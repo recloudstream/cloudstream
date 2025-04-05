@@ -2064,6 +2064,7 @@ constructor(
     override var apiName: String,
     override var type: TvType,
     var dataUrl: String,
+    var tracks: MutableMap<DubStatus, String>? = null,
 
     override var posterUrl: String? = null,
     override var year: Int? = null,
@@ -2096,6 +2097,7 @@ constructor(
         apiName: String,
         type: TvType,
         dataUrl: String,
+        tracks: MutableMap<DubStatus, String>?,
         posterUrl: String? = null,
         year: Int? = null,
         plot: String? = null,
@@ -2110,7 +2112,7 @@ constructor(
         posterHeaders: Map<String, String>? = null,
         backgroundPosterUrl: String? = null,
     ) : this(
-        name, url, apiName, type, dataUrl, posterUrl, year, plot, rating, tags, duration, trailers,
+        name, url, apiName, type, dataUrl, tracks, posterUrl, year, plot, rating, tags, duration, trailers,
         recommendations, actors, comingSoon, syncData, posterHeaders, backgroundPosterUrl, null
     )
 }

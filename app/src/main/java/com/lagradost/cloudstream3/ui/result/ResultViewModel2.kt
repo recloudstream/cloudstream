@@ -1858,11 +1858,15 @@ class ResultViewModel2 : ViewModel() {
         postEpisodeRange(currentIndex, currentRange, sortType)
     }
 
-    private fun getMovie(): ResultEpisode? {
-        return currentEpisodes.entries.firstOrNull()?.value?.firstOrNull()?.let { ep ->
-            val posDur = getViewPos(ep.id)
-            ep.copy(position = posDur?.position ?: 0, duration = posDur?.duration ?: 0)
-        }
+    private fun getMovie(dubStatus: DubStatus?): ResultEpisode? {
+        if(dubStatus == null) return null
+        return currentEpisodes.entries
+            .firstOrNull { it.key.dubStatus == dubStatus }
+            ?.value?.firstOrNull()
+            ?.let { ep ->
+                val posDur = getViewPos(ep.id)
+                ep.copy(position = posDur?.position ?: 0, duration = posDur?.duration ?: 0)
+            }
     }
 
     private fun getEpisodes(
@@ -1919,7 +1923,7 @@ class ResultViewModel2 : ViewModel() {
                 }
             }
         )
-        val data = getMovie()
+        val data = getMovie(preferDubStatus)
         _episodes.postValue(null)
         if (text == null || data == null) {
             _movie.postValue(null)
@@ -2070,7 +2074,7 @@ class ResultViewModel2 : ViewModel() {
 
         _selectedDubStatus.postValue(
 
-            if (isMovie || currentDubStatus.size <= 1) null else
+            if (currentDubStatus.size <= 1) null else
                 txt(indexer.dubStatus)
 
         )
@@ -2086,7 +2090,7 @@ class ResultViewModel2 : ViewModel() {
         preferDubStatus = indexer.dubStatus
 
         generator = if (isMovie) {
-            getMovie()?.let { RepoLinkGenerator(listOf(it), page = currentResponse) }
+            getMovie(preferDubStatus)?.let { RepoLinkGenerator(listOf(it), page = currentResponse) }
         } else {
             val episodes = currentEpisodes.filter { it.key.dubStatus == indexer.dubStatus }
                 .toList()
@@ -2301,26 +2305,58 @@ class ResultViewModel2 : ViewModel() {
             }
 
             is MovieLoadResponse -> {
-                singleMap(
-                    buildResultEpisode(
-                        loadResponse.name,
-                        loadResponse.name,
-                        null,
-                        0,
-                        null,
-                        null,
-                        loadResponse.dataUrl,
-                        loadResponse.apiName,
-                        (mainId), // HAS SAME ID
-                        0,
-                        null,
-                        null,
-                        null,
-                        loadResponse.type,
-                        mainId,
-                        null,
+                val movieLoadResponse = loadResponse as MovieLoadResponse
+                val movieLoadResponseTracks = movieLoadResponse.tracks
+                if(movieLoadResponseTracks == null){
+                    singleMap(
+                        buildResultEpisode(
+                            loadResponse.name,
+                            loadResponse.name,
+                            null,
+                            0,
+                            null,
+                            null,
+                            loadResponse.dataUrl,
+                            loadResponse.apiName,
+                            (mainId), // HAS SAME ID
+                            0,
+                            null,
+                            null,
+                            null,
+                            loadResponse.type,
+                            mainId,
+                            null,
+                        )
                     )
-                )
+                }else{
+                    val tracks: MutableMap<EpisodeIndexer, MutableList<ResultEpisode>> =
+                        mutableMapOf()
+                    movieLoadResponseTracks.map { (dubStatus, data) ->
+                        tracks.getOrPut(EpisodeIndexer(dubStatus,0),{ mutableListOf() }).add(
+                            buildResultEpisode(
+                                loadResponse.name + dubStatus.toString(),
+                                loadResponse.name + dubStatus.toString(),
+                                null,
+                                0,
+                                null,
+                                null,
+                                data,
+                                loadResponse.apiName,
+                                (mainId+dubStatus.id),
+                                0,
+                                null,
+                                null,
+                                null,
+                                loadResponse.type,
+                                mainId,
+                                null,
+                            )
+                        )
+                    }
+                    tracks
+                }
+
+
             }
 
             is LiveStreamLoadResponse -> {
