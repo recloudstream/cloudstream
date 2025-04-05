@@ -76,7 +76,7 @@ const val NEXT_WATCH_EPISODE_PERCENTAGE = 90
 const val UPDATE_SYNC_PROGRESS_PERCENTAGE = 80
 
 abstract class AbstractPlayerFragment(
-    val player: IPlayer = CS3IPlayer()
+    var player: IPlayer = CS3IPlayer()
 ) : Fragment() {
     var resizeMode: Int = 0
     var subStyle: SaveCaptionStyle? = null
@@ -106,7 +106,7 @@ abstract class AbstractPlayerFragment(
         throw NotImplementedError()
     }
 
-    open fun playerStatusChanged(){}
+    open fun playerStatusChanged() {}
 
     open fun playerDimensionsLoaded(width: Int, height: Int) {
         throw NotImplementedError()
@@ -360,9 +360,9 @@ abstract class AbstractPlayerFragment(
 
             is SocketTimeoutException -> {
                 /**
-                 * Ensures this is run on the UI thread to prevent issues 
-                 * caused by SocketTimeoutException in torrents. Running 
-                 * on another thread can break player interactions or 
+                 * Ensures this is run on the UI thread to prevent issues
+                 * caused by SocketTimeoutException in torrents. Running
+                 * on another thread can break player interactions or
                  * prevent switching to the next source.
                  */
                 activity?.runOnUiThread {
@@ -385,15 +385,14 @@ abstract class AbstractPlayerFragment(
     }
 
     private fun onSubStyleChanged(style: SaveCaptionStyle) {
-        if (player is CS3IPlayer) {
-            player.updateSubtitleStyle(style)
-            // Forcefully update the subtitle encoding in case the edge size is changed
-            player.seekTime(-1)
-        }
+        player.updateSubtitleStyle(style)
+        // Forcefully update the subtitle encoding in case the edge size is changed
+        player.seekTime(-1)
     }
 
+
     @SuppressLint("UnsafeOptInUsageError")
-    private fun playerUpdated(player: Any?) {
+    open fun playerUpdated(player: Any?) {
         if (player is ExoPlayer) {
             context?.let { ctx ->
                 mMediaSession?.release()
@@ -411,7 +410,7 @@ abstract class AbstractPlayerFragment(
         }
     }
 
-    private var mMediaSession: MediaSession? = null
+    protected var mMediaSession: MediaSession? = null
 
     // this can be used in the future for players other than exoplayer
     //private val mMediaSessionCallback: MediaSessionCompat.Callback = object : MediaSessionCompat.Callback() {
@@ -434,20 +433,21 @@ abstract class AbstractPlayerFragment(
     //    }
     //}
 
-    open fun onDownload(event : DownloadEvent) = Unit
+    open fun onDownload(event: DownloadEvent) = Unit
 
     /** This receives the events from the player, if you want to append functionality you do it here,
      * do note that this only receives events for UI changes,
      * and returning early WONT stop it from changing in eg the player time or pause status */
     open fun mainCallback(event: PlayerEvent) {
         // we don't want to spam DownloadEvent
-        if(event !is DownloadEvent) {
+        if (event !is DownloadEvent) {
             Log.i(TAG, "Handle event: $event")
         }
         when (event) {
             is DownloadEvent -> {
                 onDownload(event)
             }
+
             is ResizedEvent -> {
                 playerDimensionsLoaded(event.width, event.height)
             }
@@ -542,6 +542,7 @@ abstract class AbstractPlayerFragment(
             ),
         )
 
+        val player = player
         if (player is CS3IPlayer) {
             // preview bar
             val progressBar: PreviewTimeBar? = playerView?.findViewById(R.id.exo_progress)

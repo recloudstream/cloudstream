@@ -53,20 +53,21 @@ open class Streamplay : ExtractorApi() {
                 .replace("label", "\"label\"")
             tryParseJson<List<Source>>("[$data}]")?.map { res ->
                 callback.invoke(
-                    ExtractorLink(
+                    newExtractorLink(
                         this.name,
                         this.name,
                         res.file ?: return@map null,
-                        "$mainServer/",
-                        when (res.label) {
+                    ) {
+                        this.referer = "$mainServer/"
+                        this.quality = when (res.label) {
                             "HD" -> Qualities.P720.value
                             "SD" -> Qualities.P480.value
                             else -> Qualities.Unknown.value
-                        },
-                        headers = mapOf(
+                        }
+                        this.headers = mapOf(
                             "Range" to "bytes=0-"
                         )
-                    )
+                    }
                 )
             }
         }

@@ -103,13 +103,14 @@ open class Userload : ExtractorApi() {
         val videoLink = videoLinkPage.text
         val nameSource = app.get(url).document.head().selectFirst("title")!!.text()
         extractedLinksList.add(
-            ExtractorLink(
+            newExtractorLink(
                 name,
                 name,
-                videoLink,
-                mainUrl,
-                getQualityFromName(nameSource),
-            )
+                videoLink
+            ) {
+                this.referer = mainUrl
+                this.quality = getQualityFromName(nameSource)
+            }
         )
 
         return extractedLinksList

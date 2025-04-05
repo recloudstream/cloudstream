@@ -18,6 +18,7 @@ import com.lagradost.cloudstream3.databinding.LogcatBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.network.initClient
+import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.services.BackupWorkManager
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -251,6 +252,13 @@ class SettingsUpdates : PreferenceFragmentCompat() {
                 (context ?: AcraApplication.context)?.let { ctx -> app.initClient(ctx) }
             }
             return@setOnPreferenceClickListener true
+        }
+
+        getPref(R.string.manual_update_plugins_key)?.setOnPreferenceClickListener {
+            ioSafe {
+                PluginManager._DO_NOT_CALL_FROM_A_PLUGIN_manuallyReloadAndUpdatePlugins(activity ?: return@ioSafe)
+            }
+            return@setOnPreferenceClickListener true // Return true for the listener
         }
     }
 

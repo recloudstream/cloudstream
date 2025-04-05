@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import java.net.URI
 import kotlin.random.Random
 
@@ -98,14 +99,14 @@ open class DoodLaExtractor : ExtractorApi() {
             ?.getOrNull(0)
 		
 	callback.invoke(
-            ExtractorLink(
+            newExtractorLink(
                 this.name,
                 this.name,
                 trueUrl,
-                "$mainUrl/",
-                getQualityFromName(quality),
-                INFER_TYPE,
-            )
+            ) {
+                this.referer = "$mainUrl/"
+                this.quality = getQualityFromName(quality)
+            }
         )
 
     }

@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.dokka.gradle.engine.parameters.KotlinPlatform
 import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
@@ -31,6 +32,7 @@ kotlin {
             implementation(libs.fuzzywuzzy) // Match Extractors
             implementation(libs.rhino) // Run JavaScript
             implementation(libs.newpipeextractor)
+            implementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
         }
     }
 }
@@ -53,6 +55,14 @@ buildkonfig {
             logger.quiet("Compiling library with release flag")
         }
         buildConfigField(FieldSpec.Type.BOOLEAN, "DEBUG", isDebug.toString())
+
+        // Reads local.properties
+        val localProperties = gradleLocalProperties(rootDir, project.providers)
+
+        buildConfigField(
+            FieldSpec.Type.STRING,
+            "MDL_API_KEY", (System.getenv("MDL_API_KEY") ?: localProperties["mdl.key"]).toString()
+        )
     }
 }
 

@@ -196,10 +196,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".ui.EasterEggMonke"
-            android:exported="true" />
-
         <receiver
             android:name=".receivers.VideoDownloadRestartReceiver"
             android:enabled="false"

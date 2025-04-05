@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.ui.settings
 
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -25,7 +24,6 @@ import com.lagradost.cloudstream3.databinding.AddSiteInputBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.network.initClient
-import com.lagradost.cloudstream3.ui.EasterEggMonke
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.beneneCount
@@ -43,6 +41,7 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
+import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
@@ -392,16 +391,13 @@ class SettingsGeneral : PreferenceFragmentCompat() {
                     try {
                         beneneCount++
                         if (beneneCount%20 == 0) {
-                            val intent = Intent(context, EasterEggMonke::class.java)
-                            startActivity(intent)
+                            activity?.navigate(R.id.action_navigation_settings_general_to_easterEggMonkeFragment)
                         }
                         settingsManager.edit().putInt(
                             getString(R.string.benene_count),
                             beneneCount
-                        )
-                            .apply()
-                        it.summary =
-                            getString(R.string.benene_count_text).format(beneneCount)
+                        ).apply()
+                        it.summary = getString(R.string.benene_count_text).format(beneneCount)
                     } catch (e: Exception) {
                         logError(e)
                     }

@@ -360,14 +360,14 @@
 
                                 <com.google.android.material.button.MaterialButton
                                     android:id="@+id/result_meta_site"
-                                    android:layout_gravity="center_vertical"
                                     style="@style/SmallBlackButton"
+                                    android:layout_gravity="center_vertical"
                                     tools:text="Gogoanime" />
 
                                 <com.google.android.material.button.MaterialButton
                                     android:id="@+id/result_meta_content_rating"
-                                    android:layout_gravity="center_vertical"
                                     style="@style/SmallBlackButton"
+                                    android:layout_gravity="center_vertical"
                                     tools:text="PG-13" />
 
                                 <TextView
@@ -409,8 +409,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:ellipsize="end"
-                                    android:maxLines="10"
                                     android:foreground="@drawable/outline_drawable"
+                                    android:maxLines="10"
                                     android:nextFocusUp="@id/result_back"
                                     android:nextFocusDown="@id/result_bookmark_Button"
                                     android:paddingTop="5dp"
@@ -733,19 +733,20 @@
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
 
-                            <LinearLayout
+                            <com.lagradost.cloudstream3.widget.FlowLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="10dp"
                                 android:gravity="center_vertical"
-                                android:orientation="horizontal">
+                                android:orientation="horizontal"
+                                app:itemSpacing="10dp">
 
                                 <com.google.android.material.button.MaterialButton
                                     android:id="@+id/result_season_button"
                                     style="@style/MultiSelectButton"
                                     android:layout_gravity="center_vertical"
-                                    android:layout_marginStart="0dp"
-                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginTop="10dp"
+                                    android:layout_marginBottom="10dp"
                                     android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
                                     android:nextFocusLeft="@id/result_episode_select"
                                     android:nextFocusRight="@id/result_episode_select"
@@ -761,8 +762,8 @@
                                     android:id="@+id/result_episode_select"
                                     style="@style/MultiSelectButton"
                                     android:layout_gravity="center_vertical"
-                                    android:layout_marginStart="0dp"
-                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginTop="10dp"
+                                    android:layout_marginBottom="10dp"
                                     android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
                                     android:nextFocusLeft="@id/result_season_button"
                                     android:nextFocusRight="@id/result_season_button"
@@ -778,8 +779,8 @@
                                     android:id="@+id/result_dub_select"
                                     style="@style/MultiSelectButton"
                                     android:layout_gravity="center_vertical"
-                                    android:layout_marginStart="0dp"
-                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginTop="10dp"
+                                    android:layout_marginBottom="10dp"
                                     android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
                                     android:nextFocusLeft="@id/result_season_button"
                                     android:nextFocusRight="@id/result_season_button"
@@ -788,7 +789,23 @@
                                     android:paddingStart="10dp"
                                     android:paddingEnd="5dp"
                                     android:visibility="gone"
-                                    tools:text="Dubbed"
+                                    tools:text="Dubbed1"
+                                    tools:visibility="visible" />
+
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/result_sort_button"
+                                    style="@style/MultiSelectButton"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginTop="10dp"
+                                    android:layout_marginBottom="10dp"
+                                    android:nextFocusLeft="@id/result_dub_select"
+                                    android:nextFocusUp="@id/result_description"
+                                    android:nextFocusDown="@id/result_episodes"
+                                    android:paddingStart="10dp"
+                                    android:paddingEnd="5dp"
+                                    android:text="Sort"
+                                    android:visibility="gone"
                                     tools:visibility="visible" />
 
                                 <TextView
@@ -796,13 +813,15 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center_vertical"
+                                    android:layout_marginTop="10dp"
+                                    android:layout_marginBottom="10dp"
                                     android:paddingTop="10dp"
                                     android:paddingBottom="10dp"
                                     android:textColor="?attr/textColor"
                                     android:textSize="17sp"
                                     android:textStyle="normal"
                                     tools:text="8 Episodes" />
-                            </LinearLayout>
+                            </com.lagradost.cloudstream3.widget.FlowLayout>
 
 
                             <!--TODO add next airing-->

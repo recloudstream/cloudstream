@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 class StreamM4u : XStreamCdn() {
     override val name: String = "StreamM4u"
@@ -120,13 +121,14 @@ open class XStreamCdn : ExtractorApi() {
                 if (it.success && it.data != null) {
                     it.data.map { source ->
                         callback.invoke(
-                            ExtractorLink(
+                            newExtractorLink(
                                 name,
                                 name = name,
                                 source.file,
-                                url,
-                                getQualityFromName(source.label),
-                            )
+                            ) {
+                                this.referer = url
+                                this.quality = getQualityFromName(source.label)
+                            }
                         )
                     }
                 }

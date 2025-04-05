@@ -1,16 +1,15 @@
 package com.lagradost.cloudstream3.services
 
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
-import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.PendingIntentCompat
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.MainActivity.Companion.deleteFileOnExit
 import com.lagradost.cloudstream3.R
@@ -29,13 +28,9 @@ class PackageInstallerService : Service() {
     private var installer: ApkInstaller? = null
 
     private val baseNotification by lazy {
-        val flag = if (SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.FLAG_IMMUTABLE
-        } else 0
-
         val intent = Intent(this, MainActivity::class.java)
         val pendingIntent =
-            PendingIntent.getActivity(this, 0, intent, flag)
+            PendingIntentCompat.getActivity(this, 0, intent, 0, false)
 
         NotificationCompat.Builder(this, UPDATE_CHANNEL_ID)
             .setAutoCancel(false)

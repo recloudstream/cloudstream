@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.extractors.helper.NineAnimeHelper.encrypt
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.Qualities
 
@@ -127,7 +128,15 @@ open class WcoStream : ExtractorApi() {
 
         if (!response.text.startsWith("{")) throw ErrorLoadingException("Seems like 9Anime kiddies changed stuff again, Go touch some grass for bout an hour Or use a different Server")
         return response.parsed<Response>().data.media.sources.map {
-            ExtractorLink(name, it.file, it.file, host, Qualities.Unknown.value, type = INFER_TYPE)
+            newExtractorLink(
+                name,
+                it.file,
+                it.file,
+                type = INFER_TYPE
+            ) {
+                this.referer = host
+                this.quality = Qualities.Unknown.value
+            }
         }
     }
 }

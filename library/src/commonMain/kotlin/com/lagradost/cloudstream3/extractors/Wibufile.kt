@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 open class Wibufile : ExtractorApi() {
     override val name: String = "Wibufile"
@@ -22,14 +23,14 @@ open class Wibufile : ExtractorApi() {
         val video = Regex("src: ['\"](.*?)['\"]").find(res)?.groupValues?.get(1)
 
         callback.invoke(
-            ExtractorLink(
+            newExtractorLink(
                 name,
                 name,
                 video ?: return,
-                "$mainUrl/",
-                Qualities.Unknown.value,
-                type = INFER_TYPE
-            )
+            ) {
+                this.referer = "$mainUrl/"
+                this.quality = Qualities.Unknown.value
+            }
         )
     }
 }

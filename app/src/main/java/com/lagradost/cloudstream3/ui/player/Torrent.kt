@@ -196,11 +196,9 @@ object Torrent {
         ).parsed<TorrentStatus>()
     }
 
-    /** Spins up the torrent server.
-     *
-     * FYI this will throw a os.Exit(1) if port is taken and is not currently checked,
-     * so if someone complains then add an extra check. */
+    /** Spins up the torrent server. */
     private suspend fun setup(dir: String): Boolean {
+        go.Seq.load()
         if (echo()) {
             return true
         }

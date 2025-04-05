@@ -94,14 +94,15 @@ open class Gdriveplayer : ExtractorApi() {
             it.groupValues[1] to it.groupValues[2]
         }.toList().distinctBy { it.second }.map { (link, quality) ->
             callback.invoke(
-                ExtractorLink(
+                newExtractorLink(
                     source = this.name,
                     name = this.name,
                     url = "${httpsify(link)}&res=$quality",
-                    referer = mainUrl,
-                    quality = quality.toIntOrNull() ?: Qualities.Unknown.value,
-                    headers = mapOf("Range" to "bytes=0-")
-                )
+                ) {
+                    this.referer = mainUrl
+                    this.quality = quality.toIntOrNull() ?: Qualities.Unknown.value
+                    this.headers = mapOf("Range" to "bytes=0-")
+                }
             )
         }
 

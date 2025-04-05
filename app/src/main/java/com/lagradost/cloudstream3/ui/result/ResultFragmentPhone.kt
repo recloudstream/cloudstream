@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.result
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Rect
@@ -36,6 +37,7 @@ import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.databinding.BottomSelectionDialogBinding
 import com.lagradost.cloudstream3.databinding.FragmentResultBinding
 import com.lagradost.cloudstream3.databinding.FragmentResultSwipeBinding
 import com.lagradost.cloudstream3.databinding.ResultRecommendationsBinding
@@ -232,6 +234,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
         updateUIEvent -= ::updateUI
         binding = null
+        resultBinding?.resultScroll?.setOnClickListener(null)
         resultBinding = null
         syncBinding = null
         recommendationBinding = null
@@ -253,6 +256,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
     var selectSeason: String? = null
     var selectEpisodeRange: String? = null
+    var selectSort: EpisodeSortType? = null
 
     private fun setUrl(url: String?) {
         if (url == null) {
@@ -358,7 +362,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         binding?.resultSearch?.setOnClickListener {
             QuickSearchFragment.pushSearch(activity, storedData.name)
         }
-        
+
         resultBinding?.apply {
             resultReloadConnectionerror.setOnClickListener {
                 viewModel.load(
@@ -406,8 +410,32 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     { downloadClickEvent ->
                         DownloadButtonSetup.handleDownloadClick(downloadClickEvent)
                     }
+
                 )
 
+            observeNullable(viewModel.selectedSorting) {
+                resultSortButton.setText(it)
+            }
+
+            observe(viewModel.sortSelections) { sort ->
+                resultBinding?.resultSortButton?.setOnClickListener { view ->
+                    view?.context?.let { ctx ->
+                        val names = sort
+                            .mapNotNull { (text, r) ->
+                                r to (text.asStringNull(ctx) ?: return@mapNotNull null)
+                            }
+
+                        activity?.showDialog(
+                            names.map { it.second },
+                            viewModel.selectedSortingIndex.value ?: -1,
+                            "",
+                            false,
+                            {}) { itemId ->
+                            viewModel.setSort(names[itemId].first)
+                        }
+                    }
+                }
+            }
 
             resultScroll.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
                 val dy = scrollY - oldScrollY
@@ -458,8 +486,12 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     }
 
                     val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                        ?: com.lagradost.cloudstream3.utils.txt(R.string.no_data).asStringNull(context) ?: ""
-                    showToast(com.lagradost.cloudstream3.utils.txt(message, name), Toast.LENGTH_SHORT)
+                        ?: com.lagradost.cloudstream3.utils.txt(R.string.no_data)
+                            .asStringNull(context) ?: ""
+                    showToast(
+                        com.lagradost.cloudstream3.utils.txt(message, name),
+                        Toast.LENGTH_SHORT
+                    )
                 }
                 context?.let { openBatteryOptimizationSettings(it) }
             }
@@ -474,8 +506,12 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     }
 
                     val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                        ?: com.lagradost.cloudstream3.utils.txt(R.string.no_data).asStringNull(context) ?: ""
-                    showToast(com.lagradost.cloudstream3.utils.txt(message, name), Toast.LENGTH_SHORT)
+                        ?: com.lagradost.cloudstream3.utils.txt(R.string.no_data)
+                            .asStringNull(context) ?: ""
+                    showToast(
+                        com.lagradost.cloudstream3.utils.txt(message, name),
+                        Toast.LENGTH_SHORT
+                    )
                 }
             }
             mediaRouteButton.apply {
@@ -713,10 +749,23 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultNextAiring.setText(d.nextAiringEpisode)
                     resultNextAiringTime.setText(d.nextAiringDate)
                     resultPoster.loadImage(d.posterImage, headers = d.posterHeaders) {
-                        error{ getImageFromDrawable(context?: return@error null, R.drawable.default_cover) }
+                        error {
+                            getImageFromDrawable(
+                                context ?: return@error null,
+                                R.drawable.default_cover
+                            )
+                        }
                     }
-                    resultPosterBackground.loadImage(d.posterBackgroundImage, headers = d.posterHeaders) {
-                        error{ getImageFromDrawable(context?: return@error null, R.drawable.default_cover) }
+                    resultPosterBackground.loadImage(
+                        d.posterBackgroundImage,
+                        headers = d.posterHeaders
+                    ) {
+                        error {
+                            getImageFromDrawable(
+                                context ?: return@error null,
+                                R.drawable.default_cover
+                            )
+                        }
                     }
 
                     var isExpanded = false
@@ -790,7 +839,10 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 resultReloadConnectionOpenInBrowser.isVisible = data is Resource.Failure
 
                 resultTitle.setOnLongClickListener {
-                    clipboardHelper(com.lagradost.cloudstream3.utils.txt(R.string.title), resultTitle.text)
+                    clipboardHelper(
+                        com.lagradost.cloudstream3.utils.txt(R.string.title),
+                        resultTitle.text
+                    )
                     true
                 }
             }

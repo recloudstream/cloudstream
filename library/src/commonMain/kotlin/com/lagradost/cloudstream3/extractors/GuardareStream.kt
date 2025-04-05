@@ -57,14 +57,14 @@ open class GuardareStream : ExtractorApi() {
         val jsonVideoData = AppUtils.parseJson<GuardareJsonData>(response)
         jsonVideoData.data.forEach {
             callback.invoke(
-                ExtractorLink(
+                newExtractorLink(
                     this.name,
                     this.name,
                     it.file + ".${it.type}",
-                    mainUrl,
-                    it.label.filter { it.isDigit() }.toInt(),
-                    false
-                )
+                ) {
+                    this.referer = mainUrl
+                    this.quality = it.label.filter { it.isDigit() }.toInt()
+                }
             )
         }
 
