@@ -38,6 +38,7 @@ import com.lagradost.cloudstream3.extractors.DesuArcg
 import com.lagradost.cloudstream3.extractors.DesuDrive
 import com.lagradost.cloudstream3.extractors.DesuOdchan
 import com.lagradost.cloudstream3.extractors.DesuOdvip
+import com.lagradost.cloudstream3.extractors.Dhtpre
 import com.lagradost.cloudstream3.extractors.Dokicloud
 import com.lagradost.cloudstream3.extractors.DoodCxExtractor
 import com.lagradost.cloudstream3.extractors.DoodLaExtractor
@@ -152,6 +153,7 @@ import com.lagradost.cloudstream3.extractors.OkRuHTTP
 import com.lagradost.cloudstream3.extractors.OkRuSSL
 import com.lagradost.cloudstream3.extractors.Okrulink
 import com.lagradost.cloudstream3.extractors.PeaceMakerst
+import com.lagradost.cloudstream3.extractors.Peytonepre
 import com.lagradost.cloudstream3.extractors.Pichive
 import com.lagradost.cloudstream3.extractors.PixelDrain
 import com.lagradost.cloudstream3.extractors.PlayLtXyz
@@ -178,6 +180,7 @@ import com.lagradost.cloudstream3.extractors.SfastwishCom
 import com.lagradost.cloudstream3.extractors.ShaveTape
 import com.lagradost.cloudstream3.extractors.SibNet
 import com.lagradost.cloudstream3.extractors.Simpulumlamerop
+import com.lagradost.cloudstream3.extractors.Smoothpre
 import com.lagradost.cloudstream3.extractors.Sobreatsesuyp
 import com.lagradost.cloudstream3.extractors.Solidfiles
 import com.lagradost.cloudstream3.extractors.Ssbstream
@@ -1136,6 +1139,9 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     VidHidePro4(),
     VidHidePro5(),
     VidHidePro6(),
+    Dhtpre(),
+    Smoothpre(),
+    Peytonepre(),
     LuluStream(),
     Lulustream1(),
     Lulustream2(),
