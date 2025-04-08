@@ -16,6 +16,9 @@ import com.lagradost.cloudstream3.extractors.Asnwish
 import com.lagradost.cloudstream3.extractors.Awish
 import com.lagradost.cloudstream3.extractors.Beastx
 import com.lagradost.cloudstream3.extractors.Bestx
+import com.lagradost.cloudstream3.extractors.BgwpCC
+import com.lagradost.cloudstream3.extractors.BigwarpArt
+import com.lagradost.cloudstream3.extractors.BigwarpIO
 import com.lagradost.cloudstream3.extractors.Blogger
 import com.lagradost.cloudstream3.extractors.Boltx
 import com.lagradost.cloudstream3.extractors.Boosterx
@@ -1140,6 +1143,9 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Lulustream1(),
     Lulustream2(),
     StreamWishExtractor(),
+    BigwarpIO(),
+    BigwarpArt(),
+    BgwpCC(),
     WishembedPro(),
     CdnwishCom(),
     FlaswishCom(),
