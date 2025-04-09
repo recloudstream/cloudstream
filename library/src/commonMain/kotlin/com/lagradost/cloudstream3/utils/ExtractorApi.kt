@@ -16,6 +16,9 @@ import com.lagradost.cloudstream3.extractors.Asnwish
 import com.lagradost.cloudstream3.extractors.Awish
 import com.lagradost.cloudstream3.extractors.Beastx
 import com.lagradost.cloudstream3.extractors.Bestx
+import com.lagradost.cloudstream3.extractors.BgwpCC
+import com.lagradost.cloudstream3.extractors.BigwarpArt
+import com.lagradost.cloudstream3.extractors.BigwarpIO
 import com.lagradost.cloudstream3.extractors.Blogger
 import com.lagradost.cloudstream3.extractors.Boltx
 import com.lagradost.cloudstream3.extractors.Boosterx
@@ -38,6 +41,7 @@ import com.lagradost.cloudstream3.extractors.DesuArcg
 import com.lagradost.cloudstream3.extractors.DesuDrive
 import com.lagradost.cloudstream3.extractors.DesuOdchan
 import com.lagradost.cloudstream3.extractors.DesuOdvip
+import com.lagradost.cloudstream3.extractors.Dhtpre
 import com.lagradost.cloudstream3.extractors.Dokicloud
 import com.lagradost.cloudstream3.extractors.DoodCxExtractor
 import com.lagradost.cloudstream3.extractors.DoodLaExtractor
@@ -152,6 +156,7 @@ import com.lagradost.cloudstream3.extractors.OkRuHTTP
 import com.lagradost.cloudstream3.extractors.OkRuSSL
 import com.lagradost.cloudstream3.extractors.Okrulink
 import com.lagradost.cloudstream3.extractors.PeaceMakerst
+import com.lagradost.cloudstream3.extractors.Peytonepre
 import com.lagradost.cloudstream3.extractors.Pichive
 import com.lagradost.cloudstream3.extractors.PixelDrain
 import com.lagradost.cloudstream3.extractors.PlayLtXyz
@@ -178,6 +183,7 @@ import com.lagradost.cloudstream3.extractors.SfastwishCom
 import com.lagradost.cloudstream3.extractors.ShaveTape
 import com.lagradost.cloudstream3.extractors.SibNet
 import com.lagradost.cloudstream3.extractors.Simpulumlamerop
+import com.lagradost.cloudstream3.extractors.Smoothpre
 import com.lagradost.cloudstream3.extractors.Sobreatsesuyp
 import com.lagradost.cloudstream3.extractors.Solidfiles
 import com.lagradost.cloudstream3.extractors.Ssbstream
@@ -260,6 +266,8 @@ import com.lagradost.cloudstream3.extractors.Vidplay
 import com.lagradost.cloudstream3.extractors.VidplayOnline
 import com.lagradost.cloudstream3.extractors.Vidstreamz
 import com.lagradost.cloudstream3.extractors.Vidxstream
+import com.lagradost.cloudstream3.extractors.VinovoSi
+import com.lagradost.cloudstream3.extractors.VinovoTo
 import com.lagradost.cloudstream3.extractors.Vizcloud
 import com.lagradost.cloudstream3.extractors.Vizcloud2
 import com.lagradost.cloudstream3.extractors.VizcloudCloud
@@ -1136,10 +1144,16 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     VidHidePro4(),
     VidHidePro5(),
     VidHidePro6(),
+    Dhtpre(),
+    Smoothpre(),
+    Peytonepre(),
     LuluStream(),
     Lulustream1(),
     Lulustream2(),
     StreamWishExtractor(),
+    BigwarpIO(),
+    BigwarpArt(),
+    BgwpCC(),
     WishembedPro(),
     CdnwishCom(),
     FlaswishCom(),
@@ -1192,6 +1206,9 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     InternetArchive(),
     VidStack(),
     GDMirrorbot(),
+
+    VinovoSi(),
+    VinovoTo(),
 )
 
 

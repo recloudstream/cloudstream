@@ -30,6 +30,20 @@ class VidHidePro6 : VidHidePro() {
     override val mainUrl = "https://vidhidepre.com"
 }
 
+class Smoothpre: VidHidePro() {
+    override var name = "EarnVids"
+    override var mainUrl = "https://smoothpre.com"
+}
+
+class Dhtpre: VidHidePro() {
+    override var name = "EarnVids"
+    override var mainUrl = "https://dhtpre.com"
+}
+
+class Peytonepre : VidHidePro() {
+    override var name = "EarnVids"
+    override var mainUrl = "https://peytonepre.com"
+}
 
 open class VidHidePro : ExtractorApi() {
     override val name = "VidHidePro"
@@ -57,15 +71,17 @@ open class VidHidePro : ExtractorApi() {
             getAndUnpack(response.text)
         } else {
             response.document.selectFirst("script:containsData(sources:)")?.data()
+        } ?: return
+
+        // m3u8 urls could be prefixed by 'file:', 'hls2:' or 'hls4:', so we just match ':'
+        Regex(":\\s*\"(.*?m3u8.*?)\"").findAll(script).forEach { m3u8Match ->
+            generateM3u8(
+                name,
+                m3u8Match.groupValues[1],
+                mainUrl,
+                headers = headers
+            ).forEach(callback)
         }
-        val m3u8 =
-            Regex("file:\\s*\"(.*?m3u8.*?)\"").find(script ?: return)?.groupValues?.getOrNull(1)
-        generateM3u8(
-            name,
-            m3u8 ?: return,
-            mainUrl,
-	        headers = headers
-        ).forEach(callback)
     }
 
     private fun getEmbedUrl(url: String): String {
