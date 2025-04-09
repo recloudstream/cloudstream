@@ -1576,7 +1576,8 @@ class CS3IPlayer : IPlayer {
 
                                 DialogInterface.BUTTON_NEGATIVE -> {
                                     Torrent.hasAcceptedTorrentForThisSession = false
-                                    event(ErrorEvent(ErrorLoadingException("Not accepted torrent")))
+                                    val errorMessage = context.getString(R.string.torrent_not_accepted)
+                                    event(ErrorEvent(ErrorLoadingException(errorMessage)))
                                 }
                             }
                         }
@@ -1585,7 +1586,8 @@ class CS3IPlayer : IPlayer {
                         .setMessage(R.string.torrent_info)
                         // Ensure that the user will not accidentally start a torrent session.
                         .setCancelable(false).setOnCancelListener {
-                            event(ErrorEvent(ErrorLoadingException("Not accepted torrent")))
+                            val errorMessage = context.getString(R.string.torrent_not_accepted)
+                            event(ErrorEvent(ErrorLoadingException(errorMessage)))
                         }
                         .setPositiveButton(R.string.ok, dialogClickListener)
                         .setNegativeButton(R.string.go_back, dialogClickListener)
