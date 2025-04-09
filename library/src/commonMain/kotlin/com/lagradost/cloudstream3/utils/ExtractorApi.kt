@@ -31,6 +31,7 @@ import com.lagradost.cloudstream3.extractors.Chillx
 import com.lagradost.cloudstream3.extractors.CineGrabber
 import com.lagradost.cloudstream3.extractors.Cinestart
 import com.lagradost.cloudstream3.extractors.ContentX
+import com.lagradost.cloudstream3.extractors.CsstOnline
 import com.lagradost.cloudstream3.extractors.D0000d
 import com.lagradost.cloudstream3.extractors.D000dCom
 import com.lagradost.cloudstream3.extractors.DBfilm
@@ -58,6 +59,7 @@ import com.lagradost.cloudstream3.extractors.DoodstreamCom
 import com.lagradost.cloudstream3.extractors.Dooood
 import com.lagradost.cloudstream3.extractors.Ds2play
 import com.lagradost.cloudstream3.extractors.Ds2video
+import com.lagradost.cloudstream3.extractors.DsstOnline
 import com.lagradost.cloudstream3.extractors.Dwish
 import com.lagradost.cloudstream3.extractors.EPlayExtractor
 import com.lagradost.cloudstream3.extractors.Embedgram
@@ -80,6 +82,7 @@ import com.lagradost.cloudstream3.extractors.FourCX
 import com.lagradost.cloudstream3.extractors.FourPichive
 import com.lagradost.cloudstream3.extractors.FourPlayRu
 import com.lagradost.cloudstream3.extractors.Fplayer
+import com.lagradost.cloudstream3.extractors.FsstOnline
 import com.lagradost.cloudstream3.extractors.GDMirrorbot
 import com.lagradost.cloudstream3.extractors.GMPlayer
 import com.lagradost.cloudstream3.extractors.GamoVideo
@@ -178,6 +181,7 @@ import com.lagradost.cloudstream3.extractors.Sbrapid
 import com.lagradost.cloudstream3.extractors.Sbsonic
 import com.lagradost.cloudstream3.extractors.Sbspeed
 import com.lagradost.cloudstream3.extractors.Sbthe
+import com.lagradost.cloudstream3.extractors.SecvideoOnline
 import com.lagradost.cloudstream3.extractors.Sendvid
 import com.lagradost.cloudstream3.extractors.SfastwishCom
 import com.lagradost.cloudstream3.extractors.ShaveTape
@@ -1164,6 +1168,10 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Vidguardto1(),
     Vidguardto2(),
     Vidguardto3(),
+    SecvideoOnline(),
+    FsstOnline(),
+    CsstOnline(),
+    DsstOnline(),
     Simpulumlamerop(),
     Urochsunloath(),
     Yipsu(),
