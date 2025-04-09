@@ -260,6 +260,8 @@ import com.lagradost.cloudstream3.extractors.Vidplay
 import com.lagradost.cloudstream3.extractors.VidplayOnline
 import com.lagradost.cloudstream3.extractors.Vidstreamz
 import com.lagradost.cloudstream3.extractors.Vidxstream
+import com.lagradost.cloudstream3.extractors.VinovoSi
+import com.lagradost.cloudstream3.extractors.VinovoTo
 import com.lagradost.cloudstream3.extractors.Vizcloud
 import com.lagradost.cloudstream3.extractors.Vizcloud2
 import com.lagradost.cloudstream3.extractors.VizcloudCloud
@@ -1192,6 +1194,9 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     InternetArchive(),
     VidStack(),
     GDMirrorbot(),
+
+    VinovoSi(),
+    VinovoTo(),
 )
 
 
