@@ -31,6 +31,7 @@ import com.lagradost.cloudstream3.newTvSeriesLoadResponse
 import com.lagradost.cloudstream3.newTvSeriesSearchResponse
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import java.net.URI
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -59,18 +60,25 @@ open class TraktProvider : MainAPI() {
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
 
-        val apiResponse = getApi("${request.data}?extended=cloud9,full&page=$page")
+        val apiResponse =
+            getApi("${request.data.replace("extended=cloud9,full", "extended=images")}?extended=images&page=$page")
 
-        val results = parseJson<List<MediaDetails>>(apiResponse).map { element ->
+        val results = parseJson<List<Media>>(apiResponse).map { element ->
             element.toSearchResponse()
         }
         return newHomePageResponse(request.name, results)
     }
 
-    private fun MediaDetails.toSearchResponse(): SearchResponse {
+    private fun Media.toSearchResponse(): SearchResponse {
 
         val media = this.media ?: this
-        val mediaType = if (media.ids?.tvdb == null) TvType.Movie else TvType.TvSeries
+        val mediaType = when {
+            // guard against shows missing tvdb id
+            // e.g. cbs-mornings-2021, traktId-246185
+            media.airedEpisodes != null -> TvType.TvSeries
+            else -> if (media.ids?.tvdb == null) TvType.Movie else TvType.TvSeries
+
+        }
         val poster = media.images?.poster?.firstOrNull()
 
         if (mediaType == TvType.Movie) {
@@ -78,7 +86,7 @@ open class TraktProvider : MainAPI() {
                 name = media.title ?: "",
                 url = Data(
                     type = mediaType,
-                    mediaDetails = media,
+                    ids = media.ids,
                 ).toJson(),
                 type = TvType.Movie,
             ) {
@@ -89,7 +97,7 @@ open class TraktProvider : MainAPI() {
                 name = media.title ?: "",
                 url = Data(
                     type = mediaType,
-                    mediaDetails = media,
+                    ids = media.ids,
                 ).toJson(),
                 type = TvType.TvSeries,
             ) {
@@ -100,9 +108,9 @@ open class TraktProvider : MainAPI() {
 
     override suspend fun search(query: String): List<SearchResponse>? {
         val apiResponse =
-            getApi("$traktApiUrl/search/movie,show?extended=cloud9,full&limit=20&page=1&query=$query")
+            getApi("$traktApiUrl/search/movie,show?extended=images&limit=20&page=1&query=$query")
 
-        val results = parseJson<List<MediaDetails>>(apiResponse).map { element ->
+        val results = parseJson<List<Media>>(apiResponse).map { element ->
             element.toSearchResponse()
         }
 
@@ -112,8 +120,10 @@ open class TraktProvider : MainAPI() {
     override suspend fun load(url: String): LoadResponse {
 
         val data = parseJson<Data>(url)
-        val mediaDetails = data.mediaDetails
         val moviesOrShows = if (data.type == TvType.Movie) "movies" else "shows"
+        val resMediaDetails =
+            getApi("$traktApiUrl/$moviesOrShows/${data.ids?.trakt}?extended=cloud9,full")
+        val mediaDetails = tryParseJson<MediaDetails>(resMediaDetails)
 
         val posterUrl = mediaDetails?.images?.poster?.firstOrNull()
         val backDropUrl = mediaDetails?.images?.fanart?.firstOrNull()
@@ -132,9 +142,9 @@ open class TraktProvider : MainAPI() {
         }
 
         val resRelated =
-            getApi("$traktApiUrl/$moviesOrShows/${mediaDetails?.ids?.trakt}/related?extended=cloud9,full&limit=20")
+            getApi("$traktApiUrl/$moviesOrShows/${mediaDetails?.ids?.trakt}/related?extended=images&limit=20")
 
-        val relatedMedia = parseJson<List<MediaDetails>>(resRelated).map { it.toSearchResponse() }
+        val relatedMedia = parseJson<List<Media>>(resRelated).map { it.toSearchResponse() }
 
         val isCartoon =
             mediaDetails?.genres?.contains("animation") == true || mediaDetails?.genres?.contains("anime") == true
@@ -167,7 +177,7 @@ open class TraktProvider : MainAPI() {
 
             return newMovieLoadResponse(
                 name = mediaDetails?.title!!,
-                url = data.toJson(),
+                url = url,
                 dataUrl = linkData.toJson(),
                 type = if (isAnime) TvType.AnimeMovie else TvType.Movie,
             ) {
@@ -252,7 +262,7 @@ open class TraktProvider : MainAPI() {
 
             return newTvSeriesLoadResponse(
                 name = mediaDetails?.title!!,
-                url = data.toJson(),
+                url = url,
                 type = if (isAnime) TvType.Anime else TvType.TvSeries,
                 episodes = episodes
             ) {
@@ -330,7 +340,17 @@ open class TraktProvider : MainAPI() {
 
     data class Data(
         val type: TvType? = null,
-        val mediaDetails: MediaDetails? = null,
+        val ids: Ids? = null,
+    )
+
+    data class Media(
+        @JsonProperty("watchers") val watchers: Int? = null,
+        @JsonProperty("title") val title: String? = null,
+        @JsonProperty("year") val year: Int? = null,
+        @JsonProperty("ids") val ids: Ids? = null,
+        @JsonProperty("aired_episodes") val airedEpisodes: Int? = null,
+        @JsonProperty("images") val images: Images? = null,
+        @JsonProperty("movie") @JsonAlias("show") val media: Media? = null
     )
 
     data class MediaDetails(
@@ -342,7 +362,7 @@ open class TraktProvider : MainAPI() {
         @JsonProperty("released") val released: String? = null,
         @JsonProperty("runtime") val runtime: Int? = null,
         @JsonProperty("country") val country: String? = null,
-        @JsonProperty("updatedAt") val updatedAt: String? = null,
+        @JsonProperty("updated_at") val updatedAt: String? = null,
         @JsonProperty("trailer") val trailer: String? = null,
         @JsonProperty("homepage") val homepage: String? = null,
         @JsonProperty("status") val status: String? = null,
@@ -359,7 +379,6 @@ open class TraktProvider : MainAPI() {
         @JsonProperty("airs") val airs: Airs? = null,
         @JsonProperty("network") val network: String? = null,
         @JsonProperty("images") val images: Images? = null,
-        @JsonProperty("movie") @JsonAlias("show") val media: MediaDetails? = null
     )
 
     data class Airs(
