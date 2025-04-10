@@ -146,6 +146,7 @@ import com.lagradost.cloudstream3.extractors.Mvidoo
 import com.lagradost.cloudstream3.extractors.Mwish
 import com.lagradost.cloudstream3.extractors.MwvnVizcloudInfo
 import com.lagradost.cloudstream3.extractors.MyCloud
+import com.lagradost.cloudstream3.extractors.NathanFromSubject
 import com.lagradost.cloudstream3.extractors.Nekostream
 import com.lagradost.cloudstream3.extractors.Nekowish
 import com.lagradost.cloudstream3.extractors.Neonime7n
@@ -1168,6 +1169,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Vidguardto3(),
     Simpulumlamerop(),
     Urochsunloath(),
+    NathanFromSubject(),
     Yipsu(),
     MetaGnathTuggers(),
     Geodailymotion(),
