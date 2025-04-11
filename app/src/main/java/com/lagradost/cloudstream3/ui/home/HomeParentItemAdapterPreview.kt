@@ -5,6 +5,7 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
@@ -17,7 +18,6 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.navigation.NavigationBarItemView
-import com.google.android.material.navigationrail.NavigationRailMenuView
 import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.HomePageList
@@ -45,6 +45,7 @@ import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectStringRes
@@ -55,7 +56,8 @@ import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 class HomeParentItemAdapterPreview(
     override val fragment: Fragment,
     private val viewModel: HomeViewModel,
-) : ParentItemAdapter(fragment, id = "HomeParentItemAdapterPreview".hashCode(),
+) : ParentItemAdapter(
+    fragment, id = "HomeParentItemAdapterPreview".hashCode(),
     clickCallback = {
         viewModel.click(it)
     }, moreInfoClickCallback = {
@@ -148,7 +150,8 @@ class HomeParentItemAdapterPreview(
                 listOf(
                     R.string.action_open_play,
                     R.string.action_open_watching,
-                    R.string.action_remove_watching
+                    R.string.action_remove_watching,
+                    R.string.action_remove_all_watching
                 )
             ) { (isTv, actionId) ->
                 when (actionId + if (isTv) 0 else 1) {
@@ -163,7 +166,7 @@ class HomeParentItemAdapterPreview(
                             )
                         )
                     }
-                    //info
+                    // info
                     1 -> {
                         viewModel.click(
                             SearchClickCallback(
@@ -182,9 +185,33 @@ class HomeParentItemAdapterPreview(
                             viewModel.reloadStored()
                         }
                     }
+                    // remove all
+                    3 -> {
+                        if (callback.card is DataStoreHelper.ResumeWatchingResult) {
+                            val builder: AlertDialog.Builder =
+                                AlertDialog.Builder(callback.view.context)
+                            builder.apply {
+                                setTitle(R.string.delete_file)
+                                setMessage(
+                                    context.getString(R.string.delete_message).format(
+                                        context.getString(
+                                            R.string.continue_watching
+                                        )
+                                    )
+                                )
+                                setNegativeButton(R.string.cancel) { _, _ -> /*NO-OP*/ }
+                                setPositiveButton(R.string.delete) { _, _ ->
+                                    DataStoreHelper.deleteAllResumeStateIds()
+                                    viewModel.reloadStored()
+                                }
+                                show().setDefaultFocus()
+                            }
+                        }
+                    }
                 }
             }
         }
+
         private val bookmarkAdapter = HomeChildItemAdapter(
             fragment,
             id = "bookmarkAdapter".hashCode(),
@@ -481,7 +508,9 @@ class HomeParentItemAdapterPreview(
                     if (!hasFocus) return@setOnFocusChangeListener
                     if (previewViewpager.currentItem <= 0) {
                         //Focus the Home item as the default focus will be the header item
-                        (activity as? MainActivity)?.binding?.navRailView?.findViewById<NavigationBarItemView>(R.id.navigation_home)?.requestFocus()
+                        (activity as? MainActivity)?.binding?.navRailView?.findViewById<NavigationBarItemView>(
+                            R.id.navigation_home
+                        )?.requestFocus()
                     } else {
                         previewViewpager.setCurrentItem(previewViewpager.currentItem - 1, true)
                         binding.homePreviewPlayBtt.requestFocus()
