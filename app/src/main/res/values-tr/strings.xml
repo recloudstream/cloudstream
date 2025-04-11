@@ -732,7 +732,7 @@
     <string name="starting_plugin_update_manually">Eklenti güncellemesi başlıyor!</string>
     <string name="plugins_updated_manually">%d eklenti başarıyla güncellendi!</string>
     <string name="no_plugins_updated_manually">Hiçbir eklenti güncellenmedi.</string>
-    <string name="update_plugins_manually">Eklentileri elle güncelle</string>
+    <string name="update_plugins_manually">Eklentileri el ile güncelle</string>
     <string name="player_notification_channel_description">Oynatıcı bildirimi arka planda oynatmasını kontrol etmek içindir</string>
     <string name="player_notification_channel_name">Oynatıcı bildirimleri</string>
     <string name="subtitles_from_embedded">Yerleştir</string>

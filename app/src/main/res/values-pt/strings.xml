@@ -672,4 +672,24 @@
     <string name="torrent_not_accepted">Torrent não aceito</string>
     <string name="software_decoding">Descodificação por software</string>
     <string name="software_decoding_desc">Descodificação por software permite que o leitor reproduza ficheiros não suportados pelo seu dispositivo, mas pode resultar numa reprodução desfasada ou instável em altas resoluções</string>
+    <string name="subtitles_from_embedded">Incorporada</string>
+    <string name="subtitles_from_online">Online</string>
+    <string name="sort_episodes_number_asc">Episódio (Ascendente)</string>
+    <string name="sort_episodes_number_desc">Episódio (descendente)</string>
+    <string name="sort_episodes_date_oldest">Data de exibição (mais antiga)</string>
+    <string name="update_plugins">Atualizar plugins</string>
+    <string name="starting_plugin_update_manually">A iniciar o processo de atualização do plugin!</string>
+    <string name="plugins_updated_manually">Atualização bem-sucedida para %d plugin(s)!</string>
+    <string name="no_plugins_updated_manually">Nenhum plugin foi atualizado.</string>
+    <string name="update_plugins_manually">Atualizar plugins manualmente</string>
+    <string name="speech_recognition_unavailable">O reconhecimento de fala não está disponível</string>
+    <string name="begin_speaking">Comece a falar…</string>
+    <string name="sort_episodes_rating_high_low">Avaliação (mais alta)</string>
+    <string name="sort_episodes_rating_low_high">Avaliação (mais baixa)</string>
+    <string name="sort_episodes_date_newest">Data de exibição (mais recente)</string>
+    <string name="sort_button_episode">Ep %s</string>
+    <string name="sort_button_rating">Avaliação %s</string>
+    <string name="sort_button_date">Data %s</string>
+    <string name="player_notification_channel_description">Notificação do player para controlar a reprodução em segundo plano</string>
+    <string name="player_notification_channel_name">Notificações de reprodução</string>
 </resources>
