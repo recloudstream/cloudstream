@@ -489,10 +489,10 @@ object CommonActivity {
     }
 
 
-    fun onKeyDown(act: Activity?, keyCode: Int, event: KeyEvent?) {
+    fun onKeyDown(act: Activity?, keyCode: Int, event: KeyEvent?) : Boolean? {
 
         // 149 keycode_numpad 5
-        when (keyCode) {
+        val playerEvent = when (keyCode) {
             KeyEvent.KEYCODE_FORWARD, KeyEvent.KEYCODE_D, KeyEvent.KEYCODE_MEDIA_SKIP_FORWARD, KeyEvent.KEYCODE_MEDIA_FAST_FORWARD -> {
                 PlayerEventType.SeekForward
             }
@@ -557,10 +557,14 @@ object CommonActivity {
                 PlayerEventType.PlayPauseToggle
             }
 
-            else -> null
-        }?.let { playerEvent ->
-            playerEventListener?.invoke(playerEvent)
+            else -> return null
         }
+        val listener = playerEventListener
+        if(listener != null) {
+            listener.invoke(playerEvent)
+            return true
+        }
+        return null
 
         //when (keyCode) {
         //    KeyEvent.KEYCODE_DPAD_CENTER -> {

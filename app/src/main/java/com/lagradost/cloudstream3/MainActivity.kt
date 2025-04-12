@@ -301,7 +301,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         // This specific intent is used for the gradle deployWithAdb
                         // https://github.com/recloudstream/gradle/blob/master/src/main/kotlin/com/lagradost/cloudstream3/gradle/tasks/DeployWithAdbTask.kt#L46
                         if (str == "$APP_STRING:") {
-                            PluginManager._DO_NOT_CALL_FROM_A_PLUGIN_hotReloadAllLocalPlugins(activity)
+                            PluginManager._DO_NOT_CALL_FROM_A_PLUGIN_hotReloadAllLocalPlugins(
+                                activity
+                            )
                         }
                     } else if (safeURI(str)?.scheme == APP_STRING_REPO) {
                         val url = str.replaceFirst(APP_STRING_REPO, "https")
@@ -517,6 +519,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     navRailView.menu.findItem(R.id.navigation_downloads).isChecked = true
                     navView.menu.findItem(R.id.navigation_downloads).isChecked = true
                 }
+
                 in listOf(
                     R.id.navigation_settings,
                     R.id.navigation_subtitles,
@@ -603,18 +606,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
     }
 
-    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-        val response = CommonActivity.dispatchKeyEvent(this, event)
-        if (response != null)
-            return response
-        return super.dispatchKeyEvent(event)
-    }
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean =
+        CommonActivity.dispatchKeyEvent(this, event) ?: super.dispatchKeyEvent(event)
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        CommonActivity.onKeyDown(this, keyCode, event)
-
-        return super.onKeyDown(keyCode, event)
-    }
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean =
+        CommonActivity.onKeyDown(this, keyCode, event) ?: super.onKeyDown(keyCode, event)
 
 
     override fun onUserLeaveHint() {
@@ -694,7 +690,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         val destinationId = item.itemId
 
         // Check if we are already at the selected destination
-        if(navController.currentDestination?.id == destinationId) return false
+        if (navController.currentDestination?.id == destinationId) return false
 
         val builder = NavOptions.Builder().setLaunchSingleTop(true).setRestoreState(true)
             .setEnterAnim(R.anim.enter_anim)
@@ -728,12 +724,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                             list.forEach { custom ->
                                 allProviders.firstOrNull { it.javaClass.simpleName == custom.parentJavaClass }
                                     ?.let {
-                                        allProviders.add(it.javaClass.getDeclaredConstructor().newInstance().apply {
-                                            name = custom.name
-                                            lang = custom.lang
-                                            mainUrl = custom.url.trimEnd('/')
-                                            canBeOverridden = false
-                                        })
+                                        allProviders.add(
+                                            it.javaClass.getDeclaredConstructor().newInstance()
+                                                .apply {
+                                                    name = custom.name
+                                                    lang = custom.lang
+                                                    mainUrl = custom.url.trimEnd('/')
+                                                    canBeOverridden = false
+                                                })
                                     }
                             }
                         }
@@ -1109,7 +1107,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         super.onCreate(savedInstanceState)
         try {
             if (isCastApiAvailable()) {
-                CastContext.getSharedInstance(this) {it.run()}.addOnSuccessListener { mSessionManager = it.sessionManager }
+                CastContext.getSharedInstance(this) { it.run() }
+                    .addOnSuccessListener { mSessionManager = it.sessionManager }
             }
         } catch (t: Throwable) {
             logError(t)
@@ -1245,7 +1244,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                             true
                         )
                     ) {
-                        PluginManager._DO_NOT_CALL_FROM_A_PLUGIN_updateAllOnlinePluginsAndLoadThem(this@MainActivity)
+                        PluginManager._DO_NOT_CALL_FROM_A_PLUGIN_updateAllOnlinePluginsAndLoadThem(
+                            this@MainActivity
+                        )
                     } else {
                         _DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(this@MainActivity)
                     }
@@ -1266,7 +1267,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
 
                 ioSafe {
-                    PluginManager._DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(this@MainActivity, false)
+                    PluginManager._DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(
+                        this@MainActivity,
+                        false
+                    )
                 }
             }
         } else {
