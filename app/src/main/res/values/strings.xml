@@ -852,4 +852,7 @@
     <string name="player_notification_channel_description">The player notification for controlling the playback from the background</string>
     <string name="subtitles_from_embedded">Embedded</string>
     <string name="subtitles_from_online">Online</string>
+    <string name="all_subtitles_bold">Make all subtitles bold</string>
+    <string name="all_subtitles_italic">Make all subtitles italic</string>
+    <string name="background_radius">Background Radius</string>
 </resources>

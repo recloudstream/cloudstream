@@ -6,8 +6,10 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Layout
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -35,6 +37,7 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.SubtitleSettingsBinding
 import com.lagradost.cloudstream3.ui.player.OutlineSpan
+import com.lagradost.cloudstream3.ui.player.RoundedBackgroundColorSpan
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.DataStore.setKey
@@ -71,6 +74,12 @@ data class SaveCaptionStyle @OptIn(UnstableApi::class) constructor(
     @JsonProperty("removeBloat") var removeBloat: Boolean = true,
     /** Apply caps lock to the text **/
     @JsonProperty("upperCase") var upperCase: Boolean = false,
+    /** Apply bold to the text **/
+    @JsonProperty("bold") var bold: Boolean = false,
+    /** Apply italic to the text **/
+    @JsonProperty("italic") var italic: Boolean = false,
+    /** in px, background radius, aka how round the background (backgroundColor) on each row is **/
+    @JsonProperty("backgroundRadius") var backgroundRadius: Float? = null,
 )
 
 const val DEF_SUBS_ELEVATION = 20
@@ -85,12 +94,100 @@ class SubtitlesFragment : DialogFragment() {
             val ctx = view.context ?: return
             val style = ctx.fromSaveToStyle(data)
             view.setStyle(style)
+
+            // we default to 25sp, this is needed as RoundedBackgroundColorSpan breaks on override sizes
+            val size = data.fixedTextSize ?: 25.0f
+            view.setFixedTextSize(TypedValue.COMPLEX_UNIT_SP, size)
+            /*if (size != null) {
+                view.setFixedTextSize(TypedValue.COMPLEX_UNIT_SP, size)
+            } else {
+                view.setUserDefaultTextSize()
+            }*/
+        }
+
+        fun Cue.Builder.applyStyle(style: SaveCaptionStyle): Cue.Builder {
+            val edgeSize = style.edgeSize
+
+            /*
+            This is old code for only applying on non null
+
+            val fixedFontSize = style.fixedTextSize
+            val absoluteFontSize =
+                fixedFontSize?.let { getPixels(TypedValue.COMPLEX_UNIT_SP, it).toFloat() }
+
+            // 1. apply override size
+            if (absoluteFontSize != null) {
+                setTextSize(absoluteFontSize, Cue.TEXT_SIZE_TYPE_ABSOLUTE)
+            }*/
+
+            // 1. remove any subtitle size set by the subtitle file (like ass)
+            // instead we use the inherit size of the subtitle view
+            setTextSize(Cue.DIMEN_UNSET, Cue.TYPE_UNSET)
+
+            // 2. apply edge
+            text?.let { text ->
+                val customSpan = SpannableString.valueOf(text)
+                if (edgeSize != null) {
+                    customSpan.setSpan(
+                        OutlineSpan(edgeSize), 0, customSpan.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
+                setText(customSpan)
+            }
+
+            // 3. apply bold + italic
+            text?.let { text ->
+                val customSpan = SpannableString.valueOf(text)
+
+                val typeface = when (style.bold to style.italic) {
+                    (true to true) -> Typeface.BOLD_ITALIC
+                    (true to false) -> Typeface.BOLD
+                    (false to true) -> Typeface.ITALIC
+                    (false to false) -> Typeface.NORMAL
+                    else -> {
+                        Typeface.NORMAL
+                    }
+                }
+                if (typeface != Typeface.NORMAL) {
+                    val styleSpan = StyleSpan(typeface)
+                    customSpan.setSpan(
+                        styleSpan, 0, customSpan.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
+                setText(customSpan)
+            }
+
+            // 4. apply radius
+            text?.let { text ->
+                val customSpan = SpannableString.valueOf(text)
+                val radius = style.backgroundRadius
+
+                if (radius != null && style.backgroundColor != Color.TRANSPARENT) {
+                    val styleSpan = RoundedBackgroundColorSpan(
+                        style.backgroundColor,
+                        this.textAlignment ?: Layout.Alignment.ALIGN_CENTER,
+                        2.0F + radius * 0.5f,
+                        radius
+                    )
+                    customSpan.setSpan(
+                        styleSpan, 0, customSpan.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
+                setText(customSpan)
+            }
+
+
+            return this
         }
 
         private fun Context.fromSaveToStyle(data: SaveCaptionStyle): CaptionStyleCompat {
             return CaptionStyleCompat(
                 data.foregroundColor,
-                data.backgroundColor,
+                // we actually override with a custom span when backgroundRadius != null
+                if (data.backgroundRadius == null) data.backgroundColor else Color.TRANSPARENT,
                 data.windowColor,
                 data.edgeType,
                 data.edgeColor,
@@ -159,10 +256,6 @@ class SubtitlesFragment : DialogFragment() {
             } ?: listOf()
         }
 
-        private fun Context.getCurrentStyle(): CaptionStyleCompat {
-            return fromSaveToStyle(getCurrentSavedStyle())
-        }
-
         private fun getPixels(unit: Int, size: Float): Int {
             val metrics: DisplayMetrics = Resources.getSystem().displayMetrics
             return TypedValue.applyDimension(unit, size, metrics).toInt()
@@ -204,25 +297,13 @@ class SubtitlesFragment : DialogFragment() {
     private fun Context.updateState() {
         val text = getString(R.string.subtitles_example_text)
         val fixedText = SpannableString.valueOf(if (state.upperCase) text.uppercase() else text)
-
-        state.edgeSize?.let { size ->
-            fixedText.setSpan(
-                OutlineSpan(size),
-                0,
-                fixedText.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-        }
-
         setSubtitleViewStyle(binding?.subtitleText, state)
+
         binding?.subtitleText?.setCues(
             listOf(
                 Cue.Builder()
-                    .setTextSize(
-                        getPixels(TypedValue.COMPLEX_UNIT_SP, 25.0f).toFloat(),
-                        Cue.TEXT_SIZE_TYPE_ABSOLUTE
-                    )
                     .setText(fixedText)
+                    .applyStyle(state)
                     .build()
             )
         )
@@ -358,6 +439,35 @@ class SubtitlesFragment : DialogFragment() {
                 return@setOnLongClickListener true
             }
 
+            subsBackgroundRadius.setFocusableInTv()
+            subsBackgroundRadius.setOnClickListener { textView ->
+                // tbh this should not be a dialog if it has so many values
+                val radiusTypes = listOf(
+                    null to textView.context.getString(R.string.none)
+                ) + (1..10).map { x ->
+                    val i = x * 5
+                    i to "${i}px"
+                }
+
+                activity?.showDialog(
+                    radiusTypes.map { it.second },
+                    radiusTypes.map { it.first }.indexOf(state.backgroundRadius?.toInt()),
+                    (textView as TextView).text.toString(),
+                    false,
+                    dismissCallback
+                ) { index ->
+                    state.backgroundRadius = radiusTypes.map { it.first }[index]?.toFloat()
+                    textView.context.updateState()
+                }
+            }
+
+            subsBackgroundRadius.setOnLongClickListener {
+                state.backgroundRadius = null
+                it.context.updateState()
+                showToast(R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
+                return@setOnLongClickListener true
+            }
+
             subsEdgeType.setFocusableInTv()
             subsEdgeType.setOnClickListener { textView ->
                 val edgeTypes = listOf(
@@ -408,7 +518,7 @@ class SubtitlesFragment : DialogFragment() {
                     dismissCallback
                 ) { index ->
                     state.fixedTextSize = fontSizes.map { it.first }[index]
-                    //textView.context.updateState() // font size not changed
+                    textView.context.updateState()
                 }
             }
 
@@ -446,9 +556,21 @@ class SubtitlesFragment : DialogFragment() {
                 state.removeCaptions = b
             }
 
+            subtitlesBold.isChecked = state.bold
+            subtitlesBold.setOnCheckedChangeListener { _, b ->
+                state.bold = b
+                context?.updateState()
+            }
+
+            subtitlesItalic.isChecked = state.italic
+            subtitlesItalic.setOnCheckedChangeListener { _, b ->
+                state.italic = b
+                context?.updateState()
+            }
+
             subsFontSize.setOnLongClickListener { _ ->
                 state.fixedTextSize = null
-                //textView.context.updateState() // font size not changed
+                context?.updateState()
                 showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
                 return@setOnLongClickListener true
             }
@@ -600,7 +722,6 @@ class SubtitlesFragment : DialogFragment() {
             applyBtt.setOnClickListener {
                 it.context.saveStyle(state)
                 applyStyleEvent.invoke(state)
-                it.context.fromSaveToStyle(state)
                 if (popFragment) {
                     activity?.popCurrentPage()
                 } else {
