@@ -87,8 +87,7 @@
                 </ImageView>
 
                 <ProgressBar
-                    android:id="@+id/player_progressbar_left"
-                    style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                    android:id="@+id/player_progressbar_left_level1"
                     android:layout_width="5dp"
                     android:layout_height="150dp"
                     android:layout_centerInParent="true"
@@ -98,7 +97,26 @@
                     android:max="100"
                     android:progress="100"
                     android:progressDrawable="@drawable/progress_drawable_vertical"
-                    tools:progress="30" />
+                    android:progressTint="@color/white"
+                    android:progressTintMode="src_in"
+                    tools:progress="30"
+                    style="@android:style/Widget.Material.ProgressBar.Horizontal" />
+
+                <ProgressBar
+                    android:id="@+id/player_progressbar_left_level2"
+                    android:layout_width="5dp"
+                    android:layout_height="150dp"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginStart="40dp"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/progress_drawable_vertical"
+                    android:progressTint="@color/colorPrimaryOrange"
+                    android:progressTintMode="src_in"
+                    tools:progress="0"
+                    style="@android:style/Widget.Material.ProgressBar.Horizontal" />
             </RelativeLayout>
 
             <RelativeLayout
