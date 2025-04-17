@@ -223,11 +223,17 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         // NOTE: screenWidth is without the navbar width when 3button nav is turned on.
         if (Build.VERSION.SDK_INT >= 30) {
             // real = absolute dimen without any default deductions like navbar width
-            val windowMetrics = (context?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager)?.currentWindowMetrics
-            val realScreenHeight = windowMetrics?.let { windowMetrics.bounds.bottom - windowMetrics.bounds.top } ?: screenHeight
-            val realScreenWidth = windowMetrics?.let { windowMetrics.bounds.right - windowMetrics.bounds.left } ?: screenWidth
+            val windowMetrics =
+                (context?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager)?.currentWindowMetrics
+            val realScreenHeight =
+                windowMetrics?.let { windowMetrics.bounds.bottom - windowMetrics.bounds.top }
+                    ?: screenHeight
+            val realScreenWidth =
+                windowMetrics?.let { windowMetrics.bounds.right - windowMetrics.bounds.left }
+                    ?: screenWidth
 
-            val insets = rootWindowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            val insets =
+                rootWindowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
             val isOutsideHeight = rawY < insets.top || rawY > (realScreenHeight - insets.bottom)
             val isOutsideWidth = if (windowMetrics == null) {
                 rawX < screenWidth
@@ -441,6 +447,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     override fun onResume() {
         enterFullscreen()
+        verifyVolume()
         super.onResume()
     }
 
@@ -539,7 +546,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
             subtitleOffsetRecyclerview.adapter = subtitleAdapter
             // Prevent flashing changes when changing items
-            (subtitleOffsetRecyclerview.itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
+            (subtitleOffsetRecyclerview.itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations =
+                false
 
             val firstSubtitle = subtitleAdapter.getLatestActiveItem(initialSubtitlePosition)
             subtitleOffsetRecyclerview.scrollToPosition(firstSubtitle)
@@ -857,8 +865,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     // requested volume and brightness is used to make swiping smoother
     // to make it not jump between values,
-    // this value is within the range [0,1]
+    // this value is within the range [0,2] where 1+ is loudness
     private var currentRequestedVolume: Float = 0.0f
+
+    // this value is within the range [0,1]
     private var currentRequestedBrightness: Float = 1.0f
 
     enum class TouchAction {
@@ -965,6 +975,31 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     private var progressBarLeftHideRunnable: Runnable? = null
     private var progressBarRightHideRunnable: Runnable? = null
 
+    // Verifies that the currentRequestedVolume matches the system volume
+    // if not, then it removes changes currentRequestedVolume and removes the loudnessEnhancer
+    // if the real volume is less than 100%
+    //
+    // This is here to make returning to the player less jarring, if we change the volume outside
+    // the app. Note that this will make it a bit wierd when using loudness in PiP, then returning
+    // however that is the cost of correctness.
+    private fun verifyVolume() {
+        (activity?.getSystemService(Context.AUDIO_SERVICE) as? AudioManager)?.let { audioManager ->
+            val currentVolumeStep =
+                audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+            val maxVolumeStep =
+                audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+
+            // if we can set the volume directly then do it
+            if (currentVolumeStep < maxVolumeStep || currentRequestedVolume <= 1.0f) {
+                currentRequestedVolume =
+                    currentVolumeStep.toFloat() / maxVolumeStep.toFloat()
+
+                loudnessEnhancer?.release()
+                loudnessEnhancer = null
+            }
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     private fun handleMotionEvent(view: View?, event: MotionEvent?): Boolean {
         if (event == null || view == null) return false
@@ -976,13 +1011,17 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    isVolumeLocked = currentRequestedVolume < 1.0f
-                    if (isVolumeLocked) hasShownVolumeToast = false
                     // validates if the touch is inside of the player area
                     isCurrentTouchValid = view.isValidTouch(currentTouch.x, currentTouch.y)
                     /*if (isCurrentTouchValid && player_episode_list?.isVisible == true) {
                         player_episode_list?.isVisible = false
                     } else*/ if (isCurrentTouchValid) {
+
+                        isVolumeLocked = currentRequestedVolume < 1.0f
+                        if (currentRequestedVolume <= 1.0f) {
+                            hasShownVolumeToast = false
+                        }
+
                         currentTouchStartTime = System.currentTimeMillis()
                         currentTouchStart = currentTouch
                         currentTouchLast = currentTouch
@@ -991,23 +1030,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                         getBrightness()?.let {
                             currentRequestedBrightness = it
                         }
-                        (activity?.getSystemService(Context.AUDIO_SERVICE) as? AudioManager)?.let { audioManager ->
-                            val currentVolume =
-                                audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
-                            val maxVolume =
-                                audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-
-                            if (currentRequestedVolume == 0f || currentVolume < maxVolume) {
-                                currentRequestedVolume =
-                                    currentVolume.toFloat() / maxVolume.toFloat()
-                            }
-                        }
+                        verifyVolume()
                     }
                 }
 
                 MotionEvent.ACTION_UP -> {
-                    isVolumeLocked = currentRequestedVolume < 1.0f
-                    if (isVolumeLocked) hasShownVolumeToast = false
                     if (isCurrentTouchValid && !isLocked && isFullScreenPlayer) {
                         // seek time
                         if (swipeHorizontalEnabled && currentTouchAction == TouchAction.Time) {
@@ -1170,6 +1197,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                         progressBarRightHideRunnable?.let { removeCallbacks(it) }
                                         progressBarRightHideRunnable = Runnable {
                                             // Fade out the progress bar
+                                            animate().cancel()
                                             animate()
                                                 .alpha(0f)
                                                 .setDuration(300)
@@ -1209,9 +1237,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                                 TouchAction.Volume -> {
                                     handleVolumeAdjustment(
-                                        isVolumeUp = false, // Since it's a motion event, we assume no button presses
-                                        verticalAddition = verticalAddition,
-                                        volumeStep = 0f // Not used in motion events
+                                        verticalAddition,
+                                        false
                                     )
                                 }
 
@@ -1230,91 +1257,98 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     private fun handleKeyEvent(event: KeyEvent, hasNavigated: Boolean): Boolean {
         if (hasNavigated) {
             autoHide()
-        } else {
-            event.keyCode.let { keyCode ->
-                when (event.action) {
-                    KeyEvent.ACTION_DOWN -> {
-                        when (keyCode) {
-                            KeyEvent.KEYCODE_DPAD_CENTER -> {
-                                if (!isShowing) {
-                                    if (!isLocked) player.handleEvent(CSPlayerEvent.PlayPauseToggle)
-                                    onClickChange()
-                                    return true
-                                }
-                            }
+            return false
+        }
+        val keyCode = event.keyCode
 
-                            KeyEvent.KEYCODE_DPAD_DOWN,
-                            KeyEvent.KEYCODE_DPAD_UP -> {
-                                if (!isShowing) {
-                                    onClickChange()
-                                    return true
-                                }
-                            }
-
-                            KeyEvent.KEYCODE_DPAD_LEFT -> {
-                                if (!isShowing && !isLocked) {
-                                    player.seekTime(-androidTVInterfaceOffSeekTime)
-                                    return true
-                                } else if (playerBinding?.playerPausePlay?.isFocused == true) {
-                                    player.seekTime(-androidTVInterfaceOnSeekTime)
-                                    return true
-                                }
-                            }
-
-                            KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                                if (!isShowing && !isLocked) {
-                                    player.seekTime(androidTVInterfaceOffSeekTime)
-                                    return true
-                                } else if (playerBinding?.playerPausePlay?.isFocused == true) {
-                                    player.seekTime(androidTVInterfaceOnSeekTime)
-                                    return true
-                                }
-                            }
-
-                            KeyEvent.KEYCODE_VOLUME_DOWN,
-                            KeyEvent.KEYCODE_VOLUME_UP -> {
-                                if (isLayout(PHONE or EMULATOR)) {
-                                    /**
-                                     * Some TVs do not support volume boosting, and overriding
-                                     * the volume buttons can be inconvenient for TV users.
-                                     * Since boosting volume is mainly useful on phones and emulators,
-                                     * we limit this feature to those devices.
-                                     */
-                                    handleVolumeAdjustment(
-                                        isVolumeUp = keyCode == KeyEvent.KEYCODE_VOLUME_UP,
-                                        verticalAddition = 0f, // Not used for volume key events
-                                        volumeStep = 0.05f
-                                    )
-                                    return true
-                                }
-                            }
-                        }
+        if (event.action == KeyEvent.ACTION_DOWN) {
+            when (keyCode) {
+                KeyEvent.KEYCODE_DPAD_CENTER -> {
+                    if (!isShowing) {
+                        if (!isLocked) player.handleEvent(CSPlayerEvent.PlayPauseToggle)
+                        onClickChange()
+                        return true
                     }
                 }
 
-                when (keyCode) {
-                    // don't allow dpad move when hidden
-
-                    KeyEvent.KEYCODE_DPAD_DOWN,
-                    KeyEvent.KEYCODE_DPAD_UP,
-                    KeyEvent.KEYCODE_DPAD_DOWN_LEFT,
-                    KeyEvent.KEYCODE_DPAD_DOWN_RIGHT,
-                    KeyEvent.KEYCODE_DPAD_UP_LEFT,
-                    KeyEvent.KEYCODE_DPAD_UP_RIGHT -> {
-                        if (!isShowing) {
-                            return true
-                        } else {
-                            autoHide()
-                        }
+                KeyEvent.KEYCODE_DPAD_DOWN,
+                KeyEvent.KEYCODE_DPAD_UP -> {
+                    if (!isShowing) {
+                        onClickChange()
+                        return true
                     }
+                }
 
-                    // netflix capture back and hide ~monke
-                    KeyEvent.KEYCODE_BACK -> {
-                        if (isShowing && isLayout(TV or EMULATOR)) {
-                            onClickChange()
-                            return true
-                        }
+                KeyEvent.KEYCODE_DPAD_LEFT -> {
+                    if (!isShowing && !isLocked) {
+                        player.seekTime(-androidTVInterfaceOffSeekTime)
+                        return true
+                    } else if (playerBinding?.playerPausePlay?.isFocused == true) {
+                        player.seekTime(-androidTVInterfaceOnSeekTime)
+                        return true
                     }
+                }
+
+                KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                    if (!isShowing && !isLocked) {
+                        player.seekTime(androidTVInterfaceOffSeekTime)
+                        return true
+                    } else if (playerBinding?.playerPausePlay?.isFocused == true) {
+                        player.seekTime(androidTVInterfaceOnSeekTime)
+                        return true
+                    }
+                }
+
+                KeyEvent.KEYCODE_VOLUME_DOWN,
+                KeyEvent.KEYCODE_VOLUME_UP -> {
+                    if (isLayout(PHONE or EMULATOR)) {
+                        /**
+                         * Some TVs do not support volume boosting, and overriding
+                         * the volume buttons can be inconvenient for TV users.
+                         * Since boosting volume is mainly useful on phones and emulators,
+                         * we limit this feature to those devices.
+                         */
+                        verifyVolume()
+                        if (currentRequestedVolume <= 1.0f) {
+                            hasShownVolumeToast = false
+                        }
+                        isVolumeLocked = currentRequestedVolume < 1.0f
+                        handleVolumeAdjustment(
+                            // +- 5%
+                            if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+                                0.05f
+                            } else {
+                                -0.05f
+                            },
+                            true
+                        )
+                        return true
+                    }
+                }
+            }
+        }
+
+        when (keyCode) {
+            // don't allow dpad move when hidden
+
+            KeyEvent.KEYCODE_DPAD_DOWN,
+            KeyEvent.KEYCODE_DPAD_UP,
+            KeyEvent.KEYCODE_DPAD_DOWN_LEFT,
+            KeyEvent.KEYCODE_DPAD_DOWN_RIGHT,
+            KeyEvent.KEYCODE_DPAD_UP_LEFT,
+            KeyEvent.KEYCODE_DPAD_UP_RIGHT -> {
+                if (!isShowing) {
+                    return true
+                } else {
+                    autoHide()
+                }
+            }
+
+            // netflix capture back and hide ~monke
+            KeyEvent.KEYCODE_BACK -> {
+                if (isShowing && isLayout(TV or EMULATOR)) {
+                    onClickChange()
+                    return true
                 }
             }
         }
@@ -1326,14 +1360,92 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     @OptIn(UnstableApi::class)
     private fun handleVolumeAdjustment(
-        isVolumeUp: Boolean,
-        verticalAddition: Float,
-        volumeStep: Float
+        delta: Float,
+        fromButton: Boolean,
     ) {
-        val audioManager = activity?.getSystemService(Context.AUDIO_SERVICE) as? AudioManager ?: return
-        val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
-        val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+        val audioManager =
+            activity?.getSystemService(Context.AUDIO_SERVICE) as? AudioManager ?: return
+        val currentVolumeStep = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+        val maxVolumeStep = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
 
+        val currentVolume = currentRequestedVolume
+        val isCurrentVolumeLocked = isVolumeLocked
+
+        val nextVolume =
+            (currentVolume + delta).coerceIn(0.0f, if (isCurrentVolumeLocked) 1.0f else 2.0f)
+
+        val nextVolumeStep =
+            (nextVolume * maxVolumeStep.toFloat()).roundToInt().coerceIn(0, maxVolumeStep)
+
+        // show toast
+        if (fromButton) {
+            // for button related request we only show a toast when we exceeded the volume
+            if (currentVolume <= 1.0f && nextVolume > 1.0f && !hasShownVolumeToast) {
+                showToast(R.string.volume_exceeded_100)
+                hasShownVolumeToast = true
+            }
+        } else {
+            val nextRequestedVolume = currentVolume + delta
+
+            // for swipes, we show toast that we need to swipe again
+            if (nextRequestedVolume > 1.0 && isCurrentVolumeLocked && !hasShownVolumeToast) {
+                showToast(R.string.slide_up_again_to_exceed_100)
+                hasShownVolumeToast = true
+            }
+        }
+
+        // set the current volume step
+        if (nextVolumeStep != currentVolumeStep) {
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, nextVolumeStep, 0)
+        }
+
+        // Apply loudness enhancer for volumes > 100%, removes it if less
+        if (nextVolume > 1.0f) {
+            val boostFactor = ((nextVolume - 1.0f) * 1000).toInt()
+            val currentEnhancer = loudnessEnhancer
+
+            if (currentEnhancer != null) {
+                currentEnhancer.setTargetGain(boostFactor)
+            } else {
+                val audioSessionId = (playerView?.player as? ExoPlayer)?.audioSessionId
+                if (audioSessionId != null && audioSessionId != AudioManager.ERROR) {
+                    loudnessEnhancer = LoudnessEnhancer(audioSessionId).apply {
+                        setTargetGain(boostFactor)
+                        enabled = true
+                    }
+                }
+            }
+        } else {
+            loudnessEnhancer?.release()
+            loudnessEnhancer = null
+        }
+
+        currentRequestedVolume = nextVolume
+
+        // Update the progress bar
+        playerBinding?.apply {
+            val level1ProgressBar = playerProgressbarLeftLevel1
+            val level2ProgressBar = playerProgressbarLeftLevel2
+
+            level1ProgressBar.max = 100_000
+            level1ProgressBar.progress = (nextVolume * 100_000f).toInt().coerceIn(2_000, 100_000)
+
+            level2ProgressBar.max = 100_000
+            level2ProgressBar.progress =
+                if (nextVolume > 1.0f) ((nextVolume - 1.0) * 100_000f).toInt()
+                    .coerceIn(2_000, 100_000) else 0
+            level2ProgressBar.isVisible = nextVolume > 1.0f
+
+            // Calculate the clamped index for the volume icon based on the requested volume
+            val iconIndex = (nextVolume * (volumeIcons.lastIndex))
+                .roundToInt()
+                .coerceIn(0, volumeIcons.lastIndex)
+
+            // Update icon
+            playerProgressbarLeftIcon.setImageResource(volumeIcons[iconIndex])
+        }
+
+        // alpha fade
         playerBinding?.playerProgressbarLeftHolder?.apply {
             if (!isVisible || alpha < 1f) {
                 alpha = 1f
@@ -1343,6 +1455,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             progressBarLeftHideRunnable?.let { removeCallbacks(it) }
             progressBarLeftHideRunnable = Runnable {
                 // Fade out the progress bar
+                animate().cancel()
                 animate()
                     .alpha(0f)
                     .setDuration(300)
@@ -1351,102 +1464,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             }
             // Show the progress bar for 1.5 seconds
             postDelayed(progressBarLeftHideRunnable, 1500)
-        }
-
-        // Max volume percentage including boost
-        var maxVolumePercentage = 200
-        if (verticalAddition >= 0f) {
-            val nextVolume = currentRequestedVolume + verticalAddition
-            if (isVolumeLocked && nextVolume >= 1.0f) {
-                if (!hasShownVolumeToast) {
-                    showToast(R.string.slide_up_again_to_exceed_100)
-                    hasShownVolumeToast = true
-                }
-                maxVolumePercentage = 100
-            }
-        }
-
-        // Adjust currentRequestedVolume based on the event (up, down, or touch)
-        currentRequestedVolume = when {
-            isVolumeUp -> {
-                // Volume up button pressed, increase volume but clamp to maxVolumePercentage / 100.0f
-                (currentRequestedVolume + volumeStep).coerceAtMost(maxVolumePercentage / 100.0f)
-            }
-            verticalAddition == 0f -> {
-                // Volume down button pressed, decrease volume but clamp to 0.0%
-                (currentRequestedVolume - volumeStep).coerceAtLeast(0.0f)
-            }
-            else -> {
-                // Touch action adjusts the volume, clamp to range [0.0f, maxVolumePercentage / 100.0f]
-                (currentRequestedVolume + verticalAddition).coerceIn(0.0f, maxVolumePercentage / 100.0f)
-            }
-        }
-
-        val currentVolumePercentage = (currentRequestedVolume * 100).toInt()
-
-        // Set system volume (up to 100%)
-        val desiredVolume = (currentRequestedVolume.coerceAtMost(1.0f) * maxVolume).toInt()
-        if (desiredVolume != currentVolume) {
-            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, desiredVolume, 0)
-        }
-
-        // Update the progress bar
-        playerBinding?.apply {
-            val level1ProgressBar = playerProgressbarLeftLevel1
-            val level2ProgressBar = playerProgressbarLeftLevel2
-
-            when {
-                currentVolumePercentage <= 100 -> {
-                    // All volume is within the base range
-                    level1ProgressBar.progress = currentVolumePercentage
-                    level2ProgressBar.progress = 0
-                    level2ProgressBar.isVisible = false
-                }
-                else -> {
-                    // Volume spans base and first boost range
-                    level1ProgressBar.progress = 100
-                    level2ProgressBar.progress = currentVolumePercentage - 100
-                    level2ProgressBar.isVisible = true
-                }
-            }
-
-            // Calculate the clamped index for the volume icon based on the requested volume
-            val iconIndex = (currentRequestedVolume * (volumeIcons.size - 1))
-                .roundToInt()
-                .coerceIn(0, volumeIcons.size - 1)
-
-            // Update icon
-            playerProgressbarLeftIcon.setImageResource(volumeIcons[iconIndex])
-        }
-
-        // Apply loudness enhancer for volumes > 100%
-        if (currentRequestedVolume > 1.0f) {
-            val boostFactor = ((currentRequestedVolume - 1.0f) * 1000).toInt()
-
-            // Show the toast only the first time the volume exceeds 100%
-            // or after it drops below 100% and goes above again.
-            // We only do this if the volume buttons are pressed as
-            // we handle sliding a bit different.
-            if (!hasShownVolumeToast && isVolumeUp && currentRequestedVolume > 1.0f) {
-                showToast(R.string.volume_exceeded_100)
-                hasShownVolumeToast = true
-            }
-
-            if (loudnessEnhancer == null) {
-                val audioSessionId = (playerView?.player as? ExoPlayer)?.audioSessionId
-                if (audioSessionId != null && audioSessionId != AudioManager.ERROR) {
-                    loudnessEnhancer = LoudnessEnhancer(audioSessionId).apply {
-                        setTargetGain(boostFactor)
-                        enabled = true
-                    }
-                }
-            } else loudnessEnhancer?.setTargetGain(boostFactor)
-        } else {
-            loudnessEnhancer?.release()
-            loudnessEnhancer = null
-            if (volumeStep > 0f) {
-                hasShownVolumeToast = false
-            }
         }
     }
 
@@ -1629,7 +1646,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                         false
                     )
 
-                hideControlsNames = settingsManager.getBoolean(ctx.getString(R.string.hide_player_control_names_key), false)
+                hideControlsNames = settingsManager.getBoolean(
+                    ctx.getString(R.string.hide_player_control_names_key),
+                    false
+                )
 
                 val profiles = QualityDataHelper.getProfiles()
                 val type = if (ctx.isUsingMobileData())
@@ -1814,7 +1834,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     it.textSize = 0f
                     it.iconPadding = 0
                     it.iconGravity = MaterialButton.ICON_GRAVITY_TEXT_START
-                    it.setPadding(0,0,0,0)
+                    it.setPadding(0, 0, 0, 0)
                 } else if (it is LinearLayout) {
                     iterate(it)
                 }
