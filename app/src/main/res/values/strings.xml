@@ -837,7 +837,7 @@
     <string name="dont_show">Don\'t Show</string>
     <string name="subs_edge_size">Edge Size</string>
     <string name="torrent_preferred_media">Enable torrent in Settings/Providers/Preferred media</string>
-    <string name="torrent_not_accepted">Not accepted torrent</string>
+    <string name="torrent_not_accepted">Restart app and accept Stream Torrent pop-up to proceed.</string>
     <string name="software_decoding_key" translatable="false">software_decoding_key2</string>
     <string name="software_decoding">Software decoding</string>
     <string name="software_decoding_desc">Software decoding enables the player to play video files not supported by your phone, but may cause laggy or unstable playback on high resolution</string>
@@ -852,4 +852,7 @@
     <string name="player_notification_channel_description">The player notification for controlling the playback from the background</string>
     <string name="subtitles_from_embedded">Embedded</string>
     <string name="subtitles_from_online">Online</string>
+    <string name="all_subtitles_bold">Make all subtitles bold</string>
+    <string name="all_subtitles_italic">Make all subtitles italic</string>
+    <string name="background_radius">Background Radius</string>
 </resources>

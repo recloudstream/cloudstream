@@ -123,14 +123,8 @@ class PlayerSubtitleHelper {
     fun setSubStyle(style: SaveCaptionStyle) {
         subStyle = style
         Log.i(TAG, "SET STYLE = $style")
-        setSubtitleViewStyle(subtitleView, style)
         subtitleView?.translationY = -style.elevation.toPx.toFloat()
-        val size = style.fixedTextSize
-        if (size != null) {
-            subtitleView?.setFixedTextSize(TypedValue.COMPLEX_UNIT_SP, size)
-        } else {
-            subtitleView?.setUserDefaultTextSize()
-        }
+        setSubtitleViewStyle(subtitleView, style)
     }
 
     fun initSubtitles(subView: SubtitleView?, subHolder: FrameLayout?, style: SaveCaptionStyle?) {

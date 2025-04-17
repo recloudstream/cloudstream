@@ -24,6 +24,10 @@ class Urochsunloath : Voe() {
     override var mainUrl = "https://urochsunloath.com"
 }
 
+class NathanFromSubject : Voe() {
+    override val mainUrl = "https://nathanfromsubject.com"
+}
+
 class Yipsu : Voe() {
     override val name = "Yipsu"
     override var mainUrl = "https://yip.su"
