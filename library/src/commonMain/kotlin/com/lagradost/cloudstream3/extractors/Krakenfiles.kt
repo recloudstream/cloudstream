@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.httpsify
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 open class Krakenfiles : ExtractorApi() {
     override val name = "Krakenfiles"
@@ -23,12 +24,10 @@ open class Krakenfiles : ExtractorApi() {
         val link = doc.selectFirst("source")?.attr("src")
 
         callback.invoke(
-            ExtractorLink(
+            newExtractorLink(
                 this.name,
                 this.name,
                 httpsify(link ?: return),
-                "",
-                Qualities.Unknown.value
             )
         )
 

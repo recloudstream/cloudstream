@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 class Meownime : JWPlayer() {
     override val name = "Meownime"
@@ -55,17 +56,18 @@ open class JWPlayer : ExtractorApi() {
 
             tryParseJson<List<ResponseSource>>("$data")?.map {
                 sources.add(
-                    ExtractorLink(
+                    newExtractorLink(
                         name,
                         name,
                         it.file,
-                        referer = url,
-                        quality = getQualityFromName(
+                    ) {
+                        this.referer = url
+                        this.quality = getQualityFromName(
                             Regex("(\\d{3,4}p)").find(it.file)?.groupValues?.get(
                                 1
                             )
                         )
-                    )
+                    }
                 )
             }
         }

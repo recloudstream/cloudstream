@@ -60,7 +60,7 @@ class SetupFragmentLanguage : Fragment() {
                 normalSafeApiCall {
                     val drawable = when {
                         BuildConfig.DEBUG -> R.drawable.cloud_2_gradient_debug
-                        BuildConfig.BUILD_TYPE == "prerelease" -> R.drawable.cloud_2_gradient_beta
+                        BuildConfig.FLAVOR == "prerelease" -> R.drawable.cloud_2_gradient_beta
                         else -> R.drawable.cloud_2_gradient
                     }
                     appIconImage.setImageDrawable(ContextCompat.getDrawable(ctx, drawable))
@@ -109,6 +109,4 @@ class SetupFragmentLanguage : Fragment() {
 
         }
     }
-
-
 }

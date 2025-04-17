@@ -15,18 +15,11 @@ import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPres
 class DownloadedPlayerActivity : AppCompatActivity() {
     private val dTAG = "DownloadedPlayerAct"
 
-    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-        CommonActivity.dispatchKeyEvent(this, event)?.let {
-            return it
-        }
-        return super.dispatchKeyEvent(event)
-    }
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean =
+        CommonActivity.dispatchKeyEvent(this, event) ?: super.dispatchKeyEvent(event)
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        CommonActivity.onKeyDown(this, keyCode, event)
-
-        return super.onKeyDown(keyCode, event)
-    }
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean =
+        CommonActivity.onKeyDown(this, keyCode, event) ?: super.onKeyDown(keyCode, event)
 
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()

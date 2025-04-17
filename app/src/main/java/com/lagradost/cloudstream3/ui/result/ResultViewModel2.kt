@@ -145,6 +145,15 @@ enum class LibraryListType {
     SUBSCRIPTIONS
 }
 
+enum class EpisodeSortType {
+    NUMBER_ASC,
+    NUMBER_DESC,
+    RATING_HIGH_LOW,
+    RATING_LOW_HIGH,
+    DATE_NEWEST,
+    DATE_OLDEST
+}
+
 fun txt(status: DubStatus?): UiText? {
     return txt(
         when (status) {
@@ -399,6 +408,7 @@ class ResultViewModel2 : ViewModel() {
     private var currentMeta: SyncAPI.SyncResult? = null
     private var currentSync: Map<String, String>? = null
     private var currentIndex: EpisodeIndexer? = null
+    private var currentSorting: EpisodeSortType? = null
     private var currentRange: EpisodeRange? = null
     private var currentShowFillers: Boolean = false
     var currentRepo: APIRepository? = null
@@ -451,6 +461,18 @@ class ResultViewModel2 : ViewModel() {
     private val _selectedRange: MutableLiveData<UiText?> =
         MutableLiveData(null)
     val selectedRange: LiveData<UiText?> = _selectedRange
+
+    private val _selectedSorting: MutableLiveData<UiText?> =
+        MutableLiveData(null)
+    val selectedSorting: LiveData<UiText?> = _selectedSorting
+
+    private val _selectedSortingIndex: MutableLiveData<Int> =
+        MutableLiveData(-1)
+    val selectedSortingIndex: LiveData<Int> = _selectedSortingIndex
+
+    private val _sortSelections: MutableLiveData<List<Pair<UiText, EpisodeSortType>>> =
+        MutableLiveData(emptyList())
+    val sortSelections: LiveData<List<Pair<UiText, EpisodeSortType>>> = _sortSelections
 
     private val _selectedSeason: MutableLiveData<UiText?> =
         MutableLiveData(null)
@@ -770,13 +792,17 @@ class ResultViewModel2 : ViewModel() {
                 val generator = RepoLinkGenerator(listOf(episode))
                 val currentLinks = mutableSetOf<ExtractorLink>()
                 val currentSubs = mutableSetOf<SubtitleData>()
-                generator.generateLinks(clearCache = false, allowedTypes = LOADTYPE_INAPP_DOWNLOAD, callback = {
-                    it.first?.let { link ->
-                        currentLinks.add(link)
-                    }
-                }, subtitleCallback = { sub ->
-                    currentSubs.add(sub)
-                })
+                generator.generateLinks(
+                    clearCache = false,
+                    allowedTypes = LOADTYPE_INAPP_DOWNLOAD,
+                    callback = {
+                        it.first?.let { link ->
+                            currentLinks.add(link)
+                        }
+                    },
+                    subtitleCallback = { sub ->
+                        currentSubs.add(sub)
+                    })
 
                 if (currentLinks.isEmpty()) {
                     main {
@@ -921,7 +947,12 @@ class ResultViewModel2 : ViewModel() {
         isVisible: Boolean = true
     ) {
         if (activity == null) return
-        loadLinks(result, isVisible = isVisible, sourceTypes = LOADTYPE_CHROMECAST, isCasting = true) { data ->
+        loadLinks(
+            result,
+            isVisible = isVisible,
+            sourceTypes = LOADTYPE_CHROMECAST,
+            isCasting = true
+        ) { data ->
             startChromecast(activity, result, data.links, data.subs, 0)
         }
     }
@@ -1296,16 +1327,18 @@ class ResultViewModel2 : ViewModel() {
         isCasting: Boolean = false,
         callback: (Pair<LinkLoadingResult, Int>) -> Unit
     ) {
+        // TODO Add skip loading here
         loadLinks(result, isVisible = true, sourceTypes, isCasting = isCasting) { links ->
             // Could not find a better way to do this
-            val context = AcraApplication.context
+            //val context = AcraApplication.context
             postPopup(
                 text,
-                links.links.apmap {
-                    val size =
-                        it.getVideoSize()?.let { size -> " " + formatFileSize(context, size) } ?: ""
-                    txt("${it.name} ${Qualities.getStringByInt(it.quality)}$size")
-                }) {
+                links.links.map { txt("${it.name} ${Qualities.getStringByInt(it.quality)}") }
+                /*.amap {
+                val size =
+                    it.getVideoSize()?.let { size -> " " + formatFileSize(context, size) } ?: ""
+                txt("${it.name} ${Qualities.getStringByInt(it.quality)}$size")
+                }*/) {
                 callback.invoke(links to (it ?: return@postPopup))
             }
         }
@@ -1344,7 +1377,8 @@ class ResultViewModel2 : ViewModel() {
         }
         try {
             updatePage()
-            tempGenerator.generateLinks(clearCache,
+            tempGenerator.generateLinks(
+                clearCache,
                 allowedTypes = sourceTypes,
                 callback = { (link, _) ->
                     if (link != null) {
@@ -1353,10 +1387,11 @@ class ResultViewModel2 : ViewModel() {
                     }
                 },
                 subtitleCallback = { sub ->
-                subs += sub
-                updatePage()
-            },
-                isCasting = isCasting)
+                    subs += sub
+                    updatePage()
+                },
+                isCasting = isCasting
+            )
         } catch (e: Exception) {
             logError(e)
         } finally {
@@ -1678,11 +1713,11 @@ class ResultViewModel2 : ViewModel() {
                 syncData[k] = v
             }
 
-            argamap(
+            runAllAsync(
                 {
-                    if (this !is AnimeLoadResponse) return@argamap
+                    if (this !is AnimeLoadResponse) return@runAllAsync
                     // already exist, no need to run getTracker
-                    if (this.getAniListId() != null && this.getMalId() != null) return@argamap
+                    if (this.getAniListId() != null && this.getMalId() != null) return@runAllAsync
 
                     val res = APIHolder.getTracker(
                         listOfNotNull(
@@ -1711,7 +1746,7 @@ class ResultViewModel2 : ViewModel() {
                         }
                     ) {
                         // getTracker fucked up as it conflicts with current implementation
-                        return@argamap
+                        return@runAllAsync
                     }
 
                     // set all the new data, prioritise old correct data
@@ -1726,17 +1761,17 @@ class ResultViewModel2 : ViewModel() {
                     backgroundPosterUrl = backgroundPosterUrl ?: res?.cover
                 },
                 {
-                    if (meta == null) return@argamap
+                    if (meta == null) return@runAllAsync
                     addTrailer(meta.trailers)
                 }, {
-                    if (this !is AnimeLoadResponse) return@argamap
+                    if (this !is AnimeLoadResponse) return@runAllAsync
                     val map =
                         Kitsu.getEpisodesDetails(
                             getMalId(),
                             getAniListId(),
                             isResponseRequired = false
                         )
-                    if (map.isNullOrEmpty()) return@argamap
+                    if (map.isNullOrEmpty()) return@runAllAsync
                     updateEpisodes = DubStatus.entries.map { dubStatus ->
                         val current =
                             this.episodes[dubStatus]?.mapIndexed { index, episode ->
@@ -1806,15 +1841,21 @@ class ResultViewModel2 : ViewModel() {
     }
 
     fun changeDubStatus(status: DubStatus) {
-        postEpisodeRange(currentIndex?.copy(dubStatus = status), currentRange)
+        postEpisodeRange(currentIndex?.copy(dubStatus = status), currentRange, currentSorting ?: DataStoreHelper.resultsSortingMode)
     }
 
     fun changeRange(range: EpisodeRange) {
-        postEpisodeRange(currentIndex, range)
+        postEpisodeRange(currentIndex, range, currentSorting ?: DataStoreHelper.resultsSortingMode)
     }
 
     fun changeSeason(season: Int) {
-        postEpisodeRange(currentIndex?.copy(season = season), currentRange)
+        postEpisodeRange(currentIndex?.copy(season = season), currentRange, currentSorting ?: DataStoreHelper.resultsSortingMode)
+    }
+
+    fun setSort(sortType: EpisodeSortType) {
+        // we only update here as postEpisodeRange might change the sorting mode if it does not fit
+        DataStoreHelper.resultsSortingMode = sortType
+        postEpisodeRange(currentIndex, currentRange, sortType)
     }
 
     private fun getMovie(): ResultEpisode? {
@@ -1824,26 +1865,37 @@ class ResultViewModel2 : ViewModel() {
         }
     }
 
-    private fun getEpisodes(indexer: EpisodeIndexer, range: EpisodeRange): List<ResultEpisode> {
-        val startIndex = range.startIndex
-        val length = range.length
-
-        return currentEpisodes[indexer]
-            ?.let { list ->
-                val start = minOf(list.size, startIndex)
-                val end = minOf(list.size, start + length)
-                list.subList(start, end).map {
-                    val posDur = getViewPos(it.id)
-                    val watchState =
-                        getVideoWatchState(it.id) ?: VideoWatchState.None
-                    it.copy(
-                        position = posDur?.position ?: 0,
-                        duration = posDur?.duration ?: 0,
-                        videoWatchState = watchState
-                    )
-                }
+    private fun getEpisodes(
+        indexer: EpisodeIndexer,
+        range: EpisodeRange,
+    ): List<ResultEpisode> {
+        return currentEpisodes[indexer]?.let { list ->
+            val start = minOf(list.size, range.startIndex)
+            val end = minOf(list.size, start + range.length)
+            list.subList(start, end).map {
+                val posDur = getViewPos(it.id)
+                val watchState = getVideoWatchState(it.id) ?: VideoWatchState.None
+                it.copy(
+                    position = posDur?.position ?: 0,
+                    duration = posDur?.duration ?: 0,
+                    videoWatchState = watchState
+                )
             }
-            ?: emptyList()
+        } ?: emptyList()
+    }
+
+    private fun getSortedEpisodes(
+        episodes: List<ResultEpisode>,
+        sorting: EpisodeSortType
+    ): List<ResultEpisode> {
+        return when (sorting) {
+            EpisodeSortType.NUMBER_ASC -> episodes.sortedBy { it.episode }
+            EpisodeSortType.NUMBER_DESC -> episodes.sortedByDescending { it.episode }
+            EpisodeSortType.RATING_HIGH_LOW -> episodes.sortedByDescending { it.rating ?: 0 }
+            EpisodeSortType.RATING_LOW_HIGH -> episodes.sortedBy { it.rating ?: 0 }
+            EpisodeSortType.DATE_NEWEST -> episodes.sortedByDescending { it.airDate }
+            EpisodeSortType.DATE_OLDEST -> episodes.sortedBy { it.airDate }
+        }
     }
 
     private fun postMovie() {
@@ -1882,9 +1934,11 @@ class ResultViewModel2 : ViewModel() {
         } else {
             _episodes.postValue(
                 Resource.Success(
-                    getEpisodes(
-                        currentIndex ?: return,
-                        currentRange ?: return
+                    getSortedEpisodes(
+                        getEpisodes(
+                            currentIndex ?: return,
+                            currentRange ?: return,
+                        ), currentSorting ?: return
                     )
                 )
             )
@@ -1912,8 +1966,24 @@ class ResultViewModel2 : ViewModel() {
         _favoriteStatus.postValue(isFavorite)
     }
 
-    private fun postEpisodeRange(indexer: EpisodeIndexer?, range: EpisodeRange?) {
-        if (range == null || indexer == null) {
+    private fun shouldEnableSort(type: EpisodeSortType, episodes: List<ResultEpisode>?): Boolean {
+        if (episodes.isNullOrEmpty()) return false
+        return when (type) {
+            EpisodeSortType.NUMBER_ASC, EpisodeSortType.NUMBER_DESC -> true
+            EpisodeSortType.RATING_HIGH_LOW, EpisodeSortType.RATING_LOW_HIGH ->
+                episodes.any { it.rating != null }
+
+            EpisodeSortType.DATE_NEWEST, EpisodeSortType.DATE_OLDEST ->
+                episodes.any { it.airDate != null }
+        }
+    }
+
+    private fun postEpisodeRange(
+        indexer: EpisodeIndexer?,
+        range: EpisodeRange?,
+        sorting: EpisodeSortType?
+    ) {
+        if (range == null || indexer == null || sorting == null) {
             return
         }
 
@@ -1921,10 +1991,10 @@ class ResultViewModel2 : ViewModel() {
 
         if (ranges?.contains(range) != true) {
             // if the current ranges does not include the range then select the range with the closest matching start episode
-            // this usually happends when dub has less episodes then sub -> the range does not exist
+            // this usually happens when dub has less episodes then sub -> the range does not exist
             ranges?.minByOrNull { kotlin.math.abs(it.startEpisode - range.startEpisode) }
                 ?.let { r ->
-                    postEpisodeRange(indexer, r)
+                    postEpisodeRange(indexer, r, sorting)
                     return
                 }
         }
@@ -2027,16 +2097,64 @@ class ResultViewModel2 : ViewModel() {
         }
 
         if (isMovie) {
+            _sortSelections.postValue(emptyList())
+            _selectedSortingIndex.postValue(-1)
+            _selectedSorting.postValue(null)
+
             postMovie()
         } else {
             val ret = getEpisodes(indexer, range)
-            /*if (ret.isEmpty()) {
-                val index = ranges?.indexOf(range)
-                if(index != null && index > 0) {
 
+            if (ret.size <= 1) {
+                // we cant sort on an empty list or a list with only 1 episode
+                _sortSelections.postValue(emptyList())
+                _selectedSortingIndex.postValue(-1)
+                _selectedSorting.postValue(null)
+                _episodes.postValue(Resource.Success(ret))
+            } else {
+                val sortOptions = mutableListOf<Pair<UiText, EpisodeSortType>>().apply {
+                    // Episode number sorting is always available
+                    add(txt(R.string.sort_episodes_number_asc) to EpisodeSortType.NUMBER_ASC)
+                    add(txt(R.string.sort_episodes_number_desc) to EpisodeSortType.NUMBER_DESC)
+
+                    // Only add rating options if any episodes have ratings
+                    if (shouldEnableSort(EpisodeSortType.RATING_HIGH_LOW, ret)) {
+                        add(txt(R.string.sort_episodes_rating_high_low) to EpisodeSortType.RATING_HIGH_LOW)
+                        add(txt(R.string.sort_episodes_rating_low_high) to EpisodeSortType.RATING_LOW_HIGH)
+                    }
+
+                    // Only add air date options if any episodes have air dates
+                    if (shouldEnableSort(EpisodeSortType.DATE_NEWEST, ret)) {
+                        add(txt(R.string.sort_episodes_date_newest) to EpisodeSortType.DATE_NEWEST)
+                        add(txt(R.string.sort_episodes_date_oldest) to EpisodeSortType.DATE_OLDEST)
+                    }
                 }
-            }*/
-            _episodes.postValue(Resource.Success(ret))
+
+                var sortIndex = sortOptions.indexOfFirst { it.second == sorting }
+
+                // correct the sorting order so if we have a selected that is not possible we just choose the default NUMBER_ASC
+                val correctedSorting = if (sortIndex == -1) {
+                    sortIndex = 0
+                    EpisodeSortType.NUMBER_ASC
+                } else {
+                    sorting
+                }
+
+                currentSorting = correctedSorting
+                _sortSelections.postValue(sortOptions)
+                _selectedSortingIndex.postValue(sortIndex)
+                _selectedSorting.postValue(
+                    when (correctedSorting) {
+                        EpisodeSortType.NUMBER_ASC -> txt(R.string.sort_button_episode, "↑")
+                        EpisodeSortType.NUMBER_DESC -> txt(R.string.sort_button_episode, "↓")
+                        EpisodeSortType.RATING_HIGH_LOW -> txt(R.string.sort_button_rating, "↓")
+                        EpisodeSortType.RATING_LOW_HIGH -> txt(R.string.sort_button_rating, "↑")
+                        EpisodeSortType.DATE_NEWEST -> txt(R.string.sort_button_date, "↓")
+                        EpisodeSortType.DATE_OLDEST -> txt(R.string.sort_button_date, "↑")
+                    }
+                )
+                _episodes.postValue(Resource.Success(getSortedEpisodes(ret, correctedSorting)))
+            }
         }
     }
 
@@ -2303,7 +2421,7 @@ class ResultViewModel2 : ViewModel() {
             it.startEpisode >= (preferStartEpisode ?: 0)
         } ?: ranger?.lastOrNull()
 
-        postEpisodeRange(min, range)
+        postEpisodeRange(min, range, DataStoreHelper.resultsSortingMode)
         postResume()
     }
 
@@ -2368,14 +2486,16 @@ class ResultViewModel2 : ViewModel() {
                                 { links.add(it) }) && trailerData.raw
                         ) {
                             arrayListOf(
-                                ExtractorLink(
+                                newExtractorLink(
                                     "",
                                     "Trailer",
                                     trailerData.extractorUrl,
-                                    trailerData.referer ?: "",
-                                    Qualities.Unknown.value,
                                     type = INFER_TYPE
-                                )
+                                ) {
+                                    this.referer = trailerData.referer ?: ""
+                                    this.quality = Qualities.Unknown.value
+                                    this.headers = trailerData.headers
+                                }
                             ) to arrayListOf()
                         } else {
                             links to subs

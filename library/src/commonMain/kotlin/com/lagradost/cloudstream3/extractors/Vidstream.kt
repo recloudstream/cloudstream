@@ -3,12 +3,13 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.argamap
+import com.lagradost.cloudstream3.runAllAsync
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.extractorApis
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import com.lagradost.cloudstream3.utils.loadExtractor
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import org.jsoup.Jsoup
 
 /**
@@ -36,7 +37,7 @@ class Vidstream(val mainUrl: String) {
         callback: (ExtractorLink) -> Unit,
     ): Boolean {
         val extractorUrl = getExtractorUrl(id)
-        argamap(
+        runAllAsync(
             {
                 normalApis.amap { api ->
                     val url = api.getExtractorUrl(id)
@@ -65,14 +66,15 @@ class Vidstream(val mainUrl: String) {
 
                     if (!loadExtractor(href, link, subtitleCallback, callback)) {
                         callback.invoke(
-                            ExtractorLink(
+                            newExtractorLink(
                                 this.name,
                                 name = this.name,
                                 href,
-                                page.url,
-                                getQualityFromName(qual),
                                 type = INFER_TYPE
-                            )
+                            ) {
+                                this.referer = page.url
+                                this.quality = getQualityFromName(qual)
+                            }
                         )
                     }
                 }

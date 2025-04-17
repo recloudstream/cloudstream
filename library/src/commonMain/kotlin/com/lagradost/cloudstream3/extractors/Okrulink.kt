@@ -5,6 +5,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 data class Okrulinkdata (
     @JsonProperty("status" ) var status : String? = null,
@@ -24,13 +25,10 @@ open class Okrulink: ExtractorApi() {
         ).parsedSafe<Okrulinkdata>()
         if (request?.url != null) {
             sources.add(
-                ExtractorLink(
+                newExtractorLink(
                     name,
                     name,
-                    request.url!!,
-                    "",
-                    Qualities.Unknown.value,
-                    isM3u8 = false
+                    request.url!!
                 )
             )
         }

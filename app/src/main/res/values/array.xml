@@ -226,6 +226,18 @@
         <item>2</item>
     </array>
 
+    <array name="software_decoding_switch">
+        <item>@string/automatic</item>
+        <item>@string/yes</item>
+        <item>@string/no</item>
+    </array>
+
+    <array name="software_decoding_switch_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </array>
+
     <array name="confirm_exit">
         <item>@string/automatic</item>
         <item>@string/show</item>

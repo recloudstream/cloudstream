@@ -152,21 +152,47 @@
                     android:visibility="gone" />
             </LinearLayout>
 
-            <ListView
-                android:id="@+id/sort_subtitles"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_rowWeight="1"
-                android:background="?attr/primaryBlackBackground"
-                android:listSelector="@drawable/outline_drawable_forced"
-                android:nextFocusLeft="@id/sort_providers"
-                android:nextFocusRight="@id/apply_btt"
-                android:nextFocusUp="@id/subtitles_click_settings"
-                android:nextFocusDown="@id/apply_btt"
-                android:requiresFadingEdge="vertical"
-                tools:layout_height="200dp"
-                tools:listfooter="@layout/sort_bottom_footer_add_choice"
-                tools:listitem="@layout/sort_bottom_single_choice" />
+                android:orientation="horizontal">
+
+                <ListView
+                    android:id="@+id/sort_subtitles"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_rowWeight="1"
+                    android:layout_weight="1"
+                    android:background="?attr/primaryBlackBackground"
+                    android:listSelector="@drawable/outline_drawable_forced"
+                    android:nextFocusLeft="@id/sort_providers"
+                    android:nextFocusRight="@id/sort_subtitles_options"
+                    android:nextFocusUp="@id/subtitles_click_settings"
+                    android:nextFocusDown="@id/apply_btt"
+                    android:requiresFadingEdge="vertical"
+                    tools:layout_height="200dp"
+                    tools:listfooter="@layout/sort_bottom_footer_add_choice"
+                    tools:listitem="@layout/sort_bottom_single_choice" />
+
+                <ListView
+                    android:id="@+id/sort_subtitles_options"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_rowWeight="1"
+                    android:layout_weight="1"
+                    android:background="?attr/primaryBlackBackground"
+                    android:listSelector="@drawable/outline_drawable_forced"
+                    android:nextFocusLeft="@id/sort_subtitles"
+                    android:nextFocusRight="@id/apply_btt"
+                    android:nextFocusUp="@id/subtitle_settings_btt"
+                    android:nextFocusDown="@id/apply_btt"
+                    android:requiresFadingEdge="vertical"
+                    tools:layout_height="200dp"
+                    tools:listfooter="@layout/sort_bottom_footer_add_choice"
+                    tools:listitem="@layout/sort_bottom_single_choice" />
+            </LinearLayout>
+
+
         </LinearLayout>
     </LinearLayout>
 

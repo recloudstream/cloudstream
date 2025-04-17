@@ -102,7 +102,7 @@ class PluginDetailsFragment(val data: PluginViewData) : BottomSheetDialogFragmen
             if (data.isDownloaded) {
                 // On local plugins page the filepath is provided instead of url.
                 val plugin =
-                    PluginManager.urlPlugins[metadata.url] ?: PluginManager.plugins[metadata.url]
+                    (PluginManager.urlPlugins[metadata.url] ?: PluginManager.plugins[metadata.url]) as? com.lagradost.cloudstream3.plugins.Plugin
                 if (plugin?.openSettings != null && context != null) {
                     actionSettings.isVisible = true
                     actionSettings.setOnClickListener {

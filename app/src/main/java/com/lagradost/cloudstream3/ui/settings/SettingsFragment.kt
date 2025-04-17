@@ -21,7 +21,6 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.errorProfilePic
-import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -33,6 +32,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
+import com.lagradost.cloudstream3.utils.txt
 import java.io.File
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -42,10 +42,8 @@ import java.util.TimeZone
 
 class SettingsFragment : Fragment() {
     companion object {
-
         fun PreferenceFragmentCompat?.getPref(id: Int): Preference? {
             if (this == null) return null
-
             return try {
                 findPreference(getString(id))
             } catch (e: Exception) {
@@ -90,6 +88,7 @@ class SettingsFragment : Fragment() {
                 listView?.setPadding(0, 0, 0, 100.toPx)
             }
         }
+
         fun PreferenceFragmentCompat.setToolBarScrollFlags() {
             if (isLayout(TV or EMULATOR)) {
                 val settingsAppbar = view?.findViewById<MaterialToolbar>(R.id.settings_toolbar)
@@ -99,6 +98,7 @@ class SettingsFragment : Fragment() {
                 }
             }
         }
+
         fun Fragment?.setToolBarScrollFlags() {
             if (isLayout(TV or EMULATOR)) {
                 val settingsAppbar = this?.view?.findViewById<MaterialToolbar>(R.id.settings_toolbar)
@@ -108,6 +108,7 @@ class SettingsFragment : Fragment() {
                 }
             }
         }
+
         fun Fragment?.setUpToolbar(title: String) {
             if (this == null) return
             val settingsToolbar = view?.findViewById<MaterialToolbar>(R.id.settings_toolbar) ?: return
@@ -155,12 +156,14 @@ class SettingsFragment : Fragment() {
             return size
         }
     }
+
     override fun onDestroyView() {
         binding = null
         super.onDestroyView()
     }
 
     var binding: MainSettingsBinding? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -191,6 +194,7 @@ class SettingsFragment : Fragment() {
                         error { getImageFromDrawable(context ?: return@error null, errorProfilePic) }
                     }
                 }
+                binding?.settingsProfileText?.text = login.name
                 return true // sync profile exists
 
             }

@@ -19,14 +19,13 @@ open class SibNet : ExtractorApi() {
         m3uLink = "${mainUrl}${m3uLink}"
 
         callback.invoke(
-            ExtractorLink(
+            newExtractorLink(
                 source  = this.name,
                 name    = this.name,
                 url     = m3uLink,
-                referer = url,
-                quality = Qualities.Unknown.value,
-                type    = INFER_TYPE
-            )
+            ) {
+                this.referer = url
+            }
         )
     }
 }

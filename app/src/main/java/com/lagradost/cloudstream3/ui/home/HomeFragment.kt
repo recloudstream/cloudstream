@@ -241,18 +241,20 @@ class HomeFragment : Fragment() {
             movies: Chip?,
             asian: Chip?,
             livestream: Chip?,
+            torrent: Chip?,
             nsfw: Chip?,
             others: Chip?,
         ): List<Pair<Chip?, List<TvType>>> {
             // This list should be same order as home screen to aid navigation
             return listOf(
-                Pair(movies, listOf(TvType.Movie, TvType.Torrent)),
+                Pair(movies, listOf(TvType.Movie)),
                 Pair(tvs, listOf(TvType.TvSeries)),
                 Pair(anime, listOf(TvType.Anime, TvType.OVA, TvType.AnimeMovie)),
                 Pair(asian, listOf(TvType.AsianDrama)),
                 Pair(cartoons, listOf(TvType.Cartoon)),
                 Pair(docs, listOf(TvType.Documentary)),
                 Pair(livestream, listOf(TvType.Live)),
+                Pair(torrent, listOf(TvType.Torrent)),
                 Pair(nsfw, listOf(TvType.NSFW)),
                 Pair(others, listOf(TvType.Others)),
             )
@@ -266,6 +268,7 @@ class HomeFragment : Fragment() {
             header.homeSelectMovies,
             header.homeSelectAsian,
             header.homeSelectLivestreams,
+            header.homeSelectTorrents,
             header.homeSelectNsfw,
             header.homeSelectOthers
         )

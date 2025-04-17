@@ -11,6 +11,7 @@ import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import org.jsoup.nodes.Document
 import java.net.URI
 import javax.crypto.Cipher
@@ -124,13 +125,14 @@ object GogoHelper {
                 ).forEach(sourceCallback)
             } else {
                 sourceCallback.invoke(
-                    ExtractorLink(
+                    newExtractorLink(
                         mainApiName,
                         mainApiName,
                         source.file,
-                        mainUrl,
-                        getQualityFromName(source.label),
-                    )
+                    ) {
+                        this.referer = mainUrl
+                        this.quality = getQualityFromName(source.label)
+                    }
                 )
             }
         }

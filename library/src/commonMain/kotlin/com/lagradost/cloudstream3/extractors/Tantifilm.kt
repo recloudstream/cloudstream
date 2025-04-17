@@ -5,6 +5,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 open class Tantifilm : ExtractorApi() {
     override var name = "Tantifilm"
@@ -29,14 +30,14 @@ open class Tantifilm : ExtractorApi() {
         val response = app.post(link).text.replace("""\""","")
         val jsonvideodata = parseJson<TantifilmJsonData>(response)
         return jsonvideodata.data.map {
-            ExtractorLink(
+            newExtractorLink(
                 this.name,
                 this.name,
-                it.file+".${it.type}",
-                mainUrl,
-                it.label.filter{ it.isDigit() }.toInt(),
-                false
-            )
+                it.file+".${it.type}"
+            ) {
+                this.referer = mainUrl
+                this.quality = it.label.filter{ it.isDigit() }.toInt()
+            }
         }
     }
 }

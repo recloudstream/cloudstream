@@ -89,8 +89,18 @@
             android:nextFocusRight="@id/cancel_btt"
 
             android:nextFocusUp="@id/subs_outline_color"
-            android:nextFocusDown="@id/subs_window_color"
+            android:nextFocusDown="@id/subs_background_radius"
             android:text="@string/subs_background_color" />
+
+        <TextView
+            android:id="@+id/subs_background_radius"
+            style="@style/SettingsItem"
+            android:nextFocusLeft="@id/apply_btt"
+            android:nextFocusRight="@id/cancel_btt"
+
+            android:nextFocusUp="@id/subs_background_color"
+            android:nextFocusDown="@id/subs_window_color"
+            android:text="@string/background_radius" />
 
         <TextView
             android:id="@+id/subs_window_color"
@@ -98,7 +108,7 @@
             android:nextFocusLeft="@id/apply_btt"
             android:nextFocusRight="@id/cancel_btt"
 
-            android:nextFocusUp="@id/subs_background_color"
+            android:nextFocusUp="@id/subs_background_radius"
             android:nextFocusDown="@id/subs_edge_type"
             android:text="@string/subs_window_color" />
 
@@ -164,6 +174,7 @@
             android:nextFocusUp="@id/subs_download_languages"
             android:nextFocusDown="@id/subtitles_remove_captions"
             android:text="@string/subtitles_remove_bloat"
+            app:trackTint="@color/toggle_selector"
             app:drawableEndCompat="@null" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
@@ -177,6 +188,7 @@
             android:nextFocusUp="@id/subtitles_remove_bloat"
             android:nextFocusDown="@id/subtitles_filter_sub_lang"
             android:text="@string/subtitles_remove_captions"
+            app:trackTint="@color/toggle_selector"
             app:drawableEndCompat="@null" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
@@ -190,6 +202,7 @@
             android:nextFocusUp="@id/subtitles_remove_captions"
             android:nextFocusDown="@id/subtitles_uppercase"
             android:text="@string/subtitles_filter_lang"
+            app:trackTint="@color/toggle_selector"
             app:drawableEndCompat="@null" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
@@ -201,8 +214,41 @@
             android:nextFocusLeft="@id/apply_btt"
             android:nextFocusRight="@id/cancel_btt"
             android:nextFocusUp="@id/subtitles_filter_sub_lang"
-            android:nextFocusDown="@id/apply_btt"
+            android:nextFocusDown="@id/subtitles_bold"
             android:text="@string/uppercase_all_subtitles"
+            app:trackTint="@color/toggle_selector"
+            app:drawableEndCompat="@null" />
+
+
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/subtitles_bold"
+            style="@style/SettingsItem"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/google_sans"
+            android:nextFocusLeft="@id/apply_btt"
+            android:nextFocusRight="@id/cancel_btt"
+            android:nextFocusUp="@id/subtitles_uppercase"
+            android:nextFocusDown="@id/subtitles_italic"
+            android:text="@string/all_subtitles_bold"
+            app:trackTint="@color/toggle_selector"
+            app:drawableEndCompat="@null" />
+
+
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/subtitles_italic"
+            style="@style/SettingsItem"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/google_sans"
+            android:nextFocusLeft="@id/apply_btt"
+            android:nextFocusRight="@id/cancel_btt"
+            android:nextFocusUp="@id/subtitles_bold"
+            android:nextFocusDown="@id/apply_btt"
+            android:text="@string/all_subtitles_italic"
+            app:trackTint="@color/toggle_selector"
             app:drawableEndCompat="@null" />
 
         <TextView
@@ -238,7 +284,7 @@
                 android:layout_width="wrap_content"
                 android:layout_gravity="center_vertical|end"
                 android:nextFocusRight="@id/cancel_btt"
-                android:nextFocusUp="@id/subtitles_remove_captions"
+                android:nextFocusUp="@id/subtitles_italic"
                 android:text="@string/sort_apply"
                 android:visibility="visible">
 

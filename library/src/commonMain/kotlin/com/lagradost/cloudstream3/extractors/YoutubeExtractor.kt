@@ -4,7 +4,9 @@ import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import com.lagradost.cloudstream3.utils.schemaStripRegex
 import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor
@@ -73,13 +75,11 @@ open class YoutubeExtractor : ExtractorApi() {
         }
         ytVideos[url]?.let {
             callback(
-                ExtractorLink(
-                    this.name,
-                    this.name,
-                    it,
-                    "",
-                    Qualities.Unknown.value,
-                    isM3u8 = true
+                newExtractorLink(
+                    source = this.name,
+                    name = this.name,
+                    url = it,
+                    type = ExtractorLinkType.M3U8
                 )
             )
         }

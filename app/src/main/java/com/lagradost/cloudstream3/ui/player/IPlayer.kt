@@ -40,6 +40,7 @@ enum class CSPlayerEvent(val value: Int) {
     PlayPauseToggle(7),
     ToggleMute(8),
     Restart(9),
+    PlayAsAudio(10),
 }
 
 enum class CSPlayerLoading {

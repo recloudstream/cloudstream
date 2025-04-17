@@ -484,6 +484,44 @@ abstract class MainAPI {
     open val hasQuickSearch = false
 
     /**
+     * The timeout on the `loadLinks` functions in milliseconds,
+     * By default this should be around a few minutes to prevent any unexpected recursive call/extraction to drain resources,
+     * however if you need very long extraction times, you can can request it by changing this variable.
+     *
+     * Note that this is only a hint, and may not get respected if you request something too long.
+     * */
+    open val loadLinksTimeoutMs : Long? = null
+
+    /**
+     * The timeout on the `getMainPage` functions in milliseconds.
+     *
+     * Note that this is only a hint, and may not get respected if you request something too long.
+     * */
+    open val getMainPageTimeoutMs : Long? = null
+
+    /**
+     * The timeout on the `search` functions in milliseconds.
+     *
+     * Note that this is only a hint, and may not get respected if you request something too long.
+     * */
+    open val searchTimeoutMs : Long? = null
+
+    /**
+     * The timeout on the `quickSearch` functions in milliseconds.
+     *
+     * Note that this is only a hint, and may not get respected if you request something too long.
+     * */
+    open val quickSearchTimeoutMs : Long? = null
+
+    /**
+     * The timeout on the `loadSearch` functions in milliseconds.
+     *
+     * Note that this is only a hint, and may not get respected if you request something too long.
+     * */
+    open val loadTimeoutMs : Long? = null
+
+
+    /**
      * A set of which ids the provider can open with getLoadUrl()
      * If the set contains SyncIdName.Imdb then getLoadUrl() can be started with
      * an Imdb class which inherits from SyncId.
@@ -677,7 +715,7 @@ suspend fun getRhinoContext(): org.mozilla.javascript.Context {
     return Coroutines.mainWork {
         val rhino = org.mozilla.javascript.Context.enter()
         rhino.initSafeStandardObjects()
-        rhino.optimizationLevel = -1
+        rhino.setInterpretedMode(true)
         rhino
     }
 }
@@ -923,7 +961,6 @@ fun getQualityFromString(string: String?): SearchQuality? {
  *   scheme            authority                path                   query                 fragment
  * ```
  */
-@Prerelease
 fun MainAPI.updateUrl(url: String): String {
     try {
         val original = URI(url)
@@ -1206,7 +1243,7 @@ constructor(
     override var id: Int? = null,
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
-    val lang: String? = null,
+    var lang: String? = null,
 ) : SearchResponse
 
 /** Data class of [SearchResponse] interface for Tv series.
@@ -1221,8 +1258,8 @@ constructor(
     override var type: TvType? = null,
 
     override var posterUrl: String? = null,
-    val year: Int? = null,
-    val episodes: Int? = null,
+    var year: Int? = null,
+    var episodes: Int? = null,
     override var id: Int? = null,
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
@@ -1237,6 +1274,7 @@ data class TrailerData(
     val extractorUrl: String,
     val referer: String?,
     val raw: Boolean,
+    val headers: Map<String, String> = mapOf(),
     // var mirrors: List<ExtractorLink>,
     // var subtitles: List<SubtitleFile> = emptyList(),
 )
@@ -1418,6 +1456,17 @@ interface LoadResponse {
         fun LoadResponse.addTrailer(newTrailers: List<ExtractorLink>) {
             trailers.addAll(newTrailers.map { TrailerData(listOf(it)) })
         }*/
+
+        @Suppress("RedundantSuspendModifier")
+        suspend fun LoadResponse.addTrailer(
+            trailerUrl: String?,
+            referer: String? = null,
+            addRaw: Boolean = false,
+            headers: Map<String, String> = mapOf()
+        ) {
+            if (!isTrailersEnabled || trailerUrl.isNullOrBlank()) return
+            this.trailers.add(TrailerData(trailerUrl, referer, addRaw, headers))
+        }
 
         @Suppress("RedundantSuspendModifier")
         suspend fun LoadResponse.addTrailer(
@@ -1701,7 +1750,10 @@ constructor(
      * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
      */
     @Suppress("DEPRECATION")
-    @Deprecated("Use newTorrentLoadResponse method with contentRating included", level = DeprecationLevel.WARNING)
+    @Deprecated(
+        "Use newTorrentLoadResponse method with contentRating included",
+        level = DeprecationLevel.WARNING
+    )
     constructor(
         name: String,
         url: String,
@@ -1834,7 +1886,10 @@ constructor(
      * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
      */
     @Suppress("DEPRECATION")
-    @Deprecated("Use newAnimeLoadResponse method with contentRating included", level = DeprecationLevel.WARNING)
+    @Deprecated(
+        "Use newAnimeLoadResponse method with contentRating included",
+        level = DeprecationLevel.WARNING
+    )
     constructor(
         engName: String? = null,
         japName: String? = null,
@@ -1951,7 +2006,10 @@ constructor(
      * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
      */
     @Suppress("DEPRECATION")
-    @Deprecated("Use newLiveStreamLoadResponse method with contentRating included", level = DeprecationLevel.WARNING)
+    @Deprecated(
+        "Use newLiveStreamLoadResponse method with contentRating included",
+        level = DeprecationLevel.WARNING
+    )
     constructor(
         name: String,
         url: String,
@@ -2028,7 +2086,10 @@ constructor(
      * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
      */
     @Suppress("DEPRECATION")
-    @Deprecated("Use newMovieLoadResponse method with contentRating included", level = DeprecationLevel.WARNING)
+    @Deprecated(
+        "Use newMovieLoadResponse method with contentRating included",
+        level = DeprecationLevel.WARNING
+    )
     constructor(
         name: String,
         url: String,
@@ -2070,6 +2131,7 @@ suspend fun <T> MainAPI.newMovieLoadResponse(
         initializer = initializer
     )
     val dataUrl = data?.toJson() ?: ""
+
     @Suppress("DEPRECATION")
     val builder = MovieLoadResponse(
         name = name,
@@ -2269,7 +2331,10 @@ constructor(
      * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
      */
     @Suppress("DEPRECATION")
-    @Deprecated("Use newTvSeriesLoadResponse method with contentRating included", level = DeprecationLevel.WARNING)
+    @Deprecated(
+        "Use newTvSeriesLoadResponse method with contentRating included",
+        level = DeprecationLevel.WARNING
+    )
     constructor(
         name: String,
         url: String,

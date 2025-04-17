@@ -105,7 +105,7 @@
             android:title="@string/preview_seekbar"
             app:defaultValue="true"
             app:key="@string/preview_seekbar_key" />
-        <SwitchPreference
+        <Preference
             android:icon="@drawable/ic_baseline_extension_24"
             android:summary="@string/software_decoding_desc"
             android:title="@string/software_decoding"

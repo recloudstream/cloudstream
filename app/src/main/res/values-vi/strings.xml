@@ -256,7 +256,7 @@
     <string name="check_for_update">Kiểm tra cập nhật</string>
     <string name="video_lock">Khóa</string>
     <string name="video_aspect_ratio_resize">Thu Phóng</string>
-    <string name="video_source">Nguồn</string>
+    <string name="video_source">Nguồn &amp; Phụ đề</string>
     <string name="video_skip_op">Bỏ qua OP</string>
     <string name="dont_show_again">Không hiện lại</string>
     <string name="skip_update">Bỏ qua bản cập nhật này</string>
@@ -425,11 +425,11 @@
     <string name="view_public_repositories_button_short">Danh sách công khai</string>
     <string name="uppercase_all_subtitles">In hoa toàn bộ phụ đề</string>
     <string name="download_all_plugins_from_repo">Cảnh báo: CloudStream 3 không chịu trách nhiệm về các tiện ích bên thứ ba và không cung cấp bất kỳ sự hỗ trợ nào!</string>
-    <string name="single_plugin_disabled" formatted="true">%s (Đã vô hiệu)</string>
-    <string name="tracks">Thêm</string>
+    <string name="single_plugin_disabled" formatted="true">%s (Đã vô hiệu hoá)</string>
+    <string name="tracks">Âm thanh &amp; Chất lượng</string>
     <string name="audio_tracks">Âm thanh</string>
     <string name="video_tracks">Chất lượng Video</string>
-    <string name="apply_on_restart">Áp dụng khi khởi động lại.</string>
+    <string name="apply_on_restart">Áp dụng khi khởi động lại ứng dụng.</string>
     <string name="safe_mode_title">Chế độ an toàn được bật</string>
     <string name="safe_mode_description">Đã xảy ra sự cố và chúng tôi đã tự động tắt tất cả các tiện ích mở rộng, hãy tìm và xóa tiện ích mở rộng đang gây ra sự cố.</string>
     <string name="safe_mode_crash_info">Xem thông tin sự cố</string>
@@ -493,13 +493,13 @@
     <string name="library">Thư viện</string>
     <string name="browser">Trình duyệt</string>
     <string name="plugin_downloaded">Plugin đã tải</string>
-    <string name="apk_installer_legacy">Di sản</string>
+    <string name="apk_installer_legacy">Legacy</string>
     <string name="sort_updated_new">Đã cập nhật (Mới đến Cũ)</string>
     <string name="sort_updated_old">Đã cập nhật (Cũ đến Mới)</string>
     <string name="empty_library_no_accounts_message">Thư viện của bạn đang trống :(
 \nĐăng nhập vào tài khoản thư viện hoặc thêm phim vào thư viện cục bộ.</string>
     <string name="open_with">Mở với</string>
-    <string name="provider_info_meta">Siêu dữ liệu không có sẵn, video sẽ không được tải nếu nó không tồn tại trên trang web.</string>
+    <string name="provider_info_meta">Thông tin dữ liệu không được cung cấp bởi trang web, video sẽ không tìm thấy link nếu nó không tồn tại trên trang web.</string>
     <string name="apk_installer_package_installer">PackageInstaller</string>
     <string name="sort">Sắp xếp</string>
     <string name="sort_rating_desc">Xếp hạng (Cao đến Thấp)</string>
@@ -553,7 +553,7 @@
     <string name="qualities">Các phẩm chất</string>
     <string name="already_voted">Bạn đã bình chọn</string>
     <string name="disable">Vô hiệu hoá</string>
-    <string name="no_repository_found_error">Không tìm thấy tiện ích, hãy kiểm tra URL và thử VPN</string>
+    <string name="no_repository_found_error">Không tìm thấy tiện ích, hãy kiểm tra URL và thử lại với VPN</string>
     <string name="no_plugins_found_error">Không tìm thấy plugin</string>
     <string name="unable_to_inflate">Không thể khởi tạo UI, đây là một LỖI LỚN và cần được báo cáo ngay lập tức tới %s</string>
     <string name="automatic_plugin_download_mode_title">Chọn chế độ để lọc plugin tải xuống</string>
@@ -619,12 +619,12 @@
     <string name="biometric_warning">Dữ liệu CloudStream của bạn hiện đã được sao lưu. Mặc dù khả năng xảy ra điều này là rất thấp nhưng tất cả các thiết bị đều có thể hoạt động khác nhau. Trong trường hợp hiếm gặp là bạn bị khóa truy cập ứng dụng, hãy xóa hoàn toàn dữ liệu ứng dụng và khôi phục từ bản sao lưu. Chúng tôi rất xin lỗi vì bất kỳ sự bất tiện nào phát sinh từ việc này.</string>
     <string name="biometric_setting_summary">Mở khóa ứng dụng bằng Vân tay, Khuôn mặt, PIN, Hình vẽ và Mật khẩu.</string>
     <string name="biometric_prompt_description">Màn hình bị đóng sau nhiều lần thử thất bại. Hãy khởi động lại ứng dụng.</string>
-    <string name="test_extensions_summary">Phần kiểm thử này chỉ dành cho nhà phát triển và không xác nhận hay từ chối việc hoạt động của nguồn phim.</string>
+    <string name="test_extensions_summary">Bài kiểm tra này chỉ dành cho các nhà phát triển và không xác nhận hay phủ nhận việc hoạt động của bất kỳ nguồn phim nào.</string>
     <string name="app_unrestricted_toast">Chế độ tiêu thụ pin của ứng dụng đã được đặt ở mức không giới hạn</string>
     <string name="custom_media_singluar">Phương tiện</string>
     <string name="repo_copy_label">Tên và URL kho lưu trữ</string>
     <string name="reset_btn">Đặt lại</string>
-    <string name="battery_dialog_message">Để đảm bảo quá trình tải xuống và thông báo cho các chương trình truyền hình đã đăng ký không bị gián đoạn, CloudStream cần có quyền chạy ở chế độ nền. Bằng cách nhấn OK, bạn sẽ được chuyển đến Thông tin ứng dụng. Ở đó, cuộn đến 𝘼𝙥𝙥 𝙗𝙖𝙩𝙩𝙚𝙧𝙮 𝙪𝙨𝙖𝙜𝙚 và đặt mức sử dụng pin thành 𝙐𝙣𝙧𝙚𝙨𝙩𝙧𝙞𝙘𝙩𝙚𝙙. Xin lưu ý, quyền này không có nghĩa là CS3 sẽ làm hao pin của bạn. Nó sẽ chỉ hoạt động ở chế độ nền khi cần thiết, chẳng hạn như khi nhận được thông báo hoặc tải xuống video từ các tiện ích mở rộng chính thức. Nếu bạn chọn hủy, bạn có thể điều chỉnh cài đặt này sau trong 𝙂𝙚𝙣𝙚𝙧𝙖𝙡 𝙎𝙚𝙩𝙩𝙞𝙣𝙜𝙨.</string>
+    <string name="battery_dialog_message">Để đảm bảo quá trình tải xuống và thông báo cho các chương trình truyền hình đã đăng ký không bị gián đoạn, CloudStream cần có quyền chạy ở chế độ nền. Bằng cách nhấn OK, một hộp thoại yêu cầu sẽ hiển thị. Hãy nhấn \"Cho phép\".\n\nXin lưu ý, quyền này không có nghĩa là CS3 sẽ làm hao pin của bạn. Nó sẽ chỉ hoạt động ở chế độ nền khi cần thiết, chẳng hạn như khi nhận được thông báo hoặc tải xuống video từ các tiện ích mở rộng chính thức.</string>
     <string name="next_season_episode_format" formatted="true">Mùa %1$d Tập %2$d sẽ được phát hành vào</string>
     <string name="episode_upcoming_format" formatted="true">Sắp tới sau %s</string>
     <string name="player_settings_select_cast_device">Chọn thiết bị truyền</string>
@@ -671,11 +671,38 @@
     <string name="preview_seekbar">Xem trước Seekbar</string>
     <string name="no_subtitles_loaded">Chưa tải phụ đề</string>
     <string name="confirm_before_exiting_title">Xác nhận trước khi thoát</string>
-    <string name="confirm_before_exiting_desc">Hiện hộp thoại trước khi thoát ứng dụng</string>
+    <string name="confirm_before_exiting_desc">Hiện hộp thoại xác nhận thoát ứng dụng</string>
     <string name="dont_show">Không hiển thị</string>
     <string name="show">Hiển thị</string>
     <string name="backup_path_title">Vị trí thư mục sao lưu</string>
     <string name="custom">Tuỳ chỉnh</string>
     <string name="subs_edge_size">Kích thước cạnh</string>
     <string name="torrent_info">Video này là Torrent, điều này có nghĩa là hoạt động video của bạn có thể được theo dõi.\nHãy đảm bảo rằng bạn hiểu về Torrent trước khi tiếp tục.</string>
+    <string name="encoding_error">Lỗi mã hóa</string>
+    <string name="software_decoding_desc">Cho phép trình phát các tệp video không được điện thoại của bạn hỗ trợ, nhưng có thể bị lag ở độ phân giải cao</string>
+    <string name="software_decoding">Bộ giải mã ứng dụng</string>
+    <string name="torrent_not_accepted">Torrent không được chấp nhận</string>
+    <string name="torrent_preferred_media">Kích hoạt torrent trong Cài đặt/Nguồn phim/Thể loại ưu tiên</string>
+    <string name="player_load_one_subtitle_online">Tải phụ đề đầu tiên có sẵn</string>
+    <string name="audio_singluar">Âm thanh</string>
+    <string name="podcast_singluar">Podcast</string>
+    <string name="unsupported_error">Lỗi không được hỗ trợ</string>
+    <string name="sort_episodes_rating_low_high">Xếp hạng (Thấp nhất)</string>
+    <string name="sort_episodes_number_asc">Tập (Tăng dần)</string>
+    <string name="sort_episodes_date_newest">Ngày phát sóng (Mới nhất)</string>
+    <string name="sort_button_rating">Xếp hạng %s</string>
+    <string name="sort_button_date">Ngày %s</string>
+    <string name="sort_button_episode">Tập %s</string>
+    <string name="update_plugins">Cập nhật plugin</string>
+    <string name="no_plugins_updated_manually">Không có plugin nào được cập nhật.</string>
+    <string name="sort_episodes_date_oldest">Ngày phát hành (Cũ nhất)</string>
+    <string name="plugins_updated_manually">Đã cập nhật thành công %d plugin!</string>
+    <string name="sort_episodes_rating_high_low">Xếp hạng (Cao nhất)</string>
+    <string name="update_plugins_manually">Cập nhật plugin thủ công</string>
+    <string name="sort_episodes_number_desc">Tập (Giảm dần)</string>
+    <string name="starting_plugin_update_manually">Bắt đầu quá trình cập nhật plugin!</string>
+    <string name="player_notification_channel_name">Thông báo trình phát</string>
+    <string name="player_notification_channel_description">Thông báo trình phát để điều khiển phát lại từ nền</string>
+    <string name="begin_speaking">Bắt đầu nói…</string>
+    <string name="speech_recognition_unavailable">Tìm kiếm giọng nói không khả dụng</string>
 </resources>

@@ -47,6 +47,7 @@ import androidx.media3.exoplayer.SeekParameters
 import androidx.media3.exoplayer.dash.DashMediaSource
 import androidx.media3.exoplayer.drm.DefaultDrmSessionManager
 import androidx.media3.exoplayer.drm.FrameworkMediaDrm
+import androidx.media3.exoplayer.drm.HttpMediaDrmCallback
 import androidx.media3.exoplayer.drm.LocalMediaDrmCallback
 import androidx.media3.exoplayer.source.ClippingMediaSource
 import androidx.media3.exoplayer.source.ConcatenatingMediaSource
@@ -62,6 +63,7 @@ import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.MainActivity.Companion.deleteFileOnExit
 import com.lagradost.cloudstream3.R
@@ -71,6 +73,8 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.utils.AppContextUtils.isUsingMobileData
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
@@ -80,6 +84,9 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.DrmExtractorLink
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.CLEARKEY_UUID
+import com.lagradost.cloudstream3.utils.WIDEVINE_UUID
+import com.lagradost.cloudstream3.utils.PLAYREADY_UUID
 import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
@@ -123,6 +130,10 @@ class CS3IPlayer : IPlayer {
     val imageGenerator = IPreviewGenerator.new()
 
     private val seekActionTime = 30000L
+    private val isMediaSeekable
+        get() = exoPlayer?.let {
+            it.isCommandAvailable(Player.COMMAND_GET_CURRENT_MEDIA_ITEM) && it.isCurrentMediaItemSeekable
+        } ?: false
 
     private var ignoreSSL: Boolean = true
     private var playBackSpeed: Float = 1.0f
@@ -138,6 +149,9 @@ class CS3IPlayer : IPlayer {
 
     private val subtitleHelper = PlayerSubtitleHelper()
 
+    /** If we want to play the audio only in the background when the app is not open */
+    private var isAudioOnlyBackground = false
+
     /**
      * This is a way to combine the MediaItem and its duration for the concatenating MediaSource.
      * @param durationUs does not matter if only one slice is present, since it will not concatenate
@@ -149,10 +163,11 @@ class CS3IPlayer : IPlayer {
     )
 
     data class DrmMetadata(
-        val kid: String,
-        val key: String,
+        val kid: String? = null,
+        val key: String? = null,
         val uuid: UUID,
-        val kty: String,
+        val kty: String? = null,
+        val licenseUrl: String? = null,
         val keyRequestParameters: HashMap<String, String>,
     )
 
@@ -176,7 +191,6 @@ class CS3IPlayer : IPlayer {
     }
 
     override fun releaseCallbacks() {
-        ioSafe { Torrent.clearAll() }
         eventHandler = null
     }
 
@@ -550,14 +564,17 @@ class CS3IPlayer : IPlayer {
         if (saveTime)
             updatedTime()
 
+        currentTextRenderer = null
+        currentSubtitleDecoder = null
+
         exoPlayer?.apply {
             playWhenReady = false
-            
+
             // This may look weird, however on some TV devices the audio does not stop playing
             // so this may fix it?
             try {
                 pause()
-            } catch (t : Throwable) {
+            } catch (t: Throwable) {
                 // No documented exception, but just to be extra safe
                 logError(t)
             }
@@ -568,6 +585,7 @@ class CS3IPlayer : IPlayer {
         //simpleCache?.release()
 
         exoPlayer = null
+        event(PlayerAttachedEvent(null))
         //simpleCache = null
     }
 
@@ -575,18 +593,23 @@ class CS3IPlayer : IPlayer {
         Log.i(TAG, "onStop")
 
         saveData()
-        handleEvent(CSPlayerEvent.Pause, PlayerEventSource.Player)
+        if (!isAudioOnlyBackground) {
+            handleEvent(CSPlayerEvent.Pause, PlayerEventSource.Player)
+        }
         //releasePlayer()
     }
 
     override fun onPause() {
         Log.i(TAG, "onPause")
         saveData()
-        handleEvent(CSPlayerEvent.Pause, PlayerEventSource.Player)
+        if (!isAudioOnlyBackground) {
+            handleEvent(CSPlayerEvent.Pause, PlayerEventSource.Player)
+        }
         //releasePlayer()
     }
 
     override fun onResume(context: Context) {
+        isAudioOnlyBackground = false
         if (exoPlayer == null)
             reloadPlayer(context)
     }
@@ -620,9 +643,6 @@ class CS3IPlayer : IPlayer {
             }
 
         private var simpleCache: SimpleCache? = null
-
-        var requestSubtitleUpdate: (() -> Unit)? = null
-
         private fun createOnlineSource(headers: Map<String, String>): HttpDataSource.Factory {
             val source = OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
             return source.apply {
@@ -633,16 +653,19 @@ class CS3IPlayer : IPlayer {
         private fun createOnlineSource(link: ExtractorLink): HttpDataSource.Factory {
             val provider = getApiFromNameNull(link.source)
             val interceptor = provider?.getVideoInterceptor(link)
+            val userAgent = link.headers.entries.find {
+                it.key.equals("User-Agent", ignoreCase = true)
+            }?.value
 
             val source = if (interceptor == null) {
                 DefaultHttpDataSource.Factory() //TODO USE app.baseClient
-                    .setUserAgent(USER_AGENT)
+                    .setUserAgent(userAgent ?: USER_AGENT)
                     .setAllowCrossProtocolRedirects(true)   //https://stackoverflow.com/questions/69040127/error-code-io-bad-http-status-exoplayer-android
             } else {
                 val client = app.baseClient.newBuilder()
                     .addInterceptor(interceptor)
                     .build()
-                OkHttpDataSource.Factory(client).setUserAgent(USER_AGENT)
+                OkHttpDataSource.Factory(client).setUserAgent(userAgent ?: USER_AGENT)
             }
 
             // Do no include empty referer, if the provider wants those they can use the header map.
@@ -736,12 +759,20 @@ class CS3IPlayer : IPlayer {
             val exoPlayerBuilder =
                 ExoPlayer.Builder(context)
                     .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
-
                         val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-                        val softwareDecoding = settingsManager.getBoolean(
+                        val current = settingsManager.getInt(
                             context.getString(R.string.software_decoding_key),
-                            true
+                            -1
                         )
+                        val softwareDecoding = when (current) {
+                            0 -> true // yes
+                            1 -> false // no
+                            // -1 = automatic
+                            else -> {
+                                // we do not want tv to have software decoding, because of crashes
+                                !isLayout(TV)
+                            }
+                        }
 
                         val factory = if (softwareDecoding) {
                             NextRenderersFactory(context).apply {
@@ -813,29 +844,68 @@ class CS3IPlayer : IPlayer {
                             ).build()
                     )
 
+            // Because "Java rules" the media3 team hates to do open classes so we have to copy paste the entire thing to add a custom extractor
+            // This includes the updated MKV extractor that enabled seeking in formats where the seek information is at the back of the file
+            val extractorFactor = UpdatedDefaultExtractorsFactory()
 
             val factory =
-                if (cacheFactory == null) DefaultMediaSourceFactory(context)
-                else DefaultMediaSourceFactory(cacheFactory)
+                if (cacheFactory == null) DefaultMediaSourceFactory(context, extractorFactor)
+                else DefaultMediaSourceFactory(cacheFactory, extractorFactor)
 
             // If there is only one item then treat it as normal, if multiple: concatenate the items.
             val videoMediaSource = if (mediaItemSlices.size == 1) {
                 val item = mediaItemSlices.first()
 
                 item.drm?.let { drm ->
-                    val drmCallback =
-                        LocalMediaDrmCallback("{\"keys\":[{\"kty\":\"${drm.kty}\",\"k\":\"${drm.key}\",\"kid\":\"${drm.kid}\"}],\"type\":\"temporary\"}".toByteArray())
-                    val manager = DefaultDrmSessionManager.Builder()
-                        .setPlayClearSamplesWithoutKeys(true)
-                        .setMultiSession(false)
-                        .setKeyRequestParameters(drm.keyRequestParameters)
-                        .setUuidAndExoMediaDrmProvider(drm.uuid, FrameworkMediaDrm.DEFAULT_PROVIDER)
-                        .build(drmCallback)
-                    val manifestDataSourceFactory = DefaultHttpDataSource.Factory()
+                    when (drm.uuid) {
+                        CLEARKEY_UUID -> {
+                            val client =
+                                OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
+                            val drmCallback =
+                                LocalMediaDrmCallback("{\"keys\":[{\"kty\":\"${drm.kty}\",\"k\":\"${drm.key}\",\"kid\":\"${drm.kid}\"}],\"type\":\"temporary\"}".toByteArray())
+                            val manager = DefaultDrmSessionManager.Builder()
+                                .setPlayClearSamplesWithoutKeys(true)
+                                .setMultiSession(false)
+                                .setKeyRequestParameters(drm.keyRequestParameters)
+                                .setUuidAndExoMediaDrmProvider(
+                                    drm.uuid,
+                                    FrameworkMediaDrm.DEFAULT_PROVIDER
+                                )
+                                .build(drmCallback)
 
-                    DashMediaSource.Factory(manifestDataSourceFactory)
-                        .setDrmSessionManagerProvider { manager }
-                        .createMediaSource(item.mediaItem)
+                            DashMediaSource.Factory(client)
+                                .setDrmSessionManagerProvider { manager }
+                                .createMediaSource(item.mediaItem)
+                        }
+
+                        WIDEVINE_UUID,
+                        PLAYREADY_UUID -> {
+                            val client =
+                                OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
+                            val drmCallback = HttpMediaDrmCallback(drm.licenseUrl, client)
+                            val manager = DefaultDrmSessionManager.Builder()
+                                .setPlayClearSamplesWithoutKeys(true)
+                                .setMultiSession(true)
+                                .setKeyRequestParameters(drm.keyRequestParameters)
+                                .setUuidAndExoMediaDrmProvider(
+                                    drm.uuid,
+                                    FrameworkMediaDrm.DEFAULT_PROVIDER
+                                )
+                                .build(drmCallback)
+
+                            DashMediaSource.Factory(client)
+                                .setDrmSessionManagerProvider { manager }
+                                .createMediaSource(item.mediaItem)
+                        }
+
+                        else -> {
+                            Log.e(
+                                TAG,
+                                "DRM Metadata class is not supported: ${drm::class.simpleName}"
+                            )
+                            null
+                        }
+                    }
                 } ?: run {
                     factory.createMediaSource(item.mediaItem)
                 }
@@ -852,9 +922,10 @@ class CS3IPlayer : IPlayer {
                         )
                     }
                     source.build()
-                } catch(_: IllegalArgumentException) {
+                } catch (_: IllegalArgumentException) {
                     @Suppress("DEPRECATION")
-                    val source = ConcatenatingMediaSource() // FIXME figure out why ConcatenatingMediaSource2 seems to fail with Torrents only
+                    val source =
+                        ConcatenatingMediaSource() // FIXME figure out why ConcatenatingMediaSource2 seems to fail with Torrents only
                     mediaItemSlices.map { item ->
                         source.addMediaSource(
                             // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
@@ -922,13 +993,21 @@ class CS3IPlayer : IPlayer {
     }
 
     override fun seekTo(time: Long, source: PlayerEventSource) {
-        updatedTime(time, source)
-        exoPlayer?.seekTo(time)
+        if (isMediaSeekable) {
+            updatedTime(time, source)
+            exoPlayer?.seekTo(time)
+        } else {
+            Log.i(TAG, "Media is not seekable, we can not seek to $time")
+        }
     }
 
     private fun ExoPlayer.seekTime(time: Long, source: PlayerEventSource) {
-        updatedTime(currentPosition + time, source)
-        seekTo(currentPosition + time)
+        if (isMediaSeekable) {
+            updatedTime(currentPosition + time, source)
+            seekTo(currentPosition + time)
+        } else {
+            Log.i(TAG, "Media is not seekable, we can not seek to $time")
+        }
     }
 
     override fun handleEvent(event: CSPlayerEvent, source: PlayerEventSource) {
@@ -996,6 +1075,11 @@ class CS3IPlayer : IPlayer {
                             event(TimestampSkippedEvent(timestamp = lastTimeStamp, source = source))
                         }
                     }
+
+                    CSPlayerEvent.PlayAsAudio -> {
+                        isAudioOnlyBackground = true
+                        activity?.moveTaskToBack(false)
+                    }
                 }
             }
         } catch (t: Throwable) {
@@ -1007,7 +1091,6 @@ class CS3IPlayer : IPlayer {
     // we want to push metadata when loading torrents, so we just set up a looper that loops until
     // the index changes, this way only 1 looper is active at a time, and modifying eventLooperIndex
     // will kill any active loopers
-    @Volatile
     private var eventLooperIndex = 0
     private fun torrentEventLooper(hash: String) = ioSafe {
         eventLooperIndex += 2
@@ -1066,8 +1149,6 @@ class CS3IPlayer : IPlayer {
                 maxVideoHeight = maxVideoHeight
             )
 
-            requestSubtitleUpdate = ::reloadSubs
-
             event(PlayerAttachedEvent(exoPlayer))
             exoPlayer?.prepare()
 
@@ -1109,12 +1190,13 @@ class CS3IPlayer : IPlayer {
                                         // Nicer looking displayed names
                                         fromTwoLettersToLanguage(format.language!!)
                                             ?: format.language!!,
+                                        "",
                                         // See setPreferredTextLanguage
                                         format.id!!.stripTrackId(),
                                         SubtitleOrigin.EMBEDDED_IN_VIDEO,
                                         format.sampleMimeType ?: MimeTypes.APPLICATION_SUBRIP,
                                         emptyMap(),
-                                        format.language
+                                        format.language,
                                     )
                                 }
 
@@ -1494,7 +1576,8 @@ class CS3IPlayer : IPlayer {
 
                                 DialogInterface.BUTTON_NEGATIVE -> {
                                     Torrent.hasAcceptedTorrentForThisSession = false
-                                    event(ErrorEvent(ErrorLoadingException("Not accepted torrent")))
+                                    val errorMessage = context.getString(R.string.torrent_not_accepted)
+                                    event(ErrorEvent(ErrorLoadingException(errorMessage)))
                                 }
                             }
                         }
@@ -1503,7 +1586,8 @@ class CS3IPlayer : IPlayer {
                         .setMessage(R.string.torrent_info)
                         // Ensure that the user will not accidentally start a torrent session.
                         .setCancelable(false).setOnCancelListener {
-                            event(ErrorEvent(ErrorLoadingException("Not accepted torrent")))
+                            val errorMessage = context.getString(R.string.torrent_not_accepted)
+                            event(ErrorEvent(ErrorLoadingException(errorMessage)))
                         }
                         .setPositiveButton(R.string.ok, dialogClickListener)
                         .setNegativeButton(R.string.go_back, dialogClickListener)
@@ -1542,6 +1626,7 @@ class CS3IPlayer : IPlayer {
                                 key = link.key,
                                 uuid = link.uuid,
                                 kty = link.kty,
+                                licenseUrl = link.licenseUrl,
                                 keyRequestParameters = link.keyRequestParameters
                             )
                         )
