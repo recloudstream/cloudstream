@@ -6,10 +6,10 @@
     <string name="tracks">Треки</string>
     <string name="queued">В очереди</string>
     <string name="resize_zoom">Приблизить</string>
-    <string name="download">Загрузить</string>
+    <string name="download">Скачать</string>
     <string name="search">Поиск</string>
     <string name="resize_fill">Заполнить</string>
-    <string name="download_failed">Скачать неудачный</string>
+    <string name="download_failed">Скачивание не удалось</string>
     <string name="resize_fit">Подогнать</string>
     <string name="delete">Удалить</string>
     <string name="cancel">Отмена</string>
@@ -21,12 +21,12 @@
     <string name="none">Нет</string>
     <string name="title">Название</string>
     <string name="loading">Загрузка…</string>
-    <string name="status">Статус</string>
+    <string name="status">Состояние</string>
     <string name="logout">Выйти</string>
-    <string name="next_episode_format" formatted="true">Серия %d будет выпущен в</string>
+    <string name="next_episode_format" formatted="true">Серия %d будет выпущена на</string>
     <string name="result_poster_img_des">Плакат</string>
     <string name="search_poster_img_des">Плакат</string>
-    <string name="episode_poster_img_des">Плакат эпизода</string>
+    <string name="episode_poster_img_des">Плакат серии</string>
     <string name="home_main_poster_img_des">Главный плакат</string>
     <string name="home_next_random_img_des">Следующий случайный</string>
     <string name="go_back_img_des">Вернуться</string>
@@ -38,42 +38,42 @@
 \n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Заполнитель</string>
     <string name="app_name">CloudStream</string>
-    <string name="action_remove_from_bookmarks">Убирать</string>
+    <string name="action_remove_from_bookmarks">Убрать</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
     <string name="play_with_app_name">Смотреть с CloudStream</string>
     <string name="title_home">Главная</string>
     <string name="title_search">Поиск</string>
-    <string name="title_downloads">Загрузки</string>
+    <string name="title_downloads">Скачанное</string>
     <string name="title_settings">Настройки</string>
     <string name="search_hint">Поиск…</string>
     <string name="search_hint_site" formatted="true">Поиск %s…</string>
     <string name="no_data">Нет данных</string>
     <string name="episode_more_options_des">Дополнительные опции</string>
-    <string name="next_episode">Следующий эпизод</string>
+    <string name="next_episode">Следующая серия</string>
     <string name="result_tags">Жанры</string>
     <string name="result_share">Поделиться</string>
-    <string name="result_open_in_browser">Открыть в браузере</string>
+    <string name="result_open_in_browser">Открыть в веб обозревателе</string>
     <string name="skip_loading">Пропустить загрузку</string>
     <string name="type_watching">Просмотр</string>
-    <string name="type_on_hold">Приостановленно</string>
+    <string name="type_on_hold">Приостановлено</string>
     <string name="type_completed">Завершено</string>
-    <string name="type_dropped">Брошенный</string>
-    <string name="type_plan_to_watch">План посмотреть</string>
+    <string name="type_dropped">Брошено</string>
+    <string name="type_plan_to_watch">Буду смотреть</string>
     <string name="type_re_watching">Пересмотрю</string>
     <string name="play_movie_button">Смотреть фильм</string>
     <string name="play_trailer_button">Смотреть трейлер</string>
-    <string name="play_livestream_button">Смотреть Livestream</string>
+    <string name="play_livestream_button">Смотреть стрим</string>
     <string name="pick_source">Источники</string>
     <string name="pick_subtitle">Субтитры</string>
-    <string name="play_episode">Смотреть эпизод</string>
-    <string name="reload_error">Повторная попытка подключение…</string>
+    <string name="play_episode">Смотреть серию</string>
+    <string name="reload_error">Повторная попытка подключения…</string>
     <string name="go_back">Вернуться</string>
     <string name="downloaded">Скачано</string>
     <string name="downloading">Скачивание</string>
-    <string name="download_paused">Скачать остановлена</string>
-    <string name="download_started">Загрузка началась</string>
-    <string name="download_canceled">Загрузка отменена</string>
-    <string name="download_done">Скачать выполнено</string>
+    <string name="download_paused">Скачивание остановлено</string>
+    <string name="download_started">Скачивание началось</string>
+    <string name="download_canceled">Скачивание отменено</string>
+    <string name="download_done">Скачивание закончено</string>
     <string name="home_info">Инфо</string>
     <string name="update_started">Обновление началось</string>
     <string name="home_expanded_hide">Прятать</string>
@@ -86,12 +86,12 @@
     <string name="sort_close">Закрыть</string>
     <string name="sort_clear">Очистить</string>
     <string name="sort_save">Сохранить</string>
-    <string name="player_speed">Скорость проигрыватель</string>
-    <string name="play_episode_toast">Воспроизвести Эпизод</string>
+    <string name="player_speed">Скорость проигрывателя</string>
+    <string name="play_episode_toast">Смотреть серию</string>
     <string name="next_episode_time_day_format" formatted="true">%1$dд %2$dч %3$dм</string>
     <string name="duration_format" formatted="true">%d мин</string>
-    <string name="app_dubbed_text">Dub</string>
-    <string name="app_subbed_text">Sub</string>
+    <string name="app_dubbed_text">Дуб</string>
+    <string name="app_subbed_text">Суб</string>
     <string name="action_add_to_bookmarks">Установите смотреть состояние</string>
     <string name="subs_outline_color">Цвет контура</string>
     <string name="subs_text_color">Цвет текста</string>
@@ -100,11 +100,11 @@
     <string name="subs_window_color">Цвет окна</string>
     <string name="subs_edge_type">Тип края</string>
     <string name="subs_subtitle_elevation">Подъем субтитров</string>
-    <string name="search_provider_text_providers">Поиск с использованием провайдеров</string>
+    <string name="search_provider_text_providers">Поиск с использованием поставщиков</string>
     <string name="search_provider_text_types">Поиск с использованием типов</string>
-    <string name="benene_count_text">%d бенен(а/ов) выдано разрабам</string>
+    <string name="benene_count_text">%d бенен(а/ов) выдано разработчикам</string>
     <string name="benene_count_text_none">Бенены не выданы</string>
-    <string name="subs_auto_select_language">Автовыбор языка</string>
+    <string name="subs_auto_select_language">Автоматический выбор языка</string>
     <string name="subs_download_languages">Скачать языки</string>
     <string name="subs_subtitle_languages">Язык субтитров</string>
     <string name="subs_hold_to_reset_to_default">Удерживайте, чтобы сбросить по умолчанию</string>
@@ -120,15 +120,15 @@
     <string name="pref_disable_acra">Отключить автоматическое информирование об ошибках</string>
     <string name="subs_import_text" formatted="true">Импортируйте шрифты поместив их в %s</string>
     <string name="continue_watching">Продолжить смотреть</string>
-    <string name="action_remove_watching">Удалите</string>
+    <string name="action_remove_watching">Убрать</string>
     <string name="action_open_watching">Подробнее</string>
-    <string name="vpn_might_be_needed">Для корректной работы этого поставщика может потребоваться VPN</string>
-    <string name="vpn_torrent">Этот поставщика - торрент, рекомендуется VPN</string>
-    <string name="provider_info_meta">Метаданные не предоставляются сайтом, загрузка видео будет неудачной, если они не существуют на сайте.</string>
+    <string name="vpn_might_be_needed">Для правильной работы этого поставщика может потребоваться VPN</string>
+    <string name="vpn_torrent">Этот поставщик — торрент, рекомендуется использовать VPN</string>
+    <string name="provider_info_meta">Метаданные не предоставляются сайтом, скачивание видео будет неудачным, если они не существуют на сайте.</string>
     <string name="torrent_plot">Описание</string>
     <string name="normal_no_plot">Сюжет не найден</string>
     <string name="torrent_no_plot">Описание не найдено</string>
-    <string name="show_log_cat">Показать Logcat 🐈</string>
+    <string name="show_log_cat">Показать журнал ошибок 🐈</string>
     <string name="picture_in_picture">Картинка в картинке</string>
     <string name="picture_in_picture_des">Продолжение воспроизведения в миниатюрном проигрывателе поверх других приложений</string>
     <string name="player_size_settings">Кнопка изменения размера проигрывателя</string>
@@ -141,36 +141,36 @@
     <string name="swipe_to_seek_settings">Проведите пальцем для поиска</string>
     <string name="swipe_to_change_settings">Проведите пальцем для изменения настроек</string>
     <string name="swipe_to_change_settings_des">Проведите вверх или вниз по левой или правой стороне, чтобы изменить яркость или громкость</string>
-    <string name="autoplay_next_settings">Автопроиграть следующего серия</string>
+    <string name="autoplay_next_settings">Автоматически начинать следующую серию</string>
     <string name="play_torrent_button">Поток торрент</string>
-    <string name="swipe_to_seek_settings_des">Проведите пальцем из стороны в сторону, чтобы управлять свое место в видеоролике</string>
+    <string name="swipe_to_seek_settings_des">Водите пальцем из стороны в сторону чтобы выбрать место в видеоролике</string>
     <string name="autoplay_next_settings_des">Начните следующий серию, когда закончится текущий</string>
-    <string name="restore_success">Загружена резервная копия</string>
+    <string name="restore_success">Восстановлено из резервной копии</string>
     <string name="restore_failed_format" formatted="true">Не удалось восстановить данные из %s</string>
-    <string name="backup_failed">Отсутствует разрешение на хранение. Пожалуйста попробуйте снова.</string>
-    <string name="category_account">Аккаунты и Безопасность</string>
+    <string name="backup_failed">Отсутствует разрешение на хранение. Пожалуйста, попробуйте снова.</string>
+    <string name="category_account">Учётные записи и Безопасность</string>
     <string name="category_updates">Обновления и Резервное копирование</string>
     <string name="settings_info">Информация</string>
     <string name="advanced_search">Расширенный поиск</string>
     <string name="show_trailers_settings">Показывать трейлеры</string>
     <string name="pref_filter_search_quality">Скрыть выбранные форматы видео в результатах поиска</string>
-    <string name="automatic_plugin_updates">Автообновление плагинов</string>
-    <string name="automatic_plugin_download">Автозагрузка плагинов</string>
+    <string name="automatic_plugin_updates">Автоматическое обновление дополнений</string>
+    <string name="automatic_plugin_download">Автозагрузка дополнений</string>
     <string name="updates_settings">Показать обновления приложения</string>
     <string name="updates_settings_des">Автоматически проверять обновления при старте приложения.</string>
-    <string name="uprereleases_settings">Обновится до пре-релиза</string>
+    <string name="uprereleases_settings">Обновится до предвыпуска</string>
     <string name="apk_installer_settings">APK установщик</string>
     <string name="github">Github</string>
     <string name="app_language">Язык приложения</string>
     <string name="no_links_found_toast">Ссылок не найдено</string>
     <string name="copy_link_toast">Ссылка скопирована в буфер обмена</string>
     <string name="subs_default_reset_toast">Восстановить по умолчанию</string>
-    <string name="acra_report_toast">Извините, приложение прекратило работу. Анонимный отчет об ошибке будет отправлен разработчикам</string>
-    <string name="episode">Эпизод</string>
-    <string name="episodes">Эпизодов</string>
+    <string name="acra_report_toast">Извините, приложение прекратило работу. Анонимный отчёт об ошибке будет отправлен разработчикам</string>
+    <string name="episode">Серия</string>
+    <string name="episodes">Серии</string>
     <string name="season_short">С</string>
     <string name="episode_short">Э</string>
-    <string name="no_episodes_found">Эпизоды не найдены</string>
+    <string name="no_episodes_found">Серии не найдены</string>
     <string name="delete_file">Удалить файл</string>
     <string name="resume">Продолжить</string>
     <string name="go_back_30">-30</string>
@@ -190,11 +190,11 @@
     <string name="torrent">Торренты</string>
     <string name="others">Другое</string>
     <string name="storage_error">Ошибка загрузки, проверьте разрешения хранилища</string>
-    <string name="episode_action_auto_download">Автоскачивание</string>
-    <string name="episode_action_download_mirror">Загрузка. Зеркало</string>
+    <string name="episode_action_auto_download">Автоматическое скачивание</string>
+    <string name="episode_action_download_mirror">Скачивание. Зеркало</string>
     <string name="season">Сезон</string>
     <string name="anim">Аниме приложение от тех же разработчиков</string>
-    <string name="automatic_plugin_download_summary">Автоматически загружать еще не установленные плагины из добавленных репозиториев.</string>
+    <string name="automatic_plugin_download_summary">Автоматически скачивать ещё не установленные дополнения из добавленных источников.</string>
     <string name="discord">Присоединиться к Discord-серверу</string>
     <string name="free_storage">Свободно</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
@@ -207,17 +207,17 @@
     <string name="cartoons">Мультфильмы</string>
     <string name="documentaries">Документальные фильмы</string>
     <string name="ova">OVA</string>
-    <string name="nsfw">NSFW</string>
-    <string name="nsfw_singular">NSFW</string>
+    <string name="nsfw">Вызывающие</string>
+    <string name="nsfw_singular">Вызывающее</string>
     <string name="movies_singular">Фильм</string>
     <string name="tv_series_singular">Сериал</string>
     <string name="torrent_singular">Торрент</string>
     <string name="documentaries_singular">Документальный</string>
     <string name="asian_drama_singular">Азиатская драма</string>
     <string name="category_general">Общие</string>
-    <string name="category_providers">Провайдеры</string>
+    <string name="category_providers">Поставщики</string>
     <string name="category_ui">Расстановка</string>
-    <string name="pref_category_extensions">Расширения</string>
+    <string name="pref_category_extensions">Дополнения</string>
     <string name="category_player">Плеер</string>
     <string name="backup_settings">Резервное копирование данных</string>
     <string name="bug_report_settings_off">Отправлять данные только при вылетах</string>
@@ -226,10 +226,10 @@
     <string name="double_tap_to_seek_settings_des">Коснитесь дважды правой или левой стороны для поиска вперед или назад</string>
     <string name="double_tap_to_pause_settings_des">Нажмите дважды в центре, чтобы сделать паузу</string>
     <string name="use_system_brightness_settings">Использовать системную яркость</string>
-    <string name="episode_sync_settings_des">Автоматически синхронизировать текущий прогресс эпизода</string>
+    <string name="episode_sync_settings_des">Автоматически синхронизировать текущий прогресс серии</string>
     <string name="backup_failed_error_format">Ошибка резервного копирования %s</string>
     <string name="restore_settings">Восстановить данные из резервной копии</string>
-    <string name="show_fillers_settings">Показывать Филлер эпизоды для аниме</string>
+    <string name="show_fillers_settings">Показывать Филлер серии для аниме</string>
     <string name="kitsu_settings">Показывать афиши из Kitsu</string>
     <string name="apk_installer_settings_des">Некоторые телефоны не поддерживают новые установщики. Попробуйте использовать legacy (старый) вариант, если обновления не устанавливаются.</string>
     <string name="status_ongoing">Выходит</string>
@@ -249,11 +249,11 @@
     <string name="benene_des">Давал бенен</string>
     <string name="update">Обновить</string>
     <string name="primary_color_settings">Основной цвет</string>
-    <string name="provider_lang_settings">Языки провайдеров</string>
+    <string name="provider_lang_settings">Языки дополнений</string>
     <string name="repository_name_hint">Название репозитория (необязательно)</string>
     <string name="clear_history">Очистить историю</string>
     <string name="referer">Реферер (необязательно)</string>
-    <string name="benene">Дайте бенен разрабам</string>
+    <string name="benene">Дайте бенен разработчикам</string>
     <string name="pref_category_links">Ссылки</string>
     <string name="pref_category_player_layout">Расстановка</string>
     <string name="app_layout">Расстановка приложения</string>
@@ -261,8 +261,8 @@
     <string name="add_repository">Добавить репозиторий</string>
     <string name="action_remove_from_watched">Убрать отметку</string>
     <string name="confirm_exit_dialog">Вы уверены, что хотите выйти?</string>
-    <string name="plugin_downloaded">Плагин скачан</string>
-    <string name="plugin_deleted">Плагин удален</string>
+    <string name="plugin_downloaded">Дополнение скачано</string>
+    <string name="plugin_deleted">Дополнение удалено</string>
     <string name="extension_description">Описание</string>
     <string name="extension_version">Версия</string>
     <string name="extension_status">Статус</string>
@@ -271,13 +271,13 @@
     <string name="extension_types">Поддерживается</string>
     <string name="skip_type_format" formatted="true">Пропустить %s</string>
     <string name="skip_type_ed">Концовка</string>
-    <string name="use_system_brightness_settings_des">Используйте яркость системы в проигрывателе приложения вместо темного наложения</string>
+    <string name="use_system_brightness_settings_des">Используйте яркость системы в проигрывателе приложения вместо тёмной накладки</string>
     <string name="episode_sync_settings">Обновлять прогресс просмотра</string>
     <string name="backup_success">Данные сохранены</string>
-    <string name="advanced_search_des">Показывает результаты поиска, разделенные по провайдеру</string>
+    <string name="advanced_search_des">Показывает результаты поиска, разделенные по поставщикам</string>
     <string name="uprereleases_settings_des">Поиск предварительных обновлений вместо полных выпусков</string>
     <string name="redo_setup_process">Повторить процесс настройки</string>
-    <string name="no_chromecast_support_toast">Этот провайдер не поддерживает Chromecast</string>
+    <string name="no_chromecast_support_toast">Этот поставщик не поддерживает Chromecast</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Нет сезона</string>
     <string name="episodes_range">%1$d-%2$d</string>
@@ -286,9 +286,9 @@
     <string name="live_singular">Прямая трансляция</string>
     <string name="source_error">Ошибка источника</string>
     <string name="remote_error">Ошибка пульта</string>
-    <string name="render_error">Ошибка рендера</string>
+    <string name="render_error">Ошибка отрисовки</string>
     <string name="unexpected_error">Неожиданная ошибка плеера</string>
-    <string name="episode_action_chromecast_episode">Эпизод Chromecast</string>
+    <string name="episode_action_chromecast_episode">Смотреть серию на Chromecast</string>
     <string name="episode_action_play_in_format">Воспроизведение на %s</string>
     <string name="episode_action_download_subtitle">Скачать субтитры</string>
     <string name="show_hd">Знак качества</string>
@@ -297,7 +297,7 @@
     <string name="dont_show_again">Больше не показывать</string>
     <string name="skip_update">Пропустить это обновление</string>
     <string name="nginx_url_pref">URL сервера NGINX</string>
-    <string name="create_account">Создать аккаунт</string>
+    <string name="create_account">Создать учётную запись</string>
     <string name="add_sync">Добавить слежение</string>
     <string name="added_sync_format" formatted="true">Добавлено %s</string>
     <string name="upload_sync">Синхронизировать</string>
@@ -318,14 +318,14 @@
     <string name="video_buffer_size_settings">Размер буфера</string>
     <string name="video_buffer_clear_settings">Отчистить кеш видео и изображений</string>
     <string name="video_ram_description">Вызывает сбои, если установлено слишком высокое значение на устройствах с небольшим объемом памяти, таких как Android TV.</string>
-    <string name="video_disk_description">Вызывает проблемы, если установлено слишком высокое значение на устройствах с небольшим объемом памяти, таких как Android TV.</string>
-    <string name="lightnovel">Легкое приложение для новелл от тех же разработчиков</string>
+    <string name="video_disk_description">Вызывает проблемы, если установлено слишком высокое значение на устройствах с небольшим объёмом памяти, таких как Android TV.</string>
+    <string name="lightnovel">Лёгкое приложение для новелл от тех же разработчиков</string>
     <string name="extension_language">Язык</string>
     <string name="hls_playlist">Плейлист HLS</string>
-    <string name="extension_install_first">Сначала установить расширение</string>
+    <string name="extension_install_first">Сначала установить дополнение</string>
     <string name="player_settings_play_in_app">Внутренний проигрыватель</string>
     <string name="synopsis">Синопсис</string>
-    <string name="skip_type_intro">Интро</string>
+    <string name="skip_type_intro">Введение</string>
     <string name="example_email">hello@world.com</string>
     <string name="episode_action_chromecast_mirror">Зеркало Chromecast</string>
     <string name="episode_action_play_in_app">Воспроизвести в приложении</string>
@@ -333,18 +333,18 @@
     <string name="pref_category_player_features">Возможности плеера</string>
     <string name="pref_category_subtitles">Субтитры</string>
     <string name="bottom_title_settings">Расположение названия плаката</string>
-    <string name="tv_layout">ТV (телевидение)</string>
+    <string name="tv_layout">Телевизионное оформление</string>
     <string name="phone_layout">Телефон</string>
     <string name="emulator_layout">Эмулятор</string>
     <string name="bottom_title_settings_des">Под плакатом</string>
-    <string name="example_password">parol123</string>
-    <string name="example_username">Юзернейм</string>
-    <string name="switch_account">Сменить аккаунт</string>
-    <string name="add_account">Добавить аккаунт</string>
+    <string name="example_password">ваш пароль123</string>
+    <string name="example_username">Имярек</string>
+    <string name="switch_account">Сменить учётную запись</string>
+    <string name="add_account">Добавить учётную запись</string>
     <string name="example_site_name">ИмяСайта</string>
     <string name="example_site_url">https://example.com</string>
     <string name="example_lang_name">Код языка (ru)</string>
-    <string name="account">аккаунт</string>
+    <string name="account">учётная запись</string>
     <string name="automatic">Автоматически</string>
     <string name="example_ip">127.0.0.1</string>
     <string name="pref_category_app_updates">Обновления приложения</string>
@@ -353,16 +353,16 @@
     <string name="pref_category_cache">Кэш</string>
     <string name="pref_category_gestures">Жесты</string>
     <string name="setup_done">Готово</string>
-    <string name="extensions">Расширения</string>
+    <string name="extensions">Дополнения</string>
     <string name="repository_url_hint">URL или код репозитория</string>
-    <string name="plugin_loaded">Плагин загружен</string>
+    <string name="plugin_loaded">Дополнение загружено</string>
     <string name="action_open_play">@string/home_play</string>
     <string name="double_tap_to_seek_settings">Перемотка двойным нажатием</string>
     <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="is_adult">18+</string>
     <string name="plugin_load_fail" formatted="true">Не удалось загрузить %s</string>
-    <string name="plugin">плагины</string>
+    <string name="plugin">дополнения</string>
     <string name="quality_sdr">SDR</string>
     <string name="quality_ts">TS</string>
     <string name="delete_repository">Удалить репозиторий</string>
@@ -370,7 +370,7 @@
     <string name="quality_4k">4K</string>
     <string name="quality_webrip">Web</string>
     <string name="quality_uhd">UHD</string>
-    <string name="plugin_singular">плагин</string>
+    <string name="plugin_singular">дополнение</string>
     <string name="skip_setup">Пропустить настройку</string>
     <string name="error">Ошибка</string>
     <string name="quality_cam_hd">Cam</string>
@@ -386,7 +386,7 @@
     <string name="plugins_disabled" formatted="true">Отключено: %d</string>
     <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="authenticated_user" formatted="true">%s аутентифицировано</string>
-    <string name="authenticated_user_fail" formatted="true">Не удается логин на %s</string>
+    <string name="authenticated_user_fail" formatted="true">Не удаётся войти на %s</string>
     <string name="max">Макс</string>
     <string name="min">Мин</string>
     <string name="subtitles_outline">Контурный</string>
@@ -412,7 +412,7 @@
     <string name="coming_soon">Скоро…</string>
     <string name="show_sub">Этикетка Sub</string>
     <string name="actor_background">Фон</string>
-    <string name="pref_category_looks">Oтoбpaжeниe</string>
+    <string name="pref_category_looks">Отображение</string>
     <string name="trailer">Трейлер</string>
     <string name="single_plugin_disabled" formatted="true">%s (отключено)</string>
     <string name="next">Далее</string>
@@ -430,8 +430,7 @@
     <string name="sort_alphabetical_z">Алфавитный (Я до А)</string>
     <string name="select_library">Выбрать библиотеку</string>
     <string name="open_with">Открыть с</string>
-    <string name="empty_library_no_accounts_message">Ваша библиотека пуста :(
-\nВойдите в аккаунт с библиотекой или добавьте сериалы в локальную библиотеку.</string>
+    <string name="empty_library_no_accounts_message">Ваша библиотека пуста :( \nВойдите в учётную запись библиотеки или добавьте сериалы в локальную библиотеку.</string>
     <string name="sort">Сортировка</string>
     <string name="view_public_repositories_button_short">Открытый список</string>
     <string name="sort_rating_desc">Рейтинг (высокий - низкий)</string>
@@ -444,14 +443,14 @@
     <string name="extension_rating" formatted="true">Рейтинг: %s</string>
     <string name="batch_download_finish_format" formatted="true">Скачано %1$d %2$s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Все %s уже скачаны</string>
-    <string name="batch_download_start_format" formatted="true">Загрузка началась %1$d %2$s…</string>
+    <string name="batch_download_start_format" formatted="true">Скачивание началась %1$d %2$s…</string>
     <string name="plugins_not_downloaded" formatted="true">Не скачано: %d</string>
-    <string name="download_all_plugins_from_repo">Внимание: CloudStream 3 не несет ответсвенность за сторонние файлы и не поддерживает их!</string>
+    <string name="download_all_plugins_from_repo">Внимание: CloudStream 3 не несёт ответственность за сторонние файлы и не поддерживает их!</string>
     <string name="safe_mode_title">Включен безопасный режим</string>
     <string name="plugins_downloaded" formatted="true">Скачано: %d</string>
-    <string name="plugins_updated" formatted="true">Обновлено %d плагинов</string>
-    <string name="player_load_subtitles_online">Загрузить из интернета</string>
-    <string name="update_notification_downloading">Загрузка обновления приложения…</string>
+    <string name="plugins_updated" formatted="true">Обновлено %d дополнений</string>
+    <string name="player_load_subtitles_online">Скачивать из интернета</string>
+    <string name="update_notification_downloading">Скачивание обновления приложения…</string>
     <string name="error_invalid_url">Недопустимый URL</string>
     <string name="apply_on_restart">Перезапустите приложение, чтобы увидеть изменения.</string>
     <string name="crash_reporting_title">Отчеты ошибках</string>
@@ -459,24 +458,23 @@
     <string name="provider_languages_tip">Смотрите видео на этих языках</string>
     <string name="downloaded_file">Скачано файл</string>
     <string name="poster_image">Изображение постера</string>
-    <string name="batch_download">Пакетная загрузка</string>
+    <string name="batch_download">Пакетная скачивание</string>
     <string name="setup_extensions_subtext">Скачайте список сайтов, который вы хотите использовать</string>
     <string name="display_subbed_dubbed_settings">Отображать аниме с дубляжом/субтитрами</string>
-    <string name="enable_nsfw_on_providers">Включить NSFW у поддерживаемых расширений (провайдеров)</string>
+    <string name="enable_nsfw_on_providers">Включить вызывающее содержимое у поддерживаемых дополнений (поставщиков)</string>
     <string name="subtitles_remove_captions">Удалять скрытые субтитры из субтитров</string>
     <string name="extras">Дополнительно</string>
     <string name="app_layout_subtext">Изменить вид интерфейса, чтобы соответствовать устройству</string>
     <string name="audio_tracks">Аудио дорожки</string>
-    <string name="delete_repository_plugins">Это также удалит все плагины репозитория</string>
+    <string name="delete_repository_plugins">Это также удалит все дополнения из источника</string>
     <string name="view_public_repositories_button">Просмотреть репозитории сообщества</string>
     <string name="video_tracks">Видео дорожки</string>
-    <string name="safe_mode_description">Все расширения были отключены из-за сбоя, чтобы помочь вам найти то, которое вызывает проблемы.</string>
+    <string name="safe_mode_description">Все дополнения были отключены из-за сбоя, чтобы помочь вам найти то, которое вызывает проблемы.</string>
     <string name="skip_type_recap">Повтор</string>
     <string name="clipboard_too_large">Слишком много текста. Не удалось сохранить в буфер обмена.</string>
     <string name="update_notification_installing">Установка обновления приложения…</string>
     <string name="update_notification_failed">Не удалось установить новую версию приложения</string>
-    <string name="safe_mode_file">Файл безопасного режима найден!
-\nНе загружаются никакие расширения при запуске, пока файл не будет удален.</string>
+    <string name="safe_mode_file">Файл безопасного режима найден! \nНе загружаются никакие дополнения при запуске, пока файл не будет удалён.</string>
     <string name="delayed_update_notice">Приложение будет обновлено после выхода</string>
     <string name="empty_library_logged_in_message">Этот список пуст, попробуйте переключиться на другой.</string>
     <string name="uppercase_all_subtitles">Все субтитры заглавными</string>
@@ -484,9 +482,9 @@
     <string name="subtitles_filter_lang">Фильтровать по предпочитаемому языку медиа</string>
     <string name="error_invalid_id">Неверный ID</string>
     <string name="network_adress_example">https://example.com/example.mp4</string>
-    <string name="random_button_settings_desc">Отображать рандомную кнопку в библиотеке и главной странице</string>
-    <string name="random_button_settings">Рандомная кнопка</string>
-    <string name="apk_installer_legacy">Legacy (старый)</string>
+    <string name="random_button_settings_desc">Отображать случайную кнопку в библиотеке и главной странице</string>
+    <string name="random_button_settings">Случайная кнопка</string>
+    <string name="apk_installer_legacy">Устаревший</string>
     <string name="bug_report_settings_on">Не отправляет данные</string>
     <string name="episode_action_reload_links">Перезагрузить ссылки</string>
     <string name="preferred_media_settings">Предпочтительные медиа</string>
@@ -501,7 +499,7 @@
     <string name="actor_supporting">Второго планa</string>
     <string name="skip_type_mixed_op">Смешанный опенинг</string>
     <string name="skip_type_mixed_ed">Смешанный конец</string>
-    <string name="category_provider_test">Тест провайдер</string>
+    <string name="category_provider_test">Тест поставщиков</string>
     <string name="test_log">Журнал</string>
     <string name="start">Запустить</string>
     <string name="test_passed">Выполнено</string>
@@ -527,13 +525,13 @@
     <string name="profile_background_des">Задний фон профиля</string>
     <string name="help">Помощь</string>
     <string name="profile_number">Профиль %d</string>
-    <string name="automatic_plugin_download_mode_title">Выберите режим фильтера плагинов для загрузки</string>
+    <string name="automatic_plugin_download_mode_title">Выберите режим фильтрации для скачивания дополнений</string>
     <string name="qualities">Качество</string>
     <string name="use">Использовать</string>
     <string name="disable">Выключить</string>
     <string name="no_repository_found_error">Хранилище не обнаружено, проверьте URL и попробуйте с ВПН</string>
     <string name="already_voted">Вы уже проголосовали</string>
-    <string name="no_plugins_found_error">Никаких плагинов не обнаружено</string>
+    <string name="no_plugins_found_error">Никаких дополнений не обнаружено в источнике</string>
     <string name="set_default">Поставить обычный</string>
     <string name="quality_profile_help">Здесь вы можете изменить порядок расположения источников. Если видео имеет более высокий приоритет, оно будет отображаться выше в списке источников. Сумма приоритета источника и приоритета качества составляет приоритет видео.
 \n
@@ -543,132 +541,146 @@
 \n
 \nПРИМЕЧАНИЕ. Если сумма равна 10 или более, плеер автоматически пропустит загрузку при загрузке этой ссылки!</string>
     <string name="links_reloaded_toast">Ссылки перезагружены</string>
-    <string name="select_an_account">Выбрать аккаунт</string>
-    <string name="favorite_removed">%s убрано из любимого</string>
-    <string name="enter_pin">Введите пин-код</string>
-    <string name="lock_profile">Защитить профиль</string>
-    <string name="pin">Пин-код</string>
+    <string name="select_an_account">Выберите учётную запись</string>
+    <string name="favorite_removed">%s убрано из любимых</string>
+    <string name="enter_pin">Введите ПИН-код</string>
+    <string name="lock_profile">Заблокировать профиль</string>
+    <string name="pin">ПИН-код</string>
     <string name="duplicate_title">Найден потенциальный дубликат</string>
     <string name="duplicate_add">Добавить</string>
-    <string name="pin_error_incorrect">Неверный пин-код. Попробуйте снова.</string>
-    <string name="pin_error_length">Пин-код должен состоять из 4 цифр</string>
-    <string name="edit_account">Изменить аккаунт</string>
-    <string name="manage_accounts">Управление аккаунтами</string>
+    <string name="pin_error_incorrect">Неверный ПИН-код. Пожалуйста, введите его заново.</string>
+    <string name="pin_error_length">ПИН-код должен содержать 4 символа</string>
+    <string name="edit_account">Изменить учётную запись</string>
+    <string name="manage_accounts">Управление учётными записями</string>
     <string name="logged_account" formatted="true">Вы вошли как %s</string>
-    <string name="skip_startup_account_select_pref">Пропускать выбор аккаунта при запуске</string>
+    <string name="skip_startup_account_select_pref">Пропускать выбор учётной записи при запуске</string>
     <string name="rotate_video">Повернуть</string>
     <string name="rotate_video_desc">Показывать переключатель ориентации экрана</string>
     <string name="duplicate_replace_all">Заменить всё</string>
-    <string name="duplicate_message_multiple" formatted="true">Потенциальные дубликаты элементов были найдены в вашей библиотеке:
-\n
-\n\'%s.\'
-\n
-\nВы хотите добавить этот элемент, заменить существующие или отменить это действие?</string>
+    <string name="duplicate_message_multiple" formatted="true">В вашей библиотеке есть возможно повторяющиеся элементы: \n \n\'%s.\' \n \nХотите ли вы всё равно добавить этот элемент в библиотеку, заменить уже существующий или отменить действие?</string>
     <string name="action_remove_from_favorites">Убрать из любимого</string>
     <string name="action_add_to_favorites">Добавить в любимое</string>
     <string name="auto_rotate_video_desc">Включить автоматическую смену ориентации экрана на основе ориентации видео</string>
     <string name="auto_rotate_video">Автоповорот</string>
     <string name="rotate_video_key">rotate_video_key</string>
-    <string name="use_default_account">Использовать аккаунт по умолчанию</string>
+    <string name="use_default_account">Использовать учётную запись по умолчанию</string>
     <string name="action_unsubscribe">Отписаться</string>
     <string name="duplicate_replace">Заменить</string>
-    <string name="enter_current_pin">Введите текущий пин-код</string>
+    <string name="enter_current_pin">Введите текущий ПИН-код</string>
     <string name="auto_rotate_video_key">auto_rotate_video_key</string>
-    <string name="favorites_list_name">Любимое</string>
-    <string name="favorite_added">%s добавлено в любимое</string>
-    <string name="enter_pin_with_name" formatted="true">Введите пин-код от %s</string>
+    <string name="favorites_list_name">Любимые</string>
+    <string name="favorite_added">%s добавлено в любимые</string>
+    <string name="enter_pin_with_name" formatted="true">Введите ПИН-код от %s</string>
     <string name="action_subscribe">Подписаться</string>
     <string name="backup_frequency">Частота резервного копирования</string>
-    <string name="duplicate_message_single" formatted="true">Похоже, что потенциальный дубликат элемента уже существует в вашей библиотеке: \'%s.\'
-\n
-\nВы хотите добавить этот элемент, заменить существующий или отменить это действие?</string>
-    <string name="subscribe_tooltip">Оповещение о выходе нового эпизода</string>
+    <string name="duplicate_message_single" formatted="true">Кажется, что в вашей библиотеке уже есть такой элемент: \'%s.\' \n \nВы хотите всё равно добавить его, заменить уже существующий или отменить действие?</string>
+    <string name="subscribe_tooltip">Оповещение о выходе новой серии</string>
     <string name="result_search_tooltip">Искать в других расширениях</string>
     <string name="recommendations_tooltip">Показать рекомендации</string>
-    <string name="test_extensions_summary">Этот тест предназначен только для разработчиков и не подтверждает или не опровергает работоспособность провайдеров.</string>
+    <string name="test_extensions_summary">Этот тест предназначен только для разработчиков и не подтверждает или не опровергает работоспособность поставщиков.</string>
     <string name="speed_setting_summary">Добавление настроек скорости в плеер</string>
-    <string name="test_extensions">Протестировать всех провайдеров</string>
+    <string name="test_extensions">Протестировать всех поставщиков</string>
     <string name="toast_copied">скопировано!</string>
     <string name="ok">ОК</string>
     <string name="repo_copy_label">Имя репозитория и URL адрес</string>
-    <string name="clipboard_permission_error">Ошибка доступа к буферу обмена, пожалуйста, попробуйте ещё раз</string>
-    <string name="clipboard_unknown_error">Ошибка при копировании, пожалуйста, скопируйте лог и свяжитесь с технической поддержкой.</string>
+    <string name="clipboard_permission_error">Ошибка доступа к буферу обмена, пожалуйста, попробуйте ещё раз.</string>
+    <string name="clipboard_unknown_error">Ошибка при копировании, пожалуйста, скопируйте журнал и свяжитесь с технической поддержкой.</string>
     <string name="unfavorite">Нелюбимое</string>
     <string name="biometric_authentication_title">Разблокировать CloudStream</string>
     <string name="favorite">Любимое</string>
     <string name="app_unrestricted_toast">Использование батареи приложением уже настроено на неограниченное</string>
-    <string name="app_info_intent_error">Не удается открыть информацию о приложении CloudStream.</string>
+    <string name="app_info_intent_error">Не удаётся открыть информацию о приложении CloudStream.</string>
     <string name="biometric_setting">Заблокировать биометрией</string>
     <string name="music_singlar">Музыка</string>
     <string name="audio_book_singular">Аудиокнига</string>
     <string name="custom_media_singluar">Медиа</string>
-    <string name="biometric_setting_summary">Разблокируйте приложение с помощью отпечатка пальца, Face ID, PIN-кода, шаблона и пароля.</string>
+    <string name="biometric_setting_summary">Разблокируйте приложение с помощью отпечатка пальца, Face ID, ПИН-кода, шаблона и пароля.</string>
     <string name="resume_remaining" formatted="true">%s
 \nосталось</string>
     <string name="battery_dialog_title">Отключить оптимизацию батареи</string>
-    <string name="password_pin_authentication_title">Аутентификация по паролю/PIN-коду</string>
+    <string name="password_pin_authentication_title">Аутентификация по паролю/ПИН-коду</string>
     <string name="biometric_unsupported">Биометрическая аутентификация на этом устройстве не поддерживается</string>
-    <string name="biometric_prompt_description">После нескольких неудачных попыток это уведомление закроется. Перезапутите приложение и попробуйте снова.</string>
+    <string name="biometric_prompt_description">После нескольких неудачных попыток это уведомление закроется. Перезапустите приложение и попробуйте снова.</string>
     <string name="biometric_warning">Ваши данные в CloudStream были скопированы. Хотя вероятность этого очень мала, все устройства могут вести себя по-разному. В редких случаях, когда доступ к приложению заблокирован, полностью удалите данные приложения и восстановите их из резервной копии. Мы приносим свои извинения за любые неудобства, связанные с этим.</string>
-    <string name="battery_dialog_message">Чтобы обеспечить бесперебойную загрузку и получение уведомлений о телепередачах, на которые вы подписаны, CloudStream необходимо разрешение на запуск в фоновом режиме. Нажав OK, вы перейдете к информации о приложении. Там перейдите к разделу 𝘼𝙥𝙥 𝙗𝙖𝙩𝙩𝙚𝙧𝙮 𝙪𝙨𝙖𝙜𝙚 и установите значение \"Использование батареи\" 𝙐𝙣𝙧𝙚𝙨𝙩𝙧𝙞𝙘𝙩𝙚𝙙. Пожалуйста, обратите внимание, что это разрешение не означает, что CS3 разрядит вашу батарею. Он будет работать в фоновом режиме только при необходимости, например, при получении уведомлений или загрузке видео с официальных расширений. Если вы решите отменить, вы можете изменить эту настройку позже в 𝙂𝙚𝙣𝙚𝙧𝙖𝙡 𝙎𝙚𝙩𝙩𝙞𝙣𝙜𝙨.</string>
+    <string name="battery_dialog_message">Чтобы обеспечить бесперебойное скачивание и получение уведомлений о телепередачах, на которые вы подписаны, CloudStream необходимо разрешение на запуск в фоновом режиме. Нажав OK, вы увидите запрос. Там нажмите «Разрешить».\n\nПожалуйста, обратите внимание, что это разрешение не означает, что CS3 разрядит вашу батарею. Он будет работать в фоновом режиме только при необходимости, например, при получении уведомлений или загрузке видео из официальных дополнений.</string>
     <string name="reset_btn">Сброс</string>
-    <string name="next_season_episode_format" formatted="true">Сезон %1$d Эпизод %2$d выйдет</string>
+    <string name="next_season_episode_format" formatted="true">Сезон %1$d серия %2$d выйдет</string>
     <string name="episode_upcoming_format" formatted="true">Выйдет %s</string>
-    <string name="player_settings_select_cast_device">Выберите девайс для трансляции</string>
+    <string name="player_settings_select_cast_device">Выберите устройство для трансляции</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
-    <string name="downloads_empty">В данный момент загрузок нет.</string>
+    <string name="downloads_empty">В данный момент скачиваний нет.</string>
     <string name="play_from_beginning_img_des">Играть с самого начала</string>
     <string name="open_local_video">Открыть локальное видео</string>
     <string name="pref_category_security">Меры безопасности</string>
-    <string name="pref_category_accounts">Аккаунты</string>
+    <string name="pref_category_accounts">Учётные записи</string>
     <string name="open_downloaded_repo">Откройте хранилище</string>
     <string name="qr_image">QR-код</string>
     <string name="test_warning">Предупреждение</string>
-    <string name="offline_file">Доступно для просмотра оффлайн</string>
+    <string name="offline_file">Доступно для просмотра без сети</string>
     <string name="select_all">Выбрать всё</string>
     <string name="deselect_all">Отменить выбор</string>
     <string name="delete_files">Удалить файлы</string>
-    <string name="delete_message_series_episodes" formatted="true">Вы уверены, что хотите навсегда удалить данный эпизод в %1$s?
-\n
-\n%2$s</string>
-    <string name="delete_message_series_section" formatted="true">Вы также навсегда удалите все эпизоды в данном сериале:
-\n
-\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Вы уверены, что хотите навсегда удалить данную серию в %1$s? \n \n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">Вы также навсегда удалите все серии в данном сериале: \n \n%s</string>
     <string name="delete_plugin">Удалить модуль</string>
     <string name="episode_action_cast_mirror">Актёрский состав</string>
-    <string name="delete_message_series_only" formatted="true">Вы уверены, что хотите навсегда удалить все эпизоды в данном сериале?
-\n
-\n%s</string>
-    <string name="downloads_delete_select">Выберите предеты для удаления</string>
+    <string name="delete_message_series_only" formatted="true">Вы уверены, что хотите навсегда удалить все серии в данном сериале? \n \n%s</string>
+    <string name="downloads_delete_select">Выберите элементы для удаления</string>
     <string name="delete_format" formatted="true">Удалить (%1$d | %2$s)</string>
     <string name="delete_message_multiple" formatted="true">Вы уверены, что хотите навсегда удалить данный объект?
 \n
 \n%s</string>
-    <string name="device_pin_error_message">Невозможно получить ПИН-код устройства, попробуйте локальную аутенфикацию</string>
+    <string name="device_pin_error_message">Невозможно получить ПИН-код устройства, попробуйте локальную аутентификацию</string>
     <string name="device_pin_url_message">Откройте <b>%s</b> на вашем смартфоне или компьютере и введите данный код</string>
     <string name="cs3wiki">CloudStream Вики</string>
     <string name="device_pin_expired_message">ПИН-код больше не действителен !</string>
     <string name="device_pin_counter_text">Код истекает через %1$dмин %2$dсек</string>
-    <string name="sort_release_date_new">Дата выхода (С нового к Старому)</string>
-    <string name="sort_release_date_old">Дата выхода (Со Старого к Новому)</string>
+    <string name="sort_release_date_new">Дата выпуска (от нового к старому)</string>
+    <string name="sort_release_date_old">Дата выпуска (от старого к новому)</string>
     <string name="hide_player_control_names">Скрыть имена контроля игроков</string>
     <string name="dismiss">Пропустить</string>
     <string name="auth_locally">Войти локально</string>
-    <string name="preview_seekbar">Предосмотр поисковой строки</string>
-    <string name="preview_seekbar_desc">Включить предосмотр миниатюр в поисковой строке</string>
-    <string name="no_subtitles_loaded">Субтитры еще не загружены</string>
+    <string name="preview_seekbar">Предпросмотр поисковой строки</string>
+    <string name="preview_seekbar_desc">Включить предпросмотр миниатюр в поисковой строке</string>
+    <string name="no_subtitles_loaded">Субтитры еще не скачаны</string>
     <string name="confirm_before_exiting_title">Подтвердить перед выходом</string>
-    <string name="confirm_before_exiting_desc">Показать диалог перед выходом из апликации</string>
+    <string name="confirm_before_exiting_desc">Показать диалог перед выходом из приложения</string>
     <string name="show">Показать</string>
     <string name="dont_show">Не показывать</string>
     <string name="backup_path_title">Расположение резервных копий</string>
     <string name="custom">Пользовательский</string>
     <string name="torrent_info">Это видео является торрентом, это значит, что вашу видеоактивность можно отследить.\nУбедитесь, что вы понимаете работу торрентов, прежде чем продолжить.</string>
-    <string name="subs_edge_size">Размер Границ</string>
+    <string name="subs_edge_size">Размер границ</string>
     <string name="encoding_error">Ошибка кодировки</string>
     <string name="unsupported_error">Не поддерживается</string>
-    <string name="player_load_one_subtitle_online">Загрузить первое доступное</string>
+    <string name="player_load_one_subtitle_online">Скачать первые доступные</string>
     <string name="audio_singluar">Аудио</string>
     <string name="podcast_singluar">Подкаст</string>
-    <string name="sort_episodes_number_asc">Эпизод</string>
+    <string name="sort_episodes_number_asc">Серия (по возрастанию)</string>
+    <string name="subtitles_from_embedded">Встроенный</string>
+    <string name="subtitles_from_online">Из сети</string>
+    <string name="sort_episodes_number_desc">Серия (по убыванию)</string>
+    <string name="sort_episodes_rating_high_low">Оценка (Наивысший)</string>
+    <string name="sort_button_episode">Сер %s</string>
+    <string name="sort_button_rating">Оценка %s</string>
+    <string name="sort_button_date">Дата %s</string>
+    <string name="sort_episodes_date_newest">Дата выпуска (Новейшие)</string>
+    <string name="software_decoding_desc">Программное декодирование позволяет плееру воспроизводить видео, которые не поддерживаются вашим телефоном, но может быть с задержками или нестабильным при высоком разрешении</string>
+    <string name="software_decoding">Программное декодирование</string>
+    <string name="player_notification_channel_description">Уведомление проигрывателя для управления воспроизведением в фоновом режиме</string>
+    <string name="update_plugins">Обновить дополнения</string>
+    <string name="update_plugins_manually">Обновить дополнения вручную</string>
+    <string name="speech_recognition_unavailable">Распознавание речи недоступно</string>
+    <string name="begin_speaking">Начните говорить…</string>
+    <string name="starting_plugin_update_manually">Начало процесса обновления дополнения!</string>
+    <string name="plugins_updated_manually">Успешно обновлено %d дополнений!</string>
+    <string name="no_plugins_updated_manually">Дополнений не было обновлено.</string>
+    <string name="player_notification_channel_name">Уведомления плеера</string>
+    <string name="sort_episodes_date_oldest">Дата выпуска (Старейшие)</string>
+    <string name="sort_episodes_rating_low_high">Оценка (Наинизшая)</string>
+    <string name="torrent_preferred_media">Включите торрент в Настройки/Поставщики/Предпочтительные медиа</string>
+    <string name="torrent_not_accepted">Перезапустите программу и примите сплывающее окно Stream Torrent, чтобы продолжить.</string>
+    <string name="background_radius">Радиус фона</string>
+    <string name="all_subtitles_bold">Сделать все субтитры жирными</string>
+    <string name="all_subtitles_italic">Сделать все субтитры курсивом</string>
 </resources>

@@ -711,4 +711,7 @@
     <string name="player_notification_channel_description">Pemberitahuan pemutar untuk mengontrol pemutaran dari latar belakang</string>
     <string name="subtitles_from_online">Daring</string>
     <string name="begin_speaking">Mulai bicara…</string>
+    <string name="subtitles_from_embedded">Tertanam</string>
+    <string name="player_notification_channel_name">Notifikasi pemain</string>
+    <string name="speech_recognition_unavailable">Pengenalan ucapan tidak tersedia</string>
 </resources>

@@ -716,7 +716,7 @@
     <string name="audio_singluar">Ses</string>
     <string name="podcast_singluar">Podcast</string>
     <string name="torrent_preferred_media">Ayarlar/Sağlayıcılar/Tercih edilen medya bölümünden torrenti etkinleştirin</string>
-    <string name="torrent_not_accepted">Torrent kabul edilmedi</string>
+    <string name="torrent_not_accepted">Uygulamayı yeniden başlatın ve devam etmek için Stream Torrent açılır penceresini kabul edin.</string>
     <string name="software_decoding">Yazılımsal çözücü</string>
     <string name="software_decoding_desc">Yazılımsal kod çözücü, oynatıcının telefon tarafından desteklenmeyen video dosyalarını oynatmasını sağlar, ancak yüksek çözünürlükte gecikmeli veya dengesiz oynatmaya neden olabilir</string>
     <string name="sort_episodes_number_asc">Bölüm (Artan)</string>
@@ -732,11 +732,16 @@
     <string name="starting_plugin_update_manually">Eklenti güncellemesi başlıyor!</string>
     <string name="plugins_updated_manually">%d eklenti başarıyla güncellendi!</string>
     <string name="no_plugins_updated_manually">Hiçbir eklenti güncellenmedi.</string>
-    <string name="update_plugins_manually">Eklentileri elle güncelle</string>
+    <string name="update_plugins_manually">Eklentileri el ile güncelle</string>
     <string name="player_notification_channel_description">Oynatıcı bildirimi arka planda oynatmasını kontrol etmek içindir</string>
     <string name="player_notification_channel_name">Oynatıcı bildirimleri</string>
     <string name="subtitles_from_embedded">Yerleştir</string>
     <string name="subtitles_from_online">Çevrimiçi</string>
     <string name="speech_recognition_unavailable">Konuşma tanıma özelliği mevcut değil</string>
     <string name="begin_speaking">Konuşmaya Başlayın…</string>
+    <string name="volume_exceeded_100">Ses %100 oranını aştı</string>
+    <string name="slide_up_again_to_exceed_100">%100 üzerine çıkmak için yukarı kaydır</string>
+    <string name="all_subtitles_bold">Tüm altyazıları kalın yap</string>
+    <string name="all_subtitles_italic">Tüm altyazıları italik yap</string>
+    <string name="background_radius">Arka Plan Yarıçapı</string>
 </resources>
