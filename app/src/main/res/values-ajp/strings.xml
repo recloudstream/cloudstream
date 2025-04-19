@@ -695,4 +695,8 @@
     <string name="starting_plugin_update_manually">بلشت عملية تجديد الإضافات!</string>
     <string name="plugins_updated_manually">نجح تجديد %d إضافات!</string>
     <string name="player_notification_channel_description">نوتيفيكايشن بت خليك تتحكم بال ڤيديو لما م يكون الآپ مفتوح</string>
+    <string name="subtitles_from_online">اونلاين</string>
+    <string name="subtitles_from_embedded">داخلياً</string>
+    <string name="speech_recognition_unavailable">التعرّف الصوتي مش موجود</string>
+    <string name="begin_speaking">بَلّش حكي…</string>
 </resources>
