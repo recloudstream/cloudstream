@@ -53,14 +53,18 @@ object ImageLoader {
             /** Pass interceptors with care, unnecessary passing tokens to servers
             or image hosting services causes unauthorized exceptions **/
             .components { add(OkHttpNetworkFetcherFactory(callFactory = { buildDefaultClient(context) })) }
-            .also { it.setupLogger() }
+            .also {
+                it.setupCoilLogger()
+                Log.d(TAG, "buildImageLoader: Setting COIL Image Loader.")
+            }
             .build()
 
     /** Use DebugLogger on debug builds which won't slow down release builds & use EventListener for
     Errors on release builds. **/
-    internal fun ImageLoader.Builder.setupLogger() {
+    internal fun ImageLoader.Builder.setupCoilLogger() {
         if (BuildConfig.DEBUG) {
             logger(DebugLogger())
+            Log.d(TAG, "setupCoilLogger: Activated DEBUG_LOGGER FOR COIL")
         } else {
             eventListener(object : EventListener() {
                 override fun onError(request: ImageRequest, result: ErrorResult) {
@@ -68,6 +72,7 @@ object ImageLoader {
                     Log.e(TAG, "Error loading image: ${result.throwable}")
                 }
             })
+            Log.d(TAG, "setupCoilLogger: Activated EVENT_LISTENER FOR COIL")
         }
     }
 
