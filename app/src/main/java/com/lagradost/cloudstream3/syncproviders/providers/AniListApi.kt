@@ -145,7 +145,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
             recommendations = season.recommendations?.edges?.mapNotNull { rec ->
                 val recMedia = rec.node.mediaRecommendation
                 SyncAPI.SyncSearchResult(
-                    name = recMedia.title?.userPreferred ?: return@mapNotNull null,
+                    name = recMedia?.title?.userPreferred ?: return@mapNotNull null,
                     this.name,
                     recMedia.id?.toString() ?: return@mapNotNull null,
                     getUrlFromId(recMedia.id),
@@ -917,7 +917,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     )
 
     data class Recommendation(
-        @JsonProperty("mediaRecommendation") val mediaRecommendation: SeasonMedia,
+        val id: Long,
+        @JsonProperty("mediaRecommendation") val mediaRecommendation: SeasonMedia?,
     )
 
     data class CharacterName(
