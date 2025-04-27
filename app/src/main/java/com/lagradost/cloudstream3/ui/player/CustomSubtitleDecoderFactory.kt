@@ -89,7 +89,6 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
                     RegexOption.IGNORE_CASE
                 ),
             )
-        val captionRegex = listOf(Regex("""(-\s?|)[\[({][\w\s]*?[])}]\s*"""))
 
         //https://emptycharacter.com/
         //https://www.fileformat.info/info/unicode/char/200b/index.htm
@@ -279,10 +278,6 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
                 )
                 realDecoder?.let { decoder ->
                     if (decoder !is SsaParser) {
-                        if (currentStyle.removeCaptions)
-                            captionRegex.forEach { rgx ->
-                                str = str.replace(rgx, "\n")
-                            }
                         if (currentStyle.removeBloat)
                             bloatRegex.forEach { rgx ->
                                 str = str.replace(rgx, "\n")
