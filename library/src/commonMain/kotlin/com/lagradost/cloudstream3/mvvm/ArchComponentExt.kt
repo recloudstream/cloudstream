@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.mvvm
 import com.lagradost.api.BuildConfig
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.ErrorLoadingException
+import com.lagradost.cloudstream3.Prerelease
 import kotlinx.coroutines.*
 import java.io.InterruptedIOException
 import java.net.SocketTimeoutException
@@ -67,6 +68,7 @@ fun logError(throwable: Throwable) {
     Log.d("ApiError", "-------------------------------------------------------------------")
 }
 
+@Deprecated("Outdated function, use `safe` instead when the new stable is released", ReplaceWith("safe"), level = DeprecationLevel.WARNING)
 fun <T> normalSafeApiCall(apiCall: () -> T): T? {
     return try {
         apiCall.invoke()
@@ -76,6 +78,31 @@ fun <T> normalSafeApiCall(apiCall: () -> T): T? {
     }
 }
 
+/** Catches any exception (or error) and only logs it.
+ * Will return null on exceptions. */
+@Prerelease
+fun <T> safe(apiCall: () -> T): T? {
+    return try {
+        apiCall.invoke()
+    } catch (throwable: Throwable) {
+        logError(throwable)
+        return null
+    }
+}
+
+/** Catches any exception (or error) and only logs it.
+ * Will return null on exceptions. */
+@Prerelease
+suspend fun <T> safeAsync(apiCall: suspend () -> T): T? {
+    return try {
+        apiCall.invoke()
+    } catch (throwable: Throwable) {
+        logError(throwable)
+        return null
+    }
+}
+
+@Deprecated("Outdated function, use `safeAsync` instead when the new stable is released", ReplaceWith("safeAsync"), level = DeprecationLevel.WARNING)
 suspend fun <T> suspendSafeApiCall(apiCall: suspend () -> T): T? {
     return try {
         apiCall.invoke()
@@ -119,7 +146,7 @@ fun CoroutineScope.launchSafe(
     return this.launch(context, start, obj)
 }
 
-fun<T> throwAbleToResource(
+fun <T> throwAbleToResource(
     throwable: Throwable
 ): Resource<T> {
     return when (throwable) {
@@ -131,6 +158,7 @@ fun<T> throwAbleToResource(
                 "App or extension is outdated, update the app or try pre-release.\n${throwable.message}" // todo add exact version?
             )
         }
+
         is NullPointerException -> {
             for (line in throwable.stackTrace) {
                 if (line?.fileName?.endsWith("provider.kt", ignoreCase = true) == true) {
@@ -144,6 +172,7 @@ fun<T> throwAbleToResource(
             }
             safeFail(throwable)
         }
+
         is SocketTimeoutException, is InterruptedIOException -> {
             Resource.Failure(
                 true,
@@ -161,8 +190,14 @@ fun<T> throwAbleToResource(
 //            )
 //        }
         is UnknownHostException -> {
-            Resource.Failure(true, null, null, "Cannot connect to server, try again later.\n${throwable.message}")
+            Resource.Failure(
+                true,
+                null,
+                null,
+                "Cannot connect to server, try again later.\n${throwable.message}"
+            )
         }
+
         is ErrorLoadingException -> {
             Resource.Failure(
                 true,
@@ -171,9 +206,11 @@ fun<T> throwAbleToResource(
                 throwable.message ?: "Error loading, try again later."
             )
         }
+
         is NotImplementedError -> {
             Resource.Failure(false, null, null, "This operation is not implemented.")
         }
+
         is SSLHandshakeException -> {
             Resource.Failure(
                 true,
@@ -182,11 +219,13 @@ fun<T> throwAbleToResource(
                 (throwable.message ?: "SSLHandshakeException") + "\nTry a VPN or DNS."
             )
         }
+
         is CancellationException -> {
             throwable.cause?.let {
                 throwAbleToResource(it)
             } ?: safeFail(throwable)
         }
+
         else -> safeFail(throwable)
     }
 }
