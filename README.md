@@ -10,7 +10,8 @@
 + [Installation Steps:](#install_rules)
 + [Contributing:](#contributing)
 + [Issues:](#issues)
-  + [Bugs Reports:](#bug_report)
+  + [Bugs Reports:](#bug_repor
+  t)
   + [Enhancement:](#enhancment)
 + [Extension Development:](#extensions)
 + [Language Support:](#languages)
