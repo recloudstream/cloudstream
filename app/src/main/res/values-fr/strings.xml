@@ -557,7 +557,7 @@
     <string name="duplicate_add">Ajouter</string>
     <string name="action_remove_from_favorites">Retirer des favoris</string>
     <string name="select_an_account">Sélectionnez un compte</string>
-    <string name="enter_pin">Entrer PIN</string>
+    <string name="enter_pin">Saisir le code PIN</string>
     <string name="pin">PIN</string>
     <string name="favorites_list_name">Favoris</string>
     <string name="logged_account" formatted="true">Connecté en tant que %s</string>
@@ -566,16 +566,16 @@
 \n%s
 \n
 \nSouhaitez-vous ajouter cet élément, remplacer les éléments existants ou annuler l\'action ?</string>
-    <string name="enter_pin_with_name" formatted="true">Entrer le code PIN pour %s</string>
+    <string name="enter_pin_with_name" formatted="true">Saisir le code PIN pour %s</string>
     <string name="duplicate_title">Doublon potentiel trouvé</string>
     <string name="lock_profile">Verrouiller le profil</string>
-    <string name="skip_startup_account_select_pref">Passer la sélection de compte au démarrage</string>
+    <string name="skip_startup_account_select_pref">Ignorer la sélection de compte au démarrage</string>
     <string name="action_unsubscribe">Se désabonner</string>
     <string name="action_subscribe">S\'abonner</string>
     <string name="duplicate_message_single" formatted="true">Il semble qu\'un élément potentiellement dupliqué existe déjà dans votre bibliothèque : \'%s.
 \n
 \nSouhaitez-vous ajouter cet élément, remplacer l\'élément existant ou annuler l\'action ?</string>
-    <string name="enter_current_pin">Entrer le code PIN actuel</string>
+    <string name="enter_current_pin">Saisir le code PIN actuel</string>
     <string name="rotate_video">Pivoter</string>
     <string name="links_reloaded_toast">Les liens ont été rechargés</string>
     <string name="rotate_video_desc">Afficher un bouton pour l’orientation de l’écran</string>
@@ -661,7 +661,7 @@
     <string name="software_decoding_desc">Le décodage logiciel permet au lecteur de lire des fichiers vidéo non pris en charge par votre téléphone, mais peut entraîner une lecture lente ou instable en haute résolution</string>
     <string name="software_decoding">Décodage logiciel</string>
     <string name="torrent_preferred_media">Activer les torrents dans Paramètres/Sources/Média préféré</string>
-    <string name="torrent_not_accepted">Torrent non accepté</string>
+    <string name="torrent_not_accepted">Redémarrez l\'application et acceptez la fenêtre contextuelle Stream Torrent pour continuer.</string>
     <string name="player_load_one_subtitle_online">Charger le premier disponible</string>
     <string name="audio_singluar">Audio</string>
     <string name="podcast_singluar">Podcast</string>
@@ -680,5 +680,14 @@
     <string name="player_notification_channel_description">La notification du lecteur pour contrôler la lecture en arrière-plan</string>
     <string name="sort_episodes_date_newest">Date (Plus Récent)</string>
     <string name="sort_episodes_rating_low_high">Note (Plus Basse)</string>
-    <string name="starting_plugin_update_manually">Processus de mise à jour à commencer !</string>
+    <string name="starting_plugin_update_manually">Démarrage du processus de mise à jour du plugin !</string>
+    <string name="subtitles_from_embedded">Intégré</string>
+    <string name="subtitles_from_online">En ligne</string>
+    <string name="speech_recognition_unavailable">La reconnaissance vocale n\'est pas disponible</string>
+    <string name="begin_speaking">Commencez à parler…</string>
+    <string name="volume_exceeded_100">Le volume a dépassé 100 %</string>
+    <string name="slide_up_again_to_exceed_100">Glisser à nouveau vers le haut pour dépasser 100 %</string>
+    <string name="all_subtitles_bold">Mettre tous les sous-titres en gras</string>
+    <string name="background_radius">Rayon de l\'arrière-plan</string>
+    <string name="all_subtitles_italic">Mettre tous les sous-titres en italique</string>
 </resources>

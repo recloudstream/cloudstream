@@ -143,7 +143,7 @@
     <string name="backup_failed">Липсват разрешения за съхранение. Моля, опитайте отново.</string>
     <string name="backup_failed_error_format">Грешка при архивирането на %s</string>
     <string name="search">Търсене</string>
-    <string name="category_account">Акаунти</string>
+    <string name="category_account">Акаунти и сигурност</string>
     <string name="category_updates">Актуализации и архивиране</string>
     <string name="settings_info">Информация</string>
     <string name="advanced_search">Подробно търсене</string>
@@ -395,8 +395,8 @@
     <string name="setup_done">Край</string>
     <string name="extensions">Разширения</string>
     <string name="add_repository">Добавяне на хранилище</string>
-    <string name="repository_name_hint">Име на хранилище</string>
-    <string name="repository_url_hint">URL на хранилището</string>
+    <string name="repository_name_hint">Име на хранилището (по избор)</string>
+    <string name="repository_url_hint">URL адрес на хранилището или кратък код</string>
     <string name="plugin_loaded">Приставката е заредена</string>
     <string name="plugin_deleted">Приставката е изтрита</string>
     <string name="plugin_load_fail" formatted="true">Не може да зареди %s</string>
@@ -420,12 +420,12 @@
     <string name="view_public_repositories_button">Вижте хранилищата на общността</string>
     <string name="view_public_repositories_button_short">Публичен списък</string>
     <string name="uppercase_all_subtitles">Всички субтитри с главни букви</string>
-    <string name="download_all_plugins_from_repo">Изтегляне на всички добавки от това хранилище?</string>
+    <string name="download_all_plugins_from_repo">Предупреждение: CloudStream 3 не носи отговорност за използването на трети страни разширения и не предоставя поддръжка за тях!</string>
     <string name="single_plugin_disabled" formatted="true">%s (Деактивиран)</string>
     <string name="tracks">Потоци</string>
     <string name="audio_tracks">Аудио потоци</string>
     <string name="video_tracks">Видео потоци</string>
-    <string name="apply_on_restart">Приложете при рестартиране</string>
+    <string name="apply_on_restart">Приложете при рестартиране.</string>
     <string name="safe_mode_title">Безопасен режим включен</string>
     <string name="safe_mode_description">Всички разширения бяха изключени поради срив, за да ви помогне да намерите това, което създава проблеми.</string>
     <string name="safe_mode_crash_info">Вижте информация за срива</string>
@@ -494,7 +494,7 @@
     <string name="test_failed">Неуспешен</string>
     <string name="library">Библиотека</string>
     <string name="watch_quality_pref_data">Предпочитано качество за гледане (Мобилни данни)</string>
-    <string name="start">Начало</string>
+    <string name="start">Старт</string>
     <string name="automatic_plugin_download_mode_title">Избери режим, да филтрира изтегляне на добавки</string>
     <string name="jsdelivr_proxy">raw.githubusercontent.com прокси</string>
     <string name="jsdelivr_enabled">Неуспешно свързване с GitHub. Включване на jsDelivr прокси…</string>
@@ -503,7 +503,7 @@
     <string name="disable">Деактивиране</string>
     <string name="pref_category_android_tv">Android TV</string>
     <string name="pref_category_bypass">Заобикаляне на интернет доставчик</string>
-    <string name="no_plugins_found_error">Няма намерени добавки в този архив.</string>
+    <string name="no_plugins_found_error">Няма намерени добавки в този архив</string>
     <string name="no_repository_found_error">Архивът не е намерен, проверете уеб-адреса и пробвайте с VPN</string>
     <string name="sort_rating_desc">Оценка (От висока до ниска)</string>
     <string name="sort_by">Сортирай по</string>
@@ -611,4 +611,90 @@
     <string name="deselect_all">Премахване на избора на всички</string>
     <string name="test_warning">Предупреждение</string>
     <string name="delete_message_multiple" formatted="true">Сигурни ли сте, че искате да изтриете трайно следните елементи?\n\n %s</string>
+    <string name="encoding_error">Проблем с кодирането</string>
+    <string name="unsupported_error">Неподдържана грешка</string>
+    <string name="subtitles_from_online">Онлайн</string>
+    <string name="volume_exceeded_100">Обемът надвиши 100%</string>
+    <string name="slide_up_again_to_exceed_100">Плъзнете нагоре отново, за да преминете над 100%</string>
+    <string name="player_notification_channel_description">Известие на плейъра за контролиране на възпроизвеждането от фона</string>
+    <string name="subtitles_from_embedded">Вграден</string>
+    <string name="all_subtitles_bold">Направете всички субтитри удебелени</string>
+    <string name="background_radius">Радиус на фона</string>
+    <string name="preview_seekbar">Преглед на лентата за търсене</string>
+    <string name="sort_episodes_number_asc">Епизод (възходящо)</string>
+    <string name="sort_episodes_rating_low_high">Оценка (най-ниска)</string>
+    <string name="sort_button_episode">Епизод %s</string>
+    <string name="backup_path_title">Местоположение на папката за архивиране</string>
+    <string name="confirm_before_exiting_title">Потвърдете преди да излезете</string>
+    <string name="subs_edge_size">Размер на ръба</string>
+    <string name="software_decoding">Софтуерно декодиране</string>
+    <string name="confirm_before_exiting_desc">Покажи диалог преди да затвориш приложението</string>
+    <string name="show">Покажи</string>
+    <string name="dont_show">Не показвай</string>
+    <string name="update_plugins">Актуализирай плъгини</string>
+    <string name="update_plugins_manually">Актуализирайте плъгините ръчно</string>
+    <string name="sort_release_date_new">Дата на издаване (от нова към стара)</string>
+    <string name="hide_player_control_names">Скрий имената на контролните елементи на играча</string>
+    <string name="sort_episodes_rating_high_low">Оценка (най-висока)</string>
+    <string name="sort_episodes_date_newest">Дата на излъчване (най-нова)</string>
+    <string name="sort_button_rating">Оценка %s</string>
+    <string name="preview_seekbar_desc">Активирай миниатюра за преглед на лентата за търсене</string>
+    <string name="custom">По избор</string>
+    <string name="sort_release_date_old">Дата на издаване (от стара към нова)</string>
+    <string name="torrent_preferred_media">Активирай торент в Настройки/Доставчици/Предпочитани медии</string>
+    <string name="plugins_updated_manually">Успешно актуализиран/и %d плъгин/а!</string>
+    <string name="all_subtitles_italic">Направете всички субтитри наклонени</string>
+    <string name="sort_episodes_date_oldest">Дата на излъчване (най-стара)</string>
+    <string name="sort_button_date">Дата %s</string>
+    <string name="no_plugins_updated_manually">Няма актуализирани плъгини.</string>
+    <string name="delete_message_series_only" formatted="true">Are you sure you wСигурни ли сте, че искате трайно да изтриете всички епизоди от тази поредица?\n\n%s</string>
+    <string name="torrent_not_accepted">Рестартирайте приложението и приемете изскачащото съобщение за Stream Torrent, за да продължите.</string>
+    <string name="software_decoding_desc">Софтуерното декодиране позволява на плейъра да възпроизвежда видео файлове, които не се поддържат от телефона ви, но може да причини забавяне или нестабилно възпроизвеждане при висока резолюция</string>
+    <string name="player_notification_channel_name">Известия на плейъра</string>
+    <string name="sort_episodes_number_desc">Епизод (низходящо)</string>
+    <string name="starting_plugin_update_manually">Започва процесът на актуализация на плъгините!</string>
+    <string name="player_load_one_subtitle_online">Зареди първия наличен</string>
+    <string name="no_subtitles_loaded">Няма заредени субтитри още</string>
+    <string name="audio_singluar">Звук</string>
+    <string name="podcast_singluar">Подкаст</string>
+    <string name="auth_locally">Автентикация локално</string>
+    <string name="biometric_setting">Заключване с биометрия</string>
+    <string name="open_downloaded_repo">Отвори хранилище</string>
+    <string name="reset_btn">Нулиране</string>
+    <string name="device_pin_expired_message">PIN кодът е изтекъл !</string>
+    <string name="cs3wiki">CloudStream Уики</string>
+    <string name="password_pin_authentication_title">Удостоверяване с парола/PIN</string>
+    <string name="custom_media_singluar">Медия</string>
+    <string name="audio_book_singular">Аудиокнига</string>
+    <string name="dismiss">Отхвърли</string>
+    <string name="biometric_setting_summary">Отключете приложението с отпечатък, Face ID, PIN, шаблон или парола.</string>
+    <string name="delete_plugin">Изтриване на плъгин</string>
+    <string name="biometric_prompt_description">След няколко неуспешни опита, прозорецът ще се затвори. Просто рестартирайте приложението, за да опитате отново.</string>
+    <string name="biometric_warning">Вашите данни от CloudStream бяха архивирани. Въпреки че възможността за това е много малка, всички устройства могат да се държат по различен начин. В редките случаи, когато бъдете блокирани от достъпа до приложението, изчистете напълно данните на приложението и възстановете от архив. Извиняваме се за всяко неудобство, което може да възникне от това.</string>
+    <string name="device_pin_error_message">Не може да се получи PIN кода на устройството, опитайте локално удостоверяване</string>
+    <string name="torrent_info">Това видео е торент, което означава, че вашата видео дейност може да бъде проследена.\nУверете се, че разбирате принципите на торентирането, преди да продължите.</string>
+    <string name="pref_category_security">Сигурност</string>
+    <string name="ok">Добре</string>
+    <string name="app_unrestricted_toast">Използването на батерия от приложението вече е настроено като неограничено</string>
+    <string name="app_info_intent_error">Не може да се отвори информацията за приложението CloudStream.</string>
+    <string name="battery_dialog_title">Изключи оптимизация на батерията</string>
+    <string name="biometric_authentication_title">Отключи CloudStream</string>
+    <string name="resume_remaining" formatted="true">%s\nоставащи</string>
+    <string name="clipboard_permission_error">Грешка при достъп до клипборда, моля опитайте отново.</string>
+    <string name="speech_recognition_unavailable">Разпознаването на реч не е налично</string>
+    <string name="begin_speaking">Започнете да говорите…</string>
+    <string name="delete_message_series_episodes" formatted="true">Сигурни ли сте, че искате да изтриете завинаги следните епизоди в %1$s?\n\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">Също така ще изтриете завинаги всички епизоди от следните серии:\n\n%s</string>
+    <string name="episode_action_cast_mirror">Огледално излъчването</string>
+    <string name="pref_category_accounts">Акаунти</string>
+    <string name="clipboard_unknown_error">Грешка при копиране, моля копирайте logcat и се свържете с поддръжката на приложението.</string>
+    <string name="biometric_unsupported">Биометричното удостоверяване не се поддържа на това устройство</string>
+    <string name="device_pin_url_message">Посетете <b>%s</b> на вашия смартфон или компютър и въведете горния код</string>
+    <string name="device_pin_counter_text">Кодът изтича след %1$dm %2$ds</string>
+    <string name="player_settings_select_cast_device">Изберете устройство за излъчване</string>
+    <string name="music_singlar">Музика</string>
+    <string name="favorite">Любим</string>
+    <string name="battery_dialog_message">За да гарантираме непрекъснати изтегляния и известия за абонирани телевизионни шоута, CloudStream се нуждае от разрешение да работи в фонов режим. Като натиснете ДОБРЕ, ще видите диалогов прозорец с искане. Моля, натиснете \"Позволи\".\n\nМоля, имайте предвид, че това разрешение не означава, че CS3 ще изтощава батерията ви. То ще работи във фонов режим само когато е необходимо, като например при получаване на известия или изтегляне на видеоклипове от официални разширения.</string>
+    <string name="qr_image">Изображение на QR код</string>
+    <string name="unfavorite">Премахни от любими</string>
 </resources>
