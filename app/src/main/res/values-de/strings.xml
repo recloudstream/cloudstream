@@ -673,7 +673,7 @@
     <string name="sort_button_date">Datum %s</string>
     <string name="torrent_preferred_media">Torrent in Eintellungen/Anbieter/Bevorzugte Medien aktivieren</string>
     <string name="software_decoding_desc">Softwaredekodierung erlaubt es dem Player, Videodateien abzuspielen, die von deinem Gerät nicht unterstützt werden, könnte jedoch bei hoher Auflösung zu ruckelnder oder instabiler Wiedergabe führen</string>
-    <string name="torrent_not_accepted">Nicht akzeptierter Torrent</string>
+    <string name="torrent_not_accepted">App neu starten und Stream Torrent Pop-Up akzeptieren, um fortzufahren.</string>
     <string name="update_plugins">Plugins aktualisieren</string>
     <string name="plugins_updated_manually">%d Plugin(s) erfolgreich aktualisiert!</string>
     <string name="update_plugins_manually">Plugins manuell aktualisieren</string>
@@ -692,4 +692,9 @@
     <string name="speech_recognition_unavailable">Spracherkennung ist nicht verfügbar</string>
     <string name="begin_speaking">Beginne zu sprechen…</string>
     <string name="player_notification_channel_name">Player-Benachrichtigung</string>
+    <string name="all_subtitles_bold">Alle Untertitel fettgedruckt anzeigen</string>
+    <string name="all_subtitles_italic">Alle Untertitel kursiv anzeigen</string>
+    <string name="background_radius">Hintergrundsradius</string>
+    <string name="volume_exceeded_100">Lautstärke hat 100% überschritten</string>
+    <string name="slide_up_again_to_exceed_100">Noch einmal nach oben wischen, um 100% zu überschreiten</string>
 </resources>

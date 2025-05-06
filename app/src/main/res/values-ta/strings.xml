@@ -66,7 +66,7 @@
     <string name="type_dropped">கைவிடப்பட்டது</string>
     <string name="download_done">பதிவிறக்கம் முடிந்தது</string>
     <string name="reload_error">இணைப்பை மீண்டும் முயலவும்…</string>
-    <string name="play_movie_button">திரைப்படம் திரைப்படம்</string>
+    <string name="play_movie_button">திரைப்படம் இயக்கு</string>
     <string name="play_livestream_button">லைவ்ச்ட்ரீம் விளையாடுங்கள்</string>
     <string name="play_trailer_button">டிரெய்லரை இயக்கு</string>
     <string name="pick_source">மூலங்கள்</string>
@@ -507,8 +507,7 @@
     <string name="apply_on_restart">மாற்றங்களைக் காண பயன்பாட்டை மறுதொடக்கம் செய்யுங்கள்.</string>
     <string name="safe_mode_crash_info">செயலிழப்பு தகவலைக் காண்க</string>
     <string name="delete_repository">களஞ்சியத்தை நீக்கு</string>
-    <string name="blank_repo_message">கிளவுட்ச்ட்ரீமில் இயல்புநிலையாக எந்த தளங்களும் நிறுவப்படவில்லை. நீங்கள் களஞ்சியங்களிலிருந்து தளங்களை நிறுவ வேண்டும்.
-\n எங்கள் முரண்பாட்டில் சேரவும் அல்லது ஆன்லைனில் தேடுங்கள்.</string>
+    <string name="blank_repo_message">கிளவுட்ச்ட்ரீமில் இயல்புநிலையாக எந்தத் தளங்களும் நிறுவப்படவில்லை. நீங்கள் களஞ்சியங்களிலிருந்து தளங்களை நிறுவ வேண்டும். \n\n எங்கள் முரண்பாட்டில் சேரவும் அல்லது ஆன்லைனில் தேடுங்கள்.</string>
     <string name="extension_status">நிலை</string>
     <string name="extension_size">அளவு</string>
     <string name="extension_types">ஆதரிக்கப்பட்டது</string>
@@ -581,11 +580,7 @@
     <string name="subscription_episode_released">எபிசோட் %d வெளியானது!</string>
     <string name="mobile_data">மொபைல் தரவு</string>
     <string name="set_default">இயல்புநிலையை அமைக்கவும்</string>
-    <string name="quality_profile_help">ஆதாரங்கள் எவ்வாறு உத்தரவிடப்படுகின்றன என்பதை இங்கே மாற்றலாம். ஒரு வீடியோவுக்கு அதிக முன்னுரிமை இருந்தால், அது மூல தேர்வில் அதிகமாகத் தோன்றும். மூல முன்னுரிமையின் தொகை மற்றும் தரமான முன்னுரிமை ஆகியவை வீடியோ முன்னுரிமை.
-\n சான்று A: 3
-\n தகுதி பி: 7
-\n 10 இன் ஒருங்கிணைந்த வீடியோ முன்னுரிமை இருக்கும்.
-\n குறிப்பு: தொகை 10 அல்லது அதற்கு மேற்பட்டதாக இருந்தால், அந்த இணைப்பு ஏற்றப்படும்போது பிளேயர் தானாகவே ஏற்றுவதைத் தவிர்க்கும்!</string>
+    <string name="quality_profile_help">ஆதாரங்கள் எவ்வாறு உத்தரவிடப்படுகின்றன என்பதை இங்கே மாற்றலாம். ஒரு வீடியோவுக்கு அதிக முன்னுரிமை இருந்தால், அது மூல தேர்வில் அதிகமாகத் தோன்றும். மூல முன்னுரிமையின் தொகை மற்றும் தரமான முன்னுரிமை ஆகியவை வீடியோ முன்னுரிமை. \n\n சான்று A: 3 \n தகுதி பி: 7 \n 10 இன் ஒருங்கிணைந்த வீடியோ முன்னுரிமை இருக்கும். \n\n குறிப்பு: தொகை 10 அல்லது அதற்கு மேற்பட்டதாக இருந்தால், அந்த இணைப்பு ஏற்றப்படும்போது பிளேயர் தானாகவே ஏற்றுவதைத் தவிர்க்கும்!</string>
     <string name="biometric_warning">உங்கள் கிளவுட்ச்ட்ரீம் தரவு இப்போது காப்புப் பிரதி எடுக்கப்பட்டுள்ளது. இதன் சாத்தியம் மிகக் குறைவு என்றாலும், எல்லா சாதனங்களும் வித்தியாசமாக நடந்து கொள்ளலாம். அரிய விசயத்தில், பயன்பாட்டை அணுகுவதிலிருந்து நீங்கள் பூட்டப்படுகிறீர்கள், பயன்பாட்டு தரவை முழுவதுமாக அழித்து, காப்புப்பிரதியிலிருந்து மீட்டெடுக்கவும். இதிலிருந்து எழும் ஏதேனும் சிரமத்திற்கு நாங்கள் மிகவும் வருந்துகிறோம்.</string>
     <string name="custom_media_singluar">ஊடகம்</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
@@ -608,13 +603,13 @@
     <string name="select_all">அனைத்தையும் தேர்ந்தெடுக்கவும்</string>
     <string name="downloads_delete_select">அழிப்பதற்கு தேர்ந்தெடுக்கவும்</string>
     <string name="delete_files">கோப்புகளை நீக்கு</string>
-    <string name="delete_message_multiple" formatted="true">இந்த தரவுகளை நிரந்தரமாக நீக்கலாமா?</string>
-    <string name="rated_format" formatted="true">மதிப்பிடப்பட்டது: %.1 எஃப்</string>
+    <string name="delete_message_multiple" formatted="true">இந்தத் தரவுகளை நிரந்தரமாக நீக்கலாமா?\n\n%s</string>
+    <string name="rated_format" formatted="true">மதிப்பிடப்பட்டது: %.1f</string>
     <string name="added_sync_format" formatted="true">சேர்க்கப்பட்டது %s</string>
     <string name="extension_rating" formatted="true">மதிப்பீடு: %s</string>
     <string name="resume_time_left" formatted="true">%d.எம\n மீதமுள்ள</string>
     <string name="unable_to_inflate">இடைமுகம் ஐ சரியாக உருவாக்க முடியவில்லை, இது ஒரு பெரிய பிழை மற்றும் உடனடியாக %s தெரிவிக்க வேண்டும்</string>
-    <string name="resume_remaining" formatted="true">%கள\n மீதமுள்ள</string>
+    <string name="resume_remaining" formatted="true">%s\n மீதமுள்ள</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">அனைத்து %s ஏற்கனவே பதிவிறக்கம் செய்யப்பட்டுள்ளன</string>
     <string name="single_plugin_disabled" formatted="true">%s (முடக்கப்பட்டவை)</string>
     <string name="torrent_info">இந்த வீடியோ ஒரு நீரோடை, இதன் பொருள் உங்கள் வீடியோ செயல்பாட்டைக் கண்காணிக்க முடியும்.\n தொடர்வதற்கு முன் நீரோட்டத்தை நீங்கள் புரிந்துகொண்டுள்ளீர்கள் என்பதை உறுதிப்படுத்திக் கொள்ளுங்கள்.</string>
