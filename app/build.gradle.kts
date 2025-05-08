@@ -86,6 +86,17 @@ android {
             "SIMKL_CLIENT_SECRET",
             "\"" + (System.getenv("SIMKL_CLIENT_SECRET") ?: localProperties["simkl.secret"]) + "\""
         )
+        buildConfigField(
+    "String",
+    "COMMIT_HASH",
+    "\"${getGitCommitHash()}\""
+)
+buildConfigField(
+    "String",
+    "BUILD_TIME",
+    "\"${java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(java.util.Date())}\""
+)
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
