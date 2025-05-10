@@ -6,6 +6,8 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.widget.FrameLayout
+import android.animation.ValueAnimator
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 
 /**
  *This is a container that lets the user pinch to zoom its entire contents
@@ -23,6 +25,27 @@ class ZoomLayout @JvmOverloads constructor( //Why not
 
     //the gesture detector
     private val detector = ScaleGestureDetector(context, this)
+
+    //animator that resets scaleFactor/focus back to defaults
+    private val resetAnimator = ValueAnimator().apply {
+        interpolator = FastOutSlowInInterpolator()
+        duration = 300L
+        addUpdateListener { anim ->
+            // anim.animatedValue will go from 1f → 0f
+            val fraction = anim.animatedFraction
+            // lerp scaleFactor from current → 1f
+            scaleFactor = lerp(scaleFactorStart, 1f, fraction)
+            // lerp focus back to center
+            focusX = lerp(focusXStart, width / 2f, fraction)
+            focusY = lerp(focusYStart, height / 2f, fraction)
+            invalidate()
+        }
+    }
+
+
+    private var scaleFactorStart = 1f
+    private var focusXStart = 0f
+    private var focusYStart = 0f
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         //lets the detector see all touches
@@ -60,5 +83,15 @@ class ZoomLayout @JvmOverloads constructor( //Why not
         return true
     }
 
-    override fun onScaleEnd(detector: ScaleGestureDetector) { /* no-op */ }
+
+    //we now use it for a cleaner approach since it already works
+    override fun onScaleEnd(detector: ScaleGestureDetector) {
+        scaleFactorStart = scaleFactor
+        focusXStart = focusX
+        focusYStart = focusY
+        resetAnimator.start()
+    }
+
+    //simple helper
+    private fun lerp(a: Float, b: Float, t: Float): Float = a + (b - a) * t
 }
