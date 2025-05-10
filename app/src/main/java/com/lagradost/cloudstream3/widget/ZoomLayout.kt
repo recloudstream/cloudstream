@@ -27,7 +27,7 @@ class ZoomLayout @JvmOverloads constructor( //Why not
     private val detector = ScaleGestureDetector(context, this)
 
     //animator that resets scaleFactor/focus back to defaults
-    private val resetAnimator = ValueAnimator().apply {
+    private val resetAnimator = ValueAnimator.ofFloat(0f,1f).apply {
         interpolator = FastOutSlowInInterpolator()
         duration = 300L
         addUpdateListener { anim ->
