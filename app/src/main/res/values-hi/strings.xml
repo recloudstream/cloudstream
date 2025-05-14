@@ -319,9 +319,12 @@
     <string name="pref_filter_search_quality">खोज परिणामों में चयनित वीडियो गुणवत्ता छुपाएं</string>
     <plurals name="episodes" translatable="false">
         <item quantity="one">प्रकरण</item>
-        <item quantity="other"/>
+        <item quantity="other"></item>
     </plurals>
     <string name="episodes_range">%1$d-%2$d</string>
     <string name="action_open_play">@string/home_play</string>
     <string name="double_tap_to_seek_amount_settings">प्लेयर में आगे पीछे जाने का समय (सेकंड्स)</string>
+    <string name="automatic_plugin_download_summary">जोड़े गए रिपॉजिटरीज से अभी तक इंस्टॉल नहीं किए गए सभी प्लगइन्स को स्वचालित रूप से इंस्टॉल करें।</string>
+    <string name="speech_recognition_unavailable">वाक् पहचान उपलब्ध नहीं है</string>
+    <string name="begin_speaking">बोलना शुरू करें…</string>
 </resources>

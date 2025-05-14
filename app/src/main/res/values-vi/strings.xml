@@ -681,7 +681,7 @@
     <string name="encoding_error">Lỗi mã hóa</string>
     <string name="software_decoding_desc">Cho phép trình phát các tệp video không được điện thoại của bạn hỗ trợ, nhưng có thể bị lag ở độ phân giải cao</string>
     <string name="software_decoding">Bộ giải mã ứng dụng</string>
-    <string name="torrent_not_accepted">Torrent không được chấp nhận</string>
+    <string name="torrent_not_accepted">Khởi động lại ứng dụng và chấp nhận cửa sổ bật lên của Stream Torrent để tiếp tục</string>
     <string name="torrent_preferred_media">Kích hoạt torrent trong Cài đặt/Nguồn phim/Thể loại ưu tiên</string>
     <string name="player_load_one_subtitle_online">Tải phụ đề đầu tiên có sẵn</string>
     <string name="audio_singluar">Âm thanh</string>
@@ -705,4 +705,11 @@
     <string name="player_notification_channel_description">Thông báo trình phát để điều khiển phát lại từ nền</string>
     <string name="begin_speaking">Bắt đầu nói…</string>
     <string name="speech_recognition_unavailable">Tìm kiếm giọng nói không khả dụng</string>
+    <string name="subtitles_from_online">Trực tuyến</string>
+    <string name="background_radius">Bo tròn nền</string>
+    <string name="volume_exceeded_100">Âm lượng đã vượt quá 100%</string>
+    <string name="slide_up_again_to_exceed_100">Vuốt lên lần nữa để vượt quá 100%</string>
+    <string name="subtitles_from_embedded">Được nhúng</string>
+    <string name="all_subtitles_bold">Làm tất cả phụ đề in đậm</string>
+    <string name="all_subtitles_italic">Làm tất cả phụ đề in nghiêng</string>
 </resources>
