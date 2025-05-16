@@ -5,6 +5,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.newExtractorLink
 import com.lagradost.cloudstream3.utils.schemaStripRegex
@@ -51,11 +52,7 @@ open class YoutubeExtractor : ExtractorApi() {
     ) {
         if (ytVideos[url].isNullOrEmpty()) {
             val link =
-                YoutubeStreamLinkHandlerFactory.getInstance().fromUrl(
-                    url.replace(
-                        schemaStripRegex, ""
-                    )
-                )
+                YoutubeStreamLinkHandlerFactory.getInstance().fromUrl(url)
 
             val s = object : YoutubeStreamExtractor(
                 ServiceList.YouTube,
@@ -64,7 +61,13 @@ open class YoutubeExtractor : ExtractorApi() {
 
             }
             s.fetchPage()
-            ytVideos[url] = s.hlsUrl
+            val streamUrl = s.hlsUrl.takeIf { !it.isNullOrEmpty() }
+            ?: s.dashMpdUrl.takeIf { !it.isNullOrEmpty() }
+            ?: s.videoStreams?.firstOrNull()?.url
+
+            if (!streamUrl.isNullOrEmpty()) {
+                ytVideos[url] = streamUrl
+            }
 
             ytVideosSubtitles[url] = try {
                 s.subtitlesDefault.filterNotNull()
@@ -79,7 +82,7 @@ open class YoutubeExtractor : ExtractorApi() {
                     source = this.name,
                     name = this.name,
                     url = it,
-                    type = ExtractorLinkType.M3U8
+                    type = INFER_TYPE
                 )
             )
         }
