@@ -676,7 +676,7 @@
     <string name="encoding_error">أرور بال إنكودينگ</string>
     <string name="player_load_one_subtitle_online">أفّي اللودينگ تلقائيًا</string>
     <string name="torrent_preferred_media">سماح ب إستعمال الـTorrent بال سَتِنگز/المصادر/المحتوى المفضل</string>
-    <string name="torrent_not_accepted">تورنت مش مدعوم</string>
+    <string name="torrent_not_accepted">سكر الآپ و رجاع فتحه، و قبال دعم التورنت ت تكفي.</string>
     <string name="software_decoding_desc">السوفتوار ديكودينگ بخلي مشغل الڤيديو يمشّي أنواع فيلات ڤيديو م بيدعمها جهازك، بس هال شي معقول يخلي الڤيديو يعلق، خاصتًا إزا كانت الجودة عالية</string>
     <string name="software_decoding">سوفتوار ديكودينگ</string>
     <string name="sort_episodes_rating_low_high">رايتينگ (أوطا)</string>
@@ -695,4 +695,13 @@
     <string name="starting_plugin_update_manually">بلشت عملية تجديد الإضافات!</string>
     <string name="plugins_updated_manually">نجح تجديد %d إضافات!</string>
     <string name="player_notification_channel_description">نوتيفيكايشن بت خليك تتحكم بال ڤيديو لما م يكون الآپ مفتوح</string>
+    <string name="subtitles_from_online">اونلاين</string>
+    <string name="subtitles_from_embedded">داخلياً</string>
+    <string name="speech_recognition_unavailable">التعرّف الصوتي مش موجود</string>
+    <string name="begin_speaking">بَلّش حكي…</string>
+    <string name="volume_exceeded_100">تعلى الصوت ل أعلى من 100%</string>
+    <string name="slide_up_again_to_exceed_100">سحاب بعد ت تعليه فوق الـ100%</string>
+    <string name="all_subtitles_bold">عمول خط الترجمة بولد</string>
+    <string name="all_subtitles_italic">عمول خط الترجمة أيتاليك</string>
+    <string name="background_radius">قوة برمة الخلفية</string>
 </resources>
