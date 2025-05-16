@@ -461,7 +461,7 @@
     <string name="extras">エクストラ</string>
     <string name="skip_type_op">オープニング</string>
     <string name="subscription_new">%s を購読しました</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="subs_import_text" formatted="true">フォントを %s に配置してインポート</string>
     <string name="show_fillers_settings">アニメのフィラーエピソードを表示</string>
     <string name="automatic_plugin_updates">自動プラグインアップデート</string>
