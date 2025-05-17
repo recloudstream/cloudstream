@@ -54,7 +54,7 @@
     <string name="play_episode">Reproduzir episódio</string>
     <!--<string name="need_storage">Permirtir baixar episódios</string>-->
     <string name="download">Download</string>
-    <string name="downloaded">Download concluído</string>
+    <string name="downloaded">Transferido</string>
     <string name="downloading">Baixando</string>
     <string name="download_paused">Download pausado</string>
     <string name="download_started">Download iniciado</string>
