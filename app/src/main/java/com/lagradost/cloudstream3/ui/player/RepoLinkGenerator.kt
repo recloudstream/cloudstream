@@ -15,7 +15,10 @@ import kotlin.math.min
 data class Cache(
     val linkCache: MutableSet<ExtractorLink>,
     val subtitleCache: MutableSet<SubtitleData>,
-    var lastCachedTimestamp: Long = unixTime
+    /** When it was last updated */
+    var lastCachedTimestamp: Long = unixTime,
+    /** If it has fully loaded */
+    var saturated: Boolean,
 )
 
 class RepoLinkGenerator(
@@ -74,6 +77,7 @@ class RepoLinkGenerator(
     //var linkCache = Array<Set<ExtractorLink>>(size = episodes.size, init = { setOf() })
     //var subsCache = Array<Set<SubtitleData>>(size = episodes.size, init = { setOf() })
 
+    @Throws
     override suspend fun generateLinks(
         clearCache: Boolean,
         allowedTypes: Set<ExtractorLinkType>,
@@ -85,86 +89,114 @@ class RepoLinkGenerator(
         val index = currentIndex
         val current = episodes.getOrNull(index + offset) ?: return false
 
-        val (currentLinkCache, currentSubsCache, lastCachedTimestamp) = if (clearCache) {
-            Cache(mutableSetOf(), mutableSetOf(), unixTime)
-        } else {
-            cache[current.apiName to current.id] ?: Cache(mutableSetOf(), mutableSetOf(), unixTime)
+        val currentCache = synchronized(cache) {
+            cache[current.apiName to current.id] ?: Cache(
+                mutableSetOf(),
+                mutableSetOf(),
+                unixTime,
+                false
+            ).also {
+                cache[current.apiName to current.id] = it
+            }
         }
 
-        //val currentLinkCache = if (clearCache) mutableSetOf() else linkCache[index].toMutableSet()
-        //val currentSubsCache = if (clearCache) mutableSetOf() else subsCache[index].toMutableSet()
-
-        val currentLinks = mutableSetOf<String>()       // makes all urls unique
+        // these act as a general filter to prevent duplication of links or names
+        val currentLinksUrls = mutableSetOf<String>()       // makes all urls unique
         val currentSubsUrls = mutableSetOf<String>()    // makes all subs urls unique
         val currentSubsNames = mutableSetOf<String>()   // makes all subs names unique
 
-        val invalidateCache = unixTime - lastCachedTimestamp  > 60 * 20 // 20 minutes
-        if(invalidateCache){
-            currentLinkCache.clear()
-            currentSubsCache.clear()
-        }
+        synchronized(currentCache) {
+            val outdatedCache =
+                unixTime - currentCache.lastCachedTimestamp > 60 * 20 // 20 minutes
 
-        currentLinkCache.filter { allowedTypes.contains(it.type) }.forEach { link ->
-            currentLinks.add(link.url)
-            callback(link to null)
-        }
+            if (outdatedCache || clearCache) {
+                currentCache.linkCache.clear()
+                currentCache.subtitleCache.clear()
+                currentCache.saturated = false
+            } else if (currentCache.linkCache.isNotEmpty()) {
+                Log.d(TAG, "Resumed previous loading from ${unixTime - currentCache.lastCachedTimestamp}s ago")
+            }
 
-        currentSubsCache.forEach { sub ->
-            currentSubsUrls.add(sub.url)
-            currentSubsNames.add(sub.name)
-            subtitleCallback(sub)
-        }
+            // call all callbacks
+            currentCache.linkCache.forEach { link ->
+                currentLinksUrls.add(link.url)
+                if (allowedTypes.contains(link.type)) {
+                    callback(link to null)
+                }
+            }
 
-        // this stops all execution if links are cached
-        // no extra get requests
-        if (currentLinkCache.size > 0) {
-            return true
+            currentCache.subtitleCache.forEach { sub ->
+                currentSubsUrls.add(sub.url)
+                currentSubsNames.add(sub.name)
+                subtitleCallback(sub)
+            }
+
+            // this stops all execution if links are cached
+            // no extra get requests
+            if (currentCache.saturated) {
+                return true
+            }
         }
 
         val result = APIRepository(
             getApiFromNameNull(current.apiName) ?: throw Exception("This provider does not exist")
-        ).loadLinks(current.data,
+        ).loadLinks(
+            current.data,
             isCasting = isCasting,
             subtitleCallback = { file ->
+                Log.d(TAG, "Loaded SubtitleFile: $file")
                 val correctFile = PlayerSubtitleHelper.getSubtitleData(file)
-                if (correctFile.url.isNotEmpty() && !currentSubsUrls.contains(correctFile.url)) {
-                    currentSubsUrls.add(correctFile.url)
+                if (correctFile.url.isBlank() || currentSubsUrls.contains(correctFile.url)) {
+                    return@loadLinks
+                }
+                currentSubsUrls.add(correctFile.url)
 
-                    // this part makes sure that all names are unique for UX
-                    val fixedName = correctFile.name.html().toString().trim()
+                // this part makes sure that all names are unique for UX
+                val fixedName = correctFile.name.html().toString().trim()
 
-                    var name = fixedName
-                    var count = 1
-                    while (currentSubsNames.contains(name)) {
-                        count++
-                        name = SubtitleData.constructName(fixedName, "$count")
-                    }
+                var name = fixedName
+                var count = 1
+                while (currentSubsNames.contains(name)) {
+                    count++
+                    name =
+                        SubtitleData.constructName(originalName = fixedName, nameSuffix = "$count")
+                }
 
-                    currentSubsNames.add(name)
-                    val updatedFile = correctFile.copy(originalName = fixedName, nameSuffix = "$count")
+                currentSubsNames.add(name)
+                val updatedFile =
+                    correctFile.copy(originalName = fixedName, nameSuffix = "$count")
 
-                    if (!currentSubsCache.contains(updatedFile)) {
+                synchronized(currentCache) {
+                    if (currentCache.subtitleCache.add(updatedFile)) {
                         subtitleCallback(updatedFile)
-                        currentSubsCache.add(updatedFile)
-                        //subsCache[index] = currentSubsCache
+                        currentCache.lastCachedTimestamp = unixTime
                     }
                 }
             },
             callback = { link ->
                 Log.d(TAG, "Loaded ExtractorLink: $link")
-                if (link.url.isNotEmpty() && !currentLinks.contains(link.url) && !currentLinkCache.contains(link)) {
-                    currentLinks.add(link.url)
+                if (link.url.isBlank() || currentLinksUrls.contains(link.url)) {
+                    return@loadLinks
+                }
+                currentLinksUrls.add(link.url)
 
-                    if (allowedTypes.contains(link.type)) {
-                        callback(Pair(link, null))
+                synchronized(currentCache) {
+                    if (currentCache.linkCache.add(link)) {
+                        if (allowedTypes.contains(link.type)) {
+                            callback(Pair(link, null))
+                        }
+
+                        currentCache.linkCache.add(link)
+                        currentCache.lastCachedTimestamp = unixTime
                     }
-
-                    currentLinkCache.add(link)
-                    // linkCache[index] = currentLinkCache
                 }
             }
         )
-        cache[Pair(current.apiName, current.id)] = Cache(currentLinkCache, currentSubsCache, unixTime)
+
+        synchronized(currentCache) {
+            currentCache.saturated = currentCache.linkCache.isNotEmpty()
+            currentCache.lastCachedTimestamp = unixTime
+        }
 
         return result
     }

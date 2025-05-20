@@ -671,7 +671,7 @@
     <string name="unsupported_error">Nieobsługiwany błąd</string>
     <string name="encoding_error">Błąd kodowania</string>
     <string name="player_load_one_subtitle_online">Wczytaj pierwsze dostępne</string>
-    <string name="torrent_not_accepted">Niezaakceptowany torrent</string>
+    <string name="torrent_not_accepted">Uruchom ponownie aplikację i zaakceptuj wyskakujące okienko Otwórz torrent, aby kontynuować.</string>
     <string name="torrent_preferred_media">Włącz torrent w Ustawienia/Źródła/Preferowane multimedia</string>
     <string name="software_decoding">Dekodowanie programowe</string>
     <string name="software_decoding_desc">Dekodowanie programowe umożliwia odtwarzaczowi odtwarzanie plików wideo, których Twój telefon nie obsługuje, ale może powodować opóźnienia lub niestabilność odtwarzania w wysokiej rozdzielczości</string>
@@ -695,4 +695,9 @@
     <string name="begin_speaking">Zacznij mówić…</string>
     <string name="subtitles_from_embedded">Osadzone</string>
     <string name="subtitles_from_online">Online</string>
+    <string name="all_subtitles_italic">Zmień wszystkie napisy na kursywę</string>
+    <string name="background_radius">Promień tła</string>
+    <string name="all_subtitles_bold">Zmień wszystkie napisy na pogrubione</string>
+    <string name="slide_up_again_to_exceed_100">Przesuń ponownie w górę, aby przekroczyć 100%</string>
+    <string name="volume_exceeded_100">Głośność przekroczyła 100%</string>
 </resources>

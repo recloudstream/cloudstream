@@ -112,6 +112,7 @@ class PlayerGeneratorViewModel : ViewModel() {
             }
         }
     }
+
     fun getLoadResponse(): LoadResponse? {
         return normalSafeApiCall { (generator as? RepoLinkGenerator?)?.page }
     }
@@ -137,18 +138,21 @@ class PlayerGeneratorViewModel : ViewModel() {
         }
     }
 
+    private var extraSubtitles : MutableSet<SubtitleData> = mutableSetOf()
+
     /**
      * If duplicate nothing will happen
      * */
-    fun addSubtitles(file: Set<SubtitleData>) {
-        val currentSubs = _currentSubs.value ?: emptySet()
-        // Prevent duplicates
-        val allSubs = (currentSubs + file).distinct().toSet()
-        // Do not post if there's nothing new
-        // Posting will refresh subtitles which will in turn
-        // make the subs to english if previously unselected
-        if (allSubs != currentSubs) {
-            _currentSubs.postValue(allSubs)
+    fun addSubtitles(file: Set<SubtitleData>) = synchronized(extraSubtitles) {
+        extraSubtitles += file
+        val current = _currentSubs.value ?: emptySet()
+        val next = extraSubtitles + current
+
+        // if it is of a different size then we have added distinct items
+        if (next.size != current.size) {
+            // Posting will refresh subtitles which will in turn
+            // make the subs to english if previously unselected
+            _currentSubs.postValue(next)
         }
     }
 
@@ -179,6 +183,10 @@ class PlayerGeneratorViewModel : ViewModel() {
         currentJob?.cancel()
 
         currentJob = viewModelScope.launchSafe {
+            // if we load links then we clear the prev loaded links
+            synchronized(extraSubtitles) {
+                extraSubtitles.clear()
+            }
             val currentLinks = mutableSetOf<Pair<ExtractorLink?, ExtractorUri?>>()
             val currentSubs = mutableSetOf<SubtitleData>()
 
@@ -189,26 +197,34 @@ class PlayerGeneratorViewModel : ViewModel() {
             // load more data
             _loadingLinks.postValue(Resource.Loading())
             val loadingState = safeApiCall {
-                generator?.generateLinks(sourceTypes = sourceTypes, clearCache = forceClearCache, callback = {
-                    currentLinks.add(it)
-                    // Clone to prevent ConcurrentModificationException
-                    normalSafeApiCall {
-                        // Extra normalSafeApiCall since .toSet() iterates.
-                        _currentLinks.postValue(currentLinks.toSet())
-                    }
-                }, subtitleCallback = {
-                    currentSubs.add(it)
-                    normalSafeApiCall {
-                        _currentSubs.postValue(currentSubs.toSet())
-                    }
-                })
+                generator?.generateLinks(
+                    sourceTypes = sourceTypes,
+                    clearCache = forceClearCache,
+                    callback = {
+                        synchronized(currentLinks) {
+                            currentLinks.add(it)
+                            // Clone to prevent ConcurrentModificationException
+                            normalSafeApiCall {
+                                // Extra normalSafeApiCall since .toSet() iterates.
+                                _currentLinks.postValue(currentLinks.toSet())
+                            }
+                        }
+                    },
+                    subtitleCallback = {
+                        synchronized(extraSubtitles) {
+                            currentSubs.add(it)
+                            normalSafeApiCall {
+                                _currentSubs.postValue(currentSubs + extraSubtitles)
+                            }
+                        }
+                    })
             }
 
             _loadingLinks.postValue(loadingState)
             _currentLinks.postValue(currentLinks)
-            _currentSubs.postValue(
-                currentSubs.union(_currentSubs.value ?: emptySet())
-            )
+            synchronized(extraSubtitles) {
+                _currentSubs.postValue(currentSubs + extraSubtitles)
+            }
         }
 
     }

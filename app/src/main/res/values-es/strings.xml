@@ -552,13 +552,13 @@
 \n
 \n¿Desea añadir este elemento de todos modos, sustituir los existentes o cancelar la acción?</string>
     <string name="duplicate_title">Posible duplicado encontrado</string>
-    <string name="lock_profile">Perfil de bloqueo</string>
+    <string name="lock_profile">Bloquear perfil</string>
     <string name="action_add_to_favorites">Añadido a favoritos</string>
-    <string name="duplicate_replace_all">Sustituir todo</string>
+    <string name="duplicate_replace_all">Remplazar todo</string>
     <string name="pin_error_incorrect">PIN incorrecto. Por favor, inténtelo de nuevo.</string>
     <string name="action_unsubscribe">Cancelar la suscripción</string>
     <string name="pin_error_length">El PIN debe tener 4 caracteres</string>
-    <string name="duplicate_replace">Sustituir</string>
+    <string name="duplicate_replace">Remplazar</string>
     <string name="duplicate_add">Añadir</string>
     <string name="action_subscribe">Suscríbase</string>
     <string name="action_remove_from_favorites">Eliminar de favoritos</string>
@@ -596,7 +596,7 @@
     <string name="biometric_prompt_description">Después de algunos intentos fallidos, el mensaje se cerrará. Simplemente reinicie la aplicación para volver a intentarlo.</string>
     <string name="biometric_warning">Ahora se ha realizado una copia de seguridad de sus datos de CloudStream. Aunque la posibilidad de que esto ocurra es muy baja, todos los dispositivos pueden comportarse de forma diferente. En el raro caso de que no puedas acceder a la aplicación, borra completamente los datos de la aplicación y restaura desde una copia de seguridad. Sentimos mucho las molestias que esto pueda ocasionarte.</string>
     <string name="favorite">Favorito</string>
-    <string name="unfavorite">No favorito</string>
+    <string name="unfavorite">Eliminar de favoritos</string>
     <string name="resume_remaining" formatted="true">%s
 \nrestante</string>
     <string name="repo_copy_label">Nombre del repositorio y su URL</string>
@@ -671,7 +671,7 @@
     <string name="unsupported_error">Error no soportado</string>
     <string name="player_load_one_subtitle_online">Cargar primero disponible</string>
     <string name="torrent_preferred_media">Habilitación torrent en Opciones/Proveedores/Medio preferido</string>
-    <string name="torrent_not_accepted">Torrent no aceptado</string>
+    <string name="torrent_not_accepted">Reiniciar app y aceptar aparición de Stream Torrent para proceder.</string>
     <string name="software_decoding">Software de decodificado</string>
     <string name="software_decoding_desc">El software de decodificado permite que el reproductor reproduzca archivos de video no soportados por su teléfono, lo cual podría causar una reproducción lenta o inestable en alta resolución</string>
     <string name="player_notification_channel_description">La notificación del jugador para controlar el juego desde el segundo plano</string>
@@ -679,7 +679,7 @@
     <string name="sort_episodes_number_desc">Episodio (Descendente)</string>
     <string name="sort_episodes_rating_low_high">Puntuación (Más baja)</string>
     <string name="sort_episodes_date_newest">Fecha aérea (más nueva)</string>
-    <string name="starting_plugin_update_manually">Inicio de actualización de complemento.</string>
+    <string name="starting_plugin_update_manually">¡Iniciando el proceso de actualización del plugin!</string>
     <string name="update_plugins_manually">Actualizar complementos manualmente</string>
     <string name="player_notification_channel_name">Notificaciones del reproductor</string>
     <string name="update_plugins">Actualizar complementos</string>
@@ -689,9 +689,14 @@
     <string name="no_plugins_updated_manually">Ningún complemento fue actualizado.</string>
     <string name="sort_episodes_number_asc">Episodio (Ascendente)</string>
     <string name="speech_recognition_unavailable">Reconocimiento de habla no disponible</string>
-    <string name="begin_speaking">Comenzar a hablar…</string>
+    <string name="begin_speaking">Empiece a hablar…</string>
     <string name="sort_button_episode">Ep %s</string>
     <string name="sort_button_date">Fecha %s</string>
     <string name="subtitles_from_embedded">Integrado</string>
     <string name="subtitles_from_online">En línea</string>
+    <string name="all_subtitles_italic">Poner todos los subtítulos en cursiva</string>
+    <string name="all_subtitles_bold">Poner todos los subtítulos en negrita</string>
+    <string name="background_radius">Radio del fondo</string>
+    <string name="volume_exceeded_100">El volumen ha excedido 100%</string>
+    <string name="slide_up_again_to_exceed_100">Deslice de nuevo hacia arriba para ir más allá del 100%</string>
 </resources>

@@ -88,6 +88,7 @@ const val DEF_SUBS_ELEVATION = 20
 class SubtitlesFragment : DialogFragment() {
     companion object {
         val applyStyleEvent = Event<SaveCaptionStyle>()
+        private val captionRegex = Regex("""(-\s?|)[\[({][\S\s]*?[])}]\s*""")
 
         fun setSubtitleViewStyle(view: SubtitleView?, data: SaveCaptionStyle) {
             if (view == null) return
@@ -179,6 +180,12 @@ class SubtitlesFragment : DialogFragment() {
                 setText(customSpan)
             }
 
+            // 5. remove captions
+            text?.let { text ->
+                if (style.removeCaptions) {
+                    setText(text.replace(captionRegex, ""))
+                }
+            }
 
             return this
         }

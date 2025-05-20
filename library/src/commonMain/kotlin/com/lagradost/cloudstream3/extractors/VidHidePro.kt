@@ -62,7 +62,7 @@ open class VidHidePro : ExtractorApi() {
             "Sec-Fetch-Dest" to "empty",
             "Sec-Fetch-Mode" to "cors",
             "Sec-Fetch-Site" to "cross-site",
-            "Origin" to "$mainUrl/",
+            "Origin" to mainUrl,
 	        "User-Agent" to USER_AGENT,
         )
         
@@ -77,8 +77,8 @@ open class VidHidePro : ExtractorApi() {
         Regex(":\\s*\"(.*?m3u8.*?)\"").findAll(script).forEach { m3u8Match ->
             generateM3u8(
                 name,
-                m3u8Match.groupValues[1],
-                mainUrl,
+                fixUrl(m3u8Match.groupValues[1]),
+                referer = "$mainUrl/",
                 headers = headers
             ).forEach(callback)
         }
