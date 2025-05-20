@@ -52,7 +52,11 @@ open class YoutubeExtractor : ExtractorApi() {
     ) {
         if (ytVideos[url].isNullOrEmpty()) {
             val link =
-                YoutubeStreamLinkHandlerFactory.getInstance().fromUrl(url)
+                YoutubeStreamLinkHandlerFactory.getInstance().fromUrl(
+                    url.replace(
+                        schemaStripRegex, ""
+                    )
+                )
 
             val s = object : YoutubeStreamExtractor(
                 ServiceList.YouTube,
