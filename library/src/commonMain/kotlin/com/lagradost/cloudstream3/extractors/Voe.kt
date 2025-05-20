@@ -50,7 +50,6 @@ open class Voe : ExtractorApi() {
     override val mainUrl = "https://voe.sx"
     override val requiresReferer = true
     private val redirectRegex = Regex("""window.location.href\s*=\s*'([^']+)';""")
-    private val encodedRegex = Regex("""MKGMa="(.*?)";""", RegexOption.DOT_MATCHES_ALL)
 
     override suspend fun getUrl(
         url: String,
@@ -63,9 +62,9 @@ open class Voe : ExtractorApi() {
         if (redirectUrl != null) {
             res = app.get(redirectUrl, referer = referer)
         }
-        val encodedString = encodedRegex.find(res.body.string())?.groupValues?.get(1)
+        val encodedString = res.document.selectFirst("script[type=application/json]")?.data()?.trim()?.substringAfter("[\"")?.substringBeforeLast("\"]")
         if (encodedString == null) {
-            println("MKGMa string not found.")
+            println("encoded string not found.")
             return
         }
         val decryptedJson = decryptF7(encodedString)
