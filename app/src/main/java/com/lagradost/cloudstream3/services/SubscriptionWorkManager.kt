@@ -19,8 +19,6 @@ import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.AppContextUtils.createNotificationChannel
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiDubstatusSettings
-import com.lagradost.cloudstream3.utils.AppUtils.parseJson
-import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllSubscriptions
@@ -82,15 +80,6 @@ class SubscriptionWorkManager(val context: Context, workerParams: WorkerParamete
             .setSmallIcon(com.google.android.gms.cast.framework.R.drawable.quantum_ic_refresh_white_24)
             .setProgress(0, 0, true)
 
-    private val updateNotificationBuilder =
-        NotificationCompat.Builder(context, SUBSCRIPTION_CHANNEL_ID)
-            .setColorized(true)
-            .setOnlyAlertOnce(true)
-            .setAutoCancel(true)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setColor(context.colorFromAttribute(R.attr.colorPrimary))
-            .setSmallIcon(R.drawable.ic_cloudstream_monochrome_big)
-
     private val notificationManager: NotificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -141,8 +130,8 @@ class SubscriptionWorkManager(val context: Context, workerParams: WorkerParamete
                     val api = getApiFromNameNull(savedData.apiName) ?: return@apmap null
 
                     // Reasonable timeout to prevent having this worker run forever.
-                    val response = withTimeoutOrNull(60_000) {
-                        api.load(savedData.url) as? EpisodeResponse
+                    val loadResponse = withTimeoutOrNull(60_000) {
+                        api.load(savedData.url)
                     } ?: return@apmap null
 
                     val dubPreference =
@@ -154,6 +143,8 @@ class SubscriptionWorkManager(val context: Context, workerParams: WorkerParamete
                             DubStatus.Subbed
                         }
 
+                    var season = 0
+                    val response = loadResponse as? EpisodeResponse ?: return@apmap null
                     val latestEpisodes = response.getLatestEpisodes()
                     val latestPreferredEpisode = latestEpisodes[dubPreference]
                     val nextAiring = response.nextAiring
@@ -171,6 +162,18 @@ class SubscriptionWorkManager(val context: Context, workerParams: WorkerParamete
                         // Early return to prevent notifying users of unavailable episodes
                         // on the rare occasion latestPreferredEpisode changes for meta providers
                         return@apmap Unit
+                    }
+
+                    when (loadResponse) {
+                        is TvSeriesLoadResponse -> {
+                            season = loadResponse.episodes.maxOf { it.season ?: Int.MIN_VALUE }
+                        }
+
+                        is AnimeLoadResponse -> {
+                            loadResponse.episodes[dubPreference]?.let { episodes ->
+                                season = episodes.maxOf { it.season ?: Int.MIN_VALUE }
+                            }
+                        }
                     }
 
                     val (shouldUpdate, latestEpisode) = if (latestPreferredEpisode != null) {
@@ -193,38 +196,14 @@ class SubscriptionWorkManager(val context: Context, workerParams: WorkerParamete
                     )
 
                     if (shouldUpdate) {
-                        val updateHeader = savedData.name
-                        val updateDescription = txt(
-                            R.string.subscription_episode_released,
-                            latestEpisode,
-                            savedData.name
-                        ).asString(context)
-
-                        val intent = Intent(context, MainActivity::class.java).apply {
-                            data = savedData.url.toUri()
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        }.putExtra(MainActivity.API_NAME_EXTRA_KEY, api.name)
-
-                        val pendingIntent =
-                            PendingIntentCompat.getActivity(context, 0, intent, 0, false)
-
-                        val poster = ioWork {
-                            savedData.posterUrl?.let { url ->
-                                context.getImageBitmapFromUrl(
-                                    url,
-                                    savedData.posterHeaders
-                                )
-                            }
-                        }
-
-                        val updateNotification =
-                            updateNotificationBuilder.setContentTitle(updateHeader)
-                                .setContentText(updateDescription)
-                                .setContentIntent(pendingIntent)
-                                .setLargeIcon(poster)
-                                .build()
-
-                        notificationManager.notify(id, updateNotification)
+                        EpisodeAlertManager.showEpisodeNotification(
+                            id = id,
+                            season = season,
+                            episode = latestEpisode,
+                            savedData = savedData,
+                            apiName = api.name,
+                            context = context
+                        )
                     }
 
                     // You can probably get some issues here since this is async but it does not matter much.
@@ -255,9 +234,6 @@ class EpisodeAlertWorker(
         const val EPISODE_NO = "episode_no"
         const val SEASON_NO = "season_no"
         const val API_NAME = "api_name"
-        const val UPDATE_HEADER = "update_header"
-        const val POSTER_URL = "poster_url"
-        const val POSTER_HEADERS = "poster_headers"
     }
 
     override suspend fun doWork(): Result {
@@ -266,59 +242,19 @@ class EpisodeAlertWorker(
         val episode = inputData.getInt(EPISODE_NO, -1)
         val season = inputData.getInt(SEASON_NO, -1)
         val apiName = inputData.getString(API_NAME) ?: return Result.success()
-        val updateHeader = inputData.getString(UPDATE_HEADER) ?: return Result.success()
-        val posterUrl = inputData.getString(POSTER_URL)
-        val posterHeaders = inputData.getString(POSTER_HEADERS)?.let {
-            parseJson<Map<String, String>>(it)
-        }
 
         // Final check to ensure user is still subscribed before notifying
         val savedData = DataStoreHelper.getSubscribedData(subscriptionId) ?: return Result.success()
         val id = savedData.id ?: return Result.success()
 
-        val intent = Intent(applicationContext, MainActivity::class.java).apply {
-            data = savedData.url.toUri()
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra(MainActivity.API_NAME_EXTRA_KEY, apiName)
-        }
-
-        val pendingIntent =
-            PendingIntentCompat.getActivity(applicationContext, 0, intent, 0, false)
-
-        val updateDescription = if (season > 0) {
-            txt(
-                R.string.subscription_season_episode_released,
-                season,
-                episode,
-            ).asString(applicationContext)
-        } else {
-            txt(
-                R.string.subscription_episode_released,
-                episode,
-            ).asString(applicationContext)
-        }
-
-        val notificationBuilder = NotificationCompat.Builder(
-            applicationContext,
-            SUBSCRIPTION_CHANNEL_ID
-        ).apply {
-            setContentTitle(updateHeader)
-            setContentText(
-                updateDescription
-            )
-            setContentIntent(pendingIntent)
-            setSmallIcon(R.drawable.ic_cloudstream_monochrome_big)
-            setAutoCancel(true)
-            priority = NotificationCompat.PRIORITY_DEFAULT
-        }
-
-        posterUrl?.let { url ->
-            val bitmap = applicationContext.getImageBitmapFromUrl(url, posterHeaders)
-            notificationBuilder.setLargeIcon(bitmap)
-        }
-
-        NotificationManagerCompat.from(applicationContext)
-            .notify(id, notificationBuilder.build())
+        EpisodeAlertManager.showEpisodeNotification(
+            id = id,
+            season = season,
+            episode = episode,
+            savedData = savedData,
+            apiName = apiName,
+            context = applicationContext
+        )
 
         return Result.success()
     }
@@ -381,9 +317,6 @@ class EpisodeAlertManager {
                 EpisodeAlertWorker.EPISODE_NO to nextAiring.episode,
                 EpisodeAlertWorker.SEASON_NO to nextAiring.season,
                 EpisodeAlertWorker.API_NAME to apiName,
-                EpisodeAlertWorker.UPDATE_HEADER to subscribedData.name,
-                EpisodeAlertWorker.POSTER_URL to subscribedData.posterUrl,
-                EpisodeAlertWorker.POSTER_HEADERS to subscribedData.posterHeaders?.toJson()
             )
 
             val constraints = Constraints.Builder()
@@ -402,6 +335,62 @@ class EpisodeAlertManager {
                 ExistingWorkPolicy.REPLACE,
                 request
             )
+        }
+
+        suspend fun showEpisodeNotification(
+            id: Int,
+            season: Int,
+            episode: Int,
+            savedData: DataStoreHelper.SubscribedData,
+            apiName: String,
+            context: Context
+        ) {
+            val updateHeader = savedData.name
+            val posterUrl = savedData.posterUrl
+            val posterHeaders = savedData.posterHeaders
+            val intent = Intent(context, MainActivity::class.java).apply {
+                data = savedData.url.toUri()
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                putExtra(MainActivity.API_NAME_EXTRA_KEY, apiName)
+            }
+
+            val pendingIntent =
+                PendingIntentCompat.getActivity(context, 0, intent, 0, false)
+
+            val updateDescription = if (season > 0) {
+                txt(
+                    R.string.subscription_season_episode_released,
+                    season,
+                    episode,
+                ).asString(context)
+            } else {
+                txt(
+                    R.string.subscription_episode_released,
+                    episode,
+                ).asString(context)
+            }
+
+            val notificationBuilder =
+                NotificationCompat.Builder(context, SUBSCRIPTION_CHANNEL_ID)
+                    .setColorized(true)
+                    .setOnlyAlertOnce(true)
+                    .setAutoCancel(true)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setColor(context.colorFromAttribute(R.attr.colorPrimary))
+                    .setSmallIcon(R.drawable.ic_cloudstream_monochrome_big)
+                    .setContentTitle(updateHeader)
+                    .setContentText(updateDescription)
+                    .setContentIntent(pendingIntent)
+
+            val poster = ioWork {
+                posterUrl?.let { url ->
+                    context.getImageBitmapFromUrl(url, posterHeaders)
+                }
+            }
+            notificationBuilder.setLargeIcon(poster)
+
+            NotificationManagerCompat.from(context)
+                .notify(id, notificationBuilder.build())
         }
     }
 }
