@@ -646,7 +646,7 @@
     <string name="encoding_error">Грешка при кодирање на преводот</string>
     <string name="unsupported_error">Неподдржана грешка</string>
     <string name="player_load_one_subtitle_online">Вчитај прво достапно</string>
-    <string name="torrent_not_accepted">Не е прифатен torrent</string>
+    <string name="torrent_not_accepted">Рестартирај ја апликацијата и прифати го Stream Torrent искачувачкиот прозорец за да продолжиш.</string>
     <string name="torrent_preferred_media">Овозможи torrent во Поставки/Провајдери/Претпочитани медиуми</string>
     <string name="software_decoding_desc">Софтверското декодирање му овозможува на плеерот да репродуцира видео фајлови што не се поддржани од вашиот телефон, но може да предизвика задоцнување или нестабилна репродукција при висока резолуција.</string>
     <string name="software_decoding">Софтверско декодирање</string>
@@ -664,4 +664,15 @@
     <string name="sort_button_rating">Рејтинг %s</string>
     <string name="sort_button_date">Датум %s</string>
     <string name="update_plugins_manually">Ажурирај ги приклучоците рачно</string>
+    <string name="volume_exceeded_100">Јачината на звукот ја надмина 100%</string>
+    <string name="slide_up_again_to_exceed_100">Повлечи повторно нагоре за да надминеш 100%</string>
+    <string name="player_notification_channel_name">Известувања од плеерот</string>
+    <string name="player_notification_channel_description">Известување од плеерот за контрола на репродукцијата од позадина</string>
+    <string name="subtitles_from_embedded">Вграден</string>
+    <string name="subtitles_from_online">Онлајн</string>
+    <string name="all_subtitles_bold">Направи ги сите преводи со задебелен фонт</string>
+    <string name="all_subtitles_italic">Направи ги сите преводи со закосен фонт</string>
+    <string name="speech_recognition_unavailable">Препознавањето на говор не е достапно</string>
+    <string name="begin_speaking">Започни со зборување…</string>
+    <string name="background_radius">Радиус на позадина</string>
 </resources>
