@@ -607,4 +607,6 @@
     <string name="toast_copied">Gekopieerd!</string>
     <string name="dont_show">Verbergen</string>
     <string name="show">Tonen</string>
+    <string name="next_season_episode_format" formatted="true">Seizoen %1$d Aflevering %2$d zal worden uitgebracht in</string>
+    <string name="play_from_beginning_img_des">Kijken vanaf het begin</string>
 </resources>
