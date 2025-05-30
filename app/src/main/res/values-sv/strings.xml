@@ -676,4 +676,14 @@
     <string name="unsupported_error">Stöds ej</string>
     <string name="sort_episodes_number_asc">Avsnitt (Stigande)</string>
     <string name="sort_episodes_number_desc">Avsnitt (Fallande)</string>
+    <string name="volume_exceeded_100">Volymen har överskridit 100%</string>
+    <string name="sort_episodes_rating_high_low">Betyg (Högsta)</string>
+    <string name="sort_button_date">Datum%s</string>
+    <string name="update_plugins_manually">Uppdatera Plugins manuellt</string>
+    <string name="speech_recognition_unavailable">Röst igenkänning inte tillgänglig</string>
+    <string name="begin_speaking">Börja Prata…</string>
+    <string name="sort_episodes_rating_low_high">Betyg (Lägsta)</string>
+    <string name="sort_button_episode">Ep %s</string>
+    <string name="sort_button_rating">Betyg%s</string>
+    <string name="update_plugins">Uppdatera Plugins</string>
 </resources>

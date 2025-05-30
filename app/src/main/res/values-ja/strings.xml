@@ -656,7 +656,7 @@
     <string name="sort_release_date_old">公開日 (古い順)</string>
     <string name="hide_player_control_names">プレーヤーのコントロール名を非表示</string>
     <string name="torrent_preferred_media">設定/プロバイダ/優先メディアでトレントを有効にする</string>
-    <string name="torrent_not_accepted">トレントが受け入れられません</string>
+    <string name="torrent_not_accepted">アプリを再起動し、ポップアップに同意して続行します。</string>
     <string name="software_decoding">ソフトウェアデコーディング</string>
     <string name="software_decoding_desc">ソフトウェアデコーディングにより、携帯電話でサポートされていないビデオファイルを再生できますが、高解像度で遅延や不安定な再生を引き起こす可能性があります</string>
     <string name="plugins_updated_manually">%d 個のプラグインを正常に更新しました！</string>
@@ -670,4 +670,9 @@
     <string name="unsupported_error">サポートされていないエラー</string>
     <string name="pref_category_actions">アクション</string>
     <string name="pref_category_player_features">プレーヤー機能</string>
+    <string name="all_subtitles_bold">字幕を太字にする</string>
+    <string name="volume_exceeded_100">ボリュームが100%を越えました</string>
+    <string name="slide_up_again_to_exceed_100">再度上へスライドして100%以上に調整できます</string>
+    <string name="all_subtitles_italic">字幕を斜体にする</string>
+    <string name="background_radius">背景の半径</string>
 </resources>
