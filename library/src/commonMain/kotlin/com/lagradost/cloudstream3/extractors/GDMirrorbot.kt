@@ -44,7 +44,7 @@ open class GDMirrorbot : ExtractorApi() {
                     val jsonStr = base64Decode(mresultBase64)
                     JsonParser.parseString(jsonStr).asJsonObject
                 } catch (e: Exception) {
-                    Log.e("Phisher", "Failed to decode mresult base64: $e")
+                    Log.e("Error:", "Failed to decode mresult base64: $e")
                     return
                 }
             }
