@@ -58,9 +58,28 @@ open class GDMirrorbot : ExtractorApi() {
             val path = decodedMresult[key]?.asString?.trimStart('/') ?: continue
             val fullUrl = "$base/$path"
 
-            siteFriendlyNames?.get(key)?.asString ?: name
-            loadExtractor(fullUrl, referer ?: mainUrl, subtitleCallback, callback)
+            val friendlyName = siteFriendlyNames?.get(key)?.asString ?: key
+            try {
+                when (friendlyName) {
+                    "EarnVids" -> {
+                        VidhideExtractor().getUrl(fullUrl, referer, subtitleCallback, callback)
+                    }
+                    "StreamHG" -> {
+                        VidHidePro().getUrl(fullUrl, referer, subtitleCallback, callback)
+                    }
+                    "RpmShare", "UpnShare", "StreamP2p" -> {
+                        VidStack().getUrl(fullUrl, referer, subtitleCallback, callback)
+                    }
+                    else -> {
+                        loadExtractor(fullUrl, referer ?: mainUrl, subtitleCallback, callback)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("Error:", "Failed to extract from $friendlyName at $fullUrl")
+                continue
+            }
         }
+
     }
 
     private fun getBaseUrl(url: String): String {
