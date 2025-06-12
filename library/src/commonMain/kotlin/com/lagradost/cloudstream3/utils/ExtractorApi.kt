@@ -42,6 +42,7 @@ import com.lagradost.cloudstream3.extractors.DesuArcg
 import com.lagradost.cloudstream3.extractors.DesuDrive
 import com.lagradost.cloudstream3.extractors.DesuOdchan
 import com.lagradost.cloudstream3.extractors.DesuOdvip
+import com.lagradost.cloudstream3.extractors.Dhcplay
 import com.lagradost.cloudstream3.extractors.Dhtpre
 import com.lagradost.cloudstream3.extractors.Dokicloud
 import com.lagradost.cloudstream3.extractors.DoodCxExtractor
@@ -1150,6 +1151,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     VidHidePro5(),
     VidHidePro6(),
     Dhtpre(),
+    Dhcplay(),
     Smoothpre(),
     Peytonepre(),
     LuluStream(),
