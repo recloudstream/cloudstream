@@ -1218,7 +1218,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     InternetArchive(),
     VidStack(),
     GDMirrorbot(),
-
+    Server1uns(),
     VinovoSi(),
     VinovoTo(),
 )
