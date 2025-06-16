@@ -691,7 +691,7 @@
     <string name="unsupported_error">Error yang tidak didukung</string>
     <string name="player_load_one_subtitle_online">Muat yang pertama tersedia</string>
     <string name="torrent_preferred_media">Aktifkan torrent di dalam Pengaturan/Penyedia/Media pilihan</string>
-    <string name="torrent_not_accepted">Tidak menerima torrent</string>
+    <string name="torrent_not_accepted">Mulai ulang aplikasi dan terima pop-up Stream Torrent untuk melanjutkan.</string>
     <string name="software_decoding_desc">Dekode perangkat lunak memungkinkan pemutar memainkan berkas video yang tidak didukung perangkat Anda, tetapi dapat memperburuk performa atau pemutaran yang tidak stabil pada resolusi tinggi</string>
     <string name="software_decoding">Dekode perangkat lunak</string>
     <string name="sort_episodes_rating_low_high">Rating (terendah)</string>
@@ -711,4 +711,12 @@
     <string name="player_notification_channel_description">Pemberitahuan pemutar untuk mengontrol pemutaran dari latar belakang</string>
     <string name="subtitles_from_online">Daring</string>
     <string name="begin_speaking">Mulai bicara…</string>
+    <string name="subtitles_from_embedded">Tertanam</string>
+    <string name="player_notification_channel_name">Notifikasi pemain</string>
+    <string name="speech_recognition_unavailable">Pengenalan ucapan tidak tersedia</string>
+    <string name="all_subtitles_bold">Membuat semua subtitle menjadi tebal</string>
+    <string name="all_subtitles_italic">Membuat semua subtitle menjadi miring</string>
+    <string name="background_radius">Radius Latar Belakang</string>
+    <string name="volume_exceeded_100">Volume telah melebihi 100%</string>
+    <string name="slide_up_again_to_exceed_100">Geser ke atas lagi untuk melampaui 100%</string>
 </resources>

@@ -694,7 +694,7 @@
     <string name="encoding_error">Chyba kódování</string>
     <string name="unsupported_error">Nepodporovaná chyba</string>
     <string name="player_load_one_subtitle_online">Načíst první dostupné</string>
-    <string name="torrent_not_accepted">Není akceptovatelný torrent</string>
+    <string name="torrent_not_accepted">Pro pokračování restartujte aplikaci a potvrďte dialog o streamování torrentu.</string>
     <string name="torrent_preferred_media">Povolte torrent v Nastavení/Poskytovatelé/Preferovaná média</string>
     <string name="software_decoding">Softwarové dekódování</string>
     <string name="software_decoding_desc">Softwarové dekódování umožňuje přehrávači přehrávat video soubory, které telefon nepodporuje, ale může způsobit zpoždění nebo nestabilní přehrávání ve vysokém rozlišení</string>
@@ -718,4 +718,9 @@
     <string name="begin_speaking">Začněte mluvit…</string>
     <string name="subtitles_from_embedded">Vložené</string>
     <string name="subtitles_from_online">Online</string>
+    <string name="all_subtitles_bold">Vykreslit všechny titulky tučně</string>
+    <string name="all_subtitles_italic">Vykreslit všechny titulky kurzívou</string>
+    <string name="background_radius">Poloměr pozadí</string>
+    <string name="slide_up_again_to_exceed_100">Přejeďte opět nahoru pro pokračování nad 100 %</string>
+    <string name="volume_exceeded_100">Hlasitost překročila 100 %</string>
 </resources>
