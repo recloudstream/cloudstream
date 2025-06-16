@@ -694,7 +694,7 @@
     <string name="software_decoding">Dekodiranje softvera</string>
     <string name="software_decoding_desc">Softversko dekodiranje omogućuje playeru reprodukciju video datoteka koje tvoj mobitel ne podržava, ali može uzrokovati kašnjenja ili nestabilnu reprodukciju pri visokoj rezoluciji</string>
     <string name="torrent_info">Ovaj je video Torrent, što znači da se tvoja video aktivnost može pratiti.\nInformiraj se o korištenju Torrenta prije nego što nastaviš.</string>
-    <string name="torrent_not_accepted">Neprihvaćeni torrent</string>
+    <string name="torrent_not_accepted">Ponovno pokrenite aplikaciju i prihvatite skočni prozor Stream Torrent za nastavak.</string>
     <string name="player_load_one_subtitle_online">Učitaj prvi dostupni</string>
     <string name="audio_singluar">Audio</string>
     <string name="podcast_singluar">Podcast</string>
@@ -715,4 +715,13 @@
     <string name="player_notification_channel_name">Obavijesti reproduktora</string>
     <string name="plugins_updated_manually">Uspješno ažuriran(o) %d dodatak(a)!</string>
     <string name="player_notification_channel_description">Obavijest reproduktora za upravljanje reprodukcijom iz pozadine</string>
+    <string name="all_subtitles_italic">Ukosite sve titlove</string>
+    <string name="all_subtitles_bold">Podebljajte sve titlove</string>
+    <string name="background_radius">Radijus pozadine</string>
+    <string name="volume_exceeded_100">Glasnoća je premašila 100%</string>
+    <string name="slide_up_again_to_exceed_100">Ponovno kliznite prema gore da biste prešli preko 100%</string>
+    <string name="subtitles_from_embedded">Ugrađen</string>
+    <string name="subtitles_from_online">Online</string>
+    <string name="speech_recognition_unavailable">Prepoznavanje govora nije dostupno</string>
+    <string name="begin_speaking">Počnite govoriti…</string>
 </resources>

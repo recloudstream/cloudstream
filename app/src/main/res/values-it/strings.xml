@@ -690,7 +690,7 @@
     <string name="unsupported_error">Errore non supportato</string>
     <string name="encoding_error">Errore di codifica</string>
     <string name="player_load_one_subtitle_online">Carica il primo disponibile</string>
-    <string name="torrent_not_accepted">Torrent non accettato</string>
+    <string name="torrent_not_accepted">Riavvia l\'app e accetta il pop-up Stream Torrent per procedere.</string>
     <string name="torrent_preferred_media">Abilita torrent in Impostazioni/Provider/Media preferiti</string>
     <string name="software_decoding">Decodifica software</string>
     <string name="software_decoding_desc">La decodifica software consente al lettore di riprodurre file video non supportati dal telefono, ma potrebbe causare una riproduzione lenta o instabile ad alta risoluzione</string>
@@ -712,4 +712,11 @@
     <string name="player_notification_channel_description">La notifica del lettore per controllare la riproduzione in background</string>
     <string name="begin_speaking">Inizia a parlare…</string>
     <string name="speech_recognition_unavailable">Il riconoscimento vocale non è disponibile</string>
+    <string name="subtitles_from_embedded">Incorporato</string>
+    <string name="subtitles_from_online">In linea</string>
+    <string name="all_subtitles_bold">Rendi tutti i sottotitoli in grassetto</string>
+    <string name="all_subtitles_italic">Rendi tutti i sottotitoli in corsivo</string>
+    <string name="background_radius">Raggio di sfondo</string>
+    <string name="volume_exceeded_100">Il volume ha superato il 100%</string>
+    <string name="slide_up_again_to_exceed_100">Scorri di nuovo verso l\'alto per andare oltre il 100%</string>
 </resources>

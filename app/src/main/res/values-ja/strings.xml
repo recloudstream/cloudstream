@@ -93,7 +93,7 @@
     <string name="action_remove_from_bookmarks">削除</string>
     <string name="home_more_info">詳細情報</string>
     <string name="home_expanded_hide">閉じる</string>
-    <string name="category_updates">アップデート・バックアップ</string>
+    <string name="category_updates">アップデートとバックアップ</string>
     <string name="app_language">アプリ言語</string>
     <string name="github">GitHub（ギットハブ）</string>
     <string name="go_back_30">-30</string>
@@ -156,7 +156,7 @@
     <string name="download_started">ダウンロード開始</string>
     <string name="download_done">ダウンロード完了</string>
     <string name="download_canceled">ダウンロード終了</string>
-    <string name="stream">ストリーム</string>
+    <string name="stream">ネットワークストリーム</string>
     <string name="update_started">アップデート開始</string>
     <string name="no_season">シーズンなし</string>
     <string name="no_subtitles">字幕なし</string>
@@ -184,7 +184,7 @@
     <string name="network_adress_example">https://example.com/example.mp4</string>
     <string name="subtitle_offset_extra_hint_none_format">字幕遅延なし</string>
     <string name="delete_repository">リポジトリ削除</string>
-    <string name="download_all_plugins_from_repo">このリポジトリからすべてのプラグインをダウンロードしますか？</string>
+    <string name="download_all_plugins_from_repo">警告: CloudStream 3はサードパーティの拡張機能の使用について一切の責任を負わず、それらに対するサポートも提供しません！</string>
     <string name="action_add_to_bookmarks">視聴状態を設定</string>
     <string name="subtitle_offset">字幕を同期</string>
     <string name="add_repository">リポジトリを追加</string>
@@ -415,4 +415,264 @@
     <string name="backup_frequency">バックアップ頻度</string>
     <string name="picture_in_picture_des">他のアプリの上にミニプレイヤーで再生し続ける</string>
     <string name="downloads_empty">現在ダウンロードはがありません。</string>
+    <string name="benene_count_text_none">ベネネは与えられていません</string>
+    <string name="double_tap_to_seek_settings">ダブルタップでシーク</string>
+    <string name="android_tv_interface_off_seek_settings_summary">プレーヤーが非表示のときに使用されるシーク量</string>
+    <string name="resize_zoom">ズーム</string>
+    <string name="action_subscribe">購読</string>
+    <string name="subtitles_from_embedded">埋め込み</string>
+    <string name="subtitles_from_online">オンライン</string>
+    <string name="lightnovel">同じ開発者によるライトノベルアプリ</string>
+    <string name="uprereleases_settings_des">完全リリースだけでなくプレリリースのアップデートも検索</string>
+    <string name="add_site_pref">サイトをクローン</string>
+    <string name="actor_main">メイン</string>
+    <string name="subtitles_remove_bloat">字幕から不要なものを削除</string>
+    <string name="safe_mode_file">セーフモードファイルが見つかりました！\nファイルが削除されるまで、スタートアップ時に拡張機能は読み込まれません。</string>
+    <string name="remove_site_pref">サイトを削除</string>
+    <string name="view_public_repositories_button_short">公開リスト</string>
+    <string name="uppercase_all_subtitles">すべての字幕を大文字にする</string>
+    <string name="enable_skip_op_from_database_des">オープニング/エンディングのスキップポップアップを表示</string>
+    <string name="clipboard_too_large">テキストが多すぎます。クリップボードに保存できません。</string>
+    <string name="sort_episodes_number_desc">エピソード (降順)</string>
+    <string name="sort_episodes_rating_high_low">評価 (最高)</string>
+    <string name="unable_to_inflate">UIが正しく作成できませんでした。これは重大なバグであり、すぐに報告する必要があります %s</string>
+    <string name="update_plugins">プラグインを更新</string>
+    <string name="starting_plugin_update_manually">プラグインの更新プロセスを開始します！</string>
+    <string name="update_plugins_manually">プラグインを手動で更新</string>
+    <string name="episode_sync_settings">視聴進捗を更新</string>
+    <string name="backup_success">データが保存されました</string>
+    <string name="advanced_search_des">プロバイダごとに分かれた検索結果を提供します</string>
+    <string name="watch_quality_pref">優先視聴品質 (WiFi)</string>
+    <string name="auth_locally">ローカルで認証</string>
+    <string name="authenticated_user_fail" formatted="true">%s でログインできませんでした</string>
+    <string name="pref_category_bypass">ISPバイパス</string>
+    <string name="pref_category_accounts">アカウント</string>
+    <string name="test_extensions">すべての拡張機能をテスト</string>
+    <string name="example_password">password123</string>
+    <string name="restart">再起動</string>
+    <string name="android_tv_interface_on_seek_settings">プレーヤー表示時 - シーク量</string>
+    <string name="random_button_settings_desc">ホームページとライブラリにランダムボタンを表示</string>
+    <string name="batch_download_nothing_to_download_format" formatted="true">すべての %s はすでにダウンロードされています</string>
+    <string name="extension_install_first">最初に拡張機能をインストール</string>
+    <string name="player_settings_play_in_app">内部プレーヤー</string>
+    <string name="backup_settings">データをバックアップ</string>
+    <string name="queued">キューに入れられました</string>
+    <string name="android_tv_interface_on_seek_settings_summary">プレーヤーが表示されているときに使用されるシーク量</string>
+    <string name="extras">エクストラ</string>
+    <string name="skip_type_op">オープニング</string>
+    <string name="subscription_new">%s を購読しました</string>
+    <string name="action_open_play">@string/home_play</string>
+    <string name="subs_import_text" formatted="true">フォントを %s に配置してインポート</string>
+    <string name="show_fillers_settings">アニメのフィラーエピソードを表示</string>
+    <string name="automatic_plugin_updates">自動プラグインアップデート</string>
+    <string name="delete_format" formatted="true">削除 (%1$d | %2$s)</string>
+    <string name="render_error">レンダラーエラー</string>
+    <string name="storage_error">ダウンロードエラー、ストレージの許可を確認してください</string>
+    <string name="source_error">ソースエラー</string>
+    <string name="episode_action_chromecast_episode">エピソードをChromecast</string>
+    <string name="video_buffer_clear_settings">ビデオと画像のキャッシュをクリア</string>
+    <string name="primary_color_settings">プライマリカラー</string>
+    <string name="example_site_name">NewSiteName</string>
+    <string name="example_lang_name">言語コード (en)</string>
+    <string name="account">アカウント</string>
+    <string name="delete_repository_plugins">これにより、リポジトリのすべてのプラグインも削除されます</string>
+    <string name="plugins_disabled" formatted="true">無効: %d</string>
+    <string name="player_pref">優先ビデオプレーヤー</string>
+    <string name="skip_type_format" formatted="true">%s をスキップ</string>
+    <string name="skip_type_creddits">クレジット</string>
+    <string name="app_unrestricted_toast">アプリのバッテリー使用はすでに無制限に設定されています</string>
+    <string name="sort">並べ替え</string>
+    <string name="revert">元に戻す</string>
+    <string name="subscription_in_progress_notification">購読している番組を更新中</string>
+    <string name="biometric_authentication_title">CloudStreamをアンロック</string>
+    <string name="apply_on_restart">変更を反映するにはアプリを再起動してください。</string>
+    <string name="benene">開発者にベネネを与える</string>
+    <string name="benene_des">与えられたベネネ</string>
+    <string name="use">使用</string>
+    <string name="quality_sd">SD</string>
+    <string name="apk_installer_settings_des">一部の携帯電話は新しいパッケージインストーラをサポートしていません。アップデートがインストールされない場合はレガシーオプションを試してください。</string>
+    <string name="episode_action_chromecast_mirror">Chromecastミラー</string>
+    <string name="double_tap_to_seek_settings_des">前後にシークするために右側または左側をダブルタップ</string>
+    <string name="quality_hdr">HDR</string>
+    <string name="anim">同じ開発者によるアニメアプリ</string>
+    <string name="remote_error">リモートエラー</string>
+    <string name="episode_action_download_mirror">ミラーをダウンロード</string>
+    <string name="poster_ui_settings">ポスター上のUI要素を切り替え</string>
+    <string name="dns_pref_summary">ISPのブロックを回避するのに役立ちます</string>
+    <string name="pref_category_looks">外観</string>
+    <string name="example_username">ユーザー名</string>
+    <string name="add_sync">トラッキングを追加</string>
+    <string name="added_sync_format" formatted="true">%s を追加しました</string>
+    <string name="upload_sync">同期</string>
+    <string name="sync_score">評価済み</string>
+    <string name="authenticated_user" formatted="true">%s で認証されました</string>
+    <string name="all">すべて</string>
+    <string name="subtitles_shadow">影</string>
+    <string name="subtitles_raised">浮き上がった</string>
+    <string name="subtitle_offset_hint">1000 ms</string>
+    <string name="subtitle_offset_extra_hint_later_format">字幕が %d ms 早く表示される場合に使用</string>
+    <string name="downloaded_file">ダウンロードしたファイル</string>
+    <string name="player_loaded_subtitles" formatted="true">%s を読み込みました</string>
+    <string name="quality_hd">HD</string>
+    <string name="quality_ts">TS</string>
+    <string name="quality_tc">TC</string>
+    <string name="resolution_and_title">解像度とタイトル</string>
+    <string name="title">タイトル</string>
+    <string name="subtitles_filter_lang">優先メディア言語でフィルタ</string>
+    <string name="referer">リファラー (任意)</string>
+    <string name="app_layout_subtext">デバイスの外観に合わせてアプリのレイアウトを変更</string>
+    <string name="batch_download_start_format" formatted="true">%1$d %2$s のダウンロードを開始しました…</string>
+    <string name="plugin_loaded">プラグインが読み込まれました</string>
+    <string name="plugins_downloaded" formatted="true">ダウンロード済み: %d</string>
+    <string name="tracks">トラック</string>
+    <string name="safe_mode_title">セーフモードオン</string>
+    <string name="extension_description">説明</string>
+    <string name="hls_playlist">HLSプレイリスト</string>
+    <string name="skip_type_ed">エンディング</string>
+    <string name="skip_type_recap">リキャップ</string>
+    <string name="skip_type_mixed_ed">ミックスエンディング</string>
+    <string name="sort_rating_desc">評価 (高い順)</string>
+    <string name="sort_rating_asc">評価 (低い順)</string>
+    <string name="sort_updated_new">更新日 (新しい順)</string>
+    <string name="category_provider_test">プロバイダテスト</string>
+    <string name="stop">停止</string>
+    <string name="profile_number">プロフィール %d</string>
+    <string name="automatic_plugin_download_mode_title">プラグインダウンロードをフィルタするモードを選択</string>
+    <string name="duplicate_message_single" formatted="true">ライブラリに潜在的な重複アイテムがすでに存在します: \'%s.\' \n\nこのアイテムを追加しますか、既存のものを置き換えますか、それともアクションをキャンセルしますか？</string>
+    <string name="enter_pin_with_name" formatted="true">%s のPINを入力</string>
+    <string name="rotate_video_desc">画面の向きを切り替えるトグルボタンを表示</string>
+    <string name="auto_rotate_video_desc">ビデオの向きに基づいて画面の向きを自動的に切り替える</string>
+    <string name="result_search_tooltip">他の拡張機能で検索</string>
+    <string name="test_extensions_summary">このテストは開発者専用であり、拡張機能の動作を検証または否定しません。</string>
+    <string name="biometric_setting">生体認証でロック</string>
+    <string name="resume_remaining" formatted="true">残り %s</string>
+    <string name="clipboard_unknown_error">コピー中にエラーが発生しました。logcatをコピーしてアプリサポートに連絡してください。</string>
+    <string name="ok">OK</string>
+    <string name="battery_dialog_title">バッテリー最適化を無効にする</string>
+    <string name="episode_upcoming_format" formatted="true">%s 後に公開</string>
+    <string name="episode_action_cast_mirror">キャストミラー</string>
+    <string name="next_season_episode_format" formatted="true">シーズン %1$d エピソード %2$d は</string>
+    <string name="open_local_video">ローカルビデオを開く</string>
+    <string name="test_warning">警告</string>
+    <string name="dismiss">閉じる</string>
+    <string name="open_downloaded_repo">リポジトリを開く</string>
+    <string name="jsdelivr_enabled">GitHubに接続できません。jsDelivrプロキシをオンにします…</string>
+    <string name="jsdelivr_proxy_summary">jsDelivrを使用して生のGitHub URLのブロックを回避します。アップデートが数日遅れる可能性があります。</string>
+    <string name="speech_recognition_unavailable">音声認識は利用できません</string>
+    <string name="begin_speaking">話し始めてください…</string>
+    <string name="torrent_info">このビデオはトレントです。つまり、ビデオの活動が追跡される可能性があります。続行する前にトレントについて理解してください。</string>
+    <string name="watch_quality_pref_data">優先視聴品質 (モバイルデータ)</string>
+    <string name="limit_title">ビデオプレーヤーのタイトル最大文字数</string>
+    <string name="video_disk_description">ストレージが少ないデバイス（Android TVなど）で高く設定すると問題が発生します。</string>
+    <string name="bottom_title_settings">ポスターのタイトルの位置</string>
+    <string name="bottom_title_settings_des">タイトルをポスターの下に配置</string>
+    <string name="subtitles_depressed">凹んだ</string>
+    <string name="qr_image">QRコード画像</string>
+    <string name="previous">前へ</string>
+    <string name="crash_reporting_title">クラッシュレポート</string>
+    <string name="preferred_media_subtext">表示したいもの</string>
+    <string name="batch_download_finish_format" formatted="true">%1$d %2$s をダウンロードしました</string>
+    <string name="lock_profile">プロフィールをロック</string>
+    <string name="password_pin_authentication_title">パスワード/PIN認証</string>
+    <string name="bug_report_settings_off">クラッシュ時のみデータを送信</string>
+    <string name="pref_filter_search_quality">検索結果で選択したビデオ品質を非表示</string>
+    <string name="automatic_plugin_download_summary">追加されたリポジトリから未インストールのすべてのプラグインを自動的にインストールします。</string>
+    <string name="redo_setup_process">セットアッププロセスを再実行</string>
+    <string name="no_links_found_toast">リンクが見つかりません</string>
+    <string name="delete_message_series_episodes" formatted="true">%1$s の以下のエピソードを永久に削除してもよろしいですか？\n\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">以下のシリーズのすべてのエピソードも永久に削除されます：\n\n%s</string>
+    <string name="random_button_settings">ランダムボタン</string>
+    <string name="quality_sdr">SDR</string>
+    <string name="resize_fill">引き伸ばす</string>
+    <string name="quality_hq">HQ</string>
+    <string name="plugin_downloaded">プラグインがダウンロードされました</string>
+    <string name="player_load_one_subtitle_online">最初に利用可能なものを読み込む</string>
+    <string name="quality_workprint">WP</string>
+    <string name="subtitles_remove_captions">字幕からクローズドキャプションを削除</string>
+    <string name="setup_extensions_subtext">使用したいサイトのリストをダウンロード</string>
+    <string name="plugins_not_downloaded" formatted="true">未ダウンロード: %d</string>
+    <string name="all_languages_preference">すべての言語</string>
+    <string name="skip_type_mixed_op">ミックスオープニング</string>
+    <string name="sort_by">並べ替え</string>
+    <string name="subs_edge_size">エッジサイズ</string>
+    <string name="swipe_to_seek_settings_des">ビデオの位置を制御するために左右にスワイプ</string>
+    <string name="swipe_to_change_settings_des">明るさや音量を変更するために左右に上下にスワイプ</string>
+    <string name="double_tap_to_seek_amount_settings">プレーヤーのシーク量（秒）</string>
+    <string name="use_system_brightness_settings_des">アプリプレーヤーで暗いオーバーレイの代わりにシステムの明るさを使用</string>
+    <string name="episode_sync_settings_des">現在のエピソードの進捗を自動的に同期</string>
+    <string name="restore_success">バックアップファイルを読み込みました</string>
+    <string name="backup_failed_error_format">%s のバックアップに失敗しました</string>
+    <string name="kitsu_settings">Kitsuのポスターを表示</string>
+    <string name="automatic_plugin_download">自動的にプラグインをダウンロード</string>
+    <string name="delete_files">ファイルを削除</string>
+    <string name="delete_message_series_only" formatted="true">以下のシリーズのすべてのエピソードを永久に削除してもよろしいですか？\n\n%s</string>
+    <string name="episode_action_reload_links">リンクをリロード</string>
+    <string name="show_hd">品質ラベル</string>
+    <string name="video_ram_description">メモリが少ないデバイス（Android TVなど）で高く設定するとクラッシュの原因になります。</string>
+    <string name="dns_pref">DNS over HTTPS</string>
+    <string name="download_path_pref">ダウンロードパス</string>
+    <string name="pref_category_gestures">ジェスチャー</string>
+    <string name="provider_lang_settings">拡張機能の言語</string>
+    <string name="preferred_media_settings">優先メディア</string>
+    <string name="enable_nsfw_on_providers">サポートされている拡張機能でNSFWを有効にする</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
+    <string name="subtitle_offset_extra_hint_before_format">字幕が %d ms 遅く表示される場合に使用</string>
+    <string name="subtitles_example_text">The quick brown fox jumps over the lazy dog</string>
+    <string name="actor_supporting">サポート</string>
+    <string name="actor_background">背景</string>
+    <string name="quality_cam">Cam</string>
+    <string name="quality_cam_rip">Cam</string>
+    <string name="quality_cam_hd">Cam</string>
+    <string name="provider_languages_tip">これらの言語でビデオを視聴</string>
+    <string name="no_repository_found_error">リポジトリが見つかりません。URLを確認し、VPNを試してください</string>
+    <string name="batch_download">一括ダウンロード</string>
+    <string name="plugins_updated" formatted="true">%d 個のプラグインを更新しました</string>
+    <string name="safe_mode_description">トラブルを引き起こすものを特定するのを助けるために、クラッシュのためにすべての拡張機能がオフにされました。</string>
+    <string name="extension_types">サポート</string>
+    <string name="player_settings_select_cast_device">キャストデバイスを選択</string>
+    <string name="skip_type_intro">イントロ</string>
+    <string name="clipboard_permission_error">クリップボードへのアクセスエラー。もう一度お試しください。</string>
+    <string name="action_mark_as_watched">視聴済みとしてマーク</string>
+    <string name="action_remove_from_watched">視聴済みから削除</string>
+    <string name="confirm_exit_dialog">本当に終了しますか？</string>
+    <string name="yes">はい</string>
+    <string name="battery_dialog_message">中断のないダウンロードと購読しているテレビ番組の通知を確実にするために、CloudStreamはバックグラウンドで実行する許可が必要です。\'OK\'を押すと、リクエストダイアログが表示されます。\'許可\'を押してください。\n\nこの許可は、CS3がバッテリーを消耗することを意味するものではありません。通知の受信や公式拡張機能からのビデオのダウンロードなど、必要な場合にのみバックグラウンドで動作します。</string>
+    <string name="sort_updated_old">更新日 (古い順)</string>
+    <string name="sort_episodes_number_asc">エピソード (昇順)</string>
+    <string name="sort_episodes_rating_low_high">評価 (最低)</string>
+    <string name="sort_episodes_date_newest">放映日 (最新)</string>
+    <string name="sort_episodes_date_oldest">放映日 (最古)</string>
+    <string name="sort_button_episode">Ep %s</string>
+    <string name="sort_button_rating">評価 %s</string>
+    <string name="sort_button_date">日付 %s</string>
+    <string name="subscription_deleted">%s の購読を解除しました</string>
+    <string name="action_unsubscribe">購読解除</string>
+    <string name="profiles">プロフィール</string>
+    <string name="quality_profile_help">ここでソースの並び順を変更できます。ビデオの優先度が高いほど、ソース選択で上位に表示されます。 ソースの優先度と品質の優先度の合計がビデオの優先度になります。 \n\nソース A: 3 \n品質 B: 7 \nビデオの優先度は10になります。 \n\n注: 合計が10以上の場合、そのリンクが読み込まれたときにプレーヤーは自動的に読み込みをスキップします！</string>
+    <string name="qualities">品質</string>
+    <string name="duplicate_message_multiple" formatted="true">ライブラリに潜在的な重複アイテムが見つかりました: \n\n%s \n\nこのアイテムを追加しますか、既存のものを置き換えますか、それともアクションをキャンセルしますか？</string>
+    <string name="biometric_warning">CloudStreamのデータは今バックアップされました。非常に低い可能性ですが、すべてのデバイスは異なって動作する可能性があります。まれに、アプリへのアクセスがロックアウトされた場合、アプリのデータを完全にクリアし、バックアップから復元してください。このことで生じる不便についてお詫び申し上げます。</string>
+    <string name="device_pin_error_message">デバイスPINコードを取得できません。ローカル認証を試してください</string>
+    <string name="sort_release_date_old">公開日 (古い順)</string>
+    <string name="hide_player_control_names">プレーヤーのコントロール名を非表示</string>
+    <string name="torrent_preferred_media">設定/プロバイダ/優先メディアでトレントを有効にする</string>
+    <string name="torrent_not_accepted">アプリを再起動し、ポップアップに同意して続行します。</string>
+    <string name="software_decoding">ソフトウェアデコーディング</string>
+    <string name="software_decoding_desc">ソフトウェアデコーディングにより、携帯電話でサポートされていないビデオファイルを再生できますが、高解像度で遅延や不安定な再生を引き起こす可能性があります</string>
+    <string name="plugins_updated_manually">%d 個のプラグインを正常に更新しました！</string>
+    <string name="no_plugins_updated_manually">更新されたプラグインはありません。</string>
+    <string name="player_notification_channel_name">プレーヤー通知</string>
+    <string name="player_notification_channel_description">バックグラウンドから再生を制御するためのプレーヤー通知</string>
+    <string name="audio_singluar">オーディオ</string>
+    <string name="podcast_singluar">ポッドキャスト</string>
+    <string name="android_tv_interface_off_seek_settings">プレーヤー非表示時 - シーク量</string>
+    <string name="encoding_error">エンコーディングエラー</string>
+    <string name="unsupported_error">サポートされていないエラー</string>
+    <string name="pref_category_actions">アクション</string>
+    <string name="pref_category_player_features">プレーヤー機能</string>
+    <string name="all_subtitles_bold">字幕を太字にする</string>
+    <string name="volume_exceeded_100">ボリュームが100%を越えました</string>
+    <string name="slide_up_again_to_exceed_100">再度上へスライドして100%以上に調整できます</string>
+    <string name="all_subtitles_italic">字幕を斜体にする</string>
+    <string name="background_radius">背景の半径</string>
 </resources>
