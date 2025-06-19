@@ -727,4 +727,8 @@
     <string name="subtitles_from_online">اونلاين</string>
     <string name="subtitles_from_embedded">داخلياً</string>
     <string name="volume_exceeded_100">لقد تجاوز مستوى الصوت 100٪</string>
+    <string name="all_subtitles_bold">جعل جميع العناوين الفرعية عريضة</string>
+    <string name="slide_up_again_to_exceed_100">اسحب لأعلى مرة أخرى لتتجاوز 100%</string>
+    <string name="all_subtitles_italic">جعل كل العناوين الفرعية مائلة</string>
+    <string name="background_radius">نصف قطر الخلفية</string>
 </resources>
