@@ -42,6 +42,7 @@ import com.lagradost.cloudstream3.extractors.DesuArcg
 import com.lagradost.cloudstream3.extractors.DesuDrive
 import com.lagradost.cloudstream3.extractors.DesuOdchan
 import com.lagradost.cloudstream3.extractors.DesuOdvip
+import com.lagradost.cloudstream3.extractors.Dhcplay
 import com.lagradost.cloudstream3.extractors.Dhtpre
 import com.lagradost.cloudstream3.extractors.Dokicloud
 import com.lagradost.cloudstream3.extractors.DoodCxExtractor
@@ -184,6 +185,7 @@ import com.lagradost.cloudstream3.extractors.Sbspeed
 import com.lagradost.cloudstream3.extractors.Sbthe
 import com.lagradost.cloudstream3.extractors.SecvideoOnline
 import com.lagradost.cloudstream3.extractors.Sendvid
+import com.lagradost.cloudstream3.extractors.Server1uns
 import com.lagradost.cloudstream3.extractors.SfastwishCom
 import com.lagradost.cloudstream3.extractors.ShaveTape
 import com.lagradost.cloudstream3.extractors.SibNet
@@ -1150,6 +1152,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     VidHidePro5(),
     VidHidePro6(),
     Dhtpre(),
+    Dhcplay(),
     Smoothpre(),
     Peytonepre(),
     LuluStream(),
@@ -1216,7 +1219,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     InternetArchive(),
     VidStack(),
     GDMirrorbot(),
-
+    Server1uns(),
     VinovoSi(),
     VinovoTo(),
 )
