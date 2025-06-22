@@ -1503,18 +1503,30 @@ interface LoadResponse {
         }
 
         fun LoadResponse.addImdbId(id: String?) {
-            // TODO add imdb sync
+            // TODO add IMDb sync
             this.addSimklId(SimklSyncServices.Imdb, id)
         }
 
-        @Suppress("UNUSED_PARAMETER")
+        @Deprecated("Outdated API due to misspelling", ReplaceWith("addTraktId(id)"))
         fun LoadResponse.addTrackId(id: String?) {
-            // TODO add trackt sync
+            this.addTraktId(id)
+        }
+
+        @Deprecated("Outdated API due to missing capitalization", ReplaceWith("addKitsuId(id)"))
+        fun LoadResponse.addkitsuId(id: String?) {
+            this.addKitsuId(id)
         }
 
         @Suppress("UNUSED_PARAMETER")
-        fun LoadResponse.addkitsuId(id: String?) {
-            // TODO add kitsu sync
+        @Prerelease
+        fun LoadResponse.addTraktId(id: String?) {
+            // TODO add Trakt sync
+        }
+
+        @Suppress("UNUSED_PARAMETER")
+        @Prerelease
+        fun LoadResponse.addKitsuId(id: String?) {
+            // TODO add Kitsu sync
         }
 
         fun LoadResponse.addTMDbId(id: String?) {
