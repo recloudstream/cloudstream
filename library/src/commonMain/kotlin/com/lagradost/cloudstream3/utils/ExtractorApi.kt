@@ -30,6 +30,7 @@ import com.lagradost.cloudstream3.extractors.CdnwishCom
 import com.lagradost.cloudstream3.extractors.Chillx
 import com.lagradost.cloudstream3.extractors.CineGrabber
 import com.lagradost.cloudstream3.extractors.Cinestart
+import com.lagradost.cloudstream3.extractors.CloudMailRu
 import com.lagradost.cloudstream3.extractors.ContentX
 import com.lagradost.cloudstream3.extractors.CsstOnline
 import com.lagradost.cloudstream3.extractors.D0000d
@@ -1222,6 +1223,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Server1uns(),
     VinovoSi(),
     VinovoTo(),
+    CloudMailRu(),
 )
 
 
