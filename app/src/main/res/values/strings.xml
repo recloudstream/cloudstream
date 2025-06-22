@@ -46,6 +46,8 @@
     <string name="dns_key" translatable="false">dns_key</string>
     <string name="jsdelivr_proxy_key" translatable="false">jsdelivr_proxy_key</string>
     <string name="download_path_key" translatable="false">download_path_key</string>
+    <string name="download_parallel_key" translatable="false">download_parallel_key</string>
+    <string name="download_concurrent_key" translatable="false">download_concurrent_key</string>
     <string name="download_path_key_visual" translatable="false">download_path_key_visual</string>
     <string name="app_name_download_path" translatable="false">Cloudstream</string>
     <string name="app_layout_key" translatable="false">app_layout_key</string>
@@ -857,4 +859,8 @@
     <string name="all_subtitles_bold">Make all subtitles bold</string>
     <string name="all_subtitles_italic">Make all subtitles italic</string>
     <string name="background_radius">Background Radius</string>
+    <string name="download_parallel_settings_des">How many different items that can be downloaded in parallel</string>
+    <string name="parallel_downloads">Parallel downloads</string>
+    <string name="concurrent_connections">Concurrent connections</string>
+    <string name="concurrent_connections_settings_des">How many concurrent connections each download can use while downloading</string>
 </resources>
