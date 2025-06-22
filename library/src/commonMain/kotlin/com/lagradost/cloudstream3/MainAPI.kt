@@ -1469,12 +1469,24 @@ interface LoadResponse {
             this.addSimklId(SimklSyncServices.Imdb, id)
         }
 
+        @Deprecated("Outdated API due to misspelling", ReplaceWith("addTraktId(id)"))
+        fun LoadResponse.addTrackId(id: String?) {
+            this.addTraktId(id)
+        }
+
+        @Deprecated("Outdated API due to missing capitalization", ReplaceWith("addKitsuId(id)"))
+        fun LoadResponse.addkitsuId(id: String?) {
+            this.addKitsuId(id)
+        }
+
         @Suppress("UNUSED_PARAMETER")
+        @Prerelease
         fun LoadResponse.addTraktId(id: String?) {
             // TODO add Trakt sync
         }
 
         @Suppress("UNUSED_PARAMETER")
+        @Prerelease
         fun LoadResponse.addKitsuId(id: String?) {
             // TODO add Kitsu sync
         }
