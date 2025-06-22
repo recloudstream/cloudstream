@@ -221,7 +221,7 @@ class SyncViewModel : ViewModel() {
     fun updateUserData() = ioSafe {
         Log.i(TAG, "updateUserData")
         _userDataResponse.postValue(Resource.Loading())
-        var lastError: Resource<SyncAPI.SyncStatus> = Resource.Failure(false, null, null, "No data")
+        var lastError: Resource<SyncAPI.SyncStatus> = Resource.Failure(false, "No data")
         syncs.forEach { (prefix, id) ->
             repos.firstOrNull { it.idPrefix == prefix }?.let { repo ->
                 if (repo.hasAccount()) {
@@ -243,7 +243,7 @@ class SyncViewModel : ViewModel() {
         Log.i(TAG, "updateMetadata")
 
         _metaResponse.postValue(Resource.Loading())
-        var lastError: Resource<SyncAPI.SyncResult> = Resource.Failure(false, null, null, "No data")
+        var lastError: Resource<SyncAPI.SyncResult> = Resource.Failure(false, "No data")
         val current = ArrayList(syncs.toList())
 
         // shitty way to sort anilist first, as it has trailers while mal does not
@@ -281,9 +281,9 @@ class SyncViewModel : ViewModel() {
         setEpisodesDelta(0)
     }
 
-    fun syncName(syncName: String) : String? {
+    fun syncName(syncName: String): String? {
         // fix because of bad old data :pensive:
-        val realName = when(syncName) {
+        val realName = when (syncName) {
             "MAL" -> malApi.idPrefix
             "Simkl" -> simklApi.idPrefix
             "AniList" -> aniListApi.idPrefix
@@ -292,7 +292,7 @@ class SyncViewModel : ViewModel() {
         return repos.firstOrNull { it.idPrefix == realName }?.idPrefix
     }
 
-    fun setSync(syncName : String, syncId : String) {
+    fun setSync(syncName: String, syncId: String) {
         syncs.clear()
         syncs[syncName] = syncId
     }

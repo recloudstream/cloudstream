@@ -2644,8 +2644,6 @@ class ResultViewModel2 : ViewModel() {
                 _page.postValue(
                     Resource.Failure(
                         false,
-                        null,
-                        null,
                         "This provider does not exist"
                     )
                 )
