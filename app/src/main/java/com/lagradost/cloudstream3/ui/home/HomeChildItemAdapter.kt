@@ -1,11 +1,14 @@
 package com.lagradost.cloudstream3.ui.home
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.databinding.HomeRemoveGridBinding
+import com.lagradost.cloudstream3.databinding.HomeRemoveGridExpandedBinding
 import com.lagradost.cloudstream3.databinding.HomeResultGridBinding
 import com.lagradost.cloudstream3.databinding.HomeResultGridExpandedBinding
 import com.lagradost.cloudstream3.ui.BaseAdapter
@@ -13,19 +16,13 @@ import com.lagradost.cloudstream3.ui.ViewHolderState
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.UIHelper.isBottomLayout
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 
 class HomeScrollViewHolderState(view: ViewBinding) : ViewHolderState<Boolean>(view) {
-    /*private fun recursive(view : View) : Boolean {
-        if (view.isFocused) {
-            println("VIEW: $view | id=${view.id}")
-        }
-        return (view as? ViewGroup)?.children?.any { recursive(it) } ?: false
-    }*/
-
     // very shitty that we cant store the state when the view clears,
     // but this is because the focus clears before the view is removed
     // so we have to manually store it
@@ -35,18 +32,68 @@ class HomeScrollViewHolderState(view: ViewBinding) : ViewHolderState<Boolean>(vi
         if (state) {
             wasFocused = false
             // only refocus if tv
-            if(isLayout(TV)) {
+            if (isLayout(TV)) {
                 itemView.requestFocus()
             }
         }
     }
 }
 
-class HomeChildItemAdapter(
+class ResumeItemAdapter(
+    fragment: Fragment,
+    nextFocusUp: Int? = null,
+    nextFocusDown: Int? = null,
+    clickCallback: (SearchClickCallback) -> Unit,
+    private val removeCallback: (View) -> Unit,
+) : HomeChildItemAdapter(
+    fragment = fragment,
+    id = "resumeAdapter".hashCode(),
+    nextFocusUp = nextFocusUp,
+    nextFocusDown = nextFocusDown,
+    clickCallback = clickCallback
+) {
+    // As there is no popup on TV we instead use the footer to clear
+    override val footers = if (isLayout(TV or EMULATOR)) 1 else 0
+
+    override fun onCreateFooter(parent: ViewGroup): ViewHolderState<Boolean> {
+        val expanded = parent.context.isBottomLayout()
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = if (expanded) HomeRemoveGridExpandedBinding.inflate(
+            inflater,
+            parent,
+            false
+        ) else HomeRemoveGridBinding.inflate(inflater, parent, false)
+        return HomeScrollViewHolderState(binding)
+    }
+
+    override fun onBindFooter(holder: ViewHolderState<Boolean>) {
+        this.applyBinding(holder, false)
+        holder.itemView.apply {
+            if (isLayout(TV)) {
+                isFocusableInTouchMode = true
+                isFocusable = true
+            }
+
+            if (nextFocusUp != null) {
+                nextFocusUpId = nextFocusUp
+            }
+
+            if (nextFocusDown != null) {
+                nextFocusDownId = nextFocusDown
+            }
+
+            setOnClickListener { v ->
+                removeCallback.invoke(v ?: return@setOnClickListener)
+            }
+        }
+    }
+}
+
+open class HomeChildItemAdapter(
     fragment: Fragment,
     id: Int,
-    private val nextFocusUp: Int? = null,
-    private val nextFocusDown: Int? = null,
+    protected val nextFocusUp: Int? = null,
+    protected val nextFocusDown: Int? = null,
     private val clickCallback: (SearchClickCallback) -> Unit,
 ) :
     BaseAdapter<SearchResponse, Boolean>(fragment, id) {
@@ -55,11 +102,6 @@ class HomeChildItemAdapter(
 
     override fun onCreateContent(parent: ViewGroup): ViewHolderState<Boolean> {
         val expanded = parent.context.isBottomLayout()
-        /* val layout = if (bottom) R.layout.home_result_grid_expanded else R.layout.home_result_grid
-
-         val root = LayoutInflater.from(parent.context).inflate(layout, parent, false)
-         val binding = HomeResultGridBinding.bind(root)*/
-
         val inflater = LayoutInflater.from(parent.context)
         val binding = if (expanded) HomeResultGridExpandedBinding.inflate(
             inflater,
@@ -69,11 +111,7 @@ class HomeChildItemAdapter(
         return HomeScrollViewHolderState(binding)
     }
 
-    override fun onBindContent(
-        holder: ViewHolderState<Boolean>,
-        item: SearchResponse,
-        position: Int
-    ) {
+    protected fun applyBinding(holder: ViewHolderState<Boolean>, isFirstItem: Boolean) {
         when (val binding = holder.view) {
             is HomeResultGridBinding -> {
                 binding.backgroundCard.apply {
@@ -116,11 +154,19 @@ class HomeChildItemAdapter(
                         }
                 }
 
-                if (position == 0) { // to fix tv
+                if (isFirstItem) { // to fix tv
                     binding.backgroundCard.nextFocusLeftId = R.id.nav_rail_view
                 }
             }
         }
+    }
+
+    override fun onBindContent(
+        holder: ViewHolderState<Boolean>,
+        item: SearchResponse,
+        position: Int
+    ) {
+        applyBinding(holder, position == 0)
 
         SearchResultBuilder.bind(
             clickCallback = { click ->
