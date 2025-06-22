@@ -863,4 +863,9 @@
     <string name="parallel_downloads">Parallel downloads</string>
     <string name="concurrent_connections">Concurrent connections</string>
     <string name="concurrent_connections_settings_des">How many concurrent connections each download can use while downloading</string>
+    <string name="go_to_downloads">Go to Downloads</string>
+    <string name="no_internet_connection">
+        No internet connection.
+        \n\nPlease connect to the internet and try again, or watch your downloads while you are offline.
+    </string>
 </resources>
