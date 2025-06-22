@@ -106,7 +106,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
             activity?.restorePrompt()
             return@setOnPreferenceClickListener true
         }
-        getPref(R.string.backup_path_key)?.hideOn(TV or EMULATOR)?.setOnPreferenceClickListener {
+        getPref(R.string.backup_path_key)?.hideOn(EMULATOR)?.setOnPreferenceClickListener {
             val dirs = getBackupDirsForDisplay()
             val currentDir =
                 settingsManager.getString(getString(R.string.backup_dir_key), null)
