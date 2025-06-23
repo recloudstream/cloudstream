@@ -1298,6 +1298,10 @@ data class TrailerData(
  * @property posterHeaders headers map used by network request to get the poster.
  * @property backgroundPosterUrl Url of the media background poster.
  * @property contentRating content rating of the media, appears on result page.
+ * @property uniqueUrl The key used for storing the persistent data about an entry.
+ * On older versions `url` was used instead, but this was added to support JSON that can change as the url parameter.
+ *
+ * If you have JSON that can change you can set `url = jsonObject.toJson()` and `uniqueId = jsonObject.id.toString()`
  * */
 interface LoadResponse {
     var name: String
@@ -1319,6 +1323,9 @@ interface LoadResponse {
     var posterHeaders: Map<String, String>?
     var backgroundPosterUrl: String?
     var contentRating: String?
+
+    @Prerelease
+    var uniqueUrl : String
 
     companion object {
         var malIdPrefix = "" //malApi.idPrefix
@@ -1756,6 +1763,8 @@ constructor(
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
+    @Prerelease
+    override var uniqueUrl : String = url
 ) : LoadResponse {
     /**
      * Secondary constructor for backwards compatibility without contentRating.
@@ -1867,6 +1876,8 @@ constructor(
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
+    @Prerelease
+    override var uniqueUrl : String = url
 ) : LoadResponse, EpisodeResponse {
     override fun getLatestEpisodes(): Map<DubStatus, Int?> {
         return episodes.map { (status, episodes) ->
@@ -2012,6 +2023,8 @@ constructor(
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
+    @Prerelease
+    override var uniqueUrl : String = url
 ) : LoadResponse {
     /**
      * Secondary constructor for backwards compatibility without contentRating.
@@ -2092,6 +2105,8 @@ constructor(
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
+    @Prerelease
+    override var uniqueUrl : String = url
 ) : LoadResponse {
     /**
      * Secondary constructor for backwards compatibility without contentRating.
@@ -2269,10 +2284,6 @@ interface IDownloadableMinimum {
     val headers: Map<String, String>
 }
 
-fun IDownloadableMinimum.getId(): Int {
-    return url.hashCode()
-}
-
 /**
  * Set of sync services simkl is compatible with.
  * Add more as required: https://simkl.docs.apiary.io/#reference/search/id-lookup/get-items-by-id
@@ -2315,6 +2326,8 @@ constructor(
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
+    @Prerelease
+    override var uniqueUrl : String = url
 ) : LoadResponse, EpisodeResponse {
     override fun getLatestEpisodes(): Map<DubStatus, Int?> {
         val maxSeason =

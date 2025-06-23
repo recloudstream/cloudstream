@@ -142,6 +142,7 @@ open class TraktProvider : MainAPI() {
             isCartoon && (mediaDetails?.language == "zh" || mediaDetails?.language == "ja")
         val isAsian = !isAnime && (mediaDetails?.language == "zh" || mediaDetails?.language == "ko")
         val isBollywood = mediaDetails?.country == "in"
+        val uniqueUrl = data.mediaDetails?.ids?.trakt?.toJson() ?: data.toJson()
 
         if (data.type == TvType.Movie) {
 
@@ -171,6 +172,7 @@ open class TraktProvider : MainAPI() {
                 dataUrl = linkData.toJson(),
                 type = if (isAnime) TvType.AnimeMovie else TvType.Movie,
             ) {
+                this.uniqueUrl = uniqueUrl
                 this.name = mediaDetails.title
                 this.type = if (isAnime) TvType.AnimeMovie else TvType.Movie
                 this.posterUrl = getOriginalWidthImageUrl(posterUrl)
@@ -256,6 +258,7 @@ open class TraktProvider : MainAPI() {
                 type = if (isAnime) TvType.Anime else TvType.TvSeries,
                 episodes = episodes
             ) {
+                this.uniqueUrl = uniqueUrl
                 this.name = mediaDetails.title
                 this.type = if (isAnime) TvType.Anime else TvType.TvSeries
                 this.episodes = episodes

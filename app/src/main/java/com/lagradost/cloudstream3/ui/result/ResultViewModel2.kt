@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.ui.result
 
 import android.app.Activity
 import android.content.*
-import android.text.format.Formatter.formatFileSize
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.MainThread
@@ -305,7 +304,7 @@ data class ExtractorSubtitleLink(
 fun LoadResponse.getId(): Int {
     // this fixes an issue with outdated api as getLoadResponseIdFromUrl might be fucked
     return (if (this is ResultViewModel2.LoadResponseFromSearch) this.id else null)
-        ?: getLoadResponseIdFromUrl(url, apiName)
+        ?: getLoadResponseIdFromUrl(uniqueUrl, apiName)
 }
 
 private fun getLoadResponseIdFromUrl(url: String, apiName: String): Int {
@@ -2580,6 +2579,7 @@ class ResultViewModel2 : ViewModel() {
         override var posterHeaders: Map<String, String>? = null,
         override var backgroundPosterUrl: String? = null,
         override var contentRating: String? = null,
+        override var uniqueUrl: String = url,
         val id: Int?,
     ) : LoadResponse
 
