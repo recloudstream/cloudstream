@@ -1188,6 +1188,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             null
         }
 
+        // overscan
+        val padding = settingsManager.getInt(getString(R.string.overscan_key), 0).toPx
+        binding?.homeRoot?.setPadding(padding, padding, padding, padding)
+
         changeStatusBarState(isLayout(EMULATOR))
 
         /** Biometric stuff for users without accounts **/
