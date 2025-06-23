@@ -559,6 +559,11 @@ abstract class AbstractPlayerFragment(
                             CSPlayerEvent.Pause,
                             PlayerEventSource.Player
                         )
+
+                        // No clashing UI
+                        if (hasPreview) {
+                            subView?.isVisible = false
+                        }
                     }
 
                     override fun onScrubMove(
@@ -570,6 +575,13 @@ abstract class AbstractPlayerFragment(
 
                     override fun onScrubStop(previewBar: PreviewBar?) {
                         if (resume) player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.Player)
+                        // Delay to prevent the small flicker of subtitle before seeking
+                        subView?.postDelayed({
+                            // If we are not scrubbing then show subtitles again
+                            if (previewBar == null || !previewBar.isPreviewEnabled || !previewBar.isShowingPreview) {
+                                subView?.isVisible = true
+                            }
+                        }, 200)
                     }
                 })
                 progressBar.attachPreviewView(previewFrameLayout)
