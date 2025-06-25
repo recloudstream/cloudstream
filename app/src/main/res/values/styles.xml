@@ -533,6 +533,14 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
+    <style name="DialogHalfFullscreen" parent="AlertDialogCustom">
+        <item name="android:windowEnterAnimation">@anim/enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/exit_anim</item>
+
+        <item name="android:windowMinWidthMajor">45%</item> <!-- 65% -->
+        <item name="android:windowMinWidthMinor">95%</item> <!-- 95% -->
+    </style>
+
     <style name="AlertDialogCustomBlack" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:windowBackground">?attr/primaryBlackBackground</item>
         <item name="android:layout_width">match_parent</item>

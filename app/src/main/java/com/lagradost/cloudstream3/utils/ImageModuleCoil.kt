@@ -86,6 +86,8 @@ object ImageLoader {
         // clear image to avoid loading & flickering issue at fast scrolling (e.g, an image recycler)
         this.load(null)
 
+        if(imageData == null) return // Just in case
+
         // Use Coil's built-in load method but with our custom module & a decent USER-AGENT always
         // which can be overridden by extensions.
         this.load(imageData, SingletonImageLoader.get(context)) {

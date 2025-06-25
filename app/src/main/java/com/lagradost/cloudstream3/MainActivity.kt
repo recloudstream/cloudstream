@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -12,6 +13,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.AttributeSet
 import android.util.Log
+import android.view.Gravity
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -182,6 +184,7 @@ import java.nio.charset.Charset
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.system.exitProcess
+
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
     companion object {
@@ -768,16 +771,31 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         bottomPreviewBinding = null
     }
 
-    private var bottomPreviewPopup: BottomSheetDialog? = null
+    private var bottomPreviewPopup: Dialog? = null
     private var bottomPreviewBinding: BottomResultviewPreviewBinding? = null
     private fun showPreviewPopupDialog(): BottomResultviewPreviewBinding {
         val ret = (bottomPreviewBinding ?: run {
-            val builder =
-                BottomSheetDialog(this)
-            val binding: BottomResultviewPreviewBinding =
-                BottomResultviewPreviewBinding.inflate(builder.layoutInflater, null, false)
+
+            val builder: Dialog
+            val layout: Int
+
+            if (isLayout(PHONE)) {
+                builder =
+                    BottomSheetDialog(this)
+                layout = R.layout.bottom_resultview_preview
+            } else {
+                builder =
+                    Dialog(this, R.style.DialogHalfFullscreen)
+                layout = R.layout.bottom_resultview_preview_tv
+                // No way to do this in styles :(
+                builder.window?.setGravity(Gravity.CENTER_VERTICAL or Gravity.END)
+            }
+
+            val root = layoutInflater.inflate(layout, null, false)
+            val binding = BottomResultviewPreviewBinding.bind(root)
+
             bottomPreviewBinding = binding
-            builder.setContentView(binding.root)
+            builder.setContentView(root)
             builder.setOnDismissListener {
                 bottomPreviewPopup = null
                 bottomPreviewBinding = null
@@ -1402,9 +1420,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         resultviewPreviewMetaRating.setText(d.ratingText)
 
                         resultviewPreviewDescription.setTextHtml(d.plotText)
-                        resultviewPreviewPoster.loadImage(
-                            d.posterImage ?: d.posterBackgroundImage
-                        )
+                        if (isLayout(PHONE)) {
+                            resultviewPreviewPoster.loadImage(
+                                d.posterImage ?: d.posterBackgroundImage,
+                                headers = d.posterHeaders
+                            )
+                        } else {
+                            resultviewPreviewPoster.loadImage(
+                                d.posterBackgroundImage ?: d.posterImage,
+                                headers = d.posterHeaders
+                            )
+                        }
 
                         setUserData(syncViewModel.userData.value)
                         setWatchStatus(viewModel.watchStatus.value)
