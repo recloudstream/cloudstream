@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import androidx.viewbinding.ViewBinding
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
@@ -112,11 +113,17 @@ open class HomeChildItemAdapter(
     }
 
     protected fun applyBinding(holder: ViewHolderState<Boolean>, isFirstItem: Boolean) {
+        val context = holder.view.root.context
+        val scale = PreferenceManager.getDefaultSharedPreferences(context)
+            ?.getInt(context.getString(R.string.poster_size_key), 0) ?: 0
+        // Scale by +10% per step
+        val mul = 1.0f + scale * 0.1f
+        val min = (114.toPx.toFloat() * mul).toInt()
+        val max = (180.toPx.toFloat() * mul).toInt()
+
         when (val binding = holder.view) {
             is HomeResultGridBinding -> {
                 binding.backgroundCard.apply {
-                    val min = 114.toPx
-                    val max = 180.toPx
 
                     layoutParams =
                         layoutParams.apply {
@@ -136,8 +143,6 @@ open class HomeChildItemAdapter(
 
             is HomeResultGridExpandedBinding -> {
                 binding.backgroundCard.apply {
-                    val min = 114.toPx
-                    val max = 180.toPx
 
                     layoutParams =
                         layoutParams.apply {

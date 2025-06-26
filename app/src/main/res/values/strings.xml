@@ -63,6 +63,7 @@
     <string name="bottom_title_key" translatable="false">bottom_title_key</string>
     <string name="poster_ui_key" translatable="false">poster_ui_key</string>
     <string name="overscan_key" translatable="false">overscan_key</string>
+    <string name="poster_size_key" translatable="false">poster_size_key</string>
     <string name="subtitles_encoding_key" translatable="false">subtitles_encoding_key</string>
     <string name="override_site_key" translatable="false">override_site_key</string>
     <string name="redo_setup_key" translatable="false">redo_setup_key</string>
@@ -871,4 +872,6 @@
     </string>
     <string name="overscan_settings_des">Changes the bounds of the screen</string>
     <string name="overscan_settings">Overscan</string>
+    <string name="poster_size_settings_des">Changes size of posters</string>
+    <string name="poster_size_settings">Poster size</string>
 </resources>

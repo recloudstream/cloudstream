@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.utils
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build.VERSION.SDK_INT
 import android.util.Log
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
@@ -36,7 +37,7 @@ object ImageLoader {
 
     internal fun buildImageLoader(context: PlatformContext): ImageLoader = ImageLoader.Builder(context)
             .crossfade(200)
-            .allowHardware(false) // SDK_INT >= 28, cant use hardware bitmaps for Palette Builder
+            .allowHardware(SDK_INT >= 28) // SDK_INT >= 28, cant use hardware bitmaps for Palette Builder
             .diskCachePolicy(CachePolicy.ENABLED)
             .networkCachePolicy(CachePolicy.ENABLED)
             .memoryCache {
