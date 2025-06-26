@@ -1939,6 +1939,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var langFilterList = listOf<String>()
@@ -2022,7 +2023,16 @@ class GeneratorPlayer : FullScreenPlayer() {
             currentLinks = it
             val turnVisible = it.isNotEmpty() && lastUsedGenerator?.canSkipLoading == true
             val wasGone = binding?.overlayLoadingSkipButton?.isGone == true
-            binding?.overlayLoadingSkipButton?.isVisible = turnVisible
+
+            binding?.overlayLoadingSkipButton?.apply {
+                isVisible = turnVisible
+                val value = viewModel.currentLinks.value
+                if (value.isNullOrEmpty()) {
+                    setText(R.string.skip_loading)
+                } else {
+                    text = "${context.getString(R.string.skip_loading)} (${value.size})"
+                }
+            }
 
             safe {
                 if (currentLinks.any { link ->
