@@ -38,7 +38,7 @@ import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.apmap
 import com.lagradost.cloudstream3.mvvm.debugPrint
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.plugins.RepositoryManager.ONLINE_PLUGINS_FOLDER
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.plugins.RepositoryManager.downloadPluginToFile
@@ -144,7 +144,7 @@ object PluginManager {
                 !it.filePath.contains(repositoryPath)
             }
             val file = File(repositoryPath)
-            normalSafeApiCall {
+            safe {
                 if (file.exists()) file.deleteRecursively()
             }
             setKey(PLUGINS_KEY, plugins)
@@ -577,9 +577,9 @@ object PluginManager {
      * @return true if safe mode file is present
      **/
     fun checkSafeModeFile(): Boolean {
-        return normalSafeApiCall {
+        return safe {
             val folder = File(CLOUD_STREAM_FOLDER)
-            if (!folder.exists()) return@normalSafeApiCall false
+            if (!folder.exists()) return@safe false
             val files = folder.listFiles { _, name ->
                 name.equals("safe", ignoreCase = true)
             }

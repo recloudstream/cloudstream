@@ -1212,7 +1212,7 @@ class ResultViewModel2 : ViewModel() {
     }
 
     private fun getImdbIdFromSyncData(syncData: Map<String, String>?): String? {
-        return normalSafeApiCall {
+        return safe {
             val imdbId = readIdFromString(
                 syncData?.get(AccountManager.simklApi.idPrefix)
             )[SimklSyncServices.Imdb]
@@ -1221,7 +1221,7 @@ class ResultViewModel2 : ViewModel() {
     }
 
     private fun getTMDbIdFromSyncData(syncData: Map<String, String>?): String? {
-        return normalSafeApiCall {
+        return safe {
             val tmdbId = readIdFromString(
                 syncData?.get(AccountManager.simklApi.idPrefix)
             )[SimklSyncServices.Tmdb]

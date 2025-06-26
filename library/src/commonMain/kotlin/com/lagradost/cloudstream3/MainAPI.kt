@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
@@ -1373,10 +1373,10 @@ interface LoadResponse {
             database: SimklSyncServices,
             id: String?
         ) {
-            normalSafeApiCall {
+            safe {
                 this.syncData[simklIdPrefix] =
                     addIdToString(this.syncData[simklIdPrefix], database, id.toString())
-                        ?: return@normalSafeApiCall
+                        ?: return@safe
             }
         }
 
@@ -1394,13 +1394,13 @@ interface LoadResponse {
         }
 
         fun LoadResponse.getImdbId(): String? {
-            return normalSafeApiCall {
+            return safe {
                 readIdFromString(this.syncData[simklIdPrefix])[SimklSyncServices.Imdb]
             }
         }
 
         fun LoadResponse.getTMDbId(): String? {
-            return normalSafeApiCall {
+            return safe {
                 readIdFromString(this.syncData[simklIdPrefix])[SimklSyncServices.Tmdb]
             }
         }

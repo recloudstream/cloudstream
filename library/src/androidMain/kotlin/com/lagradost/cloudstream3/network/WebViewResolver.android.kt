@@ -10,7 +10,7 @@ import com.lagradost.api.getContext
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.debugException
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.Coroutines.mainWork
 import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
@@ -281,7 +281,7 @@ fun WebResourceRequest.toRequest(): Request? {
     // If invalid url then it can crash with
     // java.lang.IllegalArgumentException: Expected URL scheme 'http' or 'https' but was 'data'
     // At Request.Builder().url(addParamsToUrl(url, params))
-    return normalSafeApiCall {
+    return safe {
         requestCreator(
             this.method,
             webViewUrl,

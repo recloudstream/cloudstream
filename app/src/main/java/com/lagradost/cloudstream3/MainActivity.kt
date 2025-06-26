@@ -81,7 +81,7 @@ import com.lagradost.cloudstream3.databinding.ActivityMainTvBinding
 import com.lagradost.cloudstream3.databinding.BottomResultviewPreviewBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.network.initClient
@@ -266,7 +266,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 // TODO MUCH BETTER HANDLING
 
                 // Invalid URIs can crash
-                fun safeURI(uri: String) = normalSafeApiCall { URI(uri) }
+                fun safeURI(uri: String) = safe { URI(uri) }
 
                 if (str != null && this != null) {
                     if (str.startsWith("https://cs.repo")) {
@@ -1138,15 +1138,15 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         updateTv()
 
         // backup when we update the app, I don't trust myself to not boot lock users, might want to make this a setting?
-        normalSafeApiCall {
+        safe {
             val appVer = BuildConfig.VERSION_NAME
             val lastAppAutoBackup: String = getKey("VERSION_NAME") ?: ""
             if (appVer != lastAppAutoBackup) {
                 setKey("VERSION_NAME", BuildConfig.VERSION_NAME)
-                normalSafeApiCall {
+                safe {
                     backup(this)
                 }
-                normalSafeApiCall {
+                safe {
                     // Recompile oat on new version
                     PluginManager.deleteAllOatFiles(this)
                 }
@@ -1251,7 +1251,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         ioSafe { SafeFile.check(this@MainActivity) }
 
         if (PluginManager.checkSafeModeFile()) {
-            normalSafeApiCall {
+            safe {
                 showToast(R.string.safe_mode_file, Toast.LENGTH_LONG)
             }
         } else if (lastError == null) {

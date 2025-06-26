@@ -1,7 +1,7 @@
 package com.lagradost.cloudstream3.metaproviders
 
 import com.lagradost.cloudstream3.MainAPI
-import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safeAsync
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
 
 object SyncRedirector {
@@ -44,7 +44,7 @@ object SyncRedirector {
         return syncIds.firstNotNullOfOrNull { (syncName, syncRegex) ->
             if (providerApi.supportedSyncNames.contains(syncName)) {
                 syncRegex.find(url)?.value?.let {
-                    suspendSafeApiCall {
+                    safeAsync {
                         providerApi.getLoadUrl(syncName, it)
                     }
                 }

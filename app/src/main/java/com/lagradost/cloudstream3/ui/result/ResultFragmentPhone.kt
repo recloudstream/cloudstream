@@ -44,7 +44,7 @@ import com.lagradost.cloudstream3.databinding.ResultRecommendationsBinding
 import com.lagradost.cloudstream3.databinding.ResultSyncBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.services.SubscriptionWorkManager
@@ -891,7 +891,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         fun setSyncMaxEpisodes(totalEpisodes: Int?) {
             syncBinding?.resultSyncEpisodes?.max = (totalEpisodes ?: 0) * 1000
 
-            normalSafeApiCall {
+            safe {
                 val ctx = syncBinding?.resultSyncEpisodes?.context
                 syncBinding?.resultSyncMaxEpisodes?.text =
                     totalEpisodes?.let { episodes ->
@@ -961,7 +961,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         }
                         resultSyncCurrentEpisodes.text =
                             Editable.Factory.getInstance()?.newEditable(watchedEpisodes.toString())
-                        normalSafeApiCall { // format might fail
+                        safe { // format might fail
                             context?.getString(R.string.sync_score_format)?.format(d.score ?: 0)
                                 ?.let {
                                     resultSyncScoreText.text = it

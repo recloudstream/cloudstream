@@ -16,7 +16,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.databinding.LogcatBinding
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.services.BackupWorkManager
@@ -264,7 +264,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
     }
 
     private fun getBackupDirsForDisplay(): List<String> {
-        return normalSafeApiCall {
+        return safe {
             context?.let { ctx ->
                 val defaultDir = BackupUtils.getDefaultBackupDir(ctx)?.filePath()
                 val first = listOf(defaultDir)

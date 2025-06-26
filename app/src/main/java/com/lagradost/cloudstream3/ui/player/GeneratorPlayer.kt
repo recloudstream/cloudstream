@@ -66,7 +66,7 @@ import com.lagradost.cloudstream3.isLiveStream
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.subtitles.AbstractSubApi
@@ -910,10 +910,10 @@ class GeneratorPlayer : FullScreenPlayer() {
     // Open file picker
     private val subsPathPicker =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-            normalSafeApiCall {
+            safe {
                 // It lies, it can be null if file manager quits.
-                if (uri == null) return@normalSafeApiCall
-                val ctx = context ?: AcraApplication.context ?: return@normalSafeApiCall
+                if (uri == null) return@safe
+                val ctx = context ?: AcraApplication.context ?: return@safe
                 // RW perms for the path
                 ctx.contentResolver.takePersistableUriPermission(
                     uri,
@@ -1060,7 +1060,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 var shouldDismiss = true
 
                 binding.subtitleSettingsBtt.setOnClickListener {
-                    normalSafeApiCall {
+                    safe {
                         SubtitlesFragment().show(this.parentFragmentManager, "SubtitleSettings")
                     }
                 }
@@ -1732,7 +1732,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     private fun autoSelectSubtitles() {
         //Log.i(TAG, "autoSelectSubtitles")
-        normalSafeApiCall {
+        safe {
             if (!autoSelectFromSettings()) {
                 autoSelectFromDownloads()
             }
@@ -2024,7 +2024,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             val wasGone = binding?.overlayLoadingSkipButton?.isGone == true
             binding?.overlayLoadingSkipButton?.isVisible = turnVisible
 
-            normalSafeApiCall {
+            safe {
                 if (currentLinks.any { link ->
                         getLinkPriority(currentQualityProfile, link) >=
                                 QualityDataHelper.AUTO_SKIP_PRIORITY

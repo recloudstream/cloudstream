@@ -44,7 +44,7 @@ import com.lagradost.cloudstream3.CommonActivity.screenWidth
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.unixTimeMs
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
@@ -243,7 +243,7 @@ abstract class AbstractPlayerFragment(
                 exitedPipMode()
                 pipReceiver?.let {
                     // Prevents java.lang.IllegalArgumentException: Receiver not registered
-                    normalSafeApiCall {
+                    safe {
                         activity?.unregisterReceiver(it)
                     }
                 }

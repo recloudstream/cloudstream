@@ -73,7 +73,7 @@ import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_RESUME_WATCHING
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
@@ -134,9 +134,9 @@ object AppContextUtils {
 
     //fun Context.deleteFavorite(data: SearchResponse) {
     //    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
-    //    normalSafeApiCall {
+    //    safe {
     //        val existingId =
-    //            getWatchNextProgramByVideoId(data.url, this).second ?: return@normalSafeApiCall
+    //            getWatchNextProgramByVideoId(data.url, this).second ?: return@safe
     //        contentResolver.delete(
 //
     //            TvContractCompat.buildWatchNextProgramUri(existingId),
@@ -655,7 +655,7 @@ object AppContextUtils {
 
     fun openWebView(fragment: Fragment?, url: String) {
         if (fragment?.context?.hasWebView() == true)
-            normalSafeApiCall {
+            safe {
                 fragment
                     .findNavController()
                     .navigate(R.id.navigation_webview, WebviewFragment.newInstance(url))

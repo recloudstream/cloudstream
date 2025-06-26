@@ -8,7 +8,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safeAsync
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
@@ -530,13 +530,13 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     }
 
     private suspend fun postApi(q: String, cache: Boolean = false): String? {
-        return suspendSafeApiCall {
+        return safeAsync {
             if (!checkToken()) {
                 app.post(
                     "https://graphql.anilist.co/",
                     headers = mapOf(
                         "Authorization" to "Bearer " + (getAuth()
-                            ?: return@suspendSafeApiCall null),
+                            ?: return@safeAsync null),
                         if (cache) "Cache-Control" to "max-stale=$MAX_STALE" else "Cache-Control" to "no-cache"
                     ),
                     cacheTime = 0,

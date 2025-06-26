@@ -1309,7 +1309,7 @@ abstract class ExtractorApi {
     var sourcePlugin: String? = null
 
     //suspend fun getSafeUrl(url: String, referer: String? = null): List<ExtractorLink>? {
-    //    return suspendSafeApiCall { getUrl(url, referer) }
+    //    return safeAsync { getUrl(url, referer) }
     //}
 
     // this is the new extractorapi, override to add subtitles and stuff
