@@ -15,7 +15,6 @@ import okhttp3.Request
 import okhttp3.Response
 import java.net.URI
 
-
 @AnyThread
 class CloudflareKiller : Interceptor {
     companion object {
@@ -100,8 +99,7 @@ class CloudflareKiller : Interceptor {
             mapOf("user-agent" to it)
         } ?: emptyMap()
 
-        val headers =
-            getHeaders(request.headers.toMap() + userAgentMap, cookies + request.cookies)
+        val headers = getHeaders(request.headers.toMap() + userAgentMap, cookies + request.cookies)
         return app.baseClient.newCall(
             request.newBuilder()
                 .headers(headers)
