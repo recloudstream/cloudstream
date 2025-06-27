@@ -235,9 +235,9 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
             R.string.cast_format,
             actors?.joinToString { it.actor.name }),
         plotText =
-        if (plot.isNullOrBlank()) txt(if (this is TorrentLoadResponse) R.string.torrent_no_plot else R.string.normal_no_plot) else txt(
-            plot!!
-        ),
+            if (plot.isNullOrBlank()) txt(if (this is TorrentLoadResponse) R.string.torrent_no_plot else R.string.normal_no_plot) else txt(
+                plot!!
+            ),
         backgroundPosterUrl = backgroundPosterUrl,
         title = name,
         typeText = txt(
@@ -274,7 +274,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
             }
         ),
         metaText =
-        if (repo.providerType == ProviderType.MetaProvider) txt(R.string.provider_info_meta) else null,
+            if (repo.providerType == ProviderType.MetaProvider) txt(R.string.provider_info_meta) else null,
         durationText = if (dur == null || dur <= 0) null else txt(
             secondsToReadable(dur * 60, "0 mins")
         ),
@@ -288,9 +288,9 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
             )
         } else null,
         noEpisodesFoundText =
-        if ((this is TvSeriesLoadResponse && this.episodes.isEmpty()) || (this is AnimeLoadResponse && !this.episodes.any { it.value.isNotEmpty() })) txt(
-            R.string.no_episodes_found
-        ) else null
+            if ((this is TvSeriesLoadResponse && this.episodes.isEmpty()) || (this is AnimeLoadResponse && !this.episodes.any { it.value.isNotEmpty() })) txt(
+                R.string.no_episodes_found
+            ) else null
     )
 }
 
@@ -1306,15 +1306,22 @@ class ResultViewModel2 : ViewModel() {
     ) {
         currentLoadLinkJob?.cancel()
         currentLoadLinkJob = ioSafe {
-            val links = loadLinks(
-                result,
-                isVisible = isVisible,
-                sourceTypes = sourceTypes,
-                clearCache = clearCache,
-                isCasting = isCasting
-            )
-            if (!this.isActive) return@ioSafe
-            work(links)
+            val parentJob = this.coroutineContext.job
+            launch {
+                val links = loadLinks(
+                    result,
+                    isVisible = isVisible,
+                    sourceTypes = sourceTypes,
+                    clearCache = clearCache,
+                    isCasting = isCasting
+                )
+                // Cancel child = skip link loading
+                // Cancel parent = dismiss dialog
+                if (parentJob.isCancelled) {
+                    return@launch
+                }
+                work(links)
+            }
         }
     }
 
@@ -1358,6 +1365,11 @@ class ResultViewModel2 : ViewModel() {
         }
     }
 
+    fun skipLoading() {
+        currentLoadLinkJob?.cancelChildren()
+        currentLoadLinkJob = null
+    }
+
     private suspend fun CoroutineScope.loadLinks(
         result: ResultEpisode,
         isVisible: Boolean,
@@ -1391,6 +1403,8 @@ class ResultViewModel2 : ViewModel() {
                 },
                 isCasting = isCasting
             )
+        } catch (e : CancellationException) {
+            // Do nothing
         } catch (e: Exception) {
             logError(e)
         } finally {
@@ -1840,7 +1854,11 @@ class ResultViewModel2 : ViewModel() {
     }
 
     fun changeDubStatus(status: DubStatus) {
-        postEpisodeRange(currentIndex?.copy(dubStatus = status), currentRange, currentSorting ?: DataStoreHelper.resultsSortingMode)
+        postEpisodeRange(
+            currentIndex?.copy(dubStatus = status),
+            currentRange,
+            currentSorting ?: DataStoreHelper.resultsSortingMode
+        )
     }
 
     fun changeRange(range: EpisodeRange) {
@@ -1848,7 +1866,11 @@ class ResultViewModel2 : ViewModel() {
     }
 
     fun changeSeason(season: Int) {
-        postEpisodeRange(currentIndex?.copy(season = season), currentRange, currentSorting ?: DataStoreHelper.resultsSortingMode)
+        postEpisodeRange(
+            currentIndex?.copy(season = season),
+            currentRange,
+            currentSorting ?: DataStoreHelper.resultsSortingMode
+        )
     }
 
     fun setSort(sortType: EpisodeSortType) {

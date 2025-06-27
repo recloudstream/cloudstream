@@ -11,12 +11,14 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.LoadResponse
@@ -753,14 +755,21 @@ class ResultFragmentTv : Fragment() {
                     loadingDialog = null
                     viewModel.cancelLinks()
                 }
-                //builder.setOnCancelListener {
-                //    it?.dismiss()
-                //}
                 builder.setCanceledOnTouchOutside(true)
                 builder.show()
                 builder
             }
-
+            loadingDialog?.findViewById<MaterialButton>(R.id.overlay_loading_skip_button)?.apply {
+                if (load.linksLoaded <= 0) {
+                    isInvisible = true
+                } else {
+                    setOnClickListener {
+                        viewModel.skipLoading()
+                    }
+                    isVisible = true
+                    text = "${context.getString(R.string.skip_loading)} (${load.linksLoaded})"
+                }
+            }
         }
 
 
