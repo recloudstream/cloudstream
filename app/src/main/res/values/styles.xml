@@ -67,14 +67,17 @@
         <item name="iconColor">@color/iconColor</item>
         <item name="white">@color/white</item>
         <item name="black">@color/black</item>
-
+        <item name="focusBackground">?android:attr/selectableItemBackground</item>
         <item name="preferenceTheme">@style/CustomPreferenceThemeOverlay</item>
-
 
         <item name="download_icon_color">?attr/white</item>
         <item name="download_fill_color">?attr/white</item>
         <item name="download_outline_color">?attr/white</item>
         <item name="download_icon_scale">1.0</item>
+    </style>
+
+    <style name="AppThemeTvOverlay">
+        <item name="focusBackground">@drawable/outline_drawable_less</item>
     </style>
 
     <style name="ListViewStyle" parent="Widget.AppCompat.ListView">
@@ -558,6 +561,26 @@
 
     <style name="CustomPreferenceThemeOverlay" parent="@style/PreferenceThemeOverlay">
         <item name="android:layout">@layout/settings_title_top</item>
+        <item name="preferenceStyle">@style/CustomPreferenceStyle</item>
+        <item name="switchPreferenceStyle">@style/CustomSwitchPreferenceStyle</item>
+        <item name="seekBarPreferenceStyle">@style/CustomSeekBarPreferenceStyle</item>
+    </style>
+
+    <!--
+    <style name="CustomPreferenceCategoryStyle" parent="@style/Preference.Category.Material">
+        <item name="android:layout">@layout/custom_preference_category_material</item>
+    </style>-->
+
+    <style name="CustomSwitchPreferenceStyle" parent="@style/Preference.SwitchPreference.Material">
+        <item name="android:layout">@layout/custom_preference_material</item>
+    </style>
+
+    <style name="CustomSeekBarPreferenceStyle" parent="@style/Preference.SeekBarPreference.Material">
+        <item name="android:layout">@layout/custom_preference_widget_seekbar</item>
+    </style>
+
+    <style name="CustomPreferenceStyle" parent="@style/Preference.Material">
+        <item name="android:layout">@layout/custom_preference_material</item>
     </style>
 
     <style name="SettingsItem">
@@ -567,8 +590,7 @@
         <item name="android:paddingStart">20dp</item>
         <item name="android:paddingEnd">20dp</item>
         <item name="android:selectAllOnFocus">true</item>
-        <item name="android:background">@drawable/outline_drawable_less</item>
-        <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:background">?attr/focusBackground</item>
         <item name="android:textColor">?attr/textColor</item>
         <item name="android:textAppearance">?android:attr/textAppearanceListItemSmall</item>
         <item name="drawableEndCompat">@drawable/ic_baseline_keyboard_arrow_right_24</item>
