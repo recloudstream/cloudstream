@@ -149,7 +149,7 @@ class SubscriptionWorkManager(val context: Context, workerParams: WorkerParamete
                     val latestPreferredEpisode = latestEpisodes[dubPreference]
                     val nextAiring = response.nextAiring
 
-                    if (nextAiring != null) {
+                    if (nextAiring != null && nextAiring.unixTime > unixTime) {
                         EpisodeAlertManager.scheduleEpisodeAlert(
                             subscribedData = savedData,
                             nextAiring = nextAiring,
@@ -280,7 +280,7 @@ class EpisodeAlertManager {
                     )
                 }
 
-                nextAiring.unixTime > now -> {
+                nextAiring.unixTime > now && nextAiring.unixTime < now + 31_556_926L -> {
                     val episodeKey = "${nextAiring.season ?: ""}_${nextAiring.episode}"
                     val uniqueWorkName = "${apiName}_${subscribedData.id}_$episodeKey"
                     val delay = nextAiring.unixTime - now
