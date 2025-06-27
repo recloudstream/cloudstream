@@ -1190,7 +1190,7 @@ class CS3IPlayer : IPlayer {
                                         // Nicer looking displayed names
                                         fromTwoLettersToLanguage(format.language!!)
                                             ?: format.language!!,
-                                        "",
+                                        format.label ?: "",
                                         // See setPreferredTextLanguage
                                         format.id!!.stripTrackId(),
                                         SubtitleOrigin.EMBEDDED_IN_VIDEO,
