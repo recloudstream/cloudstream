@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.ui.result
 
 import android.app.Activity
 import android.content.*
-import android.text.format.Formatter.formatFileSize
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.MainThread
@@ -236,9 +235,9 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
             R.string.cast_format,
             actors?.joinToString { it.actor.name }),
         plotText =
-        if (plot.isNullOrBlank()) txt(if (this is TorrentLoadResponse) R.string.torrent_no_plot else R.string.normal_no_plot) else txt(
-            plot!!
-        ),
+            if (plot.isNullOrBlank()) txt(if (this is TorrentLoadResponse) R.string.torrent_no_plot else R.string.normal_no_plot) else txt(
+                plot!!
+            ),
         backgroundPosterUrl = backgroundPosterUrl,
         title = name,
         typeText = txt(
@@ -275,7 +274,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
             }
         ),
         metaText =
-        if (repo.providerType == ProviderType.MetaProvider) txt(R.string.provider_info_meta) else null,
+            if (repo.providerType == ProviderType.MetaProvider) txt(R.string.provider_info_meta) else null,
         durationText = if (dur == null || dur <= 0) null else txt(
             secondsToReadable(dur * 60, "0 mins")
         ),
@@ -289,9 +288,9 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
             )
         } else null,
         noEpisodesFoundText =
-        if ((this is TvSeriesLoadResponse && this.episodes.isEmpty()) || (this is AnimeLoadResponse && !this.episodes.any { it.value.isNotEmpty() })) txt(
-            R.string.no_episodes_found
-        ) else null
+            if ((this is TvSeriesLoadResponse && this.episodes.isEmpty()) || (this is AnimeLoadResponse && !this.episodes.any { it.value.isNotEmpty() })) txt(
+                R.string.no_episodes_found
+            ) else null
     )
 }
 
@@ -305,7 +304,7 @@ data class ExtractorSubtitleLink(
 fun LoadResponse.getId(): Int {
     // this fixes an issue with outdated api as getLoadResponseIdFromUrl might be fucked
     return (if (this is ResultViewModel2.LoadResponseFromSearch) this.id else null)
-        ?: getLoadResponseIdFromUrl(url, apiName)
+        ?: getLoadResponseIdFromUrl(uniqueUrl, apiName)
 }
 
 private fun getLoadResponseIdFromUrl(url: String, apiName: String): Int {
@@ -1213,7 +1212,7 @@ class ResultViewModel2 : ViewModel() {
     }
 
     private fun getImdbIdFromSyncData(syncData: Map<String, String>?): String? {
-        return normalSafeApiCall {
+        return safe {
             val imdbId = readIdFromString(
                 syncData?.get(AccountManager.simklApi.idPrefix)
             )[SimklSyncServices.Imdb]
@@ -1222,7 +1221,7 @@ class ResultViewModel2 : ViewModel() {
     }
 
     private fun getTMDbIdFromSyncData(syncData: Map<String, String>?): String? {
-        return normalSafeApiCall {
+        return safe {
             val tmdbId = readIdFromString(
                 syncData?.get(AccountManager.simklApi.idPrefix)
             )[SimklSyncServices.Tmdb]
@@ -1307,15 +1306,22 @@ class ResultViewModel2 : ViewModel() {
     ) {
         currentLoadLinkJob?.cancel()
         currentLoadLinkJob = ioSafe {
-            val links = loadLinks(
-                result,
-                isVisible = isVisible,
-                sourceTypes = sourceTypes,
-                clearCache = clearCache,
-                isCasting = isCasting
-            )
-            if (!this.isActive) return@ioSafe
-            work(links)
+            val parentJob = this.coroutineContext.job
+            launch {
+                val links = loadLinks(
+                    result,
+                    isVisible = isVisible,
+                    sourceTypes = sourceTypes,
+                    clearCache = clearCache,
+                    isCasting = isCasting
+                )
+                // Cancel child = skip link loading
+                // Cancel parent = dismiss dialog
+                if (parentJob.isCancelled) {
+                    return@launch
+                }
+                work(links)
+            }
         }
     }
 
@@ -1359,6 +1365,11 @@ class ResultViewModel2 : ViewModel() {
         }
     }
 
+    fun skipLoading() {
+        currentLoadLinkJob?.cancelChildren()
+        currentLoadLinkJob = null
+    }
+
     private suspend fun CoroutineScope.loadLinks(
         result: ResultEpisode,
         isVisible: Boolean,
@@ -1392,6 +1403,8 @@ class ResultViewModel2 : ViewModel() {
                 },
                 isCasting = isCasting
             )
+        } catch (e : CancellationException) {
+            // Do nothing
         } catch (e: Exception) {
             logError(e)
         } finally {
@@ -1841,7 +1854,11 @@ class ResultViewModel2 : ViewModel() {
     }
 
     fun changeDubStatus(status: DubStatus) {
-        postEpisodeRange(currentIndex?.copy(dubStatus = status), currentRange, currentSorting ?: DataStoreHelper.resultsSortingMode)
+        postEpisodeRange(
+            currentIndex?.copy(dubStatus = status),
+            currentRange,
+            currentSorting ?: DataStoreHelper.resultsSortingMode
+        )
     }
 
     fun changeRange(range: EpisodeRange) {
@@ -1849,7 +1866,11 @@ class ResultViewModel2 : ViewModel() {
     }
 
     fun changeSeason(season: Int) {
-        postEpisodeRange(currentIndex?.copy(season = season), currentRange, currentSorting ?: DataStoreHelper.resultsSortingMode)
+        postEpisodeRange(
+            currentIndex?.copy(season = season),
+            currentRange,
+            currentSorting ?: DataStoreHelper.resultsSortingMode
+        )
     }
 
     fun setSort(sortType: EpisodeSortType) {
@@ -2580,6 +2601,7 @@ class ResultViewModel2 : ViewModel() {
         override var posterHeaders: Map<String, String>? = null,
         override var backgroundPosterUrl: String? = null,
         override var contentRating: String? = null,
+        override var uniqueUrl: String = url,
         val id: Int?,
     ) : LoadResponse
 
@@ -2644,8 +2666,6 @@ class ResultViewModel2 : ViewModel() {
                 _page.postValue(
                     Resource.Failure(
                         false,
-                        null,
-                        null,
                         "This provider does not exist"
                     )
                 )

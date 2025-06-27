@@ -66,7 +66,7 @@ import com.lagradost.cloudstream3.isLiveStream
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.subtitles.AbstractSubApi
@@ -910,10 +910,10 @@ class GeneratorPlayer : FullScreenPlayer() {
     // Open file picker
     private val subsPathPicker =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-            normalSafeApiCall {
+            safe {
                 // It lies, it can be null if file manager quits.
-                if (uri == null) return@normalSafeApiCall
-                val ctx = context ?: AcraApplication.context ?: return@normalSafeApiCall
+                if (uri == null) return@safe
+                val ctx = context ?: AcraApplication.context ?: return@safe
                 // RW perms for the path
                 ctx.contentResolver.takePersistableUriPermission(
                     uri,
@@ -1060,7 +1060,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 var shouldDismiss = true
 
                 binding.subtitleSettingsBtt.setOnClickListener {
-                    normalSafeApiCall {
+                    safe {
                         SubtitlesFragment().show(this.parentFragmentManager, "SubtitleSettings")
                     }
                 }
@@ -1732,7 +1732,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     private fun autoSelectSubtitles() {
         //Log.i(TAG, "autoSelectSubtitles")
-        normalSafeApiCall {
+        safe {
             if (!autoSelectFromSettings()) {
                 autoSelectFromDownloads()
             }
@@ -1939,6 +1939,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var langFilterList = listOf<String>()
@@ -2022,9 +2023,18 @@ class GeneratorPlayer : FullScreenPlayer() {
             currentLinks = it
             val turnVisible = it.isNotEmpty() && lastUsedGenerator?.canSkipLoading == true
             val wasGone = binding?.overlayLoadingSkipButton?.isGone == true
-            binding?.overlayLoadingSkipButton?.isVisible = turnVisible
 
-            normalSafeApiCall {
+            binding?.overlayLoadingSkipButton?.apply {
+                isVisible = turnVisible
+                val value = viewModel.currentLinks.value
+                if (value.isNullOrEmpty()) {
+                    setText(R.string.skip_loading)
+                } else {
+                    text = "${context.getString(R.string.skip_loading)} (${value.size})"
+                }
+            }
+
+            safe {
                 if (currentLinks.any { link ->
                         getLinkPriority(currentQualityProfile, link) >=
                                 QualityDataHelper.AUTO_SKIP_PRIORITY

@@ -11,7 +11,7 @@ import android.util.Rational
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import kotlin.math.roundToInt
 
 class PlayerPipHelper {
@@ -102,7 +102,7 @@ class PlayerPipHelper {
                     Rational((it * ratioAccuracy).roundToInt(), ratioAccuracy)
                 }
 
-            normalSafeApiCall {
+            safe {
                 activity.setPictureInPictureParams(
                     PictureInPictureParams.Builder()
                         .apply {

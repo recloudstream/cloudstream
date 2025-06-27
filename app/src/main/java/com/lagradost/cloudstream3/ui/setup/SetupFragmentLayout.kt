@@ -12,7 +12,7 @@ import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentSetupLayoutBinding
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import org.acra.ACRA
 
@@ -40,8 +40,8 @@ class SetupFragmentLayout : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         fixPaddingStatusbar(binding?.setupRoot)
 
-        normalSafeApiCall {
-            val ctx = context ?: return@normalSafeApiCall
+        safe {
+            val ctx = context ?: return@safe
 
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
 

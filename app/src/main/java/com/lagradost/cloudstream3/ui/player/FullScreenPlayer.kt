@@ -250,6 +250,26 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         animateLayoutChanges()
     }
 
+    private fun animateLayoutChangesForSubtitles() =
+        // Post here as bottomPlayerBar is gone the first frame => bottomPlayerBar.height = 0
+        playerBinding?.bottomPlayerBar?.post {
+            @OptIn(UnstableApi::class)
+            val sView = subView ?: return@post
+            val sStyle = subStyle ?: return@post
+            val binding = playerBinding ?: return@post
+
+            val move = if (isShowing) minOf(
+                // We do not want to drag down subtitles if the subtitle elevation is large
+                -sStyle.elevation.toPx,
+                // The lib uses Invisible instead of Gone for no reason
+                binding.previewFrameLayout.height - binding.bottomPlayerBar.height
+            ) else -sStyle.elevation.toPx
+            ObjectAnimator.ofFloat(sView, "translationY", move.toFloat()).apply {
+                duration = 200
+                start()
+            }
+        }
+
     protected fun animateLayoutChanges() {
         if (isShowing) {
             updateUIVisibility()
@@ -284,17 +304,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         fadeAnimation.duration = 100
         fadeAnimation.fillAfter = true
 
-        @OptIn(UnstableApi::class)
-        val sView = subView
-        val sStyle = subStyle
-        if (sView != null && sStyle != null) {
-            val move = if (isShowing) -((playerBinding?.bottomPlayerBar?.height?.toFloat()
-                ?: 0f) + 40.toPx) else -sStyle.elevation.toPx.toFloat()
-            ObjectAnimator.ofFloat(sView, "translationY", move).apply {
-                duration = 200
-                start()
-            }
-        }
+        animateLayoutChangesForSubtitles()
 
         val playerSourceMove = if (isShowing) 0f else -50.toPx.toFloat()
 

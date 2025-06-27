@@ -21,7 +21,7 @@ import com.lagradost.cloudstream3.mapper
 import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.debugPrint
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safeAsync
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.OAuth2API
@@ -760,7 +760,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
     }
 
     private suspend fun getUser(): SettingsResponse.User? {
-        return suspendSafeApiCall {
+        return safeAsync {
             app.post("$mainUrl/users/settings", interceptor = interceptor)
                 .parsedSafe<SettingsResponse>()?.user
         }

@@ -7,7 +7,7 @@ import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.ui.player.OfflinePlaybackHelper.playLink
 import com.lagradost.cloudstream3.ui.player.OfflinePlaybackHelper.playUri
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
@@ -36,7 +36,7 @@ class DownloadedPlayerActivity : AppCompatActivity() {
         val data = intent.data
 
         if (intent?.action == Intent.ACTION_SEND || intent?.action == Intent.ACTION_OPEN_DOCUMENT || intent?.action == Intent.ACTION_VIEW) {
-            val extraText = normalSafeApiCall { // I dont trust android
+            val extraText = safe { // I dont trust android
                 intent.getStringExtra(Intent.EXTRA_TEXT)
             }
             val cd = intent.clipData

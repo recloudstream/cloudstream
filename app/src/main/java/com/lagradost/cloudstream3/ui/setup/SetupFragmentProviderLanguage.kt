@@ -14,7 +14,7 @@ import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentSetupProviderLanguagesBinding
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
@@ -42,8 +42,8 @@ class SetupFragmentProviderLanguage : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         fixPaddingStatusbar(binding?.setupRoot)
 
-        normalSafeApiCall {
-            val ctx = context ?: return@normalSafeApiCall
+        safe {
+            val ctx = context ?: return@safe
 
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
 

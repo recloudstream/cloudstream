@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentTestingBinding
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -47,7 +47,7 @@ class TestFragment : Fragment() {
             }
 
             observeNullable(testViewModel.providerResults) {
-                normalSafeApiCall {
+                safe {
                     val newItems = it.sortedBy { api -> api.first.name }
                     (providerTestRecyclerView.adapter as? TestResultAdapter)?.updateList(
                         newItems

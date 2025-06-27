@@ -124,15 +124,15 @@ class SubscriptionWorkManager(val context: Context, workerParams: WorkerParamete
             PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(context)
             PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(context, false)
 
-            subscriptions.apmap { savedData ->
+            subscriptions.amap { savedData ->
                 try {
-                    val id = savedData.id ?: return@apmap null
-                    val api = getApiFromNameNull(savedData.apiName) ?: return@apmap null
+                    val id = savedData.id ?: return@amap null
+                    val api = getApiFromNameNull(savedData.apiName) ?: return@amap null
 
                     // Reasonable timeout to prevent having this worker run forever.
                     val loadResponse = withTimeoutOrNull(60_000) {
                         api.load(savedData.url)
-                    } ?: return@apmap null
+                    } ?: return@amap null
 
                     val dubPreference =
                         getDub(id) ?: if (
@@ -144,7 +144,7 @@ class SubscriptionWorkManager(val context: Context, workerParams: WorkerParamete
                         }
 
                     var season = 0
-                    val response = loadResponse as? EpisodeResponse ?: return@apmap null
+                    val response = loadResponse as? EpisodeResponse ?: return@amap null
                     val latestEpisodes = response.getLatestEpisodes()
                     val latestPreferredEpisode = latestEpisodes[dubPreference]
                     val nextAiring = response.nextAiring
@@ -161,7 +161,7 @@ class SubscriptionWorkManager(val context: Context, workerParams: WorkerParamete
 
                         // Early return to prevent notifying users of unavailable episodes
                         // on the rare occasion latestPreferredEpisode changes for meta providers
-                        return@apmap Unit
+                        return@amap Unit
                     }
 
                     when (loadResponse) {

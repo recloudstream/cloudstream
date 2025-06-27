@@ -11,7 +11,7 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentSetupExtensionsBinding
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.ui.settings.extensions.PluginsViewModel
@@ -93,8 +93,8 @@ class SetupFragmentExtensions : Fragment() {
 //            openBrowser(PUBLIC_REPOSITORIES_LIST, isTvSettings(), this)
 //        }
 
-        normalSafeApiCall {
-           // val ctx = context ?: return@normalSafeApiCall
+        safe {
+           // val ctx = context ?: return@safe
             setRepositories()
             binding?.apply {
                 if (!isSetup) {

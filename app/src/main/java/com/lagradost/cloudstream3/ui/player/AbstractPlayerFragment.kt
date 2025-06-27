@@ -44,7 +44,7 @@ import com.lagradost.cloudstream3.CommonActivity.screenWidth
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.unixTimeMs
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
@@ -243,7 +243,7 @@ abstract class AbstractPlayerFragment(
                 exitedPipMode()
                 pipReceiver?.let {
                     // Prevents java.lang.IllegalArgumentException: Receiver not registered
-                    normalSafeApiCall {
+                    safe {
                         activity?.unregisterReceiver(it)
                     }
                 }
@@ -559,6 +559,11 @@ abstract class AbstractPlayerFragment(
                             CSPlayerEvent.Pause,
                             PlayerEventSource.Player
                         )
+
+                        // No clashing UI
+                        if (hasPreview) {
+                            subView?.isVisible = false
+                        }
                     }
 
                     override fun onScrubMove(
@@ -570,6 +575,13 @@ abstract class AbstractPlayerFragment(
 
                     override fun onScrubStop(previewBar: PreviewBar?) {
                         if (resume) player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.Player)
+                        // Delay to prevent the small flicker of subtitle before seeking
+                        subView?.postDelayed({
+                            // If we are not scrubbing then show subtitles again
+                            if (previewBar == null || !previewBar.isPreviewEnabled || !previewBar.isShowingPreview) {
+                                subView?.isVisible = true
+                            }
+                        }, 200)
                     }
                 })
                 progressBar.attachPreviewView(previewFrameLayout)

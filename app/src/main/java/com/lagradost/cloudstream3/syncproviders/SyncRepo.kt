@@ -2,7 +2,7 @@ package com.lagradost.cloudstream3.syncproviders
 
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.mvvm.Resource
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 
 class SyncRepo(private val repo: SyncAPI) {
@@ -39,10 +39,10 @@ class SyncRepo(private val repo: SyncAPI) {
     }
 
     fun hasAccount(): Boolean {
-        return normalSafeApiCall { repo.loginInfo() != null } ?: false
+        return safe { repo.loginInfo() != null } ?: false
     }
 
-    fun getIdFromUrl(url: String): String? = normalSafeApiCall {
+    fun getIdFromUrl(url: String): String? = safe {
         repo.getIdFromUrl(url)
     }
 }

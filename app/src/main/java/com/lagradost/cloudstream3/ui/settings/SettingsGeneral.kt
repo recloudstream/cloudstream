@@ -22,7 +22,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.databinding.AddRemoveSitesBinding
 import com.lagradost.cloudstream3.databinding.AddSiteInputBinding
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -319,7 +319,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
         }
 
         fun getDownloadDirs(): List<String> {
-            return normalSafeApiCall {
+            return safe {
                 context?.let { ctx ->
                     val defaultDir = VideoDownloadManager.getDefaultDir(ctx)?.filePath()
 

@@ -35,10 +35,10 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.actions.VideoClickAction
 import com.lagradost.cloudstream3.actions.VideoClickActionHolder
-import com.lagradost.cloudstream3.apmap
+import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.mvvm.debugPrint
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.plugins.RepositoryManager.ONLINE_PLUGINS_FOLDER
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.plugins.RepositoryManager.downloadPluginToFile
@@ -144,7 +144,7 @@ object PluginManager {
                 !it.filePath.contains(repositoryPath)
             }
             val file = File(repositoryPath)
-            normalSafeApiCall {
+            safe {
                 if (file.exists()) file.deleteRecursively()
             }
             setKey(PLUGINS_KEY, plugins)
@@ -265,7 +265,7 @@ object PluginManager {
         level = DeprecationLevel.ERROR
     )
     @Throws
-    fun ___DO_NOT_CALL_FROM_A_PLUGIN_updateAllOnlinePluginsAndLoadThem(activity: Activity) {
+    suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_updateAllOnlinePluginsAndLoadThem(activity: Activity) {
         assertNonRecursiveCallstack()
 
         // Load all plugins as fast as possible!
@@ -275,7 +275,7 @@ object PluginManager {
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
             ?: emptyArray()) + PREBUILT_REPOSITORIES
 
-        val onlinePlugins = urls.toList().apmap {
+        val onlinePlugins = urls.toList().amap {
             getRepoPlugins(it.url)?.toList() ?: emptyList()
         }.flatten().distinctBy { it.second.url }
 
@@ -296,7 +296,7 @@ object PluginManager {
 
         val updatedPlugins = mutableListOf<String>()
 
-        outdatedPlugins.apmap { pluginData ->
+        outdatedPlugins.amap { pluginData ->
             if (pluginData.isDisabled) {
                 //updatedPlugins.add(activity.getString(R.string.single_plugin_disabled, pluginData.onlineData.second.name))
                 unloadPlugin(pluginData.savedData.filePath)
@@ -346,7 +346,7 @@ object PluginManager {
         level = DeprecationLevel.ERROR
     )
     @Throws
-    fun ___DO_NOT_CALL_FROM_A_PLUGIN_downloadNotExistingPluginsAndLoad(
+    suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_downloadNotExistingPluginsAndLoad(
         activity: Activity,
         mode: AutoDownloadMode
     ) {
@@ -355,7 +355,7 @@ object PluginManager {
         val newDownloadPlugins = mutableListOf<String>()
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
             ?: emptyArray()) + PREBUILT_REPOSITORIES
-        val onlinePlugins = urls.toList().apmap {
+        val onlinePlugins = urls.toList().amap {
             getRepoPlugins(it.url)?.toList() ?: emptyList()
         }.flatten().distinctBy { it.second.url }
 
@@ -415,7 +415,7 @@ object PluginManager {
         }
         //Log.i(TAG, "notDownloadedPlugins => ${notDownloadedPlugins.toJson()}")
 
-        notDownloadedPlugins.apmap { pluginData ->
+        notDownloadedPlugins.amap { pluginData ->
             downloadPlugin(
                 activity,
                 pluginData.onlineData.second.url,
@@ -460,11 +460,11 @@ object PluginManager {
         level = DeprecationLevel.ERROR
     )
     @Throws
-    fun ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(context: Context) {
+    suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(context: Context) {
         assertNonRecursiveCallstack()
 
         // Load all plugins as fast as possible!
-        (getPluginsOnline()).toList().apmap { pluginData ->
+        (getPluginsOnline()).toList().amap { pluginData ->
             loadPlugin(
                 context,
                 File(pluginData.filePath),
@@ -486,7 +486,7 @@ object PluginManager {
         replaceWith = ReplaceWith("loadPlugin"),
         level = DeprecationLevel.ERROR
     )
-    fun ___DO_NOT_CALL_FROM_A_PLUGIN_hotReloadAllLocalPlugins(activity: FragmentActivity?) {
+    suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_hotReloadAllLocalPlugins(activity: FragmentActivity?) {
         assertNonRecursiveCallstack()
 
         Log.d(TAG, "Reloading all local plugins!")
@@ -511,7 +511,7 @@ object PluginManager {
         level = DeprecationLevel.ERROR
     )
     @Throws
-    fun ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(context: Context, forceReload: Boolean) {
+    suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(context: Context, forceReload: Boolean) {
         assertNonRecursiveCallstack()
 
         val dir = File(LOCAL_PLUGINS_PATH)
@@ -540,7 +540,7 @@ object PluginManager {
         // Make sure all local plugins are fully refreshed.
         removeKey(PLUGINS_KEY_LOCAL)
 
-        sortedPlugins?.sortedBy { it.name }?.apmap { file ->
+        sortedPlugins?.sortedBy { it.name }?.amap { file ->
             try {
                 val destinationFile = File(pluginDirectory, file.name)
 
@@ -577,9 +577,9 @@ object PluginManager {
      * @return true if safe mode file is present
      **/
     fun checkSafeModeFile(): Boolean {
-        return normalSafeApiCall {
+        return safe {
             val folder = File(CLOUD_STREAM_FOLDER)
-            if (!folder.exists()) return@normalSafeApiCall false
+            if (!folder.exists()) return@safe false
             val files = folder.listFiles { _, name ->
                 name.equals("safe", ignoreCase = true)
             }
@@ -815,7 +815,7 @@ object PluginManager {
         replaceWith = ReplaceWith("loadPlugin"),
         level = DeprecationLevel.ERROR
     )
-    fun ___DO_NOT_CALL_FROM_A_PLUGIN_manuallyReloadAndUpdatePlugins(activity: Activity) {
+    suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_manuallyReloadAndUpdatePlugins(activity: Activity) {
         assertNonRecursiveCallstack()
 
         showToast(activity.getString(R.string.starting_plugin_update_manually), Toast.LENGTH_LONG)
@@ -825,7 +825,7 @@ object PluginManager {
 
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
             ?: emptyArray()) + PREBUILT_REPOSITORIES
-        val onlinePlugins = urls.toList().apmap {
+        val onlinePlugins = urls.toList().amap {
             getRepoPlugins(it.url)?.toList() ?: emptyList()
         }.flatten().distinctBy { it.second.url }
 
@@ -839,7 +839,7 @@ object PluginManager {
 
         val updatedPlugins = mutableListOf<String>()
 
-        allPlugins.apmap { pluginData ->
+        allPlugins.amap { pluginData ->
             if (pluginData.isDisabled) {
                 Log.e(
                     "PluginManager",

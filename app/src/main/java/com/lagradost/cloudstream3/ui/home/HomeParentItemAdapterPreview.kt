@@ -5,6 +5,7 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
@@ -17,9 +18,9 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.navigation.NavigationBarItemView
-import com.google.android.material.navigationrail.NavigationRailMenuView
 import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.CommonActivity.activity
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainActivity
@@ -29,6 +30,7 @@ import com.lagradost.cloudstream3.databinding.FragmentHomeHeadBinding
 import com.lagradost.cloudstream3.databinding.FragmentHomeHeadTvBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.debugException
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.ViewHolderState
 import com.lagradost.cloudstream3.ui.WatchType
@@ -45,6 +47,7 @@ import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectStringRes
@@ -55,7 +58,8 @@ import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 class HomeParentItemAdapterPreview(
     override val fragment: Fragment,
     private val viewModel: HomeViewModel,
-) : ParentItemAdapter(fragment, id = "HomeParentItemAdapterPreview".hashCode(),
+) : ParentItemAdapter(
+    fragment, id = "HomeParentItemAdapterPreview".hashCode(),
     clickCallback = {
         viewModel.click(it)
     }, moreInfoClickCallback = {
@@ -128,63 +132,89 @@ class HomeParentItemAdapterPreview(
         }
 
         val previewAdapter = HomeScrollAdapter(fragment = fragment)
-        private val resumeAdapter = HomeChildItemAdapter(
+        private val resumeAdapter = ResumeItemAdapter(
             fragment,
-            id = "resumeAdapter".hashCode(),
             nextFocusUp = itemView.nextFocusUpId,
-            nextFocusDown = itemView.nextFocusDownId
-        ) { callback ->
-            if (callback.action != SEARCH_ACTION_SHOW_METADATA) {
-                viewModel.click(callback)
-                return@HomeChildItemAdapter
-            }
-            callback.view.context?.getActivity()?.showOptionSelectStringRes(
-                callback.view,
-                callback.card.posterUrl,
-                listOf(
-                    R.string.action_open_watching,
-                    R.string.action_remove_watching
-                ),
-                listOf(
-                    R.string.action_open_play,
-                    R.string.action_open_watching,
-                    R.string.action_remove_watching
-                )
-            ) { (isTv, actionId) ->
-                when (actionId + if (isTv) 0 else 1) {
-                    // play
-                    0 -> {
-                        viewModel.click(
-                            SearchClickCallback(
-                                START_ACTION_RESUME_LATEST,
-                                callback.view,
-                                -1,
-                                callback.card
+            nextFocusDown = itemView.nextFocusDownId,
+            removeCallback = { v ->
+                try {
+                    val context = v.context ?: return@ResumeItemAdapter
+                    val builder: AlertDialog.Builder =
+                        AlertDialog.Builder(context)
+                    // Copy pasted from https://github.com/recloudstream/cloudstream/pull/1658/files
+                    builder.apply {
+                        setTitle(R.string.clear_history)
+                        setMessage(
+                            context.getString(R.string.delete_message).format(
+                                context.getString(
+                                    R.string.continue_watching
+                                )
                             )
                         )
-                    }
-                    //info
-                    1 -> {
-                        viewModel.click(
-                            SearchClickCallback(
-                                SEARCH_ACTION_LOAD,
-                                callback.view,
-                                -1,
-                                callback.card
-                            )
-                        )
-                    }
-                    // remove
-                    2 -> {
-                        val card = callback.card
-                        if (card is DataStoreHelper.ResumeWatchingResult) {
-                            DataStoreHelper.removeLastWatched(card.parentId)
+                        setNegativeButton(R.string.cancel) { _, _ -> /*NO-OP*/ }
+                        setPositiveButton(R.string.delete) { _, _ ->
+                            DataStoreHelper.deleteAllResumeStateIds()
                             viewModel.reloadStored()
+                        }
+                        show().setDefaultFocus()
+                    }
+                } catch (t: Throwable) {
+                    // This may throw a formatting error
+                    logError(t)
+                }
+            },
+            clickCallback = { callback ->
+                if (callback.action != SEARCH_ACTION_SHOW_METADATA) {
+                    viewModel.click(callback)
+                    return@ResumeItemAdapter
+                }
+                callback.view.context?.getActivity()?.showOptionSelectStringRes(
+                    callback.view,
+                    callback.card.posterUrl,
+                    listOf(
+                        R.string.action_open_watching,
+                        R.string.action_remove_watching
+                    ),
+                    listOf(
+                        R.string.action_open_play,
+                        R.string.action_open_watching,
+                        R.string.action_remove_watching
+                    )
+                ) { (isTv, actionId) ->
+                    when (actionId + if (isTv) 0 else 1) {
+                        // play
+                        0 -> {
+                            viewModel.click(
+                                SearchClickCallback(
+                                    START_ACTION_RESUME_LATEST,
+                                    callback.view,
+                                    -1,
+                                    callback.card
+                                )
+                            )
+                        }
+                        //info
+                        1 -> {
+                            viewModel.click(
+                                SearchClickCallback(
+                                    SEARCH_ACTION_LOAD,
+                                    callback.view,
+                                    -1,
+                                    callback.card
+                                )
+                            )
+                        }
+                        // remove
+                        2 -> {
+                            val card = callback.card
+                            if (card is DataStoreHelper.ResumeWatchingResult) {
+                                DataStoreHelper.removeLastWatched(card.parentId)
+                                viewModel.reloadStored()
+                            }
                         }
                     }
                 }
-            }
-        }
+            })
         private val bookmarkAdapter = HomeChildItemAdapter(
             fragment,
             id = "bookmarkAdapter".hashCode(),
@@ -481,7 +511,9 @@ class HomeParentItemAdapterPreview(
                     if (!hasFocus) return@setOnFocusChangeListener
                     if (previewViewpager.currentItem <= 0) {
                         //Focus the Home item as the default focus will be the header item
-                        (activity as? MainActivity)?.binding?.navRailView?.findViewById<NavigationBarItemView>(R.id.navigation_home)?.requestFocus()
+                        (activity as? MainActivity)?.binding?.navRailView?.findViewById<NavigationBarItemView>(
+                            R.id.navigation_home
+                        )?.requestFocus()
                     } else {
                         previewViewpager.setCurrentItem(previewViewpager.currentItem - 1, true)
                         binding.homePreviewPlayBtt.requestFocus()

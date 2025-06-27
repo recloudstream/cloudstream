@@ -313,7 +313,7 @@ class HomeViewModel : ViewModel() {
 
         if (repo?.hasMainPage != true) {
             _page.postValue(Resource.Success(emptyMap()))
-            _preview.postValue(Resource.Failure(false, null, null, "No homepage"))
+            _preview.postValue(Resource.Failure(false, "No homepage"))
             return@ioSafe
         }
 
@@ -375,8 +375,6 @@ class HomeViewModel : ViewModel() {
                         _preview.postValue(
                             Resource.Failure(
                                 false,
-                                null,
-                                null,
                                 "No homepage responses"
                             )
                         )

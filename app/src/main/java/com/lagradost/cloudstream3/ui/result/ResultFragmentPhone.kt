@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.ui.result
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Rect
@@ -19,6 +18,7 @@ import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.view.isGone
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doOnTextChanged
@@ -30,6 +30,7 @@ import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.DubStatus
@@ -37,16 +38,15 @@ import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
-import com.lagradost.cloudstream3.databinding.BottomSelectionDialogBinding
 import com.lagradost.cloudstream3.databinding.FragmentResultBinding
 import com.lagradost.cloudstream3.databinding.FragmentResultSwipeBinding
 import com.lagradost.cloudstream3.databinding.ResultRecommendationsBinding
 import com.lagradost.cloudstream3.databinding.ResultSyncBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.services.SubscriptionWorkManager
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
@@ -891,7 +891,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         fun setSyncMaxEpisodes(totalEpisodes: Int?) {
             syncBinding?.resultSyncEpisodes?.max = (totalEpisodes ?: 0) * 1000
 
-            normalSafeApiCall {
+            safe {
                 val ctx = syncBinding?.resultSyncEpisodes?.context
                 syncBinding?.resultSyncMaxEpisodes?.text =
                     totalEpisodes?.let { episodes ->
@@ -961,7 +961,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         }
                         resultSyncCurrentEpisodes.text =
                             Editable.Factory.getInstance()?.newEditable(watchedEpisodes.toString())
-                        normalSafeApiCall { // format might fail
+                        safe { // format might fail
                             context?.getString(R.string.sync_score_format)?.format(d.score ?: 0)
                                 ?.let {
                                     resultSyncScoreText.text = it
@@ -1072,19 +1072,26 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 loadingDialog = null
             }
             loadingDialog = loadingDialog ?: context?.let { ctx ->
-                val builder =
-                    BottomSheetDialog(ctx)
+                val builder = BottomSheetDialog(ctx)
                 builder.setContentView(R.layout.bottom_loading)
                 builder.setOnDismissListener {
                     loadingDialog = null
                     viewModel.cancelLinks()
                 }
-                //builder.setOnCancelListener {
-                //    it?.dismiss()
-                //}
                 builder.setCanceledOnTouchOutside(true)
                 builder.show()
                 builder
+            }
+            loadingDialog?.findViewById<MaterialButton>(R.id.overlay_loading_skip_button)?.apply {
+                if (load.linksLoaded <= 0) {
+                    isInvisible = true
+                } else {
+                    setOnClickListener {
+                        viewModel.skipLoading()
+                    }
+                    isVisible = true
+                    text = "${context.getString(R.string.skip_loading)} (${load.linksLoaded})"
+                }
             }
         }
 
@@ -1127,13 +1134,14 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         observe(viewModel.dubSubSelections) { range ->
             resultBinding?.resultDubSelect?.setOnClickListener { view ->
                 view?.context?.let { ctx ->
-                    view.popupMenuNoIconsAndNoStringRes(range
-                        .mapNotNull { (text, status) ->
-                            Pair(
-                                status.ordinal,
-                                text?.asStringNull(ctx) ?: return@mapNotNull null
-                            )
-                        }) {
+                    view.popupMenuNoIconsAndNoStringRes(
+                        range
+                            .mapNotNull { (text, status) ->
+                                Pair(
+                                    status.ordinal,
+                                    text?.asStringNull(ctx) ?: return@mapNotNull null
+                                )
+                            }) {
                         viewModel.changeDubStatus(DubStatus.entries[itemId])
                     }
                 }

@@ -45,6 +45,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
+import com.lagradost.cloudstream3.utils.AppContextUtils.isNetworkAvailable
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRecyclerScrollable
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppContextUtils.ownHide
@@ -56,6 +57,7 @@ import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
+import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import java.util.*
 
@@ -153,7 +155,7 @@ class HomeFragment : Fragment() {
                                 }
                             }
 
-                        builder.setTitle(R.string.delete_file)
+                        builder.setTitle(R.string.clear_history)
                             .setMessage(
                                 context.getString(R.string.delete_message).format(
                                     item.name
@@ -489,10 +491,6 @@ class HomeFragment : Fragment() {
     private var toggleRandomButton = false
 
     private var bottomSheetDialog: BottomSheetDialog? = null
-
-    // https://github.com/vivchar/RendererRecyclerViewAdapter/blob/185251ee9d94fb6eb3e063b00d646b745186c365/example/src/main/java/com/github/vivchar/example/pages/github/GithubFragment.kt#L32
-    // cry about it, but this is android we are talking about, we cant do the most simple shit without making a global variable
-    private var instanceState: Bundle = Bundle()
     private var homeMasterAdapter: HomeParentItemAdapterPreview? = null
 
     @SuppressLint("SetTextI18n")
@@ -593,7 +591,6 @@ class HomeFragment : Fragment() {
 
                     is Resource.Failure -> {
                         homeLoadingShimmer.stopShimmer()
-                        resultErrorText.text = data.errorString
                         homeReloadConnectionerror.setOnClickListener(apiChangeClickListener)
                         homeReloadConnectionOpenInBrowser.setOnClickListener { view ->
                             val validAPIs = apis//.filter { api -> api.hasMainPage }
@@ -617,7 +614,27 @@ class HomeFragment : Fragment() {
                         homeLoading.isVisible = false
                         homeLoadingError.isVisible = true
                         homeMasterRecycler.isVisible = false
-                        //home_loaded?.isVisible = false
+
+                        // Based on https://github.com/recloudstream/cloudstream/pull/1438
+                        val hasNoNetworkConnection = context?.isNetworkAvailable() == false
+                        val isNetworkError = data.isNetworkError
+
+                        // Show the downloads button if we have any sort of network shenanigans
+                        homeReloadConnectionGoToDownloads.isVisible =
+                            hasNoNetworkConnection || isNetworkError
+
+                        // Only hide the open in browser button if we know this is not network shenanigans related to cs3
+                        homeReloadConnectionOpenInBrowser.isGone = hasNoNetworkConnection
+
+                        resultErrorText.text = if (hasNoNetworkConnection) {
+                            getString(R.string.no_internet_connection)
+                        } else {
+                            data.errorString
+                        }
+
+                        homeReloadConnectionGoToDownloads.setOnClickListener {
+                            activity.navigate(R.id.navigation_downloads)
+                        }
                     }
 
                     is Resource.Loading -> {

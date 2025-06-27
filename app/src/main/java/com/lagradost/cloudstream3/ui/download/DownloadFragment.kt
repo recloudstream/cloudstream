@@ -29,7 +29,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentDownloadsBinding
 import com.lagradost.cloudstream3.databinding.StreamInputBinding
 import com.lagradost.cloudstream3.isEpisodeBased
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.player.BasicLink
@@ -309,7 +309,7 @@ class DownloadFragment : Fragment() {
             .setType("video/*")
             .addCategory(Intent.CATEGORY_OPENABLE)
             .addFlags(FLAG_GRANT_READ_URI_PERMISSION) // Request temporary access
-        normalSafeApiCall {
+        safe {
             videoResultLauncher.launch(
                 Intent.createChooser(
                     intent,
@@ -367,7 +367,7 @@ class DownloadFragment : Fragment() {
     }
 
     private fun activateSwitchOnHls(text: String?, binding: StreamInputBinding) {
-        binding.hlsSwitch.isChecked = normalSafeApiCall {
+        binding.hlsSwitch.isChecked = safe {
             URI(text).path?.substringAfterLast(".")?.contains("m3u")
         } == true
     }
