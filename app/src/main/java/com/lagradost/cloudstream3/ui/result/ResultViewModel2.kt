@@ -1636,6 +1636,33 @@ class ResultViewModel2 : ViewModel() {
                 }
             }
 
+            ACTION_ALWAYS_ASK_PLAYER -> {
+                activity?.let { ctx ->
+                    // Show player selection dialog
+                    val players = VideoClickActionHolder.getPlayers(ctx)
+                    val options = mutableListOf<Pair<UiText, Int>>()
+                    
+                    // Add internal player option
+                    options.add(txt(R.string.episode_action_play_in_app) to ACTION_PLAY_EPISODE_IN_PLAYER)
+                    
+                    // Add external player options 
+                    options.addAll(players.map { player ->
+                        player.name to (VideoClickActionHolder.uniqueIdToId(player.uniqueId()) ?: ACTION_PLAY_EPISODE_IN_PLAYER)
+                    })
+
+                    postPopup(
+                        txt(R.string.player_pref),
+                        options
+                    ) { selectedAction ->
+                        if (selectedAction != null) {
+                            handleEpisodeClickEvent(
+                                click.copy(action = selectedAction)
+                            )
+                        }
+                    }
+                }
+            }
+
             ACTION_MARK_AS_WATCHED -> {
                 val isWatched =
                     getVideoWatchState(click.data.id) == VideoWatchState.Watched
