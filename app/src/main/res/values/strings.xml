@@ -18,6 +18,7 @@
     <string name="quality_pref_key" translatable="false">quality_pref_key</string>
     <string name="quality_pref_mobile_data_key" translatable="false">quality_pref_mobile_data_key</string>
     <string name="player_default_key" translatable="false">player_default_key</string>
+    <string name="player_always_ask_key" translatable="false">always_ask</string>
     <string name="prefer_limit_title_key" translatable="false">prefer_limit_title_key</string>
     <string name="prefer_limit_title_rez_key" translatable="false">prefer_limit_title_rez_key</string>
     <string name="apk_installer_key" translatable="false">apk_installer_key</string>
@@ -673,6 +674,7 @@
     <string name="hls_playlist">HLS Playlist</string>
     <string name="player_pref">Preferred video player</string>
     <string name="player_settings_play_in_app">Internal player</string>
+    <string name="player_settings_always_ask">Always ask</string>
     <string name="player_settings_select_cast_device">Select cast device</string>
     <string name="app_not_found_error">App not found</string>
     <string name="all_languages_preference">All Languages</string>

@@ -179,10 +179,12 @@ class SettingsPlayer : PreferenceFragmentCompat() {
             val prefNames = buildList {
                 add(getString(R.string.player_settings_play_in_app))
                 addAll(players.map { it.name.asStringNull(activity) ?: it.javaClass.simpleName })
+                add(getString(R.string.player_settings_always_ask))
             }
             val prefValues = buildList {
                 add("")
                 addAll(players.map { it.uniqueId() })
+                add(getString(R.string.player_always_ask_key))
             }
             val current = settingsManager.getString(getString(R.string.player_default_key), "") ?: ""
 

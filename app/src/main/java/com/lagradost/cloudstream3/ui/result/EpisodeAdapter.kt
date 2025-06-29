@@ -38,6 +38,7 @@ import java.util.Locale
  * @see VideoClickActionHolder
  */
 const val ACTION_PLAY_EPISODE_IN_PLAYER = 1
+const val ACTION_ALWAYS_ASK_PLAYER = 2
 
 const val ACTION_CHROME_CAST_EPISODE = 4
 const val ACTION_CHROME_CAST_MIRROR = 5
@@ -71,6 +72,12 @@ class EpisodeAdapter(
         fun getPlayerAction(context: Context): Int {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
             val playerPref = settingsManager.getString(context.getString(R.string.player_default_key), "")
+            
+            // Check if "Always ask" is selected
+            if (playerPref == context.getString(R.string.player_always_ask_key)) {
+                return ACTION_ALWAYS_ASK_PLAYER
+            }
+            
             return VideoClickActionHolder.uniqueIdToId(playerPref) ?: ACTION_PLAY_EPISODE_IN_PLAYER
         }
     }
