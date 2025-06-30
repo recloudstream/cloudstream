@@ -67,7 +67,8 @@ interface IPreviewGenerator {
         fun new(): IPreviewGenerator {
             val userDisabled = AcraApplication.context?.let { ctx ->
                 PreferenceManager.getDefaultSharedPreferences(ctx)?.getBoolean(
-                    ctx.getString(R.string.preview_seekbar_key), true) == false
+                    ctx.getString(R.string.preview_seekbar_key), true
+                ) == false
             } ?: false
             /** because TV has low ram + not show we disable this for now */
             return if (isLayout(TV) || userDisabled) {
@@ -251,7 +252,6 @@ private class M3u8PreviewGenerator(override var params: ImageParams) : IPreviewG
     }
 
 
-
     // prefixSum[i] = sum(hsl.ts[0..i].time)
     // where [0] = 0, [1] = hsl.ts[0].time aka time at start of segment, do [b] - [a] for range a,b
     private var prefixSum: Array<Double> = arrayOf()
@@ -327,13 +327,12 @@ private class M3u8PreviewGenerator(override var params: ImageParams) : IPreviewG
                 //    }
                 val retriever = MediaMetadataRetriever()
                 val hsl = M3u8Helper2.hslLazy(
-                    listOf(
-                        M3u8Helper.M3u8Stream(
-                            streamUrl = url,
-                            headers = headers
-                        )
+                    M3u8Helper.M3u8Stream(
+                        streamUrl = url,
+                        headers = headers
                     ),
-                    selectBest = false
+                    selectBest = false,
+                    requireAudio = false,
                 )
 
                 // no support for encryption atm

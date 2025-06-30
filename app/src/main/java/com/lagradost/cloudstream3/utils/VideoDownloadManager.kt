@@ -1434,7 +1434,7 @@ object VideoDownloadManager {
                 )
             )
 
-            val items = M3u8Helper2.hslLazy(listOf(m3u8))
+            val items = M3u8Helper2.hslLazy(m3u8, selectBest = true, requireAudio = true)
 
             metadata.hlsTotal = items.size
             metadata.type = DownloadType.IsDownloading
