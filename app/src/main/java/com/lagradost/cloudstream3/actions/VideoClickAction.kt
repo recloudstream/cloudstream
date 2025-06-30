@@ -46,6 +46,7 @@ object VideoClickActionHolder {
         MpvPackage(),
         FcastAction(),
         // forks/backup apps
+        VlcNightlyPackage(),
         WebVideoCastPackage(),
         MpvYTDLPackage(),
         MpvKtPackage(),
