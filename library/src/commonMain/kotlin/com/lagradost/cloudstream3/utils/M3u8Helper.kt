@@ -131,16 +131,16 @@ object M3u8Helper2 {
             response,
         )
 
-        // The m3u8 should not be split it that causes a loss of audio, but also in the case of loss of subtitles
-        val cantSplit =
-            parsed == null || parsed.audios.isNotEmpty() || parsed.subtitles.isNotEmpty() || parsed.closedCaptions.isNotEmpty()
-
-        if (parsed == null || cantSplit || returnThis) {
-            list += m3u8
-        }
-
-        if (parsed != null && !cantSplit) {
+        var anyFound = false
+        if (parsed != null) {
             for (video in parsed.variants) {
+                // The m3u8 should not be split it that causes a loss of audio
+                if (!video.isPlayableStandalone()) {
+                    //println("Denied m3u8Generation, isTrickPlay = ${video.isTrickPlay()} containsAudio = ${video.containsAudio()}, codec = ${video.format.codecs}, url = ${video.url}")
+                    continue
+                }
+
+                anyFound = true
                 val quality = video.format.width
                 list.add(
                     M3u8Helper.M3u8Stream(
@@ -149,6 +149,14 @@ object M3u8Helper2 {
                         headers = m3u8.headers
                     )
                 )
+            }
+        }
+
+        // If it is not a "Master Playlist", or if it does not contain any playable "Media Playlist" or if it should return itself
+        if (parsed == null || !anyFound || returnThis) {
+            // Only include it if is a "Media Playlist" (any TS files are found), or if it is a "Master Playlist" (parsing is non null)
+            if (parsed != null || TS_EXTENSION_REGEX.containsMatchIn(response)) {
+                list += m3u8
             }
         }
 
@@ -257,17 +265,30 @@ object M3u8Helper2 {
             // find first with no audio group if audio is required, as otherwise muxing is required
             // as m3u8 files can include separate tracks for dubs/subs
             val variants = if (requireAudio) {
-                parsed.variants.filter { it.audioGroupId == null }
+                parsed.variants.filter { it.isPlayableStandalone() }
             } else {
-                parsed.variants
+                parsed.variants.filter { !it.isTrickPlay() }
             }
 
-            // m3u8 can also include different camera angles (parsed.videos) for the same quality
+            if (variants.isEmpty()) {
+                throw IllegalStateException(
+                    if (requireAudio) {
+                        "M3u8 contains no video with audio"
+                    } else {
+                        "M3u8 contains no video"
+                    }
+                )
+            }
+
+            // M3u8 can also include different camera angles (parsed.videos) for the same quality
             // but here the default is used
             val bestVideo = if (selectBest) {
-                variants.maxBy { it.format.width }
+                // Sort by pixels, while this normally is a bad idea if one is -1,
+                // in the m3u8 parsing must contains both or neither, so NO_VALUE => 1
+                // Tie break on averageBitrate
+                variants.maxBy { (it.format.width * it.format.height).toLong() * 1000L + it.format.averageBitrate.toLong() }
             } else {
-                variants.minBy { it.format.width }
+                variants.minBy { (it.format.width * it.format.height).toLong() * 1000L + it.format.averageBitrate.toLong() }
             }
 
             val quality = bestVideo.format.width
@@ -318,7 +339,8 @@ object M3u8Helper2 {
             }
             TsLink(url = url, time = time.toDoubleOrNull())
         }.toList()
-        if (allTsList.isEmpty()) throw IllegalArgumentException("ts must be non empty")
+
+        if (allTsList.isEmpty()) throw IllegalStateException("M3u8 must contains TS files")
 
         return LazyHlsDownloadData(
             encryptionData = encryptionData,
