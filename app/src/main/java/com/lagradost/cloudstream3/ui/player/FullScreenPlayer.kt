@@ -136,7 +136,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected var playerRotateEnabled = false
     protected var autoPlayerRotateEnabled = false
     private var hideControlsNames = false
-
+    protected var speedupEnabled = false
     protected var subtitleDelay
         set(value) = try {
             player.setSubtitleOffset(-value)
@@ -1036,9 +1036,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     /*if (isCurrentTouchValid && player_episode_list?.isVisible == true) {
                         player_episode_list?.isVisible = false
                     } else*/ if (isCurrentTouchValid) {
-                        hasTriggeredSpeedUp = false
-                        if(player.getIsPlaying()){
-                            holdhandler.postDelayed(holdRunnable,500)
+                        if(speedupEnabled){
+                            hasTriggeredSpeedUp = false
+                            if(player.getIsPlaying()){
+                                holdhandler.postDelayed(holdRunnable,500)
+                            }
                         }
                         isVolumeLocked = currentRequestedVolume < 1.0f
                         if (currentRequestedVolume <= 1.0f) {
@@ -1060,7 +1062,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 MotionEvent.ACTION_UP -> {
                     holdhandler.removeCallbacks(holdRunnable)
                     if(hasTriggeredSpeedUp) {
-                        player.setPlaybackSpeed(1.0f)
+                        player.setPlaybackSpeed(DataStoreHelper.playBackSpeed)
                         playerSpeedupButton?.isGone = true
                     }
                     if (isCurrentTouchValid && !isLocked && isFullScreenPlayer) {
@@ -1688,6 +1690,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     ctx.getString(R.string.hide_player_control_names_key),
                     false
                 )
+
+                speedupEnabled = settingsManager.getBoolean(
+                    ctx.getString(R.string.speedup_key),
+                    false
+                )
+
 
                 val profiles = QualityDataHelper.getProfiles()
                 val type = if (ctx.isUsingMobileData())

@@ -874,4 +874,7 @@
     <string name="overscan_settings">Overscan</string>
     <string name="poster_size_settings_des">Changes size of posters</string>
     <string name="poster_size_settings">Poster size</string>
+    <string name="speedup_key" translatable="false">speedup_key</string>
+    <string name="speedup_title" >LongPress Speed Toggle</string>
+    <string name="speedup_summary" >Hold to get 2x speed</string>
 </resources>
