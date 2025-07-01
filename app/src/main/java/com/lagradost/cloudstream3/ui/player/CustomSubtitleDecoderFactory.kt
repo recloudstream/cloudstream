@@ -242,12 +242,30 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
         val currentStyle = style
         val customOutput = Consumer<CuesWithTiming> { cue ->
             // fixed style and filter on the cues
-            val newCue =
-                CuesWithTiming(cue.cues.map { c ->
-                    c.buildUpon().fixSubtitleAlignment().applyStyle(currentStyle).build()
-                }, cue.startTimeUs, cue.durationUs)
 
-            // do not apply the offset to the currentSubtitleCues as those are then used for sync subs
+            // Move cues into one single one
+            // This is to prevent text overlap in vtt (and potentially other) subtitle files
+            val combinedCues = cue.cues.groupBy {
+                // Groups cues which share the same positon
+                it.lineAnchor to it.position.times(1000.0f).toInt()
+            }.mapNotNull { (_, entries) ->
+                val combinedCueText = entries.joinToString("\n") {
+                    it.text?.toString() ?: ""
+                }
+
+                entries
+                    .firstOrNull()
+                    ?.buildUpon()
+                    ?.fixSubtitleAlignment()
+                    ?.applyStyle(currentStyle)
+                    ?.setText(combinedCueText)
+                    ?.build()
+            }
+
+            val newCue =
+                CuesWithTiming(combinedCues, cue.startTimeUs, cue.durationUs)
+
+            // Do not apply the offset to the currentSubtitleCues as those are then used for sync subs
             currentSubtitleCues.add(
                 SubtitleCue(
                     newCue.startTimeUs / 1000,
