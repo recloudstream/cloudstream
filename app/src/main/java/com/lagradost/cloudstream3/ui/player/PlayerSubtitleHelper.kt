@@ -85,7 +85,7 @@ class PlayerSubtitleHelper {
     }
 
     private var subStyle: SaveCaptionStyle? = null
-    private var subtitleView: SubtitleView? = null
+    var subtitleView: SubtitleView? = null
 
     companion object {
         fun String.toSubtitleMimeType(): String {

@@ -79,7 +79,6 @@ abstract class AbstractPlayerFragment(
     var player: IPlayer = CS3IPlayer()
 ) : Fragment() {
     var resizeMode: Int = 0
-    var subStyle: SaveCaptionStyle? = null
     var subView: SubtitleView? = null
     var isBuffering = true
     protected open var hasPipModeSupport = true
@@ -593,8 +592,7 @@ abstract class AbstractPlayerFragment(
             }
 
             subView = playerView?.findViewById(androidx.media3.ui.R.id.exo_subtitles)
-            subStyle = SubtitlesFragment.getCurrentSavedStyle()
-            player.initSubtitles(subView, subtitleHolder, subStyle)
+            player.initSubtitles(subView, subtitleHolder, CustomDecoder.style)
             (player.imageGenerator as? PreviewGenerator)?.params = ImageParams.new16by9(screenWidth)
 
             /*previewImageView?.doOnLayout {
