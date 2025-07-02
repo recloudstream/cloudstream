@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
+import com.lagradost.api.Log
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.app
 import kotlinx.coroutines.CancellationException
@@ -38,6 +39,8 @@ class M3u8Helper {
 
 
 object M3u8Helper2 {
+    private val TAG = "M3u8Helper"
+
     suspend fun generateM3u8(
         source: String,
         streamUrl: String,
@@ -158,6 +161,8 @@ object M3u8Helper2 {
             // Only include it if is a "Media Playlist" (any TS files are found), or if it is a "Master Playlist" (parsing is non null)
             if (parsed != null || TS_EXTENSION_REGEX.containsMatchIn(response)) {
                 list += m3u8
+            } else {
+                Log.i(TAG, "M3u8 Playlist is not a \"Master Playlist\" nor a \"Media Playlist\". Removing this link as it is invalid and will not open in player: ${m3u8.streamUrl}")
             }
         }
 
