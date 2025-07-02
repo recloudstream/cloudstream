@@ -84,7 +84,6 @@ class PlayerSubtitleHelper {
         allSubtitles = list
     }
 
-    private var subStyle: SaveCaptionStyle? = null
     var subtitleView: SubtitleView? = null
 
     companion object {
@@ -121,7 +120,6 @@ class PlayerSubtitleHelper {
     }
 
     fun setSubStyle(style: SaveCaptionStyle) {
-        subStyle = style
         Log.i(TAG, "SET STYLE = $style")
         subtitleView?.translationY = -style.elevation.toPx.toFloat()
         setSubtitleViewStyle(subtitleView, style)
