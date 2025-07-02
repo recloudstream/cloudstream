@@ -232,12 +232,15 @@ class SubtitlesFragment : DialogFragment() {
             }
         }
 
+        private var cachedSubtitleStyle: SaveCaptionStyle? = null
+
         fun Context.saveStyle(style: SaveCaptionStyle) {
+            cachedSubtitleStyle = style
             this.setKey(SUBTITLE_KEY, style)
         }
 
         fun getCurrentSavedStyle(): SaveCaptionStyle {
-            return getKey(SUBTITLE_KEY) ?: SaveCaptionStyle(
+            return cachedSubtitleStyle ?: (getKey(SUBTITLE_KEY) ?: SaveCaptionStyle(
                 foregroundColor = getDefColor(0),
                 backgroundColor = getDefColor(2),
                 windowColor = getDefColor(3),
@@ -247,7 +250,7 @@ class SubtitlesFragment : DialogFragment() {
                 typefaceFilePath = null,
                 elevation = DEF_SUBS_ELEVATION,
                 fixedTextSize = null,
-            )
+            )).also { cachedSubtitleStyle = it }
         }
 
         private fun Context.getSavedFonts(): List<File> {
