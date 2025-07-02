@@ -76,6 +76,12 @@
             app:defaultValue="false"
             app:key="@string/playback_speed_enabled_key" />
         <SwitchPreference
+            android:icon="@drawable/speedup"
+            android:summary="@string/speedup_summary"
+            android:title="@string/speedup_title"
+            app:defaultValue="false"
+            app:key="@string/speedup_key" />
+        <SwitchPreference
             android:icon="@drawable/ic_baseline_skip_next_24"
             android:summary="@string/autoplay_next_settings_des"
             android:title="@string/autoplay_next_settings"
@@ -112,7 +118,6 @@
             app:defaultValue="true"
             app:key="@string/software_decoding_key" />
     </PreferenceCategory>
-
     <PreferenceCategory
         android:title="@string/pref_category_gestures"
         app:key="@string/pref_category_gestures_key">
