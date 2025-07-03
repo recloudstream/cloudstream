@@ -18,7 +18,6 @@
     <string name="quality_pref_key" translatable="false">quality_pref_key</string>
     <string name="quality_pref_mobile_data_key" translatable="false">quality_pref_mobile_data_key</string>
     <string name="player_default_key" translatable="false">player_default_key</string>
-    <string name="player_always_ask_key" translatable="false">always_ask</string>
     <string name="prefer_limit_title_key" translatable="false">prefer_limit_title_key</string>
     <string name="prefer_limit_title_rez_key" translatable="false">prefer_limit_title_rez_key</string>
     <string name="apk_installer_key" translatable="false">apk_installer_key</string>
