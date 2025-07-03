@@ -673,6 +673,7 @@
     <string name="hls_playlist">HLS Playlist</string>
     <string name="player_pref">Preferred video player</string>
     <string name="player_settings_play_in_app">Internal player</string>
+    <string name="player_settings_always_ask">Always ask</string>
     <string name="player_settings_select_cast_device">Select cast device</string>
     <string name="app_not_found_error">App not found</string>
     <string name="all_languages_preference">All Languages</string>
