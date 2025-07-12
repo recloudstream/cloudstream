@@ -71,6 +71,7 @@ class EpisodeAdapter(
         fun getPlayerAction(context: Context): Int {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
             val playerPref = settingsManager.getString(context.getString(R.string.player_default_key), "")
+            
             return VideoClickActionHolder.uniqueIdToId(playerPref) ?: ACTION_PLAY_EPISODE_IN_PLAYER
         }
     }
