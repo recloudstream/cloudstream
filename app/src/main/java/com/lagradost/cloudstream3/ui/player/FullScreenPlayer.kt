@@ -13,6 +13,8 @@ import android.media.AudioManager
 import android.media.audiofx.LoudnessEnhancer
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.text.Editable
 import android.text.format.DateUtils
@@ -134,7 +136,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected var playerRotateEnabled = false
     protected var autoPlayerRotateEnabled = false
     private var hideControlsNames = false
-
+    protected var speedupEnabled = false
     protected var subtitleDelay
         set(value) = try {
             player.setSubtitleOffset(-value)
@@ -1010,6 +1012,14 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
     }
 
+    val holdhandler = Handler(Looper.getMainLooper())
+    var hasTriggeredSpeedUp = false
+    val holdRunnable  = Runnable {
+        player.setPlaybackSpeed(2.0f)
+        playerBinding?.playerSpeedupButton?.isGone = false
+        hasTriggeredSpeedUp = true
+    }
+
     @SuppressLint("SetTextI18n")
     private fun handleMotionEvent(view: View?, event: MotionEvent?): Boolean {
         if (event == null || view == null) return false
@@ -1026,7 +1036,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     /*if (isCurrentTouchValid && player_episode_list?.isVisible == true) {
                         player_episode_list?.isVisible = false
                     } else*/ if (isCurrentTouchValid) {
-
+                        if(speedupEnabled){
+                            hasTriggeredSpeedUp = false
+                            if(player.getIsPlaying()){
+                                holdhandler.postDelayed(holdRunnable,500)
+                            }
+                        }
                         isVolumeLocked = currentRequestedVolume < 1.0f
                         if (currentRequestedVolume <= 1.0f) {
                             hasShownVolumeToast = false
@@ -1045,9 +1060,14 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 }
 
                 MotionEvent.ACTION_UP -> {
+                    holdhandler.removeCallbacks(holdRunnable)
+                    if(hasTriggeredSpeedUp) {
+                        player.setPlaybackSpeed(DataStoreHelper.playBackSpeed)
+                        playerSpeedupButton?.isGone = true
+                    }
                     if (isCurrentTouchValid && !isLocked && isFullScreenPlayer) {
                         // seek time
-                        if (swipeHorizontalEnabled && currentTouchAction == TouchAction.Time) {
+                       if(swipeHorizontalEnabled && currentTouchAction == TouchAction.Time) {
                             val startTime = currentTouchStartPlayerTime
                             if (startTime != null) {
                                 calculateNewTime(
@@ -1108,7 +1128,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                         } else {
                             // is a valid click but not fast enough for seek
                             currentClickCount = 0
-                            toggleShowDelayed()
+                            if(!hasTriggeredSpeedUp){
+                                toggleShowDelayed()
+                            }
                             //onClickChange()
                         }
                     } else {
@@ -1135,8 +1157,13 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                 MotionEvent.ACTION_MOVE -> {
                     // if current touch is valid
+
+                    if(hasTriggeredSpeedUp){
+                        return true
+                    }
                     if (startTouch != null && isCurrentTouchValid && !isLocked && isFullScreenPlayer) {
                         // action is unassigned and can therefore be assigned
+
                         if (currentTouchAction == null) {
                             val diffFromStart = startTouch - currentTouch
 
@@ -1175,6 +1202,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                             when (currentTouchAction) {
                                 TouchAction.Time -> {
+                                    holdhandler.removeCallbacks(holdRunnable)
                                     // this simply updates UI as the seek logic happens on release
                                     // startTime is rounded to make the UI sync in a nice way
                                     val startTime =
@@ -1198,6 +1226,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                 }
 
                                 TouchAction.Brightness -> {
+                                    holdhandler.removeCallbacks(holdRunnable)
                                     playerBinding?.playerProgressbarRightHolder?.apply {
                                         if (!isVisible || alpha < 1f) {
                                             alpha = 1f
@@ -1246,6 +1275,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                 }
 
                                 TouchAction.Volume -> {
+                                    holdhandler.removeCallbacks(holdRunnable)
                                     handleVolumeAdjustment(
                                         verticalAddition,
                                         false
@@ -1660,6 +1690,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     ctx.getString(R.string.hide_player_control_names_key),
                     false
                 )
+
+                speedupEnabled = settingsManager.getBoolean(
+                    ctx.getString(R.string.speedup_key),
+                    false
+                )
+
 
                 val profiles = QualityDataHelper.getProfiles()
                 val type = if (ctx.isUsingMobileData())
