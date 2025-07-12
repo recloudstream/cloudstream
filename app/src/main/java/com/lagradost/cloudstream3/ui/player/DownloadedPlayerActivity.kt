@@ -35,6 +35,10 @@ class DownloadedPlayerActivity : AppCompatActivity() {
 
         val data = intent.data
 
+        if (OfflinePlaybackHelper.playIntent(activity = this, intent = intent)) {
+            return
+        }
+
         if (intent?.action == Intent.ACTION_SEND || intent?.action == Intent.ACTION_OPEN_DOCUMENT || intent?.action == Intent.ACTION_VIEW) {
             val extraText = safe { // I dont trust android
                 intent.getStringExtra(Intent.EXTRA_TEXT)
