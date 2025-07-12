@@ -964,9 +964,9 @@ class CS3IPlayer : IPlayer {
                             entries
                                 .firstOrNull()
                                 ?.buildUpon()
+                                ?.setText(combinedCueText)
                                 ?.fixSubtitleAlignment()
                                 ?.applyStyle(style)
-                                ?.setText(combinedCueText)
                                 ?.build()
                         }
 
