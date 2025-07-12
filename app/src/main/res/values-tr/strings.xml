@@ -744,4 +744,14 @@
     <string name="all_subtitles_bold">Tüm altyazıları kalın yap</string>
     <string name="all_subtitles_italic">Tüm altyazıları italik yap</string>
     <string name="background_radius">Arka Plan Yarıçapı</string>
+    <string name="overscan_settings">Ekran sığdırma</string>
+    <string name="parallel_downloads">Eşzamanlı indirmeler</string>
+    <string name="concurrent_connections">Eşzamanlı bağlantılar</string>
+    <string name="no_internet_connection">İnternet bağlantısı yok.\n\nLütfen internete bağlanıp tekrar deneyin ya da çevrimdışıyken indirdiğiniz içerikleri izleyin.</string>
+    <string name="go_to_downloads">İndirilenlere Git</string>
+    <string name="download_parallel_settings_des">Aynı anda kaç farklı öğe indirilebilir</string>
+    <string name="overscan_settings_des">Ekranın sınırlarını değiştirir</string>
+    <string name="concurrent_connections_settings_des">Her indirme sırasında kaç eşzamanlı bağlantı kullanılabilir</string>
+    <string name="poster_size_settings">Afiş boyutu</string>
+    <string name="poster_size_settings_des">Afişlerin boyutlarını değiştir</string>
 </resources>

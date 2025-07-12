@@ -686,4 +686,5 @@
     <string name="sort_button_episode">Ep %s</string>
     <string name="sort_button_rating">Betyg%s</string>
     <string name="update_plugins">Uppdatera Plugins</string>
+    <string name="go_to_downloads">Gå till Hämtade filer</string>
 </resources>

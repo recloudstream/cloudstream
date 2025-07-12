@@ -671,4 +671,17 @@
     <string name="all_subtitles_italic">Зробити всі субтитри курсивом</string>
     <string name="volume_exceeded_100">Гучність перевищила 100%</string>
     <string name="slide_up_again_to_exceed_100">Ще раз проведіть угору, щоби перевищити 100%</string>
+    <string name="concurrent_connections">Одночасні підключення</string>
+    <string name="overscan_settings_des">Змінює межі екрана</string>
+    <string name="overscan_settings">Оверсканування</string>
+    <string name="go_to_downloads">Перейти до завантажень</string>
+    <string name="no_internet_connection">Немає підключення до Інтернету.\n\nБудь ласка, підключіться до Інтернету та спробуйте ще раз або перегляньте завантажені відео офлайн.</string>
+    <string name="download_parallel_settings_des">Скільки різних елементів можна завантажити паралельно</string>
+    <string name="parallel_downloads">Паралельні завантаження</string>
+    <string name="concurrent_connections_settings_des">Скільки одночасних підключень може використовувати кожне завантаження</string>
+    <string name="poster_size_settings_des">Зміна розміру плакатів</string>
+    <string name="poster_size_settings">Розмір постера</string>
+    <string name="player_settings_always_ask">Завжди запитуйте</string>
+    <string name="speedup_title">Перемикач швидкості LongPress</string>
+    <string name="speedup_summary">Утримуйте, щоб отримати 2-кратну швидкість</string>
 </resources>

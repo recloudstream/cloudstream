@@ -260,7 +260,7 @@
     <string name="video_ram_description">Ustawienie zbyt wysokiej wartości może powodować problemy na urządzeniach z małą ilością pamięci RAM, takich jak urządzenia Android TV lub stare telefony.</string>
     <string name="video_disk_description">Zbyt wysokie ustawienie może powodować problemy na urządzeniach z małą ilością dostęponej pamięci, takich jak urządzenia Android TV.</string>
     <string name="dns_pref">DNS over HTTPS</string>
-    <string name="dns_pref_summary">Przydatne w pomijaniu blokad dostawców internetu</string>
+    <string name="dns_pref_summary">Przydatne w pomijaniu blokad dostawców Internetu</string>
     <string name="add_site_pref">Sklonuj stronę</string>
     <string name="remove_site_pref">Usuń stronę</string>
     <string name="add_site_summary">Dodaj klona istniejącej strony z innym adresem URL</string>
@@ -700,4 +700,17 @@
     <string name="all_subtitles_bold">Zmień wszystkie napisy na pogrubione</string>
     <string name="slide_up_again_to_exceed_100">Przesuń ponownie w górę, aby przekroczyć 100%</string>
     <string name="volume_exceeded_100">Głośność przekroczyła 100%</string>
+    <string name="concurrent_connections_settings_des">Ile równoczesnych połączeń może wykorzystać każde pobieranie</string>
+    <string name="download_parallel_settings_des">Ile różnych elementów można pobrać równolegle</string>
+    <string name="parallel_downloads">Pobieranie równoległe</string>
+    <string name="concurrent_connections">Połączenia równoczesne</string>
+    <string name="go_to_downloads">Przejdź do pobranych</string>
+    <string name="no_internet_connection">Brak połączenia z Internetem.\n\nPołącz się z Internetem i spróbuj ponownie lub obejrzyj pobrane pliki, będąc offline.</string>
+    <string name="overscan_settings">Nadmiarowość obrazu</string>
+    <string name="overscan_settings_des">Zmienia granice ekranu</string>
+    <string name="poster_size_settings">Rozmiar plakatu</string>
+    <string name="poster_size_settings_des">Zmienia rozmiar plakatów</string>
+    <string name="player_settings_always_ask">Zawsze pytaj</string>
+    <string name="speedup_title">Przełączanie prędkości długiego naciśnięcia</string>
+    <string name="speedup_summary">Przytrzymaj, aby uzyskać 2x większą prędkość</string>
 </resources>
