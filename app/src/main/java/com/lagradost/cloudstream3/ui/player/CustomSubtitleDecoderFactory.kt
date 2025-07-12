@@ -28,7 +28,6 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
-import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.applyStyle
 import org.mozilla.universalchardet.UniversalDetector
 import java.lang.ref.WeakReference
 import java.nio.charset.Charset
@@ -241,29 +240,8 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
     ) {
         val currentStyle = style
         val customOutput = Consumer<CuesWithTiming> { cue ->
-            // fixed style and filter on the cues
-
-            // Move cues into one single one
-            // This is to prevent text overlap in vtt (and potentially other) subtitle files
-            val combinedCues = cue.cues.groupBy {
-                // Groups cues which share the same positon
-                it.lineAnchor to it.position.times(1000.0f).toInt()
-            }.mapNotNull { (_, entries) ->
-                val combinedCueText = entries.joinToString("\n") {
-                    it.text?.toString() ?: ""
-                }
-
-                entries
-                    .firstOrNull()
-                    ?.buildUpon()
-                    ?.fixSubtitleAlignment()
-                    ?.applyStyle(currentStyle)
-                    ?.setText(combinedCueText)
-                    ?.build()
-            }
-
             val newCue =
-                CuesWithTiming(combinedCues, cue.startTimeUs, cue.durationUs)
+                CuesWithTiming(cue.cues, cue.startTimeUs, cue.durationUs)
 
             // Do not apply the offset to the currentSubtitleCues as those are then used for sync subs
             currentSubtitleCues.add(
