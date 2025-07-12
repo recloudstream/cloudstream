@@ -4,17 +4,14 @@ import android.content.Context
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.result.LinkLoadingResult
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
-import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.utils.txt
 
 class AlwaysAskAction : VideoClickAction() {
     override val name = txt(R.string.player_settings_always_ask)
     override val isPlayer = true
-    
-    override fun shouldShow(context: Context?, video: ResultEpisode?): Boolean {
-        // This action should always be available as a player option
-        return true
-    }
+
+    // Only show in settings, not on a video
+    override fun shouldShow(context: Context?, video: ResultEpisode?): Boolean = video == null
     
     override suspend fun runAction(
         context: Context?,
