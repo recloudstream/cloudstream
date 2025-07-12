@@ -19,6 +19,7 @@ import com.lagradost.cloudstream3.actions.temp.MpvKtPackage
 import com.lagradost.cloudstream3.actions.temp.MpvKtPreviewPackage
 import com.lagradost.cloudstream3.actions.temp.MpvPackage
 import com.lagradost.cloudstream3.actions.temp.MpvYTDLPackage
+import com.lagradost.cloudstream3.actions.temp.NextPlayerPackage
 import com.lagradost.cloudstream3.actions.temp.PlayInBrowserAction
 import com.lagradost.cloudstream3.actions.temp.ViewM3U8Action
 import com.lagradost.cloudstream3.actions.temp.VlcNightlyPackage
@@ -47,6 +48,7 @@ object VideoClickActionHolder {
         // main support external apps
         VlcPackage(),
         MpvPackage(),
+        NextPlayerPackage(),
         FcastAction(),
         LibreTorrentPackage(),
         BiglyBTPackage(),
