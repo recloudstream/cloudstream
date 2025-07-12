@@ -1038,8 +1038,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     } else*/ if (isCurrentTouchValid) {
                         if(speedupEnabled){
                             hasTriggeredSpeedUp = false
-                            if(player.getIsPlaying()){
-                                holdhandler.postDelayed(holdRunnable,500)
+                            if (player.getIsPlaying() && !isLocked) {
+                                holdhandler.postDelayed(holdRunnable, 500)
                             }
                         }
                         isVolumeLocked = currentRequestedVolume < 1.0f
