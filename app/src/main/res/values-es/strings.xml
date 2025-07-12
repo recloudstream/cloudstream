@@ -699,4 +699,5 @@
     <string name="background_radius">Radio del fondo</string>
     <string name="volume_exceeded_100">El volumen ha excedido 100%</string>
     <string name="slide_up_again_to_exceed_100">Deslice de nuevo hacia arriba para ir más allá del 100%</string>
+    <string name="download_parallel_settings_des">How many different items that can be downloaded in parallel</string>
 </resources>
