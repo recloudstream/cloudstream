@@ -951,9 +951,20 @@ class CS3IPlayer : IPlayer {
                     val style = CustomDecoder.style
                     // Custom TextOutput to apply cue styling and rules to all subtitles
                     val customTextOutput = TextOutput { cue ->
+                        // Do not remove filterNotNull as Java typesystem is fucked
+                        val (bitmapCues, textCues) = cue.cues.filterNotNull().partition { it.bitmap != null }
+
+                        val styledBitmapCues = bitmapCues.map { bitmapCue ->
+                            bitmapCue
+                                .buildUpon()
+                                .fixSubtitleAlignment()
+                                .applyStyle(style)
+                                .build()
+                        }
+
                         // Move cues into one single one
                         // This is to prevent text overlap in vtt (and potentially other) subtitle files
-                        val combinedCues = cue.cues.groupBy {
+                        val styledTextCues = textCues.groupBy {
                             // Groups cues which share the same positon
                             it.lineAnchor to it.position.times(1000.0f).toInt()
                         }.mapNotNull { (_, entries) ->
@@ -969,6 +980,8 @@ class CS3IPlayer : IPlayer {
                                 ?.applyStyle(style)
                                 ?.build()
                         }
+
+                        val combinedCues = styledBitmapCues + styledTextCues
 
                         subtitleHelper.subtitleView?.setCues(combinedCues)
                     }
@@ -1605,7 +1618,8 @@ class CS3IPlayer : IPlayer {
 
                                 DialogInterface.BUTTON_NEGATIVE -> {
                                     Torrent.hasAcceptedTorrentForThisSession = false
-                                    val errorMessage = context.getString(R.string.torrent_not_accepted)
+                                    val errorMessage =
+                                        context.getString(R.string.torrent_not_accepted)
                                     event(ErrorEvent(ErrorLoadingException(errorMessage)))
                                 }
                             }
