@@ -92,6 +92,15 @@ object SearchResultBuilder {
 
                 rating?.text = ratingText
             }
+        } else {
+            val showRating = card.rating != null
+            rating?.isVisible = showRating
+            if(showRating) {
+                val ratingText = ((card.rating ?: 0).toDouble() / 10).toString()
+                    .replace(".0", "")
+
+                rating?.text = ratingText
+            }
         }
 
         shadow?.isVisible = showTitle

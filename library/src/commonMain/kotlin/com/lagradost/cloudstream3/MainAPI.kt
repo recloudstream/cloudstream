@@ -992,6 +992,7 @@ interface SearchResponse {
     var posterHeaders: Map<String, String>?
     var id: Int?
     var quality: SearchQuality?
+    var rating: Int?
 }
 
 fun MainAPI.newTorrentSearchResponse(
@@ -1149,6 +1150,7 @@ constructor(
     override var id: Int? = null,
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
+    override var rating: Int? = null,
 ) : SearchResponse
 
 fun AnimeSearchResponse.addDubStatus(status: DubStatus, episodes: Int? = null) {
@@ -1208,6 +1210,7 @@ constructor(
     override var id: Int? = null,
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
+    override var rating: Int? = null,
 ) : SearchResponse
 
 /** Data class of [SearchResponse] interface for Movies.
@@ -1225,7 +1228,8 @@ constructor(
     var year: Int? = null,
     override var id: Int? = null,
     override var quality: SearchQuality? = null,
-    override var posterHeaders: Map<String, String>? = null
+    override var posterHeaders: Map<String, String>? = null,
+    override var rating: Int? = null,
 ) : SearchResponse
 
 /** Data class of [SearchResponse] interface for Live streams.
@@ -1244,6 +1248,7 @@ constructor(
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
     var lang: String? = null,
+    override var rating: Int? = null,
 ) : SearchResponse
 
 /** Data class of [SearchResponse] interface for Tv series.
@@ -1263,6 +1268,7 @@ constructor(
     override var id: Int? = null,
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
+    override var rating: Int? = null,
 ) : SearchResponse
 
 /** Data class of Trailer data.
