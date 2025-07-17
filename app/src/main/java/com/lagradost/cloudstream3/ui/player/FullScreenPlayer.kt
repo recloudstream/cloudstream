@@ -273,6 +273,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
 
     protected fun animateLayoutChanges() {
+        if(isLayout(PHONE)) { // isEnabled also disables the onKeyDown
+            playerBinding?.exoProgress?.isEnabled = isShowing // Prevent accidental clicks/drags
+        }
+
         if (isShowing) {
             updateUIVisibility()
         } else {
