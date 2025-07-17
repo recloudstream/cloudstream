@@ -141,7 +141,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                     }
                 )
             },
-            publicScore = season.averageScore?.times(100),
+            publicScore = Score.from100(season.averageScore),
             recommendations = season.recommendations?.edges?.mapNotNull { rec ->
                 val recMedia = rec.node.mediaRecommendation
                 SyncAPI.SyncSearchResult(
