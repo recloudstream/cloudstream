@@ -4,7 +4,7 @@ appcompat = "1.7.0"
 biometric = "1.4.0-alpha03"
 buildkonfigGradlePlugin = "0.15.2"
 coil = "3.1.0"
-colorpicker = "1.1.0"
+colorpicker = "6b46b49bd5"
 conscryptAndroid = "2.5.2"
 constraintlayout = "2.2.1"
 coreKtx = "1.16.0"
@@ -58,7 +58,7 @@ biometric = { module = "androidx.biometric:biometric", version.ref = "biometric"
 buildkonfig-gradle-plugin = { module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin", version.ref = "buildkonfigGradlePlugin" }
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
-colorpicker = { module = "com.jaredrummler:colorpicker", version.ref = "colorpicker" }
+colorpicker = { module = "com.github.recloudstream:color-picker-android", version.ref = "colorpicker" }
 conscrypt-android = { module = "org.conscrypt:conscrypt-android", version.ref = "conscryptAndroid" }
 constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
 core = { module = "androidx.test:core" }
