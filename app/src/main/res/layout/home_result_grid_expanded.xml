@@ -110,6 +110,12 @@
                     android:layout_gravity="end" />
 
                 <TextView
+                    android:id="@+id/text_rating"
+                    style="@style/RatingButton"
+                    android:layout_gravity="end"
+                    tools:text="7.7" />
+
+                <TextView
                     android:id="@+id/text_flag"
                     style="@style/SearchBox"
                     android:layout_gravity="end"

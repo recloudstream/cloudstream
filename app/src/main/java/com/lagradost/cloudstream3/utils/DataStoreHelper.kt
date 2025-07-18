@@ -240,7 +240,7 @@ object DataStoreHelper {
         @JsonProperty("quality") override var quality: SearchQuality?,
         @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>?,
         @JsonProperty("plot") open val plot : String? = null,
-        @JsonProperty("rating") open val rating : Int? = null,
+        @JsonProperty("rating") override var rating : Int? = null,
         @JsonProperty("tags") open val tags : List<String>? = null,
     ) : SearchResponse
 
@@ -259,7 +259,7 @@ object DataStoreHelper {
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null,
         override val plot: String? = null,
-        override val rating: Int? = null,
+        override var rating: Int? = null,
         override val tags: List<String>? = null,
     ) : LibrarySearchResponse(id, latestUpdatedTime, name, url, apiName, type, posterUrl, year, syncData, quality, posterHeaders, plot,rating,tags) {
         fun toLibraryItem(): SyncAPI.LibraryItem? {
@@ -290,7 +290,7 @@ object DataStoreHelper {
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null,
         override val plot: String? = null,
-        override val rating: Int? = null,
+        override var rating: Int? = null,
         override val tags: List<String>? = null,
     ) : LibrarySearchResponse(id, latestUpdatedTime, name, url, apiName, type, posterUrl, year, syncData, quality, posterHeaders, plot) {
         fun toLibraryItem(id: String): SyncAPI.LibraryItem {
@@ -321,7 +321,7 @@ object DataStoreHelper {
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null,
         override val plot: String? = null,
-        override val rating: Int? = null,
+        override var rating: Int? = null,
         override val tags: List<String>? = null,
     ) : LibrarySearchResponse(id, latestUpdatedTime, name, url, apiName, type, posterUrl, year, syncData, quality, posterHeaders,plot) {
         fun toLibraryItem(): SyncAPI.LibraryItem? {
@@ -352,6 +352,7 @@ object DataStoreHelper {
         @JsonProperty("isFromDownload") val isFromDownload: Boolean,
         @JsonProperty("quality") override var quality: SearchQuality? = null,
         @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
+        @JsonProperty("rating") override var rating: Int? = null,
     ) : SearchResponse
 
     /**
