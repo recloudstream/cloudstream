@@ -74,6 +74,8 @@
         <item name="download_fill_color">?attr/white</item>
         <item name="download_outline_color">?attr/white</item>
         <item name="download_icon_scale">1.0</item>
+
+        <item name="cpv_focusBorderColor">?attr/white</item>
     </style>
 
     <style name="AppThemeTvOverlay">
