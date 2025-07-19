@@ -237,6 +237,10 @@ interface IPlayer {
     fun getSubtitleOffset(): Long // in ms
     fun setSubtitleOffset(offset: Long) // in ms
 
+    fun getCurrentUrl(): String?
+    fun getCurrentHeaders(): Map<String, String>?
+    fun getCurrentReferer(): String?
+
     fun initCallbacks(
         eventHandler: ((PlayerEvent) -> Unit),
         /** this is used to request when the player should report back view percentage */

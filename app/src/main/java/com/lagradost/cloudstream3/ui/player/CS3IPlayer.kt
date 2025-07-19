@@ -179,6 +179,10 @@ class CS3IPlayer : IPlayer {
     override fun getIsPlaying(): Boolean = isPlaying
     override fun getPlaybackSpeed(): Float = playBackSpeed
 
+    override fun getCurrentUrl(): String? = currentLink?.url ?: currentDownloadedFile?.uri?.toString()
+    override fun getCurrentHeaders(): Map<String, String>? = currentLink?.headers
+    override fun getCurrentReferer(): String? = currentLink?.referer
+
     /**
      * Tracks reported to be used by exoplayer, since sometimes it has a mind of it's own when selecting subs.
      * String = id (without exoplayer track number)
