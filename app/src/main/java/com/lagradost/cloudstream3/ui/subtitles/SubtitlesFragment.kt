@@ -49,6 +49,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import java.io.File
 
 const val SUBTITLE_KEY = "subtitle_settings"
@@ -95,6 +96,9 @@ class SubtitlesFragment : DialogFragment() {
             val ctx = view.context ?: return
             val style = ctx.fromSaveToStyle(data)
             view.setStyle(style)
+            view.setPadding(
+                view.paddingLeft, data.elevation.toPx, view.paddingRight, view.paddingBottom
+            )
 
             // we default to 25sp, this is needed as RoundedBackgroundColorSpan breaks on override sizes
             val size = data.fixedTextSize ?: 25.0f
@@ -232,12 +236,15 @@ class SubtitlesFragment : DialogFragment() {
             }
         }
 
+        private var cachedSubtitleStyle: SaveCaptionStyle? = null
+
         fun Context.saveStyle(style: SaveCaptionStyle) {
+            cachedSubtitleStyle = style
             this.setKey(SUBTITLE_KEY, style)
         }
 
         fun getCurrentSavedStyle(): SaveCaptionStyle {
-            return getKey(SUBTITLE_KEY) ?: SaveCaptionStyle(
+            return cachedSubtitleStyle ?: (getKey(SUBTITLE_KEY) ?: SaveCaptionStyle(
                 foregroundColor = getDefColor(0),
                 backgroundColor = getDefColor(2),
                 windowColor = getDefColor(3),
@@ -247,7 +254,7 @@ class SubtitlesFragment : DialogFragment() {
                 typefaceFilePath = null,
                 elevation = DEF_SUBS_ELEVATION,
                 fixedTextSize = null,
-            )
+            )).also { cachedSubtitleStyle = it }
         }
 
         private fun Context.getSavedFonts(): List<File> {

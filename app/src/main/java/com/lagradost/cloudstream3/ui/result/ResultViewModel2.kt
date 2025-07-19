@@ -24,6 +24,7 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
 import com.lagradost.cloudstream3.LoadResponse.Companion.readIdFromString
+import com.lagradost.cloudstream3.actions.AlwaysAskAction
 import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.metaproviders.SyncRedirector
 import com.lagradost.cloudstream3.mvvm.*
@@ -1652,6 +1653,35 @@ class ResultViewModel2 : ViewModel() {
 
             else -> {
                 val action = VideoClickActionHolder.getActionById(click.action) ?: return
+
+                // Special handling for AlwaysAskAction - show player selection dialog
+                if (action is AlwaysAskAction) {
+                    activity?.let { ctx ->
+                        // Show player selection dialog
+                        val players = VideoClickActionHolder.getPlayers(ctx)
+                        val options = mutableListOf<Pair<UiText, Int>>()
+                        
+                        // Add internal player option
+                        options.add(txt(R.string.episode_action_play_in_app) to ACTION_PLAY_EPISODE_IN_PLAYER)
+                        
+                        // Add external player options 
+                        options.addAll(players.filter { it !is AlwaysAskAction }.map { player ->
+                            player.name to (VideoClickActionHolder.uniqueIdToId(player.uniqueId()) ?: ACTION_PLAY_EPISODE_IN_PLAYER)
+                        })
+
+                        postPopup(
+                            txt(R.string.player_pref),
+                            options
+                        ) { selectedAction ->
+                            if (selectedAction != null) {
+                                handleEpisodeClickEvent(
+                                    click.copy(action = selectedAction)
+                                )
+                            }
+                        }
+                    }
+                    return
+                }
 
                 activity?.setKey("last_click_action", action.uniqueId())
                 if (action.oneSource) {

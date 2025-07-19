@@ -1284,14 +1284,48 @@ object HlsPlaylistParser {
         val subtitleGroupId: String?,
         val captionGroupId: String?,
     ) {
-        fun isPlayableStandalone(): Boolean = containsAudio() && !isTrickPlay()
+        /** This is unfortunately impossible to do 100%, given that audio detection is hard without TS inspection, 
+         * however this is a generous safety abstraction */
+        fun isPlayableStandalone(playlist: HlsMultivariantPlaylist): Boolean =
+            mustContainAudio(playlist) && !isTrickPlay()
 
-        // Trick play is "visual feedback while they are rewinding or fast-forwarding a stream",
-        // This more or less means thumbnails
+        /**
+         * https://datatracker.ietf.org/doc/html/rfc8216#section-4.3.3.6
+         * > The EXT-X-I-FRAMES-ONLY tag indicates that each Media Segment in the
+         * > Playlist describes a single I-frame.  I-frames are encoded video
+         * > frames whose encoding does not depend on any other frame.  I-frame
+         * > Playlists can be used for trick play, such as fast forward, rapid
+         * > reverse, and scrubbing.
+         */
         fun isTrickPlay(): Boolean = (format.roleFlags and C.ROLE_FLAG_TRICK_PLAY != 0)
 
-        fun containsAudio(): Boolean = (audioGroupId == null || format.codecs?.split(",")
-            ?.any { MimeTypes.isAudio(MimeTypes.getMediaMimeType(it)) } == true)
+        /**
+        https://datatracker.ietf.org/doc/html/rfc6381:
+        > When the 'codecs' parameter is used, it MUST contain all codecs
+        > indicated by the content present in the body part.  The 'codecs'
+        > parameter MUST NOT include any codecs that are not indicated by any
+        > media elements in the body part.
+
+        This means that codecs cant be used
+        "|| format.codecs?.split(",")?.any { MimeTypes.isAudio(MimeTypes.getMediaMimeType(it)) } == true"
+        They may be used for harsher restriction on "audioGroupId == null", but codecs is optional
+
+        https://datatracker.ietf.org/doc/html/rfc8216
+        > Since the EXT-X-STREAM-INF tag has no AUDIO attribute, all video
+        > Renditions would be required to contain the audio.
+
+        However it may still contain audio with the AUDIO attribute, therefore we also check the audio with that groupId:
+
+        > If the media type is VIDEO or AUDIO, a missing URI attribute
+        > indicates that the media data for this Rendition is included in the
+        > Media Playlist of any EXT-X-STREAM-INF tag referencing this EXT-
+        > X-MEDIA tag.
+
+        But this is not foolproof, because TS segments needs to be investigated to be sure as I do not see any
+        way to detect this from the m3u8 playlist
+         */
+        fun mustContainAudio(playlist: HlsMultivariantPlaylist): Boolean =
+            audioGroupId == null || (playlist.audios.firstOrNull { it.groupId == audioGroupId }?.url == null)
     }
 
     data class Rendition(

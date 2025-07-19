@@ -257,7 +257,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         playerBinding?.bottomPlayerBar?.post {
             @OptIn(UnstableApi::class)
             val sView = subView ?: return@post
-            val sStyle = subStyle ?: return@post
+            val sStyle = CustomDecoder.style
             val binding = playerBinding ?: return@post
 
             val move = if (isShowing) minOf(
@@ -273,6 +273,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
 
     protected fun animateLayoutChanges() {
+        if(isLayout(PHONE)) { // isEnabled also disables the onKeyDown
+            playerBinding?.exoProgress?.isEnabled = isShowing // Prevent accidental clicks/drags
+        }
+
         if (isShowing) {
             updateUIVisibility()
         } else {
@@ -1038,8 +1042,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     } else*/ if (isCurrentTouchValid) {
                         if(speedupEnabled){
                             hasTriggeredSpeedUp = false
-                            if(player.getIsPlaying()){
-                                holdhandler.postDelayed(holdRunnable,500)
+                            if (player.getIsPlaying() && !isLocked && isFullScreenPlayer) {
+                                holdhandler.postDelayed(holdRunnable, 500)
                             }
                         }
                         isVolumeLocked = currentRequestedVolume < 1.0f

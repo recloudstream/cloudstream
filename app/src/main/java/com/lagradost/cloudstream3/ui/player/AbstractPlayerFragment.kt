@@ -42,6 +42,7 @@ import com.lagradost.cloudstream3.CommonActivity.keyEventListener
 import com.lagradost.cloudstream3.CommonActivity.playerEventListener
 import com.lagradost.cloudstream3.CommonActivity.screenWidth
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
@@ -79,7 +80,6 @@ abstract class AbstractPlayerFragment(
     var player: IPlayer = CS3IPlayer()
 ) : Fragment() {
     var resizeMode: Int = 0
-    var subStyle: SaveCaptionStyle? = null
     var subView: SubtitleView? = null
     var isBuffering = true
     protected open var hasPipModeSupport = true
@@ -373,13 +373,28 @@ abstract class AbstractPlayerFragment(
                 }
             }
 
+            is ErrorLoadingException -> {
+                exception.message?.let {
+                    showToast(
+                        it,
+                        gotoNext = true
+                    )
+                } ?: showToast(
+                    exception.toString(),
+                    gotoNext = true
+                )
+            }
+
             else -> {
                 exception.message?.let {
                     showToast(
                         it,
                         gotoNext = false
                     )
-                }
+                } ?: showToast(
+                    exception.toString(),
+                    gotoNext = false
+                )
             }
         }
     }
@@ -593,8 +608,7 @@ abstract class AbstractPlayerFragment(
             }
 
             subView = playerView?.findViewById(androidx.media3.ui.R.id.exo_subtitles)
-            subStyle = SubtitlesFragment.getCurrentSavedStyle()
-            player.initSubtitles(subView, subtitleHolder, subStyle)
+            player.initSubtitles(subView, subtitleHolder, CustomDecoder.style)
             (player.imageGenerator as? PreviewGenerator)?.params = ImageParams.new16by9(screenWidth)
 
             /*previewImageView?.doOnLayout {

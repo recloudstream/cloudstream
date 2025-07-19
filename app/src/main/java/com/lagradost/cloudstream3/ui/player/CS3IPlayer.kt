@@ -55,6 +55,7 @@ import androidx.media3.exoplayer.source.ConcatenatingMediaSource2
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.source.MergingMediaSource
 import androidx.media3.exoplayer.source.SingleSampleMediaSource
+import androidx.media3.exoplayer.text.TextOutput
 import androidx.media3.exoplayer.text.TextRenderer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.exoplayer.trackselection.TrackSelector
@@ -73,9 +74,11 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
+import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.fixSubtitleAlignment
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
+import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.applyStyle
 import com.lagradost.cloudstream3.utils.AppContextUtils.isUsingMobileData
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -736,223 +739,6 @@ class CS3IPlayer : IPlayer {
 
         private var currentSubtitleDecoder: CustomSubtitleDecoderFactory? = null
         private var currentTextRenderer: TextRenderer? = null
-
-        private fun buildExoPlayer(
-            context: Context,
-            mediaItemSlices: List<MediaItemSlice>,
-            subSources: List<SingleSampleMediaSource>,
-            currentWindow: Int,
-            playbackPosition: Long,
-            playBackSpeed: Float,
-            subtitleOffset: Long,
-            cacheSize: Long,
-            videoBufferMs: Long,
-            playWhenReady: Boolean = true,
-            cacheFactory: CacheDataSource.Factory? = null,
-            trackSelector: TrackSelector? = null,
-            /**
-             * Sets the m3u8 preferred video quality, will not force stop anything with higher quality.
-             * Does not work if trackSelector is defined.
-             **/
-            maxVideoHeight: Int? = null
-        ): ExoPlayer {
-            val exoPlayerBuilder =
-                ExoPlayer.Builder(context)
-                    .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
-                        val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-                        val current = settingsManager.getInt(
-                            context.getString(R.string.software_decoding_key),
-                            -1
-                        )
-                        val softwareDecoding = when (current) {
-                            0 -> true // yes
-                            1 -> false // no
-                            // -1 = automatic
-                            else -> {
-                                // we do not want tv to have software decoding, because of crashes
-                                !isLayout(TV)
-                            }
-                        }
-
-                        val factory = if (softwareDecoding) {
-                            NextRenderersFactory(context).apply {
-                                setEnableDecoderFallback(true)
-                                setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON)
-                            }
-                        } else {
-                            DefaultRenderersFactory(context)
-                        }
-
-                        factory.createRenderers(
-                            eventHandler,
-                            videoRendererEventListener,
-                            audioRendererEventListener,
-                            textRendererOutput,
-                            metadataRendererOutput
-                        ).map {
-                            if (it is TextRenderer) {
-                                CustomDecoder.subtitleOffset = subtitleOffset
-                                val decoder = CustomSubtitleDecoderFactory()
-                                val currentTextRenderer = TextRenderer(
-                                    textRendererOutput,
-                                    eventHandler.looper,
-                                    decoder
-                                ).apply {
-                                    // Required to make the decoder work with old subtitles
-                                    // Upgrade CustomSubtitleDecoderFactory when media3 supports it
-                                    @Suppress("DEPRECATION")
-                                    experimentalSetLegacyDecodingEnabled(true)
-                                }.also { renderer ->
-                                    this.currentTextRenderer = renderer
-                                    this.currentSubtitleDecoder = decoder
-                                }
-                                currentTextRenderer
-                            } else
-                                it
-                        }.toTypedArray()
-                    }
-                    .setTrackSelector(
-                        trackSelector ?: getTrackSelector(
-                            context,
-                            maxVideoHeight
-                        )
-                    )
-                    // Allows any seeking to be +- 0.3s to allow for faster seeking
-                    .setSeekParameters(SeekParameters(toleranceBeforeUs, toleranceAfterUs))
-                    .setLoadControl(
-                        DefaultLoadControl.Builder()
-                            .setTargetBufferBytes(
-                                if (cacheSize <= 0) {
-                                    DefaultLoadControl.DEFAULT_TARGET_BUFFER_BYTES
-                                } else {
-                                    if (cacheSize > Int.MAX_VALUE) Int.MAX_VALUE else cacheSize.toInt()
-                                }
-                            )
-                            .setBackBuffer(
-                                30000,
-                                true
-                            )
-                            .setBufferDurationsMs(
-                                DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
-                                if (videoBufferMs <= 0) {
-                                    DefaultLoadControl.DEFAULT_MAX_BUFFER_MS
-                                } else {
-                                    videoBufferMs.toInt()
-                                },
-                                DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
-                                DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS
-                            ).build()
-                    )
-
-            // Because "Java rules" the media3 team hates to do open classes so we have to copy paste the entire thing to add a custom extractor
-            // This includes the updated MKV extractor that enabled seeking in formats where the seek information is at the back of the file
-            val extractorFactor = UpdatedDefaultExtractorsFactory()
-
-            val factory =
-                if (cacheFactory == null) DefaultMediaSourceFactory(context, extractorFactor)
-                else DefaultMediaSourceFactory(cacheFactory, extractorFactor)
-
-            // If there is only one item then treat it as normal, if multiple: concatenate the items.
-            val videoMediaSource = if (mediaItemSlices.size == 1) {
-                val item = mediaItemSlices.first()
-
-                item.drm?.let { drm ->
-                    when (drm.uuid) {
-                        CLEARKEY_UUID -> {
-                            val client =
-                                OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
-                            val drmCallback =
-                                LocalMediaDrmCallback("{\"keys\":[{\"kty\":\"${drm.kty}\",\"k\":\"${drm.key}\",\"kid\":\"${drm.kid}\"}],\"type\":\"temporary\"}".toByteArray())
-                            val manager = DefaultDrmSessionManager.Builder()
-                                .setPlayClearSamplesWithoutKeys(true)
-                                .setMultiSession(false)
-                                .setKeyRequestParameters(drm.keyRequestParameters)
-                                .setUuidAndExoMediaDrmProvider(
-                                    drm.uuid,
-                                    FrameworkMediaDrm.DEFAULT_PROVIDER
-                                )
-                                .build(drmCallback)
-
-                            DashMediaSource.Factory(client)
-                                .setDrmSessionManagerProvider { manager }
-                                .createMediaSource(item.mediaItem)
-                        }
-
-                        WIDEVINE_UUID,
-                        PLAYREADY_UUID -> {
-                            val client =
-                                OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
-                            val drmCallback = HttpMediaDrmCallback(drm.licenseUrl, client)
-                            val manager = DefaultDrmSessionManager.Builder()
-                                .setPlayClearSamplesWithoutKeys(true)
-                                .setMultiSession(true)
-                                .setKeyRequestParameters(drm.keyRequestParameters)
-                                .setUuidAndExoMediaDrmProvider(
-                                    drm.uuid,
-                                    FrameworkMediaDrm.DEFAULT_PROVIDER
-                                )
-                                .build(drmCallback)
-
-                            DashMediaSource.Factory(client)
-                                .setDrmSessionManagerProvider { manager }
-                                .createMediaSource(item.mediaItem)
-                        }
-
-                        else -> {
-                            Log.e(
-                                TAG,
-                                "DRM Metadata class is not supported: ${drm::class.simpleName}"
-                            )
-                            null
-                        }
-                    }
-                } ?: run {
-                    factory.createMediaSource(item.mediaItem)
-                }
-            } else {
-                try {
-                    val source = ConcatenatingMediaSource2.Builder()
-                    mediaItemSlices.map { item ->
-                        source.add(
-                            // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
-                            ClippingMediaSource(
-                                factory.createMediaSource(item.mediaItem),
-                                item.durationUs
-                            )
-                        )
-                    }
-                    source.build()
-                } catch (_: IllegalArgumentException) {
-                    @Suppress("DEPRECATION")
-                    val source =
-                        ConcatenatingMediaSource() // FIXME figure out why ConcatenatingMediaSource2 seems to fail with Torrents only
-                    mediaItemSlices.map { item ->
-                        source.addMediaSource(
-                            // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
-                            ClippingMediaSource(
-                                factory.createMediaSource(item.mediaItem),
-                                item.durationUs
-                            )
-                        )
-                    }
-                    source
-                }
-            }
-
-            //println("PLAYBACK POS $playbackPosition")
-            return exoPlayerBuilder.build().apply {
-                setPlayWhenReady(playWhenReady)
-                seekTo(currentWindow, playbackPosition)
-                setMediaSource(
-                    MergingMediaSource(
-                        videoMediaSource, *subSources.toTypedArray()
-                    ),
-                    playbackPosition
-                )
-                setHandleAudioBecomingNoisy(true)
-                setPlaybackSpeed(playBackSpeed)
-            }
-        }
     }
 
     private fun getCurrentTimestamp(writePosition: Long? = null): EpisodeSkip.SkipStamp? {
@@ -1113,6 +899,262 @@ class CS3IPlayer : IPlayer {
                 logError(t)
             }
             delay(1000)
+        }
+    }
+
+    private fun buildExoPlayer(
+        context: Context,
+        mediaItemSlices: List<MediaItemSlice>,
+        subSources: List<SingleSampleMediaSource>,
+        currentWindow: Int,
+        playbackPosition: Long,
+        playBackSpeed: Float,
+        subtitleOffset: Long,
+        cacheSize: Long,
+        videoBufferMs: Long,
+        playWhenReady: Boolean = true,
+        cacheFactory: CacheDataSource.Factory? = null,
+        trackSelector: TrackSelector? = null,
+        /**
+         * Sets the m3u8 preferred video quality, will not force stop anything with higher quality.
+         * Does not work if trackSelector is defined.
+         **/
+        maxVideoHeight: Int? = null
+    ): ExoPlayer {
+        val exoPlayerBuilder =
+            ExoPlayer.Builder(context)
+                .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
+                    val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+                    val current = settingsManager.getInt(
+                        context.getString(R.string.software_decoding_key),
+                        -1
+                    )
+                    val softwareDecoding = when (current) {
+                        0 -> true // yes
+                        1 -> false // no
+                        // -1 = automatic
+                        else -> {
+                            // we do not want tv to have software decoding, because of crashes
+                            !isLayout(TV)
+                        }
+                    }
+
+                    val factory = if (softwareDecoding) {
+                        NextRenderersFactory(context).apply {
+                            setEnableDecoderFallback(true)
+                            setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON)
+                        }
+                    } else {
+                        DefaultRenderersFactory(context)
+                    }
+
+                    val style = CustomDecoder.style
+                    // Custom TextOutput to apply cue styling and rules to all subtitles
+                    val customTextOutput = TextOutput { cue ->
+                        // Do not remove filterNotNull as Java typesystem is fucked
+                        val (bitmapCues, textCues) = cue.cues.filterNotNull().partition { it.bitmap != null }
+
+                        val styledBitmapCues = bitmapCues.map { bitmapCue ->
+                            bitmapCue
+                                .buildUpon()
+                                .fixSubtitleAlignment()
+                                .applyStyle(style)
+                                .build()
+                        }
+
+                        // Move cues into one single one
+                        // This is to prevent text overlap in vtt (and potentially other) subtitle files
+                        val styledTextCues = textCues.groupBy {
+                            // Groups cues which share the same positon
+                            it.lineAnchor to it.position.times(1000.0f).toInt()
+                        }.mapNotNull { (_, entries) ->
+                            val combinedCueText = entries.joinToString("\n") {
+                                it.text?.toString() ?: ""
+                            }
+
+                            entries
+                                .firstOrNull()
+                                ?.buildUpon()
+                                ?.setText(combinedCueText)
+                                ?.fixSubtitleAlignment()
+                                ?.applyStyle(style)
+                                ?.build()
+                        }
+
+                        val combinedCues = styledBitmapCues + styledTextCues
+
+                        subtitleHelper.subtitleView?.setCues(combinedCues)
+                    }
+
+                    factory.createRenderers(
+                        eventHandler,
+                        videoRendererEventListener,
+                        audioRendererEventListener,
+                        customTextOutput,
+                        metadataRendererOutput
+                    ).map {
+                        if (it is TextRenderer) {
+                            CustomDecoder.subtitleOffset = subtitleOffset
+                            val decoder = CustomSubtitleDecoderFactory()
+
+                            val currentTextRenderer = TextRenderer(
+                                customTextOutput,
+                                eventHandler.looper,
+                                decoder
+                            ).apply {
+                                // Required to make the decoder work with old subtitles
+                                // Upgrade CustomSubtitleDecoderFactory when media3 supports it
+                                @Suppress("DEPRECATION")
+                                experimentalSetLegacyDecodingEnabled(true)
+                            }.also { renderer ->
+                                currentTextRenderer = renderer
+                                currentSubtitleDecoder = decoder
+                            }
+                            currentTextRenderer
+                        } else
+                            it
+                    }.toTypedArray()
+                }
+                .setTrackSelector(
+                    trackSelector ?: getTrackSelector(
+                        context,
+                        maxVideoHeight
+                    )
+                )
+                // Allows any seeking to be +- 0.3s to allow for faster seeking
+                .setSeekParameters(SeekParameters(toleranceBeforeUs, toleranceAfterUs))
+                .setLoadControl(
+                    DefaultLoadControl.Builder()
+                        .setTargetBufferBytes(
+                            if (cacheSize <= 0) {
+                                DefaultLoadControl.DEFAULT_TARGET_BUFFER_BYTES
+                            } else {
+                                if (cacheSize > Int.MAX_VALUE) Int.MAX_VALUE else cacheSize.toInt()
+                            }
+                        )
+                        .setBackBuffer(
+                            30000,
+                            true
+                        )
+                        .setBufferDurationsMs(
+                            DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
+                            if (videoBufferMs <= 0) {
+                                DefaultLoadControl.DEFAULT_MAX_BUFFER_MS
+                            } else {
+                                videoBufferMs.toInt()
+                            },
+                            DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
+                            DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS
+                        ).build()
+                )
+
+        // Because "Java rules" the media3 team hates to do open classes so we have to copy paste the entire thing to add a custom extractor
+        // This includes the updated MKV extractor that enabled seeking in formats where the seek information is at the back of the file
+        val extractorFactor = UpdatedDefaultExtractorsFactory()
+
+        val factory =
+            if (cacheFactory == null) DefaultMediaSourceFactory(context, extractorFactor)
+            else DefaultMediaSourceFactory(cacheFactory, extractorFactor)
+
+        // If there is only one item then treat it as normal, if multiple: concatenate the items.
+        val videoMediaSource = if (mediaItemSlices.size == 1) {
+            val item = mediaItemSlices.first()
+
+            item.drm?.let { drm ->
+                when (drm.uuid) {
+                    CLEARKEY_UUID -> {
+                        val client =
+                            OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
+                        val drmCallback =
+                            LocalMediaDrmCallback("{\"keys\":[{\"kty\":\"${drm.kty}\",\"k\":\"${drm.key}\",\"kid\":\"${drm.kid}\"}],\"type\":\"temporary\"}".toByteArray())
+                        val manager = DefaultDrmSessionManager.Builder()
+                            .setPlayClearSamplesWithoutKeys(true)
+                            .setMultiSession(false)
+                            .setKeyRequestParameters(drm.keyRequestParameters)
+                            .setUuidAndExoMediaDrmProvider(
+                                drm.uuid,
+                                FrameworkMediaDrm.DEFAULT_PROVIDER
+                            )
+                            .build(drmCallback)
+
+                        DashMediaSource.Factory(client)
+                            .setDrmSessionManagerProvider { manager }
+                            .createMediaSource(item.mediaItem)
+                    }
+
+                    WIDEVINE_UUID,
+                    PLAYREADY_UUID -> {
+                        val client =
+                            OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
+                        val drmCallback = HttpMediaDrmCallback(drm.licenseUrl, client)
+                        val manager = DefaultDrmSessionManager.Builder()
+                            .setPlayClearSamplesWithoutKeys(true)
+                            .setMultiSession(true)
+                            .setKeyRequestParameters(drm.keyRequestParameters)
+                            .setUuidAndExoMediaDrmProvider(
+                                drm.uuid,
+                                FrameworkMediaDrm.DEFAULT_PROVIDER
+                            )
+                            .build(drmCallback)
+
+                        DashMediaSource.Factory(client)
+                            .setDrmSessionManagerProvider { manager }
+                            .createMediaSource(item.mediaItem)
+                    }
+
+                    else -> {
+                        Log.e(
+                            TAG,
+                            "DRM Metadata class is not supported: ${drm::class.simpleName}"
+                        )
+                        null
+                    }
+                }
+            } ?: run {
+                factory.createMediaSource(item.mediaItem)
+            }
+        } else {
+            try {
+                val source = ConcatenatingMediaSource2.Builder()
+                mediaItemSlices.map { item ->
+                    source.add(
+                        // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
+                        ClippingMediaSource(
+                            factory.createMediaSource(item.mediaItem),
+                            item.durationUs
+                        )
+                    )
+                }
+                source.build()
+            } catch (_: IllegalArgumentException) {
+                @Suppress("DEPRECATION")
+                val source =
+                    ConcatenatingMediaSource() // FIXME figure out why ConcatenatingMediaSource2 seems to fail with Torrents only
+                mediaItemSlices.map { item ->
+                    source.addMediaSource(
+                        // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
+                        ClippingMediaSource(
+                            factory.createMediaSource(item.mediaItem),
+                            item.durationUs
+                        )
+                    )
+                }
+                source
+            }
+        }
+
+        //println("PLAYBACK POS $playbackPosition")
+        return exoPlayerBuilder.build().apply {
+            setPlayWhenReady(playWhenReady)
+            seekTo(currentWindow, playbackPosition)
+            setMediaSource(
+                MergingMediaSource(
+                    videoMediaSource, *subSources.toTypedArray()
+                ),
+                playbackPosition
+            )
+            setHandleAudioBecomingNoisy(true)
+            setPlaybackSpeed(playBackSpeed)
         }
     }
 
@@ -1576,7 +1618,8 @@ class CS3IPlayer : IPlayer {
 
                                 DialogInterface.BUTTON_NEGATIVE -> {
                                     Torrent.hasAcceptedTorrentForThisSession = false
-                                    val errorMessage = context.getString(R.string.torrent_not_accepted)
+                                    val errorMessage =
+                                        context.getString(R.string.torrent_not_accepted)
                                     event(ErrorEvent(ErrorLoadingException(errorMessage)))
                                 }
                             }

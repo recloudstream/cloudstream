@@ -28,7 +28,6 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
-import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.applyStyle
 import org.mozilla.universalchardet.UniversalDetector
 import java.lang.ref.WeakReference
 import java.nio.charset.Charset
@@ -53,6 +52,7 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
             }
         }
 
+        private const val DEFAULT_MARGIN: Float = 0.05f
         private const val SSA_ALIGNMENT_BOTTOM_LEFT = 1
         private const val SSA_ALIGNMENT_BOTTOM_CENTER = 2
         private const val SSA_ALIGNMENT_BOTTOM_RIGHT = 3
@@ -99,6 +99,49 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
             )
         }
 
+        private fun computeDefaultLineOrPosition(@Cue.AnchorType anchor: Int) = when (anchor) {
+            Cue.ANCHOR_TYPE_START -> DEFAULT_MARGIN
+            Cue.ANCHOR_TYPE_MIDDLE -> 0.5f
+            Cue.ANCHOR_TYPE_END -> 1.0f - DEFAULT_MARGIN
+            Cue.TYPE_UNSET -> Cue.DIMEN_UNSET
+            else -> Cue.DIMEN_UNSET
+        }
+
+        /**
+         * Fixes alignment for cues with {\anX}, 
+         * this is common for .vtt that should be parsed as .srt
+         *
+         * ```
+         * WEBVTT
+         *
+         * 00:00.000 --> 00:01.000
+         * {\an1}Label 1
+         *
+         * 00:01.000 --> 00:02.000
+         * {\an2}Label 2
+         *
+         * 00:02.000 --> 00:03.000
+         * {\an3}Label 3
+         *
+         * 00:03.000 --> 00:04.000
+         * {\an4}Label 4
+         *
+         * 00:04.000 --> 00:05.000
+         * {\an5}Label 5
+         *
+         * 00:05.000 --> 00:06.000
+         * {\an6}Label 6
+         *
+         * 00:06.000 --> 00:07.000
+         * {\an7}Label 7
+         *
+         * 00:07.000 --> 00:08.000
+         * {\an8}Label 8
+         *
+         * 00:08.000 --> 00:09.000
+         * {\an9}Label 9
+         * ```
+         */
         fun Cue.Builder.fixSubtitleAlignment(): Cue.Builder {
             var trimmed = text?.trim() ?: return this
             // https://github.com/androidx/media/blob/main/libraries/extractor/src/main/java/androidx/media3/extractor/text/ssa/SsaStyle.java
@@ -112,6 +155,9 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
                     else -> null
                 }?.let { anchor ->
                     setLineAnchor(anchor)
+                    setLine(
+                        computeDefaultLineOrPosition(anchor), Cue.LINE_TYPE_FRACTION
+                    )
                 }
                 // toPositionAnchor
                 when (alignment) {
@@ -121,6 +167,7 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
                     else -> null
                 }?.let { anchor ->
                     setPositionAnchor(anchor)
+                    setPosition(computeDefaultLineOrPosition(anchor))
                 }
 
                 // toTextAlignment
@@ -241,13 +288,10 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
     ) {
         val currentStyle = style
         val customOutput = Consumer<CuesWithTiming> { cue ->
-            // fixed style and filter on the cues
             val newCue =
-                CuesWithTiming(cue.cues.map { c ->
-                    c.buildUpon().fixSubtitleAlignment().applyStyle(currentStyle).build()
-                }, cue.startTimeUs, cue.durationUs)
+                CuesWithTiming(cue.cues, cue.startTimeUs, cue.durationUs)
 
-            // do not apply the offset to the currentSubtitleCues as those are then used for sync subs
+            // Do not apply the offset to the currentSubtitleCues as those are then used for sync subs
             currentSubtitleCues.add(
                 SubtitleCue(
                     newCue.startTimeUs / 1000,

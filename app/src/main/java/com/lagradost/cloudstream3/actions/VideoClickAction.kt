@@ -12,24 +12,28 @@ import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.actions.temp.BiglyBTPackage
 import com.lagradost.cloudstream3.actions.temp.CopyClipboardAction
+import com.lagradost.cloudstream3.actions.temp.JustPlayerPackage
+import com.lagradost.cloudstream3.actions.temp.LibreTorrentPackage
 import com.lagradost.cloudstream3.actions.temp.MpvKtPackage
 import com.lagradost.cloudstream3.actions.temp.MpvKtPreviewPackage
 import com.lagradost.cloudstream3.actions.temp.MpvPackage
 import com.lagradost.cloudstream3.actions.temp.MpvYTDLPackage
+import com.lagradost.cloudstream3.actions.temp.NextPlayerPackage
 import com.lagradost.cloudstream3.actions.temp.PlayInBrowserAction
 import com.lagradost.cloudstream3.actions.temp.ViewM3U8Action
-import com.lagradost.cloudstream3.actions.temp.VlcPackage
 import com.lagradost.cloudstream3.actions.temp.VlcNightlyPackage
+import com.lagradost.cloudstream3.actions.temp.VlcPackage
 import com.lagradost.cloudstream3.actions.temp.WebVideoCastPackage
 import com.lagradost.cloudstream3.actions.temp.fcast.FcastAction
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.result.LinkLoadingResult
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
-import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import com.lagradost.cloudstream3.utils.UiText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.concurrent.Callable
@@ -45,13 +49,19 @@ object VideoClickActionHolder {
         // main support external apps
         VlcPackage(),
         MpvPackage(),
+        NextPlayerPackage(),
+        JustPlayerPackage(),
         FcastAction(),
+        LibreTorrentPackage(),
+        BiglyBTPackage(),
         // forks/backup apps
         VlcNightlyPackage(),
         WebVideoCastPackage(),
         MpvYTDLPackage(),
         MpvKtPackage(),
         MpvKtPreviewPackage(),
+        // Always Ask option
+        AlwaysAskAction(),
         // added by plugins
         // ...
     )

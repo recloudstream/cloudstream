@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
+import com.lagradost.api.Log
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.app
 import kotlinx.coroutines.CancellationException
@@ -38,6 +39,8 @@ class M3u8Helper {
 
 
 object M3u8Helper2 {
+    private val TAG = "M3u8Helper"
+
     suspend fun generateM3u8(
         source: String,
         streamUrl: String,
@@ -134,14 +137,15 @@ object M3u8Helper2 {
         var anyFound = false
         if (parsed != null) {
             for (video in parsed.variants) {
-                // The m3u8 should not be split it that causes a loss of audio
-                if (!video.isPlayableStandalone()) {
+                // The m3u8 should not be split it that causes a loss of audio, however this can not be done reliably
+                // Therefore that should be figured out on the extension level, so only "trick play" is checked for
+                if (video.isTrickPlay()) {
                     //println("Denied m3u8Generation, isTrickPlay = ${video.isTrickPlay()} containsAudio = ${video.containsAudio()}, codec = ${video.format.codecs}, url = ${video.url}")
                     continue
                 }
 
                 anyFound = true
-                val quality = video.format.width
+                val quality = video.format.height
                 list.add(
                     M3u8Helper.M3u8Stream(
                         streamUrl = video.url.toString(),
@@ -157,6 +161,8 @@ object M3u8Helper2 {
             // Only include it if is a "Media Playlist" (any TS files are found), or if it is a "Master Playlist" (parsing is non null)
             if (parsed != null || TS_EXTENSION_REGEX.containsMatchIn(response)) {
                 list += m3u8
+            } else {
+                Log.i(TAG, "M3u8 Playlist is not a \"Master Playlist\" nor a \"Media Playlist\". Removing this link as it is invalid and will not open in player: ${m3u8.streamUrl}")
             }
         }
 
@@ -265,7 +271,7 @@ object M3u8Helper2 {
             // find first with no audio group if audio is required, as otherwise muxing is required
             // as m3u8 files can include separate tracks for dubs/subs
             val variants = if (requireAudio) {
-                parsed.variants.filter { it.isPlayableStandalone() }
+                parsed.variants.filter { it.isPlayableStandalone(parsed) }
             } else {
                 parsed.variants.filter { !it.isTrickPlay() }
             }
@@ -291,7 +297,7 @@ object M3u8Helper2 {
                 variants.minBy { (it.format.width * it.format.height).toLong() * 1000L + it.format.averageBitrate.toLong() }
             }
 
-            val quality = bestVideo.format.width
+            val quality = bestVideo.format.height
             return hslLazy(
                 playlistStream = M3u8Helper.M3u8Stream(
                     bestVideo.url.toString(),
