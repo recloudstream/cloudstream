@@ -22,4 +22,5 @@
     <dimen name="video_frame_width">1dp</dimen>
 
     <dimen name="account_select_linear_item_size">100dp</dimen>
+    <dimen name="dialog_buttons_inset">5dp</dimen>
 </resources>

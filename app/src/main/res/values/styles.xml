@@ -455,6 +455,10 @@
         <item name="android:windowMinWidthMinor">@dimen/abc_dialog_min_width_minor</item>
         <item name="android:windowBackground">@drawable/dialog__window_background</item>
         <item name="textAllCaps">false</item>
+
+        <item name="buttonBarPositiveButtonStyle">@style/WhiteButton.Dialog</item>
+        <item name="buttonBarNegativeButtonStyle">@style/BlackButton.Dialog</item>
+        <item name="buttonBarNeutralButtonStyle">@style/BlackButton.Dialog</item>
     </style>
 
     <style name="TabNoCaps" parent="TextAppearance.Design.Tab">
@@ -652,6 +656,21 @@
         <item name="iconTint">?attr/iconGrayBackground</item>
         <item name="android:textColor">?attr/iconGrayBackground</item>
         <item name="rippleColor">?attr/primaryBlackBackground</item>
+    </style>
+    <!-- This is so shit, because android has no native way to either changing the layout (android:layout) or changing the layout_height for no reason.
+    So the only way to shrink the buttons is by using insetTop+insetBottom along with the drawable.
+    https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/layout/alert_dialog.xml <- old xml for reference, but new use m3_alert_dialog
+    -->
+    <style name="BlackButton.Dialog" parent="BlackButton">
+        <item name="android:foreground">@drawable/outline_drawable_less_inset</item>
+        <item name="android:insetTop">@dimen/dialog_buttons_inset</item>
+        <item name="android:insetBottom">@dimen/dialog_buttons_inset</item>
+    </style>
+
+    <style name="WhiteButton.Dialog" parent="WhiteButton">
+        <item name="android:foreground">@drawable/outline_drawable_less_inset</item>
+        <item name="android:insetTop">@dimen/dialog_buttons_inset</item>
+        <item name="android:insetBottom">@dimen/dialog_buttons_inset</item>
     </style>
 
     <style name="BlackLabel" parent="@style/Widget.MaterialComponents.Tooltip">
