@@ -8,6 +8,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.ShowStatus
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
@@ -214,7 +215,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 id = internalId.toString(),
                 totalEpisodes = malAnime.numEpisodes,
                 title = malAnime.title,
-                publicScore = malAnime.mean?.toFloat()?.times(1000)?.toInt(),
+                publicScore = Score.from10(malAnime.mean),
                 duration = malAnime.averageEpisodeDuration,
                 synopsis = malAnime.synopsis,
                 airStatus = when (malAnime.status) {

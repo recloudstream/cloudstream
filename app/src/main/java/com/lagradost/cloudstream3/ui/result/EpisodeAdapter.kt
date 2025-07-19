@@ -188,7 +188,7 @@ class EpisodeAdapter(
                         season = card.season,
                         id = card.id,
                         parentId = card.parentId,
-                        rating = card.rating,
+                        score = card.score,
                         description = card.description,
                         cacheTime = System.currentTimeMillis(),
                     ), null
@@ -230,9 +230,9 @@ class EpisodeAdapter(
 
                 episodePoster.loadImage(card.poster)
 
-                if (card.rating != null) {
+                if (card.score != null) {
                     episodeRating.text = episodeRating.context?.getString(R.string.rated_format)
-                        ?.format(card.rating.toFloat() / 10f)
+                        ?.format(card.score.toFloat(10)) // TODO Change rated_format to use card.score.toString()
                 } else {
                     episodeRating.text = ""
                 }
@@ -347,7 +347,7 @@ class EpisodeAdapter(
                         season = card.season,
                         id = card.id,
                         parentId = card.parentId,
-                        rating = card.rating,
+                        score = card.score,
                         description = card.description,
                         cacheTime = System.currentTimeMillis(),
                     ), null
