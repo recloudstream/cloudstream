@@ -723,4 +723,17 @@
     <string name="background_radius">Poloměr pozadí</string>
     <string name="slide_up_again_to_exceed_100">Přejeďte opět nahoru pro pokračování nad 100 %</string>
     <string name="volume_exceeded_100">Hlasitost překročila 100 %</string>
+    <string name="download_parallel_settings_des">Počet různých položek, které lze stahovat v jednu chvíli</string>
+    <string name="poster_size_settings_des">Změní velikost plakátů</string>
+    <string name="no_internet_connection">Žádné připojení k internetu. \n\nPřipojte se prosím k internetu a zkuste to znovu, nebo sledujte stažené, zatímco jste offline.</string>
+    <string name="poster_size_settings">Velikost plakátů</string>
+    <string name="overscan_settings_des">Změní hranice obrazovky</string>
+    <string name="overscan_settings">Oříznutí</string>
+    <string name="parallel_downloads">Paralelní stahování</string>
+    <string name="concurrent_connections">Souběžná připojení</string>
+    <string name="concurrent_connections_settings_des">Kolik souběžných připojení může každé stahování použít</string>
+    <string name="go_to_downloads">Přejít na stažené</string>
+    <string name="player_settings_always_ask">Vždy se zeptat</string>
+    <string name="speedup_title">Přepínač rychlosti při podržení</string>
+    <string name="speedup_summary">Podržte pro 2x rychlost</string>
 </resources>

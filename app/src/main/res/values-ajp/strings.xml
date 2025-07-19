@@ -40,7 +40,7 @@
     <string name="discord">انضم لگروپ \"كلود ستريم\" ع الـ\"ديسكورد\"</string>
     <string name="episode_more_options_des">بعد خيارات</string>
     <string name="backup_success">تسيّڤة النسخة الإحتياطية</string>
-    <string name="benene_count_text">صرتو عاطين %d موزززة للمطورين!</string>
+    <string name="benene_count_text">صرتو عاطين %d موزززة للمطورين</string>
     <string name="swipe_to_seek_settings">سحابو لتقدمو وترجعو</string>
     <string name="backup_failed">إذن الوصول لذاكرة التخزين مفقود. پليز جرب بعد مرّة.</string>
     <string name="type_watching">عم إحضر</string>
@@ -704,4 +704,17 @@
     <string name="all_subtitles_bold">عمول خط الترجمة بولد</string>
     <string name="all_subtitles_italic">عمول خط الترجمة أيتاليك</string>
     <string name="background_radius">قوة برمة الخلفية</string>
+    <string name="download_parallel_settings_des">كم شغلة مختلفة فيها تتنزل ب نفس الوقت</string>
+    <string name="parallel_downloads">تنزيل ب نفس الوقت</string>
+    <string name="concurrent_connections">كم إتصال ب نفص الوقت</string>
+    <string name="concurrent_connections_settings_des">كم إتصال ب نفس الوقت فيه يستعمل كل تنزيل</string>
+    <string name="go_to_downloads">فتاح التنزيلات</string>
+    <string name="no_internet_connection">مافي إنترنت.\n\nپليز جرب مرّة تانية لمّا يكون عندك إنترنت، أو حضار الإشيا اللي منزلها إنت و أفلاين.</string>
+    <string name="overscan_settings_des">بت غير حدود الشاشة</string>
+    <string name="overscan_settings">أوڤر سكان</string>
+    <string name="poster_size_settings_des">بت غيّر حجم الپوستر</string>
+    <string name="poster_size_settings">حجم الپوستر</string>
+    <string name="player_settings_always_ask">دايمًا سئالوني</string>
+    <string name="speedup_title">خليك كابس حتى تسرع</string>
+    <string name="speedup_summary">خليك كابس كرمال صرعة الـ2x</string>
 </resources>
