@@ -264,8 +264,8 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
         ),
         yearText = txt(year?.toString()),
         apiName = txt(apiName),
-        ratingText = rating?.div(1000f)
-            ?.let { if (it <= 0.1f) null else txt(R.string.rating_format, it) },
+        ratingText = score?.toStringNull(0.1, 10, 1, false, '.')
+            ?.let { txt(R.string.rating_format, it) },
         contentRatingText = txt(contentRating),
         vpnText = txt(
             when (repo.vpnStatus) {
@@ -738,7 +738,7 @@ class ResultViewModel2 : ViewModel() {
                         season = episode.season,
                         id = episode.id,
                         parentId = parentId,
-                        rating = episode.rating,
+                        score = episode.score,
                         description = episode.description,
                         cacheTime = System.currentTimeMillis(),
                     )
@@ -925,7 +925,7 @@ class ResultViewModel2 : ViewModel() {
                         response.syncData,
                         plot = response.plot,
                         tags = response.tags,
-                        rating = response.rating
+                        score = response.score
                     )
                 )
             }
@@ -1022,7 +1022,7 @@ class ResultViewModel2 : ViewModel() {
                         response.year,
                         response.syncData,
                         plot = response.plot,
-                        rating = response.rating,
+                        score = response.score,
                         tags = response.tags
                     )
                 )
@@ -1093,7 +1093,7 @@ class ResultViewModel2 : ViewModel() {
                         response.year,
                         response.syncData,
                         plot = response.plot,
-                        rating = response.rating,
+                        score = response.score,
                         tags = response.tags
                     )
                 )
@@ -1404,7 +1404,7 @@ class ResultViewModel2 : ViewModel() {
                 },
                 isCasting = isCasting
             )
-        } catch (e : CancellationException) {
+        } catch (e: CancellationException) {
             // Do nothing
         } catch (e: Exception) {
             logError(e)
@@ -1660,13 +1660,14 @@ class ResultViewModel2 : ViewModel() {
                         // Show player selection dialog
                         val players = VideoClickActionHolder.getPlayers(ctx)
                         val options = mutableListOf<Pair<UiText, Int>>()
-                        
+
                         // Add internal player option
                         options.add(txt(R.string.episode_action_play_in_app) to ACTION_PLAY_EPISODE_IN_PLAYER)
-                        
+
                         // Add external player options 
                         options.addAll(players.filter { it !is AlwaysAskAction }.map { player ->
-                            player.name to (VideoClickActionHolder.uniqueIdToId(player.uniqueId()) ?: ACTION_PLAY_EPISODE_IN_PLAYER)
+                            player.name to (VideoClickActionHolder.uniqueIdToId(player.uniqueId())
+                                ?: ACTION_PLAY_EPISODE_IN_PLAYER)
                         })
 
                         postPopup(
@@ -1723,7 +1724,7 @@ class ResultViewModel2 : ViewModel() {
 
             if (meta != null) {
                 duration = duration ?: meta.duration
-                rating = rating ?: meta.publicScore
+                score = score ?: meta.publicScore
                 tags = tags ?: meta.genres
                 plot = if (plot.isNullOrBlank()) meta.synopsis else plot
                 posterUrl = posterUrl ?: meta.posterUrl ?: meta.backgroundPosterUrl
@@ -1942,8 +1943,8 @@ class ResultViewModel2 : ViewModel() {
         return when (sorting) {
             EpisodeSortType.NUMBER_ASC -> episodes.sortedBy { it.episode }
             EpisodeSortType.NUMBER_DESC -> episodes.sortedByDescending { it.episode }
-            EpisodeSortType.RATING_HIGH_LOW -> episodes.sortedByDescending { it.rating ?: 0 }
-            EpisodeSortType.RATING_LOW_HIGH -> episodes.sortedBy { it.rating ?: 0 }
+            EpisodeSortType.RATING_HIGH_LOW -> episodes.sortedByDescending { it.score?.toDouble() ?: 0.0 }
+            EpisodeSortType.RATING_LOW_HIGH -> episodes.sortedBy { it.score?.toDouble() ?: 0.0 }
             EpisodeSortType.DATE_NEWEST -> episodes.sortedByDescending { it.airDate }
             EpisodeSortType.DATE_OLDEST -> episodes.sortedBy { it.airDate }
         }
@@ -2022,7 +2023,7 @@ class ResultViewModel2 : ViewModel() {
         return when (type) {
             EpisodeSortType.NUMBER_ASC, EpisodeSortType.NUMBER_DESC -> true
             EpisodeSortType.RATING_HIGH_LOW, EpisodeSortType.RATING_LOW_HIGH ->
-                episodes.any { it.rating != null }
+                episodes.any { it.score != null }
 
             EpisodeSortType.DATE_NEWEST, EpisodeSortType.DATE_OLDEST ->
                 episodes.any { it.airDate != null }
@@ -2274,7 +2275,7 @@ class ResultViewModel2 : ViewModel() {
                                     loadResponse.apiName,
                                     id,
                                     index,
-                                    i.rating,
+                                    i.score,
                                     i.description,
                                     fillers.getOrDefault(episode, false),
                                     loadResponse.type,
@@ -2330,7 +2331,7 @@ class ResultViewModel2 : ViewModel() {
                                 loadResponse.apiName,
                                 id,
                                 index,
-                                episode.rating,
+                                episode.score,
                                 episode.description,
                                 null,
                                 loadResponse.type,
@@ -2620,7 +2621,7 @@ class ResultViewModel2 : ViewModel() {
         override var posterUrl: String?,
         override var year: Int? = null,
         override var plot: String? = null,
-        override var rating: Int? = null,
+        override var score: Score? = null,
         override var tags: List<String>? = null,
         override var duration: Int? = null,
         override var trailers: MutableList<TrailerData> = mutableListOf(),
@@ -2654,12 +2655,12 @@ class ResultViewModel2 : ViewModel() {
         ).apply {
             if (searchResponse is SyncAPI.LibraryItem) {
                 this.plot = searchResponse.plot
-                this.rating = searchResponse.personalRating?.times(100) ?: searchResponse.rating
+                this.score = Score.from100(searchResponse.personalRating) ?: searchResponse.rating
                 this.tags = searchResponse.tags
             }
             if (searchResponse is DataStoreHelper.BookmarkedData) {
                 this.plot = searchResponse.plot
-                this.rating = searchResponse.rating
+                this.score = searchResponse.score
                 this.tags = searchResponse.tags
             }
         }

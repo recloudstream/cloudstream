@@ -9,12 +9,14 @@ import com.lagradost.cloudstream3.Episode
 import com.lagradost.cloudstream3.HomePageResponse
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.LoadResponse.Companion.addImdbId
+import com.lagradost.cloudstream3.LoadResponse.Companion.addRating
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTMDbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainPageRequest
 import com.lagradost.cloudstream3.NextAiring
 import com.lagradost.cloudstream3.ProviderType
+import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.ShowStatus
 import com.lagradost.cloudstream3.TvType
@@ -178,7 +180,7 @@ open class TraktProvider : MainAPI() {
                 this.posterUrl = getOriginalWidthImageUrl(posterUrl)
                 this.year = mediaDetails.year
                 this.plot = mediaDetails.overview
-                this.rating = mediaDetails.rating?.times(1000)?.roundToInt()
+                this.score = Score.from10(mediaDetails.rating)
                 this.tags = mediaDetails.genres
                 this.duration = mediaDetails.runtime
                 this.recommendations = relatedMedia
@@ -266,7 +268,7 @@ open class TraktProvider : MainAPI() {
                 this.year = mediaDetails.year
                 this.plot = mediaDetails.overview
                 this.showStatus = getStatus(mediaDetails.status)
-                this.rating = mediaDetails.rating?.times(1000)?.roundToInt()
+                this.score = Score.from10(mediaDetails.rating)
                 this.tags = mediaDetails.genres
                 this.duration = mediaDetails.runtime
                 this.recommendations = relatedMedia

@@ -12,6 +12,7 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainPageRequest
 import com.lagradost.cloudstream3.ProviderType
+import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.ShowStatus
 import com.lagradost.cloudstream3.TvType
@@ -173,7 +174,7 @@ abstract class MyDramaListAPI : MainAPI() {
         this.posterUrl = media.images.poster
         this.year = media.mediaYear
         this.plot = media.synopsis
-        this.rating = media.mediaRating.times(1000).toInt()
+        this.score = Score.from10(media.mediaRating)
         this.tags = media.fixGenres()
         this.duration = media.runtime.toInt()
         this.recommendations = media.fetchRecommendations().map { it.toSearchResponse() }
@@ -350,7 +351,7 @@ abstract class MyDramaListAPI : MainAPI() {
                 season = null
                 episode = ep.episodeNumber
                 posterUrl = null
-                rating = ep.rating.times(1000).toInt()
+                score = Score.from10(ep.rating)
                 description = null
                 runTime = null
                 addDate(ep.releasedAt)

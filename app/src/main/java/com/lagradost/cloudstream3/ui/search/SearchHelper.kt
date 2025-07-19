@@ -38,7 +38,7 @@ object SearchHelper {
                                         season = card.season,
                                         id = id,
                                         parentId = card.parentId ?: return,
-                                        rating = null,
+                                        score = null,
                                         description = null,
                                         cacheTime = System.currentTimeMillis(),
                                     )

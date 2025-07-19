@@ -80,8 +80,7 @@ interface SyncAPI : OAuth2API {
         var totalEpisodes: Int? = null,
 
         var title: String? = null,
-        /**1-1000*/
-        var publicScore: Int? = null,
+        var publicScore: Score? = null,
         /**In minutes*/
         var duration: Int? = null,
         var synopsis: String? = null,
@@ -154,7 +153,7 @@ interface SyncAPI : OAuth2API {
         val episodesCompleted: Int?,
         val episodesTotal: Int?,
         /** Out of 100 */
-        val personalRating: Int?,
+        val personalRating: Int?, // TODO also update this to Score
         val lastUpdatedUnixTime: Long?,
         override val apiName: String,
         override var type: TvType?,
@@ -164,7 +163,7 @@ interface SyncAPI : OAuth2API {
         val releaseDate: Date?,
         override var id: Int? = null,
         val plot : String? = null,
-        val rating: Int? = null,
+        val rating: Score? = null,
         val tags: List<String>? = null
     ) : SearchResponse
 }

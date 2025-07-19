@@ -696,8 +696,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                             season = null,
                             id = ep.id,
                             parentId = ep.id,
-                            rating = null,
-                            description = null,
+                            score = ep.score,
+                            description = ep.description,
                             cacheTime = System.currentTimeMillis(),
                         ),
                         null
