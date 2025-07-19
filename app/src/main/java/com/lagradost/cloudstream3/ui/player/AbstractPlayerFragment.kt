@@ -343,11 +343,6 @@ abstract class AbstractPlayerFragment(
                     }
 
                     else -> {
-                        val currentUrl = player.getCurrentUrl() ?: "unknown"
-                        val headers = player.getCurrentHeaders()?.toString() ?: "none"
-                        val referer = player.getCurrentReferer() ?: "none"
-                        Log.e(TAG, "Unhandled exception: type=${exception::class.java.canonicalName}, message=${exception.message}, url=$currentUrl, headers=$headers, referer=$referer, position=${player.getPosition() ?: "unknown"}, duration=${player.getDuration() ?: "unknown"}, isPlaying=${player.getIsPlaying()}", exception)
-
                         showToast(
                             "${ctx.getString(R.string.unexpected_error)}\n$errorName ($code)\n$msg",
                             gotoNext = false

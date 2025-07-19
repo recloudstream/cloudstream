@@ -1503,7 +1503,11 @@ class GeneratorPlayer : FullScreenPlayer() {
 
 
     override fun playerError(exception: Throwable) {
-        Log.i(TAG, "playerError = $currentSelectedLink")
+        val currentUrl = currentSelectedLink?.let { it.first?.url ?: it.second?.uri?.toString() } ?: "unknown"
+        val headers = currentSelectedLink?.first?.headers?.toString() ?: "none"
+        val referer = currentSelectedLink?.first?.referer ?: "none"
+        Log.e(TAG, "playerError: type=${exception::class.java.canonicalName}, message=${exception.message}, url=$currentUrl, headers=$headers, referer=$referer, position=${player.getPosition() ?: "unknown"}, duration=${player.getDuration() ?: "unknown"}, isPlaying=${player.getIsPlaying()}", exception)
+
         if (!hasNextMirror()) {
             viewModel.forceClearCache = true
         }
