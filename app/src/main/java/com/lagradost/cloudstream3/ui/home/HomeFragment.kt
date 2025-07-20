@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
+import com.lagradost.api.Log
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.CommonActivity.showToast
@@ -395,21 +396,48 @@ class HomeFragment : Fragment() {
 
                 fun updateList() {
                     DataStoreHelper.homePreference = preSelectedTypes
-
+                    val pinnedp = DataStoreHelper.pinnedProviders.toList().asReversed()
                     arrayAdapter.clear()
-                    currentValidApis = validAPIs.filter { api ->
+                    val sortedApis = validAPIs.filter { api ->
                         api.hasMainPage && api.supportedTypes.any {
                             preSelectedTypes.contains(it)
                         }
                     }.sortedBy { it.name.lowercase() }.toMutableList()
+
+                    val pinnedApis = pinnedp.mapNotNull { pinnedName ->
+                        sortedApis.find { it.name == pinnedName }
+                    }
+                    val remainingApis = sortedApis.filterNot { api -> pinnedp.contains(api.name) }
+
+                    currentValidApis = (pinnedApis + remainingApis).toMutableList()
                     currentValidApis.addAll(0, validAPIs.subList(0, 2))
 
-                    val names =
-                        currentValidApis.map { if (isMultiLang) "${getFlagFromIso(it.lang)?.plus(" ") ?: ""}${it.name}" else it.name }
+                    val names = currentValidApis.map { api ->
+                        val flagPrefix = if (isMultiLang) "${getFlagFromIso(api.lang)?.plus(" ") ?: ""}" else ""
+                        val isPinned = pinnedp.any { it.contains(api.name, ignoreCase = true) }
+                        val pinSuffix = if (isPinned) " ★" else ""
+
+                        "$flagPrefix${api.name}$pinSuffix"
+                    }
                     val index = currentValidApis.map { it.name }.indexOf(currentApiName)
                     listView?.setItemChecked(index, true)
                     arrayAdapter.addAll(names)
                     arrayAdapter.notifyDataSetChanged()
+                }
+                // pin provider on hold
+                listView?.setOnItemLongClickListener { _, _, i, _ ->
+                    if (currentValidApis.isNotEmpty() && i>1) {
+                        val pinnedp = DataStoreHelper.pinnedProviders.toMutableList()
+                        val thisapi = currentValidApis[i].name
+                        if(pinnedp.contains(thisapi)){
+                            pinnedp.remove(thisapi)
+                        }else{
+                            pinnedp.add(thisapi)
+                        }
+                        DataStoreHelper.pinnedProviders = pinnedp
+                        updateList()
+                    }
+                    true
                 }
 
                 bindChips(
