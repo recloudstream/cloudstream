@@ -45,7 +45,7 @@ const val RESULT_EPISODE = "result_episode"
 const val RESULT_SEASON = "result_season"
 const val RESULT_DUB = "result_dub"
 const val KEY_RESULT_SORT = "result_sort"
-
+const val USER_PINNED_PROVIDERS = "user_pinned_providers" //key for pinned user set
 
 class UserPreferenceDelegate<T : Any>(
     private val key: String, private val default: T //, private val klass: KClass<T>
@@ -714,4 +714,8 @@ object DataStoreHelper {
             getKey("${idPrefix}_sync", id.toString())
         }
     }
+   var pinnedProviders: List<String>
+        get() = getKey(USER_PINNED_PROVIDERS) ?: emptyList()
+        set(value) = setKey(USER_PINNED_PROVIDERS, value)
+
 }
