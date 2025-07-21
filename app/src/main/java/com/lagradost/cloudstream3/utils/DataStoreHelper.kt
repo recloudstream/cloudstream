@@ -326,7 +326,7 @@ object DataStoreHelper {
                 year?.toYear(),
                 this.id,
                 plot = this.plot,
-                rating = this.score,
+                score = this.score,
                 tags = this.tags
             )
         }
@@ -379,7 +379,7 @@ object DataStoreHelper {
                 year?.toYear(),
                 this.id,
                 plot = this.plot,
-                rating = this.score,
+                score = this.score,
                 tags = this.tags
             )
         }
