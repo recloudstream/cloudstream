@@ -2655,7 +2655,7 @@ class ResultViewModel2 : ViewModel() {
         ).apply {
             if (searchResponse is SyncAPI.LibraryItem) {
                 this.plot = searchResponse.plot
-                this.score = Score.from100(searchResponse.personalRating) ?: searchResponse.rating
+                this.score = Score.from100(searchResponse.personalRating) ?: searchResponse.score
                 this.tags = searchResponse.tags
             }
             if (searchResponse is DataStoreHelper.BookmarkedData) {
