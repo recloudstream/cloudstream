@@ -93,11 +93,10 @@ object SearchResultBuilder {
                 rating?.text = ratingText
             }
         } else {
-            val showRating = (card.rating ?: 0) != 0
+            val ratingText = card.score?.toString(10, 1)
+            val showRating = (ratingText ?: "") != ""
             rating?.isVisible = showRating
             if(showRating) {
-                val ratingText = ((card.rating ?: 0).toDouble() / 10).toString()
-                    .replace(".0", "")
                 rating?.text = ratingText
             }
         }
