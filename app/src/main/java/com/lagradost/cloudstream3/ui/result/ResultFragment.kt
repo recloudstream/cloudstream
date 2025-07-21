@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.ui.result.EpisodeAdapter.Companion.getPlayerAction
@@ -39,7 +40,7 @@ data class ResultEpisode(
     val index: Int,
     val position: Long, // time in MS
     val duration: Long, // duration in MS
-    val rating: Int?,
+    val score: Score?,
     val description: String?,
     val isFiller: Boolean?,
     val tvType: TvType,
@@ -81,7 +82,7 @@ fun buildResultEpisode(
     apiName: String,
     id: Int,
     index: Int,
-    rating: Int? = null,
+    rating: Score? = null,
     description: String? = null,
     isFiller: Boolean? = null,
     tvType: TvType,
