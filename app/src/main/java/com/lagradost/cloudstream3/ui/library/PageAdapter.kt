@@ -73,7 +73,7 @@ class PageAdapter(
                 item,
                 position,
                 itemView,
-                colorCallback = { palette ->
+                /*colorCallback = { palette ->
                     AcraApplication.context?.let { ctx ->
                         val defColor = ContextCompat.getColor(ctx, R.color.ratingColorBg)
                         var bg = palette.getDarkVibrantColor(defColor)
@@ -97,6 +97,7 @@ class PageAdapter(
                         }
                     }
                 }
+                */
             )
 
             // See searchAdaptor for this, it basically fixes the height

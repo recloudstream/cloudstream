@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.viewbinding.ViewBinding
+import com.lagradost.cloudstream3.databinding.BottomResultviewPreviewBinding
 import com.lagradost.cloudstream3.databinding.FragmentHomeBinding
 import com.lagradost.cloudstream3.databinding.FragmentHomeTvBinding
 import com.lagradost.cloudstream3.databinding.FragmentLibraryBinding
@@ -87,6 +88,8 @@ class ExampleInstrumentedTest {
                // testAllLayouts<ActivityMainTvBinding>(activity,R.layout.activity_main, R.layout.activity_main_tv)
                // testAllLayouts<ActivityMainBinding>(activity,R.layout.activity_main, R.layout.activity_main_tv)
                 //testAllLayouts<ActivityMainBinding>(activity, R.layout.activity_main_tv)
+
+                testAllLayouts<BottomResultviewPreviewBinding>(activity, R.layout.bottom_resultview_preview,R.layout.bottom_resultview_preview_tv)
 
                 testAllLayouts<FragmentPlayerBinding>(activity, R.layout.fragment_player,R.layout.fragment_player_tv)
                 testAllLayouts<FragmentPlayerTvBinding>(activity, R.layout.fragment_player,R.layout.fragment_player_tv)

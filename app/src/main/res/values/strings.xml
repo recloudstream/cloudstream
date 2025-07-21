@@ -46,6 +46,8 @@
     <string name="dns_key" translatable="false">dns_key</string>
     <string name="jsdelivr_proxy_key" translatable="false">jsdelivr_proxy_key</string>
     <string name="download_path_key" translatable="false">download_path_key</string>
+    <string name="download_parallel_key" translatable="false">download_parallel_key</string>
+    <string name="download_concurrent_key" translatable="false">download_concurrent_key</string>
     <string name="download_path_key_visual" translatable="false">download_path_key_visual</string>
     <string name="app_name_download_path" translatable="false">Cloudstream</string>
     <string name="app_layout_key" translatable="false">app_layout_key</string>
@@ -60,6 +62,8 @@
     <string name="show_logcat_key" translatable="false">show_logcat_key</string>
     <string name="bottom_title_key" translatable="false">bottom_title_key</string>
     <string name="poster_ui_key" translatable="false">poster_ui_key</string>
+    <string name="overscan_key" translatable="false">overscan_key</string>
+    <string name="poster_size_key" translatable="false">poster_size_key</string>
     <string name="subtitles_encoding_key" translatable="false">subtitles_encoding_key</string>
     <string name="override_site_key" translatable="false">override_site_key</string>
     <string name="redo_setup_key" translatable="false">redo_setup_key</string>
@@ -80,7 +84,7 @@
     <string name="rew_text_format" formatted="true" translatable="false">-%d</string>
     <string name="ffw_text_regular_format" formatted="true" translatable="false">%d</string>
     <string name="rew_text_regular_format" formatted="true" translatable="false">%d</string>
-    <string name="rating_format" formatted="true" translatable="false">%.1f/10.0</string>
+    <string name="rating_format" formatted="true" translatable="false">%s/10.0</string>
     <string name="year_format" formatted="true" translatable="false">%d</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
     <string name="cast_format" formatted="true">Cast: %s</string>
@@ -669,6 +673,7 @@
     <string name="hls_playlist">HLS Playlist</string>
     <string name="player_pref">Preferred video player</string>
     <string name="player_settings_play_in_app">Internal player</string>
+    <string name="player_settings_always_ask">Always ask</string>
     <string name="player_settings_select_cast_device">Select cast device</string>
     <string name="app_not_found_error">App not found</string>
     <string name="all_languages_preference">All Languages</string>
@@ -857,4 +862,20 @@
     <string name="all_subtitles_bold">Make all subtitles bold</string>
     <string name="all_subtitles_italic">Make all subtitles italic</string>
     <string name="background_radius">Background Radius</string>
+    <string name="download_parallel_settings_des">How many different items that can be downloaded in parallel</string>
+    <string name="parallel_downloads">Parallel downloads</string>
+    <string name="concurrent_connections">Concurrent connections</string>
+    <string name="concurrent_connections_settings_des">How many concurrent connections each download can use while downloading</string>
+    <string name="go_to_downloads">Go to Downloads</string>
+    <string name="no_internet_connection">
+        No internet connection.
+        \n\nPlease connect to the internet and try again, or watch your downloads while you are offline.
+    </string>
+    <string name="overscan_settings_des">Changes the bounds of the screen</string>
+    <string name="overscan_settings">Overscan</string>
+    <string name="poster_size_settings_des">Changes size of posters</string>
+    <string name="poster_size_settings">Poster size</string>
+    <string name="speedup_key" translatable="false">speedup_key</string>
+    <string name="speedup_title" >LongPress Speed Toggle</string>
+    <string name="speedup_summary" >Hold to get 2x speed</string>
 </resources>

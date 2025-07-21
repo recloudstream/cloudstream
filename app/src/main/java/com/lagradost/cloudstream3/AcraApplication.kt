@@ -11,8 +11,8 @@ import androidx.fragment.app.FragmentActivity
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import com.lagradost.api.setContext
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
-import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
+import com.lagradost.cloudstream3.mvvm.safeAsync
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -54,7 +54,7 @@ class CustomReportSender : ReportSender {
 
         thread { // to not run it on main thread
             runBlocking {
-                suspendSafeApiCall {
+                safeAsync {
                     app.post(url, data = data)
                     //println("Report response: $post")
                 }
@@ -62,7 +62,7 @@ class CustomReportSender : ReportSender {
         }
 
         runOnMainThread { // to run it on main looper
-            normalSafeApiCall {
+            safe {
                 Toast.makeText(context, R.string.acra_report_toast, Toast.LENGTH_SHORT).show()
             }
         }*/

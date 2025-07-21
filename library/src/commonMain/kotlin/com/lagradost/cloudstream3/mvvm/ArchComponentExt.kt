@@ -52,8 +52,6 @@ sealed class Resource<out T> {
     data class Success<out T>(val value: T) : Resource<T>()
     data class Failure(
         val isNetworkError: Boolean,
-        val errorCode: Int?,
-        val errorResponse: Any?, //ResponseBody
         val errorString: String,
     ) : Resource<Nothing>()
 
@@ -68,7 +66,11 @@ fun logError(throwable: Throwable) {
     Log.d("ApiError", "-------------------------------------------------------------------")
 }
 
-@Deprecated("Outdated function, use `safe` instead when the new stable is released", ReplaceWith("safe"), level = DeprecationLevel.WARNING)
+@Deprecated(
+    "Outdated function, use `safe` instead when the new stable is released",
+    ReplaceWith("safe"),
+    level = DeprecationLevel.WARNING
+)
 fun <T> normalSafeApiCall(apiCall: () -> T): T? {
     return try {
         apiCall.invoke()
@@ -102,7 +104,11 @@ suspend fun <T> safeAsync(apiCall: suspend () -> T): T? {
     }
 }
 
-@Deprecated("Outdated function, use `safeAsync` instead when the new stable is released", ReplaceWith("safeAsync"), level = DeprecationLevel.WARNING)
+@Deprecated(
+    "Outdated function, use `safeAsync` instead when the new stable is released",
+    ReplaceWith("safeAsync"),
+    level = DeprecationLevel.WARNING
+)
 suspend fun <T> suspendSafeApiCall(apiCall: suspend () -> T): T? {
     return try {
         apiCall.invoke()
@@ -127,7 +133,7 @@ fun Throwable.getStackTracePretty(showMessage: Boolean = true): String {
 
 fun <T> safeFail(throwable: Throwable): Resource<T> {
     val stackTraceMsg = throwable.getStackTracePretty()
-    return Resource.Failure(false, null, null, stackTraceMsg)
+    return Resource.Failure(false, stackTraceMsg)
 }
 
 fun CoroutineScope.launchSafe(
@@ -153,8 +159,6 @@ fun <T> throwAbleToResource(
         is NoSuchMethodException, is NoSuchFieldException, is NoSuchMethodError, is NoSuchFieldError, is NoSuchPropertyException -> {
             Resource.Failure(
                 false,
-                null,
-                null,
                 "App or extension is outdated, update the app or try pre-release.\n${throwable.message}" // todo add exact version?
             )
         }
@@ -164,8 +168,6 @@ fun <T> throwAbleToResource(
                 if (line?.fileName?.endsWith("provider.kt", ignoreCase = true) == true) {
                     return Resource.Failure(
                         false,
-                        null,
-                        null,
                         "NullPointerException at ${line.fileName} ${line.lineNumber}\nSite might have updated or added Cloudflare/DDOS protection"
                     )
                 }
@@ -176,8 +178,6 @@ fun <T> throwAbleToResource(
         is SocketTimeoutException, is InterruptedIOException -> {
             Resource.Failure(
                 true,
-                null,
-                null,
                 "Connection Timeout\nPlease try again later."
             )
         }
@@ -192,8 +192,6 @@ fun <T> throwAbleToResource(
         is UnknownHostException -> {
             Resource.Failure(
                 true,
-                null,
-                null,
                 "Cannot connect to server, try again later.\n${throwable.message}"
             )
         }
@@ -201,21 +199,17 @@ fun <T> throwAbleToResource(
         is ErrorLoadingException -> {
             Resource.Failure(
                 true,
-                null,
-                null,
                 throwable.message ?: "Error loading, try again later."
             )
         }
 
         is NotImplementedError -> {
-            Resource.Failure(false, null, null, "This operation is not implemented.")
+            Resource.Failure(false, "This operation is not implemented.")
         }
 
         is SSLHandshakeException -> {
             Resource.Failure(
                 true,
-                null,
-                null,
                 (throwable.message ?: "SSLHandshakeException") + "\nTry a VPN or DNS."
             )
         }

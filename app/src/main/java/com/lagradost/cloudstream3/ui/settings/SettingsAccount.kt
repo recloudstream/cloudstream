@@ -9,12 +9,13 @@ import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.edit
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
-import androidx.preference.SwitchPreferenceCompat
+import androidx.preference.SwitchPreference
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
@@ -366,9 +367,10 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
     private fun updateAuthPreference(enabled: Boolean) {
         val biometricKey = getString(R.string.biometric_key)
 
-        PreferenceManager.getDefaultSharedPreferences(context ?: return).edit()
-            .putBoolean(biometricKey, enabled).apply()
-        findPreference<SwitchPreferenceCompat>(biometricKey)?.isChecked = enabled
+        PreferenceManager.getDefaultSharedPreferences(context ?: return).edit {
+            putBoolean(biometricKey, enabled)
+        }
+        findPreference<SwitchPreference>(biometricKey)?.isChecked = enabled
     }
 
     override fun onAuthenticationError() {

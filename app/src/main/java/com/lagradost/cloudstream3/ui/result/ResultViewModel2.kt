@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.ui.result
 
 import android.app.Activity
 import android.content.*
-import android.text.format.Formatter.formatFileSize
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.MainThread
@@ -25,6 +24,7 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
 import com.lagradost.cloudstream3.LoadResponse.Companion.readIdFromString
+import com.lagradost.cloudstream3.actions.AlwaysAskAction
 import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.metaproviders.SyncRedirector
 import com.lagradost.cloudstream3.mvvm.*
@@ -236,9 +236,9 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
             R.string.cast_format,
             actors?.joinToString { it.actor.name }),
         plotText =
-        if (plot.isNullOrBlank()) txt(if (this is TorrentLoadResponse) R.string.torrent_no_plot else R.string.normal_no_plot) else txt(
-            plot!!
-        ),
+            if (plot.isNullOrBlank()) txt(if (this is TorrentLoadResponse) R.string.torrent_no_plot else R.string.normal_no_plot) else txt(
+                plot!!
+            ),
         backgroundPosterUrl = backgroundPosterUrl,
         title = name,
         typeText = txt(
@@ -264,8 +264,8 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
         ),
         yearText = txt(year?.toString()),
         apiName = txt(apiName),
-        ratingText = rating?.div(1000f)
-            ?.let { if (it <= 0.1f) null else txt(R.string.rating_format, it) },
+        ratingText = score?.toStringNull(0.1, 10, 1, false, '.')
+            ?.let { txt(R.string.rating_format, it) },
         contentRatingText = txt(contentRating),
         vpnText = txt(
             when (repo.vpnStatus) {
@@ -275,7 +275,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
             }
         ),
         metaText =
-        if (repo.providerType == ProviderType.MetaProvider) txt(R.string.provider_info_meta) else null,
+            if (repo.providerType == ProviderType.MetaProvider) txt(R.string.provider_info_meta) else null,
         durationText = if (dur == null || dur <= 0) null else txt(
             secondsToReadable(dur * 60, "0 mins")
         ),
@@ -289,9 +289,9 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
             )
         } else null,
         noEpisodesFoundText =
-        if ((this is TvSeriesLoadResponse && this.episodes.isEmpty()) || (this is AnimeLoadResponse && !this.episodes.any { it.value.isNotEmpty() })) txt(
-            R.string.no_episodes_found
-        ) else null
+            if ((this is TvSeriesLoadResponse && this.episodes.isEmpty()) || (this is AnimeLoadResponse && !this.episodes.any { it.value.isNotEmpty() })) txt(
+                R.string.no_episodes_found
+            ) else null
     )
 }
 
@@ -305,7 +305,7 @@ data class ExtractorSubtitleLink(
 fun LoadResponse.getId(): Int {
     // this fixes an issue with outdated api as getLoadResponseIdFromUrl might be fucked
     return (if (this is ResultViewModel2.LoadResponseFromSearch) this.id else null)
-        ?: getLoadResponseIdFromUrl(url, apiName)
+        ?: getLoadResponseIdFromUrl(uniqueUrl, apiName)
 }
 
 private fun getLoadResponseIdFromUrl(url: String, apiName: String): Int {
@@ -738,7 +738,7 @@ class ResultViewModel2 : ViewModel() {
                         season = episode.season,
                         id = episode.id,
                         parentId = parentId,
-                        rating = episode.rating,
+                        score = episode.score,
                         description = episode.description,
                         cacheTime = System.currentTimeMillis(),
                     )
@@ -925,7 +925,7 @@ class ResultViewModel2 : ViewModel() {
                         response.syncData,
                         plot = response.plot,
                         tags = response.tags,
-                        rating = response.rating
+                        score = response.score
                     )
                 )
             }
@@ -1022,7 +1022,7 @@ class ResultViewModel2 : ViewModel() {
                         response.year,
                         response.syncData,
                         plot = response.plot,
-                        rating = response.rating,
+                        score = response.score,
                         tags = response.tags
                     )
                 )
@@ -1093,7 +1093,7 @@ class ResultViewModel2 : ViewModel() {
                         response.year,
                         response.syncData,
                         plot = response.plot,
-                        rating = response.rating,
+                        score = response.score,
                         tags = response.tags
                     )
                 )
@@ -1213,7 +1213,7 @@ class ResultViewModel2 : ViewModel() {
     }
 
     private fun getImdbIdFromSyncData(syncData: Map<String, String>?): String? {
-        return normalSafeApiCall {
+        return safe {
             val imdbId = readIdFromString(
                 syncData?.get(AccountManager.simklApi.idPrefix)
             )[SimklSyncServices.Imdb]
@@ -1222,7 +1222,7 @@ class ResultViewModel2 : ViewModel() {
     }
 
     private fun getTMDbIdFromSyncData(syncData: Map<String, String>?): String? {
-        return normalSafeApiCall {
+        return safe {
             val tmdbId = readIdFromString(
                 syncData?.get(AccountManager.simklApi.idPrefix)
             )[SimklSyncServices.Tmdb]
@@ -1307,15 +1307,22 @@ class ResultViewModel2 : ViewModel() {
     ) {
         currentLoadLinkJob?.cancel()
         currentLoadLinkJob = ioSafe {
-            val links = loadLinks(
-                result,
-                isVisible = isVisible,
-                sourceTypes = sourceTypes,
-                clearCache = clearCache,
-                isCasting = isCasting
-            )
-            if (!this.isActive) return@ioSafe
-            work(links)
+            val parentJob = this.coroutineContext.job
+            launch {
+                val links = loadLinks(
+                    result,
+                    isVisible = isVisible,
+                    sourceTypes = sourceTypes,
+                    clearCache = clearCache,
+                    isCasting = isCasting
+                )
+                // Cancel child = skip link loading
+                // Cancel parent = dismiss dialog
+                if (parentJob.isCancelled) {
+                    return@launch
+                }
+                work(links)
+            }
         }
     }
 
@@ -1359,6 +1366,11 @@ class ResultViewModel2 : ViewModel() {
         }
     }
 
+    fun skipLoading() {
+        currentLoadLinkJob?.cancelChildren()
+        currentLoadLinkJob = null
+    }
+
     private suspend fun CoroutineScope.loadLinks(
         result: ResultEpisode,
         isVisible: Boolean,
@@ -1392,6 +1404,8 @@ class ResultViewModel2 : ViewModel() {
                 },
                 isCasting = isCasting
             )
+        } catch (e: CancellationException) {
+            // Do nothing
         } catch (e: Exception) {
             logError(e)
         } finally {
@@ -1640,6 +1654,36 @@ class ResultViewModel2 : ViewModel() {
             else -> {
                 val action = VideoClickActionHolder.getActionById(click.action) ?: return
 
+                // Special handling for AlwaysAskAction - show player selection dialog
+                if (action is AlwaysAskAction) {
+                    activity?.let { ctx ->
+                        // Show player selection dialog
+                        val players = VideoClickActionHolder.getPlayers(ctx)
+                        val options = mutableListOf<Pair<UiText, Int>>()
+
+                        // Add internal player option
+                        options.add(txt(R.string.episode_action_play_in_app) to ACTION_PLAY_EPISODE_IN_PLAYER)
+
+                        // Add external player options 
+                        options.addAll(players.filter { it !is AlwaysAskAction }.map { player ->
+                            player.name to (VideoClickActionHolder.uniqueIdToId(player.uniqueId())
+                                ?: ACTION_PLAY_EPISODE_IN_PLAYER)
+                        })
+
+                        postPopup(
+                            txt(R.string.player_pref),
+                            options
+                        ) { selectedAction ->
+                            if (selectedAction != null) {
+                                handleEpisodeClickEvent(
+                                    click.copy(action = selectedAction)
+                                )
+                            }
+                        }
+                    }
+                    return
+                }
+
                 activity?.setKey("last_click_action", action.uniqueId())
                 if (action.oneSource) {
                     acquireSingleLink(
@@ -1680,7 +1724,7 @@ class ResultViewModel2 : ViewModel() {
 
             if (meta != null) {
                 duration = duration ?: meta.duration
-                rating = rating ?: meta.publicScore
+                score = score ?: meta.publicScore
                 tags = tags ?: meta.genres
                 plot = if (plot.isNullOrBlank()) meta.synopsis else plot
                 posterUrl = posterUrl ?: meta.posterUrl ?: meta.backgroundPosterUrl
@@ -1841,7 +1885,11 @@ class ResultViewModel2 : ViewModel() {
     }
 
     fun changeDubStatus(status: DubStatus) {
-        postEpisodeRange(currentIndex?.copy(dubStatus = status), currentRange, currentSorting ?: DataStoreHelper.resultsSortingMode)
+        postEpisodeRange(
+            currentIndex?.copy(dubStatus = status),
+            currentRange,
+            currentSorting ?: DataStoreHelper.resultsSortingMode
+        )
     }
 
     fun changeRange(range: EpisodeRange) {
@@ -1849,7 +1897,11 @@ class ResultViewModel2 : ViewModel() {
     }
 
     fun changeSeason(season: Int) {
-        postEpisodeRange(currentIndex?.copy(season = season), currentRange, currentSorting ?: DataStoreHelper.resultsSortingMode)
+        postEpisodeRange(
+            currentIndex?.copy(season = season),
+            currentRange,
+            currentSorting ?: DataStoreHelper.resultsSortingMode
+        )
     }
 
     fun setSort(sortType: EpisodeSortType) {
@@ -1891,8 +1943,8 @@ class ResultViewModel2 : ViewModel() {
         return when (sorting) {
             EpisodeSortType.NUMBER_ASC -> episodes.sortedBy { it.episode }
             EpisodeSortType.NUMBER_DESC -> episodes.sortedByDescending { it.episode }
-            EpisodeSortType.RATING_HIGH_LOW -> episodes.sortedByDescending { it.rating ?: 0 }
-            EpisodeSortType.RATING_LOW_HIGH -> episodes.sortedBy { it.rating ?: 0 }
+            EpisodeSortType.RATING_HIGH_LOW -> episodes.sortedByDescending { it.score?.toDouble() ?: 0.0 }
+            EpisodeSortType.RATING_LOW_HIGH -> episodes.sortedBy { it.score?.toDouble() ?: 0.0 }
             EpisodeSortType.DATE_NEWEST -> episodes.sortedByDescending { it.airDate }
             EpisodeSortType.DATE_OLDEST -> episodes.sortedBy { it.airDate }
         }
@@ -1971,7 +2023,7 @@ class ResultViewModel2 : ViewModel() {
         return when (type) {
             EpisodeSortType.NUMBER_ASC, EpisodeSortType.NUMBER_DESC -> true
             EpisodeSortType.RATING_HIGH_LOW, EpisodeSortType.RATING_LOW_HIGH ->
-                episodes.any { it.rating != null }
+                episodes.any { it.score != null }
 
             EpisodeSortType.DATE_NEWEST, EpisodeSortType.DATE_OLDEST ->
                 episodes.any { it.airDate != null }
@@ -2223,7 +2275,7 @@ class ResultViewModel2 : ViewModel() {
                                     loadResponse.apiName,
                                     id,
                                     index,
-                                    i.rating,
+                                    i.score,
                                     i.description,
                                     fillers.getOrDefault(episode, false),
                                     loadResponse.type,
@@ -2279,7 +2331,7 @@ class ResultViewModel2 : ViewModel() {
                                 loadResponse.apiName,
                                 id,
                                 index,
-                                episode.rating,
+                                episode.score,
                                 episode.description,
                                 null,
                                 loadResponse.type,
@@ -2569,7 +2621,7 @@ class ResultViewModel2 : ViewModel() {
         override var posterUrl: String?,
         override var year: Int? = null,
         override var plot: String? = null,
-        override var rating: Int? = null,
+        override var score: Score? = null,
         override var tags: List<String>? = null,
         override var duration: Int? = null,
         override var trailers: MutableList<TrailerData> = mutableListOf(),
@@ -2580,6 +2632,7 @@ class ResultViewModel2 : ViewModel() {
         override var posterHeaders: Map<String, String>? = null,
         override var backgroundPosterUrl: String? = null,
         override var contentRating: String? = null,
+        override var uniqueUrl: String = url,
         val id: Int?,
     ) : LoadResponse
 
@@ -2602,12 +2655,12 @@ class ResultViewModel2 : ViewModel() {
         ).apply {
             if (searchResponse is SyncAPI.LibraryItem) {
                 this.plot = searchResponse.plot
-                this.rating = searchResponse.personalRating?.times(100) ?: searchResponse.rating
+                this.score = Score.from100(searchResponse.personalRating) ?: searchResponse.rating
                 this.tags = searchResponse.tags
             }
             if (searchResponse is DataStoreHelper.BookmarkedData) {
                 this.plot = searchResponse.plot
-                this.rating = searchResponse.rating
+                this.score = searchResponse.score
                 this.tags = searchResponse.tags
             }
         }
@@ -2644,8 +2697,6 @@ class ResultViewModel2 : ViewModel() {
                 _page.postValue(
                     Resource.Failure(
                         false,
-                        null,
-                        null,
                         "This provider does not exist"
                     )
                 )

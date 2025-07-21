@@ -9,7 +9,6 @@
     <string name="rew_text_format" formatted="true" translatable="false">-%d</string>
     <string name="ffw_text_regular_format" formatted="true" translatable="false">%d</string>
     <string name="rew_text_regular_format" formatted="true" translatable="false">%d</string>
-    <string name="rating_format" formatted="true" translatable="false">%.1f/10.0</string>
     <string name="year_format" formatted="true" translatable="false">%d</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s epizoda %2$d</string>
     <string name="cast_format" formatted="true">Glumačka postava: %s</string>

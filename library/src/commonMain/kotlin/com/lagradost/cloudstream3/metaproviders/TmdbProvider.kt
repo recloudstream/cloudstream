@@ -180,7 +180,7 @@ open class TmdbProvider : MainAPI() {
 
             tags = genres?.mapNotNull { it.name }
             duration = episode_run_time?.average()?.toInt()
-            rating = this@toLoadResponse.rating
+            // score = Score.from10(this@toLoadResponse.rating) No docs on this?
             addTrailer(videos.toTrailers())
 
             recommendations = (this@toLoadResponse.recommendations
@@ -224,7 +224,7 @@ open class TmdbProvider : MainAPI() {
             addImdbId(external_ids?.imdb_id)
             tags = genres?.mapNotNull { it.name }
             duration = runtime
-            rating = this@toLoadResponse.rating
+            // score = Score.from10(this@toLoadResponse.rating) No docs on this?
             addTrailer(videos.toTrailers())
 
             recommendations = (this@toLoadResponse.recommendations

@@ -42,9 +42,10 @@ import com.lagradost.cloudstream3.CommonActivity.keyEventListener
 import com.lagradost.cloudstream3.CommonActivity.playerEventListener
 import com.lagradost.cloudstream3.CommonActivity.screenWidth
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.unixTimeMs
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
@@ -79,7 +80,6 @@ abstract class AbstractPlayerFragment(
     var player: IPlayer = CS3IPlayer()
 ) : Fragment() {
     var resizeMode: Int = 0
-    var subStyle: SaveCaptionStyle? = null
     var subView: SubtitleView? = null
     var isBuffering = true
     protected open var hasPipModeSupport = true
@@ -243,7 +243,7 @@ abstract class AbstractPlayerFragment(
                 exitedPipMode()
                 pipReceiver?.let {
                     // Prevents java.lang.IllegalArgumentException: Receiver not registered
-                    normalSafeApiCall {
+                    safe {
                         activity?.unregisterReceiver(it)
                     }
                 }
@@ -373,13 +373,28 @@ abstract class AbstractPlayerFragment(
                 }
             }
 
+            is ErrorLoadingException -> {
+                exception.message?.let {
+                    showToast(
+                        it,
+                        gotoNext = true
+                    )
+                } ?: showToast(
+                    exception.toString(),
+                    gotoNext = true
+                )
+            }
+
             else -> {
                 exception.message?.let {
                     showToast(
                         it,
                         gotoNext = false
                     )
-                }
+                } ?: showToast(
+                    exception.toString(),
+                    gotoNext = false
+                )
             }
         }
     }
@@ -559,6 +574,11 @@ abstract class AbstractPlayerFragment(
                             CSPlayerEvent.Pause,
                             PlayerEventSource.Player
                         )
+
+                        // No clashing UI
+                        if (hasPreview) {
+                            subView?.isVisible = false
+                        }
                     }
 
                     override fun onScrubMove(
@@ -570,6 +590,13 @@ abstract class AbstractPlayerFragment(
 
                     override fun onScrubStop(previewBar: PreviewBar?) {
                         if (resume) player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.Player)
+                        // Delay to prevent the small flicker of subtitle before seeking
+                        subView?.postDelayed({
+                            // If we are not scrubbing then show subtitles again
+                            if (previewBar == null || !previewBar.isPreviewEnabled || !previewBar.isShowingPreview) {
+                                subView?.isVisible = true
+                            }
+                        }, 200)
                     }
                 })
                 progressBar.attachPreviewView(previewFrameLayout)
@@ -581,8 +608,7 @@ abstract class AbstractPlayerFragment(
             }
 
             subView = playerView?.findViewById(androidx.media3.ui.R.id.exo_subtitles)
-            subStyle = SubtitlesFragment.getCurrentSavedStyle()
-            player.initSubtitles(subView, subtitleHolder, subStyle)
+            player.initSubtitles(subView, subtitleHolder, CustomDecoder.style)
             (player.imageGenerator as? PreviewGenerator)?.params = ImageParams.new16by9(screenWidth)
 
             /*previewImageView?.doOnLayout {

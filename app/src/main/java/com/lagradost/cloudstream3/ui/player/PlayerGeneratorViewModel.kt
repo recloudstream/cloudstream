@@ -9,7 +9,7 @@ import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -114,20 +114,20 @@ class PlayerGeneratorViewModel : ViewModel() {
     }
 
     fun getLoadResponse(): LoadResponse? {
-        return normalSafeApiCall { (generator as? RepoLinkGenerator?)?.page }
+        return safe { (generator as? RepoLinkGenerator?)?.page }
     }
 
     fun getMeta(): Any? {
-        return normalSafeApiCall { generator?.getCurrent() }
+        return safe { generator?.getCurrent() }
     }
 
     fun getAllMeta(): List<Any>? {
-        return normalSafeApiCall { generator?.getAll() }
+        return safe { generator?.getAll() }
     }
 
     fun getNextMeta(): Any? {
-        return normalSafeApiCall {
-            if (generator?.hasNext() == false) return@normalSafeApiCall null
+        return safe {
+            if (generator?.hasNext() == false) return@safe null
             generator?.getCurrent(offset = 1)
         }
     }
@@ -204,8 +204,8 @@ class PlayerGeneratorViewModel : ViewModel() {
                         synchronized(currentLinks) {
                             currentLinks.add(it)
                             // Clone to prevent ConcurrentModificationException
-                            normalSafeApiCall {
-                                // Extra normalSafeApiCall since .toSet() iterates.
+                            safe {
+                                // Extra safe since .toSet() iterates.
                                 _currentLinks.postValue(currentLinks.toSet())
                             }
                         }
@@ -213,7 +213,7 @@ class PlayerGeneratorViewModel : ViewModel() {
                     subtitleCallback = {
                         synchronized(extraSubtitles) {
                             currentSubs.add(it)
-                            normalSafeApiCall {
+                            safe {
                                 _currentSubs.postValue(currentSubs + extraSubtitles)
                             }
                         }

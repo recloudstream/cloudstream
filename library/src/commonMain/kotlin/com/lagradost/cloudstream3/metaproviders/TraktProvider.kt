@@ -9,12 +9,14 @@ import com.lagradost.cloudstream3.Episode
 import com.lagradost.cloudstream3.HomePageResponse
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.LoadResponse.Companion.addImdbId
+import com.lagradost.cloudstream3.LoadResponse.Companion.addRating
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTMDbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainPageRequest
 import com.lagradost.cloudstream3.NextAiring
 import com.lagradost.cloudstream3.ProviderType
+import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.ShowStatus
 import com.lagradost.cloudstream3.TvType
@@ -142,6 +144,7 @@ open class TraktProvider : MainAPI() {
             isCartoon && (mediaDetails?.language == "zh" || mediaDetails?.language == "ja")
         val isAsian = !isAnime && (mediaDetails?.language == "zh" || mediaDetails?.language == "ko")
         val isBollywood = mediaDetails?.country == "in"
+        val uniqueUrl = data.mediaDetails?.ids?.trakt?.toJson() ?: data.toJson()
 
         if (data.type == TvType.Movie) {
 
@@ -171,12 +174,13 @@ open class TraktProvider : MainAPI() {
                 dataUrl = linkData.toJson(),
                 type = if (isAnime) TvType.AnimeMovie else TvType.Movie,
             ) {
+                this.uniqueUrl = uniqueUrl
                 this.name = mediaDetails.title
                 this.type = if (isAnime) TvType.AnimeMovie else TvType.Movie
                 this.posterUrl = getOriginalWidthImageUrl(posterUrl)
                 this.year = mediaDetails.year
                 this.plot = mediaDetails.overview
-                this.rating = mediaDetails.rating?.times(1000)?.roundToInt()
+                this.score = Score.from10(mediaDetails.rating)
                 this.tags = mediaDetails.genres
                 this.duration = mediaDetails.runtime
                 this.recommendations = relatedMedia
@@ -256,6 +260,7 @@ open class TraktProvider : MainAPI() {
                 type = if (isAnime) TvType.Anime else TvType.TvSeries,
                 episodes = episodes
             ) {
+                this.uniqueUrl = uniqueUrl
                 this.name = mediaDetails.title
                 this.type = if (isAnime) TvType.Anime else TvType.TvSeries
                 this.episodes = episodes
@@ -263,7 +268,7 @@ open class TraktProvider : MainAPI() {
                 this.year = mediaDetails.year
                 this.plot = mediaDetails.overview
                 this.showStatus = getStatus(mediaDetails.status)
-                this.rating = mediaDetails.rating?.times(1000)?.roundToInt()
+                this.score = Score.from10(mediaDetails.rating)
                 this.tags = mediaDetails.genres
                 this.duration = mediaDetails.runtime
                 this.recommendations = relatedMedia

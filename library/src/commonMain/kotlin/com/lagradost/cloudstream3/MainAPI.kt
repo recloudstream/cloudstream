@@ -6,12 +6,13 @@
 
 package com.lagradost.cloudstream3
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
@@ -28,6 +29,7 @@ import java.util.*
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.math.absoluteValue
+import kotlin.math.roundToInt
 
 /** Api has not yet been published to stable, and will cause `NoSuchMethodException` on stable */
 @MustBeDocumented // Same as java.lang.annotation.Documented
@@ -490,35 +492,35 @@ abstract class MainAPI {
      *
      * Note that this is only a hint, and may not get respected if you request something too long.
      * */
-    open val loadLinksTimeoutMs : Long? = null
+    open val loadLinksTimeoutMs: Long? = null
 
     /**
      * The timeout on the `getMainPage` functions in milliseconds.
      *
      * Note that this is only a hint, and may not get respected if you request something too long.
      * */
-    open val getMainPageTimeoutMs : Long? = null
+    open val getMainPageTimeoutMs: Long? = null
 
     /**
      * The timeout on the `search` functions in milliseconds.
      *
      * Note that this is only a hint, and may not get respected if you request something too long.
      * */
-    open val searchTimeoutMs : Long? = null
+    open val searchTimeoutMs: Long? = null
 
     /**
      * The timeout on the `quickSearch` functions in milliseconds.
      *
      * Note that this is only a hint, and may not get respected if you request something too long.
      * */
-    open val quickSearchTimeoutMs : Long? = null
+    open val quickSearchTimeoutMs: Long? = null
 
     /**
      * The timeout on the `loadSearch` functions in milliseconds.
      *
      * Note that this is only a hint, and may not get respected if you request something too long.
      * */
-    open val loadTimeoutMs : Long? = null
+    open val loadTimeoutMs: Long? = null
 
 
     /**
@@ -768,6 +770,204 @@ enum class DubStatus(val id: Int) {
     None(-1),
     Dubbed(1),
     Subbed(0),
+}
+
+/** This is the primary way to store score/rating. Use Score.from or Score.from10 to parse the score
+ * as it does not have a public constructor. Use toInt/toFloat to get back the score.
+ *
+ * Internally it stores it as an int up to 10^9 to represent up to 10 significant digits. So think
+ * of this as a decimal class specifically for ratings.
+ * */
+@Prerelease
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+class Score private constructor(
+    /** Decimal between [0, 10^9] representing the min score and max score respectively */
+    @JsonProperty("data")
+    private val data: Int,
+) {
+    fun toOld(): Int = toInt(10000)
+
+    fun toByte(maxScore: Int): Byte = toLong(maxScore).toByte()
+
+    fun toInt(maxScore: Int = 10): Int = toLong(maxScore).toInt()
+
+    fun toLong(maxScore: Int = 10): Long = (data.toLong() * maxScore.toLong()) / MAX.toLong()
+
+    fun toFloat(maxScore: Int = 10): Float =
+        (data.toFloat() / MAX.toFloat()) * maxScore.toFloat()
+
+    fun toDouble(maxScore: Int = 10): Double =
+        (data.toDouble() / MAX.toDouble()) * maxScore.toDouble()
+
+    override fun toString(): String = this.toString(10)
+
+    /** Formats the rating to a human readable format (with no rounding)
+     *
+     * However it may also return null if the score is less than the minimum score,
+     * this is to avoid 0.0/10.0 in case of default = 0
+     * */
+    @Throws(IllegalArgumentException::class)
+    fun toStringNull(
+        minScore: Double,
+        maxScore: Int,
+        decimals: Int = 1,
+        removeTrailingZeros: Boolean = true,
+        decimalChar: Char = '.'
+    ): String? {
+        if (toDouble() < minScore) return null
+        return toString(maxScore, decimals, removeTrailingZeros, decimalChar)
+    }
+
+    /** Formats the rating to a human readable format (with no rounding) */
+    @Throws(IllegalArgumentException::class)
+    fun toString(
+        maxScore: Int,
+        decimals: Int = 1,
+        removeTrailingZeros: Boolean = true,
+        decimalChar: Char = '.'
+    ): String {
+        require(maxScore in 1..1000) {
+            "maxScore ∈ [1,1000]"
+        }
+        require(decimals in 0..MAX_ZEROS) {
+            "decimals ∈ [0,$MAX_ZEROS]"
+        }
+        var number = data.toLong() * maxScore.toLong()
+        val chars = CharArray(MAX_ZEROS + 6)
+
+        for (i in chars.indices) {
+            chars[i] = (number % 10L).toInt().digitToChar()
+            number /= 10L
+        }
+
+        var trailingZeros = 0
+        for (i in chars.indices) {
+            if (chars[i] != '0') {
+                break
+            }
+            trailingZeros += 1
+        }
+
+        var leadingZeros = 0
+        for (i in chars.indices.reversed()) {
+            if (chars[i] != '0') {
+                break
+            }
+            leadingZeros += 1
+        }
+
+        val stringBuilder = StringBuilder()
+        for (i in maxOf(MAX_ZEROS, (chars.size - leadingZeros - 1)) downTo MAX_ZEROS) {
+            stringBuilder.append(chars[i])
+        }
+
+        val end = if (removeTrailingZeros) {
+            maxOf(MAX_ZEROS - decimals, trailingZeros)
+        } else {
+            MAX_ZEROS - decimals
+        }
+
+        if (end <= MAX_ZEROS - 1) {
+            stringBuilder.append(decimalChar)
+            for (i in MAX_ZEROS - 1 downTo end) {
+                stringBuilder.append(chars[i])
+            }
+        }
+
+        return stringBuilder.toString()
+    }
+
+    companion object {
+        const val MAX: Int = 1000_000_000
+        const val MIN: Int = 0
+        const val MAX_ZEROS: Int = 9
+        private const val TAG: String = "Score"
+
+        fun fromOld(value: Int?): Score? {
+            if (value == null) return null
+            if (value < 0 || value > 10000) {
+                com.lagradost.api.Log.w(TAG, "old: $value ∉ [0, 10000]")
+                return null
+            }
+            return Score(value * 100_000)
+        }
+
+        /** `value ∈ [0, maxScore]` */
+        fun from(value: Int?, maxScore: Int): Score? {
+            if (value == null) {
+                return null
+            }
+            if (value < 0 || value > maxScore) {
+                com.lagradost.api.Log.w(TAG, "fromInt: $value ∉ [0, $maxScore]")
+                return null
+            }
+            return Score((MAX / maxScore) * value)
+        }
+
+        /** `value ∈ [0.0, maxScore]` */
+        fun from(value: Double?, maxScore: Int): Score? {
+            if (value == null) {
+                return null
+            }
+            if (value < 0.0 || value > maxScore) {
+                com.lagradost.api.Log.w(TAG, "fromDouble: $value ∉ [0.0, $maxScore]")
+                return null
+            }
+            return Score(((MAX / maxScore).toDouble() * value).roundToInt())
+        }
+
+        /** `value ∈ [0.0f, maxScore]` */
+        fun from(value: Float?, maxScore: Int): Score? {
+            if (value == null) {
+                return null
+            }
+            if (value < 0.0 || value > maxScore) {
+                com.lagradost.api.Log.w(TAG, "fromFloat: $value ∉ [0.0f, $maxScore]")
+                return null
+            }
+            return Score(((MAX / maxScore).toFloat() * value).roundToInt())
+        }
+
+        /** `value ∈ ["0.0", maxScore]` */
+        fun from(value: String?, maxScore: Int): Score? =
+            from(value?.trim()?.toDoubleOrNull()?.absoluteValue, maxScore)
+
+        /** `value ∈ [0, 5]` */
+        fun from5(value: Int?): Score? = from(value, 5)
+
+        /** `value ∈ [0, 10]` */
+        fun from10(value: Int?): Score? = from(value, 10)
+
+        /** `value ∈ [0, 100]` */
+        fun from100(value: Int?): Score? = from(value, 100)
+
+        /** `value ∈ [0.0, 5.0]` */
+        fun from5(value: Double?): Score? = from(value, 5)
+
+        /** `value ∈ [0.0, 10.0]` */
+        fun from10(value: Double?): Score? = from(value, 10)
+
+        /** `value ∈ [0.0, 100.0]` */
+        fun from100(value: Double?): Score? = from(value, 100)
+
+        /** `value ∈ [0.0f, 5.0f]` */
+        fun from5(value: Float?): Score? = from(value, 5)
+
+        /** `value ∈ [0.0f, 10.0f]` */
+        fun from10(value: Float?): Score? = from(value, 10)
+
+        /** `value ∈ [0.0f, 100.0f]` */
+        fun from100(value: Float?): Score? = from(value, 100)
+
+        /** `value ∈ ["0.0", "5.0"]` */
+        fun from5(value: String?): Score? = from(value, 5)
+
+        /** `value ∈ ["0.0", "10.0"]` */
+        fun from10(value: String?): Score? = from(value, 10)
+
+        /** `value ∈ ["0.0", "100.0"]` */
+        fun from100(value: String?): Score? = from(value, 100)
+    }
 }
 
 @Suppress("UNUSED_PARAMETER")
@@ -1287,7 +1487,8 @@ data class TrailerData(
  * @property posterUrl Url of the media poster, appears on Top of result page.
  * @property year Year of the media, appears on result page.
  * @property plot Plot of the media, appears on result page.
- * @property rating Rating of the media, appears on result page (0-10000).
+ * @property score Rating of the media, appears on result page.
+ * Use it with addScore or by assigning a score like `Score.from(string/float/int/double, 10)` or `Score.from10(string/float/int/double)`
  * @property tags Tags of the media, appears on result page.
  * @property duration duration of the media, appears on result page.
  * @property trailers list of the media [TrailerData], used to load trailers.
@@ -1298,6 +1499,10 @@ data class TrailerData(
  * @property posterHeaders headers map used by network request to get the poster.
  * @property backgroundPosterUrl Url of the media background poster.
  * @property contentRating content rating of the media, appears on result page.
+ * @property uniqueUrl The key used for storing the persistent data about an entry.
+ * On older versions `url` was used instead, but this was added to support JSON that can change as the url parameter.
+ *
+ * If you have JSON that can change you can set `url = jsonObject.toJson()` and `uniqueId = jsonObject.id.toString()`
  * */
 interface LoadResponse {
     var name: String
@@ -1307,7 +1512,9 @@ interface LoadResponse {
     var posterUrl: String?
     var year: Int?
     var plot: String?
-    var rating: Int? // 0-10000
+
+    @Prerelease
+    var score: Score?
     var tags: List<String>?
     var duration: Int? // in minutes
     var trailers: MutableList<TrailerData>
@@ -1319,6 +1526,19 @@ interface LoadResponse {
     var posterHeaders: Map<String, String>?
     var backgroundPosterUrl: String?
     var contentRating: String?
+
+    @Prerelease
+    var uniqueUrl: String
+
+    @Deprecated(
+        "`rating` is the old scoring system, use score instead",
+        replaceWith = ReplaceWith("score")
+    )
+    var rating: Int?
+        set(value) {
+            this.score = Score.fromOld(value)
+        }
+        get() = score?.toOld()
 
     companion object {
         var malIdPrefix = "" //malApi.idPrefix
@@ -1366,10 +1586,10 @@ interface LoadResponse {
             database: SimklSyncServices,
             id: String?
         ) {
-            normalSafeApiCall {
+            safe {
                 this.syncData[simklIdPrefix] =
                     addIdToString(this.syncData[simklIdPrefix], database, id.toString())
-                        ?: return@normalSafeApiCall
+                        ?: return@safe
             }
         }
 
@@ -1387,13 +1607,13 @@ interface LoadResponse {
         }
 
         fun LoadResponse.getImdbId(): String? {
-            return normalSafeApiCall {
+            return safe {
                 readIdFromString(this.syncData[simklIdPrefix])[SimklSyncServices.Imdb]
             }
         }
 
         fun LoadResponse.getTMDbId(): String? {
-            return normalSafeApiCall {
+            return safe {
                 readIdFromString(this.syncData[simklIdPrefix])[SimklSyncServices.Tmdb]
             }
         }
@@ -1503,18 +1723,30 @@ interface LoadResponse {
         }
 
         fun LoadResponse.addImdbId(id: String?) {
-            // TODO add imdb sync
+            // TODO add IMDb sync
             this.addSimklId(SimklSyncServices.Imdb, id)
         }
 
-        @Suppress("UNUSED_PARAMETER")
+        @Deprecated("Outdated API due to misspelling", ReplaceWith("addTraktId(id)"))
         fun LoadResponse.addTrackId(id: String?) {
-            // TODO add trackt sync
+            this.addTraktId(id)
+        }
+
+        @Deprecated("Outdated API due to missing capitalization", ReplaceWith("addKitsuId(id)"))
+        fun LoadResponse.addkitsuId(id: String?) {
+            this.addKitsuId(id)
         }
 
         @Suppress("UNUSED_PARAMETER")
-        fun LoadResponse.addkitsuId(id: String?) {
-            // TODO add kitsu sync
+        @Prerelease
+        fun LoadResponse.addTraktId(id: String?) {
+            // TODO add Trakt sync
+        }
+
+        @Suppress("UNUSED_PARAMETER")
+        @Prerelease
+        fun LoadResponse.addKitsuId(id: String?) {
+            // TODO add Kitsu sync
         }
 
         fun LoadResponse.addTMDbId(id: String?) {
@@ -1522,15 +1754,21 @@ interface LoadResponse {
             this.addSimklId(SimklSyncServices.Tmdb, id)
         }
 
-        fun LoadResponse.addRating(text: String?) {
-            addRating(text.toRatingInt())
+        fun LoadResponse.addScore(score: String?, maxValue: Int = 10) {
+            this.score = Score.from(score, maxValue)
         }
 
+        fun LoadResponse.addScore(score: Score?) {
+            this.score = score
+        }
+
+        fun LoadResponse.addRating(text: String?) {
+            this.score = Score.from10(text)
+        }
+
+        @Deprecated("Use addScore", replaceWith = ReplaceWith("addScore"))
         fun LoadResponse.addRating(value: Int?) {
-            if ((value ?: return) < 0 || value > 10000) {
-                return
-            }
-            this.rating = value
+            this.score = Score.fromOld(value)
         }
 
         fun LoadResponse.addDuration(input: String?) {
@@ -1722,7 +1960,7 @@ fun EpisodeResponse.addSeasonNames(names: List<SeasonData>) {
  * @see newTorrentLoadResponse
  */
 data class TorrentLoadResponse
-@Deprecated("Use newTorrentLoadResponse method", level = DeprecationLevel.WARNING)
+@Deprecated("Use newTorrentLoadResponse method", level = DeprecationLevel.ERROR)
 constructor(
     override var name: String,
     override var url: String,
@@ -1733,7 +1971,7 @@ constructor(
     override var type: TvType = TvType.Torrent,
     override var posterUrl: String? = null,
     override var year: Int? = null,
-    override var rating: Int? = null,
+    override var score: Score? = null,
     override var tags: List<String>? = null,
     override var duration: Int? = null,
     override var trailers: MutableList<TrailerData> = mutableListOf(),
@@ -1744,15 +1982,17 @@ constructor(
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
+    @Prerelease
+    override var uniqueUrl: String = url
 ) : LoadResponse {
     /**
      * Secondary constructor for backwards compatibility without contentRating.
      * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
      */
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Deprecated(
         "Use newTorrentLoadResponse method with contentRating included",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     constructor(
         name: String,
@@ -1784,7 +2024,7 @@ constructor(
         type,
         posterUrl,
         year,
-        rating,
+        Score.fromOld(rating),
         tags,
         duration,
         trailers,
@@ -1805,7 +2045,7 @@ suspend fun MainAPI.newTorrentLoadResponse(
     torrent: String? = null,
     initializer: suspend TorrentLoadResponse.() -> Unit = { }
 ): TorrentLoadResponse {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     val builder = TorrentLoadResponse(
         name = name,
         url = url,
@@ -1824,7 +2064,7 @@ suspend fun MainAPI.newTorrentLoadResponse(
  * @see newAnimeLoadResponse
  * */
 data class AnimeLoadResponse
-@Deprecated("Use newAnimeLoadResponse method", level = DeprecationLevel.WARNING)
+@Deprecated("Use newAnimeLoadResponse method", level = DeprecationLevel.ERROR)
 constructor(
     var engName: String? = null,
     var japName: String? = null,
@@ -1843,7 +2083,7 @@ constructor(
     override var tags: List<String>? = null,
     var synonyms: List<String>? = null,
 
-    override var rating: Int? = null,
+    override var score: Score? = null,
     override var duration: Int? = null,
     override var trailers: MutableList<TrailerData> = mutableListOf(),
     override var recommendations: List<SearchResponse>? = null,
@@ -1855,7 +2095,10 @@ constructor(
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
+    @Prerelease
+    override var uniqueUrl: String = url
 ) : LoadResponse, EpisodeResponse {
+
     override fun getLatestEpisodes(): Map<DubStatus, Int?> {
         return episodes.map { (status, episodes) ->
             val maxSeason = episodes.maxOfOrNull { it.season ?: Int.MIN_VALUE }
@@ -1885,7 +2128,7 @@ constructor(
      * Secondary constructor for backwards compatibility without contentRating.
      * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
      */
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Deprecated(
         "Use newAnimeLoadResponse method with contentRating included",
         level = DeprecationLevel.WARNING
@@ -1929,7 +2172,7 @@ constructor(
         plot,
         tags,
         synonyms,
-        rating,
+        Score.fromOld(rating),
         duration,
         trailers,
         recommendations,
@@ -1977,7 +2220,7 @@ suspend fun MainAPI.newAnimeLoadResponse(
  * @see newLiveStreamLoadResponse
  * */
 data class LiveStreamLoadResponse
-@Deprecated("Use newLiveStreamLoadResponse method", level = DeprecationLevel.WARNING)
+@Deprecated("Use newLiveStreamLoadResponse method", level = DeprecationLevel.ERROR)
 constructor(
     override var name: String,
     override var url: String,
@@ -1989,7 +2232,7 @@ constructor(
     override var plot: String? = null,
 
     override var type: TvType = TvType.Live,
-    override var rating: Int? = null,
+    override var score: Score? = null,
     override var tags: List<String>? = null,
     override var duration: Int? = null,
     override var trailers: MutableList<TrailerData> = mutableListOf(),
@@ -2000,12 +2243,14 @@ constructor(
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
+    @Prerelease
+    override var uniqueUrl: String = url
 ) : LoadResponse {
     /**
      * Secondary constructor for backwards compatibility without contentRating.
      * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
      */
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Deprecated(
         "Use newLiveStreamLoadResponse method with contentRating included",
         level = DeprecationLevel.WARNING
@@ -2030,8 +2275,25 @@ constructor(
         posterHeaders: Map<String, String>? = null,
         backgroundPosterUrl: String? = null,
     ) : this(
-        name, url, apiName, dataUrl, posterUrl, year, plot, type, rating, tags, duration, trailers,
-        recommendations, actors, comingSoon, syncData, posterHeaders, backgroundPosterUrl, null
+        name,
+        url,
+        apiName,
+        dataUrl,
+        posterUrl,
+        year,
+        plot,
+        type,
+        Score.fromOld(rating),
+        tags,
+        duration,
+        trailers,
+        recommendations,
+        actors,
+        comingSoon,
+        syncData,
+        posterHeaders,
+        backgroundPosterUrl,
+        null
     )
 }
 
@@ -2041,7 +2303,7 @@ suspend fun MainAPI.newLiveStreamLoadResponse(
     dataUrl: String,
     initializer: suspend LiveStreamLoadResponse.() -> Unit = { }
 ): LiveStreamLoadResponse {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     val builder = LiveStreamLoadResponse(
         name = name,
         url = url,
@@ -2057,7 +2319,7 @@ suspend fun MainAPI.newLiveStreamLoadResponse(
  * @see newMovieLoadResponse
  * */
 data class MovieLoadResponse
-@Deprecated("Use newMovieLoadResponse method", level = DeprecationLevel.WARNING)
+@Deprecated("Use newMovieLoadResponse method", level = DeprecationLevel.ERROR)
 constructor(
     override var name: String,
     override var url: String,
@@ -2069,7 +2331,7 @@ constructor(
     override var year: Int? = null,
     override var plot: String? = null,
 
-    override var rating: Int? = null,
+    override var score: Score? = null,
     override var tags: List<String>? = null,
     override var duration: Int? = null,
     override var trailers: MutableList<TrailerData> = mutableListOf(),
@@ -2080,15 +2342,17 @@ constructor(
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
+    @Prerelease
+    override var uniqueUrl: String = url
 ) : LoadResponse {
     /**
      * Secondary constructor for backwards compatibility without contentRating.
      * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
      */
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Deprecated(
         "Use newMovieLoadResponse method with contentRating included",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     constructor(
         name: String,
@@ -2110,8 +2374,25 @@ constructor(
         posterHeaders: Map<String, String>? = null,
         backgroundPosterUrl: String? = null,
     ) : this(
-        name, url, apiName, type, dataUrl, posterUrl, year, plot, rating, tags, duration, trailers,
-        recommendations, actors, comingSoon, syncData, posterHeaders, backgroundPosterUrl, null
+        name,
+        url,
+        apiName,
+        type,
+        dataUrl,
+        posterUrl,
+        year,
+        plot,
+        Score.fromOld(rating),
+        tags,
+        duration,
+        trailers,
+        recommendations,
+        actors,
+        comingSoon,
+        syncData,
+        posterHeaders,
+        backgroundPosterUrl,
+        null
     )
 }
 
@@ -2132,7 +2413,7 @@ suspend fun <T> MainAPI.newMovieLoadResponse(
     )
     val dataUrl = data?.toJson() ?: ""
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     val builder = MovieLoadResponse(
         name = name,
         url = url,
@@ -2152,7 +2433,7 @@ suspend fun MainAPI.newMovieLoadResponse(
     dataUrl: String,
     initializer: suspend MovieLoadResponse.() -> Unit = { }
 ): MovieLoadResponse {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     val builder = MovieLoadResponse(
         name = name,
         url = url,
@@ -2171,30 +2452,40 @@ suspend fun MainAPI.newMovieLoadResponse(
  * @property season Season number.
  * @property episode Episode number.
  * @property posterUrl URL of Episode's poster image.
- * @property rating Episode rating.
+ * @property score Episode rating.
  * @property date Episode air date, see addDate.
  * @property runTime Episode runtime in seconds.
  * @see newEpisode
  * */
 data class Episode
-@Deprecated("Use newEpisode", level = DeprecationLevel.WARNING)
+@Deprecated("Use newEpisode", level = DeprecationLevel.ERROR)
 constructor(
     var data: String,
     var name: String? = null,
     var season: Int? = null,
     var episode: Int? = null,
     var posterUrl: String? = null,
-    var rating: Int? = null,
+    var score: Score? = null,
     var description: String? = null,
     var date: Long? = null,
     var runTime: Int? = null,
 ) {
+    @Deprecated(
+        "`rating` is the old scoring system, use score instead",
+        replaceWith = ReplaceWith("score")
+    )
+    var rating: Int?
+        set(value) {
+            this.score = Score.from(value, 100)
+        }
+        get() = score?.toInt(100)
+
     /**
      * Secondary constructor for backwards compatibility without runTime.
      *  TODO Remove this constructor after there is a new stable release and extensions are updated to support runTime.
      */
-    @Suppress("DEPRECATION")
-    @Deprecated("Use newEpisode with runTime included", level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated("Use newEpisode with runTime included", level = DeprecationLevel.ERROR)
     constructor(
         data: String,
         name: String? = null,
@@ -2205,7 +2496,7 @@ constructor(
         description: String? = null,
         date: Long? = null,
     ) : this(
-        data, name, season, episode, posterUrl, rating, description, date, null
+        data, name, season, episode, posterUrl, Score.fromOld(rating), description, date, null
     )
 }
 
@@ -2226,7 +2517,7 @@ fun MainAPI.newEpisode(
     initializer: Episode.() -> Unit = { },
     fix: Boolean = true,
 ): Episode {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     val builder = Episode(
         data = if (fix) fixUrl(url) else url
     )
@@ -2243,7 +2534,7 @@ fun <T> MainAPI.newEpisode(
         initializer = initializer
     ) // just in case java is wack
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     val builder = Episode(
         data = data?.toJson() ?: throw ErrorLoadingException("invalid newEpisode")
     )
@@ -2255,10 +2546,6 @@ interface IDownloadableMinimum {
     val url: String
     val referer: String
     val headers: Map<String, String>
-}
-
-fun IDownloadableMinimum.getId(): Int {
-    return url.hashCode()
 }
 
 /**
@@ -2277,7 +2564,7 @@ enum class SimklSyncServices(val originalName: String) {
  * @see newTvSeriesLoadResponse
  * */
 data class TvSeriesLoadResponse
-@Deprecated("Use newTvSeriesLoadResponse method", level = DeprecationLevel.WARNING)
+@Deprecated("Use newTvSeriesLoadResponse method", level = DeprecationLevel.ERROR)
 constructor(
     override var name: String,
     override var url: String,
@@ -2290,7 +2577,7 @@ constructor(
     override var plot: String? = null,
 
     override var showStatus: ShowStatus? = null,
-    override var rating: Int? = null,
+    override var score: Score? = null,
     override var tags: List<String>? = null,
     override var duration: Int? = null,
     override var trailers: MutableList<TrailerData> = mutableListOf(),
@@ -2303,6 +2590,8 @@ constructor(
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
+    @Prerelease
+    override var uniqueUrl: String = url
 ) : LoadResponse, EpisodeResponse {
     override fun getLatestEpisodes(): Map<DubStatus, Int?> {
         val maxSeason =
@@ -2330,10 +2619,10 @@ constructor(
      * Secondary constructor for backwards compatibility without contentRating.
      * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
      */
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Deprecated(
         "Use newTvSeriesLoadResponse method with contentRating included",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     constructor(
         name: String,
@@ -2367,7 +2656,7 @@ constructor(
         year,
         plot,
         showStatus,
-        rating,
+        Score.fromOld(rating),
         tags,
         duration,
         trailers,
@@ -2390,7 +2679,7 @@ suspend fun MainAPI.newTvSeriesLoadResponse(
     episodes: List<Episode>,
     initializer: suspend TvSeriesLoadResponse.() -> Unit = { }
 ): TvSeriesLoadResponse {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     val builder = TvSeriesLoadResponse(
         name = name,
         url = url,

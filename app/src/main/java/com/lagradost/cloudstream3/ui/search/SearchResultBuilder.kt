@@ -126,13 +126,15 @@ object SearchResultBuilder {
         cardView.isVisible = true
         cardView.loadImage(card.posterUrl, card.posterHeaders) {
             error { getImageFromDrawable(itemView.context, R.drawable.default_cover) }
+            /*
+            createPaletteAsync is currently disabled as we use hardware acceleration on images
             val posterUrl = card.posterUrl
             if (posterUrl != null && colorCallback != null) {
                 this.listener(onSuccess = { _,success ->
                     val bitmap = success.image.toBitmap()
                     createPaletteAsync(posterUrl, bitmap, colorCallback)
                 })
-            }
+            }*/
         }
         
         fun click(view: View?) {

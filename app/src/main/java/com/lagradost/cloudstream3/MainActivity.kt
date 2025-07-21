@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -12,6 +13,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.AttributeSet
 import android.util.Log
+import android.view.Gravity
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -79,12 +81,12 @@ import com.lagradost.cloudstream3.databinding.ActivityMainTvBinding
 import com.lagradost.cloudstream3.databinding.BottomResultviewPreviewBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.plugins.PluginManager
-import com.lagradost.cloudstream3.plugins.PluginManager._DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins
+import com.lagradost.cloudstream3.plugins.PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins
 import com.lagradost.cloudstream3.plugins.PluginManager.loadSinglePlugin
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.services.SubscriptionWorkManager
@@ -183,6 +185,7 @@ import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.system.exitProcess
 
+
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
     companion object {
         var activityResultLauncher: ActivityResultLauncher<Intent>? = null
@@ -252,6 +255,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
          * @return true if the str has launched an app task (be it successful or not)
          * @param isWebview does not handle providers and opening download page if true. Can still add repos and login.
          * */
+        @Suppress("DEPRECATION_ERROR")
         fun handleAppIntentUrl(
             activity: FragmentActivity?,
             str: String?,
@@ -262,7 +266,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 // TODO MUCH BETTER HANDLING
 
                 // Invalid URIs can crash
-                fun safeURI(uri: String) = normalSafeApiCall { URI(uri) }
+                fun safeURI(uri: String) = safe { URI(uri) }
 
                 if (str != null && this != null) {
                     if (str.startsWith("https://cs.repo")) {
@@ -301,9 +305,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         // This specific intent is used for the gradle deployWithAdb
                         // https://github.com/recloudstream/gradle/blob/master/src/main/kotlin/com/lagradost/cloudstream3/gradle/tasks/DeployWithAdbTask.kt#L46
                         if (str == "$APP_STRING:") {
-                            PluginManager._DO_NOT_CALL_FROM_A_PLUGIN_hotReloadAllLocalPlugins(
-                                activity
-                            )
+                            ioSafe {
+                                PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_hotReloadAllLocalPlugins(
+                                    activity
+                                )
+                            }
                         }
                     } else if (safeURI(str)?.scheme == APP_STRING_REPO) {
                         val url = str.replaceFirst(APP_STRING_REPO, "https")
@@ -767,16 +773,31 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         bottomPreviewBinding = null
     }
 
-    private var bottomPreviewPopup: BottomSheetDialog? = null
+    private var bottomPreviewPopup: Dialog? = null
     private var bottomPreviewBinding: BottomResultviewPreviewBinding? = null
     private fun showPreviewPopupDialog(): BottomResultviewPreviewBinding {
         val ret = (bottomPreviewBinding ?: run {
-            val builder =
-                BottomSheetDialog(this)
-            val binding: BottomResultviewPreviewBinding =
-                BottomResultviewPreviewBinding.inflate(builder.layoutInflater, null, false)
+
+            val builder: Dialog
+            val layout: Int
+
+            if (isLayout(PHONE)) {
+                builder =
+                    BottomSheetDialog(this)
+                layout = R.layout.bottom_resultview_preview
+            } else {
+                builder =
+                    Dialog(this, R.style.DialogHalfFullscreen)
+                layout = R.layout.bottom_resultview_preview_tv
+                // No way to do this in styles :(
+                builder.window?.setGravity(Gravity.CENTER_VERTICAL or Gravity.END)
+            }
+
+            val root = layoutInflater.inflate(layout, null, false)
+            val binding = BottomResultviewPreviewBinding.bind(root)
+
             bottomPreviewBinding = binding
-            builder.setContentView(binding.root)
+            builder.setContentView(root)
             builder.setOnDismissListener {
                 bottomPreviewPopup = null
                 bottomPreviewBinding = null
@@ -1084,6 +1105,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
     }
 
+    @Suppress("DEPRECATION_ERROR")
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
@@ -1118,15 +1140,15 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         updateTv()
 
         // backup when we update the app, I don't trust myself to not boot lock users, might want to make this a setting?
-        normalSafeApiCall {
+        safe {
             val appVer = BuildConfig.VERSION_NAME
             val lastAppAutoBackup: String = getKey("VERSION_NAME") ?: ""
             if (appVer != lastAppAutoBackup) {
                 setKey("VERSION_NAME", BuildConfig.VERSION_NAME)
-                normalSafeApiCall {
+                safe {
                     backup(this)
                 }
-                normalSafeApiCall {
+                safe {
                     // Recompile oat on new version
                     PluginManager.deleteAllOatFiles(this)
                 }
@@ -1186,6 +1208,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             null
         }
 
+        // overscan
+        val padding = settingsManager.getInt(getString(R.string.overscan_key), 0).toPx
+        binding?.homeRoot?.setPadding(padding, padding, padding, padding)
+
         changeStatusBarState(isLayout(EMULATOR))
 
         /** Biometric stuff for users without accounts **/
@@ -1227,7 +1253,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         ioSafe { SafeFile.check(this@MainActivity) }
 
         if (PluginManager.checkSafeModeFile()) {
-            normalSafeApiCall {
+            safe {
                 showToast(R.string.safe_mode_file, Toast.LENGTH_LONG)
             }
         } else if (lastError == null) {
@@ -1244,11 +1270,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                             true
                         )
                     ) {
-                        PluginManager._DO_NOT_CALL_FROM_A_PLUGIN_updateAllOnlinePluginsAndLoadThem(
+                        PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_updateAllOnlinePluginsAndLoadThem(
                             this@MainActivity
                         )
                     } else {
-                        _DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(this@MainActivity)
+                        ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(this@MainActivity)
                     }
 
                     //Automatically download not existing plugins, using mode specified.
@@ -1259,7 +1285,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         )
                     ) ?: AutoDownloadMode.Disable
                     if (autoDownloadPlugin != AutoDownloadMode.Disable) {
-                        PluginManager._DO_NOT_CALL_FROM_A_PLUGIN_downloadNotExistingPluginsAndLoad(
+                        PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_downloadNotExistingPluginsAndLoad(
                             this@MainActivity,
                             autoDownloadPlugin
                         )
@@ -1267,7 +1293,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
 
                 ioSafe {
-                    PluginManager._DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(
+                    PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(
                         this@MainActivity,
                         false
                     )
@@ -1396,9 +1422,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         resultviewPreviewMetaRating.setText(d.ratingText)
 
                         resultviewPreviewDescription.setTextHtml(d.plotText)
-                        resultviewPreviewPoster.loadImage(
-                            d.posterImage ?: d.posterBackgroundImage
-                        )
+                        if (isLayout(PHONE)) {
+                            resultviewPreviewPoster.loadImage(
+                                d.posterImage ?: d.posterBackgroundImage,
+                                headers = d.posterHeaders
+                            )
+                        } else {
+                            resultviewPreviewPoster.loadImage(
+                                d.posterBackgroundImage ?: d.posterImage,
+                                headers = d.posterHeaders
+                            )
+                        }
 
                         setUserData(syncViewModel.userData.value)
                         setWatchStatus(viewModel.watchStatus.value)

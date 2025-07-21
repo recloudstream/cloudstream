@@ -13,6 +13,10 @@
         <item name="customCastBackgroundColor">?attr/colorPrimary</item>
     </style>
 
+    <declare-styleable name="Focus">
+        <attr name="focusBackground" format="reference" />
+    </declare-styleable>
+
     <declare-styleable name="TestView">
         <attr name="header_text" format="string" />
     </declare-styleable>
