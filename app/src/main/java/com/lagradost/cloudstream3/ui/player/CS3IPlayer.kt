@@ -1065,6 +1065,11 @@ class CS3IPlayer : IPlayer {
                     CLEARKEY_UUID -> {
                         val client =
                             OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
+                        // Add headers from drm.keyRequestParameters (if any) and from the link.headers
+                        val headers = drm.keyRequestParameters + (currentLink?.headers ?: emptyMap())
+                        if (headers.isNotEmpty()) {
+                            client.setDefaultRequestProperties(headers)
+                        }
                         val drmCallback =
                             LocalMediaDrmCallback("{\"keys\":[{\"kty\":\"${drm.kty}\",\"k\":\"${drm.key}\",\"kid\":\"${drm.kid}\"}],\"type\":\"temporary\"}".toByteArray())
                         val manager = DefaultDrmSessionManager.Builder()
@@ -1086,6 +1091,11 @@ class CS3IPlayer : IPlayer {
                     PLAYREADY_UUID -> {
                         val client =
                             OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
+                        // Add headers from drm.keyRequestParameters (if any) and from the link.headers
+                        val headers = drm.keyRequestParameters + (currentLink?.headers ?: emptyMap())
+                        if (headers.isNotEmpty()) {
+                            client.setDefaultRequestProperties(headers)
+                        }
                         val drmCallback = HttpMediaDrmCallback(drm.licenseUrl, client)
                         val manager = DefaultDrmSessionManager.Builder()
                             .setPlayClearSamplesWithoutKeys(true)
