@@ -379,7 +379,7 @@ class HomeFragment : Fragment() {
                     dialog.dismissSafe()
                 }
 
-                var pinnedphashset = DataStoreHelper.pinnedProviders.reversed().toHashSet()
+                var pinnedphashset = DataStoreHelper.pinnedProviders.toHashSet()
 
                 val listView = dialog.findViewById<ListView>(R.id.listview1)
 
@@ -411,7 +411,7 @@ class HomeFragment : Fragment() {
 
                 fun updateList() {
                     DataStoreHelper.homePreference = preSelectedTypes
-                    val pinnedp = DataStoreHelper.pinnedProviders.reversed()
+                    val pinnedp = DataStoreHelper.pinnedProviders.toList()
                     pinnedphashset = pinnedp.toHashSet()
                     arrayAdapter.clear()
                     val sortedApis = validAPIs
@@ -422,7 +422,7 @@ class HomeFragment : Fragment() {
                         sortedApis.forEach { put(it.name, it) }
                     }
 
-                    val pinnedApis = pinnedp.mapNotNull { name ->
+                    val pinnedApis = pinnedp.asReversed().mapNotNull { name ->
                         sortedApiMap[name]
                     }
 
