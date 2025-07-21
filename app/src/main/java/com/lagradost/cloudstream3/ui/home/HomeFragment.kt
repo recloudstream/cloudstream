@@ -380,7 +380,21 @@ class HomeFragment : Fragment() {
                 }
 
                 val listView = dialog.findViewById<ListView>(R.id.listview1)
-                val arrayAdapter = ArrayAdapter<String>(this, R.layout.sort_bottom_single_choice)
+
+                val arrayAdapter = object : ArrayAdapter<String>(this, R.layout.sort_bottom_single_provider_choice,
+                    mutableListOf()
+                ) {
+                    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                        val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.sort_bottom_single_provider_choice, parent, false)
+                        val titleText = view.findViewById<TextView>(R.id.text1)
+                        val pinIcon = view.findViewById<ImageView>(R.id.pinicon)
+                        val name = getItem(position)
+                        titleText?.text = name
+                        val isPinned = DataStoreHelper.pinnedProviders.contains(currentValidApis[position].name ?: "")
+                        pinIcon.visibility = if (isPinned) View.VISIBLE else View.GONE
+                        return view
+                    }
+                }
                 listView?.adapter = arrayAdapter
                 listView?.choiceMode = AbsListView.CHOICE_MODE_SINGLE
 
@@ -395,29 +409,30 @@ class HomeFragment : Fragment() {
 
                 fun updateList() {
                     DataStoreHelper.homePreference = preSelectedTypes
-                    val pinnedp = DataStoreHelper.pinnedProviders.toList().asReversed()
+                    val pinnedp = DataStoreHelper.pinnedProviders.toHashSet().reversed()
                     arrayAdapter.clear()
-                    val sortedApis = validAPIs.filter { api ->
-                        api.hasMainPage && api.supportedTypes.any {
-                            preSelectedTypes.contains(it)
-                        }
-                    }.sortedBy { it.name.lowercase() }.toMutableList()
+                    val sortedApis = validAPIs
+                        .filter { it.hasMainPage && it.supportedTypes.any(preSelectedTypes::contains) }
+                        .sortedBy { it.name.lowercase() }
 
-                    val pinnedApis = pinnedp.mapNotNull { pinnedName ->
-                        sortedApis.find { it.name == pinnedName }
+                    val sortedApiMap = LinkedHashMap<String, MainAPI>().apply {
+                        sortedApis.forEach { put(it.name, it) }
                     }
-                    val remainingApis = sortedApis.filterNot { api -> pinnedp.contains(api.name) }
 
-                    currentValidApis = (pinnedApis + remainingApis).toMutableList()
-                    currentValidApis.addAll(0, validAPIs.subList(0, 2))
-
-                    val names = currentValidApis.map { api ->
-                        val flagPrefix = if (isMultiLang) "${getFlagFromIso(api.lang)?.plus(" ") ?: ""}" else ""
-                        val isPinned = pinnedp.any { it.contains(api.name, ignoreCase = true) }
-                        val pinSuffix = if (isPinned) " ★" else ""
-
-                        "$flagPrefix${api.name}$pinSuffix"
+                    val pinnedApis = pinnedp.mapNotNull { name ->
+                        sortedApiMap[name]
                     }
+
+                    val remainingApis = sortedApis.filterNot { pinnedp.contains(it.name) }
+
+                    currentValidApis = mutableListOf<MainAPI>().apply {
+                        addAll(pinnedApis)
+                        addAll(remainingApis)
+                        addAll(0, validAPIs.take(2))
+                    }
+
+                    val names =
+                        currentValidApis.map { if (isMultiLang) "${getFlagFromIso(it.lang)?.plus(" ") ?: ""}${it.name}" else it.name }
                     val index = currentValidApis.map { it.name }.indexOf(currentApiName)
                     listView?.setItemChecked(index, true)
                     arrayAdapter.addAll(names)
@@ -433,7 +448,7 @@ class HomeFragment : Fragment() {
                         }else{
                             pinnedp.add(thisapi)
                         }
-                        DataStoreHelper.pinnedProviders = pinnedp
+                        DataStoreHelper.pinnedProviders = pinnedp.toTypedArray()
                         updateList()
                     }
                     true

@@ -714,8 +714,8 @@ object DataStoreHelper {
             getKey("${idPrefix}_sync", id.toString())
         }
     }
-   var pinnedProviders: List<String>
-        get() = getKey(USER_PINNED_PROVIDERS) ?: emptyList()
+   var pinnedProviders:Array<String>
+        get() = getKey(USER_PINNED_PROVIDERS) ?: emptyArray<String>()
         set(value) = setKey(USER_PINNED_PROVIDERS, value)
 
 }
