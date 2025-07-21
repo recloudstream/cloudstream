@@ -106,7 +106,6 @@ import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.home.HomeViewModel
-import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.ui.library.LibraryViewModel
 import com.lagradost.cloudstream3.ui.player.BasicLink
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
@@ -720,37 +719,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
     }
 
-    private fun handleHomeLongClick() {
-        // Navigate to home if not already there and scroll to top
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
-        val navController = navHostFragment?.navController
-        
-        if (navController?.currentDestination?.id != R.id.navigation_home) {
-            // Navigate to home first
-            navController?.navigate(R.id.navigation_home)
-        }
-        
-        // Scroll to top - find the home fragment and call scrollToTop
-        ioSafe {
-            // Give some time for navigation to complete if needed
-            Thread.sleep(100)
-            runOnUiThread {
-                val fragments = supportFragmentManager.fragments
-                for (fragment in fragments) {
-                    if (fragment is NavHostFragment) {
-                        val childFragments = fragment.childFragmentManager.fragments
-                        for (childFragment in childFragments) {
-                            if (childFragment is HomeFragment) {
-                                childFragment.scrollToTop()
-                                break
-                            }
-                        }
-                        break
-                    }
-                }
-            }
-        }
-    }
 
     private val pluginsLock = Mutex()
     private fun onAllPluginsLoaded(success: Boolean = false) {
@@ -1664,38 +1632,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 )
             }
             
-            // Long click listener for Home button
-            // Note: Material BottomNavigationView doesn't have native long click support
-            // This is a workaround to add long click functionality
-            try {
-                post {
-                    val homeMenuItem = menu.findItem(R.id.navigation_home)
-                    if (homeMenuItem != null) {
-                        // Try to find the home navigation item view
-                        for (i in 0 until childCount) {
-                            val child = getChildAt(i)
-                            if (child is ViewGroup) {
-                                for (j in 0 until child.childCount) {
-                                    val menuItemView = child.getChildAt(j)
-                                    // Check if this is the home menu item
-                                    if (menuItemView.tag == homeMenuItem || 
-                                        (menuItemView as? View)?.id == R.id.navigation_home ||
-                                        menuItemView.contentDescription?.toString()?.contains("Home", ignoreCase = true) == true) {
-                                        menuItemView.setOnLongClickListener {
-                                            handleHomeLongClick()
-                                            true
-                                        }
-                                        break
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                // Fallback: if long click setup fails, just log it
-                Log.w("MainActivity", "Failed to set up long click for home button", e)
-            }
         }
 
         binding?.navRailView?.apply {
@@ -1715,38 +1651,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 )
             }
             
-            // Long click listener for Home button
-            // Note: Material NavigationRailView doesn't have native long click support
-            // This is a workaround to add long click functionality
-            try {
-                post {
-                    val homeMenuItem = menu.findItem(R.id.navigation_home)
-                    if (homeMenuItem != null) {
-                        // Try to find the home navigation item view
-                        for (i in 0 until childCount) {
-                            val child = getChildAt(i)
-                            if (child is ViewGroup) {
-                                for (j in 0 until child.childCount) {
-                                    val menuItemView = child.getChildAt(j)
-                                    // Check if this is the home menu item
-                                    if (menuItemView.tag == homeMenuItem || 
-                                        (menuItemView as? View)?.id == R.id.navigation_home ||
-                                        menuItemView.contentDescription?.toString()?.contains("Home", ignoreCase = true) == true) {
-                                        menuItemView.setOnLongClickListener {
-                                            handleHomeLongClick()
-                                            true
-                                        }
-                                        break
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                // Fallback: if long click setup fails, just log it
-                Log.w("MainActivity", "Failed to set up long click for home button", e)
-            }
 
             fun noFocus(view: View) {
                 view.tag = view.context.getString(R.string.tv_no_focus_tag)
@@ -1783,6 +1687,15 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
             } else {
                 navProfileRoot.isGone = true
+            }
+        }
+
+        // Home button long click functionality to scroll to top
+        for (view in listOf(binding?.navView, binding?.navRailView)) {
+            view?.findViewById<View?>(R.id.navigation_home)?.setOnLongClickListener {
+                val recycler = binding?.root?.findViewById<RecyclerView?>(R.id.home_master_recycler)
+                recycler?.smoothScrollToPosition(0)
+                return@setOnLongClickListener recycler != null
             }
         }
 

@@ -430,9 +430,6 @@ class HomeFragment : Fragment() {
 
     var binding: FragmentHomeBinding? = null
 
-    fun scrollToTop() {
-        binding?.homeMasterRecycler?.smoothScrollToPosition(0)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
