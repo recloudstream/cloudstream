@@ -379,6 +379,8 @@ class HomeFragment : Fragment() {
                     dialog.dismissSafe()
                 }
 
+                var pinnedphashset = DataStoreHelper.pinnedProviders.reversed().toHashSet()
+
                 val listView = dialog.findViewById<ListView>(R.id.listview1)
 
                 val arrayAdapter = object : ArrayAdapter<String>(this, R.layout.sort_bottom_single_provider_choice,
@@ -390,7 +392,7 @@ class HomeFragment : Fragment() {
                         val pinIcon = view.findViewById<ImageView>(R.id.pinicon)
                         val name = getItem(position)
                         titleText?.text = name
-                        val isPinned = DataStoreHelper.pinnedProviders.contains(currentValidApis[position].name ?: "")
+                        val isPinned = pinnedphashset.contains(currentValidApis[position].name ?: "")
                         pinIcon.visibility = if (isPinned) View.VISIBLE else View.GONE
                         return view
                     }
@@ -409,7 +411,8 @@ class HomeFragment : Fragment() {
 
                 fun updateList() {
                     DataStoreHelper.homePreference = preSelectedTypes
-                    val pinnedp = DataStoreHelper.pinnedProviders.toHashSet().reversed()
+                    val pinnedp = DataStoreHelper.pinnedProviders.reversed()
+                    pinnedphashset = pinnedp.toHashSet()
                     arrayAdapter.clear()
                     val sortedApis = validAPIs
                         .filter { it.hasMainPage && it.supportedTypes.any(preSelectedTypes::contains) }
@@ -423,12 +426,12 @@ class HomeFragment : Fragment() {
                         sortedApiMap[name]
                     }
 
-                    val remainingApis = sortedApis.filterNot { pinnedp.contains(it.name) }
+                    val remainingApis = sortedApis.filterNot { pinnedphashset.contains(it.name) }
 
                     currentValidApis = mutableListOf<MainAPI>().apply {
+                        addAll(validAPIs.take(2))
                         addAll(pinnedApis)
                         addAll(remainingApis)
-                        addAll(0, validAPIs.take(2))
                     }
 
                     val names =
