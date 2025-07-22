@@ -48,18 +48,28 @@ open class Dailymotion : ExtractorApi() {
                 getStream(it.url, this.name, callback)
             }
         }
+        metaData.subtitles.data.forEach { (_, subtitle) ->
+            val subUrl = subtitle.urls.firstOrNull() ?: return@forEach
+            subtitleCallback.invoke(
+                SubtitleFile(
+                    subtitle.label,
+                    subUrl
+                )
+            )
+        }
+
     }
 
     private fun getEmbedUrl(url: String): String? {
-		if (url.contains("/embed/") || url.contains("/video/")) {
-        return url
+        if (url.contains("/embed/") || url.contains("/video/")) {
+            return url
+        }
+        if (url.contains("geo.dailymotion.com")) {
+            val videoId = url.substringAfter("video=")
+            return "$baseUrl/embed/video/$videoId"
+        }
+        return null
     }
-		if (url.contains("geo.dailymotion.com")) {
-			val videoId = url.substringAfter("video=")
-			return "$baseUrl/embed/video/$videoId"
-		}
-		return null
-	}
 
     private fun getVideoId(url: String): String? {
         val path = URI(url).path
@@ -97,7 +107,18 @@ open class Dailymotion : ExtractorApi() {
     )
 
     data class MetaData(
-        val qualities: Map<String, List<VideoLink>>
+        val qualities: Map<String, List<VideoLink>>,
+        val subtitles: Subtitles,
+    )
+
+    data class Subtitles(
+        val enable: Boolean,
+        val data: Map<String, Subtitle>
+    )
+
+    data class Subtitle(
+        val label: String,
+        val urls: List<String>,
     )
 
     data class VideoLink(
