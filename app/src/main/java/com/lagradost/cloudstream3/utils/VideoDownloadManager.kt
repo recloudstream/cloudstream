@@ -274,7 +274,19 @@ object VideoDownloadManager {
             return null
         }
     }
-
+    //calculate the time
+    private fun getEstimatedTimeLeft(bytesPerSecond: Long, progress: Long, total: Long):String{
+        if(bytesPerSecond <= 0 ) return  ""
+        val timeInSec = (total - progress)/bytesPerSecond
+        val timeFormated = mutableListOf<String>()
+        val hrs = timeInSec/3600
+        val mins =  (timeInSec%3600)/ 60
+        val secs = timeInSec % 60
+        if(hrs>0) timeFormated.add("${hrs}h")
+        if(mins>0 || hrs>0) timeFormated.add("${mins}m")
+        timeFormated.add("${secs}s")
+        return timeFormated.joinToString(" ")
+    }
     /**
      * @param hlsProgress will together with hlsTotal display another notification if used, to lessen the confusion about estimated size.
      * */
@@ -378,10 +390,15 @@ object VideoDownloadManager {
                         " ($mbFormat/s)".format(bytesPerSecond.toFloat() / 1000000f)
                     } else ""
 
+                val remainingTime =
+                    if(state == DownloadType.IsDownloading){
+                        getEstimatedTimeLeft(bytesPerSecond, progress, total)
+                    }else ""
+
                 val bigText =
                     when (state) {
                         DownloadType.IsDownloading, DownloadType.IsPaused -> {
-                            (if (linkName == null) "" else "$linkName\n") + "$rowTwo\n$progressPercentage % ($progressMbString/$totalMbString)$suffix$mbPerSecondString"
+                            (if (linkName == null) "" else "$linkName\n") + "$rowTwo\n$progressPercentage % ($progressMbString/$totalMbString)$suffix$mbPerSecondString $remainingTime"
                         }
 
                         DownloadType.IsPending -> {
