@@ -1350,7 +1350,43 @@ constructor(
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
     override var score: Score? = null,
-) : SearchResponse
+) : SearchResponse {
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        "Use newAnimeSearchResponse",
+        level = DeprecationLevel.ERROR
+    )
+    constructor(
+        name: String,
+        url: String,
+        apiName: String,
+        type: TvType? = null,
+
+        posterUrl: String? = null,
+        year: Int? = null,
+        dubStatus: EnumSet<DubStatus>? = null,
+
+        otherName: String? = null,
+        episodes: MutableMap<DubStatus, Int> = mutableMapOf(),
+
+        id: Int? = null,
+        quality: SearchQuality? = null,
+        posterHeaders: Map<String, String>? = null,
+    ) : this(
+        name,
+        url,
+        apiName,
+        type,
+        posterUrl,
+        year,
+        dubStatus,
+        otherName,
+        episodes,
+        id,
+        quality,
+        posterHeaders, null
+    )
+}
 
 fun AnimeSearchResponse.addDubStatus(status: DubStatus, episodes: Int? = null) {
     this.dubStatus = dubStatus?.also { it.add(status) } ?: EnumSet.of(status)
@@ -1410,7 +1446,23 @@ constructor(
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
     override var score: Score? = null,
-) : SearchResponse
+) : SearchResponse {
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        "Use newTorrentSearchResponse",
+        level = DeprecationLevel.ERROR
+    )
+    constructor(
+        name: String,
+        url: String,
+        apiName: String,
+        type: TvType?,
+        posterUrl: String?,
+        id: Int? = null,
+        quality: SearchQuality? = null,
+        posterHeaders: Map<String, String>? = null
+    ) : this(name, url, apiName, type, posterUrl, id, quality, posterHeaders, null)
+}
 
 /** Data class of [SearchResponse] interface for Movies.
  * @see newMovieSearchResponse
@@ -1429,7 +1481,24 @@ constructor(
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
     override var score: Score? = null,
-) : SearchResponse
+) : SearchResponse {
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        "Use newMovieSearchResponse",
+        level = DeprecationLevel.ERROR
+    )
+    constructor(
+        name: String,
+        url: String,
+        apiName: String,
+        type: TvType?,
+        posterUrl: String?,
+        year: Int? = null,
+        id: Int? = null,
+        quality: SearchQuality? = null,
+        posterHeaders: Map<String, String>? = null
+    ) : this(name, url, apiName, type, posterUrl, id, year, quality, posterHeaders, null)
+}
 
 /** Data class of [SearchResponse] interface for Live streams.
  * @see newLiveSearchResponse
@@ -1448,7 +1517,24 @@ constructor(
     override var posterHeaders: Map<String, String>? = null,
     var lang: String? = null,
     override var score: Score? = null,
-) : SearchResponse
+) : SearchResponse {
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        "Use newLiveSearchResponse",
+        level = DeprecationLevel.ERROR
+    )
+    constructor(
+        name: String,
+        url: String,
+        apiName: String,
+        type: TvType?,
+        posterUrl: String?,
+        id: Int? = null,
+        quality: SearchQuality? = null,
+        posterHeaders: Map<String, String>? = null,
+        lang: String? = null,
+    ) : this(name, url, apiName, type, posterUrl, id, quality, posterHeaders, lang, null)
+}
 
 /** Data class of [SearchResponse] interface for Tv series.
  * @see newTvSeriesSearchResponse
@@ -1468,7 +1554,37 @@ constructor(
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
     override var score: Score? = null,
-) : SearchResponse
+) : SearchResponse {
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        "Use newTvSeriesSearchResponse",
+        level = DeprecationLevel.ERROR
+    )
+    constructor(
+        name: String,
+        url: String,
+        apiName: String,
+        type: TvType?,
+        posterUrl: String?,
+        year: Int? = null,
+        episodes: Int? = null,
+        id: Int? = null,
+        quality: SearchQuality? = null,
+        posterHeaders: Map<String, String>? = null,
+    ) : this(
+        name,
+        url,
+        apiName,
+        type,
+        posterUrl,
+        year,
+        episodes,
+        id,
+        quality,
+        posterHeaders,
+        null
+    )
+}
 
 /** Data class of Trailer data.
  * @property extractorUrl Url string of the Trailer video.
