@@ -51,6 +51,7 @@ interface SyncAPI : OAuth2API {
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null,
         override var id: Int? = null,
+        override var score: Score? = null,
     ) : SearchResponse
 
     abstract class AbstractSyncStatus {
@@ -163,7 +164,7 @@ interface SyncAPI : OAuth2API {
         val releaseDate: Date?,
         override var id: Int? = null,
         val plot : String? = null,
-        val rating: Score? = null,
+        override var score: Score? = null,
         val tags: List<String>? = null
     ) : SearchResponse
 }

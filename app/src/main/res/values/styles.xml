@@ -159,7 +159,7 @@
         <item name="android:background">@drawable/rating_bg_color</item>
         <item name="drawableTint">?attr/colorOnPrimary</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>
-        <item name="drawableStartCompat">@drawable/ic_baseline_star_24</item>
+        <!--<item name="drawableStartCompat">@drawable/ic_baseline_star_24</item>-->
     </style>
 
     <style name="TypeButton" parent="@style/SearchBox">

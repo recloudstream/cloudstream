@@ -259,7 +259,7 @@ object DataStoreHelper {
         @JsonProperty("quality") override var quality: SearchQuality?,
         @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>?,
         @JsonProperty("plot") open val plot: String? = null,
-        @JsonProperty("score") open var score: Score? = null,
+        @JsonProperty("score") override var score: Score? = null,
         @JsonProperty("tags") open val tags: List<String>? = null,
     ) : SearchResponse {
         @JsonProperty("rating", access = JsonProperty.Access.WRITE_ONLY)
@@ -326,7 +326,7 @@ object DataStoreHelper {
                 year?.toYear(),
                 this.id,
                 plot = this.plot,
-                rating = this.score,
+                score = this.score,
                 tags = this.tags
             )
         }
@@ -379,7 +379,7 @@ object DataStoreHelper {
                 year?.toYear(),
                 this.id,
                 plot = this.plot,
-                rating = this.score,
+                score = this.score,
                 tags = this.tags
             )
         }
@@ -432,7 +432,7 @@ object DataStoreHelper {
                 year?.toYear(),
                 this.id,
                 plot = this.plot,
-                rating = this.score,
+                score = this.score,
                 tags = this.tags
             )
         }
@@ -452,6 +452,7 @@ object DataStoreHelper {
         @JsonProperty("isFromDownload") val isFromDownload: Boolean,
         @JsonProperty("quality") override var quality: SearchQuality? = null,
         @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
+        @JsonProperty("score") override var score: Score? = null,
     ) : SearchResponse
 
     /**

@@ -778,7 +778,6 @@ enum class DubStatus(val id: Int) {
  * Internally it stores it as an int up to 10^9 to represent up to 10 significant digits. So think
  * of this as a decimal class specifically for ratings.
  * */
-@Prerelease
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 class Score private constructor(
     /** Decimal between [0, 10^9] representing the min score and max score respectively */
@@ -1192,6 +1191,7 @@ interface SearchResponse {
     var posterHeaders: Map<String, String>?
     var id: Int?
     var quality: SearchQuality?
+    var score: Score?
 }
 
 fun MainAPI.newTorrentSearchResponse(
@@ -1201,7 +1201,7 @@ fun MainAPI.newTorrentSearchResponse(
     fix: Boolean = true,
     initializer: TorrentSearchResponse.() -> Unit = { },
 ): TorrentSearchResponse {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     val builder = TorrentSearchResponse(
         name = name,
         url = if (fix) fixUrl(url) else url,
@@ -1221,7 +1221,7 @@ fun MainAPI.newMovieSearchResponse(
     fix: Boolean = true,
     initializer: MovieSearchResponse.() -> Unit = { },
 ): MovieSearchResponse {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     val builder = MovieSearchResponse(name, if (fix) fixUrl(url) else url, this.name, type)
     builder.initializer()
 
@@ -1235,7 +1235,7 @@ fun MainAPI.newLiveSearchResponse(
     fix: Boolean = true,
     initializer: LiveSearchResponse.() -> Unit = { },
 ): LiveSearchResponse {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     val builder = LiveSearchResponse(
         name = name,
         url = if (fix) fixUrl(url) else url,
@@ -1253,7 +1253,7 @@ fun MainAPI.newTvSeriesSearchResponse(
     fix: Boolean = true,
     initializer: TvSeriesSearchResponse.() -> Unit = { },
 ): TvSeriesSearchResponse {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     val builder = TvSeriesSearchResponse(name, if (fix) fixUrl(url) else url, this.name, type)
     builder.initializer()
 
@@ -1267,7 +1267,7 @@ fun MainAPI.newAnimeSearchResponse(
     fix: Boolean = true,
     initializer: AnimeSearchResponse.() -> Unit = { },
 ): AnimeSearchResponse {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     val builder = AnimeSearchResponse(name, if (fix) fixUrl(url) else url, this.name, type)
     builder.initializer()
 
@@ -1332,7 +1332,7 @@ data class ActorData(
  * @see newAnimeSearchResponse
  * */
 data class AnimeSearchResponse
-@Deprecated("Use newAnimeSearchResponse", level = DeprecationLevel.WARNING)
+@Deprecated("Use newAnimeSearchResponse", level = DeprecationLevel.ERROR)
 constructor(
     override val name: String,
     override val url: String,
@@ -1349,6 +1349,7 @@ constructor(
     override var id: Int? = null,
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
+    override var score: Score? = null,
 ) : SearchResponse
 
 fun AnimeSearchResponse.addDubStatus(status: DubStatus, episodes: Int? = null) {
@@ -1397,7 +1398,7 @@ fun AnimeSearchResponse.addDubStatus(status: String, episodes: Int? = null) {
  * @see newTorrentSearchResponse
  * */
 data class TorrentSearchResponse
-@Deprecated("Use newTorrentSearchResponse", level = DeprecationLevel.WARNING)
+@Deprecated("Use newTorrentSearchResponse", level = DeprecationLevel.ERROR)
 constructor(
     override val name: String,
     override val url: String,
@@ -1408,13 +1409,14 @@ constructor(
     override var id: Int? = null,
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
+    override var score: Score? = null,
 ) : SearchResponse
 
 /** Data class of [SearchResponse] interface for Movies.
  * @see newMovieSearchResponse
  * */
 data class MovieSearchResponse
-@Deprecated("Use newMovieSearchResponse", level = DeprecationLevel.WARNING)
+@Deprecated("Use newMovieSearchResponse", level = DeprecationLevel.ERROR)
 constructor(
     override val name: String,
     override val url: String,
@@ -1425,14 +1427,15 @@ constructor(
     var year: Int? = null,
     override var id: Int? = null,
     override var quality: SearchQuality? = null,
-    override var posterHeaders: Map<String, String>? = null
+    override var posterHeaders: Map<String, String>? = null,
+    override var score: Score? = null,
 ) : SearchResponse
 
 /** Data class of [SearchResponse] interface for Live streams.
  * @see newLiveSearchResponse
  * */
 data class LiveSearchResponse
-@Deprecated("Use newLiveSearchResponse", level = DeprecationLevel.WARNING)
+@Deprecated("Use newLiveSearchResponse", level = DeprecationLevel.ERROR)
 constructor(
     override val name: String,
     override val url: String,
@@ -1444,13 +1447,14 @@ constructor(
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
     var lang: String? = null,
+    override var score: Score? = null,
 ) : SearchResponse
 
 /** Data class of [SearchResponse] interface for Tv series.
  * @see newTvSeriesSearchResponse
  * */
 data class TvSeriesSearchResponse
-@Deprecated("Use newTvSeriesSearchResponse", level = DeprecationLevel.WARNING)
+@Deprecated("Use newTvSeriesSearchResponse", level = DeprecationLevel.ERROR)
 constructor(
     override val name: String,
     override val url: String,
@@ -1463,6 +1467,7 @@ constructor(
     override var id: Int? = null,
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
+    override var score: Score? = null,
 ) : SearchResponse
 
 /** Data class of Trailer data.
@@ -1513,7 +1518,6 @@ interface LoadResponse {
     var year: Int?
     var plot: String?
 
-    @Prerelease
     var score: Score?
     var tags: List<String>?
     var duration: Int? // in minutes
@@ -1527,7 +1531,6 @@ interface LoadResponse {
     var backgroundPosterUrl: String?
     var contentRating: String?
 
-    @Prerelease
     var uniqueUrl: String
 
     @Deprecated(
@@ -1738,13 +1741,11 @@ interface LoadResponse {
         }
 
         @Suppress("UNUSED_PARAMETER")
-        @Prerelease
         fun LoadResponse.addTraktId(id: String?) {
             // TODO add Trakt sync
         }
 
         @Suppress("UNUSED_PARAMETER")
-        @Prerelease
         fun LoadResponse.addKitsuId(id: String?) {
             // TODO add Kitsu sync
         }
@@ -1982,7 +1983,6 @@ constructor(
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
-    @Prerelease
     override var uniqueUrl: String = url
 ) : LoadResponse {
     /**
@@ -2095,7 +2095,6 @@ constructor(
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
-    @Prerelease
     override var uniqueUrl: String = url
 ) : LoadResponse, EpisodeResponse {
 
@@ -2131,7 +2130,7 @@ constructor(
     @Suppress("DEPRECATION_ERROR")
     @Deprecated(
         "Use newAnimeLoadResponse method with contentRating included",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     constructor(
         engName: String? = null,
@@ -2202,7 +2201,7 @@ suspend fun MainAPI.newAnimeLoadResponse(
     comingSoonIfNone: Boolean = true,
     initializer: suspend AnimeLoadResponse.() -> Unit = { },
 ): AnimeLoadResponse {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     val builder = AnimeLoadResponse(name = name, url = url, apiName = this.name, type = type)
     builder.initializer()
     if (comingSoonIfNone) {
@@ -2243,7 +2242,6 @@ constructor(
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
-    @Prerelease
     override var uniqueUrl: String = url
 ) : LoadResponse {
     /**
@@ -2253,7 +2251,7 @@ constructor(
     @Suppress("DEPRECATION_ERROR")
     @Deprecated(
         "Use newLiveStreamLoadResponse method with contentRating included",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     constructor(
         name: String,
@@ -2342,7 +2340,6 @@ constructor(
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
-    @Prerelease
     override var uniqueUrl: String = url
 ) : LoadResponse {
     /**
@@ -2458,7 +2455,7 @@ suspend fun MainAPI.newMovieLoadResponse(
  * @see newEpisode
  * */
 data class Episode
-@Deprecated("Use newEpisode", level = DeprecationLevel.ERROR)
+@Deprecated("Use newEpisode method", level = DeprecationLevel.ERROR)
 constructor(
     var data: String,
     var name: String? = null,
@@ -2485,7 +2482,7 @@ constructor(
      *  TODO Remove this constructor after there is a new stable release and extensions are updated to support runTime.
      */
     @Suppress("DEPRECATION_ERROR")
-    @Deprecated("Use newEpisode with runTime included", level = DeprecationLevel.ERROR)
+    @Deprecated("Use newEpisode method", level = DeprecationLevel.ERROR)
     constructor(
         data: String,
         name: String? = null,
@@ -2590,7 +2587,6 @@ constructor(
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
-    @Prerelease
     override var uniqueUrl: String = url
 ) : LoadResponse, EpisodeResponse {
     override fun getLatestEpisodes(): Map<DubStatus, Int?> {
