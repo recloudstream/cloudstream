@@ -719,6 +719,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
     }
 
+
     private val pluginsLock = Mutex()
     private fun onAllPluginsLoaded(success: Boolean = false) {
         ioSafe {
@@ -1630,6 +1631,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     navController
                 )
             }
+            
         }
 
         binding?.navRailView?.apply {
@@ -1648,6 +1650,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     navController
                 )
             }
+            
 
             fun noFocus(view: View) {
                 view.tag = view.context.getString(R.string.tv_no_focus_tag)
@@ -1684,6 +1687,15 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
             } else {
                 navProfileRoot.isGone = true
+            }
+        }
+
+        // Home button long click functionality to scroll to top
+        for (view in listOf(binding?.navView, binding?.navRailView)) {
+            view?.findViewById<View?>(R.id.navigation_home)?.setOnLongClickListener {
+                val recycler = binding?.root?.findViewById<RecyclerView?>(R.id.home_master_recycler)
+                recycler?.smoothScrollToPosition(0)
+                return@setOnLongClickListener recycler != null
             }
         }
 
