@@ -1063,13 +1063,9 @@ class CS3IPlayer : IPlayer {
             item.drm?.let { drm ->
                 when (drm.uuid) {
                     CLEARKEY_UUID -> {
-                        val client =
-                            OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
-                        // Add headers from drm.keyRequestParameters (if any) and from the link.headers
-                        val headers = drm.keyRequestParameters + (currentLink?.headers ?: emptyMap())
-                        if (headers.isNotEmpty()) {
-                            client.setDefaultRequestProperties(headers)
-                        }
+                        // Use createOnlineSource to properly apply headers from the ExtractorLink
+                        val client = currentLink?.let { createOnlineSource(it) }
+                            ?: OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)             
                         val drmCallback =
                             LocalMediaDrmCallback("{\"keys\":[{\"kty\":\"${drm.kty}\",\"k\":\"${drm.key}\",\"kid\":\"${drm.kid}\"}],\"type\":\"temporary\"}".toByteArray())
                         val manager = DefaultDrmSessionManager.Builder()
@@ -1089,13 +1085,9 @@ class CS3IPlayer : IPlayer {
 
                     WIDEVINE_UUID,
                     PLAYREADY_UUID -> {
-                        val client =
-                            OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
-                        // Add headers from drm.keyRequestParameters (if any) and from the link.headers
-                        val headers = drm.keyRequestParameters + (currentLink?.headers ?: emptyMap())
-                        if (headers.isNotEmpty()) {
-                            client.setDefaultRequestProperties(headers)
-                        }
+                        // Use createOnlineSource to properly apply headers from the ExtractorLink
+                        val client = currentLink?.let { createOnlineSource(it) }
+                            ?: OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)  
                         val drmCallback = HttpMediaDrmCallback(drm.licenseUrl, client)
                         val manager = DefaultDrmSessionManager.Builder()
                             .setPlayClearSamplesWithoutKeys(true)
