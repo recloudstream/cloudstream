@@ -172,6 +172,7 @@ class CS3IPlayer : IPlayer {
         val kty: String? = null,
         val licenseUrl: String? = null,
         val keyRequestParameters: HashMap<String, String>,
+        val headers: Map<String, String> = emptyMap(),
     )
 
     override fun getDuration(): Long? = exoPlayer?.duration
@@ -1063,9 +1064,8 @@ class CS3IPlayer : IPlayer {
             item.drm?.let { drm ->
                 when (drm.uuid) {
                     CLEARKEY_UUID -> {
-                        // Use createOnlineSource to properly apply headers from the ExtractorLink
-                        val client = currentLink?.let { createOnlineSource(it) }
-                            ?: OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)             
+                        // Use headers from DrmMetadata for media requests
+                        val client = createOnlineSource(drm.headers)
                         val drmCallback =
                             LocalMediaDrmCallback("{\"keys\":[{\"kty\":\"${drm.kty}\",\"k\":\"${drm.key}\",\"kid\":\"${drm.kid}\"}],\"type\":\"temporary\"}".toByteArray())
                         val manager = DefaultDrmSessionManager.Builder()
@@ -1085,9 +1085,8 @@ class CS3IPlayer : IPlayer {
 
                     WIDEVINE_UUID,
                     PLAYREADY_UUID -> {
-                        // Use createOnlineSource to properly apply headers from the ExtractorLink
-                        val client = currentLink?.let { createOnlineSource(it) }
-                            ?: OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)  
+                        // Use headers from DrmMetadata for media requests
+                        val client = createOnlineSource(drm.headers)
                         val drmCallback = HttpMediaDrmCallback(drm.licenseUrl, client)
                         val manager = DefaultDrmSessionManager.Builder()
                             .setPlayClearSamplesWithoutKeys(true)
@@ -1672,7 +1671,8 @@ class CS3IPlayer : IPlayer {
                                 uuid = link.uuid,
                                 kty = link.kty,
                                 licenseUrl = link.licenseUrl,
-                                keyRequestParameters = link.keyRequestParameters
+                                keyRequestParameters = link.keyRequestParameters,
+                                headers = link.getAllHeaders()
                             )
                         )
                     )
