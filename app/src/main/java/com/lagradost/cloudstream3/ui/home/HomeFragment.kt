@@ -379,8 +379,24 @@ class HomeFragment : Fragment() {
                     dialog.dismissSafe()
                 }
 
+                var pinnedphashset = DataStoreHelper.pinnedProviders.toHashSet()
+
                 val listView = dialog.findViewById<ListView>(R.id.listview1)
-                val arrayAdapter = ArrayAdapter<String>(this, R.layout.sort_bottom_single_choice)
+
+                val arrayAdapter = object : ArrayAdapter<String>(this, R.layout.sort_bottom_single_provider_choice,
+                    mutableListOf()
+                ) {
+                    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                        val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.sort_bottom_single_provider_choice, parent, false)
+                        val titleText = view.findViewById<TextView>(R.id.text1)
+                        val pinIcon = view.findViewById<ImageView>(R.id.pinicon)
+                        val name = getItem(position)
+                        titleText?.text = name
+                        val isPinned = pinnedphashset.contains(currentValidApis[position].name ?: "")
+                        pinIcon.visibility = if (isPinned) View.VISIBLE else View.GONE
+                        return view
+                    }
+                }
                 listView?.adapter = arrayAdapter
                 listView?.choiceMode = AbsListView.CHOICE_MODE_SINGLE
 
@@ -395,14 +411,28 @@ class HomeFragment : Fragment() {
 
                 fun updateList() {
                     DataStoreHelper.homePreference = preSelectedTypes
-
+                    val pinnedp = DataStoreHelper.pinnedProviders.toList()
+                    pinnedphashset = pinnedp.toHashSet()
                     arrayAdapter.clear()
-                    currentValidApis = validAPIs.filter { api ->
-                        api.hasMainPage && api.supportedTypes.any {
-                            preSelectedTypes.contains(it)
-                        }
-                    }.sortedBy { it.name.lowercase() }.toMutableList()
-                    currentValidApis.addAll(0, validAPIs.subList(0, 2))
+                    val sortedApis = validAPIs
+                        .filter { it.hasMainPage && it.supportedTypes.any(preSelectedTypes::contains) }
+                        .sortedBy { it.name.lowercase() }
+
+                    val sortedApiMap = LinkedHashMap<String, MainAPI>().apply {
+                        sortedApis.forEach { put(it.name, it) }
+                    }
+
+                    val pinnedApis = pinnedp.asReversed().mapNotNull { name ->
+                        sortedApiMap[name]
+                    }
+
+                    val remainingApis = sortedApis.filterNot { pinnedphashset.contains(it.name) }
+
+                    currentValidApis = mutableListOf<MainAPI>().apply {
+                        addAll(validAPIs.take(2))
+                        addAll(pinnedApis)
+                        addAll(remainingApis)
+                    }
 
                     val names =
                         currentValidApis.map { if (isMultiLang) "${getFlagFromIso(it.lang)?.plus(" ") ?: ""}${it.name}" else it.name }
@@ -410,6 +440,21 @@ class HomeFragment : Fragment() {
                     listView?.setItemChecked(index, true)
                     arrayAdapter.addAll(names)
                     arrayAdapter.notifyDataSetChanged()
+                }
+                // pin provider on hold
+                listView?.setOnItemLongClickListener { _, _, i, _ ->
+                    if (currentValidApis.isNotEmpty() && i>1) {
+                        val pinnedp = DataStoreHelper.pinnedProviders.toMutableList()
+                        val thisapi = currentValidApis[i].name
+                        if(pinnedp.contains(thisapi)){
+                            pinnedp.remove(thisapi)
+                        }else{
+                            pinnedp.add(thisapi)
+                        }
+                        DataStoreHelper.pinnedProviders = pinnedp.toTypedArray()
+                        updateList()
+                    }
+                    true
                 }
 
                 bindChips(
