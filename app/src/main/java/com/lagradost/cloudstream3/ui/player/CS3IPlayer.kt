@@ -188,9 +188,17 @@ class CS3IPlayer : IPlayer {
     private var requestedListeningPercentages: List<Int>? = null
 
     private var eventHandler: ((PlayerEvent) -> Unit)? = null
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     fun event(event: PlayerEvent) {
-        eventHandler?.invoke(event)
+        // Ensure that all work is done on the main looper, aka main thread
+        if (Looper.myLooper() == mainHandler.looper) {
+            eventHandler?.invoke(event)
+        } else {
+            mainHandler.post {
+                eventHandler?.invoke(event)
+            }
+        }
     }
 
     override fun releaseCallbacks() {
