@@ -48,8 +48,8 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.CommonActivity.keyEventListener
 import com.lagradost.cloudstream3.CommonActivity.playerEventListener
-import com.lagradost.cloudstream3.CommonActivity.screenHeight
-import com.lagradost.cloudstream3.CommonActivity.screenWidth
+import com.lagradost.cloudstream3.CommonActivity.screenHeightWithOrientation
+import com.lagradost.cloudstream3.CommonActivity.screenWidthWithOrientation
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
@@ -229,22 +229,22 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 (context?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager)?.currentWindowMetrics
             val realScreenHeight =
                 windowMetrics?.let { windowMetrics.bounds.bottom - windowMetrics.bounds.top }
-                    ?: screenHeight
+                    ?: screenHeightWithOrientation
             val realScreenWidth =
                 windowMetrics?.let { windowMetrics.bounds.right - windowMetrics.bounds.left }
-                    ?: screenWidth
+                    ?: screenWidthWithOrientation
 
             val insets =
                 rootWindowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
             val isOutsideHeight = rawY < insets.top || rawY > (realScreenHeight - insets.bottom)
             val isOutsideWidth = if (windowMetrics == null) {
-                rawX < screenWidth
+                rawX < screenWidthWithOrientation
             } else rawX < insets.left || rawX > realScreenWidth - insets.right
 
             return !(isOutsideWidth || isOutsideHeight)
         } else {
             val statusHeight = statusBarHeight ?: 0
-            return rawY > statusHeight && rawX < screenWidth
+            return rawY > statusHeight && rawX < screenWidthWithOrientation
         }
     }
 
@@ -923,7 +923,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         touchEnd: Vector2?
     ): Long? {
         if (touchStart == null || touchEnd == null || startTime == null) return null
-        val diffX = (touchEnd.x - touchStart.x) * HORIZONTAL_MULTIPLIER / screenWidth.toFloat()
+        val diffX = (touchEnd.x - touchStart.x) * HORIZONTAL_MULTIPLIER / screenWidthWithOrientation.toFloat()
         val duration = player.getDuration() ?: return null
         return max(
             min(
@@ -1071,7 +1071,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     }
                     if (isCurrentTouchValid && !isLocked && isFullScreenPlayer) {
                         // seek time
-                       if(swipeHorizontalEnabled && currentTouchAction == TouchAction.Time) {
+                        if(swipeHorizontalEnabled && currentTouchAction == TouchAction.Time) {
                             val startTime = currentTouchStartPlayerTime
                             if (startTime != null) {
                                 calculateNewTime(
@@ -1104,12 +1104,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                 currentDoubleTapIndex++
                                 if (doubleTapPauseEnabled && isFullScreenPlayer) { // you can pause if your tap is in the middle of the screen
                                     when {
-                                        currentTouch.x < screenWidth / 2 - (DOUBLE_TAB_PAUSE_PERCENTAGE * screenWidth) -> {
+                                        currentTouch.x < screenWidthWithOrientation / 2 - (DOUBLE_TAB_PAUSE_PERCENTAGE * screenWidthWithOrientation) -> {
                                             if (doubleTapEnabled)
                                                 rewind()
                                         }
 
-                                        currentTouch.x > screenWidth / 2 + (DOUBLE_TAB_PAUSE_PERCENTAGE * screenWidth) -> {
+                                        currentTouch.x > screenWidthWithOrientation / 2 + (DOUBLE_TAB_PAUSE_PERCENTAGE * screenWidthWithOrientation) -> {
                                             if (doubleTapEnabled)
                                                 fastForward()
                                         }
@@ -1122,7 +1122,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                         }
                                     }
                                 } else if (doubleTapEnabled && isFullScreenPlayer) {
-                                    if (currentTouch.x < screenWidth / 2) {
+                                    if (currentTouch.x < screenWidthWithOrientation / 2) {
                                         rewind()
                                     } else {
                                         fastForward()
@@ -1172,9 +1172,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                             val diffFromStart = startTouch - currentTouch
 
                             if (swipeVerticalEnabled) {
-                                if (abs(diffFromStart.y * 100 / screenHeight) > MINIMUM_VERTICAL_SWIPE) {
+                                if (abs(diffFromStart.y * 100 / screenHeightWithOrientation) > MINIMUM_VERTICAL_SWIPE) {
                                     // left = Brightness, right = Volume, but the UI is reversed to show the UI better
-                                    currentTouchAction = if (startTouch.x < screenWidth / 2) {
+                                    currentTouchAction = if (startTouch.x < screenWidthWithOrientation / 2) {
                                         // hide the UI if you hold brightness to show screen better, better UX
                                         if (isShowing) {
                                             isShowing = false
@@ -1188,7 +1188,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                 }
                             }
                             if (swipeHorizontalEnabled) {
-                                if (abs(diffFromStart.x * 100 / screenHeight) > MINIMUM_HORIZONTAL_SWIPE) {
+                                if (abs(diffFromStart.x * 100 / screenHeightWithOrientation) > MINIMUM_HORIZONTAL_SWIPE) {
                                     currentTouchAction = TouchAction.Time
                                 }
                             }
@@ -1199,7 +1199,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                         if (lastTouch != null) {
                             val diffFromLast = lastTouch - currentTouch
                             val verticalAddition =
-                                diffFromLast.y * VERTICAL_MULTIPLIER / screenHeight.toFloat()
+                                diffFromLast.y * VERTICAL_MULTIPLIER / screenHeightWithOrientation.toFloat()
 
                             // update UI
                             playerTimeText.isVisible = false
