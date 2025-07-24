@@ -93,6 +93,8 @@ const val HORIZONTAL_MULTIPLIER = 2.0f
 const val DOUBLE_TAB_MAXIMUM_HOLD_TIME = 200L
 const val DOUBLE_TAB_MINIMUM_TIME_BETWEEN = 200L    // this also affects the UI show response time
 const val DOUBLE_TAB_PAUSE_PERCENTAGE = 0.15        // in both directions
+const val HIDE_CONTROL_INTERFACE = 5000L
+
 private const val SUBTITLE_DELAY_BUNDLE_KEY = "subtitle_delay"
 
 // All the UI Logic for the player
@@ -849,7 +851,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             if (!isCurrentTouchValid && isShowing && index == currentTapIndex && player.getIsPlaying()) {
                 onClickChange()
             }
-        }, 2000)
+        }, HIDE_CONTROL_INTERFACE)
     }
 
     // this is used because you don't want to hide UI when double tap seeking
