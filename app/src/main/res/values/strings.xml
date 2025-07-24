@@ -403,10 +403,12 @@
     <string name="show_hd">Quality label</string>
     <string name="show_dub">Dub label</string>
     <string name="show_sub">Sub label</string>
+    <string name="show_rating">Rating Label</string>
     <string name="show_title">Title</string>
     <string name="show_hd_key" translatable="false">show_hd_key</string>
     <string name="show_dub_key" translatable="false">show_dub_key</string>
     <string name="show_sub_key" translatable="false">show_sub_key</string>
+    <string name="show_rating_key" translatable="false">show_rating_key</string>
     <string name="show_title_key" translatable="false">show_title_key</string>
     <string name="poster_ui_settings">Toggle UI elements on poster</string>
     <string name="no_update_found">No Update Found</string>
