@@ -671,4 +671,6 @@
     <string name="all_subtitles_italic">Зробити всі субтитри курсивом</string>
     <string name="volume_exceeded_100">Гучність перевищила 100%</string>
     <string name="slide_up_again_to_exceed_100">Ще раз проведіть угору, щоби перевищити 100%</string>
+    <string name="speedup_title" >Прискорення затисканням</string>
+    <string name="speedup_summary" >Затиснути, щоб увімкнути 2x прискорення</string>
 </resources>
