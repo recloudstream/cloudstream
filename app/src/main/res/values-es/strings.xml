@@ -699,4 +699,15 @@
     <string name="background_radius">Radio del fondo</string>
     <string name="volume_exceeded_100">El volumen ha excedido 100%</string>
     <string name="slide_up_again_to_exceed_100">Deslice de nuevo hacia arriba para ir más allá del 100%</string>
+    <string name="download_parallel_settings_des">How many different items that can be downloaded in parallel</string>
+    <string name="player_settings_always_ask">Preguntar siempre</string>
+    <string name="parallel_downloads">Descargas en paralelo</string>
+    <string name="concurrent_connections">Conexiones concurrentes</string>
+    <string name="concurrent_connections_settings_des">Cuántas conexiones concurrentes para cada descarga se pueden usar</string>
+    <string name="go_to_downloads">Ir a Descargar</string>
+    <string name="no_internet_connection">Sin conexión a internet. \n\nPor favor, conéctate a internet y vuelve a intentarlo, o mira tus descargas mientras estás offline.</string>
+    <string name="overscan_settings_des">Cambios en los límites de la pantalla</string>
+    <string name="overscan_settings">Overscan</string>
+    <string name="poster_size_settings_des">Cambios en el tamaño de los pósteres</string>
+    <string name="poster_size_settings">Tamaño del póster</string>
 </resources>

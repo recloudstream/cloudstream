@@ -685,4 +685,17 @@
     <string name="all_subtitles_italic">Сделать все субтитры курсивом</string>
     <string name="volume_exceeded_100">Громкость превысила 100%</string>
     <string name="slide_up_again_to_exceed_100">Повысьте снова чтобы перевысить 100%</string>
+    <string name="go_to_downloads">Перейти к загрузкам</string>
+    <string name="no_internet_connection">Нет подключения к Интернету.\n\nПожалуйста, подключитесь к Интернету и повторите попытку, или смотрите свои загрузки, находясь в автономном режиме.</string>
+    <string name="download_parallel_settings_des">Сколько различных элементов можно загружать параллельно</string>
+    <string name="parallel_downloads">Параллельные загрузки</string>
+    <string name="concurrent_connections">Одновременные соединения</string>
+    <string name="concurrent_connections_settings_des">Сколько одновременных соединений может использовать каждая загрузка во время скачивания</string>
+    <string name="overscan_settings_des">Изменение границ экрана</string>
+    <string name="overscan_settings">Пересканирование</string>
+    <string name="poster_size_settings_des">Изменение размера плакатов</string>
+    <string name="poster_size_settings">Размер плаката</string>
+    <string name="player_settings_always_ask">Спрашивать всегда</string>
+    <string name="speedup_title">Переключатель скорости LongPress</string>
+    <string name="speedup_summary">Удерживайте, чтобы увеличить скорость в 2 раза</string>
 </resources>
