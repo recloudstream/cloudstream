@@ -421,7 +421,7 @@ fun newHomePageResponse(list: List<HomePageList>, hasNext: Boolean? = null): Hom
 }
 
 @Prerelease
-fun newSearchResponse(
+fun newSearchResponseList(
     list: List<SearchResponse>?,
     hasNext: Boolean? = null,
 ): SearchResponseList {
@@ -570,9 +570,12 @@ abstract class MainAPI {
     }
 
     @Prerelease
-    open suspend fun search(query: String, page: Int): SearchResponseList {
-        return newSearchResponse(
-            search(query),
+    /** Paginated search, starts with page: 1 */
+    open suspend fun search(query: String, page: Int): SearchResponseList? {
+        val searchResults = search(query) ?: return null
+
+        return newSearchResponseList(
+            searchResults,
             false
         )
     }

@@ -516,12 +516,11 @@ class SearchFragment : Fragment() {
                 listLock.lock()
                 (binding?.searchMasterRecycler?.adapter as ParentItemAdapter?)?.apply {
                     val newItems = list.map { ongoing ->
-                        val dataList =
-                            if (ongoing.data is Resource.Success) ongoing.data.value else ArrayList()
+                        val dataList = ongoing.value.list
                         val dataListFiltered =
                             context?.filterSearchResultByFilmQuality(dataList) ?: dataList
                         val ongoingList = HomePageList(
-                            ongoing.apiName,
+                            ongoing.key,
                             dataListFiltered
                         )
                         ongoingList
@@ -552,7 +551,7 @@ class SearchFragment : Fragment() {
             }, { item ->
                 bottomSheetDialog = activity?.loadHomepageList(item, dismissCallback = {
                     bottomSheetDialog = null
-                })
+                }, expandCallback = { searchViewModel.expandAndReturn(it) })
             })
 
         val historyAdapter = SearchHistoryAdaptor(mutableListOf()) { click ->
