@@ -784,6 +784,9 @@ class Score private constructor(
     @JsonProperty("data")
     private val data: Int,
 ) {
+    override fun hashCode(): Int = this.data.hashCode()
+    override fun equals(other: Any?): Boolean = other is Score && this.data == other.data
+
     fun toOld(): Int = toInt(10000)
 
     fun toByte(maxScore: Int): Byte = toLong(maxScore).toByte()
