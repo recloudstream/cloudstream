@@ -33,6 +33,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
+import androidx.core.view.get
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -50,6 +51,7 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.Session
 import com.google.android.gms.cast.framework.SessionManager
@@ -1631,7 +1633,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     navController
                 )
             }
-            
+
         }
 
         binding?.navRailView?.apply {
@@ -1650,7 +1652,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     navController
                 )
             }
-            
+
 
             fun noFocus(view: View) {
                 view.tag = view.context.getString(R.string.tv_no_focus_tag)
@@ -1690,10 +1692,47 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             }
         }
 
-        // Home button long click functionality to scroll to top
+        // Navigation button long click functionality to scroll to top
         for (view in listOf(binding?.navView, binding?.navRailView)) {
             view?.findViewById<View?>(R.id.navigation_home)?.setOnLongClickListener {
                 val recycler = binding?.root?.findViewById<RecyclerView?>(R.id.home_master_recycler)
+                recycler?.smoothScrollToPosition(0)
+                return@setOnLongClickListener recycler != null
+            }
+
+            view?.findViewById<View?>(R.id.navigation_library)?.setOnLongClickListener {
+                val viewPager = binding?.root?.findViewById<ViewPager2?>(R.id.viewpager)
+                    ?: return@setOnLongClickListener false
+                try {
+                    val children = (viewPager[0] as? RecyclerView)?.children
+                        ?: return@setOnLongClickListener false
+                    for (child in children) {
+                        child.findViewById<RecyclerView?>(R.id.page_recyclerview)
+                            ?.smoothScrollToPosition(0)
+                    }
+                } catch (_: IndexOutOfBoundsException) {
+                } catch (t: Throwable) {
+                    logError(t)
+                }
+                return@setOnLongClickListener true
+            }
+
+            view?.findViewById<View?>(R.id.navigation_search)?.setOnLongClickListener {
+                for (recyclerId in arrayOf(
+                    R.id.search_master_recycler,
+                    R.id.search_autofit_results,
+                    R.id.search_history_recycler
+                )) {
+                    val recycler = binding?.root?.findViewById<RecyclerView?>(recyclerId)
+                        ?: return@setOnLongClickListener false
+                    recycler.smoothScrollToPosition(0)
+                }
+                return@setOnLongClickListener true
+            }
+
+            view?.findViewById<View?>(R.id.navigation_downloads)?.setOnLongClickListener {
+                val recycler: RecyclerView? = binding?.root?.findViewById(R.id.download_list)
+                    ?: binding?.root?.findViewById(R.id.download_child_list)
                 recycler?.smoothScrollToPosition(0)
                 return@setOnLongClickListener recycler != null
             }
