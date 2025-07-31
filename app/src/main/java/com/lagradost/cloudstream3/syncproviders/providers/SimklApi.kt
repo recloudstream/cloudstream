@@ -14,6 +14,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.LoadResponse.Companion.readIdFromString
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.SimklSyncServices
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
@@ -782,7 +783,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
 
     class SimklSyncStatus(
         override var status: SyncWatchType,
-        override var score: Int?,
+        override var score: Score?,
         val oldScore: Int?,
         override var watchedEpisodes: Int?,
         val episodeConstructor: SimklEpisodeConstructor,
@@ -836,7 +837,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                     )
                 }
                     ?: return null,
-                score = foundItem.userRating,
+                score = Score.from10(foundItem.userRating),
                 watchedEpisodes = foundItem.watchedEpisodesCount,
                 maxEpisodes = searchResult.totalEpisodes,
                 episodeConstructor = episodeConstructor,
@@ -847,7 +848,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
         } else {
             return SimklSyncStatus(
                 status = SyncWatchType.fromInternalId(SimklListStatusType.None.value),
-                score = 0,
+                score = null,
                 watchedEpisodes = 0,
                 maxEpisodes = if (searchResult.type == "movie") 0 else searchResult.totalEpisodes,
                 episodeConstructor = episodeConstructor,
@@ -865,7 +866,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
 
         val builder = SimklScoreBuilder.Builder()
             .apiUrl(this.mainUrl)
-            .score(status.score, simklStatus?.oldScore)
+            .score(status.score?.toInt(10), simklStatus?.oldScore)
             .status(
                 status.status.internalId,
                 (status as? SimklSyncStatus)?.oldStatus?.let { oldStatus ->
