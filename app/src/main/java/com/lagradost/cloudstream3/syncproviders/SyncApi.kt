@@ -115,8 +115,8 @@ interface SyncAPI : OAuth2API {
                             )
                         }
                     } else items
-                ListSorting.RatingHigh -> items.sortedBy { -(it.personalRating ?: 0) }
-                ListSorting.RatingLow -> items.sortedBy { (it.personalRating ?: 0) }
+                ListSorting.RatingHigh -> items.sortedBy { -(it.personalRating?.toInt(100) ?: 0) }
+                ListSorting.RatingLow -> items.sortedBy { (it.personalRating?.toInt(100) ?: 0) }
                 ListSorting.AlphabeticalA -> items.sortedBy { it.name }
                 ListSorting.AlphabeticalZ -> items.sortedBy { it.name }.reversed()
                 ListSorting.UpdatedNew -> items.sortedBy { it.lastUpdatedUnixTime?.times(-1) }
@@ -150,7 +150,7 @@ interface SyncAPI : OAuth2API {
         val episodesCompleted: Int?,
         val episodesTotal: Int?,
         /** Out of 100 */
-        val personalRating: Int?, // TODO also update this to Score
+        val personalRating: Score?,
         val lastUpdatedUnixTime: Long?,
         override val apiName: String,
         override var type: TvType?,

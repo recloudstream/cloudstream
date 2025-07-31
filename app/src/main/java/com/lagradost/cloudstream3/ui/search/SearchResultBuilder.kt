@@ -50,7 +50,7 @@ object SearchResultBuilder {
         itemView: View,
         nextFocusUp: Int? = null,
         nextFocusDown: Int? = null,
-        colorCallback : ((Palette) -> Unit)? = null
+        colorCallback: ((Palette) -> Unit)? = null
     ) {
         val cardView: ImageView = itemView.findViewById(R.id.imageView)
         val cardText: TextView? = itemView.findViewById(R.id.imageText)
@@ -81,22 +81,20 @@ object SearchResultBuilder {
         val showDub = showCache[textIsDub?.context?.getString(R.string.show_dub_key)] ?: false
         val showTitle = showCache[cardText?.context?.getString(R.string.show_title_key)] ?: false
         val showHd = showCache[textQuality?.context?.getString(R.string.show_hd_key)] ?: false
-        val showRatingView = showCache[textQuality?.context?.getString(R.string.show_rating_key)] ?: false
-        if(card is SyncAPI.LibraryItem) {
-            val showRating = (card.personalRating ?: 0) != 0
+        val showRatingView =
+            showCache[textQuality?.context?.getString(R.string.show_rating_key)] ?: false
+        if (card is SyncAPI.LibraryItem) {
+            val ratingText = card.personalRating?.toStringNull(0.1, 10, 1)
+            val showRating = !ratingText.isNullOrBlank()
             rating?.isVisible = showRating
             if (showRating) {
-                // We want to show 8.5 but not 8.0 hence the replace
-                val ratingText = ((card.personalRating ?: 0).toDouble() / 10).toString()
-                    .replace(".0", "")
-
                 rating?.text = ratingText
             }
-        } else if(showRatingView) {
+        } else if (showRatingView) {
             val ratingText = card.score?.toStringNull(0.1, 10, 1)
             val showRating = !ratingText.isNullOrBlank()
             rating?.isVisible = showRating
-            if(showRating) {
+            if (showRating) {
                 rating?.text = ratingText
             }
         }
@@ -143,7 +141,7 @@ object SearchResultBuilder {
                 })
             }*/
         }
-        
+
         fun click(view: View?) {
             clickCallback.invoke(
                 SearchClickCallback(
@@ -181,7 +179,7 @@ object SearchResultBuilder {
 
         bg.isFocusable = false
         bg.isFocusableInTouchMode = false
-        if(!isLayout(TV)) {
+        if (!isLayout(TV)) {
             bg.setOnClickListener {
                 click(it)
             }
@@ -191,7 +189,7 @@ object SearchResultBuilder {
             }
         }
         //
-       //
+        //
         //
 
         itemView.setOnClickListener {
@@ -225,9 +223,9 @@ object SearchResultBuilder {
         */
 
         if (isLayout(TV)) {
-           // bg.isFocusable = true
-           // bg.isFocusableInTouchMode = true
-           // bg.touchscreenBlocksFocus = false
+            // bg.isFocusable = true
+            // bg.isFocusableInTouchMode = true
+            // bg.touchscreenBlocksFocus = false
             itemView.isFocusableInTouchMode = true
             itemView.isFocusable = true
         }
@@ -256,6 +254,7 @@ object SearchResultBuilder {
                     }
                 }
             }
+
             is DataStoreHelper.ResumeWatchingResult -> {
                 val pos = card.watchPos?.fixVisual()
                 if (pos != null) {
@@ -271,6 +270,7 @@ object SearchResultBuilder {
                         cardText?.context?.getNameFull(card.name, card.episode, card.season)
                 }
             }
+
             is AnimeSearchResponse -> {
                 val dubStatus = card.dubStatus
                 if (!dubStatus.isNullOrEmpty()) {

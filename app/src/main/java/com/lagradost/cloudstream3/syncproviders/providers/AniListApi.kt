@@ -624,7 +624,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                 this.media.id.toString(),
                 this.progress,
                 this.media.episodes,
-                this.score,
+                Score.from100(this.score),
                 this.updatedAt.toLong(),
                 "AniList",
                 TvType.Anime,

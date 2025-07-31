@@ -442,7 +442,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 this.node.id.toString(),
                 this.listStatus?.numEpisodesWatched,
                 this.node.numEpisodes,
-                this.listStatus?.score?.times(10),
+                Score.from10(this.listStatus?.score),
                 parseDateLong(this.listStatus?.updatedAt),
                 "MAL",
                 TvType.Anime,
