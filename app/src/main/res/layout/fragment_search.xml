@@ -110,6 +110,14 @@
         <include
             android:id="@+id/tvtypes_chips_scroll"
             layout="@layout/tvtypes_chips_scroll" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/search_genre_filter"
+            style="@style/SelectableButton"
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:text="Genres"
+            app:icon="@drawable/ic_baseline_keyboard_arrow_down_24" />
+
     </LinearLayout>
 
 
