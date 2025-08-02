@@ -610,7 +610,7 @@
     <string name="battery_dialog_title">Desativar a otimização da bateria</string>
     <string name="battery_dialog_message">Para garantir descarregamentos ininterruptos e notificações de programas de TV subscritos, o CloudStream precisa de permissão para ser executado em segundo plano. Ao premir OK, será mostrado um diálogo. Prima \"Permitir\".\n\nTenha em atenção que esta permissão não significa que o CS3 irá esgotar a sua bateria. Este só funcionará em segundo plano quando necessário, como ao receber notificações ou baixar vídeos de extensões oficiais.</string>
     <string name="reset_btn">Reiniciar</string>
-    <string name="next_season_episode_format" formatted="true">Episódio %1$d Episódio %2$d vai ser lançado em</string>
+    <string name="next_season_episode_format" formatted="true">Temporada %1$d Episódio %2$d será lançado em</string>
     <string name="player_settings_select_cast_device">Escolha o dispositivo</string>
     <string name="episode_action_cast_mirror">Transmitir</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
@@ -669,7 +669,7 @@
     <string name="encoding_error">Erro de codificação</string>
     <string name="unsupported_error">Erro não suportado</string>
     <string name="torrent_preferred_media">Ativar torrent nas Configurações/Provedores/Mídia preferida</string>
-    <string name="torrent_not_accepted">Torrent não aceito</string>
+    <string name="torrent_not_accepted">Reinicie a aplicação e aceite o pop-up do Stream Torrent para continuar.</string>
     <string name="software_decoding">Descodificação por software</string>
     <string name="software_decoding_desc">Descodificação por software permite que o leitor reproduza ficheiros não suportados pelo seu dispositivo, mas pode resultar numa reprodução desfasada ou instável em altas resoluções</string>
     <string name="subtitles_from_embedded">Incorporada</string>
@@ -692,4 +692,22 @@
     <string name="sort_button_date">Data %s</string>
     <string name="player_notification_channel_description">Notificação do player para controlar a reprodução em segundo plano</string>
     <string name="player_notification_channel_name">Notificações de reprodução</string>
+    <string name="all_subtitles_italic">Colocar todas as legendas em itálico</string>
+    <string name="background_radius">Raio do fundo</string>
+    <string name="volume_exceeded_100">O volume excedeu 100%</string>
+    <string name="all_subtitles_bold">Colocar todas as legendas em negrito</string>
+    <string name="slide_up_again_to_exceed_100">Deslize para cima novamente para ir além de 100%</string>
+    <string name="download_parallel_settings_des">Quantos itens diferentes podem ser baixados em paralelo</string>
+    <string name="parallel_downloads">Downloads paralelos</string>
+    <string name="concurrent_connections">Conexões simultâneas</string>
+    <string name="concurrent_connections_settings_des">Quantas conexões simultâneas cada download pode usar durante o download</string>
+    <string name="go_to_downloads">Ir para downloads</string>
+    <string name="no_internet_connection">Sem conexão com a internet.\n\nConecte-se à internet e tente novamente ou assista aos seus downloads enquanto estiver offline.</string>
+    <string name="overscan_settings_des">Altera os limites da tela</string>
+    <string name="overscan_settings">Overscan</string>
+    <string name="poster_size_settings_des">Altera o tamanho dos pôsteres</string>
+    <string name="poster_size_settings">Tamanho do pôster</string>
+    <string name="player_settings_always_ask">Sempre perguntar</string>
+    <string name="speedup_title">Pressionamento para acelerar</string>
+    <string name="speedup_summary">Pressione para acelerar</string>
 </resources>

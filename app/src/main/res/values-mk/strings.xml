@@ -648,7 +648,7 @@
     <string name="player_load_one_subtitle_online">Вчитај прво достапно</string>
     <string name="torrent_not_accepted">Рестартирај ја апликацијата и прифати го Stream Torrent искачувачкиот прозорец за да продолжиш.</string>
     <string name="torrent_preferred_media">Овозможи torrent во Поставки/Провајдери/Претпочитани медиуми</string>
-    <string name="software_decoding_desc">Софтверското декодирање му овозможува на плеерот да репродуцира видео фајлови што не се поддржани од вашиот телефон, но може да предизвика задоцнување или нестабилна репродукција при висока резолуција.</string>
+    <string name="software_decoding_desc">Софтверското декодирање овозможува плеерот да воспоставува видео фајлови кои не се поддржани од вашиот телефон, но може да предизвика застој или нестабилно репродуцирање при висока резолуција</string>
     <string name="software_decoding">Софтверско декодирање</string>
     <string name="starting_plugin_update_manually">Започнување на процесот на ажурирање на приклучоци!</string>
     <string name="update_plugins">Ажурирај приклучоци</string>
@@ -675,4 +675,17 @@
     <string name="speech_recognition_unavailable">Препознавањето на говор не е достапно</string>
     <string name="begin_speaking">Започни со зборување…</string>
     <string name="background_radius">Радиус на позадина</string>
+    <string name="download_parallel_settings_des">Колку различни содржини можат да се симнуваат паралелно</string>
+    <string name="parallel_downloads">Паралелни симнувања</string>
+    <string name="concurrent_connections">Истовремени конекции</string>
+    <string name="concurrent_connections_settings_des">Колку истовремени конекции може да користи секое симнување додека се симнува</string>
+    <string name="go_to_downloads">Оди во Симнувања</string>
+    <string name="no_internet_connection">Нема интернет конекција.\n\nПоврзете се на интернет и обидете се повторно, или гледајте ги симнатите содржини додека сте офлајн.</string>
+    <string name="overscan_settings_des">Ги менува границите на екранот</string>
+    <string name="overscan_settings">Оверскен</string>
+    <string name="poster_size_settings_des">Менување на големината на постерите</string>
+    <string name="poster_size_settings">Големина на постер</string>
+    <string name="player_settings_always_ask">Секогаш прашувај</string>
+    <string name="speedup_title">Префрлувач на брзина со долго притискање</string>
+    <string name="speedup_summary">Држи за да добиеш 2x брзина</string>
 </resources>
