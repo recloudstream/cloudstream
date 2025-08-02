@@ -697,4 +697,17 @@
     <string name="background_radius">Hintergrundsradius</string>
     <string name="volume_exceeded_100">Lautstärke hat 100% überschritten</string>
     <string name="slide_up_again_to_exceed_100">Noch einmal nach oben wischen, um 100% zu überschreiten</string>
+    <string name="player_settings_always_ask">Immer fragen</string>
+    <string name="download_parallel_settings_des">Wie viele verschiedene Elemente können parallel heruntergeladen werden</string>
+    <string name="parallel_downloads">Parallele Downloads</string>
+    <string name="concurrent_connections">Gleichzeitige Verbindungen</string>
+    <string name="concurrent_connections_settings_des">Wie viele gleichzeitige Verbindungen jeder Download während des Downloads verwenden kann</string>
+    <string name="go_to_downloads">Zu den Downloads</string>
+    <string name="no_internet_connection">Keine Internetverbindung.\n\nBitte verbinden Sie sich mit dem Internet und versuchen Sie es erneut, oder schauen Sie sich Ihre Downloads an, während Sie offline sind.</string>
+    <string name="overscan_settings_des">Ändert die Grenzen des Bildschirms</string>
+    <string name="overscan_settings">Überscannen</string>
+    <string name="poster_size_settings_des">Ändert die Größe von Postern</string>
+    <string name="poster_size_settings">Größe des Posters</string>
+    <string name="speedup_title">LongPress Geschwindigkeitsschalter</string>
+    <string name="speedup_summary">Halten Sie gedrückt, um die 2x Geschwindigkeit zu erhalten</string>
 </resources>
