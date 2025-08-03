@@ -730,7 +730,7 @@ class HomeFragment : Fragment() {
 
         //TODO READD THIS
         /*for (syncApi in OAuth2Apis) {
-            val login = syncApi.loginInfo()
+            val login = SyncAPI2.loginInfo()
             val pic = login?.profilePicture
             if (home_profile_picture?.setImage(
                     pic,

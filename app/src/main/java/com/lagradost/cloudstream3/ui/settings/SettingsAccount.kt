@@ -20,23 +20,24 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.AccountManagmentBinding
 import com.lagradost.cloudstream3.databinding.AccountSwitchBinding
 import com.lagradost.cloudstream3.databinding.AddAccountInputBinding
 import com.lagradost.cloudstream3.databinding.DeviceAuthBinding
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.openSubtitlesApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.simklApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.subDlApi
-import com.lagradost.cloudstream3.syncproviders.AuthAPI
-import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
-import com.lagradost.cloudstream3.syncproviders.OAuth2API
+import com.lagradost.cloudstream3.syncproviders.AuthLoginResponse
+import com.lagradost.cloudstream3.syncproviders.AuthRepo
+import com.lagradost.cloudstream3.syncproviders.AuthUser
+import com.lagradost.cloudstream3.syncproviders.SubtitleRepo
+import com.lagradost.cloudstream3.syncproviders.SyncRepo
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
-import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
@@ -68,8 +69,8 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
         /** Used by nginx plugin too */
         fun showLoginInfo(
             activity: FragmentActivity?,
-            api: AccountManager,
-            info: AuthAPI.LoginInfo
+            api: AuthRepo,
+            info: AuthUser
         ) {
             if (activity == null) return
             val binding: AccountManagmentBinding =
@@ -82,9 +83,8 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
             binding.accountMainProfilePictureHolder.isVisible = !info.profilePicture.isNullOrEmpty()
             binding.accountMainProfilePicture.loadImage(info.profilePicture)
 
-
             binding.accountLogout.setOnClickListener {
-                api.logOut()
+                api.logout(info)
                 dialog.dismissSafe(activity)
             }
 
@@ -103,8 +103,8 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
             }
         }
 
-        private fun showAccountSwitch(activity: FragmentActivity, api: AccountManager) {
-            val accounts = api.getAccounts() ?: return
+        private fun showAccountSwitch(activity: FragmentActivity, api: AuthRepo) {
+            val accounts = api.accounts
             val binding: AccountSwitchBinding =
                 AccountSwitchBinding.inflate(activity.layoutInflater, null, false)
 
@@ -119,247 +119,266 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
             }
 
             val ogIndex = api.accountIndex
-
-            val items = ArrayList<AuthAPI.LoginInfo>()
-
-            for (index in accounts) {
-                api.accountIndex = index
-                val accountInfo = api.loginInfo()
-                if (accountInfo != null) {
-                    items.add(accountInfo)
-                }
-            }
             api.accountIndex = ogIndex
-            val adapter = AccountAdapter(items) {
+            val adapter = AccountAdapter(accounts) {
                 dialog?.dismissSafe(activity)
-                api.changeAccount(it.card.accountIndex)
+                api.accountIndex = it.card
             }
             val list = dialog.findViewById<RecyclerView>(R.id.account_list)
             list?.adapter = adapter
         }
 
+
         @UiThread
-        fun addAccount(activity: FragmentActivity?, api: AccountManager) {
-            try {
-                when (api) {
-                    is OAuth2API -> {
-                        if (isLayout(PHONE) || !api.supportDeviceAuth) {
-                            api.authenticate(activity)
-                        } else if (api.supportDeviceAuth && activity != null) {
+        fun showPin(activity: FragmentActivity, api: AuthRepo) {
+            val binding: DeviceAuthBinding =
+                DeviceAuthBinding.inflate(activity.layoutInflater, null, false)
 
-                            val binding: DeviceAuthBinding =
-                                DeviceAuthBinding.inflate(activity.layoutInflater, null, false)
+            val builder =
+                AlertDialog.Builder(activity)
+                    .setView(binding.root)
 
-                            val builder =
-                                AlertDialog.Builder(activity)
-                                    .setView(binding.root)
+            builder.apply {
+                setNegativeButton(R.string.cancel) { _, _ -> }
+                if (api.hasOAuth2) {
+                    setPositiveButton(R.string.auth_locally) { _, _ ->
+                        api.openOAuth2PageWithToast()
+                    }
+                }
+            }
 
-                            builder.apply {
-                                setNegativeButton(R.string.cancel) { _, _ -> }
-                                setPositiveButton(R.string.auth_locally) { _, _ ->
-                                    api.authenticate(activity)
-                                }
-                            }
+            val dialog = builder.create()
 
-                            val dialog = builder.create()
+            ioSafe {
+                val pinCodeData = try {
+                    api.pinRequest()
+                } catch (e: ErrorLoadingException) {
+                    if (e.message != null) {
+                        showToast(e.message)
+                        null
+                    } else {
+                        throw e
+                    }
+                } catch (t: Throwable) {
+                    logError(t)
+                    null
+                }
+                if (pinCodeData == null) {
+                    if (api.hasOAuth2) {
+                        showToast(R.string.device_pin_error_message)
+                        api.openOAuth2PageWithToast()
+                    } else {
+                        showToast(
+                            txt(
+                                R.string.authenticated_user_fail,
+                                api.name
+                            )
+                        )
+                    }
+                    return@ioSafe
+                }
 
-                            ioSafe {
-                                try {
-                                    val pinCodeData = api.getDevicePin()
-                                    if (pinCodeData == null) {
-                                        showToast(R.string.device_pin_error_message)
-                                        api.authenticate(activity)
-                                        return@ioSafe
-                                    }
+                /*val logoBytes = ContextCompat.getDrawable(
+                    activity,
+                    R.drawable.cloud_2_solid
+                )?.toBitmapOrNull()?.let { bitmap ->
+                    val csLogo = ByteArrayOutputStream()
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, csLogo)
+                    csLogo.toByteArray()
+                }*/
 
-                                    /*val logoBytes = ContextCompat.getDrawable(
-                                        activity,
-                                        R.drawable.cloud_2_solid
-                                    )?.toBitmapOrNull()?.let { bitmap ->
-                                        val csLogo = ByteArrayOutputStream()
-                                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, csLogo)
-                                        csLogo.toByteArray()
-                                    }*/
+                val qrCodeImage = QRCode.ofRoundedSquares()
+                    .withColor(activity.colorFromAttribute(R.attr.textColor))
+                    .withBackgroundColor(activity.colorFromAttribute(R.attr.primaryBlackBackground))
+                    //.withLogo(logoBytes, 200.toPx, 200.toPx) //For later if logo needed anytime
+                    .build(pinCodeData.verificationUrl)
+                    .render().nativeImage() as Bitmap
 
-                                    val qrCodeImage = QRCode.ofRoundedSquares()
-                                        .withColor(activity.colorFromAttribute(R.attr.textColor))
-                                        .withBackgroundColor(activity.colorFromAttribute(R.attr.primaryBlackBackground))
-                                        //.withLogo(logoBytes, 200.toPx, 200.toPx) //For later if logo needed anytime
-                                        .build(pinCodeData.verificationUrl)
-                                        .render().nativeImage() as Bitmap
-
-                                    activity.runOnUiThread {
-                                        dialog.show()
-                                        binding.apply {
-                                            devicePinCode.setText(txt(pinCodeData.userCode))
-                                            deviceAuthMessage.setText(
-                                                txt(
-                                                    R.string.device_pin_url_message,
-                                                    pinCodeData.verificationUrl
-                                                )
-                                            )
-                                            deviceAuthQrcode.loadImage(qrCodeImage)
-                                        }
-
-                                        val expirationMillis =
-                                            pinCodeData.expiresIn.times(1000).toLong()
-
-                                        object : CountDownTimer(expirationMillis, 1000) {
-
-                                            override fun onTick(millisUntilFinished: Long) {
-                                                val secondsUntilFinished =
-                                                    millisUntilFinished.div(1000).toInt()
-
-                                                binding.deviceAuthValidationCounter.setText(
-                                                    txt(
-                                                        R.string.device_pin_counter_text,
-                                                        secondsUntilFinished.div(60),
-                                                        secondsUntilFinished.rem(60)
-                                                    )
-                                                )
-
-                                                ioSafe {
-                                                    if (secondsUntilFinished.rem(pinCodeData.interval) == 0 && api.handleDeviceAuth(pinCodeData)) {
-                                                        showToast(
-                                                            txt(
-                                                                R.string.authenticated_user,
-                                                                api.name
-                                                            )
-                                                        )
-                                                        dialog.dismissSafe(activity)
-                                                        cancel()
-                                                    }
-                                                }
-                                            }
-
-                                            override fun onFinish() {
-                                                showToast(R.string.device_pin_expired_message)
-                                                dialog.dismissSafe(activity)
-                                            }
-
-                                        }.start()
-                                    }
-                                } catch (e: Exception) {
-                                    logError(e)
-                                }
-                            }
-                        }
+                activity.runOnUiThread {
+                    dialog.show()
+                    binding.apply {
+                        devicePinCode.setText(txt(pinCodeData.userCode))
+                        deviceAuthMessage.setText(
+                            txt(
+                                R.string.device_pin_url_message,
+                                pinCodeData.verificationUrl
+                            )
+                        )
+                        deviceAuthQrcode.loadImage(qrCodeImage)
                     }
 
-                    is InAppAuthAPI -> {
-                        if (activity == null) return
-                        val binding: AddAccountInputBinding =
-                            AddAccountInputBinding.inflate(activity.layoutInflater, null, false)
-                        val builder =
-                            AlertDialog.Builder(activity, R.style.AlertDialogCustom)
-                                .setView(binding.root)
-                        val dialog = builder.show()
+                    val expirationMillis =
+                        pinCodeData.expiresIn.times(1000).toLong()
 
-                        val visibilityMap = listOf(
-                            binding.loginEmailInput to api.requiresEmail,
-                            binding.loginPasswordInput to api.requiresPassword,
-                            binding.loginServerInput to api.requiresServer,
-                            binding.loginUsernameInput to api.requiresUsername
-                        )
+                    object : CountDownTimer(expirationMillis, 1000) {
+                        override fun onTick(millisUntilFinished: Long) {
+                            val secondsUntilFinished =
+                                millisUntilFinished.div(1000).toInt()
 
-                        if (isLayout(TV or EMULATOR)) {
-                            visibilityMap.forEach { (input, isVisible) ->
-                                input.isVisible = isVisible
-
-                                // Band-aid for weird FireTV behavior causing crashes because keyboard covers the screen
-                                input.setOnEditorActionListener { textView, actionId, _ ->
-                                    if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                                        val view = textView.focusSearch(FOCUS_DOWN)
-                                        return@setOnEditorActionListener view?.requestFocus(
-                                            FOCUS_DOWN
-                                        ) == true
-                                    }
-                                    return@setOnEditorActionListener true
-                                }
-                            }
-                        } else {
-                            visibilityMap.forEach { (input, isVisible) ->
-                                input.isVisible = isVisible
-                            }
-                        }
-
-                        binding.loginEmailInput.isVisible = api.requiresEmail
-                        binding.loginPasswordInput.isVisible = api.requiresPassword
-                        binding.loginServerInput.isVisible = api.requiresServer
-                        binding.loginUsernameInput.isVisible = api.requiresUsername
-                        binding.createAccount.isGone = api.createAccountUrl.isNullOrBlank()
-                        binding.createAccount.setOnClickListener {
-                            openBrowser(
-                                api.createAccountUrl ?: return@setOnClickListener,
-                                activity
+                            binding.deviceAuthValidationCounter.setText(
+                                txt(
+                                    R.string.device_pin_counter_text,
+                                    secondsUntilFinished.div(60),
+                                    secondsUntilFinished.rem(60)
+                                )
                             )
-                            dialog.dismissSafe()
-                        }
 
-                        val displayedItems = listOf(
-                            binding.loginUsernameInput,
-                            binding.loginEmailInput,
-                            binding.loginServerInput,
-                            binding.loginPasswordInput
-                        ).filter { it.isVisible }
-
-                        displayedItems.foldRight(displayedItems.firstOrNull()) { item, previous ->
-                            item.id.let { previous?.nextFocusDownId = it }
-                            previous?.id?.let { item.nextFocusUpId = it }
-                            item
-                        }
-
-                        displayedItems.firstOrNull()?.let {
-                            binding.createAccount.nextFocusDownId = it.id
-                            it.nextFocusUpId = binding.createAccount.id
-                        }
-                        binding.applyBtt.id.let {
-                            displayedItems.lastOrNull()?.nextFocusDownId = it
-                        }
-
-                        binding.text1.text = api.name
-
-                        if (api.storesPasswordInPlainText) {
-                            api.getLatestLoginData()?.let { data ->
-                                binding.loginEmailInput.setText(data.email ?: "")
-                                binding.loginServerInput.setText(data.server ?: "")
-                                binding.loginUsernameInput.setText(data.username ?: "")
-                                binding.loginPasswordInput.setText(data.password ?: "")
-                            }
-                        }
-
-                        binding.applyBtt.setOnClickListener {
-                            val loginData = InAppAuthAPI.LoginData(
-                                username = if (api.requiresUsername) binding.loginUsernameInput.text?.toString() else null,
-                                password = if (api.requiresPassword) binding.loginPasswordInput.text?.toString() else null,
-                                email = if (api.requiresEmail) binding.loginEmailInput.text?.toString() else null,
-                                server = if (api.requiresServer) binding.loginServerInput.text?.toString() else null,
-                            )
                             ioSafe {
-                                try {
+                                if (secondsUntilFinished.rem(pinCodeData.interval) == 0 && api.login(
+                                        pinCodeData
+                                    )
+                                ) {
                                     showToast(
                                         txt(
-                                            if (api.login(loginData)) R.string.authenticated_user else R.string.authenticated_user_fail,
+                                            R.string.authenticated_user,
                                             api.name
                                         )
                                     )
-                                } catch (e: Exception) {
-                                    logError(e)
+                                    dialog.dismissSafe(activity)
+                                    cancel()
                                 }
                             }
-                            dialog.dismissSafe(activity)
                         }
-                        binding.cancelBtt.setOnClickListener {
-                            dialog.dismissSafe(activity)
-                        }
-                    }
 
-                    else -> {
-                        throw NotImplementedError("You are trying to add an account that has an unknown login method")
+                        override fun onFinish() {
+                            showToast(R.string.device_pin_expired_message)
+                            dialog.dismissSafe(activity)
+                        }
+                    }.start()
+                }
+            }
+        }
+
+
+        fun showAppLogin(activity: FragmentActivity, api: AuthRepo) {
+
+            val binding: AddAccountInputBinding =
+                AddAccountInputBinding.inflate(activity.layoutInflater, null, false)
+            val builder =
+                AlertDialog.Builder(activity, R.style.AlertDialogCustom)
+                    .setView(binding.root)
+            val dialog = builder.show()
+            val req =
+                api.inAppLoginRequirement ?: throw ErrorLoadingException("Missing LoginRequirement")
+            val visibilityMap = listOf(
+                binding.loginEmailInput to req.email,
+                binding.loginPasswordInput to req.password,
+                binding.loginServerInput to req.server,
+                binding.loginUsernameInput to req.username
+            )
+
+            if (isLayout(TV or EMULATOR)) {
+                visibilityMap.forEach { (input, isVisible) ->
+                    input.isVisible = isVisible
+
+                    // Band-aid for weird FireTV behavior causing crashes because keyboard covers the screen
+                    input.setOnEditorActionListener { textView, actionId, _ ->
+                        if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                            val view = textView.focusSearch(FOCUS_DOWN)
+                            return@setOnEditorActionListener view?.requestFocus(
+                                FOCUS_DOWN
+                            ) == true
+                        }
+                        return@setOnEditorActionListener true
                     }
                 }
-            } catch (e: Exception) {
-                logError(e)
+            } else {
+                visibilityMap.forEach { (input, isVisible) ->
+                    input.isVisible = isVisible
+                }
+            }
+
+            binding.createAccount.isGone = api.createAccountUrl.isNullOrBlank()
+            binding.createAccount.setOnClickListener {
+                openBrowser(
+                    api.createAccountUrl ?: return@setOnClickListener,
+                    activity
+                )
+                dialog.dismissSafe()
+            }
+
+            val displayedItems = listOf(
+                binding.loginUsernameInput,
+                binding.loginEmailInput,
+                binding.loginServerInput,
+                binding.loginPasswordInput
+            ).filter { it.isVisible }
+
+            displayedItems.foldRight(displayedItems.firstOrNull()) { item, previous ->
+                item.id.let { previous?.nextFocusDownId = it }
+                previous?.id?.let { item.nextFocusUpId = it }
+                item
+            }
+
+            displayedItems.firstOrNull()?.let {
+                binding.createAccount.nextFocusDownId = it.id
+                it.nextFocusUpId = binding.createAccount.id
+            }
+            binding.applyBtt.id.let {
+                displayedItems.lastOrNull()?.nextFocusDownId = it
+            }
+
+            binding.text1.text = api.name
+
+            binding.applyBtt.setOnClickListener {
+                val loginData = AuthLoginResponse(
+                    username = if (req.username) binding.loginUsernameInput.text?.toString() else null,
+                    password = if (req.username) binding.loginPasswordInput.text?.toString() else null,
+                    email = if (req.email) binding.loginEmailInput.text?.toString() else null,
+                    server = if (req.server) binding.loginServerInput.text?.toString() else null,
+                )
+                ioSafe {
+                    try {
+                        if (api.login(loginData)) {
+                            showToast(
+                                txt(
+                                    R.string.authenticated_user,
+                                    api.name
+                                )
+                            )
+                            dialog.dismissSafe(activity)
+                        } else {
+                            showToast(
+                                txt(
+                                    R.string.authenticated_user_fail,
+                                    api.name
+                                )
+                            )
+                        }
+                    } catch (t: Throwable) {
+                        if (t is ErrorLoadingException && t.message != null) {
+                            showToast(t.message)
+                            return@ioSafe
+                        }
+                        showToast(
+                            txt(
+                                R.string.authenticated_user_fail,
+                                api.name
+                            )
+                        )
+                    }
+                }
+            }
+            binding.cancelBtt.setOnClickListener {
+                dialog.dismissSafe(activity)
+            }
+        }
+
+        @UiThread
+        fun addAccount(activity: FragmentActivity, api: AuthRepo) {
+            try {
+                if (api.hasPin) {
+                    showPin(activity, api)
+                } else if (api.hasOAuth2) {
+                    api.openOAuth2PageWithToast()
+                } else if (api.hasInApp) {
+                    showAppLogin(activity, api)
+                } else {
+                    throw NotImplementedError("The api ${api.name} has no login")
+                }
+            } catch (t: Throwable) {
+                showToast(txt(R.string.authenticated_user_fail, api.name))
+                logError(t)
             }
         }
     }
@@ -378,7 +397,7 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
     }
 
     override fun onAuthenticationSuccess() {
-        if (isAuthEnabled(context?: return)) {
+        if (isAuthEnabled(context ?: return)) {
             updateAuthPreference(true)
             BackupUtils.backup(activity)
             activity?.showBottomDialogText(
@@ -409,10 +428,10 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
 
             if (deviceHasPasswordPinLock(ctx)) {
                 startBiometricAuthentication(
-                    activity?: return@setOnPreferenceClickListener false,
+                    activity ?: return@setOnPreferenceClickListener false,
                     R.string.biometric_authentication_title,
                     false
-                    )
+                )
                 promptInfo?.let {
                     authCallback = this
                     biometricPrompt?.authenticate(it)
@@ -424,18 +443,19 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
 
         val syncApis =
             listOf(
-                R.string.mal_key to malApi,
-                R.string.anilist_key to aniListApi,
-                R.string.simkl_key to simklApi,
-                R.string.opensubtitles_key to openSubtitlesApi,
-                R.string.subdl_key to subDlApi,
+                R.string.mal_key to SyncRepo(malApi),
+                R.string.anilist_key to SyncRepo(aniListApi),
+                R.string.simkl_key to SyncRepo(simklApi),
+                R.string.opensubtitles_key to SubtitleRepo(openSubtitlesApi),
+                R.string.subdl_key to SubtitleRepo(subDlApi),
             )
 
         for ((key, api) in syncApis) {
             getPref(key)?.apply {
                 title = api.name
                 setOnPreferenceClickListener {
-                    val info = api.loginInfo()
+                    val activity = activity ?: return@setOnPreferenceClickListener false
+                    val info = api.authUser()
                     if (info != null) {
                         showLoginInfo(activity, api, info)
                     } else {

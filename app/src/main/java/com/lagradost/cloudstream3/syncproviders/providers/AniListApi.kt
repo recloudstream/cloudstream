@@ -1,92 +1,97 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
 import androidx.annotation.StringRes
-import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.Actor
+import com.lagradost.cloudstream3.ActorData
+import com.lagradost.cloudstream3.ActorRole
+import com.lagradost.cloudstream3.ErrorLoadingException
+import com.lagradost.cloudstream3.NextAiring
+import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.Score
+import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.safeAsync
-import com.lagradost.cloudstream3.syncproviders.AccountManager
-import com.lagradost.cloudstream3.syncproviders.AuthAPI
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING
+import com.lagradost.cloudstream3.syncproviders.AuthLoginPage
+import com.lagradost.cloudstream3.syncproviders.AuthToken
+import com.lagradost.cloudstream3.syncproviders.AuthUser
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
-import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.AppContextUtils.splitQuery
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
-import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
 import com.lagradost.cloudstream3.utils.DataStoreHelper.toYear
+import com.lagradost.cloudstream3.utils.txt
 import java.net.URL
 import java.net.URLEncoder
 import java.util.Locale
 
-class AniListApi(index: Int) : AccountManager(index), SyncAPI {
+class AniListApi : SyncAPI() {
     override var name = "AniList"
-    override val key = "6871"
-    override val redirectUrl = "anilistlogin"
     override val idPrefix = "anilist"
+
+    val key = "6871"
+    override val redirectUrlIdentifier = "anilistlogin"
     override var requireLibraryRefresh = true
-    override val supportDeviceAuth = false
+    override val hasOAuth2 = true
     override var mainUrl = "https://anilist.co"
     override val icon = R.drawable.ic_anilist_icon
-    override val requiresLogin = false
     override val createAccountUrl = "$mainUrl/signup"
     override val syncIdName = SyncIdName.Anilist
 
-    override fun loginInfo(): AuthAPI.LoginInfo? {
-        // context.getUser(true)?.
-        getKey<AniListUser>(accountId, ANILIST_USER_KEY)?.let { user ->
-            return AuthAPI.LoginInfo(
-                profilePicture = user.picture,
-                name = user.name,
-                accountIndex = accountIndex
-            )
-        }
-        return null
-    }
+    override fun loginRequest(): AuthLoginPage? =
+        AuthLoginPage("https://anilist.co/api/v2/oauth/authorize?client_id=$key&response_type=token")
 
-    override fun logOut() {
-        requireLibraryRefresh = true
-        removeAccountKeys()
-    }
-
-    override fun authenticate(activity: FragmentActivity?) {
-        val request = "https://anilist.co/api/v2/oauth/authorize?client_id=$key&response_type=token"
-        openBrowser(request, activity)
-    }
-
-    override suspend fun handleRedirect(url: String): Boolean {
+    override suspend fun login(redirectUrl: String, payload: String?): AuthToken? {
         val sanitizer =
-            splitQuery(URL(url.replace(APP_STRING, "https").replace("/#", "?"))) // FIX ERROR
-        val token = sanitizer["access_token"]!!
-        val expiresIn = sanitizer["expires_in"]!!
-
-        val endTime = unixTime + expiresIn.toLong()
-
-        switchToNewAccount()
-        setKey(accountId, ANILIST_UNIXTIME_KEY, endTime)
-        setKey(accountId, ANILIST_TOKEN_KEY, token)
-        val user = getUser()
-        requireLibraryRefresh = true
-        return user != null
+            splitQuery(
+                URL(
+                    redirectUrl.replace(APP_STRING, "https").replace("/#", "?")
+                )
+            ) // FIX ERROR
+        val token = AuthToken(
+            accessToken = sanitizer["access_token"],
+            //refreshToken = sanitizer["refresh_token"],
+            accessTokenLifetime = unixTime + sanitizer["expires_in"]!!.toLong(),
+        )
+        val user = getUser(token) ?: throw ErrorLoadingException("Unable to fetch user data")
+        return token.copy(payload = user.id.toString())
     }
 
-    override fun getIdFromUrl(url: String): String {
-        return url.removePrefix("$mainUrl/anime/").removeSuffix("/")
+    // https://docs.anilist.co/guide/auth/
+    override suspend fun refreshToken(token: AuthToken): AuthToken? {
+        // AniList access tokens are long-lived. They will remain valid for 1 year from the time they are issued.
+        // Refresh tokens are not currently supported. Once a token expires, you will need to re-authenticate your users.
+        return super.refreshToken(token)
     }
+
+    override suspend fun user(token: AuthToken?): AuthUser? {
+        val user = getUser(token ?: return null)
+            ?: throw ErrorLoadingException("Unable to fetch user data")
+
+        return AuthUser(
+            id = user.id,
+            name = user.name,
+            profilePicture = user.picture,
+        )
+    }
+
+    override fun urlToId(url: String): String? =
+        url.removePrefix("$mainUrl/anime/").removeSuffix("/")
+
 
     private fun getUrlFromId(id: Int): String {
         return "$mainUrl/anime/$id"
     }
 
-    override suspend fun search(name: String): List<SyncAPI.SyncSearchResult>? {
+    override suspend fun search(token: AuthToken?, query: String): List<SyncAPI.SyncSearchResult>? {
         val data = searchShows(name) ?: return null
         return data.data?.page?.media?.map {
             SyncAPI.SyncSearchResult(
@@ -99,7 +104,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    override suspend fun getResult(id: String): SyncAPI.SyncResult {
+    override suspend fun load(token: AuthToken?, id: String): SyncAPI.SyncResult? {
         val internalId = (Regex("anilist\\.co/anime/(\\d*)").find(id)?.groupValues?.getOrNull(1)
             ?: id).toIntOrNull() ?: throw ErrorLoadingException("Invalid internalId")
         val season = getSeason(internalId).data.media
@@ -161,9 +166,9 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         )
     }
 
-    override suspend fun getStatus(id: String): SyncAPI.AbstractSyncStatus? {
+    override suspend fun status(token: AuthToken?, id: String): SyncAPI.AbstractSyncStatus? {
         val internalId = id.toIntOrNull() ?: return null
-        val data = getDataAboutId(internalId) ?: return null
+        val data = getDataAboutId(token ?: return null, internalId) ?: return null
 
         return SyncAPI.SyncStatus(
             score = Score.from100(data.score),
@@ -174,24 +179,25 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         )
     }
 
-    override suspend fun score(id: String, status: SyncAPI.AbstractSyncStatus): Boolean {
+    override suspend fun updateStatus(
+        token: AuthToken?,
+        id: String,
+        newStatus: SyncAPI.AbstractSyncStatus
+    ): Boolean {
         return postDataAboutId(
+            token ?: return false,
             id.toIntOrNull() ?: return false,
-            fromIntToAnimeStatus(status.status.internalId),
-            status.score,
-            status.watchedEpisodes
-        ).also {
-            requireLibraryRefresh = requireLibraryRefresh || it
-        }
+            fromIntToAnimeStatus(newStatus.status.internalId),
+            newStatus.score,
+            newStatus.watchedEpisodes
+        )
     }
 
     companion object {
+        const val MAX_STALE = 60 * 10
         private val aniListStatusString =
             arrayOf("CURRENT", "COMPLETED", "PAUSED", "DROPPED", "PLANNING", "REPEATING")
 
-        const val ANILIST_UNIXTIME_KEY: String = "anilist_unixtime" // When token expires
-        const val ANILIST_TOKEN_KEY: String = "anilist_token" // anilist token for api
-        const val ANILIST_USER_KEY: String = "anilist_user" // user data like profile
         const val ANILIST_CACHED_LIST: String = "anilist_cached_list"
 
         private fun fixName(name: String): String {
@@ -461,21 +467,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    fun initGetUser() {
-        if (getAuth() == null) return
-        ioSafe {
-            getUser()
-        }
-    }
-
-    private fun checkToken(): Boolean {
-        return unixTime > getKey(
-            accountId,
-            ANILIST_UNIXTIME_KEY, 0L
-        )!!
-    }
-
-    private suspend fun getDataAboutId(id: Int): AniListTitleHolder? {
+    private suspend fun getDataAboutId(token: AuthToken, id: Int): AniListTitleHolder? {
         val q =
             """query (${'$'}id: Int = $id) { # Define which variables will be used in the query (id)
                 Media (id: ${'$'}id, type: ANIME) { # Insert our variables into the query arguments (id) (type: ANIME is hard-coded in the query)
@@ -494,7 +486,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                 }
             }"""
 
-        val data = postApi(q, true)
+        val data = postApi(token, q, true)
         val d = parseJson<GetDataRoot>(data ?: return null)
 
         val main = d.data?.media
@@ -522,37 +514,22 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
 
     }
 
-    private fun getAuth(): String? {
-        return getKey(
-            accountId,
-            ANILIST_TOKEN_KEY
-        )
-    }
-
-    private suspend fun postApi(q: String, cache: Boolean = false): String? {
-        return safeAsync {
-            if (!checkToken()) {
-                app.post(
-                    "https://graphql.anilist.co/",
-                    headers = mapOf(
-                        "Authorization" to "Bearer " + (getAuth()
-                            ?: return@safeAsync null),
-                        if (cache) "Cache-Control" to "max-stale=$MAX_STALE" else "Cache-Control" to "no-cache"
-                    ),
-                    cacheTime = 0,
-                    data = mapOf(
-                        "query" to URLEncoder.encode(
-                            q,
-                            "UTF-8"
-                        )
-                    ), //(if (vars == null) mapOf("query" to q) else mapOf("query" to q, "variables" to vars))
-                    timeout = 5 // REASONABLE TIMEOUT
-                ).text.replace("\\/", "/")
-            } else {
-                null
-            }
-        }
-    }
+    private suspend fun postApi(token: AuthToken, q: String, cache: Boolean = false): String? =
+        app.post(
+            "https://graphql.anilist.co/",
+            headers = mapOf(
+                "Authorization" to "Bearer ${token.accessToken}",
+                if (cache) "Cache-Control" to "max-stale=$MAX_STALE" else "Cache-Control" to "no-cache"
+            ),
+            cacheTime = 0,
+            data = mapOf(
+                "query" to URLEncoder.encode(
+                    q,
+                    "UTF-8"
+                )
+            ), //(if (vars == null) mapOf("query" to q) else mapOf("query" to q, "variables" to vars))
+            timeout = 5 // REASONABLE TIMEOUT
+        ).text.replace("\\/", "/")
 
     data class MediaRecommendation(
         @JsonProperty("id") val id: Int,
@@ -652,27 +629,23 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         @JsonProperty("MediaListCollection") val mediaListCollection: MediaListCollection
     )
 
-    private fun getAniListListCached(): Array<Lists>? {
-        return getKey(ANILIST_CACHED_LIST) as? Array<Lists>
-    }
-
-    private suspend fun getAniListAnimeListSmart(): Array<Lists>? {
-        if (getAuth() == null) return null
-
-        if (checkToken()) return null
+    private suspend fun getAniListAnimeListSmart(token: AuthToken): Array<Lists>? {
         return if (requireLibraryRefresh) {
-            val list = getFullAniListList()?.data?.mediaListCollection?.lists?.toTypedArray()
+            val list = getFullAniListList(token)?.data?.mediaListCollection?.lists?.toTypedArray()
             if (list != null) {
-                setKey(ANILIST_CACHED_LIST, list)
+                setKey(ANILIST_CACHED_LIST, token.accessToken ?: "", list)
             }
             list
         } else {
-            getAniListListCached()
+            getKey<Array<Lists>>(
+                ANILIST_CACHED_LIST,
+                token.accessToken ?: ""
+            ) as? Array<Lists>
         }
     }
 
-    override suspend fun getPersonalLibrary(): SyncAPI.LibraryMetadata {
-        val list = getAniListAnimeListSmart()?.groupBy {
+    override suspend fun library(token: AuthToken?): SyncAPI.LibraryMetadata? {
+        val list = getAniListAnimeListSmart(token ?: return null)?.groupBy {
             convertAniListStringToStatus(it.status ?: "").stringRes
         }?.mapValues { group ->
             group.value.map { it.entries.map { entry -> entry.toLibraryItem() } }.flatten()
@@ -699,10 +672,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         )
     }
 
-    private suspend fun getFullAniListList(): FullAnilistList? {
-        /** WARNING ASSUMES ONE USER! **/
-
-        val userID = getKey<AniListUser>(accountId, ANILIST_USER_KEY)?.id ?: return null
+    private suspend fun getFullAniListList(token: AuthToken): FullAnilistList? {
+        val userID = token.payload ?: return null
         val mediaType = "ANIME"
 
         val query = """
@@ -745,11 +716,11 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                     }
                     }
             """
-        val text = postApi(query)
+        val text = postApi(token, query)
         return text?.toKotlinObject()
     }
 
-    suspend fun toggleLike(id: Int): Boolean {
+    suspend fun toggleLike(token: AuthToken, id: Int): Boolean {
         val q = """mutation (${'$'}animeId: Int = $id) {
 				ToggleFavourite (animeId: ${'$'}animeId) {
 					anime {
@@ -762,7 +733,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
 					}
 				}
 			}"""
-        val data = postApi(q)
+        val data = postApi(token, q)
         return data != ""
     }
 
@@ -772,15 +743,17 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     data class MediaListId(@JsonProperty("id") val id: Long? = null)
 
     private suspend fun postDataAboutId(
+        token: AuthToken,
         id: Int,
         type: AniListStatusType,
         score: Score?,
         progress: Int?
     ): Boolean {
+        val userID = token.payload ?: return false
+
         val q =
             // Delete item if status type is None
             if (type == AniListStatusType.None) {
-                val userID = getKey<AniListUser>(accountId, ANILIST_USER_KEY)?.id ?: return false
                 // Get list ID for deletion
                 val idQuery = """
                   query MediaList(${'$'}userId: Int = $userID, ${'$'}mediaId: Int = $id) {
@@ -789,7 +762,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                     }
                   }
                 """
-                val response = postApi(idQuery)
+                val response = postApi(token, idQuery)
                 val listId =
                     tryParseJson<MediaListItemRoot>(response)?.data?.mediaList?.id ?: return false
                 """
@@ -815,11 +788,11 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                 }"""
             }
 
-        val data = postApi(q)
+        val data = postApi(token, q)
         return data != ""
     }
 
-    private suspend fun getUser(setSettings: Boolean = true): AniListUser? {
+    private suspend fun getUser(token: AuthToken): AniListUser? {
         val q = """
 				{
   					Viewer {
@@ -837,23 +810,15 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                         }
   					}
 				}"""
-        val data = postApi(q)
+        val data = postApi(token, q)
         if (data.isNullOrBlank()) return null
         val userData = parseJson<AniListRoot>(data)
-        val u = userData.data?.viewer
+        val u = userData.data?.viewer ?: return null
         val user = AniListUser(
-            u?.id,
-            u?.name,
-            u?.avatar?.large,
+            u.id,
+            u.name,
+            u.avatar?.large,
         )
-        if (setSettings) {
-            setKey(accountId, ANILIST_USER_KEY, user)
-            registerAccount()
-        }
-        /* // TODO FIX FAVS
-        for(i in u.favourites.anime.nodes) {
-            println("FFAV:" + i.id)
-        }*/
         return user
     }
 
@@ -1048,8 +1013,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     )
 
     data class AniListViewer(
-        @JsonProperty("id") val id: Int?,
-        @JsonProperty("name") val name: String?,
+        @JsonProperty("id") val id: Int,
+        @JsonProperty("name") val name: String,
         @JsonProperty("avatar") val avatar: AniListAvatar?,
         @JsonProperty("favourites") val favourites: AniListFavourites?,
     )
@@ -1063,8 +1028,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     )
 
     data class AniListUser(
-        @JsonProperty("id") val id: Int?,
-        @JsonProperty("name") val name: String?,
+        @JsonProperty("id") val id: Int,
+        @JsonProperty("name") val name: String,
         @JsonProperty("picture") val picture: String?,
     )
 

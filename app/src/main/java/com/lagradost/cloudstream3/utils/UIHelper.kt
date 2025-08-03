@@ -88,7 +88,11 @@ object UIHelper {
                 || Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
     }
 
-    fun populateChips(view: ChipGroup?, tags: List<String>, @StyleRes style : Int = R.style.ChipFilled) {
+    fun populateChips(
+        view: ChipGroup?,
+        tags: List<String>,
+        @StyleRes style: Int = R.style.ChipFilled
+    ) {
         if (view == null) return
         view.removeAllViews()
         val context = view.context ?: return
@@ -335,19 +339,19 @@ object UIHelper {
             }
         }*/
 
-            @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility = (
-                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                            // Set the content to appear under the system bars so that the
-                            // content doesn't resize when the system bars hide and show.
-                            or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            // Hide the nav bar and status bar
-                            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            or View.SYSTEM_UI_FLAG_FULLSCREEN
-                    ) // FIXME this should be replaced
-          //}
+        @Suppress("DEPRECATION")
+        window.decorView.systemUiVisibility = (
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        // Set the content to appear under the system bars so that the
+                        // content doesn't resize when the system bars hide and show.
+                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        // Hide the nav bar and status bar
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+                ) // FIXME this should be replaced
+        //}
     }
 
     fun Context.getStatusBarHeight(): Int {
@@ -414,27 +418,35 @@ object UIHelper {
     }
 
     fun Activity.changeStatusBarState(hide: Boolean): Int {
-        return if (hide) {
+        try {
+            if (hide) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    window.insetsController?.hide(WindowInsets.Type.statusBars())
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                window.insetsController?.hide(WindowInsets.Type.statusBars())
-
+                } else {
+                    @Suppress("DEPRECATION")
+                    window.setFlags(
+                        WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                        WindowManager.LayoutParams.FLAG_FULLSCREEN
+                    )
+                }
+                0
             } else {
-                @Suppress("DEPRECATION")
-                window.setFlags(
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN
-                )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    window.insetsController?.show(WindowInsets.Type.statusBars())
+                } else {
+                    @Suppress("DEPRECATION")
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+                }
+
+                this.getStatusBarHeight()
             }
+        } catch (t: Throwable) {
+            logError(t)
+        }
+        return if (hide) {
             0
         } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                window.insetsController?.show(WindowInsets.Type.statusBars())
-            } else {
-                @Suppress("DEPRECATION")
-                window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-            }
-
             this.getStatusBarHeight()
         }
     }
@@ -448,7 +460,8 @@ object UIHelper {
             WindowCompat.setDecorFitsSystemWindows(window, true)
             WindowInsetsControllerCompat(window, View(this)).show(WindowInsetsCompat.Type.systemBars())
 
-        } else {*/ /** WINDOW COMPAT IS BUGGY DUE TO FU*KED UP PLAYER AND TRAILERS **/
+        } else {*/
+        /** WINDOW COMPAT IS BUGGY DUE TO FU*KED UP PLAYER AND TRAILERS **/
         @Suppress("DEPRECATION")
         window.decorView.systemUiVisibility =
             (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN) // FIXME this should be replaced
@@ -525,7 +538,13 @@ object UIHelper {
         onMenuItemClick: MenuItem.() -> Unit,
     ): PopupMenu {
         val ctw = ContextThemeWrapper(context, R.style.PopupMenu)
-        val popup = PopupMenu(ctw, this, Gravity.NO_GRAVITY, androidx.appcompat.R.attr.actionOverflowMenuStyle, 0)
+        val popup = PopupMenu(
+            ctw,
+            this,
+            Gravity.NO_GRAVITY,
+            androidx.appcompat.R.attr.actionOverflowMenuStyle,
+            0
+        )
 
         items.forEach { (id, stringRes) ->
             popup.menu.add(0, id, 0, stringRes)
@@ -549,7 +568,13 @@ object UIHelper {
         onMenuItemClick: MenuItem.() -> Unit,
     ): PopupMenu {
         val ctw = ContextThemeWrapper(context, R.style.PopupMenu)
-        val popup = PopupMenu(ctw, this, Gravity.NO_GRAVITY, androidx.appcompat.R.attr.actionOverflowMenuStyle, 0)
+        val popup = PopupMenu(
+            ctw,
+            this,
+            Gravity.NO_GRAVITY,
+            androidx.appcompat.R.attr.actionOverflowMenuStyle,
+            0
+        )
 
         items.forEach { (id, string) ->
             popup.menu.add(0, id, 0, string)

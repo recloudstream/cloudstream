@@ -3,23 +3,29 @@ package com.lagradost.cloudstream3.syncproviders.providers
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.subtitles.AbstractSubProvider
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.subtitles.SubtitleResource
+import com.lagradost.cloudstream3.syncproviders.AuthToken
+import com.lagradost.cloudstream3.syncproviders.SubtitleAPI
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 
-class SubSourceApi : AbstractSubProvider {
+class SubSourceApi : SubtitleAPI() {
+    override val name = "SubSource"
     override val idPrefix = "subsource"
-    val name = "SubSource"
+
+    override val requiresLogin = false
 
     companion object {
         const val APIURL = "https://api.subsource.net/api"
         const val DOWNLOADENDPOINT = "https://api.subsource.net/api/downloadSub"
     }
 
-    override suspend fun search(query: AbstractSubtitleEntities.SubtitleSearch): List<AbstractSubtitleEntities.SubtitleEntity>? {
+    override suspend fun search(
+        token: AuthToken?,
+        query: AbstractSubtitleEntities.SubtitleSearch
+    ): List<AbstractSubtitleEntities.SubtitleEntity>? {
 
         //Only supports Imdb Id search for now
         if (query.imdbId == null) return null
@@ -87,8 +93,10 @@ class SubSourceApi : AbstractSubProvider {
         }
     }
 
-    override suspend fun SubtitleResource.getResources(data: AbstractSubtitleEntities.SubtitleEntity) {
-
+    override suspend fun SubtitleResource.getResources(
+        token: AuthToken?,
+        data: AbstractSubtitleEntities.SubtitleEntity
+    ) {
         val parsedSub = parseJson<SubData>(data.data)
 
         val subRes = app.post(

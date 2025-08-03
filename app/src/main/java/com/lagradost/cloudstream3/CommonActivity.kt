@@ -34,6 +34,7 @@ import com.lagradost.cloudstream3.actions.OpenInAppAction
 import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.databinding.ToastBinding
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.ui.player.PlayerEventType
 import com.lagradost.cloudstream3.ui.player.Torrent
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -233,6 +234,7 @@ object CommonActivity {
 
         componentActivity.updateLocale()
         componentActivity.updateTv()
+        AccountManager.initMainAPI()
         NewPipe.init(DownloaderTestImpl.getInstance())
 
         MainActivity.activityResultLauncher =
