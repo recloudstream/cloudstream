@@ -127,7 +127,7 @@ class SubDlApi : SubtitleAPI() {
     )
 
     data class OAuthTokenResponse(
-        @JsonProperty("token") val token: String? = null,
+        @JsonProperty("token") val token: String,
         @JsonProperty("userData") val userData: UserData? = null,
         @JsonProperty("status") val status: Boolean? = null,
         @JsonProperty("message") val message: String? = null,
@@ -145,7 +145,7 @@ class SubDlApi : SubtitleAPI() {
 
     data class ApiKeyResponse(
         @JsonProperty("ok") val ok: Boolean? = false,
-        @JsonProperty("api_key") val apiKey: String? = null,
+        @JsonProperty("api_key") val apiKey: String,
         @JsonProperty("usage") val usage: Usage? = null,
     )
 

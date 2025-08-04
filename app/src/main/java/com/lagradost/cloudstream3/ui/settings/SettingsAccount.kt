@@ -323,7 +323,7 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
             binding.applyBtt.setOnClickListener {
                 val loginData = AuthLoginResponse(
                     username = if (req.username) binding.loginUsernameInput.text?.toString() else null,
-                    password = if (req.username) binding.loginPasswordInput.text?.toString() else null,
+                    password = if (req.password) binding.loginPasswordInput.text?.toString() else null,
                     email = if (req.email) binding.loginEmailInput.text?.toString() else null,
                     server = if (req.server) binding.loginServerInput.text?.toString() else null,
                 )

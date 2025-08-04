@@ -142,10 +142,6 @@ class SimklApi : SyncAPI() {
     companion object {
         private const val CLIENT_ID: String = BuildConfig.SIMKL_CLIENT_ID
         private const val CLIENT_SECRET: String = BuildConfig.SIMKL_CLIENT_SECRET
-        private var lastLoginState = ""
-
-        const val SIMKL_TOKEN_KEY: String = "simkl_token"
-        const val SIMKL_USER_KEY: String = "simkl_user"
         const val SIMKL_CACHED_LIST: String = "simkl_cached_list"
         const val SIMKL_CACHED_LIST_TIME: String = "simkl_cached_time"
 
@@ -1062,12 +1058,8 @@ class SimklApi : SyncAPI() {
             "$mainUrl/oauth/pin/${payload.userCode}?client_id=$CLIENT_ID"
         ).parsedSafe<PinExchangeResponse>() ?: return null
 
-        if (pinAuthResp.accessToken == null) {
-            return null
-        }
-
         return AuthToken(
-            accessToken = pinAuthResp.accessToken,
+            accessToken = pinAuthResp.accessToken ?: return null,
         )
     }
 

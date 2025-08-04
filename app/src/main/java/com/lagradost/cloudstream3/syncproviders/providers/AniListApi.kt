@@ -57,7 +57,7 @@ class AniListApi : SyncAPI() {
                 )
             ) // FIX ERROR
         val token = AuthToken(
-            accessToken = sanitizer["access_token"],
+            accessToken = sanitizer["access_token"] ?: throw ErrorLoadingException("No access token"),
             //refreshToken = sanitizer["refresh_token"],
             accessTokenLifetime = unixTime + sanitizer["expires_in"]!!.toLong(),
         )
