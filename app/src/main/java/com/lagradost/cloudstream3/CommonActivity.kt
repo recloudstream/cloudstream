@@ -91,7 +91,14 @@ object CommonActivity {
         get() {
             return min(displayMetrics.widthPixels, displayMetrics.heightPixels)
         }
-
+    val screenWidthWithOrientation: Int
+        get() {
+            return displayMetrics.widthPixels
+        }
+    val screenHeightWithOrientation: Int
+        get() {
+            return displayMetrics.heightPixels
+        }
 
     var canEnterPipMode: Boolean = false
     var canShowPipMode: Boolean = false

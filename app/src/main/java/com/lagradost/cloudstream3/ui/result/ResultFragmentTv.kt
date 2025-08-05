@@ -69,6 +69,7 @@ class ResultFragmentTv : Fragment() {
     override fun onDestroyView() {
         binding = null
         updateUIEvent -= ::updateUI
+        activity?.detachBackPressedCallback(this@ResultFragmentTv.toString())
         super.onDestroyView()
     }
 
@@ -228,11 +229,6 @@ class ResultFragmentTv : Fragment() {
             duration = 200
             interpolator = DecelerateInterpolator()
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        activity?.detachBackPressedCallback(this@ResultFragmentTv.toString())
     }
 
     private fun toggleEpisodes(show: Boolean) {

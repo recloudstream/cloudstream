@@ -143,6 +143,7 @@
         <item>@string/show_hd</item>
         <item>@string/show_dub</item>
         <item>@string/show_sub</item>
+        <item>@string/show_rating</item>
         <item>@string/show_title</item>
     </array>
 
@@ -150,6 +151,7 @@
         <item>@string/show_hd_key</item>
         <item>@string/show_dub_key</item>
         <item>@string/show_sub_key</item>
+        <item>@string/show_rating_key</item>
         <item>@string/show_title_key</item>
     </array>
 

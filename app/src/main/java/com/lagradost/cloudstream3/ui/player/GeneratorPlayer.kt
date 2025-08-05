@@ -28,6 +28,7 @@ import androidx.core.animation.addListener
 import androidx.core.app.NotificationCompat
 import androidx.core.app.PendingIntentCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.text.toSpanned
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -66,9 +67,9 @@ import com.lagradost.cloudstream3.isLiveStream
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.subtitles.AbstractSubApi
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities.SubtitleSearch
@@ -118,7 +119,6 @@ import kotlinx.coroutines.launch
 import java.io.Serializable
 import java.util.Calendar
 import kotlin.math.abs
-import androidx.core.content.edit
 
 
 @UnstableApi
@@ -1503,7 +1503,20 @@ class GeneratorPlayer : FullScreenPlayer() {
 
 
     override fun playerError(exception: Throwable) {
-        Log.i(TAG, "playerError = $currentSelectedLink")
+        val currentUrl =
+            currentSelectedLink?.let { it.first?.url ?: it.second?.uri?.toString() } ?: "unknown"
+        val headers = currentSelectedLink?.first?.headers?.toString() ?: "none"
+        val referer = currentSelectedLink?.first?.referer ?: "none"
+        Log.e(
+            TAG,
+            "playerError: $currentSelectedLink, " +
+                    "type=${exception::class.java.canonicalName}, " +
+                    "message=${exception.message}, url=$currentUrl, headers=$headers, " +
+                    "referer=$referer, position=${player.getPosition() ?: "unknown"}, " +
+                    "duration=${player.getDuration() ?: "unknown"}, " +
+                    "isPlaying=${player.getIsPlaying()}", exception
+        )
+
         if (!hasNextMirror()) {
             viewModel.forceClearCache = true
         }

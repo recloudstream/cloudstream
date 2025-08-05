@@ -32,6 +32,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
 import androidx.annotation.OptIn
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
@@ -48,8 +49,8 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.CommonActivity.keyEventListener
 import com.lagradost.cloudstream3.CommonActivity.playerEventListener
-import com.lagradost.cloudstream3.CommonActivity.screenHeight
-import com.lagradost.cloudstream3.CommonActivity.screenWidth
+import com.lagradost.cloudstream3.CommonActivity.screenHeightWithOrientation
+import com.lagradost.cloudstream3.CommonActivity.screenWidthWithOrientation
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
@@ -83,6 +84,8 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
 import kotlin.math.roundToInt
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
 
 
 const val MINIMUM_SEEK_TIME = 7000L         // when swipe seeking
@@ -229,22 +232,22 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 (context?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager)?.currentWindowMetrics
             val realScreenHeight =
                 windowMetrics?.let { windowMetrics.bounds.bottom - windowMetrics.bounds.top }
-                    ?: screenHeight
+                    ?: screenHeightWithOrientation
             val realScreenWidth =
                 windowMetrics?.let { windowMetrics.bounds.right - windowMetrics.bounds.left }
-                    ?: screenWidth
+                    ?: screenWidthWithOrientation
 
             val insets =
                 rootWindowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
             val isOutsideHeight = rawY < insets.top || rawY > (realScreenHeight - insets.bottom)
             val isOutsideWidth = if (windowMetrics == null) {
-                rawX < screenWidth
+                rawX < screenWidthWithOrientation
             } else rawX < insets.left || rawX > realScreenWidth - insets.right
 
             return !(isOutsideWidth || isOutsideHeight)
         } else {
             val statusHeight = statusBarHeight ?: 0
-            return rawY > statusHeight && rawX < screenWidth
+            return rawY > statusHeight && rawX < screenWidthWithOrientation
         }
     }
 
@@ -273,7 +276,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
 
     protected fun animateLayoutChanges() {
-        if(isLayout(PHONE)) { // isEnabled also disables the onKeyDown
+        if (isLayout(PHONE)) { // isEnabled also disables the onKeyDown
             playerBinding?.exoProgress?.isEnabled = isShowing // Prevent accidental clicks/drags
         }
 
@@ -464,7 +467,20 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     override fun onResume() {
         enterFullscreen()
         verifyVolume()
+        activity?.attachBackPressedCallback("FullScreenPlayer") {
+            // netflix capture back and hide ~monke
+            if (isShowing && isLayout(TV or EMULATOR)) {
+                onClickChange()
+            } else {
+                activity?.popCurrentPage("FullScreenPlayer")
+            }
+        }
         super.onResume()
+    }
+
+    override fun onStop() {
+        activity?.detachBackPressedCallback("FullScreenPlayer")
+        super.onStop()
     }
 
     override fun onDestroy() {
@@ -923,7 +939,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         touchEnd: Vector2?
     ): Long? {
         if (touchStart == null || touchEnd == null || startTime == null) return null
-        val diffX = (touchEnd.x - touchStart.x) * HORIZONTAL_MULTIPLIER / screenWidth.toFloat()
+        val diffX =
+            (touchEnd.x - touchStart.x) * HORIZONTAL_MULTIPLIER / screenWidthWithOrientation.toFloat()
         val duration = player.getDuration() ?: return null
         return max(
             min(
@@ -1018,7 +1035,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     val holdhandler = Handler(Looper.getMainLooper())
     var hasTriggeredSpeedUp = false
-    val holdRunnable  = Runnable {
+    val holdRunnable = Runnable {
         player.setPlaybackSpeed(2.0f)
         playerBinding?.playerSpeedupButton?.isGone = false
         hasTriggeredSpeedUp = true
@@ -1040,7 +1057,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     /*if (isCurrentTouchValid && player_episode_list?.isVisible == true) {
                         player_episode_list?.isVisible = false
                     } else*/ if (isCurrentTouchValid) {
-                        if(speedupEnabled){
+                        if (speedupEnabled) {
                             hasTriggeredSpeedUp = false
                             if (player.getIsPlaying() && !isLocked && isFullScreenPlayer) {
                                 holdhandler.postDelayed(holdRunnable, 500)
@@ -1065,13 +1082,13 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                 MotionEvent.ACTION_UP -> {
                     holdhandler.removeCallbacks(holdRunnable)
-                    if(hasTriggeredSpeedUp) {
+                    if (hasTriggeredSpeedUp) {
                         player.setPlaybackSpeed(DataStoreHelper.playBackSpeed)
                         playerSpeedupButton?.isGone = true
                     }
                     if (isCurrentTouchValid && !isLocked && isFullScreenPlayer) {
                         // seek time
-                       if(swipeHorizontalEnabled && currentTouchAction == TouchAction.Time) {
+                        if (swipeHorizontalEnabled && currentTouchAction == TouchAction.Time) {
                             val startTime = currentTouchStartPlayerTime
                             if (startTime != null) {
                                 calculateNewTime(
@@ -1104,12 +1121,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                 currentDoubleTapIndex++
                                 if (doubleTapPauseEnabled && isFullScreenPlayer) { // you can pause if your tap is in the middle of the screen
                                     when {
-                                        currentTouch.x < screenWidth / 2 - (DOUBLE_TAB_PAUSE_PERCENTAGE * screenWidth) -> {
+                                        currentTouch.x < screenWidthWithOrientation / 2 - (DOUBLE_TAB_PAUSE_PERCENTAGE * screenWidthWithOrientation) -> {
                                             if (doubleTapEnabled)
                                                 rewind()
                                         }
 
-                                        currentTouch.x > screenWidth / 2 + (DOUBLE_TAB_PAUSE_PERCENTAGE * screenWidth) -> {
+                                        currentTouch.x > screenWidthWithOrientation / 2 + (DOUBLE_TAB_PAUSE_PERCENTAGE * screenWidthWithOrientation) -> {
                                             if (doubleTapEnabled)
                                                 fastForward()
                                         }
@@ -1122,7 +1139,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                         }
                                     }
                                 } else if (doubleTapEnabled && isFullScreenPlayer) {
-                                    if (currentTouch.x < screenWidth / 2) {
+                                    if (currentTouch.x < screenWidthWithOrientation / 2) {
                                         rewind()
                                     } else {
                                         fastForward()
@@ -1132,7 +1149,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                         } else {
                             // is a valid click but not fast enough for seek
                             currentClickCount = 0
-                            if(!hasTriggeredSpeedUp){
+                            if (!hasTriggeredSpeedUp) {
                                 toggleShowDelayed()
                             }
                             //onClickChange()
@@ -1162,7 +1179,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 MotionEvent.ACTION_MOVE -> {
                     // if current touch is valid
 
-                    if(hasTriggeredSpeedUp){
+                    if (hasTriggeredSpeedUp) {
                         return true
                     }
                     if (startTouch != null && isCurrentTouchValid && !isLocked && isFullScreenPlayer) {
@@ -1172,23 +1189,24 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                             val diffFromStart = startTouch - currentTouch
 
                             if (swipeVerticalEnabled) {
-                                if (abs(diffFromStart.y * 100 / screenHeight) > MINIMUM_VERTICAL_SWIPE) {
+                                if (abs(diffFromStart.y * 100 / screenHeightWithOrientation) > MINIMUM_VERTICAL_SWIPE) {
                                     // left = Brightness, right = Volume, but the UI is reversed to show the UI better
-                                    currentTouchAction = if (startTouch.x < screenWidth / 2) {
-                                        // hide the UI if you hold brightness to show screen better, better UX
-                                        if (isShowing) {
-                                            isShowing = false
-                                            animateLayoutChanges()
-                                        }
+                                    currentTouchAction =
+                                        if (startTouch.x < screenWidthWithOrientation / 2) {
+                                            // hide the UI if you hold brightness to show screen better, better UX
+                                            if (isShowing) {
+                                                isShowing = false
+                                                animateLayoutChanges()
+                                            }
 
-                                        TouchAction.Brightness
-                                    } else {
-                                        TouchAction.Volume
-                                    }
+                                            TouchAction.Brightness
+                                        } else {
+                                            TouchAction.Volume
+                                        }
                                 }
                             }
                             if (swipeHorizontalEnabled) {
-                                if (abs(diffFromStart.x * 100 / screenHeight) > MINIMUM_HORIZONTAL_SWIPE) {
+                                if (abs(diffFromStart.x * 100 / screenHeightWithOrientation) > MINIMUM_HORIZONTAL_SWIPE) {
                                     currentTouchAction = TouchAction.Time
                                 }
                             }
@@ -1199,7 +1217,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                         if (lastTouch != null) {
                             val diffFromLast = lastTouch - currentTouch
                             val verticalAddition =
-                                diffFromLast.y * VERTICAL_MULTIPLIER / screenHeight.toFloat()
+                                diffFromLast.y * VERTICAL_MULTIPLIER / screenHeightWithOrientation.toFloat()
 
                             // update UI
                             playerTimeText.isVisible = false
@@ -1389,12 +1407,13 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             }
 
             // netflix capture back and hide ~monke
-            KeyEvent.KEYCODE_BACK -> {
+            // This is removed due to inconsistent behavior on A36 vs A22, see https://github.com/recloudstream/cloudstream/issues/1804
+            /*KeyEvent.KEYCODE_BACK -> {
                 if (isShowing && isLayout(TV or EMULATOR)) {
                     onClickChange()
                     return true
                 }
-            }
+            }*/
         }
 
         return false
@@ -1443,6 +1462,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, nextVolumeStep, 0)
         }
 
+        var hasBoostError = false
+
         // Apply loudness enhancer for volumes > 100%, removes it if less
         if (nextVolume > 1.0f) {
             val boostFactor = ((nextVolume - 1.0f) * 1000).toInt()
@@ -1453,9 +1474,14 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             } else {
                 val audioSessionId = (playerView?.player as? ExoPlayer)?.audioSessionId
                 if (audioSessionId != null && audioSessionId != AudioManager.ERROR) {
-                    loudnessEnhancer = LoudnessEnhancer(audioSessionId).apply {
-                        setTargetGain(boostFactor)
-                        enabled = true
+                    try {
+                        loudnessEnhancer = LoudnessEnhancer(audioSessionId).apply {
+                            setTargetGain(boostFactor)
+                            enabled = true
+                        }
+                    } catch (t: Throwable) {
+                        logError(t)
+                        hasBoostError = true
                     }
                 }
             }
@@ -1471,8 +1497,23 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             val level1ProgressBar = playerProgressbarLeftLevel1
             val level2ProgressBar = playerProgressbarLeftLevel2
 
+            // Change color to show that LoudnessEnhancer broke
+            // this is not a real fix, but solves the crash issue
+            if (nextVolume > 1.0f) {
+                level2ProgressBar.progressTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        level2ProgressBar.context, if (hasBoostError) {
+                            R.color.colorPrimaryRed
+                        } else {
+                            R.color.colorPrimaryOrange
+                        }
+                    )
+                )
+            }
+
             level1ProgressBar.max = 100_000
-            level1ProgressBar.progress = (nextVolume * 100_000f).toInt().coerceIn(2_000, 100_000)
+            level1ProgressBar.progress =
+                (nextVolume * 100_000f).toInt().coerceIn(2_000, 100_000)
 
             level2ProgressBar.max = 100_000
             level2ProgressBar.progress =

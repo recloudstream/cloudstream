@@ -45,7 +45,7 @@ const val RESULT_EPISODE = "result_episode"
 const val RESULT_SEASON = "result_season"
 const val RESULT_DUB = "result_dub"
 const val KEY_RESULT_SORT = "result_sort"
-
+const val USER_PINNED_PROVIDERS = "user_pinned_providers" //key for pinned user set
 
 class UserPreferenceDelegate<T : Any>(
     private val key: String, private val default: T //, private val klass: KClass<T>
@@ -259,7 +259,7 @@ object DataStoreHelper {
         @JsonProperty("quality") override var quality: SearchQuality?,
         @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>?,
         @JsonProperty("plot") open val plot: String? = null,
-        @JsonProperty("score") open var score: Score? = null,
+        @JsonProperty("score") override var score: Score? = null,
         @JsonProperty("tags") open val tags: List<String>? = null,
     ) : SearchResponse {
         @JsonProperty("rating", access = JsonProperty.Access.WRITE_ONLY)
@@ -326,7 +326,7 @@ object DataStoreHelper {
                 year?.toYear(),
                 this.id,
                 plot = this.plot,
-                rating = this.score,
+                score = this.score,
                 tags = this.tags
             )
         }
@@ -379,7 +379,7 @@ object DataStoreHelper {
                 year?.toYear(),
                 this.id,
                 plot = this.plot,
-                rating = this.score,
+                score = this.score,
                 tags = this.tags
             )
         }
@@ -432,7 +432,7 @@ object DataStoreHelper {
                 year?.toYear(),
                 this.id,
                 plot = this.plot,
-                rating = this.score,
+                score = this.score,
                 tags = this.tags
             )
         }
@@ -452,6 +452,7 @@ object DataStoreHelper {
         @JsonProperty("isFromDownload") val isFromDownload: Boolean,
         @JsonProperty("quality") override var quality: SearchQuality? = null,
         @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
+        @JsonProperty("score") override var score: Score? = null,
     ) : SearchResponse
 
     /**
@@ -714,4 +715,8 @@ object DataStoreHelper {
             getKey("${idPrefix}_sync", id.toString())
         }
     }
+   var pinnedProviders:Array<String>
+        get() = getKey(USER_PINNED_PROVIDERS) ?: emptyArray<String>()
+        set(value) = setKey(USER_PINNED_PROVIDERS, value)
+
 }

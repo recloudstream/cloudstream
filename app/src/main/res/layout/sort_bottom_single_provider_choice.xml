@@ -1,0 +1,22 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+     >
+    <TextView
+        android:id="@+id/text1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/CheckLabel"
+        android:layout_gravity="center"
+        tools:text="hello" />
+    <ImageView
+        android:id="@+id/pinicon"
+        android:layout_width="50dp"
+        android:layout_height="24dp"
+        android:layout_gravity="end|center_vertical"
+        android:src="@drawable/pin_ic"
+        android:visibility="gone"
+        tools:visibility="visible"
+        tools:ignore="RtlHardcoded" />
+</FrameLayout>

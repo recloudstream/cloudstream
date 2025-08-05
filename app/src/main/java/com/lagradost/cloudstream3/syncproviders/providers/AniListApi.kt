@@ -166,7 +166,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         val data = getDataAboutId(internalId) ?: return null
 
         return SyncAPI.SyncStatus(
-            score = data.score,
+            score = Score.from100(data.score),
             watchedEpisodes = data.progress,
             status = SyncWatchType.fromInternalId(data.type?.value ?: return null),
             isFavorite = data.isFavourite,
@@ -485,7 +485,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                     mediaListEntry {
                         progress
                         status
-                        score (format: POINT_10)
+                        score (format: POINT_100)
                     }
                     title {
                         english
@@ -624,7 +624,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                 this.media.id.toString(),
                 this.progress,
                 this.media.episodes,
-                this.score,
+                Score.from100(this.score),
                 this.updatedAt.toLong(),
                 "AniList",
                 TvType.Anime,
@@ -774,7 +774,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     private suspend fun postDataAboutId(
         id: Int,
         type: AniListStatusType,
-        score: Int?,
+        score: Score?,
         progress: Int?
     ): Boolean {
         val q =
@@ -805,7 +805,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                         0,
                         type.value
                     )]
-                }, ${if (score != null) "${'$'}scoreRaw: Int = ${score * 10}" else ""} , ${if (progress != null) "${'$'}progress: Int = $progress" else ""}) {
+                }, ${if (score != null) "${'$'}scoreRaw: Int = ${score.toInt(100)}" else ""} , ${if (progress != null) "${'$'}progress: Int = $progress" else ""}) {
                     SaveMediaListEntry (mediaId: ${'$'}id, status: ${'$'}status, scoreRaw: ${'$'}scoreRaw, progress: ${'$'}progress) {
                         id
                         status

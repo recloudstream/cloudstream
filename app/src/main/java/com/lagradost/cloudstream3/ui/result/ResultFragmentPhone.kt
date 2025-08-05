@@ -37,6 +37,7 @@ import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.databinding.FragmentResultBinding
 import com.lagradost.cloudstream3.databinding.FragmentResultSwipeBinding
@@ -82,6 +83,7 @@ import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
+import kotlin.math.roundToInt
 
 open class ResultFragmentPhone : FullScreenPlayer() {
     private val gestureRegionsListener =
@@ -944,7 +946,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         resultSyncHolder.isVisible = true
 
                         val d = status.value
-                        resultSyncRating.value = d.score?.toFloat() ?: 0.0f
+                        resultSyncRating.value = d.score?.toFloat(resultSyncRating.valueTo.roundToInt()) ?: 0.0f
                         resultSyncCheck.setItemChecked(d.status.internalId + 1, true)
                         val watchedEpisodes = d.watchedEpisodes ?: 0
                         currentSyncProgress = watchedEpisodes
@@ -962,10 +964,10 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         resultSyncCurrentEpisodes.text =
                             Editable.Factory.getInstance()?.newEditable(watchedEpisodes.toString())
                         safe { // format might fail
-                            context?.getString(R.string.sync_score_format)?.format(d.score ?: 0)
-                                ?.let {
-                                    resultSyncScoreText.text = it
-                                }
+                            val text = d.score?.toInt(10)?.let {
+                                context?.getString(R.string.sync_score_format)?.format(it)
+                            } ?: "?"
+                            resultSyncScoreText.text = text
                         }
                     }
 
@@ -1009,8 +1011,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     syncModel.setStatus(which - 1)
                 }
 
-                resultSyncRating.addOnChangeListener { _, value, _ ->
-                    syncModel.setScore(value.toInt())
+                resultSyncRating.addOnChangeListener { it, value, fromUser ->
+                    if(fromUser) syncModel.setScore(Score.from(value, it.valueTo.roundToInt()))
                 }
 
                 resultSyncAddEpisode.setOnClickListener {

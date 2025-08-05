@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
@@ -157,7 +158,7 @@ class SyncViewModel : ViewModel() {
         }
     }
 
-    fun setScore(score: Int) {
+    fun setScore(score: Score?) {
         Log.i(TAG, "setScore = $score")
         val user = userData.value
         if (user is Resource.Success) {

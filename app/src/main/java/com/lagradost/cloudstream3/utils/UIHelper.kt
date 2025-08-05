@@ -70,6 +70,8 @@ import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.disableBackPressedCallback
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.enableBackPressedCallback
 
 object UIHelper {
     val Int.toPx: Int get() = (this * Resources.getSystem().displayMetrics.density).toInt()
@@ -255,11 +257,15 @@ object UIHelper {
         }
     }
 
-    fun FragmentActivity.popCurrentPage() {
+    /** If you want to call this from a BackPressedCallback, pass the name of the callback to temporarily disable it */
+    fun FragmentActivity.popCurrentPage(fromBackPressedCallback : String? = null) {
         // Use the main looper handler to post actions on the main thread
         main {
             // Post the back press action to the main thread handler to ensure it executes
             // after any currently pending UI updates or fragment transactions.
+            if(fromBackPressedCallback != null) {
+                disableBackPressedCallback(fromBackPressedCallback)
+            }
             if (!supportFragmentManager.isStateSaved) {
                 // Get the top fragment from the back stack
                 Log.d("popFragment", "Destroying Fragment")
@@ -274,6 +280,9 @@ object UIHelper {
                     Log.d("popFragment", "Destroying after delay")
                     onBackPressedDispatcher.onBackPressed()
                 }
+            }
+            if(fromBackPressedCallback != null) {
+                enableBackPressedCallback(fromBackPressedCallback)
             }
         }
     }

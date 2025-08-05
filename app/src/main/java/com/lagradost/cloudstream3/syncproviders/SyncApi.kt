@@ -51,23 +51,20 @@ interface SyncAPI : OAuth2API {
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null,
         override var id: Int? = null,
+        override var score: Score? = null,
     ) : SearchResponse
 
     abstract class AbstractSyncStatus {
         abstract var status: SyncWatchType
-
-        /** 1-10 */
-        abstract var score: Int?
+        abstract var score: Score?
         abstract var watchedEpisodes: Int?
         abstract var isFavorite: Boolean?
         abstract var maxEpisodes: Int?
     }
 
-
     data class SyncStatus(
         override var status: SyncWatchType,
-        /** 1-10 */
-        override var score: Int?,
+        override var score: Score?,
         override var watchedEpisodes: Int?,
         override var isFavorite: Boolean? = null,
         override var maxEpisodes: Int? = null,
@@ -118,8 +115,8 @@ interface SyncAPI : OAuth2API {
                             )
                         }
                     } else items
-                ListSorting.RatingHigh -> items.sortedBy { -(it.personalRating ?: 0) }
-                ListSorting.RatingLow -> items.sortedBy { (it.personalRating ?: 0) }
+                ListSorting.RatingHigh -> items.sortedBy { -(it.personalRating?.toInt(100) ?: 0) }
+                ListSorting.RatingLow -> items.sortedBy { (it.personalRating?.toInt(100) ?: 0) }
                 ListSorting.AlphabeticalA -> items.sortedBy { it.name }
                 ListSorting.AlphabeticalZ -> items.sortedBy { it.name }.reversed()
                 ListSorting.UpdatedNew -> items.sortedBy { it.lastUpdatedUnixTime?.times(-1) }
@@ -153,7 +150,7 @@ interface SyncAPI : OAuth2API {
         val episodesCompleted: Int?,
         val episodesTotal: Int?,
         /** Out of 100 */
-        val personalRating: Int?, // TODO also update this to Score
+        val personalRating: Score?,
         val lastUpdatedUnixTime: Long?,
         override val apiName: String,
         override var type: TvType?,
@@ -163,7 +160,7 @@ interface SyncAPI : OAuth2API {
         val releaseDate: Date?,
         override var id: Int? = null,
         val plot : String? = null,
-        val rating: Score? = null,
+        override var score: Score? = null,
         val tags: List<String>? = null
     ) : SearchResponse
 }

@@ -102,7 +102,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         return setScoreRequest(
             id.toIntOrNull() ?: return false,
             fromIntToAnimeStatus(status.status.internalId),
-            status.score,
+            status.score?.toInt(10),
             status.watchedEpisodes
         ).also {
             requireLibraryRefresh = requireLibraryRefresh || it
@@ -251,7 +251,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         val data =
             getDataAboutMalId(internalId)?.myListStatus //?: throw ErrorLoadingException("No my_list_status")
         return SyncAPI.SyncStatus(
-            score = data?.score,
+            score = Score.from10(data?.score),
             status = SyncWatchType.fromInternalId(malStatusAsString.indexOf(data?.status)),
             isFavorite = null,
             watchedEpisodes = data?.numEpisodesWatched,
@@ -442,7 +442,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 this.node.id.toString(),
                 this.listStatus?.numEpisodesWatched,
                 this.node.numEpisodes,
-                this.listStatus?.score?.times(10),
+                Score.from10(this.listStatus?.score),
                 parseDateLong(this.listStatus?.updatedAt),
                 "MAL",
                 TvType.Anime,
@@ -450,12 +450,16 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 null,
                 null,
                 plot = this.node.synopsis,
-                releaseDate = if (this.node.startDate == null) null else try {Date.from(
-                    Instant.from(
-                        DateTimeFormatter.ofPattern(if (this.node.startDate.length == 4) "yyyy" else if (this.node.startDate.length == 7) "yyyy-MM" else "yyyy-MM-dd")
-                            .parse(this.node.startDate)
+                releaseDate = if (this.node.startDate == null) null else try {
+                    Date.from(
+                        Instant.from(
+                            DateTimeFormatter.ofPattern(if (this.node.startDate.length == 4) "yyyy" else if (this.node.startDate.length == 7) "yyyy-MM" else "yyyy-MM-dd")
+                                .parse(this.node.startDate)
+                        )
                     )
-                )} catch (_: RuntimeException) {null}
+                } catch (_: RuntimeException) {
+                    null
+                }
             )
         }
     }

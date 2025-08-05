@@ -274,7 +274,33 @@ object VideoDownloadManager {
             return null
         }
     }
-
+    //calculate the time
+    private fun getEstimatedTimeLeft(context:Context,bytesPerSecond: Long, progress: Long, total: Long):String{
+        if(bytesPerSecond <= 0 ) return  ""
+        val timeInSec = (total - progress)/bytesPerSecond
+        val hrs = timeInSec/3600
+        val mins =  (timeInSec%3600)/ 60
+        val secs = timeInSec % 60
+        val timeFormated:UiText? = when{
+            hrs>0 -> txt(
+                R.string.download_time_left_hour_min_sec_format,
+                hrs,
+                mins,
+                secs
+            )
+            mins>0 -> txt(
+                R.string.download_time_left_min_sec_format,
+                mins,
+                secs
+            )
+            secs>0 -> txt(
+                R.string.download_time_left_sec_format,
+                secs
+            )
+            else -> null
+        }
+        return timeFormated?.asString(context) ?: ""
+    }
     /**
      * @param hlsProgress will together with hlsTotal display another notification if used, to lessen the confusion about estimated size.
      * */
@@ -378,10 +404,15 @@ object VideoDownloadManager {
                         " ($mbFormat/s)".format(bytesPerSecond.toFloat() / 1000000f)
                     } else ""
 
+                val remainingTime =
+                    if(state == DownloadType.IsDownloading){
+                        getEstimatedTimeLeft(context,bytesPerSecond, progress, total)
+                    }else ""
+
                 val bigText =
                     when (state) {
                         DownloadType.IsDownloading, DownloadType.IsPaused -> {
-                            (if (linkName == null) "" else "$linkName\n") + "$rowTwo\n$progressPercentage % ($progressMbString/$totalMbString)$suffix$mbPerSecondString"
+                            (if (linkName == null) "" else "$linkName\n") + "$rowTwo\n$progressPercentage % ($progressMbString/$totalMbString)$suffix$mbPerSecondString $remainingTime"
                         }
 
                         DownloadType.IsPending -> {
