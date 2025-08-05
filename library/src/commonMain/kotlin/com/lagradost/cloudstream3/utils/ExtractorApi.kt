@@ -74,9 +74,7 @@ import com.lagradost.cloudstream3.extractors.FEnet
 import com.lagradost.cloudstream3.extractors.Fastream
 import com.lagradost.cloudstream3.extractors.FeHD
 import com.lagradost.cloudstream3.extractors.Fembed9hd
-import com.lagradost.cloudstream3.extractors.FileMoon
 import com.lagradost.cloudstream3.extractors.FileMoonIn
-import com.lagradost.cloudstream3.extractors.FileMoonSx
 import com.lagradost.cloudstream3.extractors.Filegram
 import com.lagradost.cloudstream3.extractors.Filesim
 import com.lagradost.cloudstream3.extractors.FlaswishCom
@@ -306,6 +304,9 @@ import com.lagradost.cloudstream3.extractors.Zorofile
 import com.lagradost.cloudstream3.extractors.Zplayer
 import com.lagradost.cloudstream3.extractors.ZplayerV2
 import com.lagradost.cloudstream3.extractors.Ztreamhub
+import com.lagradost.cloudstream3.extractors.helper.FileMoon
+import com.lagradost.cloudstream3.extractors.helper.FileMoonSx
+import com.lagradost.cloudstream3.extractors.helper.FilemoonV2
 import com.lagradost.cloudstream3.mvvm.logError
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -1087,6 +1088,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Guccihide(),
     FileMoon(),
     FileMoonSx(),
+    FilemoonV2(),
 
     Vido(),
     Linkbox(),
