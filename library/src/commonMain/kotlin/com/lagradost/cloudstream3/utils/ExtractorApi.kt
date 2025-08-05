@@ -304,9 +304,9 @@ import com.lagradost.cloudstream3.extractors.Zorofile
 import com.lagradost.cloudstream3.extractors.Zplayer
 import com.lagradost.cloudstream3.extractors.ZplayerV2
 import com.lagradost.cloudstream3.extractors.Ztreamhub
-import com.lagradost.cloudstream3.extractors.helper.FileMoon
-import com.lagradost.cloudstream3.extractors.helper.FileMoonSx
-import com.lagradost.cloudstream3.extractors.helper.FilemoonV2
+import com.lagradost.cloudstream3.extractors.FileMoon
+import com.lagradost.cloudstream3.extractors.FileMoonSx
+import com.lagradost.cloudstream3.extractors.FilemoonV2
 import com.lagradost.cloudstream3.mvvm.logError
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay

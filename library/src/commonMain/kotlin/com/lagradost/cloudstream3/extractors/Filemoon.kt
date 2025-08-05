@@ -1,4 +1,4 @@
-package com.lagradost.cloudstream3.extractors.helper
+package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.SubtitleFile
