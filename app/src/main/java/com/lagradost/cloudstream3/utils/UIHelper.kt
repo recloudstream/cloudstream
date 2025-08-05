@@ -70,6 +70,8 @@ import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.disableBackPressedCallback
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.enableBackPressedCallback
 
 object UIHelper {
     val Int.toPx: Int get() = (this * Resources.getSystem().displayMetrics.density).toInt()
