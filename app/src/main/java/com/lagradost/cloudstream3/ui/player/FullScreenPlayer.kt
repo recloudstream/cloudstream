@@ -465,7 +465,20 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     override fun onResume() {
         enterFullscreen()
         verifyVolume()
+        activity?.attachBackPressedCallback("FullScreenPlayer") {
+            // netflix capture back and hide ~monke
+            if (isShowing && isLayout(TV or EMULATOR)) {
+                onClickChange()
+            } else {
+                activity?.popCurrentPage("FullScreenPlayer")
+            }
+        }
         super.onResume()
+    }
+
+    override fun onStop() {
+        activity?.detachBackPressedCallback("FullScreenPlayer")
+        super.onStop()
     }
 
     override fun onDestroy() {
@@ -1392,12 +1405,13 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             }
 
             // netflix capture back and hide ~monke
-            KeyEvent.KEYCODE_BACK -> {
+            // This is removed due to inconsistent behavior on A36 vs A22, see https://github.com/recloudstream/cloudstream/issues/1804
+            /*KeyEvent.KEYCODE_BACK -> {
                 if (isShowing && isLayout(TV or EMULATOR)) {
                     onClickChange()
                     return true
                 }
-            }
+            }*/
         }
 
         return false
