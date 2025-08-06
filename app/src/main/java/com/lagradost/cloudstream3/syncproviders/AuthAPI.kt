@@ -42,21 +42,36 @@ import java.util.Date
 import java.util.concurrent.TimeUnit
 
 data class AuthLoginPage(
+    /** The website to open to authenticate */
     val url: String,
+    /**
+     * State/control code to verify against the redirectUrl to make sure the request is valid.
+     * This parameter will be saved, and then used in AuthAPI::login.
+     * */
     val payload: String? = null,
 )
 
 data class AuthToken(
+    /**
+     * This is the general access tokens/api token representing a logged in user.
+     *
+     * `Access tokens are the thing that applications use to make API requests on behalf of a user.`
+     * */
     @JsonProperty("accessToken")
     val accessToken: String? = null,
+    /**
+     * For OAuth a special refresh token is issues to refresh the access token.
+     * */
     @JsonProperty("refreshToken")
     val refreshToken: String? = null,
-    /** In UnixTime (sec) */
+    /** In UnixTime (sec) when it expires */
     @JsonProperty("accessTokenLifetime")
     val accessTokenLifetime: Long? = null,
-    /** In UnixTime (sec) */
+    /** In UnixTime (sec) when it expires */
     @JsonProperty("refreshTokenLifetime")
     val refreshTokenLifetime: Long? = null,
+    /** Sometimes AuthToken needs to be customized to store e.g. username/password,
+     * this acts as a catch all to store text or JSON data. */
     @JsonProperty("payload")
     val payload: String? = null,
 ) {
@@ -68,14 +83,19 @@ data class AuthToken(
 }
 
 data class AuthUser(
+    /** Account display-name, can also be email if name does not exist */
     @JsonProperty("name")
     val name: String?,
+    /** Unique account identifier,
+     * if a subsequent login is done then it will be refused if another account with the same id exists*/
     @JsonProperty("id")
     val id: Int,
+    /** Profile picture URL */
     @JsonProperty("profilePicture")
     val profilePicture: String? = null,
+    /** Profile picture Headers of the URL */
     @JsonProperty("profilePictureHeader")
-    val profilePictureHeader: Map<String, String>? = null
+    val profilePictureHeaders: Map<String, String>? = null
 )
 
 data class AuthData(
@@ -88,11 +108,15 @@ data class AuthData(
 data class AuthPinData(
     val deviceCode: String,
     val userCode: String,
+    /** QR Code url */
     val verificationUrl: String,
+    /** In seconds */
     val expiresIn: Int,
+    /** Check if the code has been verified interval */
     val interval: Int,
 )
 
+/** The login field requirements to display to the user */
 data class AuthLoginRequirement(
     val password: Boolean = false,
     val username: Boolean = false,
@@ -100,6 +124,7 @@ data class AuthLoginRequirement(
     val server: Boolean = false,
 )
 
+/** What the user responds to the AuthLoginRequirement */
 data class AuthLoginResponse(
     @JsonProperty("password")
     val password: String?,
@@ -182,6 +207,7 @@ abstract class AuthAPI {
     open suspend fun user(token: AuthToken?): AuthUser? = throw NotImplementedError()
 
     @Throws
+    @Deprecated("Please the the new api for AuthAPI", level = DeprecationLevel.WARNING)
     fun toRepo(): AuthRepo = when (this) {
         is SubtitleAPI -> SubtitleRepo(this)
         is SyncAPI -> SyncRepo(this)
@@ -210,16 +236,6 @@ abstract class AuthAPI {
         val name: String?,
         val accountIndex: Int,
     )
-}
-
-enum class WatchingStatus {
-    None,
-    Watching,
-    Completed,
-    OnHold,
-    Dropped,
-    PlanToWatch,
-    ReWatching,
 }
 
 /**
@@ -383,7 +399,6 @@ abstract class SyncAPI : AuthAPI() {
         val syncId: String,
         val episodesCompleted: Int?,
         val episodesTotal: Int?,
-        /** Out of 100 */
         val personalRating: Score?,
         val lastUpdatedUnixTime: Long?,
         override val apiName: String,
@@ -514,6 +529,7 @@ abstract class AuthRepo(open val api: AuthAPI) {
     }
 
     fun authToken(): AuthToken? = authData()?.token
+
     fun authUser(): AuthUser? = authData()?.user
 
     val accounts
@@ -694,7 +710,6 @@ abstract class AccountManager {
         val addic7ed = Addic7ed()
         val subDlApi = SubDlApi()
         val subSourceApi = SubSourceApi()
-
 
         var cachedAccounts: MutableMap<String, Array<AuthData>>
         var cachedAccountIndices: MutableMap<String, Int>

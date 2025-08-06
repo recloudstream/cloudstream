@@ -64,7 +64,7 @@ class AccountAdapter(
                 accountProfilePicture.isVisible = true
                 accountProfilePicture.loadImage(
                     card.user.profilePicture,
-                    headers = card.user.profilePictureHeader
+                    headers = card.user.profilePictureHeaders
                 )
 
                 itemView.setOnClickListener {
