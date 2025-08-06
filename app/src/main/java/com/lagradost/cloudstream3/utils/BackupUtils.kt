@@ -56,7 +56,7 @@ object BackupUtils {
         PLUGINS_KEY_LOCAL,
 
         AccountManager.ACCOUNT_TOKEN,
-        AccountManager.ACCOUNT_INDEX,
+        AccountManager.ACCOUNT_IDS,
 
         "biometric_key", // can lock down users if backup is shared on a incompatible device
         "nginx_user", // Nginx user key

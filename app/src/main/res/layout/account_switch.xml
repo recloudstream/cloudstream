@@ -17,6 +17,13 @@
         android:focusable="true"/>
 
     <TextView
+        android:id="@+id/account_none"
+        android:text="@string/no_account"
+        style="@style/SettingsItem"
+        android:focusable="true">
+    </TextView>
+
+    <TextView
         android:id="@+id/account_add"
         android:text="@string/add_account"
         style="@style/SettingsItem"

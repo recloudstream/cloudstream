@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.settings
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -67,10 +68,12 @@ import qrcode.QRCode
 class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
     companion object {
         /** Used by nginx plugin too */
+        @SuppressLint("StringFormatInvalid")
         fun showLoginInfo(
             activity: FragmentActivity?,
             api: AuthRepo,
-            info: AuthUser
+            info: AuthUser?,
+            index: Int,
         ) {
             if (activity == null) return
             val binding: AccountManagmentBinding =
@@ -80,16 +83,25 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
                     .setView(binding.root)
             val dialog = builder.show()
 
-            binding.accountMainProfilePictureHolder.isVisible = !info.profilePicture.isNullOrEmpty()
-            binding.accountMainProfilePicture.loadImage(info.profilePicture)
+            binding.accountMainProfilePictureHolder.isVisible =
+                !info?.profilePicture.isNullOrEmpty()
+            binding.accountMainProfilePicture.loadImage(info?.profilePicture)
 
+            binding.accountLogout.isVisible = info != null
             binding.accountLogout.setOnClickListener {
-                api.logout(info)
+                if (info != null) {
+                    api.logout(info)
+                }
                 dialog.dismissSafe(activity)
             }
 
-            (info.name ?: activity.getString(R.string.no_data)).let {
-                dialog.findViewById<TextView>(R.id.account_name)?.text = it
+            dialog.findViewById<TextView>(R.id.account_name)?.text = if (info != null) {
+                info.name ?: "%s %d".format(
+                    activity.getString(R.string.account),
+                    index + 1
+                )
+            } else {
+                activity.getString(R.string.no_account)
             }
 
             binding.accountSite.text = api.name
@@ -118,11 +130,14 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
                 dialog?.dismissSafe(activity)
             }
 
-            val ogIndex = api.accountIndex
-            api.accountIndex = ogIndex
+            binding.accountNone.setOnClickListener {
+                api.accountId = -1
+                dialog?.dismissSafe(activity)
+            }
+
             val adapter = AccountAdapter(accounts) {
                 dialog?.dismissSafe(activity)
-                api.accountIndex = it.card
+                api.accountId = it.card.user.id
             }
             val list = dialog.findViewById<RecyclerView>(R.id.account_list)
             list?.adapter = adapter
@@ -456,8 +471,9 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
                 setOnPreferenceClickListener {
                     val activity = activity ?: return@setOnPreferenceClickListener false
                     val info = api.authUser()
-                    if (info != null) {
-                        showLoginInfo(activity, api, info)
+                    val index = api.accounts.indexOfFirst { account -> account.user.id == info?.id }
+                    if (api.accounts.isNotEmpty()) {
+                        showLoginInfo(activity, api, info, index)
                     } else {
                         addAccount(activity, api)
                     }

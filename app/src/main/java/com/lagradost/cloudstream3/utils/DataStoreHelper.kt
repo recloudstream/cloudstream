@@ -185,6 +185,7 @@ object DataStoreHelper {
         val homepage = currentHomePage
 
         selectedKeyIndex = account.keyIndex
+        AccountManager.updateAccountIds()
         showToast(context?.getString(R.string.logged_account, account.name) ?: account.name)
         MainActivity.bookmarksUpdatedEvent(true)
         MainActivity.reloadLibraryEvent(true)

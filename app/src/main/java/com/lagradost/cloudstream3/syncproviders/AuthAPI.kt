@@ -24,6 +24,7 @@ import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities.SubtitleEntity
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities.SubtitleSearch
 import com.lagradost.cloudstream3.subtitles.SubtitleResource
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.NONE_ID
 import com.lagradost.cloudstream3.syncproviders.providers.Addic7ed
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi
 import com.lagradost.cloudstream3.syncproviders.providers.LocalList
@@ -35,6 +36,7 @@ import com.lagradost.cloudstream3.syncproviders.providers.SubSourceApi
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.utils.txt
 import me.xdrop.fuzzywuzzy.FuzzySearch
@@ -504,7 +506,7 @@ abstract class AuthRepo(open val api: AuthAPI) {
         val newAccounts = currentAccounts.filter { it.user.id != from.id }.toTypedArray()
         if (newAccounts.size < currentAccounts.size) {
             AccountManager.updateAccounts(idPrefix, newAccounts)
-            AccountManager.updateAccountsIndex(idPrefix, 0)
+            AccountManager.updateAccountsId(idPrefix, 0)
         }
     }
 
@@ -520,11 +522,9 @@ abstract class AuthRepo(open val api: AuthAPI) {
         AccountManager.updateAccounts(idPrefix, newAccounts)
     }
 
-    fun authData(): AuthData? = synchronized(AccountManager.cachedAccountIndices) {
-        AccountManager.cachedAccountIndices[idPrefix]?.let {
-            AccountManager.cachedAccounts[idPrefix]?.getOrNull(
-                it
-            )
+    fun authData(): AuthData? = synchronized(AccountManager.cachedAccountIds) {
+        AccountManager.cachedAccountIds[idPrefix]?.let { id ->
+            AccountManager.cachedAccounts[idPrefix]?.firstOrNull { data -> data.user.id == id }
         }
     }
 
@@ -536,12 +536,12 @@ abstract class AuthRepo(open val api: AuthAPI) {
         get() = synchronized(AccountManager.cachedAccounts) {
             AccountManager.cachedAccounts[idPrefix] ?: emptyArray()
         }
-    var accountIndex
-        get() = synchronized(AccountManager.cachedAccountIndices) {
-            AccountManager.cachedAccountIndices[idPrefix] ?: 0
+    var accountId
+        get() = synchronized(AccountManager.cachedAccountIds) {
+            AccountManager.cachedAccountIds[idPrefix] ?: NONE_ID
         }
         set(value) {
-            AccountManager.updateAccountsIndex(idPrefix, value)
+            AccountManager.updateAccountsId(idPrefix, value)
         }
 
     @Throws
@@ -564,7 +564,7 @@ abstract class AuthRepo(open val api: AuthAPI) {
 
         val newAccounts = currentAccounts + newAccount
         AccountManager.updateAccounts(idPrefix, newAccounts)
-        AccountManager.updateAccountsIndex(idPrefix, newAccounts.size - 1)
+        AccountManager.updateAccountsId(idPrefix, user.id)
         if (this is SyncRepo) {
             requireLibraryRefresh = true
         }
@@ -701,6 +701,7 @@ class SubtitleRepo(override val api: SubtitleAPI) : AuthRepo(api) {
 
 abstract class AccountManager {
     companion object {
+        const val NONE_ID : Int = -1
         val malApi = MALApi()
         val aniListApi = AniListApi()
         val simklApi = SimklApi()
@@ -712,29 +713,29 @@ abstract class AccountManager {
         val subSourceApi = SubSourceApi()
 
         var cachedAccounts: MutableMap<String, Array<AuthData>>
-        var cachedAccountIndices: MutableMap<String, Int>
+        var cachedAccountIds: MutableMap<String, Int>
 
         const val ACCOUNT_TOKEN = "auth_tokens"
-        const val ACCOUNT_INDEX = "auth_index"
+        const val ACCOUNT_IDS = "auth_ids"
 
         fun accounts(prefix: String): Array<AuthData> {
             require(prefix != "NONE")
-            return getKey<Array<AuthData>>(ACCOUNT_TOKEN, prefix) ?: arrayOf()
+            return getKey<Array<AuthData>>(ACCOUNT_TOKEN, "${prefix}/${DataStoreHelper.currentAccount}") ?: arrayOf()
         }
 
         fun updateAccounts(prefix: String, array: Array<AuthData>) {
             require(prefix != "NONE")
-            setKey(ACCOUNT_TOKEN, prefix, array)
+            setKey(ACCOUNT_TOKEN, "${prefix}/${DataStoreHelper.currentAccount}", array)
             synchronized(cachedAccounts) {
                 cachedAccounts[prefix] = array
             }
         }
 
-        fun updateAccountsIndex(prefix: String, index: Int) {
+        fun updateAccountsId(prefix: String, id: Int) {
             require(prefix != "NONE")
-            setKey(ACCOUNT_INDEX, prefix, index)
-            synchronized(cachedAccountIndices) {
-                cachedAccountIndices[prefix] = index
+            setKey(ACCOUNT_IDS, "${prefix}/${DataStoreHelper.currentAccount}", id)
+            synchronized(cachedAccountIds) {
+                cachedAccountIds[prefix] = id
             }
         }
 
@@ -750,15 +751,25 @@ abstract class AccountManager {
             SubtitleRepo(subSourceApi)
         )
 
+        fun updateAccountIds() {
+            val ids = mutableMapOf<String, Int>()
+            for (api in allApis) {
+                ids.put(api.idPrefix, getKey<Int>(ACCOUNT_IDS, "${api.idPrefix}/${DataStoreHelper.currentAccount}" , NONE_ID) ?: NONE_ID)
+            }
+            synchronized(cachedAccountIds) {
+                cachedAccountIds = ids
+            }
+        }
+
         init {
             val data = mutableMapOf<String, Array<AuthData>>()
-            val indices = mutableMapOf<String, Int>()
+            val ids = mutableMapOf<String, Int>()
             for (api in allApis) {
                 data.put(api.idPrefix, accounts(api.idPrefix))
-                indices.put(api.idPrefix, getKey<Int>(ACCOUNT_TOKEN, api.idPrefix, 0) ?: 0)
+                ids.put(api.idPrefix, getKey<Int>(ACCOUNT_IDS, "${api.idPrefix}/${DataStoreHelper.currentAccount}" , NONE_ID) ?: NONE_ID)
             }
             cachedAccounts = data
-            cachedAccountIndices = indices
+            cachedAccountIds = ids
         }
 
         // I do not want to place this in the init block as JVM initialization order is weird, and it may cause exceptions

@@ -11,7 +11,7 @@ import com.lagradost.cloudstream3.databinding.AccountSingleBinding
 import com.lagradost.cloudstream3.syncproviders.AuthData
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 
-class AccountClickCallback(val action: Int, val view: View, val card: Int)
+class AccountClickCallback(val action: Int, val view: View, val card: AuthData)
 
 class AccountAdapter(
     private val cardList: Array<AuthData>,
@@ -68,7 +68,7 @@ class AccountAdapter(
                 )
 
                 itemView.setOnClickListener {
-                    clickCallback.invoke(AccountClickCallback(0, itemView, position))
+                    clickCallback.invoke(AccountClickCallback(0, itemView, card))
                 }
             }
         }
