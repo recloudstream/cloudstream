@@ -1,84 +1,64 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
-import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.subtitles.AbstractSubApi
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.subtitles.SubtitleResource
-import com.lagradost.cloudstream3.syncproviders.AuthAPI.LoginInfo
-import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
-import com.lagradost.cloudstream3.syncproviders.InAppAuthAPIManager
+import com.lagradost.cloudstream3.syncproviders.AuthLoginRequirement
+import com.lagradost.cloudstream3.syncproviders.AuthLoginResponse
+import com.lagradost.cloudstream3.syncproviders.AuthToken
+import com.lagradost.cloudstream3.syncproviders.AuthUser
+import com.lagradost.cloudstream3.syncproviders.SubtitleAPI
 
-class SubDlApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
-    override val idPrefix = "subdl"
+class SubDlApi : SubtitleAPI() {
     override val name = "SubDL"
+    override val idPrefix = "subdl"
+
     override val icon = R.drawable.subdl_logo_big
-    override val requiresPassword = true
-    override val requiresEmail = true
+    override val hasInApp = true
+    override val inAppLoginRequirement = AuthLoginRequirement(password = true, email = true)
+    override val requiresLogin = true
     override val createAccountUrl = "https://subdl.com/panel/register"
 
     companion object {
         const val APIURL = "https://apiold.subdl.com"
         const val APIENDPOINT = "$APIURL/api/v1/subtitles"
         const val DOWNLOADENDPOINT = "https://dl.subdl.com"
-        const val SUBDL_SUBTITLES_USER_KEY: String = "subdl_user"
-        var currentSession: SubtitleOAuthEntity? = null
     }
 
-    override suspend fun initialize() {
-        currentSession = getAuthKey()
-    }
-
-    override fun logOut() {
-        setAuthKey(null)
-        removeAccountKeys()
-        currentSession = getAuthKey()
-    }
-
-    override suspend fun login(data: InAppAuthAPI.LoginData): Boolean {
-        val email = data.email ?: throw ErrorLoadingException("Requires Email")
-        val password = data.password ?: throw ErrorLoadingException("Requires Password")
-        switchToNewAccount()
-        try {
-            if (initLogin(email, password)) {
-                registerAccount()
-                return true
-            }
-        } catch (e: Exception) {
-            logError(e)
-            switchToOldAccount()
-        }
-        switchToOldAccount()
-        return false
-    }
-
-    override fun getLatestLoginData(): InAppAuthAPI.LoginData? {
-        val current = getAuthKey() ?: return null
-        return InAppAuthAPI.LoginData(
-            email = current.userEmail,
-            password = current.pass
-        )
-    }
-
-    override fun loginInfo(): LoginInfo? {
-        getAuthKey()?.let { user ->
-            return LoginInfo(
-                profilePicture = null,
-                name = user.name ?: user.userEmail,
-                accountIndex = accountIndex
+    override suspend fun login(form: AuthLoginResponse): AuthToken? {
+        val email = form.email ?: return null
+        val password = form.password ?: return null
+        val tokenResponse = app.post(
+            url = "$APIURL/login",
+            json = mapOf(
+                "email" to email,
+                "password" to password
             )
-        }
-        return null
+        ).parsed<OAuthTokenResponse>()
+
+        val apiResponse = app.get(
+            url = "$APIURL/user/userApi",
+            headers = mapOf(
+                "Authorization" to "Bearer ${tokenResponse.token}"
+            )
+        ).parsed<ApiKeyResponse>()
+
+        return AuthToken(accessToken = apiResponse.apiKey, payload = email)
     }
 
-    override suspend fun search(query: AbstractSubtitleEntities.SubtitleSearch): List<AbstractSubtitleEntities.SubtitleEntity>? {
+    override suspend fun user(token: AuthToken?): AuthUser? {
+        val name = token?.payload ?: return null
+        return AuthUser(id = name.hashCode(), name = name)
+    }
+
+    override suspend fun search(
+        token: AuthToken?,
+        query: AbstractSubtitleEntities.SubtitleSearch
+    ): List<AbstractSubtitleEntities.SubtitleEntity>? {
+        if (token == null) return null
 
         val queryText = query.query
         val epNum = query.epNumber ?: 0
@@ -97,8 +77,8 @@ class SubDlApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
 
         val searchQueryUrl = when (idQuery) {
             //Use imdb/tmdb id to search if its valid
-            null -> "$APIENDPOINT?api_key=${currentSession?.apiKey}&film_name=$queryText&languages=${query.lang}$epQuery$seasonQuery$yearQuery"
-            else -> "$APIENDPOINT?api_key=${currentSession?.apiKey}$idQuery&languages=${query.lang}$epQuery$seasonQuery$yearQuery"
+            null -> "$APIENDPOINT?api_key=${token.accessToken}&film_name=$queryText&languages=${query.lang}$epQuery$seasonQuery$yearQuery"
+            else -> "$APIENDPOINT?api_key=${token.accessToken}$idQuery&languages=${query.lang}$epQuery$seasonQuery$yearQuery"
         }
 
         val req = app.get(
@@ -129,56 +109,13 @@ class SubDlApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
         }
     }
 
-    override suspend fun SubtitleResource.getResources(data: AbstractSubtitleEntities.SubtitleEntity) {
+    override suspend fun SubtitleResource.getResources(
+        token: AuthToken?,
+        data: AbstractSubtitleEntities.SubtitleEntity
+    ) {
         this.addZipUrl(data.data) { name, _ ->
             name
         }
-    }
-
-    private suspend fun initLogin(useremail: String, password: String): Boolean {
-
-        val tokenResponse = app.post(
-            url = "$APIURL/login",
-            json = mapOf(
-                "email" to useremail,
-                "password" to password
-            )
-        ).parsedSafe<OAuthTokenResponse>()
-
-        if (tokenResponse?.token == null) return false
-
-        val apiResponse = app.get(
-            url = "$APIURL/user/userApi",
-            headers = mapOf(
-                "Authorization" to "Bearer ${tokenResponse.token}"
-            )
-        ).parsedSafe<ApiKeyResponse>()
-
-        if (apiResponse?.ok == false) return false
-
-        setAuthKey(
-            SubtitleOAuthEntity(
-                userEmail = useremail,
-                pass = password,
-                name = tokenResponse.userData?.username ?: tokenResponse.userData?.name,
-                accessToken = tokenResponse.token,
-                apiKey = apiResponse?.apiKey
-            )
-        )
-        return true
-    }
-
-    private fun getAuthKey(): SubtitleOAuthEntity? {
-        return getKey(accountId, SUBDL_SUBTITLES_USER_KEY)
-    }
-
-    private fun setAuthKey(data: SubtitleOAuthEntity?) {
-        if (data == null) removeKey(
-            accountId,
-            SUBDL_SUBTITLES_USER_KEY
-        )
-        currentSession = data
-        setKey(accountId, SUBDL_SUBTITLES_USER_KEY, data)
     }
 
     data class SubtitleOAuthEntity(
@@ -190,7 +127,7 @@ class SubDlApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
     )
 
     data class OAuthTokenResponse(
-        @JsonProperty("token") val token: String? = null,
+        @JsonProperty("token") val token: String,
         @JsonProperty("userData") val userData: UserData? = null,
         @JsonProperty("status") val status: Boolean? = null,
         @JsonProperty("message") val message: String? = null,
@@ -208,7 +145,7 @@ class SubDlApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
 
     data class ApiKeyResponse(
         @JsonProperty("ok") val ok: Boolean? = false,
-        @JsonProperty("api_key") val apiKey: String? = null,
+        @JsonProperty("api_key") val apiKey: String,
         @JsonProperty("usage") val usage: Usage? = null,
     )
 

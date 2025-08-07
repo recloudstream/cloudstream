@@ -18,17 +18,9 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.plugins.PLUGINS_KEY
 import com.lagradost.cloudstream3.plugins.PLUGINS_KEY_LOCAL
+import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_CACHED_LIST
-import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_TOKEN_KEY
-import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_UNIXTIME_KEY
-import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_USER_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_CACHED_LIST
-import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_REFRESH_TOKEN_KEY
-import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_TOKEN_KEY
-import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_UNIXTIME_KEY
-import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_USER_KEY
-import com.lagradost.cloudstream3.syncproviders.providers.OpenSubtitlesApi.Companion.OPEN_SUBTITLES_USER_KEY
-import com.lagradost.cloudstream3.syncproviders.providers.SubDlApi.Companion.SUBDL_SUBTITLES_USER_KEY
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getDefaultSharedPrefs
@@ -42,7 +34,6 @@ import com.lagradost.cloudstream3.utils.VideoDownloadManager.setupStream
 import com.lagradost.safefile.MediaFileContentType
 import com.lagradost.safefile.SafeFile
 import okhttp3.internal.closeQuietly
-import java.io.File
 import java.io.IOException
 import java.io.OutputStream
 import java.io.PrintWriter
@@ -57,22 +48,15 @@ object BackupUtils {
      * */
     private val nonTransferableKeys = listOf(
         // When sharing backup we do not want to transfer what is essentially the password
-        ANILIST_TOKEN_KEY,
         ANILIST_CACHED_LIST,
-        ANILIST_UNIXTIME_KEY,
-        ANILIST_USER_KEY,
-        MAL_TOKEN_KEY,
-        MAL_REFRESH_TOKEN_KEY,
         MAL_CACHED_LIST,
-        MAL_UNIXTIME_KEY,
-        MAL_USER_KEY,
 
         // The plugins themselves are not backed up
         PLUGINS_KEY,
         PLUGINS_KEY_LOCAL,
 
-        OPEN_SUBTITLES_USER_KEY,
-        SUBDL_SUBTITLES_USER_KEY,
+        AccountManager.ACCOUNT_TOKEN,
+        AccountManager.ACCOUNT_IDS,
 
         "biometric_key", // can lock down users if backup is shared on a incompatible device
         "nginx_user", // Nginx user key
