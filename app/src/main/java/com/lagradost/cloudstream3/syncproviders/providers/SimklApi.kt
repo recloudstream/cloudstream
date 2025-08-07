@@ -509,7 +509,7 @@ class SimklApi : SyncAPI() {
         }
 
         fun getHeaders(token: AuthToken): Map<String, String> =
-            mapOf("Authorization" to "Bearer ${token.accessToken}")
+            mapOf("Authorization" to "Bearer ${token.accessToken}", "simkl-api-key" to CLIENT_ID)
 
         suspend fun getEpisodes(
             simklId: Int?,
