@@ -103,7 +103,7 @@ class PlayerSubtitleHelper {
                 url = subtitleFile.url,
                 origin = SubtitleOrigin.URL,
                 mimeType = subtitleFile.url.toSubtitleMimeType(),
-                headers = emptyMap(),
+                headers = subtitleFile.headers ?: emptyMap(),
                 languageCode = subtitleFile.lang
             )
         }

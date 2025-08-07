@@ -673,7 +673,7 @@ class ResultViewModel2 : ViewModel() {
                 val folder = getFolder(meta.type ?: return, meta.mainName)
                 downloadSubtitle(
                     ctx,
-                    ExtractorSubtitleLink(link.name, link.url, ""),
+                    ExtractorSubtitleLink(link.name, link.url, "", link.headers),
                     fileName,
                     folder
                 )
@@ -766,7 +766,7 @@ class ResultViewModel2 : ViewModel() {
                             )
                         )
                     }
-                        .map { ExtractorSubtitleLink(it.name, it.url, "") }.take(3)
+                        .map { ExtractorSubtitleLink(it.name, it.url, "", it.headers) }.take(3)
                         .forEach { link ->
                             val fileName = VideoDownloadManager.getFileName(context, meta)
                             downloadSubtitle(context, link, fileName, folder)
