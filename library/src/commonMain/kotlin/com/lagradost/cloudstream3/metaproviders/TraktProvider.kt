@@ -12,6 +12,7 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.addImdbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addRating
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTMDbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
+import com.lagradost.cloudstream3.LoadResponse.Companion.addTraktId
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainPageRequest
 import com.lagradost.cloudstream3.NextAiring
@@ -192,6 +193,7 @@ open class TraktProvider : MainAPI() {
                 addTrailer(mediaDetails.trailer)
                 addImdbId(mediaDetails.ids?.imdb)
                 addTMDbId(mediaDetails.ids?.tmdb.toString())
+                addTraktId(mediaDetails.ids?.trakt?.toString())
             }
         } else {
 
@@ -281,6 +283,7 @@ open class TraktProvider : MainAPI() {
                 addTrailer(mediaDetails.trailer)
                 addImdbId(mediaDetails.ids?.imdb)
                 addTMDbId(mediaDetails.ids?.tmdb.toString())
+                addTraktId(mediaDetails.ids?.trakt?.toString())
             }
         }
     }

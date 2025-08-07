@@ -35,6 +35,7 @@ import com.lagradost.cloudstream3.syncproviders.providers.OpenSubtitlesApi
 import com.lagradost.cloudstream3.syncproviders.providers.SimklApi
 import com.lagradost.cloudstream3.syncproviders.providers.SubDlApi
 import com.lagradost.cloudstream3.syncproviders.providers.SubSourceApi
+import com.lagradost.cloudstream3.syncproviders.providers.TraktApi
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.utils.AppContextUtils.splitQuery
@@ -276,7 +277,7 @@ abstract class SyncAPI : AuthAPI() {
     open var requireLibraryRefresh: Boolean = true
     open val mainUrl: String = "NONE"
 
-    /** Currently unused, but will be used to correctly render the UI. 
+    /** Currently unused, but will be used to correctly render the UI.
      * This should specify what sync watch types can be used with this service. */
     open val supportedWatchTypes: Set<SyncWatchType> = SyncWatchType.entries.toSet()
     /**
@@ -732,6 +733,7 @@ abstract class AccountManager {
         val malApi = MALApi()
         val aniListApi = AniListApi()
         val simklApi = SimklApi()
+        val traktApi = TraktApi()
         val localListApi = LocalList()
 
         val openSubtitlesApi = OpenSubtitlesApi()
@@ -773,6 +775,7 @@ abstract class AccountManager {
             SyncRepo(malApi),
             SyncRepo(aniListApi),
             SyncRepo(simklApi),
+            SyncRepo(traktApi),
             SyncRepo(localListApi),
 
             SubtitleRepo(openSubtitlesApi),
@@ -822,6 +825,7 @@ abstract class AccountManager {
             LoadResponse.malIdPrefix = malApi.idPrefix
             LoadResponse.aniListIdPrefix = aniListApi.idPrefix
             LoadResponse.simklIdPrefix = simklApi.idPrefix
+            LoadResponse.traktIdPrefix = traktApi.idPrefix
         }
 
         val subtitleProviders = arrayOf(
@@ -834,6 +838,7 @@ abstract class AccountManager {
             SyncRepo(malApi),
             SyncRepo(aniListApi),
             SyncRepo(simklApi),
+            SyncRepo(traktApi),
             SyncRepo(localListApi)
         )
 

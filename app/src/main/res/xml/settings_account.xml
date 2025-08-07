@@ -18,6 +18,10 @@
             android:key="@string/simkl_key" />
 
         <Preference
+            android:icon="@drawable/trakt"
+            android:key="@string/trakt_key" />
+
+        <Preference
             android:icon="@drawable/open_subtitles_icon"
             android:key="@string/opensubtitles_key" />
 
