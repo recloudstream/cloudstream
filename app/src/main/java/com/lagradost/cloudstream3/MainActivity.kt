@@ -296,7 +296,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                                     } catch (t: Throwable) {
                                         logError(t)
                                         showToast(
-                                            txt(R.string.authenticated_user, api.name)
+                                            txt(R.string.authenticated_user_fail, api.name)
                                         )
                                     }
                                 }
