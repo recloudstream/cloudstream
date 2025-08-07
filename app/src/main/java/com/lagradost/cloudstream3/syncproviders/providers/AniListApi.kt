@@ -14,7 +14,6 @@ import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING
 import com.lagradost.cloudstream3.syncproviders.AuthLoginPage
 import com.lagradost.cloudstream3.syncproviders.AuthToken
 import com.lagradost.cloudstream3.syncproviders.AuthUser
@@ -22,14 +21,12 @@ import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
-import com.lagradost.cloudstream3.utils.AppContextUtils.splitQuery
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
 import com.lagradost.cloudstream3.utils.DataStoreHelper.toYear
 import com.lagradost.cloudstream3.utils.txt
-import java.net.URL
 import java.net.URLEncoder
 import java.util.Locale
 
@@ -50,12 +47,7 @@ class AniListApi : SyncAPI() {
         AuthLoginPage("https://anilist.co/api/v2/oauth/authorize?client_id=$key&response_type=token")
 
     override suspend fun login(redirectUrl: String, payload: String?): AuthToken? {
-        val sanitizer =
-            splitQuery(
-                URL(
-                    redirectUrl.replace(APP_STRING, "https").replace("/#", "?")
-                )
-            ) // FIX ERROR
+        val sanitizer = splitRedirectUrl(redirectUrl)
         val token = AuthToken(
             accessToken = sanitizer["access_token"] ?: throw ErrorLoadingException("No access token"),
             //refreshToken = sanitizer["refresh_token"],

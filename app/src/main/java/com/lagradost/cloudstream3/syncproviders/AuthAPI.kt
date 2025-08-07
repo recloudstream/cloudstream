@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.syncproviders
 
+import android.util.Base64
 import androidx.annotation.WorkerThread
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder.unixTime
@@ -24,6 +25,7 @@ import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities.SubtitleEntity
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities.SubtitleSearch
 import com.lagradost.cloudstream3.subtitles.SubtitleResource
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.NONE_ID
 import com.lagradost.cloudstream3.syncproviders.providers.Addic7ed
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi
@@ -35,11 +37,14 @@ import com.lagradost.cloudstream3.syncproviders.providers.SubDlApi
 import com.lagradost.cloudstream3.syncproviders.providers.SubSourceApi
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
+import com.lagradost.cloudstream3.utils.AppContextUtils.splitQuery
 import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.utils.txt
 import me.xdrop.fuzzywuzzy.FuzzySearch
+import java.net.URL
+import java.security.SecureRandom
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -172,6 +177,25 @@ abstract class AuthAPI {
             get() = System.currentTimeMillis() / 1000L
         val unixTimeMs: Long
             get() = System.currentTimeMillis()
+
+        fun splitRedirectUrl(redirectUrl: String): Map<String, String> {
+            return splitQuery(
+                URL(
+                    redirectUrl.replace(APP_STRING, "https").replace("/#", "?")
+                )
+            )
+        }
+
+        fun generateCodeVerifier(): String {
+            // It is recommended to use a URL-safe string as code_verifier.
+            // See section 4 of RFC 7636 for more details.
+            val secureRandom = SecureRandom()
+            val codeVerifierBytes = ByteArray(96) // base64 has 6bit per char; (8/6)*96 = 128
+            secureRandom.nextBytes(codeVerifierBytes)
+            return Base64.encodeToString(codeVerifierBytes, Base64.DEFAULT).trimEnd('=')
+                .replace("+", "-")
+                .replace("/", "_").replace("\n", "")
+        }
     }
 
     /** Is this url a valid redirect url for this service? */
@@ -252,6 +276,9 @@ abstract class SyncAPI : AuthAPI() {
     open var requireLibraryRefresh: Boolean = true
     open val mainUrl: String = "NONE"
 
+    /** Currently unused, but will be used to correctly render the UI. 
+     * This should specify what sync watch types can be used with this service. */
+    open val supportedWatchTypes: Set<SyncWatchType> = SyncWatchType.entries.toSet()
     /**
      * Allows certain providers to open pages from
      * library links.
@@ -701,7 +728,7 @@ class SubtitleRepo(override val api: SubtitleAPI) : AuthRepo(api) {
 
 abstract class AccountManager {
     companion object {
-        const val NONE_ID : Int = -1
+        const val NONE_ID: Int = -1
         val malApi = MALApi()
         val aniListApi = AniListApi()
         val simklApi = SimklApi()
@@ -720,7 +747,10 @@ abstract class AccountManager {
 
         fun accounts(prefix: String): Array<AuthData> {
             require(prefix != "NONE")
-            return getKey<Array<AuthData>>(ACCOUNT_TOKEN, "${prefix}/${DataStoreHelper.currentAccount}") ?: arrayOf()
+            return getKey<Array<AuthData>>(
+                ACCOUNT_TOKEN,
+                "${prefix}/${DataStoreHelper.currentAccount}"
+            ) ?: arrayOf()
         }
 
         fun updateAccounts(prefix: String, array: Array<AuthData>) {
@@ -754,7 +784,14 @@ abstract class AccountManager {
         fun updateAccountIds() {
             val ids = mutableMapOf<String, Int>()
             for (api in allApis) {
-                ids.put(api.idPrefix, getKey<Int>(ACCOUNT_IDS, "${api.idPrefix}/${DataStoreHelper.currentAccount}" , NONE_ID) ?: NONE_ID)
+                ids.put(
+                    api.idPrefix,
+                    getKey<Int>(
+                        ACCOUNT_IDS,
+                        "${api.idPrefix}/${DataStoreHelper.currentAccount}",
+                        NONE_ID
+                    ) ?: NONE_ID
+                )
             }
             synchronized(cachedAccountIds) {
                 cachedAccountIds = ids
@@ -766,7 +803,14 @@ abstract class AccountManager {
             val ids = mutableMapOf<String, Int>()
             for (api in allApis) {
                 data.put(api.idPrefix, accounts(api.idPrefix))
-                ids.put(api.idPrefix, getKey<Int>(ACCOUNT_IDS, "${api.idPrefix}/${DataStoreHelper.currentAccount}" , NONE_ID) ?: NONE_ID)
+                ids.put(
+                    api.idPrefix,
+                    getKey<Int>(
+                        ACCOUNT_IDS,
+                        "${api.idPrefix}/${DataStoreHelper.currentAccount}",
+                        NONE_ID
+                    ) ?: NONE_ID
+                )
             }
             cachedAccounts = data
             cachedAccountIds = ids

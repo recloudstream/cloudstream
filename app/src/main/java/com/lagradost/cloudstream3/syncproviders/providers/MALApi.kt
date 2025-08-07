@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
-import android.util.Base64
 import androidx.annotation.StringRes
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
@@ -10,7 +9,6 @@ import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.ShowStatus
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING
 import com.lagradost.cloudstream3.syncproviders.AuthLoginPage
 import com.lagradost.cloudstream3.syncproviders.AuthToken
 import com.lagradost.cloudstream3.syncproviders.AuthUser
@@ -18,13 +16,10 @@ import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
-import com.lagradost.cloudstream3.utils.AppContextUtils.splitQuery
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
 import com.lagradost.cloudstream3.utils.txt
-import java.net.URL
-import java.security.SecureRandom
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.format.DateTimeFormatter
@@ -47,6 +42,15 @@ class MALApi : SyncAPI() {
     override val syncIdName = SyncIdName.MyAnimeList
     override val createAccountUrl = "$mainUrl/register.php"
 
+    override val supportedWatchTypes = setOf(
+        SyncWatchType.WATCHING,
+        SyncWatchType.COMPLETED,
+        SyncWatchType.PLANTOWATCH,
+        SyncWatchType.DROPPED,
+        SyncWatchType.ONHOLD,
+        SyncWatchType.NONE
+    )
+
     data class PayLoad(
         val requestId: Int,
         val codeVerifier: String
@@ -54,13 +58,7 @@ class MALApi : SyncAPI() {
 
     override suspend fun login(redirectUrl: String, payload: String?): AuthToken? {
         val payloadData = parseJson<PayLoad>(payload!!)
-
-        val sanitizer =
-            splitQuery(
-                URL(
-                    redirectUrl.replace(APP_STRING, "https").replace("/#", "?")
-                )
-            ) // FIX ERROR
+        val sanitizer = splitRedirectUrl(redirectUrl)
         val state = sanitizer["state"]!!
 
         if (state != "RequestID${payloadData.requestId}") {
@@ -342,15 +340,7 @@ class MALApi : SyncAPI() {
     }
 
     override fun loginRequest(): AuthLoginPage? {
-        // It is recommended to use a URL-safe string as code_verifier.
-        // See section 4 of RFC 7636 for more details.
-
-        val secureRandom = SecureRandom()
-        val codeVerifierBytes = ByteArray(96) // base64 has 6bit per char; (8/6)*96 = 128
-        secureRandom.nextBytes(codeVerifierBytes)
-        val codeVerifier =
-            Base64.encodeToString(codeVerifierBytes, Base64.DEFAULT).trimEnd('=').replace("+", "-")
-                .replace("/", "_").replace("\n", "")
+        val codeVerifier = generateCodeVerifier()
         val requestId = ++requestIdCounter
         val codeChallenge = codeVerifier
         val request =
