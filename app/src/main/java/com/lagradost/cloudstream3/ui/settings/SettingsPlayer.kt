@@ -8,6 +8,7 @@ import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.ui.home.HomeViewModel
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -176,6 +177,7 @@ class SettingsPlayer : PreferenceFragmentCompat() {
         }
 
         getPref(R.string.player_default_key)?.setOnPreferenceClickListener {
+            //val api = HomeViewModel
             val players = VideoClickActionHolder.getPlayers(activity)
             val prefNames = buildList {
                 add(getString(R.string.player_settings_play_in_app))
