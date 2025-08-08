@@ -40,6 +40,7 @@ import com.lagradost.cloudstream3.syncproviders.SubtitleRepo
 import com.lagradost.cloudstream3.syncproviders.SyncRepo
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.hideOn
@@ -382,7 +383,7 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
         @UiThread
         fun addAccount(activity: FragmentActivity, api: AuthRepo) {
             try {
-                if (api.hasPin) {
+                if (api.hasPin && !isLayout(PHONE)) {
                     showPin(activity, api)
                 } else if (api.hasOAuth2) {
                     api.openOAuth2PageWithToast()
