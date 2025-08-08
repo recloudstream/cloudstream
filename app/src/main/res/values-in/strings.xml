@@ -719,4 +719,14 @@
     <string name="background_radius">Radius Latar Belakang</string>
     <string name="volume_exceeded_100">Volume telah melebihi 100%</string>
     <string name="slide_up_again_to_exceed_100">Geser ke atas lagi untuk melampaui 100%</string>
+    <string name="player_settings_always_ask">Selalu tanya</string>
+    <string name="download_parallel_settings_des">Berapa banyak item yang bisa diunduh secara paralel</string>
+    <string name="parallel_downloads">Pengunduhan paralel</string>
+    <string name="poster_size_settings_des">Ubah ukuran poster</string>
+    <string name="poster_size_settings">Ukuran poster</string>
+    <string name="speedup_summary">Tahan untuk kecepatan 2x</string>
+    <string name="no_internet_connection">Sambungan internet tidak tersedia.\n\nSilakan sambung ke internet dan coba lagi, atau tonton unduhan Anda saat sedang luring.</string>
+    <string name="overscan_settings_des">Ubah batas layar</string>
+    <string name="go_to_downloads">Kunjungi Unduhan</string>
+    <string name="concurrent_connections_settings_des">Jumlah sambungan yang bisa digunakan secara bersamaan saat mengunduh</string>
 </resources>
