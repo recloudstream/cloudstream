@@ -967,7 +967,7 @@ object AppContextUtils {
                     //val media = medialibrary.getMedia(data.lastPathSegment!!.toLong())
                     uri = null//media.uri*/
             } else {
-                val inputPFD: ParcelFileDescriptor?
+                var inputPFD: ParcelFileDescriptor? = null
                 try {
                     inputPFD = ctx.contentResolver.openFileDescriptor(data, "r")
                     if (inputPFD == null) return data
@@ -999,6 +999,8 @@ object AppContextUtils {
                 } catch (e: SecurityException) {
                     Log.e("TAG", "${e.message} for $data", e)
                     return null
+                } finally {
+                    inputPFD?.close()
                 }
             }// Media or MMS URI
         }
