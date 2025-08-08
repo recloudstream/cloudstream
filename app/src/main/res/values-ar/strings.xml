@@ -727,4 +727,25 @@
     <string name="subtitles_from_online">اونلاين</string>
     <string name="subtitles_from_embedded">داخلياً</string>
     <string name="volume_exceeded_100">لقد تجاوز مستوى الصوت 100٪</string>
+    <string name="all_subtitles_bold">جعل جميع العناوين الفرعية عريضة</string>
+    <string name="slide_up_again_to_exceed_100">اسحب لأعلى مرة أخرى لتتجاوز 100%</string>
+    <string name="all_subtitles_italic">جعل كل العناوين الفرعية مائلة</string>
+    <string name="background_radius">نصف قطر الخلفية</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dh %2$dm %3$d</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dm %2$d</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$dث</string>
+    <string name="show_rating">ملصق التصنيف</string>
+    <string name="player_settings_always_ask">أسال دائما</string>
+    <string name="download_parallel_settings_des">عدد الأصناف المختلفة التي يمكن تنزيلها بالتوازي</string>
+    <string name="parallel_downloads">تحميلات موازية</string>
+    <string name="concurrent_connections">الاتصالات الجارية</string>
+    <string name="concurrent_connections_settings_des">كم عدد الاتصالات المتزامنة التي يمكن أن يستخدمها كل تحميل</string>
+    <string name="go_to_downloads">الذهاب إلى تحميل</string>
+    <string name="no_internet_connection">لا يوجد اتصال بالإنترنت.\n\nيُرجى الاتصال بالإنترنت والمحاولة مرة أخرى، أو مشاهدة التنزيلات أثناء عدم الاتصال بالإنترنت.</string>
+    <string name="overscan_settings_des">تغير حدود الشاشة</string>
+    <string name="overscan_settings">مسح زائد</string>
+    <string name="poster_size_settings_des">تغيير حجم الملصقات</string>
+    <string name="poster_size_settings">حجم الملصقات</string>
+    <string name="speedup_title">تبديل سرعة الضغط لفترة طويلة</string>
+    <string name="speedup_summary">اضغط مع الاستمرار للحصول على سرعة 2x</string>
 </resources>
