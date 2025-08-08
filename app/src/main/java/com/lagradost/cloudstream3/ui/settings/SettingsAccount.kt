@@ -382,7 +382,7 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
         @UiThread
         fun addAccount(activity: FragmentActivity, api: AuthRepo) {
             try {
-                if (api.hasPin) {
+                if (api.hasPin & !isLayout(PHONE)) {
                     showPin(activity, api)
                 } else if (api.hasOAuth2) {
                     api.openOAuth2PageWithToast()
