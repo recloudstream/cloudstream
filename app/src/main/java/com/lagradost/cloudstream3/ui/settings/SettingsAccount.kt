@@ -91,7 +91,7 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
             binding.accountLogout.isVisible = info != null
             binding.accountLogout.setOnClickListener {
                 if (info != null) {
-                    api.logout(info)
+                    ioSafe { api.logout(info) }
                 }
                 dialog.dismissSafe(activity)
             }

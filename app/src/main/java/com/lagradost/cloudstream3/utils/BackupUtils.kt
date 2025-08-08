@@ -47,7 +47,6 @@ object BackupUtils {
      * No sensitive or breaking data in the backup
      * */
     private val nonTransferableKeys = listOf(
-        // When sharing backup we do not want to transfer what is essentially the password
         ANILIST_CACHED_LIST,
         MAL_CACHED_LIST,
 
@@ -65,7 +64,19 @@ object BackupUtils {
         "download_path_key",
         "download_path_key_visual",
         "backup_path_key",
-        "backup_dir_path_key"
+        "backup_dir_path_key",
+
+        // When sharing backup we do not want to transfer what is essentially the password
+        // Note that this is deprecated, and can be removed after all tokens have expired
+        "anilist_token",
+        "anilist_user",
+        "mal_user",
+        "mal_token",
+        "mal_refresh_token",
+        "mal_unixtime",
+        "open_subtitles_user",
+        "subdl_user",
+        "simkl_token",
     )
 
     /** false if key should not be contained in backup */
@@ -283,7 +294,8 @@ object BackupUtils {
 
     fun getCurrentBackupDir(context: Context): Pair<SafeFile?, String?> {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-        val basePathSetting = settingsManager.getString(context.getString(R.string.backup_path_key), null)
+        val basePathSetting =
+            settingsManager.getString(context.getString(R.string.backup_path_key), null)
         return baseBackupPathToFile(context, basePathSetting) to basePathSetting
     }
 

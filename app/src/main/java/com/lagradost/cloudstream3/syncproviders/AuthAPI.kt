@@ -232,6 +232,15 @@ abstract class AuthAPI {
     @Throws
     open suspend fun user(token: AuthToken?): AuthUser? = throw NotImplementedError()
 
+    /**
+     * An optional security measure to make sure that even if an attacker gets ahold of the token, it will be invalid.
+     *
+     * Note that this will currently only be called *once* on logout,
+     * and as such any network issues it will fail silently, and the token will not be revoked.
+     **/
+    @Throws
+    open suspend fun invalidateToken(token: AuthToken): Nothing = throw NotImplementedError()
+
     @Throws
     @Deprecated("Please the the new api for AuthAPI", level = DeprecationLevel.WARNING)
     fun toRepo(): AuthRepo = when (this) {
@@ -276,7 +285,7 @@ abstract class SyncAPI : AuthAPI() {
     open var requireLibraryRefresh: Boolean = true
     open val mainUrl: String = "NONE"
 
-    /** Currently unused, but will be used to correctly render the UI. 
+    /** Currently unused, but will be used to correctly render the UI.
      * This should specify what sync watch types can be used with this service. */
     open val supportedWatchTypes: Set<SyncWatchType> = SyncWatchType.entries.toSet()
     /**
@@ -528,12 +537,22 @@ abstract class AuthRepo(open val api: AuthAPI) {
         }
     }
 
-    fun logout(from: AuthUser) {
+    suspend fun logout(from: AuthUser) {
         val currentAccounts = AccountManager.accounts(idPrefix)
-        val newAccounts = currentAccounts.filter { it.user.id != from.id }.toTypedArray()
+        val (newAccounts, oldAccounts) = currentAccounts.partition { it.user.id != from.id }
         if (newAccounts.size < currentAccounts.size) {
-            AccountManager.updateAccounts(idPrefix, newAccounts)
+            AccountManager.updateAccounts(idPrefix, newAccounts.toTypedArray())
             AccountManager.updateAccountsId(idPrefix, 0)
+        }
+
+        for (oldAccount in oldAccounts) {
+            try {
+                api.invalidateToken(oldAccount.token)
+            } catch (_ : NotImplementedError) {
+                // no-op
+            } catch (t: Throwable) {
+                logError(t)
+            }
         }
     }
 
