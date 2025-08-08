@@ -33,6 +33,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.openSubtitlesApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.simklApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.subDlApi
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.traktApi
 import com.lagradost.cloudstream3.syncproviders.AuthLoginResponse
 import com.lagradost.cloudstream3.syncproviders.AuthRepo
 import com.lagradost.cloudstream3.syncproviders.AuthUser
@@ -462,6 +463,7 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
                 R.string.mal_key to SyncRepo(malApi),
                 R.string.anilist_key to SyncRepo(aniListApi),
                 R.string.simkl_key to SyncRepo(simklApi),
+                R.string.trakt_key to SyncRepo(traktApi),
                 R.string.opensubtitles_key to SubtitleRepo(openSubtitlesApi),
                 R.string.subdl_key to SubtitleRepo(subDlApi),
             )
