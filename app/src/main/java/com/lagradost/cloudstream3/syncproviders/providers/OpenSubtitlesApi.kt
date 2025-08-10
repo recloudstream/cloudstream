@@ -2,10 +2,9 @@ package com.lagradost.cloudstream3.syncproviders.providers
 
 import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.TvType
-import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.syncproviders.AuthData
 import com.lagradost.cloudstream3.syncproviders.AuthLoginRequirement
@@ -13,9 +12,12 @@ import com.lagradost.cloudstream3.syncproviders.AuthLoginResponse
 import com.lagradost.cloudstream3.syncproviders.AuthToken
 import com.lagradost.cloudstream3.syncproviders.AuthUser
 import com.lagradost.cloudstream3.syncproviders.SubtitleAPI
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToLangTagIETF
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToOpenSubtitlesTag
 
 class OpenSubtitlesApi : SubtitleAPI() {
     override val name = "OpenSubtitles"
@@ -93,24 +95,6 @@ class OpenSubtitlesApi : SubtitleAPI() {
     }
 
     /**
-     * Some languages do not use the normal country codes on OpenSubtitles
-     * */
-    private val languageExceptions = mapOf<String, String>(
-//        "pt" to "pt-PT",
-//        "pt" to "pt-BR"
-    )
-
-    private fun fixLanguage(language: String?): String? {
-        return languageExceptions[language] ?: language
-    }
-
-    // O(n) but good enough, BiMap did not want to work properly
-    private fun fixLanguageReverse(language: String?): String? {
-        return languageExceptions.entries.firstOrNull { it.value == language }?.key ?: language
-    }
-
-
-    /**
      * Fetch subtitles using token authenticated on previous method (see authorize).
      * Returns list of Subtitles which user can select to download (see load).
      * */
@@ -119,7 +103,7 @@ class OpenSubtitlesApi : SubtitleAPI() {
         query: AbstractSubtitleEntities.SubtitleSearch
     ): List<AbstractSubtitleEntities.SubtitleEntity>? {
         throwIfCantDoRequest()
-        val fixedLang = fixLanguage(query.lang)
+        val langOpenSubTag = fromCodeToOpenSubtitlesTag(query.lang) ?: query.lang ?: ""
 
         val imdbId = query.imdbId?.replace("tt", "")?.toInt() ?: 0
         val queryText = query.query
@@ -132,8 +116,8 @@ class OpenSubtitlesApi : SubtitleAPI() {
 
         val searchQueryUrl = when (imdbId > 0) {
             //Use imdb_id to search if its valid
-            true -> "$HOST/subtitles?imdb_id=$imdbId&languages=${fixedLang}$yearQuery$epQuery$seasonQuery"
-            false -> "$HOST/subtitles?query=${queryText}&languages=${fixedLang}$yearQuery$epQuery$seasonQuery"
+            true -> "$HOST/subtitles?imdb_id=$imdbId&languages=${langOpenSubTag}$yearQuery$epQuery$seasonQuery"
+            false -> "$HOST/subtitles?query=${queryText}&languages=${langOpenSubTag}$yearQuery$epQuery$seasonQuery"
         }
 
         val req = app.get(
@@ -142,6 +126,7 @@ class OpenSubtitlesApi : SubtitleAPI() {
                 Pair("Content-Type", "application/json")
             ) + headers,
         )
+        Log.i(TAG, "searchQueryUrl => ${searchQueryUrl}")
         Log.i(TAG, "Search Req => ${req.text}")
         if (!req.isSuccessful) {
             if (req.code == 429)
@@ -162,7 +147,7 @@ class OpenSubtitlesApi : SubtitleAPI() {
                 //Use any valid name/title in hierarchy
                 val name = filename ?: featureDetails?.movieName ?: featureDetails?.title
                 ?: featureDetails?.parentTitle ?: attr.release ?: query.query
-                val lang = fixLanguageReverse(attr.language) ?: ""
+                val langTagIETF = fromCodeToLangTagIETF(attr.language) ?: ""
                 val resEpNum = featureDetails?.episodeNumber ?: query.epNumber
                 val resSeasonNum = featureDetails?.seasonNumber ?: query.seasonNumber
                 val year = featureDetails?.year ?: query.year
@@ -176,7 +161,7 @@ class OpenSubtitlesApi : SubtitleAPI() {
                         AbstractSubtitleEntities.SubtitleEntity(
                             idPrefix = this.idPrefix,
                             name = name,
-                            lang = lang,
+                            lang = langTagIETF,
                             data = resultData,
                             type = type,
                             source = this.name,
