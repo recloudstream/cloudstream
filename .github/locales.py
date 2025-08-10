@@ -14,6 +14,9 @@ INDENT = " "*4
 
 iso_map = requests.get(ISO_MAP_URL, timeout=300).json()
 
+## TODO: generate locales_config.xml as initial step for
+## android 13+ language per-app. (?_?) use it as the only lang source?
+
 # Load settings file
 src = open(SETTINGS_PATH, "r", encoding='utf-8').read()
 before_src, rest = src.split(START_MARKER)

@@ -143,14 +143,14 @@ class ProviderTests {
 
 //     @Test
 //     fun providerCorrectData() {
-//         val isoNames = SubtitleHelper.languages.map { it.ISO_639_1 }
-//         Assert.assertFalse("ISO does not contain any languages", isoNames.isNullOrEmpty())
+//         val langTagsIETF = SubtitleHelper.languages.map { it.IETF_tag }
+//         Assert.assertFalse("langTagsIETF does not contain any languages", langTagsIETF.isNullOrEmpty())
 //         for (api in getAllProviders()) {
 //             Assert.assertTrue("Api does not contain a mainUrl", api.mainUrl != "NONE")
 //             Assert.assertTrue("Api does not contain a name", api.name != "NONE")
 //             Assert.assertTrue(
 //                 "Api ${api.name} does not contain a valid language code",
-//                 isoNames.contains(api.lang)
+//                 langTagsIETF.contains(api.lang)
 //             )
 //             Assert.assertTrue(
 //                 "Api ${api.name} does not contain any supported types",

@@ -2,11 +2,13 @@ package com.lagradost.cloudstream3.ui.settings
 
 import android.content.Context
 import android.net.Uri
-import android.os.Build
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -45,52 +47,68 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
+import java.util.Locale
 
 // Change local language settings in the app.
 fun getCurrentLocale(context: Context): String {
-    val res = context.resources
-    val conf = res.configuration
+    val conf = context.resources.configuration
 
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        conf?.locales?.get(0)?.toString() ?: "en"
+    return if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
+        // initialstep for android 13+ language per-app support
+        // https://developer.android.com/guide/topics/resources/app-languages
+        AppCompatDelegate.getApplicationLocales().get(0)?.toLanguageTag() ?: "en"
+    } else if (VERSION.SDK_INT >= VERSION_CODES.N) {
+        conf?.locales[0]?.toLanguageTag() ?: "en"
     } else {
         @Suppress("DEPRECATION")
-        conf?.locale?.toString() ?: "en"
+        conf?.locale?.toLanguageTag() ?: "en"
     }
 }
 
 // idk, if you find a way of automating this it would be great
 // https://www.iemoji.com/view/emoji/1794/flags/antarctica
 // Emoji Character Encoding Data --> C/C++/Java Src
-// https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes leave blank for auto
+//
+// TODO: (?_?) get from locales_config.xml? It's
+// need for android 13+ language per-app support
+// https://developer.android.com/guide/topics/resources/app-languages?hl=en
+/**
+ * List of app support languages.
+ * Language code shall be a IETF BCP 47 conformant tag
+ *
+ * See locales on:
+ * https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/availableLocales.json
+ * https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+ * https://android.googlesource.com/platform/frameworks/base/+/android-16.0.0_r2/core/res/res/values/locale_config.xml
+ * https://iso639-3.sil.org/code_tables/639/data/all
+*/
 val appLanguages = arrayListOf(
     /* begin language list */
     Triple("", "Afrikaans", "af"),
-    Triple("", "عربي شامي", "ajp"),
     Triple("", "አማርኛ", "am"),
+    Triple("", "عربي شامي", "apc"), // "ajp" is deprecated, changed to "apc"  Arabic (Levantine)
     Triple("", "العربية", "ar"),
-    Triple("", "اللهجة النجدية", "ars"),
+    Triple("", "اللهجة النجدية", "ars"), // Arabic (Najdi)
     Triple("", "অসমীয়া", "as"),
     Triple("", "azərbaycan dili", "az"),
     Triple("", "български", "bg"),
     Triple("", "বাংলা", "bn"),
-    Triple("\uD83C\uDDE7\uD83C\uDDF7", "português brasileiro", "bp"),
     Triple("", "čeština", "cs"),
     Triple("", "Deutsch", "de"),
     Triple("", "Ελληνικά", "el"),
     Triple("", "English", "en"),
-    Triple("", "Esperanto", "eo"),
-    Triple("", "español", "es"),
+    Triple("", "Esperanto", "eo"), // esperanto has no flag
+    Triple("", "Español", "es"),
     Triple("", "فارسی", "fa"),
     Triple("", "fil", "fil"),
-    Triple("", "français", "fr"),
-    Triple("", "galego", "gl"),
-    Triple("", "हिन्दी", "hi"),
-    Triple("", "hrvatski", "hr"),
-    Triple("", "magyar", "hu"),
-    Triple("\uD83C\uDDEE\uD83C\uDDE9", "Bahasa Indonesia", "in"),
-    Triple("", "italiano", "it"),
-    Triple("\uD83C\uDDEE\uD83C\uDDF1", "עברית", "iw"),
+    Triple("", "Français", "fr"),
+    Triple("", "Galego", "gl"),
+    Triple("", "עברית", "hi"),
+    Triple("", "हिन्दी", "hr"),
+    Triple("", "hrvatski", "hu"),
+    Triple("", "magyar", "id"), // "in" is deprecated, changed to "id"
+    Triple("", "Bahasa Indonesia", "it"),
+    Triple("", "Italiano", "he"), // "iw" is deprecated, changed to "he"
     Triple("", "日本語 (にほんご)", "ja"),
     Triple("", "ಕನ್ನಡ", "kn"),
     Triple("", "한국어", "ko"),
@@ -107,8 +125,9 @@ val appLanguages = arrayListOf(
     Triple("", "norsk bokmål", "no"),
     Triple("", "ଓଡ଼ିଆ", "or"),
     Triple("", "polski", "pl"),
-    Triple("\uD83C\uDDF5\uD83C\uDDF9", "português", "pt"),
-    Triple("\uD83E\uDD8D", "mmmm... monke", "qt"),
+    Triple("", "Português (Brasil)", "pt-BR"),
+    Triple("", "Português", "pt"),
+    Triple("", "mmmm... monke", "qt"),
     Triple("", "română", "ro"),
     Triple("", "русский", "ru"),
     Triple("", "slovenčina", "sk"),
@@ -121,10 +140,23 @@ val appLanguages = arrayListOf(
     Triple("", "українська", "uk"),
     Triple("", "اردو", "ur"),
     Triple("", "Tiếng Việt", "vi"),
+    Triple("", "正體中文(臺灣)", "zh-TW"),
     Triple("", "中文", "zh"),
-    Triple("\uD83C\uDDF9\uD83C\uDDFC", "正體中文(臺灣)", "zh-rTW"),
 /* end language list */
-).sortedBy { it.second.lowercase() } //ye, we go alphabetical, so ppl don't put their lang on top
+).sortedBy { it.second.lowercase(Locale.ROOT) } // ye, we go alphabetical, so ppl don't put their lang on top
+
+fun Triple<String, String, String>.nameNextToFlagEmoji(): String {
+    val flag = 
+        SubtitleHelper.getFlagFromIso(this.third) ?:
+        if (VERSION.SDK_INT >= VERSION_CODES.P) "\ud83c\udde6\ud83c\udde6" else "\ud83c\udff3\ufe0f"
+    val newLocale = Locale.forLanguageTag(this.third)
+    val sysLocalizedName = newLocale.getDisplayName(newLocale)
+
+    return if (sysLocalizedName.equals(this.third, ignoreCase = true))
+        "$flag ${this.second}"
+    else
+        "$flag $sysLocalizedName"
+}
 
 class SettingsGeneral : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -166,22 +198,18 @@ class SettingsGeneral : PreferenceFragmentCompat() {
         }
 
         getPref(R.string.locale_key)?.setOnPreferenceClickListener { pref ->
-            val tempLangs = appLanguages.toMutableList()
             val current = getCurrentLocale(pref.context)
-            val languageCodes = tempLangs.map { (_, _, iso) -> iso }
-            val languageNames = tempLangs.map { (emoji, name, iso) ->
-                val flag = emoji.ifBlank { SubtitleHelper.getFlagFromIso(iso) ?: "ERROR" }
-                "$flag $name"
-            }
-            val index = languageCodes.indexOf(current)
+            val languageTagsIETF = appLanguages.map { (_, _, langTagIETF) -> langTagIETF }
+            val languageNames = appLanguages.map { it.nameNextToFlagEmoji() }
+            val index = languageTagsIETF.indexOf(current)
 
             activity?.showDialog(
                 languageNames, index, getString(R.string.app_language), true, { }
             ) { languageIndex ->
                 try {
-                    val code = languageCodes[languageIndex]
-                    CommonActivity.setLocale(activity, code)
-                    settingsManager.edit().putString(getString(R.string.locale_key), code).apply()
+                    val langTagIETF = languageTagsIETF[languageIndex]
+                    CommonActivity.setLocale(activity, langTagIETF)
+                    settingsManager.edit().putString(getString(R.string.locale_key), langTagIETF).apply()
                     activity?.recreate()
                 } catch (e: Exception) {
                     logError(e)
@@ -227,7 +255,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
                     val url = binding.siteUrlInput.text?.toString()
                     val lang = binding.siteLangInput.text?.toString()
                     val realLang = if (lang.isNullOrBlank()) provider.lang else lang
-                    if (url.isNullOrBlank() || name.isNullOrBlank() || realLang.length != 2) {
+                    if (url.isNullOrBlank() || name.isNullOrBlank()) {
                         showToast(R.string.error_invalid_data, Toast.LENGTH_SHORT)
                         return@setOnClickListener
                     }

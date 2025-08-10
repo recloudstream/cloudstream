@@ -6,27 +6,29 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.Fragment
 import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.BuildConfig
-import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.databinding.FragmentPluginsBinding
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.bindChips
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
+import com.lagradost.cloudstream3.ui.settings.appLanguages
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
-import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.nameNextToFlagEmoji
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
-import com.lagradost.cloudstream3.ui.settings.appLanguages
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import java.util.Locale
 
 const val PLUGINS_BUNDLE_NAME = "name"
 const val PLUGINS_BUNDLE_URL = "url"
@@ -89,24 +91,19 @@ class PluginsFragment : Fragment() {
                     }
 
                     R.id.lang_filter -> {
-                        val tempLangs = appLanguages.toMutableList()
-                        val languageCodes =
-                            mutableListOf("none") + tempLangs.map { (_, _, iso) -> iso }
-                        val languageNames =
-                            mutableListOf(getString(R.string.no_data)) + tempLangs.map { (emoji, name, iso) ->
-                                val flag =
-                                    emoji.ifBlank { SubtitleHelper.getFlagFromIso(iso) ?: "ERROR" }
-                                "$flag $name"
-                            }
+                        val languageTagsIETF = mutableListOf("none") +
+                            appLanguages.map { (_, _, langTagIETF) -> langTagIETF.lowercase() }
+                        val languageNames = mutableListOf(getString(R.string.no_data)) +
+                            appLanguages.map { it.nameNextToFlagEmoji() }
                         val selectedList =
-                            pluginViewModel.languages.map { languageCodes.indexOf(it) }
+                            pluginViewModel.languages.map { languageTagsIETF.indexOf(it) }
 
                         activity?.showMultiDialog(
                             languageNames,
                             selectedList,
                             getString(R.string.provider_lang_settings),
                             {}) { newList ->
-                            pluginViewModel.languages = newList.map { languageCodes[it] }
+                            pluginViewModel.languages = newList.map { languageTagsIETF[it] }
                             pluginViewModel.updateFilteredPlugins()
                         }
                     }

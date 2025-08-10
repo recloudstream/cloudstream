@@ -29,7 +29,7 @@ class Addic7ed : SubtitleAPI() {
         query: AbstractSubtitleEntities.SubtitleSearch
     ): List<AbstractSubtitleEntities.SubtitleEntity>? {
         val lang = query.lang
-        val queryLang = SubtitleHelper.fromTwoLettersToLanguage(lang.toString())
+        val queryLang = SubtitleHelper.fromTagToLanguage(lang.toString())
         val queryText = query.query.trim()
         val epNum = query.epNumber ?: 0
         val seasonNum = query.seasonNumber ?: 0

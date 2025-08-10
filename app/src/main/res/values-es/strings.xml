@@ -554,11 +554,11 @@
     <string name="duplicate_title">Posible duplicado encontrado</string>
     <string name="lock_profile">Bloquear perfil</string>
     <string name="action_add_to_favorites">Añadido a favoritos</string>
-    <string name="duplicate_replace_all">Remplazar todo</string>
+    <string name="duplicate_replace_all">Reemplazar todo</string>
     <string name="pin_error_incorrect">PIN incorrecto. Por favor, inténtelo de nuevo.</string>
     <string name="action_unsubscribe">Cancelar la suscripción</string>
     <string name="pin_error_length">El PIN debe tener 4 caracteres</string>
-    <string name="duplicate_replace">Remplazar</string>
+    <string name="duplicate_replace">Reemplazar</string>
     <string name="duplicate_add">Añadir</string>
     <string name="action_subscribe">Suscríbase</string>
     <string name="action_remove_from_favorites">Eliminar de favoritos</string>
