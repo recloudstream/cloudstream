@@ -2,5 +2,16 @@
     "githubPullRequests.ignoredPullRequestBranches": [
         "master"
     ],
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "files.associations": {
+        "*.kt": "kotlin"
+    },
+    "[kotlin]": {
+        "editor.defaultFormatter": "fwcd.kotlin"
+    },
+    "adb-helper.scrcpyBinPath": "scrcpy",
+    "kotlin.codegen.enabled": false,
+    "kotlin.debugAdapter.enabled": false,
+    "kotlin.indexing.enabled": false,
+    "kotlin.completion.snippets.enabled": true,
 }

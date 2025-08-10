@@ -465,7 +465,17 @@ abstract class MainAPI {
     /** used to keep track when last homepage request was in unixtime ms */
     var lastHomepageRequest: Long = 0L
 
-    open var lang = "en" // ISO_639_1 check SubtitleHelper
+    /**
+     * The language as an IETF BCP 47 conformant tag.
+     * Check [com.lagradost.cloudstream3.utils.SubtitleHelper].
+     *
+     * See locales on:
+     * https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/availableLocales.json
+     * https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+     * https://android.googlesource.com/platform/frameworks/base/+/android-16.0.0_r2/core/res/res/values/locale_config.xml
+     * https://iso639-3.sil.org/code_tables/639/data/all
+    */
+    open var lang = "en"
 
     /**If link is stored in the "data" string, so links can be instantly loaded*/
     open val instantLinkLoading = false

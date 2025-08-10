@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "vscjava.vscode-gradle",
+        "fwcd.kotlin",
+        "jawa0919.adb-helper",
+        "github.vscode-github-actions",
+    ]
+}

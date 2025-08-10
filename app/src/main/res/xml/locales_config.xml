@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!-- Using IETF BCP 47 language tag as Locale class implements it https://developer.android.com/reference/java/util/Locale -->
+    <!-- lang:langNativeName needed for "qt" and "apc" ! And fallback for getDisplayName() -->
+    <locale app:langNativeName="Afrikaans" android:name="af"/>
+    <locale app:langNativeName="አማርኛ" android:name="am"/>
+    <locale app:langNativeName="عربي شامي" android:name="apc"/> <!-- "ajp" is deprecated, changed to "apc"  Arabic (Levantine / Shami) -->
+    <locale app:langNativeName="العربية" android:name="ar"/>
+    <locale app:langNativeName="اللهجة النجدية" android:name="ars"/> <!-- Arabic (Najdi) -->
+    <locale app:langNativeName="অসমীয়া" android:name="as"/>
+    <locale app:langNativeName="azərbaycan dili" android:name="az"/>
+    <locale app:langNativeName="български" android:name="bg"/>
+    <locale app:langNativeName="বাংলা" android:name="bn"/>
+    <locale app:langNativeName="čeština" android:name="cs"/>
+    <locale app:langNativeName="Deutsch" android:name="de"/>
+    <locale app:langNativeName="Ελληνικά" android:name="el"/>
+    <locale app:langNativeName="English" android:name="en"/>
+    <locale app:langNativeName="Esperanto" android:name="eo"/>
+    <locale app:langNativeName="Español" android:name="es"/>
+    <locale app:langNativeName="فارسی" android:name="fa"/>
+    <locale app:langNativeName="fil" android:name="fil"/>
+    <locale app:langNativeName="Français" android:name="fr"/>
+    <locale app:langNativeName="Galego" android:name="gl"/>
+    <locale app:langNativeName="עברית" android:name="hi"/>
+    <locale app:langNativeName="हिन्दी" android:name="hr"/>
+    <locale app:langNativeName="hrvatski" android:name="hu"/>
+    <locale app:langNativeName="magyar" android:name="id"/> <!-- "in" is deprecated, changed to "id" -->
+    <locale app:langNativeName="Bahasa Indonesia" android:name="it"/>
+    <locale app:langNativeName="Italiano" android:name="he"/> <!-- "iw" is deprecated, changed to "he" -->
+    <locale app:langNativeName="日本語 (にほんご)" android:name="ja"/>
+    <locale app:langNativeName="ಕನ್ನಡ" android:name="kn"/>
+    <locale app:langNativeName="한국어" android:name="ko"/>
+    <locale app:langNativeName="lietuvių kalba" android:name="lt"/>
+    <locale app:langNativeName="latviešu valoda" android:name="lv"/>
+    <locale app:langNativeName="македонски" android:name="mk"/>
+    <locale app:langNativeName="മലയാളം" android:name="ml"/>
+    <locale app:langNativeName="bahasa Melayu" android:name="ms"/>
+    <locale app:langNativeName="Malti" android:name="mt"/>
+    <locale app:langNativeName="ဗမာစာ" android:name="my"/>
+    <locale app:langNativeName="नेपाली" android:name="ne"/>
+    <locale app:langNativeName="Nederlands" android:name="nl"/>
+    <locale app:langNativeName="norsk nynorsk" android:name="nn"/>
+    <locale app:langNativeName="norsk bokmål" android:name="no"/>
+    <locale app:langNativeName="ଓଡ଼ିଆ" android:name="or"/>
+    <locale app:langNativeName="polski" android:name="pl"/>
+    <locale app:langNativeName="Português (Brasil)" android:name="pt-BR"/>
+    <locale app:langNativeName="Português" android:name="pt"/>
+    <locale app:langNativeName="mmmm... monke" android:name="qt"/>
+    <locale app:langNativeName="română" android:name="ro"/>
+    <locale app:langNativeName="русский" android:name="ru"/>
+    <locale app:langNativeName="slovenčina" android:name="sk"/>
+    <locale app:langNativeName="Soomaaliga" android:name="so"/>
+    <locale app:langNativeName="svenska" android:name="sv"/>
+    <locale app:langNativeName="தமிழ்" android:name="ta"/>
+    <locale app:langNativeName="ትግርኛ" android:name="ti"/>
+    <locale app:langNativeName="Tagalog" android:name="tl"/>
+    <locale app:langNativeName="Türkçe" android:name="tr"/>
+    <locale app:langNativeName="українська" android:name="uk"/>
+    <locale app:langNativeName="اردو" android:name="ur"/>
+    <locale app:langNativeName="Tiếng Việt" android:name="vi"/>
+    <locale app:langNativeName="正體中文(臺灣)" android:name="zh-TW"/>
+    <locale app:langNativeName="中文" android:name="zh"/>
+</locale-config>

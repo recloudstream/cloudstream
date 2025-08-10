@@ -71,4 +71,7 @@
         <attr name="white" format="color" />
         <attr name="black" format="color" />
     </declare-styleable>
+
+    <!-- used in locales_config.xml -->
+    <attr name="langNativeName" format="string" />
 </resources>

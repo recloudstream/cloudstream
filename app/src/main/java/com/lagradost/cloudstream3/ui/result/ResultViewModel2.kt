@@ -756,11 +756,11 @@ class ResultViewModel2 : ViewModel() {
                 // 1. Checks if the lang should be downloaded
                 // 2. Makes it into the download format
                 // 3. Downloads it as a .vtt file
-                val downloadList = SubtitlesFragment.getDownloadSubsLanguageISO639_1()
+                val downloadList = SubtitlesFragment.getDownloadSubsLanguageTagIETF()
                 subs?.let { subsList ->
                     subsList.filter {
                         downloadList.contains(
-                            SubtitleHelper.fromLanguageToTwoLetters(
+                            SubtitleHelper.fromLanguageToTagIETF(
                                 it.name,
                                 true
                             )

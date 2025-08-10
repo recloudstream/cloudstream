@@ -21,7 +21,7 @@
     <string name="player_speed_text_format" formatted="true">سرعة(%.2fx)</string>
     <string name="play_with_app_name">فتح مع كلاودستريم</string>
     <string name="title_home">الصفحة الاساسية</string>
-    <string name="search_hint_site" formatted="true">...%sابحث</string>
+    <string name="search_hint_site" formatted="true">…%sابحث</string>
     <string name="no_data">لايوجد بيانات</string>
     <string name="episode_more_options_des">المزيد من الخيارات</string>
     <string name="result_open_in_browser">فتح في المتصفح</string>
@@ -43,7 +43,7 @@
     <string name="title_search">بحث</string>
     <string name="title_downloads">التحميلات</string>
     <string name="title_settings">اعدادات</string>
-    <string name="search_hint">...بحث</string>
+    <string name="search_hint">…بحث</string>
     <string name="next_episode">الحلقة القادمة</string>
     <string name="result_share">شارك</string>
     <string name="type_watching">مشاهدة</string>
@@ -330,7 +330,7 @@
     <string name="poster_ui_settings">تبديل عناصر واجهة المستخدم على الملصق</string>
     <string name="resize_zoom">تكبير</string>
     <string name="resize_fit">صالح للشاشة</string>
-    <string name="jsdelivr_enabled">...jsDelivr لا يمكن الوصول إلى جيتهاب. جارٍ تشغيل وكيل</string>
+    <string name="jsdelivr_enabled">…jsDelivr لا يمكن الوصول إلى جيتهاب. جارٍ تشغيل وكيل</string>
     <string name="android_tv_interface_off_seek_settings_summary">استخدام مبلغ البحث عندما يكون اللاعب مخفيًا</string>
     <string name="video_lock">قفل</string>
     <string name="storage_error">خطأ في التنزيل، تحقق من أذونات التخزين</string>
