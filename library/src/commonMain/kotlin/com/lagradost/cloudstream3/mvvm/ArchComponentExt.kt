@@ -55,6 +55,17 @@ sealed class Resource<out T> {
     ) : Resource<Nothing>()
 
     data class Loading(val url: String? = null) : Resource<Nothing>()
+
+    companion object {
+        fun <T> fromResult(result: Result<T>) : Resource<T> {
+            val value = result.getOrNull()
+            return if(value != null) {
+                Success(value)
+            } else {
+                throwAbleToResource(result.exceptionOrNull() ?: Exception("this should not be possible"))
+            }
+        }
+    }
 }
 
 fun logError(throwable: Throwable) {

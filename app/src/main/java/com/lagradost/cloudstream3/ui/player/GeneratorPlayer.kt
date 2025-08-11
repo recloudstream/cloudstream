@@ -745,7 +745,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                     // TODO Make ui a lot better, like search with tabs
                     val results = providers.amap {
-                        when (val response = it.search(search)) {
+                        when (val response = Resource.fromResult(it.search(search))) {
                             is Resource.Success -> {
                                 response.value
                             }
@@ -804,7 +804,8 @@ class GeneratorPlayer : FullScreenPlayer() {
             currentSubtitle?.let { currentSubtitle ->
                 providers.firstOrNull { it.idPrefix == currentSubtitle.idPrefix }?.let { api ->
                     ioSafe {
-                        when (val apiResource = api.getResource(currentSubtitle)) {
+                        when (val apiResource =
+                            Resource.fromResult(api.resource(currentSubtitle))) {
                             is Resource.Success -> {
                                 val subtitles = apiResource.value.getSubtitles().map { resource ->
                                     SubtitleData(
@@ -950,8 +951,10 @@ class GeneratorPlayer : FullScreenPlayer() {
             // we might want to change it to prefer different sources when used multiple times,
             // however caching might make this random after the first click too
             subsProviders.toList().amap { provider ->
-                val success = when (val result = provider.search(
-                    query = query
+                val success = when (val result = Resource.fromResult(
+                    provider.search(
+                        query = query
+                    )
                 )) {
                     is Resource.Failure -> {
                         // scope might cancel, so we do an extra check
@@ -977,21 +980,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                         break
                     }
 
-                    val subtitleResources =
-                        when (val result = provider.getResource(subtitleEntry)) {
-                            is Resource.Failure -> {
-                                continue
-                            }
-
-                            is Resource.Loading -> {
-                                // unreachable
-                                continue
-                            }
-
-                            is Resource.Success -> {
-                                result.value
-                            }
-                        }
+                    val subtitleResources = provider.resource(subtitleEntry).getOrNull() ?: continue
 
                     val subtitles = subtitleResources.getSubtitles().map { resource ->
                         SubtitleData(

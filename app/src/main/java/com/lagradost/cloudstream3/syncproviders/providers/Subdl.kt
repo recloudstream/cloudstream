@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.subtitles.SubtitleResource
+import com.lagradost.cloudstream3.syncproviders.AuthData
 import com.lagradost.cloudstream3.syncproviders.AuthLoginRequirement
 import com.lagradost.cloudstream3.syncproviders.AuthLoginResponse
 import com.lagradost.cloudstream3.syncproviders.AuthToken
@@ -55,11 +56,11 @@ class SubDlApi : SubtitleAPI() {
     }
 
     override suspend fun search(
-        token: AuthToken?,
+        auth : AuthData?,
         query: AbstractSubtitleEntities.SubtitleSearch
     ): List<AbstractSubtitleEntities.SubtitleEntity>? {
-        if (token == null) return null
-
+        if (auth == null) return null
+        val apiKey = auth.token.accessToken ?: return null
         val queryText = query.query
         val epNum = query.epNumber ?: 0
         val seasonNum = query.seasonNumber ?: 0
@@ -77,8 +78,8 @@ class SubDlApi : SubtitleAPI() {
 
         val searchQueryUrl = when (idQuery) {
             //Use imdb/tmdb id to search if its valid
-            null -> "$APIENDPOINT?api_key=${token.accessToken}&film_name=$queryText&languages=${query.lang}$epQuery$seasonQuery$yearQuery"
-            else -> "$APIENDPOINT?api_key=${token.accessToken}$idQuery&languages=${query.lang}$epQuery$seasonQuery$yearQuery"
+            null -> "$APIENDPOINT?api_key=${apiKey}&film_name=$queryText&languages=${query.lang}$epQuery$seasonQuery$yearQuery"
+            else -> "$APIENDPOINT?api_key=${apiKey}$idQuery&languages=${query.lang}$epQuery$seasonQuery$yearQuery"
         }
 
         val req = app.get(
@@ -110,10 +111,10 @@ class SubDlApi : SubtitleAPI() {
     }
 
     override suspend fun SubtitleResource.getResources(
-        token: AuthToken?,
-        data: AbstractSubtitleEntities.SubtitleEntity
+        auth: AuthData?,
+        subtitle: AbstractSubtitleEntities.SubtitleEntity
     ) {
-        this.addZipUrl(data.data) { name, _ ->
+        this.addZipUrl(subtitle.data) { name, _ ->
             name
         }
     }

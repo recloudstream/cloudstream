@@ -3,7 +3,7 @@ package com.lagradost.cloudstream3.syncproviders.providers
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
-import com.lagradost.cloudstream3.syncproviders.AuthToken
+import com.lagradost.cloudstream3.syncproviders.AuthData
 import com.lagradost.cloudstream3.syncproviders.SubtitleAPI
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 
@@ -25,7 +25,7 @@ class Addic7ed : SubtitleAPI() {
     }
 
     override suspend fun search(
-        token: AuthToken?,
+        auth: AuthData?,
         query: AbstractSubtitleEntities.SubtitleSearch
     ): List<AbstractSubtitleEntities.SubtitleEntity>? {
         val lang = query.lang
@@ -101,9 +101,9 @@ class Addic7ed : SubtitleAPI() {
     }
 
     override suspend fun load(
-        token: AuthToken?,
-        data: AbstractSubtitleEntities.SubtitleEntity
+        auth: AuthData?,
+        subtitle: AbstractSubtitleEntities.SubtitleEntity
     ): String? {
-        return data.data
+        return subtitle.data
     }
 }
