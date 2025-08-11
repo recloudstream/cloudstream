@@ -415,7 +415,7 @@ class HomeFragment : Fragment() {
                     pinnedphashset = pinnedp.toHashSet()
                     arrayAdapter.clear()
                     val sortedApis = validAPIs
-                        .filter { it.hasMainPage && it.supportedTypes.any(preSelectedTypes::contains) }
+                        .filter {it.hasMainPage && pinnedphashset.contains(it.name) ||  it.supportedTypes.any(preSelectedTypes::contains) }
                         .sortedBy { it.name.lowercase() }
 
                     val sortedApiMap = LinkedHashMap<String, MainAPI>().apply {
