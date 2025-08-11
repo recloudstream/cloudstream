@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
+import com.lagradost.cloudstream3.metaproviders.TraktProvider
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
@@ -58,7 +59,7 @@ object APIHolder {
         get() = System.currentTimeMillis()
 
     // ConcurrentModificationException is possible!!!
-    val allProviders = threadSafeListOf<MainAPI>()
+    val allProviders = threadSafeListOf<MainAPI>(TraktProvider())
 
     fun initAll() {
         synchronized(allProviders) {
@@ -1695,6 +1696,7 @@ interface LoadResponse {
         var malIdPrefix = "" //malApi.idPrefix
         var aniListIdPrefix = "" //aniListApi.idPrefix
         var simklIdPrefix = "" //simklApi.idPrefix
+        var traktIdPrefix = "" //simklApi.idPrefix
         var isTrailersEnabled = true
 
         /**
@@ -1890,7 +1892,7 @@ interface LoadResponse {
 
         @Suppress("UNUSED_PARAMETER")
         fun LoadResponse.addTraktId(id: String?) {
-            // TODO add Trakt sync
+            this.syncData[traktIdPrefix] = (id ?: return).toString()
         }
 
         @Suppress("UNUSED_PARAMETER")
