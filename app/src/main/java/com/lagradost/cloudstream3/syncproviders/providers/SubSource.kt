@@ -5,7 +5,7 @@ import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.subtitles.SubtitleResource
-import com.lagradost.cloudstream3.syncproviders.AuthToken
+import com.lagradost.cloudstream3.syncproviders.AuthData
 import com.lagradost.cloudstream3.syncproviders.SubtitleAPI
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
@@ -23,7 +23,7 @@ class SubSourceApi : SubtitleAPI() {
     }
 
     override suspend fun search(
-        token: AuthToken?,
+        auth: AuthData?,
         query: AbstractSubtitleEntities.SubtitleSearch
     ): List<AbstractSubtitleEntities.SubtitleEntity>? {
 
@@ -94,16 +94,16 @@ class SubSourceApi : SubtitleAPI() {
     }
 
     override suspend fun SubtitleResource.getResources(
-        token: AuthToken?,
-        data: AbstractSubtitleEntities.SubtitleEntity
+        auth: AuthData?,
+        subtitle: AbstractSubtitleEntities.SubtitleEntity
     ) {
-        val parsedSub = parseJson<SubData>(data.data)
+        val parsedSub = parseJson<SubData>(subtitle.data)
 
         val subRes = app.post(
             url = "$APIURL/getSub",
             data = mapOf(
                 "movie" to parsedSub.movie,
-                "lang" to data.lang,
+                "lang" to subtitle.lang,
                 "id" to parsedSub.id
             )
         ).parsedSafe<SubTitleLink>() ?: return

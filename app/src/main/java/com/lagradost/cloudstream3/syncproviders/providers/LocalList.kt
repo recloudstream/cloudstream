@@ -1,12 +1,11 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.syncproviders.AuthToken
+import com.lagradost.cloudstream3.syncproviders.AuthData
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
-import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
@@ -15,6 +14,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllSubscriptions
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllWatchStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
+import com.lagradost.cloudstream3.utils.txt
 
 class LocalList : SyncAPI() {
     override val name = "Local"
@@ -26,7 +26,7 @@ class LocalList : SyncAPI() {
     override var requireLibraryRefresh = true
     override val syncIdName = SyncIdName.LocalList
 
-    override suspend fun library(token: AuthToken?): SyncAPI.LibraryMetadata? {
+    override suspend fun library(auth : AuthData?): SyncAPI.LibraryMetadata? {
         val watchStatusIds = ioWork {
             getAllWatchStateIds()?.map { id ->
                 Pair(id, getResultWatchState(id))
@@ -74,8 +74,8 @@ class LocalList : SyncAPI() {
             result
         }
 
-        return SyncAPI.LibraryMetadata(
-            list.map { SyncAPI.LibraryList(txt(it.key), it.value) },
+        return LibraryMetadata(
+            list.map { LibraryList(txt(it.key), it.value) },
             setOf(
                 ListSorting.AlphabeticalA,
                 ListSorting.AlphabeticalZ,

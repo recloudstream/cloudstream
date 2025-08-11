@@ -9,6 +9,7 @@ import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.ShowStatus
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.syncproviders.AuthData
 import com.lagradost.cloudstream3.syncproviders.AuthLoginPage
 import com.lagradost.cloudstream3.syncproviders.AuthToken
 import com.lagradost.cloudstream3.syncproviders.AuthUser
@@ -97,8 +98,8 @@ class MALApi : SyncAPI() {
         )
     }
 
-    override suspend fun search(token: AuthToken?, query: String): List<SyncAPI.SyncSearchResult>? {
-        val auth = token?.accessToken ?: return null
+    override suspend fun search(auth : AuthData?, query: String): List<SyncAPI.SyncSearchResult>? {
+        val auth = auth?.token?.accessToken ?: return null
         val url = "$apiUrl/v2/anime?q=$name&limit=$MAL_MAX_SEARCH_LIMIT"
         val res = app.get(
             url, headers = mapOf(
@@ -121,12 +122,12 @@ class MALApi : SyncAPI() {
         Regex("""/anime/((.*)/|(.*))""").find(url)!!.groupValues.first()
 
     override suspend fun updateStatus(
-        token: AuthToken?,
+        auth : AuthData?,
         id: String,
         newStatus: SyncAPI.AbstractSyncStatus
     ): Boolean {
         return setScoreRequest(
-            token ?: return false,
+            auth?.token ?: return false,
             id.toIntOrNull() ?: return false,
             fromIntToAnimeStatus(newStatus.status),
             newStatus.score?.toInt(10),
@@ -224,8 +225,8 @@ class MALApi : SyncAPI() {
         )
     }
 
-    override suspend fun load(token: AuthToken?, id: String): SyncAPI.SyncResult? {
-        val auth = token?.accessToken ?: return null
+    override suspend fun load(auth : AuthData?, id: String): SyncAPI.SyncResult? {
+        val auth = auth?.token?.accessToken ?: return null
         val internalId = id.toIntOrNull() ?: return null
         val url =
             "$apiUrl/v2/anime/$internalId?fields=id,title,main_picture,alternative_titles,start_date,end_date,synopsis,mean,rank,popularity,num_list_users,num_scoring_users,nsfw,created_at,updated_at,media_type,status,genres,my_list_status,num_episodes,start_season,broadcast,source,average_episode_duration,rating,pictures,background,related_anime,related_manga,recommendations,studios,statistics"
@@ -270,8 +271,8 @@ class MALApi : SyncAPI() {
         }
     }
 
-    override suspend fun status(token: AuthToken?, id: String): SyncAPI.AbstractSyncStatus? {
-        val auth = token?.accessToken ?: return null
+    override suspend fun status(auth : AuthData?, id: String): SyncAPI.AbstractSyncStatus? {
+        val auth = auth?.token?.accessToken ?: return null
 
         // https://myanimelist.net/apiconfig/references/api/v2#operation/anime_anime_id_get
         val url =
@@ -476,8 +477,8 @@ class MALApi : SyncAPI() {
         @JsonProperty("start_time") val startTime: String?
     )
 
-    override suspend fun library(token: AuthToken?): LibraryMetadata? {
-        val list = getMalAnimeListSmart(token ?: return null)?.groupBy {
+    override suspend fun library(auth : AuthData?): LibraryMetadata? {
+        val list = getMalAnimeListSmart(auth ?: return null)?.groupBy {
             convertToStatus(it.listStatus?.status ?: "").stringRes
         }?.mapValues { group ->
             group.value.map { it.toLibraryItem() }
@@ -504,13 +505,13 @@ class MALApi : SyncAPI() {
         )
     }
 
-    private suspend fun getMalAnimeListSmart(token: AuthToken): Array<Data>? {
+    private suspend fun getMalAnimeListSmart(auth : AuthData): Array<Data>? {
         return if (requireLibraryRefresh) {
-            val list = getMalAnimeList(token)
-            setKey(MAL_CACHED_LIST, token.accessToken ?: "", list)
+            val list = getMalAnimeList(auth.token)
+            setKey(MAL_CACHED_LIST, auth.user.id.toString(), list)
             list
         } else {
-            getKey<Array<Data>>(MAL_CACHED_LIST, token.accessToken ?: "") as? Array<Data>
+            getKey<Array<Data>>(MAL_CACHED_LIST, auth.user.id.toString()) as? Array<Data>
         }
     }
 

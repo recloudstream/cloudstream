@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
+import com.lagradost.cloudstream3.syncproviders.AuthData
 import com.lagradost.cloudstream3.syncproviders.AuthLoginRequirement
 import com.lagradost.cloudstream3.syncproviders.AuthLoginResponse
 import com.lagradost.cloudstream3.syncproviders.AuthToken
@@ -114,7 +115,7 @@ class OpenSubtitlesApi : SubtitleAPI() {
      * Returns list of Subtitles which user can select to download (see load).
      * */
     override suspend fun search(
-        token: AuthToken?,
+        auth : AuthData?,
         query: AbstractSubtitleEntities.SubtitleSearch
     ): List<AbstractSubtitleEntities.SubtitleEntity>? {
         throwIfCantDoRequest()
@@ -197,9 +198,10 @@ class OpenSubtitlesApi : SubtitleAPI() {
     */
 
     override suspend fun load(
-        token: AuthToken?,
-        data: AbstractSubtitleEntities.SubtitleEntity
+        auth : AuthData?,
+        subtitle: AbstractSubtitleEntities.SubtitleEntity
     ): String? {
+        if(auth == null) return null
         throwIfCantDoRequest()
 
         val req = app.post(
@@ -207,13 +209,13 @@ class OpenSubtitlesApi : SubtitleAPI() {
             headers = mapOf(
                 Pair(
                     "Authorization",
-                    "Bearer ${token?.accessToken ?: throw ErrorLoadingException("No access token active in current session")}"
+                    "Bearer ${auth.token.accessToken ?: throw ErrorLoadingException("No access token active in current session")}"
                 ),
                 Pair("Content-Type", "application/json"),
                 Pair("Accept", "*/*")
             ) + headers,
             data = mapOf(
-                Pair("file_id", data.data)
+                Pair("file_id", subtitle.data)
             )
         )
         Log.i(TAG, "Request result  => (${req.code}) ${req.text}")

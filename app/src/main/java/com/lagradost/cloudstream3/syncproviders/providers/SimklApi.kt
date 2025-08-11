@@ -20,6 +20,7 @@ import com.lagradost.cloudstream3.mapper
 import com.lagradost.cloudstream3.mvvm.debugPrint
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING
+import com.lagradost.cloudstream3.syncproviders.AuthData
 import com.lagradost.cloudstream3.syncproviders.AuthLoginPage
 import com.lagradost.cloudstream3.syncproviders.AuthPinData
 import com.lagradost.cloudstream3.syncproviders.AuthToken
@@ -795,8 +796,8 @@ class SimklApi : SyncAPI() {
         val oldStatus: String?
     ) : SyncAPI.AbstractSyncStatus()
 
-    override suspend fun status(token: AuthToken?, id: String): SyncAPI.AbstractSyncStatus? {
-        if (token == null) return null
+    override suspend fun status(auth: AuthData?, id: String): SyncAPI.AbstractSyncStatus? {
+        if (auth == null) return null
         val realIds = readIdFromString(id)
 
         // Key which assumes all ids are the same each time :/
@@ -820,7 +821,7 @@ class SimklApi : SyncAPI() {
             searchResult.hasEnded()
         )
 
-        val foundItem = getSyncListSmart(token)?.let { list ->
+        val foundItem = getSyncListSmart(auth)?.let { list ->
             listOf(list.shows, list.anime, list.movies).flatten().firstOrNull { show ->
                 realIds.any { (database, id) ->
                     show.getIds().matchesId(database, id)
@@ -861,9 +862,9 @@ class SimklApi : SyncAPI() {
     }
 
     override suspend fun updateStatus(
-        token: AuthToken?,
+        auth: AuthData?,
         id: String,
-        newStatus: SyncAPI.AbstractSyncStatus
+        newStatus: AbstractSyncStatus
     ): Boolean {
         val parsedId = readIdFromString(id)
         lastScoreTime = unixTime
@@ -879,7 +880,7 @@ class SimklApi : SyncAPI() {
                         it.originalName == oldStatus
                     }?.value
                 })
-            .token(token ?: return false)
+            .token(auth?.token ?: return false)
             .ids(MediaObject.Ids.fromMap(parsedId))
 
 
@@ -913,7 +914,7 @@ class SimklApi : SyncAPI() {
         ).parsedSafe()
     }
 
-    override suspend fun search(token: AuthToken?, query: String): List<SyncAPI.SyncSearchResult>? {
+    override suspend fun search(auth: AuthData?, query: String): List<SyncAPI.SyncSearchResult>? {
         return app.get(
             "$mainUrl/search/", params = mapOf("client_id" to CLIENT_ID, "q" to name)
         ).parsedSafe<Array<MediaObject>>()?.mapNotNull { it.toSyncSearchResult() }
@@ -930,9 +931,9 @@ class SimklApi : SyncAPI() {
         )
     }
 
-    override suspend fun load(token: AuthToken?, id: String): SyncAPI.SyncResult? = null
+    override suspend fun load(auth: AuthData?, id: String): SyncResult? = null
 
-    private suspend fun getSyncListSince(token: AuthToken, since: Long?): AllItemsResponse? {
+    private suspend fun getSyncListSince(auth: AuthData, since: Long?): AllItemsResponse? {
         val params = getDateTime(since)?.let {
             mapOf("date_from" to it)
         } ?: emptyMap()
@@ -941,7 +942,7 @@ class SimklApi : SyncAPI() {
         return app.get(
             "$mainUrl/sync/all-items/",
             params = params,
-            headers = getHeaders(token)
+            headers = getHeaders(auth.token)
         ).parsedSafe()
     }
 
@@ -949,15 +950,14 @@ class SimklApi : SyncAPI() {
         return app.post("$mainUrl/sync/activities", headers = getHeaders(token)).parsedSafe()
     }
 
-    private fun getSyncListCached(token: AuthToken): AllItemsResponse? {
-        return getKey<AllItemsResponse>(token.accessToken ?: return null, SIMKL_CACHED_LIST)
+    private fun getSyncListCached(auth: AuthData): AllItemsResponse? {
+        return getKey<AllItemsResponse>(SIMKL_CACHED_LIST, auth.user.id.toString())
     }
 
-    private suspend fun getSyncListSmart(token: AuthToken): AllItemsResponse? {
-
-        val activities = getActivities(token)
-        val accessToken = token.accessToken ?: return null
-        val lastCacheUpdate = getKey<Long>(accessToken, SIMKL_CACHED_LIST_TIME)
+    private suspend fun getSyncListSmart(auth: AuthData): AllItemsResponse? {
+        val activities = getActivities(auth.token)
+        val userId = auth.user.id.toString()
+        val lastCacheUpdate = getKey<Long>(SIMKL_CACHED_LIST_TIME, auth.user.id.toString())
         val lastRemoval = listOf(
             activities?.tvShows?.removedFromList,
             activities?.anime?.removedFromList,
@@ -977,28 +977,28 @@ class SimklApi : SyncAPI() {
         debugPrint { "Cache times: lastCacheUpdate=$lastCacheUpdate, lastRemoval=$lastRemoval, lastRealUpdate=$lastRealUpdate" }
         val list = if (lastCacheUpdate == null || lastCacheUpdate < lastRemoval) {
             debugPrint { "Full list update in ${this.name}." }
-            setKey(accessToken, SIMKL_CACHED_LIST_TIME, lastRemoval)
-            getSyncListSince(token, null)
+            setKey(SIMKL_CACHED_LIST_TIME, userId, lastRemoval)
+            getSyncListSince(auth, null)
         } else if (lastCacheUpdate < lastRealUpdate || lastCacheUpdate < lastScoreTime) {
             debugPrint { "Partial list update in ${this.name}." }
-            setKey(accessToken, SIMKL_CACHED_LIST_TIME, lastCacheUpdate)
+            setKey(SIMKL_CACHED_LIST_TIME, userId, lastCacheUpdate)
             AllItemsResponse.merge(
-                getSyncListCached(token),
-                getSyncListSince(token, lastCacheUpdate)
+                getSyncListCached(auth),
+                getSyncListSince(auth, lastCacheUpdate)
             )
         } else {
             debugPrint { "Cached list update in ${this.name}." }
-            getSyncListCached(token)
+            getSyncListCached(auth)
         }
         debugPrint { "List sizes: movies=${list?.movies?.size}, shows=${list?.shows?.size}, anime=${list?.anime?.size}" }
 
-        setKey(accessToken, SIMKL_CACHED_LIST, list)
+        setKey(SIMKL_CACHED_LIST, userId, list)
 
         return list
     }
 
-    override suspend fun library(token: AuthToken?): SyncAPI.LibraryMetadata? {
-        val list = getSyncListSmart(token ?: return null) ?: return null
+    override suspend fun library(auth: AuthData?): SyncAPI.LibraryMetadata? {
+        val list = getSyncListSmart(auth ?: return null) ?: return null
 
         val baseMap =
             SimklListStatusType.entries
