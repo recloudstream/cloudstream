@@ -12,7 +12,9 @@ import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIE
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
+import com.lagradost.cloudstream3.utils.getImageFromDrawable
 
 class RepoAdapter(
     val isSetup: Boolean,
@@ -89,6 +91,11 @@ class RepoAdapter(
                         }
                         mainText.text = repositoryData.name
                         subText.text = repositoryData.url
+                        if(repositoryData.iconUrl.isNotEmpty()){
+                            entryIcon.loadImage(repositoryData.iconUrl){
+                                error(getImageFromDrawable(itemView.context,R.drawable.ic_github_logo))
+                            }
+                        }
                     }
                 }
 
@@ -116,6 +123,11 @@ class RepoAdapter(
 
                         mainText.text = repositoryData.name
                         subText.text = repositoryData.url
+                        if(repositoryData.iconUrl.isNotEmpty()){
+                            entryIcon.loadImage(repositoryData.iconUrl){
+                                error(getImageFromDrawable(itemView.context,R.drawable.ic_github_logo))
+                            }
+                        }
                     }
                 }
             }
