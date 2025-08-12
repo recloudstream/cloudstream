@@ -37,11 +37,11 @@ import androidx.media3.common.util.Log
 import androidx.media3.common.util.ParsableByteArray
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.common.util.Util
+import androidx.media3.container.DolbyVisionConfig;
 import androidx.media3.container.NalUnitUtil
 import androidx.media3.extractor.AacUtil
 import androidx.media3.extractor.AvcConfig
 import androidx.media3.extractor.ChunkIndex
-import androidx.media3.extractor.DolbyVisionConfig
 import androidx.media3.extractor.Extractor
 import androidx.media3.extractor.ExtractorInput
 import androidx.media3.extractor.ExtractorOutput
@@ -51,11 +51,11 @@ import androidx.media3.extractor.MpegAudioUtil
 import androidx.media3.extractor.PositionHolder
 import androidx.media3.extractor.SeekMap
 import androidx.media3.extractor.SeekMap.Unseekable
+import androidx.media3.extractor.text.SubtitleParser
+import androidx.media3.extractor.text.SubtitleTranscodingExtractorOutput
 import androidx.media3.extractor.TrackOutput
 import androidx.media3.extractor.TrackOutput.CryptoData
 import androidx.media3.extractor.TrueHdSampleRechunker
-import androidx.media3.extractor.text.SubtitleParser
-import androidx.media3.extractor.text.SubtitleTranscodingExtractorOutput
 import com.google.common.collect.ImmutableList
 import java.io.IOException
 import java.nio.ByteBuffer
