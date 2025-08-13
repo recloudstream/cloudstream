@@ -884,4 +884,9 @@
     <string name="speedup_key" translatable="false">speedup_key</string>
     <string name="speedup_title" >LongPress Speed Toggle</string>
     <string name="speedup_summary" >Hold to get 2x speed</string>
+    <string name="edit_profile_image_title">Edit Profile Image</string>
+    <string name="edit_profile_image_hint">Enter Profile Image URL</string>
+    <string name="edit_profile_image_error_empty">No URL Found</string>
+    <string name="edit_profile_image_error_invalid">Invalid URL or Image</string>
+    <string name="edit_profile_image_success">Successfully Image Updated</string>
 </resources>
