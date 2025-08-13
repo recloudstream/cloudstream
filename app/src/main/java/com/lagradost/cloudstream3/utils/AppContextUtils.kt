@@ -543,6 +543,7 @@ object AppContextUtils {
             val repo = RepositoryManager.parseRepository(url) ?: return@ioSafe
             RepositoryManager.addRepository(
                 RepositoryData(
+                    repo.iconUrl ?: "",
                     repo.name,
                     url
                 )
