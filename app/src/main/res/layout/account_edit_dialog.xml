@@ -37,6 +37,33 @@
         android:layout_marginBottom="60dp"
         android:orientation="vertical">
 
+        <androidx.cardview.widget.CardView
+            android:layout_width="@dimen/account_select_linear_item_size"
+            android:layout_height="@dimen/account_select_linear_item_size"
+            app:cardCornerRadius="@dimen/rounded_image_radius"
+            android:layout_gravity="center"
+            >
+            <ImageView
+                android:id="@+id/account_image"
+                android:src="@drawable/profile_bg_blue"
+                android:focusable="true"
+                android:contentDescription="@string/preview_background_img_des"
+                android:scaleType="centerCrop"
+                android:foreground="@drawable/outline_drawable_forced_round"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center" />
+            <ImageView
+                android:id="@+id/edit_profile_photo_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_edit_24"
+                android:layout_gravity="bottom|end"
+                android:padding="5dp"
+                android:background="@color/skipOpTransparent"
+                />
+        </androidx.cardview.widget.CardView>
+
         <EditText
             android:id="@+id/account_name"
             android:layout_width="match_parent"
@@ -57,23 +84,7 @@
             android:layout_height="wrap_content"
             android:text="@string/lock_profile" />
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:cardCornerRadius="@dimen/rounded_image_radius">
 
-            <ImageView
-                android:id="@+id/account_image"
-                android:src="@drawable/profile_bg_blue"
-                android:focusable="true"
-                android:contentDescription="@string/preview_background_img_des"
-                android:scaleType="centerCrop"
-                android:foreground="@drawable/outline_drawable_forced_round"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_gravity="center" />
-
-        </androidx.cardview.widget.CardView>
     </LinearLayout>
 
     <RelativeLayout
