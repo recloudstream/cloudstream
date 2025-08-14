@@ -1424,6 +1424,29 @@ class ResultViewModel2 : ViewModel() {
         _episodeSynopsis.postValue(null)
     }
 
+    fun markEpisodesAsWatched(episodeIds: Array<Int>) {
+        episodeIds.forEach{id->
+            if (getVideoWatchState(id) != VideoWatchState.Watched) {
+                setVideoWatchState(id, VideoWatchState.Watched)
+            }
+        }
+    }
+
+    fun getEpisodesBySeason(season: Int): HashMap<Int, Array<Int>> {
+        return HashMap(
+            currentEpisodes.entries
+                .filter { it.key.season <= season }
+                .groupBy { it.key.season }
+                .mapValues { entry ->
+                    entry.value
+                        .flatMap {it.value}
+                        .map { it.id }
+                        .toTypedArray()
+                }
+        )
+    }
+
+
     private suspend fun handleEpisodeClickEvent(click: EpisodeClickEvent) {
         when (click.action) {
             ACTION_SHOW_OPTIONS -> {
@@ -1463,7 +1486,7 @@ class ResultViewModel2 : ViewModel() {
 
                     options.add(txt(watchedText) to ACTION_MARK_AS_WATCHED)
                 }
-
+                options.add(txt(R.string.action_mark_watched_up_to_this_episode) to ACTION_MARK_WATCHED_UP_TO_THIS_EPISODE)
                 postPopup(
                     txt(
                         activity?.getNameFull(
@@ -1640,17 +1663,26 @@ class ResultViewModel2 : ViewModel() {
             ACTION_MARK_AS_WATCHED -> {
                 val isWatched =
                     getVideoWatchState(click.data.id) == VideoWatchState.Watched
-
                 if (isWatched) {
                     setVideoWatchState(click.data.id, VideoWatchState.None)
                 } else {
                     setVideoWatchState(click.data.id, VideoWatchState.Watched)
                 }
-
                 // Kinda dirty to reload all episodes :(
                 reloadEpisodes()
             }
 
+            ACTION_MARK_WATCHED_UP_TO_THIS_EPISODE -> {
+                val (clickSeason,clickEpisode) = click.data.let { (it.season ?: 0) to it.episode }
+                val seasons = getEpisodesBySeason(clickSeason)
+                val seasonsToMark = if (clickSeason == 0) listOf(0) else (clickSeason downTo 1)
+                seasonsToMark.forEachIndexed { index, currentSeason ->
+                    var episodeIds = seasons[currentSeason] ?: emptyArray()
+                    if(index == 0) episodeIds = episodeIds.sliceArray(0 until clickEpisode)
+                    markEpisodesAsWatched(episodeIds)
+                }
+                reloadEpisodes()
+            }
             else -> {
                 val action = VideoClickActionHolder.getActionById(click.action) ?: return
 
