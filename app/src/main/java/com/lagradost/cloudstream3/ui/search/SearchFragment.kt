@@ -35,6 +35,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
 import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.AnimeSearchResponse
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainActivity
@@ -42,12 +43,15 @@ import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.databinding.FragmentSearchBinding
 import com.lagradost.cloudstream3.databinding.HomeSelectMainpageBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.ui.APIRepository
+import com.lagradost.cloudstream3.ui.APIRepository.Companion.getTimeout
 import com.lagradost.cloudstream3.ui.BaseAdapter
 import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.bindChips
@@ -70,11 +74,14 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
+import kotlinx.coroutines.withTimeout
 import java.util.Locale
 import java.util.concurrent.locks.ReentrantLock
 
@@ -272,6 +279,30 @@ class SearchFragment : Fragment() {
                 }
             }
         }
+
+        binding?.searchGenreFilter?.setOnClickListener {
+            val name = DataStoreHelper.currentHomePage
+            val provider = getApiFromNameNull(name)
+            val availableGenres = provider?.supportedGenres
+            val prefNames = availableGenres?.map {
+                it.name
+            } ?: return@setOnClickListener
+            activity?.showMultiDialog(
+                prefNames,
+                listOf(),
+                "Genres",
+                {},
+                { enabledIndices ->
+                    val listOfSelectedGenres =  if (enabledIndices.isEmpty()) {
+                        availableGenres
+                    } else {
+                        availableGenres.filterIndexed { index, _ -> index in enabledIndices }
+                    }
+                    searchViewModel.discoverAndCancel(provider.supportedTypes.toList(), listOfSelectedGenres.toList(), provider)
+                }
+            )
+        }
+
 
         val searchExitIcon =
             binding?.mainSearch?.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
