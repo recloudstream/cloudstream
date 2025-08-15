@@ -199,4 +199,41 @@ object DataStore {
     inline fun <reified T : Any> Context.getKey(folder: String, path: String, defVal: T?): T? {
         return getKey(getFolderName(folder, path), defVal) ?: defVal
     }
+
+    /**
+     * This function outlines the steps for migrating existing plaintext SharedPreferences data
+     * to EncryptedSharedPreferences.
+     *
+     * IMPORTANT: This is a placeholder. The actual migration logic needs to be implemented
+     * by the developer based on the specific data structures and sensitive information
+     * stored in plaintext SharedPreferences.
+     *
+     * Steps for migration:
+     * 1. Get an instance of the old, plaintext SharedPreferences.
+     * 2. Get an instance of the new, EncryptedSharedPreferences.
+     * 3. Iterate through the keys in the old SharedPreferences.
+     * 4. For each key that contains sensitive data:
+     *    a. Read the data from the old SharedPreferences.
+     *    b. Write the data to the new EncryptedSharedPreferences.
+     *    c. (Optional but recommended) Remove the data from the old SharedPreferences.
+     * 5. After all sensitive data is migrated, consider deleting the old SharedPreferences file
+     *    if it no longer contains any necessary data.
+     * 6. Ensure this migration logic runs only once (e.g., using a flag in EncryptedSharedPreferences).
+     */
+    fun migrateToEncryptedSharedPreferences(context: Context) {
+        // TODO: Implement actual migration logic here.
+        // Example:
+        // val oldPrefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+        // val encryptedPrefs = getPreferences(context) // This now returns EncryptedSharedPreferences
+
+        // Example migration of a single sensitive key:
+        // val sensitiveData = oldPrefs.getString("sensitive_key", null)
+        // if (sensitiveData != null) {
+        //     encryptedPrefs.edit().putString("sensitive_key", sensitiveData).apply()
+        //     oldPrefs.edit().remove("sensitive_key").apply() // Remove from old prefs
+        // }
+
+        // Remember to handle different data types (String, Int, Boolean, etc.)
+        // and complex objects (which are stored as JSON strings).
+    }
 }
