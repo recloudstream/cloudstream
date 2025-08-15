@@ -31,7 +31,7 @@ class OpenSubtitlesApi : SubtitleAPI() {
     override val createAccountUrl = "https://www.opensubtitles.com/en/users/sign_up"
 
     companion object {
-        // API_KEY removed for security reasons. Implement secure key management.
+        const val API_KEY = "uyBLgFD17MgrYmA0gSXoKllMJBelOYj2"
         const val HOST = "https://api.opensubtitles.com/api/v1"
         const val TAG = "OPENSUBS"
         const val COOLDOWN_DURATION: Long = 1000L * 30L // CoolDown if 429 error code in ms
