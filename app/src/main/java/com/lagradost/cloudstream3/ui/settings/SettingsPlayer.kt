@@ -43,7 +43,8 @@ class SettingsPlayer : PreferenceFragmentCompat() {
                 R.string.pref_category_gestures_key,
                 R.string.rotate_video_key,
                 R.string.auto_rotate_video_key,
-                R.string.speedup_key
+                R.string.speedup_key,
+                R.string.pip_enabled_key
             ),
             TV or EMULATOR
         )
