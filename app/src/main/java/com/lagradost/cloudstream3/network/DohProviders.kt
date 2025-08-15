@@ -105,3 +105,12 @@ fun OkHttpClient.Builder.addCanadianShieldDns() = (
                 "149.112.122.10",
             )
         ))
+
+fun OkHttpClient.Builder.addQuad9SecureDns() = (
+    addGenericDns(
+        "https://dns11.quad9.net/dns-query",
+        listOf(
+            "9.9.9.11",
+            "149.112.112.11",
+        )
+    ))

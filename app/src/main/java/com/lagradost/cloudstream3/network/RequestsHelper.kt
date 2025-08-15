@@ -45,6 +45,7 @@ fun buildDefaultClient(context: Context): OkHttpClient {
                 6 -> addQuad9Dns()
                 7 -> addDnsSbDns()
                 8 -> addCanadianShieldDns()
+                9 -> addQuad9SecureDns()
             }
         }
         // Needs to be build as otherwise the other builders will change this object
