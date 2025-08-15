@@ -1115,7 +1115,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         val errorFile = filesDir.resolve("last_error")
         if (errorFile.exists() && errorFile.isFile) {
             lastError = errorFile.readText(Charset.defaultCharset())
-            errorFile.delete()
+            errorFile.delete() // Delete the file after reading
         } else {
             lastError = null
         }

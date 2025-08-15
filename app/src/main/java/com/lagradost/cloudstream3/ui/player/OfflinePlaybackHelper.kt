@@ -1,9 +1,8 @@
-package com.lagradost.cloudstream3.ui.player
-
 import android.app.Activity
 import android.content.ContentUris
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.core.content.ContextCompat.getString
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.actions.temp.CloudStreamPackage
@@ -13,7 +12,15 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.safefile.SafeFile
 
 object OfflinePlaybackHelper {
+    private val ALLOWED_SCHEMES = setOf("http", "https", "file", "content", "magnet")
+
     fun playLink(activity: Activity, url: String) {
+        val uri = Uri.parse(url)
+        if (!ALLOWED_SCHEMES.contains(uri.scheme)) {
+            Log.e("OfflinePlaybackHelper", "Attempted to play link with disallowed scheme: ${uri.scheme}")
+            return
+        }
+
         activity.navigate(
             R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
                 LinkGenerator(
@@ -59,6 +66,11 @@ object OfflinePlaybackHelper {
     }
 
     fun playUri(activity: Activity, uri: Uri) {
+        if (!ALLOWED_SCHEMES.contains(uri.scheme)) {
+            Log.e("OfflinePlaybackHelper", "Attempted to play URI with disallowed scheme: ${uri.scheme}")
+            return
+        }
+
         if (uri.scheme == "magnet") {
             playLink(activity, uri.toString())
             return
