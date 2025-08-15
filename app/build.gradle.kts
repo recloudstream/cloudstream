@@ -145,6 +145,10 @@ android {
         buildConfig = true
     }
 
+    packagingOptions {
+        doNotStrip("**/*.so")
+    }
+
     namespace = "com.lagradost.cloudstream3"
 }
 
