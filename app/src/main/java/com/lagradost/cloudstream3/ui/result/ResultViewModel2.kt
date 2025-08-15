@@ -1485,8 +1485,8 @@ class ResultViewModel2 : ViewModel() {
                     else R.string.action_mark_as_watched
 
                     options.add(txt(watchedText) to ACTION_MARK_AS_WATCHED)
+                    options.add(txt(R.string.action_mark_watched_up_to_this_episode) to ACTION_MARK_WATCHED_UP_TO_THIS_EPISODE)
                 }
-                options.add(txt(R.string.action_mark_watched_up_to_this_episode) to ACTION_MARK_WATCHED_UP_TO_THIS_EPISODE)
                 postPopup(
                     txt(
                         activity?.getNameFull(
@@ -1675,7 +1675,7 @@ class ResultViewModel2 : ViewModel() {
             ACTION_MARK_WATCHED_UP_TO_THIS_EPISODE -> {
                 val (clickSeason,clickEpisode) = click.data.let { (it.season ?: 0) to it.episode }
                 val seasons = getEpisodesBySeason(clickSeason)
-                val seasonsToMark = if (clickSeason == 0) listOf(0) else (clickSeason downTo 1)
+                val seasonsToMark = if (clickSeason == 0) listOf(0) else clickSeason downTo 1
                 seasonsToMark.forEachIndexed { index, currentSeason ->
                     var episodeIds = seasons[currentSeason] ?: emptyArray()
                     if(index == 0) episodeIds = episodeIds.sliceArray(0 until clickEpisode)
