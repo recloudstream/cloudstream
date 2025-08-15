@@ -145,8 +145,10 @@ android {
         buildConfig = true
     }
 
-    packagingOptions {
-        doNotStrip("**/*.so")
+    packaging {
+        jniLibs {
+            keepDebugSymbols.add("**/*.so")
+        }
     }
 
     namespace = "com.lagradost.cloudstream3"
