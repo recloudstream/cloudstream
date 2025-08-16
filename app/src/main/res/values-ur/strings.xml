@@ -478,7 +478,7 @@
     <string name="history">تاریخ</string>
     <string name="open_with">کے ساتھ کھولیں</string>
     <string name="error_invalid_id">غلط ID</string>
-    <string name="repository_name_hint">ذخیرہ کا نام</string>
+    <string name="repository_name_hint">ذخیرہ کا نام (اختیاری)</string>
     <string name="skip_type_ed">ختم ہونے والا</string>
     <string name="skip_type_op">کھل رہا ہے</string>
     <string name="confirm_exit_dialog">کیا آپ کو یقین ہے کہ آپ ہیاں سے نکلنا چاہتے ہیں؟</string>
@@ -612,4 +612,20 @@
     <string name="recommendations_tooltip">سفارشات دکھائیں</string>
     <string name="biometric_warning">آپ کے CloudStream ڈیٹا کا اب بیک اپ لیا گیا ہے۔ اگرچہ اس کا امکان بہت کم ہے، لیکن مختلف ڈیوائس مختلف طریقے سے کام کر سکتے ہیں۔ اگر آپ ایپ تک رسائی حاصل کرنے سے قاصر ہیں تو، ایپ کا ڈیٹا مکمل طور پر صاف کریں اور بیک اپ سے بحال کریں۔ اس سے ہونے والی کسی بھی تکلیف کے لیے ہم بہت معذرت خواہ ہیں۔</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="next_season_episode_format" formatted="true">سیزن %1$d کی قسط %2$d جاری ہوگی</string>
+    <string name="play_from_beginning_img_des">شروع سےپلے کریں</string>
+    <string name="speech_recognition_unavailable">کلام شناسی دستیاب نہیں</string>
+    <string name="begin_speaking">بولنا شروع کریں…</string>
+    <string name="torrent_info">یہ ویڈیو ایک ٹورنٹ ہے،یعنی آپ کی ویڈیو سرگرمی کا سراغ آپ تک لگایا جاسکتا ہے۔\nآگے بڑھنے سے پہلے یہ بات یقینی بنائیں کہ آپ ٹورنٹنگ کو صحیح سے جانتے ہیں</string>
+    <string name="downloads_delete_select">ڈیلیٹ کرنے کے لئے چیزیں چنیں</string>
+    <string name="downloads_empty">فی الحال کوئی ڈاونلوڈ نہیں۔</string>
+    <string name="offline_file">آف لائن دیکھنے کے لئے دستیاب ہے</string>
+    <string name="select_all">سب چُنیں</string>
+    <string name="deselect_all">سب غیر منتخب کریں</string>
+    <string name="open_local_video">لوکل ویڈیو کھولیں</string>
+    <string name="delete_files">فائلز حذف کریں</string>
+    <string name="test_warning">انتباہ</string>
+    <string name="audio_singluar">آواز</string>
+    <string name="sort_button_date">تاریخ %s</string>
+    <string name="device_pin_url_message">اپنے اسمارٹ فون یا کمپیوٹر پر یہ <b>%s</b> وزٹ کریں اور مندرجہ بالا کوڈ ڈالیں</string>
 </resources>
