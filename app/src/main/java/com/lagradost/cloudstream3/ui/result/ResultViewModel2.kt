@@ -1432,7 +1432,9 @@ class ResultViewModel2 : ViewModel() {
         val editor = editor(context ?: return,false)
         val watchStateString = DataStore.mapper.writeValueAsString(watchState)
         episodeIds.forEach {
-            editor.setKeyRaw(getFolderName("$currentAccount/$VIDEO_WATCH_STATE", it),watchStateString)
+            if(getVideoWatchState(it.toInt()) != watchState){
+                editor.setKeyRaw(getFolderName("$currentAccount/$VIDEO_WATCH_STATE", it),watchStateString)
+            }
         }
         editor.apply()
     }
