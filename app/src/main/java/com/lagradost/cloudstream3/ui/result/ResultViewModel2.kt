@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
+import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.getCastSession
@@ -55,7 +56,10 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.Coroutines.ioWorkSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.DataStore.editor
+import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllFavorites
@@ -1424,26 +1428,30 @@ class ResultViewModel2 : ViewModel() {
         _episodeSynopsis.postValue(null)
     }
 
-    fun markEpisodesAsWatched(episodeIds: Array<Int>) {
-        episodeIds.forEach{id->
-            if (getVideoWatchState(id) != VideoWatchState.Watched) {
-                setVideoWatchState(id, VideoWatchState.Watched)
-            }
+    private fun markEpisodes(context: Context?,episodeIds: Array<String>,watchState: VideoWatchState) {
+        val editor = editor(context ?: return,false)
+        val watchStateString = DataStore.mapper.writeValueAsString(watchState)
+        episodeIds.forEach {
+            editor.setKeyRaw(getFolderName("$currentAccount/$VIDEO_WATCH_STATE", it),watchStateString)
         }
+        editor.apply()
     }
 
-    fun getEpisodesBySeason(season: Int): HashMap<Int, Array<Int>> {
-        return HashMap(
-            currentEpisodes.entries
-                .filter { it.key.season <= season }
-                .groupBy { it.key.season }
-                .mapValues { entry ->
-                    entry.value
-                        .flatMap {it.value}
-                        .map { it.id }
-                        .toTypedArray()
-                }
-        )
+    private fun  getEpisodesIdsBySeason(season: Int): HashMap<Int, Array<String>> {
+        val result = currentEpisodes.entries
+            .asSequence()
+            .filter { it.key.season <= season }
+            .flatMap { entry ->
+                entry.value.asSequence().map { entry.key.season to it.id.toString() }
+            }
+            .groupBy({ it.first }, { it.second })
+            .mapValues { (_, ids) -> ids.toTypedArray() }
+            .toMap(HashMap())
+
+        if(season != 0){
+            result.remove(0)
+        }
+        return result
     }
 
 
@@ -1484,8 +1492,12 @@ class ResultViewModel2 : ViewModel() {
                     val watchedText = if (isWatched) R.string.action_remove_from_watched
                     else R.string.action_mark_as_watched
 
+                    val markUpToText = if(isWatched) R.string.action_remove_mark_watched_up_to_this_episode
+                    else R.string.action_mark_watched_up_to_this_episode
+
                     options.add(txt(watchedText) to ACTION_MARK_AS_WATCHED)
-                    options.add(txt(R.string.action_mark_watched_up_to_this_episode) to ACTION_MARK_WATCHED_UP_TO_THIS_EPISODE)
+
+                    options.add(txt(markUpToText) to ACTION_MARK_WATCHED_UP_TO_THIS_EPISODE)
                 }
                 postPopup(
                     txt(
@@ -1674,15 +1686,17 @@ class ResultViewModel2 : ViewModel() {
 
             ACTION_MARK_WATCHED_UP_TO_THIS_EPISODE -> {
                 val (clickSeason,clickEpisode) = click.data.let { (it.season ?: 0) to it.episode }
-                val seasons = getEpisodesBySeason(clickSeason)
-                val seasonsToMark = if (clickSeason == 0) listOf(0) else clickSeason downTo 1
-                seasonsToMark.forEachIndexed { index, currentSeason ->
+                val watchState = if (getVideoWatchState(click.data.id) == VideoWatchState.Watched) VideoWatchState.None else VideoWatchState.Watched
+                val seasons =  getEpisodesIdsBySeason(clickSeason)
+
+                seasons.keys.forEach {currentSeason ->
                     var episodeIds = seasons[currentSeason] ?: emptyArray()
-                    if(index == 0) episodeIds = episodeIds.sliceArray(0 until clickEpisode)
-                    markEpisodesAsWatched(episodeIds)
+                    if(currentSeason == clickSeason) episodeIds = episodeIds.sliceArray(0 until clickEpisode)
+                    markEpisodes(context,episodeIds,watchState)
                 }
                 reloadEpisodes()
             }
+
             else -> {
                 val action = VideoClickActionHolder.getActionById(click.action) ?: return
 
