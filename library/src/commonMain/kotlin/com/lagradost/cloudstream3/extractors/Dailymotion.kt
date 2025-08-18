@@ -1,9 +1,7 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
@@ -32,32 +30,22 @@ open class Dailymotion : ExtractorApi() {
         callback: (ExtractorLink) -> Unit
     ) {
         val embedUrl = getEmbedUrl(url) ?: return
-        val req = app.get(embedUrl)
-        val prefix = "window.__PLAYER_CONFIG__ = "
-        val configStr = req.document.selectFirst("script:containsData($prefix)")?.data() ?: return
-        val config = tryParseJson<Config>(configStr.substringAfter(prefix).substringBefore(";").trim()) ?: return
         val id = getVideoId(embedUrl) ?: return
-        val dmV1st = config.dmInternalData.v1st
-        val dmTs = config.dmInternalData.ts
-        val embedder = config.context.embedder
-        val metaDataUrl = "$baseUrl/player/metadata/video/$id?embedder=$embedder&locale=en-US&dmV1st=$dmV1st&dmTs=$dmTs&is_native_app=0"
-        val metaData = app.get(metaDataUrl, referer = embedUrl, cookies = req.cookies)
-            .parsedSafe<MetaData>() ?: return
-        metaData.qualities.forEach { (_, video) ->
-            video.forEach {
-                getStream(it.url, this.name, callback)
+        val metaDataUrl = "$baseUrl/player/metadata/video/$id"
+        val metaData = app.get(metaDataUrl, referer = embedUrl)
+            .parsedSafe<VideoData>() ?: return
+        metaData.qualities.forEach { (_, qualityList) ->
+            qualityList.forEach { video ->
+                getStream(video.url, this.name, callback)
             }
         }
+
         metaData.subtitles.data.forEach { (_, subtitle) ->
             val subUrl = subtitle.urls.firstOrNull() ?: return@forEach
-            subtitleCallback.invoke(
-                SubtitleFile(
-                    subtitle.label,
-                    subUrl
-                )
+            subtitleCallback(
+                SubtitleFile(subtitle.label, subUrl)
             )
         }
-
     }
 
     private fun getEmbedUrl(url: String): String? {
@@ -91,39 +79,24 @@ open class Dailymotion : ExtractorApi() {
             "",
         ).forEach(callback)
     }
-    data class Config(
-        val context: Context,
-        val dmInternalData: InternalData
+
+    data class VideoData(
+        val qualities: Map<String, List<QualityVideo>>,
+        val subtitles: SubtitlesData
     )
 
-    data class InternalData(
-        val ts: Long,
-        val v1st: String
-    )
-
-    data class Context(
-        @JsonProperty("access_token") val accessToken: String?,
-        val embedder: String?,
-    )
-
-    data class MetaData(
-        val qualities: Map<String, List<VideoLink>>,
-        val subtitles: Subtitles,
-    )
-
-    data class Subtitles(
-        val enable: Boolean,
-        val data: Map<String, Subtitle>
-    )
-
-    data class Subtitle(
-        val label: String,
-        val urls: List<String>,
-    )
-
-    data class VideoLink(
+    data class QualityVideo(
         val type: String,
         val url: String
+    )
+
+    data class SubtitlesData(
+        val data: Map<String, SubtitleItem>
+    )
+
+    data class SubtitleItem(
+        val label: String,
+        val urls: List<String>
     )
 
 }
