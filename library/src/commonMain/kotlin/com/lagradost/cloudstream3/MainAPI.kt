@@ -1054,7 +1054,36 @@ fun TvType.isAnimeOp(): Boolean {
  * @property lang Subtitle file language.
  * @property url Subtitle file url to download/load the file.
  * */
-data class SubtitleFile(val lang: String, val url: String)
+@ConsistentCopyVisibility
+data class SubtitleFile private constructor(
+    var lang: String,
+    var url: String,
+    var headers: Map<String, String>?
+) {
+    /** Backwards compatible constructor, mark this as deprecated when new stable comes out */
+    constructor(lang: String, url: String) : this(lang = lang, url = url, headers = null)
+
+    /** Backwards compatible copy */
+    fun copy(
+        lang: String = this.lang, url: String = this.url
+    ): SubtitleFile = SubtitleFile(lang = lang, url = url, headers = this.headers)
+}
+
+// No `MainAPI.` to be able to use this in extractors
+@Prerelease
+suspend fun newSubtitleFile(
+    lang: String,
+    url: String,
+    initializer: suspend SubtitleFile.() -> Unit = { }
+): SubtitleFile {
+    @Suppress("DEPRECATION_ERROR")
+    val builder = SubtitleFile(
+        lang, url
+    )
+    builder.initializer()
+
+    return builder
+}
 
 /** Data class for the Homepage response info.
  * @property items List of [HomePageList] items.

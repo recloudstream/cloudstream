@@ -70,10 +70,8 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.mvvm.safe
-import com.lagradost.cloudstream3.subtitles.AbstractSubApi
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities.SubtitleSearch
-import com.lagradost.cloudstream3.subtitles.SubRepository
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.subtitleProviders
 import com.lagradost.cloudstream3.ui.player.CS3IPlayer.Companion.preferredAudioTrackLanguage
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.updateForcedEncoding
@@ -137,11 +135,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             }
         }
 
-        val subsProviders
-            get() = subtitleProviders.filter { provider ->
-                (provider as? AbstractSubApi)?.let { !it.requiresLogin || it.loginInfo() != null }
-                    ?: true
-            }.map { SubRepository(it) }
+        val subsProviders = subtitleProviders
         val subsProvidersIsActive
             get() = subsProviders.isNotEmpty()
     }
@@ -608,7 +602,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     override fun openOnlineSubPicker(
         context: Context, loadResponse: LoadResponse?, dismissCallback: (() -> Unit)
     ) {
-        val providers = subsProviders
+        val providers = subsProviders.toList()
         val isSingleProvider = subsProviders.size == 1
 
         val dialog = Dialog(context, R.style.AlertDialogCustomBlack)
@@ -751,7 +745,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                     // TODO Make ui a lot better, like search with tabs
                     val results = providers.amap {
-                        when (val response = it.search(search)) {
+                        when (val response = Resource.fromResult(it.search(search))) {
                             is Resource.Success -> {
                                 response.value
                             }
@@ -810,7 +804,8 @@ class GeneratorPlayer : FullScreenPlayer() {
             currentSubtitle?.let { currentSubtitle ->
                 providers.firstOrNull { it.idPrefix == currentSubtitle.idPrefix }?.let { api ->
                     ioSafe {
-                        when (val apiResource = api.getResource(currentSubtitle)) {
+                        when (val apiResource =
+                            Resource.fromResult(api.resource(currentSubtitle))) {
                             is Resource.Success -> {
                                 val subtitles = apiResource.value.getSubtitles().map { resource ->
                                     SubtitleData(
@@ -955,9 +950,11 @@ class GeneratorPlayer : FullScreenPlayer() {
             // first come first served with these subtitles
             // we might want to change it to prefer different sources when used multiple times,
             // however caching might make this random after the first click too
-            subsProviders.amap { provider ->
-                val success = when (val result = provider.search(
-                    query = query
+            subsProviders.toList().amap { provider ->
+                val success = when (val result = Resource.fromResult(
+                    provider.search(
+                        query = query
+                    )
                 )) {
                     is Resource.Failure -> {
                         // scope might cancel, so we do an extra check
@@ -983,21 +980,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                         break
                     }
 
-                    val subtitleResources =
-                        when (val result = provider.getResource(subtitleEntry)) {
-                            is Resource.Failure -> {
-                                continue
-                            }
-
-                            is Resource.Loading -> {
-                                // unreachable
-                                continue
-                            }
-
-                            is Resource.Success -> {
-                                result.value
-                            }
-                        }
+                    val subtitleResources = provider.resource(subtitleEntry).getOrNull() ?: continue
 
                     val subtitles = subtitleResources.getSubtitles().map { resource ->
                         SubtitleData(

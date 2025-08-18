@@ -92,14 +92,12 @@ import com.lagradost.cloudstream3.plugins.PluginManager.___DO_NOT_CALL_FROM_A_PL
 import com.lagradost.cloudstream3.plugins.PluginManager.loadSinglePlugin
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.services.SubscriptionWorkManager
+import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_PLAYER
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_REPO
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_RESUME_WATCHING
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_SEARCH
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.OAuth2Apis
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.inAppAuths
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.localListApi
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.APIRepository
@@ -277,28 +275,29 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         loadRepository(realUrl)
                         return true
                     } else if (str.contains(APP_STRING)) {
-                        for (api in OAuth2Apis) {
-                            if (str.contains("/${api.redirectUrl}")) {
+                        for (api in AccountManager.allApis) {
+                            if (api.isValidRedirectUrl(str)) {
                                 ioSafe {
                                     Log.i(TAG, "handleAppIntent $str")
-                                    val isSuccessful = api.handleRedirect(str)
-
-                                    if (isSuccessful) {
-                                        Log.i(TAG, "authenticated ${api.name}")
-                                    } else {
-                                        Log.i(TAG, "failed to authenticate ${api.name}")
-                                    }
-
-                                    this@with.runOnUiThread {
-                                        try {
-                                            showToast(
-                                                getString(if (isSuccessful) R.string.authenticated_user else R.string.authenticated_user_fail).format(
-                                                    api.name
-                                                )
-                                            )
-                                        } catch (e: Exception) {
-                                            logError(e) // format might fail
+                                    try {
+                                        val isSuccessful = api.login(str)
+                                        if (isSuccessful) {
+                                            Log.i(TAG, "authenticated ${api.name}")
+                                        } else {
+                                            Log.i(TAG, "failed to authenticate ${api.name}")
                                         }
+                                        showToast(
+                                            if (isSuccessful) {
+                                                txt(R.string.authenticated_user, api.name)
+                                            } else {
+                                                txt(R.string.authenticated_user_fail, api.name)
+                                            }
+                                        )
+                                    } catch (t: Throwable) {
+                                        logError(t)
+                                        showToast(
+                                            txt(R.string.authenticated_user_fail, api.name)
+                                        )
                                     }
                                 }
                                 return true
@@ -1538,18 +1537,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
         // init accounts
         ioSafe {
-            for (api in accountManagers) {
-                api.init()
-            }
-
-            inAppAuths.amap { api ->
-                try {
-                    api.initialize()
-                } catch (e: Exception) {
-                    logError(e)
-                }
-            }
-
             // we need to run this after we init all apis, otherwise currentSyncApi will fuck itself
             this@MainActivity.runOnUiThread {
                 // Change library icon with logo of current api in sync

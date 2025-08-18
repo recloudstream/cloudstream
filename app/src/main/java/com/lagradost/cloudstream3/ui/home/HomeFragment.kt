@@ -415,7 +415,7 @@ class HomeFragment : Fragment() {
                     pinnedphashset = pinnedp.toHashSet()
                     arrayAdapter.clear()
                     val sortedApis = validAPIs
-                        .filter { it.hasMainPage && it.supportedTypes.any(preSelectedTypes::contains) }
+                        .filter {it.hasMainPage && (pinnedphashset.contains(it.name) ||  it.supportedTypes.any(preSelectedTypes::contains)) }
                         .sortedBy { it.name.lowercase() }
 
                     val sortedApiMap = LinkedHashMap<String, MainAPI>().apply {
@@ -730,7 +730,7 @@ class HomeFragment : Fragment() {
 
         //TODO READD THIS
         /*for (syncApi in OAuth2Apis) {
-            val login = syncApi.loginInfo()
+            val login = SyncAPI2.loginInfo()
             val pic = login?.profilePicture
             if (home_profile_picture?.setImage(
                     pic,

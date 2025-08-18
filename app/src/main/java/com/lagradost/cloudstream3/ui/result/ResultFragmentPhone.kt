@@ -946,7 +946,11 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         resultSyncHolder.isVisible = true
 
                         val d = status.value
-                        resultSyncRating.value = d.score?.toFloat(resultSyncRating.valueTo.roundToInt()) ?: 0.0f
+                        val desiredScore = d.score?.toFloat(1) ?: 0.0f
+                        val totalSteps = (resultSyncRating.valueTo / resultSyncRating.stepSize)
+                        val desiredStep = (totalSteps * desiredScore).roundToInt()
+                        resultSyncRating.value = desiredStep * resultSyncRating.stepSize
+
                         resultSyncCheck.setItemChecked(d.status.internalId + 1, true)
                         val watchedEpisodes = d.watchedEpisodes ?: 0
                         currentSyncProgress = watchedEpisodes
@@ -964,7 +968,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         resultSyncCurrentEpisodes.text =
                             Editable.Factory.getInstance()?.newEditable(watchedEpisodes.toString())
                         safe { // format might fail
-                            val text = d.score?.toInt(10)?.let {
+                            val text = d.score?.toFloat(10)?.roundToInt()?.let {
                                 context?.getString(R.string.sync_score_format)?.format(it)
                             } ?: "?"
                             resultSyncScoreText.text = text

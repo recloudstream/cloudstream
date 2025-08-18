@@ -2,20 +2,16 @@ package com.lagradost.cloudstream3.syncproviders.providers
 
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.subtitles.AbstractSubApi
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
+import com.lagradost.cloudstream3.syncproviders.AuthData
+import com.lagradost.cloudstream3.syncproviders.SubtitleAPI
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 
-class Addic7ed : AbstractSubApi {
+class Addic7ed : SubtitleAPI() {
     override val name = "Addic7ed"
     override val idPrefix = "addic7ed"
+
     override val requiresLogin = false
-    override val icon: Nothing? = null
-    override val createAccountUrl: Nothing? = null
-
-    override fun loginInfo(): Nothing? = null
-
-    override fun logOut() {}
 
     companion object {
         const val HOST = "https://www.addic7ed.com"
@@ -26,10 +22,12 @@ class Addic7ed : AbstractSubApi {
         return if (url.startsWith("/")) HOST + url
         else if (!url.startsWith("http")) "$HOST/$url"
         else url
-
     }
 
-    override suspend fun search(query: AbstractSubtitleEntities.SubtitleSearch): List<AbstractSubtitleEntities.SubtitleEntity> {
+    override suspend fun search(
+        auth: AuthData?,
+        query: AbstractSubtitleEntities.SubtitleSearch
+    ): List<AbstractSubtitleEntities.SubtitleEntity>? {
         val lang = query.lang
         val queryLang = SubtitleHelper.fromTwoLettersToLanguage(lang.toString())
         val queryText = query.query.trim()
@@ -65,9 +63,9 @@ class Addic7ed : AbstractSubApi {
         val url = "$HOST/search.php?search=${title}&Submit=Search"
         val hostDocument = app.get(url).document
         var searchResult = ""
-        if (!hostDocument.select("span:contains($title)").isNullOrEmpty()) searchResult = url
-        else if (!hostDocument.select("table.tabel")
-                .isNullOrEmpty()
+        if (hostDocument.select("span:contains($title)").isNotEmpty()) searchResult = url
+        else if (hostDocument.select("table.tabel")
+                .isNotEmpty()
         ) searchResult = hostDocument.select("a:contains($title)").attr("href").toString()
         else {
             val show =
@@ -96,13 +94,16 @@ class Addic7ed : AbstractSubApi {
             }" else "${document.select(".titulo").text().replace("Subtitle","").trim()}${node.parent()!!.select(".NewsTitle").text().substringAfter("Version").substringBefore(", Duration")}"
             val link = fixUrl(node.select("a.buttonDownload").attr("href"))
             val isHearingImpaired =
-                !node.parent()!!.select("tr:last-child [title=\"Hearing Impaired\"]").isNullOrEmpty()
+                node.parent()!!.select("tr:last-child [title=\"Hearing Impaired\"]").isNotEmpty()
             cleanResources(results, name, link, mapOf("referer" to "$HOST/"), isHearingImpaired)
         }
         return results
     }
 
-    override suspend fun load(data: AbstractSubtitleEntities.SubtitleEntity): String {
-        return data.data
+    override suspend fun load(
+        auth: AuthData?,
+        subtitle: AbstractSubtitleEntities.SubtitleEntity
+    ): String? {
+        return subtitle.data
     }
 }

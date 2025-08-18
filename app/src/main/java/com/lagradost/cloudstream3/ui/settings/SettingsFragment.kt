@@ -19,7 +19,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.MainSettingsBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
+import com.lagradost.cloudstream3.syncproviders.AuthRepo
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.errorProfilePic
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
@@ -183,9 +183,9 @@ class SettingsFragment : Fragment() {
         showToast(activity,"${VideoDownloadManager.downloadStatusEvent.size} :
         ${VideoDownloadManager.downloadProgressEvent.size}") **/
 
-        fun hasProfilePictureFromAccountManagers(accountManagers: List<AccountManager>): Boolean {
+        fun hasProfilePictureFromAccountManagers(accountManagers: Array<AuthRepo>): Boolean {
             for (syncApi in accountManagers) {
-                val login = syncApi.loginInfo()
+                val login = syncApi.authUser()
                 val pic = login?.profilePicture ?: continue
 
                 binding?.settingsProfilePic?.let { imageView ->
@@ -196,13 +196,12 @@ class SettingsFragment : Fragment() {
                 }
                 binding?.settingsProfileText?.text = login.name
                 return true // sync profile exists
-
             }
             return false // not syncing
         }
 
         // display local account information if not syncing
-        if (!hasProfilePictureFromAccountManagers(accountManagers)) {
+        if (!hasProfilePictureFromAccountManagers(AccountManager.allApis)) {
             val activity = activity ?: return
             val currentAccount = try {
                 DataStoreHelper.accounts.firstOrNull {

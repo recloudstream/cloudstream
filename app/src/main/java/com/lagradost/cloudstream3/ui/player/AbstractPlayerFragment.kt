@@ -46,7 +46,6 @@ import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.unixTimeMs
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.AppContextUtils
@@ -413,7 +412,7 @@ abstract class AbstractPlayerFragment(
                 mMediaSession?.release()
                 mMediaSession = MediaSession.Builder(ctx, player)
                     // Ensure unique ID for concurrent players
-                    .setId(unixTimeMs.toString())
+                    .setId(System.currentTimeMillis().toString())
                     .build()
             }
 

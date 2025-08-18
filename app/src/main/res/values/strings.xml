@@ -801,6 +801,7 @@
     <string name="pin_error_incorrect">Incorrect PIN. Please try again.</string>
     <string name="pin_error_length">PIN must be 4 characters</string>
     <string name="select_an_account">Select an Account</string>
+    <string name="no_account">No account</string>
     <string name="manage_accounts">Manage Accounts</string>
     <string name="edit_account">Edit account</string>
     <string name="logged_account" formatted="true">Logged in as %s</string>
@@ -883,4 +884,9 @@
     <string name="speedup_key" translatable="false">speedup_key</string>
     <string name="speedup_title" >LongPress Speed Toggle</string>
     <string name="speedup_summary" >Hold to get 2x speed</string>
+    <string name="edit_profile_image_title">Edit Profile Image</string>
+    <string name="edit_profile_image_hint">Enter Profile Image URL</string>
+    <string name="edit_profile_image_error_empty">No URL Found</string>
+    <string name="edit_profile_image_error_invalid">Invalid URL or Image</string>
+    <string name="edit_profile_image_success">Successfully Image Updated</string>
 </resources>

@@ -28,6 +28,7 @@ import java.io.OutputStream
  * */
 
 data class Repository(
+    @JsonProperty("iconUrl") val iconUrl: String?,
     @JsonProperty("name") val name: String,
     @JsonProperty("description") val description: String?,
     @JsonProperty("manifestVersion") val manifestVersion: Int,
