@@ -1864,7 +1864,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             }
 
             playerGoBack.setOnClickListener {
-                activity?.popCurrentPage()
+                activity?.popCurrentPage("FullScreenPlayer")
             }
 
             playerSourcesBtt.setOnClickListener {
