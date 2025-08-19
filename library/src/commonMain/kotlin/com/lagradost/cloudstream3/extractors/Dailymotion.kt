@@ -1,28 +1,26 @@
-package com.lagradost.cloudstream3.extractors
+package recloudstream
 
+import com.lagradost.api.Log
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
 import java.net.URI
+import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 
-class Geodailymotion : Dailymotion() {
-    override val name = "GeoDailymotion"
-    override val mainUrl = "https://geo.dailymotion.com"
-}
 
 open class Dailymotion : ExtractorApi() {
     override val mainUrl = "https://www.dailymotion.com"
     override val name = "Dailymotion"
     override val requiresReferer = false
     private val baseUrl = "https://www.dailymotion.com"
+    private val gson = Gson()
 
     @Suppress("RegExpSimplifiable")
-    private val videoIdRegex = "^[kx][a-zA-Z0-9]+\$".toRegex()
+    private val videoIdRegex = "^[kx][a-zA-Z0-9]+$".toRegex()
 
-    // https://www.dailymotion.com/video/k3JAHfletwk94ayCVIu
-    // https://www.dailymotion.com/embed/video/k3JAHfletwk94ayCVIu
     override suspend fun getUrl(
         url: String,
         referer: String?,
@@ -32,8 +30,14 @@ open class Dailymotion : ExtractorApi() {
         val embedUrl = getEmbedUrl(url) ?: return
         val id = getVideoId(embedUrl) ?: return
         val metaDataUrl = "$baseUrl/player/metadata/video/$id"
-        val metaData = app.get(metaDataUrl, referer = embedUrl)
-            .parsedSafe<VideoData>() ?: return
+        val response = app.get(metaDataUrl, referer = embedUrl).text
+        val metaData = try {
+            gson.fromJson(response, VideoData::class.java)
+                ?: throw ParsingException("Response was null")
+        } catch (e: JsonSyntaxException) {
+            throw ParsingException("Parsing failed: ${e.message}")
+        }
+
         metaData.qualities.forEach { (_, qualityList) ->
             qualityList.forEach { video ->
                 getStream(video.url, this.name, callback)
@@ -49,9 +53,7 @@ open class Dailymotion : ExtractorApi() {
     }
 
     private fun getEmbedUrl(url: String): String? {
-        if (url.contains("/embed/") || url.contains("/video/")) {
-            return url
-        }
+        if (url.contains("/embed/") || url.contains("/video/")) return url
         if (url.contains("geo.dailymotion.com")) {
             val videoId = url.substringAfter("video=")
             return "$baseUrl/embed/video/$videoId"
@@ -59,25 +61,20 @@ open class Dailymotion : ExtractorApi() {
         return null
     }
 
+    class ParsingException(message: String) : Exception(message)
+
     private fun getVideoId(url: String): String? {
         val path = URI(url).path
         val id = path.substringAfter("/video/")
-        if (id.matches(videoIdRegex)) {
-            return id
-        }
-        return null
+        return if (id.matches(videoIdRegex)) id else null
     }
 
     private suspend fun getStream(
         streamLink: String,
         name: String,
         callback: (ExtractorLink) -> Unit
-    )  {
-        return generateM3u8(
-            name,
-            streamLink,
-            "",
-        ).forEach(callback)
+    ) {
+        return generateM3u8(name, streamLink, "").forEach(callback)
     }
 
     data class VideoData(
@@ -98,5 +95,4 @@ open class Dailymotion : ExtractorApi() {
         val label: String,
         val urls: List<String>
     )
-
 }
