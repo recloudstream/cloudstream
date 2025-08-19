@@ -6,18 +6,19 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
 import java.net.URI
-import com.google.gson.Gson
-import com.google.gson.JsonSyntaxException
 
+
+class Geodailymotion : Dailymotion() {
+    override val name = "GeoDailymotion"
+    override val mainUrl = "https://geo.dailymotion.com"
+}
 
 open class Dailymotion : ExtractorApi() {
     override val mainUrl = "https://www.dailymotion.com"
     override val name = "Dailymotion"
     override val requiresReferer = false
     private val baseUrl = "https://www.dailymotion.com"
-    private val gson = Gson()
 
-    @Suppress("RegExpSimplifiable")
     private val videoIdRegex = "^[kx][a-zA-Z0-9]+$".toRegex()
 
     override suspend fun getUrl(
@@ -30,24 +31,25 @@ open class Dailymotion : ExtractorApi() {
         val id = getVideoId(embedUrl) ?: return
         val metaDataUrl = "$baseUrl/player/metadata/video/$id"
         val response = app.get(metaDataUrl, referer = embedUrl).text
-        val metaData = try {
-            gson.fromJson(response, VideoData::class.java)
-                ?: throw ParsingException("Response was null")
-        } catch (e: JsonSyntaxException) {
-            throw ParsingException("Parsing failed: ${e.message}")
+        val qualityUrlRegex = Regex(""""url"\s*:\s*"([^"]+)"""")
+        val subtitlesRegex = Regex(""""subtitles"\s*:\s*\{[^}]*"data"\s*:\s*(\[[^\]]*\])""")
+
+        val urls = qualityUrlRegex.findAll(response)
+            .map { it.groupValues[1] }
+            .toList().filter { it.contains(".m3u8") }
+
+        urls.forEach { videoUrl ->
+            getStream(videoUrl, this.name, callback)
         }
 
-        metaData.qualities.forEach { (_, qualityList) ->
-            qualityList.forEach { video ->
-                getStream(video.url, this.name, callback)
+        val subtitlesMatches = subtitlesRegex.findAll(response).map { it.groupValues[1] }.toList()
+        subtitlesMatches.forEach { subtitleJson ->
+            val subRegex = Regex("""\{\s*"label"\s*:\s*"([^"]+)",\s*"urls"\s*:\s*\["([^"]+)"""")
+            subRegex.findAll(subtitleJson).forEach { match ->
+                val label = match.groupValues[1]
+                val subUrl = match.groupValues[2]
+                subtitleCallback(SubtitleFile(label, subUrl))
             }
-        }
-
-        metaData.subtitles.data.forEach { (_, subtitle) ->
-            val subUrl = subtitle.urls.firstOrNull() ?: return@forEach
-            subtitleCallback(
-                SubtitleFile(subtitle.label, subUrl)
-            )
         }
     }
 
@@ -60,7 +62,6 @@ open class Dailymotion : ExtractorApi() {
         return null
     }
 
-    class ParsingException(message: String) : Exception(message)
 
     private fun getVideoId(url: String): String? {
         val path = URI(url).path
@@ -75,23 +76,4 @@ open class Dailymotion : ExtractorApi() {
     ) {
         return generateM3u8(name, streamLink, "").forEach(callback)
     }
-
-    data class VideoData(
-        val qualities: Map<String, List<QualityVideo>>,
-        val subtitles: SubtitlesData
-    )
-
-    data class QualityVideo(
-        val type: String,
-        val url: String
-    )
-
-    data class SubtitlesData(
-        val data: Map<String, SubtitleItem>
-    )
-
-    data class SubtitleItem(
-        val label: String,
-        val urls: List<String>
-    )
 }
