@@ -3,11 +3,13 @@ package com.lagradost.cloudstream3.ui.player
 import android.util.Log
 import android.util.TypedValue
 import android.view.ViewGroup
+import android.view.View
 import android.widget.FrameLayout
 import androidx.annotation.OptIn
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.SubtitleView
+
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.setSubtitleViewStyle
@@ -85,6 +87,7 @@ class PlayerSubtitleHelper {
     }
 
     var subtitleView: SubtitleView? = null
+    private var secondarySubtitleView: SubtitleView? = null
 
     companion object {
         fun String.toSubtitleMimeType(): String {
@@ -120,9 +123,12 @@ class PlayerSubtitleHelper {
     }
 
     fun setSubStyle(style: SaveCaptionStyle) {
-        Log.i(TAG, "SET STYLE = $style")
+        Log.i("PlayerSubtitleHelper", "SET STYLE = $style")
         subtitleView?.translationY = -style.elevation.toPx.toFloat()
         setSubtitleViewStyle(subtitleView, style)
+        // Let secondary position be driven by Cue line (top). No translation offset.
+        secondarySubtitleView?.translationY = 0f
+        setSubtitleViewStyle(secondarySubtitleView, style)
     }
 
     fun initSubtitles(subView: SubtitleView?, subHolder: FrameLayout?, style: SaveCaptionStyle?) {
@@ -131,8 +137,27 @@ class PlayerSubtitleHelper {
             (sView.parent as ViewGroup?)?.removeView(sView)
             subHolder?.addView(sView)
         }
+        ensureSecondarySubtitleView(subHolder)
         style?.let {
             setSubStyle(it)
         }
+    }
+
+    /** Ensure a secondary SubtitleView is attached to the same holder. Hidden by default. */
+    private fun ensureSecondarySubtitleView(subHolder: FrameLayout?) {
+        if (secondarySubtitleView == null && subHolder != null) {
+            secondarySubtitleView = SubtitleView(subHolder.context).apply {
+                visibility = View.GONE
+            }
+            subHolder.addView(secondarySubtitleView)
+        }
+    }
+
+    /** Expose the secondary view for rendering external cues. */
+    fun getSecondarySubtitleView(): SubtitleView? = secondarySubtitleView
+
+    /** Control visibility of the secondary subtitles. */
+    fun showSecondarySubtitles(show: Boolean) {
+        secondarySubtitleView?.visibility = if (show) View.VISIBLE else View.GONE
     }
 }
