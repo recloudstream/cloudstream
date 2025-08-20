@@ -40,7 +40,7 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:contentDescription="@string/change_providers_img_des"
                 android:focusable="true"
-                android:nextFocusLeft="@id/nav_rail_view"
+                android:nextFocusLeft="@id/navigation_library"
                 android:nextFocusRight="@id/library_sort"
                 android:tag="@string/tv_no_focus_tag"
                 android:src="@drawable/ic_baseline_extension_24"

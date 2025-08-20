@@ -112,7 +112,7 @@
                 android:layout_marginEnd="0dp"
                 android:background="@drawable/player_button_tv_attr_no_bg"
                 android:gravity="center_vertical"
-                android:nextFocusLeft="@id/nav_rail_view"
+                android:nextFocusLeft="@id/navigation_home"
                 android:nextFocusRight="@id/home_preview_search_button"
                 android:nextFocusDown="@id/home_preview_play_btt" >
             <requestFocus />
@@ -217,7 +217,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:descendantFocusability="afterDescendants"
-        android:nextFocusLeft="@id/nav_rail_view"
+        android:nextFocusLeft="@id/navigation_home"
         android:nextFocusUp="@id/home_bookmarked_child_recyclerview"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/homepage_parent_tv"

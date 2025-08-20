@@ -57,10 +57,10 @@
                         android:imeOptions="actionSearch"
 
                         android:inputType="text"
-                        android:nextFocusLeft="@id/nav_rail_view"
+                        android:nextFocusLeft="@id/navigation_search"
 
                         android:nextFocusRight="@id/search_filter"
-                        android:nextFocusUp="@id/nav_rail_view"
+                        android:nextFocusUp="@id/navigation_search"
                         android:nextFocusDown="@id/search_autofit_results"
                         android:paddingStart="-10dp"
                         app:iconifiedByDefault="false"
@@ -101,7 +101,7 @@
                     android:contentDescription="@string/change_providers_img_des"
                     android:nextFocusLeft="@id/main_search"
                     android:nextFocusRight="@id/main_search"
-                    android:nextFocusUp="@id/nav_rail_view"
+                    android:nextFocusUp="@id/navigation_search"
                     android:nextFocusDown="@id/tvtypes_chips_scroll"
                     android:tag = "@string/tv_no_focus_tag"
                     android:src="@drawable/ic_baseline_tune_24"
@@ -123,7 +123,7 @@
         android:background="?attr/primaryBlackBackground"
         android:clipToPadding="false"
         android:descendantFocusability="afterDescendants"
-        android:nextFocusLeft="@id/nav_rail_view"
+        android:nextFocusLeft="@id/navigation_search"
         android:orientation="vertical"
         android:paddingStart="8dp"
         android:paddingTop="5dp"
@@ -139,7 +139,7 @@
 
         android:background="?attr/primaryBlackBackground"
         android:descendantFocusability="afterDescendants"
-        android:nextFocusLeft="@id/nav_rail_view"
+        android:nextFocusLeft="@id/navigation_search"
         android:nextFocusUp="@id/tvtypes_chips"
         android:nextFocusDown="@id/search_clear_call_history"
         android:visibility="gone"
@@ -158,7 +158,7 @@
             android:layout_marginStart="@dimen/navbar_width"
 
             android:descendantFocusability="afterDescendants"
-            android:nextFocusLeft="@id/nav_rail_view"
+            android:nextFocusLeft="@id/navigation_search"
             android:nextFocusUp="@id/tvtypes_chips"
             android:nextFocusDown="@id/search_clear_call_history"
             android:tag = "@string/tv_no_focus_tag"

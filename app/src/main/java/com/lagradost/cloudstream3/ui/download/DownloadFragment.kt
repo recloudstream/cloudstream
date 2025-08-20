@@ -87,7 +87,7 @@ class DownloadFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         hideKeyboard()
-        binding?.downloadStorageAppbar?.setAppBarNoScrollFlagsOnTV()
+        binding?.downloadAppbar?.setAppBarNoScrollFlagsOnTV()
         binding?.downloadDeleteAppbar?.setAppBarNoScrollFlagsOnTV()
 
         /**
@@ -136,12 +136,15 @@ class DownloadFragment : Fragment() {
                 binding?.downloadUsed
             )
 
-            // Prevent race condition and make sure
-            // we don't display it early
-            if (
-                downloadsViewModel.isMultiDeleteState.value == null ||
-                downloadsViewModel.isMultiDeleteState.value == false
-            ) binding?.downloadStorageAppbar?.isVisible = it > 0
+            val hasBytes = it > 0
+            if(hasBytes) {
+                binding?.downloadLoadingBytes?.stopShimmer()
+            } else {
+                binding?.downloadLoadingBytes?.startShimmer()
+            }
+
+            binding?.downloadBytesBar?.isVisible = hasBytes
+            binding?.downloadLoadingBytes?.isGone = hasBytes
         }
         observe(downloadsViewModel.downloadBytes) {
             updateStorageInfo(
@@ -165,7 +168,7 @@ class DownloadFragment : Fragment() {
                 // Prevent race condition and make sure
                 // we don't display it early
                 if (downloadsViewModel.usedBytes.value?.let { it > 0 } == true) {
-                    binding?.downloadStorageAppbar?.isVisible = true
+                    binding?.downloadAppbar?.isVisible = true
                 }
             }
         }
@@ -218,6 +221,12 @@ class DownloadFragment : Fragment() {
                 isGone = isLayout(TV)
                 setOnClickListener { showStreamInputDialog(it.context) }
             }
+
+            downloadStreamButtonTv.isFocusableInTouchMode = isLayout(TV)
+            downloadAppbar.isFocusableInTouchMode = isLayout(TV)
+
+            downloadStreamButtonTv.setOnClickListener { showStreamInputDialog(it.context) }
+            steamImageviewHolder.isVisible = isLayout(TV)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -252,7 +261,7 @@ class DownloadFragment : Fragment() {
     private fun handleSelectedChange(selected: MutableSet<Int>) {
         if (selected.isNotEmpty()) {
             binding?.downloadDeleteAppbar?.isVisible = true
-            binding?.downloadStorageAppbar?.isVisible = false
+            binding?.downloadAppbar?.isVisible = false
             activity?.attachBackPressedCallback("Downloads") {
                 downloadsViewModel.setIsMultiDeleteState(false)
             }

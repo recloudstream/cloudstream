@@ -699,6 +699,36 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         // Check if we are already at the selected destination
         if (navController.currentDestination?.id == destinationId) return false
 
+        // Make all nav buttons focus on this specific view when nextFocusRightId
+        val targetView = when (destinationId) {
+            // Please note that if R.id.navigation_home is readded, then it will only take affect when
+            // navigation to home for the second time as onNavDestinationSelected will not get called
+            // when first loading up the app
+
+            // R.id.navigation_home -> R.id.home_preview_change_api
+            R.id.navigation_search -> R.id.main_search
+            R.id.navigation_library -> R.id.main_search
+            R.id.navigation_downloads -> R.id.download_appbar
+            else -> null
+        }
+        if (targetView != null && isLayout(TV or EMULATOR)) {
+            val fromView = binding?.navRailView
+            if (fromView != null) {
+                fromView.nextFocusRightId = targetView
+
+                for (focusView in arrayOf(
+                    R.id.navigation_downloads,
+                    R.id.navigation_home,
+                    R.id.navigation_search,
+                    R.id.navigation_library,
+                    R.id.navigation_settings,
+                )) {
+                    fromView.findViewById<View?>(focusView)?.nextFocusRightId = targetView
+                }
+            }
+        }
+
+
         val builder = NavOptions.Builder().setLaunchSingleTop(true).setRestoreState(true)
             .setEnterAnim(R.anim.enter_anim)
             .setExitAnim(R.anim.exit_anim)

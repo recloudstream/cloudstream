@@ -292,7 +292,7 @@
                 android:layout_marginStart="@dimen/navbar_width"
 
                 android:descendantFocusability="afterDescendants"
-                android:nextFocusLeft="@id/nav_rail_view"
+                android:nextFocusLeft="@id/navigation_home"
                 android:nextFocusUp="@id/home_watch_child_recyclerview"
                 android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
                 android:orientation="horizontal">
@@ -302,7 +302,7 @@
                     style="@style/ChipFilled"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:nextFocusLeft="@id/nav_rail_view"
+                    android:nextFocusLeft="@id/navigation_home"
                     android:nextFocusRight="@id/home_plan_to_watch_btt"
 
                     android:nextFocusUp="@id/home_watch_child_recyclerview"
@@ -377,7 +377,7 @@
             android:clipToPadding="false"
 
             android:descendantFocusability="afterDescendants"
-            android:nextFocusLeft="@id/nav_rail_view"
+            android:nextFocusLeft="@id/navigation_home"
             android:nextFocusUp="@id/home_type_holder"
 
             android:nextFocusDown="@id/home_child_recyclerview"
