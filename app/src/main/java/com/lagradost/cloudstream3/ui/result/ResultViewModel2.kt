@@ -1442,7 +1442,7 @@ class ResultViewModel2 : ViewModel() {
     private fun  getEpisodesIdsBySeason(season: Int): HashMap<Int, Array<String>> {
         val result = currentEpisodes.entries
             .asSequence()
-            .filter { it.key.season <= season }
+            .filter { it.key.season <= season && it.key.dubStatus == preferDubStatus }
             .flatMap { entry ->
                 entry.value.asSequence().map { entry.key.season to it.id.toString() }
             }
