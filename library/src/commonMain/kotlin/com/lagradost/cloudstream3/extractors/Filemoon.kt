@@ -15,6 +15,11 @@ class FileMoon : FilemoonV2() {
     override var name = "FileMoon"
 }
 
+class FileMoonIn : FilemoonV2() {
+    override var mainUrl = "https://filemoon.in"
+    override var name = "FileMoon"
+}
+
 class FileMoonSx : FilemoonV2() {
     override var mainUrl = "https://filemoon.sx"
     override var name = "FileMoonSx"
@@ -47,8 +52,8 @@ open class FilemoonV2 : ExtractorApi() {
             val fallbackScriptData = initialResponse.document
                 .selectFirst("script:containsData(function(p,a,c,k,e,d))")
                 ?.data().orEmpty()
-
             val unpackedScript = JsUnpacker(fallbackScriptData).unpack()
+
             val videoUrl = unpackedScript?.let {
                 Regex("""sources:\[\{file:"(.*?)"""").find(it)?.groupValues?.get(1)
             }
@@ -75,6 +80,7 @@ open class FilemoonV2 : ExtractorApi() {
             ?.data().orEmpty()
 
         val unpackedScript = JsUnpacker(iframeScriptData).unpack()
+
         val videoUrl = unpackedScript?.let {
             Regex("""sources:\[\{file:"(.*?)"""").find(it)?.groupValues?.get(1)
         }
@@ -85,7 +91,7 @@ open class FilemoonV2 : ExtractorApi() {
                 videoUrl,
                 mainUrl,
                 headers = defaultHeaders
-            )
+            ).forEach(callback)
         } else {
             // Last-resort fallback using WebView interception
             val resolver = WebViewResolver(
@@ -107,7 +113,7 @@ open class FilemoonV2 : ExtractorApi() {
                     interceptedUrl,
                     mainUrl,
                     headers = defaultHeaders
-                )
+                ).forEach(callback)
             } else {
                 Log.d("FilemoonV2", "No video URL intercepted in WebView fallback.")
             }
