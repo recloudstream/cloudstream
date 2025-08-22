@@ -23,11 +23,6 @@ class Moviesm4u : Filesim() {
     override val name = "Moviesm4u"
 }
 
-class FileMoonIn : Filesim() {
-    override val mainUrl = "https://filemoon.in"
-    override val name = "FileMoon"
-}
-
 class StreamhideTo : Filesim() {
     override val mainUrl = "https://streamhide.to"
     override val name = "Streamhide"
