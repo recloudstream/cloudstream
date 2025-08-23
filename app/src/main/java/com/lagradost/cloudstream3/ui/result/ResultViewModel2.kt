@@ -1428,15 +1428,13 @@ class ResultViewModel2 : ViewModel() {
         _episodeSynopsis.postValue(null)
     }
 
-    private fun markEpisodes(context: Context?,episodeIds: Array<String>,watchState: VideoWatchState) {
-        val editor = editor(context ?: return,false)
+    private fun markEpisodes(editor: Editor,episodeIds: Array<String>,watchState: VideoWatchState) {
         val watchStateString = DataStore.mapper.writeValueAsString(watchState)
         episodeIds.forEach {
             if(getVideoWatchState(it.toInt()) != watchState){
                 editor.setKeyRaw(getFolderName("$currentAccount/$VIDEO_WATCH_STATE", it),watchStateString)
             }
         }
-        editor.apply()
     }
 
     private fun  getEpisodesIdsBySeason(season: Int): HashMap<Int, Array<String>> {
@@ -1686,17 +1684,22 @@ class ResultViewModel2 : ViewModel() {
                 reloadEpisodes()
             }
 
-            ACTION_MARK_WATCHED_UP_TO_THIS_EPISODE -> {
-                val (clickSeason,clickEpisode) = click.data.let { (it.season ?: 0) to it.episode }
-                val watchState = if (getVideoWatchState(click.data.id) == VideoWatchState.Watched) VideoWatchState.None else VideoWatchState.Watched
-                val seasons =  getEpisodesIdsBySeason(clickSeason)
+            ACTION_MARK_WATCHED_UP_TO_THIS_EPISODE -> ioSafe{
+                val editor = context?.let { it1 -> editor(it1,false) }
 
-                seasons.keys.forEach {currentSeason ->
-                    var episodeIds = seasons[currentSeason] ?: emptyArray()
-                    if(currentSeason == clickSeason) episodeIds = episodeIds.sliceArray(0 until clickEpisode)
-                    markEpisodes(context,episodeIds,watchState)
+                if (editor != null) {
+                    val (clickSeason,clickEpisode) = click.data.let { (it.season ?: 0) to it.episode }
+                    val watchState = if (getVideoWatchState(click.data.id) == VideoWatchState.Watched) VideoWatchState.None else VideoWatchState.Watched
+                    val seasons =  getEpisodesIdsBySeason(clickSeason)
+
+                    seasons.keys.forEach {currentSeason ->
+                        var episodeIds = seasons[currentSeason] ?: emptyArray()
+                        if(currentSeason == clickSeason) episodeIds = episodeIds.sliceArray(0 until clickEpisode)
+                        markEpisodes(editor,episodeIds,watchState)
+                    }
+                    editor.apply()
+                    reloadEpisodes()
                 }
-                reloadEpisodes()
             }
 
             else -> {
