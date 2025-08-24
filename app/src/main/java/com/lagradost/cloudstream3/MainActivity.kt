@@ -98,6 +98,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STR
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_REPO
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_RESUME_WATCHING
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_SEARCH
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_SHARE
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.localListApi
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.APIRepository
@@ -184,6 +185,7 @@ import java.nio.charset.Charset
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.system.exitProcess
+import androidx.core.net.toUri
 
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
@@ -358,7 +360,13 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                                 START_ACTION_RESUME_LATEST
                             )
                         }
-                    } else if (!isWebview) {
+                    } else if(str.startsWith(APP_STRING_SHARE)){
+                        val data = str.substringAfter("$APP_STRING_SHARE:")
+                        val parts = data.split(":",limit=2)
+                        if(parts.size<2) return false
+                        loadResult(base64Decode(parts[1]),parts[0],"")
+                        return true
+                    }else if (!isWebview) {
                         if (str.startsWith(DOWNLOAD_NAVIGATE_TO)) {
                             this.navigate(R.id.navigation_downloads)
                             return true
