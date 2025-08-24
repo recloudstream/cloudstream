@@ -889,4 +889,6 @@
     <string name="edit_profile_image_error_empty">No URL Found</string>
     <string name="edit_profile_image_error_invalid">Invalid URL or Image</string>
     <string name="edit_profile_image_success">Successfully Image Updated</string>
+    <string name="action_mark_watched_up_to_this_episode">Mark as watched up to this episode</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">Remove watched up to this episode</string>
 </resources>
