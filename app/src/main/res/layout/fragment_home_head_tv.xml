@@ -77,7 +77,7 @@
                 android:nextFocusLeft="@id/home_preview_search_button"
                 android:nextFocusRight="@id/home_preview_switch_account"
                 android:nextFocusDown="@id/home_preview_info_btt"
-
+                android:visibility="gone"
                 android:padding="10dp"
                 android:src="@drawable/ic_outline_account_circle_24"
                 android:tag="@string/tv_no_focus_tag"
