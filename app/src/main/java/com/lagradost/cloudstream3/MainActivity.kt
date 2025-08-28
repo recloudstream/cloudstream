@@ -364,7 +364,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         val data = str.substringAfter("$APP_STRING_SHARE:")
                         val parts = data.split(":",limit=2)
                         if(parts.size<2) return false
-                        loadResult(base64Decode(parts[1]),parts[0],"")
+                        loadResult(base64Decode(parts[1]),parts[0].replace("%20"," "),"")
                         return true
                     }else if (!isWebview) {
                         if (str.startsWith(DOWNLOAD_NAVIGATE_TO)) {
