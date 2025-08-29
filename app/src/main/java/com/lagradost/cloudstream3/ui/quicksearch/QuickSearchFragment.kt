@@ -187,7 +187,7 @@ class QuickSearchFragment : Fragment() {
                 }, { item ->
                     bottomSheetDialog = activity?.loadHomepageList(item, dismissCallback = {
                         bottomSheetDialog = null
-                    })
+                    }, expandCallback = { searchViewModel.expandAndReturn(it) })
                 })
             binding?.quickSearchMasterRecycler?.layoutManager = GridLayoutManager(context, 1)
         }
@@ -202,8 +202,8 @@ class QuickSearchFragment : Fragment() {
                 (binding?.quickSearchMasterRecycler?.adapter as ParentItemAdapter?)?.apply {
                     updateList(list.map { ongoing ->
                         val ongoingList = HomePageList(
-                            ongoing.apiName,
-                            if (ongoing.data is Resource.Success) ongoing.data.value else ArrayList()
+                            ongoing.key,
+                            ongoing.value.list
                         )
                         ongoingList
                     })
