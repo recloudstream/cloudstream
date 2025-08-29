@@ -1709,6 +1709,35 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             }
         }
 
+        val rail = binding?.navRailView
+        if (rail != null && isLayout(TV)) {
+            val focus = mutableSetOf<Int>()
+            for (id in arrayOf(
+                R.id.navigation_home,
+                R.id.navigation_library,
+                R.id.navigation_search,
+                R.id.navigation_downloads,
+                R.id.navigation_settings
+            )) {
+                rail.findViewById<View?>(id)?.onFocusChangeListener =
+                    View.OnFocusChangeListener { v, hasFocus ->
+                        if (hasFocus) {
+                            focus += id
+                            binding?.navRailView?.labelVisibilityMode = NavigationRailView.LABEL_VISIBILITY_LABELED
+                            binding?.navRailView?.expand()
+                        } else {
+                            focus -= id
+                            v.post {
+                                if(focus.isEmpty()) {
+                                    binding?.navRailView?.labelVisibilityMode = NavigationRailView.LABEL_VISIBILITY_UNLABELED
+                                    binding?.navRailView?.collapse()
+                                }
+                            }
+                        }
+                    }
+            }
+        }
+
         // Navigation button long click functionality to scroll to top
         for (view in listOf(binding?.navView, binding?.navRailView)) {
             view?.findViewById<View?>(R.id.navigation_home)?.setOnLongClickListener {
