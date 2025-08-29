@@ -362,9 +362,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         }
                     } else if(str.startsWith(APP_STRING_SHARE)){
                         try{
-                            val data = String(base64DecodeArray(str.substringAfter("$APP_STRING_SHARE:")),Charsets.UTF_8)
+                            val data = str.substringAfter("$APP_STRING_SHARE:")
                             val parts = data.split("?",limit=2)
-                            loadResult(parts[1],parts[0],"")
+                            loadResult(String(base64DecodeArray(parts[1]), Charsets.UTF_8),String(base64DecodeArray(parts[0]), Charsets.UTF_8),"")
                             return true
                         }catch (e: Exception) {
                             showToast("Invalid Uri",Toast.LENGTH_SHORT)
