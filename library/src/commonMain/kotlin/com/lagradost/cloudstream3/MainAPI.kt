@@ -484,6 +484,7 @@ abstract class MainAPI {
 
     open val hasMainPage = false
     open val hasQuickSearch = false
+    open val hasDiscover = false
 
     /**
      * The timeout on the `loadLinks` functions in milliseconds,
@@ -545,6 +546,12 @@ abstract class MainAPI {
         TvType.OVA,
     )
 
+    open val supportedGenres = setOf(
+        Genres.Action,
+        Genres.Horror,
+        Genres.Romance
+    )
+
     open val vpnStatus = VPNStatus.None
     open val providerType = ProviderType.DirectProvider
 
@@ -561,6 +568,10 @@ abstract class MainAPI {
 
     // @WorkerThread
     open suspend fun search(query: String): List<SearchResponse>? {
+        throw NotImplementedError()
+    }
+
+    open suspend fun discover(types: List<TvType?>, genres: List<Genres?>): List<SearchResponse>? {
         throw NotImplementedError()
     }
 
@@ -971,6 +982,14 @@ class Score private constructor(
         fun from100(value: String?): Score? = from(value, 100)
     }
 }
+
+@Suppress("UNUSED_PARAMETER")
+enum class Genres(value: Int?) {
+    Action(1),
+    Romance(2),
+    Horror(3)
+}
+
 
 @Suppress("UNUSED_PARAMETER")
 enum class TvType(value: Int?) {
