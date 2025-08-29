@@ -815,8 +815,9 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         resultShare.setOnClickListener {
                             try {
                                 val i = Intent(Intent.ACTION_SEND)
-                                val base64Url = base64Encode(d.url.toByteArray(Charsets.UTF_8))
-                                val encodedUri = URLEncoder.encode("$APP_STRING_SHARE:${d.apiName}:${base64Url}","UTF-8").replace("+","%20")
+                                val uriString = "${d.apiName}?${d.url}"
+                                val base64Uri = base64Encode(uriString.toByteArray(Charsets.UTF_8))
+                                val encodedUri =  URLEncoder.encode("$APP_STRING_SHARE:$base64Uri","UTF-8")
                                 val redirectUrl = "https://recloudstream.github.io/csredirect?redirectto=$encodedUri"
                                 i.type = "text/plain"
                                 i.putExtra(Intent.EXTRA_SUBJECT, d.title)

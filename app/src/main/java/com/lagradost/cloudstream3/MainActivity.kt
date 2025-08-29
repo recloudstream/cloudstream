@@ -361,11 +361,15 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                             )
                         }
                     } else if(str.startsWith(APP_STRING_SHARE)){
-                        val data = str.substringAfter("$APP_STRING_SHARE:")
-                        val parts = data.split(":",limit=2)
-                        if(parts.size<2) return false
-                        loadResult(base64Decode(parts[1]),parts[0].replace("%20"," "),"")
-                        return true
+                        try{
+                            val data = String(base64DecodeArray(str.substringAfter("$APP_STRING_SHARE:")),Charsets.UTF_8)
+                            val parts = data.split("?",limit=2)
+                            loadResult(parts[1],parts[0],"")
+                            return true
+                        }catch (e: Exception) {
+                            showToast("Invalid Uri",Toast.LENGTH_SHORT)
+                            return false
+                        }
                     }else if (!isWebview) {
                         if (str.startsWith(DOWNLOAD_NAVIGATE_TO)) {
                             this.navigate(R.id.navigation_downloads)
