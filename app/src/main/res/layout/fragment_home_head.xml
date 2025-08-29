@@ -58,12 +58,12 @@
             <LinearLayout
                 android:id="@+id/home_head_profile_padding"
                 android:layout_width="50dp"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:clickable="true"
                 android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:foreground="@drawable/rounded_select_ripple"
                 android:nextFocusLeft="@id/home_search">
 
                 <androidx.cardview.widget.CardView
@@ -82,6 +82,7 @@
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
                         android:contentDescription="@string/account"
+                        android:foreground="@drawable/rounded_outline"
                         tools:src="@drawable/profile_bg_orange" />
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
@@ -166,12 +167,12 @@
         <LinearLayout
             android:id="@+id/alternate_home_head_profile_padding"
             android:layout_width="50dp"
-            android:layout_height="match_parent"
+            android:layout_height="50dp"
             android:gravity="center"
             android:orientation="horizontal"
             android:clickable="true"
             android:focusable="true"
-            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:foreground="@drawable/rounded_select_ripple"
             android:nextFocusLeft="@id/home_search">
 
             <androidx.cardview.widget.CardView
@@ -190,6 +191,7 @@
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
                     android:contentDescription="@string/account"
+                    android:foreground="@drawable/rounded_outline"
                     tools:src="@drawable/profile_bg_orange" />
             </androidx.cardview.widget.CardView>
         </LinearLayout>
