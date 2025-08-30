@@ -672,7 +672,7 @@ class SubtitlesFragment : DialogFragment() {
             subsAutoSelectLanguage.setFocusableInTv()
             subsAutoSelectLanguage.setOnClickListener { textView ->
                 val langMap = arrayListOf(
-                    SubtitleHelper.Language639(
+                    SubtitleHelper.LanguageMetadata(
                         textView.context.getString(R.string.none),
                         textView.context.getString(R.string.none),
                         "",
