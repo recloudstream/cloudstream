@@ -271,6 +271,9 @@ interface IPlayer {
     fun setPreferredSubtitles(subtitle: SubtitleData?): Boolean // returns true if the player requires a reload, null for nothing
     fun getCurrentPreferredSubtitle(): SubtitleData?
 
+    /** Set a secondary subtitle (rendered in a separate overlay view). */
+    fun setSecondarySubtitles(subtitle: SubtitleData?)
+
     fun handleEvent(event: CSPlayerEvent, source: PlayerEventSource = PlayerEventSource.UI)
 
     fun onStop()

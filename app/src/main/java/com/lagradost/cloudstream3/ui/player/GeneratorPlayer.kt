@@ -1250,6 +1250,30 @@ class GeneratorPlayer : FullScreenPlayer() {
                     }
                 }
 
+                // Long-press on group: quick set secondary. On "No subtitles" clears secondary
+                subtitleList.setOnItemLongClickListener { _, _, which, _ ->
+                    if (which == 0) {
+                        player.setSecondarySubtitles(null)
+                        showToast(ctx.getString(R.string.no_subtitles) + " (secondary)", Toast.LENGTH_SHORT)
+                        return@setOnItemLongClickListener true
+                    }
+                    val groupIndex = which - 1
+                    val secondary = subtitlesGroupedList
+                        .getOrNull(groupIndex)?.value
+                        ?.firstOrNull()
+                    if (secondary != null) {
+                        player.setSecondarySubtitles(secondary)
+                        showToast(
+                            ctx.getString(R.string.player_loaded_subtitles, secondary.name) +
+                                    " (secondary)",
+                            Toast.LENGTH_SHORT
+                        )
+                        true
+                    } else {
+                        false
+                    }
+                }
+
                 subtitleOptionList.setOnItemClickListener { _, _, which, _ ->
                     if (which >= (subtitlesGroupedList.getOrNull(subtitleGroupIndex - 1)?.value?.size
                             ?: -1)
@@ -1259,6 +1283,23 @@ class GeneratorPlayer : FullScreenPlayer() {
                     } else {
                         subtitleOptionIndex = which
                         subtitleOptionList.setItemChecked(which, true)
+                    }
+                }
+
+                subtitleOptionList.setOnItemLongClickListener { _, _, which, _ ->
+                    val secondary = subtitlesGroupedList
+                        .getOrNull(subtitleGroupIndex - 1)?.value
+                        ?.getOrNull(which)
+                    if (secondary != null) {
+                        player.setSecondarySubtitles(secondary)
+                        showToast(
+                            ctx.getString(R.string.player_loaded_subtitles, secondary.name) +
+                                    " (secondary)",
+                            Toast.LENGTH_SHORT
+                        )
+                        true
+                    } else {
+                        false
                     }
                 }
 

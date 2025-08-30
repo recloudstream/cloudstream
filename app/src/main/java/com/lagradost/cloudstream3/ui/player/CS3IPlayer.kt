@@ -16,6 +16,7 @@ import androidx.annotation.MainThread
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AlertDialog
 import androidx.media3.common.C.TIME_UNSET
+import androidx.media3.common.C
 import androidx.media3.common.C.TRACK_TYPE_AUDIO
 import androidx.media3.common.C.TRACK_TYPE_TEXT
 import androidx.media3.common.C.TRACK_TYPE_VIDEO
@@ -31,6 +32,7 @@ import androidx.media3.common.VideoSize
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.database.StandaloneDatabaseProvider
 import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DataSpec
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.datasource.HttpDataSource
@@ -79,6 +81,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.applyStyle
+import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.AppContextUtils.isUsingMobileData
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -151,6 +154,11 @@ class CS3IPlayer : IPlayer {
     private var playbackPosition: Long = 0
 
     private val subtitleHelper = PlayerSubtitleHelper()
+
+    // Secondary subtitle state
+    private var secondarySubtitleData: SubtitleData? = null
+    private var secondarySubtitleCues: List<SubtitleCue> = emptyList()
+    private var lastRenderedSecondaryHash: Int = 0
 
     /** If we want to play the audio only in the background when the app is not open */
     private var isAudioOnlyBackground = false
@@ -239,12 +247,90 @@ class CS3IPlayer : IPlayer {
         subtitleHelper.initSubtitles(subView, subHolder, style)
     }
 
+    // --- Secondary subtitle periodic render ticker ---
+    private val secondaryHandler by lazy { android.os.Handler(android.os.Looper.getMainLooper()) }
+    private var secondaryTicker: Runnable? = null
+
+    private fun startSecondaryTicker() {
+        if (secondaryTicker != null) return
+        secondaryTicker = Runnable {
+            try {
+                exoPlayer?.currentPosition?.let { renderSecondaryAt(it) }
+            } catch (_: Throwable) { }
+            // Re-schedule while active
+            secondaryHandler.postDelayed(secondaryTicker!!, 250L)
+        }
+        secondaryHandler.post(secondaryTicker!!)
+    }
+
+    private fun stopSecondaryTicker() {
+        secondaryTicker?.let { secondaryHandler.removeCallbacks(it) }
+        secondaryTicker = null
+    }
+
     override fun getPreview(fraction: Float): Bitmap? {
         return imageGenerator.getPreviewImage(fraction)
     }
 
     override fun hasPreview(): Boolean {
         return imageGenerator.hasPreview()
+    }
+
+    /** Parse and render secondary subtitles above the primary subtitle. */
+    override fun setSecondarySubtitles(subtitle: SubtitleData?) {
+        secondarySubtitleData = subtitle
+        secondarySubtitleCues = emptyList()
+        lastRenderedSecondaryHash = 0
+
+        if (subtitle == null) {
+            subtitleHelper.showSecondarySubtitles(false)
+            subtitleHelper.getSecondarySubtitleView()?.setCues(emptyList())
+            stopSecondaryTicker()
+            return
+        }
+
+        // Show the view while loading; it will be cleared/updated as soon as cues are ready
+        subtitleHelper.showSecondarySubtitles(true)
+        startSecondaryTicker()
+
+        // Load + parse on IO thread
+        ioSafe {
+            val bytes = loadSecondarySubtitleBytes(subtitle)
+            if (bytes == null || bytes.isEmpty()) {
+                Log.w(TAG, "Secondary subtitle bytes empty for ${subtitle.url}")
+                runOnMainThread { subtitleHelper.showSecondarySubtitles(false) }
+                return@ioSafe
+            }
+
+            // Use CustomDecoder to parse and gather cues
+            val format = Format.Builder()
+                .setSampleMimeType(subtitle.mimeType)
+                .build()
+            val parser = CustomDecoder(format)
+            try {
+                // parseToLegacySubtitle internally routes through CustomDecoder.parse(...)
+                // which fills parser.currentSubtitleCues as a side effect
+                parser.parseToLegacySubtitle(bytes, 0, bytes.size)
+            } catch (t: Throwable) {
+                logError(t)
+            }
+
+            val parsed = parser.currentSubtitleCues.toList()
+            runOnMainThread {
+                // Guard: ensure same request (in case user switched quickly)
+                if (secondarySubtitleData?.getId() == subtitle.getId()) {
+                    secondarySubtitleCues = parsed
+                    // Render immediately at current position
+                    renderSecondaryAt(exoPlayer?.currentPosition ?: 0L)
+                }
+            }
+        }
+    }
+
+    override fun release() {
+        stopSecondaryTicker()
+        imageGenerator.release()
+        releasePlayer()
     }
 
     override fun loadPlayer(
@@ -543,9 +629,7 @@ class CS3IPlayer : IPlayer {
 
     override fun getCurrentPreferredSubtitle(): SubtitleData? {
         return subtitleHelper.getAllSubtitles().firstOrNull { sub ->
-            playerSelectedSubtitleTracks.any { (id, isSelected) ->
-                isSelected && sub.getId() == id
-            }
+            playerSelectedSubtitleTracks.any { it.second && it.first == sub.getId() }
         }
     }
 
@@ -624,11 +708,6 @@ class CS3IPlayer : IPlayer {
         isAudioOnlyBackground = false
         if (exoPlayer == null)
             reloadPlayer(context)
-    }
-
-    override fun release() {
-        imageGenerator.release()
-        releasePlayer()
     }
 
     override fun setPlaybackSpeed(speed: Float) {
@@ -781,6 +860,94 @@ class CS3IPlayer : IPlayer {
                 )
             )
         }
+
+        // Keep secondary subtitles in sync
+        position?.let { renderSecondaryAt(it) }
+    }
+
+    /** Load subtitle bytes for secondary track. Supports URL and downloaded file for now. */
+    private fun loadSecondarySubtitleBytes(sub: SubtitleData): ByteArray? {
+        return try {
+            when (sub.origin) {
+                SubtitleOrigin.URL -> {
+                    // Merge headers: use current video link headers + referer, then override with subtitle-specific headers
+                    val mergedHeaders = mutableMapOf<String, String>().apply {
+                        currentLink?.let { link ->
+                            putAll(link.headers)
+                            if (link.referer.isNotBlank()) this["referer"] = link.referer
+                        }
+                        putAll(sub.headers)
+                    }
+                    val factory = createOnlineSource(mergedHeaders)
+                    val ds = factory.createDataSource()
+                    val spec = DataSpec.Builder().setUri(sub.getFixedUrl()).build()
+                    var length = ds.open(spec)
+                    if (length == C.LENGTH_UNSET.toLong()) length = Long.MAX_VALUE
+                    val buffer = ByteArray(8 * 1024)
+                    val out = java.io.ByteArrayOutputStream()
+                    var read: Int
+                    while (true) {
+                        read = ds.read(buffer, 0, buffer.size)
+                        if (read == C.RESULT_END_OF_INPUT) break
+                        if (read > 0) out.write(buffer, 0, read)
+                    }
+                    ds.close()
+                    out.toByteArray()
+                }
+
+                SubtitleOrigin.DOWNLOADED_FILE -> {
+                    // Treat url as a file path if possible
+                    val file = File(Uri.parse(sub.url).path ?: sub.url)
+                    if (file.exists()) file.readBytes() else null
+                }
+
+                SubtitleOrigin.EMBEDDED_IN_VIDEO -> {
+                    // Not supported yet for secondary; requires demuxing from current media source
+                    null
+                }
+            }
+        } catch (t: Throwable) {
+            logError(t)
+            null
+        }
+    }
+
+    /** Render secondary subtitles for the given playback position. */
+    private fun renderSecondaryAt(positionMs: Long) {
+        val view = subtitleHelper.getSecondarySubtitleView() ?: return
+        val style: SaveCaptionStyle = SubtitlesFragment.getCurrentSavedStyle()
+
+        if (secondarySubtitleCues.isEmpty()) {
+            // If empty, clear to avoid stale text
+            view.setCues(emptyList())
+            return
+        }
+
+        // Apply offset like primary
+        val offsetMs = currentSubtitleOffset
+        val active = secondarySubtitleCues.filter { cue ->
+            val start = cue.startTimeMs + offsetMs
+            val end = cue.endTimeMs + offsetMs
+            positionMs in start..<(end)
+        }
+
+        // Build cues text
+        val cues = if (active.isEmpty()) emptyList() else listOf(
+            androidx.media3.common.text.Cue.Builder()
+                .setText(active.first().text.joinToString("\n"))
+                .fixSubtitleAlignment()
+                .applyStyle(style)
+                // Place secondary subtitle near the top
+                .setLine(0.08f, androidx.media3.common.text.Cue.LINE_TYPE_FRACTION)
+                .setLineAnchor(androidx.media3.common.text.Cue.ANCHOR_TYPE_START)
+                .build()
+        )
+
+        // Avoid redundant updates
+        val hash = cues.hashCode() * 31 + positionMs.toInt()
+        if (hash == lastRenderedSecondaryHash) return
+        lastRenderedSecondaryHash = hash
+        view.setCues(cues)
     }
 
     override fun seekTime(time: Long, source: PlayerEventSource) {
