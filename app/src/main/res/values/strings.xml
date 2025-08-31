@@ -892,4 +892,5 @@
     <string name="action_mark_watched_up_to_this_episode">Mark as watched up to this episode</string>
     <string name="action_remove_mark_watched_up_to_this_episode">Remove watched up to this episode</string>
     <string name="action_reload">Reloaded</string>
+    <string name="reload_provider">Reload Provider</string>
 </resources>

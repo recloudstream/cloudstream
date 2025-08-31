@@ -51,6 +51,23 @@
             </com.google.android.material.button.MaterialButton>
 
             <ImageView
+                android:id="@+id/home_preview_reload_provider"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:background="@drawable/player_button_tv_attr_no_bg"
+                android:contentDescription="@string/reload_provider"
+                android:focusable="true"
+                android:nextFocusLeft="@id/home_preview_change_api"
+                android:nextFocusRight="@id/home_preview_search_button"
+                android:nextFocusDown="@id/home_preview_info_btt"
+                android:padding="10dp"
+                android:src="@drawable/ic_refresh"
+                android:tag="@string/tv_no_focus_tag"
+                app:tint="@color/player_on_button_tv_attr"
+                android:visibility="gone"/>
+
+            <ImageView
                 android:id="@+id/home_preview_search_button"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
