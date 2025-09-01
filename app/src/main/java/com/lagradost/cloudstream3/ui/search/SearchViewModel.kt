@@ -5,10 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.APIHolder.apis
+import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.Genres
+import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.launchSafe
@@ -63,6 +67,15 @@ class SearchViewModel : ViewModel() {
         onGoingSearch = search(query, providersActive, ignoreSettings, isQuickSearch)
     }
 
+    fun discoverAndCancel(
+        types: List<TvType?>,
+        genres: List<Genres?>,
+        provider: MainAPI,
+    ) {
+        onGoingSearch?.cancel()
+        onGoingSearch = discover(types, genres, provider)
+    }
+
     fun updateHistory() = viewModelScope.launch {
         ioSafe {
             val items = getKeys("$currentAccount/$SEARCH_HISTORY_KEY")?.mapNotNull {
@@ -71,6 +84,8 @@ class SearchViewModel : ViewModel() {
             _currentHistory.postValue(items)
         }
     }
+
+
 
     private fun search(
         query: String,
@@ -125,6 +140,51 @@ class SearchViewModel : ViewModel() {
                         .filterIsInstance<Resource.Success<List<SearchResponse>>>().map { it.value }
 
                 // I do it this way to move the relevant search results to the top
+                var index = 0
+                while (true) {
+                    var added = 0
+                    for (sublist in nestedList) {
+                        if (sublist.size > index) {
+                            list.add(sublist[index])
+                            added++
+                        }
+                    }
+                    if (added == 0) break
+                    index++
+                }
+
+                _searchResponse.postValue(Resource.Success(list))
+            }
+        }
+
+
+    private fun discover(
+        types: List<TvType?>,
+        genres: List<Genres?>,
+        provider: MainAPI,
+    ) =
+        viewModelScope.launchSafe {
+
+            _searchResponse.postValue(Resource.Loading())
+            val currentIndex = currentSearchIndex
+
+            _currentSearch.postValue(ArrayList())
+
+            withContext(Dispatchers.IO) { // This interrupts UI otherwise
+                val currentList = ArrayList<OnGoingSearch>()
+                val a = APIRepository(provider)
+                val discover = a?.discover(types, genres) ?: return@withContext
+
+                currentList.add(OnGoingSearch(provider.name, discover))
+                if (currentSearchIndex != currentIndex) return@withContext // this should prevent rewrite of existing data bug TODO useless ??
+
+                _currentSearch.postValue(currentList)
+                val list = ArrayList<SearchResponse>()
+                val nestedList =
+                    currentList.map { it.data }
+                        .filterIsInstance<Resource.Success<List<SearchResponse>>>().map { it.value }
+
+                // I do it this way to move the relevant search results to the top TODO remove ??
                 var index = 0
                 while (true) {
                     var added = 0

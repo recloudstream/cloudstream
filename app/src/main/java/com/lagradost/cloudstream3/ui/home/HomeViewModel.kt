@@ -149,6 +149,7 @@ class HomeViewModel : ViewModel() {
         }
     }
 
+
     fun loadStoredData(preferredWatchStatus: Set<WatchType>?) = viewModelScope.launchSafe {
         val watchStatusIds = withContext(Dispatchers.IO) {
             getAllWatchStateIds()?.map { id ->

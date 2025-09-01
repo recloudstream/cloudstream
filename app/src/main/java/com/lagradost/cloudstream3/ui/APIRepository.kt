@@ -4,6 +4,7 @@ import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.ErrorLoadingException
+import com.lagradost.cloudstream3.Genres
 import com.lagradost.cloudstream3.HomePageResponse
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainAPI
@@ -138,6 +139,14 @@ class APIRepository(val api: MainAPI) {
         return safeApiCall {
             withTimeout(getTimeout(api.quickSearchTimeoutMs)) {
                 api.quickSearch(query) ?: throw ErrorLoadingException()
+            }
+        }
+    }
+
+    suspend fun discover(types: List<TvType?>, genres: List<Genres?>): Resource<List<SearchResponse>> {
+        return safeApiCall {
+            withTimeout(getTimeout(api.searchTimeoutMs)) {
+                api.discover(types, genres) ?: throw ErrorLoadingException()
             }
         }
     }
