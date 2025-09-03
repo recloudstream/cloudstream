@@ -54,6 +54,7 @@ import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.bindChips
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.currentSpan
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.loadHomepageList
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.updateChips
+import com.lagradost.cloudstream3.ui.home.HomeViewModel
 import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
@@ -67,6 +68,7 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.getApiSettings
 import com.lagradost.cloudstream3.utils.AppContextUtils.ownHide
 import com.lagradost.cloudstream3.utils.AppContextUtils.ownShow
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
@@ -516,18 +518,25 @@ class SearchFragment : Fragment() {
                 listLock.lock()
                 (binding?.searchMasterRecycler?.adapter as ParentItemAdapter?)?.apply {
                     val newItems = list.map { ongoing ->
-                        val dataList =
-                            if (ongoing.data is Resource.Success) ongoing.data.value else ArrayList()
+                        val dataList = ongoing.value.list
                         val dataListFiltered =
                             context?.filterSearchResultByFilmQuality(dataList) ?: dataList
-                        val ongoingList = HomePageList(
-                            ongoing.apiName,
+
+                        val homePageList = HomePageList(
+                            ongoing.key,
                             dataListFiltered
                         )
-                        ongoingList
-                    }
-                    updateList(newItems)
 
+                        val expandableList = HomeViewModel.ExpandableHomepageList(
+                            homePageList,
+                            ongoing.value.currentPage,
+                            ongoing.value.hasNext
+                        )
+
+                        expandableList
+                    }
+
+                    submitList(newItems)
                     //notifyDataSetChanged()
                 }
             } catch (e: Exception) {
@@ -552,7 +561,11 @@ class SearchFragment : Fragment() {
             }, { item ->
                 bottomSheetDialog = activity?.loadHomepageList(item, dismissCallback = {
                     bottomSheetDialog = null
-                })
+                }, expandCallback = { name -> searchViewModel.expandAndReturn(name) })
+            }, expandCallback = { name ->
+                ioSafe {
+                    searchViewModel.expandAndReturn(name)
+                }
             })
 
         val historyAdapter = SearchHistoryAdaptor(mutableListOf()) { click ->

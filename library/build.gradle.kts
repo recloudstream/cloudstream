@@ -16,7 +16,7 @@ plugins {
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
 
 kotlin {
-    version = "1.0.0"
+    version = "1.0.1"
     androidTarget()
     jvm()
 
