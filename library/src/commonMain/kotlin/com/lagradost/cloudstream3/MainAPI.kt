@@ -426,6 +426,7 @@ fun newSearchResponseList(
     hasNext: Boolean? = null,
 ): SearchResponseList {
     val newList = list ?: emptyList()
+    @Suppress("DEPRECATION")
     return SearchResponseList(
         newList,
         hasNext = hasNext ?: newList.isNotEmpty()
@@ -909,7 +910,9 @@ data class HomePageList(
  * @property hasNext if there is a next page or not.
  * */
 @Prerelease
-data class SearchResponseList(
+data class SearchResponseList
+@Deprecated("Use newSearchResponseList method", level = DeprecationLevel.WARNING)
+constructor(
     val items: List<SearchResponse>,
     val hasNext: Boolean = false
 )
