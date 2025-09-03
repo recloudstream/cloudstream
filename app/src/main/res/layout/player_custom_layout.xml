@@ -992,7 +992,7 @@
         android:textAllCaps="false"
         android:visibility="gone"
         app:icon="@drawable/speedup"
-        app:iconTint="?attr/textColor"
+        app:iconTint="@color/textColor"
         android:foreground="@null"
         android:backgroundTint="@color/skipOpTransparent"
         tools:visibility="visible" />
