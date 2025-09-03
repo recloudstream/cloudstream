@@ -420,6 +420,23 @@ fun newHomePageResponse(list: List<HomePageList>, hasNext: Boolean? = null): Hom
     return HomePageResponse(list, hasNext = hasNext ?: list.any { it.list.isNotEmpty() })
 }
 
+@Prerelease
+fun newSearchResponseList(
+    list: List<SearchResponse>?,
+    hasNext: Boolean? = null,
+): SearchResponseList {
+    val newList = list ?: emptyList()
+    return SearchResponseList(
+        newList,
+        hasNext = hasNext ?: newList.isNotEmpty()
+    )
+}
+
+@Prerelease
+fun List<SearchResponse>?.toNewSearchResponseList(hasNext: Boolean? = null) : SearchResponseList {
+    return newSearchResponseList(this, hasNext)
+}
+
 /**Every provider will **not** have try catch built in, so handle exceptions when calling these functions*/
 abstract class MainAPI {
     companion object {
@@ -555,6 +572,17 @@ abstract class MainAPI {
         request: MainPageRequest,
     ): HomePageResponse? {
         throw NotImplementedError()
+    }
+
+    @Prerelease
+    /** Paginated search, starts with page: 1 */
+    open suspend fun search(query: String, page: Int): SearchResponseList? {
+        val searchResults = search(query) ?: return null
+
+        return newSearchResponseList(
+            searchResults,
+            false
+        )
     }
 
     // @WorkerThread
@@ -874,6 +902,16 @@ data class HomePageList(
     val name: String,
     var list: List<SearchResponse>,
     val isHorizontalImages: Boolean = false
+)
+
+/** Data class for the Search results.
+ * @property items list of [SearchResponse] items that will be added to the search row.
+ * @property hasNext if there is a next page or not.
+ * */
+@Prerelease
+data class SearchResponseList(
+    val items: List<SearchResponse>,
+    val hasNext: Boolean = false
 )
 
 /** enum class holds search quality.
