@@ -422,19 +422,17 @@ fun newHomePageResponse(list: List<HomePageList>, hasNext: Boolean? = null): Hom
 
 @Prerelease
 fun newSearchResponseList(
-    list: List<SearchResponse>?,
+    list: List<SearchResponse>,
     hasNext: Boolean? = null,
 ): SearchResponseList {
-    val newList = list ?: emptyList()
-    @Suppress("DEPRECATION")
     return SearchResponseList(
-        newList,
-        hasNext = hasNext ?: newList.isNotEmpty()
+        list,
+        hasNext = hasNext ?: list.isNotEmpty()
     )
 }
 
 @Prerelease
-fun List<SearchResponse>?.toNewSearchResponseList(hasNext: Boolean? = null) : SearchResponseList {
+fun List<SearchResponse>.toNewSearchResponseList(hasNext: Boolean? = null) : SearchResponseList {
     return newSearchResponseList(this, hasNext)
 }
 
