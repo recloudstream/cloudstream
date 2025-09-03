@@ -36,6 +36,22 @@ class PluginsViewModel : ViewModel() {
 
     /** plugins is an unaltered list of plugins */
     private var plugins: List<PluginViewData> = emptyList()
+        set(value) {
+            // Also set all the plugin languages for easier filtering
+            val languages =
+                value.map { it ->
+                    val language = it.plugin.second.language
+                    if (language.isNullOrBlank()) "none" else language
+                }.distinct().sorted().toMutableList()
+            // Move "none" to the front as it is a special case
+            if (languages.remove("none")) {
+                languages.add(0, "none")
+            }
+            pluginLanguages = languages
+
+            field = value
+        }
+    var pluginLanguages: List<String> = emptyList()
 
     /** filteredPlugins is a subset of plugins following the current search query and tv type selection */
     private var _filteredPlugins = MutableLiveData<PluginViewDataUpdate>()
@@ -227,7 +243,12 @@ class PluginsViewModel : ViewModel() {
             // Return list to base state if no query
             this.sortedBy { it.plugin.second.name }
         } else {
-            this.sortedBy { -FuzzySearch.partialRatio(it.plugin.second.name.lowercase(), query.lowercase()) }
+            this.sortedBy {
+                -FuzzySearch.partialRatio(
+                    it.plugin.second.name.lowercase(),
+                    query.lowercase()
+                )
+            }
         }
     }
 
