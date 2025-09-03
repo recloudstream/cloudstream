@@ -89,13 +89,18 @@ class PluginsFragment : Fragment() {
                     }
 
                     R.id.lang_filter -> {
-                        val tempLangs = appLanguages.toMutableList()
-                        val languageCodes =
-                            mutableListOf("none") + tempLangs.map { (_, _, iso) -> iso }
+                        val languageCodes = pluginViewModel.pluginLanguages
+
                         val languageNames =
-                            mutableListOf(getString(R.string.no_data)) + tempLangs.map { (emoji, name, iso) ->
-                                val flag =
-                                    emoji.ifBlank { SubtitleHelper.getFlagFromIso(iso) ?: "ERROR" }
+                            languageCodes.map { iso ->
+                                val (flag, name) = when (iso) {
+                                    AllLanguagesName -> "" to getString(R.string.all_languages_preference)
+                                    "none" -> "" to getString(R.string.no_data)
+                                    else -> (SubtitleHelper.getFlagFromIso(iso)
+                                        ?: "") to (SubtitleHelper.fromTwoLettersToLanguage(
+                                        iso,
+                                    ) ?: iso)
+                                }
                                 "$flag $name"
                             }
                         val selectedList =
