@@ -6,6 +6,7 @@ import android.net.http.SslError
 import android.os.Handler
 import android.os.Looper
 import android.webkit.*
+import com.lagradost.api.Log
 import com.lagradost.api.getContext
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.debugException
@@ -44,8 +45,9 @@ actual class WebViewResolver actual constructor(
     Interceptor {
 
     actual companion object {
-        var webViewUserAgent: String? = null
+        actual var webViewUserAgent: String? = null
         actual val DEFAULT_TIMEOUT = 60_000L
+        private const val TAG = "WebViewResolver"
 
         @JvmName("getWebViewUserAgent1")
         fun getWebViewUserAgent(): String? {
@@ -69,15 +71,16 @@ actual class WebViewResolver actual constructor(
         }
     }
 
-    suspend fun resolveUsingWebView(
+    actual suspend fun resolveUsingWebView(
         url: String,
-        referer: String? = null,
-        method: String = "GET",
-        requestCallBack: (Request) -> Boolean = { false },
+        referer: String?,
+        headers: Map<String, String>,
+        method: String,
+        requestCallBack: (Request) -> Boolean,
     ): Pair<Request?, List<Request>> {
         return try {
             resolveUsingWebView(
-                requestCreator(method, url, referer = referer), requestCallBack
+                requestCreator(method, url, referer = referer, headers = headers), requestCallBack
             )
         } catch (e: java.lang.IllegalArgumentException) {
             logError(e)
@@ -86,18 +89,14 @@ actual class WebViewResolver actual constructor(
         }
     }
 
-    /**
-     * @param requestCallBack asynchronously return matched requests by either interceptUrl or additionalUrls. If true, destroy WebView.
-     * @return the final request (by interceptUrl) and all the collected urls (by additionalUrls).
-     * */
     @SuppressLint("SetJavaScriptEnabled")
-    suspend fun resolveUsingWebView(
+    actual suspend fun resolveUsingWebView(
         request: Request,
-        requestCallBack: (Request) -> Boolean = { false }
+        requestCallBack: (Request) -> Boolean
     ): Pair<Request?, List<Request>> {
         val url = request.url.toString()
         val headers = request.headers
-        println("Initial web-view request: $url")
+        Log.i(TAG, "Initial web-view request: $url")
         var webView: WebView? = null
         // Extra assurance it exits as it should.
         var shouldExit = false
@@ -108,7 +107,7 @@ actual class WebViewResolver actual constructor(
                 webView?.destroy()
                 webView = null
                 shouldExit = true
-                println("Destroyed webview")
+                Log.i(TAG, "Destroyed webview")
             }
         }
 
@@ -142,12 +141,12 @@ actual class WebViewResolver actual constructor(
                         request: WebResourceRequest
                     ): WebResourceResponse? = runBlocking {
                         val webViewUrl = request.url.toString()
-                        println("Loading WebView URL: $webViewUrl")
+                        Log.i(TAG, "Loading WebView URL: $webViewUrl")
 
                         if (script != null) {
                             val handler = Handler(Looper.getMainLooper())
                             handler.post {
-                                view.evaluateJavascript("$script")
+                                view.evaluateJavascript(script)
                                 { scriptCallback?.invoke(it) }
                             }
                         }
@@ -156,7 +155,7 @@ actual class WebViewResolver actual constructor(
                             fixedRequest = request.toRequest()?.also {
                                 requestCallBack(it)
                             }
-                            println("Web-view request finished: $webViewUrl")
+                            Log.i(TAG, "Web-view request finished: $webViewUrl")
                             destroyWebView()
                             return@runBlocking null
                         }
@@ -205,8 +204,7 @@ actual class WebViewResolver actual constructor(
                          *  They don't contain all the headers the browser actually gives.
                          *  Overriding with okhttp might fuck up otherwise working requests,
                          *  e.g the recaptcha request.
-                         * **/
-
+                         * */
                         return@runBlocking try {
                             when {
                                 blacklistedFiles.any { URI(webViewUrl).path.contains(it) } || webViewUrl.endsWith(
@@ -216,6 +214,7 @@ actual class WebViewResolver actual constructor(
                                     null,
                                     null
                                 )
+
                                 webViewUrl.contains("recaptcha") || webViewUrl.contains("/cdn-cgi/") -> super.shouldInterceptRequest(
                                     view,
                                     request
@@ -236,11 +235,12 @@ actual class WebViewResolver actual constructor(
                                     request
                                 )
                             }
-                        } catch (e: Exception) {
+                        } catch (_: Exception) {
                             null
                         }
                     }
 
+                    @SuppressLint("WebViewClientOnReceivedSslError")
                     override fun onReceivedSslError(
                         view: WebView?,
                         handler: SslErrorHandler?,
@@ -268,7 +268,7 @@ actual class WebViewResolver actual constructor(
             loop += 1
         }
 
-        println("Web-view timeout after ${totalTime / 1000}s")
+        Log.i(TAG, "Web-view timeout after ${totalTime / 1000}s")
         destroyWebView()
         return fixedRequest to extraRequestList
     }

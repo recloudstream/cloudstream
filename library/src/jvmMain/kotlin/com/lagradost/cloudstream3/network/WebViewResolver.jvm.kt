@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.network
 
 import okhttp3.Interceptor
+import okhttp3.Request
 import okhttp3.Response
 
 /**
@@ -31,5 +32,24 @@ actual class WebViewResolver actual constructor(
 
     actual companion object {
         actual val DEFAULT_TIMEOUT = 60_000L
+        actual var webViewUserAgent: String? = null
+    }
+
+    actual suspend fun resolveUsingWebView(
+        url: String,
+        referer: String?,
+        headers: Map<String, String>,
+        method: String,
+        requestCallBack: (Request) -> Boolean
+    ): Pair<Request?, List<Request>> {
+        TODO("Not yet implemented")
+    }
+
+    actual suspend fun resolveUsingWebView(
+        request: Request,
+        requestCallBack: (Request) -> Boolean
+    ): Pair<Request?, List<Request>> {
+        TODO("Not yet implemented")
     }
 }
+
