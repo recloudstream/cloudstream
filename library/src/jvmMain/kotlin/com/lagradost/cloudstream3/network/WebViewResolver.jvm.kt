@@ -1,5 +1,8 @@
 package com.lagradost.cloudstream3.network
 
+import com.lagradost.cloudstream3.mvvm.debugException
+import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.nicehttp.requestCreator
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -38,11 +41,27 @@ actual class WebViewResolver actual constructor(
     actual suspend fun resolveUsingWebView(
         url: String,
         referer: String?,
+        method: String,
+        requestCallBack: (Request) -> Boolean,
+    ): Pair<Request?, List<Request>> =
+        resolveUsingWebView(url, referer, emptyMap(), method, requestCallBack)
+
+    actual suspend fun resolveUsingWebView(
+        url: String,
+        referer: String?,
         headers: Map<String, String>,
         method: String,
         requestCallBack: (Request) -> Boolean
     ): Pair<Request?, List<Request>> {
-        TODO("Not yet implemented")
+        return try {
+            resolveUsingWebView(
+                requestCreator(method, url, referer = referer, headers = headers), requestCallBack
+            )
+        } catch (e: java.lang.IllegalArgumentException) {
+            logError(e)
+            debugException { "ILLEGAL URL IN resolveUsingWebView!" }
+            return null to emptyList()
+        }
     }
 
     actual suspend fun resolveUsingWebView(

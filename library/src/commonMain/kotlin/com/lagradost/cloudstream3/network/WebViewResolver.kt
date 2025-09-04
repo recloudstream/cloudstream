@@ -35,6 +35,17 @@ expect class WebViewResolver(
     suspend fun resolveUsingWebView(
         url: String,
         referer: String? = null,
+        method: String = "GET",
+        requestCallBack: (Request) -> Boolean = { false },
+    ) : Pair<Request?, List<Request>>
+
+    /**
+     * @param requestCallBack asynchronously return matched requests by either interceptUrl or additionalUrls. If true, destroy WebView.
+     * @return the final request (by interceptUrl) and all the collected urls (by additionalUrls).
+     * */
+    suspend fun resolveUsingWebView(
+        url: String,
+        referer: String? = null,
         headers: Map<String, String> = emptyMap(),
         method: String = "GET",
         requestCallBack: (Request) -> Boolean = { false },

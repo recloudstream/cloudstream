@@ -74,6 +74,14 @@ actual class WebViewResolver actual constructor(
     actual suspend fun resolveUsingWebView(
         url: String,
         referer: String?,
+        method: String,
+        requestCallBack: (Request) -> Boolean,
+    ): Pair<Request?, List<Request>> =
+        resolveUsingWebView(url, referer, emptyMap(), method, requestCallBack)
+
+    actual suspend fun resolveUsingWebView(
+        url: String,
+        referer: String?,
         headers: Map<String, String>,
         method: String,
         requestCallBack: (Request) -> Boolean,
@@ -272,7 +280,6 @@ actual class WebViewResolver actual constructor(
         destroyWebView()
         return fixedRequest to extraRequestList
     }
-
 }
 
 fun WebResourceRequest.toRequest(): Request? {
