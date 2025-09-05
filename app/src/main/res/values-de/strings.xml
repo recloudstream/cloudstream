@@ -386,7 +386,7 @@
     <string name="skip_setup">Einrichtung überspringen</string>
     <string name="app_layout_subtext">Aussehen der App passend zu dem des Geräts ändern</string>
     <string name="crash_reporting_title">Absturzmeldung</string>
-    <string name="preferred_media_subtext">Was möchtest du sehen?</string>
+    <string name="preferred_media_subtext">Was möchten Sie sehen</string>
     <string name="setup_done">Fertig</string>
     <string name="extensions">Erweiterungen</string>
     <string name="add_repository">Repository hinzufügen</string>
@@ -414,7 +414,7 @@
     <string name="view_public_repositories_button">Community-Repositories anzeigen</string>
     <string name="view_public_repositories_button_short">Öffentliche Liste</string>
     <string name="uppercase_all_subtitles">Alle Untertitel in Großbuchstaben</string>
-    <string name="download_all_plugins_from_repo">Alle Plugins aus diesem Repository herunterladen?</string>
+    <string name="download_all_plugins_from_repo">Warnung: CloudStream 3 übernimmt keine Verantwortung für das nutzen von Dritt-Anbieter-Erweiterungen und leistet für sie keine Unterstützung!</string>
     <string name="single_plugin_disabled" formatted="true">%s (Deaktiviert)</string>
     <string name="tracks">Spuren</string>
     <string name="audio_tracks">Audiospuren</string>
@@ -630,7 +630,7 @@
     <string name="test_warning">Warnung</string>
     <string name="device_pin_counter_text">Code läuft ab in %1$dm %2$ds</string>
     <string name="cs3wiki">CloudStream-Wiki</string>
-    <string name="battery_dialog_message">Um einen unterbrechungsfreien Download zu gewährleisten und Benachrichtigungen für abonnierte TV-Shows anzuzeigen, benötigt Cloudstream die Berechtigung, im Hintergrund ausgeführt zu werden. Beim drücken auf 𝙊𝙆 wird ein Dialog angezeigt. Bitte drücke ‚Erlauben‘.\n Bitte beachte, dass dies nicht dazu führt, dass CS3 den Akku dauerhaft entlädt. Es läuft nur im Hintergrund, wenn es nötig ist, beispielsweise zum Empfang von Benachrichtigungen oder dem Download von Videos aus offiziellen Erweiterungen.</string>
+    <string name="battery_dialog_message">Um einen unterbrechungsfreien Download zu gewährleisten und Benachrichtigungen für abonnierte TV-Shows anzuzeigen, benötigt Cloudstream die Berechtigung, im Hintergrund ausgeführt zu werden. Beim drücken auf 𝙊𝙆 wird ein Dialog angezeigt. Bitte drücke ‚Erlauben‘.\n\nBitte beachte, dass dies nicht dazu führt, dass CS3 den Akku dauerhaft entlädt. Es läuft nur im Hintergrund, wenn es nötig ist, beispielsweise zum Empfang von Benachrichtigungen oder dem Download von Videos aus offiziellen Erweiterungen.</string>
     <string name="delete_files">Dateien löschen</string>
     <string name="delete_format" formatted="true">Löschen (%1$d | %2$s)</string>
     <string name="select_all">Alle auswählen</string>
@@ -692,9 +692,35 @@
     <string name="speech_recognition_unavailable">Spracherkennung ist nicht verfügbar</string>
     <string name="begin_speaking">Beginne zu sprechen…</string>
     <string name="player_notification_channel_name">Player-Benachrichtigung</string>
-    <string name="all_subtitles_bold">Alle Untertitel fettgedruckt anzeigen</string>
-    <string name="all_subtitles_italic">Alle Untertitel kursiv anzeigen</string>
+    <string name="all_subtitles_bold">Alle Untertitel fett machen</string>
+    <string name="all_subtitles_italic">Alle Untertitel kursiv machen</string>
     <string name="background_radius">Hintergrundsradius</string>
     <string name="volume_exceeded_100">Lautstärke hat 100% überschritten</string>
     <string name="slide_up_again_to_exceed_100">Noch einmal nach oben wischen, um 100% zu überschreiten</string>
+    <string name="player_settings_always_ask">Immer fragen</string>
+    <string name="download_parallel_settings_des">Wie viele verschiedene Elemente können parallel heruntergeladen werden</string>
+    <string name="parallel_downloads">Parallele Downloads</string>
+    <string name="concurrent_connections">Gleichzeitige Verbindungen</string>
+    <string name="concurrent_connections_settings_des">Wie viele gleichzeitige Verbindungen jeder Download während des Downloads verwenden kann</string>
+    <string name="go_to_downloads">Zu den Downloads</string>
+    <string name="no_internet_connection">Keine Internetverbindung.\n\nBitte verbinden Sie sich mit dem Internet und versuchen Sie es erneut, oder schauen Sie sich Ihre Downloads an, während Sie offline sind.</string>
+    <string name="overscan_settings_des">Ändert die Grenzen des Bildschirms</string>
+    <string name="overscan_settings">Überscannen</string>
+    <string name="poster_size_settings_des">Ändert die Größe von Postern</string>
+    <string name="poster_size_settings">Größe des Posters</string>
+    <string name="speedup_title">LongPress Geschwindigkeitsschalter</string>
+    <string name="speedup_summary">Halten Sie gedrückt, um die 2x Geschwindigkeit zu erhalten</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dstd%2$dm%3$ds</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dm%2$ds</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$ds</string>
+    <string name="show_rating">Bewerungslabel</string>
+    <string name="no_account">Kein Konto</string>
+    <string name="edit_profile_image_title">Profilbild ändern</string>
+    <string name="edit_profile_image_hint">Profilbild URL eingeben</string>
+    <string name="edit_profile_image_error_empty">Keine URL gefunden</string>
+    <string name="edit_profile_image_error_invalid">Ungültige URL oder ungültiges Bild</string>
+    <string name="edit_profile_image_success">Profilbild erfolgreich geändert</string>
+    <string name="action_mark_watched_up_to_this_episode">Označi kao gledano do ove epizode</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">Ukloni epizodu koju sam gledao do sada</string>
+    <string name="action_reload">Ponovo učitano</string>
 </resources>
