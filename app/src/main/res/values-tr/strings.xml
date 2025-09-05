@@ -743,4 +743,27 @@
     <string name="all_subtitles_bold">Tüm altyazıları kalın yap</string>
     <string name="all_subtitles_italic">Tüm altyazıları italik yap</string>
     <string name="background_radius">Arka Plan Yarıçapı</string>
+    <string name="overscan_settings">Ekran sığdırma</string>
+    <string name="parallel_downloads">Eşzamanlı indirmeler</string>
+    <string name="concurrent_connections">Eşzamanlı bağlantılar</string>
+    <string name="no_internet_connection">İnternet bağlantısı yok.\n\nLütfen internete bağlanıp tekrar deneyin ya da çevrimdışıyken indirdiğiniz içerikleri izleyin.</string>
+    <string name="go_to_downloads">İndirilenlere Git</string>
+    <string name="download_parallel_settings_des">Aynı anda kaç farklı öğe indirilebilir</string>
+    <string name="overscan_settings_des">Ekranın sınırlarını değiştirir</string>
+    <string name="concurrent_connections_settings_des">Her indirme sırasında kaç eşzamanlı bağlantı kullanılabilir</string>
+    <string name="poster_size_settings">Afiş boyutu</string>
+    <string name="poster_size_settings_des">Afişlerin boyutlarını değiştir</string>
+    <string name="player_settings_always_ask">Her zaman sor</string>
+    <string name="speedup_title">Uzun basma hızını değiştir</string>
+    <string name="speedup_summary">2x hız için basılı tut</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dsa %2$ddk %3$dsn</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$ddk %2$dsn</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$dsn</string>
+    <string name="show_rating">Reyting etiketi</string>
+    <string name="no_account">Hesap yok</string>
+    <string name="edit_profile_image_title">Profil Resmini düzenle</string>
+    <string name="edit_profile_image_hint">Profil Resmi Bağlantısını Girin</string>
+    <string name="edit_profile_image_error_empty">URL bulunamadı</string>
+    <string name="edit_profile_image_error_invalid">Geçersiz Bağlantı veya Görsel</string>
+    <string name="edit_profile_image_success">Görsel Başarıyla Güncellendi</string>
 </resources>

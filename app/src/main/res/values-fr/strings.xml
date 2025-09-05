@@ -595,8 +595,7 @@
     <string name="app_info_intent_error">Impossible d\'ouvrir les informations de l\'application CloudStream.</string>
     <string name="biometric_authentication_title">Déverrouiller CloudStream</string>
     <string name="music_singlar">Musique</string>
-    <string name="resume_remaining" formatted="true">%s
-\nrestants</string>
+    <string name="resume_remaining" formatted="true">%s \nrestants</string>
     <string name="clipboard_permission_error">Erreur d\'accès au presse-papiers, veuillez réessayer.</string>
     <string name="ok">OK</string>
     <string name="biometric_unsupported">L\'authentification biométrique n\'est pas prise en charge sur cet appareil</string>
@@ -688,6 +687,32 @@
     <string name="volume_exceeded_100">Le volume a dépassé 100 %</string>
     <string name="slide_up_again_to_exceed_100">Glisser à nouveau vers le haut pour dépasser 100 %</string>
     <string name="all_subtitles_bold">Mettre tous les sous-titres en gras</string>
-    <string name="background_radius">Rayon de l\'arrière-plan</string>
+    <string name="background_radius">Rayon d\'arrière-plan</string>
     <string name="all_subtitles_italic">Mettre tous les sous-titres en italique</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dh %2$dm %3$ds</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dm %2$ds</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$ds</string>
+    <string name="show_rating">Étiquette de notation</string>
+    <string name="player_settings_always_ask">Demandez toujours</string>
+    <string name="download_parallel_settings_des">Combien d\'objets différents peuvent être téléchargés en parallèle</string>
+    <string name="parallel_downloads">Téléchargements parallèles</string>
+    <string name="concurrent_connections">Connections simultanées</string>
+    <string name="concurrent_connections_settings_des">Combien de connexions simultanées chaque téléchargement peut utiliser pendant le téléchargement</string>
+    <string name="go_to_downloads">Aller aux téléchargements</string>
+    <string name="no_internet_connection">Pas de connexion Internet.\n\nConnectez-vous à Internet et essayez à nouveau, ou regardez vos téléchargements pendant que vous êtes hors ligne.</string>
+    <string name="overscan_settings_des">Change les limites de l\'écran</string>
+    <string name="overscan_settings">Surbalayage</string>
+    <string name="poster_size_settings_des">Change la taille des affiches</string>
+    <string name="poster_size_settings">Taille des affiches</string>
+    <string name="speedup_title">Basculement de vitesse par appui long</string>
+    <string name="speedup_summary">Maintenir pour vitesse 2x</string>
+    <string name="no_account">Pas de compte</string>
+    <string name="edit_profile_image_title">Modifier le profil Image</string>
+    <string name="edit_profile_image_hint">Saisir l\'URL de la photo de profil</string>
+    <string name="edit_profile_image_error_empty">Aucune URL trouvée</string>
+    <string name="edit_profile_image_error_invalid">Image ou URL Invalide</string>
+    <string name="edit_profile_image_success">Image mise à jour avec succès</string>
+    <string name="action_mark_watched_up_to_this_episode">Marquer comme vu jusqu’à cet épisode</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">Supprimer l\'historique de visionnage jusqu\'à cet épisode</string>
+    <string name="action_reload">Rechargé</string>
 </resources>
