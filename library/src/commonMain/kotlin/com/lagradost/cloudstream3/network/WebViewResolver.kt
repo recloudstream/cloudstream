@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.network
 
 import com.lagradost.cloudstream3.USER_AGENT
 import okhttp3.Interceptor
+import okhttp3.Request
 
 /**
  * When used as Interceptor additionalUrls cannot be returned, use WebViewResolver(...).resolveUsingWebView(...)
@@ -24,5 +25,38 @@ expect class WebViewResolver(
 ) : Interceptor {
     companion object {
         val DEFAULT_TIMEOUT: Long
+        var webViewUserAgent: String?
     }
+
+    /**
+     * @param requestCallBack asynchronously return matched requests by either interceptUrl or additionalUrls. If true, destroy WebView.
+     * @return the final request (by interceptUrl) and all the collected urls (by additionalUrls).
+     * */
+    suspend fun resolveUsingWebView(
+        url: String,
+        referer: String? = null,
+        method: String = "GET",
+        requestCallBack: (Request) -> Boolean = { false },
+    ) : Pair<Request?, List<Request>>
+
+    /**
+     * @param requestCallBack asynchronously return matched requests by either interceptUrl or additionalUrls. If true, destroy WebView.
+     * @return the final request (by interceptUrl) and all the collected urls (by additionalUrls).
+     * */
+    suspend fun resolveUsingWebView(
+        url: String,
+        referer: String? = null,
+        headers: Map<String, String> = emptyMap(),
+        method: String = "GET",
+        requestCallBack: (Request) -> Boolean = { false },
+    ) : Pair<Request?, List<Request>>
+
+    /**
+     * @param requestCallBack asynchronously return matched requests by either interceptUrl or additionalUrls. If true, destroy WebView.
+     * @return the final request (by interceptUrl) and all the collected urls (by additionalUrls).
+     * */
+    suspend fun resolveUsingWebView(
+        request: Request,
+        requestCallBack: (Request) -> Boolean = { false }
+    ): Pair<Request?, List<Request>>
 }
