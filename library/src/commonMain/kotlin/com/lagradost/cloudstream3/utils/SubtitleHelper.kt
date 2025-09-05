@@ -598,6 +598,7 @@ object SubtitleHelper {
         LanguageMetadata("Marathi","मराठी","mr","mr","mar","mar","mr"),
         LanguageMetadata("Marshallese","Kajin M̧ajeļ","mh","mh","mah","mah",""),
         LanguageMetadata("Meitei","ꯃꯅꯤꯄꯨꯔꯤ, মণিপুরী","mni","","mni","mni","ma"),
+        LanguageMetadata("Mexican Spanish", "Español mexicano", "es-MX", "mx","","",""), // iso639_1 is not mx but, some extension use it as such
         LanguageMetadata("Mongolian","Монгол хэл","mn","mn","mon","mon","mn"),
         LanguageMetadata("Montenegrin","crnogorski, црногорски","cnr","","cnr","cnr","me"),
         LanguageMetadata("Navajo","Diné bizaad","nv","nv","nav","nav","nv"),
