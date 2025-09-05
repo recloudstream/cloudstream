@@ -1,9 +1,19 @@
 package com.lagradost.cloudstream3.utils
 
-import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.Prerelease
 import java.util.Locale
+import kotlin.text.RegexOption.IGNORE_CASE
+
+// If you find a way to use SettingsGeneral getCurrentLocale()
+// instead of this function do it.
+fun getCurrentLocale(): String {
+    return Locale.getDefault().toLanguageTag()
+}
 
 object SubtitleHelper {
+    @Deprecated(
+        "Default language code changed to IETF BCP 47 tag",
+        ReplaceWith("LanguageMetadata(languageName, nativeName, ISO_639_1.ifBlank { ISO_639_2_B }), ISO_639_1, ISO_639_2_B, ISO_639_3, ISO_639_1"))
     data class Language639(
         val languageName: String,
         val nativeName: String,
@@ -14,157 +24,288 @@ object SubtitleHelper {
         val ISO_639_6: String,
     )
 
-    /*fun createISO() {
-        val url = "https://infogalactic.com/info/List_of_ISO_639-1_codes"
-        val response = get(url).text
-        val document = Jsoup.parse(response)
-        val headers = document.select("table.wikitable > tbody > tr")
+    /**
+     * Represents one language with english name, native name and codes.
+     * IETF BCP 47 conformant tag shall be used as the first choice for language code!
+     *
+     * See locales on:
+     * https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/availableLocales.json
+     * https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+     * https://android.googlesource.com/platform/frameworks/base/+/android-16.0.0_r2/core/res/res/values/locale_config.xml
+     * https://iso639-3.sil.org/code_tables/639/data/all
+    */
+    data class LanguageMetadata(
+        val languageName: String,
+        val nativeName: String,
+        val IETF_tag: String,       // Combine ISO 639-1, 639-3 and ISO 3166-1 (or numeric UN M49 / CLDR) for country / region
+        val ISO_639_1: String,
+        val ISO_639_2_B: String,    // ISO 639-2/T missing as it's a subset of ISO 639-3
+        val ISO_639_3: String,      // ISO 639-6 missing as it's intended to differentiate specific dialects and variants
+        val openSubtitles: String, // inconsistent codes that do not conform ISO 639
+    ) {
+        internal fun localizedName(localizedTo: String? = null): String {
+            // Use system locale to localize language name
+            val localeOfLangCode = Locale.forLanguageTag(this.IETF_tag)
+            val localeOfLocalizeTo = Locale.forLanguageTag(localizedTo ?: getCurrentLocale())
+            val sysLocalizedName = localeOfLangCode.getDisplayName(localeOfLocalizeTo)
 
-        var text = "listOf(\n"
-        for (head in headers) {
-            val tds = head.select("td")
-            if (tds.size < 8) continue
-            val name = tds[2].selectFirst("> a").text()
-            val native = tds[3].text()
-            val ISO_639_1 = tds[4].ownText().replace("+", "").replace(" ", "")
-            val ISO_639_2_T = tds[5].ownText().replace("+", "").replace(" ", "")
-            val ISO_639_2_B = tds[6].ownText().replace("+", "").replace(" ", "")
-            val ISO_639_3 = tds[7].ownText().replace("+", "").replace(" ", "")
-            val ISO_639_6 = tds[8].ownText().replace("+", "").replace(" ", "")
+            val langCodeWithCountry = "${localeOfLangCode.language} (${localeOfLangCode.country})"
+            val failedToLocalize =
+                sysLocalizedName.contains(this.IETF_tag, ignoreCase = true) ||
+                sysLocalizedName.contains(langCodeWithCountry, ignoreCase = true)
 
-            val txtAdd =
-                "Language(\"$name\", \"$native\", \"$ISO_639_1\", \"$ISO_639_2_T\", \"$ISO_639_2_B\", \"$ISO_639_3\", \"$ISO_639_6\"),\n"
-            text += txtAdd
+            return if (failedToLocalize)
+                // fallback to native language name
+                this.nativeName
+            else
+                sysLocalizedName
         }
-        text += ")"
-        println("ISO CREATED:\n$text")
-    }*/
 
-    /** lang -> ISO_639_1
-     * @param looseCheck will use .contains in addition to .equals
-     * */
+        internal fun nameNextToFlagEmoji(localizedTo: String? = null): String {
+            // fallback to [A][A] -> [?] question mak flag
+            val flag = getFlagFromIso(this.IETF_tag) ?: "\ud83c\udde6\ud83c\udde6"
+
+            return "$flag ${localizedName(localizedTo)}"
+        }
+    }
+
+    /**
+     * Language name (english or native) -> [LanguageMetadata]
+     * @param languageName language name
+     * @param halfMatch match with `contains()` instead of `equals()`
+    */
+    private fun getLanguageDataFromName(languageName: String?, halfMatch: Boolean? = false): LanguageMetadata? {
+        if (languageName.isNullOrBlank() || languageName.length < 2) return null
+
+        val lowLangName = languageName.lowercase()
+        val index =
+            indexMapLanguageName[lowLangName] ?:
+            indexMapNativeName[lowLangName] ?: -1
+        val langMetadata = languages.getOrNull(index)
+
+        if (halfMatch == true && langMetadata == null) {
+            // Workaround to avoid junk like "English (original audio)" or "Spanish 123"
+            // or "اَلْعَرَبِيَّةُ (Original Audio) 1" or "English (hindi sub)"…
+            // Subtitle downloads and auto selection should rely on proper language codes
+            // instead of language names! And remove remove junk beforehand.
+            val arabicDiacritics = Regex("[\\u064B-\\u065B]")
+            val withoutDiacritics = lowLangName.replace(arabicDiacritics, "")
+            val nameWithoutJunk = Regex("^([^()\\s\\d]+)").find(withoutDiacritics)?.value ?: withoutDiacritics
+
+            for (lang in languages)
+                if (lang.languageName.contains(nameWithoutJunk, ignoreCase = true) ||
+                    lang.nativeName.contains(nameWithoutJunk, ignoreCase = true))
+                    return lang
+        }
+        return langMetadata
+    }
+
+    // @Deprecated(
+    //     "Default language code changed to IETF BCP 47 tag",
+    //     ReplaceWith("fromLanguageToTagIETF(input, looseCheck)"))
+    /**
+     * Language name (english or native) -> ISO_639_1
+     * @param languageName language name
+     * @param looseCheck match with `contains()` instead of `equals()`
+    */
     fun fromLanguageToTwoLetters(input: String, looseCheck: Boolean): String? {
-        languages.forEach {
-            if (it.languageName.equals(input, ignoreCase = true)
-                || it.nativeName.equals(input, ignoreCase = true)
-            ) return it.ISO_639_1
-        }
-
-        // Runs as a separate loop as to prioritize fully matching languages.
-        if (looseCheck)
-            languages.forEach {
-                if (input.contains(it.languageName, ignoreCase = true)
-                    || input.contains(it.nativeName, ignoreCase = true)
-                ) return it.ISO_639_1
-            }
-
-        return null
+        return getLanguageDataFromName(input, looseCheck)?.ISO_639_1
     }
 
-    private var ISO_639_1Map: HashMap<String, String> = hashMapOf()
-    private fun initISO6391Map() {
-        for (lang in languages) {
-            ISO_639_1Map[lang.ISO_639_1] = lang.languageName
-        }
-    }
 
-    /** ISO_639_1 -> lang*/
-    fun fromTwoLettersToLanguage(input: String): String? {
-        // pr-BR
-        if (input.substringBefore("-").length != 2) return null
-        if (ISO_639_1Map.isEmpty()) {
-            initISO6391Map()
-        }
-        val comparison = input.lowercase(Locale.ROOT)
-
-        return ISO_639_1Map[comparison]
-    }
-
-    /**ISO_639_2_B or ISO_639_2_T or ISO_639_3-> lang*/
-    fun fromThreeLettersToLanguage(input: String): String? {
-        if (input.length != 3) return null
-        val comparison = input.lowercase(Locale.ROOT)
-        for (lang in languages) {
-            if (lang.ISO_639_2_B == comparison) {
-                return lang.languageName
-            }
-        }
-        for (lang in languages) {
-            if (lang.ISO_639_2_T == comparison) {
-                return lang.languageName
-            }
-        }
-        for (lang in languages) {
-            if (lang.ISO_639_3 == comparison) {
-                return lang.languageName
-            }
-        }
-        return null
-    }
-
-    /** lang -> ISO_639_2_T*/
+    // @Deprecated(
+    //     "Default language code changed to IETF BCP 47 tag",
+    //     ReplaceWith("fromLanguageToTagIETF(input)"))
+    /**
+     * Language name (english or native) -> ISO_639_3
+    */
     fun fromLanguageToThreeLetters(input: String): String? {
-        for (lang in languages) {
-            if (lang.languageName == input || lang.nativeName == input) {
-                return lang.ISO_639_2_T
-            }
-        }
-        return null
+        return getLanguageDataFromName(input)?.ISO_639_3
     }
 
-    private const val flagOffset = 0x1F1E6
-    private const val asciiOffset = 0x41
-    private const val offset = flagOffset - asciiOffset
+    /**
+     * Language name -> IETF_tag
+     * @param languageName language name
+     * @param halfMatch match with `contains()` instead of `equals()`
+    */
+    fun fromLanguageToTagIETF(languageName: String?, halfMatch: Boolean? = false): String? {
+        return getLanguageDataFromName(languageName, halfMatch)?.IETF_tag
+    }
 
-    private val flagRegex = Regex("[\uD83C\uDDE6-\uD83C\uDDFF]{2}")
+    /**
+     * Language code -> [LanguageMetadata]
+     * @param languageCode IETF BCP 47, ISO 639-1, ISO 639-2B/T, ISO 639-3, OpenSubtitles
+     * @return [LanguageMetadata] or `null`
+    */
+    private fun getLanguageDataFromCode(languageCode: String?): LanguageMetadata?  {
+        if (languageCode.isNullOrBlank() || languageCode.length < 2) return null
 
+        val lowLangCode = languageCode.lowercase()
+        val index =
+            indexMapIETF_tag[lowLangCode] ?:
+            indexMapISO_639_1[lowLangCode] ?:
+            indexMapISO_639_3[lowLangCode] ?:
+            indexMapISO_639_2_B[lowLangCode] ?:
+            indexMapOpenSubtitles[lowLangCode] ?: -1
+
+        return languages.getOrNull(index)
+    }
+
+    // @Deprecated(
+    //     "Default language code changed to IETF BCP 47 tag",
+    //     ReplaceWith("fromTagToLanguageName(input)"))
+    /**
+     * Language code -> language english name
+    */
+    fun fromTwoLettersToLanguage(input: String): String? {
+        return getLanguageDataFromCode(input)?.languageName
+    }
+
+    // @Deprecated(
+    //     "Default language code changed to IETF BCP 47 tag",
+    //     ReplaceWith("fromTagToLanguageName(input)"))
+    /**
+     * Language code -> language english name
+    */
+    fun fromThreeLettersToLanguage(input: String): String? {
+        return getLanguageDataFromCode(input)?.languageName
+    }
+
+    /**
+     * Language code -> language name (if not found, fallback to native language name)
+     * @param languageCode IETF BCP 47, ISO 639-1, ISO 639-2B/T, ISO 639-3, OpenSubtitles
+     * @param localizedTo IETF BCP 47 tag to localize the language name to. Default: app current language
+    */
+    @Prerelease
+    fun fromTagToLanguageName(languageCode: String?, localizedTo: String? = null): String? {
+        return getLanguageDataFromCode(languageCode)?.localizedName(localizedTo)
+    }
+
+    /**
+     * Language code -> openSubtitles inconsistent language tag
+     * @param languageCode IETF BCP 47, ISO 639-1, ISO 639-2B/T, ISO 639-3, OpenSubtitles
+    */
+    @Prerelease
+    fun fromCodeToOpenSubtitlesTag(languageCode: String?): String? {
+        return getLanguageDataFromCode(languageCode)?.openSubtitles
+    }
+
+    /** openSubtitles -> IETF_tag */
+    @Prerelease
+    fun fromCodeToLangTagIETF(languageCode: String?): String? {
+        return getLanguageDataFromCode(languageCode)?.IETF_tag
+    }
+
+    /**
+     * Check for a well formed IETF BCP 47 conformant language tag
+     *
+     * See locales on:
+     * https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/availableLocales.json
+     * https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+     * https://android.googlesource.com/platform/frameworks/base/+/android-16.0.0_r2/core/res/res/values/locale_config.xml
+    */
+    @Prerelease
+    fun isWellFormedTagIETF(langTagIETF: String?): Boolean {
+        if (langTagIETF.isNullOrBlank() || langTagIETF.length < 2) return false
+
+        // Written by Addison Phillips, <Addison at amazon.com>
+        // https://www.langtag.net/philips-regexp.html
+        val langTagRegex = """
+            +(^[xX](\x2d\p{Alnum}{1,8})*$)"
+            +|(((^\p{Alpha}{2,8}(?=\x2d|$)){1}"
+            +((\x2d\p{Alpha}{3})(?=\x2d|$)){0,3}"
+            +(\x2d\p{Alpha}{4}(?=\x2d|$))?"
+            +(\x2d(\p{Alpha}{2}|\d{3})(?=\x2d|$))?"
+            +(\x2d(\d\p{Alnum}{3}|\p{Alnum}{5,8})(?=\x2d|$))*)"
+            +((\x2d([a-wyzA-WYZ](?=\x2d))(\x2d(\p{Alnum}{2,8})+)*))*"
+            +(\x2d[xX](\x2d\p{Alnum}{1,8})*)?)$
+            """.trimMargin("+").toRegex()
+        return langTagIETF.matches(langTagRegex)
+    }
+
+    /**
+     * Try to get a flag emoji form a language code
+     * or two letters country code (ISO 3166-1-alfa-2)
+    */
     fun getFlagFromIso(inp: String?): String? {
         if (inp.isNullOrBlank() || inp.length < 2) return null
 
-        try {
-            val ret = getFlagFromIsoShort(flags[inp])
-                ?: getFlagFromIsoShort(inp.uppercase()) ?: return null
+        // 2 times a symbol between regional indicator "[A]" and "[Z]"
+        val unicodeFlagRegex = Regex("[\uD83C\uDDE6-\uD83C\uDDFF]{2}")
+        // language tags (en-US, es-419, pt-BR, zh-hant-TW) that includes country
+        val countryRegex = Regex("(?<=[-_])(?<country>\\p{Alnum}{2,3})$", IGNORE_CASE)
 
-            return if (flagRegex.matches(ret)) {
-                ret
-            } else {
-                null
-            }
-        } catch (e: Exception) {
-            logError(e)
-            return null
-        }
+        val country = countryRegex.find(inp)?.value
+
+        val flagEmoji =
+            getFlagFromCountry2Letters(lang2country[inp.lowercase()]) ?:
+            getFlagFromCountry2Letters(country?.uppercase()) ?:
+            getFlagFromCountry2Letters(inp.uppercase()) ?:
+            getFlagFromCountry2Letters(lang2country[country?.lowercase()]) ?: ""
+
+        if (inp.equals("qt", ignoreCase = true))
+            return "\uD83E\uDD8D" // "mmmm... monke" -> gorilla [🦍]
+        if (flagEmoji.matches(unicodeFlagRegex))
+            return flagEmoji
+        return null
     }
 
-    private fun getFlagFromIsoShort(flagAscii: String?): String? {
-        if (flagAscii.isNullOrBlank() || flagAscii.length < 2) return null
-        return try {
-            val firstChar: Int = Character.codePointAt(flagAscii, 0) + offset
-            val secondChar: Int = Character.codePointAt(flagAscii, 1) + offset
-
-            (String(Character.toChars(firstChar)) + String(Character.toChars(secondChar)))
-        } catch (e: Exception) {
-            logError(e)
-            null
-        }
+    /**
+     * Get a flag emoji next to the language name
+     * @param languageCode IETF BCP 47, ISO 639-1, ISO 639-2B/T, ISO 639-3, OpenSubtitles
+     * @param localizedTo IETF BCP 47 tag to localize the language name to. Default: app current language
+    */
+    @Prerelease
+    fun getNameNextToFlagEmoji(languageCode: String?, localizedTo: String? = null): String? {
+        return getLanguageDataFromCode(languageCode)?.nameNextToFlagEmoji(localizedTo)
     }
 
-    private val flags = mapOf(
+    // 2 letters country code (ISO 3166-1-alfa-2) -> flag emoji
+    private fun getFlagFromCountry2Letters(countryLetters: String?): String? {
+        if (countryLetters.isNullOrBlank() || countryLetters.length != 2) return null
+
+        val asciiOffset = 0x41    // uppercase "A"
+        val flagOffset = 0x1F1E6  // regional indicator "[A]"
+        val offset = flagOffset - asciiOffset
+
+        val firstChar: Int = Character.codePointAt(countryLetters, 0) + offset
+        val secondChar: Int = Character.codePointAt(countryLetters, 1) + offset
+
+        return String(Character.toChars(firstChar)) + String(Character.toChars(secondChar))
+    }
+
+    // when (langTag = country) or (langTag contains country)
+    // as in:
+    //   "es" to "ES"
+    //   "pt" to "PT"
+    //   "fr" to "FR"
+    //   "en-US" to "US"
+    //   "pt-BR" to "BR"
+    //   "zh-hant-TW" to "TW"
+    // add to this list is useless as getFlagFromIso() already
+    // handles it.
+    private val lang2country = mapOf(
+        "419" to "ES", // (?_?) Latin America Spanish -> ES or a L.A. country?
+        "aa" to "ET",
         "af" to "ZA",
         "agq" to "CM",
         "ajp" to "SY",
         "ak" to "GH",
         "am" to "ET",
+        "an" to "ES",
+        "apc" to "SY",
         "ar" to "AE",
+        "arg" to "ES",
         "ars" to "SA",
         "as" to "IN",
         "asa" to "TZ",
-        "az" to "AZ",
+        "av" to "RU", // (?_?) Avaric -> RU
+        "ay" to "BO", // (?_?) Aymara -> BO
+        "azb" to "AZ",
         "bas" to "CM",
         "be" to "BY",
         "bem" to "ZM",
         "bez" to "IT",
-        "bg" to "BG",
         "bm" to "ML",
         "bn" to "BD",
         "bo" to "CN",
@@ -174,27 +315,33 @@ object SubtitleHelper {
         "ca" to "ES",
         "cgg" to "UG",
         "chr" to "US",
+        "cnr" to "ME",
         "cs" to "CZ",
         "cy" to "GB",
         "da" to "DK",
         "dav" to "KE",
-        "de" to "DE",
         "dje" to "NE",
         "dua" to "CM",
         "dyo" to "SN",
+        "dz" to "BT",
+        "ea" to "ES",
         "ebu" to "KE",
         "ee" to "GH",
-        "en" to "GB",
         "el" to "GR",
-        "es" to "ES",
+        "en" to "GB",
         "et" to "EE",
         "eu" to "ES",
         "ewo" to "CM",
+        "ex" to "ES",
+        "ext" to "ES",
         "fa" to "IR",
+        "ff" to "CN",
         "fil" to "PH",
-        "fr" to "FR",
+        "fj" to "FJ",
         "ga" to "IE",
+        "gd" to "GB",
         "gl" to "ES",
+        "gn" to "PY", // (?_?) Guarani -> PY
         "gsw" to "CH",
         "gu" to "IN",
         "guz" to "KE",
@@ -203,28 +350,24 @@ object SubtitleHelper {
         "haw" to "US",
         "he" to "IL",
         "hi" to "IN",
-        "ff" to "CN",
-        "fi" to "FI",
-        "fo" to "FO",
-        "hr" to "HR",
-        "hu" to "HU",
         "hy" to "AM",
-        "id" to "ID",
         "ig" to "NG",
         "ii" to "CN",
-        "is" to "IS",
-        "it" to "IT",
+        "in" to "ID", // "in" deprecate, use "id" instead. Keeping for exiting subtitles
         "ita" to "IT",
+        "iw" to "IL", // "iw" deprecate, use "he" instead. Keeping for exiting subtitles
         "ja" to "JP",
         "jmc" to "TZ",
+        "jv" to "ID",
+        "jvn" to "ID",
         "ka" to "GE",
         "kab" to "DZ",
-        "ki" to "KE",
         "kam" to "KE",
-        "mer" to "KE",
         "kde" to "TZ",
         "kea" to "CV",
+        "kg" to "CD", // (?_?) Kongo -> CD or CG or AO
         "khq" to "ML",
+        "ki" to "KE",
         "kk" to "KZ",
         "kl" to "GL",
         "kln" to "KE",
@@ -232,288 +375,305 @@ object SubtitleHelper {
         "kn" to "IN",
         "ko" to "KR",
         "kok" to "IN",
+        "kr" to "TD", // (?_?) Kanuri -> TD or NE
+        "ks" to "IN", // (?_?) Kashmiri -> IN or PK
         "ksb" to "TZ",
         "ksf" to "CM",
+        "ku" to "IQ",
         "kw" to "GB",
+        "ky" to "KG",
+        "la" to "IT",
         "lag" to "TZ",
+        "lat" to "IT",
+        "lat" to "LV",
+        "lb" to "LU",
         "lg" to "UG",
         "ln" to "CG",
-        "lt" to "LT",
+        "lo" to "LA",
+        "ltz" to "LU",
         "lu" to "CD",
-        "lv" to "LV",
-        "lat" to "LV",
         "luo" to "KE",
         "luy" to "KE",
+        "ma" to "IN",
         "mas" to "TZ",
+        "mer" to "KE",
         "mfe" to "MU",
-        "mg" to "MG",
         "mgh" to "MZ",
         "ml" to "IN",
-        "mk" to "MK",
+        "mni" to "IN",
         "mr" to "IN",
         "ms" to "MY",
-        "mt" to "MT",
         "mua" to "CM",
         "my" to "MM",
         "naq" to "NA",
         "nb" to "NO",
-        "no" to "NO",
-        "nn" to "NO",
         "nd" to "ZW",
         "ne" to "NP",
-        "nl" to "NL",
         "nmg" to "CM",
+        "nn" to "NO",
+        "nr" to "ZA", // (?_?) Southern Ndebele -> ZA or ZW
         "nus" to "SD",
+        "nv" to "US",
+        "ny" to "MW", // (?_?) Nyanja -> MW
         "nyn" to "UG",
+        "oc" to "ES",
+        "oci" to "ES",
         "om" to "ET",
         "or" to "IN",
+        "pa" to "IN",
         "pa" to "PK",
-        "pl" to "PL",
+        "pan" to "IN",
+        "pb" to "BR",
+        "pm" to "MZ",
+        "por" to "PT",
+        "pr" to "AF",
+        "prs" to "AF",
         "ps" to "AF",
-        "pt" to "PT",
-        "pt-pt" to "PT",
-        "pt-br" to "BR",
+        "qu" to "PE", // (?_?) Quechua -> PE or EC or BO or CO or CL or AR
+        "que" to "PE", // (?_?) Quechua -> PE or EC or BO or CO or CL or AR
         "rm" to "CH",
         "rn" to "BI",
-        "ro" to "RO",
-        "ru" to "RU",
-        "rw" to "RW",
         "rof" to "TZ",
         "rwk" to "TZ",
+        "sa" to "IN",
+        "san" to "IN",
         "saq" to "KE",
+        "sat" to "IN",
         "sbp" to "TZ",
+        "sd" to "PK", // (?_?) Sindhi -> PK or IN
+        "sdn" to "PK", // (?_?) Sindhi -> PK or IN
+        "se" to "NO",
         "seh" to "MZ",
         "ses" to "ML",
         "sg" to "CF",
         "shi" to "MA",
         "si" to "LK",
-        "sk" to "SK",
         "sl" to "SI",
+        "sm" to "WS",
+        "smo" to "WS",
         "sn" to "ZW",
-        "so" to "SO",
+        "sp" to "ES",
         "sq" to "AL",
         "sr" to "RS",
+        "st" to "LS", // (?_?) Southern Sotho -> LS or ZA
+        "su" to "ID",
         "sv" to "SE",
         "sw" to "TZ",
         "swc" to "CD",
         "ta" to "IN",
+        "tat" to "RU",
+        "tdt" to "TL",
         "te" to "IN",
         "teo" to "UG",
-        "th" to "TH",
+        "tg" to "TJ",
+        "tgk" to "TJ",
         "ti" to "ET",
-        "to" to "TO",
-        "tr" to "TR",
+        "tk" to "TM",
+        "tl" to "PH",
+        "tm-td" to "TL", // (?_?) Tetun -> TL
+        "tn" to "ZA", // (?_?) Tswana -> ZA or BW
+        "ts" to "ZA",
+        "tso" to "ZA",
+        "tt" to "RU",
+        "tuk" to "TM",
         "twq" to "NE",
         "tzm" to "MA",
         "uk" to "UA",
         "ur" to "PK",
-        "uz" to "UZ",
         "vai" to "LR",
         "vi" to "VN",
         "vun" to "TZ",
+        "wo" to "SN",
+        "xh" to "ZA",
+        "xho" to "ZA",
         "xog" to "UG",
         "yav" to "CM",
         "yo" to "NG",
+        "yue" to "CN",
+        "za" to "CN",
+        "zh-hans" to "CN", // (?_?) Chinese (simplified) -> CN ?
+        "zh-hant" to "TW", // (?_?) Chinese (traditional) -> CN or TW or other ?
         "zh" to "CN",
+        "zha" to "CN",
         "zu" to "ZA",
-        "tl" to "PH",
     )
 
     val languages = listOf(
-        Language639("Abkhaz", "аҧсуа бызшәа, аҧсшәа", "ab", "abk", "abk", "abk", "abks"),
-        Language639("Afar", "Afaraf", "aa", "aar", "aar", "aar", "aars"),
-        Language639("Afrikaans", "Afrikaans", "af", "afr", "afr", "afr", "afrs"),
-        Language639("Akan", "Akan", "ak", "aka", "aka", "aka", ""),
-        Language639("Albanian", "Shqip", "sq", "sqi", "", "sqi", ""),
-        Language639("Amharic", "አማርኛ", "am", "amh", "amh", "amh", ""),
-        Language639("Arabic", "العربية", "ar", "ara", "ara", "ara", ""),
-        Language639("Aragonese", "aragonés", "an", "arg", "arg", "arg", ""),
-        Language639("Armenian", "Հայերեն", "hy", "hye", "", "hye", ""),
-        Language639("Assamese", "অসমীয়া", "as", "asm", "asm", "asm", ""),
-        Language639("Avaric", "авар мацӀ, магӀарул мацӀ", "av", "ava", "ava", "ava", ""),
-        Language639("Avestan", "avesta", "ae", "ave", "ave", "ave", ""),
-        Language639("Aymara", "aymar aru", "ay", "aym", "aym", "aym", ""),
-        Language639("Azerbaijani", "azərbaycan dili", "az", "aze", "aze", "aze", ""),
-        Language639("Bambara", "bamanankan", "bm", "bam", "bam", "bam", ""),
-        Language639("Bashkir", "башҡорт теле", "ba", "bak", "bak", "bak", ""),
-        Language639("Basque", "euskara, euskera", "eu", "eus", "", "eus", ""),
-        Language639("Belarusian", "беларуская мова", "be", "bel", "bel", "bel", ""),
-        Language639("Bengali", "বাংলা", "bn", "ben", "ben", "ben", ""),
-        Language639("Bihari", "भोजपुरी", "bh", "bih", "bih", "", ""),
-        Language639("Bislama", "Bislama", "bi", "bis", "bis", "bis", ""),
-        Language639("Bosnian", "bosanski jezik", "bs", "bos", "bos", "bos", "boss"),
-        Language639("Breton", "brezhoneg", "br", "bre", "bre", "bre", ""),
-        Language639("Bulgarian", "български език", "bg", "bul", "bul", "bul", "buls"),
-        Language639("Burmese", "ဗမာစာ", "my", "mya", "", "mya", ""),
-        Language639("Catalan", "català", "ca", "cat", "cat", "cat", ""),
-        Language639("Chamorro", "Chamoru", "ch", "cha", "cha", "cha", ""),
-        Language639("Chechen", "нохчийн мотт", "ce", "che", "che", "che", ""),
-        Language639("Chichewa", "chiCheŵa, chinyanja", "ny", "nya", "nya", "nya", ""),
-        Language639("Chinese", "中文 (Zhōngwén), 汉语, 漢語", "zh", "zho", "", "zho", ""),
-        Language639("Chuvash", "чӑваш чӗлхи", "cv", "chv", "chv", "chv", ""),
-        Language639("Cornish", "Kernewek", "kw", "cor", "cor", "cor", ""),
-        Language639("Corsican", "corsu, lingua corsa", "co", "cos", "cos", "cos", ""),
-        Language639("Cree", "ᓀᐦᐃᔭᐍᐏᐣ", "cr", "cre", "cre", "cre", ""),
-        Language639("Croatian", "hrvatski jezik", "hr", "hrv", "hrv", "hrv", ""),
-        Language639("Czech", "čeština, český jazyk", "cs", "ces", "", "ces", ""),
-        Language639("Danish", "dansk", "da", "dan", "dan", "dan", ""),
-        Language639("Divehi", "ދިވެހި", "dv", "div", "div", "div", ""),
-        Language639("Dutch", "Nederlands, Vlaams", "nl", "nld", "", "nld", ""),
-        Language639("Dzongkha", "རྫོང་ཁ", "dz", "dzo", "dzo", "dzo", ""),
-        Language639("English", "English", "en", "eng", "eng", "eng", "engs"),
-        Language639("Esperanto", "Esperanto", "eo", "epo", "epo", "epo", ""),
-        Language639("Estonian", "eesti, eesti keel", "et", "est", "est", "est", ""),
-        Language639("Ewe", "Eʋegbe", "ee", "ewe", "ewe", "ewe", ""),
-        Language639("Faroese", "føroyskt", "fo", "fao", "fao", "fao", ""),
-        Language639("Fijian", "vosa Vakaviti", "fj", "fij", "fij", "fij", ""),
-        Language639("Finnish", "suomi, suomen kieli", "fi", "fin", "fin", "fin", ""),
-        Language639("French", "français, langue française", "fr", "fra", "", "fra", "fras"),
-        Language639("Fula", "Fulfulde, Pulaar, Pular", "ff", "ful", "ful", "ful", ""),
-        Language639("Galician", "galego", "gl", "glg", "glg", "glg", ""),
-        Language639("Georgian", "ქართული", "ka", "kat", "", "kat", ""),
-        Language639("German", "Deutsch", "de", "deu", "", "deu", "deus"),
-        Language639("Greek", "ελληνικά", "el", "ell", "", "ell", "ells"),
-        Language639("Guaraní", "Avañe'ẽ", "gn", "grn", "grn", "grn", ""),
-        Language639("Gujarati", "ગુજરાતી", "gu", "guj", "guj", "guj", ""),
-        Language639("Haitian", "Kreyòl ayisyen", "ht", "hat", "hat", "hat", ""),
-        Language639("Hausa", "(Hausa) هَوُسَ", "ha", "hau", "hau", "hau", ""),
-        Language639("Hebrew", "עברית", "he", "heb", "heb", "heb", ""),
-        Language639("Herero", "Otjiherero", "hz", "her", "her", "her", ""),
-        Language639("Hindi", "हिन्दी, हिंदी", "hi", "hin", "hin", "hin", "hins"),
-        Language639("Hiri Motu", "Hiri Motu", "ho", "hmo", "hmo", "hmo", ""),
-        Language639("Hungarian", "magyar", "hu", "hun", "hun", "hun", ""),
-        Language639("Interlingua", "Interlingua", "ia", "ina", "ina", "ina", ""),
-        Language639("Indonesian", "Bahasa Indonesia", "id", "ind", "ind", "ind", ""),
-        Language639(
-            "Interlingue",
-            "Originally called Occidental; then Interlingue after WWII",
-            "ie",
-            "ile",
-            "ile",
-            "ile",
-            ""
-        ),
-        Language639("Irish", "Gaeilge", "ga", "gle", "gle", "gle", ""),
-        Language639("Igbo", "Asụsụ Igbo", "ig", "ibo", "ibo", "ibo", ""),
-        Language639("Inupiaq", "Iñupiaq, Iñupiatun", "ik", "ipk", "ipk", "ipk", ""),
-        Language639("Ido", "Ido", "io", "ido", "ido", "ido", "idos"),
-        Language639("Icelandic", "Íslenska", "is", "isl", "", "isl", ""),
-        Language639("Italian", "italiano", "it", "ita", "ita", "ita", "itas"),
-        Language639("Inuktitut", "ᐃᓄᒃᑎᑐᑦ", "iu", "iku", "iku", "iku", ""),
-        Language639("Japanese", "日本語 (にほんご)", "ja", "jpn", "jpn", "jpn", ""),
-        Language639("Javanese", "ꦧꦱꦗꦮ", "jv", "jav", "jav", "jav", ""),
-        Language639("Kalaallisut", "kalaallisut, kalaallit oqaasii", "kl", "kal", "kal", "kal", ""),
-        Language639("Kannada", "ಕನ್ನಡ", "kn", "kan", "kan", "kan", ""),
-        Language639("Kanuri", "Kanuri", "kr", "kau", "kau", "kau", ""),
-        Language639("Kashmiri", "कश्मीरी, كشميري‎", "ks", "kas", "kas", "kas", ""),
-        Language639("Kazakh", "қазақ тілі", "kk", "kaz", "kaz", "kaz", ""),
-        Language639("Khmer", "ខ្មែរ, ខេមរភាសា, ភាសាខ្មែរ", "km", "khm", "khm", "khm", ""),
-        Language639("Kikuyu", "Gĩkũyũ", "ki", "kik", "kik", "kik", ""),
-        Language639("Kinyarwanda", "Ikinyarwanda", "rw", "kin", "kin", "kin", ""),
-        Language639("Kyrgyz", "Кыргызча, Кыргыз тили", "ky", "kir", "kir", "kir", ""),
-        Language639("Komi", "коми кыв", "kv", "kom", "kom", "kom", ""),
-        Language639("Kongo", "Kikongo", "kg", "kon", "kon", "kon", ""),
-        Language639("Korean", "한국어, 조선어", "ko", "kor", "kor", "kor", ""),
-        Language639("Kurdish", "Kurdî, كوردی‎", "ku", "kur", "kur", "kur", ""),
-        Language639("Kwanyama", "Kuanyama", "kj", "kua", "kua", "kua", ""),
-        Language639("Latin", "latine, lingua latina", "la", "lat", "lat", "lat", "lats"),
-        Language639("Luxembourgish", "Lëtzebuergesch", "lb", "ltz", "ltz", "ltz", ""),
-        Language639("Ganda", "Luganda", "lg", "lug", "lug", "lug", ""),
-        Language639("Limburgish", "Limburgs", "li", "lim", "lim", "lim", ""),
-        Language639("Lingala", "Lingála", "ln", "lin", "lin", "lin", ""),
-        Language639("Lao", "ພາສາລາວ", "lo", "lao", "lao", "lao", ""),
-        Language639("Lithuanian", "lietuvių kalba", "lt", "lit", "lit", "lit", ""),
-        Language639("Luba-Katanga", "Tshiluba", "lu", "lub", "lub", "lub", ""),
-        Language639("Latvian", "latviešu valoda", "lv", "lav", "lav", "lav", ""),
-        Language639("Manx", "Gaelg, Gailck", "gv", "glv", "glv", "glv", ""),
-        Language639("Macedonian", "македонски јазик", "mk", "mkd", "", "mkd", ""),
-        Language639("Malagasy", "fiteny malagasy", "mg", "mlg", "mlg", "mlg", ""),
-        Language639("Malay", "bahasa Melayu, بهاس ملايو‎", "ms", "msa", "", "msa", ""),
-        Language639("Malayalam", "മലയാളം", "ml", "mal", "mal", "mal", ""),
-        Language639("Maltese", "Malti", "mt", "mlt", "mlt", "mlt", ""),
-        Language639("Māori", "te reo Māori", "mi", "mri", "", "mri", ""),
-        Language639("Marathi", "मराठी", "mr", "mar", "mar", "mar", ""),
-        Language639("Marshallese", "Kajin M̧ajeļ", "mh", "mah", "mah", "mah", ""),
-        Language639("Mongolian", "Монгол хэл", "mn", "mon", "mon", "mon", ""),
-        Language639("Nauruan", "Dorerin Naoero", "na", "nau", "nau", "nau", ""),
-        Language639("Navajo", "Diné bizaad", "nv", "nav", "nav", "nav", ""),
-        Language639("Northern Ndebele", "isiNdebele", "nd", "nde", "nde", "nde", ""),
-        Language639("Nepali", "नेपाली", "ne", "nep", "nep", "nep", ""),
-        Language639("Ndonga", "Owambo", "ng", "ndo", "ndo", "ndo", ""),
-        Language639("Norwegian Bokmål", "Norsk bokmål", "nb", "nob", "nob", "nob", ""),
-        Language639("Norwegian Nynorsk", "Norsk nynorsk", "nn", "nno", "nno", "nno", ""),
-        Language639("Norwegian", "Norsk", "no", "nor", "nor", "nor", ""),
-        Language639("Nuosu", "ꆈꌠ꒿ Nuosuhxop", "ii", "iii", "iii", "iii", ""),
-        Language639("Southern Ndebele", "isiNdebele", "nr", "nbl", "nbl", "nbl", ""),
-        Language639("Occitan", "occitan, lenga d'òc", "oc", "oci", "oci", "oci", ""),
-        Language639("Ojibwe", "ᐊᓂᔑᓈᐯᒧᐎᓐ", "oj", "oji", "oji", "oji", ""),
-        Language639("Old Church Slavonic", "ѩзыкъ словѣньскъ", "cu", "chu", "chu", "chu", ""),
-        Language639("Oromo", "Afaan Oromoo", "om", "orm", "orm", "orm", ""),
-        Language639("Oriya", "ଓଡ଼ିଆ", "or", "ori", "ori", "ori", ""),
-        Language639("Ossetian", "ирон æвзаг", "os", "oss", "oss", "oss", ""),
-        Language639("Panjabi", "ਪੰਜਾਬੀ, پنجابی‎", "pa", "pan", "pan", "pan", ""),
-        Language639("Pāli", "पाऴि", "pi", "pli", "pli", "pli", ""),
-        Language639("Persian", "فارسی", "fa", "fas", "", "fas", ""),
-        Language639("Polish", "język polski, polszczyzna", "pl", "pol", "pol", "pol", "pols"),
-        Language639("Pashto", "پښتو", "ps", "pus", "pus", "pus", ""),
-        Language639("Portuguese", "português", "pt-pt", "por", "por", "por", ""),
-        // Addition to support Brazilian Portuguese properly, might break other things
-        Language639("Portuguese (Brazilian)", "português", "pt-br", "por", "por", "por", ""),
-        Language639("Quechua", "Runa Simi, Kichwa", "qu", "que", "que", "que", ""),
-        Language639("Romansh", "rumantsch grischun", "rm", "roh", "roh", "roh", ""),
-        Language639("Kirundi", "Ikirundi", "rn", "run", "run", "run", ""),
-        Language639("Reunion Creole", "Kréol Rénioné", "rc", "rcf", "rcf", "rcf", ""),
-        Language639("Romanian", "limba română", "ro", "ron", "", "ron", ""),
-        Language639("Russian", "Русский", "ru", "rus", "rus", "rus", ""),
-        Language639("Sanskrit", "संस्कृतम्", "sa", "san", "san", "san", ""),
-        Language639("Sardinian", "sardu", "sc", "srd", "srd", "srd", ""),
-        Language639("Sindhi", "सिन्धी, سنڌي، سندھی‎", "sd", "snd", "snd", "snd", ""),
-        Language639("Northern Sami", "Davvisámegiella", "se", "sme", "sme", "sme", ""),
-        Language639("Samoan", "gagana fa'a Samoa", "sm", "smo", "smo", "smo", ""),
-        Language639("Sango", "yângâ tî sängö", "sg", "sag", "sag", "sag", ""),
-        Language639("Serbian", "српски језик", "sr", "srp", "srp", "srp", ""),
-        Language639("Scottish Gaelic", "Gàidhlig", "gd", "gla", "gla", "gla", ""),
-        Language639("Shona", "chiShona", "sn", "sna", "sna", "sna", ""),
-        Language639("Sinhalese", "සිංහල", "si", "sin", "sin", "sin", ""),
-        Language639("Slovak", "slovenčina, slovenský jazyk", "sk", "slk", "", "slk", ""),
-        Language639("Slovene", "slovenski jezik, slovenščina", "sl", "slv", "slv", "slv", ""),
-        Language639("Somali", "Soomaaliga, af Soomaali", "so", "som", "som", "som", ""),
-        Language639("Southern Sotho", "Sesotho", "st", "sot", "sot", "sot", ""),
-        Language639("Spanish", "español", "es", "spa", "spa", "spa", ""),
-        Language639("Sundanese", "Basa Sunda", "su", "sun", "sun", "sun", ""),
-        Language639("Swahili", "Kiswahili", "sw", "swa", "swa", "swa", ""),
-        Language639("Swati", "SiSwati", "ss", "ssw", "ssw", "ssw", ""),
-        Language639("Swedish", "svenska", "sv", "swe", "swe", "swe", ""),
-        Language639("Tamil", "தமிழ்", "ta", "tam", "tam", "tam", ""),
-        Language639("Telugu", "తెలుగు", "te", "tel", "tel", "tel", ""),
-        Language639("Tajik", "тоҷикӣ, toçikī, تاجیکی‎", "tg", "tgk", "tgk", "tgk", ""),
-        Language639("Thai", "ไทย", "th", "tha", "tha", "tha", ""),
-        Language639("Tigrinya", "ትግርኛ", "ti", "tir", "tir", "tir", ""),
-        Language639("Tibetan Standard", "བོད་ཡིག", "bo", "bod", "", "bod", ""),
-        Language639("Turkmen", "Türkmen, Түркмен", "tk", "tuk", "tuk", "tuk", ""),
-        Language639("Tagalog", "Wikang Tagalog", "tl", "tgl", "tgl", "tgl", ""),
-        Language639("Tswana", "Setswana", "tn", "tsn", "tsn", "tsn", ""),
-        Language639("Tonga", "faka Tonga", "to", "ton", "ton", "ton", ""),
-        Language639("Turkish", "Türkçe", "tr", "tur", "tur", "tur", ""),
-        Language639("Tsonga", "Xitsonga", "ts", "tso", "tso", "tso", ""),
-        Language639("Tatar", "татар теле, tatar tele", "tt", "tat", "tat", "tat", ""),
-        Language639("Twi", "Twi", "tw", "twi", "twi", "twi", ""),
-        Language639("Tahitian", "Reo Tahiti", "ty", "tah", "tah", "tah", ""),
-        Language639("Uyghur", "ئۇيغۇرچە‎, Uyghurche", "ug", "uig", "uig", "uig", ""),
-        Language639("Ukrainian", "Українська", "uk", "ukr", "ukr", "ukr", ""),
-        Language639("Urdu", "اردو", "ur", "urd", "urd", "urd", ""),
-        Language639("Uzbek", "Oʻzbek, Ўзбек, أۇزبېك‎", "uz", "uzb", "uzb", "uzb", ""),
-        Language639("Venda", "Tshivenḓa", "ve", "ven", "ven", "ven", ""),
-        Language639("Vietnamese", "Tiếng Việt", "vi", "vie", "vie", "vie", ""),
-        Language639("Volapük", "Volapük", "vo", "vol", "vol", "vol", ""),
-        Language639("Walloon", "walon", "wa", "wln", "wln", "wln", ""),
-        Language639("Welsh", "Cymraeg", "cy", "cym", "", "cym", ""),
-        Language639("Wolof", "Wollof", "wo", "wol", "wol", "wol", ""),
-        Language639("Western Frisian", "Frysk", "fy", "fry", "fry", "fry", ""),
-        Language639("Xhosa", "isiXhosa", "xh", "xho", "xho", "xho", ""),
-        Language639("Yiddish", "ייִדיש", "yi", "yid", "yid", "yid", ""),
-        Language639("Yoruba", "Yorùbá", "yo", "yor", "yor", "yor", ""),
-        Language639("Zhuang", "Saɯ cueŋƅ, Saw cuengh", "za", "zha", "zha", "zha", ""),
-        Language639("Zulu", "isiZulu", "zu", "zul", "zul", "zul", ""),
+        // languageName, nativeName, IETF_tag, ISO_639_1, ISO_639_2_B, ISO_639_3, openSubtitles
+        LanguageMetadata("Afar","Afaraf","aa","aa","aar","aar",""),
+        LanguageMetadata("Afrikaans","Afrikaans","af","af","afr","afr","af"),
+        LanguageMetadata("Akan","Akan","ak","ak","aka","aka",""),
+        LanguageMetadata("Albanian","Shqip","sq","sq","","sqi","sq"),
+        LanguageMetadata("Amharic","አማርኛ","am","am","amh","amh","am"),
+        LanguageMetadata("Arabic","العربية","ar","ar","ara","ara","ar"),
+        LanguageMetadata("Arabic (Levantine)","عربي شامي","apc","","","apc","ar"),
+        LanguageMetadata("Arabic (Najdi)","عربي شامي","ars","","","ars","ar"),
+        LanguageMetadata("Aragonese","aragonés","an","an","arg","arg","an"),
+        LanguageMetadata("Armenian","Հայերեն","hy","hy","","hye","hy"),
+        LanguageMetadata("Assamese","অসমীয়া","as","as","asm","asm","as"),
+        LanguageMetadata("Avaric","авар мацӀ, магӀарул мацӀ","av","av","ava","ava",""),
+        LanguageMetadata("Aymara","aymar aru","ay","ay","aym","aym",""),
+        LanguageMetadata("Azerbaijani","Azərbaycan","az","az","aze","aze","az-az"),
+        LanguageMetadata("Azerbaijani (South)","Azərbaycan (Cənubi)","azb","","","azb","az-zb"),
+        LanguageMetadata("Bambara","bamanankan","bm","bm","bam","bam",""),
+        LanguageMetadata("Basque","euskara, euskera","eu","eu","","eus","eu"),
+        LanguageMetadata("Belarusian","беларуская мова","be","be","bel","bel","be"),
+        LanguageMetadata("Bengali","বাংলা","bn","bn","ben","ben","bn"),
+        LanguageMetadata("Bosnian","bosanski jezik","bs","bs","bos","bos","bs"),
+        LanguageMetadata("Breton","brezhoneg","br","br","bre","bre","br"),
+        LanguageMetadata("Bulgarian","български език","bg","bg","bul","bul","bg"),
+        LanguageMetadata("Burmese","ဗမာစာ","my","my","","mya","my"),
+        LanguageMetadata("Catalan","català","ca","ca","cat","cat","ca"),
+        LanguageMetadata("Chichewa","chiCheŵa, chinyanja","ny","ny","nya","nya",""),
+        LanguageMetadata("Chinese","中文, 汉语, 漢語","zh","zh","chi","zho","ze"),
+        LanguageMetadata("Chinese (Cantonese)","廣東話, 广东话","yue","","","yue","zh-ca"),
+        LanguageMetadata("Chinese (simplified)","汉语","zh-hans","","","","zh-cn"),
+        LanguageMetadata("Chinese (Taiwan)","正體中文(臺灣)","zh-hant-tw","","","","zh-tw"),
+        LanguageMetadata("Chinese (traditional)","漢語","zh-hant","","","","zh-tw"),
+        LanguageMetadata("Croatian","hrvatski jezik","hr","hr","hrv","hrv","hr"),
+        LanguageMetadata("Czech","čeština, český jazyk","cs","cs","","ces","cs"),
+        LanguageMetadata("Danish","dansk","da","da","dan","dan","da"),
+        LanguageMetadata("Dari","دری","prs","","","prs","pr"),
+        LanguageMetadata("Dutch","Nederlands, Vlaams","nl","nl","","nld","nl"),
+        LanguageMetadata("Dzongkha","རྫོང་ཁ","dz","dz","dzo","dzo",""),
+        LanguageMetadata("English","English","en","en","eng","eng","en"),
+        LanguageMetadata("Esperanto","Esperanto","eo","eo","epo","epo","eo"),
+        LanguageMetadata("Estonian","eesti, eesti keel","et","et","est","est","et"),
+        LanguageMetadata("Ewe","Eʋegbe","ee","ee","ewe","ewe",""),
+        LanguageMetadata("Extremaduran","Estremeñu","ext","","","ext","ex"),
+        LanguageMetadata("Faroese","føroyskt","fo","fo","fao","fao",""),
+        LanguageMetadata("Fijian","vosa Vakaviti","fj","fj","fij","fij",""),
+        LanguageMetadata("Filipino","Wikang Filipino","fil","","fil","fil",""),
+        LanguageMetadata("Finnish","suomi, suomen kieli","fi","fi","fin","fin","fi"),
+        LanguageMetadata("French","Français","fr","fr","","fra","fr"),
+        LanguageMetadata("Fula","Fulfulde, Pulaar, Pular","ff","ff","ful","ful",""),
+        LanguageMetadata("Galician","Galego","gl","gl","glg","glg","gl"),
+        LanguageMetadata("Ganda","Luganda","lg","lg","lug","lug",""),
+        LanguageMetadata("Georgian","ქართული","ka","ka","","kat","ka"),
+        LanguageMetadata("German","Deutsch","de","de","","deu","de"),
+        LanguageMetadata("Greek","ελληνικά","el","el","","ell","el"),
+        LanguageMetadata("Guarani","Avañe'ẽ","gn","gn","grn","gug",""),
+        LanguageMetadata("Gujarati","ગુજરાતી","gu","gu","guj","guj",""),
+        LanguageMetadata("Haitian","Kreyòl ayisyen","ht","ht","hat","hat",""),
+        LanguageMetadata("Hausa","(Hausa) هَوُسَ","ha","ha","hau","hau",""),
+        LanguageMetadata("Hebrew","עברית","he","he","heb","heb","he"),
+        LanguageMetadata("Hindi","हिन्दी, हिंदी","hi","hi","hin","hin","hi"),
+        LanguageMetadata("Hungarian","Magyar","hu","hu","hun","hun","hu"),
+        LanguageMetadata("Icelandic","Íslenska","is","is","","isl","is"),
+        LanguageMetadata("Ido","Ido","io","io","ido","ido",""),
+        LanguageMetadata("Igbo","Asụsụ Igbo","ig","ig","ibo","ibo","ig"),
+        LanguageMetadata("Indonesian","Bahasa Indonesia","id","id","ind","ind","id"),
+        LanguageMetadata("Interlingua","Interlingua","ia","ia","ina","ina","ia"),
+        LanguageMetadata("Interlingue","Interlingue (originally Occidental)","ie","ie","ile","ile",""),
+        LanguageMetadata("Irish","Gaeilge","ga","ga","gle","gle","ga"),
+        LanguageMetadata("Italian","italiano","it","it","ita","ita","it"),
+        LanguageMetadata("Japanese","日本語 (にほんご)","ja","ja","jpn","jpn","ja"),
+        LanguageMetadata("Javanese","ꦧꦱꦗꦮ","jv","jv","jav","jvn",""),
+        LanguageMetadata("Kalaallisut","kalaallisut, kalaallit oqaasii","kl","kl","kal","kal",""),
+        LanguageMetadata("Kannada","ಕನ್ನಡ","kn","kn","kan","kan","kn"),
+        LanguageMetadata("Kanuri","Kanuri","kr","kr","kau","kau",""),
+        LanguageMetadata("Kashmiri","कश्मीरी, كشميري‎","ks","ks","kas","kas",""),
+        LanguageMetadata("Kazakh","қазақ тілі","kk","kk","kaz","kaz","kk"),
+        LanguageMetadata("Khmer","ខ្មែរ, ខេមរភាសា, ភាសាខ្មែរ","km","km","khm","khm","km"),
+        LanguageMetadata("Kikuyu","Gĩkũyũ","ki","ki","kik","kik",""),
+        LanguageMetadata("Kinyarwanda","Ikinyarwanda","rw","rw","kin","kin",""),
+        LanguageMetadata("Kirundi","Ikirundi","rn","rn","run","run",""),
+        LanguageMetadata("Kongo","Kikongo","kg","kg","kon","kon",""),
+        LanguageMetadata("Korean","한국어, 조선어","ko","ko","kor","kor","ko"),
+        LanguageMetadata("Kurdish","Kurdî, كوردی‎","ku","ku","kur","kur","ku"),
+        LanguageMetadata("Kyrgyz","Кыргызча, Кыргыз тили","ky","ky","kir","kir",""),
+        LanguageMetadata("Lao","ພາສາລາວ","lo","lo","lao","lao",""),
+        LanguageMetadata("Latin","Latine","la","la","lat","lat",""),
+        LanguageMetadata("Latvian","latviešu valoda","lv","lv","lav","lav","lv"),
+        LanguageMetadata("Lingala","Lingála","ln","ln","lin","lin",""),
+        LanguageMetadata("Lithuanian","lietuvių kalba","lt","lt","lit","lit","lt"),
+        LanguageMetadata("Luba-Katanga","Tshiluba","lu","lu","lub","lub",""),
+        LanguageMetadata("Luxembourgish","Lëtzebuergesch","lb","lb","ltz","ltz","lb"),
+        LanguageMetadata("Macedonian","македонски","mk","mk","","mkd","mk"),
+        LanguageMetadata("Malagasy","fiteny malagasy","mg","mg","mlg","mlg",""),
+        LanguageMetadata("Malay","Bahasa Melayu, بهاس ملايو‎","ms","ms","","msa","ms"),
+        LanguageMetadata("Malayalam","മലയാളം","ml","ml","mal","mal","ml"),
+        LanguageMetadata("Maltese","Malti","mt","mt","mlt","mlt",""),
+        LanguageMetadata("Manx","Gaelg, Gailck","gv","gv","glv","glv",""),
+        LanguageMetadata("Marathi","मराठी","mr","mr","mar","mar","mr"),
+        LanguageMetadata("Marshallese","Kajin M̧ajeļ","mh","mh","mah","mah",""),
+        LanguageMetadata("Meitei","ꯃꯅꯤꯄꯨꯔꯤ, মণিপুরী","mni","","mni","mni","ma"),
+        LanguageMetadata("Mongolian","Монгол хэл","mn","mn","mon","mon","mn"),
+        LanguageMetadata("Montenegrin","crnogorski, црногорски","cnr","","cnr","cnr","me"),
+        LanguageMetadata("Navajo","Diné bizaad","nv","nv","nav","nav","nv"),
+        LanguageMetadata("Nepali","नेपाली","ne","ne","nep","nep","ne"),
+        LanguageMetadata("Northern Ndebele","isiNdebele","nd","nd","nde","nde",""),
+        LanguageMetadata("Northern Sami","Davvisámegiella","se","se","sme","sme","se"),
+        LanguageMetadata("Norwegian","Norsk","no","no","nor","nor","no"),
+        LanguageMetadata("Norwegian Bokmål","Norsk bokmål","nb","nb","nob","nob",""),
+        LanguageMetadata("Norwegian Nynorsk","Norsk nynorsk","nn","nn","nno","nno",""),
+        LanguageMetadata("Nuosu","ꆈꌠ꒿ Nuosuhxop","ii","ii","iii","iii",""),
+        LanguageMetadata("Occitan","occitan, lenga d'òc","oc","oc","oci","oci","oc"),
+        LanguageMetadata("Oriya","ଓଡ଼ିଆ","or","or","ori","ori","or"),
+        LanguageMetadata("Oromo","Afaan Oromoo","om","om","orm","orm",""),
+        LanguageMetadata("Panjabi","ਪੰਜਾਬੀ, پنجابی‎","pa","pa","pan","pan",""),
+        LanguageMetadata("Pashto","پښتو","ps","ps","pus","pus","ps"),
+        LanguageMetadata("Persian (Farsi)","فارسی","fa","fa","","fas","fa"),
+        LanguageMetadata("Polish","Polski, polszczyzna","pl","pl","pol","pol","pl"),
+        LanguageMetadata("Portuguese","Português","pt","pt","por","por","pt-pt"),
+        LanguageMetadata("Portuguese (Brazil)","Português (Brasil)","pt-br","","","","pt-br"),
+        LanguageMetadata("Portuguese (Mozambique)","Português (Moçambique)","pt-mz","","","","pm"),
+        LanguageMetadata("Quechua","Runa Simi, Kichwa","qu","qu","que","que",""),
+        LanguageMetadata("Romanian","Română","ro","ro","","ron","ro"),
+        LanguageMetadata("Romansh","rumantsch grischun","rm","rm","roh","roh",""),
+        LanguageMetadata("Russian","Русский","ru","ru","rus","rus","ru"),
+        LanguageMetadata("Samoan","gagana fa'a Samoa","sm","sm","smo","smo",""),
+        LanguageMetadata("Sango","yângâ tî sängö","sg","sg","sag","sag",""),
+        LanguageMetadata("Sanskrit","संस्कृतम्","sa","sa","san","san",""),
+        LanguageMetadata("Santali","ᱥᱟᱱᱛᱟᱲᱤ","sat","","","sat","sx"),
+        LanguageMetadata("Scottish Gaelic","Gàidhlig","gd","gd","gla","gla","gd"),
+        LanguageMetadata("Serbian","српски језик","sr","sr","srp","srp","sr"),
+        LanguageMetadata("Shona","chiShona","sn","sn","sna","sna",""),
+        LanguageMetadata("Sindhi","सिन्धी, سنڌي، سندھی‎","sd","sd","snd","snd","sd"),
+        LanguageMetadata("Sinhala","සිංහල","si","si","sin","sin","si"),
+        LanguageMetadata("Slovak","slovenčina, slovenský jazyk","sk","sk","","slk","sk"),
+        LanguageMetadata("Slovenian","slovenski jezik, slovenščina","sl","sl","slv","slv","sl"),
+        LanguageMetadata("Somali","Soomaaliga, af Soomaali","so","so","som","som","so"),
+        LanguageMetadata("Sotho","Sesotho","st","st","sot","sot",""),
+        LanguageMetadata("Southern Ndebele","isiNdebele","nr","nr","nbl","nbl",""),
+        LanguageMetadata("Spanish","Español","es","es","spa","spa","es"),
+        LanguageMetadata("Spanish (Europe)","Español (Europa)","es-es","","","","sp"),
+        LanguageMetadata("Spanish (Latin America)","Español (Latinoamérica)","es-419","","","","ea"),
+        LanguageMetadata("Sundanese","Basa Sunda","su","su","sun","sun",""),
+        LanguageMetadata("Swahili","Kiswahili","sw","sw","swa","swa","sw"),
+        LanguageMetadata("Swedish","Svenska","sv","sv","swe","swe","sv"),
+        LanguageMetadata("Tagalog","Wikang Tagalog, ᜆᜄᜎᜓᜄ᜔","tl","tl","","tlg","tl"),
+        LanguageMetadata("Tajik","тоҷикӣ, toçikī, تاجیکی‎","tg","tg","tgk","tgk",""),
+        LanguageMetadata("Tamil","தமிழ்","ta","ta","tam","tam","ta"),
+        LanguageMetadata("Tatar","татар теле, tatar tele","tt","tt","tat","tat","tt"),
+        LanguageMetadata("Telugu","తెలుగు","te","te","tel","tel","te"),
+        LanguageMetadata("Tetum","Tetun","tdt","","","tdt","tm-td"),
+        LanguageMetadata("Thai","ไทย","th","th","tha","tha","th"),
+        LanguageMetadata("Tibetan Standard","བོད་ཡིག","bo","bo","","bod",""),
+        LanguageMetadata("Tigrinya","ትግርኛ","ti","ti","tir","tir",""),
+        LanguageMetadata("Toki Pona","toki pona","tok","","","tok","tp"),
+        LanguageMetadata("Tonga","faka Tonga","to","to","ton","ton",""),
+        LanguageMetadata("Tsonga","Xitsonga","ts","ts","tso","tso",""),
+        LanguageMetadata("Tswana","Setswana","tn","tn","tsn","tsn",""),
+        LanguageMetadata("Turkish","Türkçe","tr","tr","tur","tur","tr"),
+        LanguageMetadata("Turkmen","Türkmen, Түркмен","tk","tk","tuk","tuk","tk"),
+        LanguageMetadata("Ukrainian","Українська","uk","uk","ukr","ukr","uk"),
+        LanguageMetadata("Urdu","اردو","ur","ur","urd","urd","ur"),
+        LanguageMetadata("Uzbek","Oʻzbek, Ўзбек, أۇزبېك‎","uz","uz","uzb","uzb","uz"),
+        LanguageMetadata("Vietnamese","Tiếng Việt","vi","vi","vie","vie","vi"),
+        LanguageMetadata("Welsh","Cymraeg","cy","cy","","cym","cy"),
+        LanguageMetadata("Wolof","Wollof","wo","wo","wol","wol",""),
+        LanguageMetadata("Xhosa","isiXhosa","xh","xh","xho","xho",""),
+        LanguageMetadata("Yoruba","Yorùbá","yo","yo","yor","yor",""),
+        LanguageMetadata("Zhuang","Saɯ cueŋƅ, Saw cuengh","za","za","zha","zha",""),
+        LanguageMetadata("Zulu","isiZulu","zu","zu","zul","zul",""),
     )
+
+    val indexMapLanguageName = languages.withIndex().associate { (i, lang) -> lang.languageName.lowercase() to i}
+    val indexMapNativeName = languages.withIndex().associate { (i, lang) -> lang.nativeName.lowercase() to i}
+    val indexMapIETF_tag = languages.withIndex().associate { (i, lang) -> lang.IETF_tag.lowercase() to i}
+    val indexMapISO_639_1 = languages.withIndex().associate { (i, lang) -> lang.ISO_639_1.lowercase() to i}
+    val indexMapISO_639_2_B = languages.withIndex().associate { (i, lang) -> lang.ISO_639_2_B.lowercase() to i}
+    val indexMapISO_639_3 = languages.withIndex().associate { (i, lang) -> lang.ISO_639_3.lowercase() to i}
+    val indexMapOpenSubtitles = languages.withIndex().associate { (i, lang) -> lang.openSubtitles.lowercase() to i}
 }

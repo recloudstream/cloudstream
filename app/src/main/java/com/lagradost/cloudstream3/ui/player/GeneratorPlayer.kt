@@ -1681,7 +1681,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         sortSubs(subtitles).firstOrNull { sub ->
             val t = sub.name.replace(Regex("[^A-Za-z]"), " ").trim()
-            (settings) && t == lang || t.startsWith(lang) || t == langCode
+            settings && t == lang || t.startsWith(lang) || t == langCode
         }?.let { sub ->
             return sub
         }
