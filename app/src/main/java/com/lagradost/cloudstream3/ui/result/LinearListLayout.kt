@@ -8,6 +8,8 @@ import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.FocusDirection
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 
 const val FOCUS_SELF = View.NO_ID - 1
 const val FOCUS_INHERIT = FOCUS_SELF - 1
@@ -106,10 +108,16 @@ open class LinearListLayout(context: Context?) :
 
     override fun onInterceptFocusSearch(focused: View, direction: Int): View? {
         val dir = if (orientation == HORIZONTAL) {
-            if (direction == View.FOCUS_DOWN) getNextDirection(focused, FocusDirection.Down)?.let { newFocus ->
+            if (direction == View.FOCUS_DOWN) getNextDirection(
+                focused,
+                FocusDirection.Down
+            )?.let { newFocus ->
                 return newFocus
             }
-            if (direction == View.FOCUS_UP) getNextDirection(focused, FocusDirection.Up)?.let { newFocus ->
+            if (direction == View.FOCUS_UP) getNextDirection(
+                focused,
+                FocusDirection.Up
+            )?.let { newFocus ->
                 return newFocus
             }
 
@@ -129,10 +137,16 @@ open class LinearListLayout(context: Context?) :
             }
             ret
         } else {
-            if (direction == View.FOCUS_RIGHT) getNextDirection(focused, FocusDirection.End)?.let { newFocus ->
+            if (direction == View.FOCUS_RIGHT) getNextDirection(
+                focused,
+                FocusDirection.End
+            )?.let { newFocus ->
                 return newFocus
             }
-            if (direction == View.FOCUS_LEFT) getNextDirection(focused, FocusDirection.Start)?.let { newFocus ->
+            if (direction == View.FOCUS_LEFT) getNextDirection(
+                focused,
+                FocusDirection.Start
+            )?.let { newFocus ->
                 return newFocus
             }
 
@@ -151,9 +165,15 @@ open class LinearListLayout(context: Context?) :
 
             // if out of bounds then refocus as specified
             return if (lookFor >= itemCount) {
-                getNextDirection(focused, if(orientation == HORIZONTAL) FocusDirection.End else FocusDirection.Down)
+                getNextDirection(
+                    focused,
+                    if (orientation == HORIZONTAL) FocusDirection.End else FocusDirection.Down
+                )
             } else if (lookFor < 0) {
-                getNextDirection(focused, if(orientation == HORIZONTAL) FocusDirection.Start else FocusDirection.Up)
+                getNextDirection(
+                    focused,
+                    if (orientation == HORIZONTAL) FocusDirection.Start else FocusDirection.Up
+                )
             } else {
                 getViewFromPos(lookFor) ?: run {
                     scrollToPosition(lookFor)
@@ -166,6 +186,38 @@ open class LinearListLayout(context: Context?) :
         }
     }
 
+    override fun requestChildRectangleOnScreen(
+        parent: RecyclerView,
+        child: View,
+        rect: android.graphics.Rect,
+        immediate: Boolean,
+        focusedChildVisible: Boolean
+    ): Boolean {
+        if (isLayout(TV) && orientation == HORIZONTAL) {
+            val dx = when {
+                isLayoutRTL -> getDecoratedRight(child) - (parent.width - parent.paddingRight)
+                else -> getDecoratedLeft(child) - parent.paddingLeft
+            }
+            return if (dx != 0) {
+                when {
+                    immediate -> parent.scrollBy(dx, 0)
+                    else -> parent.smoothScrollBy(dx, 0)
+                }
+                true
+            } else {
+                false
+            }
+        } else {
+            return super.requestChildRectangleOnScreen(
+                parent,
+                child,
+                rect,
+                immediate,
+                focusedChildVisible
+            )
+        }
+    }
+    
     /*override fun onRequestChildFocus(
         parent: RecyclerView,
         state: RecyclerView.State,
