@@ -1036,9 +1036,24 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     val holdhandler = Handler(Looper.getMainLooper())
     var hasTriggeredSpeedUp = false
     val holdRunnable = Runnable {
+        if (isShowing) {
+            onClickChange()
+        }
         player.setPlaybackSpeed(2.0f)
-        playerBinding?.playerSpeedupButton?.isGone = false
+        showOrHideSpeedUp(true)
         hasTriggeredSpeedUp = true
+    }
+
+    private fun showOrHideSpeedUp(show:Boolean){
+        playerBinding?.playerSpeedupButton?.let { button ->
+            button.clearAnimation()
+            button.alpha = if(show) 0f else 1f
+            button.isVisible = show
+            button.animate()
+                .alpha(if(show) 1f else 0f)
+                .setDuration(200L)
+                .start()
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -1084,7 +1099,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     holdhandler.removeCallbacks(holdRunnable)
                     if (hasTriggeredSpeedUp) {
                         player.setPlaybackSpeed(DataStoreHelper.playBackSpeed)
-                        playerSpeedupButton?.isGone = true
+                        showOrHideSpeedUp(false)
                     }
                     if (isCurrentTouchValid && !isLocked && isFullScreenPlayer) {
                         // seek time
