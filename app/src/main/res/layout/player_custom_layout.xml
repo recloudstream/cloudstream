@@ -984,7 +984,7 @@
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="30dp"
         app:iconPadding="0dp"
         app:iconGravity="textStart"
         android:clickable="false"
