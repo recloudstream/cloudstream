@@ -469,6 +469,12 @@ class ResultFragmentTv : Fragment() {
             resultCastItems.adapter = ActorAdaptor(aboveCast?.id) {
                 toggleEpisodes(false)
             }
+            
+            if (isLayout(EMULATOR)) {
+                episodesShadow.setOnClickListener {
+                    toggleEpisodes(false)
+                }
+            }
         }
 
         observeNullable(viewModel.resumeWatching) { resume ->
