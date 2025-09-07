@@ -11,6 +11,8 @@ import androidx.media3.ui.SubtitleView
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.setSubtitleViewStyle
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToLangTagIETF
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromLanguageToTagIETF
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 
 enum class SubtitleStatus {
@@ -30,7 +32,7 @@ enum class SubtitleOrigin {
  * @param nameSuffix An extra suffix added to the subtitle to make sure it is unique
  * @param url Url for the subtitle, when EMBEDDED_IN_VIDEO this variable is used as the real backend id
  * @param headers if empty it will use the base onlineDataSource headers else only the specified headers
- * @param languageCode Not guaranteed to follow any standard. Could be something like "English 4" or "en".
+ * @param languageCode ideally a proper language tag. But could be something like "English 4" or "en".
  * */
 data class SubtitleData(
     val originalName: String,
@@ -104,7 +106,9 @@ class PlayerSubtitleHelper {
                 origin = SubtitleOrigin.URL,
                 mimeType = subtitleFile.url.toSubtitleMimeType(),
                 headers = subtitleFile.headers ?: emptyMap(),
-                languageCode = subtitleFile.lang
+                languageCode = fromLanguageToTagIETF(subtitleFile.lang) ?:
+                               fromCodeToLangTagIETF(subtitleFile.lang) ?:
+                               subtitleFile.lang
             )
         }
     }

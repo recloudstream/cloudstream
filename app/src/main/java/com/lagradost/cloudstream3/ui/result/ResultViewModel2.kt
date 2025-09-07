@@ -760,14 +760,19 @@ class ResultViewModel2 : ViewModel() {
                 // 1. Checks if the lang should be downloaded
                 // 2. Makes it into the download format
                 // 3. Downloads it as a .vtt file
-                val downloadList = SubtitlesFragment.getDownloadSubsLanguageISO639_1()
+                val downloadList = SubtitlesFragment.getDownloadSubsLanguageTagIETF().also{
+                    android.util.Log.i("RESULT_VIEW_MODEL_2", "764 downloadList: $it" )
+                }
                 subs?.let { subsList ->
                     subsList.filter {
                         downloadList.contains(
-                            SubtitleHelper.fromLanguageToTwoLetters(
+                            SubtitleHelper.fromLanguageToTagIETF(
                                 it.name,
                                 true
-                            )
+                            ).also{
+                                android.util.Log.i("RESULT_VIEW_MODEL_2", "773: $it" )
+                                android.util.Log.i("RESULT_VIEW_MODEL_2", "subsList: $subsList" )
+                            }
                         )
                     }
                         .map { ExtractorSubtitleLink(it.name, it.url, "", it.headers) }.take(3)
@@ -805,7 +810,9 @@ class ResultViewModel2 : ViewModel() {
                         }
                     },
                     subtitleCallback = { sub ->
-                        currentSubs.add(sub)
+                        currentSubs.add(sub).also{
+                            android.util.Log.i("RESULT_VIEW_MODEL_2", "subtitleCallback: $it" )
+                        }
                     })
 
                 if (currentLinks.isEmpty()) {

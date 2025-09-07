@@ -31,7 +31,7 @@
     <string name="title_settings">Configurações</string>
     <string name="search_hint">Procurar…</string>
     <string name="search_hint_site" formatted="true">Pesquisar %s…</string>
-    <string name="no_data">Sem dados</string>
+    <string name="no_data">Desconhecida</string>
     <string name="episode_more_options_des">Mais opções</string>
     <string name="next_episode">Próximo episódio</string>
     <string name="result_tags">Gêneros</string>
@@ -78,7 +78,7 @@
     <string name="filter_bookmarks">Filtrar marcadores</string>
     <string name="error_bookmarks_text">Marcadores</string>
     <string name="action_remove_from_bookmarks">Remover</string>
-    <string name="action_add_to_bookmarks">Definir como assistido/não assistido</string>
+    <string name="action_add_to_bookmarks">Salvar na lista</string>
     <string name="sort_apply">Aplicar</string>
     <string name="sort_copy">Copiar</string>
     <string name="sort_close">Fechar</string>
@@ -109,7 +109,7 @@
     <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">Uma VPN pode ser necessária para esse fornecedor funcionar corretamente</string>
     <string name="vpn_torrent">Esse fornecedor é um torrent, uma VPN é recomendada</string>
-    <string name="provider_info_meta">Metadados não são oferecidas pelo site, o carregamento do video pode falhar se ele não existir no site.</string>
+    <string name="provider_info_meta">Metadados não são oferecidas pelo site, o carregamento do vídeo pode falhar se ele não existir no site.</string>
     <string name="torrent_plot">Descrição</string>
     <string name="normal_no_plot">Sinopse não encontrada</string>
     <string name="torrent_no_plot">Descrição não encontrada</string>
@@ -161,10 +161,10 @@
     <string name="uprereleases_settings">Atualizar para pré-lançamento</string>
     <string name="uprereleases_settings_des">Procura atualizações do pré-lançamento ao invés de apenas do lançamento oficial</string>
     <string name="github">Github</string>
-    <string name="lightnovel">App de Light novel pelos mesmos desenvolvedores</string>
-    <string name="anim">App de Anime pelos mesmos desenvolvedores</string>
+    <string name="lightnovel">App de Light novel dos mesmos desenvolvedores</string>
+    <string name="anim">App de Anime dos mesmos desenvolvedores</string>
     <string name="discord">Junte-se ao Discord</string>
-    <string name="benene">Dar um benene para os desenvolvedores</string>
+    <string name="benene">Dar um benene aos desenvolvedores</string>
     <string name="benene_des">Benene dada</string>
     <string name="app_language">Idioma do aplicativo</string>
     <string name="no_chromecast_support_toast">Esse fornecedor não possui suporte para Chromecast</string>
@@ -274,7 +274,7 @@
     <string name="resize_fill">Esticar</string>
     <string name="resize_zoom">Zoom</string>
     <string name="legal_notice">Aviso Legal</string>
-    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
+    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any vídeos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">Geral</string>
     <string name="random_button_settings">Botão Aleatório</string>
     <string name="random_button_settings_desc">Mostrar botão aleatório na página inicial e na biblioteca</string>
@@ -455,7 +455,7 @@
     <string name="android_tv_interface_on_seek_settings">Exibindo Player - procure na Barra de Progresso</string>
     <string name="action_remove_from_watched">Remover dos assistidos</string>
     <string name="pref_category_extensions">Extensões</string>
-    <string name="sort_alphabetical_a">Alfabética(A =&gt; Z)</string>
+    <string name="sort_alphabetical_a">Alfabética (A -&gt; Z)</string>
     <string name="open_with">Abrir com</string>
     <string name="select_library">Selecionar Biblioteca</string>
     <string name="test_passed">Passou</string>
@@ -470,12 +470,12 @@
     <string name="update_started">Atualização iniciada</string>
     <string name="nsfw_singular">Conteúdo +18</string>
     <string name="help">Ajuda</string>
-    <string name="redo_setup_process">Processo de configuração de Redo</string>
+    <string name="redo_setup_process">Refazer configuração inicial</string>
     <string name="update_notification_failed">Não foi possível instalar a nova versão do aplicativo</string>
     <string name="apk_installer_package_installer">instalador de pacotes</string>
-    <string name="sort_by">Organizar por</string>
+    <string name="sort_by">Ordenação</string>
     <string name="sort_rating_desc">Avaliação (alta para baixa)</string>
-    <string name="sort_alphabetical_z">Alfabética(Z =&gt; A)</string>
+    <string name="sort_alphabetical_z">Alfabética (Z -&gt; A)</string>
     <string name="qualities">Qualidade</string>
     <string name="profile_background_des">Perfil de plano de fundo</string>
     <string name="quality_profile_help">Aqui você pode alterar como as fontes são ordenadas. Se um vídeo tiver uma prioridade mais alta, aparecerá mais alto na seleção da fonte. A soma da prioridade da fonte e da prioridade da qualidade é a prioridade do vídeo.
@@ -520,7 +520,7 @@
     <string name="hls_playlist">Lista de reprodução HLS</string>
     <string name="skip_type_ed">Terminando</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
-    <string name="sort_updated_old">Adicionado em (antigo para novo)</string>
+    <string name="sort_updated_old">Data de adição (decrescente)</string>
     <string name="skip_type_intro">Introdução</string>
     <string name="no_plugins_found_error">plug-ins não foram encontrados no repositório</string>
     <string name="no_repository_found_error">Repositório não encontrado, verifique o URL e tente usa uma VPN</string>
@@ -529,8 +529,8 @@
     <string name="extension_authors">Autores</string>
     <string name="extension_install_first">Instale a extensão primeiro</string>
     <string name="skip_type_creddits">Créditos</string>
-    <string name="history">Historico</string>
-    <string name="clear_history">Limpar historico</string>
+    <string name="history">Histórico</string>
+    <string name="clear_history">Limpar histórico</string>
     <string name="clipboard_too_large">Tem Muito texto. Não é possível salvar no clipboard.</string>
     <string name="player_pref">Player de vídeo preferido</string>
     <string name="start">Começar</string>
@@ -540,8 +540,8 @@
     <string name="apply_on_restart">Reinicie o aplicativo para ver as alterações.</string>
     <string name="safe_mode_crash_info">Visualização info de crash</string>
     <string name="audio_tracks">Faixas de áudio</string>
-    <string name="sort_updated_new">Adicionado em (novo para antigo)</string>
-    <string name="video_tracks">Faixas de video</string>
+    <string name="sort_updated_new">Data de adição (crescente)</string>
+    <string name="video_tracks">Faixas de vídeo</string>
     <string name="pref_category_subtitles">Legendas</string>
     <string name="is_adult">18+</string>
     <string name="pref_category_links">Links</string>
@@ -656,8 +656,8 @@
     <string name="downloads_empty">Não há downloads no momento.</string>
     <string name="hide_player_control_names">Ocultar os nomes dos controles do player</string>
     <string name="open_local_video">Abrir vídeo local</string>
-    <string name="sort_release_date_new">Data de lançamento (do novo ao antigo)</string>
-    <string name="sort_release_date_old">Data de lançamento (do antigo para o novo)</string>
+    <string name="sort_release_date_new">Data de lançamento (recente -&gt; antigo)</string>
+    <string name="sort_release_date_old">Data de lançamento (antigo -&gt; recente)</string>
     <string name="downloads_delete_select">Selecionar itens para excluir</string>
     <string name="delete_files">Excluir arquivos</string>
     <string name="offline_file">Disponível para assistir offline</string>
