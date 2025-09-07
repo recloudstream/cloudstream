@@ -43,16 +43,16 @@ object SubtitleHelper {
         val ISO_639_3: String,      // ISO 639-6 missing as it's intended to differentiate specific dialects and variants
         val openSubtitles: String, // inconsistent codes that do not conform ISO 639
     ) {
-        internal fun localizedName(localizedTo: String? = null): String {
+        fun localizedName(localizedTo: String? = null): String {
             // Use system locale to localize language name
             val localeOfLangCode = Locale.forLanguageTag(this.IETF_tag)
             val localeOfLocalizeTo = Locale.forLanguageTag(localizedTo ?: getCurrentLocale())
             val sysLocalizedName = localeOfLangCode.getDisplayName(localeOfLocalizeTo)
 
-            val langCodeWithCountry = "${localeOfLangCode.language} (${localeOfLangCode.country})"
+            val langCodeWithVariant = "${localeOfLangCode.language} (" // ${localeOfLangCode.variant})"
             val failedToLocalize =
-                sysLocalizedName.contains(this.IETF_tag, ignoreCase = true) ||
-                sysLocalizedName.contains(langCodeWithCountry, ignoreCase = true)
+                sysLocalizedName.equals(this.IETF_tag, ignoreCase = true) ||
+                sysLocalizedName.contains(langCodeWithVariant, ignoreCase = true)
 
             return if (failedToLocalize)
                 // fallback to native language name
@@ -61,7 +61,7 @@ object SubtitleHelper {
                 sysLocalizedName
         }
 
-        internal fun nameNextToFlagEmoji(localizedTo: String? = null): String {
+        fun nameNextToFlagEmoji(localizedTo: String? = null): String {
             // fallback to [A][A] -> [?] question mak flag
             val flag = getFlagFromIso(this.IETF_tag) ?: "\ud83c\udde6\ud83c\udde6"
 
@@ -179,6 +179,15 @@ object SubtitleHelper {
     @Prerelease
     fun fromTagToLanguageName(languageCode: String?, localizedTo: String? = null): String? {
         return getLanguageDataFromCode(languageCode)?.localizedName(localizedTo)
+    }
+
+    /**
+     * Language code -> language english name
+     * @param languageCode IETF BCP 47, ISO 639-1, ISO 639-2B/T, ISO 639-3, OpenSubtitles
+    */
+    @Prerelease
+    fun fromTagToEnglishLanguageName(languageCode: String?): String? {
+        return getLanguageDataFromCode(languageCode)?.languageName
     }
 
     /**
