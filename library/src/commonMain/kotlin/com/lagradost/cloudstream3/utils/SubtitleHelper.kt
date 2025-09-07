@@ -49,9 +49,9 @@ object SubtitleHelper {
             val localeOfLocalizeTo = Locale.forLanguageTag(localizedTo ?: getCurrentLocale())
             val sysLocalizedName = localeOfLangCode.getDisplayName(localeOfLocalizeTo)
 
-            val langCodeWithCountry = "${localeOfLangCode.language} (${localeOfLangCode.country})"
+            val langCodeWithCountry = "${localeOfLangCode.language} (" // ${localeOfLangCode.country})"
             val failedToLocalize =
-                sysLocalizedName.contains(this.IETF_tag, ignoreCase = true) ||
+                sysLocalizedName.equals(this.IETF_tag, ignoreCase = true) ||
                 sysLocalizedName.contains(langCodeWithCountry, ignoreCase = true)
 
             return if (failedToLocalize)

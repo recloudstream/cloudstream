@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.ConfigurationCompat
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -45,86 +46,98 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
+import java.util.Locale
 
 // Change local language settings in the app.
 fun getCurrentLocale(context: Context): String {
     val res = context.resources
     val conf = res.configuration
 
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        conf?.locales?.get(0)?.toString() ?: "en"
-    } else {
-        @Suppress("DEPRECATION")
-        conf?.locale?.toString() ?: "en"
-    }
+    return ConfigurationCompat.getLocales(conf)?.get(0)?.toLanguageTag() ?: "en"
 }
 
 // idk, if you find a way of automating this it would be great
 // https://www.iemoji.com/view/emoji/1794/flags/antarctica
 // Emoji Character Encoding Data --> C/C++/Java Src
 // https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes leave blank for auto
+/**
+ * List of app support languages.
+ * Language code shall be a IETF BCP 47 conformant tag
+ *
+ * See locales on:
+ * https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/availableLocales.json
+ * https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+ * https://android.googlesource.com/platform/frameworks/base/+/android-16.0.0_r2/core/res/res/values/locale_config.xml
+ * https://iso639-3.sil.org/code_tables/639/data/all
+*/
 val appLanguages = arrayListOf(
     /* begin language list */
-    Triple("", "Afrikaans", "af"),
-    Triple("", "عربي شامي", "ajp"),
-    Triple("", "አማርኛ", "am"),
-    Triple("", "العربية", "ar"),
-    Triple("", "اللهجة النجدية", "ars"),
-    Triple("", "অসমীয়া", "as"),
-    Triple("", "azərbaycan dili", "az"),
-    Triple("", "български", "bg"),
-    Triple("", "বাংলা", "bn"),
-    Triple("\uD83C\uDDE7\uD83C\uDDF7", "português brasileiro", "bp"),
-    Triple("", "čeština", "cs"),
-    Triple("", "Deutsch", "de"),
-    Triple("", "Ελληνικά", "el"),
-    Triple("", "English", "en"),
-    Triple("", "Esperanto", "eo"),
-    Triple("", "español", "es"),
-    Triple("", "فارسی", "fa"),
-    Triple("", "fil", "fil"),
-    Triple("", "français", "fr"),
-    Triple("", "galego", "gl"),
-    Triple("", "हिन्दी", "hi"),
-    Triple("", "hrvatski", "hr"),
-    Triple("", "magyar", "hu"),
-    Triple("\uD83C\uDDEE\uD83C\uDDE9", "Bahasa Indonesia", "in"),
-    Triple("", "italiano", "it"),
-    Triple("\uD83C\uDDEE\uD83C\uDDF1", "עברית", "iw"),
-    Triple("", "日本語 (にほんご)", "ja"),
-    Triple("", "ಕನ್ನಡ", "kn"),
-    Triple("", "한국어", "ko"),
-    Triple("", "lietuvių kalba", "lt"),
-    Triple("", "latviešu valoda", "lv"),
-    Triple("", "македонски", "mk"),
-    Triple("", "മലയാളം", "ml"),
-    Triple("", "bahasa Melayu", "ms"),
-    Triple("", "Malti", "mt"),
-    Triple("", "ဗမာစာ", "my"),
-    Triple("", "नेपाली", "ne"),
-    Triple("", "Nederlands", "nl"),
-    Triple("", "norsk nynorsk", "nn"),
-    Triple("", "norsk bokmål", "no"),
-    Triple("", "ଓଡ଼ିଆ", "or"),
-    Triple("", "polski", "pl"),
-    Triple("\uD83C\uDDF5\uD83C\uDDF9", "português", "pt"),
-    Triple("\uD83E\uDD8D", "mmmm... monke", "qt"),
-    Triple("", "română", "ro"),
-    Triple("", "русский", "ru"),
-    Triple("", "slovenčina", "sk"),
-    Triple("", "Soomaaliga", "so"),
-    Triple("", "svenska", "sv"),
-    Triple("", "தமிழ்", "ta"),
-    Triple("", "ትግርኛ", "ti"),
-    Triple("", "Tagalog", "tl"),
-    Triple("", "Türkçe", "tr"),
-    Triple("", "українська", "uk"),
-    Triple("", "اردو", "ur"),
-    Triple("", "Tiếng Việt", "vi"),
-    Triple("", "中文", "zh"),
-    Triple("\uD83C\uDDF9\uD83C\uDDFC", "正體中文(臺灣)", "zh-rTW"),
+    Pair("Afrikaans", "af"),
+    Pair("azərbaycan dili", "az"),
+    Pair("Bahasa Indonesia", "id"), // "in" is deprecated, changed to "id"
+    Pair("bahasa Melayu", "ms"),
+    Pair("čeština", "cs"),
+    Pair("Deutsch", "de"),
+    Pair("English", "en"),
+    Pair("Español", "es"),
+    Pair("Esperanto", "eo"),
+    Pair("fil", "fil"),
+    Pair("Français", "fr"),
+    Pair("Galego", "gl"),
+    Pair("hrvatski", "hr"),
+    Pair("Italiano", "it"),
+    Pair("latviešu valoda", "lv"),
+    Pair("lietuvių kalba", "lt"),
+    Pair("magyar", "hu"),
+    Pair("Malti", "mt"),
+    Pair("mmmm... monke", "qt"),
+    Pair("Nederlands", "nl"),
+    Pair("norsk bokmål", "no"),
+    Pair("norsk nynorsk", "nn"),
+    Pair("polski", "pl"),
+    Pair("Português (Brasil)", "pt-BR"),
+    Pair("Português", "pt"),
+    Pair("română", "ro"),
+    Pair("slovenčina", "sk"),
+    Pair("Soomaaliga", "so"),
+    Pair("svenska", "sv"),
+    Pair("Tagalog", "tl"),
+    Pair("Tiếng Việt", "vi"),
+    Pair("Türkçe", "tr"),
+    Pair("Ελληνικά", "el"),
+    Pair("български", "bg"),
+    Pair("македонски", "mk"),
+    Pair("русский", "ru"),
+    Pair("українська", "uk"),
+    Pair("עברית", "he"), // "iw" is deprecated, changed to "he"
+    Pair("اردو", "ur"),
+    Pair("العربية", "ar"),
+    Pair("اللهجة النجدية", "ars"), // Arabic (Najdi)
+    Pair("عربي شامي", "apc"), // "ajp" is deprecated, changed to "apc"  Arabic (Levantine)
+    Pair("فارسی", "fa"),
+    Pair("ትግርኛ", "ti"),
+    Pair("አማርኛ", "am"),
+    Pair("नेपाली", "ne"),
+    Pair("हिन्दी", "hi"),
+    Pair("অসমীয়া", "as"),
+    Pair("বাংলা", "bn"),
+    Pair("ଓଡ଼ିଆ", "or"),
+    Pair("தமிழ்", "ta"),
+    Pair("ಕನ್ನಡ", "kn"),
+    Pair("മലയാളം", "ml"),
+    Pair("ဗမာစာ", "my"),
+    Pair("한국어", "ko"),
+    Pair("中文", "zh"),
+    Pair("日本語 (にほんご)", "ja"),
+    Pair("正體中文(臺灣)", "zh-TW"),
 /* end language list */
-).sortedBy { it.second.lowercase() } //ye, we go alphabetical, so ppl don't put their lang on top
+).sortedBy { it.first.lowercase(Locale.ROOT) } // ye, we go alphabetical, so ppl don't put their lang on top
+
+fun Pair<String, String>.nameNextToFlagEmoji(): String {
+    val flag = SubtitleHelper.getFlagFromIso(this.second) ?: "\ud83c\udde6\ud83c\udde6"
+
+    return "$flag ${this.first}"
+}
 
 class SettingsGeneral : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -166,22 +179,18 @@ class SettingsGeneral : PreferenceFragmentCompat() {
         }
 
         getPref(R.string.locale_key)?.setOnPreferenceClickListener { pref ->
-            val tempLangs = appLanguages.toMutableList()
             val current = getCurrentLocale(pref.context)
-            val languageCodes = tempLangs.map { (_, _, iso) -> iso }
-            val languageNames = tempLangs.map { (emoji, name, iso) ->
-                val flag = emoji.ifBlank { SubtitleHelper.getFlagFromIso(iso) ?: "ERROR" }
-                "$flag $name"
-            }
-            val index = languageCodes.indexOf(current)
+            val languageTagsIETF = appLanguages.map { it.second }
+            val languageNames = appLanguages.map { it.nameNextToFlagEmoji() }
+            val currentIndex = languageTagsIETF.indexOf(current)
 
             activity?.showDialog(
-                languageNames, index, getString(R.string.app_language), true, { }
-            ) { languageIndex ->
+                languageNames, currentIndex, getString(R.string.app_language), true, { }
+            ) { selectedLangIndex ->
                 try {
-                    val code = languageCodes[languageIndex]
-                    CommonActivity.setLocale(activity, code)
-                    settingsManager.edit().putString(getString(R.string.locale_key), code).apply()
+                    val langTagIETF = languageTagsIETF[selectedLangIndex]
+                    CommonActivity.setLocale(activity, langTagIETF)
+                    settingsManager.edit().putString(getString(R.string.locale_key), langTagIETF).apply()
                     activity?.recreate()
                 } catch (e: Exception) {
                     logError(e)
@@ -227,7 +236,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
                     val url = binding.siteUrlInput.text?.toString()
                     val lang = binding.siteLangInput.text?.toString()
                     val realLang = if (lang.isNullOrBlank()) provider.lang else lang
-                    if (url.isNullOrBlank() || name.isNullOrBlank() || realLang.length != 2) {
+                    if (url.isNullOrBlank() || name.isNullOrBlank()) {
                         showToast(R.string.error_invalid_data, Toast.LENGTH_SHORT)
                         return@setOnClickListener
                     }

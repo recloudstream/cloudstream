@@ -10,21 +10,20 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
-import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentPluginDetailsBinding
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.VotingApi.canVote
 import com.lagradost.cloudstream3.plugins.VotingApi.getVotes
 import com.lagradost.cloudstream3.plugins.VotingApi.hasVoted
 import com.lagradost.cloudstream3.plugins.VotingApi.vote
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
-import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
-import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
+import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
-import com.lagradost.cloudstream3.utils.getImageFromDrawable
 
 
 class PluginDetailsFragment(val data: PluginViewData) : BottomSheetDialogFragment() {
@@ -85,9 +84,9 @@ class PluginDetailsFragment(val data: PluginViewData) : BottomSheetDialogFragmen
                     ", "
                 )
             pluginLang.text = if (metadata.language == null)
-                getString(R.string.no_data)
-            else
-                "${getFlagFromIso(metadata.language)} ${fromTwoLettersToLanguage(metadata.language)}"
+                    getString(R.string.no_data)
+                else
+                    getNameNextToFlagEmoji(metadata.language) ?: metadata.language
 
             githubBtn.setOnClickListener {
                 if (metadata.repositoryUrl != null) {
