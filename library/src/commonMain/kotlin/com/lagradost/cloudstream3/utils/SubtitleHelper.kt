@@ -233,9 +233,9 @@ object SubtitleHelper {
         // 2 times a symbol between regional indicator "[A]" and "[Z]"
         val unicodeFlagRegex = Regex("[\uD83C\uDDE6-\uD83C\uDDFF]{2}")
         // language tags (en-US, es-419, pt-BR, zh-hant-TW) that includes country
-        val countryRegex = Regex("(?<=[-_])(?<country>\\p{Alnum}{2,3})$", IGNORE_CASE)
+        val countryRegex = Regex("[-_](\\p{Alnum}{2,3})$", RegexOption.IGNORE_CASE)
 
-        val country = countryRegex.find(inp)?.value
+        val country = countryRegex.find(inp)?.groupValues?.get(1)
 
         val flagEmoji =
             getFlagFromCountry2Letters(lang2country[inp.lowercase()]) ?:
