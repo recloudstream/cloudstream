@@ -192,10 +192,13 @@ class AniListApi : SyncAPI() {
 
         const val ANILIST_CACHED_LIST: String = "anilist_cached_list"
 
-        private fun fixName(name: String): String {
-            return name.lowercase(Locale.ROOT).replace(" ", "")
-                .replace("[^a-zA-Z0-9]".toRegex(), "")
-        }
+        private fun fixName(name: String): String = buildString {
+    		name.lowercase(Locale.ROOT).forEach { char ->
+        		if (char in 'a'..'z' || char in '0'..'9') {
+            		append(char)
+        		}
+    		}
+		}
 
         private suspend fun searchShows(name: String): GetSearchRoot? {
             try {
