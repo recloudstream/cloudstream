@@ -13,14 +13,16 @@ import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CommonActivity
-import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentSetupLanguageBinding
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.settings.appLanguages
 import com.lagradost.cloudstream3.ui.settings.getCurrentLocale
+import com.lagradost.cloudstream3.ui.settings.nameNextToFlagEmoji
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import java.util.Locale
 
 const val HAS_DONE_SETUP_KEY = "HAS_DONE_SETUP"
 
@@ -68,12 +70,9 @@ class SetupFragmentLanguage : Fragment() {
                 }
 
                 val current = getCurrentLocale(ctx)
-                val languageCodes = appLanguages.map { it.third }
-                val languageNames = appLanguages.map { (emoji, name, iso) ->
-                    val flag = emoji.ifBlank { SubtitleHelper.getFlagFromIso(iso) ?: "ERROR" }
-                    "$flag $name"
-                }
-                val index = languageCodes.indexOf(current)
+                val languageTagsIETF = appLanguages.map { it.third }
+                val languageNames = appLanguages.map { it.nameNextToFlagEmoji() }
+                val index = languageTagsIETF.indexOf(current)
 
                 arrayAdapter.addAll(languageNames)
                 listview1.adapter = arrayAdapter
@@ -81,9 +80,9 @@ class SetupFragmentLanguage : Fragment() {
                 listview1.setItemChecked(index, true)
 
                 listview1.setOnItemClickListener { _, _, position, _ ->
-                    val code = languageCodes[position]
-                    CommonActivity.setLocale(activity, code)
-                    settingsManager.edit().putString(getString(R.string.locale_key), code)
+                    val langTagIETF = languageTagsIETF[position]
+                    CommonActivity.setLocale(activity, langTagIETF)
+                    settingsManager.edit().putString(getString(R.string.locale_key), langTagIETF)
                         .apply()
                     activity?.recreate()
                 }

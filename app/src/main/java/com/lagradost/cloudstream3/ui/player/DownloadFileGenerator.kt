@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromLanguageToTagIETF
 import com.lagradost.cloudstream3.utils.SubtitleUtils.cleanDisplayName
 import com.lagradost.cloudstream3.utils.SubtitleUtils.isMatchingSubtitle
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getDownloadFileInfoAndUpdateSettings
@@ -100,7 +101,7 @@ class DownloadFileGenerator(
                         SubtitleOrigin.DOWNLOADED_FILE,
                         name.toSubtitleMimeType(),
                         emptyMap(),
-                        null
+                        fromLanguageToTagIETF(realName) // realName ? cleanName ?
                     )
                 )
             }

@@ -10,13 +10,14 @@ import androidx.core.util.forEach
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
-import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.AllLanguagesName
-import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.databinding.FragmentSetupProviderLanguagesBinding
 import com.lagradost.cloudstream3.mvvm.safe
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
-import com.lagradost.cloudstream3.utils.SubtitleHelper
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
+import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 
 class SetupFragmentProviderLanguage : Fragment() {
@@ -52,49 +53,45 @@ class SetupFragmentProviderLanguage : Fragment() {
 
             val current = ctx.getApiProviderLangSettings()
             val langs = synchronized(APIHolder.apis) { APIHolder.apis.map { it.lang }.toSet()
-                .sortedBy { SubtitleHelper.fromTwoLettersToLanguage(it) } + AllLanguagesName}
+                .sortedBy { fromTagToLanguageName(it) } + AllLanguagesName}
 
             val currentList =
                 current.map { langs.indexOf(it) }.filter { it != -1 } // TODO LOOK INTO
 
             val languageNames = langs.map {
-                if (it == AllLanguagesName) {
+                if (it == AllLanguagesName)
                     getString(R.string.all_languages_preference)
-                } else {
-                    val emoji = SubtitleHelper.getFlagFromIso(it)
-                    val name = SubtitleHelper.fromTwoLettersToLanguage(it)
-                    "$emoji $name"
-                }
+                else
+                    getNameNextToFlagEmoji(it)
             }
 
             arrayAdapter.addAll(languageNames)
             binding?.apply {
-            listview1.adapter = arrayAdapter
-            listview1.choiceMode = AbsListView.CHOICE_MODE_MULTIPLE
-            currentList.forEach {
-                listview1.setItemChecked(it, true)
-            }
-
-            listview1.setOnItemClickListener { _, _, _, _ ->
-                val currentLanguages = mutableListOf<String>()
-                listview1.checkedItemPositions?.forEach { key, value ->
-                    if (value) currentLanguages.add(langs[key])
+                listview1.adapter = arrayAdapter
+                listview1.choiceMode = AbsListView.CHOICE_MODE_MULTIPLE
+                currentList.forEach {
+                    listview1.setItemChecked(it, true)
                 }
-                settingsManager.edit().putStringSet(
-                    ctx.getString(R.string.provider_lang_key),
-                    currentLanguages.toSet()
-                ).apply()
-            }
 
-            nextBtt.setOnClickListener {
-                findNavController().navigate(R.id.navigation_setup_provider_languages_to_navigation_setup_media)
-            }
+                listview1.setOnItemClickListener { _, _, _, _ ->
+                    val currentLanguages = mutableListOf<String>()
+                    listview1.checkedItemPositions?.forEach { key, value ->
+                        if (value) currentLanguages.add(langs[key])
+                    }
+                    settingsManager.edit().putStringSet(
+                        ctx.getString(R.string.provider_lang_key),
+                        currentLanguages.toSet()
+                    ).apply()
+                }
 
-            prevBtt.setOnClickListener {
-                findNavController().popBackStack()
-            } }
+                nextBtt.setOnClickListener {
+                    findNavController().navigate(R.id.navigation_setup_provider_languages_to_navigation_setup_media)
+                }
+
+                prevBtt.setOnClickListener {
+                    findNavController().popBackStack()
+                }
+            }
         }
     }
-
-
 }

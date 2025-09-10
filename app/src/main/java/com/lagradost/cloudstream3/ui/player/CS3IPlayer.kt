@@ -92,7 +92,8 @@ import com.lagradost.cloudstream3.utils.WIDEVINE_UUID
 import com.lagradost.cloudstream3.utils.PLAYREADY_UUID
 import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
-import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToLangTagIETF
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
 import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
 import kotlinx.coroutines.delay
 import java.io.File
@@ -1239,7 +1240,7 @@ class CS3IPlayer : IPlayer {
 
                                     return@mapNotNull SubtitleData(
                                         // Nicer looking displayed names
-                                        fromTwoLettersToLanguage(format.language!!)
+                                        fromTagToLanguageName(format.language)
                                             ?: format.language!!,
                                         format.label ?: "",
                                         // See setPreferredTextLanguage
@@ -1247,7 +1248,7 @@ class CS3IPlayer : IPlayer {
                                         SubtitleOrigin.EMBEDDED_IN_VIDEO,
                                         format.sampleMimeType ?: MimeTypes.APPLICATION_SUBRIP,
                                         emptyMap(),
-                                        format.language,
+                                        fromCodeToLangTagIETF(format.language),
                                     )
                                 }
 
