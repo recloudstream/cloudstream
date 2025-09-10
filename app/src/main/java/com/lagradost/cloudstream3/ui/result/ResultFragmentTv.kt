@@ -466,8 +466,15 @@ class ResultFragmentTv : Fragment() {
             ).firstOrNull {
                 it?.isVisible == true
             }
+
             resultCastItems.adapter = ActorAdaptor(aboveCast?.id) {
                 toggleEpisodes(false)
+            }
+
+            if (isLayout(EMULATOR)) {
+                episodesShadow.setOnClickListener {
+                    toggleEpisodes(false)
+                }
             }
         }
 
