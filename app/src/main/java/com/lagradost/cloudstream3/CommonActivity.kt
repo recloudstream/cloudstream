@@ -48,7 +48,9 @@ import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
 import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import com.lagradost.cloudstream3.utils.newpipe.NewPipePoTokenGenerator
 import org.schabi.newpipe.extractor.NewPipe
+import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor
 import java.lang.ref.WeakReference
 import java.util.Locale
 import kotlin.math.max
@@ -236,6 +238,7 @@ object CommonActivity {
         componentActivity.updateTv()
         AccountManager.initMainAPI()
         NewPipe.init(DownloaderTestImpl.getInstance())
+        YoutubeStreamExtractor.setPoTokenProvider(NewPipePoTokenGenerator())
 
         MainActivity.activityResultLauncher =
             componentActivity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->

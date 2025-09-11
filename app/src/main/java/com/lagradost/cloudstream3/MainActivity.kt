@@ -190,6 +190,7 @@ import androidx.core.net.toUri
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
     companion object {
+        lateinit var instance: MainActivity
         var activityResultLauncher: ActivityResultLauncher<Intent>? = null
 
         const val TAG = "MAINACT"
@@ -1152,6 +1153,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     @Suppress("DEPRECATION_ERROR")
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
+        instance = this
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
         val errorFile = filesDir.resolve("last_error")
