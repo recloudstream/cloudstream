@@ -45,7 +45,7 @@ video = "1.0.0"
 workRuntime = "2.10.5"
 workRuntimeKtx = "2.10.5"
 
-jvmTarget = "21"
+jvmTarget = "1.8"
 minSdk = "21"
 compileSdk = "36"
 targetSdk = "35"
