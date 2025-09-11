@@ -1547,7 +1547,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         // alpha fade
         playerBinding?.playerProgressbarLeftHolder?.apply {
-            if (!isVisible || alpha < 1f) {
+            if (isFullScreenPlayer && (!isVisible || alpha < 1f)) {
                 alpha = 1f
                 isVisible = true
             }
