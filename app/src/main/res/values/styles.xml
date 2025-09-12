@@ -181,6 +181,30 @@
         <item name="colorOnPrimary">@color/blackText</item>
     </style>
 
+    <style name="DraculaMode">
+        <item name="primaryGrayBackground">@color/DraculaPrimaryGrayBackground</item>
+        <item name="primaryBlackBackground">@color/DraculaBitDarkerGrayBackground</item>
+        <item name="iconGrayBackground">@color/DraculaGrayBackground</item>
+        <item name="boxItemBackground">@color/DraculaItemBackground</item>
+        <item name="textColor">@color/DraculaTextColor</item>
+        <item name="iconColor">@color/DraculaIconColor</item>
+        <item name="white">@color/DraculaTextColor</item>
+        <item name="black">@color/DraculaPrimaryGrayBackground</item>
+        <item name="colorOnPrimary">@color/DraculaTextColor</item>
+    </style>
+
+    <style name="LavenderMode">
+        <item name="primaryGrayBackground">@color/LavenderPrimaryGrayBackground</item>
+        <item name="primaryBlackBackground">@color/LavenderBitDarkerGrayBackground</item>
+        <item name="iconGrayBackground">@color/LavenderGrayBackground</item>
+        <item name="boxItemBackground">@color/LavenderItemBackground</item>
+        <item name="textColor">@color/LavenderTextColor</item>
+        <item name="iconColor">@color/LavenderIconColor</item>
+        <item name="white">@color/LavenderTextColor</item>
+        <item name="black">@color/LavenderPrimaryGrayBackground</item>
+        <item name="colorOnPrimary">@color/LavenderTextColor</item>
+    </style>
+
     <style name="MonetMode">
         <item name="primaryGrayBackground">@color/material_dynamic_neutral20</item>
         <item name="primaryBlackBackground">@color/material_dynamic_neutral10</item>
