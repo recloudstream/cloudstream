@@ -31,7 +31,8 @@ class ZoomablePlayerView @JvmOverloads constructor(
     private var isScaling = false
     private var isPanning = false
 
-    private val scaleDetector = ScaleGestureDetector(context,
+    private val scaleDetector = ScaleGestureDetector(
+        context,
         object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
             override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
                 isScaling = true
@@ -41,7 +42,6 @@ class ZoomablePlayerView @JvmOverloads constructor(
 
             override fun onScale(detector: ScaleGestureDetector): Boolean {
                 scale = (scale * detector.scaleFactor).coerceIn(minScale, maxScale)
-
                 focusX = detector.focusX
                 focusY = detector.focusY
 
@@ -60,20 +60,9 @@ class ZoomablePlayerView @JvmOverloads constructor(
             }
         })
 
-    private val gestureDetector = GestureDetector(context,
+    private val gestureDetector = GestureDetector(
+        context,
         object : GestureDetector.SimpleOnGestureListener() {
-            override fun onDoubleTap(e: MotionEvent): Boolean {
-                if (scale > 1f) {
-                    resetTransforms()
-                } else {
-                    scale = 2f
-                    focusX = e.x
-                    focusY = e.y
-                    applyTransform()
-                }
-                return true
-            }
-
             override fun onScroll(
                 e1: MotionEvent?,
                 e2: MotionEvent,
@@ -91,7 +80,13 @@ class ZoomablePlayerView @JvmOverloads constructor(
                 }
                 return false
             }
-        })
+
+            override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                performClick()
+                return true
+            }
+        }
+    )
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         if (ev.pointerCount > 1 || isScaling || (scale > 1f && isPanning)) {
@@ -103,20 +98,19 @@ class ZoomablePlayerView @JvmOverloads constructor(
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         scaleDetector.onTouchEvent(event)
-        gestureDetector.onTouchEvent(event)
-
+        if (!isScaling) {
+            gestureDetector.onTouchEvent(event)
+        }
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> if (event.pointerCount == 1) isPanning = false
             MotionEvent.ACTION_POINTER_DOWN -> parent?.requestDisallowInterceptTouchEvent(true)
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                if (!isScaling && !isPanning) {
-                    performClick()
-                }
+                if (!isScaling && !isPanning) performClick()
                 isPanning = false
                 parent?.requestDisallowInterceptTouchEvent(scale > 1f)
             }
         }
-        return isScaling || scale > 1f || isPanning || super.onTouchEvent(event)
+        return true
     }
 
     override fun performClick(): Boolean {
@@ -128,12 +122,8 @@ class ZoomablePlayerView @JvmOverloads constructor(
     private fun applyTransform() {
         val tv = videoSurfaceView as? TextureView ?: return
         val matrix = Matrix()
-
         matrix.postScale(scale, scale, focusX, focusY)
-
-        // pan
         matrix.postTranslate(translateX, translateY)
-
         tv.setTransform(matrix)
         tv.invalidate()
     }
@@ -157,7 +147,6 @@ class ZoomablePlayerView @JvmOverloads constructor(
         val scaledH = tv.height * scale
         val maxTx = max(0f, (scaledW - tv.width) / 2f)
         val maxTy = max(0f, (scaledH - tv.height) / 2f)
-
         translateX = translateX.coerceIn(-maxTx, maxTx)
         translateY = translateY.coerceIn(-maxTy, maxTy)
     }
