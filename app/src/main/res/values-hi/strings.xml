@@ -319,7 +319,7 @@
     <string name="pref_filter_search_quality">खोज परिणामों में चयनित वीडियो गुणवत्ता छुपाएं</string>
     <plurals name="episodes" translatable="false">
         <item quantity="one">प्रकरण</item>
-        <item quantity="other"/>
+        <item quantity="other"></item>
     </plurals>
     <string name="episodes_range">%1$d-%2$d</string>
     <string name="action_open_play">@string/home_play</string>
@@ -327,4 +327,18 @@
     <string name="automatic_plugin_download_summary">जोड़े गए रिपॉजिटरीज से अभी तक इंस्टॉल नहीं किए गए सभी प्लगइन्स को स्वचालित रूप से इंस्टॉल करें।</string>
     <string name="speech_recognition_unavailable">वाक् पहचान उपलब्ध नहीं है</string>
     <string name="begin_speaking">बोलना शुरू करें…</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">"%1$dघं  %2$d मि  %3$dसे"</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$d मि %2$d से</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$d सेकंड</string>
+    <string name="automatic_plugin_download_mode_title">प्लगइन डाउनलोड को फ़िल्टर करने के लिए मोड चुने</string>
+    <string name="updates_settings">ऐप अपडेट दिखाएं</string>
+    <string name="redo_setup_process">सेटअप प्रक्रिया दोबारा करें</string>
+    <string name="uprereleases_settings">प्री-रिलीज़ पर अपडेट करें</string>
+    <string name="apk_installer_settings">APK इंस्टॉलर</string>
+    <string name="apk_installer_settings_des">कुछ फ़ोन नए पैकेज इंस्टॉलर का समर्थन नहीं करते हैं। यदि अपडेट इंस्टॉल नहीं हो रहे हैं, तो पुराने विकल्प का उपयोग करें।</string>
+    <string name="subs_default_reset_toast">डिफ़ॉल्ट मान पर रीसेट करें</string>
+    <string name="audio_singluar">ऑडियो</string>
+    <string name="podcast_singluar">पॉडकास्ट</string>
+    <string name="render_error">रेंडरर त्रुटि</string>
+    <string name="encoding_error">एन्कोडिंग त्रुटि</string>
 </resources>

@@ -62,7 +62,7 @@
     <string name="download_failed">Download Mislukt</string>
     <string name="download_canceled">Download Geannuleerd</string>
     <string name="download_done">Download Gereed</string>
-    <string name="stream">Stream</string>
+    <string name="stream">Netwerkstream</string>
     <string name="error_loading_links_toast">Fout bij laden links</string>
     <string name="download_storage_text">Interne opslag</string>
     <string name="app_dubbed_text">Dub</string>
@@ -123,7 +123,7 @@
     <string name="player_subtitles_settings_des">Speler Ondertiteling instellingen</string>
     <string name="chromecast_subtitles_settings">Chromecast Ondertitels</string>
     <string name="chromecast_subtitles_settings_des">Chromecast ondertitels instellingen</string>
-    <string name="eigengraumode_settings">Eigengravy Modus</string>
+    <string name="eigengraumode_settings">Afspeelsnelheid</string>
     <string name="swipe_to_seek_settings">Swipe to seek</string>
     <string name="swipe_to_seek_settings_des">Veeg naar links of rechts om de tijd in de videospeler te regelen</string>
     <string name="swipe_to_change_settings">Veeg om instellingen te wijzigen</string>
@@ -481,7 +481,6 @@
     <string name="pref_category_extensions">Uitbreidingen</string>
     <string name="skip_type_intro">Intro</string>
     <string name="view_public_repositories_button_short">Publieke lijst</string>
-    <string name="download_all_plugins_from_repo">Alle plugins uit deze repository downloaden?</string>
     <string name="extension_rating" formatted="true">Beoordeling: %s</string>
     <string name="safe_mode_description">Alle extensies zijn uitgeschakeld door een crash om u te helpen degene te vinden die problemen veroorzaakt.</string>
     <string name="safe_mode_crash_info">Bekijk de crash info</string>
@@ -608,5 +607,17 @@
     <string name="dont_show">Verbergen</string>
     <string name="show">Tonen</string>
     <string name="next_season_episode_format" formatted="true">Seizoen %1$d Aflevering %2$d zal worden uitgebracht in</string>
-    <string name="play_from_beginning_img_des">Kijken vanaf het begin</string>
+    <string name="play_from_beginning_img_des">Speel van het begin</string>
+    <string name="repo_copy_label">Repositorynaam en URL</string>
+    <string name="recommendations_tooltip">Aanbevelingen tonen</string>
+    <string name="downloads_delete_select">Selecteer items om te verwijderen</string>
+    <string name="torrent_info">Deze video is een Torrent, dit betekent dat je videoactiviteit kan worden gevolgd.\nZorg ervoor dat je Torrenting begrijpt voordat je doorgaat.</string>
+    <string name="speed_setting_summary">Voegt een snelheidsoptie toe in de speler</string>
+    <string name="open_local_video">Open lokale video</string>
+    <string name="speech_recognition_unavailable">Spraakherkenning is niet beschikbaar</string>
+    <string name="begin_speaking">Begin met praten…</string>
+    <string name="offline_file">Beschikbaar om offline te kijken</string>
+    <string name="select_all">Selecteer alles</string>
+    <string name="deselect_all">Deselecteer alles</string>
+    <string name="subscribe_tooltip">Bericht voor nieuwe afleveringen</string>
 </resources>

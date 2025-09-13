@@ -697,4 +697,17 @@
     <string name="battery_dialog_message">За да гарантираме непрекъснати изтегляния и известия за абонирани телевизионни шоута, CloudStream се нуждае от разрешение да работи в фонов режим. Като натиснете ДОБРЕ, ще видите диалогов прозорец с искане. Моля, натиснете \"Позволи\".\n\nМоля, имайте предвид, че това разрешение не означава, че CS3 ще изтощава батерията ви. То ще работи във фонов режим само когато е необходимо, като например при получаване на известия или изтегляне на видеоклипове от официални разширения.</string>
     <string name="qr_image">Изображение на QR код</string>
     <string name="unfavorite">Премахни от любими</string>
+    <string name="download_parallel_settings_des">Колко различни елемента могат да бъдат изтеглени паралелно</string>
+    <string name="parallel_downloads">Паралелни изтегляния</string>
+    <string name="concurrent_connections">Едновременни връзки</string>
+    <string name="concurrent_connections_settings_des">Колко едновременни връзки може да използва всяко изтегляне по време на самото изтегляне</string>
+    <string name="go_to_downloads">Сваляния</string>
+    <string name="no_internet_connection">Няма интернет връзка.\n\nМоля, свържете се с интернет и опитайте отново, или гледайте вашите изтегляния, докато сте офлайн.</string>
+    <string name="overscan_settings_des">Променя границите на екрана</string>
+    <string name="overscan_settings">Overscan</string>
+    <string name="poster_size_settings_des">Променя размера на плакатите</string>
+    <string name="poster_size_settings">Размер на плаката</string>
+    <string name="player_settings_always_ask">Винаги изпращай запитване</string>
+    <string name="speedup_summary">Задръжте, за да удвоите скоростта</string>
+    <string name="speedup_title">Дълго задържане за смяна на скоростта</string>
 </resources>

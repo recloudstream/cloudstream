@@ -93,10 +93,10 @@
     <string name="filler" formatted="true">Заповнювач</string>
     <string name="play_with_app_name">Відтворити в CloudStream</string>
     <string name="stream">Мережева трансляція</string>
-    <string name="type_watching">Перегляд</string>
+    <string name="type_watching">Переглядаю</string>
     <string name="result_share">Поділитися</string>
     <string name="type_on_hold">Відкладено</string>
-    <string name="type_re_watching">Повторний перегляд</string>
+    <string name="type_re_watching">Повторно переглядаю</string>
     <string name="download">Завантажити</string>
     <string name="play_livestream_button">Переглянути трансляцію</string>
     <string name="pick_source">Джерела</string>
@@ -106,7 +106,7 @@
     <string name="download_started">Завантаження розпочато</string>
     <string name="download_failed">Не вдалося завантажити</string>
     <string name="update_started">Оновлення розпочато</string>
-    <string name="error_loading_links_toast">Помилка завантаження покликань</string>
+    <string name="error_loading_links_toast">Помилка завантаження посилань</string>
     <string name="popup_pause_download">Призупинити завантаження</string>
     <string name="popup_play_file">Переглянути файл</string>
     <string name="home_more_info">Докладніше</string>
@@ -160,7 +160,7 @@
     <string name="benene">Дати банан розробникам</string>
     <string name="app_language">Мова застосунку</string>
     <string name="no_chromecast_support_toast">Цей постачальник не має підтримування Chromecast</string>
-    <string name="no_links_found_toast">Покликань не знайдено</string>
+    <string name="no_links_found_toast">Посилань не знайдено</string>
     <string name="play_episode_toast">Переглянути епізод</string>
     <string name="subs_default_reset_toast">Скинути до типових значень</string>
     <string name="no_season">Немає сезона</string>
@@ -671,4 +671,31 @@
     <string name="all_subtitles_italic">Зробити всі субтитри курсивом</string>
     <string name="volume_exceeded_100">Гучність перевищила 100%</string>
     <string name="slide_up_again_to_exceed_100">Ще раз проведіть угору, щоби перевищити 100%</string>
+    <string name="concurrent_connections">Одночасних з’єднань</string>
+    <string name="overscan_settings_des">Змінює межі екрана</string>
+    <string name="overscan_settings">Обрізання зображення</string>
+    <string name="go_to_downloads">Перейти до завантажень</string>
+    <string name="no_internet_connection">Немає підключення до Інтернету.\n\nБудь ласка, підключіться до Інтернету та спробуйте ще раз або перегляньте завантажені відео офлайн.</string>
+    <string name="download_parallel_settings_des">Скільки різних елементів можна завантажити паралельно</string>
+    <string name="parallel_downloads">Паралельних завантажень</string>
+    <string name="concurrent_connections_settings_des">Скільки одночасних з’єднань може використовувати кожне завантаження</string>
+    <string name="poster_size_settings_des">Зміна розміру плакатів</string>
+    <string name="poster_size_settings">Розмір постера</string>
+    <string name="player_settings_always_ask">Завжди запитуйте</string>
+    <string name="speedup_title">Змінювати швидкість при утриманні</string>
+    <string name="speedup_summary">Утримуйте, щоб отримати 2-кратну швидкість</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dгод %2$dхв %3$dс</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dхв %2$dс</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$dс</string>
+    <string name="show_rating">Мітка рейтингу</string>
+    <string name="no_account">Немає облікового запису</string>
+    <string name="edit_profile_image_title">Редагувати зображення профілю</string>
+    <string name="edit_profile_image_hint">Введіть URL-адресу зображення профілю</string>
+    <string name="edit_profile_image_error_empty">URL-адресу не знайдено</string>
+    <string name="edit_profile_image_error_invalid">Недійсна URL-адреса або зображення</string>
+    <string name="edit_profile_image_success">Зображення успішно оновлено</string>
+    <string name="action_mark_watched_up_to_this_episode">Позначити як переглянуте до цього епізоду</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">Вилучити переглянуті до цього епізоду</string>
+    <string name="action_reload">Перезавантажено</string>
+    <string name="reload_provider">Постачальник послуг поповнення рахунку</string>
 </resources>

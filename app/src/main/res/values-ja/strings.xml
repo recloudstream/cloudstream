@@ -675,4 +675,17 @@
     <string name="slide_up_again_to_exceed_100">再度上へスライドして100%以上に調整できます</string>
     <string name="all_subtitles_italic">字幕を斜体にする</string>
     <string name="background_radius">背景の半径</string>
+    <string name="player_settings_always_ask">常に尋ねること</string>
+    <string name="download_parallel_settings_des">並行してダウンロードできるアイテム</string>
+    <string name="parallel_downloads">並行ダウンロード</string>
+    <string name="concurrent_connections">並行接続</string>
+    <string name="concurrent_connections_settings_des">ダウンロード中に使用できる同時接続数</string>
+    <string name="go_to_downloads">ダウンロードへ</string>
+    <string name="no_internet_connection">インターネットに接続していません。\n\nインターネットに接続して再度お試しいただくか、オフラインの状態でダウンロードをご覧ください。</string>
+    <string name="overscan_settings_des">画面の境界を変更する</string>
+    <string name="overscan_settings">オーバースキャン</string>
+    <string name="poster_size_settings_des">ポスターの大きさを変更</string>
+    <string name="poster_size_settings">ポスター</string>
+    <string name="speedup_title">長押し速度トグル</string>
+    <string name="speedup_summary">ホールドで2倍速に</string>
 </resources>
