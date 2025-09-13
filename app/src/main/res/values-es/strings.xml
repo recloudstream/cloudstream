@@ -7,9 +7,9 @@
     <string name="batch_download_finish_format" formatted="true">Descargado %1$d %2$s</string>
     <string name="delete_repository">Borrar repositorio</string>
     <string name="next_episode_format" formatted="true">El episodio %d se lanzará en</string>
-    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
-    <string name="next_episode_time_min_format" formatted="true">%dm</string>
-    <string name="result_poster_img_des">Poster</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$d h %2$d m</string>
+    <string name="next_episode_time_min_format" formatted="true">%d m</string>
+    <string name="result_poster_img_des">Póster</string>
     <string name="extensions">Extensiones</string>
     <string name="downloaded_file">Archivo descargado</string>
     <string name="safe_mode_description">Todas las extensiones se desactivaron debido a un fallo para ayudarlo a encontrar la que está causando problemas.</string>
@@ -68,7 +68,7 @@
     <string name="skip_type_recap">Resumen</string>
     <string name="skip_type_creddits">Créditos</string>
     <string name="skip_type_mixed_ed">Final mixto</string>
-    <string name="episode_poster_img_des">Poster del Episodio</string>
+    <string name="episode_poster_img_des">Póster del episodio</string>
     <string name="next_episode">Siguiente episodio</string>
     <string name="episode_more_options_des">Más opciones</string>
     <string name="episode_sync_settings">Actualizar progreso de lo visto</string>
@@ -85,28 +85,27 @@
     <string name="confirm_exit_dialog">Está seguro que quiere salir?</string>
     <string name="popup_resume_download">Continuar Descarga</string>
     <string name="example_lang_name">Código de idioma (es_LA)</string>
-    <string name="home_main_poster_img_des">Poster Principal</string>
+    <string name="home_main_poster_img_des">Póster principal</string>
     <string name="app_language">Idioma de la aplicación</string>
     <string name="provider_languages_tip">Ver videos en estos idiomas</string>
-    <string name="search_poster_img_des">Poster</string>
+    <string name="search_poster_img_des">Póster</string>
     <string name="home_next_random_img_des">Siguiente al azar</string>
     <string name="all_languages_preference">Todos los Idiomas</string>
     <string name="go_back_img_des">Regresar</string>
     <string name="home_change_provider_img_des">Cambiar proveedor</string>
-    <string name="preview_background_img_des">Vista previa del fondo</string>
+    <string name="preview_background_img_des">Previsualizar fondo</string>
     <string name="rated_format" formatted="true">Nota:%.1f</string>
-    <string name="new_update_format" formatted="true">¡Nueva actualización encontrada!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Se encontró una actualización nueva:\n%1$s → %2$s</string>
     <string name="download">Descargar</string>
     <string name="popup_pause_download">Pausar Descarga</string>
     <string name="subs_font">Formato de fuente</string>
     <string name="subs_background_color">Color de Fondo</string>
     <string name="subs_font_size">Tamaño de Fuente</string>
-    <string name="player_speed_text_format" formatted="true">Velocidad (%.2fx)</string>
+    <string name="player_speed_text_format" formatted="true">Velocidad (%.2f×)</string>
     <string name="skip_loading">Omitir carga</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep. %2$d</string>
-    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
-    <string name="cast_format" formatted="true">Elenco %s</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$d d %2$d h %3$d m</string>
+    <string name="cast_format" formatted="true">Elenco: %s</string>
     <string name="filler" formatted="true">Relleno</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="app_name">CloudStream</string>
@@ -120,7 +119,7 @@
     <string name="no_data">Sin datos</string>
     <string name="result_tags">Géneros</string>
     <string name="result_share">Compartir</string>
-    <string name="result_open_in_browser">Abrir en Navegador</string>
+    <string name="result_open_in_browser">Abrir en navegador</string>
     <string name="loading">Cargando…</string>
     <string name="home_expanded_hide">Ocultar</string>
     <string name="sort_apply">Aplicar</string>
@@ -134,7 +133,7 @@
     <string name="type_plan_to_watch">Planeando ver</string>
     <string name="type_re_watching">Volviendo a mirar</string>
     <string name="play_movie_button">Reproducir película</string>
-    <string name="play_trailer_button">Reproducir Trailer</string>
+    <string name="play_trailer_button">Reproducir tráiler</string>
     <string name="play_livestream_button">Reproducir transmisión en vivo (livestream)</string>
     <string name="play_torrent_button">Transmitir Torrent</string>
     <string name="pick_source">Fuentes</string>
@@ -563,9 +562,7 @@
     <string name="action_subscribe">Suscríbase</string>
     <string name="action_remove_from_favorites">Eliminar de favoritos</string>
     <string name="select_an_account">Seleccione una cuenta</string>
-    <string name="duplicate_message_single">Parece que ya existe un elemento potencialmente duplicado en su biblioteca: \'%s.\'
-\n
-\n¿Desea añadir este elemento de todos modos, sustituir el existente o cancelar la acción?</string>
+    <string name="duplicate_message_single">Parece que ya existe un elemento potencialmente duplicado en su colección: «%s». \n \n¿Quiere añadir este elemento de todos modos, sustituir el existente o cancelar la acción?</string>
     <string name="enter_pin">Introducir el PIN</string>
     <string name="pin">PIN</string>
     <string name="enter_current_pin">Introduzca el PIN actual</string>
@@ -674,7 +671,7 @@
     <string name="torrent_not_accepted">Reiniciar app y aceptar aparición de Stream Torrent para proceder.</string>
     <string name="software_decoding">Software de decodificado</string>
     <string name="software_decoding_desc">El software de decodificado permite que el reproductor reproduzca archivos de video no soportados por su teléfono, lo cual podría causar una reproducción lenta o inestable en alta resolución</string>
-    <string name="player_notification_channel_description">La notificación del jugador para controlar el juego desde el segundo plano</string>
+    <string name="player_notification_channel_description">La notificación del reproductor para controlar la reproducción en segundo plano</string>
     <string name="sort_episodes_rating_high_low">Puntuación (Más alta)</string>
     <string name="sort_episodes_number_desc">Episodio (Descendente)</string>
     <string name="sort_episodes_rating_low_high">Puntuación (Más baja)</string>
@@ -686,7 +683,7 @@
     <string name="sort_episodes_date_oldest">Fecha aérea (más antigua)</string>
     <string name="sort_button_rating">Puntuar %s</string>
     <string name="plugins_updated_manually">%d complemento(s) actualizados correctamente.</string>
-    <string name="no_plugins_updated_manually">Ningún complemento fue actualizado.</string>
+    <string name="no_plugins_updated_manually">No se actualizó ningún complemento.</string>
     <string name="sort_episodes_number_asc">Episodio (Ascendente)</string>
     <string name="speech_recognition_unavailable">Reconocimiento de habla no disponible</string>
     <string name="begin_speaking">Empiece a hablar…</string>
@@ -699,4 +696,27 @@
     <string name="background_radius">Radio del fondo</string>
     <string name="volume_exceeded_100">El volumen ha excedido 100%</string>
     <string name="slide_up_again_to_exceed_100">Deslice de nuevo hacia arriba para ir más allá del 100%</string>
+    <string name="download_parallel_settings_des">Cuántos elementos diferentes pueden descargarse en paralelo</string>
+    <string name="player_settings_always_ask">Preguntar siempre</string>
+    <string name="parallel_downloads">Descargas en paralelo</string>
+    <string name="concurrent_connections">Conexiones concurrentes</string>
+    <string name="concurrent_connections_settings_des">Cuántas conexiones concurrentes para cada descarga se pueden usar</string>
+    <string name="go_to_downloads">Ir a Descargas</string>
+    <string name="no_internet_connection">Sin conexión a internet. \n\nConéctese a internet y vuelva a intentarlo, o mire sus descargas mientras está sin conexión.</string>
+    <string name="overscan_settings_des">Cambios en los límites de la pantalla</string>
+    <string name="overscan_settings">Overscan</string>
+    <string name="poster_size_settings_des">Cambios en el tamaño de los pósteres</string>
+    <string name="poster_size_settings">Tamaño del póster</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$d h %2$d m %3$d s</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$d m %2$d s</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$d s</string>
+    <string name="show_rating">Etiqueta de valoración</string>
+    <string name="speedup_summary">Mantenga presionado para duplicar la velocidad</string>
+    <string name="no_account">Sin cuenta</string>
+    <string name="edit_profile_image_error_empty">Ninguna URL Encontrada</string>
+    <string name="edit_profile_image_error_invalid">URL o imagen no válida</string>
+    <string name="edit_profile_image_success">Imagen Actualizada Correctamente</string>
+    <string name="action_mark_watched_up_to_this_episode">Marcar como vigilado en este episodio</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">Retirar vigilado para este episodio</string>
+    <string name="action_reload">Recargado</string>
 </resources>

@@ -265,7 +265,7 @@
     <string name="video_source">Forrás</string>
     <string name="video_skip_op">Bevezető intro átugrása</string>
     <string name="dont_show_again">Ne mutasd újra</string>
-    <string name="next_episode_format" formatted="true">A(z) %d epizód ekkor jelenik meg:</string>
+    <string name="next_episode_format" formatted="true">A(z) %d epizód ekkor jelenik meg</string>
     <string name="type_on_hold">Szüneteltetve</string>
     <string name="type_dropped">Elvetve</string>
     <string name="show_hd">Minőségi jelzés</string>
