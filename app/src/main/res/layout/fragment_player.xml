@@ -13,7 +13,7 @@
     <!--
           app:fastforward_increment="10000"
             app:rewind_increment="10000"-->
-    <androidx.media3.ui.PlayerView
+    <com.lagradost.cloudstream3.utils.ZoomablePlayerView
         android:id="@+id/player_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -27,7 +27,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:show_timeout="0" />
+        app:show_timeout="0"
+        app:surface_type="texture_view" />
 
     <FrameLayout
         android:id="@+id/player_loading_overlay"
