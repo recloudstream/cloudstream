@@ -234,7 +234,7 @@ class PluginsViewModel : ViewModel() {
             if (it.plugin.second.language == null) {
                 return@filter languages.contains("none")
             }
-            languages.contains(it.plugin.second.language)
+            languages.map{ it.lowercase() }.contains(it.plugin.second.language)
         }
     }
 
