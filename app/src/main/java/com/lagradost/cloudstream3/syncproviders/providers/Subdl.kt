@@ -1,9 +1,8 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.subtitles.SubtitleResource
 import com.lagradost.cloudstream3.syncproviders.AuthData
@@ -12,6 +11,7 @@ import com.lagradost.cloudstream3.syncproviders.AuthLoginResponse
 import com.lagradost.cloudstream3.syncproviders.AuthToken
 import com.lagradost.cloudstream3.syncproviders.AuthUser
 import com.lagradost.cloudstream3.syncproviders.SubtitleAPI
+import com.lagradost.cloudstream3.TvType
 
 class SubDlApi : SubtitleAPI() {
     override val name = "SubDL"
@@ -65,6 +65,7 @@ class SubDlApi : SubtitleAPI() {
         val epNum = query.epNumber ?: 0
         val seasonNum = query.seasonNumber ?: 0
         val yearNum = query.year ?: 0
+        val langSubdlCode = langTagIETF2subdl[query.lang.toString()] ?: query.lang
 
         val idQuery = when {
             query.imdbId != null -> "&imdb_id=${query.imdbId}"
@@ -78,8 +79,8 @@ class SubDlApi : SubtitleAPI() {
 
         val searchQueryUrl = when (idQuery) {
             //Use imdb/tmdb id to search if its valid
-            null -> "$APIENDPOINT?api_key=${apiKey}&film_name=$queryText&languages=${query.lang}$epQuery$seasonQuery$yearQuery"
-            else -> "$APIENDPOINT?api_key=${apiKey}$idQuery&languages=${query.lang}$epQuery$seasonQuery$yearQuery"
+            null -> "$APIENDPOINT?api_key=${apiKey}&film_name=$queryText&languages=$langSubdlCode$epQuery$seasonQuery$yearQuery"
+            else -> "$APIENDPOINT?api_key=${apiKey}$idQuery&languages=$langSubdlCode$epQuery$seasonQuery$yearQuery"
         }
 
         val req = app.get(
@@ -91,7 +92,9 @@ class SubDlApi : SubtitleAPI() {
 
         return req.parsedSafe<ApiResponse>()?.subtitles?.map { subtitle ->
 
-            val lang = subtitle.lang.replaceFirstChar { it.uppercase() }
+            val langTagIETF =
+                langTagIETF2subdl.entries.find { it.value == subtitle.lang }?.key ?:
+                subtitle.lang
             val resEpNum = subtitle.episode ?: query.epNumber
             val resSeasonNum = subtitle.season ?: query.seasonNumber
             val type = if ((resSeasonNum ?: 0) > 0) TvType.TvSeries else TvType.Movie
@@ -99,7 +102,7 @@ class SubDlApi : SubtitleAPI() {
             AbstractSubtitleEntities.SubtitleEntity(
                 idPrefix = this.idPrefix,
                 name = subtitle.releaseName,
-                lang = lang,
+                lang = langTagIETF,
                 data = "${DOWNLOADENDPOINT}${subtitle.url}",
                 type = type,
                 source = this.name,
@@ -174,13 +177,83 @@ class SubDlApi : SubtitleAPI() {
     data class Subtitle(
         @JsonProperty("release_name") val releaseName: String,
         @JsonProperty("name") val name: String,
-        @JsonProperty("lang") val lang: String,
+        @JsonProperty("lang") val lang: String, // subdl language code
         @JsonProperty("author") val author: String? = null,
         @JsonProperty("url") val url: String? = null,
         @JsonProperty("subtitlePage") val subtitlePage: String? = null,
         @JsonProperty("season") val season: Int? = null,
         @JsonProperty("episode") val episode: Int? = null,
-        @JsonProperty("language") val language: String? = null,
+        @JsonProperty("language") val language: String? = null, // full language name
         @JsonProperty("hi") val hearingImpaired: Boolean? = null,
+    )
+
+    // https://subdl.com/api-files/language_list.json
+    // most of it is IETF BPC 47 conformant tag
+    // but there are some exceptions
+    private val langTagIETF2subdl = mapOf(
+        "en-bg" to "BG_EN", // "Bulgarian_English"
+        "en-de" to "EN_DE", // "English_German"
+        "en-hu" to "HU_EN", // "Hungarian_English"
+        "en-nl" to "NL_EN", // "Dutch_English"
+        "pt-br" to "BR_PT", // "Brazillian Portuguese"
+        "zh-hant" to "ZH_BG", // "Big 5 code" -> traditional Chinese (?_?)
+        // "ar" to "AR", // "Arabic"
+        // "az" to "AZ", // "Azerbaijani"
+        // "be" to "BE", // "Belarusian"
+        // "bg" to "BG", // "Bulgarian"
+        // "bn" to "BN", // "Bengali"
+        // "bs" to "BS", // "Bosnian"
+        // "ca" to "CA", // "Catalan"
+        // "cs" to "CS", // "Czech"
+        // "da" to "DA", // "Danish"
+        // "de" to "DE", // "German"
+        // "el" to "EL", // "Greek"
+        // "en" to "EN", // "English"
+        // "eo" to "EO", // "Esperanto"
+        // "es" to "ES", // "Spanish"
+        // "et" to "ET", // "Estonian"
+        // "fa" to "FA", // "Farsi_Persian"
+        // "fi" to "FI", // "Finnish"
+        // "fr" to "FR", // "French"
+        // "he" to "HE", // "Hebrew"
+        // "hi" to "HI", // "Hindi"
+        // "hr" to "HR", // "Croatian"
+        // "hu" to "HU", // "Hungarian"
+        // "id" to "ID", // "Indonesian"
+        // "is" to "IS", // "Icelandic"
+        // "it" to "IT", // "Italian"
+        // "ja" to "JA", // "Japanese"
+        // "ka" to "KA", // "Georgian"
+        // "kl" to "KL", // "Greenlandic"
+        // "ko" to "KO", // "Korean"
+        // "ku" to "KU", // "Kurdish"
+        // "lt" to "LT", // "Lithuanian"
+        // "lv" to "LV", // "Latvian"
+        // "mk" to "MK", // "Macedonian"
+        // "ml" to "ML", // "Malayalam"
+        // "mni" to "MNI", // "Manipuri"
+        // "ms" to "MS", // "Malay"
+        // "my" to "MY", // "Burmese"
+        // "nl" to "NL", // "Dutch"
+        // "no" to "NO", // "Norwegian"
+        // "pl" to "PL", // "Polish"
+        // "pt" to "PT", // "Portuguese"
+        // "ro" to "RO", // "Romanian"
+        // "ru" to "RU", // "Russian"
+        // "si" to "SI", // "Sinhala"
+        // "sk" to "SK", // "Slovak"
+        // "sl" to "SL", // "Slovenian"
+        // "sq" to "SQ", // "Albanian"
+        // "sr" to "SR", // "Serbian"
+        // "sv" to "SV", // "Swedish"
+        // "ta" to "TA", // "Tamil"
+        // "te" to "TE", // "Telugu"
+        // "th" to "TH", // "Thai"
+        // "tl" to "TL", // "Tagalog"
+        // "tr" to "TR", // "Turkish"
+        // "uk" to "UK", // "Ukranian"
+        // "ur" to "UR", // "Urdu"
+        // "vi" to "VI", // "Vietnamese"
+        // "zh" to "ZH", // "Chinese BG code"
     )
 }
