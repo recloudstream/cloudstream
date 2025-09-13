@@ -685,4 +685,31 @@
     <string name="all_subtitles_italic">Сделать все субтитры курсивом</string>
     <string name="volume_exceeded_100">Громкость превысила 100%</string>
     <string name="slide_up_again_to_exceed_100">Повысьте снова чтобы перевысить 100%</string>
+    <string name="go_to_downloads">Перейти к загрузкам</string>
+    <string name="no_internet_connection">Нет подключения к Интернету.\n\nПожалуйста, подключитесь к Интернету и повторите попытку, или смотрите свои загрузки, находясь в автономном режиме.</string>
+    <string name="download_parallel_settings_des">Сколько различных элементов можно загружать параллельно</string>
+    <string name="parallel_downloads">Параллельные загрузки</string>
+    <string name="concurrent_connections">Одновременные соединения</string>
+    <string name="concurrent_connections_settings_des">Сколько одновременных соединений может использовать каждая загрузка во время скачивания</string>
+    <string name="overscan_settings_des">Изменение границ экрана</string>
+    <string name="overscan_settings">Пересканирование</string>
+    <string name="poster_size_settings_des">Изменение размера плакатов</string>
+    <string name="poster_size_settings">Размер плаката</string>
+    <string name="player_settings_always_ask">Спрашивать всегда</string>
+    <string name="speedup_title">Переключатель скорости LongPress</string>
+    <string name="speedup_summary">Удерживайте, чтобы увеличить скорость в 2 раза</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dч %2$dм %3$dс</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dм %2$dс</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$dс</string>
+    <string name="show_rating">Рейтинговая этикетка</string>
+    <string name="no_account">Не существует учетной записи</string>
+    <string name="edit_profile_image_title">Изменить изображение профиля</string>
+    <string name="edit_profile_image_hint">Введите URL изображения профиля</string>
+    <string name="edit_profile_image_error_empty">URL не найден</string>
+    <string name="edit_profile_image_error_invalid">Неверный URL или изображение</string>
+    <string name="edit_profile_image_success">Успешное обновление изображения</string>
+    <string name="action_mark_watched_up_to_this_episode">Отметить как просмотренное до этой серии</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">Удалите просмотренное до этой серии</string>
+    <string name="action_reload">Перезагружен</string>
+    <string name="reload_provider">Перезагрузить провайдера</string>
 </resources>

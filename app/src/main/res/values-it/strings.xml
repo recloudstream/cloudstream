@@ -719,4 +719,31 @@
     <string name="background_radius">Raggio di sfondo</string>
     <string name="volume_exceeded_100">Il volume ha superato il 100%</string>
     <string name="slide_up_again_to_exceed_100">Scorri di nuovo verso l\'alto per andare oltre il 100%</string>
+    <string name="download_parallel_settings_des">Quanti oggetti possono essere scaricati contemporaneamente</string>
+    <string name="parallel_downloads">Download paralleli</string>
+    <string name="concurrent_connections">Connessioni concorrenti</string>
+    <string name="concurrent_connections_settings_des">Quante connessioni simultanee può utilizzare ogni download durante il download</string>
+    <string name="go_to_downloads">Vai ai Downloads</string>
+    <string name="no_internet_connection">Nessuna connessione a internet. \n\nConnettiti a Internet e riprova oppure guarda i tuoi download mentre sei offline.</string>
+    <string name="overscan_settings_des">Modifica limiti dello schermo</string>
+    <string name="overscan_settings">Overscan</string>
+    <string name="poster_size_settings_des">Modifica dimensioni dei poster</string>
+    <string name="poster_size_settings">Dimensione poster</string>
+    <string name="player_settings_always_ask">Chiedi sempre</string>
+    <string name="speedup_title">Attiva/disattiva velocità LongPress</string>
+    <string name="speedup_summary">Tieni premuto per velocità 2x</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dh %2$dm %3$ds</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dm %2$ds</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$ds</string>
+    <string name="show_rating">Etichetta di valutazione</string>
+    <string name="no_account">Nessun account</string>
+    <string name="edit_profile_image_title">Modifica immagine del profilo</string>
+    <string name="edit_profile_image_hint">Inserisci l\'URL dell\'immagine del profilo</string>
+    <string name="edit_profile_image_error_empty">Nessun URL trovato</string>
+    <string name="edit_profile_image_error_invalid">URL o immagine non validi</string>
+    <string name="edit_profile_image_success">Immagine aggiornata con successo</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">Rimuovi gli episodi visti fino a questo</string>
+    <string name="action_mark_watched_up_to_this_episode">Contrassegna come visto fino a questo episodio</string>
+    <string name="action_reload">Ricaricato</string>
+    <string name="reload_provider">Ricarica provider</string>
 </resources>

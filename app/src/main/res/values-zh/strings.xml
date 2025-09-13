@@ -743,4 +743,31 @@
     <string name="all_subtitles_bold">加粗所有字幕</string>
     <string name="volume_exceeded_100">音量已经超过 100%</string>
     <string name="slide_up_again_to_exceed_100">再次上滑让音量超过 100%</string>
+    <string name="parallel_downloads">并行下载</string>
+    <string name="concurrent_connections">并发连接</string>
+    <string name="overscan_settings_des">更改屏幕边界</string>
+    <string name="overscan_settings">过扫描</string>
+    <string name="go_to_downloads">转到下载</string>
+    <string name="download_parallel_settings_des">可同时下载多少项目</string>
+    <string name="concurrent_connections_settings_des">每个下载项目下载期间可同时使用多少个连接</string>
+    <string name="no_internet_connection">无互联网连接。\n\n请连接到互联网并重试，或者在离线时观看已下载项目。</string>
+    <string name="poster_size_settings_des">更改海报尺寸</string>
+    <string name="poster_size_settings">海报尺寸</string>
+    <string name="player_settings_always_ask">始终询问</string>
+    <string name="speedup_title">长按速度开关</string>
+    <string name="speedup_summary">按住获得 2 倍速</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$d小时 %2$d分钟 %3$d秒</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$d分钟 %2$d秒</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$d秒</string>
+    <string name="show_rating">评分标签</string>
+    <string name="no_account">无账户</string>
+    <string name="edit_profile_image_title">编辑个人资料图片</string>
+    <string name="edit_profile_image_hint">输入个人资料图片 URL</string>
+    <string name="edit_profile_image_error_empty">未找到 URL</string>
+    <string name="edit_profile_image_error_invalid">无效 URL 或图片</string>
+    <string name="edit_profile_image_success">成功更新了图片</string>
+    <string name="action_mark_watched_up_to_this_episode">将这一集和之前的标为已观看</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">去除这一集和之前集数的已观看状态</string>
+    <string name="action_reload">已重新加载</string>
+    <string name="reload_provider">重新加载视频源</string>
 </resources>
