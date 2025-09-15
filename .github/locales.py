@@ -21,9 +21,9 @@ rest, after_src = rest.split(END_MARKER)
 
 # Load already added langs
 languages = {}
-for lang in re.finditer(r'Triple\("(.*)", "(.*)", "(.*)"\)', rest):
-    flag, name, iso = lang.groups()
-    languages[iso] = (flag, name)
+for lang in re.finditer(r'Pair\("(.*)", "(.*)"\)', rest):
+    name, iso = lang.groups()
+    languages[iso] = name
 
 # Add not yet added langs
 for folder in glob.glob(f"{XML_NAME}*"):
@@ -32,18 +32,18 @@ for folder in glob.glob(f"{XML_NAME}*"):
         entry = iso_map.get(iso.lower(),{'nativeName':iso})
         languages[iso] = ("", entry['nativeName'].split(',')[0])
 
-# Create triples
-triples = []
+# Create pairs
+pairs = []
 for iso in sorted(languages.keys()):
-    flag, name = languages[iso]
-    triples.append(f'{INDENT}Triple("{flag}", "{name}", "{iso}"),')
+    name = languages[iso]
+    pairs.append(f'{INDENT}Pair("{name}", "{iso}"),')
 
 # Update settings file
 open(SETTINGS_PATH, "w+",encoding='utf-8').write(
     before_src +
     START_MARKER +
     "\n" +
-    "\n".join(triples) +
+    "\n".join(pairs) +
     "\n" +
     END_MARKER +
     after_src
