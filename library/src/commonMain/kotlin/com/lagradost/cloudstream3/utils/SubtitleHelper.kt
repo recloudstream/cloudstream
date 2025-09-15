@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.utils
 
 import com.lagradost.cloudstream3.Prerelease
 import java.util.Locale
-import kotlin.text.RegexOption.IGNORE_CASE
 
 // If you find a way to use SettingsGeneral getCurrentLocale()
 // instead of this function do it.
@@ -49,9 +48,9 @@ object SubtitleHelper {
             val localeOfLocalizeTo = Locale.forLanguageTag(localizedTo ?: getCurrentLocale())
             val sysLocalizedName = localeOfLangCode.getDisplayName(localeOfLocalizeTo)
 
-            val langCodeWithCountry = "${localeOfLangCode.language} (${localeOfLangCode.country})"
+            val langCodeWithCountry = "${localeOfLangCode.language} (" // ${localeOfLangCode.country})"
             val failedToLocalize =
-                sysLocalizedName.contains(this.IETF_tag, ignoreCase = true) ||
+                sysLocalizedName.equals(this.IETF_tag, ignoreCase = true) ||
                 sysLocalizedName.contains(langCodeWithCountry, ignoreCase = true)
 
             return if (failedToLocalize)
@@ -87,7 +86,7 @@ object SubtitleHelper {
             // Workaround to avoid junk like "English (original audio)" or "Spanish 123"
             // or "اَلْعَرَبِيَّةُ (Original Audio) 1" or "English (hindi sub)"…
             // Subtitle downloads and auto selection should rely on proper language codes
-            // instead of language names! And remove remove junk beforehand.
+            // instead of language names! And remove junk beforehand.
             val arabicDiacritics = Regex("[\\u064B-\\u065B]")
             val withoutDiacritics = lowLangName.replace(arabicDiacritics, "")
             val nameWithoutJunk = Regex("^([^()\\s\\d]+)").find(withoutDiacritics)?.value ?: withoutDiacritics
@@ -105,7 +104,7 @@ object SubtitleHelper {
     //     ReplaceWith("fromLanguageToTagIETF(input, looseCheck)"))
     /**
      * Language name (english or native) -> ISO_639_1
-     * @param languageName language name
+     * @param input language name
      * @param looseCheck match with `contains()` instead of `equals()`
     */
     fun fromLanguageToTwoLetters(input: String, looseCheck: Boolean): String? {
@@ -284,6 +283,11 @@ object SubtitleHelper {
     //   "zh-hant-TW" to "TW"
     // add to this list is useless as getFlagFromIso() already
     // handles it.
+    // Adding here is still an option to overwrite a flag like in:
+    //   "am" to "ET" => Ethiopia flag for Amharic instead of Armenia flag
+    // For country / region see
+    // https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+    // https://en.wikipedia.org/wiki/UN_M49
     private val lang2country = mapOf(
         "419" to "ES", // (?_?) Latin America Spanish -> ES or a L.A. country?
         "aa" to "ET",
@@ -506,7 +510,7 @@ object SubtitleHelper {
         LanguageMetadata("Albanian","Shqip","sq","sq","","sqi","sq"),
         LanguageMetadata("Amharic","አማርኛ","am","am","amh","amh","am"),
         LanguageMetadata("Arabic","العربية","ar","ar","ara","ara","ar"),
-        LanguageMetadata("Arabic (Levantine)","عربي شامي","apc","","","apc","ar"),
+        LanguageMetadata("Arabic (Levantine)","عربي شامي","apc","","ajp","apc","ar"), // "ajp" is deprecated, keeping for compatibility
         LanguageMetadata("Arabic (Najdi)","عربي شامي","ars","","","ars","ar"),
         LanguageMetadata("Aragonese","aragonés","an","an","arg","arg","an"),
         LanguageMetadata("Armenian","Հայերեն","hy","hy","","hye","hy"),
@@ -556,13 +560,13 @@ object SubtitleHelper {
         LanguageMetadata("Gujarati","ગુજરાતી","gu","gu","guj","guj",""),
         LanguageMetadata("Haitian","Kreyòl ayisyen","ht","ht","hat","hat",""),
         LanguageMetadata("Hausa","(Hausa) هَوُسَ","ha","ha","hau","hau",""),
-        LanguageMetadata("Hebrew","עברית","he","he","heb","heb","he"),
+        LanguageMetadata("Hebrew","עברית","he","iw","heb","heb","he"), // "iw" is deprecated, keeping for compatibility
         LanguageMetadata("Hindi","हिन्दी, हिंदी","hi","hi","hin","hin","hi"),
         LanguageMetadata("Hungarian","Magyar","hu","hu","hun","hun","hu"),
         LanguageMetadata("Icelandic","Íslenska","is","is","","isl","is"),
         LanguageMetadata("Ido","Ido","io","io","ido","ido",""),
         LanguageMetadata("Igbo","Asụsụ Igbo","ig","ig","ibo","ibo","ig"),
-        LanguageMetadata("Indonesian","Bahasa Indonesia","id","id","ind","ind","id"),
+        LanguageMetadata("Indonesian","Bahasa Indonesia","id","in","ind","ind","id"), // "in" is deprecated, keeping for compatibility
         LanguageMetadata("Interlingua","Interlingua","ia","ia","ina","ina","ia"),
         LanguageMetadata("Interlingue","Interlingue (originally Occidental)","ie","ie","ile","ile",""),
         LanguageMetadata("Irish","Gaeilge","ga","ga","gle","gle","ga"),
