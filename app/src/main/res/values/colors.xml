@@ -67,8 +67,8 @@
     <color name="lightIconColor">#5f6267</color>
 
     <!--Dracula Theme-->
-    <color name="DraculaPrimaryGrayBackground">#282A36</color>
-    <color name="DraculaBitDarkerGrayBackground">#21222C</color>
+    <color name="DraculaPrimaryGrayBackground">#414450</color>
+    <color name="DraculaBitDarkerGrayBackground">#282a36</color>
     <color name="DraculaGrayBackground">#44475A</color>
     <color name="DraculaItemBackground">#373844</color>
     <color name="DraculaTextColor">#F8F8F2</color>
