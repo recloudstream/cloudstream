@@ -496,7 +496,7 @@
     <string name="speech_recognition_unavailable">Pengecaman pertuturan tidak tersedia</string>
     <string name="begin_speaking">Mula Bercakap…</string>
     <string name="torrent_info">Video ini adalah torrent, ini bermakna aktiviti video anda dapat dikesan.\nPastikan anda memahami torrenting sebelum meneruskan.</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="double_tap_to_seek_amount_settings">Pemain Mencari Amaun (Seconds)</string>
     <string name="automatic_plugin_download_summary">Secara automatik memasang semua plugin yang belum dipasang dari repositori yang ditambah.</string>
     <string name="updates_settings">Tunjukkan kemas kini aplikasi</string>
