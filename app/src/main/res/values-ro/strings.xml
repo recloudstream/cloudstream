@@ -642,4 +642,20 @@
     <string name="deselect_all">Deselectionati totul</string>
     <string name="torrent_info">Acest video este un Torrent, ceea ce înseamnă că activitatea dumneavoastră video poate fi urmărită.\n Asigurați-vă că înțelegeți Torrentul înainte să continuați.</string>
     <string name="offline_file">Disponibil pentru vizionare offline</string>
+    <string name="speech_recognition_unavailable">Recogniție de voce nu este disponibilă</string>
+    <string name="begin_speaking">Începeți să vorbiți…</string>
+    <string name="open_local_video">Deschideți video local</string>
+    <string name="test_warning">Avertisment</string>
+    <string name="delete_message_multiple" formatted="true">Sunteți siguri că doriți să ștergeți definitiv următoarele fișiere?\n\n%s</string>
+    <string name="delete_message_series_section" formatted="true">Veți mai și șterge definitiv toate episoadele în seria următoare:\n\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Sunteți siguri ca doriți sa ștergeți definitiv toate episoadele în seria următoare?\n\n%s</string>
+    <string name="audio_singluar">Audio</string>
+    <string name="podcast_singluar">Podcast</string>
+    <string name="encoding_error">Eroare de codificare</string>
+    <string name="unsupported_error">Eroare Nesuportată</string>
+    <string name="show_rating">Etichetă de clasificare</string>
+    <string name="delete_files">Ștergeți fișiere</string>
+    <string name="delete_format" formatted="true">Șterge (%1$d | %2$s)</string>
+    <string name="delete_message_series_episodes" formatted="true">Sunteți sigur că vreți să ștergeți permanent următoarele epsioade în %1$s?\n\n%2$s</string>
+    <string name="pref_category_security">Securitate</string>
 </resources>
