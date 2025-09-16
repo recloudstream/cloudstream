@@ -328,6 +328,7 @@ object SubtitleHelper {
         "ca" to "ES",
         "cgg" to "UG",
         "chr" to "US",
+        "ckb" to "IQ", // (?_?) Central Kurdish -> IQ or IR
         "cnr" to "ME",
         "cs" to "CZ",
         "cy" to "GB",
