@@ -109,7 +109,7 @@ class RepoAdapter(
                         }
 
                         repositoryItemRoot.setOnLongClickListener {
-                            val shareableRepoData = "${repositoryData.name} : \n ${repositoryData.url}"
+                            val shareableRepoData = "${repositoryData.name}$SHAREABLE_REPO_SEPARATOR\n ${repositoryData.url}"
                             clipboardHelper(txt(R.string.repo_copy_label), shareableRepoData)
                             true
                         }
@@ -120,6 +120,10 @@ class RepoAdapter(
                 }
             }
         }
+    }
+
+    companion object {
+        const val SHAREABLE_REPO_SEPARATOR = " : "
     }
 }
 

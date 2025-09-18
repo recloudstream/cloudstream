@@ -232,8 +232,15 @@ class ExtensionsFragment : Fragment() {
             dialog.show()
             (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager?)?.primaryClip?.getItemAt(
                 0
-            )?.text?.toString()?.let { copy ->
-                binding.repoUrlInput.setText(copy)
+            )?.text?.toString()?.let { copiedText ->
+                if (copiedText.contains(RepoAdapter.SHAREABLE_REPO_SEPARATOR)) {
+                    // text is of format <repository name> : <repository url>
+                    val (name, url) = copiedText.split(RepoAdapter.SHAREABLE_REPO_SEPARATOR, limit = 2)
+                    binding.repoUrlInput.setText(url.trim())
+                    binding.repoNameInput.setText(name.trim())
+                } else {
+                    binding.repoUrlInput.setText(copiedText)
+                }
             }
 
 //            dialog.list_repositories?.setOnClickListener {
