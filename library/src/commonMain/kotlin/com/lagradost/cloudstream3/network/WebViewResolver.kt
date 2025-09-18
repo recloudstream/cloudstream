@@ -21,7 +21,12 @@ expect class WebViewResolver(
     useOkhttp: Boolean = true,
     script: String? = null,
     scriptCallback: ((String) -> Unit)? = null,
-    timeout: Long = DEFAULT_TIMEOUT
+    timeout: Long = DEFAULT_TIMEOUT,
+    baseUrl: String? = null,
+    html: String? = null,
+    mimeType: String? = null,
+    encoding: String? = null,
+    historyUrl: String? = null,
 ) : Interceptor {
     companion object {
         val DEFAULT_TIMEOUT: Long

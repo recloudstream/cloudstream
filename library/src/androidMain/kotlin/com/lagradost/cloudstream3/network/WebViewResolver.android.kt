@@ -40,7 +40,12 @@ actual class WebViewResolver actual constructor(
     val useOkhttp: Boolean,
     val script: String?,
     val scriptCallback: ((String) -> Unit)?,
-    val timeout: Long
+    val timeout: Long,
+    val baseUrl: String?,
+    val html: String?,
+    val mimeType: String?,
+    val encoding: String?,
+    val historyUrl: String?,
 ) :
     Interceptor {
 
@@ -185,7 +190,6 @@ actual class WebViewResolver actual constructor(
                             ".mpeg",
                             ".jpeg",
                             ".webm",
-                            ".mp4",
                             ".mp3",
                             ".gifv",
                             ".flv",
@@ -200,8 +204,6 @@ actual class WebViewResolver actual constructor(
                             ".woff",
                             ".ttf",
                             ".css",
-                            ".vtt",
-                            ".srt",
                             ".ts",
                             ".gif",
                             // Warning, this might fuck some future sites, but it's used to make Sflix work.
@@ -257,7 +259,17 @@ actual class WebViewResolver actual constructor(
                         handler?.proceed() // Ignore ssl issues
                     }
                 }
-                webView?.loadUrl(url, headers.toMap())
+                if (html != null) {
+                    webView?.loadDataWithBaseURL(
+                        baseUrl ?: url,
+                        html,
+                        mimeType,
+                        encoding,
+                        historyUrl
+                    )
+                } else {
+                    webView?.loadUrl(url, headers.toMap())
+                }
             } catch (e: Exception) {
                 logError(e)
             }

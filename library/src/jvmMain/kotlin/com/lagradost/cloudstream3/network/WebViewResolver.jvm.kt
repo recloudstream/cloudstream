@@ -24,7 +24,12 @@ actual class WebViewResolver actual constructor(
     useOkhttp: Boolean,
     script: String?,
     scriptCallback: ((String) -> Unit)?,
-    timeout: Long
+    timeout: Long,
+    baseUrl: String?,
+    html: String?,
+    mimeType: String?,
+    encoding: String?,
+    historyUrl: String?,
 ) :
     Interceptor {
 
