@@ -5,6 +5,8 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
@@ -32,6 +34,7 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.debugException
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.ViewHolderState
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
@@ -49,6 +52,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarMargin
@@ -293,9 +297,11 @@ class HomeParentItemAdapterPreview(
         private val bookmarkRecyclerView: RecyclerView =
             itemView.findViewById(R.id.home_bookmarked_child_recyclerview)
 
-        private val homeAccount: View? = itemView.findViewById(R.id.home_preview_switch_account)
-        private val alternativeHomeAccount: View? =
-            itemView.findViewById(R.id.alternative_switch_account)
+        private val headProfilePic: ImageView? = itemView.findViewById(R.id.home_head_profile_pic)
+        private val headProfilePicCard: View? = itemView.findViewById(R.id.home_head_profile_padding)
+
+        private val alternateHeadProfilePic: ImageView? = itemView.findViewById(R.id.alternate_home_head_profile_pic)
+        private val alternateHeadProfilePicCard: View? = itemView.findViewById(R.id.alternate_home_head_profile_padding)
 
         private val topPadding: View? = itemView.findViewById(R.id.home_padding)
 
@@ -469,13 +475,19 @@ class HomeParentItemAdapterPreview(
                 }
             }
 
-            homeAccount?.isGone = isLayout(TV or EMULATOR)
+            headProfilePicCard?.isGone = isLayout(TV or EMULATOR)
+            alternateHeadProfilePicCard?.isGone = isLayout(TV or EMULATOR)
 
-            homeAccount?.setOnClickListener {
+            viewModel.currentAccount.observe(fragment.viewLifecycleOwner) { currentAccount ->
+                headProfilePic?.loadImage(currentAccount?.image)
+                alternateHeadProfilePic?.loadImage(currentAccount?.image)
+            }
+
+            headProfilePicCard?.setOnClickListener {
                 activity?.showAccountSelectLinear()
             }
 
-            alternativeHomeAccount?.setOnClickListener {
+            alternateHeadProfilePicCard?.setOnClickListener {
                 activity?.showAccountSelectLinear()
             }
 
@@ -485,7 +497,11 @@ class HomeParentItemAdapterPreview(
                         viewModel.loadAndCancel(api, forceReload = true, fromUI = true)
                     }
                 }
-
+                homePreviewReloadProvider.setOnClickListener{
+                    viewModel.loadAndCancel(viewModel.apiName.value ?: noneApi.name, forceReload = true, fromUI = true)
+                    showToast(R.string.action_reload, Toast.LENGTH_SHORT)
+                    true
+                }
                 homePreviewSearchButton.setOnClickListener { _ ->
                     // Open blank screen.
                     viewModel.queryTextSubmit("")
@@ -655,6 +671,7 @@ class HomeParentItemAdapterPreview(
                 if (binding is FragmentHomeHeadTvBinding) {
                     observe(viewModel.apiName) { name ->
                         binding.homePreviewChangeApi.text = name
+                        binding.homePreviewReloadProvider.isGone = (name == noneApi.name)
                     }
                 }
                 observe(viewModel.resumeWatching) {

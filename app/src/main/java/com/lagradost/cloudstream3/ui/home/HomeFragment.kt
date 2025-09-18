@@ -547,6 +547,12 @@ class HomeFragment : Fragment() {
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
             homeApiFab.setOnClickListener(apiChangeClickListener)
+            homeApiFab.setOnLongClickListener{
+                if(currentApiName == noneApi.name) return@setOnLongClickListener false
+                homeViewModel.loadAndCancel(currentApiName, forceReload = true, fromUI = true)
+                showToast(R.string.action_reload,Toast.LENGTH_SHORT)
+                true
+            }
             homeChangeApi.setOnClickListener(apiChangeClickListener)
             homeSwitchAccount.setOnClickListener {
                 activity?.showAccountSelectLinear()

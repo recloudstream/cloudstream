@@ -637,7 +637,7 @@
     <string name="clipboard_unknown_error">Pogreška pri kopiranju. Kopirajte zapisnik i kontaktirajte podršku aplikacije.</string>
     <string name="battery_dialog_message">Da biste osigurali neprekinuta preuzimanja i obavijesti za pretplaćene TV emisije, CloudStream treba dopuštenje za rad u pozadini. Pritiskom na \"U redu\" prikazat će vam se dijaloški okvir s zahtjevom. Molimo vas da pritisnete \"Dopusti\".  \n\nNapominjemo da ovo dopuštenje ne znači da će CS3 trošiti vašu bateriju. Aplikacija će raditi u pozadini samo kada je to potrebno, primjerice prilikom primanja obavijesti ili preuzimanja videozapisa iz službenih proširenja.</string>
     <string name="biometric_warning">Vaši CloudStream podaci su sada spremljeni u sigurnosnu kopiju. Iako je vjerojatnost mala, neki se uređaji mogu ponašati drugačije. Ako izgubite pristup aplikaciji, potpuno izbrišite podatke aplikacije i obnovite ih pomoću sigurnosne kopije. Ispričavamo se zbog mogućih neugodnosti.</string>
-    <string name="next_season_episode_format" formatted="true">Sezona %1$d epizoda %2$d izlazi</string>
+    <string name="next_season_episode_format" formatted="true">Sezona %1$d epizoda %2$d izlazi za</string>
     <string name="episode_action_cast_mirror">Cast mirror</string>
     <string name="player_settings_select_cast_device">Odaberi uređaj za emitiranje</string>
     <string name="cs3wiki">CloudStream Wiki</string>
@@ -723,4 +723,31 @@
     <string name="subtitles_from_online">Online</string>
     <string name="speech_recognition_unavailable">Prepoznavanje govora nije dostupno</string>
     <string name="begin_speaking">Počnite govoriti…</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dh %2$dmin %3$ds</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dmin %2$ds</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$ds</string>
+    <string name="show_rating">Oznaka za ocjenjivanje</string>
+    <string name="player_settings_always_ask">Uvijek pitaj</string>
+    <string name="no_account">Nema računa</string>
+    <string name="download_parallel_settings_des">Koliko se različitih stavki može istovremeno preuzimati</string>
+    <string name="parallel_downloads">Istovremena preuzimanja</string>
+    <string name="concurrent_connections">Istovremene veze</string>
+    <string name="concurrent_connections_settings_des">Koliko istovremenih veza svako preuzimanje može koristiti tijekom preuzimanja</string>
+    <string name="go_to_downloads">Idi na preuzimanja</string>
+    <string name="no_internet_connection">Nema internetske veze.\n\nPovežite se s internetom i pokušajte ponovo ili gledajte svoje preuzete sadržaje kada niste povezani s internetom.</string>
+    <string name="overscan_settings_des">Mijenja granice ekrana</string>
+    <string name="overscan_settings">Slika veća od ekrana</string>
+    <string name="poster_size_settings_des">Mijenja veličinu postera</string>
+    <string name="poster_size_settings">Veličina postera</string>
+    <string name="speedup_title">Prebacivanje brzine dugim pritiskom</string>
+    <string name="speedup_summary">Držite pritisnuto za dvostruku brzinu</string>
+    <string name="edit_profile_image_title">Uredi sliku profila</string>
+    <string name="edit_profile_image_hint">Unesite URL slike profila</string>
+    <string name="edit_profile_image_error_empty">Nijedan URL nije pronađen</string>
+    <string name="edit_profile_image_error_invalid">Nevaljan URL ili slika</string>
+    <string name="edit_profile_image_success">Slika uspješno aktualizirana</string>
+    <string name="action_mark_watched_up_to_this_episode">Označi kao gledano do ove epizode</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">Ukloni gledano do ove epizode</string>
+    <string name="action_reload">Ponovo učitano</string>
+    <string name="reload_provider">Usluga ponovnog učitavanja</string>
 </resources>

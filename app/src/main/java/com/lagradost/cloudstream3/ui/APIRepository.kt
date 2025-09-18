@@ -9,13 +9,14 @@ import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.MainPageRequest
-import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.SearchResponseList
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.fixUrl
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safeApiCall
+import com.lagradost.cloudstream3.newSearchResponseList
 import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import kotlinx.coroutines.CoroutineScope
@@ -28,7 +29,7 @@ class APIRepository(val api: MainAPI) {
         // 2 minute timeout to prevent bad extensions/extractors from hogging the resources
         // No real provider should take longer, so we hard kill them.
         private const val DEFAULT_TIMEOUT = 120_000L
-        private const val MAX_TIMEOUT = 4*DEFAULT_TIMEOUT
+        private const val MAX_TIMEOUT = 4 * DEFAULT_TIMEOUT
         private const val MIN_TIMEOUT = 5_000L
 
         var dubStatusActive = HashSet<DubStatus>()
@@ -58,8 +59,8 @@ class APIRepository(val api: MainAPI) {
         private var cacheIndex: Int = 0
         const val CACHE_SIZE = 20
 
-        fun getTimeout(desired : Long?) : Long {
-             return (desired ?: DEFAULT_TIMEOUT).coerceIn(MIN_TIMEOUT, MAX_TIMEOUT)
+        fun getTimeout(desired: Long?): Long {
+            return (desired ?: DEFAULT_TIMEOUT).coerceIn(MIN_TIMEOUT, MAX_TIMEOUT)
         }
     }
 
@@ -117,27 +118,29 @@ class APIRepository(val api: MainAPI) {
         }
     }
 
-    suspend fun search(query: String): Resource<List<SearchResponse>> {
+    suspend fun search(query: String, page: Int): Resource<SearchResponseList> {
         if (query.isEmpty())
-            return Resource.Success(emptyList())
+            return Resource.Success(newSearchResponseList(emptyList()))
 
         return safeApiCall {
             withTimeout(getTimeout(api.searchTimeoutMs)) {
-                (api.search(query)
+                (api.search(query, page)
                     ?: throw ErrorLoadingException())
-            //                .filter { typesActive.contains(it.type) }
-                    .toList()
+                //                .filter { typesActive.contains(it.type) }
             }
         }
     }
 
-    suspend fun quickSearch(query: String): Resource<List<SearchResponse>> {
+    suspend fun quickSearch(query: String): Resource<SearchResponseList> {
         if (query.isEmpty())
-            return Resource.Success(emptyList())
+            return Resource.Success(newSearchResponseList(emptyList()))
 
         return safeApiCall {
             withTimeout(getTimeout(api.quickSearchTimeoutMs)) {
-                api.quickSearch(query) ?: throw ErrorLoadingException()
+                newSearchResponseList(
+                    api.quickSearch(query) ?: throw ErrorLoadingException(),
+                    false
+                )
             }
         }
     }

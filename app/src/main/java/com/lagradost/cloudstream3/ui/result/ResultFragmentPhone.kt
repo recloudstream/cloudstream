@@ -39,6 +39,7 @@ import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.base64Encode
 import com.lagradost.cloudstream3.databinding.FragmentResultBinding
 import com.lagradost.cloudstream3.databinding.FragmentResultSwipeBinding
 import com.lagradost.cloudstream3.databinding.ResultRecommendationsBinding
@@ -49,6 +50,7 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.services.SubscriptionWorkManager
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_SHARE
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_LONG_CLICK
@@ -83,6 +85,9 @@ import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
+import java.net.URLEncoder
+import java.nio.charset.Charset
+import kotlin.io.encoding.Base64
 import kotlin.math.roundToInt
 
 open class ResultFragmentPhone : FullScreenPlayer() {
@@ -810,15 +815,18 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         resultShare.setOnClickListener {
                             try {
                                 val i = Intent(Intent.ACTION_SEND)
+                                val nameBase64 = base64Encode(d.apiName.toString().toByteArray(Charsets.UTF_8))
+                                val urlBase64 = base64Encode(d.url.toByteArray(Charsets.UTF_8))
+                                val encodedUri = URLEncoder.encode("$APP_STRING_SHARE:$nameBase64?$urlBase64","UTF-8")
+                                val redirectUrl = "https://recloudstream.github.io/csredirect?redirectto=$encodedUri"
                                 i.type = "text/plain"
                                 i.putExtra(Intent.EXTRA_SUBJECT, d.title)
-                                i.putExtra(Intent.EXTRA_TEXT, d.url)
+                                i.putExtra(Intent.EXTRA_TEXT, redirectUrl)
                                 startActivity(Intent.createChooser(i, d.title))
                             } catch (e: Exception) {
                                 logError(e)
                             }
                         }
-
                         setUrl(d.url)
                         resultBookmarkFab.apply {
                             isVisible = true

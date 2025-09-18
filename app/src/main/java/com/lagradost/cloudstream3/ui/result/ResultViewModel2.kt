@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
+import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.getCastSession
@@ -55,7 +56,10 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.Coroutines.ioWorkSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.DataStore.editor
+import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllFavorites
@@ -1424,6 +1428,33 @@ class ResultViewModel2 : ViewModel() {
         _episodeSynopsis.postValue(null)
     }
 
+    private fun markEpisodes(editor: Editor,episodeIds: Array<String>,watchState: VideoWatchState) {
+        val watchStateString = DataStore.mapper.writeValueAsString(watchState)
+        episodeIds.forEach {
+            if(getVideoWatchState(it.toInt()) != watchState){
+                editor.setKeyRaw(getFolderName("$currentAccount/$VIDEO_WATCH_STATE", it),watchStateString)
+            }
+        }
+    }
+
+    private fun  getEpisodesIdsBySeason(season: Int): HashMap<Int, Array<String>> {
+        val result = currentEpisodes.entries
+            .asSequence()
+            .filter { it.key.season <= season && it.key.dubStatus == preferDubStatus }
+            .flatMap { entry ->
+                entry.value.asSequence().map { entry.key.season to it.id.toString() }
+            }
+            .groupBy({ it.first }, { it.second })
+            .mapValues { (_, ids) -> ids.toTypedArray() }
+            .toMap(HashMap())
+
+        if(season != 0){
+            result.remove(0)
+        }
+        return result
+    }
+
+
     private suspend fun handleEpisodeClickEvent(click: EpisodeClickEvent) {
         when (click.action) {
             ACTION_SHOW_OPTIONS -> {
@@ -1461,9 +1492,13 @@ class ResultViewModel2 : ViewModel() {
                     val watchedText = if (isWatched) R.string.action_remove_from_watched
                     else R.string.action_mark_as_watched
 
-                    options.add(txt(watchedText) to ACTION_MARK_AS_WATCHED)
-                }
+                    val markUpToText = if(isWatched) R.string.action_remove_mark_watched_up_to_this_episode
+                    else R.string.action_mark_watched_up_to_this_episode
 
+                    options.add(txt(watchedText) to ACTION_MARK_AS_WATCHED)
+
+                    options.add(txt(markUpToText) to ACTION_MARK_WATCHED_UP_TO_THIS_EPISODE)
+                }
                 postPopup(
                     txt(
                         activity?.getNameFull(
@@ -1640,15 +1675,31 @@ class ResultViewModel2 : ViewModel() {
             ACTION_MARK_AS_WATCHED -> {
                 val isWatched =
                     getVideoWatchState(click.data.id) == VideoWatchState.Watched
-
                 if (isWatched) {
                     setVideoWatchState(click.data.id, VideoWatchState.None)
                 } else {
                     setVideoWatchState(click.data.id, VideoWatchState.Watched)
                 }
-
                 // Kinda dirty to reload all episodes :(
                 reloadEpisodes()
+            }
+
+            ACTION_MARK_WATCHED_UP_TO_THIS_EPISODE -> ioSafe{
+                val editor = context?.let { it1 -> editor(it1,false) }
+
+                if (editor != null) {
+                    val (clickSeason,clickEpisode) = click.data.let { (it.season ?: 0) to it.episode }
+                    val watchState = if (getVideoWatchState(click.data.id) == VideoWatchState.Watched) VideoWatchState.None else VideoWatchState.Watched
+                    val seasons =  getEpisodesIdsBySeason(clickSeason)
+
+                    seasons.keys.forEach {currentSeason ->
+                        var episodeIds = seasons[currentSeason] ?: emptyArray()
+                        if(currentSeason == clickSeason) episodeIds = episodeIds.sliceArray(0 until clickEpisode)
+                        markEpisodes(editor,episodeIds,watchState)
+                    }
+                    editor.apply()
+                    reloadEpisodes()
+                }
             }
 
             else -> {

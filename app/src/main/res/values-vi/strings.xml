@@ -550,7 +550,7 @@
 \nSẽ có mức độ ưu tiên video kết hợp là 10.
 \n
 \nLƯU Ý: Nếu tổng là 10 hoặc nhiều hơn, trình phát sẽ tự động bỏ tải khi liên kết đó được tải!</string>
-    <string name="qualities">Các phẩm chất</string>
+    <string name="qualities">Các chất lượng</string>
     <string name="already_voted">Bạn đã bình chọn</string>
     <string name="disable">Vô hiệu hoá</string>
     <string name="no_repository_found_error">Không tìm thấy tiện ích, hãy kiểm tra URL và thử lại với VPN</string>
@@ -681,7 +681,7 @@
     <string name="encoding_error">Lỗi mã hóa</string>
     <string name="software_decoding_desc">Cho phép trình phát các tệp video không được điện thoại của bạn hỗ trợ, nhưng có thể bị lag ở độ phân giải cao</string>
     <string name="software_decoding">Bộ giải mã ứng dụng</string>
-    <string name="torrent_not_accepted">Khởi động lại ứng dụng và chấp nhận cửa sổ bật lên của Stream Torrent để tiếp tục</string>
+    <string name="torrent_not_accepted">Khởi động lại ứng dụng và chấp nhận cửa sổ Stream Torrent để tiếp tục</string>
     <string name="torrent_preferred_media">Kích hoạt torrent trong Cài đặt/Nguồn phim/Thể loại ưu tiên</string>
     <string name="player_load_one_subtitle_online">Tải phụ đề đầu tiên có sẵn</string>
     <string name="audio_singluar">Âm thanh</string>
@@ -712,4 +712,27 @@
     <string name="subtitles_from_embedded">Được nhúng</string>
     <string name="all_subtitles_bold">Làm tất cả phụ đề in đậm</string>
     <string name="all_subtitles_italic">Làm tất cả phụ đề in nghiêng</string>
+    <string name="player_settings_always_ask">Luôn hỏi</string>
+    <string name="show_rating">Nhãn đánh giá</string>
+    <string name="download_parallel_settings_des">Số lượng mục khác nhau có thể tải xuống cùng lúc</string>
+    <string name="parallel_downloads">Tải xuống song song</string>
+    <string name="concurrent_connections">Kết nối đồng thời</string>
+    <string name="concurrent_connections_settings_des">Số lượng kết nối đồng thời có thể sử dụng cho mỗi lượt tải</string>
+    <string name="go_to_downloads">Đến mục tải xuống</string>
+    <string name="no_internet_connection">Không có kết nối Internet. \n\nVui lòng kết nối Internet rồi thử lại, hoặc xem các nội dung đã tải xuống khi đang ngoại tuyến.</string>
+    <string name="overscan_settings_des">Thay đổi khung hiển thị màn hình</string>
+    <string name="overscan_settings">Vượt khung</string>
+    <string name="poster_size_settings_des">Thay đổi kích thước của hình poster</string>
+    <string name="poster_size_settings">Kích thước poster</string>
+    <string name="speedup_title">Tăng tốc độ phát khi nhấn giữ</string>
+    <string name="speedup_summary">Nhấn giữ để tăng tốc độ phát 2x</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dh %2$dm %3$ds</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dm %2$ds</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$ds</string>
+    <string name="no_account">Không có tài khoản</string>
+    <string name="edit_profile_image_title">Đổi hình đại điện</string>
+    <string name="edit_profile_image_hint">Nhập url hình đại diện</string>
+    <string name="edit_profile_image_error_empty">Không tìm thấy url</string>
+    <string name="edit_profile_image_error_invalid">URL hoặc hình không hợp lệ</string>
+    <string name="edit_profile_image_success">Tải hình lên thành công</string>
 </resources>

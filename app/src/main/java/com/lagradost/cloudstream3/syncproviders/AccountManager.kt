@@ -135,6 +135,8 @@ abstract class AccountManager {
         // Instantly resume watching a show
         const val APP_STRING_RESUME_WATCHING = "cloudstreamcontinuewatching"
 
+        const val APP_STRING_SHARE = "csshare"
+
         fun secondsToReadable(seconds: Int, completedValue: String): String {
             var secondsLong = seconds.toLong()
             val days = TimeUnit.SECONDS

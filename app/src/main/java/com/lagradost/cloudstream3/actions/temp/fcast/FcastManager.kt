@@ -7,6 +7,7 @@ import android.net.nsd.NsdServiceInfo
 import android.os.Build
 import android.os.ext.SdkExtensions
 import android.util.Log
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 
 class FcastManager {
@@ -72,52 +73,66 @@ class FcastManager {
         }
 
         override fun onServiceFound(serviceInfo: NsdServiceInfo?) {
-            if (serviceInfo == null) return
+            // Safe here as, java.lang.NoClassDefFoundError: Failed resolution of: Landroid/net/nsd/NsdManager$ServiceInfoCallback
+            safe {
+                if (serviceInfo == null) return@safe
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && SdkExtensions.getExtensionVersion(
-                    Build.VERSION_CODES.TIRAMISU) >= 7) {
-                nsdManager?.registerServiceInfoCallback(serviceInfo,
-                    Runnable::run,
-                    object : NsdManager.ServiceInfoCallback {
-                        override fun onServiceInfoCallbackRegistrationFailed(errorCode: Int) {
-                            Log.e(tag, "Service registration failed: $errorCode")
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && SdkExtensions.getExtensionVersion(
+                        Build.VERSION_CODES.TIRAMISU
+                    ) >= 7
+                ) {
+                    nsdManager?.registerServiceInfoCallback(
+                        serviceInfo,
+                        Runnable::run,
+                        object : NsdManager.ServiceInfoCallback {
+                            override fun onServiceInfoCallbackRegistrationFailed(errorCode: Int) {
+                                Log.e(tag, "Service registration failed: $errorCode")
+                            }
+
+                            override fun onServiceUpdated(serviceInfo: NsdServiceInfo) {
+                                Log.d(
+                                    tag,
+                                    "Service updated: ${serviceInfo.serviceName}," +
+                                            "Net: ${serviceInfo.hostAddresses.firstOrNull()?.hostAddress}"
+                                )
+                                synchronized(_currentDevices) {
+                                    _currentDevices.removeIf { it.rawName == serviceInfo.serviceName }
+                                    _currentDevices.add(PublicDeviceInfo(serviceInfo))
+                                }
+                            }
+
+                            override fun onServiceLost() {
+                                Log.d(tag, "Service lost: ${serviceInfo.serviceName},")
+                                synchronized(_currentDevices) {
+                                    _currentDevices.removeIf { it.rawName == serviceInfo.serviceName }
+                                }
+                            }
+
+                            override fun onServiceInfoCallbackUnregistered() {}
+                        })
+                } else {
+                    @Suppress("DEPRECATION")
+                    nsdManager?.resolveService(serviceInfo, object : ResolveListener {
+                        override fun onResolveFailed(
+                            serviceInfo: NsdServiceInfo?,
+                            errorCode: Int
+                        ) {
                         }
-                        override fun onServiceUpdated(serviceInfo: NsdServiceInfo) {
-                            Log.d(tag,
-                                "Service updated: ${serviceInfo.serviceName}," +
-                                        "Net: ${serviceInfo.hostAddresses.firstOrNull()?.hostAddress}"
-                            )
+
+                        override fun onServiceResolved(serviceInfo: NsdServiceInfo?) {
+                            if (serviceInfo == null) return
+
                             synchronized(_currentDevices) {
-                                _currentDevices.removeIf { it.rawName == serviceInfo.serviceName }
                                 _currentDevices.add(PublicDeviceInfo(serviceInfo))
                             }
+
+                            Log.d(
+                                tag,
+                                "Service found: ${serviceInfo.serviceName}, Net: ${serviceInfo.host.hostAddress}"
+                            )
                         }
-                        override fun onServiceLost() {
-                            Log.d(tag, "Service lost: ${serviceInfo.serviceName},")
-                            synchronized(_currentDevices) {
-                                _currentDevices.removeIf { it.rawName == serviceInfo.serviceName }
-                            }
-                        }
-                        override fun onServiceInfoCallbackUnregistered() {}
                     })
-            } else {
-                @Suppress("DEPRECATION")
-                nsdManager?.resolveService(serviceInfo, object : ResolveListener {
-                    override fun onResolveFailed(serviceInfo: NsdServiceInfo?, errorCode: Int) {}
-
-                    override fun onServiceResolved(serviceInfo: NsdServiceInfo?) {
-                        if (serviceInfo == null) return
-
-                        synchronized(_currentDevices) {
-                            _currentDevices.add(PublicDeviceInfo(serviceInfo))
-                        }
-
-                        Log.d(
-                            tag,
-                            "Service found: ${serviceInfo.serviceName}, Net: ${serviceInfo.host.hostAddress}"
-                        )
-                    }
-                })
+                }
             }
         }
 
@@ -168,8 +183,9 @@ class PublicDeviceInfo(serviceInfo: NsdServiceInfo) {
     val host: String? = if (
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
         SdkExtensions.getExtensionVersion(
-            Build.VERSION_CODES.TIRAMISU) >= 7
-        ) {
+            Build.VERSION_CODES.TIRAMISU
+        ) >= 7
+    ) {
         serviceInfo.hostAddresses.firstOrNull()?.hostAddress
     } else {
         @Suppress("DEPRECATION")
