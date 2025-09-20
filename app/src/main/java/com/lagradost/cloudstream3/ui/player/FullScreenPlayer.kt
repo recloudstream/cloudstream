@@ -1044,13 +1044,13 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         hasTriggeredSpeedUp = true
     }
 
-    private fun showOrHideSpeedUp(show:Boolean){
+    private fun showOrHideSpeedUp(show: Boolean) {
         playerBinding?.playerSpeedupButton?.let { button ->
             button.clearAnimation()
-            button.alpha = if(show) 0f else 1f
+            button.alpha = if (show) 0f else 1f
             button.isVisible = show
             button.animate()
-                .alpha(if(show) 1f else 0f)
+                .alpha(if (show) 1f else 0f)
                 .setDuration(200L)
                 .start()
         }
@@ -1378,7 +1378,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                 KeyEvent.KEYCODE_VOLUME_DOWN,
                 KeyEvent.KEYCODE_VOLUME_UP -> {
-                    if (isLayout(PHONE or EMULATOR)) {
+                    if (isLayout(PHONE or EMULATOR) && isFullScreenPlayer) {
                         /**
                          * Some TVs do not support volume boosting, and overriding
                          * the volume buttons can be inconvenient for TV users.
@@ -1547,7 +1547,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         // alpha fade
         playerBinding?.playerProgressbarLeftHolder?.apply {
-            if (isFullScreenPlayer && (!isVisible || alpha < 1f)) {
+            if (!isVisible || alpha < 1f) {
                 alpha = 1f
                 isVisible = true
             }
