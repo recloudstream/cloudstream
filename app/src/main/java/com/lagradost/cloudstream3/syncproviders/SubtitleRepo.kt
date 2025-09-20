@@ -68,7 +68,7 @@ class SubtitleRepo(override val api: SubtitleAPI) : AuthRepo(api) {
             }
 
             val returnValue =
-                api.search(freshAuth(), query) ?: throw ErrorLoadingException("Null subtitles")
+                api.search(freshAuth(), query) ?: emptyList()
 
             // only cache valid return values
             if (returnValue.isNotEmpty()) {
