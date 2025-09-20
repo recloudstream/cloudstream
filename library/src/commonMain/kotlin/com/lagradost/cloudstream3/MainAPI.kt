@@ -869,8 +869,8 @@ class Score private constructor(
             number /= 10L
         }
 
-        var trailingZeros = 0
-        for (i in chars.indices) {
+        var trailingZeros = MAX_ZEROS - decimals
+        for (i in (MAX_ZEROS - decimals) until chars.size) {
             if (chars[i] != '0') {
                 break
             }
