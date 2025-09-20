@@ -181,6 +181,15 @@ object SubtitleHelper {
     }
 
     /**
+     * Language code -> language english name
+     * @param languageCode IETF BCP 47, ISO 639-1, ISO 639-2B/T, ISO 639-3, OpenSubtitles
+    */
+    @Prerelease
+    fun fromTagToEnglishLanguageName(languageCode: String?): String? {
+        return getLanguageDataFromCode(languageCode)?.languageName
+    }
+
+    /**
      * Language code -> openSubtitles inconsistent language tag
      * @param languageCode IETF BCP 47, ISO 639-1, ISO 639-2B/T, ISO 639-3, OpenSubtitles
     */
