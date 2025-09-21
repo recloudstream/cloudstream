@@ -38,7 +38,6 @@ import java.util.Locale
  * @see VideoClickActionHolder
  */
 const val ACTION_PLAY_EPISODE_IN_PLAYER = 1
-const val ACTION_PLAY_MIRROR = 2
 const val ACTION_CHROME_CAST_EPISODE = 4
 const val ACTION_CHROME_CAST_MIRROR = 5
 
