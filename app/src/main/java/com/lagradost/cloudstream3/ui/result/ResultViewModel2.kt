@@ -33,9 +33,11 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.secondsToReadable
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
+import com.lagradost.cloudstream3.syncproviders.providers.SubDlApi
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
+import com.lagradost.cloudstream3.ui.player.ExtractorUri
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.IGenerator
 import com.lagradost.cloudstream3.ui.player.LOADTYPE_ALL
@@ -87,6 +89,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.updateSubscribedData
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import kotlinx.coroutines.*
+import okhttp3.internal.http2.FlowControlListener
 import java.util.concurrent.TimeUnit
 
 /** This starts at 1 */
@@ -1470,7 +1473,7 @@ class ResultViewModel2 : ViewModel() {
                 }
 
                 options.add(txt(R.string.episode_action_play_in_app) to ACTION_PLAY_EPISODE_IN_PLAYER)
-
+                options.add(txt(R.string.episode_action_play_mirror) to ACTION_PLAY_MIRROR)
                 options.addAll(
                     listOf(
                         txt(R.string.episode_action_auto_download) to ACTION_DOWNLOAD_EPISODE,
@@ -1669,6 +1672,72 @@ class ResultViewModel2 : ViewModel() {
                             generator ?: return, list
                         )
                     )
+                }
+            }
+
+            ACTION_PLAY_MIRROR -> {
+                val response = currentResponse ?: return
+
+                acquireSingleLink(
+                    click.data,
+                    LOADTYPE_INAPP,
+                    txt(R.string.episode_action_play_mirror)
+                ) { (result, index) ->
+                    ioSafe {
+                        //implemented special generator to only pass one mirror link instead of a list.
+                        val generatorMirror = object: IGenerator {
+                            override val hasCache: Boolean = true
+                            override val canSkipLoading: Boolean = true
+
+                            override fun hasNext(): Boolean = false
+
+                            override fun hasPrev(): Boolean = false
+
+                            override fun next() {}
+
+                            override fun prev() {}
+
+                            override fun goto(index: Int) {}
+
+                            override fun getCurrentId(): Int? = click.data.id
+
+                            override fun getCurrent(offset: Int): Any? = click.data
+
+                            override fun getAll(): List<Any>? = listOf(click.data)
+
+                            override suspend fun generateLinks(
+                                clearCache: Boolean,
+                                sourceTypes: Set<ExtractorLinkType>,
+                                callback: (Pair<ExtractorLink?, ExtractorUri?>) -> Unit,
+                                subtitleCallback: (SubtitleData) -> Unit,
+                                offset: Int,
+                                isCasting: Boolean
+                            ): Boolean {
+                                callback(result.links[index] to null)
+                                result.subs.forEach { subtitle -> subtitleCallback(SubtitleData(subtitle.originalName,subtitle.nameSuffix,subtitle.url,subtitle.origin,subtitle.mimeType,subtitle.headers,subtitle.languageCode))
+                                }
+                                return true
+                            }
+                        }
+                        // Took logic from PLAY_EPISODE_IN_APP
+                        val data = currentResponse?.syncData?.toList() ?: emptyList()
+                        val list =
+                            HashMap<String, String>().apply { putAll(data) }
+                        generator?.also {
+                            it.getAll() // I know kinda shit to iterate all, but it is 100% sure to work
+                                ?.indexOfFirst { value -> value is ResultEpisode && value.id == click.data.id }
+                                ?.let { index ->
+                                    if (index >= 0)
+                                        it.goto(index)
+                                }
+                        }
+                        activity?.navigate(
+                            R.id.global_to_navigation_player,
+                            GeneratorPlayer.newInstance(
+                                generatorMirror, list
+                            )
+                        )
+                    }
                 }
             }
 
