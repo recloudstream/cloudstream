@@ -773,6 +773,7 @@ object AppContextUtils {
         startValue: Int = 0
     ) {
         try {
+            Log.d("loadresult","${name} ${url} ${apiName}")
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
             Kitsu.isEnabled =
                 settingsManager.getBoolean(this.getString(R.string.show_kitsu_posters_key), true)
@@ -804,6 +805,7 @@ object AppContextUtils {
     ) {
         this?.runOnUiThread {
             // viewModelStore.clear()
+            Log.d("serchresult","${card}")
             this.navigate(
                 getResultsId(),
                 ResultFragment.newInstance(card, startAction, startValue)

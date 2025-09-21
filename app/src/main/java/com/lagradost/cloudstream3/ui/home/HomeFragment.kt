@@ -60,6 +60,22 @@ import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import java.util.*
+import androidx.tvprovider.media.tv.TvContractCompat
+import androidx.tvprovider.media.tv.PreviewProgram
+import com.lagradost.api.Log
+import com.lagradost.cloudstream3.utils.DataStore.saveProgramId
+import com.lagradost.cloudstream3.utils.TvChannelUtils
+import android.content.ContentUris
+import com.lagradost.cloudstream3.utils.AppContextUtils
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.withTimeout
+import org.schabi.newpipe.extractor.timeago.patterns.de
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 
 
 class HomeFragment : Fragment() {
@@ -473,6 +489,75 @@ class HomeFragment : Fragment() {
 
     private val homeViewModel: HomeViewModel by activityViewModels()
 
+    @Parcelize
+    data class SearchResponseImpl(
+        override val name: String,
+        override val url: String,
+        override val apiName: String,
+        override var type: TvType? = null,
+        override var posterUrl: String? = null,
+        override var posterHeaders: Map<String, String>? = null,
+        override var id: Int? = null,
+        override var quality: SearchQuality? = null,
+        override var score:@RawValue Score? = null
+    ) : SearchResponse, Parcelable
+    fun SearchResponse.toImpl(): SearchResponseImpl {
+        return SearchResponseImpl(
+            name = name,
+            url = url,
+            apiName = apiName,
+            type = type,
+            posterUrl = posterUrl,
+            posterHeaders = posterHeaders,
+            id = id,
+            quality = quality,
+            score = score
+        )
+    }
+
+
+    private fun checkChannel() {
+        val existingId = TvChannelUtils.getChannelId(requireContext(), "Cloudstream TV")
+        if (existingId != null) {
+            Log.d("HomeFragment", "Channel ID: $existingId")
+        } else {
+            Log.d("HomeFragment", "Channel does not exist")
+        }
+    }
+    private  fun addMovie(cardd: SearchResponse){
+        try{
+            val existingId = TvChannelUtils.getChannelId(requireContext(), "Cloudstream TV")
+            if (existingId != null) {
+                Log.d("HomeFragment", "Channel ID: $existingId")
+                val programCard = cardd.toImpl()
+                TvChannelUtils.addProgram(requireContext(), existingId, programCard)
+
+
+
+            } else {
+                Log.d("HomeFragment", "Channel does not exist")
+            }
+        }catch (e: Exception){
+            Log.d("HomeFragment","${e}")
+        }
+
+    }
+
+    private fun deleteAll(){
+        try{
+            val existingId = TvChannelUtils.getChannelId(requireContext(), "Cloudstream TV")
+            if (existingId != null) {
+                Log.d("HomeFragment", "Channel ID: $existingId")
+//                TvChannelUtils.deleteAllProgramsForChannel(requireContext(),existingId)
+                TvChannelUtils.deleteStoredPrograms(requireContext())
+            } else {
+                Log.d("HomeFragment", "Channel does not exist")
+            }
+        }catch (e: Exception){
+            Log.d("HomeFragment","${e}")
+        }
+    }
+
     var binding: FragmentHomeBinding? = null
 
 
@@ -589,7 +674,6 @@ class HomeFragment : Fragment() {
 
         }
 
-
         //Load value for toggling Random button. Hide at startup
         context?.let {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(it)
@@ -614,10 +698,32 @@ class HomeFragment : Fragment() {
                         homeLoadingShimmer.stopShimmer()
 
                         val d = data.value
+                        //start
+                        val k=d.values.first()
+//                        CoroutineScope(Dispatchers.IO).launch {
+//                            try {
+//                                withTimeout(15000) {
+//                                    AppContextUtils.loadSearchResult(k.list.list.first())
+//                                }
+//                            } catch (e: TimeoutCancellationException) {
+//                                Log.e("Timeout", "loadResult timed out ${e}", )
+//                            }
+//                        }
+
+                        // empty the channel
+                        deleteAll()
+                        // insert the program from first array
+                       Log.d("first card",k.list.list.first().toString())
+                        k.list.list.forEach { sp->
+                            Log.d("ddd","${sp}")
+                            addMovie(sp)
+                        }
+//                    end
                         val mutableListOfResponse = mutableListOf<SearchResponse>()
                         listHomepageItems.clear()
 
                         (homeMasterRecycler.adapter as? ParentItemAdapter)?.submitList(d.values.map {
+
                             it.copy(
                                 list = it.list.copy(list = it.list.list.toMutableList())
                             )

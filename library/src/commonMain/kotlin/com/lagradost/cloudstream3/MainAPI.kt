@@ -1253,7 +1253,7 @@ fun MainAPI.updateUrl(url: String): String {
 }
 
 /** Abstract interface of SearchResponse. */
-interface SearchResponse {
+ interface SearchResponse {
     val name: String
     val url: String
     val apiName: String

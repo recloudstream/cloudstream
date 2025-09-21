@@ -11,6 +11,7 @@ plugins {
     id("com.android.library")
     id("com.codingfeline.buildkonfig")
     id("org.jetbrains.dokka")
+
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
@@ -67,7 +68,7 @@ buildkonfig {
 }
 
 android {
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    compileSdkVersion(libs.versions.compileSdk.get().toInt())
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
 
     defaultConfig {
