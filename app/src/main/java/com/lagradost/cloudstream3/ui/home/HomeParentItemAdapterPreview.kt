@@ -13,7 +13,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.findViewTreeLifecycleOwner
+import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import androidx.viewpager2.widget.ViewPager2
@@ -37,7 +39,9 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.ViewHolderState
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountEditDialog
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
+import com.lagradost.cloudstream3.ui.account.AccountViewModel
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.selectHomepage
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
@@ -52,6 +56,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getDefaultAccount
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectStringRes
@@ -485,6 +490,41 @@ class HomeParentItemAdapterPreview(
 
             headProfilePicCard?.setOnClickListener {
                 activity?.showAccountSelectLinear()
+            }
+
+            fun showAccountEditBox(view: View): Boolean {
+                val context = view.context
+
+                val currentAccount = DataStoreHelper.accounts.firstOrNull {
+                    it.keyIndex == DataStoreHelper.selectedKeyIndex
+                } ?: getDefaultAccount(context)
+
+                val viewModel = view.findViewTreeViewModelStoreOwner()
+                    ?.let { ViewModelProvider(it).get(AccountViewModel::class.java) }
+
+                return if (viewModel != null) {
+                    showAccountEditDialog(
+                        context = context,
+                        account = currentAccount,
+                        isNewAccount = false,
+                        accountEditCallback = { acc ->
+                            viewModel.handleAccountUpdate(acc, context)
+                        },
+                        accountDeleteCallback = { acc ->
+                            viewModel.handleAccountDelete(acc, context)
+                        }
+                    )
+                    true
+                } else {
+                    false
+                }
+            }
+
+            alternateHeadProfilePicCard?.setOnLongClickListener{view->
+                showAccountEditBox(view)
+            }
+            headProfilePicCard?.setOnLongClickListener{view->
+                showAccountEditBox(view)
             }
 
             alternateHeadProfilePicCard?.setOnClickListener {
