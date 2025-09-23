@@ -395,6 +395,7 @@
     <string name="episode_action_chromecast_mirror">Chromecast mirror</string>
     <string name="episode_action_cast_mirror">Cast mirror</string>
     <string name="episode_action_play_in_app">Play in app</string>
+    <string name="episode_action_play_mirror">Play mirror</string>"
     <string name="episode_action_play_in_format">Play in %s</string>
     <string name="episode_action_auto_download">Auto download</string>
     <string name="episode_action_download_mirror">Download mirror</string>
