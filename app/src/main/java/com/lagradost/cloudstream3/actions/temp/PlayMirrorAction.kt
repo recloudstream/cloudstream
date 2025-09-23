@@ -70,8 +70,7 @@ class PlayMirrorAction: VideoClickAction() {
                     isCasting: Boolean
                 ): Boolean {
                     index?.let { callback(result.links[it] to null) }
-                    result.subs.forEach { subtitle -> subtitleCallback(SubtitleData(subtitle.originalName,subtitle.nameSuffix,subtitle.url,subtitle.origin,subtitle.mimeType,subtitle.headers,subtitle.languageCode))
-                    }
+                    result.subs.forEach { subtitle -> subtitleCallback(subtitle) }
                     return true
                 }
             }
