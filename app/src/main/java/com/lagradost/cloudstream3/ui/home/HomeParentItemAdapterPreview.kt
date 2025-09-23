@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.home
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
@@ -67,6 +68,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 class HomeParentItemAdapterPreview(
     override val fragment: Fragment,
     private val viewModel: HomeViewModel,
+    private val accountViewModel: AccountViewModel
 ) : ParentItemAdapter(
     fragment, id = "HomeParentItemAdapterPreview".hashCode(),
     clickCallback = {
@@ -106,7 +108,7 @@ class HomeParentItemAdapterPreview(
             )
         }
 
-        return HeaderViewHolder(binding, viewModel, fragment = fragment)
+        return HeaderViewHolder(binding, viewModel,accountViewModel, fragment = fragment)
     }
 
     override fun onBindHeader(holder: ViewHolderState<Bundle>) {
@@ -114,7 +116,7 @@ class HomeParentItemAdapterPreview(
     }
 
     private class HeaderViewHolder(
-        val binding: ViewBinding, val viewModel: HomeViewModel, fragment: Fragment,
+        val binding: ViewBinding, val viewModel: HomeViewModel,accountViewModel: AccountViewModel, fragment: Fragment,
     ) :
         ViewHolderState<Bundle>(binding) {
 
@@ -492,39 +494,25 @@ class HomeParentItemAdapterPreview(
                 activity?.showAccountSelectLinear()
             }
 
-            fun showAccountEditBox(view: View): Boolean {
-                val context = view.context
-
-                val currentAccount = DataStoreHelper.accounts.firstOrNull {
-                    it.keyIndex == DataStoreHelper.selectedKeyIndex
-                } ?: getDefaultAccount(context)
-
-                val viewModel = view.findViewTreeViewModelStoreOwner()
-                    ?.let { ViewModelProvider(it).get(AccountViewModel::class.java) }
-
-                return if (viewModel != null) {
+            fun showAccountEditBox(context:Context): Boolean {
+                val currentAccount = DataStoreHelper.getCurrentAccount()
+                return if (currentAccount != null) {
                     showAccountEditDialog(
                         context = context,
                         account = currentAccount,
                         isNewAccount = false,
-                        accountEditCallback = { acc ->
-                            viewModel.handleAccountUpdate(acc, context)
-                        },
-                        accountDeleteCallback = { acc ->
-                            viewModel.handleAccountDelete(acc, context)
-                        }
+                        accountEditCallback = { accountViewModel.handleAccountUpdate(it, context) },
+                        accountDeleteCallback = { accountViewModel.handleAccountDelete(it, context) }
                     )
                     true
-                } else {
-                    false
-                }
+                }else false
             }
 
-            alternateHeadProfilePicCard?.setOnLongClickListener{view->
-                showAccountEditBox(view)
+            alternateHeadProfilePicCard?.setOnLongClickListener{
+                showAccountEditBox(it.context)
             }
-            headProfilePicCard?.setOnLongClickListener{view->
-                showAccountEditBox(view)
+            headProfilePicCard?.setOnLongClickListener{
+                showAccountEditBox(it.context)
             }
 
             alternateHeadProfilePicCard?.setOnClickListener {
