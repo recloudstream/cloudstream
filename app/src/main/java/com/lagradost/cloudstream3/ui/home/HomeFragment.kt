@@ -36,6 +36,7 @@ import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
+import com.lagradost.cloudstream3.ui.account.AccountViewModel
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.ui.search.*
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
@@ -472,6 +473,7 @@ class HomeFragment : Fragment() {
     }
 
     private val homeViewModel: HomeViewModel by activityViewModels()
+    private val accountViewModel: AccountViewModel by activityViewModels()
 
     var binding: FragmentHomeBinding? = null
 
@@ -566,6 +568,7 @@ class HomeFragment : Fragment() {
             homeMasterAdapter = HomeParentItemAdapterPreview(
                 fragment = this@HomeFragment,
                 homeViewModel,
+                accountViewModel
             )
             homeMasterRecycler.adapter = homeMasterAdapter
             //fixPaddingStatusbar(homeLoadingStatusbar)
