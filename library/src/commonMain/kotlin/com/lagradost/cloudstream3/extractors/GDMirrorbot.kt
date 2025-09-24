@@ -72,7 +72,7 @@ open class GDMirrorbot : ExtractorApi() {
                 base64Decode(root["mresult"]!!.asString)
                     .let { JsonParser.parseString(it).asJsonObject }
             } catch (e: Exception) {
-                Log.e("Phisher", "Failed to decode mresult: $e")
+                Log.e("GDMirrorbot", "Failed to decode mresult: $e")
                 return
             }
             else -> return
@@ -85,14 +85,13 @@ open class GDMirrorbot : ExtractorApi() {
             val friendlyName = siteFriendlyNames?.get(key)?.asString ?: key
 
             try {
-                Log.d("Phisher","$friendlyName $fullUrl")
                 when (friendlyName) {
                     "StreamHG","EarnVids" -> VidHidePro().getUrl(fullUrl, referer, subtitleCallback, callback)
                     "RpmShare", "UpnShare", "StreamP2p" -> VidStack().getUrl(fullUrl, referer, subtitleCallback, callback)
                     else -> loadExtractor(fullUrl, referer ?: mainUrl, subtitleCallback, callback)
                 }
             } catch (e: Exception) {
-                Log.e("Phisher", "Failed to extract from $friendlyName at $fullUrl: $e")
+                Log.e("GDMirrorbot", "Failed to extract from $friendlyName at $fullUrl: $e")
             }
         }
     }
