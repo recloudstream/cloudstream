@@ -36,7 +36,6 @@ import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
-import com.lagradost.cloudstream3.ui.account.AccountViewModel
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.ui.search.*
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
@@ -61,6 +60,22 @@ import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import java.util.*
+import androidx.tvprovider.media.tv.TvContractCompat
+import androidx.tvprovider.media.tv.PreviewProgram
+import com.lagradost.api.Log
+import com.lagradost.cloudstream3.utils.DataStore.saveProgramId
+import android.content.ContentUris
+import com.lagradost.cloudstream3.utils.AppContextUtils
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.withTimeout
+import org.schabi.newpipe.extractor.timeago.patterns.de
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import android.os.Parcelable
+import com.lagradost.cloudstream3.ui.account.AccountViewModel
+import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 
 
 class HomeFragment : Fragment() {
@@ -473,7 +488,72 @@ class HomeFragment : Fragment() {
     }
 
     private val homeViewModel: HomeViewModel by activityViewModels()
-    private val accountViewModel: AccountViewModel by activityViewModels()
+    private val AccountViewModel: AccountViewModel by activityViewModels()
+
+    @Parcelize
+    data class SearchResponseImpl(
+        override val name: String,
+        override val url: String,
+        override val apiName: String,
+        override var type: TvType? = null,
+        override var posterUrl: String? = null,
+        override var posterHeaders: Map<String, String>? = null,
+        override var id: Int? = null,
+        override var quality: SearchQuality? = null,
+        override var score:@RawValue Score? = null
+    ) : SearchResponse, Parcelable
+    fun SearchResponse.toImpl(): SearchResponseImpl {
+        return SearchResponseImpl(
+            name = name,
+            url = url,
+            apiName = apiName,
+            type = type,
+            posterUrl = posterUrl,
+            posterHeaders = posterHeaders,
+            id = id,
+            quality = quality,
+            score = score
+        )
+    }
+
+
+
+
+    private fun addMovies(cards: List<SearchResponse>) {
+        try {
+            val existingId = AppContextUtils.getChannelId(requireContext(), "Cloudstream TV")
+            if (existingId != null) {
+                Log.d("HomeFragment", "Channel ID: $existingId")
+
+                val programCards = cards.map { it.toImpl() }
+
+                AppContextUtils.addPrograms(
+                    context = requireContext(),
+                    channelId = existingId,
+                    items = programCards
+                )
+
+            } else {
+                Log.d("HomeFragment", "Channel does not exist")
+            }
+        } catch (e: Exception) {
+            Log.e("HomeFragment", "Error adding movies: $e")
+        }
+    }
+    private fun deleteAll(){
+        try{
+            val existingId = AppContextUtils.getChannelId(requireContext(), "Cloudstream TV")
+            if (existingId != null) {
+                Log.d("HomeFragment", "Channel ID: $existingId")
+//                TvChannelUtils.deleteAllProgramsForChannel(requireContext(),existingId)
+                AppContextUtils.deleteStoredPrograms(requireContext())
+            } else {
+                Log.d("HomeFragment", "Channel does not exist")
+            }
+        }catch (e: Exception){
+            Log.d("HomeFragment","${e}")
+        }
+    }
 
     var binding: FragmentHomeBinding? = null
 
@@ -567,8 +647,7 @@ class HomeFragment : Fragment() {
             }
             homeMasterAdapter = HomeParentItemAdapterPreview(
                 fragment = this@HomeFragment,
-                homeViewModel,
-                accountViewModel
+                homeViewModel,AccountViewModel
             )
             homeMasterRecycler.adapter = homeMasterAdapter
             //fixPaddingStatusbar(homeLoadingStatusbar)
@@ -591,7 +670,6 @@ class HomeFragment : Fragment() {
             })
 
         }
-
 
         //Load value for toggling Random button. Hide at startup
         context?.let {
@@ -617,10 +695,26 @@ class HomeFragment : Fragment() {
                         homeLoadingShimmer.stopShimmer()
 
                         val d = data.value
+                        //start
+                        val k = d.values.firstOrNull()
+                        if (k != null) {
+                            // empty the channel
+                            deleteAll()
+                            // insert the program from first array
+
+                            Log.d("first card",k.list.list.first().toString())
+                            addMovies(k.list.list)
+//                    end
+                        } else {
+                            Log.w("SafeAccess", "Map values are empty — cannot access first element")
+                        }
+
+
                         val mutableListOfResponse = mutableListOf<SearchResponse>()
                         listHomepageItems.clear()
 
                         (homeMasterRecycler.adapter as? ParentItemAdapter)?.submitList(d.values.map {
+
                             it.copy(
                                 list = it.list.copy(list = it.list.list.toMutableList())
                             )

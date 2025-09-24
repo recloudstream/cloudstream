@@ -20,7 +20,7 @@ const val DOWNLOAD_EPISODE_CACHE = "download_episode_cache"
 const val VIDEO_PLAYER_BRIGHTNESS = "video_player_alpha_key"
 const val USER_SELECTED_HOMEPAGE_API = "home_api_used"
 const val USER_PROVIDER_API = "user_custom_sites"
-
+const val PROGRAM_ID_LIST_KEY = "persistent_program_ids"
 const val PREFERENCES_NAME = "rebuild_preference"
 
 // TODO degelgate by value for get & set
@@ -93,6 +93,20 @@ object DataStore {
 
     fun Context.getSharedPrefs(): SharedPreferences {
         return getPreferences(this)
+    }
+
+    fun Context.saveProgramId(programId: Long) {
+        val existing: List<Long> = getKey(PROGRAM_ID_LIST_KEY) ?: emptyList()
+        val updated = existing + programId
+        setKey(PROGRAM_ID_LIST_KEY, updated)
+    }
+    fun Context.getStoredProgramIds(): List<Long> {
+        return getKey(PROGRAM_ID_LIST_KEY) ?: emptyList()
+    }
+    fun Context.removeProgramId(programId: Long) {
+        val existing: List<Long> = getKey(PROGRAM_ID_LIST_KEY) ?: emptyList()
+        val updated = existing.filter { it != programId }
+        setKey(PROGRAM_ID_LIST_KEY, updated)
     }
 
     fun getFolderName(folder: String, path: String): String {

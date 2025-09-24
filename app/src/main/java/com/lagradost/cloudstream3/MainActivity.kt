@@ -186,7 +186,24 @@ import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.system.exitProcess
 import androidx.core.net.toUri
-
+import androidx.tvprovider.media.tv.Channel
+import androidx.tvprovider.media.tv.TvContractCompat
+import android.content.ComponentName
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import androidx.tvprovider.media.tv.PreviewProgram
+import androidx.core.content.edit
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import android.content.ContentUris
+import android.content.ActivityNotFoundException
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.tvprovider.media.tv.PreviewChannel
+import androidx.tvprovider.media.tv.PreviewChannelHelper
+import android.graphics.BitmapFactory
+import android.media.tv.TvContract.PreviewPrograms.ASPECT_RATIO_4_3
+import com.google.gson.Gson
+import com.lagradost.cloudstream3.ui.home.HomeFragment
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
     companion object {
@@ -399,6 +416,93 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 return false
             }
     }
+    private val insertedProgramIds = mutableListOf<Long>()
+
+
+
+
+    fun getExistingChannelId(channelName: String): Long? {
+        return try {
+            contentResolver.query(
+                TvContractCompat.Channels.CONTENT_URI,
+                arrayOf(TvContractCompat.Channels._ID, TvContractCompat.Channels.COLUMN_DISPLAY_NAME),
+                null, // no selection allowed
+                null,
+                null
+            )?.use { cursor ->
+                while (cursor.moveToNext()) {
+                    val name = cursor.getString(cursor.getColumnIndexOrThrow(TvContractCompat.Channels.COLUMN_DISPLAY_NAME))
+                    if (name == channelName) {
+                        return cursor.getLong(cursor.getColumnIndexOrThrow(TvContractCompat.Channels._ID))
+                    }
+                }
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("TVChannel", "Query failed: ${e.message}", e)
+            null
+        }
+    }
+
+
+    // ➊ Build your inputId once
+//    private fun channelExists(channelName: String): Boolean {
+//        Log.d("start","checking start")
+//        val projection = arrayOf(
+//            TvContractCompat.Channels._ID,
+//            TvContractCompat.Channels.COLUMN_DISPLAY_NAME
+//        )
+//        Log.d("before","cursor")
+//        val cursor = try {
+//            contentResolver.query(
+//                TvContractCompat.Channels.CONTENT_URI,
+//                projection,
+//                "${TvContractCompat.Channels.COLUMN_DISPLAY_NAME} = ?",
+//                arrayOf(channelName),
+//                null
+//            )
+//        } catch (e: Exception) {
+//            Log.e("query_error", "Exception during query", e)
+//            null
+//        }
+//
+//        Log.d("after","cursor")
+//
+//        val exists = cursor?.moveToFirst() == true
+//        cursor?.close()
+//        Log.d("exist",exists.toString())
+//        return exists
+//    }
+
+    private fun createTvChannel() {
+
+        val componentName = ComponentName(this, MainActivity::class.java)
+        val inputId = TvContractCompat.buildInputId(componentName)
+
+        val channel = Channel.Builder()
+            .setType(TvContractCompat.Channels.TYPE_PREVIEW)
+            .setDisplayName("Cloudstream TV")
+            .setAppLinkIntent(Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse("cloudstreamapp://open")
+            })
+            .setInputId(inputId)
+            .build()
+
+        val channelUri = contentResolver.insert(
+            TvContractCompat.Channels.CONTENT_URI,
+            channel.toContentValues()
+        )
+
+        channelUri?.let {
+            val channelId = ContentUris.parseId(it)
+            TvContractCompat.requestChannelBrowsable(this, channelId)
+            Log.d("create",channelId.toString())
+
+        }
+    }
+
+
+
 
     var lastPopup: SearchResponse? = null
     fun loadPopup(result: SearchResponse, load: Boolean = true) {
@@ -691,8 +795,24 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
     private fun handleAppIntent(intent: Intent?) {
         if (intent == null) return
+        val extras = intent.extras
+        if (extras?.getBoolean("OPEN_PROGRAM_DETAIL", false) == true) {
+            Log.d("called","meow")
+            val json = extras.getString("PROGRAM_CARD_JSON")
+            Log.d("json","${json}")
+            if (json != null) {
+                val card: SearchResponse = Gson().fromJson(json, HomeFragment.SearchResponseImpl::class.java)
+                Log.d("CardType", "card is of type: ${card?.javaClass?.name}")
+                loadSearchResult(card)
+                return
+            }
+            else{
+                Log.d("called","card is null")
+            }
+        }
         val str = intent.dataString
         loadCache()
+
         handleAppIntentUrl(this, str, false, intent.extras)
     }
 
@@ -1152,6 +1272,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     @Suppress("DEPRECATION_ERROR")
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
+//        handleAppIntent(intent)
+        Log.d("onc","oncreate")
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
         val errorFile = filesDir.resolve("last_error")
@@ -1342,6 +1464,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         false
                     )
                 }
+
+// Add your channel creation here
+
             }
         } else {
             val builder: AlertDialog.Builder = AlertDialog.Builder(this)
@@ -1894,6 +2019,22 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         ioSafe {
             migrateResumeWatching()
         }
+        ioSafe {
+//            if (isLayout(TV) || isLayout(EMULATOR)) {
+            withContext(Dispatchers.Main) {
+                Log.d("Iosafe","before check")
+                val channelId=getExistingChannelId("Cloudstream TV")
+                if (channelId==null) {
+                    Log.d("not","not create, creating")
+                    createTvChannel()
+                }
+                else{
+                    Log.d("Mainactivity",channelId.toString())
+
+                }
+            }
+//            }
+        }
 
         getKey<String>(USER_SELECTED_HOMEPAGE_API)?.let { homepage ->
             DataStoreHelper.currentHomePage = homepage
@@ -1943,9 +2084,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
             }
         )
-    }
 
-    /** Biometric stuff **/
+
+    }  /** Biometric stuff **/
     override fun onAuthenticationSuccess() {
         // make background (nav host fragment) visible again
         binding?.navHostFragment?.isInvisible = false
