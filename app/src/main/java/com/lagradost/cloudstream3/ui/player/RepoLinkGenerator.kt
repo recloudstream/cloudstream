@@ -72,6 +72,9 @@ class RepoLinkGenerator(
     override fun getAll(): List<Any> {
         return episodes
     }
+    fun getCurrentIndex():Int{
+        return currentIndex
+    }
 
     // this is a simple array that is used to instantly load links if they are already loaded
     //var linkCache = Array<Set<ExtractorLink>>(size = episodes.size, init = { setOf() })

@@ -214,6 +214,14 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         throw NotImplementedError()
     }
 
+    open fun showEpisodesOverlay(){
+        throw NotImplementedError()
+    }
+
+    open fun isThereEpisodes():Boolean{
+        return false
+    }
+
     /**
      * [isValidTouch] should be called on a [View] spanning across the screen for reliable results.
      *
@@ -306,7 +314,15 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 start()
             }
         }
-
+        if(isLayout(PHONE)) {
+            playerBinding?.playerEpisodesButton?.let {
+                ObjectAnimator.ofFloat(it, "translationX", if (isShowing) 0f else 50.toPx.toFloat())
+                    .apply {
+                        duration = 200
+                        start()
+                    }
+            }
+        }
         val fadeTo = if (isShowing) 1f else 0f
         val fadeAnimation = AlphaAnimation(1f - fadeTo, fadeTo)
 
@@ -781,8 +797,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             playerRewHolder.startAnimation(fadeAnimation)
             downloadBothHeader.startAnimation(fadeAnimation)
 
-            //if (hasEpisodes)
-            //    player_episodes_button?.startAnimation(fadeAnimation)
+            if (hasEpisodes)
+                playerEpisodesButton.startAnimation(fadeAnimation)
             //player_media_route_button?.startAnimation(fadeAnimation)
             //video_bar.startAnimation(fadeAnimation)
 
@@ -819,7 +835,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             playerPausePlay.isGone = isGone
             //player_buffering?.isGone = isGone
             playerTopHolder.isGone = isGone
-            //player_episodes_button?.isVisible = !isGone && hasEpisodes
+            playerEpisodesButtonRoot.isVisible = !isGone && isThereEpisodes()
             playerVideoTitle.isGone = togglePlayerTitleGone
 //        player_video_title_rez?.isGone = isGone
             playerEpisodeFiller.isGone = isGone
@@ -1069,9 +1085,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 MotionEvent.ACTION_DOWN -> {
                     // validates if the touch is inside of the player area
                     isCurrentTouchValid = view.isValidTouch(currentTouch.x, currentTouch.y)
-                    /*if (isCurrentTouchValid && player_episode_list?.isVisible == true) {
-                        player_episode_list?.isVisible = false
-                    } else*/ if (isCurrentTouchValid) {
+                    if (isCurrentTouchValid && playerEpisodeOverlay.isVisible) {
+                        playerEpisodeOverlay.isVisible = false
+                    } else if (isCurrentTouchValid) {
                         if (speedupEnabled) {
                             hasTriggeredSpeedUp = false
                             if (player.getIsPlaying() && !isLocked && isFullScreenPlayer) {
@@ -1911,6 +1927,16 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     }
                 }
                 return@setOnTouchListener false
+            }
+            playerEpisodesButton.setOnClickListener {
+                showEpisodesOverlay()
+                playerEpisodeOverlay.isVisible = true
+            }
+
+            playerCloseEpisodesOverlay.setOnClickListener{
+                if(isLayout(TV or EMULATOR) && playerEpisodeOverlay.isVisible){
+                    playerEpisodeOverlay.isVisible = false
+                }
             }
         }
         // cs3 is peak media center

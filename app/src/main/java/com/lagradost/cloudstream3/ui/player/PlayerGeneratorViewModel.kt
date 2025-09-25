@@ -132,6 +132,18 @@ class PlayerGeneratorViewModel : ViewModel() {
         }
     }
 
+    fun loadThisEpisode(index:Int) {
+        generator?.goto(index)
+        loadLinks()
+    }
+
+    fun getCurrentIndex():Int?{
+        (generator as RepoLinkGenerator).let {
+            return it.getCurrentIndex()
+        }
+        return null
+    }
+
     fun attachGenerator(newGenerator: IGenerator?) {
         if (generator == null) {
             generator = newGenerator
