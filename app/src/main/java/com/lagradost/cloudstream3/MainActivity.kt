@@ -189,21 +189,10 @@ import androidx.core.net.toUri
 import androidx.tvprovider.media.tv.Channel
 import androidx.tvprovider.media.tv.TvContractCompat
 import android.content.ComponentName
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
-import androidx.tvprovider.media.tv.PreviewProgram
-import androidx.core.content.edit
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import android.content.ContentUris
-import android.content.ActivityNotFoundException
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.tvprovider.media.tv.PreviewChannel
-import androidx.tvprovider.media.tv.PreviewChannelHelper
-import android.graphics.BitmapFactory
-import android.media.tv.TvContract.PreviewPrograms.ASPECT_RATIO_4_3
-import com.google.gson.Gson
+
 import com.lagradost.cloudstream3.ui.home.HomeFragment
+import com.lagradost.cloudstream3.utils.TvChannelUtils
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
     companion object {
@@ -416,7 +405,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 return false
             }
     }
-    private val insertedProgramIds = mutableListOf<Long>()
+//    private val insertedProgramIds = mutableListOf<Long>()
 
 
 
@@ -444,36 +433,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
     }
 
-
-    // ➊ Build your inputId once
-//    private fun channelExists(channelName: String): Boolean {
-//        Log.d("start","checking start")
-//        val projection = arrayOf(
-//            TvContractCompat.Channels._ID,
-//            TvContractCompat.Channels.COLUMN_DISPLAY_NAME
-//        )
-//        Log.d("before","cursor")
-//        val cursor = try {
-//            contentResolver.query(
-//                TvContractCompat.Channels.CONTENT_URI,
-//                projection,
-//                "${TvContractCompat.Channels.COLUMN_DISPLAY_NAME} = ?",
-//                arrayOf(channelName),
-//                null
-//            )
-//        } catch (e: Exception) {
-//            Log.e("query_error", "Exception during query", e)
-//            null
-//        }
-//
-//        Log.d("after","cursor")
-//
-//        val exists = cursor?.moveToFirst() == true
-//        cursor?.close()
-//        Log.d("exist",exists.toString())
-//        return exists
-//    }
-
     private fun createTvChannel() {
 
         val componentName = ComponentName(this, MainActivity::class.java)
@@ -481,7 +440,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
         val channel = Channel.Builder()
             .setType(TvContractCompat.Channels.TYPE_PREVIEW)
-            .setDisplayName("Cloudstream TV")
+            .setDisplayName(getString(R.string.app_name))
             .setAppLinkIntent(Intent(Intent.ACTION_VIEW).apply {
                 data = Uri.parse("cloudstreamapp://open")
             })
@@ -496,7 +455,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         channelUri?.let {
             val channelId = ContentUris.parseId(it)
             TvContractCompat.requestChannelBrowsable(this, channelId)
-            Log.d("create",channelId.toString())
+            Log.d("Channel Created",channelId.toString())
 
         }
     }
@@ -792,22 +751,25 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         handleAppIntent(intent)
         super.onNewIntent(intent)
     }
+    private fun createRecommendationIntent(searchResponse: SearchResponse): Intent {
+        val nameBase64 = base64Encode(searchResponse.apiName.toByteArray(Charsets.UTF_8))
+        val urlBase64 = base64Encode(searchResponse.url.toByteArray(Charsets.UTF_8))
+        val csshareUri = "$APP_STRING_SHARE:$nameBase64?$urlBase64"
+
+        return Intent(Intent.ACTION_VIEW, Uri.parse(csshareUri))
+    }
 
     private fun handleAppIntent(intent: Intent?) {
         if (intent == null) return
         val extras = intent.extras
         if (extras?.getBoolean("OPEN_PROGRAM_DETAIL", false) == true) {
-            Log.d("called","meow")
             val json = extras.getString("PROGRAM_CARD_JSON")
-            Log.d("json","${json}")
+            Log.d("json", "$json")
             if (json != null) {
-                val card: SearchResponse = Gson().fromJson(json, HomeFragment.SearchResponseImpl::class.java)
-                Log.d("CardType", "card is of type: ${card?.javaClass?.name}")
+                val card = mapper.readValue(json, HomeFragment.SearchResponseImpl::class.java)
+                Log.d("CardType", "card is of type: ${card.javaClass.name}")
                 loadSearchResult(card)
                 return
-            }
-            else{
-                Log.d("called","card is null")
             }
         }
         val str = intent.dataString
@@ -1272,8 +1234,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     @Suppress("DEPRECATION_ERROR")
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
-//        handleAppIntent(intent)
-        Log.d("onc","oncreate")
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
         val errorFile = filesDir.resolve("last_error")
@@ -2019,21 +1979,15 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         ioSafe {
             migrateResumeWatching()
         }
-        ioSafe {
-//            if (isLayout(TV) || isLayout(EMULATOR)) {
-            withContext(Dispatchers.Main) {
-                Log.d("Iosafe","before check")
-                val channelId=getExistingChannelId("Cloudstream TV")
-                if (channelId==null) {
-                    Log.d("not","not create, creating")
-                    createTvChannel()
-                }
-                else{
-                    Log.d("Mainactivity",channelId.toString())
 
-                }
+        main {
+            val channelId = TvChannelUtils().getChannelId(this@MainActivity, getString(R.string.app_name))
+            if (channelId == null) {
+                Log.d("TvChannel", "Channel not found, creating")
+                createTvChannel()
+            } else {
+                Log.d("TvChannel", "Channel ID: $channelId")
             }
-//            }
         }
 
         getKey<String>(USER_SELECTED_HOMEPAGE_API)?.let { homepage ->

@@ -63,7 +63,6 @@ import java.util.*
 import androidx.tvprovider.media.tv.TvContractCompat
 import androidx.tvprovider.media.tv.PreviewProgram
 import com.lagradost.api.Log
-import com.lagradost.cloudstream3.utils.DataStore.saveProgramId
 import android.content.ContentUris
 import com.lagradost.cloudstream3.utils.AppContextUtils
 import kotlinx.coroutines.TimeoutCancellationException
@@ -74,8 +73,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import android.os.Parcelable
 import com.lagradost.cloudstream3.ui.account.AccountViewModel
-import kotlinx.parcelize.Parcelize
-import kotlinx.parcelize.RawValue
+import com.lagradost.cloudstream3.utils.TvChannelUtils
+
 
 
 class HomeFragment : Fragment() {
@@ -488,9 +487,9 @@ class HomeFragment : Fragment() {
     }
 
     private val homeViewModel: HomeViewModel by activityViewModels()
-    private val AccountViewModel: AccountViewModel by activityViewModels()
+    private val accountViewModel: AccountViewModel by activityViewModels()
 
-    @Parcelize
+
     data class SearchResponseImpl(
         override val name: String,
         override val url: String,
@@ -500,8 +499,8 @@ class HomeFragment : Fragment() {
         override var posterHeaders: Map<String, String>? = null,
         override var id: Int? = null,
         override var quality: SearchQuality? = null,
-        override var score:@RawValue Score? = null
-    ) : SearchResponse, Parcelable
+        override var score: Score? = null
+    ) : SearchResponse
     fun SearchResponse.toImpl(): SearchResponseImpl {
         return SearchResponseImpl(
             name = name,
@@ -520,19 +519,23 @@ class HomeFragment : Fragment() {
 
 
     private fun addMovies(cards: List<SearchResponse>) {
+        val ctx = context ?: run {
+            Log.e("HomeFragment", "Context is null, aborting addMovies")
+            return
+        }
+
         try {
-            val existingId = AppContextUtils.getChannelId(requireContext(), "Cloudstream TV")
+            val existingId = TvChannelUtils().getChannelId(ctx, getString(R.string.app_name))
             if (existingId != null) {
                 Log.d("HomeFragment", "Channel ID: $existingId")
 
                 val programCards = cards.map { it.toImpl() }
 
-                AppContextUtils.addPrograms(
-                    context = requireContext(),
+                TvChannelUtils().addPrograms(
+                    context = ctx,
                     channelId = existingId,
                     items = programCards
                 )
-
             } else {
                 Log.d("HomeFragment", "Channel does not exist")
             }
@@ -540,18 +543,22 @@ class HomeFragment : Fragment() {
             Log.e("HomeFragment", "Error adding movies: $e")
         }
     }
-    private fun deleteAll(){
-        try{
-            val existingId = AppContextUtils.getChannelId(requireContext(), "Cloudstream TV")
+    private fun deleteAll() {
+        val ctx = context ?: run {
+            Log.e("HomeFragment", "Context is null, aborting deleteAll")
+            return
+        }
+
+        try {
+            val existingId = TvChannelUtils().getChannelId(ctx, getString(R.string.app_name))
             if (existingId != null) {
                 Log.d("HomeFragment", "Channel ID: $existingId")
-//                TvChannelUtils.deleteAllProgramsForChannel(requireContext(),existingId)
-                AppContextUtils.deleteStoredPrograms(requireContext())
+                TvChannelUtils().deleteStoredPrograms(ctx)
             } else {
                 Log.d("HomeFragment", "Channel does not exist")
             }
-        }catch (e: Exception){
-            Log.d("HomeFragment","${e}")
+        } catch (e: Exception) {
+            Log.e("HomeFragment", "Error deleting programs: ${e.message}")
         }
     }
 
@@ -647,7 +654,7 @@ class HomeFragment : Fragment() {
             }
             homeMasterAdapter = HomeParentItemAdapterPreview(
                 fragment = this@HomeFragment,
-                homeViewModel,AccountViewModel
+                homeViewModel,accountViewModel
             )
             homeMasterRecycler.adapter = homeMasterAdapter
             //fixPaddingStatusbar(homeLoadingStatusbar)
@@ -695,16 +702,12 @@ class HomeFragment : Fragment() {
                         homeLoadingShimmer.stopShimmer()
 
                         val d = data.value
-                        //start
                         val k = d.values.firstOrNull()
                         if (k != null) {
                             // empty the channel
                             deleteAll()
                             // insert the program from first array
-
-                            Log.d("first card",k.list.list.first().toString())
                             addMovies(k.list.list)
-//                    end
                         } else {
                             Log.w("SafeAccess", "Map values are empty — cannot access first element")
                         }

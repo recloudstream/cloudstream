@@ -8,7 +8,7 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("org.jetbrains.dokka")
-    id("kotlin-parcelize")
+
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
@@ -159,8 +159,6 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     // Android Core & Lifecycle
-    implementation("androidx.tvprovider:tvprovider:1.0.0")
-    implementation("com.google.code.gson:gson:2.10.1")
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
     implementation(libs.bundles.navigationKtx)

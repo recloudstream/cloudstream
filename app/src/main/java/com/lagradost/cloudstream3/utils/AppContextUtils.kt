@@ -104,15 +104,8 @@ import androidx.tvprovider.media.tv.PreviewProgram
 import androidx.tvprovider.media.tv.TvContractCompat
 import com.lagradost.cloudstream3.SearchResponse
 import android.content.ContentUris
-import com.lagradost.cloudstream3.utils.DataStore.getStoredProgramIds
-import com.lagradost.cloudstream3.utils.DataStore.removeProgramId
-import com.lagradost.cloudstream3.utils.DataStore.saveProgramId
 import android.content.Intent
-import android.os.Parcelable
-import com.google.gson.Gson
-import com.lagradost.cloudstream3.MainActivity
-import com.lagradost.cloudstream3.ui.home.HomeFragment
-import kotlinx.parcelize.Parcelize
+
 
 
 
@@ -173,98 +166,6 @@ object AppContextUtils {
         }
     }
     /** Get channel ID by name */
-    fun getChannelId(context: Context, channelName: String): Long? {
-        return try {
-            context.contentResolver.query(
-                TvContractCompat.Channels.CONTENT_URI,
-                arrayOf(
-                    TvContractCompat.Channels._ID,
-                    TvContractCompat.Channels.COLUMN_DISPLAY_NAME
-                ),
-                null,
-                null,
-                null
-            )?.use { cursor ->
-                while (cursor.moveToNext()) {
-                    val id = cursor.getLong(
-                        cursor.getColumnIndexOrThrow(TvContractCompat.Channels._ID)
-                    )
-                    val name = cursor.getString(
-                        cursor.getColumnIndexOrThrow(TvContractCompat.Channels.COLUMN_DISPLAY_NAME)
-                    )
-                    if (name == channelName) return id
-                }
-                null
-            }
-        } catch (e: Exception) {
-            Log.e("TvChannelUtils", "Query failed: ${e.message}", e)
-            null
-        }
-    }
-
-    /** Insert programs into a channel */
-
-    fun addPrograms(context: Context, channelId: Long, items: List<HomeFragment.SearchResponseImpl>) {
-        for (item in items) {
-            try {
-                val intent = Intent(context, MainActivity::class.java).apply {
-                    action = Intent.ACTION_VIEW
-                    putExtra("OPEN_PROGRAM_DETAIL", true)
-                    val json = Gson().toJson(item)
-                    putExtra("PROGRAM_CARD_JSON", json)
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-
-                val program = PreviewProgram.Builder()
-                    .setChannelId(channelId)
-                    .setTitle(item.name)
-                    .setDescription(item.apiName)
-                    .setType(TvContractCompat.PreviewPrograms.TYPE_CLIP)
-                    .setPosterArtUri(Uri.parse(item.posterUrl ?: ""))
-                    .setIntentUri(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)))
-                    .setPosterArtAspectRatio(TvContractCompat.PreviewPrograms.ASPECT_RATIO_2_3)
-                    .build()
-
-                val uri = context.contentResolver.insert(
-                    TvContractCompat.PreviewPrograms.CONTENT_URI,
-                    program.toContentValues()
-                )
-
-                if (uri != null) {
-                    val programId = ContentUris.parseId(uri)
-                    context.saveProgramId(programId)
-                    Log.d("TvChannelUtils", "Inserted program ${item.name}, ID=$programId")
-                } else {
-                    Log.e("TvChannelUtils", "Insert failed for ${item.name}")
-                }
-
-            } catch (error: Exception) {
-                Log.e("TvChannelUtils", "Error inserting ${item.name}: $error")
-            }
-        }
-    }
-
-    fun deleteStoredPrograms(context: Context) {
-        val programIds = context.getStoredProgramIds()
-
-        for (id in programIds) {
-            val uri = ContentUris.withAppendedId(TvContractCompat.PreviewPrograms.CONTENT_URI, id)
-            try {
-                val rowsDeleted = context.contentResolver.delete(uri, null, null)
-                if (rowsDeleted > 0) {
-                    Log.d("ProgramDelete", "Deleted program ID: $id")
-                    context.removeProgramId(id) // Remove from persistent list
-                } else {
-                    Log.w("ProgramDelete", "No program found for ID: $id")
-                }
-            } catch (e: Exception) {
-                Log.e("ProgramDelete", "Failed to delete program ID: $id", e)
-            }
-        }
-
-        Log.d("ProgramDelete", "Finished deleting stored programs")
-    }
-
     @SuppressLint("RestrictedApi")
     private fun buildWatchNextProgramUri(
         context: Context,
