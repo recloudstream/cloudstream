@@ -19,7 +19,6 @@
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" /> <!-- We can use this directly as CS3 is not on Play Store -->
     <uses-permission android:name="com.android.providers.tv.permission.READ_EPG_DATA" />  <!-- We can use to read the tv channel list -->
-    <uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA" />  <!-- We can use this to write programs into the channel -->
     <!-- Required for OpenInAppAction and getting arbitrary Aniyomi packages  -->
     <uses-permission
         android:name="android.permission.QUERY_ALL_PACKAGES"
