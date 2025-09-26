@@ -11,50 +11,13 @@ import com.lagradost.cloudstream3.utils.SubtitleUtils.cleanDisplayName
 import com.lagradost.cloudstream3.utils.SubtitleUtils.isMatchingSubtitle
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getDownloadFileInfoAndUpdateSettings
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getFolder
-import kotlin.math.max
-import kotlin.math.min
 
 class DownloadFileGenerator(
-    private val episodes: List<ExtractorUri>,
-    private var currentIndex: Int = 0
-) : IGenerator {
+    episodes: List<ExtractorUri>,
+    currentIndex: Int = 0
+) : VideoGenerator<ExtractorUri>(episodes, currentIndex) {
     override val hasCache = false
     override val canSkipLoading = false
-
-    override fun hasNext(): Boolean {
-        return currentIndex < episodes.size - 1
-    }
-
-    override fun hasPrev(): Boolean {
-        return currentIndex > 0
-    }
-
-    override fun next() {
-        if (hasNext())
-            currentIndex++
-    }
-
-    override fun prev() {
-        if (hasPrev())
-            currentIndex--
-    }
-
-    override fun goto(index: Int) {
-        // clamps value
-        currentIndex = min(episodes.size - 1, max(0, index))
-    }
-
-    override fun getCurrentId(): Int? {
-        return episodes[currentIndex].id
-    }
-
-    override fun getCurrent(offset: Int): Any? {
-        return episodes.getOrNull(currentIndex + offset)
-    }
-
-    override fun getAll(): List<Any>? {
-        return null
-    }
 
     override suspend fun generateLinks(
         clearCache: Boolean,
@@ -64,7 +27,7 @@ class DownloadFileGenerator(
         offset: Int,
         isCasting: Boolean
     ): Boolean {
-        val meta = episodes[currentIndex + offset]
+        val meta = getCurrent(offset) ?: return false
 
         if (meta.uri == Uri.EMPTY) {
             // We do this here so that we only load it when

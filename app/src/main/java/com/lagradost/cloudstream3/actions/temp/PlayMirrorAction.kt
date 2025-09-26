@@ -2,26 +2,22 @@ package com.lagradost.cloudstream3.actions.temp
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import androidx.core.app.ActivityOptionsCompat
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.actions.VideoClickAction
-import com.lagradost.cloudstream3.ui.player.LOADTYPE_INAPP
-import com.lagradost.cloudstream3.ui.result.LinkLoadingResult
-import com.lagradost.cloudstream3.ui.result.ResultEpisode
-import com.lagradost.cloudstream3.utils.ExtractorLinkType
-import com.lagradost.cloudstream3.utils.txt
-import androidx.core.net.toUri
 import com.lagradost.cloudstream3.ui.player.ExtractorUri
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
-import com.lagradost.cloudstream3.ui.player.IGenerator
+import com.lagradost.cloudstream3.ui.player.LOADTYPE_INAPP
 import com.lagradost.cloudstream3.ui.player.SubtitleData
+import com.lagradost.cloudstream3.ui.player.VideoGenerator
+import com.lagradost.cloudstream3.ui.result.LinkLoadingResult
+import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.FillerEpisodeCheck.list
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
+import com.lagradost.cloudstream3.utils.txt
 
-class PlayMirrorAction: VideoClickAction() {
+class PlayMirrorAction : VideoClickAction() {
     override val name = txt(R.string.episode_action_play_mirror)
 
     override val oneSource = true
@@ -40,41 +36,24 @@ class PlayMirrorAction: VideoClickAction() {
     ) {
         //Implemented a generator to handle the single
         val activity = context as? Activity ?: return
-            val generatorMirror = object: IGenerator {
-                override val hasCache: Boolean = true
+        val generatorMirror = object : VideoGenerator<ResultEpisode>(listOf(video)) {
+            override val hasCache: Boolean = false
+            override val canSkipLoading: Boolean = false
 
-                override val canSkipLoading: Boolean = true
-
-                override fun hasNext(): Boolean = false
-
-                override fun hasPrev(): Boolean = false
-
-                override fun next() {}
-
-                override fun prev() {}
-
-                override fun goto(index: Int) {}
-
-                override fun getCurrentId(): Int? = video.id
-
-                override fun getCurrent(offset: Int): Any? = video
-
-                override fun getAll(): List<Any>? = listOf(video)
-
-                override suspend fun generateLinks(
-                    clearCache: Boolean,
-                    sourceTypes: Set<ExtractorLinkType>,
-                    callback: (Pair<ExtractorLink?, ExtractorUri?>) -> Unit,
-                    subtitleCallback: (SubtitleData) -> Unit,
-                    offset: Int,
-                    isCasting: Boolean
-                ): Boolean {
-                    index?.let { callback(result.links[it] to null) }
-                    result.subs.forEach { subtitle -> subtitleCallback(subtitle) }
-                    return true
-                }
+            override suspend fun generateLinks(
+                clearCache: Boolean,
+                sourceTypes: Set<ExtractorLinkType>,
+                callback: (Pair<ExtractorLink?, ExtractorUri?>) -> Unit,
+                subtitleCallback: (SubtitleData) -> Unit,
+                offset: Int,
+                isCasting: Boolean
+            ): Boolean {
+                index?.let { callback(result.links[it] to null) }
+                result.subs.forEach { subtitle -> subtitleCallback(subtitle) }
+                return true
             }
-            // Took logic from PLAY_EPISODE_IN_APP
+        }
+        // Took logic from PLAY_EPISODE_IN_APP
         activity.navigate(
             R.id.global_to_navigation_player,
             GeneratorPlayer.newInstance(

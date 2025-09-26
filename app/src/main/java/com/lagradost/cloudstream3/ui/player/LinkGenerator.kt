@@ -40,36 +40,7 @@ class LinkGenerator(
     private val links: List<BasicLink>,
     private val extract: Boolean = true,
     private val refererUrl: String? = null,
-) : IGenerator {
-    override val hasCache = false
-    override val canSkipLoading = true
-
-    override fun getCurrentId(): Int? {
-        return null
-    }
-
-    override fun hasNext(): Boolean {
-        return false
-    }
-
-    override fun getAll(): List<Any>? {
-        return null
-    }
-
-    override fun hasPrev(): Boolean {
-        return false
-    }
-
-    override fun getCurrent(offset: Int): Any? {
-        return null
-    }
-
-    override fun goto(index: Int) {}
-
-    override fun next() {}
-
-    override fun prev() {}
-
+) : NoVideoGenerator() {
     override suspend fun generateLinks(
         clearCache: Boolean,
         sourceTypes: Set<ExtractorLinkType>,
@@ -107,36 +78,9 @@ class LinkGenerator(
 class MinimalLinkGenerator(
     private val links: List<CloudStreamPackage.MinimalVideoLink>,
     private val subs: List<CloudStreamPackage.MinimalSubtitleLink>,
-    private val id : Int? = null
-) : IGenerator {
-    override val hasCache = false
-    override val canSkipLoading = true
-
-    override fun getCurrentId(): Int? {
-        return id
-    }
-
-    override fun hasNext(): Boolean {
-        return false
-    }
-
-    override fun getAll(): List<Any>? {
-        return null
-    }
-
-    override fun hasPrev(): Boolean {
-        return false
-    }
-
-    override fun getCurrent(offset: Int): Any? {
-        return null
-    }
-
-    override fun goto(index: Int) {}
-
-    override fun next() {}
-
-    override fun prev() {}
+    private val id: Int? = null
+) : NoVideoGenerator() {
+    override fun getCurrentId(): Int? = id
 
     override suspend fun generateLinks(
         clearCache: Boolean,
