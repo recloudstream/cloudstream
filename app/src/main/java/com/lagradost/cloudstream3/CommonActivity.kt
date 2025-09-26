@@ -21,8 +21,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MainThread
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.core.os.LocaleListCompat
 import androidx.core.view.children
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.CastSession
@@ -205,6 +207,12 @@ object CommonActivity {
         val config = resources.configuration
         Locale.setDefault(locale)
         config.setLocale(locale)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // initial step for android 13+ language per-app support
+            // https://developer.android.com/guide/topics/resources/app-languages
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.create(locale))
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             context.createConfigurationContext(config)
