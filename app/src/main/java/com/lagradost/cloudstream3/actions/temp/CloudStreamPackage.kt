@@ -5,8 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.actions.OpenInAppAction
+import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.ui.player.ExtractorUri
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.player.SubtitleOrigin
@@ -18,8 +18,10 @@ import com.lagradost.cloudstream3.utils.DrmExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
-import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.newExtractorLink
+import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToLangTagIETF
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromLanguageToTagIETF
 import com.lagradost.cloudstream3.utils.txt
 
 /**
@@ -122,7 +124,9 @@ class CloudStreamPackage : OpenInAppAction(
             originalName = name ?: "Unknown",
             headers = headers,
             origin = SubtitleOrigin.URL,
-            languageCode = null,
+            languageCode = fromCodeToLangTagIETF(name) ?:
+                           fromLanguageToTagIETF(name, true) ?:
+                           name,
         )
     }
 

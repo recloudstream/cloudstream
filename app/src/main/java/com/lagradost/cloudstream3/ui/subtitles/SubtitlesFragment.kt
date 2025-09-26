@@ -34,17 +34,19 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
 import com.lagradost.cloudstream3.CommonActivity.showToast
-import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.SubtitleSettingsBinding
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.player.OutlineSpan
 import com.lagradost.cloudstream3.ui.player.RoundedBackgroundColorSpan
-import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.nameNextToFlagEmoji
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
-import com.lagradost.cloudstream3.utils.SubtitleHelper
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToLangTagIETF
+import com.lagradost.cloudstream3.utils.SubtitleHelper.languages
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
@@ -276,11 +278,11 @@ class SubtitlesFragment : DialogFragment() {
             return TypedValue.applyDimension(unit, size, metrics).toInt()
         }
 
-        fun getDownloadSubsLanguageISO639_1(): List<String> {
+        fun getDownloadSubsLanguageTagIETF(): List<String> {
             return getKey(SUBTITLE_DOWNLOAD_KEY) ?: listOf("en")
         }
 
-        fun getAutoSelectLanguageISO639_1(): String {
+        fun getAutoSelectLanguageTagIETF(): String {
             return getKey(SUBTITLE_AUTO_SELECT_KEY) ?: "en"
         }
     }
@@ -671,28 +673,23 @@ class SubtitlesFragment : DialogFragment() {
 
             subsAutoSelectLanguage.setFocusableInTv()
             subsAutoSelectLanguage.setOnClickListener { textView ->
-                val langMap = arrayListOf(
-                    SubtitleHelper.LanguageMetadata(
-                        textView.context.getString(R.string.none),
-                        textView.context.getString(R.string.none),
-                        "",
-                        "",
-                        "",
-                        "",
-                        ""
-                    ),
-                )
-                langMap.addAll(SubtitleHelper.languages)
+                val languagesTagName =
+                    listOf( Pair(textView.context.getString(R.string.none),
+                                 textView.context.getString(R.string.none))) +
+                    languages
+                        .map { Pair(it.IETF_tag, it.nameNextToFlagEmoji()) }
+                        .sortedBy { it.second.substringAfter("\u00a0").lowercase() } // name ignoring flag emoji
 
-                val lang639_1 = langMap.map { it.ISO_639_1 }
+                val (langTagsIETF, langNames) = languagesTagName.unzip()
+
                 activity?.showDialog(
-                    langMap.map { it.languageName },
-                    lang639_1.indexOf(getAutoSelectLanguageISO639_1()),
+                    langNames,
+                    langTagsIETF.indexOf(getAutoSelectLanguageTagIETF()),
                     (textView as TextView).text.toString(),
                     true,
                     dismissCallback
                 ) { index ->
-                    setKey(SUBTITLE_AUTO_SELECT_KEY, lang639_1[index])
+                    setKey(SUBTITLE_AUTO_SELECT_KEY, langTagsIETF[index])
                 }
             }
 
@@ -704,18 +701,24 @@ class SubtitlesFragment : DialogFragment() {
 
             subsDownloadLanguages.setFocusableInTv()
             subsDownloadLanguages.setOnClickListener { textView ->
-                val langMap = SubtitleHelper.languages
-                val lang639_1 = langMap.map { it.ISO_639_1 }
-                val keys = getDownloadSubsLanguageISO639_1()
-                val keyMap = keys.map { lang639_1.indexOf(it) }.filter { it >= 0 }
+                val languagesTagName =
+                    languages
+                        .map { Pair(it.IETF_tag, it.nameNextToFlagEmoji()) }
+                        .sortedBy { it.second.substringAfter("\u00a0").lowercase() } // name ignoring flag emoji
+
+                val (langTagsIETF, langNames) = languagesTagName.unzip()
+
+                val selectedLanguages = getDownloadSubsLanguageTagIETF()
+                                        .map { langTagsIETF.indexOf(it) }
+                                        .filter { it >= 0 }
 
                 activity?.showMultiDialog(
-                    langMap.map { it.languageName },
-                    keyMap,
+                    langNames,
+                    selectedLanguages,
                     (textView as TextView).text.toString(),
                     dismissCallback
                 ) { indexList ->
-                    setKey(SUBTITLE_DOWNLOAD_KEY, indexList.map { lang639_1[it] }.toList())
+                    setKey(SUBTITLE_DOWNLOAD_KEY, indexList.map { langTagsIETF[it] }.toList())
                 }
             }
 
