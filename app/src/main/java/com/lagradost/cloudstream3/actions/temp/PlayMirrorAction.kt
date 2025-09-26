@@ -55,7 +55,7 @@ class PlayMirrorAction: VideoClickAction() {
 
                 override fun goto(index: Int) {}
 
-                override fun getCurrentId(): Int? = index
+                override fun getCurrentId(): Int? = video.id
 
                 override fun getCurrent(offset: Int): Any? = video
 
