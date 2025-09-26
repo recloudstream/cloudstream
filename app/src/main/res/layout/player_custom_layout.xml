@@ -999,7 +999,7 @@
                 android:id="@+id/player_episode_list"
                 tools:listitem="@layout/player_episodes"
                 android:nextFocusRight="@id/player_close_episodes_overlay"
-                android:layout_width="400dp"
+                android:layout_width="350dp"
                 android:layout_height="match_parent">
 
             </androidx.recyclerview.widget.RecyclerView>
