@@ -64,7 +64,7 @@ class RepoLinkGenerator(
         // these act as a general filter to prevent duplication of links or names
         val currentLinksUrls = mutableSetOf<String>()       // makes all urls unique
         val currentSubsUrls = mutableSetOf<String>()    // makes all subs urls unique
-        val currentSubsNames = mutableSetOf<String>()   // makes all subs names unique
+        val lastCountedSuffix = mutableMapOf<String, UInt>()
 
         synchronized(currentCache) {
             val outdatedCache =
@@ -88,7 +88,6 @@ class RepoLinkGenerator(
 
             currentCache.subtitleCache.forEach { sub ->
                 currentSubsUrls.add(sub.url)
-                currentSubsNames.add(sub.name)
                 subtitleCallback(sub)
             }
 
@@ -113,19 +112,14 @@ class RepoLinkGenerator(
                 currentSubsUrls.add(correctFile.url)
 
                 // this part makes sure that all names are unique for UX
-                val fixedName = correctFile.name.html().toString().trim()
 
-                var name = fixedName
-                var count = 1
-                while (currentSubsNames.contains(name)) {
-                    count++
-                    name =
-                        SubtitleData.constructName(originalName = fixedName, nameSuffix = "$count")
-                }
+                val nameDecoded = correctFile.originalName.html().toString().trim() // `%3Ch1%3Esub%20name…` → `<h1>sub name…` → `sub name…`
 
-                currentSubsNames.add(name)
+                val suffixCount = lastCountedSuffix.getOrDefault(nameDecoded, 0u) +1u
+                lastCountedSuffix[nameDecoded] = suffixCount
+
                 val updatedFile =
-                    correctFile.copy(originalName = fixedName, nameSuffix = "$count")
+                    correctFile.copy(originalName = nameDecoded, nameSuffix = "$suffixCount")
 
                 synchronized(currentCache) {
                     if (currentCache.subtitleCache.add(updatedFile)) {

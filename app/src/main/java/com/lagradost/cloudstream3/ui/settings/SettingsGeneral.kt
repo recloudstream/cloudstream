@@ -132,7 +132,7 @@ fun Pair<String, String>.nameNextToFlagEmoji(): String {
     // fallback to [A][A] -> [?] question mak flag
     val flag = SubtitleHelper.getFlagFromIso(this.second) ?: "\ud83c\udde6\ud83c\udde6"
 
-    return "$flag ${this.first}"
+    return "$flag\u00a0${this.first}" // \u00a0 non-breaking space
 }
 
 class SettingsGeneral : PreferenceFragmentCompat() {
@@ -232,7 +232,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
                     val url = binding.siteUrlInput.text?.toString()
                     val lang = binding.siteLangInput.text?.toString()
                     val realLang = if (lang.isNullOrBlank()) provider.lang else lang
-                    if (url.isNullOrBlank() || name.isNullOrBlank() || realLang.length != 2) {
+                    if (url.isNullOrBlank() || name.isNullOrBlank()) {
                         showToast(R.string.error_invalid_data, Toast.LENGTH_SHORT)
                         return@setOnClickListener
                     }

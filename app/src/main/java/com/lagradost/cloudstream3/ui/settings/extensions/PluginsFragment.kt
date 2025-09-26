@@ -89,7 +89,7 @@ class PluginsFragment : Fragment() {
                     R.id.lang_filter -> {
                         var languagesTagName = pluginViewModel.pluginLanguages
                             .map { langTag -> Pair(langTag, getNameNextToFlagEmoji(langTag) ?: langTag) }
-                            .sortedBy { it.second.substringAfter(" ") } // name ignoring flag emoji
+                            .sortedBy { it.second.substringAfter("\u00a0").lowercase() } // name ignoring flag emoji
                             .toMutableList()
 
                         // Move "none" to 1st position as it's special code to indicate unknown/missing language
