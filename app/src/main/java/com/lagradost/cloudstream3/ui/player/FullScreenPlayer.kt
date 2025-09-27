@@ -1089,7 +1089,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     // validates if the touch is inside of the player area
                     isCurrentTouchValid = view.isValidTouch(currentTouch.x, currentTouch.y)
                     if (isCurrentTouchValid && playerEpisodeOverlay.isVisible) {
-                        playerEpisodeOverlay.isVisible = false
+                        toggleEpisodesOverlay(show=false)
                     } else if (isCurrentTouchValid) {
                         if (speedupEnabled) {
                             hasTriggeredSpeedUp = false
