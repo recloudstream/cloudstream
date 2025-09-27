@@ -19,6 +19,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STR
 import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
+import java.net.URLEncoder
 
 const val PROGRAM_ID_LIST_KEY = "persistent_program_ids"
 
@@ -68,6 +69,14 @@ object TvChannelUtils {
     }
 
     /** Insert programs into a channel */
+    fun wrapWithWsrvIfNeeded(url: String?): String? {
+        if (url.isNullOrBlank()) return null
+        return if (url.contains("wsrv.nl")) {
+            url
+        } else {
+            "https://wsrv.nl/?url=${URLEncoder.encode(url, "UTF-8")}"
+        }
+    }
 
     fun addPrograms(context: Context, channelId: Long, items: List<SearchResponse>) {
         for (item in items) {
@@ -75,22 +84,22 @@ object TvChannelUtils {
                 val nameBase64 = base64Encode(item.apiName.toByteArray(Charsets.UTF_8))
                 val urlBase64 = base64Encode(item.url.toByteArray(Charsets.UTF_8))
                 val csshareUri = "$APP_STRING_SHARE:$nameBase64?$urlBase64"
-//                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(csshareUri))
+                val safePosterUrl = wrapWithWsrvIfNeeded(item.posterUrl)
                 val builder = PreviewProgram.Builder()
                     .setChannelId(channelId)
                     .setTitle(item.name)
-                    .setDescription(item.apiName)
+                    .setDescription(item.apiName+"Score:- ${item.score}")
                     .setContentId(item.url)
-                    .setType(TvContractCompat.PreviewPrograms.TYPE_CLIP)
+                    .setType(TvContractCompat.PreviewPrograms.TYPE_MOVIE)
                     .setIntentUri(Uri.parse(csshareUri))
                     .setPosterArtAspectRatio(TvContractCompat.PreviewPrograms.ASPECT_RATIO_2_3)
 
                 // Validate poster URL before setting
-                val posterUrl = item.posterUrl
-                if (!posterUrl.isNullOrBlank() && posterUrl.startsWith("http")) {
-                    builder.setPosterArtUri(Uri.parse(posterUrl))
+                if (!safePosterUrl.isNullOrBlank() && safePosterUrl.startsWith("http")) {
+                    builder.setPosterArtUri(Uri.parse(safePosterUrl))
+
                 } else {
-                    Log.w("TvChannelUtils", "Missing or invalid poster for ${item.name}")
+
                 }
 
                 val program = builder.build()
