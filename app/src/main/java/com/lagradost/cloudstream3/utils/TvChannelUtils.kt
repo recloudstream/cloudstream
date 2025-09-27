@@ -98,10 +98,7 @@ object TvChannelUtils {
                 if (!safePosterUrl.isNullOrBlank() && safePosterUrl.startsWith("http")) {
                     builder.setPosterArtUri(Uri.parse(safePosterUrl))
 
-                } else {
-
                 }
-
                 val program = builder.build()
 
                 val uri = context.contentResolver.insert(
