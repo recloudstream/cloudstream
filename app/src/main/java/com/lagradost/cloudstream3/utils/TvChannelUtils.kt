@@ -1,15 +1,19 @@
 package com.lagradost.cloudstream3.utils
 
+import android.content.ComponentName
 import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.tvprovider.media.tv.Channel
 import android.util.Log
 import androidx.tvprovider.media.tv.PreviewProgram
 import androidx.tvprovider.media.tv.TvContractCompat
 import com.lagradost.cloudstream3.base64Encode
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_SHARE
 import com.lagradost.cloudstream3.MainActivity
+import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.mapper
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_SHARE
 import com.lagradost.cloudstream3.ui.home.HomeFragment
@@ -18,7 +22,7 @@ import com.lagradost.cloudstream3.utils.DataStore.setKey
 
 const val PROGRAM_ID_LIST_KEY = "persistent_program_ids"
 
-class TvChannelUtils {
+object TvChannelUtils {
     fun Context.saveProgramId(programId: Long) {
         val existing: List<Long> = getKey(PROGRAM_ID_LIST_KEY) ?: emptyList()
         val updated = (existing + programId).distinct()
@@ -65,13 +69,13 @@ class TvChannelUtils {
 
     /** Insert programs into a channel */
 
-    fun addPrograms(context: Context, channelId: Long, items: List<HomeFragment.SearchResponseImpl>) {
+    fun addPrograms(context: Context, channelId: Long, items: List<SearchResponse>) {
         for (item in items) {
             try {
                 val nameBase64 = base64Encode(item.apiName.toByteArray(Charsets.UTF_8))
                 val urlBase64 = base64Encode(item.url.toByteArray(Charsets.UTF_8))
                 val csshareUri = "$APP_STRING_SHARE:$nameBase64?$urlBase64"
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(csshareUri))
+//                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(csshareUri))
                 val builder = PreviewProgram.Builder()
                     .setChannelId(channelId)
                     .setTitle(item.name)
@@ -128,6 +132,31 @@ class TvChannelUtils {
         }
 
         Log.d("ProgramDelete", "Finished deleting stored programs")
+    }
+
+    fun createTvChannel(context: Context) {
+        val componentName = ComponentName(context, MainActivity::class.java)
+        val inputId = TvContractCompat.buildInputId(componentName)
+
+        val channel = Channel.Builder()
+            .setType(TvContractCompat.Channels.TYPE_PREVIEW)
+            .setDisplayName(context.getString(R.string.app_name))
+            .setAppLinkIntent(Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse("cloudstreamapp://open")
+            })
+            .setInputId(inputId)
+            .build()
+
+        val channelUri = context.contentResolver.insert(
+            TvContractCompat.Channels.CONTENT_URI,
+            channel.toContentValues()
+        )
+
+        channelUri?.let {
+            val channelId = ContentUris.parseId(it)
+            TvContractCompat.requestChannelBrowsable(context, channelId)
+            Log.d("TvChannelUtils", "Channel Created: $channelId")
+        }
     }
 
 }

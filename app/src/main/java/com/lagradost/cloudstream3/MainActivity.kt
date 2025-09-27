@@ -405,62 +405,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 return false
             }
     }
-//    private val insertedProgramIds = mutableListOf<Long>()
-
-
-
-
-    fun getExistingChannelId(channelName: String): Long? {
-        return try {
-            contentResolver.query(
-                TvContractCompat.Channels.CONTENT_URI,
-                arrayOf(TvContractCompat.Channels._ID, TvContractCompat.Channels.COLUMN_DISPLAY_NAME),
-                null, // no selection allowed
-                null,
-                null
-            )?.use { cursor ->
-                while (cursor.moveToNext()) {
-                    val name = cursor.getString(cursor.getColumnIndexOrThrow(TvContractCompat.Channels.COLUMN_DISPLAY_NAME))
-                    if (name == channelName) {
-                        return cursor.getLong(cursor.getColumnIndexOrThrow(TvContractCompat.Channels._ID))
-                    }
-                }
-                null
-            }
-        } catch (e: Exception) {
-            Log.e("TVChannel", "Query failed: ${e.message}", e)
-            null
-        }
-    }
-
-    private fun createTvChannel() {
-
-        val componentName = ComponentName(this, MainActivity::class.java)
-        val inputId = TvContractCompat.buildInputId(componentName)
-
-        val channel = Channel.Builder()
-            .setType(TvContractCompat.Channels.TYPE_PREVIEW)
-            .setDisplayName(getString(R.string.app_name))
-            .setAppLinkIntent(Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse("cloudstreamapp://open")
-            })
-            .setInputId(inputId)
-            .build()
-
-        val channelUri = contentResolver.insert(
-            TvContractCompat.Channels.CONTENT_URI,
-            channel.toContentValues()
-        )
-
-        channelUri?.let {
-            val channelId = ContentUris.parseId(it)
-            TvContractCompat.requestChannelBrowsable(this, channelId)
-            Log.d("Channel Created",channelId.toString())
-
-        }
-    }
-
-
 
 
     var lastPopup: SearchResponse? = null
@@ -751,27 +695,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         handleAppIntent(intent)
         super.onNewIntent(intent)
     }
-    private fun createRecommendationIntent(searchResponse: SearchResponse): Intent {
-        val nameBase64 = base64Encode(searchResponse.apiName.toByteArray(Charsets.UTF_8))
-        val urlBase64 = base64Encode(searchResponse.url.toByteArray(Charsets.UTF_8))
-        val csshareUri = "$APP_STRING_SHARE:$nameBase64?$urlBase64"
-
-        return Intent(Intent.ACTION_VIEW, Uri.parse(csshareUri))
-    }
 
     private fun handleAppIntent(intent: Intent?) {
         if (intent == null) return
-        val extras = intent.extras
-        if (extras?.getBoolean("OPEN_PROGRAM_DETAIL", false) == true) {
-            val json = extras.getString("PROGRAM_CARD_JSON")
-            Log.d("json", "$json")
-            if (json != null) {
-                val card = mapper.readValue(json, HomeFragment.SearchResponseImpl::class.java)
-                Log.d("CardType", "card is of type: ${card.javaClass.name}")
-                loadSearchResult(card)
-                return
-            }
-        }
         val str = intent.dataString
         loadCache()
 
@@ -1981,10 +1907,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
 
         main {
-            val channelId = TvChannelUtils().getChannelId(this@MainActivity, getString(R.string.app_name))
+            val channelId = TvChannelUtils.getChannelId(this@MainActivity, getString(R.string.app_name))
             if (channelId == null) {
                 Log.d("TvChannel", "Channel not found, creating")
-                createTvChannel()
+                TvChannelUtils.createTvChannel(this@MainActivity)
             } else {
                 Log.d("TvChannel", "Channel ID: $channelId")
             }

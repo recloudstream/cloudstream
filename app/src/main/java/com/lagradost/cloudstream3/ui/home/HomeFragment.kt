@@ -76,6 +76,7 @@ import com.lagradost.cloudstream3.ui.account.AccountViewModel
 import com.lagradost.cloudstream3.utils.TvChannelUtils
 
 
+private const val TAG = "HomeFragment"
 
 class HomeFragment : Fragment() {
     companion object {
@@ -518,47 +519,47 @@ class HomeFragment : Fragment() {
 
 
 
-    private fun addMovies(cards: List<SearchResponse>) {
+     fun addMovies(cards: List<SearchResponse>) {
         val ctx = context ?: run {
-            Log.e("HomeFragment", "Context is null, aborting addMovies")
+            Log.e(TAG, "Context is null, aborting addMovies")
             return
         }
 
         try {
-            val existingId = TvChannelUtils().getChannelId(ctx, getString(R.string.app_name))
+            val existingId = TvChannelUtils.getChannelId(ctx, getString(R.string.app_name))
             if (existingId != null) {
-                Log.d("HomeFragment", "Channel ID: $existingId")
+                Log.d(TAG, "Channel ID: $existingId")
 
-                val programCards = cards.map { it.toImpl() }
+                val programCards = cards
 
-                TvChannelUtils().addPrograms(
+                TvChannelUtils.addPrograms(
                     context = ctx,
                     channelId = existingId,
                     items = programCards
                 )
             } else {
-                Log.d("HomeFragment", "Channel does not exist")
+                Log.d(TAG, "Channel does not exist")
             }
         } catch (e: Exception) {
-            Log.e("HomeFragment", "Error adding movies: $e")
+            Log.e(TAG, "Error adding movies: $e")
         }
     }
     private fun deleteAll() {
         val ctx = context ?: run {
-            Log.e("HomeFragment", "Context is null, aborting deleteAll")
+            Log.e(TAG, "Context is null, aborting deleteAll")
             return
         }
 
         try {
-            val existingId = TvChannelUtils().getChannelId(ctx, getString(R.string.app_name))
+            val existingId = TvChannelUtils.getChannelId(ctx, getString(R.string.app_name))
             if (existingId != null) {
-                Log.d("HomeFragment", "Channel ID: $existingId")
-                TvChannelUtils().deleteStoredPrograms(ctx)
+                Log.d(TAG, "Channel ID: $existingId")
+                TvChannelUtils.deleteStoredPrograms(ctx)
             } else {
-                Log.d("HomeFragment", "Channel does not exist")
+                Log.d(TAG, "Channel does not exist")
             }
         } catch (e: Exception) {
-            Log.e("HomeFragment", "Error deleting programs: ${e.message}")
+            Log.e(TAG, "Error deleting programs: ${e.message}")
         }
     }
 
