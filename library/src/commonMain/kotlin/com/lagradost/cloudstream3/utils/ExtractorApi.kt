@@ -308,6 +308,7 @@ import com.lagradost.cloudstream3.extractors.Ztreamhub
 import com.lagradost.cloudstream3.extractors.FileMoon
 import com.lagradost.cloudstream3.extractors.FileMoonSx
 import com.lagradost.cloudstream3.extractors.FilemoonV2
+import com.lagradost.cloudstream3.extractors.Techinmind
 import com.lagradost.cloudstream3.mvvm.logError
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -1224,6 +1225,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     InternetArchive(),
     VidStack(),
     GDMirrorbot(),
+    Techinmind(),
     Server1uns(),
     VinovoSi(),
     VinovoTo(),

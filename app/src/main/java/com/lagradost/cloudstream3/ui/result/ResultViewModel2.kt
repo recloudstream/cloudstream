@@ -33,11 +33,9 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.secondsToReadable
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
-import com.lagradost.cloudstream3.syncproviders.providers.SubDlApi
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
-import com.lagradost.cloudstream3.ui.player.ExtractorUri
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.IGenerator
 import com.lagradost.cloudstream3.ui.player.LOADTYPE_ALL
@@ -89,7 +87,6 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.updateSubscribedData
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import kotlinx.coroutines.*
-import okhttp3.internal.http2.FlowControlListener
 import java.util.concurrent.TimeUnit
 
 /** This starts at 1 */
@@ -801,7 +798,7 @@ class ResultViewModel2 : ViewModel() {
                 val currentSubs = mutableSetOf<SubtitleData>()
                 generator.generateLinks(
                     clearCache = false,
-                    allowedTypes = LOADTYPE_INAPP_DOWNLOAD,
+                    sourceTypes = LOADTYPE_INAPP_DOWNLOAD,
                     callback = {
                         it.first?.let { link ->
                             currentLinks.add(link)
@@ -1398,7 +1395,7 @@ class ResultViewModel2 : ViewModel() {
             updatePage()
             tempGenerator.generateLinks(
                 clearCache,
-                allowedTypes = sourceTypes,
+                sourceTypes = sourceTypes,
                 callback = { (link, _) ->
                     if (link != null) {
                         links += link
