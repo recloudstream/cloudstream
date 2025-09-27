@@ -9,6 +9,10 @@ fun getCurrentLocale(): String {
     return Locale.getDefault().toLanguageTag()
 }
 
+@Suppress(
+    "unused",
+    "MemberVisibilityCanBePrivate"
+)
 object SubtitleHelper {
     @Deprecated(
         "Default language code changed to IETF BCP 47 tag",
@@ -42,7 +46,8 @@ object SubtitleHelper {
         val ISO_639_3: String,      // ISO 639-6 missing as it's intended to differentiate specific dialects and variants
         val openSubtitles: String, // inconsistent codes that do not conform ISO 639
     ) {
-        internal fun localizedName(localizedTo: String? = null): String {
+        @Prerelease
+        fun localizedName(localizedTo: String? = null): String {
             // Use system locale to localize language name
             val localeOfLangCode = Locale.forLanguageTag(this.IETF_tag)
             val localeOfLocalizeTo = Locale.forLanguageTag(localizedTo ?: getCurrentLocale())
@@ -60,11 +65,12 @@ object SubtitleHelper {
                 sysLocalizedName
         }
 
-        internal fun nameNextToFlagEmoji(localizedTo: String? = null): String {
+        @Prerelease
+        fun nameNextToFlagEmoji(localizedTo: String? = null): String {
             // fallback to [A][A] -> [?] question mak flag
             val flag = getFlagFromIso(this.IETF_tag) ?: "\ud83c\udde6\ud83c\udde6"
 
-            return "$flag ${localizedName(localizedTo)}"
+            return "$flag\u00a0${localizedName(localizedTo)}" // \u00a0 non-breaking space
         }
     }
 
@@ -75,25 +81,24 @@ object SubtitleHelper {
     */
     private fun getLanguageDataFromName(languageName: String?, halfMatch: Boolean? = false): LanguageMetadata? {
         if (languageName.isNullOrBlank() || languageName.length < 2) return null
-
-        val lowLangName = languageName.lowercase()
+        // Workaround to avoid junk like "English (original audio)" or "Spanish 123"
+        // or "اَلْعَرَبِيَّةُ (Original Audio) 1" or "English (hindi sub)"…
+        val garbage = Regex(
+            "\\([^)]*(?:dub|sub|original|audio|code)[^)]*\\)|" + // junk words in parenthesis
+            "[\\u064B-\\u065B]|" + // arabic diacritics
+            "\\d|" +  // numbers
+            "[^\\p{L}\\p{Mn}\\p{Mc}\\p{Me} ()]" // non-letter (from any language)
+        )
+        val lowLangName = languageName.lowercase().replace(garbage, "").trim()
         val index =
             indexMapLanguageName[lowLangName] ?:
             indexMapNativeName[lowLangName] ?: -1
         val langMetadata = languages.getOrNull(index)
 
         if (halfMatch == true && langMetadata == null) {
-            // Workaround to avoid junk like "English (original audio)" or "Spanish 123"
-            // or "اَلْعَرَبِيَّةُ (Original Audio) 1" or "English (hindi sub)"…
-            // Subtitle downloads and auto selection should rely on proper language codes
-            // instead of language names! And remove junk beforehand.
-            val arabicDiacritics = Regex("[\\u064B-\\u065B]")
-            val withoutDiacritics = lowLangName.replace(arabicDiacritics, "")
-            val nameWithoutJunk = Regex("^([^()\\s\\d]+)").find(withoutDiacritics)?.value ?: withoutDiacritics
-
             for (lang in languages)
-                if (lang.languageName.contains(nameWithoutJunk, ignoreCase = true) ||
-                    lang.nativeName.contains(nameWithoutJunk, ignoreCase = true))
+                if (lang.languageName.contains(lowLangName, ignoreCase = true) ||
+                    lang.nativeName.contains(lowLangName, ignoreCase = true))
                     return lang
         }
         return langMetadata
@@ -139,7 +144,7 @@ object SubtitleHelper {
     private fun getLanguageDataFromCode(languageCode: String?): LanguageMetadata?  {
         if (languageCode.isNullOrBlank() || languageCode.length < 2) return null
 
-        val lowLangCode = languageCode.lowercase()
+        val lowLangCode = languageCode.lowercase().trim()
         val index =
             indexMapIETF_tag[lowLangCode] ?:
             indexMapISO_639_1[lowLangCode] ?:
@@ -219,13 +224,13 @@ object SubtitleHelper {
         // Written by Addison Phillips, <Addison at amazon.com>
         // https://www.langtag.net/philips-regexp.html
         val langTagRegex = """
-            +(^[xX](\x2d\p{Alnum}{1,8})*$)"
-            +|(((^\p{Alpha}{2,8}(?=\x2d|$)){1}"
-            +((\x2d\p{Alpha}{3})(?=\x2d|$)){0,3}"
-            +(\x2d\p{Alpha}{4}(?=\x2d|$))?"
-            +(\x2d(\p{Alpha}{2}|\d{3})(?=\x2d|$))?"
-            +(\x2d(\d\p{Alnum}{3}|\p{Alnum}{5,8})(?=\x2d|$))*)"
-            +((\x2d([a-wyzA-WYZ](?=\x2d))(\x2d(\p{Alnum}{2,8})+)*))*"
+            +(^[xX](\x2d\p{Alnum}{1,8})*$)
+            +|(((^\p{Alpha}{2,8}(?=\x2d|$)){1}
+            +((\x2d\p{Alpha}{3})(?=\x2d|$)){0,3}
+            +(\x2d\p{Alpha}{4}(?=\x2d|$))?
+            +(\x2d(\p{Alpha}{2}|\d{3})(?=\x2d|$))?
+            +(\x2d(\d\p{Alnum}{3}|\p{Alnum}{5,8})(?=\x2d|$))*)
+            +((\x2d([a-wyzA-WYZ](?=\x2d))(\x2d(\p{Alnum}{2,8})+)*))*
             +(\x2d[xX](\x2d\p{Alnum}{1,8})*)?)$
             """.trimMargin("+").toRegex()
         return langTagIETF.matches(langTagRegex)
@@ -512,6 +517,7 @@ object SubtitleHelper {
         "zu" to "ZA",
     )
 
+    @Suppress("SpellCheckingInspection")
     val languages = listOf(
         // languageName, nativeName, IETF_tag, ISO_639_1, ISO_639_2_B, ISO_639_3, openSubtitles
         LanguageMetadata("Afar","Afaraf","aa","aa","aar","aar",""),

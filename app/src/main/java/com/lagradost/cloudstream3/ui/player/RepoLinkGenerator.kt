@@ -113,19 +113,15 @@ class RepoLinkGenerator(
                 currentSubsUrls.add(correctFile.url)
 
                 // this part makes sure that all names are unique for UX
-                val fixedName = correctFile.name.html().toString().trim()
 
-                var name = fixedName
-                var count = 1
-                while (currentSubsNames.contains(name)) {
-                    count++
-                    name =
-                        SubtitleData.constructName(originalName = fixedName, nameSuffix = "$count")
-                }
+                val nameDecoded = correctFile.originalName.html().toString().trim() // `%3Ch1%3Esub%20name…` → `<h1>sub name…` → `sub name…`
 
-                currentSubsNames.add(name)
+                val suffixCount = currentSubsNames.count { it.contains(nameDecoded) } +1
+
                 val updatedFile =
-                    correctFile.copy(originalName = fixedName, nameSuffix = "$count")
+                    correctFile.copy(originalName = nameDecoded, nameSuffix = "$suffixCount")
+
+                currentSubsNames.add(updatedFile.name)
 
                 synchronized(currentCache) {
                     if (currentCache.subtitleCache.add(updatedFile)) {

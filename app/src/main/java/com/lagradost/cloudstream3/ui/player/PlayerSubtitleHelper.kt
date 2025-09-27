@@ -30,7 +30,7 @@ enum class SubtitleOrigin {
  * @param nameSuffix An extra suffix added to the subtitle to make sure it is unique
  * @param url Url for the subtitle, when EMBEDDED_IN_VIDEO this variable is used as the real backend id
  * @param headers if empty it will use the base onlineDataSource headers else only the specified headers
- * @param languageCode Not guaranteed to follow any standard. Could be something like "English 4" or "en".
+ * @param languageCode usually, tags such as "en", "es-mx", or "zh-hant-TW". But it could be something like "English 4"
  * */
 data class SubtitleData(
     val originalName: String,
@@ -41,17 +41,13 @@ data class SubtitleData(
     val headers: Map<String, String>,
     val languageCode: String?,
 ) {
-    companion object {
-        fun constructName(originalName: String, nameSuffix: String) = "$originalName $nameSuffix"
-    }
-
     /** Internal ID for exoplayer, unique for each link*/
     fun getId(): String {
         return if (origin == SubtitleOrigin.EMBEDDED_IN_VIDEO) url
         else "$url|$name"
     }
 
-    val name = constructName(originalName, nameSuffix)
+    val name = "$originalName $nameSuffix"
 
     /**
      * Gets the URL, but tries to fix it if it is malformed.
@@ -104,7 +100,7 @@ class PlayerSubtitleHelper {
                 origin = SubtitleOrigin.URL,
                 mimeType = subtitleFile.url.toSubtitleMimeType(),
                 headers = subtitleFile.headers ?: emptyMap(),
-                languageCode = subtitleFile.lang
+                languageCode = subtitleFile.langTag ?: subtitleFile.lang
             )
         }
     }
