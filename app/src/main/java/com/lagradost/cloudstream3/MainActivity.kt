@@ -186,7 +186,13 @@ import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.system.exitProcess
 import androidx.core.net.toUri
+import androidx.tvprovider.media.tv.Channel
+import androidx.tvprovider.media.tv.TvContractCompat
+import android.content.ComponentName
+import android.content.ContentUris
 
+import com.lagradost.cloudstream3.ui.home.HomeFragment
+import com.lagradost.cloudstream3.utils.TvChannelUtils
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
     companion object {
@@ -399,6 +405,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 return false
             }
     }
+
 
     var lastPopup: SearchResponse? = null
     fun loadPopup(result: SearchResponse, load: Boolean = true) {
@@ -693,6 +700,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         if (intent == null) return
         val str = intent.dataString
         loadCache()
+
         handleAppIntentUrl(this, str, false, intent.extras)
     }
 
@@ -1342,6 +1350,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         false
                     )
                 }
+
+// Add your channel creation here
+
             }
         } else {
             val builder: AlertDialog.Builder = AlertDialog.Builder(this)
@@ -1895,6 +1906,16 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             migrateResumeWatching()
         }
 
+        main {
+            val channelId = TvChannelUtils.getChannelId(this@MainActivity, getString(R.string.app_name))
+            if (channelId == null) {
+                Log.d("TvChannel", "Channel not found, creating")
+                TvChannelUtils.createTvChannel(this@MainActivity)
+            } else {
+                Log.d("TvChannel", "Channel ID: $channelId")
+            }
+        }
+
         getKey<String>(USER_SELECTED_HOMEPAGE_API)?.let { homepage ->
             DataStoreHelper.currentHomePage = homepage
             removeKey(USER_SELECTED_HOMEPAGE_API)
@@ -1943,9 +1964,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
             }
         )
-    }
 
-    /** Biometric stuff **/
+
+    }  /** Biometric stuff **/
     override fun onAuthenticationSuccess() {
         // make background (nav host fragment) visible again
         binding?.navHostFragment?.isInvisible = false
