@@ -81,6 +81,7 @@ import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.updateForced
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
+import com.lagradost.cloudstream3.ui.result.ACTION_CLICK_DEFAULT
 import com.lagradost.cloudstream3.ui.result.EpisodeAdapter
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.ResultFragment
@@ -163,7 +164,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     private var preferredAutoSelectSubtitles: String? = null // null means do nothing, "" means none
 
     private var binding: FragmentPlayerBinding? = null
-    private var allMeta: List<Any>? =  null
+    private var allMeta: List<ResultEpisode>? =  null
     private fun startLoading() {
         player.release()
         currentSelectedSubtitles = null
@@ -1950,9 +1951,16 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
-    override fun isThereEpisodes():Boolean{
-        allMeta =  viewModel.getAllMeta()
-        return allMeta!!.size >1
+    override fun isThereEpisodes(): Boolean {
+        val metaList = viewModel.getAllMeta()
+        val episodeList = metaList?.filterIsInstance<ResultEpisode>()
+
+        return if (!episodeList.isNullOrEmpty()) {
+            allMeta = episodeList
+            episodeList.size > 1
+        } else {
+            false
+        }
     }
 
     override fun showEpisodesOverlay() {
@@ -1961,9 +1969,11 @@ class GeneratorPlayer : FullScreenPlayer() {
                 playerEpisodeList.adapter = EpisodeAdapter(
                     false,
                     { episodeClick ->
-                        player.release()
-                        playerEpisodeOverlay.isGone = true
-                        episodeClick.position?.let { viewModel.loadThisEpisode(it) }
+                        if(episodeClick.action == ACTION_CLICK_DEFAULT){
+                            player.release()
+                            playerEpisodeOverlay.isGone = true
+                            episodeClick.position?.let { viewModel.loadThisEpisode(it) }
+                        }
                     },
                     {downloadClickEvent ->
                         DownloadButtonSetup.handleDownloadClick(downloadClickEvent)
@@ -2001,7 +2011,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                             val topItem = episodes.getOrNull(topIndex)?.season
                             topItem?.let {
                                 val paddedSeasonString = String.format("%02d",topItem)
-                                playerEpisodeOverlayTitle.text = "$epString: S$paddedSeasonString"
+                                playerEpisodeOverlayTitle.text = "${context?.getString(R.string.episodes)}:${context?.getString(R.string.season_short)}${paddedSeasonString}"
                             }
                         }
                     }

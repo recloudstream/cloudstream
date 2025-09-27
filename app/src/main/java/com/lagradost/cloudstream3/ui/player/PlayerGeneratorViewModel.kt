@@ -138,10 +138,8 @@ class PlayerGeneratorViewModel : ViewModel() {
     }
 
     fun getCurrentIndex():Int?{
-        (generator as RepoLinkGenerator).let {
-            return it.getCurrentIndex()
-        }
-        return null
+        val repoGen = generator as? RepoLinkGenerator ?: return null
+        return repoGen.getCurrentIndex()
     }
 
     fun attachGenerator(newGenerator: IGenerator?) {
