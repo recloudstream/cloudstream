@@ -27,6 +27,7 @@ import android.view.ViewGroup
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -183,6 +184,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         R.drawable.ic_baseline_volume_up_24,
     )
 
+    private var isShowingEpisodeOverlay:Boolean = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -212,6 +215,14 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         dismissCallback: (() -> Unit)
     ) {
         throw NotImplementedError()
+    }
+
+    open fun showEpisodesOverlay(){
+        throw NotImplementedError()
+    }
+
+    open fun isThereEpisodes():Boolean{
+        return false
     }
 
     /**
@@ -306,7 +317,15 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 start()
             }
         }
-
+        if(isLayout(PHONE)) {
+            playerBinding?.playerEpisodesButton?.let {
+                ObjectAnimator.ofFloat(it, "translationX", if (isShowing) 0f else 50.toPx.toFloat())
+                    .apply {
+                        duration = 200
+                        start()
+                    }
+            }
+        }
         val fadeTo = if (isShowing) 1f else 0f
         val fadeAnimation = AlphaAnimation(1f - fadeTo, fadeTo)
 
@@ -747,7 +766,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         if (isFullScreenPlayer)
             activity?.hideSystemUI()
         animateLayoutChanges()
-        playerBinding?.playerPausePlay?.requestFocus()
+        if(playerBinding?.playerEpisodeOverlay?.isGone == true) playerBinding?.playerPausePlay?.requestFocus()
     }
 
     private fun toggleLock() {
@@ -781,8 +800,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             playerRewHolder.startAnimation(fadeAnimation)
             downloadBothHeader.startAnimation(fadeAnimation)
 
-            //if (hasEpisodes)
-            //    player_episodes_button?.startAnimation(fadeAnimation)
+            if (hasEpisodes)
+                playerEpisodesButton.startAnimation(fadeAnimation)
             //player_media_route_button?.startAnimation(fadeAnimation)
             //video_bar.startAnimation(fadeAnimation)
 
@@ -819,7 +838,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             playerPausePlay.isGone = isGone
             //player_buffering?.isGone = isGone
             playerTopHolder.isGone = isGone
-            //player_episodes_button?.isVisible = !isGone && hasEpisodes
+            playerEpisodesButtonRoot.isVisible = !isGone && isThereEpisodes()
             playerVideoTitle.isGone = togglePlayerTitleGone
 //        player_video_title_rez?.isGone = isGone
             playerEpisodeFiller.isGone = isGone
@@ -1069,9 +1088,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 MotionEvent.ACTION_DOWN -> {
                     // validates if the touch is inside of the player area
                     isCurrentTouchValid = view.isValidTouch(currentTouch.x, currentTouch.y)
-                    /*if (isCurrentTouchValid && player_episode_list?.isVisible == true) {
-                        player_episode_list?.isVisible = false
-                    } else*/ if (isCurrentTouchValid) {
+                    if (isCurrentTouchValid && playerEpisodeOverlay.isVisible) {
+                        toggleEpisodesOverlay(show=false)
+                    } else if (isCurrentTouchValid) {
                         if (speedupEnabled) {
                             hasTriggeredSpeedUp = false
                             if (player.getIsPlaying() && !isLocked && isFullScreenPlayer) {
@@ -1350,14 +1369,14 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                 KeyEvent.KEYCODE_DPAD_DOWN,
                 KeyEvent.KEYCODE_DPAD_UP -> {
-                    if (!isShowing) {
+                    if (!isShowing && !isShowingEpisodeOverlay) {
                         onClickChange()
                         return true
                     }
                 }
 
                 KeyEvent.KEYCODE_DPAD_LEFT -> {
-                    if (!isShowing && !isLocked) {
+                    if (!isShowing && !isLocked && !isShowingEpisodeOverlay) {
                         player.seekTime(-androidTVInterfaceOffSeekTime)
                         return true
                     } else if (playerBinding?.playerPausePlay?.isFocused == true) {
@@ -1367,7 +1386,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 }
 
                 KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                    if (!isShowing && !isLocked) {
+                    if (!isShowing && !isLocked && !isShowingEpisodeOverlay) {
                         player.seekTime(androidTVInterfaceOffSeekTime)
                         return true
                     } else if (playerBinding?.playerPausePlay?.isFocused == true) {
@@ -1793,12 +1812,18 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     playerRestart to playerRestartText,
                     playerGoForward to playerGoForwardText,
                     downloadHeaderToggle to downloadHeaderToggleText,
+                    playerEpisodesButton to playerEpisodesButtonText
                 ).forEach { (button, text) ->
                     button.setOnFocusChangeListener { _, hasFocus ->
                         if (!hasFocus) {
                             text.isSelected = false
                             text.isVisible = false
                             return@setOnFocusChangeListener
+                        }
+                        if(button.id == R.id.player_episodes_button){
+                            toggleEpisodesOverlay(show = true)
+                        }else{
+                            toggleEpisodesOverlay(show = false)
                         }
                         text.isSelected = true
                         text.isVisible = true
@@ -1912,6 +1937,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 }
                 return@setOnTouchListener false
             }
+            playerEpisodesButton.setOnClickListener{
+                toggleEpisodesOverlay(show=true)
+            }
         }
         // cs3 is peak media center
         setRemainingTimeCounter(durationMode || isLayout(TV))
@@ -1981,6 +2009,33 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             }
         } else {
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE // default orientation
+        }
+    }
+    private fun toggleEpisodesOverlay(show: Boolean){
+       if(show && !isShowingEpisodeOverlay){
+           showEpisodesOverlay()
+           playerBinding?.playerEpisodeOverlay?.isVisible = true
+           isShowingEpisodeOverlay = true
+           animateEpisodesOverlay()
+       }else if(isShowingEpisodeOverlay){
+           playerBinding?.playerEpisodeOverlay?.isGone = true
+           isShowingEpisodeOverlay =false
+           animateEpisodesOverlay()
+       }
+    }
+    private fun animateEpisodesOverlay(){
+        playerBinding?.playerEpisodeOverlay?.let { overlay ->
+            overlay.animate().cancel()
+            (overlay.parent as? ViewGroup)?.layoutTransition = null // Disable layout transitions
+
+            val offset = 50 * overlay.resources.displayMetrics.density
+
+            overlay.animate()
+                .translationX(if (isShowingEpisodeOverlay) 0f else offset)
+                .alpha(if (isShowingEpisodeOverlay) 1f else 0f)
+                .setDuration(300)
+                .setInterpolator(AccelerateDecelerateInterpolator())
+                .start()
         }
     }
 }

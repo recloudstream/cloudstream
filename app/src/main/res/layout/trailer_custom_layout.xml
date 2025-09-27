@@ -929,4 +929,67 @@
         android:foreground="@null"
         android:backgroundTint="@color/skipOpTransparent"
         tools:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/player_episodes_button_root"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="end|center_vertical"
+        android:visibility="gone"
+        >
+        <ImageView
+            android:padding="15dp"
+            android:id="@+id/player_episodes_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:foregroundGravity="center"
+            android:src="@drawable/ic_baseline_arrow_back_ios_24"
+            android:background="@drawable/video_tap_button_always_white"
+            app:tint="@android:color/white"
+            tools:ignore="ContentDescription" />
+        <TextView
+            android:id="@+id/player_episodes_button_text"
+            style="@style/ResultMarqueeButtonText"
+            android:layout_marginTop="5dp"
+            android:text="@string/episodes"
+            android:visibility="invisible"
+            tools:visibility="visible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/player_episode_overlay"
+        android:visibility="gone"
+        android:padding="5dp"
+        android:background="?attr/primaryBlackBackground"
+        android:orientation="vertical"
+        android:layout_gravity="end"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/player_episode_overlay_title"
+            android:padding="10dp"
+            style="@style/WatchHeaderText"
+            android:textSize="15sp"
+            android:layout_marginEnd="0dp"
+            android:text="@string/episodes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:requiresFadingEdge="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:id="@+id/player_episode_list"
+            tools:listitem="@layout/player_episodes"
+            android:nextFocusLeft="@id/player_episodes_button"
+            android:layout_width="400dp"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:descendantFocusability="afterDescendants">
+
+        </androidx.recyclerview.widget.RecyclerView>
+    </LinearLayout>
+
+
 </FrameLayout>
