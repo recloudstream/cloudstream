@@ -83,9 +83,11 @@ import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
 import com.lagradost.cloudstream3.ui.result.ACTION_CLICK_DEFAULT
 import com.lagradost.cloudstream3.ui.result.EpisodeAdapter
+import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.result.SyncViewModel
+import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -510,6 +512,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         currentSelectedLink = link
         currentMeta = viewModel.getMeta()
         nextMeta = viewModel.getNextMeta()
+        allMeta = viewModel.getAllMeta()?.filterIsInstance<ResultEpisode>()
         //  setEpisodes(viewModel.getAllMeta() ?: emptyList())
         isActive = true
         setPlayerDimen(null)
@@ -1952,15 +1955,8 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun isThereEpisodes(): Boolean {
-        val metaList = viewModel.getAllMeta()
-        val episodeList = metaList?.filterIsInstance<ResultEpisode>()
-
-        return if (!episodeList.isNullOrEmpty()) {
-            allMeta = episodeList
-            episodeList.size > 1
-        } else {
-            false
-        }
+        val meta = allMeta
+        return !meta.isNullOrEmpty() && meta.size > 1
     }
 
     override fun showEpisodesOverlay() {
@@ -1978,6 +1974,12 @@ class GeneratorPlayer : FullScreenPlayer() {
                     {downloadClickEvent ->
                         DownloadButtonSetup.handleDownloadClick(downloadClickEvent)
                     }
+                )
+                playerEpisodeList.setLinearListLayout(
+                    isHorizontal = false,
+                    nextUp = FOCUS_SELF,
+                    nextDown = FOCUS_SELF,
+                    nextRight = FOCUS_SELF,
                 )
                 val episodes = allMeta ?: emptyList()
                 (playerEpisodeList.adapter as? EpisodeAdapter)?.updateList(episodes)

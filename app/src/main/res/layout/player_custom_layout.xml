@@ -973,8 +973,13 @@
             android:background="@drawable/video_tap_button_always_white"
             app:tint="@android:color/white"
             tools:ignore="ContentDescription" />
+        <TextView
+            android:id="@+id/player_episodes_button_text"
+            style="@style/ResultMarqueeButtonText"
+            android:layout_marginTop="5dp"
+            android:text="@string/episodes"
+            android:visibility="gone" />
     </LinearLayout>
-
 
     <LinearLayout
         android:id="@+id/player_episode_overlay"
@@ -986,50 +991,26 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:background="?attr/primaryBlackBackground"
-            android:orientation="horizontal"
-            android:layout_gravity="center_vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="2">
-            <TextView
-                android:id="@+id/player_episode_overlay_title"
-                android:padding="10dp"
-                style="@style/WatchHeaderText"
-                android:textSize="15sp"
-                android:layout_marginEnd="0dp"
-                android:text="@string/episodes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"/>
-            <ImageView
-                android:visibility="gone"
-                android:id="@+id/player_close_episodes_overlay"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/video_tap_button_always_white"
-                android:clickable="true"
-                android:contentDescription="@string/go_back_img_des"
-                android:focusable="true"
-                android:nextFocusLeft="@id/player_episodes_button"
-                android:nextFocusRight="@id/player_close_episodes_overlay"
-                android:nextFocusUp="@id/player_close_episodes_overlay"
-                android:nextFocusDown="@id/player_episode_list"
-                android:src="@drawable/ic_baseline_arrow_back_24"
-                android:tag="@string/tv_no_focus_tag"
-                app:tint="@android:color/white"
-                android:layout_weight="1"/>
-        </LinearLayout>
+        <TextView
+            android:id="@+id/player_episode_overlay_title"
+            android:padding="10dp"
+            style="@style/WatchHeaderText"
+            android:textSize="15sp"
+            android:layout_marginEnd="0dp"
+            android:text="@string/episodes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:requiresFadingEdge="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:id="@+id/player_episode_list"
             tools:listitem="@layout/player_episodes"
-            android:nextFocusRight="@id/player_close_episodes_overlay"
+            android:nextFocusLeft="@id/player_episodes_button"
             android:layout_width="350dp"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:descendantFocusability="afterDescendants">
 
         </androidx.recyclerview.widget.RecyclerView>
     </LinearLayout>
