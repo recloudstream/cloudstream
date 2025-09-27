@@ -383,7 +383,9 @@ object AppContextUtils {
     }
 
     fun sortSubs(subs: Set<SubtitleData>): List<SubtitleData> {
-        return subs.sortedBy { it.name }
+        return subs.sortedWith(
+            compareBy({ it.localizedName.substringAfter("\u00a0").lowercase() }, { it.nameSuffix.toIntOrNull() ?: 0 })
+        )
     }
 
     fun Context.getApiSettings(): HashSet<String> {

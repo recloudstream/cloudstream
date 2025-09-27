@@ -88,8 +88,8 @@ class RepoLinkGenerator(
 
             currentCache.subtitleCache.forEach { sub ->
                 currentSubsUrls.add(sub.url)
-                val suffixCount = lastCountedSuffix.getOrDefault(sub.originalName, 0u) + 1u
-                lastCountedSuffix[sub.originalName] = suffixCount
+                val suffixCount = lastCountedSuffix.getOrDefault(sub.languageCode?: "unknown", 0u) + 1u
+                lastCountedSuffix[sub.languageCode?: "unknown"] = suffixCount
                 subtitleCallback(sub)
             }
 
@@ -116,9 +116,9 @@ class RepoLinkGenerator(
                 // this part makes sure that all names are unique for UX
 
                 val nameDecoded = correctFile.originalName.html().toString().trim() // `%3Ch1%3Esub%20name…` → `<h1>sub name…` → `sub name…`
-
-                val suffixCount = lastCountedSuffix.getOrDefault(nameDecoded, 0u) +1u
-                lastCountedSuffix[nameDecoded] = suffixCount
+                val langCode = correctFile.languageCode ?: "unknown"
+                val suffixCount = lastCountedSuffix.getOrDefault(langCode, 0u) +1u
+                lastCountedSuffix[langCode] = suffixCount
 
                 val updatedFile =
                     correctFile.copy(originalName = nameDecoded, nameSuffix = "$suffixCount")

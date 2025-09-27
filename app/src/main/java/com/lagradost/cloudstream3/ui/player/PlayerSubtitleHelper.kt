@@ -11,6 +11,7 @@ import androidx.media3.ui.SubtitleView
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.setSubtitleViewStyle
+import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 
 enum class SubtitleStatus {
@@ -48,6 +49,9 @@ data class SubtitleData(
     }
 
     val name = "$originalName $nameSuffix"
+
+    val localizedName
+        get() = getNameNextToFlagEmoji(languageCode) ?: originalName
 
     /**
      * Gets the URL, but tries to fix it if it is malformed.
