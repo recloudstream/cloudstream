@@ -727,4 +727,5 @@
     <string name="action_mark_watched_up_to_this_episode">Oznacz jako obejrzane do tego odcinka</string>
     <string name="action_reload">Przeładowano</string>
     <string name="reload_provider">Przeładuj dostawcę</string>
-</resources>
+    <string name="episode_action_play_mirror">Odtwarzaj inne źródło</string>"
+    </resources>

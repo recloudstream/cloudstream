@@ -770,4 +770,5 @@
     <string name="action_remove_mark_watched_up_to_this_episode">去除这一集和之前集数的已观看状态</string>
     <string name="action_reload">已重新加载</string>
     <string name="reload_provider">重新加载视频源</string>
-</resources>
+    <string name="episode_action_play_mirror">播放镜像</string>"
+    </resources>
