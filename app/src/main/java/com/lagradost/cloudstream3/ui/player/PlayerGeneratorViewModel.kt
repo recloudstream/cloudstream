@@ -139,7 +139,7 @@ class PlayerGeneratorViewModel : ViewModel() {
 
     fun getCurrentIndex():Int?{
         val repoGen = generator as? RepoLinkGenerator ?: return null
-        return repoGen.getCurrentIndex()
+        return repoGen.videoIndex
     }
 
     fun attachGenerator(newGenerator: IGenerator?) {
