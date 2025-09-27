@@ -763,7 +763,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         if (isFullScreenPlayer)
             activity?.hideSystemUI()
         animateLayoutChanges()
-        playerBinding?.playerPausePlay?.requestFocus()
+        if(playerBinding?.playerEpisodeOverlay?.isGone == true) playerBinding?.playerPausePlay?.requestFocus()
     }
 
     private fun toggleLock() {
@@ -1927,6 +1927,13 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     }
                 }
                 return@setOnTouchListener false
+            }
+            playerBinding?.playerEpisodeOverlay?.let {
+                ObjectAnimator.ofFloat(it, "translationX", if (isShowing) 0f else 50.toPx.toFloat())
+                    .apply {
+                        duration =200
+                        start()
+                    }
             }
             playerEpisodesButton.setOnClickListener {
                 showEpisodesOverlay()

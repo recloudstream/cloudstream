@@ -1979,8 +1979,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                         DownloadButtonSetup.handleDownloadClick(downloadClickEvent)
                     }
                 )
-
-                val episodes = allMeta as? List<ResultEpisode> ?: emptyList()
+                val episodes = allMeta ?: emptyList()
                 (playerEpisodeList.adapter as? EpisodeAdapter)?.updateList(episodes)
 
                 // Scroll to current episode
@@ -1999,7 +1998,6 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
 
                 // update overlay season title
-                val epString = context?.getString(R.string.episodes)
                 var lastTopIndex = -1
                 playerEpisodeList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                     @SuppressLint("SetTextI18n", "DefaultLocale")
