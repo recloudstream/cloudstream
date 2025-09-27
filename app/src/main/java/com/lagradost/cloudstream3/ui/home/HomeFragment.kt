@@ -490,35 +490,6 @@ class HomeFragment : Fragment() {
     private val homeViewModel: HomeViewModel by activityViewModels()
     private val accountViewModel: AccountViewModel by activityViewModels()
 
-
-    data class SearchResponseImpl(
-        override val name: String,
-        override val url: String,
-        override val apiName: String,
-        override var type: TvType? = null,
-        override var posterUrl: String? = null,
-        override var posterHeaders: Map<String, String>? = null,
-        override var id: Int? = null,
-        override var quality: SearchQuality? = null,
-        override var score: Score? = null
-    ) : SearchResponse
-    fun SearchResponse.toImpl(): SearchResponseImpl {
-        return SearchResponseImpl(
-            name = name,
-            url = url,
-            apiName = apiName,
-            type = type,
-            posterUrl = posterUrl,
-            posterHeaders = posterHeaders,
-            id = id,
-            quality = quality,
-            score = score
-        )
-    }
-
-
-
-
      fun addMovies(cards: List<SearchResponse>) {
         val ctx = context ?: run {
             Log.e(TAG, "Context is null, aborting addMovies")
