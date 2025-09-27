@@ -750,4 +750,5 @@
     <string name="action_remove_mark_watched_up_to_this_episode">Odebrat zhlédnutí po tuto epizodu</string>
     <string name="action_reload">Znovu načteno</string>
     <string name="reload_provider">Znovu načíst poskytovatele</string>
-</resources>
+    <string name="episode_action_play_mirror">Přehrát ze zrcadla</string>"
+    </resources>
