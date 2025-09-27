@@ -22,10 +22,10 @@ data class Cache(
 )
 
 class RepoLinkGenerator(
-    private val episodes: List<ResultEpisode>,
-    private var currentIndex: Int = 0,
+    episodes: List<ResultEpisode>,
+    currentIndex: Int = 0,
     val page: LoadResponse? = null,
-) : IGenerator {
+) : VideoGenerator<ResultEpisode>(episodes, currentIndex) {
     companion object {
         const val TAG = "RepoLink"
         val cache: HashMap<Pair<String, Int>, Cache> =
@@ -35,47 +35,6 @@ class RepoLinkGenerator(
     override val hasCache = true
     override val canSkipLoading = true
 
-    override fun hasNext(): Boolean {
-        return currentIndex < episodes.size - 1
-    }
-
-    override fun hasPrev(): Boolean {
-        return currentIndex > 0
-    }
-
-    override fun next() {
-        Log.i(TAG, "next")
-        if (hasNext())
-            currentIndex++
-    }
-
-    override fun prev() {
-        Log.i(TAG, "prev")
-        if (hasPrev())
-            currentIndex--
-    }
-
-    override fun goto(index: Int) {
-        Log.i(TAG, "goto $index")
-        // clamps value
-        currentIndex = min(episodes.size - 1, max(0, index))
-    }
-
-    override fun getCurrentId(): Int {
-        return episodes[currentIndex].id
-    }
-
-    override fun getCurrent(offset: Int): Any? {
-        return episodes.getOrNull(currentIndex + offset)
-    }
-
-    override fun getAll(): List<Any> {
-        return episodes
-    }
-    fun getCurrentIndex():Int{
-        return currentIndex
-    }
-
     // this is a simple array that is used to instantly load links if they are already loaded
     //var linkCache = Array<Set<ExtractorLink>>(size = episodes.size, init = { setOf() })
     //var subsCache = Array<Set<SubtitleData>>(size = episodes.size, init = { setOf() })
@@ -83,14 +42,13 @@ class RepoLinkGenerator(
     @Throws
     override suspend fun generateLinks(
         clearCache: Boolean,
-        allowedTypes: Set<ExtractorLinkType>,
+        sourceTypes: Set<ExtractorLinkType>,
         callback: (Pair<ExtractorLink?, ExtractorUri?>) -> Unit,
         subtitleCallback: (SubtitleData) -> Unit,
         offset: Int,
         isCasting: Boolean,
     ): Boolean {
-        val index = currentIndex
-        val current = episodes.getOrNull(index + offset) ?: return false
+        val current = getCurrent(offset) ?: return false
 
         val currentCache = synchronized(cache) {
             cache[current.apiName to current.id] ?: Cache(
@@ -123,7 +81,7 @@ class RepoLinkGenerator(
             // call all callbacks
             currentCache.linkCache.forEach { link ->
                 currentLinksUrls.add(link.url)
-                if (allowedTypes.contains(link.type)) {
+                if (sourceTypes.contains(link.type)) {
                     callback(link to null)
                 }
             }
@@ -185,7 +143,7 @@ class RepoLinkGenerator(
 
                 synchronized(currentCache) {
                     if (currentCache.linkCache.add(link)) {
-                        if (allowedTypes.contains(link.type)) {
+                        if (sourceTypes.contains(link.type)) {
                             callback(Pair(link, null))
                         }
 

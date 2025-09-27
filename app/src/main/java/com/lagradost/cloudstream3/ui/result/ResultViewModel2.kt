@@ -798,7 +798,7 @@ class ResultViewModel2 : ViewModel() {
                 val currentSubs = mutableSetOf<SubtitleData>()
                 generator.generateLinks(
                     clearCache = false,
-                    allowedTypes = LOADTYPE_INAPP_DOWNLOAD,
+                    sourceTypes = LOADTYPE_INAPP_DOWNLOAD,
                     callback = {
                         it.first?.let { link ->
                             currentLinks.add(link)
@@ -1395,7 +1395,7 @@ class ResultViewModel2 : ViewModel() {
             updatePage()
             tempGenerator.generateLinks(
                 clearCache,
-                allowedTypes = sourceTypes,
+                sourceTypes = sourceTypes,
                 callback = { (link, _) ->
                     if (link != null) {
                         links += link
@@ -1470,7 +1470,6 @@ class ResultViewModel2 : ViewModel() {
                 }
 
                 options.add(txt(R.string.episode_action_play_in_app) to ACTION_PLAY_EPISODE_IN_PLAYER)
-
                 options.addAll(
                     listOf(
                         txt(R.string.episode_action_auto_download) to ACTION_DOWNLOAD_EPISODE,

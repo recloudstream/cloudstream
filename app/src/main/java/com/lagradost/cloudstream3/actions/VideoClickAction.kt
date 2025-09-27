@@ -22,6 +22,7 @@ import com.lagradost.cloudstream3.actions.temp.MpvPackage
 import com.lagradost.cloudstream3.actions.temp.MpvYTDLPackage
 import com.lagradost.cloudstream3.actions.temp.NextPlayerPackage
 import com.lagradost.cloudstream3.actions.temp.PlayInBrowserAction
+import com.lagradost.cloudstream3.actions.temp.PlayMirrorAction
 import com.lagradost.cloudstream3.actions.temp.ViewM3U8Action
 import com.lagradost.cloudstream3.actions.temp.VlcNightlyPackage
 import com.lagradost.cloudstream3.actions.temp.VlcPackage
@@ -46,6 +47,7 @@ object VideoClickActionHolder {
         PlayInBrowserAction(),
         CopyClipboardAction(),
         ViewM3U8Action(),
+        PlayMirrorAction(),
         // main support external apps
         VlcPackage(),
         MpvPackage(),

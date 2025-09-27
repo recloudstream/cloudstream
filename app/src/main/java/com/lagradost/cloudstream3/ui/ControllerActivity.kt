@@ -315,7 +315,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                         val isSuccessful = safeApiCall {
                             generator.generateLinks(
                                 clearCache = false,
-                                allowedTypes = LOADTYPE_CHROMECAST,
+                                sourceTypes = LOADTYPE_CHROMECAST,
                                 callback = {
                                     it.first?.let { link ->
                                         currentLinks.add(link)
