@@ -294,6 +294,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         if (isShowing) {
             updateUIVisibility()
         } else {
+            toggleEpisodesOverlay(false)
             playerBinding?.playerHolder?.postDelayed({ updateUIVisibility() }, 200)
         }
 
@@ -490,6 +491,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             // netflix capture back and hide ~monke
             if (isShowing && isLayout(TV or EMULATOR)) {
                 onClickChange()
+            }else if(isShowingEpisodeOverlay) {
+                    toggleEpisodesOverlay(show = false)
+                    return@attachBackPressedCallback
             } else {
                 activity?.popCurrentPage("FullScreenPlayer")
             }
@@ -1088,7 +1092,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 MotionEvent.ACTION_DOWN -> {
                     // validates if the touch is inside of the player area
                     isCurrentTouchValid = view.isValidTouch(currentTouch.x, currentTouch.y)
-                    if (isCurrentTouchValid && playerEpisodeOverlay.isVisible) {
+                    if (isCurrentTouchValid && isShowingEpisodeOverlay) {
                         toggleEpisodesOverlay(show=false)
                     } else if (isCurrentTouchValid) {
                         if (speedupEnabled) {
@@ -1588,7 +1592,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     protected fun uiReset() {
         isShowing = false
-
+        toggleEpisodesOverlay(false)
         // if nothing has loaded these buttons should not be visible
         playerBinding?.apply {
             playerSkipEpisode.isVisible = false
@@ -2011,30 +2015,37 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE // default orientation
         }
     }
-    private fun toggleEpisodesOverlay(show: Boolean){
-       if(show && !isShowingEpisodeOverlay){
-           showEpisodesOverlay()
-           playerBinding?.playerEpisodeOverlay?.isVisible = true
-           isShowingEpisodeOverlay = true
-           animateEpisodesOverlay()
-       }else if(isShowingEpisodeOverlay){
-           playerBinding?.playerEpisodeOverlay?.isGone = true
-           isShowingEpisodeOverlay =false
-           animateEpisodesOverlay()
-       }
+    private fun toggleEpisodesOverlay(show: Boolean) {
+        if (show && !isShowingEpisodeOverlay) {
+            player.handleEvent(CSPlayerEvent.Pause)
+            showEpisodesOverlay()
+            isShowingEpisodeOverlay = true
+            animateEpisodesOverlay(true)
+        } else if (isShowingEpisodeOverlay) {
+            isShowingEpisodeOverlay = false
+            animateEpisodesOverlay(false)
+        }
     }
-    private fun animateEpisodesOverlay(){
+
+    private fun animateEpisodesOverlay(show: Boolean) {
         playerBinding?.playerEpisodeOverlay?.let { overlay ->
             overlay.animate().cancel()
             (overlay.parent as? ViewGroup)?.layoutTransition = null // Disable layout transitions
 
             val offset = 50 * overlay.resources.displayMetrics.density
 
+            overlay.translationX = if (show) offset else 0f
+            playerBinding?.playerEpisodeOverlay?.isVisible = true
+
             overlay.animate()
-                .translationX(if (isShowingEpisodeOverlay) 0f else offset)
-                .alpha(if (isShowingEpisodeOverlay) 1f else 0f)
+                .translationX(if (show) 0f else offset)
+                .alpha(if (show) 1f else 0f)
                 .setDuration(300)
-                .setInterpolator(AccelerateDecelerateInterpolator())
+                .setInterpolator(AccelerateDecelerateInterpolator()).withEndAction {
+                    if (!show) {
+                        playerBinding?.playerEpisodeOverlay?.isGone = true
+                    }
+                }
                 .start()
         }
     }
