@@ -436,7 +436,7 @@
                             android:contentDescription="@string/torrent_singular"
                             android:focusable="true"
                             android:nextFocusLeft="@id/player_go_forward"
-                            android:nextFocusRight="@id/download_header_toggle"
+                            android:nextFocusRight="@id/player_episodes_button"
                             android:nextFocusUp="@id/download_header_toggle"
                             android:nextFocusDown="@id/player_pause_play"
                             android:src="@drawable/baseline_downloading_24"

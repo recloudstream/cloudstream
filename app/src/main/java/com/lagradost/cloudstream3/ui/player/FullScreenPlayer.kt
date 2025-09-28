@@ -184,7 +184,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         R.drawable.ic_baseline_volume_up_24,
     )
 
-    private var isShowingEpisodeOverlay:Boolean = false
+    private var isShowingEpisodeOverlay: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -217,11 +217,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         throw NotImplementedError()
     }
 
-    open fun showEpisodesOverlay(){
+    open fun showEpisodesOverlay() {
         throw NotImplementedError()
     }
 
-    open fun isThereEpisodes():Boolean{
+    open fun isThereEpisodes(): Boolean {
         return false
     }
 
@@ -318,7 +318,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 start()
             }
         }
-        if(isLayout(PHONE)) {
+        if (isLayout(PHONE)) {
             playerBinding?.playerEpisodesButton?.let {
                 ObjectAnimator.ofFloat(it, "translationX", if (isShowing) 0f else 50.toPx.toFloat())
                     .apply {
@@ -488,12 +488,16 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         enterFullscreen()
         verifyVolume()
         activity?.attachBackPressedCallback("FullScreenPlayer") {
-            // netflix capture back and hide ~monke
-            if (isShowing && isLayout(TV or EMULATOR)) {
+            if (isShowingEpisodeOverlay) {
+                // isShowingEpisodeOverlay pauses, so this makes it easier to unpause
+                if(isLayout(TV or EMULATOR)) {
+                    playerPausePlay?.requestFocus()
+                }
+                toggleEpisodesOverlay(show = false)
+                return@attachBackPressedCallback
+            } else if (isShowing && isLayout(TV or EMULATOR)) {
+                // netflix capture back and hide ~monke
                 onClickChange()
-            }else if(isShowingEpisodeOverlay) {
-                    toggleEpisodesOverlay(show = false)
-                    return@attachBackPressedCallback
             } else {
                 activity?.popCurrentPage("FullScreenPlayer")
             }
@@ -770,7 +774,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         if (isFullScreenPlayer)
             activity?.hideSystemUI()
         animateLayoutChanges()
-        if(playerBinding?.playerEpisodeOverlay?.isGone == true) playerBinding?.playerPausePlay?.requestFocus()
+        if (playerBinding?.playerEpisodeOverlay?.isGone == true) playerBinding?.playerPausePlay?.requestFocus()
     }
 
     private fun toggleLock() {
@@ -1093,7 +1097,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     // validates if the touch is inside of the player area
                     isCurrentTouchValid = view.isValidTouch(currentTouch.x, currentTouch.y)
                     if (isCurrentTouchValid && isShowingEpisodeOverlay) {
-                        toggleEpisodesOverlay(show=false)
+                        toggleEpisodesOverlay(show = false)
                     } else if (isCurrentTouchValid) {
                         if (speedupEnabled) {
                             hasTriggeredSpeedUp = false
@@ -1824,9 +1828,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                             text.isVisible = false
                             return@setOnFocusChangeListener
                         }
-                        if(button.id == R.id.player_episodes_button){
+                        if (button.id == R.id.player_episodes_button) {
                             toggleEpisodesOverlay(show = true)
-                        }else{
+                        } else {
                             toggleEpisodesOverlay(show = false)
                         }
                         text.isSelected = true
@@ -1941,8 +1945,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 }
                 return@setOnTouchListener false
             }
-            playerEpisodesButton.setOnClickListener{
-                toggleEpisodesOverlay(show=true)
+            playerEpisodesButton.setOnClickListener {
+                toggleEpisodesOverlay(show = true)
             }
         }
         // cs3 is peak media center
@@ -2015,6 +2019,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE // default orientation
         }
     }
+
     private fun toggleEpisodesOverlay(show: Boolean) {
         if (show && !isShowingEpisodeOverlay) {
             player.handleEvent(CSPlayerEvent.Pause)
