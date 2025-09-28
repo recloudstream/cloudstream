@@ -88,6 +88,8 @@ class RepoLinkGenerator(
 
             currentCache.subtitleCache.forEach { sub ->
                 currentSubsUrls.add(sub.url)
+                val suffixCount = lastCountedSuffix.getOrDefault(sub.originalName, 0u) + 1u
+                lastCountedSuffix[sub.originalName] = suffixCount
                 subtitleCallback(sub)
             }
 
