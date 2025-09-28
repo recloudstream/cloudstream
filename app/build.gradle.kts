@@ -8,6 +8,7 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("org.jetbrains.dokka")
+
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())

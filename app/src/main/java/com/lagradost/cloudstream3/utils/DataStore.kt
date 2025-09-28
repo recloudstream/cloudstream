@@ -20,7 +20,6 @@ const val DOWNLOAD_EPISODE_CACHE = "download_episode_cache"
 const val VIDEO_PLAYER_BRIGHTNESS = "video_player_alpha_key"
 const val USER_SELECTED_HOMEPAGE_API = "home_api_used"
 const val USER_PROVIDER_API = "user_custom_sites"
-
 const val PREFERENCES_NAME = "rebuild_preference"
 
 // TODO degelgate by value for get & set
@@ -94,6 +93,7 @@ object DataStore {
     fun Context.getSharedPrefs(): SharedPreferences {
         return getPreferences(this)
     }
+
 
     fun getFolderName(folder: String, path: String): String {
         return "${folder}/${path}"

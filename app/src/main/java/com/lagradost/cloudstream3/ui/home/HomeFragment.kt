@@ -36,7 +36,6 @@ import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
-import com.lagradost.cloudstream3.ui.account.AccountViewModel
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.ui.search.*
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
@@ -61,7 +60,23 @@ import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import java.util.*
+import androidx.tvprovider.media.tv.TvContractCompat
+import androidx.tvprovider.media.tv.PreviewProgram
+import com.lagradost.api.Log
+import android.content.ContentUris
+import com.lagradost.cloudstream3.utils.AppContextUtils
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.withTimeout
+import org.schabi.newpipe.extractor.timeago.patterns.de
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import android.os.Parcelable
+import com.lagradost.cloudstream3.ui.account.AccountViewModel
+import com.lagradost.cloudstream3.utils.TvChannelUtils
 
+
+private const val TAG = "HomeFragment"
 
 class HomeFragment : Fragment() {
     companion object {
@@ -475,6 +490,50 @@ class HomeFragment : Fragment() {
     private val homeViewModel: HomeViewModel by activityViewModels()
     private val accountViewModel: AccountViewModel by activityViewModels()
 
+     fun addMovies(cards: List<SearchResponse>) {
+        val ctx = context ?: run {
+            Log.e(TAG, "Context is null, aborting addMovies")
+            return
+        }
+
+        try {
+            val existingId = TvChannelUtils.getChannelId(ctx, getString(R.string.app_name))
+            if (existingId != null) {
+                Log.d(TAG, "Channel ID: $existingId")
+
+                val programCards = cards
+
+                TvChannelUtils.addPrograms(
+                    context = ctx,
+                    channelId = existingId,
+                    items = programCards
+                )
+            } else {
+                Log.d(TAG, "Channel does not exist")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error adding movies: $e")
+        }
+    }
+    private fun deleteAll() {
+        val ctx = context ?: run {
+            Log.e(TAG, "Context is null, aborting deleteAll")
+            return
+        }
+
+        try {
+            val existingId = TvChannelUtils.getChannelId(ctx, getString(R.string.app_name))
+            if (existingId != null) {
+                Log.d(TAG, "Channel ID: $existingId")
+                TvChannelUtils.deleteStoredPrograms(ctx)
+            } else {
+                Log.d(TAG, "Channel does not exist")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error deleting programs: ${e.message}")
+        }
+    }
+
     var binding: FragmentHomeBinding? = null
 
 
@@ -567,8 +626,7 @@ class HomeFragment : Fragment() {
             }
             homeMasterAdapter = HomeParentItemAdapterPreview(
                 fragment = this@HomeFragment,
-                homeViewModel,
-                accountViewModel
+                homeViewModel,accountViewModel
             )
             homeMasterRecycler.adapter = homeMasterAdapter
             //fixPaddingStatusbar(homeLoadingStatusbar)
@@ -591,7 +649,6 @@ class HomeFragment : Fragment() {
             })
 
         }
-
 
         //Load value for toggling Random button. Hide at startup
         context?.let {
@@ -617,10 +674,22 @@ class HomeFragment : Fragment() {
                         homeLoadingShimmer.stopShimmer()
 
                         val d = data.value
+                        val k = d.values.firstOrNull()
+                        if (k != null) {
+                            // empty the channel
+                            deleteAll()
+                            // insert the program from first array
+                            addMovies(k.list.list)
+                        } else {
+                            Log.w("SafeAccess", "Map values are empty — cannot access first element")
+                        }
+
+
                         val mutableListOfResponse = mutableListOf<SearchResponse>()
                         listHomepageItems.clear()
 
                         (homeMasterRecycler.adapter as? ParentItemAdapter)?.submitList(d.values.map {
+
                             it.copy(
                                 list = it.list.copy(list = it.list.list.toMutableList())
                             )
