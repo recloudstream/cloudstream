@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromLanguageToTagIETF
 import com.lagradost.cloudstream3.utils.SubtitleUtils.cleanDisplayName
 import com.lagradost.cloudstream3.utils.SubtitleUtils.isMatchingSubtitle
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getDownloadFileInfoAndUpdateSettings
@@ -53,17 +54,19 @@ class DownloadFileGenerator(
         getFolder(ctx, relative, meta.basePath)?.forEach { (name, uri) ->
             if (isMatchingSubtitle(name, display, cleanDisplay)) {
                 val cleanName = cleanDisplayName(name)
-                val realName = cleanName.removePrefix(cleanDisplay)
+                val lastNum = Regex(" ([0-9]+)$")
+                val nameSuffix = lastNum.find(cleanName)?.groupValues?.get(1) ?: ""
+                val originalName = cleanName.removePrefix(cleanDisplay).replace(lastNum, "").trim()
 
                 subtitleCallback(
                     SubtitleData(
-                        realName.ifBlank { ctx.getString(R.string.default_subtitles) },
-                        "",
+                        originalName.ifBlank { ctx.getString(R.string.default_subtitles) },
+                        nameSuffix,
                         uri.toString(),
                         SubtitleOrigin.DOWNLOADED_FILE,
                         name.toSubtitleMimeType(),
                         emptyMap(),
-                        null
+                        fromLanguageToTagIETF(originalName, true)
                     )
                 )
             }

@@ -22,9 +22,6 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.mvvm.safeApiCall
-import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities.SubtitleEntity
-import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities.SubtitleSearch
-import com.lagradost.cloudstream3.subtitles.SubtitleResource
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.NONE_ID
 import com.lagradost.cloudstream3.syncproviders.providers.Addic7ed
