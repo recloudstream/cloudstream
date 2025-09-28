@@ -44,6 +44,8 @@ import androidx.media3.ui.PlayerNotificationManager
 import androidx.media3.ui.PlayerNotificationManager.EXTRA_INSTANCE_ID
 import androidx.media3.ui.PlayerNotificationManager.MediaDescriptionAdapter
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
@@ -73,14 +75,19 @@ import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities.SubtitleSearch
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.subtitleProviders
+import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.player.CS3IPlayer.Companion.preferredAudioTrackLanguage
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.updateForcedEncoding
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
+import com.lagradost.cloudstream3.ui.result.ACTION_CLICK_DEFAULT
+import com.lagradost.cloudstream3.ui.result.EpisodeAdapter
+import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.result.SyncViewModel
+import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -93,6 +100,7 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.sortSubs
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
@@ -159,7 +167,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     private var preferredAutoSelectSubtitles: String? = null // null means do nothing, "" means none
 
     private var binding: FragmentPlayerBinding? = null
-
+    private var allMeta: List<ResultEpisode>? =  null
     private fun startLoading() {
         player.release()
         currentSelectedSubtitles = null
@@ -495,6 +503,9 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         playerBinding?.downloadHeader?.isVisible = false
         playerBinding?.downloadHeaderToggle?.isVisible = isTorrent
+        if(!isLayout(PHONE)){
+            playerBinding?.downloadBothHeader?.isVisible = isTorrent
+        }
 
         showDownloadProgress(DownloadEvent(0, 0, 0, null))
 
@@ -502,6 +513,12 @@ class GeneratorPlayer : FullScreenPlayer() {
         currentSelectedLink = link
         currentMeta = viewModel.getMeta()
         nextMeta = viewModel.getNextMeta()
+        allMeta = viewModel.getAllMeta()?.filterIsInstance<ResultEpisode>()?.map { episode ->
+            // Refresh all the episodes watch duration
+            getViewPos(episode.id)?.let { data ->
+                episode.copy(position = data.position, duration = data.duration)
+            } ?: episode
+        }
         //  setEpisodes(viewModel.getAllMeta() ?: emptyList())
         isActive = true
         setPlayerDimen(null)
@@ -1940,6 +1957,74 @@ class GeneratorPlayer : FullScreenPlayer() {
             }, 6000)
         } else {
             displayTimeStamp(false)
+        }
+    }
+
+    override fun isThereEpisodes(): Boolean {
+        val meta = allMeta
+        return !meta.isNullOrEmpty() && meta.size > 1
+    }
+
+    override fun showEpisodesOverlay() {
+        try {
+            playerBinding?.apply {
+                playerEpisodeList.adapter = EpisodeAdapter(
+                    false,
+                    { episodeClick ->
+                        if(episodeClick.action == ACTION_CLICK_DEFAULT){
+                            player.release()
+                            playerEpisodeOverlay.isGone = true
+                            episodeClick.position?.let { viewModel.loadThisEpisode(it) }
+                        }
+                    },
+                    {downloadClickEvent ->
+                        DownloadButtonSetup.handleDownloadClick(downloadClickEvent)
+                    }
+                )
+                playerEpisodeList.setLinearListLayout(
+                    isHorizontal = false,
+                    nextUp = FOCUS_SELF,
+                    nextDown = FOCUS_SELF,
+                    nextRight = FOCUS_SELF,
+                )
+                val episodes = allMeta ?: emptyList()
+                (playerEpisodeList.adapter as? EpisodeAdapter)?.updateList(episodes)
+
+                // Scroll to current episode
+                viewModel.getCurrentIndex()?.let { index ->
+                    playerEpisodeList.scrollToPosition(index)
+                    // Ensure focus on tv
+                    if(isLayout(TV)){
+                    playerEpisodeList.post {
+                        val viewHolder = playerEpisodeList.findViewHolderForAdapterPosition(index)
+                        viewHolder?.itemView?.requestFocus()
+                        viewHolder?.itemView?.let { itemView ->
+                            itemView.isFocusableInTouchMode = true
+                            itemView.requestFocus()
+                        }
+                    }}
+                }
+
+                // update overlay season title
+                var lastTopIndex = -1
+                playerEpisodeList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                    @SuppressLint("SetTextI18n", "DefaultLocale")
+                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                        val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return
+                        val topIndex = layoutManager.findFirstCompletelyVisibleItemPosition()
+                        if (topIndex != RecyclerView.NO_POSITION && topIndex != lastTopIndex) {
+                            lastTopIndex = topIndex
+                            val topItem = episodes.getOrNull(topIndex)?.season
+                            topItem?.let {
+                                val paddedSeasonString = String.format("%02d",topItem)
+                                playerEpisodeOverlayTitle.text = "${context?.getString(R.string.episodes)}:${context?.getString(R.string.season_short)}${paddedSeasonString}"
+                            }
+                        }
+                    }
+                })
+            }
+        } catch (e: Exception) {
+            logError(e)
         }
     }
 
