@@ -5,18 +5,15 @@ import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.tvprovider.media.tv.Channel
 import android.util.Log
+import androidx.tvprovider.media.tv.Channel
 import androidx.tvprovider.media.tv.PreviewProgram
 import androidx.tvprovider.media.tv.TvContractCompat
-import com.lagradost.cloudstream3.base64Encode
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_SHARE
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
-import com.lagradost.cloudstream3.mapper
+import com.lagradost.cloudstream3.base64Encode
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_SHARE
-import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import java.net.URLEncoder
@@ -69,34 +66,30 @@ object TvChannelUtils {
     }
 
     /** Insert programs into a channel */
-    fun wrapWithWsrvIfNeeded(url: String?): String? {
-        if (url.isNullOrBlank()) return null
-        return if (url.contains("wsrv.nl")) {
-            url
-        } else {
-            "https://wsrv.nl/?url=${URLEncoder.encode(url, "UTF-8")}"
-        }
-    }
-
     fun addPrograms(context: Context, channelId: Long, items: List<SearchResponse>) {
         for (item in items) {
             try {
                 val nameBase64 = base64Encode(item.apiName.toByteArray(Charsets.UTF_8))
                 val urlBase64 = base64Encode(item.url.toByteArray(Charsets.UTF_8))
                 val csshareUri = "$APP_STRING_SHARE:$nameBase64?$urlBase64"
-                val safePosterUrl = wrapWithWsrvIfNeeded(item.posterUrl)
+                val poster=item.posterUrl
                 val builder = PreviewProgram.Builder()
                     .setChannelId(channelId)
                     .setTitle(item.name)
-                    .setDescription(item.apiName+"Score:- ${item.score}")
+                    .apply {
+                        val scoreText = item.score?.toStringNull(0.1, 10, 1)?.let {
+                            " - " + txt(R.string.rating_format, it).asString(context)
+                        } ?: ""
+                        setDescription("${item.apiName}$scoreText")
+                    }
                     .setContentId(item.url)
                     .setType(TvContractCompat.PreviewPrograms.TYPE_MOVIE)
                     .setIntentUri(Uri.parse(csshareUri))
                     .setPosterArtAspectRatio(TvContractCompat.PreviewPrograms.ASPECT_RATIO_2_3)
 
                 // Validate poster URL before setting
-                if (!safePosterUrl.isNullOrBlank() && safePosterUrl.startsWith("http")) {
-                    builder.setPosterArtUri(Uri.parse(safePosterUrl))
+                if (!poster.isNullOrBlank() && poster.startsWith("http")) {
+                    builder.setPosterArtUri(Uri.parse(poster))
 
                 }
                 val program = builder.build()
@@ -142,10 +135,11 @@ object TvChannelUtils {
 
     fun createTvChannel(context: Context) {
         val componentName = ComponentName(context, MainActivity::class.java)
+        val iconUri = Uri.parse("android.resource://${context.packageName}/mipmap/ic_launcher")
         val inputId = TvContractCompat.buildInputId(componentName)
-
         val channel = Channel.Builder()
             .setType(TvContractCompat.Channels.TYPE_PREVIEW)
+            .setAppLinkIconUri(iconUri)
             .setDisplayName(context.getString(R.string.app_name))
             .setAppLinkIntent(Intent(Intent.ACTION_VIEW).apply {
                 data = Uri.parse("cloudstreamapp://open")
