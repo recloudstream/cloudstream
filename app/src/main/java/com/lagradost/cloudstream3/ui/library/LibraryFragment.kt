@@ -416,6 +416,7 @@ class LibraryFragment : Fragment() {
 
                         libraryViewModel.currentPage.value?.let { page ->
                             binding?.viewpager?.setCurrentItem(page, false)
+                            binding?.searchBar?.setExpanded(true)
                         }
 
                         updateRandom()
