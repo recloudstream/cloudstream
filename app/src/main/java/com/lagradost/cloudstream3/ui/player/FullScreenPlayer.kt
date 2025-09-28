@@ -846,7 +846,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             playerPausePlay.isGone = isGone
             //player_buffering?.isGone = isGone
             playerTopHolder.isGone = isGone
-            playerEpisodesButtonRoot.isVisible = !isGone && isThereEpisodes()
+            val showPlayerEpisodes = !isGone && isThereEpisodes()
+            playerEpisodesButtonRoot.isVisible = showPlayerEpisodes
+            playerEpisodesButton.isVisible = showPlayerEpisodes
             playerVideoTitle.isGone = togglePlayerTitleGone
 //        player_video_title_rez?.isGone = isGone
             playerEpisodeFiller.isGone = isGone

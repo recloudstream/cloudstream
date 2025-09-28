@@ -1674,8 +1674,12 @@ class GeneratorPlayer : FullScreenPlayer() {
                 playerBinding?.playerSkipEpisode?.isVisible =
                     !isOpVisible && viewModel.hasNextEpisode() == true
 
-            else ->
-                playerBinding?.playerGoForwardRoot?.isVisible = viewModel.hasNextEpisode() == true
+            else -> {
+                val hasNextEpisode = viewModel.hasNextEpisode() == true
+                playerBinding?.playerGoForward?.isVisible = hasNextEpisode
+                playerBinding?.playerGoForwardRoot?.isVisible = hasNextEpisode
+            }
+
         }
 
         if (percentage >= PRELOAD_NEXT_EPISODE_PERCENTAGE) {
