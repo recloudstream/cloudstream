@@ -79,6 +79,7 @@ open class TraktProvider : MainAPI() {
                 ).toJson(),
                 type = TvType.Movie,
             ) {
+                score = Score.from10(media.rating)
                 posterUrl = fixPath(poster)
             }
         } else {
@@ -90,6 +91,7 @@ open class TraktProvider : MainAPI() {
                 ).toJson(),
                 type = TvType.TvSeries,
             ) {
+                score = Score.from10(media.rating)
                 this.posterUrl = fixPath(poster)
             }
         }
