@@ -732,8 +732,7 @@
                                         android:layout_height="30dp"
                                         app:indicatorSize="28dp"
                                         app:trackThickness="2dp"
-                                        android:progressBackgroundTint="?attr/colorPrimary"
-                                        android:progressTint="?attr/colorPrimary"
+                                        app:indicatorColor="?attr/white"
                                         tools:progress="50" />
                                 </FrameLayout>
 

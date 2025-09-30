@@ -84,8 +84,7 @@
                         android:layout_height="40dp"
                         app:indicatorSize="37dp"
                         app:trackThickness="3dp"
-                        android:progressBackgroundTint="?attr/colorPrimary"
-                        android:progressTint="?attr/colorPrimary"
+                        app:indicatorColor="@color/white"
                         tools:progress="50" />
                 </FrameLayout>
             </androidx.cardview.widget.CardView>

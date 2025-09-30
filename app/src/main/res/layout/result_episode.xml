@@ -67,16 +67,16 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@drawable/play_button_transparent"
-                android:layout_gravity="center" />
+                android:layout_gravity="center"
+                android:padding="1dp"/>
 
             <com.google.android.material.progressindicator.CircularProgressIndicator
                 android:id="@+id/episode_progress"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                app:indicatorSize="28.75dp"
-                app:trackThickness="2.5dp"
-                android:progressBackgroundTint="?attr/colorPrimary"
-                android:progressTint="?attr/colorPrimary"
+                app:indicatorSize="28dp"
+                app:trackThickness="2dp"
+                app:indicatorColor="?attr/white"
                 tools:progress="50" />
         </FrameLayout>
         <!--marquee_forever-->
