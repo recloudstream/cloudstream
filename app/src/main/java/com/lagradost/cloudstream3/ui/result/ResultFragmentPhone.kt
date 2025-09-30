@@ -608,7 +608,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                                 resume.result.season
                             )
                     }
-
+                    if(resume.isMovie) resultResumeSeriesProgressText.maxLines = 1
                     resultResumeSeriesProgressText.setText(progress.progressLeft)
                     resultResumeSeriesProgress.apply {
                         isVisible = true

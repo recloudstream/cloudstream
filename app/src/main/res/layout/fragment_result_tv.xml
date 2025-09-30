@@ -223,39 +223,78 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:orientation="horizontal"
+                    android:layout_marginTop="10dp"
                     android:visibility="gone"
                     tools:visibility="visible">
-
+                    <TextView
+                        android:id="@+id/result_resume_series_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:textColor="?attr/textColor"
+                        android:layout_gravity="center_vertical"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        tools:text="S1E1 Episode 1"
+                        android:visibility="visible"
+                        tools:visibility="visible"
+                        android:paddingEnd="5dp"/>
                     <!--https://github.com/material-components/material-components-android/blob/master/docs/components/ProgressIndicator.md-->
-                    <com.google.android.material.progressindicator.LinearProgressIndicator
-                        android:id="@+id/result_resume_series_progress"
+<!--                    <com.google.android.material.progressindicator.LinearProgressIndicator-->
+<!--                        android:id="@+id/result_resume_series_progress"-->
 
-                        style="@style/RoundProgressbar"
+<!--                        style="@style/RoundProgressbar"-->
 
-                        android:layout_width="100dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="end|center_vertical"
-                        android:layout_weight="1"
-                        android:indeterminate="false"
-                        android:max="100"
-                        android:paddingEnd="10dp"
-                        android:progress="0"
+<!--                        android:layout_width="100dp"-->
+<!--                        android:layout_height="20dp"-->
+<!--                        android:layout_gravity="end|center_vertical"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:indeterminate="false"-->
+<!--                        android:max="100"-->
+<!--                        android:paddingEnd="10dp"-->
+<!--                        android:progress="0"-->
 
-                        android:scrollbarStyle="outsideInset"
-                        tools:ignore="RtlSymmetry"
-                        tools:progress="25"
-                        tools:visibility="visible" />
+<!--                        android:scrollbarStyle="outsideInset"-->
+<!--                        tools:ignore="RtlSymmetry"-->
+<!--                        tools:progress="25"-->
+<!--                        tools:visibility="visible" />-->
+                    <FrameLayout
+                        android:id="@+id/watch_progress_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center">
+
+                        <ImageView
+                            android:id="@+id/episode_play_icon"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/play_button_transparent"
+                            android:layout_gravity="center"
+                            android:padding="1dp"/>
+
+                        <com.google.android.material.progressindicator.CircularProgressIndicator
+                            android:id="@+id/result_resume_series_progress"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            app:indicatorSize="28dp"
+                            app:trackThickness="2dp"
+                            android:progressBackgroundTint="?attr/colorPrimary"
+                            android:progressTint="?attr/colorPrimary"
+                            tools:progress="50" />
+                    </FrameLayout>
 
                     <TextView
                         android:id="@+id/result_resume_series_progress_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:maxLines="1"
+                        android:maxLines="2"
                         android:textColor="?attr/grayTextColor"
                         tools:ignore="RtlSymmetry"
-                        tools:text="69m remaining" />
+                        android:gravity="center"
+                        android:layout_gravity="center_vertical"
+                        tools:text="69m\nremaining" />
                 </LinearLayout>
-            </LinearLayout>
+            </LinearLayout>e
 
             <LinearLayout
                 android:id="@+id/result_play_parent"
