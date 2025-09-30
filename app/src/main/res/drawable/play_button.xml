@@ -1,25 +1,13 @@
-<vector
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:name="vector"
-        android:width="842dp"
-        android:height="842dp"
-        android:viewportWidth="842"
-        android:viewportHeight="842">
-    <!--70% https://stackoverflow.com/questions/11285961/how-to-make-a-background-20-transparent-on-android -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="842dp"
+    android:height="842dp"
+    android:viewportWidth="842"
+    android:viewportHeight="842">
     <path
-            android:name="path"
-            android:pathData="M 421.44 17.5 C 336.15 17.5 253.011 44.513 184.01 94.646 C 115.009 144.778 63.626 215.5 37.27 296.616 C 10.914 377.732 10.914 465.148 37.27 546.264 C 63.626 627.38 115.009 698.102 184.01 748.234 C 253.011 798.367 336.15 825.38 421.44 825.38 C 506.73 825.38 589.869 798.367 658.87 748.234 C 727.871 698.102 779.254 627.38 805.61 546.264 C 831.966 465.148 831.966 377.732 805.61 296.616 C 779.254 215.5 727.871 144.778 658.87 94.646 C 589.869 44.513 506.73 17.5 421.44 17.5 Z"
-            android:fillColor="#B3000000"
-            android:strokeWidth="1"/>
+        android:pathData="M421.44,17.5C336.15,17.5 253.01,44.51 184.01,94.65C115.01,144.78 63.63,215.5 37.27,296.62C10.91,377.73 10.91,465.15 37.27,546.26C63.63,627.38 115.01,698.1 184.01,748.23C253.01,798.37 336.15,825.38 421.44,825.38C506.73,825.38 589.87,798.37 658.87,748.23C727.87,698.1 779.25,627.38 805.61,546.26C831.97,465.15 831.97,377.73 805.61,296.62C779.25,215.5 727.87,144.78 658.87,94.65C589.87,44.51 506.73,17.5 421.44,17.5Z"
+        android:fillColor="#000000"
+        android:fillAlpha="0.701961"/>
     <path
-            android:name="path_1"
-            android:pathData="M 421.44 17.5 C 336.15 17.5 253.011 44.513 184.01 94.646 C 115.009 144.778 63.626 215.5 37.27 296.616 C 10.914 377.732 10.914 465.148 37.27 546.264 C 63.626 627.38 115.009 698.102 184.01 748.234 C 253.011 798.367 336.15 825.38 421.44 825.38 C 506.73 825.38 589.869 798.367 658.87 748.234 C 727.871 698.102 779.254 627.38 805.61 546.264 C 831.966 465.148 831.966 377.732 805.61 296.616 C 779.254 215.5 727.871 144.778 658.87 94.646 C 589.869 44.513 506.73 17.5 421.44 17.5 Z"
-            android:strokeColor="#ffffff"
-            android:strokeWidth="35"
-            android:strokeMiterLimit="10"/>
-    <path
-            android:name="path_2"
-            android:pathData="M 598.91 419.24 L 333.91 266.24 L 333.91 572.24 L 598.91 419.24 Z"
-            android:fillColor="#ffffff"
-            android:strokeWidth="1"/>
+        android:pathData="M561.41,440.89C578.08,431.27 578.08,407.21 561.41,397.59L371.41,287.89C354.74,278.27 333.91,290.3 333.91,309.54V528.94C333.91,548.18 354.74,560.21 371.41,550.59L561.41,440.89Z"
+        android:fillColor="#ffffff"/>
 </vector>
