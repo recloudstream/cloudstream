@@ -64,20 +64,11 @@
 
             <ImageView
                 android:id="@+id/episode_play_icon"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/play_button_transparent"
-                android:layout_gravity="center"
-                android:padding="1dp"/>
+                style="@style/ContinueWatchingPlayUnderlayProgress"/>
 
             <com.google.android.material.progressindicator.CircularProgressIndicator
                 android:id="@+id/episode_progress"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                app:indicatorSize="28dp"
-                app:trackThickness="2dp"
-                app:indicatorColor="?attr/white"
-                tools:progress="50" />
+                style="@style/ContinueWatchingCircularProgress" />
         </FrameLayout>
         <!--marquee_forever-->
         <com.google.android.material.button.MaterialButton

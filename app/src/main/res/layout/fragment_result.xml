@@ -720,19 +720,20 @@
 
                                     <ImageView
                                         android:id="@+id/episode_play_icon"
-                                        android:layout_width="30dp"
-                                        android:layout_height="30dp"
-                                        android:src="@drawable/play_button_transparent"
-                                        android:layout_gravity="center"
-                                        android:padding="1dp"/>
-
+                                        style="@style/ContinueWatchingPlayUnderlayProgress"
+                                        />
+<!--                                    <com.google.android.material.imageview.ShapeableImageView-->
+<!--                                        android:id="@+id/episode_play_icon"-->
+<!--                                        android:layout_width="@dimen/episode_watching_progress_size"-->
+<!--                                        android:layout_height="@dimen/episode_watching_progress_size"-->
+<!--                                        android:scaleType="center"-->
+<!--                                        android:src="@drawable/netflix_play"-->
+<!--                                        android:layout_gravity="center"-->
+<!--                                        app:shapeAppearanceOverlay="@style/CircularImageViewStyle"-->
+<!--                                        />-->
                                     <com.google.android.material.progressindicator.CircularProgressIndicator
                                         android:id="@+id/result_resume_series_progress"
-                                        android:layout_width="30dp"
-                                        android:layout_height="30dp"
-                                        app:indicatorSize="28dp"
-                                        app:trackThickness="2dp"
-                                        app:indicatorColor="?attr/white"
+                                        style="@style/ContinueWatchingCircularProgress"
                                         tools:progress="50" />
                                 </FrameLayout>
 

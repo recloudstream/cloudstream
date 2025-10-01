@@ -238,7 +238,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         tools:text="S1E1 Episode 1"
                         android:visibility="visible"
                         tools:visibility="visible"
-                        android:paddingEnd="5dp"/>
+                        android:paddingEnd="10dp"/>
                     <!--https://github.com/material-components/material-components-android/blob/master/docs/components/ProgressIndicator.md-->
 <!--                    <com.google.android.material.progressindicator.LinearProgressIndicator-->
 <!--                        android:id="@+id/result_resume_series_progress"-->
@@ -266,19 +266,11 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
 
                         <ImageView
                             android:id="@+id/episode_play_icon"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:src="@drawable/play_button_transparent"
-                            android:layout_gravity="center"
-                            android:padding="1dp"/>
+                            style="@style/ContinueWatchingPlayUnderlayProgress"/>
 
                         <com.google.android.material.progressindicator.CircularProgressIndicator
                             android:id="@+id/result_resume_series_progress"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            app:indicatorSize="28dp"
-                            app:trackThickness="2dp"
-                            app:indicatorColor="?attr/white"
+                            style="@style/ContinueWatchingCircularProgress"
                             tools:progress="50" />
                     </FrameLayout>
 

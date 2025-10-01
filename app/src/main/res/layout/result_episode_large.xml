@@ -70,22 +70,14 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center">
 
-                    <ImageView
+                    <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/episode_play_icon"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/play_button"
-                        android:layout_gravity="center"
-                        android:padding="1dp"/>
-
+                        style="@style/EpisodePlayUnderlayProgress"
+                        />
                     <com.google.android.material.progressindicator.CircularProgressIndicator
                         android:id="@+id/episode_progress"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        app:indicatorSize="37dp"
-                        app:trackThickness="3dp"
-                        app:indicatorColor="@color/white"
-                        tools:progress="50" />
+                        style="@style/EpisodeCircularProgress"
+                        tools:progress="100" />
                 </FrameLayout>
             </androidx.cardview.widget.CardView>
 

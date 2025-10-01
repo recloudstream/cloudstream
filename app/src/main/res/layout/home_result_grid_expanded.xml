@@ -54,22 +54,13 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center">
 
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/search_item_download_play"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/play_button"
-                    android:layout_gravity="center"
-                    android:padding="1dp"/>
-
+                    style="@style/HomePlayUnderlayProgress"
+                    />
                 <com.google.android.material.progressindicator.CircularProgressIndicator
                     android:id="@+id/watchProgress"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    app:indicatorSize="45dp"
-                    app:trackThickness="5dp"
-                    android:layout_gravity="center"
-                    app:indicatorColor="@color/white"
+                    style="@style/HomeCircularProgress"
                     tools:progress="50" />
 
             </FrameLayout>
