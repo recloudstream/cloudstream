@@ -1024,15 +1024,14 @@
         <item name="indicatorColor">@color/white</item>
     </style>
     <style name="HomePlayUnderlayProgress" parent="PlayUnderlayProgress">
-        <item name="android:layout_width">50dp</item>
-        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_width">@dimen/home_poster_progress_size</item>
+        <item name="android:layout_height">@dimen/home_poster_progress_size</item>
         <item name="android:background">@color/playIconBackground</item>
     </style>
     <style name="HomeCircularProgress" parent="CircularProgress">
-        <item name="android:layout_width">50dp</item>
-        <item name="android:layout_height">50dp</item>
-        <item name="indicatorSize">50dp</item>
-        <item name="trackThickness">4dp</item>
+        <item name="android:layout_width">@dimen/home_poster_progress_size</item>
+        <item name="android:layout_height">@dimen/home_poster_progress_size</item>
+        <item name="indicatorSize">@dimen/home_poster_progress_size</item>
     </style>
     <style name="EpisodePlayUnderlayProgress" parent="PlayUnderlayProgress">
         <item name="android:layout_width">40dp</item>
@@ -1040,19 +1039,19 @@
         <item name="android:background">@color/playIconBackground</item>
     </style>
     <style name="EpisodeCircularProgress" parent="CircularProgress">
-        <item name="android:layout_width">40dp</item>
-        <item name="android:layout_height">40dp</item>
-        <item name="indicatorSize">40dp</item>
+        <item name="android:layout_width">@dimen/episode_progress_size</item>
+        <item name="android:layout_height">@dimen/episode_progress_size</item>
+        <item name="indicatorSize">@dimen/episode_progress_size</item>
     </style>
     <style name="ContinueWatchingPlayUnderlayProgress">
-        <item name="android:layout_width">30dp</item>
-        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_width">@dimen/continue_watching_progress_size</item>
+        <item name="android:layout_height">@dimen/continue_watching_progress_size</item>
         <item name="android:src">@drawable/play_button_transparent</item>
         <item name="android:layout_gravity">center</item>
     </style>
     <style name="ContinueWatchingCircularProgress" parent="CircularProgress">
-        <item name="android:layout_width">30dp</item>
-        <item name="android:layout_height">30dp</item>
-        <item name="indicatorSize">30dp</item>
+        <item name="android:layout_width">@dimen/continue_watching_progress_size</item>
+        <item name="android:layout_height">@dimen/continue_watching_progress_size</item>
+        <item name="indicatorSize">@dimen/continue_watching_progress_size</item>
     </style>
 </resources>
