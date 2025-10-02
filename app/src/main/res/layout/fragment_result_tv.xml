@@ -285,7 +285,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:layout_gravity="center_vertical"
                         tools:text="69m\nremaining" />
                 </LinearLayout>
-            </LinearLayout>e
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/result_play_parent"

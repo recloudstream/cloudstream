@@ -143,7 +143,7 @@ class ExampleInstrumentedTest {
             Assert.assertTrue("Api does not contain a name", api.name != "NONE")
             Assert.assertTrue(
                 "Api ${api.name} does not contain a valid language code",
-                langTagsIETF.contains(api.lang, ignoreCase = true)
+                langTagsIETF.contains(api.lang)
             )
             Assert.assertTrue(
                 "Api ${api.name} does not contain any supported types",
