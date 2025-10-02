@@ -41,7 +41,7 @@ import androidx.media3.container.NalUnitUtil
 import androidx.media3.extractor.AacUtil
 import androidx.media3.extractor.AvcConfig
 import androidx.media3.extractor.ChunkIndex
-import androidx.media3.extractor.DolbyVisionConfig
+import androidx.media3.container.DolbyVisionConfig
 import androidx.media3.extractor.Extractor
 import androidx.media3.extractor.ExtractorInput
 import androidx.media3.extractor.ExtractorOutput
