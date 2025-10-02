@@ -1,0 +1,15 @@
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:name="vector"
+    android:width="842dp"
+    android:height="842dp"
+    android:viewportWidth="842"
+    android:viewportHeight="842"
+    android:tint="?attr/white">
+  <!--70% https://stackoverflow.com/questions/11285961/how-to-make-a-background-20-transparent-on-android -->
+  <path
+      android:name="path_2"
+      android:pathData="M 598.91 419.24 L 333.91 266.24 L 333.91 572.24 L 598.91 419.24 Z"
+      android:fillColor="#ffffff"
+      android:strokeWidth="1"/>
+</vector>

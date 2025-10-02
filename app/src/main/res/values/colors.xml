@@ -109,4 +109,5 @@
     <color name="colorTestPass">#48E484</color>
     <color name="colorTestFail">#ea596e</color>
     <color name="colorTestWarning">#FF9800</color>
+    <color name="playIconBackground">#B3000000</color>
 </resources>
