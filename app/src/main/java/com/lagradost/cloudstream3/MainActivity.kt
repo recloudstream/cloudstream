@@ -404,6 +404,24 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
                 return false
             }
+
+
+        fun centerView(view: View?) {
+            if (view == null) return
+            try {
+                Log.v(TAG, "centerView: $view")
+                val r = Rect(0, 0, 0, 0)
+                view.getDrawingRect(r)
+                val x = r.centerX()
+                val y = r.centerY()
+                val dx = r.width() / 2 //screenWidth / 2
+                val dy = screenHeight / 2
+                val r2 = Rect(x - dx, y - dy, x + dx, y + dy)
+                view.requestRectangleOnScreen(r2, false)
+                // TvFocus.current =TvFocus.current.copy(y=y.toFloat())
+            } catch (_: Throwable) {
+            }
+        }
     }
 
 
@@ -484,7 +502,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         ).contains(destination.id)
 
 
-        val dontPush = listOf(
+        /*val dontPush = listOf(
             R.id.navigation_home,
             R.id.navigation_search,
             R.id.navigation_results_phone,
@@ -515,7 +533,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             }
 
             layoutParams = params
-        }
+        }*/
 
         val landscape = when (resources.configuration.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {
@@ -1140,23 +1158,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
     }
 
-    private fun centerView(view: View?) {
-        if (view == null) return
-        try {
-            Log.v(TAG, "centerView: $view")
-            val r = Rect(0, 0, 0, 0)
-            view.getDrawingRect(r)
-            val x = r.centerX()
-            val y = r.centerY()
-            val dx = r.width() / 2 //screenWidth / 2
-            val dy = screenHeight / 2
-            val r2 = Rect(x - dx, y - dy, x + dx, y + dy)
-            view.requestRectangleOnScreen(r2, false)
-            // TvFocus.current =TvFocus.current.copy(y=y.toFloat())
-        } catch (_: Throwable) {
-        }
-    }
-
     @Suppress("DEPRECATION_ERROR")
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
@@ -1228,7 +1229,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 if (isLayout(TV)) {
                     // Put here any button you don't want focusing it to center the view
                     val exceptionButtons = listOf(
-                        R.id.home_preview_play_btt,
+                        //R.id.home_preview_play_btt,
                         R.id.home_preview_info_btt,
                         R.id.home_preview_hidden_next_focus,
                         R.id.home_preview_hidden_prev_focus,
