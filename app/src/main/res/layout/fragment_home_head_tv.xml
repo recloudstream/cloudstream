@@ -52,7 +52,6 @@
                     android:id="@+id/home_preview_viewpager"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="2dp"
                     android:descendantFocusability="blocksDescendants"
                     android:orientation="horizontal">
 
