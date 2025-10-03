@@ -6,6 +6,8 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
 import java.net.URI
+import org.json.JSONObject
+
 
 
 class Geodailymotion : Dailymotion() {
@@ -30,28 +32,43 @@ open class Dailymotion : ExtractorApi() {
         val embedUrl = getEmbedUrl(url) ?: return
         val id = getVideoId(embedUrl) ?: return
         val metaDataUrl = "$baseUrl/player/metadata/video/$id"
+
         val response = app.get(metaDataUrl, referer = embedUrl).text
-        val qualityUrlRegex = Regex(""""url"\s*:\s*"([^"]+)"""")
-        val subtitlesRegex = Regex(""""subtitles"\s*:\s*\{[^}]*"data"\s*:\s*(\[[^\]]*\])""")
+        val json = JSONObject(response)
 
-        val urls = qualityUrlRegex.findAll(response)
-            .map { it.groupValues[1] }
-            .toList().filter { it.contains(".m3u8") }
-
-        urls.forEach { videoUrl ->
-            getStream(videoUrl, this.name, callback)
+        val qualities = json.getJSONObject("qualities")
+        if (qualities.has("auto")) {
+            val autoArray = qualities.getJSONArray("auto")
+            for (i in 0 until autoArray.length()) {
+                val obj = autoArray.getJSONObject(i)
+                val videoUrl = obj.optString("url")
+                if (videoUrl.isNotEmpty() && videoUrl.contains(".m3u8")) {
+                    getStream(videoUrl, this.name, callback)
+                }
+            }
         }
 
-        val subtitlesMatches = subtitlesRegex.findAll(response).map { it.groupValues[1] }.toList()
-        subtitlesMatches.forEach { subtitleJson ->
-            val subRegex = Regex("""\{\s*"label"\s*:\s*"([^"]+)",\s*"urls"\s*:\s*\["([^"]+)"""")
-            subRegex.findAll(subtitleJson).forEach { match ->
-                val label = match.groupValues[1]
-                val subUrl = match.groupValues[2]
-                subtitleCallback(SubtitleFile(label, subUrl))
+        if (json.has("subtitles")) {
+            val subs = json.getJSONObject("subtitles")
+            if (subs.optBoolean("enable", false)) {
+                val data = subs.optJSONObject("data")
+                data?.let {
+                    val keys = it.keys()
+                    while (keys.hasNext()) {
+                        val lang = keys.next()
+                        val subObj = it.getJSONObject(lang)
+                        val label = subObj.getString("label")
+                        val urls = subObj.getJSONArray("urls")
+                        for (i in 0 until urls.length()) {
+                            val subUrl = urls.getString(i)
+                            subtitleCallback(SubtitleFile(label, subUrl))
+                        }
+                    }
+                }
             }
         }
     }
+
 
     private fun getEmbedUrl(url: String): String? {
         if (url.contains("/embed/") || url.contains("/video/")) return url
