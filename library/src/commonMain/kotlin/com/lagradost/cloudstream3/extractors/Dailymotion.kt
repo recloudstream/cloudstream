@@ -1,11 +1,13 @@
 package com.lagradost.cloudstream3.extractors
 
+import com.google.gson.Gson
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
 import java.net.URI
+
 
 
 class Geodailymotion : Dailymotion() {
@@ -30,28 +32,25 @@ open class Dailymotion : ExtractorApi() {
         val embedUrl = getEmbedUrl(url) ?: return
         val id = getVideoId(embedUrl) ?: return
         val metaDataUrl = "$baseUrl/player/metadata/video/$id"
+
         val response = app.get(metaDataUrl, referer = embedUrl).text
-        val qualityUrlRegex = Regex(""""url"\s*:\s*"([^"]+)"""")
-        val subtitlesRegex = Regex(""""subtitles"\s*:\s*\{[^}]*"data"\s*:\s*(\[[^\]]*\])""")
+        val gson = Gson()
+        val meta = gson.fromJson(response, MetaData::class.java)
 
-        val urls = qualityUrlRegex.findAll(response)
-            .map { it.groupValues[1] }
-            .toList().filter { it.contains(".m3u8") }
-
-        urls.forEach { videoUrl ->
-            getStream(videoUrl, this.name, callback)
+        meta.qualities?.get("auto")?.forEach { quality ->
+            val videoUrl = quality.url
+            if (!videoUrl.isNullOrEmpty() && videoUrl.contains(".m3u8")) {
+                getStream(videoUrl, this.name, callback)
+            }
         }
 
-        val subtitlesMatches = subtitlesRegex.findAll(response).map { it.groupValues[1] }.toList()
-        subtitlesMatches.forEach { subtitleJson ->
-            val subRegex = Regex("""\{\s*"label"\s*:\s*"([^"]+)",\s*"urls"\s*:\s*\["([^"]+)"""")
-            subRegex.findAll(subtitleJson).forEach { match ->
-                val label = match.groupValues[1]
-                val subUrl = match.groupValues[2]
-                subtitleCallback(SubtitleFile(label, subUrl))
+        meta.subtitles?.data?.forEach { (_, subData) ->
+            subData.urls.forEach { subUrl ->
+                subtitleCallback(SubtitleFile(subData.label, subUrl))
             }
         }
     }
+
 
     private fun getEmbedUrl(url: String): String? {
         if (url.contains("/embed/") || url.contains("/video/")) return url
@@ -76,4 +75,26 @@ open class Dailymotion : ExtractorApi() {
     ) {
         return generateM3u8(name, streamLink, "").forEach(callback)
     }
+
+
+    data class MetaData(
+        val qualities: Map<String, List<Quality>>?,
+        val subtitles: SubtitlesWrapper?
+    )
+
+    data class Quality(
+        val type: String?,
+        val url: String?
+    )
+
+    data class SubtitlesWrapper(
+        val enable: Boolean,
+        val data: Map<String, SubtitleData>?
+    )
+
+    data class SubtitleData(
+        val label: String,
+        val urls: List<String>
+    )
+
 }
