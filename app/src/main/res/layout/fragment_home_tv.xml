@@ -114,7 +114,7 @@
                 android:gravity="center_vertical"
                 android:nextFocusLeft="@id/navigation_home"
                 android:nextFocusRight="@id/home_preview_search_button"
-                android:nextFocusDown="@id/home_preview_play_btt" >
+                android:nextFocusDown="@id/home_preview_info_btt" >
             <requestFocus />
             </com.google.android.material.button.MaterialButton>
 

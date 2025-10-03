@@ -108,7 +108,7 @@ class HomeParentItemAdapterPreview(
             )
         }
 
-        return HeaderViewHolder(binding, viewModel,accountViewModel, fragment = fragment)
+        return HeaderViewHolder(binding, viewModel, accountViewModel, fragment = fragment)
     }
 
     override fun onBindHeader(holder: ViewHolderState<Bundle>) {
@@ -116,7 +116,10 @@ class HomeParentItemAdapterPreview(
     }
 
     private class HeaderViewHolder(
-        val binding: ViewBinding, val viewModel: HomeViewModel,accountViewModel: AccountViewModel, fragment: Fragment,
+        val binding: ViewBinding,
+        val viewModel: HomeViewModel,
+        accountViewModel: AccountViewModel,
+        fragment: Fragment,
     ) :
         ViewHolderState<Bundle>(binding) {
 
@@ -305,10 +308,13 @@ class HomeParentItemAdapterPreview(
             itemView.findViewById(R.id.home_bookmarked_child_recyclerview)
 
         private val headProfilePic: ImageView? = itemView.findViewById(R.id.home_head_profile_pic)
-        private val headProfilePicCard: View? = itemView.findViewById(R.id.home_head_profile_padding)
+        private val headProfilePicCard: View? =
+            itemView.findViewById(R.id.home_head_profile_padding)
 
-        private val alternateHeadProfilePic: ImageView? = itemView.findViewById(R.id.alternate_home_head_profile_pic)
-        private val alternateHeadProfilePicCard: View? = itemView.findViewById(R.id.alternate_home_head_profile_padding)
+        private val alternateHeadProfilePic: ImageView? =
+            itemView.findViewById(R.id.alternate_home_head_profile_pic)
+        private val alternateHeadProfilePicCard: View? =
+            itemView.findViewById(R.id.alternate_home_head_profile_padding)
 
         private val topPadding: View? = itemView.findViewById(R.id.home_padding)
 
@@ -334,7 +340,7 @@ class HomeParentItemAdapterPreview(
                 homePreviewTags.isGone =
                     item.tags.isNullOrEmpty()
 
-                homePreviewPlayBtt.setOnClickListener { view ->
+                /*homePreviewPlayBtt.setOnClickListener { view ->
                     viewModel.click(
                         LoadClickCallback(
                             START_ACTION_RESUME_LATEST,
@@ -343,7 +349,7 @@ class HomeParentItemAdapterPreview(
                             item
                         )
                     )
-                }
+                }*/
 
                 homePreviewInfoBtt.setOnClickListener { view ->
                     viewModel.click(
@@ -494,7 +500,7 @@ class HomeParentItemAdapterPreview(
                 activity?.showAccountSelectLinear()
             }
 
-            fun showAccountEditBox(context:Context): Boolean {
+            fun showAccountEditBox(context: Context): Boolean {
                 val currentAccount = DataStoreHelper.getCurrentAccount()
                 return if (currentAccount != null) {
                     showAccountEditDialog(
@@ -502,16 +508,21 @@ class HomeParentItemAdapterPreview(
                         account = currentAccount,
                         isNewAccount = false,
                         accountEditCallback = { accountViewModel.handleAccountUpdate(it, context) },
-                        accountDeleteCallback = { accountViewModel.handleAccountDelete(it, context) }
+                        accountDeleteCallback = {
+                            accountViewModel.handleAccountDelete(
+                                it,
+                                context
+                            )
+                        }
                     )
                     true
-                }else false
+                } else false
             }
 
-            alternateHeadProfilePicCard?.setOnLongClickListener{
+            alternateHeadProfilePicCard?.setOnLongClickListener {
                 showAccountEditBox(it.context)
             }
-            headProfilePicCard?.setOnLongClickListener{
+            headProfilePicCard?.setOnLongClickListener {
                 showAccountEditBox(it.context)
             }
 
@@ -525,8 +536,12 @@ class HomeParentItemAdapterPreview(
                         viewModel.loadAndCancel(api, forceReload = true, fromUI = true)
                     }
                 }
-                homePreviewReloadProvider.setOnClickListener{
-                    viewModel.loadAndCancel(viewModel.apiName.value ?: noneApi.name, forceReload = true, fromUI = true)
+                homePreviewReloadProvider.setOnClickListener {
+                    viewModel.loadAndCancel(
+                        viewModel.apiName.value ?: noneApi.name,
+                        forceReload = true,
+                        fromUI = true
+                    )
                     showToast(R.string.action_reload, Toast.LENGTH_SHORT)
                     true
                 }
@@ -535,14 +550,18 @@ class HomeParentItemAdapterPreview(
                     viewModel.queryTextSubmit("")
                 }
 
-                // This makes the hidden next buttons only available when on the info button
-                // Otherwise you might be able to go to the next item without being at the info button
-                homePreviewInfoBtt.setOnFocusChangeListener { _, hasFocus ->
-                    homePreviewHiddenNextFocus.isFocusable = hasFocus
-                }
-
-                homePreviewPlayBtt.setOnFocusChangeListener { _, hasFocus ->
-                    homePreviewHiddenPrevFocus.isFocusable = hasFocus
+                // A workaround to the focus problem of always centering the view on focus
+                // as that causes higher android versions to stretch the ui when switching between shows
+                var lastFocusTimeoutMs = 0L
+                homePreviewInfoBtt.setOnFocusChangeListener { view, hasFocus ->
+                    val lastFocusMs = lastFocusTimeoutMs
+                    // Always reset timer, as we only want to update
+                    // it if we have not interacted in half a second
+                    lastFocusTimeoutMs = System.currentTimeMillis()
+                    if (!hasFocus) return@setOnFocusChangeListener
+                    if (lastFocusMs + 500L < System.currentTimeMillis()) {
+                        MainActivity.centerView(view)
+                    }
                 }
 
                 homePreviewHiddenNextFocus.setOnFocusChangeListener { _, hasFocus ->
@@ -560,7 +579,8 @@ class HomeParentItemAdapterPreview(
                         )?.requestFocus()
                     } else {
                         previewViewpager.setCurrentItem(previewViewpager.currentItem - 1, true)
-                        binding.homePreviewPlayBtt.requestFocus()
+                        binding.homePreviewInfoBtt.requestFocus()
+                        //binding.homePreviewPlayBtt.requestFocus()
                     }
                 }
             }
