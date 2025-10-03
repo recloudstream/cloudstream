@@ -492,8 +492,9 @@ class SearchFragment : Fragment() {
             when (it) {
                 is Resource.Success -> {
                     it.value.let { data ->
-                        if (data.isNotEmpty()) {
-                            (binding?.searchAutofitResults?.adapter as? SearchAdapter)?.updateList(data)
+                        val list = data.list
+                        if (list.isNotEmpty()) {
+                            (binding?.searchAutofitResults?.adapter as? SearchAdapter)?.updateList(list)
                         }
                     }
                     searchExitIcon?.alpha = 1f
