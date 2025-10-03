@@ -1,12 +1,12 @@
 package com.lagradost.cloudstream3.extractors
 
+import com.google.gson.Gson
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
 import java.net.URI
-import org.json.JSONObject
 
 
 
@@ -34,37 +34,19 @@ open class Dailymotion : ExtractorApi() {
         val metaDataUrl = "$baseUrl/player/metadata/video/$id"
 
         val response = app.get(metaDataUrl, referer = embedUrl).text
-        val json = JSONObject(response)
+        val gson = Gson()
+        val meta = gson.fromJson(response, MetaData::class.java)
 
-        val qualities = json.getJSONObject("qualities")
-        if (qualities.has("auto")) {
-            val autoArray = qualities.getJSONArray("auto")
-            for (i in 0 until autoArray.length()) {
-                val obj = autoArray.getJSONObject(i)
-                val videoUrl = obj.optString("url")
-                if (videoUrl.isNotEmpty() && videoUrl.contains(".m3u8")) {
-                    getStream(videoUrl, this.name, callback)
-                }
+        meta.qualities?.get("auto")?.forEach { quality ->
+            val videoUrl = quality.url
+            if (!videoUrl.isNullOrEmpty() && videoUrl.contains(".m3u8")) {
+                getStream(videoUrl, this.name, callback)
             }
         }
 
-        if (json.has("subtitles")) {
-            val subs = json.getJSONObject("subtitles")
-            if (subs.optBoolean("enable", false)) {
-                val data = subs.optJSONObject("data")
-                data?.let {
-                    val keys = it.keys()
-                    while (keys.hasNext()) {
-                        val lang = keys.next()
-                        val subObj = it.getJSONObject(lang)
-                        val label = subObj.getString("label")
-                        val urls = subObj.getJSONArray("urls")
-                        for (i in 0 until urls.length()) {
-                            val subUrl = urls.getString(i)
-                            subtitleCallback(SubtitleFile(label, subUrl))
-                        }
-                    }
-                }
+        meta.subtitles?.data?.forEach { (_, subData) ->
+            subData.urls.forEach { subUrl ->
+                subtitleCallback(SubtitleFile(subData.label, subUrl))
             }
         }
     }
@@ -93,4 +75,26 @@ open class Dailymotion : ExtractorApi() {
     ) {
         return generateM3u8(name, streamLink, "").forEach(callback)
     }
+
+
+    data class MetaData(
+        val qualities: Map<String, List<Quality>>?,
+        val subtitles: SubtitlesWrapper?
+    )
+
+    data class Quality(
+        val type: String?,
+        val url: String?
+    )
+
+    data class SubtitlesWrapper(
+        val enable: Boolean,
+        val data: Map<String, SubtitleData>?
+    )
+
+    data class SubtitleData(
+        val label: String,
+        val urls: List<String>
+    )
+
 }
