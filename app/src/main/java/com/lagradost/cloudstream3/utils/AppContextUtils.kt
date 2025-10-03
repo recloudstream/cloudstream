@@ -9,7 +9,6 @@ import android.app.NotificationManager
 import android.content.ContentValues
 import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.media.AudioAttributes
@@ -19,7 +18,6 @@ import android.media.tv.TvContract.Channels.COLUMN_INTERNAL_PROVIDER_ID
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
-import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.os.Handler
@@ -27,7 +25,6 @@ import android.os.Looper
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import android.text.Spanned
-import android.util.Log
 import android.view.View
 import android.view.View.LAYOUT_DIRECTION_LTR
 import android.view.View.LAYOUT_DIRECTION_RTL
@@ -48,7 +45,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.tvprovider.media.tv.PreviewChannelHelper
-import androidx.tvprovider.media.tv.TvContractCompat
 import androidx.tvprovider.media.tv.WatchNextProgram
 import androidx.tvprovider.media.tv.WatchNextProgram.fromCursor
 import androidx.viewpager2.widget.ViewPager2
@@ -69,7 +65,6 @@ import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEvent
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.logError
@@ -102,6 +97,17 @@ import java.net.URL
 import java.net.URLDecoder
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
+import android.net.Uri
+import android.util.Log
+import androidx.biometric.AuthenticationResult
+import androidx.tvprovider.media.tv.PreviewProgram
+import androidx.tvprovider.media.tv.TvContractCompat
+import com.lagradost.cloudstream3.SearchResponse
+import android.content.ContentUris
+import android.content.Intent
+
+
+
 
 object AppContextUtils {
     fun RecyclerView.setMaxViewPoolSize(maxViewTypeId: Int, maxPoolSize: Int) {
@@ -159,7 +165,7 @@ object AppContextUtils {
             text.toSpanned()
         }
     }
-
+    /** Get channel ID by name */
     @SuppressLint("RestrictedApi")
     private fun buildWatchNextProgramUri(
         context: Context,

@@ -22,10 +22,10 @@ data class Cache(
 )
 
 class RepoLinkGenerator(
-    private val episodes: List<ResultEpisode>,
-    private var currentIndex: Int = 0,
+    episodes: List<ResultEpisode>,
+    currentIndex: Int = 0,
     val page: LoadResponse? = null,
-) : IGenerator {
+) : VideoGenerator<ResultEpisode>(episodes, currentIndex) {
     companion object {
         const val TAG = "RepoLink"
         val cache: HashMap<Pair<String, Int>, Cache> =
@@ -35,44 +35,6 @@ class RepoLinkGenerator(
     override val hasCache = true
     override val canSkipLoading = true
 
-    override fun hasNext(): Boolean {
-        return currentIndex < episodes.size - 1
-    }
-
-    override fun hasPrev(): Boolean {
-        return currentIndex > 0
-    }
-
-    override fun next() {
-        Log.i(TAG, "next")
-        if (hasNext())
-            currentIndex++
-    }
-
-    override fun prev() {
-        Log.i(TAG, "prev")
-        if (hasPrev())
-            currentIndex--
-    }
-
-    override fun goto(index: Int) {
-        Log.i(TAG, "goto $index")
-        // clamps value
-        currentIndex = min(episodes.size - 1, max(0, index))
-    }
-
-    override fun getCurrentId(): Int {
-        return episodes[currentIndex].id
-    }
-
-    override fun getCurrent(offset: Int): Any? {
-        return episodes.getOrNull(currentIndex + offset)
-    }
-
-    override fun getAll(): List<Any> {
-        return episodes
-    }
-
     // this is a simple array that is used to instantly load links if they are already loaded
     //var linkCache = Array<Set<ExtractorLink>>(size = episodes.size, init = { setOf() })
     //var subsCache = Array<Set<SubtitleData>>(size = episodes.size, init = { setOf() })
@@ -80,14 +42,13 @@ class RepoLinkGenerator(
     @Throws
     override suspend fun generateLinks(
         clearCache: Boolean,
-        allowedTypes: Set<ExtractorLinkType>,
+        sourceTypes: Set<ExtractorLinkType>,
         callback: (Pair<ExtractorLink?, ExtractorUri?>) -> Unit,
         subtitleCallback: (SubtitleData) -> Unit,
         offset: Int,
         isCasting: Boolean,
     ): Boolean {
-        val index = currentIndex
-        val current = episodes.getOrNull(index + offset) ?: return false
+        val current = getCurrent(offset) ?: return false
 
         val currentCache = synchronized(cache) {
             cache[current.apiName to current.id] ?: Cache(
@@ -103,7 +64,7 @@ class RepoLinkGenerator(
         // these act as a general filter to prevent duplication of links or names
         val currentLinksUrls = mutableSetOf<String>()       // makes all urls unique
         val currentSubsUrls = mutableSetOf<String>()    // makes all subs urls unique
-        val currentSubsNames = mutableSetOf<String>()   // makes all subs names unique
+        val lastCountedSuffix = mutableMapOf<String, UInt>()
 
         synchronized(currentCache) {
             val outdatedCache =
@@ -120,14 +81,15 @@ class RepoLinkGenerator(
             // call all callbacks
             currentCache.linkCache.forEach { link ->
                 currentLinksUrls.add(link.url)
-                if (allowedTypes.contains(link.type)) {
+                if (sourceTypes.contains(link.type)) {
                     callback(link to null)
                 }
             }
 
             currentCache.subtitleCache.forEach { sub ->
                 currentSubsUrls.add(sub.url)
-                currentSubsNames.add(sub.name)
+                val suffixCount = lastCountedSuffix.getOrDefault(sub.originalName, 0u) + 1u
+                lastCountedSuffix[sub.originalName] = suffixCount
                 subtitleCallback(sub)
             }
 
@@ -152,19 +114,14 @@ class RepoLinkGenerator(
                 currentSubsUrls.add(correctFile.url)
 
                 // this part makes sure that all names are unique for UX
-                val fixedName = correctFile.name.html().toString().trim()
 
-                var name = fixedName
-                var count = 1
-                while (currentSubsNames.contains(name)) {
-                    count++
-                    name =
-                        SubtitleData.constructName(originalName = fixedName, nameSuffix = "$count")
-                }
+                val nameDecoded = correctFile.originalName.html().toString().trim() // `%3Ch1%3Esub%20name…` → `<h1>sub name…` → `sub name…`
 
-                currentSubsNames.add(name)
+                val suffixCount = lastCountedSuffix.getOrDefault(nameDecoded, 0u) +1u
+                lastCountedSuffix[nameDecoded] = suffixCount
+
                 val updatedFile =
-                    correctFile.copy(originalName = fixedName, nameSuffix = "$count")
+                    correctFile.copy(originalName = nameDecoded, nameSuffix = "$suffixCount")
 
                 synchronized(currentCache) {
                     if (currentCache.subtitleCache.add(updatedFile)) {
@@ -182,7 +139,7 @@ class RepoLinkGenerator(
 
                 synchronized(currentCache) {
                     if (currentCache.linkCache.add(link)) {
-                        if (allowedTypes.contains(link.type)) {
+                        if (sourceTypes.contains(link.type)) {
                             callback(Pair(link, null))
                         }
 

@@ -28,7 +28,7 @@ jobs:
         token: ${{ steps.generate_token.outputs.token }}
     - name: Install dependencies
       run: |
-        pip3 install lxml
+        pip3 install lxml requests
     - name: Edit files
       run: |
         python3 .github/locales.py

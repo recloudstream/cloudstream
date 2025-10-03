@@ -303,5 +303,26 @@ object SearchResultBuilder {
                 }
             }
         }
+
+        // This is the logic for making the rounded corners more round on the top and bottom element
+        // a bit dirty to do memory allocation, but it makes it more extensible and is easier to reason about
+        // then a large if statement
+
+        // Requires that the ordering here is the same as in the xml
+        val boxes = arrayListOf<TextView>()
+        for (view in arrayOf(textIsDub, textIsSub, rating)) {
+            if (view?.isVisible == true) {
+                boxes.add(view)
+            }
+        }
+        if (boxes.size == 1) {
+            boxes[0].setBackgroundResource(R.drawable.bg_color_both)
+        } else if (boxes.size > 1) {
+            boxes[0].setBackgroundResource(R.drawable.bg_color_top)
+            for (i in 1 until boxes.size) {
+                boxes[i].setBackgroundResource(R.drawable.bg_color_center)
+            }
+            boxes[boxes.size - 1].setBackgroundResource(R.drawable.bg_color_bottom)
+        }
     }
 }

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="pin_error_incorrect">Maling PIN. Pakisubukang muli.</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">Alisin ang napanood hanggang sa episode na ito</string>
+    <string name="no_internet_connection">Walang koneksyon sa internet.\n\nKumonekta sa internet at subukang muli, o panoorin ang iyong mga na-download habang ikaw ay offline.</string>
+    <string name="player_notification_channel_description">Ang abiso ng player para sa pagkontrol sa pag-playback mula sa background</string>
+    <string name="plugins_updated_manually">Matagumpay na na-update ang %d plugin!</string>
+    <string name="overscan_settings_des">Binabago ang mga hangganan ng screen</string>
+    <string name="all_subtitles_bold">Gawing bold ( ≖‿ ≖ ) ang lahat ng subtitle</string>
+    <string name="all_subtitles_italic">Gawing italic ang lahat ng subtitle</string>
+    <string name="volume_exceeded_100">Lakas ng tunog ay lumampas sa 100%</string>
+    <string name="slide_up_again_to_exceed_100">Muling mag-slide pataas upang lumampas sa 100%</string>
+    <string name="confirm_before_exiting_desc">Ipakita ang dialog bago lumabas sa app</string>
+    <string name="preview_seekbar_desc">Paganahin ang preview thumbnail sa seekbar</string>
+    <string name="no_subtitles_loaded">Wala pang na-load na mga subtitle</string>
+    <string name="confirm_before_exiting_title">Kumpirmahin bago lumabas</string>
+    <string name="torrent_not_accepted">I-restart ang app at tanggapin ang Stream Torrent pop-up upang magpatuloy.</string>
+    <string name="software_decoding_desc">Binibigyang-daan ng software decoding ang player na mag-play ng mga video file na hindi sinusuportahan ng iyong telepono, ngunit maaaring magdulot ng laggy o hindi maayos na pag-playback sa mataas na resolution</string>
+    <string name="backup_path_title">Lokasyon ng backup na folder</string>
+    <string name="hide_player_control_names">Itago ang mga pangalan ng mga kontrol ng player</string>
+    <string name="biometric_warning">Na-back up na ngayon ang iyong data sa CloudStream. Bagama\'t napakababa ng posibilidad nito, lahat ng device ay maaaring kumilos nang iba. Sa pambihirang kaso, na ma-lock out ka mula sa pag-access sa app, ganap na i-clear ang data ng app at i-restore mula sa isang backup. Lubos kaming humihingi ng paumanhin para sa anumang abala na dulot nito.</string>
+    <string name="skip_startup_account_select_pref">Laktawan ang pagpili ng account sa pagsisimula</string>
+    <string name="duplicate_message_multiple" formatted="true">May nakitang potensyal na mga nag-doble na mga items sa iyong library: \n\n%s \n\nGusto mo pa rin bang idagdag ang item na ito, palitan ang mga nauna na, o kanselahin ito?</string>
+    <string name="favorites_list_name">Mga paborito &lt;3</string>
+    <string name="quality_profile_help">Dito maaari mong baguhin kung paano inayos ang mga pinagmulan. Kung ang isang video ay may mas mataas na priyoridad, ito ay lalabas na mas mataas sa pagpili ng pinagmulan. Ang kabuuan ng priyoridad ng source at priyoridad sa quality ay ang priyoridad ng video. \n\nSource A: 3 \nQuality B: 7 \nMagkakaroon ng pinagsamang priyoridad ng video na 10. \n\nTANDAAN: Kung ang kabuuan ay 10 o higit pa ang player ay awtomatikong lalaktawan ang paglo-load kapag na-load ang link na iyon!</string>
+    <string name="unable_to_inflate">Hindi magawa nang tama ang UI, isa itong MAJOR BUG at dapat na iulat kaagad %s</string>
+    <string name="action_add_to_favorites">Idagdag sa mga paborito &lt;3</string>
+    <string name="action_remove_from_favorites">Alisin sa mga paborito &lt;/3</string>
+    <string name="duplicate_title">May Natagpuan na Nag-doble</string>
+    <string name="duplicate_message_single" formatted="true">Lumalabas na mayroong potensyal na nag-doble na item sa iyong library: \'%s.\' \n\nGusto mo pa rin bang idagdag ang item na ito, palitan ang nauna, o kanselahin ito?</string>
+    <string name="battery_dialog_message">Para matiyak ang mga walang patid na pag-download at notification para sa mga naka-subscribe na palabas sa TV, kailangan ng CloudStream ng pahintulot na tumakbo sa background. Sa pamamagitan ng pagpindot sa OK, ipapakita sa iyo ang isang dialog. Mangyaring pindutin ang \'Allow\'.\n\nPakitandaan, ang pahintulot na ito ay hindi nangangahulugan na maubos ng CS3 ang iyong baterya. Ito ay gagana lamang sa background kung kinakailangan, tulad ng kapag tumatanggap ng mga notification o nagda-download ng mga video mula sa mga opisyal na extension.</string>
+    <string name="blank_repo_message">Ang CloudStream ay walang mga site na naka-install sa umpisa. Kailangan mong i-install ang mga site mula sa mga repositoryo. \n \nSumali sa aming Discord o maghanap online.</string>
+    <string name="download_all_plugins_from_repo">Babala: Walang pananagutan ang CloudStream 3 sa paggamit ng mga extension ng third-party at hindi kami nagbibigay ng anumang suporta para sa kanila!</string>
+    <string name="speech_recognition_unavailable">Hindi available ang speech recognition</string>
+    <string name="result_open_in_browser">Buksan sa Browser</string>
+    <string name="torrent_info">Ang video na ito ay isang Torrent, nangangahulugan ito na ang iyong aktibidad sa video ay maaaring masubaybayan.\nTiyaking naiintindihan mo ang Torrenting bago magpatuloy.</string>
+    <string name="downloads_delete_select">Piliin ang Mga Item na Tatanggalin</string>
+    <string name="downloads_empty">Kasalukuyang walang mga dina-download.</string>
+    <string name="offline_file">Available para mapanood offline</string>
+    <string name="select_all">Piliin Lahat</string>
+    <string name="deselect_all">Alisin sa pagkakapili ang Lahat</string>
+    <string name="pref_disable_acra">Huwag paganahin ang awtomatikong pag-uulat ng bug</string>
+    <string name="vpn_might_be_needed">Maaaring kailanganin ng VPN para gumana ang provider na ito</string>
+    <string name="vpn_torrent">Ang provider na ito ay isang torrent, inirerekomendang gumamit ng VPN</string>
+    <string name="provider_info_meta">Ang metadata ay hindi ibinigay ng site, hindi gagana ang video kung wala ito sa site.</string>
+    <string name="picture_in_picture_des">Ipinagpapatuloy ang pag-playback sa isang miniature na player sa ibabaw ng iba pang mga app</string>
+    <string name="speed_setting_summary">Nagdaragdag ng opsyon sa bilis sa player</string>
+    <string name="swipe_to_seek_settings_des">Mag-swipe mula sa gilid patungo sa kabilang gilid upang kontrolin ang iyong posisyon sa isang video</string>
+    <string name="swipe_to_change_settings_des">Mag-slide pataas o pababa sa kaliwa o kanang bahagi upang baguhin ang liwanag o volume</string>
+    <string name="episode_sync_settings_des">Awtomatikong i-sync ang iyong kasalukuyang episode</string>
+    <string name="backup_failed">Nawawala ang mga pahintulot sa storage. Pakisubukang muli.</string>
+    <string name="advanced_search_des">Binibigyan ka ng mga resulta ng paghahanap na pinaghihiwalay ng provider</string>
+    <string name="bug_report_settings_off">Nagpapadala lamang ng data sa mga pag-crash</string>
+    <string name="bug_report_settings_on">Hindi nagpapadala ng data</string>
+    <string name="pref_filter_search_quality">Itago ang napiling quality ng video sa mga resulta ng paghahanap</string>
+    <string name="automatic_plugin_download_mode_title">Pumili ng mode upang i-filter ang pag-download ng mga plugin</string>
+    <string name="automatic_plugin_download_summary">Awtomatikong i-install ang lahat ng hindi pa naka-install na plugin mula sa mga idinagdag na repository.</string>
+</resources>

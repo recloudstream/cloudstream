@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.fixUrl
 import com.lagradost.cloudstream3.utils.newExtractorLink
 import java.net.URI
 import javax.crypto.Cipher
@@ -52,6 +53,20 @@ open class VidStack : ExtractorApi() {
         val m3u8 = Regex("\"source\":\"(.*?)\"").find(decryptedText)
             ?.groupValues?.get(1)
             ?.replace("\\/", "/") ?: ""
+        val subtitlePattern = Regex("\"([^\"]+)\":\\s*\"([^\"]+)\"")
+        val subtitleSection = Regex("\"subtitle\":\\{(.*?)\\}").find(decryptedText)?.groupValues?.get(1)
+
+        subtitleSection?.let { section ->
+            subtitlePattern.findAll(section).forEach { match ->
+                val lang = match.groupValues[1]
+                val rawPath = match.groupValues[2].split("#")[0]
+                if (rawPath.isNotEmpty()) {
+                    val path = rawPath.replace("\\/", "/")
+                    val subUrl = "$mainUrl$path"
+                    subtitleCallback(SubtitleFile(lang, fixUrl(subUrl)))
+                }
+            }
+        }
 
         callback.invoke(
             ExtractorLink(

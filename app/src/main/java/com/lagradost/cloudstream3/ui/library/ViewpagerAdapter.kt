@@ -58,7 +58,6 @@ class ViewpagerAdapter(
             LibraryViewpagerPageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
-
     override fun onUpdateContent(
         holder: ViewHolderState<Bundle>,
         item: SyncAPI.Page,
@@ -67,6 +66,7 @@ class ViewpagerAdapter(
         val binding = holder.view
         if (binding !is LibraryViewpagerPageBinding) return
         (binding.pageRecyclerview.adapter as? PageAdapter)?.updateList(item.items)
+        binding.pageRecyclerview.scrollToPosition(0)
     }
 
     override fun onBindContent(holder: ViewHolderState<Bundle>, item: SyncAPI.Page, position: Int) {

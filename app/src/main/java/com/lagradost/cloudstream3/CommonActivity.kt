@@ -1,12 +1,12 @@
 package com.lagradost.cloudstream3
 
-import android.Manifest
 import android.app.Activity
 import android.app.PictureInPictureParams
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.Manifest
 import android.os.Build
 import android.util.DisplayMetrics
 import android.util.Log
@@ -37,9 +37,8 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.ui.player.PlayerEventType
 import com.lagradost.cloudstream3.ui.player.Torrent
-import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
-import com.lagradost.cloudstream3.utils.UiText
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRtl
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -48,11 +47,12 @@ import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
 import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
-import org.schabi.newpipe.extractor.NewPipe
+import com.lagradost.cloudstream3.utils.UiText
 import java.lang.ref.WeakReference
 import java.util.Locale
 import kotlin.math.max
 import kotlin.math.min
+import org.schabi.newpipe.extractor.NewPipe
 
 enum class FocusDirection {
     Start,
@@ -188,17 +188,19 @@ object CommonActivity {
     }
 
     /**
-     * Not all languages can be fetched from locale with a code.
-     * This map allows sidestepping the default Locale(languageCode)
-     * when setting the app language.
-     **/
-    val appLanguageExceptions = hashMapOf(
-        "zh-rTW" to Locale.TRADITIONAL_CHINESE
-    )
-
-    fun setLocale(context: Context?, languageCode: String?) {
-        if (context == null || languageCode == null) return
-        val locale = appLanguageExceptions[languageCode] ?: Locale(languageCode)
+     * Set locale
+     * @param languageTag shall a IETF BCP 47 conformant tag.
+     * Check [com.lagradost.cloudstream3.utils.SubtitleHelper].
+     *
+     * See locales on:
+     * https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/availableLocales.json
+     * https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+     * https://android.googlesource.com/platform/frameworks/base/+/android-16.0.0_r2/core/res/res/values/locale_config.xml
+     * https://iso639-3.sil.org/code_tables/639/data/all
+    */
+    fun setLocale(context: Context?, languageTag: String?) {
+        if (context == null || languageTag == null) return
+        val locale = Locale.forLanguageTag(languageTag)
         val resources: Resources = context.resources
         val config = resources.configuration
         Locale.setDefault(locale)
@@ -206,6 +208,7 @@ object CommonActivity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             context.createConfigurationContext(config)
+
         @Suppress("DEPRECATION")
         resources.updateConfiguration(
             config,
@@ -333,6 +336,8 @@ object CommonActivity {
                 "AmoledLight" -> R.style.AmoledModeLight
                 "Monet" -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                     R.style.MonetMode else R.style.AppTheme
+                "Dracula" -> R.style.DraculaMode
+                "Lavender" -> R.style.LavenderMode
 
                 else -> R.style.AppTheme
             }

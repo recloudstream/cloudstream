@@ -19,6 +19,8 @@ import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.Coroutines.mainWork
 import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToLangTagIETF
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromLanguageToTagIETF
 import com.lagradost.nicehttp.RequestBodyTypes
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -481,7 +483,17 @@ abstract class MainAPI {
     /** used to keep track when last homepage request was in unixtime ms */
     var lastHomepageRequest: Long = 0L
 
-    open var lang = "en" // ISO_639_1 check SubtitleHelper
+    /**
+     * The language as an IETF BCP 47 conformant tag.
+     * Check [com.lagradost.cloudstream3.utils.SubtitleHelper].
+     *
+     * See locales on:
+     * https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/availableLocales.json
+     * https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+     * https://android.googlesource.com/platform/frameworks/base/+/android-16.0.0_r2/core/res/res/values/locale_config.xml
+     * https://iso639-3.sil.org/code_tables/639/data/all
+    */
+    open var lang = "en"
 
     /**If link is stored in the "data" string, so links can be instantly loaded*/
     open val instantLinkLoading = false
@@ -869,8 +881,8 @@ class Score private constructor(
             number /= 10L
         }
 
-        var trailingZeros = 0
-        for (i in chars.indices) {
+        var trailingZeros = MAX_ZEROS - decimals
+        for (i in (MAX_ZEROS - decimals) until chars.size) {
             if (chars[i] != '0') {
                 break
             }
@@ -1089,6 +1101,11 @@ data class SubtitleFile private constructor(
 ) {
     /** Backwards compatible constructor, mark this as deprecated when new stable comes out */
     constructor(lang: String, url: String) : this(lang = lang, url = url, headers = null)
+
+    /** Language code to properly filter auto select / download subtitles */
+    @Prerelease
+    val langTag: String?
+        get() = fromCodeToLangTagIETF(lang) ?: fromLanguageToTagIETF(lang, true)
 
     /** Backwards compatible copy */
     fun copy(

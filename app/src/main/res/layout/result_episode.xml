@@ -40,32 +40,36 @@
                 android:layout_height="match_parent">
         </View>
     </LinearLayout>-->
-    <androidx.core.widget.ContentLoadingProgressBar
-        android:id="@+id/episode_progress"
-        style="@android:style/Widget.Material.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="-1.5dp"
-        android:progressBackgroundTint="?attr/colorPrimary"
-        android:progressTint="?attr/colorPrimary"
-        tools:progress="50" />
+<!--    <androidx.core.widget.ContentLoadingProgressBar-->
+<!--        android:id="@+id/episode_progress"-->
+<!--        style="@android:style/Widget.Material.ProgressBar.Horizontal"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="5dp"-->
+<!--        android:layout_gravity="bottom"-->
+<!--        android:layout_marginBottom="-1.5dp"-->
+<!--        android:progressBackgroundTint="?attr/colorPrimary"-->
+<!--        android:progressTint="?attr/colorPrimary"-->
+<!--        tools:progress="50" />-->
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:foreground="?android:attr/selectableItemBackgroundBorderless">
 
-        <ImageView
-            android:id="@+id/episode_play"
+        <FrameLayout
+            android:id="@+id/watch_progress_container"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:contentDescription="@string/episode_play_img_des"
-            android:src="@drawable/ic_baseline_play_arrow_24"
-            app:tint="?attr/textColor" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:id="@+id/episode_play_icon"
+                style="@style/ContinueWatchingPlayUnderlayProgress"/>
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/episode_progress"
+                style="@style/ContinueWatchingCircularProgress" />
+        </FrameLayout>
         <!--marquee_forever-->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/episode_filler"

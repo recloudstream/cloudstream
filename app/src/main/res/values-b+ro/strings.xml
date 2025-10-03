@@ -1,0 +1,661 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
+    <string name="cast_format" formatted="true">Distribuție: %s</string>
+    <string name="next_episode_format" formatted="true">Episodul %d va fi lansat în</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
+    <string name="next_episode_time_min_format" formatted="true">%dm</string>
+    <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
+    <string name="result_poster_img_des">Poster</string>
+    <string name="search_poster_img_des">Poster</string>
+    <string name="episode_poster_img_des">Poster Episod</string>
+    <string name="home_main_poster_img_des">Poster Principal</string>
+    <string name="home_next_random_img_des">Următorul la Întâmplare</string>
+    <string name="go_back_img_des">Înapoi</string>
+    <string name="home_change_provider_img_des">Schimbă furnizorul</string>
+    <string name="preview_background_img_des">Previzualizare în fundal</string>
+    <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
+    <string name="player_speed_text_format" formatted="true">Viteză (%.2fx)</string>
+    <string name="rated_format" formatted="true">Evaluare: %.1f</string>
+    <string name="new_update_format" formatted="true">Actualizare nouă găsită!
+\n%1$s -&gt; %2$s</string>
+    <string name="filler" formatted="true">Filler</string>
+    <string name="duration_format" formatted="true">%d min</string>
+    <!-- <string name="app_name">CloudStream</string> -->
+    <string name="title_home">Prima pagină</string>
+    <string name="title_search">Căutare</string>
+    <string name="title_downloads">Descărcări</string>
+    <string name="title_settings">Setări</string>
+    <string name="search_hint">Căutare…</string>
+    <string name="search_hint_site" formatted="true">Căutați %s…</string>
+    <string name="no_data">Fără date</string>
+    <string name="episode_more_options_des">Mai multe opțiunii</string>
+    <string name="next_episode">Episodul următor</string>
+    <string name="result_tags">Gen</string>
+    <string name="result_share">Distribuie</string>
+    <string name="result_open_in_browser">Deschide în browser</string>
+    <string name="skip_loading">Săriți încărcarea</string>
+    <string name="loading">Se încarcă…</string>
+    <string name="type_watching">În curs de vizualizare</string>
+    <string name="type_on_hold">În așteptare</string>
+    <string name="type_completed">Finalizat</string>
+    <string name="type_dropped">Renunțat</string>
+    <string name="type_plan_to_watch">Planificare pentru a urmări</string>
+    <string name="type_re_watching">Reurmat</string>
+    <string name="play_movie_button">Urmărește</string>
+    <string name="play_torrent_button">Stream Torrent</string>
+    <string name="pick_source">Surse</string>
+    <string name="pick_subtitle">Subtitrare</string>
+    <string name="reload_error">Încercați să vă conectați din nou…</string>
+    <string name="go_back">Înapoi</string>
+    <string name="play_episode">Redă episodul</string>
+    <string name="download">Descărcare</string>
+    <string name="downloaded">Descărcat</string>
+    <string name="downloading">Se descarcă</string>
+    <string name="download_paused">Descărcare oprită</string>
+    <string name="download_started">Descărcare începută</string>
+    <string name="download_failed">Descărcare eșuată</string>
+    <string name="download_canceled">Descărcare anulată</string>
+    <string name="download_done">Descărcare finalizată</string>
+    <string name="stream">Stream de rețea</string>
+    <string name="error_loading_links_toast">Eroare la încărcarea linkurilor</string>
+    <string name="download_storage_text">Stocare internă</string>
+    <string name="app_dubbed_text">Dub</string>
+    <string name="app_subbed_text">Sub</string>
+    <string name="popup_delete_file">Șterge fișierul</string>
+    <string name="popup_play_file">Redare fișier</string>
+    <string name="popup_resume_download">Continuați descărcarea</string>
+    <string name="popup_pause_download">Opriți descărcarea</string>
+    <string name="pref_disable_acra">Dezactivați raportarea automată a erorilor</string>
+    <string name="home_more_info">Mai multe informații</string>
+    <string name="home_expanded_hide">Ascunde</string>
+    <string name="home_play">Începe</string>
+    <string name="home_info">Informații</string>
+    <string name="filter_bookmarks">Filtrează marcajele</string>
+    <string name="error_bookmarks_text">Marcaje</string>
+    <string name="action_remove_from_bookmarks">Eliminează</string>
+    <string name="action_add_to_bookmarks">Adaugă</string>
+    <string name="sort_apply">Aplică</string>
+    <string name="sort_copy">Copiază</string>
+    <string name="sort_close">Închide</string>
+    <string name="sort_clear">Elimină</string>
+    <string name="sort_save">Salvează</string>
+    <string name="player_speed">Viteză video</string>
+    <string name="subtitles_settings">Setări de subtitrare</string>
+    <string name="subs_text_color">Culoarea textului</string>
+    <string name="subs_outline_color">Culoare de contur</string>
+    <string name="subs_background_color">Culoarea de fundal</string>
+    <string name="subs_window_color">Culoarea ferestră</string>
+    <string name="subs_edge_type">Tipul de margine</string>
+    <string name="subs_subtitle_elevation">Elevație subtitlu</string>
+    <string name="subs_font">Font</string>
+    <string name="subs_font_size">Dimensiune</string>
+    <string name="search_provider_text_providers">Căutare în funcție de furnizor</string>
+    <string name="search_provider_text_types">Căutare în funcție de tip</string>
+    <string name="benene_count_text">%d banane oferite dezvoltatorilor</string>
+    <string name="benene_count_text_none">Nu s-au oferit banane</string>
+    <string name="subs_auto_select_language">Selectare automată a limbii</string>
+    <string name="subs_download_languages">Descarcă limbi străine</string>
+    <string name="subs_subtitle_languages">Limba subtitrării</string>
+    <string name="subs_hold_to_reset_to_default">Țineți apăsat pentru a reseta la valorile implicite</string>
+    <string name="subs_import_text" formatted="true">Importați fonturi prin introducerea lor în %s</string>
+    <string name="continue_watching">Continuați să urmăriți</string>
+    <string name="action_remove_watching">Eliminați</string>
+    <string name="action_open_watching">Mai multe informații</string>
+    <string name="action_open_play">@string/home_play</string>
+    <string name="vpn_might_be_needed">Există probabilitatea necesitații unui VPN pentru ca acest furnizor să funcționeze corespunzător</string>
+    <string name="vpn_torrent">Acest furnizor este un torrent, se recomandă un VPN</string>
+    <string name="provider_info_meta">Metadatele nu sunt furnizate de către site, există posibilitatea ca încărcarea videoclipului să eșueze.</string>
+    <string name="torrent_plot">Descriere</string>
+    <string name="normal_no_plot">Scenariul este indisponibil</string>
+    <string name="torrent_no_plot">Descrierea este indisponibilă</string>
+    <string name="show_log_cat">Arată Logcat 🐈</string>
+    <string name="picture_in_picture">Picture-in-Picture</string>
+    <string name="picture_in_picture_des">Continuă redarea într-un mini-player peste alte aplicații</string>
+    <string name="player_size_settings">Buton de redimensionare video</string>
+    <string name="player_size_settings_des">Eliminați marginile negre</string>
+    <string name="player_subtitles_settings">Subtitrare</string>
+    <string name="player_subtitles_settings_des">Setări de subtitrare</string>
+    <string name="chromecast_subtitles_settings">Subtitrări Chromecast</string>
+    <string name="chromecast_subtitles_settings_des">Setări pentru subtitrare Chromecast</string>
+    <string name="eigengraumode_settings">viteza de redare</string>
+    <string name="swipe_to_seek_settings">Derulați spre înainte/înapoi</string>
+    <string name="swipe_to_seek_settings_des">Derulați dintr-o parte în alta pentru a controla timpul de difuzare a videoclipului</string>
+    <string name="swipe_to_change_settings">Derulați pentru a modifica setările</string>
+    <string name="swipe_to_change_settings_des">Glisați în sus sau în jos pe partea stângă sau dreaptă pentru a schimba luminozitatea sau volumul</string>
+    <string name="double_tap_to_seek_settings">Atingeți de două ori pentru a merge înainte/înapoi</string>
+    <string name="double_tap_to_pause_settings">Atingeți de două ori pentru a pune pauză</string>
+    <string name="double_tap_to_seek_settings_des">Atingeți de două ori partea stângă sau dreaptă a ecranului pentru a derula rapid înainte sau înapoi videoclipul</string>
+    <string name="double_tap_to_pause_settings_des">Atingeți de două ori în mijloc pentru a pune pauză</string>
+    <string name="double_tap_to_seek_amount_settings">Cantitatea de căutare al player-ului (secunde)</string>
+    <string name="use_system_brightness_settings">Utilizați luminozitatea sistemului</string>
+    <string name="use_system_brightness_settings_des">Utilizați luminozitatea sistemului în playerul aplicației în loc de o suprapunere întunecată</string>
+    <!--<string name="episode_sync_settings">Update watch progress</string>-->
+    <string name="episode_sync_settings_des">Sincronizează automat episoadele vizionate</string>
+    <string name="restore_settings">Recuperează datele din copia de rezervă</string>
+    <string name="backup_settings">Copie de rezervă a datelor</string>
+    <string name="restore_success">Fișier de rezervă încărcat</string>
+    <string name="restore_failed_format" formatted="true">Imposibilitatea de a restaura datele din %s</string>
+    <string name="backup_success">Date stocate</string>
+    <string name="backup_failed">Permisiunea de arhivare lipșe, vă rugăm să încercați din nou.</string>
+    <string name="backup_failed_error_format">Eroare de backup %s</string>
+    <string name="search">Căutare</string>
+    <string name="category_account">Conturi și Securitate</string>
+    <string name="category_updates">Actualizări și copii de rezervă</string>
+    <string name="settings_info">Informații</string>
+    <string name="advanced_search">Căutare avansată</string>
+    <string name="advanced_search_des">Împărțiți rezultatele căutării în funcție de furnizor</string>
+    <string name="bug_report_settings_off">Trimiteți date numai în cazul unui accident</string>
+    <string name="bug_report_settings_on">Nu trimiteți niciun fel de date</string>
+    <string name="show_fillers_settings">Afișează etichetele [filler] pentru anime</string>
+    <string name="show_trailers_settings">Arată trailerul</string>
+    <string name="kitsu_settings">Arată afișele de la Kitsu</string>
+    <string name="updates_settings">Afișați actualizările aplicației</string>
+    <string name="updates_settings_des">Căutați automat noi actualizări după pornirea aplicației.</string>
+    <string name="uprereleases_settings">Actualizați la prerelease</string>
+    <string name="uprereleases_settings_des">Căutați actualizări ale versiunilor preliminare în loc să căutați doar versiunile complete</string>
+    <string name="github">GitHub</string>
+    <string name="lightnovel">&gt;Aplicație Light Novel realizată de aceiași dezvoltator</string>
+    <string name="anim">Aplicație Anime realizată de aceiași dezvoltatorilor</string>
+    <string name="discord">Alăturați-vă pe Discord</string>
+    <string name="benene">Oferiți dezvoltatorilor o banană</string>
+    <string name="benene_des">Oferă o banană</string>
+    <string name="app_language">Limba aplicației</string>
+    <string name="no_chromecast_support_toast">Acest furnizor nu are suport pentru Chromecast</string>
+    <string name="no_links_found_toast">Nu s-au găsit link-uri</string>
+    <string name="copy_link_toast">Link copiat în clipboard</string>
+    <string name="play_episode_toast">Redare episod</string>
+    <string name="subs_default_reset_toast">Restabilirea la valorile implicite</string>
+    <string name="acra_report_toast">Ne pare rău, aplicația s-a blocat. Un raport de eroare anonim va fi trimis dezvoltatorilor</string>
+    <string name="season">Sezonul</string>
+    <string name="no_season">Nu există sezon</string>
+    <string name="episode">Episodul</string>
+    <string name="episodes">Episoade</string>
+    <string name="season_short">S</string>
+    <string name="episode_short">E</string>
+    <string name="no_episodes_found">Nu s-au găsit episoade</string>
+    <string name="delete_file">Ștergeți fișierul</string>
+    <string name="delete">Ștergeți</string>
+    <string name="cancel">Anulează</string>
+    <string name="pause">Pauză</string>
+    <string name="resume">Continuă</string>
+    <string name="go_back_30">-30</string>
+    <string name="go_forward_30">+30</string>
+    <string name="delete_message" formatted="true">Sunteți pe cale să ștergeți definitiv %s
+\nSunteți sigur?</string>
+    <string name="resume_time_left" formatted="true">%dm
+\nrămas</string>
+    <string name="status_ongoing">În curs de desfășurare</string>
+    <string name="status_completed">Finalizat</string>
+    <string name="status">Status</string>
+    <string name="year">Anul</string>
+    <string name="rating">Recenzie</string>
+    <string name="duration">Durată</string>
+    <string name="site">Site</string>
+    <string name="synopsis">Rezumat</string>
+    <string name="queued">În coada de așteptare</string>
+    <string name="no_subtitles">Nu există subtitrare</string>
+    <string name="action_default">Implicit</string>
+    <string name="free_storage">Liber</string>
+    <string name="used_storage">Folosit</string>
+    <string name="app_storage">Aplicație</string>
+    <!--plural-->
+    <string name="movies">Filme</string>
+    <string name="tv_series">Seriale TV</string>
+    <string name="cartoons">Desene Animate</string>
+    <string name="anime">Anime</string>
+    <string name="ova">OVA</string>
+    <string name="torrent">Torrent</string>
+    <string name="documentaries">Documentare</string>
+    <string name="asian_drama">Drame asiatice</string>
+    <!--singular-->
+    <string name="movies_singular">Film</string>
+    <string name="tv_series_singular">Serie TV</string>
+    <string name="cartoons_singular">Desen Animat</string>
+    <string name="anime_singular">Anime</string>
+    <string name="ova_singular">OVA</string>
+    <string name="torrent_singular">Torrent</string>
+    <string name="documentaries_singular">Documentar</string>
+    <string name="asian_drama_singular">Drama asiatică</string>
+    <string name="source_error">Eroare de sursă</string>
+    <string name="remote_error">Eroare de la distanță</string>
+    <string name="render_error">Eroare de randare</string>
+    <string name="unexpected_error">Eroare neașteptată a playerului</string>
+    <string name="storage_error">Eroare de descărcare; verificați permisiunile de stocare</string>
+    <string name="episode_action_chromecast_episode">Chromecast</string>
+    <string name="episode_action_chromecast_mirror">Chromecast alternativ</string>
+    <string name="episode_action_play_in_app">Redă în Aplicație</string>
+    <string name="episode_action_play_in_format">Redă în %s</string>
+    <string name="episode_action_auto_download">Auto-descărcare</string>
+    <string name="episode_action_download_mirror">Descărcă prin Alernativă</string>
+    <string name="episode_action_reload_links">Reîncărcare link-uri</string>
+    <string name="episode_action_download_subtitle">Descărcare subtitrări</string>
+    <string name="show_hd">Etichetă de calitate</string>
+    <string name="show_dub">Etichetă Dub</string>
+    <string name="show_sub">Etichetă Sub</string>
+    <string name="show_title">Titlu</string>
+    <string name="poster_ui_settings">Etichete de pe postere</string>
+    <string name="no_update_found">Nu s-au găsit actualizări</string>
+    <string name="check_for_update">Verifică pentru actualizări</string>
+    <string name="video_lock">Blocare</string>
+    <string name="video_aspect_ratio_resize">Redimensionare</string>
+    <string name="video_source">Sursă</string>
+    <string name="video_skip_op">Săriți peste intro</string>
+    <string name="dont_show_again">Nu se mai arată din nou</string>
+    <string name="skip_update">Treci peste această actualizare</string>
+    <string name="update">Actualizare</string>
+    <string name="watch_quality_pref">Calitatea preferată (WiFi)</string>
+    <string name="limit_title">Limitarea caracterelor de titlu în player</string>
+    <string name="limit_title_rez">Rezoluția playerului video</string>
+    <string name="video_buffer_size_settings">Dimensiunea cache-ului video</string>
+    <string name="video_buffer_length_settings">Lungimea buffer-ului video</string>
+    <string name="video_buffer_disk_settings">Dimensiunea cache-ului video pe disc</string>
+    <string name="video_buffer_clear_settings">Ștergeți memoria cache de imagine și video</string>
+    <string name="video_ram_description">Cauzează blocări dacă este setat prea mare pe dispozitive cu memorie redusă, cum ar fi Android TV.</string>
+    <string name="video_disk_description">Cauzează probleme dacă este setat prea mare pe dispozitive cu spațiu de stocare redus, cum ar fi Android TV.</string>
+    <string name="dns_pref">DNS peste HTTPS</string>
+    <string name="dns_pref_summary">Folositor pentru evitarea blocajelor ISP</string>
+    <string name="add_site_pref">Adaugați site-ul</string>
+    <string name="remove_site_pref">Eliminați site-ul</string>
+    <string name="add_site_summary">Adăugați o copie a unui site existent, cu o adresă URL diferită</string>
+    <string name="download_path_pref">Locul descărcării</string>
+    <string name="nginx_url_pref">Adresa URL a serverului NGNIX</string>
+    <string name="display_subbed_dubbed_settings">Afișarea anime-urilor dublate/subtitrate</string>
+    <string name="resize_fit">Adaptare la ecran</string>
+    <string name="resize_fill">Întindere</string>
+    <string name="resize_zoom">Mărire</string>
+    <string name="legal_notice">Aviz juridic (declinarea responsabilității și drepturi de autor)</string>
+    <string name="legal_notice_text">Orice probleme legale privind conținutul acestei aplicații ar trebui să fie rezolvate cu furnizorii și gazdele actuale de fișiere, întrucât noi nu suntem afiliați cu aceștia. În caz de încălcare a drepturilor de autor, vă rugăm să contactați direct părțile responsabile sau site-urile de streaming. Aplicația este destinată exclusiv utilizării educaționale și personale. CloudStream 3 nu găzduiește niciun fel de conținut în aplicație și nu are niciun control asupra conținutului media care este pus sau retras. CloudStream 3 funcționează ca orice alt motor de căutare, cum ar fi Google. CloudStream 3 nu găzduiește, nu încarcă și nu gestionează niciun videoclip, film sau conținut. Pur și simplu navighează, adună și afișează linkuri într-o interfață convenabilă și ușor de utilizat. Pur și simplu, acesta extrage paginile web ale unor terțe părți care sunt accesibile publicului prin intermediul oricărui browser web obișnuit. Este responsabilitatea utilizatorului de a evita orice acțiune care ar putea încălca legile care guvernează locația sa. Utilizați CloudStream 3 pe propria răspundere.</string>
+    <string name="category_general">General</string>
+    <string name="random_button_settings">Aleatoriu</string>
+    <string name="random_button_settings_desc">Afișează butonul pentru aleatoriu pe Pagina Principală și în Bibliotecă</string>
+    <string name="provider_lang_settings">Limbi ale extensiei</string>
+    <string name="app_layout">Aplicație de prezentare</string>
+    <string name="preferred_media_settings">Media preferată</string>
+    <string name="subtitles_encoding">Codificarea subtitrărilor</string>
+    <string name="category_ui">Interfața utilizatorului</string>
+    <string name="automatic">Auto</string>
+    <string name="tv_layout">Dispunere TV</string>
+    <string name="phone_layout">Dispunere telefonică</string>
+    <string name="emulator_layout">Dispunerea emulatorului</string>
+    <string name="primary_color_settings">Culoare primară</string>
+    <string name="app_theme_settings">Tema aplicației</string>
+    <string name="bottom_title_settings">Locația titlului posterului</string>
+    <string name="bottom_title_settings_des">Locația titlului de pe poster</string>
+    <!-- account stuff -->
+    <string name="example_password">parola123</string>
+    <string name="example_username">Numele utilizatorului/utilizatoarei</string>
+    <string name="example_email">davidpopovici@gmail.com</string>
+    <string name="example_ip">127.0.0.1</string>
+    <string name="example_site_name">NouNumeSite</string>
+    <string name="example_site_url">https://exemplu.com</string>
+    <string name="example_lang_name">Cod limbă (RO)</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
+    <string name="account">Cont</string>
+    <string name="logout">Deconectare</string>
+    <string name="login">Conectare</string>
+    <string name="switch_account">Schimbă cont</string>
+    <string name="add_account">Adaugă cont</string>
+    <string name="create_account">Creează cont</string>
+    <string name="add_sync">Adăugați tracking</string>
+    <string name="added_sync_format" formatted="true">Adaugat: %s</string>
+    <string name="upload_sync">Sincronizare</string>
+    <string name="sync_score">Recenzie</string>
+    <string name="sync_score_format" formatted="true">%d / 10</string>
+    <string name="sync_total_episodes_none">/??</string>
+    <string name="sync_total_episodes_some" formatted="true">/%d</string>
+    <string name="authenticated_user" formatted="true">%s autentificat/ă</string>
+    <string name="authenticated_user_fail" formatted="true">Nu am putut să mă autentific la %s</string>
+    <!-- ============ -->
+    <string name="none">Nu există</string>
+    <string name="normal">Normal</string>
+    <string name="all">Tot</string>
+    <string name="max">Maxim</string>
+    <string name="min">Minim</string>
+    <string name="subtitles_outline">Contur</string>
+    <string name="subtitles_depressed">Deprimat</string>
+    <string name="subtitles_shadow">Umbră</string>
+    <string name="subtitles_raised">Relief</string>
+    <string name="subtitle_offset">Sincronizare subtitrări</string>
+    <string name="subtitle_offset_hint">1000 ms</string>
+    <string name="subtitle_offset_title">Delay subtitrare</string>
+    <string name="subtitle_offset_extra_hint_later_format">Utilizează acesta dacă subtitrările sunt afișate %d ms prea devreme</string>
+    <string name="subtitle_offset_extra_hint_before_format">Utilizează acesta dacă subtitrările sunt afișate %d ms prea târziu</string>
+    <string name="subtitle_offset_extra_hint_none_format">Fără întârziere la subtitrare</string>
+    <!--
+    Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
+    see: 
+	https://en.wikipedia.org/w/index.php?title=Pangram&oldid=225849300
+	https://en.wikipedia.org/wiki/The_quick_brown_fox_jumps_over_the_lazy_dog
+    -->
+    <string name="subtitles_example_text">Vulpea maro iute sare peste câinele leneș</string>
+    <string name="recommended">Recomandări</string>
+    <string name="player_loaded_subtitles" formatted="true">A fost încărcat %s</string>
+    <string name="player_load_subtitles">Încărcați din fișier</string>
+    <string name="player_load_subtitles_online">Încărcare de pe Internet</string>
+    <string name="downloaded_file">Fișier descărcat</string>
+    <string name="actor_main">Protagonist</string>
+    <string name="actor_supporting">Suport</string>
+    <string name="actor_background">Secundar</string>
+    <string name="home_source">Sursa</string>
+    <string name="home_random">Aleatoriu</string>
+    <string name="coming_soon">În curând…</string>
+    <string name="quality_cam">Cam</string>
+    <string name="quality_cam_rip">Cam</string>
+    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_hq">HQ</string>
+    <string name="quality_hd">HD</string>
+    <string name="quality_ts">TS</string>
+    <string name="quality_tc">TC</string>
+    <string name="quality_blueray">Blu-ray</string>
+    <string name="quality_workprint">WP</string>
+    <string name="quality_dvd">DVD</string>
+    <string name="quality_4k">4K</string>
+    <string name="quality_sd">SD</string>
+    <string name="quality_uhd">UHD</string>
+    <string name="quality_hdr">HDR</string>
+    <string name="quality_sdr">SDR</string>
+    <string name="quality_webrip">Web</string>
+    <string name="poster_image">Poster</string>
+    <string name="category_player">Player</string>
+    <string name="resolution_and_title">Titlu și rezoluție</string>
+    <string name="title">Titlu</string>
+    <string name="resolution">Rezoluție</string>
+    <string name="error_invalid_id">ID-ul invalid</string>
+    <string name="error_invalid_data">Date invalide</string>
+    <string name="error">Eroare</string>
+    <!--<string name="subtitles_remove_captions">Remove closed captions from subtitles</string>-->
+    <!--<string name="subtitles_remove_bloat">Remove bloat from subtitles</string>-->
+    <!--<string name="extras">Extra</string>-->
+    <string name="trailer">Trailer</string>
+    <string name="history">Istoric</string>
+    <string name="action_mark_as_watched">Marcați ca vizionat</string>
+    <string name="autoplay_next_settings">Redă automat următorul episod</string>
+    <string name="app_name">CloudStream</string>
+    <string name="play_trailer_button">Vizionează trailerul</string>
+    <string name="update_started">Actualizarea a început</string>
+    <string name="episode_sync_settings">Actualizați progresul ceasului</string>
+    <string name="autoplay_next_settings_des">Începe următorul episod când se termină episodul curent</string>
+    <string name="pref_filter_search_quality">Ascundeți calitatea video selectată în rezultatele căutării</string>
+    <string name="play_livestream_button">Redare Livestream</string>
+    <string name="library">Librărie</string>
+    <string name="test_log">Log</string>
+    <string name="browser">Browser</string>
+    <string name="play_with_app_name">Joacă cu CloudStream</string>
+    <string name="automatic_plugin_updates">Actualizare plugin automată</string>
+    <string name="automatic_plugin_download">Descarcă plugin-uri automat</string>
+    <string name="others">Altele</string>
+    <string name="test_passed">Trecut</string>
+    <string name="start">Start</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
+    <string name="nsfw">NSFW</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="android_tv_interface_on_seek_settings">Jucătorul afișat - Cantitatea de căutare</string>
+    <string name="android_tv_interface_off_seek_settings">Jucător ascuns - Sumă de căutare</string>
+    <string name="livestreams">Livestream-uri</string>
+    <string name="nsfw_singular">NSFW</string>
+    <string name="test_failed">Eșuat</string>
+    <string name="android_tv_interface_on_seek_settings_summary">Suma de căutare utilizată atunci când jucătorul este vizibil</string>
+    <string name="live_singular">Livestream</string>
+    <string name="android_tv_interface_off_seek_settings_summary">Cantitatea de căutare folosită când jucătorul este ascuns</string>
+    <string name="watch_quality_pref_data">Calitatea preferată (Date Mobile)</string>
+    <string name="other_singular">Video</string>
+    <string name="apk_installer_settings">Instalator APK</string>
+    <string name="automatic_plugin_download_summary">Instalează automat toate plugin-urile neinstalate din depozite adăugate.</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
+    <string name="apk_installer_settings_des">Unele telefoane nu acceptă noul program de instalare a pachetului. Încercați opțiunea veche dacă nu se instalează actualizările.</string>
+    <string name="redo_setup_process">Refaceți procesul de configurare</string>
+    <string name="skip_setup">Treci peste partea de configurare</string>
+    <string name="batch_download">Descărcare pe loturi</string>
+    <string name="is_adult">18+</string>
+    <string name="extension_rating" formatted="true">Evaluare: %s</string>
+    <string name="skip_type_format" formatted="true">Treci peste %s</string>
+    <string name="app_not_found_error">Aplicația nu a fost găsită</string>
+    <string name="skip_type_mixed_ed">Încheiere mixat</string>
+    <string name="clear_history">Ștergeți istoricul</string>
+    <string name="skip_type_intro">Introducere</string>
+    <string name="yes">Da</string>
+    <string name="preferred_media_subtext">Ce vrei să vezi</string>
+    <string name="skip_type_recap">Recapitulare</string>
+    <string name="sort_alphabetical_a">Alfabetic (A la Z)</string>
+    <string name="skip_type_ed">Încheiere</string>
+    <string name="subscription_deleted">Dezabonat de la %s</string>
+    <string name="plugins_not_downloaded" formatted="true">Nu s-a descărcat: %d</string>
+    <string name="view_public_repositories_button">Vezi depozite din comunitate</string>
+    <string name="apk_installer_package_installer">Instalator de pachete</string>
+    <string name="extension_status">Stare</string>
+    <string name="plugin_load_fail" formatted="true">Nu se poate încărca %s</string>
+    <string name="audio_tracks">Piste audio</string>
+    <string name="referer">Referer (opțional)</string>
+    <string name="skip_type_op">Deschidere</string>
+    <string name="pref_category_extensions">Extensii</string>
+    <string name="pref_category_player_layout">Layout</string>
+    <string name="clipboard_too_large">Prea mult text. Nu s-a putut salva în clipboard.</string>
+    <string name="pref_category_links">Linkuri</string>
+    <string name="pref_category_ui_features">Funcții</string>
+    <string name="extension_authors">Autori</string>
+    <string name="crash_reporting_title">Raportarea accidentelor</string>
+    <string name="add_repository">Adaugă depozit</string>
+    <string name="empty_library_no_accounts_message">Biblioteca ta este goală :(
+\nConectați-vă într-un cont de bibliotecă sau adăugați emisiuni la biblioteca locală.</string>
+    <string name="subtitles_remove_captions">Eliminați subtitrările închise din subtitrări</string>
+    <string name="setup_extensions_subtext">Descărcați lista de site-uri pe care doriți să le utilizați</string>
+    <string name="sort_rating_desc">Evaluare (Ridicat la Scăzut)</string>
+    <string name="extensions">Extensii</string>
+    <string name="delete_repository">Ștergeți depozitul</string>
+    <string name="extension_size">Dimensiune</string>
+    <string name="pref_category_cache">Cache</string>
+    <string name="pref_category_player_features">Funcțiile player-ului</string>
+    <string name="plugin_loaded">Plugin încărcat</string>
+    <string name="safe_mode_crash_info">Vezi informații despre accident</string>
+    <string name="open_with">Deschideți cu</string>
+    <string name="subtitles_remove_bloat">Eliminați bloat din subtitrări</string>
+    <string name="plugins_updated" formatted="true">S-au actualizat %d plugin-uri</string>
+    <string name="sort_rating_asc">Evaluare (Scăzut la Ridicat)</string>
+    <string name="setup_done">Terminat</string>
+    <string name="extension_version">Versiune</string>
+    <string name="pref_category_backup">Backup</string>
+    <string name="extras">Suplimente</string>
+    <string name="sort_updated_new">Actualizat (Nou la Vechi)</string>
+    <string name="app_layout_subtext">Schimbați aspectul aplicației pentru a se potrivi dispozitivului dvs</string>
+    <string name="repository_name_hint">Nume de depozit</string>
+    <string name="single_plugin_disabled" formatted="true">%s (Dezactivat)</string>
+    <string name="no">Nu</string>
+    <string name="subscription_new">Abonat la %s</string>
+    <string name="delayed_update_notice">Aplicația va fi actualizată la ieșire</string>
+    <string name="pref_category_bypass">Ocoliri ISP</string>
+    <string name="previous">Anterior</string>
+    <string name="sort">Sortează</string>
+    <string name="select_library">Selectați Biblioteca</string>
+    <string name="subtitles_filter_lang">Filtrați în funcție de limba media preferată</string>
+    <string name="subscription_episode_released">Episodul %d a fost lansat!</string>
+    <string name="pref_category_android_tv">Android TV</string>
+    <string name="provider_languages_tip">Urmăriți videoclipuri în aceste limbi</string>
+    <string name="revert">Revenire</string>
+    <string name="pref_category_actions">Acțiuni</string>
+    <string name="sort_alphabetical_z">Alfabetic (Z la A)</string>
+    <string name="error_invalid_url">URL invalid</string>
+    <string name="safe_mode_description">Toate extensiile au fost dezactivate din cauza unei defecțiuni pentru a vă ajuta să o găsiți pe cea care cauzează probleme.</string>
+    <string name="update_notification_downloading">Se descarcă actualizarea aplicației…</string>
+    <string name="blank_repo_message">CloudStream nu are niciun site instalat din start. Trebuie să instalați site-urile din depozite.
+\n
+\nAlăturați-vă Discord-ului nostru sau căutați online.</string>
+    <string name="batch_download_start_format" formatted="true">A început să descarce %1$d %2$s…</string>
+    <string name="safe_mode_title">Mod sigur pornit</string>
+    <string name="safe_mode_file">Fișier Mod Sigur găsit!
+\nNu încarcă nicio extensie la pornire până când fișierul nu este eliminat.</string>
+    <string name="action_remove_from_watched">Scoateți de la urmărit</string>
+    <string name="sort_updated_old">Actualizat (Vechi la Nou)</string>
+    <string name="apply_on_restart">Reporniți aplicația pentru a vedea schimbările.</string>
+    <string name="extension_description">Descriere</string>
+    <string name="plugin_downloaded">Plugin Descărcat</string>
+    <string name="confirm_exit_dialog">Sunteți sigur că vreți să ieșiți?</string>
+    <string name="empty_library_logged_in_message">Se pare că această listă este goală, încercați să treceți la o alta.</string>
+    <string name="sort_by">Sortați după</string>
+    <string name="player_settings_play_in_app">Player intern</string>
+    <string name="pref_category_defaults">Prestabile</string>
+    <string name="repository_url_hint">URL-ul depozitului</string>
+    <string name="stop">Oprește</string>
+    <string name="pref_category_looks">Aspecturi</string>
+    <string name="plugin_deleted">Plugin Șters</string>
+    <string name="pref_category_gestures">Gesturi</string>
+    <string name="update_notification_failed">Nu s-a putut instala noua versiune a aplicației</string>
+    <string name="tracks">Piste</string>
+    <string name="restart">Repornește</string>
+    <string name="enable_nsfw_on_providers">Activează conținutul pentru adulți pe extensiile suportate</string>
+    <string name="jsdelivr_enabled">Nu s-a putut ajunge la GitHub. Se activează proxy-ul jsDelivr…</string>
+    <string name="jsdelivr_proxy">Proxy GitHub</string>
+    <string name="jsdelivr_proxy_summary">Ocolește blocarea URL-urilor brute de pe GitHub folosind jsDelivr. Poate cauza întârzieri în actualizări cu câteva zile.</string>
+    <string name="next">Următorul</string>
+    <string name="batch_download_nothing_to_download_format" formatted="true">Toate %s deja descărcate</string>
+    <string name="plugins_downloaded" formatted="true">Descărcat: %d</string>
+    <string name="plugins_disabled" formatted="true">Dezactivat: %d</string>
+    <string name="uppercase_all_subtitles">Toate subtitrările cu majuscule</string>
+    <string name="download_all_plugins_from_repo">Descărcați toate plugin-urile din acest depozit?</string>
+    <string name="subscription_in_progress_notification">Se actualizează emisiunile abonate</string>
+    <string name="subscription_list_name">Abonat</string>
+    <string name="view_public_repositories_button_short">Lista publică</string>
+    <string name="apk_installer_legacy">Moştenit</string>
+    <string name="category_provider_test">Test de furnizor</string>
+    <string name="category_providers">Furnizori</string>
+    <string name="network_adress_example">https://example.com/example.mp4</string>
+    <string name="delete_repository_plugins">Acest lucru va șterge, de asemenea, toate plugin-urile din depozit</string>
+    <string name="update_notification_installing">Se instalează actualizarea aplicației…</string>
+    <string name="batch_download_finish_format" formatted="true">S-a descărcat %1$d %2$s</string>
+    <string name="extension_types">Suportat</string>
+    <string name="hls_playlist">Playlist HLS</string>
+    <string name="video_tracks">Piste video</string>
+    <string name="enable_skip_op_from_database_des">Afișează opțiunea de omitere a ferestrelor pop-up pentru început/sfârșit</string>
+    <string name="all_languages_preference">Toate limbile</string>
+    <string name="skip_type_mixed_op">Deschidere mixat</string>
+    <string name="skip_type_creddits">Credite</string>
+    <string name="extension_language">Limbă</string>
+    <string name="plugin_singular">plugin</string>
+    <string name="plugin">plugin-uri</string>
+    <string name="extension_install_first">Instalați mai întâi extensia</string>
+    <string name="player_pref">Player video preferat</string>
+    <string name="pref_category_app_updates">Actualizări al aplicației</string>
+    <string name="pref_category_subtitles">Subtitrări</string>
+    <string name="disable">Dezactivați</string>
+    <string name="quality_profile_help">Aici puteți schimba modul în care sunt ordonate sursele. Dacă un videoclip are o prioritate mai mare, acesta va apărea mai sus în selecția surselor. Suma dintre prioritatea sursei și prioritatea calității reprezintă prioritatea video.
+\n
+\nSursa A: 3
+\nCalitate B: 7
+\nVa avea o prioritate video combinată de 10.
+\n
+\nNOTĂ: Dacă suma este 10 sau mai mare, playerul va sări automat peste încărcare atunci când este încărcat link-ul respectiv!</string>
+    <string name="no_plugins_found_error">Nu s-a găsit plugin-uri în depozit</string>
+    <string name="no_repository_found_error">Nu s-a găsit depozitul, verificați URL-ul și încercați cu un VPN</string>
+    <string name="edit">Editați</string>
+    <string name="profiles">Profiluri</string>
+    <string name="help">Ajutor</string>
+    <string name="profile_number">Profilul %d</string>
+    <string name="wifi">Wi-FI</string>
+    <string name="mobile_data">Date mobile</string>
+    <string name="qualities">Calități</string>
+    <string name="profile_background_des">Profil de fundal</string>
+    <string name="set_default">Setați ca implicit</string>
+    <string name="use">Utilizați</string>
+    <string name="unable_to_inflate">UI nu a putut fi creată corect, acesta este un BUG MAJOR și trebuie raportat imediat %s</string>
+    <string name="automatic_plugin_download_mode_title">Selectați modul de filtrare a descărcării plugin-urilor</string>
+    <string name="already_voted">Ați votat deja</string>
+    <string name="duplicate_message_multiple" formatted="true">Elemente potențial duplicate au fost găsite în biblioteca ta:
+\n
+\n%s
+\n
+\nÎn ciuda acestui fapt, ai dori să adaugi acest alement, să le înlocuiești pe cele existente, sau să anulezi acțiunea?</string>
+    <string name="favorite_added">%s a fost adăugat la favoriți/te</string>
+    <string name="favorite_removed">%s a fost eliminat din favoriți/te</string>
+    <string name="action_add_to_favorites">Adaugă la favoriți/te</string>
+    <string name="action_remove_from_favorites">Elimină din favoriți/te</string>
+    <string name="duplicate_message_single" formatted="true">Se pare că un element potențial duplicat deja există în biblioteca ta: \'%s.\'
+\n
+\nÎn ciuda aceasta, ai dori să adaugi acest element, să îl înlocuiești pe cel existent, sau să anulezi acțiunea?</string>
+    <string name="enter_pin_with_name" formatted="true">Introduce PIN-ul pentru %s</string>
+    <string name="enter_current_pin">Introduce PIN-ul actual</string>
+    <string name="enter_pin">Introduce PIN-ul</string>
+    <string name="lock_profile">Blochează Profilul</string>
+    <string name="action_unsubscribe">Dezabonează-te</string>
+    <string name="action_subscribe">Abonează-te</string>
+    <string name="duplicate_add">Adaugă</string>
+    <string name="duplicate_replace">Înlocuiește</string>
+    <string name="duplicate_replace_all">Înlocuiește tot</string>
+    <string name="duplicate_title">Posibil Duplicat Găsit</string>
+    <string name="subscribe_tooltip">Notificare episod nou</string>
+    <string name="recommendations_tooltip">Arată sugestii</string>
+    <string name="speed_setting_summary">Adaugă o opțiune de viteză la player</string>
+    <string name="favorites_list_name">Favoriți/te</string>
+    <string name="backup_frequency">Frecvența de backup</string>
+    <string name="repo_copy_label">Numele și URL-ul depozitului</string>
+    <string name="toast_copied">Copiat!</string>
+    <string name="clipboard_permission_error">Eroare la accesarea Clipboard-ului. Te rog să încerci din nou.</string>
+    <string name="clipboard_unknown_error">Eroare la copiere. Te rog să copiezi logcat-ul și să contactezi suportul aplicației.</string>
+    <string name="pin_error_incorrect">PIN incorect. Te rog să încerci din nou.</string>
+    <string name="pin">PIN</string>
+    <string name="select_an_account">Selectați un cont</string>
+    <string name="manage_accounts">Administrați conturile</string>
+    <string name="edit_account">Editare cont</string>
+    <string name="logged_account" formatted="true">Conectat ca %s</string>
+    <string name="rotate_video">Rotire</string>
+    <string name="unfavorite">Nefavorite</string>
+    <string name="biometric_authentication_title">Deblocați CloudStream</string>
+    <string name="skip_startup_account_select_pref">Omiteți selecția contului la pornire</string>
+    <string name="links_reloaded_toast">Linkuri reîncărcate</string>
+    <string name="use_default_account">Utilizați contul implicit</string>
+    <string name="test_extensions_summary">Această testare este destinată doar dezvoltatorilor și nu verifică sau respinge funcționarea oricărei extensii.</string>
+    <string name="battery_dialog_message">Pentru a asigura descărcările neîntrerupte și notificările pentru serialele TV la care ești abonat, CloudStream are nevoie de permisiunea de a rula în fundal. Apăsând pe OK, vei fi direcționat către informațiile aplicației. Acolo, derulează la \"App battery usage\" și setează utilizarea bateriei la \"Unrestricted\". Te rog să reții, această permisiune nu înseamnă că CS3 îți va consuma bateria. Va opera în fundal doar când este necesar, cum ar fi atunci când primește notificări sau descarcă videoclipuri din extensiile oficiale. Dacă alegi să anulezi, poți ajusta această setare mai târziu în \"General Settings\".</string>
+    <string name="pin_error_length">PIN-ul trebuie să fie format din 4 caractere</string>
+    <string name="rotate_video_desc">Afișează un buton de comutare pentru orientarea ecranului</string>
+    <string name="password_pin_authentication_title">Autentificare parolă/PIN</string>
+    <string name="biometric_unsupported">Autentificarea biometrică nu este acceptată pe acest dispozitiv</string>
+    <string name="biometric_setting_summary">Deblocați aplicația cu amprentă digitală, ID facial, PIN, model și parolă.</string>
+    <string name="biometric_prompt_description">Acest ecran a fost închis din cauza mai multor încercări eșuate. Vă rugăm să reporniți aplicația.</string>
+    <string name="biometric_warning">Datele dvs. CloudStream au fost salvate acum. Deși posibilitatea acestui lucru este foarte mică, toate dispozitivele se pot comporta diferit. În cazul rar, în care nu aveți acces la aplicație, ștergeți complet datele aplicației și restaurați dintr-o copie de rezervă. Ne pare foarte rău pentru orice neplăcere care decurge din aceasta.</string>
+    <string name="ok">Ok</string>
+    <string name="battery_dialog_title">Dezactivează optimizarea bateriei</string>
+    <string name="app_unrestricted_toast">Utilizarea bateriei pentru aplicație este deja setată ca fiind nelimitată</string>
+    <string name="app_info_intent_error">Imposibil de deschis informațiile aplicației CloudStream.</string>
+    <string name="favorite">Favorite</string>
+    <string name="music_singlar">Muzică</string>
+    <string name="audio_book_singular">Carte audio</string>
+    <string name="custom_media_singluar">Media</string>
+    <string name="result_search_tooltip">Caută în alte extensii</string>
+    <string name="test_extensions">Testează toate extensiile</string>
+    <string name="auto_rotate_video">Rotire automată</string>
+    <string name="reset_btn">Resetați</string>
+    <string name="auto_rotate_video_desc">Activați comutarea automată a orientării ecranului pe baza orientării video</string>
+    <string name="biometric_setting">Blocare cu biometrie</string>
+    <string name="resume_remaining" formatted="true">%s
+\nrămase</string>
+    <string name="episode_upcoming_format" formatted="true">Următorul în %s</string>
+    <string name="cs3wiki">CloudStream Wiki</string>
+    <string name="next_season_episode_format" formatted="true">Sezonul %1$d Episod %2$d va fi lansat în</string>
+    <string name="player_settings_select_cast_device">Selectați divece-ul pe care doriți să faceți cast</string>
+    <string name="episode_action_cast_mirror">Cast mirror</string>
+    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="play_from_beginning_img_des">Redă de la început</string>
+    <string name="downloads_empty">Nu există descărcări.</string>
+    <string name="downloads_delete_select">Selectionati elementele de sters</string>
+    <string name="select_all">Selectionati totul</string>
+    <string name="deselect_all">Deselectionati totul</string>
+    <string name="torrent_info">Acest video este un Torrent, ceea ce înseamnă că activitatea dumneavoastră video poate fi urmărită.\n Asigurați-vă că înțelegeți Torrentul înainte să continuați.</string>
+    <string name="offline_file">Disponibil pentru vizionare offline</string>
+    <string name="speech_recognition_unavailable">Recogniție de voce nu este disponibilă</string>
+    <string name="begin_speaking">Începeți să vorbiți…</string>
+    <string name="open_local_video">Deschideți video local</string>
+    <string name="test_warning">Avertisment</string>
+    <string name="delete_message_multiple" formatted="true">Sunteți siguri că doriți să ștergeți definitiv următoarele fișiere?\n\n%s</string>
+    <string name="delete_message_series_section" formatted="true">Veți mai și șterge definitiv toate episoadele în seria următoare:\n\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Sunteți siguri ca doriți sa ștergeți definitiv toate episoadele în seria următoare?\n\n%s</string>
+    <string name="audio_singluar">Audio</string>
+    <string name="podcast_singluar">Podcast</string>
+    <string name="encoding_error">Eroare de codificare</string>
+    <string name="unsupported_error">Eroare Nesuportată</string>
+    <string name="show_rating">Etichetă de clasificare</string>
+    <string name="delete_files">Ștergeți fișiere</string>
+    <string name="delete_format" formatted="true">Șterge (%1$d | %2$s)</string>
+    <string name="delete_message_series_episodes" formatted="true">Sunteți sigur că vreți să ștergeți permanent următoarele epsioade în %1$s?\n\n%2$s</string>
+    <string name="pref_category_security">Securitate</string>
+</resources>

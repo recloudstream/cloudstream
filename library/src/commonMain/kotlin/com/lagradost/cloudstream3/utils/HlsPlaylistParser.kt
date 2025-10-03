@@ -1450,7 +1450,16 @@ object HlsPlaylistParser {
          */
         //val labels: List<Label> = emptyList(),
 
-        /** The language as an IETF BCP 47 conformant tag, or null if unknown or not applicable. */
+        /**
+         * The language as an IETF BCP 47 conformant tag, or null if unknown or not applicable.
+         * Check [com.lagradost.cloudstream3.utils.SubtitleHelper].
+         *
+         * See locales on:
+         * https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/availableLocales.json
+         * https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+         * https://android.googlesource.com/platform/frameworks/base/+/android-16.0.0_r2/core/res/res/values/locale_config.xml
+         * https://iso639-3.sil.org/code_tables/639/data/all
+        */
         val language: String? = null,
 
         /** Track selection flags. */

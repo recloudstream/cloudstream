@@ -11,12 +11,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.AcraApplication.Companion.context
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.actions.AlwaysAskAction
+import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
-import com.lagradost.cloudstream3.AcraApplication.Companion.context
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.getCastSession
 import com.lagradost.cloudstream3.CommonActivity.showToast
@@ -25,16 +27,13 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
 import com.lagradost.cloudstream3.LoadResponse.Companion.readIdFromString
-import com.lagradost.cloudstream3.actions.AlwaysAskAction
-import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.metaproviders.SyncRedirector
 import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.secondsToReadable
-import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
+import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.APIRepository
-import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.IGenerator
@@ -46,6 +45,7 @@ import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.result.EpisodeAdapter.Companion.getPlayerAction
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
+import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppContextUtils.isConnectedToChromecast
@@ -85,9 +85,10 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setSubscribedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.updateSubscribedData
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToEnglishLanguageName
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
-import kotlinx.coroutines.*
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.*
 
 /** This starts at 1 */
 data class EpisodeRange(
@@ -760,21 +761,19 @@ class ResultViewModel2 : ViewModel() {
                 // 1. Checks if the lang should be downloaded
                 // 2. Makes it into the download format
                 // 3. Downloads it as a .vtt file
-                val downloadList = SubtitlesFragment.getDownloadSubsLanguageISO639_1()
-                subs?.let { subsList ->
-                    subsList.filter {
-                        downloadList.contains(
-                            SubtitleHelper.fromLanguageToTwoLetters(
-                                it.name,
-                                true
-                            )
-                        )
+                val downloadList = SubtitlesFragment.getDownloadSubsLanguageTagIETF()
+
+                subs?.filter { subtitle ->
+                    downloadList.any { langTagIETF ->
+                        subtitle.languageCode == langTagIETF ||
+                        subtitle.originalName.contains(fromTagToEnglishLanguageName(langTagIETF) ?: langTagIETF)
                     }
-                        .map { ExtractorSubtitleLink(it.name, it.url, "", it.headers) }.take(3)
-                        .forEach { link ->
-                            val fileName = VideoDownloadManager.getFileName(context, meta)
-                            downloadSubtitle(context, link, fileName, folder)
-                        }
+                }
+                ?.map { ExtractorSubtitleLink(it.name, it.url, "", it.headers) }
+                ?.take(3) // max subtitles download hardcoded (?_?)
+                ?.forEach { link ->
+                    val fileName = VideoDownloadManager.getFileName(context, meta)
+                    downloadSubtitle(context, link, fileName, folder)
                 }
             } catch (e: Exception) {
                 logError(e)
@@ -798,7 +797,7 @@ class ResultViewModel2 : ViewModel() {
                 val currentSubs = mutableSetOf<SubtitleData>()
                 generator.generateLinks(
                     clearCache = false,
-                    allowedTypes = LOADTYPE_INAPP_DOWNLOAD,
+                    sourceTypes = LOADTYPE_INAPP_DOWNLOAD,
                     callback = {
                         it.first?.let { link ->
                             currentLinks.add(link)
@@ -1395,7 +1394,7 @@ class ResultViewModel2 : ViewModel() {
             updatePage()
             tempGenerator.generateLinks(
                 clearCache,
-                allowedTypes = sourceTypes,
+                sourceTypes = sourceTypes,
                 callback = { (link, _) ->
                     if (link != null) {
                         links += link
@@ -1470,7 +1469,6 @@ class ResultViewModel2 : ViewModel() {
                 }
 
                 options.add(txt(R.string.episode_action_play_in_app) to ACTION_PLAY_EPISODE_IN_PLAYER)
-
                 options.addAll(
                     listOf(
                         txt(R.string.episode_action_auto_download) to ACTION_DOWNLOAD_EPISODE,

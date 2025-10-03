@@ -44,19 +44,13 @@ import androidx.media3.ui.PlayerNotificationManager
 import androidx.media3.ui.PlayerNotificationManager.EXTRA_INSTANCE_ID
 import androidx.media3.ui.PlayerNotificationManager.MediaDescriptionAdapter
 import androidx.preference.PreferenceManager
-import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
-import com.lagradost.cloudstream3.CommonActivity.showToast
-import com.lagradost.cloudstream3.LoadResponse
-import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
-import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
-import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
-import com.lagradost.cloudstream3.LoadResponse.Companion.getTMDbId
-import com.lagradost.cloudstream3.MainActivity
-import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.amap
+import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.databinding.DialogOnlineSubtitlesBinding
 import com.lagradost.cloudstream3.databinding.FragmentPlayerBinding
 import com.lagradost.cloudstream3.databinding.PlayerSelectSourceAndSubsBinding
@@ -65,41 +59,60 @@ import com.lagradost.cloudstream3.isAnimeOp
 import com.lagradost.cloudstream3.isEpisodeBased
 import com.lagradost.cloudstream3.isLiveStream
 import com.lagradost.cloudstream3.isMovieType
-import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.LoadResponse
+import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
+import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
+import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
+import com.lagradost.cloudstream3.LoadResponse.Companion.getTMDbId
+import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
+import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.safe
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities.SubtitleSearch
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.subtitleProviders
+import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.player.CS3IPlayer.Companion.preferredAudioTrackLanguage
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.updateForcedEncoding
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
+import com.lagradost.cloudstream3.ui.result.ACTION_CLICK_DEFAULT
+import com.lagradost.cloudstream3.ui.result.EpisodeAdapter
+import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.ResultFragment
+import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.result.SyncViewModel
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
-import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.subtitles.SUBTITLE_AUTO_SELECT_KEY
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
-import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAutoSelectLanguageISO639_1
+import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAutoSelectLanguageTagIETF
 import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.AppContextUtils.sortSubs
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
-import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToLangTagIETF
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromLanguageToTagIETF
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToEnglishLanguageName
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
 import com.lagradost.cloudstream3.utils.SubtitleHelper.languages
+import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -107,17 +120,14 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getImageBitmapFromUrl
-import com.lagradost.cloudstream3.utils.setText
-import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.safefile.SafeFile
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import java.io.Serializable
 import java.util.Calendar
 import kotlin.math.abs
-
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 @UnstableApi
 class GeneratorPlayer : FullScreenPlayer() {
@@ -159,7 +169,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     private var preferredAutoSelectSubtitles: String? = null // null means do nothing, "" means none
 
     private var binding: FragmentPlayerBinding? = null
-
+    private var allMeta: List<ResultEpisode>? =  null
     private fun startLoading() {
         player.release()
         currentSelectedSubtitles = null
@@ -171,24 +181,16 @@ class GeneratorPlayer : FullScreenPlayer() {
     private fun setSubtitles(subtitle: SubtitleData?): Boolean {
         // If subtitle is changed -> Save the language
         if (subtitle != currentSelectedSubtitles) {
-            val subtitleLanguage639 = if (subtitle == null) {
-                // "" is No Subtitles
-                ""
-            } else if (subtitle.languageCode != null) {
-                // Could be "English 4" which is why it is trimmed.
-                val trimmedLanguage = subtitle.languageCode.replace(Regex("\\d"), "").trim()
-
-                languages.firstOrNull { language ->
-                    language.languageName.equals(trimmedLanguage, ignoreCase = true) ||
-                            language.ISO_639_1 == subtitle.languageCode
-                }?.ISO_639_1
+            val subtitleLanguageTagIETF = if (subtitle == null) {
+                "" // -> No Subtitles
             } else {
-                null
+                fromCodeToLangTagIETF(subtitle.languageCode) ?:
+                fromLanguageToTagIETF(subtitle.languageCode, halfMatch = true)
             }
 
-            if (subtitleLanguage639 != null) {
-                setKey(SUBTITLE_AUTO_SELECT_KEY, subtitleLanguage639)
-                preferredAutoSelectSubtitles = subtitleLanguage639
+            if (subtitleLanguageTagIETF != null) {
+                setKey(SUBTITLE_AUTO_SELECT_KEY, subtitleLanguageTagIETF)
+                preferredAutoSelectSubtitles = subtitleLanguageTagIETF
             }
         }
 
@@ -495,6 +497,9 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         playerBinding?.downloadHeader?.isVisible = false
         playerBinding?.downloadHeaderToggle?.isVisible = isTorrent
+        if(!isLayout(PHONE)){
+            playerBinding?.downloadBothHeader?.isVisible = isTorrent
+        }
 
         showDownloadProgress(DownloadEvent(0, 0, 0, null))
 
@@ -502,6 +507,12 @@ class GeneratorPlayer : FullScreenPlayer() {
         currentSelectedLink = link
         currentMeta = viewModel.getMeta()
         nextMeta = viewModel.getNextMeta()
+        allMeta = viewModel.getAllMeta()?.filterIsInstance<ResultEpisode>()?.map { episode ->
+            // Refresh all the episodes watch duration
+            getViewPos(episode.id)?.let { data ->
+                episode.copy(position = data.position, duration = data.duration)
+            } ?: episode
+        }
         //  setEpisodes(viewModel.getAllMeta() ?: emptyList())
         isActive = true
         setPlayerDimen(null)
@@ -595,7 +606,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         if (entry.lang.isBlank() || !withLanguage) {
             return entry.name
         }
-        val language = fromTwoLettersToLanguage(entry.lang.trim()) ?: entry.lang
+        val language = fromTagToLanguageName(entry.lang.trim()) ?: entry.lang
         return "$language ${entry.name}"
     }
 
@@ -652,7 +663,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     mainTextView?.text = item?.let { getName(it, false) }
 
                     val language =
-                        item?.let { fromTwoLettersToLanguage(it.lang.trim()) ?: it.lang } ?: ""
+                        item?.let { fromTagToLanguageName(it.lang) ?: it.lang } ?: ""
                     val providerSuffix =
                         if (isSingleProvider || item == null) "" else " · ${item.source}"
                     secondaryTextView?.text = language + providerSuffix
@@ -674,7 +685,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             currentSubtitle = currentSubtitles.getOrNull(position) ?: return@setOnItemClickListener
         }
 
-        var currentLanguageTwoLetters: String = getAutoSelectLanguageISO639_1()
+        var currentLanguageTagIETF: String = getAutoSelectLanguageTagIETF()
 
 
         fun setSubtitlesList(list: List<AbstractSubtitleEntities.SubtitleEntity>) {
@@ -739,7 +750,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                             aniListId = loadResponse?.getAniListId()?.toInt(),
                             epNumber = currentTempMeta.episode,
                             seasonNumber = currentTempMeta.season,
-                            lang = currentLanguageTwoLetters.ifBlank { null },
+                            lang = currentLanguageTagIETF.ifBlank { null },
                             year = viewModel.currentSubtitleYear.value
                         )
 
@@ -787,15 +798,20 @@ class GeneratorPlayer : FullScreenPlayer() {
         })
 
         binding.searchFilter.setOnClickListener { view ->
-            val lang639_1 = languages.map { it.ISO_639_1 }
+            val languagesTagName =
+                languages
+                    .map { Pair(it.IETF_tag, it.nameNextToFlagEmoji()) }
+                    .sortedBy { it.second.substringAfter("\u00a0").lowercase() } // name ignoring flag emoji
+            val (langTagsIETF, langNames) = languagesTagName.unzip()
+
             activity?.showDialog(
-                languages.map { it.languageName },
-                lang639_1.indexOf(currentLanguageTwoLetters),
+                langNames,
+                langTagsIETF.indexOf(currentLanguageTagIETF),
                 view?.context?.getString(R.string.subs_subtitle_languages)
                     ?: return@setOnClickListener,
                 true,
                 { }) { index ->
-                currentLanguageTwoLetters = lang639_1[index]
+                currentLanguageTagIETF = langTagsIETF[index]
                 binding.subtitlesSearch.setQuery(binding.subtitlesSearch.query, true)
             }
         }
@@ -818,7 +834,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                                         origin = resource.origin,
                                         mimeType = resource.url.toSubtitleMimeType(),
                                         headers = currentSubtitle.headers,
-                                        currentSubtitle.lang
+                                        languageCode = currentSubtitle.lang
                                     )
                                 }
                                 if (subtitles.isEmpty()) {
@@ -1079,7 +1095,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     val metadata = getMetaData()
                     val queryName = metadata.name ?: currentLoadResponse?.name
                     if (queryName != null) {
-                        val currentLanguageTwoLetters: String = getAutoSelectLanguageISO639_1()
+                        val currentLanguageTagIETF: String = getAutoSelectLanguageTagIETF()
                         val loadFromFirstSubsFooter: TextView = layoutInflater.inflate(
                             R.layout.sort_bottom_footer_add_choice, null
                         ) as TextView
@@ -1099,7 +1115,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                                     aniListId = currentLoadResponse?.getAniListId()?.toInt(),
                                     epNumber = metadata.episode,
                                     seasonNumber = metadata.season,
-                                    lang = currentLanguageTwoLetters.ifBlank { null },
+                                    lang = currentLanguageTagIETF.ifBlank { null },
                                     year = viewModel.currentSubtitleYear.value
                                 )
                             )
@@ -1198,7 +1214,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     subsOptionsArrayAdapter.clear()
 
                     val subtitleOptions =
-                        subtitlesGrouped.entries.toList()
+                        subtitlesGroupedList
                             .getOrNull(subtitleGroupIndex - 1)?.value?.map { subtitle ->
                                 val nameSuffix = subtitle.nameSuffix.html()
                                 nameSuffix.ifBlank {
@@ -1439,10 +1455,10 @@ class GeneratorPlayer : FullScreenPlayer() {
                 audioArrayAdapter.addAll(currentAudioTracks.mapIndexed { index, format ->
                     when {
                         format.label != null && format.language != null ->
-                            "${format.label} - [${fromTwoLettersToLanguage(format.language) ?: format.language}]"
+                            "${format.label} - [${fromTagToLanguageName(format.language) ?: format.language}]"
 
                         else -> format.label
-                            ?: format.language?.let { fromTwoLettersToLanguage(it) }
+                            ?: format.language?.let { fromTagToLanguageName(it) }
                             ?: format.language
                             ?: index.toString()
                     }
@@ -1657,8 +1673,12 @@ class GeneratorPlayer : FullScreenPlayer() {
                 playerBinding?.playerSkipEpisode?.isVisible =
                     !isOpVisible && viewModel.hasNextEpisode() == true
 
-            else ->
-                playerBinding?.playerGoForwardRoot?.isVisible = viewModel.hasNextEpisode() == true
+            else -> {
+                val hasNextEpisode = viewModel.hasNextEpisode() == true
+                playerBinding?.playerGoForward?.isVisible = hasNextEpisode
+                playerBinding?.playerGoForwardRoot?.isVisible = hasNextEpisode
+            }
+
         }
 
         if (percentage >= PRELOAD_NEXT_EPISODE_PERCENTAGE) {
@@ -1670,27 +1690,25 @@ class GeneratorPlayer : FullScreenPlayer() {
         subtitles: Set<SubtitleData>, settings: Boolean, downloads: Boolean
     ): SubtitleData? {
         val langCode = preferredAutoSelectSubtitles ?: return null
-        val lang = fromTwoLettersToLanguage(langCode) ?: return null
+        val langName = fromTagToEnglishLanguageName(langCode) ?: return null
         if (downloads) {
             return subtitles.firstOrNull { sub ->
-                (sub.origin == SubtitleOrigin.DOWNLOADED_FILE && sub.name == context?.getString(
-                    R.string.default_subtitles
-                ))
+                sub.origin == SubtitleOrigin.DOWNLOADED_FILE &&
+                sub.originalName == context?.getString( R.string.default_subtitles )
             }
         }
 
-        sortSubs(subtitles).firstOrNull { sub ->
-            val t = sub.name.replace(Regex("[^A-Za-z]"), " ").trim()
-            settings && t == lang || t.startsWith(lang) || t == langCode
-        }?.let { sub ->
-            return sub
-        }
+        if (!settings) return null
 
-        return null
+        return sortSubs(subtitles).firstOrNull { sub ->
+            // rely first on sub.languageCode
+            val t = sub.originalName.replace(Regex("[^\\p{L}\\p{Mn}\\p{Mc}\\p{Me} ]"), "").trim() // keep letters from any language
+            sub.languageCode == langCode || t == langName || t.contains(langName) || t == langCode
+        }
     }
 
     private fun autoSelectFromSettings(): Boolean {
-        // auto select subtitle based of settings
+        // auto select subtitle based on settings
         val langCode = preferredAutoSelectSubtitles
         val current = player.getCurrentPreferredSubtitle()
         Log.i(TAG, "autoSelectFromSettings = $current")
@@ -1943,6 +1961,74 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+    override fun isThereEpisodes(): Boolean {
+        val meta = allMeta
+        return !meta.isNullOrEmpty() && meta.size > 1
+    }
+
+    override fun showEpisodesOverlay() {
+        try {
+            playerBinding?.apply {
+                playerEpisodeList.adapter = EpisodeAdapter(
+                    false,
+                    { episodeClick ->
+                        if(episodeClick.action == ACTION_CLICK_DEFAULT){
+                            player.release()
+                            playerEpisodeOverlay.isGone = true
+                            episodeClick.position?.let { viewModel.loadThisEpisode(it) }
+                        }
+                    },
+                    {downloadClickEvent ->
+                        DownloadButtonSetup.handleDownloadClick(downloadClickEvent)
+                    }
+                )
+                playerEpisodeList.setLinearListLayout(
+                    isHorizontal = false,
+                    nextUp = FOCUS_SELF,
+                    nextDown = FOCUS_SELF,
+                    nextRight = FOCUS_SELF,
+                )
+                val episodes = allMeta ?: emptyList()
+                (playerEpisodeList.adapter as? EpisodeAdapter)?.updateList(episodes)
+
+                // Scroll to current episode
+                viewModel.getCurrentIndex()?.let { index ->
+                    playerEpisodeList.scrollToPosition(index)
+                    // Ensure focus on tv
+                    if(isLayout(TV)){
+                    playerEpisodeList.post {
+                        val viewHolder = playerEpisodeList.findViewHolderForAdapterPosition(index)
+                        viewHolder?.itemView?.requestFocus()
+                        viewHolder?.itemView?.let { itemView ->
+                            itemView.isFocusableInTouchMode = true
+                            itemView.requestFocus()
+                        }
+                    }}
+                }
+
+                // update overlay season title
+                var lastTopIndex = -1
+                playerEpisodeList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                    @SuppressLint("SetTextI18n", "DefaultLocale")
+                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                        val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return
+                        val topIndex = layoutManager.findFirstCompletelyVisibleItemPosition()
+                        if (topIndex != RecyclerView.NO_POSITION && topIndex != lastTopIndex) {
+                            lastTopIndex = topIndex
+                            val topItem = episodes.getOrNull(topIndex)?.season
+                            topItem?.let {
+                                val paddedSeasonString = String.format("%02d",topItem)
+                                playerEpisodeOverlayTitle.text = "${context?.getString(R.string.episodes)}:${context?.getString(R.string.season_short)}${paddedSeasonString}"
+                            }
+                        }
+                    }
+                })
+            }
+        } catch (e: Exception) {
+            logError(e)
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -1962,7 +2048,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     this.getString(R.string.provider_lang_key), mutableSetOf("en")
                 )
                 langFilterList = langFromPrefMedia?.mapNotNull {
-                    fromTwoLettersToLanguage(it)?.lowercase() ?: return@mapNotNull null
+                    fromTagToEnglishLanguageName(it)?.lowercase() ?: return@mapNotNull null
                 } ?: listOf()
             }
         }
@@ -1972,7 +2058,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         sync.updateUserData()
 
-        preferredAutoSelectSubtitles = getAutoSelectLanguageISO639_1()
+        preferredAutoSelectSubtitles = getAutoSelectLanguageTagIETF()
 
         if (currentSelectedLink == null) {
             viewModel.loadLinks()
@@ -2060,7 +2146,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 langFilterList.forEach { lang ->
                     Log.i("subfilter", "Lang: $lang")
                     setOfSub += set.filter {
-                        it.name.contains(lang, ignoreCase = true) ||
+                        it.originalName.contains(lang, ignoreCase = true) ||
                                 it.origin != SubtitleOrigin.URL
                     }
                 }

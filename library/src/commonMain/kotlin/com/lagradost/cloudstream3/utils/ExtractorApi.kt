@@ -218,6 +218,7 @@ import com.lagradost.cloudstream3.extractors.Streamlare
 import com.lagradost.cloudstream3.extractors.StreamoUpload
 import com.lagradost.cloudstream3.extractors.Streamplay
 import com.lagradost.cloudstream3.extractors.Streamsss
+import com.lagradost.cloudstream3.extractors.Streamup
 import com.lagradost.cloudstream3.extractors.Streamwish2
 import com.lagradost.cloudstream3.extractors.Strwish
 import com.lagradost.cloudstream3.extractors.Strwish2
@@ -307,6 +308,7 @@ import com.lagradost.cloudstream3.extractors.Ztreamhub
 import com.lagradost.cloudstream3.extractors.FileMoon
 import com.lagradost.cloudstream3.extractors.FileMoonSx
 import com.lagradost.cloudstream3.extractors.FilemoonV2
+import com.lagradost.cloudstream3.extractors.Techinmind
 import com.lagradost.cloudstream3.mvvm.logError
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -1107,6 +1109,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     MoviehabNet(),
     Jeniusplay(),
     StreamoUpload(),
+    Streamup(),
 
     GamoVideo(),
     Gdriveplayerapi(),
@@ -1222,6 +1225,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     InternetArchive(),
     VidStack(),
     GDMirrorbot(),
+    Techinmind(),
     Server1uns(),
     VinovoSi(),
     VinovoTo(),

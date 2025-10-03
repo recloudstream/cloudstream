@@ -60,7 +60,7 @@
         <TextView android:id="@+id/text_quality" style="@style/TypeButton" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="end"
             android:orientation="vertical">
@@ -98,8 +98,8 @@
             android:layout_height="5dp"
             android:layout_gravity="bottom"
             android:layout_marginBottom="-1.5dp"
-            android:progressBackgroundTint="?attr/colorPrimary"
-            android:progressTint="?attr/colorPrimary"
+            android:progressBackgroundTint="?attr/white"
+            android:progressTint="?attr/white"
             android:visibility="gone"
             tools:progress="50"
             tools:visibility="visible" />
