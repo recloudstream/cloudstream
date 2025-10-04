@@ -14,9 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.findViewTreeLifecycleOwner
-import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import androidx.viewpager2.widget.ViewPager2
@@ -55,9 +53,9 @@ import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.DataStoreHelper
-import com.lagradost.cloudstream3.utils.DataStoreHelper.getDefaultAccount
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectStringRes
@@ -145,7 +143,12 @@ class HomeParentItemAdapterPreview(
             }
         }
 
-        val previewAdapter = HomeScrollAdapter(fragment = fragment)
+        val previewAdapter = HomeScrollAdapter(fragment = fragment) { view, position, item ->
+            viewModel.click(
+                LoadClickCallback(0, view, position, item)
+            )
+        }
+
         private val resumeAdapter = ResumeItemAdapter(
             fragment,
             nextFocusUp = itemView.nextFocusUpId,
@@ -328,9 +331,9 @@ class HomeParentItemAdapterPreview(
                 homePreviewDescription.isGone =
                     item.plot.isNullOrBlank()
                 homePreviewDescription.text =
-                    item.plot ?: ""
+                    item.plot?.html() ?: ""
 
-                homePreviewText.text = item.name
+                homePreviewText.text = item.name.html()
                 populateChips(
                     homePreviewTags,
                     item.tags?.take(6) ?: emptyList(),
@@ -340,23 +343,11 @@ class HomeParentItemAdapterPreview(
                 homePreviewTags.isGone =
                     item.tags.isNullOrEmpty()
 
-                /*homePreviewPlayBtt.setOnClickListener { view ->
-                    viewModel.click(
-                        LoadClickCallback(
-                            START_ACTION_RESUME_LATEST,
-                            view,
-                            position,
-                            item
-                        )
-                    )
-                }*/
-
                 homePreviewInfoBtt.setOnClickListener { view ->
                     viewModel.click(
                         LoadClickCallback(0, view, position, item)
                     )
                 }
-
             }
             (binding as? FragmentHomeHeadBinding)?.apply {
                 //homePreviewImage.setImage(item.posterUrl, item.posterHeaders)
