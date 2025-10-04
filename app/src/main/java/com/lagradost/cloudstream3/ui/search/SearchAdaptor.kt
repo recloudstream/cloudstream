@@ -31,7 +31,7 @@ class SearchClickCallback(
 )
 
 class SearchAdapter(
-    private val cardList: MutableList<SearchResponse>,
+    private var cardList: List<SearchResponse>,
     private val resView: AutofitRecyclerView,
     private val clickCallback: (SearchClickCallback) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -74,12 +74,9 @@ class SearchAdapter(
 
     fun updateList(newList: List<SearchResponse>) {
         val diffResult = DiffUtil.calculateDiff(
-            SearchResponseDiffCallback(this.cardList, newList)
+            SearchResponseDiffCallback(cardList, newList)
         )
-
-        cardList.clear()
-        cardList.addAll(newList)
-
+        cardList = newList
         diffResult.dispatchUpdatesTo(this)
     }
 

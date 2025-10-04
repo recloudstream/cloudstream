@@ -17,6 +17,7 @@ import com.lagradost.cloudstream3.NextAiring
 import com.lagradost.cloudstream3.ProviderType
 import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.SearchResponseList
 import com.lagradost.cloudstream3.ShowStatus
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.addDate
@@ -27,6 +28,7 @@ import com.lagradost.cloudstream3.newEpisode
 import com.lagradost.cloudstream3.newHomePageResponse
 import com.lagradost.cloudstream3.newMovieLoadResponse
 import com.lagradost.cloudstream3.newMovieSearchResponse
+import com.lagradost.cloudstream3.newSearchResponseList
 import com.lagradost.cloudstream3.newTvSeriesLoadResponse
 import com.lagradost.cloudstream3.newTvSeriesSearchResponse
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
@@ -56,7 +58,6 @@ open class TraktProvider : MainAPI() {
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
-
         val apiResponse = getApi("${request.data}?extended=full,images&page=$page")
 
         val results = parseJson<List<MediaDetails>>(apiResponse).map { element ->
@@ -97,17 +98,16 @@ open class TraktProvider : MainAPI() {
         }
     }
 
-    override suspend fun search(query: String): List<SearchResponse>? {
+    override suspend fun search(query: String, page: Int): SearchResponseList? {
         val apiResponse =
-            getApi("$traktApiUrl/search/movie,show?extended=full,images&limit=20&page=1&query=$query")
+            getApi("$traktApiUrl/search/movie,show?extended=full,images&limit=20&page=$page&query=$query")
 
-        return parseJson<List<MediaDetails>>(apiResponse).map { element ->
+        return newSearchResponseList(parseJson<List<MediaDetails>>(apiResponse).map { element ->
             element.toSearchResponse()
-        }
+        })
     }
 
     override suspend fun load(url: String): LoadResponse {
-
         val data = parseJson<Data>(url)
         val mediaDetails = data.mediaDetails
         val moviesOrShows = if (data.type == TvType.Movie) "movies" else "shows"
