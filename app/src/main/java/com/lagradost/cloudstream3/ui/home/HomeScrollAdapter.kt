@@ -57,6 +57,9 @@ class HomeScrollAdapter(
             }
 
             is HomeScrollViewTvBinding -> {
+                //Change poster crop area to 20% from Top
+                binding.homeScrollPreview.cropYCenterOffsetPct = 0.2f
+
                 binding.homeScrollPreview.loadImage(posterUrl)
             }
         }
