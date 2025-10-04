@@ -1179,24 +1179,25 @@ class GeneratorPlayer : FullScreenPlayer() {
                     ArrayAdapter<Spanned>(ctx, R.layout.sort_bottom_single_choice)
                 subsArrayAdapter.add(ctx.getString(R.string.no_subtitles).html())
 
-                val subtitlesGrouped =
-                    currentSubtitles.groupBy { it.originalName }.map { (key, value) ->
-                        key to value.sortedBy { it.nameSuffix.toIntOrNull() ?: 0 }
-                    }.toMap()
+                val subtitlesGrouped = currentSubtitles
+                                        .groupBy { it.languageCode }
+                                        .mapValues { it.value.sortedWith(
+                                            compareBy({ it.localizedName.substringAfter("\u00a0").lowercase() }, { it.nameSuffix.toIntOrNull() ?: 0 })) }
+                                        .toMap()
                 val subtitlesGroupedList = subtitlesGrouped.entries.toList()
 
-                val subtitles = subtitlesGrouped.map { it.key.html() }
+                val subtitlesDisplayNames = subtitlesGrouped.map { it.value.first().localizedName.html() }
 
                 val subtitleGroupIndexStart =
-                    subtitlesGrouped.keys.indexOf(currentSelectedSubtitles?.originalName) + 1
+                    subtitlesGrouped.keys.indexOf(currentSelectedSubtitles?.languageCode) + 1
                 var subtitleGroupIndex = subtitleGroupIndexStart
 
                 val subtitleOptionIndexStart =
-                    subtitlesGrouped[currentSelectedSubtitles?.originalName]?.indexOfFirst { it.nameSuffix == currentSelectedSubtitles?.nameSuffix }
-                        ?: 0
+                    subtitlesGrouped[currentSelectedSubtitles?.languageCode]
+                    ?.indexOfFirst { it.nameSuffix == currentSelectedSubtitles?.nameSuffix } ?: 0
                 var subtitleOptionIndex = subtitleOptionIndexStart
 
-                subsArrayAdapter.addAll(subtitles)
+                subsArrayAdapter.addAll(subtitlesDisplayNames)
 
                 subtitleList.adapter = subsArrayAdapter
                 subtitleList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
