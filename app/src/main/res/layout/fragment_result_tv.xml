@@ -36,6 +36,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
             tools:src="@drawable/profile_bg_dark_blue" />
 
         <ImageView
+            android:layout_marginBottom="-1dp"
             android:layout_width="match_parent"
             android:layout_height="120dp"
             android:layout_gravity="bottom"

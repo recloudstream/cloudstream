@@ -644,6 +644,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
+                            android:layout_marginBottom="10dp"
                             android:orientation="vertical"
                             android:visibility="gone"
                             tools:visibility="visible">
@@ -686,7 +687,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
-                            android:paddingVertical="15dp"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="15dp"
                             android:visibility="gone"
                             tools:visibility="visible">
 
