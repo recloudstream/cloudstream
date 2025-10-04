@@ -125,6 +125,7 @@
                 android:gravity="center_vertical"
                 android:nextFocusLeft="@id/home_preview_info_btt"
                 android:nextFocusRight="@id/home_preview_reload_provider"
+                android:nextFocusUp="@id/home_preview_change_api"
                 android:nextFocusDown="@id/home_preview_info_btt">
 
                 <requestFocus />
@@ -140,6 +141,7 @@
                 android:focusable="true"
                 android:nextFocusLeft="@id/home_preview_change_api"
                 android:nextFocusRight="@id/home_preview_search_button"
+                android:nextFocusUp="@id/home_preview_reload_provider"
                 android:nextFocusDown="@id/home_preview_info_btt"
                 android:padding="10dp"
                 android:src="@drawable/ic_refresh"
@@ -157,6 +159,7 @@
                 android:focusable="true"
                 android:nextFocusLeft="@id/home_preview_reload_provider"
                 android:nextFocusRight="@id/home_preview_switch_account"
+                android:nextFocusUp="@id/home_preview_search_button"
                 android:nextFocusDown="@id/home_preview_info_btt"
                 android:padding="10dp"
                 android:src="@drawable/search_icon"
