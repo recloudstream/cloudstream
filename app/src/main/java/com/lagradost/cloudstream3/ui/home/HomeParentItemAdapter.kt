@@ -90,25 +90,19 @@ open class ParentItemAdapter(
         if (binding !is HomepageParentBinding) return
         val info = item.list
         binding.apply {
-            homeChildRecyclerview.adapter = HomeChildItemAdapter(
-                fragment = fragment,
-                id = id + position + 100,
-                clickCallback = clickCallback,
-                nextFocusUp = homeChildRecyclerview.nextFocusUpId,
-                nextFocusDown = homeChildRecyclerview.nextFocusDownId,
-            ).apply {
-                isHorizontal = info.isHorizontalImages
-                hasNext = item.hasNext
-                submitList(item.list.list)
-            }
-
-            /** We can reuse the HomeChildItemAdapter, but that causes weird a fade-in
-             * That is not really desirable.
-             * */
-            /*
             val currentAdapter = homeChildRecyclerview.adapter as? HomeChildItemAdapter
             if (currentAdapter == null) {
-            ...
+                homeChildRecyclerview.adapter = HomeChildItemAdapter(
+                    fragment = fragment,
+                    id = id + position + 100,
+                    clickCallback = clickCallback,
+                    nextFocusUp = homeChildRecyclerview.nextFocusUpId,
+                    nextFocusDown = homeChildRecyclerview.nextFocusDownId,
+                ).apply {
+                    isHorizontal = info.isHorizontalImages
+                    hasNext = item.hasNext
+                    submitList(item.list.list)
+                }
             } else {
                 currentAdapter.apply {
                     isHorizontal = info.isHorizontalImages
@@ -116,10 +110,9 @@ open class ParentItemAdapter(
                     this.clickCallback = this@ParentItemAdapter.clickCallback
                     nextFocusUp = homeChildRecyclerview.nextFocusUpId
                     nextFocusDown = homeChildRecyclerview.nextFocusDownId
-                    submitList(item.list.list)
+                    submitIncomparableList(item.list.list)
                 }
-           }
-           */
+            }
 
             homeChildRecyclerview.setLinearListLayout(
                 isHorizontal = true,
