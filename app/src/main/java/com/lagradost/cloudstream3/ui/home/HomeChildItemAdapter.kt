@@ -1,8 +1,10 @@
 package com.lagradost.cloudstream3.ui.home
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import androidx.viewbinding.ViewBinding
@@ -13,6 +15,7 @@ import com.lagradost.cloudstream3.databinding.HomeRemoveGridExpandedBinding
 import com.lagradost.cloudstream3.databinding.HomeResultGridBinding
 import com.lagradost.cloudstream3.databinding.HomeResultGridExpandedBinding
 import com.lagradost.cloudstream3.ui.BaseAdapter
+import com.lagradost.cloudstream3.ui.BaseDiffCallback
 import com.lagradost.cloudstream3.ui.ViewHolderState
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
@@ -69,18 +72,25 @@ class ResumeItemAdapter(
 
     override fun onBindFooter(holder: ViewHolderState<Boolean>) {
         this.applyBinding(holder, false)
+        when (val binding = holder.view) {
+            is HomeRemoveGridBinding -> {
+                updateLayoutParms(binding.backgroundCard, setWidth, setHeight)
+            }
+
+            is HomeRemoveGridExpandedBinding -> {
+                updateLayoutParms(binding.backgroundCard, setWidth, setHeight)
+            }
+        }
         holder.itemView.apply {
             if (isLayout(TV)) {
                 isFocusableInTouchMode = true
                 isFocusable = true
             }
-
-            if (nextFocusUp != null) {
-                nextFocusUpId = nextFocusUp
+            nextFocusUp?.let {
+                nextFocusUpId = it
             }
-
-            if (nextFocusDown != null) {
-                nextFocusDownId = nextFocusDown
+            nextFocusDown?.let {
+                nextFocusDownId = it
             }
 
             setOnClickListener { v ->
@@ -90,16 +100,50 @@ class ResumeItemAdapter(
     }
 }
 
+/** Remember to set `updatePosterSize` to cache the poster size,
+ * otherwise the width and height is unset */
 open class HomeChildItemAdapter(
     fragment: Fragment,
     id: Int,
-    protected val nextFocusUp: Int? = null,
-    protected val nextFocusDown: Int? = null,
-    private val clickCallback: (SearchClickCallback) -> Unit,
+    var nextFocusUp: Int? = null,
+    var nextFocusDown: Int? = null,
+    var clickCallback: (SearchClickCallback) -> Unit,
 ) :
-    BaseAdapter<SearchResponse, Boolean>(fragment, id) {
-    var isHorizontal: Boolean = false
+    BaseAdapter<SearchResponse, Boolean>(
+        fragment, id, diffCallback = BaseDiffCallback(
+            itemSame = { a, b ->
+                a.url == b.url
+            },
+            contentSame = { a, b ->
+                a == b
+            })
+    ) {
     var hasNext: Boolean = false
+    var isHorizontal: Boolean = false
+        set(value) {
+            field = value
+            updateCachedPosterSize()
+        }
+
+    private fun updateCachedPosterSize() {
+        setWidth = if (!isHorizontal) {
+            minPosterSize
+        } else {
+            maxPosterSize
+        }
+        setHeight = if (!isHorizontal) {
+            maxPosterSize
+        } else {
+            minPosterSize
+        }
+    }
+
+    init {
+        updateCachedPosterSize()
+    }
+
+    protected var setWidth = 0
+    protected var setHeight = 0
 
     override fun onCreateContent(parent: ViewGroup): ViewHolderState<Boolean> {
         val expanded = parent.context.isBottomLayout()
@@ -112,52 +156,38 @@ open class HomeChildItemAdapter(
         return HomeScrollViewHolderState(binding)
     }
 
-    protected fun applyBinding(holder: ViewHolderState<Boolean>, isFirstItem: Boolean) {
-        val context = holder.view.root.context
-        val scale = PreferenceManager.getDefaultSharedPreferences(context)
-            ?.getInt(context.getString(R.string.poster_size_key), 0) ?: 0
-        // Scale by +10% per step
-        val mul = 1.0f + scale * 0.1f
-        val min = (114.toPx.toFloat() * mul).toInt()
-        val max = (180.toPx.toFloat() * mul).toInt()
+    companion object {
+        var minPosterSize: Int = 0
+        var maxPosterSize: Int = 0
 
+        fun updatePosterSize(context: Context) {
+            val scale = PreferenceManager.getDefaultSharedPreferences(context)
+                ?.getInt(context.getString(R.string.poster_size_key), 0) ?: 0
+            // Scale by +10% per step
+            val mul = 1.0f + scale * 0.1f
+            minPosterSize = (114.toPx.toFloat() * mul).toInt()
+            maxPosterSize = (180.toPx.toFloat() * mul).toInt()
+        }
+
+        fun updateLayoutParms(layout: FrameLayout, width: Int, height: Int) {
+            val params = layout.layoutParams
+            if (params.height == height && params.width == width) return
+
+            params.width = width
+            params.height = height
+
+            layout.layoutParams = params
+        }
+    }
+
+    protected fun applyBinding(holder: ViewHolderState<Boolean>, isFirstItem: Boolean) {
         when (val binding = holder.view) {
             is HomeResultGridBinding -> {
-                binding.backgroundCard.apply {
-
-                    layoutParams =
-                        layoutParams.apply {
-                            width = if (!isHorizontal) {
-                                min
-                            } else {
-                                max
-                            }
-                            height = if (!isHorizontal) {
-                                max
-                            } else {
-                                min
-                            }
-                        }
-                }
+                updateLayoutParms(binding.backgroundCard, setWidth, setHeight)
             }
 
             is HomeResultGridExpandedBinding -> {
-                binding.backgroundCard.apply {
-
-                    layoutParams =
-                        layoutParams.apply {
-                            width = if (!isHorizontal) {
-                                min
-                            } else {
-                                max
-                            }
-                            height = if (!isHorizontal) {
-                                max
-                            } else {
-                                min
-                            }
-                        }
-                }
+                updateLayoutParms(binding.backgroundCard, setWidth, setHeight)
 
                 if (isFirstItem) { // to fix tv
                     binding.backgroundCard.nextFocusLeftId = R.id.nav_rail_view

@@ -23,18 +23,17 @@ fun RecyclerView?.setLinearListLayout(
 ) {
     if (this == null) return
     val ctx = this.context ?: return
-    this.layoutManager =
-        LinearListLayout(ctx).apply {
-            if (isHorizontal) setHorizontal() else setVertical()
-            nextFocusLeft =
-                if (nextLeft == FOCUS_INHERIT) this@setLinearListLayout.nextFocusLeftId else nextLeft
-            nextFocusRight =
-                if (nextRight == FOCUS_INHERIT) this@setLinearListLayout.nextFocusRightId else nextRight
-            nextFocusUp =
-                if (nextUp == FOCUS_INHERIT) this@setLinearListLayout.nextFocusUpId else nextUp
-            nextFocusDown =
-                if (nextDown == FOCUS_INHERIT) this@setLinearListLayout.nextFocusDownId else nextDown
-        }
+    this.layoutManager = (this.layoutManager as? LinearListLayout ?: LinearListLayout(ctx)).apply {
+        if (isHorizontal) setHorizontal() else setVertical()
+        nextFocusLeft =
+            if (nextLeft == FOCUS_INHERIT) this@setLinearListLayout.nextFocusLeftId else nextLeft
+        nextFocusRight =
+            if (nextRight == FOCUS_INHERIT) this@setLinearListLayout.nextFocusRightId else nextRight
+        nextFocusUp =
+            if (nextUp == FOCUS_INHERIT) this@setLinearListLayout.nextFocusUpId else nextUp
+        nextFocusDown =
+            if (nextDown == FOCUS_INHERIT) this@setLinearListLayout.nextFocusDownId else nextDown
+    }
 }
 
 open class LinearListLayout(context: Context?) :

@@ -60,7 +60,7 @@ open class ParentItemAdapter(
 
         override fun restore(state: Bundle) {
             (binding as? HomepageParentBinding)?.homeChildRecyclerview?.layoutManager?.onRestoreInstanceState(
-                    state.getSafeParcelable<Parcelable>("value")
+                state.getSafeParcelable<Parcelable>("value")
             )
         }
     }
@@ -101,6 +101,26 @@ open class ParentItemAdapter(
                 hasNext = item.hasNext
                 submitList(item.list.list)
             }
+
+            /** We can reuse the HomeChildItemAdapter, but that causes weird a fade-in
+             * That is not really desirable.
+             * */
+            /*
+            val currentAdapter = homeChildRecyclerview.adapter as? HomeChildItemAdapter
+            if (currentAdapter == null) {
+            ...
+            } else {
+                currentAdapter.apply {
+                    isHorizontal = info.isHorizontalImages
+                    hasNext = item.hasNext
+                    this.clickCallback = this@ParentItemAdapter.clickCallback
+                    nextFocusUp = homeChildRecyclerview.nextFocusUpId
+                    nextFocusDown = homeChildRecyclerview.nextFocusDownId
+                    submitList(item.list.list)
+                }
+           }
+           */
+
             homeChildRecyclerview.setLinearListLayout(
                 isHorizontal = true,
                 nextLeft = startFocus,
