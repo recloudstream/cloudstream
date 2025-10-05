@@ -766,4 +766,9 @@
     <string name="edit_profile_image_error_empty">URL bulunamadı</string>
     <string name="edit_profile_image_error_invalid">Geçersiz Bağlantı veya Görsel</string>
     <string name="edit_profile_image_success">Görsel Başarıyla Güncellendi</string>
+    <string name="episode_action_play_mirror">Ekranda oynat</string>"
+    <string name="action_mark_watched_up_to_this_episode">Bu bölümü izlenmiş olarak işaretle</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">Bu bölümü izlenmemiş olarak işaretle</string>
+    <string name="action_reload">Yeniden yükle</string>
+    <string name="reload_provider">Sağlayıcıyı yeniden yükle</string>
 </resources>

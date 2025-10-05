@@ -716,9 +716,13 @@
     <string name="poster_size_settings">حجم الپوستر</string>
     <string name="player_settings_always_ask">دايمًا سئالوني</string>
     <string name="speedup_title">خليك كابس حتى تسرع</string>
-    <string name="speedup_summary">خليك كابس كرمال صرعة الـ2x</string>
+    <string name="speedup_summary">خليك كابس كرمال سرعة الـ2x</string>
     <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dساعة %2$dد %3$dث</string>
     <string name="download_time_left_min_sec_format" formatted="true">%1$dد %2$dث</string>
     <string name="download_time_left_sec_format" formatted="true">%1$dث</string>
     <string name="show_rating">لايبل الرايتينگ</string>
+    <string name="no_account">لا يوجد حساب</string>
+    <string name="edit_profile_image_title">عدّل صورة الملف</string>
+    <string name="edit_profile_image_hint">ادخل لينك ( عنوان ال URL ) تبع صورة الملف</string>
+    <string name="edit_profile_image_success">تم تعديل الصورة بنجاح</string>
 </resources>

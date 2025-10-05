@@ -719,4 +719,8 @@
     <string name="action_mark_watched_up_to_this_episode">Marcar como vigilado en este episodio</string>
     <string name="action_remove_mark_watched_up_to_this_episode">Retirar vigilado para este episodio</string>
     <string name="action_reload">Recargado</string>
+    <string name="episode_action_play_mirror">Reproducir en espejo</string>"
+    <string name="edit_profile_image_title">Editar imagen de perfil</string>
+    <string name="edit_profile_image_hint">Introducir URL de imagen de perfil</string>
+    <string name="reload_provider">Recargar proveedor</string>
 </resources>
