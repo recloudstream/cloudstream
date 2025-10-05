@@ -25,6 +25,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRecyclerScrollable
+import com.lagradost.cloudstream3.utils.AppContextUtils.setMaxViewPoolSize
 
 class LoadClickCallback(
     val action: Int = 0,
@@ -103,6 +104,9 @@ open class ParentItemAdapter(
                     hasNext = item.hasNext
                     submitList(item.list.list)
                 }
+
+                // The vast majority of the lag comes from creating the view
+                homeChildRecyclerview.setMaxViewPoolSize(0, 20) 
             } else {
                 currentAdapter.apply {
                     isHorizontal = info.isHorizontalImages
