@@ -604,6 +604,8 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         fixGrid()
 
+        context?.let { HomeChildItemAdapter.updatePosterSize(it) }
+
         binding?.apply {
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
