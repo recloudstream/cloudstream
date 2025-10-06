@@ -399,16 +399,23 @@ class HomeFragment : Fragment() {
 
                 val listView = dialog.findViewById<ListView>(R.id.listview1)
 
-                val arrayAdapter = object : ArrayAdapter<String>(this, R.layout.sort_bottom_single_provider_choice,
+                val arrayAdapter = object : ArrayAdapter<String>(
+                    this, R.layout.sort_bottom_single_provider_choice,
                     mutableListOf()
                 ) {
-                    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-                        val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.sort_bottom_single_provider_choice, parent, false)
+                    override fun getView(
+                        position: Int,
+                        convertView: View?,
+                        parent: ViewGroup
+                    ): View {
+                        val view = convertView ?: LayoutInflater.from(context)
+                            .inflate(R.layout.sort_bottom_single_provider_choice, parent, false)
                         val titleText = view.findViewById<TextView>(R.id.text1)
                         val pinIcon = view.findViewById<ImageView>(R.id.pinicon)
                         val name = getItem(position)
                         titleText?.text = name
-                        val isPinned = pinnedphashset.contains(currentValidApis[position].name ?: "")
+                        val isPinned =
+                            pinnedphashset.contains(currentValidApis[position].name ?: "")
                         pinIcon.visibility = if (isPinned) View.VISIBLE else View.GONE
                         return view
                     }
@@ -420,7 +427,7 @@ class HomeFragment : Fragment() {
                     if (currentValidApis.isNotEmpty()) {
                         currentApiName = currentValidApis[i].name
                         //to switch to apply simply remove this
-                        currentApiName?.let(callback)
+                        currentApiName.let(callback)
                         dialog.dismissSafe()
                     }
                 }
@@ -431,7 +438,11 @@ class HomeFragment : Fragment() {
                     pinnedphashset = pinnedp.toHashSet()
                     arrayAdapter.clear()
                     val sortedApis = validAPIs
-                        .filter {it.hasMainPage && (pinnedphashset.contains(it.name) ||  it.supportedTypes.any(preSelectedTypes::contains)) }
+                        .filter {
+                            it.hasMainPage && (pinnedphashset.contains(it.name) || it.supportedTypes.any(
+                                preSelectedTypes::contains
+                            ))
+                        }
                         .sortedBy { it.name.lowercase() }
 
                     val sortedApiMap = LinkedHashMap<String, MainAPI>().apply {
@@ -459,12 +470,12 @@ class HomeFragment : Fragment() {
                 }
                 // pin provider on hold
                 listView?.setOnItemLongClickListener { _, _, i, _ ->
-                    if (currentValidApis.isNotEmpty() && i>1) {
+                    if (currentValidApis.isNotEmpty() && i > 1) {
                         val pinnedp = DataStoreHelper.pinnedProviders.toMutableList()
                         val thisapi = currentValidApis[i].name
-                        if(pinnedp.contains(thisapi)){
+                        if (pinnedp.contains(thisapi)) {
                             pinnedp.remove(thisapi)
-                        }else{
+                        } else {
                             pinnedp.add(thisapi)
                         }
                         DataStoreHelper.pinnedProviders = pinnedp.toTypedArray()
@@ -490,7 +501,7 @@ class HomeFragment : Fragment() {
     private val homeViewModel: HomeViewModel by activityViewModels()
     private val accountViewModel: AccountViewModel by activityViewModels()
 
-     fun addMovies(cards: List<SearchResponse>) {
+    fun addMovies(cards: List<SearchResponse>) {
         val ctx = context ?: run {
             Log.e(TAG, "Context is null, aborting addMovies")
             return
@@ -515,6 +526,7 @@ class HomeFragment : Fragment() {
             Log.e(TAG, "Error adding movies: $e")
         }
     }
+
     private fun deleteAll() {
         val ctx = context ?: run {
             Log.e(TAG, "Context is null, aborting deleteAll")
@@ -599,6 +611,28 @@ class HomeFragment : Fragment() {
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var homeMasterAdapter: HomeParentItemAdapterPreview? = null
 
+    var lastSavedHomepage: String? = null
+
+    fun saveHomepageToTV(page :  Map<String, HomeViewModel.ExpandableHomepageList>) {
+        // No need to update for phone
+        if(isLayout(PHONE)) {
+            return
+        }
+        val (name, data) = page.entries.firstOrNull() ?: return
+        // Modifying homepage is an expensive operation, and therefore we avoid it at all cost
+        if(name == lastSavedHomepage) {
+            return
+        }
+        Log.i(TAG, "Adding programs $name to TV")
+        lastSavedHomepage = name
+        ioSafe {
+            // empty the channel
+            deleteAll()
+            // insert the program from first array
+            addMovies(data.list.list)
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -610,10 +644,10 @@ class HomeFragment : Fragment() {
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
             homeApiFab.setOnClickListener(apiChangeClickListener)
-            homeApiFab.setOnLongClickListener{
-                if(currentApiName == noneApi.name) return@setOnLongClickListener false
+            homeApiFab.setOnLongClickListener {
+                if (currentApiName == noneApi.name) return@setOnLongClickListener false
                 homeViewModel.loadAndCancel(currentApiName, forceReload = true, fromUI = true)
-                showToast(R.string.action_reload,Toast.LENGTH_SHORT)
+                showToast(R.string.action_reload, Toast.LENGTH_SHORT)
                 true
             }
             homeChangeApi.setOnClickListener(apiChangeClickListener)
@@ -628,7 +662,7 @@ class HomeFragment : Fragment() {
             }
             homeMasterAdapter = HomeParentItemAdapterPreview(
                 fragment = this@HomeFragment,
-                homeViewModel,accountViewModel
+                homeViewModel, accountViewModel
             )
             homeMasterRecycler.adapter = homeMasterAdapter
             //fixPaddingStatusbar(homeLoadingStatusbar)
@@ -676,16 +710,7 @@ class HomeFragment : Fragment() {
                         homeLoadingShimmer.stopShimmer()
 
                         val d = data.value
-                        val k = d.values.firstOrNull()
-                        if (k != null) {
-                            // empty the channel
-                            deleteAll()
-                            // insert the program from first array
-                            addMovies(k.list.list)
-                        } else {
-                            Log.w("SafeAccess", "Map values are empty — cannot access first element")
-                        }
-
+                        saveHomepageToTV(d)
 
                         val mutableListOfResponse = mutableListOf<SearchResponse>()
                         listHomepageItems.clear()

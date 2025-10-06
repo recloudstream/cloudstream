@@ -49,6 +49,13 @@ open class ParentItemAdapter(
             a.list.list == b.list.list
         })
 ) {
+    companion object {
+        // The vast majority of the lag comes from creating the view
+        // This simply shares the views between all HomeChildItemAdapter
+        private val sharedPool =
+            RecyclerView.RecycledViewPool().apply { this.setMaxRecycledViews(0, 20) }
+    }
+
     data class ParentItemHolder(val binding: ViewBinding) : ViewHolderState<Bundle>(binding) {
         override fun save(): Bundle = Bundle().apply {
             val recyclerView = (binding as? HomepageParentBinding)?.homeChildRecyclerview
@@ -93,6 +100,7 @@ open class ParentItemAdapter(
         binding.apply {
             val currentAdapter = homeChildRecyclerview.adapter as? HomeChildItemAdapter
             if (currentAdapter == null) {
+                homeChildRecyclerview.setRecycledViewPool(sharedPool)
                 homeChildRecyclerview.adapter = HomeChildItemAdapter(
                     fragment = fragment,
                     id = id + position + 100,
@@ -104,9 +112,6 @@ open class ParentItemAdapter(
                     hasNext = item.hasNext
                     submitList(item.list.list)
                 }
-
-                // The vast majority of the lag comes from creating the view
-                homeChildRecyclerview.setMaxViewPoolSize(0, 20) 
             } else {
                 currentAdapter.apply {
                     isHorizontal = info.isHorizontalImages

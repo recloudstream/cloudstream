@@ -5,9 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import androidx.viewbinding.ViewBinding
+import coil3.load
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.databinding.HomeRemoveGridBinding
@@ -39,6 +41,15 @@ class HomeScrollViewHolderState(view: ViewBinding) : ViewHolderState<Boolean>(vi
             if (isLayout(TV)) {
                 itemView.requestFocus()
             }
+        }
+    }
+
+    override fun onViewRecycled() {
+        super.onViewRecycled()
+
+        // Clear the image, idk if this saves ram or not, but I guess?
+        view.root.findViewById<ImageView>(R.id.imageView)?.apply {
+            load(null)
         }
     }
 }
