@@ -55,10 +55,10 @@
     </array>
 
     <array name="limit_title_rez_pref_names">
-        <item>@string/resolution_and_title</item>
         <item>@string/resolution_and_name</item>
-        <item>@string/title</item>
         <item>@string/name</item>
+        <item>@string/resolution_and_title</item>
+        <item>@string/title</item>
         <item>@string/resolution</item>
         <item>@string/none</item>
     </array>
@@ -422,6 +422,4 @@
         <item>VISCII</item>
         <item>Windows-1258</item>
     </string-array>
-    <string name="name">Name</string>
-    <string name="resolution_and_name">Resolution and name</string>
 </resources>
