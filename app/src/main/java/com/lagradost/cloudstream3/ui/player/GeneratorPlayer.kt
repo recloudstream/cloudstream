@@ -1845,10 +1845,10 @@ class GeneratorPlayer : FullScreenPlayer() {
         val title = when (titleRez) {
             0 -> ""
             1 -> extra
-            2 -> headerName
-            3 -> source
-            4 -> "$headerName $extra"
-            5 -> "$source $extra"
+            2 -> source
+            3 -> "$source $extra"
+            4 -> headerName
+            5 -> "$headerName $extra"
             else -> ""
         }
         playerBinding?.playerVideoTitleRez?.apply {
