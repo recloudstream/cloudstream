@@ -65,6 +65,8 @@ import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.isUsingMobileData
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
@@ -85,8 +87,6 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
 import kotlin.math.roundToInt
-import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
-import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
 
 
 const val MINIMUM_SEEK_TIME = 7000L         // when swipe seeking
@@ -110,6 +110,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     // state of player UI
     protected var isShowing = false
+    private var uiShowingBeforeGesture = false
     protected var isLocked = false
 
     protected var hasEpisodes = false
@@ -883,6 +884,13 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         delayHide()
     }
 
+    protected fun hidePlayerUI(){
+        if (isShowing) {
+            isShowing = false
+            animateLayoutChanges()
+        }
+    }
+
     override fun playerStatusChanged() {
         super.playerStatusChanged()
         delayHide()
@@ -1202,6 +1210,15 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                         currentClickCount = 0
                     }
 
+                    // If we hid the UI for a gesture and playback is paused, show it again
+                    if (!player.getIsPlaying()) {
+                        val didGesture = currentTouchAction != null || currentLastTouchAction != null
+                        if (didGesture && uiShowingBeforeGesture && !isShowing) {
+                            isShowing = true
+                            animateLayoutChanges()
+                        }
+                    }
+
                     // call auto hide as it wont hide when you have your finger down
                     autoHide()
 
@@ -1213,6 +1230,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     currentTouchStartPlayerTime = null
                     currentTouchLast = null
                     currentTouchStartTime = null
+                    uiShowingBeforeGesture = false
 
                     // resets UI
                     playerTimeText.isVisible = false
@@ -1231,20 +1249,18 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                         if (currentTouchAction == null) {
                             val diffFromStart = startTouch - currentTouch
-
                             if (swipeVerticalEnabled) {
                                 if (abs(diffFromStart.y * 100 / screenHeightWithOrientation) > MINIMUM_VERTICAL_SWIPE) {
                                     // left = Brightness, right = Volume, but the UI is reversed to show the UI better
+                                    uiShowingBeforeGesture = isShowing
                                     currentTouchAction =
                                         if (startTouch.x < screenWidthWithOrientation / 2) {
                                             // hide the UI if you hold brightness to show screen better, better UX
-                                            if (isShowing) {
-                                                isShowing = false
-                                                animateLayoutChanges()
-                                            }
-
+                                            hidePlayerUI()
                                             TouchAction.Brightness
                                         } else {
+                                            // hide the UI if you hold volume to show screen better, better UX
+                                            hidePlayerUI()
                                             TouchAction.Volume
                                         }
                                 }
