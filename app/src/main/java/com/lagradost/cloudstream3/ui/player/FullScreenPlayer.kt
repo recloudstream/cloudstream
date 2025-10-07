@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
 import android.content.res.Configuration
@@ -33,6 +34,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
 import androidx.annotation.OptIn
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
@@ -56,6 +58,7 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.PlayerCustomLayoutBinding
+import com.lagradost.cloudstream3.databinding.SpeedDialogBinding
 import com.lagradost.cloudstream3.databinding.SubtitleOffsetBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer.Companion.subsProvidersIsActive
@@ -68,7 +71,6 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.isUsingMobileData
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
 import com.lagradost.cloudstream3.utils.DataStoreHelper
-import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.getNavigationBarHeight
@@ -491,7 +493,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         activity?.attachBackPressedCallback("FullScreenPlayer") {
             if (isShowingEpisodeOverlay) {
                 // isShowingEpisodeOverlay pauses, so this makes it easier to unpause
-                if(isLayout(TV or EMULATOR)) {
+                if (isLayout(TV or EMULATOR)) {
                     playerPausePlay?.requestFocus()
                 }
                 toggleEpisodesOverlay(show = false)
@@ -655,39 +657,76 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
 
-    private fun showSpeedDialog() {
-        val speedsText =
-            listOf(
-                "0.5x",
-                "0.75x",
-                "0.85x",
-                "1x",
-                "1.15x",
-                "1.25x",
-                "1.4x",
-                "1.5x",
-                "1.75x",
-                "2x"
-            )
-        val speedsNumbers =
-            listOf(0.5f, 0.75f, 0.85f, 1f, 1.15f, 1.25f, 1.4f, 1.5f, 1.75f, 2f)
-        val speedIndex = speedsNumbers.indexOf(player.getPlaybackSpeed())
+    @SuppressLint("SetTextI18n")
+    fun updateSpeedDialogBinding(binding: SpeedDialogBinding) {
+        val speed = player.getPlaybackSpeed()
+        binding.speedText.text = "%.2fx".format(speed).replace(".0x", "x")
+        // Android crashes if you don't round to an exact step size
+        binding.speedBar.value = (speed.coerceIn(0.1f, 2.0f) / binding.speedBar.stepSize).roundToInt().toFloat() * binding.speedBar.stepSize
+    }
 
-        activity?.let { act ->
-            act.showDialog(
-                speedsText,
-                speedIndex,
-                act.getString(R.string.player_speed),
-                false,
-                {
-                    if (isFullScreenPlayer)
-                        activity?.hideSystemUI()
-                }) { index ->
-                if (isFullScreenPlayer)
-                    activity?.hideSystemUI()
-                setPlayBackSpeed(speedsNumbers[index])
+    private fun showSpeedDialog() {
+        val act = activity ?: return
+        val isPlaying = player.getIsPlaying()
+        player.handleEvent(CSPlayerEvent.Pause, PlayerEventSource.UI)
+
+        val binding: SpeedDialogBinding = SpeedDialogBinding.inflate(
+            LayoutInflater.from(act)
+        )
+
+        updateSpeedDialogBinding(binding)
+        for ((view, speed) in arrayOf(
+            binding.speed25 to 0.25f,
+            binding.speed100 to 1.0f,
+            binding.speed125 to 1.25f,
+            binding.speed150 to 1.5f,
+            binding.speed200 to 2.0f,
+        )) {
+            view.setOnClickListener {
+                setPlayBackSpeed(speed)
+                updateSpeedDialogBinding(binding)
             }
         }
+
+        binding.speedMinus.setOnClickListener {
+            setPlayBackSpeed(maxOf((player.getPlaybackSpeed() - 0.1f), 0.1f))
+            updateSpeedDialogBinding(binding)
+        }
+
+        binding.speedPlus.setOnClickListener {
+            setPlayBackSpeed(minOf((player.getPlaybackSpeed() + 0.1f), 2.0f))
+            updateSpeedDialogBinding(binding)
+        }
+
+        binding.speedBar.addOnChangeListener { slider, value, fromUser ->
+            if (fromUser) {
+                setPlayBackSpeed(value)
+                updateSpeedDialogBinding(binding)
+            }
+        }
+
+        val dismiss = DialogInterface.OnDismissListener {
+            if (isFullScreenPlayer)
+                activity?.hideSystemUI()
+            if (isPlaying) {
+                player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
+            }
+        }
+
+        //if (isLayout(PHONE)) {
+        //    val builder =
+        //        BottomSheetDialog(act, R.style.AlertDialogCustom)
+        //    builder.setContentView(binding.root)
+        //    builder.setOnDismissListener(dismiss)
+        //    builder.show()
+        //} else {
+        val builder =
+            AlertDialog.Builder(act, R.style.AlertDialogCustom)
+                .setView(binding.root)
+        builder.setOnDismissListener(dismiss)
+        val dialog = builder.create()
+        dialog.show()
+        //}
     }
 
     fun resetRewindText() {
@@ -884,7 +923,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         delayHide()
     }
 
-    protected fun hidePlayerUI(){
+    protected fun hidePlayerUI() {
         if (isShowing) {
             isShowing = false
             animateLayoutChanges()
@@ -1212,7 +1251,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                     // If we hid the UI for a gesture and playback is paused, show it again
                     if (!player.getIsPlaying()) {
-                        val didGesture = currentTouchAction != null || currentLastTouchAction != null
+                        val didGesture =
+                            currentTouchAction != null || currentLastTouchAction != null
                         if (didGesture && uiShowingBeforeGesture && !isShowing) {
                             isShowing = true
                             animateLayoutChanges()
