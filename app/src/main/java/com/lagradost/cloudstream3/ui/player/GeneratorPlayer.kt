@@ -1761,6 +1761,13 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+    private fun getHeaderName(): String? {
+        return when (val meta = currentMeta) {
+            is ResultEpisode -> meta.headerName
+            is ExtractorUri -> meta.headerName
+            else -> null
+        }
+    }
     private fun getPlayerVideoTitle(): String {
         var headerName: String? = null
         var subName: String? = null
@@ -1831,20 +1838,17 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     @SuppressLint("SetTextI18n")
     fun setPlayerDimen(widthHeight: Pair<Int, Int>?) {
-        val extra = if (widthHeight != null) {
-            val (width, height) = widthHeight
-            "- ${width}x${height}"
-        } else {
-            ""
-        }
-
+        val extra = widthHeight?.let { (w, h) -> "- ${w}x${h}" } ?: ""
         val source = currentSelectedLink?.first?.name ?: currentSelectedLink?.second?.name ?: "NULL"
+        val headerName = getHeaderName().orEmpty()
 
         val title = when (titleRez) {
             0 -> ""
             1 -> extra
-            2 -> source
-            3 -> "$source $extra"
+            2 -> headerName
+            3 -> source
+            4 -> "$headerName $extra"
+            5 -> "$source $extra"
             else -> ""
         }
         playerBinding?.playerVideoTitleRez?.apply {
