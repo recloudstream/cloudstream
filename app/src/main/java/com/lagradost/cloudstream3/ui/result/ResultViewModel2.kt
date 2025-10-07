@@ -338,6 +338,7 @@ data class ResumeWatchingStatus(
 data class LinkLoadingResult(
     val links: List<ExtractorLink>,
     val subs: List<SubtitleData>,
+    val syncData: HashMap<String, String>
 )
 
 sealed class SelectPopup {
@@ -766,15 +767,19 @@ class ResultViewModel2 : ViewModel() {
                 subs?.filter { subtitle ->
                     downloadList.any { langTagIETF ->
                         subtitle.languageCode == langTagIETF ||
-                        subtitle.originalName.contains(fromTagToEnglishLanguageName(langTagIETF) ?: langTagIETF)
+                                subtitle.originalName.contains(
+                                    fromTagToEnglishLanguageName(
+                                        langTagIETF
+                                    ) ?: langTagIETF
+                                )
                     }
                 }
-                ?.map { ExtractorSubtitleLink(it.name, it.url, "", it.headers) }
-                ?.take(3) // max subtitles download hardcoded (?_?)
-                ?.forEach { link ->
-                    val fileName = VideoDownloadManager.getFileName(context, meta)
-                    downloadSubtitle(context, link, fileName, folder)
-                }
+                    ?.map { ExtractorSubtitleLink(it.name, it.url, "", it.headers) }
+                    ?.take(3) // max subtitles download hardcoded (?_?)
+                    ?.forEach { link ->
+                        val fileName = VideoDownloadManager.getFileName(context, meta)
+                        downloadSubtitle(context, link, fileName, folder)
+                    }
             } catch (e: Exception) {
                 logError(e)
             }
@@ -1415,7 +1420,11 @@ class ResultViewModel2 : ViewModel() {
             _loadedLinks.postValue(null)
         }
 
-        return LinkLoadingResult(sortUrls(links), sortSubs(subs))
+        return LinkLoadingResult(
+            sortUrls(links),
+            sortSubs(subs),
+            HashMap(currentResponse?.syncData ?: emptyMap())
+        )
     }
 
     fun handleAction(click: EpisodeClickEvent) =
@@ -1427,16 +1436,23 @@ class ResultViewModel2 : ViewModel() {
         _episodeSynopsis.postValue(null)
     }
 
-    private fun markEpisodes(editor: Editor,episodeIds: Array<String>,watchState: VideoWatchState) {
+    private fun markEpisodes(
+        editor: Editor,
+        episodeIds: Array<String>,
+        watchState: VideoWatchState
+    ) {
         val watchStateString = DataStore.mapper.writeValueAsString(watchState)
         episodeIds.forEach {
-            if(getVideoWatchState(it.toInt()) != watchState){
-                editor.setKeyRaw(getFolderName("$currentAccount/$VIDEO_WATCH_STATE", it),watchStateString)
+            if (getVideoWatchState(it.toInt()) != watchState) {
+                editor.setKeyRaw(
+                    getFolderName("$currentAccount/$VIDEO_WATCH_STATE", it),
+                    watchStateString
+                )
             }
         }
     }
 
-    private fun  getEpisodesIdsBySeason(season: Int): HashMap<Int, Array<String>> {
+    private fun getEpisodesIdsBySeason(season: Int): HashMap<Int, Array<String>> {
         val result = currentEpisodes.entries
             .asSequence()
             .filter { it.key.season <= season && it.key.dubStatus == preferDubStatus }
@@ -1447,7 +1463,7 @@ class ResultViewModel2 : ViewModel() {
             .mapValues { (_, ids) -> ids.toTypedArray() }
             .toMap(HashMap())
 
-        if(season != 0){
+        if (season != 0) {
             result.remove(0)
         }
         return result
@@ -1490,8 +1506,9 @@ class ResultViewModel2 : ViewModel() {
                     val watchedText = if (isWatched) R.string.action_remove_from_watched
                     else R.string.action_mark_as_watched
 
-                    val markUpToText = if(isWatched) R.string.action_remove_mark_watched_up_to_this_episode
-                    else R.string.action_mark_watched_up_to_this_episode
+                    val markUpToText =
+                        if (isWatched) R.string.action_remove_mark_watched_up_to_this_episode
+                        else R.string.action_mark_watched_up_to_this_episode
 
                     options.add(txt(watchedText) to ACTION_MARK_AS_WATCHED)
 
@@ -1643,9 +1660,8 @@ class ResultViewModel2 : ViewModel() {
             }
 
             ACTION_PLAY_EPISODE_IN_PLAYER -> {
-                val data = currentResponse?.syncData?.toList() ?: emptyList()
-                val list =
-                    HashMap<String, String>().apply { putAll(data) }
+                val list = HashMap<String, String>(currentResponse?.syncData ?: emptyMap())
+
                 generator?.also {
                     it.getAll() // I know kinda shit to iterate all, but it is 100% sure to work
                         ?.indexOfFirst { value -> value is ResultEpisode && value.id == click.data.id }
@@ -1682,18 +1698,22 @@ class ResultViewModel2 : ViewModel() {
                 reloadEpisodes()
             }
 
-            ACTION_MARK_WATCHED_UP_TO_THIS_EPISODE -> ioSafe{
-                val editor = context?.let { it1 -> editor(it1,false) }
+            ACTION_MARK_WATCHED_UP_TO_THIS_EPISODE -> ioSafe {
+                val editor = context?.let { it1 -> editor(it1, false) }
 
                 if (editor != null) {
-                    val (clickSeason,clickEpisode) = click.data.let { (it.season ?: 0) to it.episode }
-                    val watchState = if (getVideoWatchState(click.data.id) == VideoWatchState.Watched) VideoWatchState.None else VideoWatchState.Watched
-                    val seasons =  getEpisodesIdsBySeason(clickSeason)
+                    val (clickSeason, clickEpisode) = click.data.let {
+                        (it.season ?: 0) to it.episode
+                    }
+                    val watchState =
+                        if (getVideoWatchState(click.data.id) == VideoWatchState.Watched) VideoWatchState.None else VideoWatchState.Watched
+                    val seasons = getEpisodesIdsBySeason(clickSeason)
 
-                    seasons.keys.forEach {currentSeason ->
+                    seasons.keys.forEach { currentSeason ->
                         var episodeIds = seasons[currentSeason] ?: emptyArray()
-                        if(currentSeason == clickSeason) episodeIds = episodeIds.sliceArray(0 until clickEpisode)
-                        markEpisodes(editor,episodeIds,watchState)
+                        if (currentSeason == clickSeason) episodeIds =
+                            episodeIds.sliceArray(0 until clickEpisode)
+                        markEpisodes(editor, episodeIds, watchState)
                     }
                     editor.apply()
                     reloadEpisodes()
@@ -1992,7 +2012,10 @@ class ResultViewModel2 : ViewModel() {
         return when (sorting) {
             EpisodeSortType.NUMBER_ASC -> episodes.sortedBy { it.episode }
             EpisodeSortType.NUMBER_DESC -> episodes.sortedByDescending { it.episode }
-            EpisodeSortType.RATING_HIGH_LOW -> episodes.sortedByDescending { it.score?.toDouble() ?: 0.0 }
+            EpisodeSortType.RATING_HIGH_LOW -> episodes.sortedByDescending {
+                it.score?.toDouble() ?: 0.0
+            }
+
             EpisodeSortType.RATING_LOW_HIGH -> episodes.sortedBy { it.score?.toDouble() ?: 0.0 }
             EpisodeSortType.DATE_NEWEST -> episodes.sortedByDescending { it.airDate }
             EpisodeSortType.DATE_OLDEST -> episodes.sortedBy { it.airDate }
