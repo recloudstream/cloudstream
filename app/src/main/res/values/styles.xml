@@ -90,6 +90,7 @@
 
     <style name="AmoledModeLight" parent="AmoledMode">
         <item name="primaryGrayBackground">@color/amoledModeLight</item>
+        <item name="boxItemBackground">@color/amoledModeLight</item>
     </style>
 
     <style name="ChipFilled" parent="@style/Widget.Material3.Chip.Filter">
