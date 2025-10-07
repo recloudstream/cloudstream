@@ -110,7 +110,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     // state of player UI
     protected var isShowing = false
-    private var showUiAfterOverlayHide = false
+    private var uiShowingBeforeGesture = false
     protected var isLocked = false
 
     protected var hasEpisodes = false
@@ -891,19 +891,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
     }
 
-    private fun showPlayerIfReady() {
-        if (!player.getIsPlaying() && showUiAfterOverlayHide) {
-            val leftGone  = playerBinding?.playerProgressbarLeftHolder?.let { !it.isVisible || it.alpha <= 0f } ?: true
-            val rightGone = playerBinding?.playerProgressbarRightHolder?.let { !it.isVisible || it.alpha <= 0f } ?: true
-
-            if (leftGone && rightGone && !isShowing) {
-                showUiAfterOverlayHide = false
-                isShowing = true
-                animateLayoutChanges()
-            }
-        }
-    }
-
     override fun playerStatusChanged() {
         super.playerStatusChanged()
         delayHide()
@@ -1226,8 +1213,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     // If we hid the UI for a gesture and playback is paused, show it again
                     if (!player.getIsPlaying()) {
                         val didGesture = currentTouchAction != null || currentLastTouchAction != null
-                        if (didGesture) {
-                            showUiAfterOverlayHide = true
+                        if (didGesture && uiShowingBeforeGesture && !isShowing) {
+                            isShowing = true
+                            animateLayoutChanges()
                         }
                     }
 
@@ -1242,6 +1230,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     currentTouchStartPlayerTime = null
                     currentTouchLast = null
                     currentTouchStartTime = null
+                    uiShowingBeforeGesture = false
 
                     // resets UI
                     playerTimeText.isVisible = false
@@ -1260,10 +1249,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                         if (currentTouchAction == null) {
                             val diffFromStart = startTouch - currentTouch
-
                             if (swipeVerticalEnabled) {
                                 if (abs(diffFromStart.y * 100 / screenHeightWithOrientation) > MINIMUM_VERTICAL_SWIPE) {
                                     // left = Brightness, right = Volume, but the UI is reversed to show the UI better
+                                    uiShowingBeforeGesture = isShowing
                                     currentTouchAction =
                                         if (startTouch.x < screenWidthWithOrientation / 2) {
                                             // hide the UI if you hold brightness to show screen better, better UX
@@ -1333,10 +1322,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                             animate()
                                                 .alpha(0f)
                                                 .setDuration(300)
-                                                .withEndAction {
-                                                    isVisible = false
-                                                    showPlayerIfReady()
-                                                }
+                                                .withEndAction { isVisible = false }
                                                 .start()
                                         }
                                         // Show the progress bar for 1.5 seconds
@@ -1618,10 +1604,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 animate()
                     .alpha(0f)
                     .setDuration(300)
-                    .withEndAction {
-                        isVisible = false
-                        showPlayerIfReady()
-                    }
+                    .withEndAction { isVisible = false }
                     .start()
             }
             // Show the progress bar for 1.5 seconds
