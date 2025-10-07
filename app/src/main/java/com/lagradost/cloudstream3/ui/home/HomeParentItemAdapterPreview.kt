@@ -624,6 +624,9 @@ class HomeParentItemAdapterPreview(
                     previewViewpager.isVisible = true
                     previewViewpagerText.isVisible = true
                     alternativeAccountPadding?.isVisible = false
+                    (binding as? FragmentHomeHeadTvBinding)?.apply {
+                        homePreviewInfoBtt.isVisible = true
+                    }
                 }
 
                 else -> {
@@ -632,6 +635,9 @@ class HomeParentItemAdapterPreview(
                     previewViewpager.isVisible = false
                     previewViewpagerText.isVisible = false
                     alternativeAccountPadding?.isVisible = true
+                    (binding as? FragmentHomeHeadTvBinding)?.apply {
+                        homePreviewInfoBtt.isVisible = false
+                    }
                     //previewHeader.isVisible = false
                 }
             }
