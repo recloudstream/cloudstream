@@ -1092,9 +1092,10 @@ fun TvType.isAnimeOp(): Boolean {
 /** Data class for the Subtitle file info.
  * @property lang Subtitle file language.
  * @property url Subtitle file url to download/load the file.
+ * @see newSubtitleFile
  * */
 @ConsistentCopyVisibility
-data class SubtitleFile private constructor(
+data class SubtitleFile internal constructor(
     var lang: String,
     var url: String,
     var headers: Map<String, String>?
