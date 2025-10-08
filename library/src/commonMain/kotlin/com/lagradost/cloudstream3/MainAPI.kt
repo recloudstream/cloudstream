@@ -429,6 +429,7 @@ fun newSearchResponseList(
     list: List<SearchResponse>,
     hasNext: Boolean? = null,
 ): SearchResponseList {
+    @Suppress("DEPRECATION")
     return SearchResponseList(
         list,
         hasNext = hasNext ?: list.isNotEmpty()
