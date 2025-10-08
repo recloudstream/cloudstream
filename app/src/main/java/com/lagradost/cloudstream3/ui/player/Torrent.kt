@@ -224,13 +224,13 @@ object Torrent {
         val status = add(link.url)
 
         return newExtractorLink(
-	        source = link.source,
+            source = link.source,
             name = link.name,
             url = status.streamUrl(link.url),
             type = ExtractorLinkType.VIDEO
         ) {
             this.referer = ""
-	        this.quality = link.quality
+            this.quality = link.quality
         } to status
     }
 
