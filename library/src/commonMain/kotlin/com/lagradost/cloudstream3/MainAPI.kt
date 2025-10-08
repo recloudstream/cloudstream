@@ -1100,6 +1100,7 @@ data class SubtitleFile private constructor(
     var headers: Map<String, String>?
 ) {
     /** Backwards compatible constructor, mark this as deprecated when new stable comes out */
+    // @Deprecated("Use newSubtitleFile method", level = DeprecationLevel.WARNING)
     constructor(lang: String, url: String) : this(lang = lang, url = url, headers = null)
 
     /** Language code to properly filter auto select / download subtitles */
@@ -1120,9 +1121,8 @@ suspend fun newSubtitleFile(
     url: String,
     initializer: suspend SubtitleFile.() -> Unit = { }
 ): SubtitleFile {
-    @Suppress("DEPRECATION_ERROR")
     val builder = SubtitleFile(
-        lang, url
+        lang, url, headers = null
     )
     builder.initializer()
 

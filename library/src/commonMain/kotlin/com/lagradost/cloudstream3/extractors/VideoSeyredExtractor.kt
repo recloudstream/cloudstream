@@ -26,7 +26,7 @@ open class VideoSeyred : ExtractorApi() {
         for (track in response.tracks) {
             if (track.label != null && track.kind == "captions") {
                 subtitleCallback.invoke(
-                    SubtitleFile(
+                    newSubtitleFile(
                         lang = track.label,
                         url  = fixUrl(track.file)
                     )
