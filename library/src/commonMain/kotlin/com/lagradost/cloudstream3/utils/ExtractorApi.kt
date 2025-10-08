@@ -340,6 +340,7 @@ fun Long.toUs(): Long {
  * If your site has an unorthodox m3u8-like system where there are multiple smaller videos concatenated
  * use this.
  * */
+@Suppress("DEPRECATION_ERROR")
 data class ExtractorLinkPlayList(
     override val source: String,
     override val name: String,
@@ -662,6 +663,7 @@ constructor(
         return headers
     }
 
+    @Suppress("DEPRECATION_ERROR")
     @Deprecated("Use newExtractorLink", level = DeprecationLevel.ERROR)
     constructor(
         source: String,
@@ -685,6 +687,7 @@ constructor(
         type = type ?: inferTypeFromUrl(url)
     )
 
+    @Suppress("DEPRECATION_ERROR")
     @Deprecated("Use newExtractorLink", level = DeprecationLevel.ERROR)
     constructor(
         source: String,
@@ -726,6 +729,7 @@ constructor(
         extractorData: String? = null
     ) : this(source, name, url, referer, quality, isM3u8, headers, extractorData, false)
 
+    @Suppress("DEPRECATION_ERROR")
     @Deprecated("Use newExtractorLink", level = DeprecationLevel.ERROR)
     constructor(
         source: String,
