@@ -512,6 +512,7 @@ suspend fun newDrmExtractorLink(
  * @property uuid Drm UUID [WIDEVINE_UUID], [PLAYREADY_UUID], [CLEARKEY_UUID] (by default) .. etc
  * @property kty Key type "oct" (octet sequence) by default
  * @property keyRequestParameters Parameters that will used to request the key.
+ * @see newDrmExtractorLink
  * */
 @Suppress("DEPRECATION_ERROR")
 open class DrmExtractorLink private constructor(
@@ -613,8 +614,11 @@ open class DrmExtractorLink private constructor(
  * @property headers Headers <String, String> map that will be used by network request.
  * @property extractorData Used for getExtractorVerifierJob()
  * @property type Extracted link type (Video, M3u8, Dash, Torrent or Magnet)
+ * @see newExtractorLink
  * */
-open class ExtractorLink constructor(
+open class ExtractorLink
+@Deprecated("Use newExtractorLink", level = DeprecationLevel.ERROR)
+constructor(
     open val source: String,
     open val name: String,
     override val url: String,
