@@ -191,7 +191,8 @@ class EpisodeAdapter(
                         "AmoledLight"
                     )
                 if (theme == "Amoled") {
-                    binding.episodeHolderLarge.getChildAt(0).setPadding(5)
+                    binding.episodeHolderLarge.radius = 0.0f
+                    binding.episodeHolder.setPadding(0)
                 }
             }
 
