@@ -11,7 +11,7 @@
         style="@style/WatchHeaderText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/navbar_width"
+        android:layout_marginStart="10dp"
         android:layout_marginEnd="0dp"
         android:padding="12dp"
         tools:text="Trending" />
@@ -24,8 +24,9 @@
         android:descendantFocusability="afterDescendants"
         android:nextFocusUp="@id/home_child_more_info"
         android:orientation="horizontal"
-        android:paddingStart="@dimen/navbar_width"
+        android:paddingStart="10dp"
         android:paddingEnd="5dp"
+        android:overScrollMode="never"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/home_result_grid" />
 </LinearLayout>
