@@ -1154,11 +1154,10 @@ data class HomePageList(
 /** Data class for the Search results.
  * @property items list of [SearchResponse] items that will be added to the search row.
  * @property hasNext if there is a next page or not.
+ * @see newSearchResponseList
  * */
 @Prerelease
-data class SearchResponseList
-@Deprecated("Use newSearchResponseList method", level = DeprecationLevel.WARNING)
-constructor(
+data class SearchResponseList internal constructor(
     val items: List<SearchResponse>,
     val hasNext: Boolean = false
 )
