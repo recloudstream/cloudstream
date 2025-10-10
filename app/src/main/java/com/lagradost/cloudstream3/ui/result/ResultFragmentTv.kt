@@ -939,8 +939,6 @@ class ResultFragmentTv : Fragment() {
                             R.drawable.profile_bg_red,
                             R.drawable.profile_bg_teal
                         ).random()
-                        //Change poster crop area to 20% from Top
-                        backgroundPoster.cropYCenterOffsetPct = 0.20F
 
                         backgroundPoster.loadImage(d.posterBackgroundImage) {
                             error { getImageFromDrawable(context ?: return@error null, error) }

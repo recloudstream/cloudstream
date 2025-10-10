@@ -90,6 +90,7 @@
 
     <style name="AmoledModeLight" parent="AmoledMode">
         <item name="primaryGrayBackground">@color/amoledModeLight</item>
+        <item name="boxItemBackground">@color/amoledModeLight</item>
     </style>
 
     <style name="ChipFilled" parent="@style/Widget.Material3.Chip.Filter">
@@ -531,7 +532,7 @@
         <item name="android:navigationBarColor">?attr/colorPrimary</item>
     </style>
 
-    <style name="AlertDialogCustom" parent="Theme.AppCompat.Dialog.Alert">
+    <style name="AlertDialogCustom" parent="Theme.AlertDialog">
         <item name="android:windowFullscreen">true</item>
         <item name="android:textColor">?attr/textColor</item>
         <item name="android:textColorPrimary">?attr/textColor</item>

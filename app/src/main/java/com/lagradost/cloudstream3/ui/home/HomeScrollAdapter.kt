@@ -59,8 +59,6 @@ class HomeScrollAdapter(
             }
 
             is HomeScrollViewTvBinding -> {
-                //Change poster crop area to 20% from Top
-                binding.homeScrollPreview.cropYCenterOffsetPct = 0.2f
                 binding.homeScrollPreview.isFocusable = false
                 binding.homeScrollPreview.setOnClickListener { view ->
                     callback.invoke(view ?: return@setOnClickListener, position, item)

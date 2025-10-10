@@ -396,7 +396,7 @@ open class TmdbProvider : MainAPI() {
         } else {
             loadFromTmdb(id)?.let { return it }
             if (isTvSeries) {
-                tmdb.tvService().externalIds(id, "en-US").awaitResponse().body()?.imdb_id?.let {
+                tmdb.tvService().externalIds(id).awaitResponse().body()?.imdb_id?.let {
                     val fromImdb = loadFromImdb(it)
                     val result = if (fromImdb == null) {
                         val details = tmdb.tvService().tv(id, "en-US").awaitResponse().body()
@@ -407,7 +407,7 @@ open class TmdbProvider : MainAPI() {
                     result
                 }
             } else {
-                tmdb.moviesService().externalIds(id, "en-US").awaitResponse()
+                tmdb.moviesService().externalIds(id).awaitResponse()
                     .body()?.imdb_id?.let { loadFromImdb(it) }
             }
         }
