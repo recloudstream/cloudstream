@@ -271,7 +271,10 @@ tasks.register<Jar>("makeJar") {
 tasks.withType<KotlinJvmCompile> {
     compilerOptions {
         jvmTarget.set(javaTarget)
-        freeCompilerArgs.add("-Xjvm-default=all-compatibility")
+        freeCompilerArgs.addAll(
+            "-Xjvm-default=all-compatibility",
+            "-opt-in=com.lagradost.cloudstream3.Prerelease"
+        )
     }
 }
 

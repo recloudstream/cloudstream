@@ -33,9 +33,17 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
-/** Api has not yet been published to stable, and will cause `NoSuchMethodException` on stable */
+/**
+ * API available only on prerelease builds.
+ * Using it will cause stable to crash with `NoSuchMethodException`.
+ */
 @MustBeDocumented // Same as java.lang.annotation.Documented
-@Retention(AnnotationRetention.SOURCE) // This is only an IDE hint, and will not be used in the runtime
+@Retention(AnnotationRetention.BINARY) // This is only an IDE hint, and will not be used in the runtime
+@RequiresOptIn(
+    message = "This API is only available on prerelease builds. " +
+              "Using it will cause CloudStream stable to crash.",
+    level = RequiresOptIn.Level.WARNING
+)
 annotation class Prerelease
 
 /**

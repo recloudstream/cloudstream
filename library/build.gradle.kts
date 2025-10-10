@@ -25,6 +25,10 @@ kotlin {
     }
 
     sourceSets {
+        all {
+            languageSettings.optIn("com.lagradost.cloudstream3.Prerelease")
+        }
+
         commonMain.dependencies {
             implementation(libs.nicehttp) // HTTP Lib
             implementation(libs.jackson.module.kotlin) // JSON Parser
