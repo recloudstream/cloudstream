@@ -1093,6 +1093,7 @@ fun TvType.isAnimeOp(): Boolean {
 /** Data class for the Subtitle file info.
  * @property lang Subtitle file language.
  * @property url Subtitle file url to download/load the file.
+ * @see newSubtitleFile
  * */
 @ConsistentCopyVisibility
 data class SubtitleFile private constructor(
@@ -1101,6 +1102,7 @@ data class SubtitleFile private constructor(
     var headers: Map<String, String>?
 ) {
     /** Backwards compatible constructor, mark this as deprecated when new stable comes out */
+    // @Deprecated("Use newSubtitleFile method", level = DeprecationLevel.WARNING)
     constructor(lang: String, url: String) : this(lang = lang, url = url, headers = null)
 
     /** Language code to properly filter auto select / download subtitles */
@@ -1121,7 +1123,7 @@ suspend fun newSubtitleFile(
     url: String,
     initializer: suspend SubtitleFile.() -> Unit = { }
 ): SubtitleFile {
-    @Suppress("DEPRECATION_ERROR")
+    // @Suppress("DEPRECATION")
     val builder = SubtitleFile(
         lang, url
     )

@@ -39,7 +39,7 @@ open class HDMomPlayer : ExtractorApi() {
                     if (track.label.contains("Forced")) continue
 
                     subtitleCallback.invoke(
-                        SubtitleFile(
+                        newSubtitleFile(
                             lang = track.label,
                             url  = fixUrl(mainUrl + track.file)
                         )

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -89,7 +90,12 @@ open class Vidplay : ExtractorApi() {
         }
 
         res?.tracks?.filter { it.kind == "captions" }?.map {
-            subtitleCallback.invoke(SubtitleFile(it.label ?: return@map, it.file ?: return@map))
+            subtitleCallback.invoke(
+                newSubtitleFile(
+                    it.label ?: return@map,
+                    it.file ?: return@map
+                )
+            )
         }
     }
 

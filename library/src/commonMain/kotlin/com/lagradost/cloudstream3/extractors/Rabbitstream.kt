@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.base64DecodeArray
 import com.lagradost.cloudstream3.base64Encode
+import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
@@ -116,7 +117,7 @@ open class Rabbitstream : ExtractorApi() {
 
         decryptedSources?.tracks?.map { track ->
             subtitleCallback.invoke(
-                SubtitleFile(
+                newSubtitleFile(
                     track?.label ?: return@map,
                     track.file ?: return@map
                 )

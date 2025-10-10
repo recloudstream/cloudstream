@@ -109,7 +109,7 @@ open class Gdriveplayer : ExtractorApi() {
         subData?.addMarks("file")?.addMarks("kind")?.addMarks("label").let { dataSub ->
             tryParseJson<List<Tracks>>("[$dataSub]")?.map { sub ->
                 subtitleCallback.invoke(
-                    SubtitleFile(
+                    newSubtitleFile(
                         sub.label,
                         httpsify(sub.file)
                     )

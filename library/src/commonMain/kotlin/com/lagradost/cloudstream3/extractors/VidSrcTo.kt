@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.extractors.FileMoon
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import java.net.URLDecoder
@@ -30,7 +31,7 @@ open class VidSrcTo : ExtractorApi() {
         val subtitlesLink = "$mainUrl/ajax/embed/episode/$mediaId/subtitles"
         val subRes = app.get(subtitlesLink).parsedSafe<Array<VidsrctoSubtitles>>()
         subRes?.forEach {
-            if (it.kind.equals("captions")) subtitleCallback.invoke(SubtitleFile(it.label, it.file))
+            if (it.kind.equals("captions")) subtitleCallback.invoke(newSubtitleFile(it.label, it.file))
         }
         val sourcesLink = "$mainUrl/ajax/embed/episode/$mediaId/sources?token=${vrfEncrypt(RowdyAvocadoKeys.getKeys(), mediaId)}"
         val res = app.get(sourcesLink).parsedSafe<VidsrctoEpisodeSources>() ?: return
