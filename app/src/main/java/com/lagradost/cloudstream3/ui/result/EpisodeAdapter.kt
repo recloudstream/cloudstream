@@ -11,6 +11,7 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
+import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.databinding.ResultEpisodeBinding
@@ -177,27 +178,16 @@ class EpisodeAdapter(
             val setWidth =
                 if (isLayout(TV or EMULATOR)) TV_EP_SIZE.toPx else ViewGroup.LayoutParams.MATCH_PARENT
 
-            binding.episodeLinHolder.layoutParams.width = setWidth
-            binding.episodeHolderLarge.layoutParams.width = setWidth
-            binding.episodeHolder.layoutParams.width = setWidth
-
-
-            if (isLayout(PHONE or EMULATOR)) {
-                val context = binding.root.context
-                val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-                val theme =
-                    settingsManager.getString(
-                        context.getString(R.string.app_theme_key),
-                        "AmoledLight"
-                    )
-                if (theme == "Amoled") {
-                    binding.episodeHolderLarge.radius = 0.0f
-                    binding.episodeHolder.setPadding(0)
-                }
-            }
-
-
             binding.apply {
+                episodeLinHolder.layoutParams.width = setWidth
+                episodeHolderLarge.layoutParams.width = setWidth
+                episodeHolder.layoutParams.width = setWidth
+
+                if (isLayout(PHONE or EMULATOR) && CommonActivity.appliedTheme == R.style.AmoledMode) {
+                    episodeHolderLarge.radius = 0.0f
+                    episodeHolder.setPadding(0)
+                }
+
                 downloadButton.isVisible = hasDownloadSupport
                 downloadButton.setDefaultClickListener(
                     VideoDownloadHelper.DownloadEpisodeCached(

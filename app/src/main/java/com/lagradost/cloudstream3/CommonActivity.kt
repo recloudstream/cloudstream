@@ -110,6 +110,8 @@ object CommonActivity {
 
     var playerEventListener: ((PlayerEventType) -> Unit)? = null
     var keyEventListener: ((Pair<KeyEvent?, Boolean>) -> Boolean)? = null
+    var appliedTheme : Int = 0
+    var appliedColor : Int = 0
 
     private var currentToast: Toast? = null
 
@@ -374,6 +376,8 @@ object CommonActivity {
 
         act.theme.applyStyle(currentTheme, true)
         act.theme.applyStyle(currentOverlayTheme, true)
+        appliedTheme = currentTheme
+        appliedColor = currentOverlayTheme
         act.updateTv()
         if (isLayout(TV)) act.theme.applyStyle(R.style.AppThemeTvOverlay, true)
         act.theme.applyStyle(
