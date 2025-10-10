@@ -735,4 +735,8 @@
     <string name="edit_profile_image_error_empty">Không tìm thấy url</string>
     <string name="edit_profile_image_error_invalid">URL hoặc hình không hợp lệ</string>
     <string name="edit_profile_image_success">Tải hình lên thành công</string>
+    <string name="action_mark_watched_up_to_this_episode">Đánh dấu là đã xem đến tập này</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">Xóa những tập đã xem đến tập này</string>
+    <string name="action_reload">Đã tải lại</string>
+    <string name="reload_provider">Tải lại nguồn phát</string>
 </resources>
