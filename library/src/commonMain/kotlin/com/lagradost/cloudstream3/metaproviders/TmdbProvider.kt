@@ -395,7 +395,7 @@ open class TmdbProvider : MainAPI() {
         } else {
             loadFromTmdb(id)?.let { return it }
             if (isTvSeries) {
-                tmdb.tvService().externalIds(id, "en-US").awaitResponse().body()?.imdb_id?.let {
+                tmdb.tvService().externalIds(id).awaitResponse().body()?.imdb_id?.let {
                     val fromImdb = loadFromImdb(it)
                     val result = if (fromImdb == null) {
                         val details = tmdb.tvService().tv(id, "en-US").awaitResponse().body()
@@ -406,14 +406,14 @@ open class TmdbProvider : MainAPI() {
                     result
                 }
             } else {
-                tmdb.moviesService().externalIds(id, "en-US").awaitResponse()
+                tmdb.moviesService().externalIds(id).awaitResponse()
                     .body()?.imdb_id?.let { loadFromImdb(it) }
             }
         }
     }
 
     override suspend fun search(query: String): List<SearchResponse>? {
-        return tmdb.searchService().multi(query, 1, "en-Us", "US", includeAdult).awaitResponse()
+        return tmdb.searchService().multi(query, 1, "en-US", "US", includeAdult).awaitResponse()
             .body()?.results?.mapNotNull {
                 it.movie?.toSearchResponse() ?: it.tvShow?.toSearchResponse()
             }
