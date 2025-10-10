@@ -42,7 +42,7 @@ import kotlin.math.roundToInt
 @RequiresOptIn(
     message = "This API is only available on prerelease builds. " +
               "Using it will cause CloudStream stable to crash.",
-    level = RequiresOptIn.Level.ERROR
+    level = RequiresOptIn.Level.WARNING
 )
 annotation class Prerelease
 
