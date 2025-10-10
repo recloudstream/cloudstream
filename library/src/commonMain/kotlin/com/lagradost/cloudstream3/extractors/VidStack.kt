@@ -69,14 +69,15 @@ open class VidStack : ExtractorApi() {
         }
 
         callback.invoke(
-            ExtractorLink(
-                this.name,
-                this.name,
-                m3u8,
-                url,
-                Qualities.P1080.value,
-                type = ExtractorLinkType.M3U8,
-            )
+            newExtractorLink(
+                source = this.name,
+                name = this.name,
+                url = m3u8,
+                type = ExtractorLinkType.M3U8
+            ) {
+                this.referer = url
+                this.quality = Qualities.Unknown.value
+            }
         )
     }
 
