@@ -1095,7 +1095,7 @@ fun TvType.isAnimeOp(): Boolean {
  * @see newSubtitleFile
  * */
 @ConsistentCopyVisibility
-data class SubtitleFile internal constructor(
+data class SubtitleFile private constructor(
     var lang: String,
     var url: String,
     var headers: Map<String, String>?
@@ -1122,8 +1122,9 @@ suspend fun newSubtitleFile(
     url: String,
     initializer: suspend SubtitleFile.() -> Unit = { }
 ): SubtitleFile {
+    // @Suppress("DEPRECATION")
     val builder = SubtitleFile(
-        lang, url, headers = null
+        lang, url
     )
     builder.initializer()
 
