@@ -71,4 +71,9 @@
         <attr name="white" format="color" />
         <attr name="black" format="color" />
     </declare-styleable>
+
+    <declare-styleable name="PercentageCropImageView">
+        <attr name="cropYCenterOffsetPct" format="float" />
+        <attr name="cropXCenterOffsetPct" format="float" />
+    </declare-styleable>
 </resources>
