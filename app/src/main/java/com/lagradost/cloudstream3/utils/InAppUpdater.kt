@@ -288,7 +288,7 @@ class InAppUpdater {
                                 )
                             }
 
-                            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+                            val builder = AlertDialog.Builder(this, R.style.AlertDialogCustom)
                             builder.setTitle(
                                 getString(R.string.new_update_format).format(
                                     currentVersion?.versionName,
