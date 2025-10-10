@@ -14,7 +14,7 @@ import com.lagradost.cloudstream3.MainPageRequest
 import com.lagradost.cloudstream3.MovieLoadResponse
 import com.lagradost.cloudstream3.MovieSearchResponse
 import com.lagradost.cloudstream3.ProviderType
-import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.SearchResponseList
 import com.lagradost.cloudstream3.TvSeriesLoadResponse
 import com.lagradost.cloudstream3.TvSeriesSearchResponse
 import com.lagradost.cloudstream3.TvType
@@ -25,6 +25,7 @@ import com.lagradost.cloudstream3.newMovieSearchResponse
 import com.lagradost.cloudstream3.newTvSeriesLoadResponse
 import com.lagradost.cloudstream3.newTvSeriesSearchResponse
 import com.lagradost.cloudstream3.runAllAsync
+import com.lagradost.cloudstream3.toNewSearchResponseList
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.AppendToResponse
@@ -238,12 +239,12 @@ open class TmdbProvider : MainAPI() {
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
 
         // SAME AS DISCOVER IT SEEMS
-//        val popularSeries = tmdb.tvService().popular(1, "en-US").execute().body()?.results?.map {
+//        val popularSeries = tmdb.tvService().popular(page, "en-US").execute().body()?.results?.map {
 //            it.toSearchResponse()
 //        } ?: listOf()
 //
 //        val popularMovies =
-//            tmdb.moviesService().popular(1, "en-US", "840").execute().body()?.results?.map {
+//            tmdb.moviesService().popular(page, "en-US", "840").execute().body()?.results?.map {
 //                it.toSearchResponse()
 //            } ?: listOf()
 
@@ -253,23 +254,23 @@ open class TmdbProvider : MainAPI() {
         var topSeries: List<TvSeriesSearchResponse> = listOf()
         runAllAsync(
             {
-                discoverMovies = tmdb.discoverMovie().build().awaitResponse().body()?.results?.map {
+                discoverMovies = tmdb.discoverMovie().page(page).build().awaitResponse().body()?.results?.map {
                     it.toSearchResponse()
                 } ?: listOf()
             }, {
-                discoverSeries = tmdb.discoverTv().build().awaitResponse().body()?.results?.map {
+                discoverSeries = tmdb.discoverTv().page(page).build().awaitResponse().body()?.results?.map {
                     it.toSearchResponse()
                 } ?: listOf()
             }, {
                 // https://en.wikipedia.org/wiki/ISO_3166-1
                 topMovies =
-                    tmdb.moviesService().topRated(1, "en-US", "US").awaitResponse()
+                    tmdb.moviesService().topRated(page, "en-US", "US").awaitResponse()
                         .body()?.results?.map {
                             it.toSearchResponse()
                         } ?: listOf()
             }, {
                 topSeries =
-                    tmdb.tvService().topRated(1, "en-US").awaitResponse().body()?.results?.map {
+                    tmdb.tvService().topRated(page, "en-US").awaitResponse().body()?.results?.map {
                         it.toSearchResponse()
                     } ?: listOf()
             }
@@ -412,10 +413,10 @@ open class TmdbProvider : MainAPI() {
         }
     }
 
-    override suspend fun search(query: String): List<SearchResponse>? {
-        return tmdb.searchService().multi(query, 1, "en-US", "US", includeAdult).awaitResponse()
+    override suspend fun search(query: String, page: Int): SearchResponseList? {
+        return tmdb.searchService().multi(query, page, "en-US", "US", includeAdult).awaitResponse()
             .body()?.results?.mapNotNull {
                 it.movie?.toSearchResponse() ?: it.tvShow?.toSearchResponse()
-            }
+            }?.toNewSearchResponseList()
     }
 }
