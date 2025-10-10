@@ -700,7 +700,7 @@
     <string name="player_settings_always_ask">Preguntar siempre</string>
     <string name="parallel_downloads">Descargas en paralelo</string>
     <string name="concurrent_connections">Conexiones concurrentes</string>
-    <string name="concurrent_connections_settings_des">Cuántas conexiones concurrentes para cada descarga se pueden usar</string>
+    <string name="concurrent_connections_settings_des">Cuántas conexiones concurrentes para cada descarga se pueden usar durante un proceso de descarga</string>
     <string name="go_to_downloads">Ir a Descargas</string>
     <string name="no_internet_connection">Sin conexión a internet. \n\nConéctese a internet y vuelva a intentarlo, o mire sus descargas mientras está sin conexión.</string>
     <string name="overscan_settings_des">Cambios en los límites de la pantalla</string>
@@ -719,4 +719,9 @@
     <string name="action_mark_watched_up_to_this_episode">Marcar como vigilado en este episodio</string>
     <string name="action_remove_mark_watched_up_to_this_episode">Retirar vigilado para este episodio</string>
     <string name="action_reload">Recargado</string>
+    <string name="episode_action_play_mirror">Reproducir en espejo</string>"
+    <string name="edit_profile_image_title">Editar imagen de perfil</string>
+    <string name="edit_profile_image_hint">Introducir URL de imagen de perfil</string>
+    <string name="reload_provider">Recargar proveedor</string>
+    <string name="name">Nombre</string>
 </resources>
