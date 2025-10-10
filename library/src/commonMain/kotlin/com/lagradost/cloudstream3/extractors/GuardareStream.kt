@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.SubtitleFile
+import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
@@ -77,7 +78,7 @@ open class GuardareStream : ExtractorApi() {
                 if (it == null) return@forEach
                 val subUrl = it.getUrl(mainUrl, userId)
                 subtitleCallback.invoke(
-                    SubtitleFile(
+                    newSubtitleFile(
                         it.language ?: "",
                         subUrl
                     )
