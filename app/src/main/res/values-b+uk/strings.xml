@@ -698,4 +698,7 @@
     <string name="action_remove_mark_watched_up_to_this_episode">Вилучити переглянуті до цього епізоду</string>
     <string name="action_reload">Перезавантажено</string>
     <string name="reload_provider">Постачальник послуг поповнення рахунку</string>
+    <string name="episode_action_play_mirror">Грати в дзеркало</string>"
+    <string name="name">Ім\'я</string>
+    <string name="resolution_and_name">Роздільна здатність та назва</string>
 </resources>

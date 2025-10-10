@@ -235,7 +235,7 @@
     <string name="emulator_layout">Изглед на емулатор</string>
     <string name="other_singular">Видео</string>
     <string name="sort_clear">Исчисти</string>
-    <string name="test_passed">Положен</string>
+    <string name="test_passed">Успешна верификација</string>
     <string name="example_site_name">Име на сајт</string>
     <string name="error_invalid_data">Неважечки податоци</string>
     <string name="actor_supporting">Поддршка</string>
@@ -401,7 +401,7 @@
     <string name="android_tv_interface_on_seek_settings">Прикажан плеер - Барај износ</string>
     <string name="pref_category_android_tv">Андроид ТВ</string>
     <string name="restore_failed_format" formatted="true">Не успеа да ги врати податоците од датотеката %s</string>
-    <string name="test_failed">Не успеа</string>
+    <string name="test_failed">Неуспешна верификација</string>
     <string name="documentaries_singular">Документарец</string>
     <string name="stream">Мрежен проток</string>
     <string name="duration_format" formatted="true">%d мин</string>
@@ -702,4 +702,5 @@
     <string name="action_remove_mark_watched_up_to_this_episode">Избриши изгледано до оваа епизода</string>
     <string name="action_reload">Повторно вчитано</string>
     <string name="reload_provider">Повторно вчитај провајдер</string>
-</resources>
+    <string name="episode_action_play_mirror">Пушти друг линк</string>"
+    </resources>
