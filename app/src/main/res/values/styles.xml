@@ -1025,6 +1025,7 @@
         <item name="indicatorColor">@color/white</item>
     </style>
     <style name="HomePlayUnderlayProgress" parent="PlayUnderlayProgress">
+        <item name="tint">@color/white</item>
         <item name="android:layout_width">@dimen/home_poster_progress_size</item>
         <item name="android:layout_height">@dimen/home_poster_progress_size</item>
         <item name="android:background">@color/playIconBackground</item>
@@ -1035,6 +1036,7 @@
         <item name="indicatorSize">@dimen/home_poster_progress_size</item>
     </style>
     <style name="EpisodePlayUnderlayProgress" parent="PlayUnderlayProgress">
+        <item name="tint">@color/white</item>
         <item name="android:layout_width">40dp</item>
         <item name="android:layout_height">40dp</item>
         <item name="android:background">@color/playIconBackground</item>
