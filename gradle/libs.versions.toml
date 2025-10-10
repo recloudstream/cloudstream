@@ -47,7 +47,7 @@ workRuntimeKtx = "2.10.0"
 
 jvmTarget = "1.8"
 minSdk = "21"
-compileSdk = "35"
+compileSdk = "36"
 targetSdk = "35"
 
 [libraries]
