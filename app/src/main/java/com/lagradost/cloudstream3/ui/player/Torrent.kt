@@ -8,6 +8,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import torrServer.TorrServer
 import java.io.File
 import java.net.ConnectException
@@ -222,14 +223,15 @@ object Torrent {
         }
         val status = add(link.url)
 
-        return ExtractorLink(
+        return newExtractorLink(
             source = link.source,
-            link.name,
+            name = link.name,
             url = status.streamUrl(link.url),
-            type = ExtractorLinkType.VIDEO,
-            referer = "",
-            quality = link.quality
-        ) to status
+            type = ExtractorLinkType.VIDEO
+        ) {
+            this.referer = ""
+            this.quality = link.quality
+        } to status
     }
 
     private val trackers = listOf(
