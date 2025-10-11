@@ -1,5 +1,5 @@
 [versions]
-acraCore = "5.12.0"
+acraCore = "5.13.1"
 appcompat = "1.7.1"
 biometric = "1.4.0-alpha04"
 buildkonfigGradlePlugin = "0.15.2"
