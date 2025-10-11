@@ -266,7 +266,7 @@
             android:nextFocusUp="@id/home_preview_info_btt"
             android:nextFocusDown="@id/home_type_holder"
             android:orientation="horizontal"
-            android:paddingStart="@dimen/navbar_width"
+            android:paddingStart="8dp"
             android:paddingEnd="5dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/home_result_grid" />
@@ -399,7 +399,7 @@
 
             android:nextFocusDown="@id/home_child_recyclerview"
             android:orientation="horizontal"
-            android:paddingStart="@dimen/navbar_width"
+            android:paddingStart="8dp"
             android:paddingEnd="5dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/home_result_grid" />
