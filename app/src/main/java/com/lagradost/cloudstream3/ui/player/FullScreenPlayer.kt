@@ -22,6 +22,7 @@ import android.text.format.DateUtils
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
@@ -89,7 +90,6 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
 import kotlin.math.roundToInt
-
 
 const val MINIMUM_SEEK_TIME = 7000L         // when swipe seeking
 const val MINIMUM_VERTICAL_SWIPE = 2.0f     // in percentage
@@ -269,6 +269,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         animateLayoutChanges()
     }
 
+    @OptIn(androidx.media3.common.util.UnstableApi::class)
     private fun animateLayoutChangesForSubtitles() =
         // Post here as bottomPlayerBar is gone the first frame => bottomPlayerBar.height = 0
         playerBinding?.bottomPlayerBar?.post {
@@ -289,6 +290,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             }
         }
 
+    @OptIn(UnstableApi::class)
     protected fun animateLayoutChanges() {
         if (isLayout(PHONE)) { // isEnabled also disables the onKeyDown
             playerBinding?.exoProgress?.isEnabled = isShowing // Prevent accidental clicks/drags
@@ -1132,6 +1134,13 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
     }
 
+    private var scaleGestureDetector: ScaleGestureDetector? = null
+    private var scaleFactor = 1f
+    private var lastPanX = 0f
+    private var lastPanY = 0f
+    private var isPanning = false
+
+    @OptIn(androidx.media3.common.util.UnstableApi::class)
     @SuppressLint("SetTextI18n")
     private fun handleMotionEvent(view: View?, event: MotionEvent?): Boolean {
         if (event == null || view == null) return false
@@ -1141,7 +1150,69 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         playerBinding?.apply {
             playerIntroPlay.isGone = true
 
-            when (event.action) {
+            // Gesture detectors for zoom & pan
+            if (scaleGestureDetector == null) {
+                scaleGestureDetector = ScaleGestureDetector(view.context, object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                    override fun onScale(detector: ScaleGestureDetector): Boolean {
+                        scaleFactor *= detector.scaleFactor
+                        scaleFactor = scaleFactor.coerceIn(1.0f, 4.0f)
+                        playerView?.videoSurfaceView?.let { videoView ->
+                            videoView.scaleX = scaleFactor
+                            videoView.scaleY = scaleFactor
+
+                            val maxTransX = (videoView.width * scaleFactor - videoView.width) / 2f
+                            val maxTransY = (videoView.height * scaleFactor - videoView.height) / 2f
+                            videoView.translationX = videoView.translationX.coerceIn(-maxTransX, maxTransX)
+                            videoView.translationY = videoView.translationY.coerceIn(-maxTransY, maxTransY)
+                        }
+                        return true
+                    }
+                })
+            }
+
+            // Handle pan with two fingers
+            if (event.pointerCount == 2) {
+                when (event.actionMasked) {
+                    MotionEvent.ACTION_POINTER_DOWN -> {
+                        lastPanX = (event.getX(0) + event.getX(1)) / 2f
+                        lastPanY = (event.getY(0) + event.getY(1)) / 2f
+                        isPanning = true
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        if (isPanning) {
+                            val newX = (event.getX(0) + event.getX(1)) / 2f
+                            val newY = (event.getY(0) + event.getY(1)) / 2f
+                            val dx = newX - lastPanX
+                            val dy = newY - lastPanY
+
+                            playerView?.videoSurfaceView?.let { videoView ->
+                                val maxTransX = (videoView.width * scaleFactor - videoView.width) / 2f
+                                val maxTransY = (videoView.height * scaleFactor - videoView.height) / 2f
+
+                                videoView.translationX = (videoView.translationX + dx).coerceIn(-maxTransX, maxTransX)
+                                videoView.translationY = (videoView.translationY + dy).coerceIn(-maxTransY, maxTransY)
+                            }
+
+                            lastPanX = newX
+                            lastPanY = newY
+                        }
+                    }
+                    MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_UP -> {
+                        isPanning = false
+                        lastPanX = 0f
+                        lastPanY = 0f
+                        currentTouchStart = null
+                        currentTouchLast = null
+                        currentTouchAction = null
+                    }
+                }
+                scaleGestureDetector?.onTouchEvent(event)
+                return true
+            }
+
+            scaleGestureDetector?.onTouchEvent(event)
+
+            when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
                     // validates if the touch is inside of the player area
                     isCurrentTouchValid = view.isValidTouch(currentTouch.x, currentTouch.y)
@@ -1177,7 +1248,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                         player.setPlaybackSpeed(DataStoreHelper.playBackSpeed)
                         showOrHideSpeedUp(false)
                     }
-                    if (isCurrentTouchValid && !isLocked && isFullScreenPlayer) {
+                    if (isCurrentTouchValid && !isLocked && isFullScreenPlayer && !isPanning) {
                         // seek time
                         if (swipeHorizontalEnabled && currentTouchAction == TouchAction.Time) {
                             val startTime = currentTouchStartPlayerTime
@@ -1284,7 +1355,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     if (hasTriggeredSpeedUp) {
                         return true
                     }
-                    if (startTouch != null && isCurrentTouchValid && !isLocked && isFullScreenPlayer) {
+                    if (startTouch != null && isCurrentTouchValid && !isLocked && isFullScreenPlayer && !isPanning) {
                         // action is unassigned and can therefore be assigned
 
                         if (currentTouchAction == null) {
