@@ -105,19 +105,33 @@ open class LinearListLayout(context: Context?) :
         }
     }
 
+    fun redirectRecycleToFirstItem(focused: View): View? {
+        return when (focused) {
+            is RecyclerView -> {
+                (focused.layoutManager as? LinearListLayout)?.let { focusedLayoutManager ->
+                    val firstPosition = focusedLayoutManager.findFirstVisibleItemPosition()
+                    val firstView = focusedLayoutManager.findViewByPosition(firstPosition)
+                    firstView
+                } ?: focused
+            }
+
+            else -> focused
+        }
+    }
+
     override fun onInterceptFocusSearch(focused: View, direction: Int): View? {
         val dir = if (orientation == HORIZONTAL) {
             if (direction == View.FOCUS_DOWN) getNextDirection(
                 focused,
                 FocusDirection.Down
             )?.let { newFocus ->
-                return newFocus
+                return redirectRecycleToFirstItem(newFocus)
             }
             if (direction == View.FOCUS_UP) getNextDirection(
                 focused,
                 FocusDirection.Up
             )?.let { newFocus ->
-                return newFocus
+                return redirectRecycleToFirstItem(newFocus)
             }
 
             if (direction == View.FOCUS_DOWN || direction == View.FOCUS_UP) {
@@ -216,7 +230,7 @@ open class LinearListLayout(context: Context?) :
             )
         }
     }
-    
+
     /*override fun onRequestChildFocus(
         parent: RecyclerView,
         state: RecyclerView.State,
