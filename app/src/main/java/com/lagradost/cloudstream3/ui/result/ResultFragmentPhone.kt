@@ -435,7 +435,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         activity?.showDialog(
                             names.map { it.second },
                             viewModel.selectedSortingIndex.value ?: -1,
-                            "",
+                            ctx.getString(R.string.sort_by),
                             false,
                             {}) { itemId ->
                             viewModel.setSort(names[itemId].first)
@@ -608,7 +608,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                                 resume.result.season
                             )
                     }
-                    if(resume.isMovie) resultResumeSeriesProgressText.maxLines = 1
+                    if (resume.isMovie) resultResumeSeriesProgressText.maxLines = 1
                     resultResumeSeriesProgressText.setText(progress.progressLeft)
                     resultResumeSeriesProgress.apply {
                         isVisible = true
@@ -815,10 +815,15 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         resultShare.setOnClickListener {
                             try {
                                 val i = Intent(Intent.ACTION_SEND)
-                                val nameBase64 = base64Encode(d.apiName.toString().toByteArray(Charsets.UTF_8))
+                                val nameBase64 =
+                                    base64Encode(d.apiName.toString().toByteArray(Charsets.UTF_8))
                                 val urlBase64 = base64Encode(d.url.toByteArray(Charsets.UTF_8))
-                                val encodedUri = URLEncoder.encode("$APP_STRING_SHARE:$nameBase64?$urlBase64","UTF-8")
-                                val redirectUrl = "https://recloudstream.github.io/csredirect?redirectto=$encodedUri"
+                                val encodedUri = URLEncoder.encode(
+                                    "$APP_STRING_SHARE:$nameBase64?$urlBase64",
+                                    "UTF-8"
+                                )
+                                val redirectUrl =
+                                    "https://recloudstream.github.io/csredirect?redirectto=$encodedUri"
                                 i.type = "text/plain"
                                 i.putExtra(Intent.EXTRA_SUBJECT, d.title)
                                 i.putExtra(Intent.EXTRA_TEXT, redirectUrl)
@@ -1024,7 +1029,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 }
 
                 resultSyncRating.addOnChangeListener { it, value, fromUser ->
-                    if(fromUser) syncModel.setScore(Score.from(value, it.valueTo.roundToInt()))
+                    if (fromUser) syncModel.setScore(Score.from(value, it.valueTo.roundToInt()))
                 }
 
                 resultSyncAddEpisode.setOnClickListener {
@@ -1173,7 +1178,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     activity?.showDialog(
                         names.map { it.second },
                         names.indexOfFirst { it.second == selectEpisodeRange },
-                        "",
+                        ctx.getString(R.string.episodes),
                         false,
                         {}) { itemId ->
                         viewModel.changeRange(names[itemId].first)
@@ -1194,7 +1199,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     activity?.showDialog(
                         names.map { it.second },
                         names.indexOfFirst { it.second == selectSeason },
-                        "",
+                        ctx.getString(R.string.season),
                         false,
                         {}) { itemId ->
                         viewModel.changeSeason(names[itemId].first)

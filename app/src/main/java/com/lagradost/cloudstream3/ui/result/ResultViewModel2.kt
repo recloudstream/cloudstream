@@ -524,6 +524,26 @@ class ResultViewModel2 : ViewModel() {
             return this?.firstOrNull { it.season == season }
         }
 
+        private fun List<SeasonData>?.getSeasonTxt(season: Int?): UiText? {
+            if (season == 0) {
+                return txt(R.string.no_season)
+            }
+
+            val seasonData = getSeason(season)
+            // If displaySeason is null then only show the name!
+            return if (seasonData?.name != null && seasonData.displaySeason == null) {
+                txt(seasonData.name)
+            } else {
+                val suffix = seasonData?.name?.let { " $it" } ?: ""
+                txt(
+                    R.string.season_format,
+                    txt(R.string.season),
+                    seasonData?.displaySeason ?: season,
+                    suffix
+                )
+            }
+        }
+
         private fun filterName(name: String?): String? {
             if (name == null) return null
             Regex("^[eE]pisode [0-9]*(.*)").find(name)?.groupValues?.get(1)?.let {
@@ -2149,29 +2169,8 @@ class ResultViewModel2 : ViewModel() {
         )
 
         _selectedSeason.postValue(
-
             if (isMovie || currentSeasons.size <= 1) null else
-                when (indexer.season) {
-                    0 -> txt(R.string.no_season)
-                    else -> {
-                        val seasonNames = (currentResponse as? EpisodeResponse)?.seasonNames
-                        val seasonData = seasonNames.getSeason(indexer.season)
-
-                        // If displaySeason is null then only show the name!
-                        if (seasonData?.name != null && seasonData.displaySeason == null) {
-                            txt(seasonData.name)
-                        } else {
-                            val suffix = seasonData?.name?.let { " $it" } ?: ""
-                            txt(
-                                R.string.season_format,
-                                txt(R.string.season),
-                                seasonData?.displaySeason ?: indexer.season,
-                                suffix
-                            )
-                        }
-                    }
-                }
-
+                (currentResponse as? EpisodeResponse)?.seasonNames.getSeasonTxt(indexer.season)
         )
 
         _selectedRangeIndex.postValue(
@@ -2509,21 +2508,7 @@ class ResultViewModel2 : ViewModel() {
         _dubSubSelections.postValue(dubSelection.map { txt(it) to it })
         if (loadResponse is EpisodeResponse) {
             _seasonSelections.postValue(seasonsSelection.map { seasonNumber ->
-                val seasonData = loadResponse.seasonNames.getSeason(seasonNumber)
-                val fixedSeasonNumber = seasonData?.displaySeason ?: seasonNumber
-                val suffix = seasonData?.name?.let { " $it" } ?: ""
-                // If displaySeason is null then only show the name!
-                val name = if (seasonData?.name != null && seasonData.displaySeason == null) {
-                    txt(seasonData.name)
-                } else {
-                    txt(
-                        R.string.season_format,
-                        txt(R.string.season),
-                        fixedSeasonNumber,
-                        suffix
-                    )
-                }
-                name to seasonNumber
+                loadResponse.seasonNames.getSeasonTxt(seasonNumber) to seasonNumber
             })
         }
 
