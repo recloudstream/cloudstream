@@ -20,4 +20,9 @@ allprojects {
         mavenLocal()
         maven("https://jitpack.io")
     }
+
+    // https://issuetracker.google.com/issues/411739086?pli=1
+    tasks.withType<AbstractTestTask>().configureEach {
+        failOnNoDiscoveredTests = false
+    }
 }
