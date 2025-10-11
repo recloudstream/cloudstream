@@ -24,6 +24,7 @@ jobs:
         app_id: ${{ secrets.GH_APP_ID }}
         private_key: ${{ secrets.GH_APP_KEY }}
         repository: "recloudstream/secrets"
+
     - name: Generate access token (archive)
       id: generate_archive_token
       uses: tibdex/github-app-token@v2
@@ -31,12 +32,15 @@ jobs:
         app_id: ${{ secrets.GH_APP_ID }}
         private_key: ${{ secrets.GH_APP_KEY }}
         repository: "recloudstream/cloudstream-archive"
+
     - uses: actions/checkout@v5
     - name: Set up JDK 17
       uses: actions/setup-java@v5
       with:
         java-version: '17'
         distribution: 'adopt'
+        cache: gradle
+
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Fetch keystore
@@ -49,6 +53,7 @@ jobs:
         KEY_PWD="$(cat keystore_password.txt)"
         echo "::add-mask::${KEY_PWD}"
         echo "key_pwd=$KEY_PWD" >> $GITHUB_OUTPUT
+
     - name: Run Gradle
       run: |
         ./gradlew assemblePrerelease
