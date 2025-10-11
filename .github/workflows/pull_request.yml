@@ -12,6 +12,7 @@ jobs:
       with:
         java-version: '17'
         distribution: 'adopt'
+        cache: gradle
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Run Gradle
