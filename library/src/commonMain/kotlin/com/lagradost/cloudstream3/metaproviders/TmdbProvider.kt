@@ -14,6 +14,7 @@ import com.lagradost.cloudstream3.MainPageRequest
 import com.lagradost.cloudstream3.MovieLoadResponse
 import com.lagradost.cloudstream3.MovieSearchResponse
 import com.lagradost.cloudstream3.ProviderType
+import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.SearchResponseList
 import com.lagradost.cloudstream3.TvSeriesLoadResponse
 import com.lagradost.cloudstream3.TvSeriesSearchResponse
@@ -93,6 +94,7 @@ open class TmdbProvider : MainAPI() {
         ) {
             this.id = this@toSearchResponse.id
             this.posterUrl = getImageUrl(poster_path)
+            this.score = Score.from10(vote_average)
             this.year = first_air_date?.let {
                 Calendar.getInstance().apply {
                     time = it
@@ -110,6 +112,7 @@ open class TmdbProvider : MainAPI() {
         ) {
             this.id = this@toSearchResponse.id
             this.posterUrl = getImageUrl(poster_path)
+            this.score = Score.from10(vote_average)
             this.year = release_date?.let {
                 Calendar.getInstance().apply {
                     time = it
@@ -143,7 +146,7 @@ open class TmdbProvider : MainAPI() {
                         this.name = episode.name
                         this.season = episode.season_number
                         this.episode = episode.episode_number
-                        this.rating = episode.rating
+                        this.score = Score.from10(episode.vote_average)
                         this.description = episode.overview
                         this.date = episode.air_date?.time
                         this.posterUrl = getImageUrl(episode.still_path)
@@ -181,7 +184,7 @@ open class TmdbProvider : MainAPI() {
 
             tags = genres?.mapNotNull { it.name }
             duration = episode_run_time?.average()?.toInt()
-            // score = Score.from10(this@toLoadResponse.rating) No docs on this?
+            score = Score.from10(vote_average)
             addTrailer(videos.toTrailers())
 
             recommendations = (this@toLoadResponse.recommendations
@@ -225,7 +228,7 @@ open class TmdbProvider : MainAPI() {
             addImdbId(external_ids?.imdb_id)
             tags = genres?.mapNotNull { it.name }
             duration = runtime
-            // score = Score.from10(this@toLoadResponse.rating) No docs on this?
+            score = Score.from10(vote_average)
             addTrailer(videos.toTrailers())
 
             recommendations = (this@toLoadResponse.recommendations
