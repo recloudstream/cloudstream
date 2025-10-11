@@ -23,6 +23,7 @@
         app:cardCornerRadius="18dp">
 
         <ImageView
+            android:foreground="@drawable/outline_big_20_gray"
             android:id="@+id/nav_footer_profile_pic"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
