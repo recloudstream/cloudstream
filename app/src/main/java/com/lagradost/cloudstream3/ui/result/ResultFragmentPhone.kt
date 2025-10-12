@@ -608,8 +608,11 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                                 resume.result.season
                             )
                     }
-                    if (resume.isMovie) resultResumeSeriesProgressText.maxLines = 1
-                    resultResumeSeriesProgressText.setText(progress.progressLeft)
+                    if (resume.isMovie){
+                        resultPlayMovie.isGone = true
+                        resultResumeSeriesProgressText.isVisible = true
+                        resultResumeSeriesProgressText.setText(progress.progressLeft)
+                    }
                     resultResumeSeriesProgress.apply {
                         isVisible = true
                         this.max = progress.maxProgress
@@ -623,7 +626,6 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultResumeSeriesProgressText.isVisible = false
                 }
 
-                resultResumeSeriesButton.isVisible = !resume.isMovie
                 resultResumeSeriesButton.setOnClickListener {
                     viewModel.handleAction(
                         EpisodeClickEvent(
