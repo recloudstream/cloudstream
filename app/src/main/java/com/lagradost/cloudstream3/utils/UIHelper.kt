@@ -47,6 +47,7 @@ import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import androidx.core.view.marginTop
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavOptions
@@ -409,6 +410,23 @@ object UIHelper {
         val params = v.layoutParams
         params.height = ctx.getStatusBarHeight()
         v.layoutParams = params
+    }
+
+    fun fixPaddingSystemBars(v: View?) {
+        if (v == null) return
+        // Handle Android 15+ edge-to-edge design
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) { // Android 15+
+            v.setOnApplyWindowInsetsListener { view, insets ->
+                val systemBars = insets.getInsets(WindowInsets.Type.systemBars())
+                view.updatePadding(
+                    left = systemBars.left,
+                    right = systemBars.right,
+                    bottom = systemBars.bottom
+                )
+
+                WindowInsets.CONSUMED
+            }
+        }
     }
 
     fun Context.getNavigationBarHeight(): Int {

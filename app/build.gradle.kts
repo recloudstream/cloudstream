@@ -69,6 +69,8 @@ android {
         resValue("string", "commit_hash", getGitCommitHash())
         resValue("bool", "is_prerelease", "false")
 
+        manifestPlaceholders["target_sdk_version"] = libs.versions.targetSdk.get()
+
         // Reads local.properties
         val localProperties = gradleLocalProperties(rootDir, project.providers)
 

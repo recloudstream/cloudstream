@@ -116,6 +116,8 @@ import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingSystemBars
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
@@ -1042,6 +1044,9 @@ class GeneratorPlayer : FullScreenPlayer() {
                 val binding =
                     PlayerSelectSourceAndSubsBinding.inflate(LayoutInflater.from(ctx), null, false)
                 sourceDialog.setContentView(binding.root)
+
+                fixPaddingStatusbar(binding.root)
+                fixPaddingSystemBars(binding.root)
 
                 selectSourceDialog = sourceDialog
 
