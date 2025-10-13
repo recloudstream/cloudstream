@@ -623,9 +623,11 @@ class GeneratorPlayer : FullScreenPlayer() {
             DialogOnlineSubtitlesBinding.inflate(LayoutInflater.from(context), null, false)
         dialog.setContentView(binding.root)
 
+        fixPaddingStatusbar(binding.root)
+        fixPaddingSystemBars(binding.root)
+
         var currentSubtitles: List<AbstractSubtitleEntities.SubtitleEntity> = emptyList()
         var currentSubtitle: AbstractSubtitleEntities.SubtitleEntity? = null
-
 
         val layout = R.layout.sort_bottom_single_choice_double_text
         val arrayAdapter =
@@ -1403,6 +1405,9 @@ class GeneratorPlayer : FullScreenPlayer() {
                 val trackDialog = Dialog(ctx, R.style.AlertDialogCustomBlack)
                 trackDialog.setContentView(binding.root)
                 trackDialog.show()
+
+                fixPaddingStatusbar(binding.root)
+                fixPaddingSystemBars(binding.root)
 
 //                selectTracksDialog = tracksDialog
 

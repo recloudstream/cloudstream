@@ -11,6 +11,8 @@ import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingSystemBars
 
 class SourcePriorityDialog(
     val ctx: Context,
@@ -26,6 +28,8 @@ class SourcePriorityDialog(
     override fun show() {
         val binding = PlayerSelectSourcePriorityBinding.inflate(LayoutInflater.from(ctx), null, false)
         setContentView(binding.root)
+        fixPaddingStatusbar(binding.root)
+        fixPaddingSystemBars(binding.root)
         val sourcesRecyclerView = binding.sortSources
         val qualitiesRecyclerView = binding.sortQualities
         val profileText = binding.profileTextEditable

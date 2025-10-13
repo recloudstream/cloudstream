@@ -48,6 +48,7 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToLangTagIETF
 import com.lagradost.cloudstream3.utils.SubtitleHelper.languages
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingSystemBars
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
@@ -384,6 +385,7 @@ class SubtitlesFragment : DialogFragment() {
         )
 
         fixPaddingStatusbar(binding?.subsRoot)
+        fixPaddingSystemBars(binding?.subsRoot)
 
         state = getCurrentSavedStyle()
         context?.updateState()

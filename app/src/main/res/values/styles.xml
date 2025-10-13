@@ -170,8 +170,8 @@
         <item name="grayTextColor">@color/lightGrayTextColor</item>
         <item name="white">@color/black</item>
         <item name="black">@color/white</item>
-
         <item name="colorOnPrimary">@color/blackText</item>
+        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="DraculaMode">
@@ -196,6 +196,7 @@
         <item name="white">@color/LavenderTextColor</item>
         <item name="black">@color/LavenderPrimaryGrayBackground</item>
         <item name="colorOnPrimary">@color/LavenderTextColor</item>
+        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="MonetMode">
