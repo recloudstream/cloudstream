@@ -73,7 +73,7 @@ import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPres
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingSystemBars
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.getNavigationBarHeight
 import com.lagradost.cloudstream3.utils.UIHelper.getStatusBarHeight
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
@@ -556,7 +556,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
         dialog.show()
 
-        fixPaddingSystemBars(binding.root, padTop = true)
+        fixSystemBarsPadding(binding.root, padTop = true)
 
         val beforeOffset = subtitleDelay
 

@@ -33,7 +33,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingSystemBars
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
@@ -173,11 +173,10 @@ class ChromecastSubtitlesFragment : Fragment() {
         onColorSelectedEvent += ::onColorSelected
         onDialogDismissedEvent += ::onDialogDismissed
 
-        fixPaddingSystemBars(
+        fixSystemBarsPadding(
             binding?.subsRoot,
-            padTop = true,
             padBottom = false,
-            padLeft = false
+            padLeft = isLayout(TV or EMULATOR)
         )
 
         state = getCurrentSavedStyle()

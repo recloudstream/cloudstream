@@ -164,7 +164,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.changeStatusBarState
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.enableEdgeToEdgeCompat
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingSystemBars
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
@@ -1272,15 +1272,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             null
         }
 
-        fixPaddingSystemBars(
+        fixSystemBarsPadding(
             v = binding?.navView,
-            heightResId = R.dimen.nav_view_height
+            heightResId = R.dimen.nav_view_height,
+            padTop = false
         )
 
-        fixPaddingSystemBars(
+        fixSystemBarsPadding(
             v = binding?.navRailView,
             widthResId = R.dimen.nav_rail_view_width,
-            padRight = false
+            padRight = false,
+            padTop = false
         )
 
         // overscan

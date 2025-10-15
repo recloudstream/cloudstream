@@ -73,14 +73,15 @@ import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
-import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
+import com.lagradost.cloudstream3.utils.UIHelper.setListViewHeightBasedOnItems
 import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
@@ -329,7 +330,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         super.onViewCreated(view, savedInstanceState)
 
         // ===== setup =====
-        UIHelper.fixPaddingSystemBars(binding?.root, padTop = true)
+        fixSystemBarsPadding(binding?.root, padTop = true)
         val storedData = getStoredData() ?: return
         activity?.window?.decorView?.clearFocus()
         activity?.loadCache()
@@ -1021,7 +1022,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             syncBinding?.apply {
                 resultSyncCheck.choiceMode = AbsListView.CHOICE_MODE_SINGLE
                 resultSyncCheck.adapter = arrayAdapter
-                UIHelper.setListViewHeightBasedOnItems(resultSyncCheck)
+                setListViewHeightBasedOnItems(resultSyncCheck)
 
                 resultSyncCheck.setOnItemClickListener { _, _, which, _ ->
                     syncModel.setStatus(which - 1)

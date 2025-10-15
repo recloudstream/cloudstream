@@ -58,7 +58,7 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppContextUtils.reduceDragSensitivity
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingSystemBars
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.abs
@@ -150,11 +150,10 @@ class LibraryFragment : Fragment() {
     @SuppressLint("ResourceType", "CutPasteId")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fixPaddingSystemBars(
-            binding?.searchStatusBarPadding,
-            padTop = true,
-            padBottom = false,
-            padLeft = false
+        fixSystemBarsPadding(
+            binding?.root,
+            padBottom = isLayout(TV or EMULATOR),
+            padLeft = isLayout(TV or EMULATOR)
         )
 
         binding?.sortFab?.setOnClickListener(sortChangeClickListener)

@@ -11,7 +11,7 @@ import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingSystemBars
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 
 class QualityProfileDialog(
     val activity: FragmentActivity,
@@ -25,7 +25,7 @@ class QualityProfileDialog(
         val binding = PlayerQualityProfileDialogBinding.inflate(this.layoutInflater, null, false)
 
         setContentView(binding.root)//R.layout.player_quality_profile_dialog)
-        fixPaddingSystemBars(binding.root, padTop = true)
+        fixSystemBarsPadding(binding.root, padTop = true)
         /*val profilesRecyclerView: RecyclerView = profiles_recyclerview
         val useBtt: View = use_btt
         val editBtt: View = edit_btt
