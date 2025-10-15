@@ -31,6 +31,7 @@ import android.widget.ListView
 import android.widget.Toast.LENGTH_LONG
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
+import androidx.annotation.DimenRes
 import androidx.annotation.StyleRes
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.view.menu.MenuBuilder
@@ -48,6 +49,9 @@ import androidx.core.view.marginRight
 import androidx.core.view.marginTop
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavOptions
@@ -364,6 +368,20 @@ object UIHelper {
         //}
     }
 
+    fun Activity.enableEdgeToEdgeCompat() {
+        // edge-to-edge is very buggy on earlier versions
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return
+        WindowCompat.enableEdgeToEdge(window)
+    }
+
+    fun Activity.setNavigationBarColorCompat(@AttrRes resourceId: Int) {
+        // edge-to-edge handles this
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) return
+
+        @Suppress("DEPRECATION")
+        window?.navigationBarColor = colorFromAttribute(resourceId)
+    }
+
     fun Context.getStatusBarHeight(): Int {
         if (isLayout(Globals.TV or EMULATOR)) {
             return 0
@@ -375,17 +393,6 @@ object UIHelper {
             result = resources.getDimensionPixelSize(resourceId)
         }
         return result
-    }
-
-    fun fixPaddingStatusbar(v: View?) {
-        if (v == null) return
-        val ctx = v.context ?: return
-        v.setPadding(
-            v.paddingLeft,
-            v.paddingTop + ctx.getStatusBarHeight(),
-            v.paddingRight,
-            v.paddingBottom
-        )
     }
 
     fun fixPaddingStatusbarMargin(v: View?) {
@@ -412,20 +419,51 @@ object UIHelper {
         v.layoutParams = params
     }
 
-    fun fixPaddingSystemBars(v: View?) {
+    fun fixPaddingSystemBars(
+        v: View?,
+        @DimenRes heightResId: Int? = null,
+        @DimenRes widthResId: Int? = null,
+        padTop: Boolean = false,
+        padBottom: Boolean = true,
+        padLeft: Boolean = true,
+        padRight: Boolean = true
+    ) {
         if (v == null) return
-        // Handle Android 15+ edge-to-edge design
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) { // Android 15+
-            v.setOnApplyWindowInsetsListener { view, insets ->
-                val systemBars = insets.getInsets(WindowInsets.Type.systemBars())
-                view.updatePadding(
-                    left = systemBars.left,
-                    right = systemBars.right,
-                    bottom = systemBars.bottom
-                )
 
-                WindowInsets.CONSUMED
+        // edge-to-edge is very buggy on earlier versions so we just
+        // handle the status bar here instead.
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            if (padTop) {
+                val ctx = v.context ?: return
+                v.updatePadding(top = ctx.getStatusBarHeight())
             }
+            return
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(v) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.updatePadding(
+                left = if (padLeft) insets.left else view.paddingLeft,
+                right = if (padRight) insets.right else view.paddingRight,
+                bottom = if (padBottom) insets.bottom else view.paddingBottom,
+                top = if (padTop) insets.top else view.paddingTop
+            )
+
+            heightResId?.let {
+                val heightPx = view.resources.getDimensionPixelSize(it)
+                view.updateLayoutParams {
+                    height = heightPx + insets.bottom
+                }
+            }
+
+            widthResId?.let {
+                val widthPx = view.resources.getDimensionPixelSize(it)
+                view.updateLayoutParams {
+                    width = if (insets.left > 0) widthPx + insets.left else widthPx
+                }
+            }
+
+            WindowInsetsCompat.CONSUMED
         }
     }
 

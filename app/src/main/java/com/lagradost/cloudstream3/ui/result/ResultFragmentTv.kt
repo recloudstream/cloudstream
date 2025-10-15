@@ -55,10 +55,10 @@ import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
 import com.lagradost.cloudstream3.utils.UIHelper
-import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
+import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
@@ -190,9 +190,7 @@ class ResultFragmentTv : Fragment() {
 
     override fun onResume() {
         activity?.let {
-            @Suppress("DEPRECATION")
-            it.window?.navigationBarColor =
-                it.colorFromAttribute(R.attr.primaryBlackBackground)
+            it.setNavigationBarColorCompat(R.attr.primaryBlackBackground)
         }
         afterPluginsLoadedEvent += ::reloadViewModel
         super.onResume()

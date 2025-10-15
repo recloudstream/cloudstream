@@ -17,8 +17,7 @@ import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIE
 import com.lagradost.cloudstream3.ui.settings.extensions.PluginsViewModel
 import com.lagradost.cloudstream3.ui.settings.extensions.RepoAdapter
 import com.lagradost.cloudstream3.utils.Coroutines.main
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
-
+import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingSystemBars
 
 class SetupFragmentExtensions : Fragment() {
     companion object {
@@ -86,7 +85,7 @@ class SetupFragmentExtensions : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fixPaddingStatusbar(binding?.setupRoot)
+        fixPaddingSystemBars(binding?.setupRoot, padTop = true)
         val isSetup = arguments?.getBoolean(SETUP_EXTENSION_BUNDLE_IS_SETUP) ?: false
 
 //        view_public_repositories_button?.setOnClickListener {

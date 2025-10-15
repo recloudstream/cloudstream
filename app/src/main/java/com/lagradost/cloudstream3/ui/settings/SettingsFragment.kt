@@ -29,6 +29,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
+import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingSystemBars
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
@@ -122,7 +123,13 @@ class SettingsFragment : Fragment() {
                     }
                 }
             }
-            UIHelper.fixPaddingStatusbar(settingsToolbar)
+            UIHelper.fixPaddingSystemBars(
+                settingsToolbar,
+                padTop = true,
+                padBottom = false,
+                padLeft = false,
+                padRight = false
+            )
         }
 
         fun Fragment?.setUpToolbar(@StringRes title: Int) {
@@ -139,7 +146,13 @@ class SettingsFragment : Fragment() {
                     }
                 }
             }
-            UIHelper.fixPaddingStatusbar(settingsToolbar)
+            UIHelper.fixPaddingSystemBars(
+                settingsToolbar,
+                padTop = true,
+                padBottom = false,
+                padLeft = false,
+                padRight = false
+            )
         }
 
         fun getFolderSize(dir: File): Long {
@@ -175,6 +188,7 @@ class SettingsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        fixPaddingSystemBars(binding?.root, padBottom = false, padLeft = false)
         fun navigate(id: Int) {
             activity?.navigate(id, Bundle())
         }

@@ -81,6 +81,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
+import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
@@ -306,9 +307,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
     override fun onResume() {
         afterPluginsLoadedEvent += ::reloadViewModel
         activity?.let {
-            @Suppress("DEPRECATION")
-            it.window?.navigationBarColor =
-                it.colorFromAttribute(R.attr.primaryBlackBackground)
+            it.setNavigationBarColorCompat(R.attr.primaryBlackBackground)
         }
         super.onResume()
         PanelsChildGestureRegionObserver.Provider.get()
@@ -330,7 +329,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         super.onViewCreated(view, savedInstanceState)
 
         // ===== setup =====
-        UIHelper.fixPaddingStatusbar(binding?.resultTopBar)
+        UIHelper.fixPaddingSystemBars(binding?.root, padTop = true)
         val storedData = getStoredData() ?: return
         activity?.window?.decorView?.clearFocus()
         activity?.loadCache()

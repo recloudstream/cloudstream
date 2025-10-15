@@ -38,6 +38,7 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingSystemBars
 
 class ExtensionsFragment : Fragment() {
     var binding: FragmentExtensionsBinding? = null
@@ -84,7 +85,12 @@ class ExtensionsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //context?.fixPaddingStatusbar(extensions_root)
+        fixPaddingSystemBars(
+            binding?.root,
+            padTop = true,
+            padBottom = false,
+            padLeft = false
+        )
 
         setUpToolbar(R.string.extensions)
         setToolBarScrollFlags()
