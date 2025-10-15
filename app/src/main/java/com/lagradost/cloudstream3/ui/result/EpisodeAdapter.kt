@@ -259,9 +259,10 @@ class EpisodeAdapter(
                 }
                 episodePoster.isVisible = posterVisible
 
-                if (card.score != null) {
+                val rating10p = card.score?.toFloat(10)
+                if (rating10p != null && rating10p > 0.1) {
                     episodeRating.text = episodeRating.context?.getString(R.string.rated_format)
-                        ?.format(card.score.toFloat(10)) // TODO Change rated_format to use card.score.toString()
+                        ?.format(rating10p) // TODO Change rated_format to use card.score.toString()
                 } else {
                     episodeRating.text = ""
                 }
