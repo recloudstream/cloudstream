@@ -6,7 +6,7 @@
     android:id="@+id/home_header"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/primaryBlackBackground"
+    android:layout_marginTop="60dp"
     android:orientation="vertical">
 
     <View
@@ -35,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="60dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
 
                 android:backgroundTint="@color/transparent"
@@ -43,7 +43,7 @@
                 android:foreground="@drawable/outline_drawable"
                 android:nextFocusLeft="@id/home_preview_hidden_prev_focus"
                 android:nextFocusRight="@id/home_preview_hidden_next_focus"
-                android:nextFocusUp="@id/home_preview_change_api"
+                android:nextFocusUp="@id/home_change_api"
                 android:nextFocusDown="@id/home_watch_child_recyclerview"
 
                 app:cardCornerRadius="@dimen/rounded_image_radius">
@@ -106,6 +106,7 @@
 
         </LinearLayout>
 
+        <!--
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="40dp"
@@ -183,7 +184,7 @@
                 android:visibility="gone"
                 app:tint="@color/player_on_button_tv_attr" />
         </LinearLayout>
-
+        -->
         <!--<FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
