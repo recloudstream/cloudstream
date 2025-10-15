@@ -10,6 +10,7 @@ import androidx.core.view.setPadding
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import coil3.load
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
@@ -249,7 +250,14 @@ class EpisodeAdapter(
                     episodeProgress.isVisible = displayPos > 0L
                 }
 
-                episodePoster.loadImage(card.poster)
+                val posterVisible = !card.poster.isNullOrBlank()
+                if(posterVisible) {
+                    episodePoster.loadImage(card.poster)
+                } else {
+                    // Clear the image
+                    episodePoster.load(null)
+                }
+                episodePoster.isVisible = posterVisible
 
                 if (card.score != null) {
                     episodeRating.text = episodeRating.context?.getString(R.string.rated_format)
@@ -287,10 +295,11 @@ class EpisodeAdapter(
                     val isUpcoming = unixTimeMS < card.airDate
 
                     if (isUpcoming) {
+                        episodeProgress.isVisible = false
                         episodePlayIcon.isVisible = false
-                        episodeUpcomingIcon.isVisible = !episodePoster.isVisible
+                        episodeUpcomingIcon.isVisible = !posterVisible
                         episodeDate.setText(
-                            com.lagradost.cloudstream3.utils.txt(
+                            txt(
                                 R.string.episode_upcoming_format,
                                 secondsToReadable(
                                     card.airDate.minus(unixTimeMS).div(1000).toInt(),
@@ -299,6 +308,7 @@ class EpisodeAdapter(
                             )
                         )
                     } else {
+                        episodePlayIcon.isVisible = true
                         episodeUpcomingIcon.isVisible = false
 
                         val formattedAirDate = SimpleDateFormat.getDateInstance(
@@ -310,6 +320,8 @@ class EpisodeAdapter(
                         episodeDate.setText(txt(formattedAirDate))
                     }
                 } else {
+                    episodeUpcomingIcon.isVisible = false
+                    episodePlayIcon.isVisible = true
                     episodeDate.isVisible = false
                 }
 
