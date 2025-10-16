@@ -4,12 +4,13 @@
     android:id="@+id/subs_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/primaryBlackBackground">
+    android:background="?attr/primaryGrayBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="?attr/primaryBlackBackground">
 
         <TextView
             android:layout_width="match_parent"

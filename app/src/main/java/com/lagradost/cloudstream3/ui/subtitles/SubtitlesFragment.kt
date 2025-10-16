@@ -38,8 +38,9 @@ import com.lagradost.cloudstream3.databinding.SubtitleSettingsBinding
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.player.OutlineSpan
 import com.lagradost.cloudstream3.ui.player.RoundedBackgroundColorSpan
-import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.nameNextToFlagEmoji
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.Event
@@ -359,7 +360,7 @@ class SubtitlesFragment : DialogFragment() {
     private lateinit var state: SaveCaptionStyle
     private var hide: Boolean = true
 
-    var systemBarsPadBottom = false
+    var systemBarsPadBottom = isLayout(TV or EMULATOR)
 
     override fun onDestroy() {
         super.onDestroy()
