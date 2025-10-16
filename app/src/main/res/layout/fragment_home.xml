@@ -247,4 +247,75 @@
         app:icon="@drawable/ic_baseline_play_arrow_24"
         tools:ignore="ContentDescription"
         tools:visibility="visible" />
+    <View
+        android:id="@+id/topbar_bg"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/black_overlay"
+        android:orientation="horizontal"
+        android:scaleY="0"
+        android:transformPivotY="0dp"
+        android:layout_marginTop="1.3dp" />
+    <LinearLayout
+        android:id="@+id/home_padding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical|end"
+        android:paddingHorizontal="0dp"
+        android:layout_gravity="top"
+        android:layout_marginTop="1.3dp">
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/home_search"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:editTextColor="@color/white"
+            android:gravity="center_vertical"
+            android:iconifiedByDefault="true"
+            android:nextFocusRight="@id/home_head_profile_padding"
+            android:padding="0dp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            app:closeIcon="@drawable/ic_baseline_close_24"
+            app:iconifiedByDefault="true"
+            app:queryBackground="@color/transparent"
+            app:queryHint="@string/search_hint"
+            app:searchIcon="@drawable/search_icon"
+            tools:ignore="RtlSymmetry"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:id="@+id/home_head_profile_padding"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="@drawable/rounded_select_ripple"
+            android:nextFocusLeft="@id/home_search">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/home_head_profile_card"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:background="@color/transparent"
+                app:cardCornerRadius="20dp"
+                android:foreground="@drawable/outline_drawable_round_20"
+                android:focusable="true">
+
+                <ImageView
+                    android:id="@+id/home_head_profile_pic"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@string/account"
+                    android:foreground="@drawable/rounded_outline"
+                    tools:src="@drawable/profile_bg_orange" />
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+    </LinearLayout>
 </FrameLayout>

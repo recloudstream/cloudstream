@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/home_header"
@@ -7,7 +7,10 @@
     android:layout_height="wrap_content"
     android:background="?attr/primaryBlackBackground"
     android:orientation="vertical">
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
     <View
         android:id="@+id/home_none_padding"
         android:layout_width="match_parent"
@@ -26,67 +29,6 @@
 
         </androidx.viewpager2.widget.ViewPager2>
 
-        <LinearLayout
-            android:id="@+id/home_padding"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="0dp">
-
-
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/home_search"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:editTextColor="@color/white"
-                android:gravity="center_vertical"
-                android:iconifiedByDefault="true"
-                android:nextFocusRight="@id/home_head_profile_padding"
-                android:padding="0dp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white"
-                app:closeIcon="@drawable/ic_baseline_close_24"
-                app:iconifiedByDefault="true"
-                app:queryBackground="@color/transparent"
-                app:queryHint="@string/search_hint"
-                app:searchIcon="@drawable/search_icon"
-                tools:ignore="RtlSymmetry" />
-
-            <LinearLayout
-                android:id="@+id/home_head_profile_padding"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="@drawable/rounded_select_ripple"
-                android:nextFocusLeft="@id/home_search">
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/home_head_profile_card"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:background="@color/transparent"
-                    app:cardCornerRadius="20dp"
-                    android:foreground="@drawable/outline_drawable_round_20"
-                    android:focusable="true">
-
-                    <ImageView
-                        android:id="@+id/home_head_profile_pic"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:contentDescription="@string/account"
-                        android:foreground="@drawable/rounded_outline"
-                        tools:src="@drawable/profile_bg_orange" />
-                </androidx.cardview.widget.CardView>
-            </LinearLayout>
-        </LinearLayout>
 
         <!--
                         <TextView
@@ -155,49 +97,10 @@
         </LinearLayout>
 
     </FrameLayout>
-
-    <LinearLayout
+    <View
         android:id="@+id/alternative_account_padding"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:gravity="end"
-        android:paddingHorizontal="0dp">
-
-        <LinearLayout
-            android:id="@+id/alternate_home_head_profile_padding"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="@drawable/rounded_select_ripple"
-            android:nextFocusLeft="@id/home_search">
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/alternate_home_head_profile_card"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:background="@color/transparent"
-                android:focusable="true"
-                android:foreground="@drawable/outline_drawable_round_20"
-                app:cardCornerRadius="20dp">
-
-                <ImageView
-                    android:id="@+id/alternate_home_head_profile_pic"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:contentDescription="@string/account"
-                    android:foreground="@drawable/rounded_outline"
-                    tools:src="@drawable/profile_bg_orange" />
-            </androidx.cardview.widget.CardView>
-        </LinearLayout>
-    </LinearLayout>
-
-
+        android:layout_height="50dp" />
     <LinearLayout
         android:id="@+id/home_watch_holder"
         android:layout_width="match_parent"
@@ -341,4 +244,6 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/home_result_grid" />
     </LinearLayout>
-</LinearLayout>
+    </LinearLayout>
+
+</FrameLayout>
