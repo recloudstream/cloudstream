@@ -38,7 +38,7 @@ class SetupFragmentLayout : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fixSystemBarsPadding(binding?.setupRoot, padTop = true)
+        fixSystemBarsPadding(binding?.setupRoot)
 
         safe {
             val ctx = context ?: return@safe

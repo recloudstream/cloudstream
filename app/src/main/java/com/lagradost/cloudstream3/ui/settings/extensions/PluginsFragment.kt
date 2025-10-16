@@ -26,7 +26,6 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpTo
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
-import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 
 const val PLUGINS_BUNDLE_NAME = "name"

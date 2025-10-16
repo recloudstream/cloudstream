@@ -39,7 +39,6 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
-import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 
 class ExtensionsFragment : Fragment() {
     var binding: FragmentExtensionsBinding? = null

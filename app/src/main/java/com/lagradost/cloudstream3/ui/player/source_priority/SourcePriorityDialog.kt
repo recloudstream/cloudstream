@@ -27,7 +27,7 @@ class SourcePriorityDialog(
     override fun show() {
         val binding = PlayerSelectSourcePriorityBinding.inflate(LayoutInflater.from(ctx), null, false)
         setContentView(binding.root)
-        fixSystemBarsPadding(binding.root, padTop = true)
+        fixSystemBarsPadding(binding.root)
         val sourcesRecyclerView = binding.sortSources
         val qualitiesRecyclerView = binding.sortQualities
         val profileText = binding.profileTextEditable

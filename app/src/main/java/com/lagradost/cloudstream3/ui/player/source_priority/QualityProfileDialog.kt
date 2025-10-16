@@ -25,7 +25,7 @@ class QualityProfileDialog(
         val binding = PlayerQualityProfileDialogBinding.inflate(this.layoutInflater, null, false)
 
         setContentView(binding.root)//R.layout.player_quality_profile_dialog)
-        fixSystemBarsPadding(binding.root, padTop = true)
+        fixSystemBarsPadding(binding.root)
         /*val profilesRecyclerView: RecyclerView = profiles_recyclerview
         val useBtt: View = use_btt
         val editBtt: View = edit_btt

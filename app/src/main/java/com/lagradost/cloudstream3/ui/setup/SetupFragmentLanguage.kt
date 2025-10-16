@@ -48,7 +48,7 @@ class SetupFragmentLanguage : Fragment() {
 
         // We don't want a crash for all users
         safe {
-            fixSystemBarsPadding(binding?.setupRoot, padTop = true)
+            fixSystemBarsPadding(binding?.setupRoot)
 
             val ctx = context ?: return@safe
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)

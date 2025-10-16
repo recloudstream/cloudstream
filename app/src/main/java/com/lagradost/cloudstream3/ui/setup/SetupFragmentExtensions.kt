@@ -85,7 +85,7 @@ class SetupFragmentExtensions : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fixSystemBarsPadding(binding?.setupRoot, padTop = true)
+        fixSystemBarsPadding(binding?.setupRoot)
         val isSetup = arguments?.getBoolean(SETUP_EXTENSION_BUNDLE_IS_SETUP) ?: false
 
 //        view_public_repositories_button?.setOnClickListener {

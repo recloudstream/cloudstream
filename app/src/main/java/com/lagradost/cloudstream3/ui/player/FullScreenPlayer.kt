@@ -556,7 +556,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
         dialog.show()
 
-        fixSystemBarsPadding(binding.root, padTop = true)
+        fixSystemBarsPadding(binding.root)
 
         val beforeOffset = subtitleDelay
 
