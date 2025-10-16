@@ -1861,7 +1861,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             playerBinding?.apply {
                 playerSpeedBtt.isVisible = playBackSpeedEnabled
                 playerResizeBtt.isVisible = playerResizeEnabled
-                playerRotateBtt.isVisible = playerRotateEnabled
+                playerRotateBtt.isVisible = if(isLayout(TV or EMULATOR)) false else playerRotateEnabled
                 if (hideControlsNames) {
                     hideControlsNames()
                 }
