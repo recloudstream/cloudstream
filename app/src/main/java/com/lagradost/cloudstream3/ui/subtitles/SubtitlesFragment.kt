@@ -34,18 +34,18 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
 import com.lagradost.cloudstream3.CommonActivity.showToast
-import com.lagradost.cloudstream3.databinding.SubtitleSettingsBinding
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.databinding.SubtitleSettingsBinding
+import com.lagradost.cloudstream3.ui.player.CustomDecoder
+import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.setSubtitleAlignment
 import com.lagradost.cloudstream3.ui.player.OutlineSpan
 import com.lagradost.cloudstream3.ui.player.RoundedBackgroundColorSpan
-import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
-import com.lagradost.cloudstream3.ui.settings.nameNextToFlagEmoji
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
-import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToLangTagIETF
 import com.lagradost.cloudstream3.utils.SubtitleHelper.languages
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
@@ -83,6 +83,8 @@ data class SaveCaptionStyle @OptIn(UnstableApi::class) constructor(
     @JsonProperty("italic") var italic: Boolean = false,
     /** in px, background radius, aka how round the background (backgroundColor) on each row is **/
     @JsonProperty("backgroundRadius") var backgroundRadius: Float? = null,
+    /** The SSA_ALIGNMENT */
+    @JsonProperty("alignment") var alignment: Int? = null,
 )
 
 const val DEF_SUBS_ELEVATION = 20
@@ -194,7 +196,8 @@ class SubtitlesFragment : DialogFragment() {
                 }
             }
 
-            return this
+            // 6. set alignment
+            return this.setSubtitleAlignment(style.alignment)
         }
 
         private fun Context.fromSaveToStyle(data: SaveCaptionStyle): CaptionStyleCompat {
@@ -429,7 +432,7 @@ class SubtitlesFragment : DialogFragment() {
                 // tbh this should not be a dialog if it has so many values
                 val elevationTypes = listOf(
                     0 to textView.context.getString(R.string.none)
-                ) + (1..30).map { x ->
+                ) + (1..40).map { x ->
                     val i = x * 10
                     i to "${i}dp"
                 }
@@ -483,6 +486,33 @@ class SubtitlesFragment : DialogFragment() {
                 it.context.updateState()
                 showToast(R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
                 return@setOnLongClickListener true
+            }
+
+            subsSubtitleAlignment.setFocusableInTv()
+            subsSubtitleAlignment.setOnClickListener { textView ->
+                val alignmentTypes = listOf(
+                    null to R.string.automatic,
+                    CustomDecoder.SSA_ALIGNMENT_BOTTOM_LEFT to R.string.bottom_left,
+                    CustomDecoder.SSA_ALIGNMENT_BOTTOM_CENTER to R.string.bottom_center,
+                    CustomDecoder.SSA_ALIGNMENT_BOTTOM_RIGHT to R.string.bottom_right,
+                    CustomDecoder.SSA_ALIGNMENT_MIDDLE_LEFT to R.string.middle_left,
+                    CustomDecoder.SSA_ALIGNMENT_MIDDLE_CENTER to R.string.middle_center,
+                    CustomDecoder.SSA_ALIGNMENT_MIDDLE_RIGHT to R.string.middle_right,
+                    CustomDecoder.SSA_ALIGNMENT_TOP_LEFT to R.string.top_left,
+                    CustomDecoder.SSA_ALIGNMENT_TOP_CENTER to R.string.top_center,
+                    CustomDecoder.SSA_ALIGNMENT_TOP_RIGHT to R.string.top_right,
+                )
+
+                activity?.showDialog(
+                    alignmentTypes.map { textView.context.getString(it.second) },
+                    alignmentTypes.map { it.first }.indexOf(state.alignment),
+                    (textView as TextView).text.toString(),
+                    false,
+                    dismissCallback
+                ) { index ->
+                    state.alignment = alignmentTypes.map { it.first }[index]
+                    textView.context.updateState()
+                }
             }
 
             subsEdgeType.setFocusableInTv()

@@ -130,8 +130,18 @@
             android:nextFocusRight="@id/cancel_btt"
 
             android:nextFocusUp="@id/subs_edge_type"
-            android:nextFocusDown="@id/subs_subtitle_elevation"
+            android:nextFocusDown="@id/subs_subtitle_alignment"
             android:text="@string/subs_edge_size" />
+
+        <TextView
+            android:id="@+id/subs_subtitle_alignment"
+            style="@style/SettingsItem"
+            android:nextFocusLeft="@id/apply_btt"
+            android:nextFocusRight="@id/cancel_btt"
+
+            android:nextFocusUp="@id/subs_edge_size"
+            android:nextFocusDown="@id/subs_subtitle_elevation"
+            android:text="@string/subs_subtitle_alignment" />
 
         <TextView
             android:id="@+id/subs_subtitle_elevation"
@@ -139,7 +149,7 @@
             android:nextFocusLeft="@id/apply_btt"
             android:nextFocusRight="@id/cancel_btt"
 
-            android:nextFocusUp="@id/subs_edge_type"
+            android:nextFocusUp="@id/subs_subtitle_alignment"
             android:nextFocusDown="@id/subs_auto_select_language"
             android:text="@string/subs_subtitle_elevation" />
 
