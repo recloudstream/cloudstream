@@ -896,4 +896,15 @@
     <string name="reload_provider">Reload Provider</string>
 	<string name="name">Name</string>
     <string name="resolution_and_name">Resolution and name</string>
+    <string name="subs_subtitle_alignment">Subtitle Alignment</string>
+
+    <string name="bottom_left">Bottom left</string>
+    <string name="bottom_center">Bottom center</string>
+    <string name="bottom_right">Bottom right</string>
+    <string name="middle_left">Middle left</string>
+    <string name="middle_center">Middle center</string>
+    <string name="middle_right">Middle right</string>
+    <string name="top_left">Top left</string>
+    <string name="top_center">Top center</string>
+    <string name="top_right">Top right</string>
 </resources>

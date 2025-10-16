@@ -86,6 +86,7 @@ import com.lagradost.cloudstream3.ui.result.EpisodeAdapter
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.ResultFragment
+import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.result.SyncViewModel
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
@@ -1863,6 +1864,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     " - "
                 }
             }$extra"
+
             4 -> headerName
             5 -> "$headerName${
                 if (headerName.isBlank()) {
@@ -1871,6 +1873,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     " - "
                 }
             }$extra"
+
             else -> ""
         }
         playerBinding?.playerVideoTitleRez?.apply {
@@ -2044,11 +2047,15 @@ class GeneratorPlayer : FullScreenPlayer() {
                         val topIndex = layoutManager.findFirstCompletelyVisibleItemPosition()
                         if (topIndex != RecyclerView.NO_POSITION && topIndex != lastTopIndex) {
                             lastTopIndex = topIndex
-                            val topItem = episodes.getOrNull(topIndex)?.season
+                            val topItem = episodes.getOrNull(topIndex)
+
                             topItem?.let {
-                                val paddedSeasonString = String.format("%02d", topItem)
-                                playerEpisodeOverlayTitle.text =
-                                    "${context?.getString(R.string.episodes)}:${context?.getString(R.string.season_short)}${paddedSeasonString}"
+                                playerEpisodeOverlayTitle.setText(
+                                    ResultViewModel2.seasonToTxt(
+                                        topItem.seasonData,
+                                        topItem.seasonIndex
+                                    )
+                                )
                             }
                         }
                     }

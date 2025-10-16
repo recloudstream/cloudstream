@@ -522,7 +522,7 @@ class HomeParentItemAdapterPreview(
             }
 
             (binding as? FragmentHomeHeadTvBinding)?.apply {
-                homePreviewChangeApi.setOnClickListener { view ->
+                /*homePreviewChangeApi.setOnClickListener { view ->
                     view.context.selectHomepage(viewModel.repo?.name) { api ->
                         viewModel.loadAndCancel(api, forceReload = true, fromUI = true)
                     }
@@ -539,7 +539,7 @@ class HomeParentItemAdapterPreview(
                 homePreviewSearchButton.setOnClickListener { _ ->
                     // Open blank screen.
                     viewModel.queryTextSubmit("")
-                }
+                }*/
 
                 // A workaround to the focus problem of always centering the view on focus
                 // as that causes higher android versions to stretch the ui when switching between shows
@@ -713,12 +713,12 @@ class HomeParentItemAdapterPreview(
                 observe(viewModel.preview) {
                     updatePreview(it)
                 }
-                if (binding is FragmentHomeHeadTvBinding) {
+                /*if (binding is FragmentHomeHeadTvBinding) {
                     observe(viewModel.apiName) { name ->
                         binding.homePreviewChangeApi.text = name
                         binding.homePreviewReloadProvider.isGone = (name == noneApi.name)
                     }
-                }
+                }*/
                 observe(viewModel.resumeWatching) {
                     updateResume(it)
                 }
