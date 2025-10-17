@@ -48,7 +48,7 @@ workRuntimeKtx = "2.10.5"
 jvmTarget = "1.8"
 minSdk = "21"
 compileSdk = "36"
-targetSdk = "36"
+targetSdk = "35"
 
 [libraries]
 acra-core = { module = "ch.acra:acra-core", version.ref = "acraCore" }
