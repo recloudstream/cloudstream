@@ -723,4 +723,7 @@
     <string name="action_mark_watched_up_to_this_episode">Označi kao gledano do ove epizode</string>
     <string name="action_remove_mark_watched_up_to_this_episode">Ukloni epizodu koju sam gledao do sada</string>
     <string name="action_reload">Ponovo učitano</string>
+    <string name="name">Name</string>
+    <string name="resolution_and_name">Auflösung und Name</string>
+    <string name="reload_provider">Anbieter erneut laden</string>
 </resources>
