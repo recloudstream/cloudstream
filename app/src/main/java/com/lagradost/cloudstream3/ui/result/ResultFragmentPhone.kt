@@ -307,9 +307,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
     override fun onResume() {
         afterPluginsLoadedEvent += ::reloadViewModel
-        activity?.let {
-            it.setNavigationBarColorCompat(R.attr.primaryBlackBackground)
-        }
+        activity?.setNavigationBarColorCompat(R.attr.primaryBlackBackground)
         super.onResume()
         PanelsChildGestureRegionObserver.Provider.get()
             .addGestureRegionsUpdateListener(gestureRegionsListener)

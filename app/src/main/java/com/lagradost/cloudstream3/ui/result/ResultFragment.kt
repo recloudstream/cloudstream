@@ -208,9 +208,7 @@ object ResultFragment {
      override fun onResume() {
          afterPluginsLoadedEvent += ::reloadViewModel
          super.onResume()
-         activity?.let {
-             it.setNavigationBarColorCompat(R.attr.primaryBlackBackground)
-         }
+         activity?.setNavigationBarColorCompat(R.attr.primaryBlackBackground)
      }
 
      override fun onDestroy() {

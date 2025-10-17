@@ -190,9 +190,7 @@ class ResultFragmentTv : Fragment() {
     }
 
     override fun onResume() {
-        activity?.let {
-            it.setNavigationBarColorCompat(R.attr.primaryBlackBackground)
-        }
+        activity?.setNavigationBarColorCompat(R.attr.primaryBlackBackground)
         afterPluginsLoadedEvent += ::reloadViewModel
         super.onResume()
     }
