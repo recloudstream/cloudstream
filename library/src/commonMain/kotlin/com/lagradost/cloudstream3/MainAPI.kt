@@ -403,7 +403,7 @@ fun newHomePageResponse(
     list: List<SearchResponse>,
     hasNext: Boolean? = null,
 ): HomePageResponse {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     return HomePageResponse(
         listOf(HomePageList(name, list)),
         hasNext = hasNext ?: list.isNotEmpty()
@@ -415,7 +415,7 @@ fun newHomePageResponse(
     list: List<SearchResponse>,
     hasNext: Boolean? = null,
 ): HomePageResponse {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     return HomePageResponse(
         listOf(HomePageList(data.name, list, data.horizontalImages)),
         hasNext = hasNext ?: list.isNotEmpty()
@@ -423,12 +423,12 @@ fun newHomePageResponse(
 }
 
 fun newHomePageResponse(list: HomePageList, hasNext: Boolean? = null): HomePageResponse {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     return HomePageResponse(listOf(list), hasNext = hasNext ?: list.list.isNotEmpty())
 }
 
 fun newHomePageResponse(list: List<HomePageList>, hasNext: Boolean? = null): HomePageResponse {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     return HomePageResponse(list, hasNext = hasNext ?: list.any { it.list.isNotEmpty() })
 }
 
@@ -1139,7 +1139,7 @@ suspend fun newSubtitleFile(
  * @property hasNext if there is a next page or not.
  * */
 data class HomePageResponse
-@Deprecated("Use newHomePageResponse method", level = DeprecationLevel.WARNING)
+@Deprecated("Use newHomePageResponse method", level = DeprecationLevel.ERROR)
 constructor(
     val items: List<HomePageList>,
     val hasNext: Boolean = false
