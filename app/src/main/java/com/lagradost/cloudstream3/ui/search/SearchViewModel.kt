@@ -32,9 +32,9 @@ data class ExpandableSearchList(
 const val SEARCH_HISTORY_KEY = "search_history"
 
 class SearchViewModel : ViewModel() {
-    private val _searchResponse: MutableLiveData<Resource<List<SearchResponse>>> =
+    private val _searchResponse: MutableLiveData<Resource<ExpandableSearchList>> =
         MutableLiveData()
-    val searchResponse: LiveData<Resource<List<SearchResponse>>> get() = _searchResponse
+    val searchResponse: LiveData<Resource<ExpandableSearchList>> get() = _searchResponse
 
     private val _currentSearch: MutableLiveData<Map<String, ExpandableSearchList>> =
         MutableLiveData()
@@ -46,7 +46,7 @@ class SearchViewModel : ViewModel() {
     private var repos = synchronized(apis) { apis.map { APIRepository(it) } }
 
     fun clearSearch() {
-        _searchResponse.postValue(Resource.Success(ArrayList()))
+        _searchResponse.postValue(Resource.Success(ExpandableSearchList(emptyList(), 0, false)))
         _currentSearch.postValue(emptyMap())
         expandableSearches.clear()
     }
@@ -105,15 +105,16 @@ class SearchViewModel : ViewModel() {
             if (next is Resource.Success) {
                 val nextValue = next.value
                 expandableSearches[name]?.apply {
-                    hasNext = nextValue.hasNext
-                    currentPage = nextPage
+                    this.hasNext = nextValue.hasNext
+                    this.currentPage = nextPage
 
                     debugWarning({ nextValue.items.any { outer -> this.list.any { it.url == outer.url } } }) {
                         "Expanded search contained an item that was previously already in the list.\nQuery = $query, ${nextValue.items} = ${this.list}"
                     }
 
-                    this.list += nextValue.items
-                    this.list.distinctBy { it.url } // just to be sure we are not adding the same shit for some reason
+                    // just to be sure we are not adding the same shit for some reason
+                    // Avoids weird behavior in the recyclerview by recreating the list
+                    this.list = (this.list + nextValue.items).distinctBy { it.url }
                 } ?: debugWarning {
                     "Expanded an item not in search load named $name, current list is ${expandableSearches.keys}"
                 }
@@ -121,14 +122,44 @@ class SearchViewModel : ViewModel() {
                 current.hasNext = false
             }
 
+            _searchResponse.postValue(Resource.Success(bundleSearch(expandableSearches)))
             _currentSearch.postValue(expandableSearches)
         }
-
 
         lock -= name
 
         val item = expandableSearches[name] ?: return null
-        return HomeViewModel.ExpandableHomepageList(HomePageList(name, item.list), item.currentPage, item.hasNext)
+        return HomeViewModel.ExpandableHomepageList(
+            HomePageList(name, item.list),
+            item.currentPage,
+            item.hasNext
+        )
+    }
+
+    private fun bundleSearch(lists: MutableMap<String, ExpandableSearchList>): ExpandableSearchList {
+        if (lists.size == 1) {
+            return lists.values.first()
+        }
+
+        val list = ArrayList<SearchResponse>()
+        val nestedList =
+            lists.map { it.value.list }
+
+        // I do it this way to move the relevant search results to the top
+        var index = 0
+        while (true) {
+            var added = 0
+            for (sublist in nestedList) {
+                if (sublist.size > index) {
+                    list.add(sublist[index])
+                    added++
+                }
+            }
+            if (added == 0) break
+            index++
+        }
+
+        return ExpandableSearchList(list, 1, false)
     }
 
     private fun search(
@@ -172,7 +203,8 @@ class SearchViewModel : ViewModel() {
                     if (currentSearchIndex != currentIndex) return@amap
                     if (search is Resource.Success) {
                         val searchValue = search.value
-                        expandableSearches[a.name] = ExpandableSearchList(searchValue.items, 1, searchValue.hasNext)
+                        expandableSearches[a.name] =
+                            ExpandableSearchList(searchValue.items, 1, searchValue.hasNext)
                     }
 
                     _currentSearch.postValue(expandableSearches)
@@ -181,23 +213,7 @@ class SearchViewModel : ViewModel() {
                 if (currentSearchIndex != currentIndex) return@withContext // this should prevent rewrite of existing data bug
 
                 _currentSearch.postValue(expandableSearches)
-                val list = ArrayList<SearchResponse>()
-                val nestedList =
-                    expandableSearches.map { it.value.list }
-
-                // I do it this way to move the relevant search results to the top
-                var index = 0
-                while (true) {
-                    var added = 0
-                    for (sublist in nestedList) {
-                        if (sublist.size > index) {
-                            list.add(sublist[index])
-                            added++
-                        }
-                    }
-                    if (added == 0) break
-                    index++
-                }
+                val list = bundleSearch(expandableSearches)
 
                 _searchResponse.postValue(Resource.Success(list))
             }

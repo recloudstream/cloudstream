@@ -25,6 +25,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRecyclerScrollable
+import com.lagradost.cloudstream3.utils.AppContextUtils.setMaxViewPoolSize
 
 class LoadClickCallback(
     val action: Int = 0,
@@ -48,6 +49,13 @@ open class ParentItemAdapter(
             a.list.list == b.list.list
         })
 ) {
+    companion object {
+        // The vast majority of the lag comes from creating the view
+        // This simply shares the views between all HomeChildItemAdapter
+        private val sharedPool =
+            RecyclerView.RecycledViewPool().apply { this.setMaxRecycledViews(0, 20) }
+    }
+
     data class ParentItemHolder(val binding: ViewBinding) : ViewHolderState<Bundle>(binding) {
         override fun save(): Bundle = Bundle().apply {
             val recyclerView = (binding as? HomepageParentBinding)?.homeChildRecyclerview
@@ -60,7 +68,7 @@ open class ParentItemAdapter(
 
         override fun restore(state: Bundle) {
             (binding as? HomepageParentBinding)?.homeChildRecyclerview?.layoutManager?.onRestoreInstanceState(
-                    state.getSafeParcelable<Parcelable>("value")
+                state.getSafeParcelable<Parcelable>("value")
             )
         }
     }
@@ -90,17 +98,31 @@ open class ParentItemAdapter(
         if (binding !is HomepageParentBinding) return
         val info = item.list
         binding.apply {
-            homeChildRecyclerview.adapter = HomeChildItemAdapter(
-                fragment = fragment,
-                id = id + position + 100,
-                clickCallback = clickCallback,
-                nextFocusUp = homeChildRecyclerview.nextFocusUpId,
-                nextFocusDown = homeChildRecyclerview.nextFocusDownId,
-            ).apply {
-                isHorizontal = info.isHorizontalImages
-                hasNext = item.hasNext
-                submitList(item.list.list)
+            val currentAdapter = homeChildRecyclerview.adapter as? HomeChildItemAdapter
+            if (currentAdapter == null) {
+                homeChildRecyclerview.setRecycledViewPool(sharedPool)
+                homeChildRecyclerview.adapter = HomeChildItemAdapter(
+                    fragment = fragment,
+                    id = id + position + 100,
+                    clickCallback = clickCallback,
+                    nextFocusUp = homeChildRecyclerview.nextFocusUpId,
+                    nextFocusDown = homeChildRecyclerview.nextFocusDownId,
+                ).apply {
+                    isHorizontal = info.isHorizontalImages
+                    hasNext = item.hasNext
+                    submitList(item.list.list)
+                }
+            } else {
+                currentAdapter.apply {
+                    isHorizontal = info.isHorizontalImages
+                    hasNext = item.hasNext
+                    this.clickCallback = this@ParentItemAdapter.clickCallback
+                    nextFocusUp = homeChildRecyclerview.nextFocusUpId
+                    nextFocusDown = homeChildRecyclerview.nextFocusDownId
+                    submitIncomparableList(item.list.list)
+                }
             }
+
             homeChildRecyclerview.setLinearListLayout(
                 isHorizontal = true,
                 nextLeft = startFocus,

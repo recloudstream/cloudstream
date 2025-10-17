@@ -435,7 +435,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         activity?.showDialog(
                             names.map { it.second },
                             viewModel.selectedSortingIndex.value ?: -1,
-                            "",
+                            ctx.getString(R.string.sort_by),
                             false,
                             {}) { itemId ->
                             viewModel.setSort(names[itemId].first)
@@ -595,10 +595,12 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             resultBinding?.apply {
                 if (resume == null) {
                     resultResumeParent.isVisible = false
+                    resultResumeProgressHolder.isVisible = false
                     return@observeNullable
                 }
                 resultResumeParent.isVisible = true
                 resume.progress?.let { progress ->
+                    resultNextSeriesButton.isVisible = false
                     resultResumeSeriesTitle.apply {
                         isVisible = !resume.isMovie
                         text =
@@ -608,8 +610,11 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                                 resume.result.season
                             )
                     }
-                    if(resume.isMovie) resultResumeSeriesProgressText.maxLines = 1
-                    resultResumeSeriesProgressText.setText(progress.progressLeft)
+                    if (resume.isMovie){
+                        resultPlayMovie.isGone = true
+                        resultResumeSeriesProgressText.isVisible = true
+                        resultResumeSeriesProgressText.setText(progress.progressLeft)
+                    }
                     resultResumeSeriesProgress.apply {
                         isVisible = true
                         this.max = progress.maxProgress
@@ -618,19 +623,24 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultResumeProgressHolder.isVisible = true
                 } ?: run {
                     resultResumeProgressHolder.isVisible = false
+                    if(!resume.isMovie){
+                        resultNextSeriesButton.isVisible = true
+                        resultNextSeriesButton.text =context?.getNameFull(
+                            resume.result.name,
+                            resume.result.episode,
+                            resume.result.season
+                        )
+                    }
                     resultResumeSeriesProgress.isVisible = false
                     resultResumeSeriesTitle.isVisible = false
                     resultResumeSeriesProgressText.isVisible = false
                 }
 
-                resultResumeSeriesButton.isVisible = !resume.isMovie
                 resultResumeSeriesButton.setOnClickListener {
-                    viewModel.handleAction(
-                        EpisodeClickEvent(
-                            storedData.playerAction, //?: ACTION_PLAY_EPISODE_IN_PLAYER,
-                            resume.result
-                        )
-                    )
+                    resumeAction(storedData, resume)
+                }
+                resultNextSeriesButton.setOnClickListener {
+                    resumeAction(storedData, resume)
                 }
             }
         }
@@ -815,10 +825,15 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         resultShare.setOnClickListener {
                             try {
                                 val i = Intent(Intent.ACTION_SEND)
-                                val nameBase64 = base64Encode(d.apiName.toString().toByteArray(Charsets.UTF_8))
+                                val nameBase64 =
+                                    base64Encode(d.apiName.toString().toByteArray(Charsets.UTF_8))
                                 val urlBase64 = base64Encode(d.url.toByteArray(Charsets.UTF_8))
-                                val encodedUri = URLEncoder.encode("$APP_STRING_SHARE:$nameBase64?$urlBase64","UTF-8")
-                                val redirectUrl = "https://recloudstream.github.io/csredirect?redirectto=$encodedUri"
+                                val encodedUri = URLEncoder.encode(
+                                    "$APP_STRING_SHARE:$nameBase64?$urlBase64",
+                                    "UTF-8"
+                                )
+                                val redirectUrl =
+                                    "https://recloudstream.github.io/csredirect?redirectto=$encodedUri"
                                 i.type = "text/plain"
                                 i.putExtra(Intent.EXTRA_SUBJECT, d.title)
                                 i.putExtra(Intent.EXTRA_TEXT, redirectUrl)
@@ -1024,7 +1039,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 }
 
                 resultSyncRating.addOnChangeListener { it, value, fromUser ->
-                    if(fromUser) syncModel.setScore(Score.from(value, it.valueTo.roundToInt()))
+                    if (fromUser) syncModel.setScore(Score.from(value, it.valueTo.roundToInt()))
                 }
 
                 resultSyncAddEpisode.setOnClickListener {
@@ -1173,7 +1188,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     activity?.showDialog(
                         names.map { it.second },
                         names.indexOfFirst { it.second == selectEpisodeRange },
-                        "",
+                        ctx.getString(R.string.episodes),
                         false,
                         {}) { itemId ->
                         viewModel.changeRange(names[itemId].first)
@@ -1194,7 +1209,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     activity?.showDialog(
                         names.map { it.second },
                         names.indexOfFirst { it.second == selectSeason },
-                        "",
+                        ctx.getString(R.string.season),
                         false,
                         {}) { itemId ->
                         viewModel.changeSeason(names[itemId].first)
@@ -1209,6 +1224,18 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 }
             }
         }
+    }
+
+    private fun resumeAction(
+        storedData: ResultFragment.StoredData,
+        resume: ResumeWatchingStatus
+    ) {
+        viewModel.handleAction(
+            EpisodeClickEvent(
+                storedData.playerAction, //?: ACTION_PLAY_EPISODE_IN_PLAYER,
+                resume.result
+            )
+        )
     }
 
     override fun onPause() {

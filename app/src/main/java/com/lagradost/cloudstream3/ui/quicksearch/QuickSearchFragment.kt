@@ -16,6 +16,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.CommonActivity.activity
@@ -39,6 +40,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.utils.AppContextUtils.filterSearchResultByFilmQuality
+import com.lagradost.cloudstream3.utils.AppContextUtils.isRecyclerScrollable
 import com.lagradost.cloudstream3.utils.AppContextUtils.ownShow
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.UIHelper
@@ -137,7 +139,6 @@ class QuickSearchFragment : Fragment() {
             HomeFragment.currentSpan = it
         }
         binding?.quickSearchAutofitResults?.spanCount = HomeFragment.currentSpan
-        HomeFragment.currentSpan = HomeFragment.currentSpan
         HomeFragment.configEvent.invoke(HomeFragment.currentSpan)
     }
 
@@ -160,7 +161,8 @@ class QuickSearchFragment : Fragment() {
             getApiFromNameNull(providers?.first())?.hasQuickSearch ?: false
         } else false
 
-        if (isSingleProvider) {
+        val firstProvider = providers?.firstOrNull()
+        if (isSingleProvider && firstProvider != null) {
             binding?.quickSearchAutofitResults?.apply {
                 adapter = SearchAdapter(
                     ArrayList(),
@@ -170,9 +172,31 @@ class QuickSearchFragment : Fragment() {
                 }
             }
 
+            binding?.quickSearchAutofitResults?.addOnScrollListener(object :
+                RecyclerView.OnScrollListener() {
+                var expandCount = 0
+
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+
+                    val adapter = recyclerView.adapter
+                    if (adapter !is SearchAdapter) return
+
+                    val count = adapter.itemCount
+                    val currentHasNext = adapter.hasNext
+
+                    if (!recyclerView.isRecyclerScrollable() && currentHasNext && expandCount != count) {
+                        expandCount = count
+                        ioSafe {
+                            searchViewModel.expandAndReturn(firstProvider)
+                        }
+                    }
+                }
+            })
+
             try {
                 binding?.quickSearch?.queryHint =
-                    getString(R.string.search_hint_site).format(providers?.first())
+                    getString(R.string.search_hint_site).format(firstProvider)
             } catch (e: Exception) {
                 logError(e)
             }
@@ -273,9 +297,12 @@ class QuickSearchFragment : Fragment() {
             when (it) {
                 is Resource.Success -> {
                     it.value.let { data ->
-                        (binding?.quickSearchAutofitResults?.adapter as? SearchAdapter)?.updateList(
-                            context?.filterSearchResultByFilmQuality(data) ?: data
+                        val adapter =
+                            (binding?.quickSearchAutofitResults?.adapter as? SearchAdapter)
+                        adapter?.updateList(
+                            context?.filterSearchResultByFilmQuality(data.list) ?: data.list
                         )
+                        adapter?.hasNext = data.hasNext
                     }
                     searchExitIcon?.alpha = 1f
                     binding?.quickSearchLoadingBar?.alpha = 0f

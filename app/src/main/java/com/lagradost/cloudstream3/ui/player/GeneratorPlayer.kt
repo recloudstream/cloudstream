@@ -86,6 +86,7 @@ import com.lagradost.cloudstream3.ui.result.EpisodeAdapter
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.ResultFragment
+import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.result.SyncViewModel
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
@@ -169,7 +170,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     private var preferredAutoSelectSubtitles: String? = null // null means do nothing, "" means none
 
     private var binding: FragmentPlayerBinding? = null
-    private var allMeta: List<ResultEpisode>? =  null
+    private var allMeta: List<ResultEpisode>? = null
     private fun startLoading() {
         player.release()
         currentSelectedSubtitles = null
@@ -184,8 +185,8 @@ class GeneratorPlayer : FullScreenPlayer() {
             val subtitleLanguageTagIETF = if (subtitle == null) {
                 "" // -> No Subtitles
             } else {
-                fromCodeToLangTagIETF(subtitle.languageCode) ?:
-                fromLanguageToTagIETF(subtitle.languageCode, halfMatch = true)
+                fromCodeToLangTagIETF(subtitle.languageCode)
+                    ?: fromLanguageToTagIETF(subtitle.languageCode, halfMatch = true)
             }
 
             if (subtitleLanguageTagIETF != null) {
@@ -497,7 +498,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         playerBinding?.downloadHeader?.isVisible = false
         playerBinding?.downloadHeaderToggle?.isVisible = isTorrent
-        if(!isLayout(PHONE)){
+        if (!isLayout(PHONE)) {
             playerBinding?.downloadBothHeader?.isVisible = isTorrent
         }
 
@@ -801,7 +802,9 @@ class GeneratorPlayer : FullScreenPlayer() {
             val languagesTagName =
                 languages
                     .map { Pair(it.IETF_tag, it.nameNextToFlagEmoji()) }
-                    .sortedBy { it.second.substringAfter("\u00a0").lowercase() } // name ignoring flag emoji
+                    .sortedBy {
+                        it.second.substringAfter("\u00a0").lowercase()
+                    } // name ignoring flag emoji
             val (langTagsIETF, langNames) = languagesTagName.unzip()
 
             activity?.showDialog(
@@ -1694,7 +1697,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         if (downloads) {
             return subtitles.firstOrNull { sub ->
                 sub.origin == SubtitleOrigin.DOWNLOADED_FILE &&
-                sub.originalName == context?.getString( R.string.default_subtitles )
+                        sub.originalName == context?.getString(R.string.default_subtitles)
             }
         }
 
@@ -1702,7 +1705,8 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         return sortSubs(subtitles).firstOrNull { sub ->
             // rely first on sub.languageCode
-            val t = sub.originalName.replace(Regex("[^\\p{L}\\p{Mn}\\p{Mc}\\p{Me} ]"), "").trim() // keep letters from any language
+            val t = sub.originalName.replace(Regex("[^\\p{L}\\p{Mn}\\p{Mc}\\p{Me} ]"), "")
+                .trim() // keep letters from any language
             sub.languageCode == langCode || t == langName || t.contains(langName) || t == langCode
         }
     }
@@ -1758,6 +1762,14 @@ class GeneratorPlayer : FullScreenPlayer() {
             if (!autoSelectFromSettings()) {
                 autoSelectFromDownloads()
             }
+        }
+    }
+
+    private fun getHeaderName(): String? {
+        return when (val meta = currentMeta) {
+            is ResultEpisode -> meta.headerName
+            is ExtractorUri -> meta.headerName
+            else -> null
         }
     }
 
@@ -1831,20 +1843,31 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     @SuppressLint("SetTextI18n")
     fun setPlayerDimen(widthHeight: Pair<Int, Int>?) {
-        val extra = if (widthHeight != null) {
-            val (width, height) = widthHeight
-            "- ${width}x${height}"
-        } else {
-            ""
-        }
-
+        val extra = widthHeight?.let { (w, h) -> "${w}x${h}" } ?: ""
         val source = currentSelectedLink?.first?.name ?: currentSelectedLink?.second?.name ?: "NULL"
+        val headerName = getHeaderName().orEmpty()
 
         val title = when (titleRez) {
             0 -> ""
             1 -> extra
             2 -> source
-            3 -> "$source $extra"
+            3 -> "$source${
+                if (source.isBlank()) {
+                    ""
+                } else {
+                    " - "
+                }
+            }$extra"
+
+            4 -> headerName
+            5 -> "$headerName${
+                if (headerName.isBlank()) {
+                    ""
+                } else {
+                    " - "
+                }
+            }$extra"
+
             else -> ""
         }
         playerBinding?.playerVideoTitleRez?.apply {
@@ -1972,13 +1995,13 @@ class GeneratorPlayer : FullScreenPlayer() {
                 playerEpisodeList.adapter = EpisodeAdapter(
                     false,
                     { episodeClick ->
-                        if(episodeClick.action == ACTION_CLICK_DEFAULT){
+                        if (episodeClick.action == ACTION_CLICK_DEFAULT) {
                             player.release()
                             playerEpisodeOverlay.isGone = true
                             episodeClick.position?.let { viewModel.loadThisEpisode(it) }
                         }
                     },
-                    {downloadClickEvent ->
+                    { downloadClickEvent ->
                         DownloadButtonSetup.handleDownloadClick(downloadClickEvent)
                     }
                 )
@@ -1995,15 +2018,17 @@ class GeneratorPlayer : FullScreenPlayer() {
                 viewModel.getCurrentIndex()?.let { index ->
                     playerEpisodeList.scrollToPosition(index)
                     // Ensure focus on tv
-                    if(isLayout(TV)){
-                    playerEpisodeList.post {
-                        val viewHolder = playerEpisodeList.findViewHolderForAdapterPosition(index)
-                        viewHolder?.itemView?.requestFocus()
-                        viewHolder?.itemView?.let { itemView ->
-                            itemView.isFocusableInTouchMode = true
-                            itemView.requestFocus()
+                    if (isLayout(TV)) {
+                        playerEpisodeList.post {
+                            val viewHolder =
+                                playerEpisodeList.findViewHolderForAdapterPosition(index)
+                            viewHolder?.itemView?.requestFocus()
+                            viewHolder?.itemView?.let { itemView ->
+                                itemView.isFocusableInTouchMode = true
+                                itemView.requestFocus()
+                            }
                         }
-                    }}
+                    }
                 }
 
                 // update overlay season title
@@ -2011,14 +2036,20 @@ class GeneratorPlayer : FullScreenPlayer() {
                 playerEpisodeList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                     @SuppressLint("SetTextI18n", "DefaultLocale")
                     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                        val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return
+                        val layoutManager =
+                            recyclerView.layoutManager as? LinearLayoutManager ?: return
                         val topIndex = layoutManager.findFirstCompletelyVisibleItemPosition()
                         if (topIndex != RecyclerView.NO_POSITION && topIndex != lastTopIndex) {
                             lastTopIndex = topIndex
-                            val topItem = episodes.getOrNull(topIndex)?.season
+                            val topItem = episodes.getOrNull(topIndex)
+
                             topItem?.let {
-                                val paddedSeasonString = String.format("%02d",topItem)
-                                playerEpisodeOverlayTitle.text = "${context?.getString(R.string.episodes)}:${context?.getString(R.string.season_short)}${paddedSeasonString}"
+                                playerEpisodeOverlayTitle.setText(
+                                    ResultViewModel2.seasonToTxt(
+                                        topItem.seasonData,
+                                        topItem.seasonIndex
+                                    )
+                                )
                             }
                         }
                     }

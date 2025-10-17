@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
@@ -63,20 +64,21 @@ open class VidStack : ExtractorApi() {
                 if (rawPath.isNotEmpty()) {
                     val path = rawPath.replace("\\/", "/")
                     val subUrl = "$mainUrl$path"
-                    subtitleCallback(SubtitleFile(lang, fixUrl(subUrl)))
+                    subtitleCallback(newSubtitleFile(lang, fixUrl(subUrl)))
                 }
             }
         }
 
         callback.invoke(
-            ExtractorLink(
-                this.name,
-                this.name,
-                m3u8,
-                url,
-                Qualities.P1080.value,
-                type = ExtractorLinkType.M3U8,
-            )
+            newExtractorLink(
+                source = this.name,
+                name = this.name,
+                url = m3u8,
+                type = ExtractorLinkType.M3U8
+            ) {
+                this.referer = url
+                this.quality = Qualities.Unknown.value
+            }
         )
     }
 

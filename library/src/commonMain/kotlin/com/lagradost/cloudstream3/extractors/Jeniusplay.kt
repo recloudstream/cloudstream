@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.extractors
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 
@@ -40,7 +41,7 @@ open class Jeniusplay : ExtractorApi() {
                     getAndUnpack(script.data()).substringAfter("\"tracks\":[").substringBefore("],")
                 tryParseJson<List<Tracks>>("[$subData]")?.map { subtitle ->
                     subtitleCallback.invoke(
-                        SubtitleFile(
+                        newSubtitleFile(
                             getLanguage(subtitle.label ?: ""),
                             subtitle.file
                         )

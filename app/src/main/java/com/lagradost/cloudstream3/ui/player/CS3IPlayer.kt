@@ -100,6 +100,8 @@ import java.util.UUID
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
+import kotlin.collections.HashSet
+import kotlin.text.StringBuilder
 
 const val TAG = "CS3ExoPlayer"
 const val PREFERRED_AUDIO_LANGUAGE_KEY = "preferred_audio_language"
@@ -961,7 +963,8 @@ class CS3IPlayer : IPlayer {
                     // Custom TextOutput to apply cue styling and rules to all subtitles
                     val customTextOutput = TextOutput { cue ->
                         // Do not remove filterNotNull as Java typesystem is fucked
-                        val (bitmapCues, textCues) = cue.cues.filterNotNull().partition { it.bitmap != null }
+                        val (bitmapCues, textCues) = cue.cues.filterNotNull()
+                            .partition { it.bitmap != null }
 
                         val styledBitmapCues = bitmapCues.map { bitmapCue ->
                             bitmapCue
@@ -971,16 +974,38 @@ class CS3IPlayer : IPlayer {
                                 .build()
                         }
 
+                        // Reuse memory, to avoid many allocations
+                        val set = HashSet<CharSequence>()
+                        val buffer = StringBuilder()
+
                         // Move cues into one single one
                         // This is to prevent text overlap in vtt (and potentially other) subtitle files
                         val styledTextCues = textCues.groupBy {
                             // Groups cues which share the same positon
                             it.lineAnchor to it.position.times(1000.0f).toInt()
                         }.mapNotNull { (_, entries) ->
-                            val combinedCueText = entries.joinToString("\n") {
-                                it.text?.toString() ?: ""
+                            set.clear()
+                            buffer.clear()
+                            var count = 0
+                            for (x in entries) {
+                                // Only allow non null text, otherwise we might have "a\n\nb"
+                                val text = x.text ?: continue
+
+                                // Prevent duplicate entries, this often happens when the subtitle file
+                                // uses multiple text lines as outlines. Most commonly found in fansubs
+                                // with fancy subtitle styling.
+                                if (!set.add(text)) {
+                                    continue
+                                }
+                                if (++count > 1) buffer.append('\n')
+
+                                // Trim to avoid weird formatting if the last line ends with a newline
+                                buffer.append(text.trim())
                             }
 
+                            val combinedCueText = buffer.toString()
+
+                            // Use the style of the first entry as the base
                             entries
                                 .firstOrNull()
                                 ?.buildUpon()

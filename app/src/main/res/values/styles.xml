@@ -90,6 +90,7 @@
 
     <style name="AmoledModeLight" parent="AmoledMode">
         <item name="primaryGrayBackground">@color/amoledModeLight</item>
+        <item name="boxItemBackground">@color/amoledModeLight</item>
     </style>
 
     <style name="ChipFilled" parent="@style/Widget.Material3.Chip.Filter">
@@ -531,7 +532,7 @@
         <item name="android:navigationBarColor">?attr/colorPrimary</item>
     </style>
 
-    <style name="AlertDialogCustom" parent="Theme.AppCompat.Dialog.Alert">
+    <style name="AlertDialogCustom" parent="Theme.AlertDialog">
         <item name="android:windowFullscreen">true</item>
         <item name="android:textColor">?attr/textColor</item>
         <item name="android:textColorPrimary">?attr/textColor</item>
@@ -723,6 +724,17 @@
         <item name="android:drawablePadding">20dp</item>
     </style>
 
+    <!-- https://github.com/material-components/material-components-android/blob/4e4e8f3388beb7e82a87cb67142aa34444a79740/lib/java/com/google/android/material/navigation/res/values/attrs.xml#L129 -->
+    <!-- https://developer.android.com/design/ui/tv/guides/components/navigation-drawer -->
+    <style name="CustomIndicator" parent="Widget.Material3Expressive.NavigationRailView.ActiveIndicator">
+        <item name="expandedHeight">48dp</item>
+        <item name="expandedWidth">180dp</item>
+        <item name="android:height">48dp</item>
+        <item name="android:width">48dp</item>
+
+        <item name="expandedActiveIndicatorPaddingTop">0dp</item>
+        <item name="expandedActiveIndicatorPaddingBottom">0dp</item>
+    </style>
 
     <style name="BlackButton" parent="NiceButton">
         <item name="strokeColor">?attr/textColor</item>
@@ -1024,6 +1036,7 @@
         <item name="indicatorColor">@color/white</item>
     </style>
     <style name="HomePlayUnderlayProgress" parent="PlayUnderlayProgress">
+        <item name="tint">@color/white</item>
         <item name="android:layout_width">@dimen/home_poster_progress_size</item>
         <item name="android:layout_height">@dimen/home_poster_progress_size</item>
         <item name="android:background">@color/playIconBackground</item>
@@ -1034,6 +1047,7 @@
         <item name="indicatorSize">@dimen/home_poster_progress_size</item>
     </style>
     <style name="EpisodePlayUnderlayProgress" parent="PlayUnderlayProgress">
+        <item name="tint">@color/white</item>
         <item name="android:layout_width">40dp</item>
         <item name="android:layout_height">40dp</item>
         <item name="android:background">@color/playIconBackground</item>

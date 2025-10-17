@@ -366,17 +366,21 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                                 START_ACTION_RESUME_LATEST
                             )
                         }
-                    } else if(str.startsWith(APP_STRING_SHARE)){
-                        try{
+                    } else if (str.startsWith(APP_STRING_SHARE)) {
+                        try {
                             val data = str.substringAfter("$APP_STRING_SHARE:")
-                            val parts = data.split("?",limit=2)
-                            loadResult(String(base64DecodeArray(parts[1]), Charsets.UTF_8),String(base64DecodeArray(parts[0]), Charsets.UTF_8),"")
+                            val parts = data.split("?", limit = 2)
+                            loadResult(
+                                String(base64DecodeArray(parts[1]), Charsets.UTF_8),
+                                String(base64DecodeArray(parts[0]), Charsets.UTF_8),
+                                ""
+                            )
                             return true
-                        }catch (e: Exception) {
-                            showToast("Invalid Uri",Toast.LENGTH_SHORT)
+                        } catch (e: Exception) {
+                            showToast("Invalid Uri", Toast.LENGTH_SHORT)
                             return false
                         }
-                    }else if (!isWebview) {
+                    } else if (!isWebview) {
                         if (str.startsWith(DOWNLOAD_NAVIGATE_TO)) {
                             this.navigate(R.id.navigation_downloads)
                             return true
@@ -404,6 +408,24 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
                 return false
             }
+
+
+        fun centerView(view: View?) {
+            if (view == null) return
+            try {
+                Log.v(TAG, "centerView: $view")
+                val r = Rect(0, 0, 0, 0)
+                view.getDrawingRect(r)
+                val x = r.centerX()
+                val y = r.centerY()
+                val dx = r.width() / 2 //screenWidth / 2
+                val dy = screenHeight / 2
+                val r2 = Rect(x - dx, y - dy, x + dx, y + dy)
+                view.requestRectangleOnScreen(r2, false)
+                // TvFocus.current =TvFocus.current.copy(y=y.toFloat())
+            } catch (_: Throwable) {
+            }
+        }
     }
 
 
@@ -484,7 +506,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         ).contains(destination.id)
 
 
-        val dontPush = listOf(
+        /*val dontPush = listOf(
             R.id.navigation_home,
             R.id.navigation_search,
             R.id.navigation_results_phone,
@@ -515,7 +537,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             }
 
             layoutParams = params
-        }
+        }*/
 
         val landscape = when (resources.configuration.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {
@@ -534,6 +556,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         binding?.apply {
             navRailView.isVisible = isNavVisible && landscape
             navView.isVisible = isNavVisible && !landscape
+            navHostFragment.layoutParams = (navHostFragment.layoutParams as ViewGroup.MarginLayoutParams).apply {
+                marginStart = if (isNavVisible && landscape && isLayout(TV or EMULATOR)) 62.toPx else 0
+            }
 
             /**
              * We need to make sure if we return to a sub-fragment,
@@ -1140,23 +1165,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
     }
 
-    private fun centerView(view: View?) {
-        if (view == null) return
-        try {
-            Log.v(TAG, "centerView: $view")
-            val r = Rect(0, 0, 0, 0)
-            view.getDrawingRect(r)
-            val x = r.centerX()
-            val y = r.centerY()
-            val dx = r.width() / 2 //screenWidth / 2
-            val dy = screenHeight / 2
-            val r2 = Rect(x - dx, y - dy, x + dx, y + dy)
-            view.requestRectangleOnScreen(r2, false)
-            // TvFocus.current =TvFocus.current.copy(y=y.toFloat())
-        } catch (_: Throwable) {
-        }
-    }
-
     @Suppress("DEPRECATION_ERROR")
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
@@ -1228,7 +1236,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 if (isLayout(TV)) {
                     // Put here any button you don't want focusing it to center the view
                     val exceptionButtons = listOf(
-                        R.id.home_preview_play_btt,
+                        //R.id.home_preview_play_btt,
                         R.id.home_preview_info_btt,
                         R.id.home_preview_hidden_next_focus,
                         R.id.home_preview_hidden_prev_focus,
@@ -1677,14 +1685,23 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
 
         binding?.navRailView?.apply {
-            itemRippleColor = rippleColor
-            itemActiveIndicatorColor = rippleColor
+            if (isLayout(PHONE)) {
+                itemRippleColor = rippleColor
+                itemActiveIndicatorColor = rippleColor
+            } else {
+                val rippleColor = ColorStateList.valueOf(getResourceColor(R.attr.textColor, 1.0f))
+                val rippleColorTransparent =
+                    ColorStateList.valueOf(getResourceColor(R.attr.textColor, 0.2f))
+                itemSpacing = 12.toPx // expandedItemSpacing does not have an attr
+                itemRippleColor = rippleColorTransparent
+                itemActiveIndicatorColor = rippleColor
+            }
             setupWithNavController(navController)
-            if (isLayout(TV or EMULATOR)) {
+            /*if (isLayout(TV or EMULATOR)) {
                 background?.alpha = 200
             } else {
                 background?.alpha = 255
-            }
+            }*/
 
             setOnItemSelectedListener { item ->
                 onNavDestinationSelected(
@@ -1729,6 +1746,58 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
             } else {
                 navProfileRoot.isGone = true
+            }
+        }
+
+        val rail = binding?.navRailView
+        if (rail != null) {
+            binding?.navRailView?.labelVisibilityMode =
+                NavigationRailView.LABEL_VISIBILITY_UNLABELED
+            //val focus = mutableSetOf<Int>()
+
+            var prevId: Int? = null
+            var prevView: View? = null
+
+            // The genius engineers at google did not actually 
+            // write a nextFocus for the navrail
+            rail.findViewById<View?>(R.id.navigation_settings)?.nextFocusDownId =
+                R.id.nav_footer_profile_card
+            for (id in arrayOf(
+                R.id.navigation_home,
+                R.id.navigation_search,
+                R.id.navigation_library,
+                R.id.navigation_downloads,
+                R.id.navigation_settings
+            )) {
+                val view = rail.findViewById<View?>(id) ?: continue
+                prevId?.let { view.nextFocusUpId = it }
+                prevView?.nextFocusDownId = id
+
+                prevView = view
+                prevId = id
+                // Uncomment for focus expand
+                /*if (!isLayout(TV)) {
+                    view.onFocusChangeListener = null
+                } else {
+                    view.onFocusChangeListener =
+                        View.OnFocusChangeListener { v, hasFocus ->
+                            if (hasFocus) {
+                                focus += id
+                                binding?.navRailView?.labelVisibilityMode =
+                                    NavigationRailView.LABEL_VISIBILITY_LABELED
+                                binding?.navRailView?.expand()
+                            } else {
+                                focus -= id
+                                v.post {
+                                    if (focus.isEmpty()) {
+                                        binding?.navRailView?.labelVisibilityMode =
+                                            NavigationRailView.LABEL_VISIBILITY_UNLABELED
+                                        binding?.navRailView?.collapse()
+                                    }
+                                }
+                            }
+                        }
+                }*/
             }
         }
 
@@ -1907,7 +1976,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
 
         main {
-            val channelId = TvChannelUtils.getChannelId(this@MainActivity, getString(R.string.app_name))
+            val channelId =
+                TvChannelUtils.getChannelId(this@MainActivity, getString(R.string.app_name))
             if (channelId == null) {
                 Log.d("TvChannel", "Channel not found, creating")
                 TvChannelUtils.createTvChannel(this@MainActivity)
@@ -1966,7 +2036,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         )
 
 
-    }  /** Biometric stuff **/
+    }
+
+    /** Biometric stuff **/
     override fun onAuthenticationSuccess() {
         // make background (nav host fragment) visible again
         binding?.navHostFragment?.isInvisible = false

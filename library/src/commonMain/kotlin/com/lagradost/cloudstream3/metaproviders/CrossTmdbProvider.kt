@@ -7,11 +7,12 @@ import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MovieLoadResponse
 import com.lagradost.cloudstream3.MovieSearchResponse
-import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.SearchResponseList
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.toNewSearchResponseList
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -62,8 +63,12 @@ class CrossTmdbProvider : TmdbProvider() {
         return false
     }
 
-    override suspend fun search(query: String): List<SearchResponse>? {
-        return super.search(query)?.filterIsInstance<MovieSearchResponse>() // TODO REMOVE
+    override suspend fun search(query: String, page: Int): SearchResponseList? {
+        // TODO REMOVE
+        return super.search(query, page)
+            ?.items
+            ?.filterIsInstance<MovieSearchResponse>()
+            ?.toNewSearchResponseList()
     }
 
     override suspend fun load(url: String): LoadResponse? {

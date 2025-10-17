@@ -13,7 +13,6 @@ import com.lagradost.cloudstream3.ui.result.LinkLoadingResult
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
-import com.lagradost.cloudstream3.utils.FillerEpisodeCheck.list
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.txt
 
@@ -53,11 +52,11 @@ class PlayMirrorAction : VideoClickAction() {
                 return true
             }
         }
-        // Took logic from PLAY_EPISODE_IN_APP
+
         activity.navigate(
             R.id.global_to_navigation_player,
             GeneratorPlayer.newInstance(
-                generatorMirror, list
+                generatorMirror, result.syncData
             )
         )
     }

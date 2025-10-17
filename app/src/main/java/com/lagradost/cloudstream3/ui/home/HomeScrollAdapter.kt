@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.home
 
 import android.content.res.Configuration
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
@@ -16,7 +17,8 @@ import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 
 class HomeScrollAdapter(
-    fragment: Fragment
+    fragment: Fragment,
+    val callback : ((View, Int, LoadResponse) -> Unit)
 ) : NoStateAdapter<LoadResponse>(fragment) {
     var hasMoreItems: Boolean = false
 
@@ -57,6 +59,10 @@ class HomeScrollAdapter(
             }
 
             is HomeScrollViewTvBinding -> {
+                binding.homeScrollPreview.isFocusable = false
+                binding.homeScrollPreview.setOnClickListener { view ->
+                    callback.invoke(view ?: return@setOnClickListener, position, item)
+                }
                 binding.homeScrollPreview.loadImage(posterUrl)
             }
         }

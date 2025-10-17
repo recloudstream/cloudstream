@@ -60,8 +60,8 @@ android {
         applicationId = "com.lagradost.cloudstream3"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 66
-        versionName = "4.5.6"
+        versionCode = 67
+        versionName = "4.6.0"
 
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
         resValue("string", "commit_hash", getGitCommitHash())
@@ -269,7 +269,11 @@ tasks.register<Jar>("makeJar") {
 tasks.withType<KotlinJvmCompile> {
     compilerOptions {
         jvmTarget.set(javaTarget)
-        freeCompilerArgs.add("-Xjvm-default=all-compatibility")
+        freeCompilerArgs.addAll(
+            "-Xjvm-default=all-compatibility",
+            "-Xannotation-default-target=param-property",
+            "-opt-in=com.lagradost.cloudstream3.Prerelease"
+        )
     }
 }
 

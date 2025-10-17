@@ -85,6 +85,22 @@ abstract class BaseAdapter<
         AsyncDifferConfig.Builder(diffCallback).build()
     )
 
+    /**
+     * Instantly submits a **new and fresh** list. This means that no changes like moves are done as
+     * we assume the new list is not the same thing as the old list, nothing is shared.
+     *
+     * The views are rendered instantly as a result, so no fade/pop-ins or similar.
+     *
+     * Use `submitList` for general use, as that can reuse old views.
+     * */
+    open fun submitIncomparableList(list: List<T>?) {
+        // This leverages a quirk in the submitList function that has a fast case for null arrays
+        // What this implies is that as long as we do a double submit we can ensure no pop-ins,
+        // as the changes are the entire list instead of calculating deltas
+        submitList(null)
+        submitList(list)
+    }
+
     open fun submitList(list: List<T>?) {
         // deep copy at least the top list, because otherwise adapter can go crazy
         mDiffer.submitList(list?.let { CopyOnWriteArrayList(it) })

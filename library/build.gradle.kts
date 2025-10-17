@@ -21,10 +21,17 @@ kotlin {
     jvm()
 
     compilerOptions {
-        freeCompilerArgs.add("-Xexpect-actual-classes")
+        freeCompilerArgs.addAll(
+            "-Xexpect-actual-classes",
+            "-Xannotation-default-target=param-property"
+        )
     }
 
     sourceSets {
+        all {
+            languageSettings.optIn("com.lagradost.cloudstream3.Prerelease")
+        }
+
         commonMain.dependencies {
             implementation(libs.nicehttp) // HTTP Lib
             implementation(libs.jackson.module.kotlin) // JSON Parser

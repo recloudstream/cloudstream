@@ -33,9 +33,17 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
-/** Api has not yet been published to stable, and will cause `NoSuchMethodException` on stable */
+/**
+ * API available only on prerelease builds.
+ * Using it will cause stable to crash with `NoSuchMethodException`.
+ */
 @MustBeDocumented // Same as java.lang.annotation.Documented
-@Retention(AnnotationRetention.SOURCE) // This is only an IDE hint, and will not be used in the runtime
+@Retention(AnnotationRetention.BINARY) // This is only an IDE hint, and will not be used in the runtime
+@RequiresOptIn(
+    message = "This API is only available on prerelease builds. " +
+              "Using it will cause CloudStream stable to crash.",
+    level = RequiresOptIn.Level.ERROR
+)
 annotation class Prerelease
 
 /**
@@ -424,18 +432,17 @@ fun newHomePageResponse(list: List<HomePageList>, hasNext: Boolean? = null): Hom
     return HomePageResponse(list, hasNext = hasNext ?: list.any { it.list.isNotEmpty() })
 }
 
-@Prerelease
 fun newSearchResponseList(
     list: List<SearchResponse>,
     hasNext: Boolean? = null,
 ): SearchResponseList {
+    @Suppress("DEPRECATION_ERROR")
     return SearchResponseList(
         list,
         hasNext = hasNext ?: list.isNotEmpty()
     )
 }
 
-@Prerelease
 fun List<SearchResponse>.toNewSearchResponseList(hasNext: Boolean? = null) : SearchResponseList {
     return newSearchResponseList(this, hasNext)
 }
@@ -587,7 +594,6 @@ abstract class MainAPI {
         throw NotImplementedError()
     }
 
-    @Prerelease
     /** Paginated search, starts with page: 1 */
     open suspend fun search(query: String, page: Int): SearchResponseList? {
         val searchResults = search(query) ?: return null
@@ -1092,6 +1098,7 @@ fun TvType.isAnimeOp(): Boolean {
 /** Data class for the Subtitle file info.
  * @property lang Subtitle file language.
  * @property url Subtitle file url to download/load the file.
+ * @see newSubtitleFile
  * */
 @ConsistentCopyVisibility
 data class SubtitleFile private constructor(
@@ -1099,11 +1106,10 @@ data class SubtitleFile private constructor(
     var url: String,
     var headers: Map<String, String>?
 ) {
-    /** Backwards compatible constructor, mark this as deprecated when new stable comes out */
+    @Deprecated("Use newSubtitleFile method", level = DeprecationLevel.WARNING)
     constructor(lang: String, url: String) : this(lang = lang, url = url, headers = null)
 
     /** Language code to properly filter auto select / download subtitles */
-    @Prerelease
     val langTag: String?
         get() = fromCodeToLangTagIETF(lang) ?: fromLanguageToTagIETF(lang, true)
 
@@ -1114,13 +1120,12 @@ data class SubtitleFile private constructor(
 }
 
 // No `MainAPI.` to be able to use this in extractors
-@Prerelease
 suspend fun newSubtitleFile(
     lang: String,
     url: String,
     initializer: suspend SubtitleFile.() -> Unit = { }
 ): SubtitleFile {
-    @Suppress("DEPRECATION_ERROR")
+    @Suppress("DEPRECATION")
     val builder = SubtitleFile(
         lang, url
     )
@@ -1155,9 +1160,8 @@ data class HomePageList(
  * @property items list of [SearchResponse] items that will be added to the search row.
  * @property hasNext if there is a next page or not.
  * */
-@Prerelease
 data class SearchResponseList
-@Deprecated("Use newSearchResponseList method", level = DeprecationLevel.WARNING)
+@Deprecated("Use newSearchResponseList method", level = DeprecationLevel.ERROR)
 constructor(
     val items: List<SearchResponse>,
     val hasNext: Boolean = false

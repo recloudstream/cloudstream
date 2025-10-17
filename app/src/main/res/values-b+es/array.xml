@@ -15,6 +15,8 @@
     </array>
 
     <array name="limit_title_rez_pref_names">
+        <item>@string/resolution_and_name</item>
+        <item>@string/name</item>
         <item>@string/resolution_and_title</item>
         <item>@string/title</item>
         <item>@string/resolution</item>
@@ -22,6 +24,8 @@
     </array>
 
     <array name="limit_title_rez_pref_values">
+        <item>5</item>
+        <item>4</item>
         <item>3</item>
         <item>2</item>
         <item>1</item>

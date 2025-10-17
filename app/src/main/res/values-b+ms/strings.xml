@@ -106,7 +106,7 @@
     <string name="popup_resume_download">Sambung muat turun</string>
     <string name="download_storage_text">Storan dalaman</string>
     <string name="search_provider_text_providers">Carian mengikut sumber</string>
-    <string name="benene_count_text">%d Benenes yang diberikan kepada pemaju</string>
+    <string name="benene_count_text">%d Pisang yang diberikan kepada pemaju</string>
     <string name="subs_font_size">Saiz Teks</string>
     <string name="sort_apply">Mohon</string>
     <string name="subs_text_color">Warna teks</string>
@@ -118,7 +118,7 @@
     <string name="continue_watching">Sambung tonton</string>
     <string name="action_remove_watching">Buang</string>
     <string name="action_open_watching">Lebih Maklumat</string>
-    <string name="vpn_torrent">Sumber ini adalah torrent, penggunaan VPN disyorkan</string>
+    <string name="vpn_torrent">Sumber ini adalah torrent, penggunaan VPN digalakkan</string>
     <string name="provider_info_meta">Metadata tidak diberikan oleh laman web, video lalai akan gagala sekiranya tidak wujud di laman web.</string>
     <string name="torrent_plot">Penerangan</string>
     <string name="show_log_cat">Papar Logcat🐈</string>
@@ -137,13 +137,13 @@
     <string name="select_all">Pilih semua</string>
     <string name="deselect_all">Nyahpilih semua</string>
     <string name="vpn_might_be_needed">VPN mungkin diperlukan untuk sumber ini berjalan dengan lancar</string>
-    <string name="picture_in_picture_des">Sambung pasang dalam pemain mini di atas aplikasi lain</string>
+    <string name="picture_in_picture_des">Sambung Rakaman didalam pemain mini di atas aplikasi lain</string>
     <string name="player_subtitles_settings">Sari kata</string>
     <string name="player_subtitles_settings_des">Tetapan sari kata pemain</string>
     <string name="chromecast_subtitles_settings">Chromecast Sari kata</string>
     <string name="eigengraumode_settings">Kelajuan pemain</string>
     <string name="autoplay_next_settings">Auto-pasang episod seterusnya</string>
-    <string name="use_system_brightness_settings">Gunakan terang system</string>
+    <string name="use_system_brightness_settings">Gunakan keterangan sistem</string>
     <string name="reload_error">Cuba sambungan talian…</string>
     <string name="settings_info">Informasi</string>
     <string name="safe_mode_crash_info">Lihat info ralat</string>
@@ -401,7 +401,7 @@
     <string name="advanced_search_des">Beri hasil carian dipisah mengikut pelbagai sumber</string>
     <string name="lightnovel">Aplikasi Light novel oleh pembangun sama</string>
     <string name="anim">Aplikasi Anime oleh pembangun sama</string>
-    <string name="discord">Masuk Discord</string>
+    <string name="discord">Menyertai Discord</string>
     <string name="delete_files">Padam Fail</string>
     <string name="delete_format" formatted="true">Padam (%1$d | %2$s)</string>
     <string name="resize_fit">Muatkan ke skrin</string>
@@ -523,4 +523,26 @@
     <string name="restore_failed_format" formatted="true">Gagal pulihkan data dari fail %s</string>
     <string name="backup_failed_error_format">Ralat sandaran %s</string>
     <string name="bug_report_settings_off">Hanya hantar data apabila mengalami kegagalan</string>
+    <plurals name="episodes" translatable="false">
+        <item quantity="other">Episode</item>
+    </plurals>
+    <string name="episode_upcoming_format" formatted="true">Akan datang pada %s</string>
+    <string name="delete_message" formatted="true">Ini akan memadamkan secara kekal %s\nAdakah anda pasti?</string>
+    <string name="delete_message_multiple" formatted="true">Adakah anda pasti mahu memadamkan item berikut secara kekal?\n\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Adakah anda pasti mahu memadamkan episod berikut secara kekal %1$s?\n\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">Anda juga akan memadamkan semua episod dalam siri berikut secara kekal:\n\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Adakah anda pasti mahu memadamkan semua episod dalam siri berikut secara kekal?\n\n%s</string>
+    <string name="resume_remaining" formatted="true">%s\nyang tinggal</string>
+    <string name="status_ongoing">Sedang berlangsung</string>
+    <string name="rating">Penilaian</string>
+    <string name="movies">Filem</string>
+    <string name="torrent">Torrents</string>
+    <string name="documentaries">Dokumentari</string>
+    <string name="livestreams">Siaran Langsung</string>
+    <string name="movies_singular">Movie</string>
+    <string name="torrent_singular">Torrent</string>
+    <string name="documentaries_singular">Dokumentari</string>
+    <string name="live_singular">Siaran Langsung</string>
+    <string name="audio_singluar">Audio</string>
+    <string name="podcast_singluar">Podcast</string>
 </resources>

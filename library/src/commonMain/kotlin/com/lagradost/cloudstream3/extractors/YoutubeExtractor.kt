@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
@@ -92,7 +93,7 @@ open class YoutubeExtractor : ExtractorApi() {
         }
 
         ytVideosSubtitles[url]?.mapNotNull {
-            SubtitleFile(
+            newSubtitleFile(
                 it.languageTag ?: return@mapNotNull null,
                 it.content ?: return@mapNotNull null
             )
