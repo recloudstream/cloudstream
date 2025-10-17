@@ -495,22 +495,13 @@ object UIHelper {
     fun Context.hasPIPPermission(): Boolean {
         val appOps =
             getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            appOps.unsafeCheckOpNoThrow(
-                AppOpsManager.OPSTR_PICTURE_IN_PICTURE,
-                android.os.Process.myUid(),
-                packageName
-            ) == AppOpsManager.MODE_ALLOWED
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            @Suppress("DEPRECATION")
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             appOps.checkOpNoThrow(
                 AppOpsManager.OPSTR_PICTURE_IN_PICTURE,
                 android.os.Process.myUid(),
                 packageName
             ) == AppOpsManager.MODE_ALLOWED
-        } else {
-            return true
-        }
+        } else true
     }
 
     fun hideKeyboard(view: View?) {
