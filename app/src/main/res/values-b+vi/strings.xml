@@ -14,7 +14,7 @@
     <string name="episode_poster_img_des">Episode Poster</string>
     <string name="home_main_poster_img_des">Main Poster</string>
     <string name="home_next_random_img_des">Next Random</string>
-    <string name="go_back_img_des">Go back</string>
+    <string name="go_back_img_des">Quay trở lại</string>
     <string name="home_change_provider_img_des">Change Provider</string>
     <string name="preview_background_img_des">Preview Background</string>
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
@@ -641,7 +641,7 @@
     <string name="device_pin_error_message">Không lấy được mã PIN, hãy thử xác thực cục bộ</string>
     <string name="downloads_empty">Hiện không có bản tải xuống nào.</string>
     <string name="auth_locally">Xác thực cục bộ</string>
-    <string name="episode_action_cast_mirror">Cast mirror</string>
+    <string name="episode_action_cast_mirror">Phản chiếu màn hình</string>
     <string name="play_from_beginning_img_des">Xem từ đầu</string>
     <string name="open_local_video">Mở video có sẵn</string>
     <string name="test_warning">Cảnh báo</string>
@@ -739,4 +739,7 @@
     <string name="action_remove_mark_watched_up_to_this_episode">Xóa những tập đã xem đến tập này</string>
     <string name="action_reload">Đã tải lại</string>
     <string name="reload_provider">Tải lại nguồn phát</string>
-</resources>
+    <string name="name">Tên</string>
+    <string name="resolution_and_name">Độ phân giải và tên</string>
+    <string name="episode_action_play_mirror">Xem phản chiếu</string>"
+    </resources>

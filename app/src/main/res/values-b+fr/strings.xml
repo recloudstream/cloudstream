@@ -716,4 +716,7 @@
     <string name="action_remove_mark_watched_up_to_this_episode">Supprimer l\'historique de visionnage jusqu\'à cet épisode</string>
     <string name="action_reload">Rechargé</string>
     <string name="reload_provider">Recharger le fournisseur</string>
-</resources>
+    <string name="resolution_and_name">Solution et nom</string>
+    <string name="name">Nom</string>
+    <string name="episode_action_play_mirror">Mise en miroir</string>"
+    </resources>

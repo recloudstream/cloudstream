@@ -730,4 +730,14 @@
     <string name="episode_action_play_mirror">Odtwarzaj inne źródło</string>"
     <string name="name">Nazwa</string>
     <string name="resolution_and_name">Rozdzielczość i nazwa</string>
+    <string name="bottom_left">Dolne lewe</string>
+    <string name="subs_subtitle_alignment">Wyrównanie napisów</string>
+    <string name="bottom_center">Dolne środkowe</string>
+    <string name="bottom_right">Dolne prawe</string>
+    <string name="middle_left">Środkowe lewe</string>
+    <string name="middle_center">Środkowe</string>
+    <string name="middle_right">Środkowe prawe</string>
+    <string name="top_left">Górne lewe</string>
+    <string name="top_center">Górne środkowe</string>
+    <string name="top_right">Górne prawe</string>
 </resources>
