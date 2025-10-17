@@ -103,7 +103,7 @@
             android:icon="@drawable/screen_rotation"
             android:summary="@string/auto_rotate_video_desc"
             android:title="@string/auto_rotate_video"
-            app:defaultValue="false"
+            app:defaultValue="true"
             app:key="@string/auto_rotate_video_key" />
         <SwitchPreference
             android:icon="@drawable/preview_seekbar_24"

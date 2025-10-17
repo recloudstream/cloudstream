@@ -1812,7 +1812,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 )
                 autoPlayerRotateEnabled = settingsManager.getBoolean(
                     ctx.getString(R.string.auto_rotate_video_key),
-                    false
+                    true
                 )
                 playerResizeEnabled =
                     settingsManager.getBoolean(
