@@ -8,7 +8,6 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("org.jetbrains.dokka")
-
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
@@ -135,6 +134,14 @@ android {
         isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.toVersion(javaTarget.target)
         targetCompatibility = JavaVersion.toVersion(javaTarget.target)
+    }
+
+    java {
+	    // Use Java 17 toolchain even if a higher JDK runs the build.
+        // We still use Java 8 for now which higher JDKs have deprecated.
+	    toolchain {
+		    languageVersion.set(JavaLanguageVersion.of(libs.versions.jdkToolchain.get()))
+    	}
     }
 
     lint {
