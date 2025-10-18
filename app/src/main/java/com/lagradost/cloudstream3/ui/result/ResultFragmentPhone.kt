@@ -688,18 +688,24 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
         observeNullable(viewModel.movie) { data ->
             resultBinding?.apply {
-                resultPlayMovie.isVisible = data is Resource.Success
+                resultPlayMovie.isVisible = data is Resource.Success && (viewModel.resumeWatching.value == null)
                 downloadButton.isVisible =
                     data is Resource.Success && viewModel.currentRepo?.api?.hasDownloadSupport == true
 
                 (data as? Resource.Success)?.value?.let { (text, ep) ->
-                    resultPlayMovie.setText(text)
+//                    resultPlayMovie.setText(text)
                     resultPlayMovie.setOnClickListener {
                         viewModel.handleAction(
                             EpisodeClickEvent(ACTION_CLICK_DEFAULT, ep)
                         )
                     }
                     resultPlayMovie.setOnLongClickListener {
+                        viewModel.handleAction(
+                            EpisodeClickEvent(ACTION_SHOW_OPTIONS, ep)
+                        )
+                        return@setOnLongClickListener true
+                    }
+                    resultResumeSeriesButton.setOnLongClickListener {
                         viewModel.handleAction(
                             EpisodeClickEvent(ACTION_SHOW_OPTIONS, ep)
                         )
