@@ -1996,6 +1996,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     false,
                     { episodeClick ->
                         if (episodeClick.action == ACTION_CLICK_DEFAULT) {
+                            isNextEpisode = false
                             player.release()
                             playerEpisodeOverlay.isGone = true
                             episodeClick.position?.let { viewModel.loadThisEpisode(it) }
