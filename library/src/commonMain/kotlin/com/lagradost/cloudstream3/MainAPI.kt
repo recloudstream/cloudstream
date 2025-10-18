@@ -1743,7 +1743,8 @@ interface LoadResponse {
 
     @Deprecated(
         "`rating` is the old scoring system, use score instead",
-        replaceWith = ReplaceWith("score")
+        replaceWith = ReplaceWith("score"),
+        level = DeprecationLevel.WARNING
     )
     var rating: Int?
         set(value) {
@@ -1938,12 +1939,20 @@ interface LoadResponse {
             this.addSimklId(SimklSyncServices.Imdb, id)
         }
 
-        @Deprecated("Outdated API due to misspelling", ReplaceWith("addTraktId(id)"))
+        @Deprecated(
+            "Outdated API due to misspelling",
+            replaceWith = ReplaceWith("addTraktId(id)"),
+            level = DeprecationLevel.ERROR
+        )
         fun LoadResponse.addTrackId(id: String?) {
             this.addTraktId(id)
         }
 
-        @Deprecated("Outdated API due to missing capitalization", ReplaceWith("addKitsuId(id)"))
+        @Deprecated(
+            "Outdated API due to missing capitalization",
+            replaceWith = ReplaceWith("addKitsuId(id)"),
+            level = DeprecationLevel.ERROR
+        )
         fun LoadResponse.addkitsuId(id: String?) {
             this.addKitsuId(id)
         }
@@ -1971,11 +1980,20 @@ interface LoadResponse {
             this.score = score
         }
 
+        @Deprecated(
+            "Use addScore",
+            replaceWith = ReplaceWith("addScore"),
+            level = DeprecationLevel.WARNING
+        )
         fun LoadResponse.addRating(text: String?) {
             this.score = Score.from10(text)
         }
 
-        @Deprecated("Use addScore", replaceWith = ReplaceWith("addScore"))
+        @Deprecated(
+            "Use addScore",
+            replaceWith = ReplaceWith("addScore"),
+            level = DeprecationLevel.WARNING
+        )
         fun LoadResponse.addRating(value: Int?) {
             this.score = Score.fromOld(value)
         }
@@ -2677,7 +2695,8 @@ constructor(
 ) {
     @Deprecated(
         "`rating` is the old scoring system, use score instead",
-        replaceWith = ReplaceWith("score")
+        replaceWith = ReplaceWith("score"),
+        level = DeprecationLevel.WARNING
     )
     var rating: Int?
         set(value) {
