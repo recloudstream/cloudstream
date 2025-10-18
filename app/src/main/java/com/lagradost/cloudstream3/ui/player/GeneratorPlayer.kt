@@ -89,6 +89,7 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.result.SyncViewModel
+import com.lagradost.cloudstream3.ui.result.VideoWatchState
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
@@ -102,6 +103,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setVideoWatchState
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
@@ -1607,6 +1609,13 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         viewModel.getId()?.let {
             DataStoreHelper.setViewPos(it, position, duration)
+            when(val meta = currentMeta){
+                is ResultEpisode->{
+                    if(meta.videoWatchState == VideoWatchState.Watched){
+                        setVideoWatchState(it, VideoWatchState.None)
+                    }
+                }
+            }
         }
 
         val percentage = position * 100L / duration
@@ -1645,6 +1654,13 @@ class GeneratorPlayer : FullScreenPlayer() {
                         resumeMeta.season,
                         isFromDownload = true
                     )
+                }
+            }
+            if(nextEp){
+                when (val meta = currentMeta) {
+                    is ResultEpisode -> {
+                        setVideoWatchState(meta.id, VideoWatchState.Watched)
+                    }
                 }
             }
         }
