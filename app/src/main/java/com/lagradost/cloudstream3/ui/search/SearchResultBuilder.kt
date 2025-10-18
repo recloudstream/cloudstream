@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.search
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -25,6 +26,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SubtitleHelper
+import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 
 object SearchResultBuilder {
@@ -323,6 +325,9 @@ object SearchResultBuilder {
                 boxes[i].setBackgroundResource(R.drawable.bg_color_center)
             }
             boxes[boxes.size - 1].setBackgroundResource(R.drawable.bg_color_bottom)
+        }
+        textIsDub?.apply {
+            backgroundTintList = ColorStateList.valueOf(context.colorFromAttribute(R.attr.textColor))
         }
     }
 }
