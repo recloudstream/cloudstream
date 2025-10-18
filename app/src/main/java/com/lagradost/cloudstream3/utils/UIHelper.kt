@@ -13,7 +13,12 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.ColorFilter
+import android.graphics.Paint
+import android.graphics.PixelFormat
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.TransactionTooLargeException
@@ -69,8 +74,9 @@ import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.ui.settings.Globals
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
@@ -217,7 +223,7 @@ object UIHelper {
     }
 
     fun View?.setAppBarNoScrollFlagsOnTV() {
-        if (isLayout(Globals.TV or EMULATOR)) {
+        if (isLayout(TV or EMULATOR)) {
             this?.updateLayoutParams<AppBarLayout.LayoutParams> {
                 scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_NO_SCROLL
             }
@@ -380,7 +386,7 @@ object UIHelper {
     }
 
     fun Context.getStatusBarHeight(): Int {
-        if (isLayout(Globals.TV or EMULATOR)) {
+        if (isLayout(TV or EMULATOR)) {
             return 0
         }
 
@@ -423,8 +429,9 @@ object UIHelper {
         padTop: Boolean = true,
         padBottom: Boolean = true,
         padLeft: Boolean = true,
-        padRight: Boolean = true
-    ) {
+        padRight: Boolean = true,
+		overlayCutout: Boolean = true
+	) {
         if (v == null) return
 
         // edge-to-edge is very buggy on earlier versions so we just
@@ -438,7 +445,11 @@ object UIHelper {
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(v) { view, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val insets = windowInsets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+                    or WindowInsetsCompat.Type.displayCutout()
+            )
+
             view.updatePadding(
                 left = if (padLeft) insets.left else view.paddingLeft,
                 right = if (padRight) insets.right else view.paddingRight,
@@ -459,6 +470,27 @@ object UIHelper {
                     width = if (insets.left > 0) widthPx + insets.left else widthPx
                 }
             }
+
+			if (overlayCutout && isLayout(PHONE)) {
+                // Draw a black overlay over the cutout. We do this so that
+                // it doesn't use the fragment background. We want it to
+                // appear as if the screen actually ends at cutout.
+                val cutout = windowInsets.displayCutout
+                if (cutout != null) {
+                    val left = if (!padLeft) 0 else cutout.safeInsetLeft
+                    val right = if (!padRight) 0 else cutout.safeInsetRight
+					if (left > 0 || right > 0) {
+                        view.overlay.clear()
+                        view.overlay.add(
+                            CutoutOverlayDrawable(
+							    view,
+							    leftCutout = left,
+							    rightCutout = right
+						    )
+                        )
+				    } else view.overlay.clear()
+                }
+			}
 
             WindowInsetsCompat.CONSUMED
         }
@@ -640,4 +672,32 @@ object UIHelper {
         popup.show()
         return popup
     }
+}
+
+private class CutoutOverlayDrawable(
+	private val view: View,
+	private val leftCutout: Int,
+	private val rightCutout: Int,
+) : Drawable() {
+	private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+		color = Color.BLACK
+		style = Paint.Style.FILL
+	}
+
+	override fun draw(canvas: Canvas) {
+		if (leftCutout > 0) canvas.drawRect(0f, 0f, leftCutout.toFloat(), view.height.toFloat(), paint)
+		if (rightCutout > 0) {
+			canvas.drawRect(
+				view.width - rightCutout.toFloat(),
+				0f, view.width.toFloat(),
+				view.height.toFloat(),
+				paint
+			)
+		}
+	}
+
+	override fun setAlpha(alpha: Int) {}
+	override fun setColorFilter(colorFilter: ColorFilter?) {}
+    @Suppress("OVERRIDE_DEPRECATION")
+	override fun getOpacity() = PixelFormat.OPAQUE
 }

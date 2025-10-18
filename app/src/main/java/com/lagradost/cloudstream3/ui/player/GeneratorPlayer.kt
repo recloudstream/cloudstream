@@ -1064,7 +1064,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 binding.subtitleSettingsBtt.setOnClickListener {
                     safe {
                         val subtitlesFragment = SubtitlesFragment()
-                        subtitlesFragment.systemBarsPadBottom = true
+                        subtitlesFragment.systemBarsAddPadding = true
                         subtitlesFragment.show(this.parentFragmentManager, "SubtitleSettings")
                     }
                 }
