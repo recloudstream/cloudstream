@@ -38,7 +38,6 @@ import androidx.media3.common.Format.NO_VALUE
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.common.util.Util
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerNotificationManager
 import androidx.media3.ui.PlayerNotificationManager.EXTRA_INSTANCE_ID
@@ -258,11 +257,9 @@ class GeneratorPlayer : FullScreenPlayer() {
     ): PendingIntent {
         val intent: Intent = Intent(action).setPackage(context.packageName)
         intent.putExtra(EXTRA_INSTANCE_ID, instanceId)
-        val pendingFlags = if (Util.SDK_INT >= 23) {
+        val pendingFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        } else {
-            PendingIntent.FLAG_UPDATE_CURRENT
-        }
+        } else PendingIntent.FLAG_UPDATE_CURRENT
 
         return PendingIntent.getBroadcast(context, instanceId, intent, pendingFlags)
     }
@@ -2002,6 +1999,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     false,
                     { episodeClick ->
                         if (episodeClick.action == ACTION_CLICK_DEFAULT) {
+                            isNextEpisode = false
                             player.release()
                             playerEpisodeOverlay.isGone = true
                             episodeClick.position?.let { viewModel.loadThisEpisode(it) }

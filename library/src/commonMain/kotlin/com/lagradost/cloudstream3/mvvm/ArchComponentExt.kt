@@ -77,9 +77,9 @@ fun logError(throwable: Throwable) {
 }
 
 @Deprecated(
-    "Outdated function, use `safe` instead when the new stable is released",
-    ReplaceWith("safe"),
-    level = DeprecationLevel.WARNING
+    "Outdated function, use `safe` instead",
+    replaceWith = ReplaceWith("safe"),
+    level = DeprecationLevel.ERROR
 )
 fun <T> normalSafeApiCall(apiCall: () -> T): T? {
     return try {
@@ -113,9 +113,9 @@ suspend fun <T> safeAsync(apiCall: suspend () -> T): T? {
 }
 
 @Deprecated(
-    "Outdated function, use `safeAsync` instead when the new stable is released",
-    ReplaceWith("safeAsync"),
-    level = DeprecationLevel.WARNING
+    "Outdated function, use `safeAsync` instead",
+    replaceWith = ReplaceWith("safeAsync"),
+    level = DeprecationLevel.ERROR
 )
 suspend fun <T> suspendSafeApiCall(apiCall: suspend () -> T): T? {
     return try {
