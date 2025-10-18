@@ -603,38 +603,34 @@
                                     </FrameLayout>
                                     <TextView
                                         android:id="@+id/result_resume_series_title"
-                                        style="@style/Widget.MaterialComponents.Button.TextButton"
                                         android:layout_width="wrap_content"
-                                        android:layout_height="match_parent"
-                                        android:gravity="center_vertical"
-                                        android:textColor="?attr/iconGrayBackground"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:layout_marginStart="10dp"
+                                        android:gravity="center"
+                                        android:letterSpacing="0.09"
+                                        android:textColor="?attr/black"
                                         android:textSize="15sp"
                                         android:textStyle="bold"
-                                        tools:text="S1E1 Episode 1"
-                                        android:visibility="visible"
-                                        tools:visibility="visible"
-                                        tools:ignore="RtlSymmetry"
-                                        android:paddingStart="5dp"
                                         android:textAllCaps="false"
                                         android:maxLines="1"
                                         android:ellipsize="end"
+                                        tools:text="S1E1 Episode 1"
                                         />
                                     <TextView
                                         android:id="@+id/result_resume_series_progress_text"
-                                        style="@style/Widget.MaterialComponents.Button.TextButton"
                                         android:layout_width="wrap_content"
-                                        android:layout_height="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:layout_marginStart="10dp"
                                         android:gravity="center"
-                                        android:paddingStart="5dp"
-                                        android:textColor="?attr/iconGrayBackground"
-                                        tools:text="69m remaining"
-                                        android:textStyle="bold"
-                                        tools:ignore="RtlSymmetry"
+                                        android:letterSpacing="0.09"
+                                        android:textAllCaps="false"
+                                        android:textColor="?attr/black"
                                         android:textSize="15sp"
-                                        android:visibility="gone"
-                                        tools:visibility="visible"
-                                        android:maxLines="1"
-                                        android:textAllCaps="false"/>
+                                        android:textStyle="bold"
+                                        tools:text="69m remaining"
+                                        android:maxLines="1"/>
                                 </LinearLayout>
                         </FrameLayout>
                         <LinearLayout
@@ -680,7 +676,8 @@
                                 android:nextFocusUp="@id/result_bookmark_Button"
                                 android:nextFocusDown="@id/result_download_movie"
                                 android:text="@string/play_movie_button"
-                                android:visibility="visible"
+                                android:visibility="gone"
+                                tools:visibility="visible"
                                 app:icon="@drawable/ic_baseline_play_arrow_24">
 
                                 <requestFocus />
