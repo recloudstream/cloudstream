@@ -38,6 +38,7 @@ import com.lagradost.cloudstream3.ui.player.LinkGenerator
 import com.lagradost.cloudstream3.ui.player.OfflinePlaybackHelper.playUri
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadResult
@@ -46,7 +47,7 @@ import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPres
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.setAppBarNoScrollFlagsOnTV
@@ -236,7 +237,11 @@ class DownloadFragment : Fragment() {
         }
 
         context?.let { downloadsViewModel.updateHeaderList(it) }
-        fixPaddingStatusbar(binding?.downloadRoot)
+        fixSystemBarsPadding(
+            binding?.downloadRoot,
+            padBottom = isLayout(TV or EMULATOR),
+            padLeft = isLayout(TV or EMULATOR)
+        )
     }
 
     private fun handleItemClick(click: DownloadHeaderClickEvent) {

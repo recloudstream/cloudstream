@@ -74,7 +74,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import java.util.Locale
@@ -236,8 +236,12 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        fixSystemBarsPadding(
+            binding?.searchRoot,
+            padBottom = isLayout(TV or EMULATOR),
+            padLeft = isLayout(TV or EMULATOR)
+        )
 
-        fixPaddingStatusbar(binding?.searchRoot)
         fixGrid()
         reloadRepos()
 

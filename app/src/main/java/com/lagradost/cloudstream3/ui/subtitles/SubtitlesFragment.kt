@@ -40,6 +40,7 @@ import com.lagradost.cloudstream3.ui.player.CustomDecoder
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.setSubtitleAlignment
 import com.lagradost.cloudstream3.ui.player.OutlineSpan
 import com.lagradost.cloudstream3.ui.player.RoundedBackgroundColorSpan
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.DataStore.setKey
@@ -47,7 +48,7 @@ import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper.languages
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
@@ -362,6 +363,8 @@ class SubtitlesFragment : DialogFragment() {
     private lateinit var state: SaveCaptionStyle
     private var hide: Boolean = true
 
+    var systemBarsPadBottom = isLayout(TV or EMULATOR)
+
     override fun onDestroy() {
         super.onDestroy()
         onColorSelectedEvent -= ::onColorSelected
@@ -386,7 +389,10 @@ class SubtitlesFragment : DialogFragment() {
             context?.getExternalFilesDir(null)?.absolutePath.toString() + "/Fonts"
         )
 
-        fixPaddingStatusbar(binding?.subsRoot)
+        fixSystemBarsPadding(
+            binding?.subsRoot,
+            padBottom = systemBarsPadBottom
+        )
 
         state = getCurrentSavedStyle()
         context?.updateState()

@@ -208,10 +208,7 @@ object ResultFragment {
      override fun onResume() {
          afterPluginsLoadedEvent += ::reloadViewModel
          super.onResume()
-         activity?.let {
-             it.window?.navigationBarColor =
-                 it.colorFromAttribute(R.attr.primaryBlackBackground)
-         }
+         activity?.setNavigationBarColorCompat(R.attr.primaryBlackBackground)
      }
 
      override fun onDestroy() {
@@ -305,8 +302,6 @@ object ResultFragment {
         context?.updateHasTrailers()
         activity?.loadCache()
 
-        //activity?.fixPaddingStatusbar(result_barstatus)
-
         /* val backParameter = result_back.layoutParams as FrameLayout.LayoutParams
          backParameter.setMargins(
              backParameter.leftMargin,
@@ -315,8 +310,6 @@ object ResultFragment {
              backParameter.bottomMargin
          )
          result_back.layoutParams = backParameter*/
-
-        // activity?.fixPaddingStatusbar(result_toolbar)
 
         val storedData = (activity ?: context)?.let {
             getStoredData(it)

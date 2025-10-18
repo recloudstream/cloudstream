@@ -13,6 +13,7 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setSystemBarsPadding
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 
@@ -29,6 +30,7 @@ class TestFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setUpToolbar(R.string.category_provider_test)
+        setSystemBarsPadding()
         setToolBarScrollFlags()
         super.onViewCreated(view, savedInstanceState)
 

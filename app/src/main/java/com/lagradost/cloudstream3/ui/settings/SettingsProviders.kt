@@ -10,6 +10,7 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setSystemBarsPadding
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiDubstatusSettings
@@ -23,6 +24,7 @@ class SettingsProviders : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar(R.string.category_providers)
+        setSystemBarsPadding()
         setPaddingBottom()
         setToolBarScrollFlags()
     }

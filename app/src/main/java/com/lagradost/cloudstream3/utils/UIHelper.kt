@@ -31,6 +31,7 @@ import android.widget.ListView
 import android.widget.Toast.LENGTH_LONG
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
+import androidx.annotation.DimenRes
 import androidx.annotation.StyleRes
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.view.menu.MenuBuilder
@@ -47,6 +48,11 @@ import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import androidx.core.view.marginTop
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavOptions
@@ -336,31 +342,41 @@ object UIHelper {
 
     fun Activity.hideSystemUI() {
         // Enables regular immersive mode.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val controller = WindowCompat.getInsetsController(window, window.decorView)
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            controller.hide(WindowInsetsCompat.Type.systemBars())
+            return
+        }
+
         // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
         // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        /** BUGGED AF  **/
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-            WindowInsetsControllerCompat(window, View(this)).let { controller ->
-                controller.hide(WindowInsetsCompat.Type.systemBars())
-                controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            }
-        }*/
-
         @Suppress("DEPRECATION")
         window.decorView.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        // Set the content to appear under the system bars so that the
-                        // content doesn't resize when the system bars hide and show.
-                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        // Hide the nav bar and status bar
-                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_FULLSCREEN
-                ) // FIXME this should be replaced
-        //}
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                // Set the content to appear under the system bars so that the
+                // content doesn't resize when the system bars hide and show.
+                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                // Hide the nav bar and status bar
+                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_FULLSCREEN
+        )
+    }
+
+    fun Activity.enableEdgeToEdgeCompat() {
+        // edge-to-edge is very buggy on earlier versions
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return
+        WindowCompat.enableEdgeToEdge(window)
+    }
+
+    fun Activity.setNavigationBarColorCompat(@AttrRes resourceId: Int) {
+        // edge-to-edge handles this
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) return
+
+        @Suppress("DEPRECATION")
+        window?.navigationBarColor = colorFromAttribute(resourceId)
     }
 
     fun Context.getStatusBarHeight(): Int {
@@ -374,17 +390,6 @@ object UIHelper {
             result = resources.getDimensionPixelSize(resourceId)
         }
         return result
-    }
-
-    fun fixPaddingStatusbar(v: View?) {
-        if (v == null) return
-        val ctx = v.context ?: return
-        v.setPadding(
-            v.paddingLeft,
-            v.paddingTop + ctx.getStatusBarHeight(),
-            v.paddingRight,
-            v.paddingBottom
-        )
     }
 
     fun fixPaddingStatusbarMargin(v: View?) {
@@ -411,6 +416,54 @@ object UIHelper {
         v.layoutParams = params
     }
 
+    fun fixSystemBarsPadding(
+        v: View?,
+        @DimenRes heightResId: Int? = null,
+        @DimenRes widthResId: Int? = null,
+        padTop: Boolean = true,
+        padBottom: Boolean = true,
+        padLeft: Boolean = true,
+        padRight: Boolean = true
+    ) {
+        if (v == null) return
+
+        // edge-to-edge is very buggy on earlier versions so we just
+        // handle the status bar here instead.
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            if (padTop) {
+                val ctx = v.context ?: return
+                v.updatePadding(top = ctx.getStatusBarHeight())
+            }
+            return
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(v) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.updatePadding(
+                left = if (padLeft) insets.left else view.paddingLeft,
+                right = if (padRight) insets.right else view.paddingRight,
+                bottom = if (padBottom) insets.bottom else view.paddingBottom,
+                top = if (padTop) insets.top else view.paddingTop
+            )
+
+            heightResId?.let {
+                val heightPx = view.resources.getDimensionPixelSize(it)
+                view.updateLayoutParams {
+                    height = heightPx + insets.bottom
+                }
+            }
+
+            widthResId?.let {
+                val widthPx = view.resources.getDimensionPixelSize(it)
+                view.updateLayoutParams {
+                    width = if (insets.left > 0) widthPx + insets.left else widthPx
+                }
+            }
+
+            WindowInsetsCompat.CONSUMED
+        }
+    }
+
     fun Context.getNavigationBarHeight(): Int {
         var result = 0
         val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
@@ -431,7 +484,6 @@ object UIHelper {
             if (hide) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     window.insetsController?.hide(WindowInsets.Type.statusBars())
-
                 } else {
                     @Suppress("DEPRECATION")
                     window.setFlags(
@@ -463,18 +515,16 @@ object UIHelper {
     // Shows the system bars by removing all the flags
     // except for the ones that make the content appear under the system bars.
     fun Activity.showSystemUI() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val controller = WindowCompat.getInsetsController(window, window.decorView)
+            controller.show(WindowInsetsCompat.Type.systemBars())
+            changeStatusBarState(isLayout(EMULATOR))
+            return
+        }
 
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-
-            WindowCompat.setDecorFitsSystemWindows(window, true)
-            WindowInsetsControllerCompat(window, View(this)).show(WindowInsetsCompat.Type.systemBars())
-
-        } else {*/
-        /** WINDOW COMPAT IS BUGGY DUE TO FU*KED UP PLAYER AND TRAILERS **/
         @Suppress("DEPRECATION")
         window.decorView.systemUiVisibility =
-            (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN) // FIXME this should be replaced
-        //}
+            (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
 
         changeStatusBarState(isLayout(EMULATOR))
     }

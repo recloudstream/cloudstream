@@ -162,12 +162,14 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SnackbarHelper.showSnackbar
 import com.lagradost.cloudstream3.utils.UIHelper.changeStatusBarState
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
-import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.enableEdgeToEdgeCompat
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
+import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
@@ -1185,6 +1187,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         MainAPI.settingsForProvider = settingsForProvider
 
         loadThemes(this)
+        enableEdgeToEdgeCompat()
+        setNavigationBarColorCompat(R.attr.primaryGrayBackground)
         updateLocale()
         super.onCreate(savedInstanceState)
         try {
@@ -1267,6 +1271,19 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             showToast(txt(R.string.unable_to_inflate, t.message ?: ""), Toast.LENGTH_LONG)
             null
         }
+
+        fixSystemBarsPadding(
+            v = binding?.navView,
+            heightResId = R.dimen.nav_view_height,
+            padTop = false
+        )
+
+        fixSystemBarsPadding(
+            v = binding?.navRailView,
+            widthResId = R.dimen.nav_rail_view_width,
+            padRight = false,
+            padTop = false
+        )
 
         // overscan
         val padding = settingsManager.getInt(getString(R.string.overscan_key), 0).toPx
@@ -1650,9 +1667,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             if (navDestination.matchDestination(R.id.navigation_home)) {
                 attachBackPressedCallback("MainActivity") {
                     showConfirmExitDialog(settingsManager)
-                    @Suppress("DEPRECATION")
-                    window?.navigationBarColor =
-                        colorFromAttribute(R.attr.primaryGrayBackground)
+                    setNavigationBarColorCompat(R.attr.primaryGrayBackground)
                     updateLocale()
                 }
             } else detachBackPressedCallback("MainActivity")
@@ -2021,8 +2036,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             this,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    @Suppress("DEPRECATION")
-                    window?.navigationBarColor = colorFromAttribute(R.attr.primaryGrayBackground)
+                    setNavigationBarColorCompat(R.attr.primaryGrayBackground)
                     updateLocale()
 
                     // If we don't disable we end up in a loop with default behavior calling

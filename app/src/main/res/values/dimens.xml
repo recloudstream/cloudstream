@@ -18,6 +18,9 @@
     <dimen name="storage_radius">3dp</dimen>
     <dimen name="navbar_width">0dp</dimen>
 
+    <dimen name="nav_view_height">70dp</dimen>
+    <dimen name="nav_rail_view_width">62dp</dimen>
+
     <dimen name="download_size">50dp</dimen>
     <dimen name="video_frame_width">1dp</dimen>
 
