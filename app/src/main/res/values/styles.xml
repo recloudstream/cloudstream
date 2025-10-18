@@ -140,6 +140,9 @@
 
     <style name="DubButton" parent="@style/SearchBox">
         <item name="android:text">@string/app_dubbed_text</item>
+        <!-- Background is set programmatically -->
+        <item name="textColor">?attr/primaryGrayBackground</item>
+        <item name="android:textColor">?attr/primaryGrayBackground</item>
     </style>
 
     <style name="SubButton" parent="@style/SearchBox">
@@ -741,7 +744,7 @@
         <item name="backgroundTint">?attr/iconGrayBackground</item>
         <item name="iconTint">?attr/textColor</item>
         <item name="android:textColor">?attr/textColor</item>
-        <item name="rippleColor">?attr/textColor</item>
+        <item name="rippleColor">@color/black_button_ripple</item>
     </style>
 
     <style name="SmallBlackButton" parent="BlackButton">
