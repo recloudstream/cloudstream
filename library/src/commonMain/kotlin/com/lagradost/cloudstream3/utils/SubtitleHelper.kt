@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.utils
 
-import com.lagradost.cloudstream3.Prerelease
 import java.util.Locale
 
 // If you find a way to use SettingsGeneral getCurrentLocale()
@@ -16,7 +15,9 @@ fun getCurrentLocale(): String {
 object SubtitleHelper {
     @Deprecated(
         "Default language code changed to IETF BCP 47 tag",
-        ReplaceWith("LanguageMetadata(languageName, nativeName, ISO_639_1.ifBlank { ISO_639_2_B }), ISO_639_1, ISO_639_2_B, ISO_639_3, ISO_639_1"))
+        replaceWith = ReplaceWith("LanguageMetadata(languageName, nativeName, ISO_639_1.ifBlank { ISO_639_2_B }), ISO_639_1, ISO_639_2_B, ISO_639_3, ISO_639_1"),
+        level = DeprecationLevel.WARNING
+    )
     data class Language639(
         val languageName: String,
         val nativeName: String,
@@ -104,7 +105,7 @@ object SubtitleHelper {
 
     // @Deprecated(
     //     "Default language code changed to IETF BCP 47 tag",
-    //     ReplaceWith("fromLanguageToTagIETF(input, looseCheck)"))
+    //     replaceWith = ReplaceWith("fromLanguageToTagIETF(input, looseCheck)"))
     /**
      * Language name (english or native) -> ISO_639_1
      * @param input language name
@@ -117,7 +118,7 @@ object SubtitleHelper {
 
     // @Deprecated(
     //     "Default language code changed to IETF BCP 47 tag",
-    //     ReplaceWith("fromLanguageToTagIETF(input)"))
+    //     replaceWith = ReplaceWith("fromLanguageToTagIETF(input)"))
     /**
      * Language name (english or native) -> ISO_639_3
     */
@@ -155,7 +156,7 @@ object SubtitleHelper {
 
     // @Deprecated(
     //     "Default language code changed to IETF BCP 47 tag",
-    //     ReplaceWith("fromTagToLanguageName(input)"))
+    //     replaceWith = ReplaceWith("fromTagToLanguageName(input)"))
     /**
      * Language code -> language english name
     */
@@ -165,7 +166,7 @@ object SubtitleHelper {
 
     // @Deprecated(
     //     "Default language code changed to IETF BCP 47 tag",
-    //     ReplaceWith("fromTagToLanguageName(input)"))
+    //     replaceWith = ReplaceWith("fromTagToLanguageName(input)"))
     /**
      * Language code -> language english name
     */
