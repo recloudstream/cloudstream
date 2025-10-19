@@ -28,9 +28,8 @@ import com.lagradost.cloudstream3.utils.DataStore.getSharedPrefs
 import com.lagradost.cloudstream3.utils.DataStore.mapper
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.StreamData
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.setupStream
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.setupStream
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects
 import com.lagradost.safefile.MediaFileContentType
 import com.lagradost.safefile.SafeFile
 import okhttp3.internal.closeQuietly
@@ -207,7 +206,7 @@ object BackupUtils {
     }
 
     @Throws(IOException::class)
-    private fun setupBackupStream(context: Context, name: String, ext: String = "txt"): StreamData {
+    private fun setupBackupStream(context: Context, name: String, ext: String = "txt"): VideoDownloadObjects.StreamData {
         return setupStream(
             baseFile = getCurrentBackupDir(context).first ?: getDefaultBackupDir(context)
             ?: throw IOException("Bad config"),
@@ -289,7 +288,7 @@ object BackupUtils {
     }
 
     /**
-     * Copy of [VideoDownloadManager.basePathToFile], [VideoDownloadManager.getDefaultDir] and [VideoDownloadManager.getBasePath]
+     * Copy of [com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.basePathToFile], [com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDefaultDir] and [com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getBasePath]
      * modded for backup specific paths
      * */
 
