@@ -12,6 +12,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.setKeyClass
 import com.lagradost.cloudstream3.mvvm.logError
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
+import androidx.core.content.edit
 
 const val DOWNLOAD_HEADER_CACHE = "download_header_cache"
 
@@ -28,6 +29,7 @@ class PreferenceDelegate<T : Any>(
     val key: String, val default: T //, private val klass: KClass<T>
 ) {
     private val klass: KClass<out T> = default::class
+
     // simple cache to make it not get the key every time it is accessed, however this requires
     // that ONLY this changes the key
     private var cache: T? = null
@@ -51,10 +53,10 @@ class PreferenceDelegate<T : Any>(
 
 /** When inserting many keys use this function, this is because apply for every key is very expensive on memory */
 data class Editor(
-    val editor : SharedPreferences.Editor
+    val editor: SharedPreferences.Editor
 ) {
     /** Always remember to call apply after */
-    fun<T> setKeyRaw(path: String, value: T) {
+    fun <T> setKeyRaw(path: String, value: T) {
         @Suppress("UNCHECKED_CAST")
         if (isStringSet(value)) {
             editor.putStringSet(path, value as Set<String>)
@@ -69,7 +71,7 @@ data class Editor(
         }
     }
 
-    private fun isStringSet(value: Any?) : Boolean {
+    private fun isStringSet(value: Any?): Boolean {
         if (value is Set<*>) {
             return value.filterIsInstance<String>().size == value.size
         }
@@ -99,9 +101,10 @@ object DataStore {
         return "${folder}/${path}"
     }
 
-    fun editor(context : Context, isEditingAppSettings: Boolean = false) : Editor {
+    fun editor(context: Context, isEditingAppSettings: Boolean = false): Editor {
         val editor: SharedPreferences.Editor =
-            if (isEditingAppSettings) context.getDefaultSharedPrefs().edit() else context.getSharedPrefs().edit()
+            if (isEditingAppSettings) context.getDefaultSharedPrefs()
+                .edit() else context.getSharedPrefs().edit()
         return Editor(editor)
     }
 
@@ -130,9 +133,9 @@ object DataStore {
         try {
             val prefs = getSharedPrefs()
             if (prefs.contains(path)) {
-                val editor: SharedPreferences.Editor = prefs.edit()
-                editor.remove(path)
-                editor.apply()
+                prefs.edit {
+                    remove(path)
+                }
             }
         } catch (e: Exception) {
             logError(e)
@@ -141,17 +144,24 @@ object DataStore {
 
     fun Context.removeKeys(folder: String): Int {
         val keys = getKeys("$folder/")
-        keys.forEach { value ->
-            removeKey(value)
+        try {
+            getSharedPrefs().edit {
+                keys.forEach { value ->
+                    remove(value)
+                }
+            }
+            return keys.size
+        } catch (e: Exception) {
+            logError(e)
+            return 0
         }
-        return keys.size
     }
 
     fun <T> Context.setKey(path: String, value: T) {
         try {
-            val editor: SharedPreferences.Editor = getSharedPrefs().edit()
-            editor.putString(path, mapper.writeValueAsString(value))
-            editor.apply()
+            getSharedPrefs().edit {
+                putString(path, mapper.writeValueAsString(value))
+            }
         } catch (e: Exception) {
             logError(e)
         }
