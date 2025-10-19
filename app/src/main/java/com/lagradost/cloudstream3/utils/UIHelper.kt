@@ -78,6 +78,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.utils.AppContextUtils.isRtl
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import kotlinx.coroutines.delay
@@ -445,9 +446,8 @@ object UIHelper {
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(v) { view, windowInsets ->
-		    val isRtl = ViewCompat.getLayoutDirection(view) == ViewCompat.LAYOUT_DIRECTION_RTL
-			val leftCheck = if (isRtl) padRight else padLeft
-			val rightCheck = if (isRtl) padLeft else padRight
+			val leftCheck = if (view.isRtl()) padRight else padLeft
+			val rightCheck = if (view.isRtl()) padLeft else padRight
 
             val insets = windowInsets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
@@ -471,7 +471,7 @@ object UIHelper {
             widthResId?.let {
                 val widthPx = view.resources.getDimensionPixelSize(it)
 				view.updateLayoutParams {
-					val startInset = if (isRtl) insets.right else insets.left
+					val startInset = if (view.isRtl()) insets.right else insets.left
                     width = if (startInset > 0) widthPx + startInset else widthPx
                 }
             }
