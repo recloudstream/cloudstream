@@ -159,7 +159,7 @@ object SubtitleHelper {
 
     @Deprecated(
         "Default language code changed to IETF BCP 47 tag",
-        replaceWith = ReplaceWith("fromTagToLanguageName(input)"),
+        replaceWith = ReplaceWith("fromTagToEnglishLanguageName(input)"),
         level = DeprecationLevel.WARNING
     )
     /**
@@ -171,7 +171,7 @@ object SubtitleHelper {
 
     @Deprecated(
         "Default language code changed to IETF BCP 47 tag",
-        replaceWith = ReplaceWith("fromTagToLanguageName(input)"),
+        replaceWith = ReplaceWith("fromTagToEnglishLanguageName(input)"),
         level = DeprecationLevel.WARNING
     )
     /**
