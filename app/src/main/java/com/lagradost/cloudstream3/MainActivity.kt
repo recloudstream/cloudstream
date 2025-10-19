@@ -189,13 +189,7 @@ import java.nio.charset.Charset
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.system.exitProcess
-import androidx.core.net.toUri
-import androidx.tvprovider.media.tv.Channel
-import androidx.tvprovider.media.tv.TvContractCompat
-import android.content.ComponentName
-import android.content.ContentUris
-
-import com.lagradost.cloudstream3.ui.home.HomeFragment
+import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import com.lagradost.cloudstream3.utils.TvChannelUtils
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
@@ -2045,7 +2039,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             }
         )
 
-
+        // Start the download queue
+        DownloadQueueManager.init(this)
     }
 
     /** Biometric stuff **/

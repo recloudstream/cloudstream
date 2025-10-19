@@ -86,15 +86,13 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects
 import com.lagradost.cloudstream3.utils.UIHelper.setListViewHeightBasedOnItems
 import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
 import java.net.URLEncoder
-import java.nio.charset.Charset
-import kotlin.io.encoding.Base64
 import kotlin.math.roundToInt
 
 open class ResultFragmentPhone : FullScreenPlayer() {
@@ -728,7 +726,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         return@setOnLongClickListener true
                     }
                     downloadButton.setDefaultClickListener(
-                        VideoDownloadHelper.DownloadEpisodeCached(
+                        VideoDownloadObjects.DownloadEpisodeCached(
                             name = ep.name,
                             poster = ep.poster,
                             episode = 0,

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
@@ -32,7 +33,8 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.txt
 import java.text.DateFormat
@@ -160,7 +162,7 @@ class EpisodeAdapter(
 
                     downloadButton.isVisible = hasDownloadSupport
                     downloadButton.setDefaultClickListener(
-                        VideoDownloadHelper.DownloadEpisodeCached(
+                        VideoDownloadObjects.DownloadEpisodeCached(
                             name = item.name,
                             poster = item.poster,
                             episode = item.episode,
@@ -198,6 +200,9 @@ class EpisodeAdapter(
                             }
                         }
                     }
+                    // TODO FIX THIS
+                    // We need to make sure we restore the correct progress
+                    // when we refresh data in the adapter.
 
                     val name =
                         if (item.name == null) "${episodeText.context.getString(R.string.episode)} ${item.episode}" else "${item.episode}. ${item.name}"
@@ -376,7 +381,7 @@ class EpisodeAdapter(
                 binding.apply {
                     downloadButton.isVisible = hasDownloadSupport
                     downloadButton.setDefaultClickListener(
-                        VideoDownloadHelper.DownloadEpisodeCached(
+                        VideoDownloadObjects.DownloadEpisodeCached(
                             name = item.name,
                             poster = item.poster,
                             episode = item.episode,
@@ -415,6 +420,9 @@ class EpisodeAdapter(
                         }
                     }
 
+                    // TODO FIX THIS
+                    // We need to make sure we restore the correct progress
+                    // when we refresh data in the adapter.
                     val name =
                         if (item.name == null) "${episodeText.context.getString(R.string.episode)} ${item.episode}" else "${item.episode}. ${item.name}"
                     episodeFiller.isVisible = item.isFiller == true

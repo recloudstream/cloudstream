@@ -12,7 +12,7 @@ object SubtitleUtils {
         ".ttml", ".sbv", ".dfxp"
     )
 
-    fun deleteMatchingSubtitles(context: Context, info: VideoDownloadManager.DownloadedFileInfo) {
+    fun deleteMatchingSubtitles(context: Context, info: VideoDownloadObjects.DownloadedFileInfo) {
         val cleanDisplay = cleanDisplayName(info.displayName)
 
         val base = basePathToFile(context, info.basePath)
