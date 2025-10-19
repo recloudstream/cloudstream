@@ -445,14 +445,18 @@ object UIHelper {
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(v) { view, windowInsets ->
+		    val isRtl = ViewCompat.getLayoutDirection(view) == ViewCompat.LAYOUT_DIRECTION_RTL
+			val leftCheck = if (isRtl) padRight else padLeft
+			val rightCheck = if (isRtl) padLeft else padRight
+
             val insets = windowInsets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
                     or WindowInsetsCompat.Type.displayCutout()
             )
 
             view.updatePadding(
-                left = if (padLeft) insets.left else view.paddingLeft,
-                right = if (padRight) insets.right else view.paddingRight,
+                left = if (leftCheck) insets.left else view.paddingLeft,
+                right = if (rightCheck) insets.right else view.paddingRight,
                 bottom = if (padBottom) insets.bottom else view.paddingBottom,
                 top = if (padTop) insets.top else view.paddingTop
             )
@@ -466,8 +470,9 @@ object UIHelper {
 
             widthResId?.let {
                 val widthPx = view.resources.getDimensionPixelSize(it)
-                view.updateLayoutParams {
-                    width = if (insets.left > 0) widthPx + insets.left else widthPx
+				view.updateLayoutParams {
+					val startInset = if (isRtl) insets.right else insets.left
+                    width = if (startInset > 0) widthPx + startInset else widthPx
                 }
             }
 
@@ -477,8 +482,8 @@ object UIHelper {
                 // appear as if the screen actually ends at cutout.
                 val cutout = windowInsets.displayCutout
                 if (cutout != null) {
-                    val left = if (!padLeft) 0 else cutout.safeInsetLeft
-                    val right = if (!padRight) 0 else cutout.safeInsetRight
+                    val left = if (!leftCheck) 0 else cutout.safeInsetLeft
+                    val right = if (!rightCheck) 0 else cutout.safeInsetRight
 					if (left > 0 || right > 0) {
                         view.overlay.clear()
                         view.overlay.add(
