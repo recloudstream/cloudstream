@@ -24,6 +24,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentDownloadsBinding
@@ -220,6 +221,10 @@ class DownloadFragment : Fragment() {
             downloadStreamButton.apply {
                 isGone = isLayout(TV)
                 setOnClickListener { showStreamInputDialog(it.context) }
+            }
+
+            downloadQueueButton.setOnClickListener {
+                findNavController().navigate(R.id.action_navigation_global_to_navigation_download_queue)
             }
 
             downloadStreamButtonTv.isFocusableInTouchMode = isLayout(TV)

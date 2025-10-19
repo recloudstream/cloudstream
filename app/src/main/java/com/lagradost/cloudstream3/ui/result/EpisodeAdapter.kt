@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
@@ -27,7 +28,8 @@ import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.txt
 import java.text.DateFormat
@@ -190,7 +192,7 @@ class EpisodeAdapter(
 
                 downloadButton.isVisible = hasDownloadSupport
                 downloadButton.setDefaultClickListener(
-                    VideoDownloadHelper.DownloadEpisodeCached(
+                    VideoDownloadObjects.DownloadEpisodeCached(
                         name = card.name,
                         poster = card.poster,
                         episode = card.episode,
@@ -228,6 +230,13 @@ class EpisodeAdapter(
                         }
                     }
                 }
+
+                // TODO FIX THIS
+                // We need to make sure we restore the correct progress
+                // when we refresh data in the adapter.
+                val status = VideoDownloadManager.downloadStatus[card.id]
+                downloadButton.resetView()
+                downloadButton.setStatus(status)
 
                 val name =
                     if (card.name == null) "${episodeText.context.getString(R.string.episode)} ${card.episode}" else "${card.episode}. ${card.name}"
@@ -373,7 +382,7 @@ class EpisodeAdapter(
             binding.apply {
                 downloadButton.isVisible = hasDownloadSupport
                 downloadButton.setDefaultClickListener(
-                    VideoDownloadHelper.DownloadEpisodeCached(
+                    VideoDownloadObjects.DownloadEpisodeCached(
                         name = card.name,
                         poster = card.poster,
                         episode = card.episode,
@@ -411,6 +420,13 @@ class EpisodeAdapter(
                         }
                     }
                 }
+
+                // TODO FIX THIS
+                // We need to make sure we restore the correct progress
+                // when we refresh data in the adapter.
+                val status = VideoDownloadManager.downloadStatus[card.id]
+                downloadButton.resetView()
+                downloadButton.setStatus(status)
 
                 val name =
                     if (card.name == null) "${episodeText.context.getString(R.string.episode)} ${card.episode}" else "${card.episode}. ${card.name}"

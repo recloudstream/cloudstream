@@ -6,7 +6,6 @@ import android.app.Activity
 import android.app.Activity.RESULT_CANCELED
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.ContentValues
 import android.content.Context
 import android.content.DialogInterface
 import android.content.pm.PackageManager
@@ -19,11 +18,8 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.os.Build
-import android.os.Environment
 import android.os.Handler
 import android.os.Looper
-import android.os.ParcelFileDescriptor
-import android.provider.MediaStore
 import android.text.Spanned
 import android.view.View
 import android.view.View.LAYOUT_DIRECTION_LTR
@@ -89,24 +85,16 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okhttp3.Cache
 import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.InputStream
-import java.io.OutputStream
 import java.net.URL
 import java.net.URLDecoder
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import android.net.Uri
 import android.util.Log
-import androidx.biometric.AuthenticationResult
-import androidx.tvprovider.media.tv.PreviewProgram
 import androidx.tvprovider.media.tv.TvContractCompat
 import com.lagradost.cloudstream3.SearchResponse
-import android.content.ContentUris
 import android.content.Intent
-
-
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects
 
 
 object AppContextUtils {
@@ -170,7 +158,7 @@ object AppContextUtils {
     private fun buildWatchNextProgramUri(
         context: Context,
         card: DataStoreHelper.ResumeWatchingResult,
-        resumeWatching: VideoDownloadHelper.ResumeWatching?
+        resumeWatching: VideoDownloadObjects.ResumeWatching?
     ): WatchNextProgram {
         val isSeries = card.type?.isMovieType() == false
         val title = if (isSeries) {
@@ -337,7 +325,7 @@ object AppContextUtils {
         val context = this
         continueWatchingLock.withLock {
             // A way to get all last watched timestamps
-            val timeStampHashMap = HashMap<Int, VideoDownloadHelper.ResumeWatching>()
+            val timeStampHashMap = HashMap<Int, VideoDownloadObjects.ResumeWatching>()
             getAllResumeStateIds()?.forEach { id ->
                 val lastWatched = getLastWatched(id) ?: return@forEach
                 timeStampHashMap[lastWatched.parentId] = lastWatched

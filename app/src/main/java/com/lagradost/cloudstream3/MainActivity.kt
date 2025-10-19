@@ -31,7 +31,6 @@ import androidx.annotation.MainThread
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import androidx.core.view.get
 import androidx.core.view.isGone
@@ -185,13 +184,8 @@ import java.nio.charset.Charset
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.system.exitProcess
-import androidx.core.net.toUri
-import androidx.tvprovider.media.tv.Channel
-import androidx.tvprovider.media.tv.TvContractCompat
-import android.content.ComponentName
-import android.content.ContentUris
+import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 
-import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.utils.TvChannelUtils
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
@@ -556,9 +550,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         binding?.apply {
             navRailView.isVisible = isNavVisible && landscape
             navView.isVisible = isNavVisible && !landscape
-            navHostFragment.layoutParams = (navHostFragment.layoutParams as ViewGroup.MarginLayoutParams).apply {
-                marginStart = if (isNavVisible && landscape && isLayout(TV or EMULATOR)) 62.toPx else 0
-            }
+            navHostFragment.layoutParams =
+                (navHostFragment.layoutParams as ViewGroup.MarginLayoutParams).apply {
+                    marginStart =
+                        if (isNavVisible && landscape && isLayout(TV or EMULATOR)) 62.toPx else 0
+                }
 
             /**
              * We need to make sure if we return to a sub-fragment,
@@ -2035,7 +2031,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             }
         )
 
-
+        // Start the download queue
+        DownloadQueueManager.init(this)
     }
 
     /** Biometric stuff **/

@@ -43,8 +43,9 @@ import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
-import com.lagradost.cloudstream3.utils.VideoDownloadManager
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadFileManagement
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadFileManagement.getBasePath
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
 import java.util.Locale
 
 // Change local language settings in the app.
@@ -326,7 +327,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
         fun getDownloadDirs(): List<String> {
             return safe {
                 context?.let { ctx ->
-                    val defaultDir = VideoDownloadManager.getDefaultDir(ctx)?.filePath()
+                    val defaultDir = VideoDownloadFileManagement.getDefaultDir(ctx)?.filePath()
 
                     val first = listOf(defaultDir)
                     (try {
@@ -353,7 +354,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
 
             val currentDir =
                 settingsManager.getString(getString(R.string.download_path_key_visual), null)
-                    ?: context?.let { ctx -> VideoDownloadManager.getDefaultDir(ctx)?.filePath() }
+                    ?: context?.let { ctx -> VideoDownloadFileManagement.getDefaultDir(ctx)?.filePath() }
 
             activity?.showBottomDialog(
                 dirs + listOf(getString(R.string.custom)),

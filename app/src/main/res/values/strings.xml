@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
+<?xml version="1.0" encoding="utf-8"?><!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
+<resources>
     <!-- KEYS DON'T TRANSLATE -->
     <string name="search_providers_list_key" translatable="false">search_providers_list</string>
     <string name="locale_key" translatable="false">app_locale</string>
@@ -883,8 +883,8 @@
     <string name="poster_size_settings_des">Changes size of posters</string>
     <string name="poster_size_settings">Poster size</string>
     <string name="speedup_key" translatable="false">speedup_key</string>
-    <string name="speedup_title" >LongPress Speed Toggle</string>
-    <string name="speedup_summary" >Hold to get 2x speed</string>
+    <string name="speedup_title">LongPress Speed Toggle</string>
+    <string name="speedup_summary">Hold to get 2x speed</string>
     <string name="edit_profile_image_title">Edit Profile Image</string>
     <string name="edit_profile_image_hint">Enter Profile Image URL</string>
     <string name="edit_profile_image_error_empty">No URL Found</string>
@@ -894,6 +894,16 @@
     <string name="action_remove_mark_watched_up_to_this_episode">Remove watched up to this episode</string>
     <string name="action_reload">Reloaded</string>
     <string name="reload_provider">Reload Provider</string>
-	<string name="name">Name</string>
+    <string name="name">Name</string>
     <string name="resolution_and_name">Resolution and name</string>
+
+    <plurals name="downloads_active">
+        <item quantity="one">%d active download</item>
+        <item quantity="other">%d active downloads</item>
+    </plurals>
+
+    <plurals name="downloads_queued">
+        <item quantity="one">%d download queued</item>
+        <item quantity="other">%d downloads queued</item>
+    </plurals>
 </resources>

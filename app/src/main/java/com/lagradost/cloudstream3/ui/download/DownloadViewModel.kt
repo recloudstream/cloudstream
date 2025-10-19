@@ -20,9 +20,9 @@ import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.deleteFilesAndUpdateSettings
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.getDownloadFileInfoAndUpdateSettings
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.deleteFilesAndUpdateSettings
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDownloadFileInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -119,14 +119,14 @@ class DownloadViewModel : ViewModel() {
     fun updateHeaderList(context: Context) = viewModelScope.launchSafe {
         val visual = withContext(Dispatchers.IO) {
             val children = context.getKeys(DOWNLOAD_EPISODE_CACHE)
-                .mapNotNull { context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(it) }
+                .mapNotNull { context.getKey<VideoDownloadObjects.DownloadEpisodeCached>(it) }
                 .distinctBy { it.id } // Remove duplicates
 
             val (totalBytesUsedByChild, currentBytesUsedByChild, totalDownloads) =
                 calculateDownloadStats(context, children)
 
             val cached = context.getKeys(DOWNLOAD_HEADER_CACHE)
-                .mapNotNull { context.getKey<VideoDownloadHelper.DownloadHeaderCached>(it) }
+                .mapNotNull { context.getKey<VideoDownloadObjects.DownloadHeaderCached>(it) }
 
             createVisualDownloadList(
                 context, cached, totalBytesUsedByChild, currentBytesUsedByChild, totalDownloads
@@ -142,7 +142,7 @@ class DownloadViewModel : ViewModel() {
 
     private fun calculateDownloadStats(
         context: Context,
-        children: List<VideoDownloadHelper.DownloadEpisodeCached>
+        children: List<VideoDownloadObjects.DownloadEpisodeCached>
     ): Triple<Map<Int, Long>, Map<Int, Long>, Map<Int, Int>> {
         // parentId : bytes
         val totalBytesUsedByChild = mutableMapOf<Int, Long>()
@@ -152,7 +152,7 @@ class DownloadViewModel : ViewModel() {
         val totalDownloads = mutableMapOf<Int, Int>()
 
         children.forEach { child ->
-            val childFile = getDownloadFileInfoAndUpdateSettings(context, child.id) ?: return@forEach
+            val childFile = getDownloadFileInfo(context, child.id) ?: return@forEach
             if (childFile.fileLength <= 1) return@forEach
 
             val len = childFile.totalBytes
@@ -167,7 +167,7 @@ class DownloadViewModel : ViewModel() {
 
     private fun createVisualDownloadList(
         context: Context,
-        cached: List<VideoDownloadHelper.DownloadHeaderCached>,
+        cached: List<VideoDownloadObjects.DownloadHeaderCached>,
         totalBytesUsedByChild: Map<Int, Long>,
         currentBytesUsedByChild: Map<Int, Long>,
         totalDownloads: Map<Int, Int>
@@ -179,7 +179,7 @@ class DownloadViewModel : ViewModel() {
             if (bytes <= 0 || downloads <= 0) return@mapNotNull null
 
             val isSelected = selectedItemIds.value?.contains(it.id) ?: false
-            val movieEpisode = if (it.type.isEpisodeBased()) null else context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(
+            val movieEpisode = if (it.type.isEpisodeBased()) null else context.getKey<VideoDownloadObjects.DownloadEpisodeCached>(
                 DOWNLOAD_EPISODE_CACHE,
                 getFolderName(it.id.toString(), it.id.toString())
             )
@@ -210,10 +210,10 @@ class DownloadViewModel : ViewModel() {
     fun updateChildList(context: Context, folder: String) = viewModelScope.launchSafe {
         val visual = withContext(Dispatchers.IO) {
             context.getKeys(folder).mapNotNull { key ->
-                context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(key)
+                context.getKey<VideoDownloadObjects.DownloadEpisodeCached>(key)
             }.mapNotNull {
                 val isSelected = selectedItemIds.value?.contains(it.id) ?: false
-                val info = getDownloadFileInfoAndUpdateSettings(context, it.id) ?: return@mapNotNull null
+                val info = getDownloadFileInfo(context, it.id) ?: return@mapNotNull null
                 VisualDownloadCached.Child(
                     currentBytes = info.fileLength,
                     totalBytes = info.totalBytes,
@@ -292,7 +292,7 @@ class DownloadViewModel : ViewModel() {
                     if (item.data.type.isEpisodeBased()) {
                         val episodes = context.getKeys(DOWNLOAD_EPISODE_CACHE)
                             .mapNotNull {
-                                context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(
+                                context.getKey<VideoDownloadObjects.DownloadEpisodeCached>(
                                     it
                                 )
                             }
@@ -316,7 +316,7 @@ class DownloadViewModel : ViewModel() {
 
                 is VisualDownloadCached.Child -> {
                     ids.add(item.data.id)
-                    val parent = context.getKey<VideoDownloadHelper.DownloadHeaderCached>(
+                    val parent = context.getKey<VideoDownloadObjects.DownloadHeaderCached>(
                         DOWNLOAD_HEADER_CACHE,
                         item.data.parentId.toString()
                     )
