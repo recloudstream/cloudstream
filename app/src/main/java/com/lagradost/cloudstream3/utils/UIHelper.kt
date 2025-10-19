@@ -431,8 +431,8 @@ object UIHelper {
         padBottom: Boolean = true,
         padLeft: Boolean = true,
         padRight: Boolean = true,
-		overlayCutout: Boolean = true
-	) {
+        overlayCutout: Boolean = true
+    ) {
         if (v == null) return
 
         // edge-to-edge is very buggy on earlier versions so we just
@@ -446,8 +446,8 @@ object UIHelper {
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(v) { view, windowInsets ->
-			val leftCheck = if (view.isRtl()) padRight else padLeft
-			val rightCheck = if (view.isRtl()) padLeft else padRight
+            val leftCheck = if (view.isRtl()) padRight else padLeft
+            val rightCheck = if (view.isRtl()) padLeft else padRight
 
             val insets = windowInsets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
@@ -470,13 +470,13 @@ object UIHelper {
 
             widthResId?.let {
                 val widthPx = view.resources.getDimensionPixelSize(it)
-				view.updateLayoutParams {
-					val startInset = if (view.isRtl()) insets.right else insets.left
+                view.updateLayoutParams {
+                    val startInset = if (view.isRtl()) insets.right else insets.left
                     width = if (startInset > 0) widthPx + startInset else widthPx
                 }
             }
 
-			if (overlayCutout && isLayout(PHONE)) {
+            if (overlayCutout && isLayout(PHONE)) {
                 // Draw a black overlay over the cutout. We do this so that
                 // it doesn't use the fragment background. We want it to
                 // appear as if the screen actually ends at cutout.
@@ -484,18 +484,18 @@ object UIHelper {
                 if (cutout != null) {
                     val left = if (!leftCheck) 0 else cutout.safeInsetLeft
                     val right = if (!rightCheck) 0 else cutout.safeInsetRight
-					if (left > 0 || right > 0) {
-                        view.overlay.clear()
+                    view.overlay.clear()
+                    if (left > 0 || right > 0) {
                         view.overlay.add(
                             CutoutOverlayDrawable(
-							    view,
-							    leftCutout = left,
-							    rightCutout = right
-						    )
+                                view,
+                                leftCutout = left,
+                                rightCutout = right
+                            )
                         )
-				    } else view.overlay.clear()
+                    }
                 }
-			}
+            }
 
             WindowInsetsCompat.CONSUMED
         }
@@ -680,29 +680,29 @@ object UIHelper {
 }
 
 private class CutoutOverlayDrawable(
-	private val view: View,
-	private val leftCutout: Int,
-	private val rightCutout: Int,
+    private val view: View,
+    private val leftCutout: Int,
+    private val rightCutout: Int,
 ) : Drawable() {
-	private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-		color = Color.BLACK
-		style = Paint.Style.FILL
-	}
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.BLACK
+        style = Paint.Style.FILL
+    }
 
-	override fun draw(canvas: Canvas) {
-		if (leftCutout > 0) canvas.drawRect(0f, 0f, leftCutout.toFloat(), view.height.toFloat(), paint)
-		if (rightCutout > 0) {
-			canvas.drawRect(
-				view.width - rightCutout.toFloat(),
-				0f, view.width.toFloat(),
-				view.height.toFloat(),
-				paint
-			)
-		}
-	}
+    override fun draw(canvas: Canvas) {
+        if (leftCutout > 0) canvas.drawRect(0f, 0f, leftCutout.toFloat(), view.height.toFloat(), paint)
+        if (rightCutout > 0) {
+            canvas.drawRect(
+                view.width - rightCutout.toFloat(),
+                0f, view.width.toFloat(),
+                view.height.toFloat(),
+                paint
+            )
+        }
+    }
 
-	override fun setAlpha(alpha: Int) {}
-	override fun setColorFilter(colorFilter: ColorFilter?) {}
+    override fun setAlpha(alpha: Int) {}
+    override fun setColorFilter(colorFilter: ColorFilter?) {}
     @Suppress("OVERRIDE_DEPRECATION")
-	override fun getOpacity() = PixelFormat.OPAQUE
+    override fun getOpacity() = PixelFormat.OPAQUE
 }
