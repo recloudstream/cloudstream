@@ -832,6 +832,10 @@ class Score private constructor(
     override fun hashCode(): Int = this.data.hashCode()
     override fun equals(other: Any?): Boolean = other is Score && this.data == other.data
 
+    @Deprecated(
+        "toOld() is deprecated. Use other Score methods instead.",
+        level = DeprecationLevel.ERROR
+    )
     fun toOld(): Int = toInt(10000)
 
     fun toByte(maxScore: Int): Byte = toLong(maxScore).toByte()
@@ -930,6 +934,10 @@ class Score private constructor(
         const val MAX_ZEROS: Int = 9
         private const val TAG: String = "Score"
 
+        @Deprecated(
+            "Score.fromOld is deprecated. Use other Score.from* methods instead.",
+            level = DeprecationLevel.ERROR
+        )
         fun fromOld(value: Int?): Score? {
             if (value == null) return null
             if (value < 0 || value > 10000) {
@@ -1744,12 +1752,14 @@ interface LoadResponse {
     @Deprecated(
         "`rating` is the old scoring system, use score instead",
         replaceWith = ReplaceWith("score"),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     var rating: Int?
         set(value) {
+            @Suppress("DEPRECATION_ERROR")
             this.score = Score.fromOld(value)
         }
+        @Suppress("DEPRECATION_ERROR")
         get() = score?.toOld()
 
     companion object {
@@ -1983,7 +1993,7 @@ interface LoadResponse {
         @Deprecated(
             "Use addScore",
             replaceWith = ReplaceWith("addScore"),
-            level = DeprecationLevel.WARNING
+            level = DeprecationLevel.ERROR
         )
         fun LoadResponse.addRating(text: String?) {
             this.score = Score.from10(text)
@@ -1992,9 +2002,10 @@ interface LoadResponse {
         @Deprecated(
             "Use addScore",
             replaceWith = ReplaceWith("addScore"),
-            level = DeprecationLevel.WARNING
+            level = DeprecationLevel.ERROR
         )
         fun LoadResponse.addRating(value: Int?) {
+            @Suppress("DEPRECATION_ERROR")
             this.score = Score.fromOld(value)
         }
 
@@ -2696,7 +2707,7 @@ constructor(
     @Deprecated(
         "`rating` is the old scoring system, use score instead",
         replaceWith = ReplaceWith("score"),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     var rating: Int?
         set(value) {
@@ -2924,6 +2935,10 @@ fun fetchUrls(text: String?): List<String> {
     return linkRegex.findAll(text).map { it.value.trim().removeSurrounding("\"") }.toList()
 }
 
+@Deprecated(
+    "toRatingInt() is deprecated. Use new score API instead.",
+    level = DeprecationLevel.ERROR
+)
 fun String?.toRatingInt(): Int? =
     this?.replace(" ", "")?.trim()?.toDoubleOrNull()?.absoluteValue?.times(1000f)?.toInt()
 
