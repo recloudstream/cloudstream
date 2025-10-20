@@ -555,18 +555,17 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
         dialog.show()
 
-        val beforeOffset = subtitleDelay
-
+        var currentOffset = subtitleDelay
         binding.apply {
             var subtitleAdapter: SubtitleOffsetItemAdapter? = null
 
             subtitleOffsetInput.doOnTextChanged { text, _, _, _ ->
                 text?.toString()?.toLongOrNull()?.let { time ->
-                    subtitleDelay = time
+                    currentOffset = time
 
                     // Scroll to the first active subtitle
                     val playerPosition = player.getPosition() ?: 0
-                    val totalPosition = playerPosition - subtitleDelay
+                    val totalPosition = playerPosition - currentOffset
                     subtitleAdapter?.updateTime(totalPosition)
 
                     subtitleAdapter?.getLatestActiveItem(totalPosition)
@@ -591,14 +590,14 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 }
             }
             subtitleOffsetInput.text =
-                Editable.Factory.getInstance()?.newEditable(beforeOffset.toString())
+                Editable.Factory.getInstance()?.newEditable(currentOffset.toString())
 
             val subtitles = player.getSubtitleCues().toMutableList()
 
             subtitleOffsetRecyclerview.isVisible = subtitles.isNotEmpty()
             noSubtitlesLoadedNotice.isVisible = subtitles.isEmpty()
 
-            val initialSubtitlePosition = (player.getPosition() ?: 0) - subtitleDelay
+            val initialSubtitlePosition = (player.getPosition() ?: 0) - currentOffset
             subtitleAdapter =
                 SubtitleOffsetItemAdapter(initialSubtitlePosition, subtitles) { subtitleCue ->
                     val playerPosition = player.getPosition() ?: 0
@@ -641,6 +640,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     activity?.hideSystemUI()
             }
             applyBtt.setOnClickListener {
+                subtitleDelay = currentOffset
                 dialog.dismissSafe(activity)
                 player.seekTime(1L)
             }
@@ -650,7 +650,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 player.seekTime(1L)
             }
             cancelBtt.setOnClickListener {
-                subtitleDelay = beforeOffset
                 dialog.dismissSafe(activity)
             }
         }
