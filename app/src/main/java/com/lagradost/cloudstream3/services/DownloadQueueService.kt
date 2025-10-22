@@ -52,6 +52,7 @@ class DownloadQueueService : Service() {
             .setColorized(false)
             .setOnlyAlertOnce(true)
             .setSilent(true)
+            .setShowWhen(false)
             // If low priority then the notification might not show :(
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setColor(this.colorFromAttribute(R.attr.colorPrimary))
@@ -63,15 +64,18 @@ class DownloadQueueService : Service() {
 
 
     private fun updateNotification(context: Context, downloads: Int, queued: Int) {
-        val activeDownloads = resources.getQuantityString(R.plurals.downloads_active, downloads).format(downloads)
-        val activeQueue = resources.getQuantityString(R.plurals.downloads_queued, queued).format(queued)
+        val activeDownloads =
+            resources.getQuantityString(R.plurals.downloads_active, downloads).format(downloads)
+        val activeQueue =
+            resources.getQuantityString(R.plurals.downloads_queued, queued).format(queued)
 
         val newNotification = baseNotification
             .setContentText(activeDownloads)
             .setSubText(activeQueue)
             .build()
 
-        NotificationManagerCompat.from(context).notify(DOWNLOAD_QUEUE_NOTIFICATION_ID, newNotification)
+        NotificationManagerCompat.from(context)
+            .notify(DOWNLOAD_QUEUE_NOTIFICATION_ID, newNotification)
     }
 
     override fun onCreate() {
@@ -116,15 +120,16 @@ class DownloadQueueService : Service() {
                     downloadInstances.add(downloadInstance)
                 }
 
-                // TODO Notification for acquiring links
                 // The downloads actually displayed to the user with a notification
-                val currentVisualDownloads = VideoDownloadManager.currentDownloads.size
-                // The queue + the download instances not actively downloading
-                val currentVisualQueue = DownloadQueueManager.queue.size + downloadInstances.count {
-                    VideoDownloadManager.currentDownloads.contains(it.downloadQueueWrapper.id).not()
-                }
+                val currentVisualDownloads =
+                    VideoDownloadManager.currentDownloads.size + downloadInstances.count {
+                        VideoDownloadManager.currentDownloads.contains(it.downloadQueueWrapper.id)
+                            .not()
+                    }
+                // Just the queue
+                val currentVisualQueue = DownloadQueueManager.queue.size
 
-                updateNotification(context, currentVisualDownloads,   currentVisualQueue)
+                updateNotification(context, currentVisualDownloads, currentVisualQueue)
 
                 // Arbitrary delay to prevent hogging the CPU, decrease to make the queue feel slightly more responsive
                 delay(500)

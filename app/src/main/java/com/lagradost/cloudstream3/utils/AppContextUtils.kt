@@ -99,7 +99,7 @@ import android.util.Log
 import androidx.tvprovider.media.tv.TvContractCompat
 import com.lagradost.cloudstream3.SearchResponse
 import android.content.Intent
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 
 
 object AppContextUtils {
@@ -158,7 +158,7 @@ object AppContextUtils {
     private fun buildWatchNextProgramUri(
         context: Context,
         card: DataStoreHelper.ResumeWatchingResult,
-        resumeWatching: VideoDownloadObjects.ResumeWatching?
+        resumeWatching: DownloadObjects.ResumeWatching?
     ): WatchNextProgram {
         val isSeries = card.type?.isMovieType() == false
         val title = if (isSeries) {
@@ -325,7 +325,7 @@ object AppContextUtils {
         val context = this
         continueWatchingLock.withLock {
             // A way to get all last watched timestamps
-            val timeStampHashMap = HashMap<Int, VideoDownloadObjects.ResumeWatching>()
+            val timeStampHashMap = HashMap<Int, DownloadObjects.ResumeWatching>()
             getAllResumeStateIds()?.forEach { id ->
                 val lastWatched = getLastWatched(id) ?: return@forEach
                 timeStampHashMap[lastWatched.parentId] = lastWatched

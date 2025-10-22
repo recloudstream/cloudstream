@@ -660,7 +660,7 @@
                                 android:text="S1E2 Episode 2"
                                 android:visibility="gone"
                                 tools:visibility="visible"
-                                app:icon="@drawable/cast_ic_mini_controller_skip_next" 
+                                app:icon="@drawable/cast_ic_mini_controller_skip_next"
                                 android:maxLines="1"
                                 android:ellipsize="end"/>
                         </LinearLayout>
@@ -818,6 +818,21 @@
                                     android:paddingStart="10dp"
                                     android:paddingEnd="5dp"
                                     android:text="Sort"
+                                    android:visibility="gone"
+                                    tools:visibility="visible" />
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/result_batch_download_button"
+                                    style="@style/MultiSelectButton"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginTop="10dp"
+                                    android:layout_marginBottom="10dp"
+                                    android:nextFocusLeft="@id/result_dub_select"
+                                    android:nextFocusUp="@id/result_description"
+                                    android:nextFocusDown="@id/result_episodes"
+                                    android:paddingStart="10dp"
+                                    android:paddingEnd="5dp"
+                                    android:text="@string/download_all"
                                     android:visibility="gone"
                                     tools:visibility="visible" />
 

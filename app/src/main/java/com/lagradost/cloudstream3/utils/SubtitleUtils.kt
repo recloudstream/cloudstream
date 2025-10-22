@@ -2,9 +2,8 @@ package com.lagradost.cloudstream3.utils
 
 import android.content.Context
 import com.lagradost.api.Log
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadFileManagement.getFolder
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.getFolder
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import com.lagradost.safefile.SafeFile
 
 object SubtitleUtils {
@@ -15,7 +14,7 @@ object SubtitleUtils {
         ".ttml", ".sbv", ".dfxp"
     )
 
-    fun deleteMatchingSubtitles(context: Context, info: VideoDownloadObjects.DownloadedFileInfo) {
+    fun deleteMatchingSubtitles(context: Context, info: DownloadObjects.DownloadedFileInfo) {
         val relative = info.relativePath
         val display = info.displayName
         val cleanDisplay = cleanDisplayName(display)
