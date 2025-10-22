@@ -696,23 +696,23 @@
                                 android:id="@+id/result_resume_series_title"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
                                 android:layout_weight="2"
                                 android:textColor="?attr/textColor"
-                                android:layout_gravity="center_vertical"
                                 android:textSize="17sp"
                                 android:textStyle="bold"
-                                tools:text="S1E1 Episode 1"
                                 android:visibility="visible"
+                                tools:text="S1E1 Episode 1"
                                 tools:visibility="visible" />
 
                             <LinearLayout
                                 android:id="@+id/progress_group"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
                                 android:layout_weight="1"
-                                android:orientation="horizontal"
                                 android:gravity="center"
-                                android:layout_gravity="center_vertical">
+                                android:orientation="horizontal">
 
                                 <FrameLayout
                                     android:id="@+id/watch_progress_container"
@@ -722,17 +722,16 @@
 
                                     <ImageView
                                         android:id="@+id/episode_play_icon"
-                                        style="@style/ContinueWatchingPlayUnderlayProgress"
-                                        />
-<!--                                    <com.google.android.material.imageview.ShapeableImageView-->
-<!--                                        android:id="@+id/episode_play_icon"-->
-<!--                                        android:layout_width="@dimen/episode_watching_progress_size"-->
-<!--                                        android:layout_height="@dimen/episode_watching_progress_size"-->
-<!--                                        android:scaleType="center"-->
-<!--                                        android:src="@drawable/netflix_play"-->
-<!--                                        android:layout_gravity="center"-->
-<!--                                        app:shapeAppearanceOverlay="@style/CircularImageViewStyle"-->
-<!--                                        />-->
+                                        style="@style/ContinueWatchingPlayUnderlayProgress" />
+                                    <!--                                    <com.google.android.material.imageview.ShapeableImageView-->
+                                    <!--                                        android:id="@+id/episode_play_icon"-->
+                                    <!--                                        android:layout_width="@dimen/episode_watching_progress_size"-->
+                                    <!--                                        android:layout_height="@dimen/episode_watching_progress_size"-->
+                                    <!--                                        android:scaleType="center"-->
+                                    <!--                                        android:src="@drawable/netflix_play"-->
+                                    <!--                                        android:layout_gravity="center"-->
+                                    <!--                                        app:shapeAppearanceOverlay="@style/CircularImageViewStyle"-->
+                                    <!--                                        />-->
                                     <com.google.android.material.progressindicator.CircularProgressIndicator
                                         android:id="@+id/result_resume_series_progress"
                                         style="@style/ContinueWatchingCircularProgress"
@@ -749,6 +748,7 @@
                                     tools:text="69m\nremaining" />
                             </LinearLayout>
                         </LinearLayout>
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -826,6 +826,21 @@
                                     android:paddingStart="10dp"
                                     android:paddingEnd="5dp"
                                     android:text="Sort"
+                                    android:visibility="gone"
+                                    tools:visibility="visible" />
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/result_batch_download_button"
+                                    style="@style/MultiSelectButton"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginTop="10dp"
+                                    android:layout_marginBottom="10dp"
+                                    android:nextFocusLeft="@id/result_dub_select"
+                                    android:nextFocusUp="@id/result_description"
+                                    android:nextFocusDown="@id/result_episodes"
+                                    android:paddingStart="10dp"
+                                    android:paddingEnd="5dp"
+                                    android:text="@string/download_all"
                                     android:visibility="gone"
                                     tools:visibility="visible" />
 

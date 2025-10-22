@@ -8,7 +8,7 @@ import androidx.core.view.isVisible
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.download.DownloadClickEvent
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 
 class DownloadButton(context: Context, attributeSet: AttributeSet) :
     PieFetchButton(context, attributeSet) {
@@ -35,7 +35,7 @@ class DownloadButton(context: Context, attributeSet: AttributeSet) :
     }
 
     override fun setDefaultClickListener(
-        card: VideoDownloadObjects.DownloadEpisodeCached,
+        card: DownloadObjects.DownloadEpisodeCached,
         textView: TextView?,
         callback: (DownloadClickEvent) -> Unit
     ) {

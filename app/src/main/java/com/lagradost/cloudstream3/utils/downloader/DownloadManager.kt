@@ -57,27 +57,29 @@ import com.lagradost.cloudstream3.utils.M3u8Helper2
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToEnglishLanguageName
 import com.lagradost.cloudstream3.utils.SubtitleUtils.deleteMatchingSubtitles
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadFileManagement.getBasePath
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadFileManagement.getDefaultDir
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadFileManagement.getFileName
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadFileManagement.getFolder
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadFileManagement.sanitizeFilename
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadFileManagement.toFile
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects.CreateNotificationMetadata
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects.DownloadEpisodeMetadata
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects.DownloadItem
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects.DownloadResumePackage
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects.DownloadStatus
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects.DownloadedFileInfo
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects.DownloadedFileInfoResult
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects.LazyStreamDownloadResponse
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects.StreamData
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadUtils.appendAndDontOverride
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadUtils.cancel
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadUtils.downloadSubtitle
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadUtils.getEstimatedTimeLeft
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadUtils.getImageBitmapFromUrl
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadUtils.join
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.getBasePath
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.getDefaultDir
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.getFileName
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.getFolder
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.sanitizeFilename
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.toFile
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.CreateNotificationMetadata
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.DownloadEpisodeMetadata
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.DownloadItem
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.DownloadResumePackage
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.DownloadStatus
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.DownloadedFileInfo
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.DownloadedFileInfoResult
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.LazyStreamDownloadResponse
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.StreamData
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.DownloadQueueWrapper
+import com.lagradost.cloudstream3.utils.downloader.DownloadUtils.appendAndDontOverride
+import com.lagradost.cloudstream3.utils.downloader.DownloadUtils.cancel
+import com.lagradost.cloudstream3.utils.downloader.DownloadUtils.downloadSubtitle
+import com.lagradost.cloudstream3.utils.downloader.DownloadUtils.getEstimatedTimeLeft
+import com.lagradost.cloudstream3.utils.downloader.DownloadUtils.getImageBitmapFromUrl
+import com.lagradost.cloudstream3.utils.downloader.DownloadUtils.join
+import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.safefile.SafeFile
 import com.lagradost.safefile.closeQuietly
 import kotlinx.coroutines.CancellationException
@@ -178,6 +180,9 @@ object VideoDownloadManager {
 
     const val KEY_RESUME_PACKAGES = "download_resume"
     const val KEY_DOWNLOAD_INFO = "download_info"
+
+    /** A key to save all the downloads which have not yet started, using [DownloadQueueWrapper] */
+    const val KEY_PRE_RESUME = "download_pre_resume_key"
 //    private const val KEY_RESUME_QUEUE_PACKAGES = "download_q_resume"
 
     val downloadStatus = HashMap<Int, DownloadType>()
@@ -1561,6 +1566,10 @@ object VideoDownloadManager {
         return context.getKey(KEY_RESUME_PACKAGES, id.toString())
     }
 
+    fun getPreDownloadResumePackage(context: Context, id: Int): DownloadQueueWrapper? {
+        return context.getKey(KEY_PRE_RESUME, id.toString())
+    }
+
     fun getDownloadEpisodeMetadata(
         episode: ResultEpisode,
         titleName: String,
@@ -1583,12 +1592,23 @@ object VideoDownloadManager {
 
     class EpisodeDownloadInstance(
         val context: Context,
-        val downloadQueueWrapper: VideoDownloadObjects.DownloadQueueWrapper
+        val downloadQueueWrapper: DownloadObjects.DownloadQueueWrapper
     ) {
+        private val TAG = "EpisodeDownloadInstance"
         private var subtitleDownloadJob: Job? = null
         private var downloadJob: Job? = null
         var isCompleted = false
+            set(value) {
+                field = value
+                removeKey(KEY_PRE_RESUME, downloadQueueWrapper.id.toString())
+            }
+
         var isFailed = false
+            set(value) {
+                field = value
+                // Clean up failed work
+                removeKey(KEY_PRE_RESUME, downloadQueueWrapper.id.toString())
+            }
 
         companion object {
             private fun displayNotification(context: Context, id: Int, notification: Notification) {
@@ -1612,6 +1632,9 @@ object VideoDownloadManager {
                 for (index in (downloadResumePackage.linkIndex ?: 0) until item.links.size) {
                     val link = item.links[index]
                     val resume = downloadResumePackage.linkIndex == index
+
+                    // We do not want pre-resume keys once the resume key is set
+                    removeKey(KEY_PRE_RESUME, id.toString())
 
                     setKey(
                         KEY_RESUME_PACKAGES,
@@ -1699,6 +1722,9 @@ object VideoDownloadManager {
         }
 
         fun startDownload() {
+            Log.d(TAG, "Starting download ${downloadQueueWrapper.id}")
+            setKey(KEY_PRE_RESUME, downloadQueueWrapper.id.toString(), downloadQueueWrapper)
+
             ioSafe {
                 if (downloadQueueWrapper.resumePackage != null) {
                     downloadFromResume()
@@ -1724,7 +1750,7 @@ object VideoDownloadManager {
                 setKey(
                     DOWNLOAD_HEADER_CACHE,
                     downloadItem.resultId.toString(),
-                    VideoDownloadObjects.DownloadHeaderCached(
+                    DownloadObjects.DownloadHeaderCached(
                         apiName = downloadItem.apiName,
                         url = downloadItem.resultUrl,
                         type = downloadItem.resultType,
@@ -1740,7 +1766,7 @@ object VideoDownloadManager {
                         downloadItem.resultId.toString()
                     ), // 3 deep folder for faster access
                     downloadItem.episode.id.toString(),
-                    VideoDownloadObjects.DownloadEpisodeCached(
+                    DownloadObjects.DownloadEpisodeCached(
                         name = downloadItem.episode.name,
                         poster = downloadItem.episode.poster,
                         episode = downloadItem.episode.episode,
@@ -1752,8 +1778,6 @@ object VideoDownloadManager {
                         cacheTime = System.currentTimeMillis(),
                     )
                 )
-
-
 
                 val meta =
                     getDownloadEpisodeMetadata(
@@ -1814,6 +1838,32 @@ object VideoDownloadManager {
             val generator = RepoLinkGenerator(listOf(downloadItem.episode))
             val currentLinks = mutableSetOf<ExtractorLink>()
             val currentSubs = mutableSetOf<SubtitleData>()
+            val meta =
+                getDownloadEpisodeMetadata(
+                    downloadItem.episode,
+                    downloadItem.resultName,
+                    downloadItem.apiName,
+                    downloadItem.resultPoster,
+                    downloadItem.isMovie,
+                    downloadItem.resultType
+                )
+
+            createDownloadNotification(
+                context,
+                downloadItem.apiName,
+                txt(R.string.loading).asString(context),
+                meta,
+                DownloadType.IsPending,
+                0,
+                1,
+                { _, _ -> },
+                null,
+                null,
+                0
+            )?.let { linkLoadingNotification ->
+                displayNotification(context, downloadItem.episode.id, linkLoadingNotification)
+            }
+
             generator.generateLinks(
                 clearCache = false,
                 sourceTypes = LOADTYPE_INAPP_DOWNLOAD,
@@ -1826,6 +1876,9 @@ object VideoDownloadManager {
                     currentSubs.add(sub)
                 })
 
+            // Remove link loading notification
+            NotificationManagerCompat.from(context).cancel(downloadItem.episode.id)
+
             if (currentLinks.isEmpty()) {
                 main {
                     showToast(
@@ -1833,6 +1886,7 @@ object VideoDownloadManager {
                         Toast.LENGTH_SHORT
                     )
                 }
+                isFailed = true
                 return
             } else {
                 main {
