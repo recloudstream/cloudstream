@@ -376,7 +376,7 @@ class SubtitlesFragment : DialogFragment() {
     }
 
     override fun getTheme(): Int {
-        return R.style.DialogFullscreen
+        return R.style.AlertDialogCustomBlack
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
