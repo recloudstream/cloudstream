@@ -19,7 +19,7 @@ import com.lagradost.cloudstream3.ui.download.button.DownloadStatusTell
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 
 const val DOWNLOAD_ACTION_PLAY_FILE = 0
 const val DOWNLOAD_ACTION_DELETE_FILE = 1
@@ -34,22 +34,22 @@ const val DOWNLOAD_ACTION_LOAD_RESULT = 1
 sealed class VisualDownloadCached {
     abstract val currentBytes: Long
     abstract val totalBytes: Long
-    abstract val data: VideoDownloadObjects.DownloadCached
+    abstract val data: DownloadObjects.DownloadCached
     abstract var isSelected: Boolean
 
     data class Child(
         override val currentBytes: Long,
         override val totalBytes: Long,
-        override val data: VideoDownloadObjects.DownloadEpisodeCached,
+        override val data: DownloadObjects.DownloadEpisodeCached,
         override var isSelected: Boolean,
     ) : VisualDownloadCached()
 
     data class Header(
         override val currentBytes: Long,
         override val totalBytes: Long,
-        override val data: VideoDownloadObjects.DownloadHeaderCached,
+        override val data: DownloadObjects.DownloadHeaderCached,
         override var isSelected: Boolean,
-        val child: VideoDownloadObjects.DownloadEpisodeCached?,
+        val child: DownloadObjects.DownloadEpisodeCached?,
         val currentOngoingDownloads: Int,
         val totalDownloads: Int,
     ) : VisualDownloadCached()
@@ -57,12 +57,12 @@ sealed class VisualDownloadCached {
 
 data class DownloadClickEvent(
     val action: Int,
-    val data: VideoDownloadObjects.DownloadEpisodeCached
+    val data: DownloadObjects.DownloadEpisodeCached
 )
 
 data class DownloadHeaderClickEvent(
     val action: Int,
-    val data: VideoDownloadObjects.DownloadHeaderCached
+    val data: DownloadObjects.DownloadHeaderCached
 )
 
 class DownloadAdapter(

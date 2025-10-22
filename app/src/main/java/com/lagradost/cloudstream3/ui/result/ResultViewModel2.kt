@@ -104,8 +104,8 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.utils.VIDEO_WATCH_STATE
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDownloadEpisodeMetadata
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadUtils.downloadSubtitle
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
+import com.lagradost.cloudstream3.utils.downloader.DownloadUtils.downloadSubtitle
 import com.lagradost.cloudstream3.utils.loadExtractor
 import com.lagradost.cloudstream3.utils.newExtractorLink
 import com.lagradost.cloudstream3.utils.txt
@@ -1418,7 +1418,7 @@ class ResultViewModel2 : ViewModel() {
             ACTION_DOWNLOAD_EPISODE -> {
                 val response = currentResponse ?: return
                 DownloadQueueManager.addToQueue(
-                    VideoDownloadObjects.DownloadQueueItem(
+                    DownloadObjects.DownloadQueueItem(
                         click.data,
                         response.isMovie(),
                         response.name,
@@ -1440,7 +1440,7 @@ class ResultViewModel2 : ViewModel() {
                 ) { (result, index) ->
                     ioSafe {
                         DownloadQueueManager.addToQueue(
-                            VideoDownloadObjects.DownloadQueueItem(
+                            DownloadObjects.DownloadQueueItem(
                                 click.data,
                                 response.isMovie(),
                                 response.name,
@@ -2616,7 +2616,7 @@ class ResultViewModel2 : ViewModel() {
                     setKey(
                         DOWNLOAD_HEADER_CACHE,
                         mainId.toString(),
-                        VideoDownloadObjects.DownloadHeaderCached(
+                        DownloadObjects.DownloadHeaderCached(
                             apiName = apiName,
                             url = validUrl,
                             type = loadResponse.type,

@@ -29,7 +29,7 @@ import com.lagradost.cloudstream3.utils.DataStore.mapper
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.setupStream
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import com.lagradost.safefile.MediaFileContentType
 import com.lagradost.safefile.SafeFile
 import okhttp3.internal.closeQuietly
@@ -206,7 +206,7 @@ object BackupUtils {
     }
 
     @Throws(IOException::class)
-    private fun setupBackupStream(context: Context, name: String, ext: String = "txt"): VideoDownloadObjects.StreamData {
+    private fun setupBackupStream(context: Context, name: String, ext: String = "txt"): DownloadObjects.StreamData {
         return setupStream(
             baseFile = getCurrentBackupDir(context).first ?: getDefaultBackupDir(context)
             ?: throw IOException("Bad config"),

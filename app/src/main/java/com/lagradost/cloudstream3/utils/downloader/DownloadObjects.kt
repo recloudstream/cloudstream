@@ -12,7 +12,7 @@ import java.io.IOException
 import java.io.OutputStream
 import java.util.Objects
 
-object VideoDownloadObjects {
+object DownloadObjects {
     /** An item can either be something to resume or something new to start */
     @ConsistentCopyVisibility
     data class DownloadQueueWrapper internal constructor(

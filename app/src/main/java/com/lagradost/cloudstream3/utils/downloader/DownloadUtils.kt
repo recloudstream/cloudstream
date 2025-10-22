@@ -14,14 +14,14 @@ import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.result.ExtractorSubtitleLink
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.UiText
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadFileManagement.getFileName
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadFileManagement.getFolder
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.getFileName
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.getFolder
 import com.lagradost.cloudstream3.utils.txt
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.runBlocking
 
 /** Separate object with helper functions for the downloader */
-object VideoDownloadUtils {
+object DownloadUtils {
     private val cachedBitmaps = hashMapOf<String, Bitmap>()
     internal fun Context.getImageBitmapFromUrl(
         url: String,
@@ -118,7 +118,7 @@ object VideoDownloadUtils {
     fun downloadSubtitle(
         context: Context?,
         link: SubtitleData,
-        meta: VideoDownloadObjects.DownloadEpisodeMetadata,
+        meta: DownloadObjects.DownloadEpisodeMetadata,
     ) {
         context?.let { ctx ->
             val fileName = getFileName(ctx, meta)

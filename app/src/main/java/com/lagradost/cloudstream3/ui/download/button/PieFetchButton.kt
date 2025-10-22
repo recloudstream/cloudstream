@@ -23,7 +23,7 @@ import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_PLAY_FILE
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_RESUME_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DownloadClickEvent
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.KEY_RESUME_PACKAGES
 
@@ -162,7 +162,7 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
     }*/
 
     protected fun setDefaultClickListener(
-        view: View, textView: TextView?, card: VideoDownloadObjects.DownloadEpisodeCached,
+        view: View, textView: TextView?, card: DownloadObjects.DownloadEpisodeCached,
         callback: (DownloadClickEvent) -> Unit
     ) {
         this.progressText = textView
@@ -212,7 +212,7 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
     }
 
     open fun setDefaultClickListener(
-        card: VideoDownloadObjects.DownloadEpisodeCached,
+        card: DownloadObjects.DownloadEpisodeCached,
         textView: TextView?,
         callback: (DownloadClickEvent) -> Unit
     ) {

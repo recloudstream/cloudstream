@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat
 import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
+import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.services.DownloadQueueService
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -13,7 +14,10 @@ import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.KEY_RESU
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.downloadStatus
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.downloadStatusEvent
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDownloadResumePackage
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects.DownloadQueueWrapper
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.DownloadQueueWrapper
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.KEY_PRE_RESUME
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDownloadFileInfo
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getPreDownloadResumePackage
 import kotlin.collections.filter
 import kotlin.collections.forEach
 
@@ -36,9 +40,17 @@ object DownloadQueueManager {
                         getDownloadResumePackage(context, id)?.toWrapper()
                     }
 
+            val resumeQueue = preResumeIds.filterNot { VideoDownloadManager.currentDownloads.contains(it) }
+                    .mapNotNull { id ->
+                        getPreDownloadResumePackage(context, id)
+                    }
+
             synchronized(queue) {
                 // Add resume packages to the first part of the queue, since they may have been removed from the queue when they started
-                queue = (resumePackages + queue).distinctBy { it.id }.toTypedArray()
+                queue = (resumePackages + resumeQueue + queue).distinctBy { it.id }.toTypedArray()
+                // Once added to the queue they can be safely removed
+                removeKeys(KEY_PRE_RESUME)
+
                 // Make sure the download buttons display a pending status
                 queue.forEach { obj ->
                     setQueueStatus(obj)
@@ -54,6 +66,15 @@ object DownloadQueueManager {
         get() {
             return getKeys(KEY_RESUME_PACKAGES)?.mapNotNull {
                 it.substringAfter("$KEY_RESUME_PACKAGES/").toIntOrNull()
+            }?.toSet()
+                ?: emptySet()
+        }
+
+    /** Downloads not yet started, but forcefully stopped by app closure. */
+    private val preResumeIds: Set<Int>
+        get() {
+            return getKeys(KEY_PRE_RESUME)?.mapNotNull {
+                it.substringAfter("$KEY_PRE_RESUME/").toIntOrNull()
             }?.toSet()
                 ?: emptySet()
         }
@@ -77,6 +98,7 @@ object DownloadQueueManager {
                 return
             }
 
+            Log.d(TAG, "Download added to queue: $downloadQueueWrapper")
             queue = localQueue + downloadQueueWrapper
         }
     }
@@ -86,6 +108,7 @@ object DownloadQueueManager {
         synchronized(queue) {
             val localQueue = queue
             val id = downloadQueueWrapper.id
+            Log.d(TAG, "Download removed from the queue: $downloadQueueWrapper")
             queue = localQueue.filter { it.id != id }.toTypedArray()
         }
     }
@@ -129,12 +152,22 @@ object DownloadQueueManager {
         }
     }
 
-    /** Add a new object to the queue */
+    /** Add a new object to the queue. Will not queue completed downloads or current downloads. */
     fun addToQueue(downloadQueueWrapper: DownloadQueueWrapper) {
         ioSafe {
+            val context = AcraApplication.context ?: return@ioSafe
+            val fileInfo = getDownloadFileInfo(context, downloadQueueWrapper.id)
+            val isComplete = fileInfo != null && (fileInfo.fileLength <= fileInfo.totalBytes)
+            // Do not queue completed files!
+            if (isComplete) return@ioSafe
+            // Do not queue already downloading files
+            if (VideoDownloadManager.currentDownloads.contains(downloadQueueWrapper.id)) {
+                return@ioSafe
+            }
+
             add(downloadQueueWrapper)
             setQueueStatus(downloadQueueWrapper)
-            startQueueService(AcraApplication.context)
+            startQueueService(context)
         }
     }
 }

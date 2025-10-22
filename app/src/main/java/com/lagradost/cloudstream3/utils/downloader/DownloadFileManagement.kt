@@ -11,7 +11,7 @@ import com.lagradost.cloudstream3.isEpisodeBased
 import com.lagradost.safefile.MediaFileContentType
 import com.lagradost.safefile.SafeFile
 
-object VideoDownloadFileManagement {
+object DownloadFileManagement {
     private const val RESERVED_CHARS = "|\\?*<\":>+[]/\'"
     internal fun sanitizeFilename(name: String, removeSpaces: Boolean = false): String {
         var tempName = name
@@ -66,7 +66,7 @@ object VideoDownloadFileManagement {
 
     internal fun getFileName(
         context: Context,
-        metadata: VideoDownloadObjects.DownloadEpisodeMetadata
+        metadata: DownloadObjects.DownloadEpisodeMetadata
     ): String {
         return getFileName(context, metadata.name, metadata.episode, metadata.season)
     }
@@ -100,7 +100,7 @@ object VideoDownloadFileManagement {
     }
 
 
-    internal fun VideoDownloadObjects.DownloadedFileInfo.toFile(context: Context): SafeFile? {
+    internal fun DownloadObjects.DownloadedFileInfo.toFile(context: Context): SafeFile? {
         return basePathToFile(context, this.basePath)?.gotoDirectory(
             relativePath,
             createMissingDirectories = false

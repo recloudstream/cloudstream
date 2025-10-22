@@ -49,7 +49,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getCurrentAccount
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadObjects
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
@@ -68,7 +68,7 @@ class HomeViewModel : ViewModel() {
             val resumeWatchingResult = withContext(Dispatchers.IO) {
                 resumeWatching?.mapNotNull { resume ->
 
-                    val data = getKey<VideoDownloadObjects.DownloadHeaderCached>(
+                    val data = getKey<DownloadObjects.DownloadHeaderCached>(
                         DOWNLOAD_HEADER_CACHE,
                         resume.parentId.toString()
                     ) ?: return@mapNotNull null
