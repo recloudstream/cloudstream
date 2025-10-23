@@ -615,7 +615,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         val providers = subsProviders.toList()
         val isSingleProvider = subsProviders.size == 1
 
-        val dialog = Dialog(context, R.style.AlertDialogCustomBlack)
+        val dialog = Dialog(context, R.style.DialogFullscreenPlayer)
         val binding =
             DialogOnlineSubtitlesBinding.inflate(LayoutInflater.from(context), null, false)
         dialog.setContentView(binding.root)
@@ -1037,7 +1037,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 player.handleEvent(CSPlayerEvent.Pause, PlayerEventSource.UI)
                 val currentSubtitles = sortSubs(currentSubs)
 
-                val sourceDialog = Dialog(ctx, R.style.AlertDialogCustomBlack)
+                val sourceDialog = Dialog(ctx, R.style.DialogFullscreenPlayer)
                 val binding =
                     PlayerSelectSourceAndSubsBinding.inflate(LayoutInflater.from(ctx), null, false)
                 sourceDialog.setContentView(binding.root)
@@ -1299,7 +1299,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     val activity = activity ?: return@setOnClickListener
                     QualityProfileDialog(
                         activity,
-                        R.style.AlertDialogCustomBlack,
+                        R.style.DialogFullscreenPlayer,
                         currentLinks.mapNotNull { it.first },
                         currentQualityProfile
                     ) { profile ->
@@ -1397,7 +1397,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 val currentAudioTracks = tracks.allAudioTracks
                 val binding: PlayerSelectTracksBinding =
                     PlayerSelectTracksBinding.inflate(LayoutInflater.from(ctx), null, false)
-                val trackDialog = Dialog(ctx, R.style.AlertDialogCustomBlack)
+                val trackDialog = Dialog(ctx, R.style.DialogFullscreenPlayer)
                 trackDialog.setContentView(binding.root)
                 trackDialog.show()
 

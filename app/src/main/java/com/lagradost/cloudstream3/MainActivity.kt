@@ -120,6 +120,7 @@ import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
 import com.lagradost.cloudstream3.ui.settings.SettingsGeneral
@@ -541,25 +542,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             layoutParams = params
         }*/
 
-        val landscape = when (resources.configuration.orientation) {
-            Configuration.ORIENTATION_LANDSCAPE -> {
-                true
-            }
-
-            Configuration.ORIENTATION_PORTRAIT -> {
-                isLayout(TV or EMULATOR)
-            }
-
-            else -> {
-                false
-            }
-        }
-
         binding?.apply {
-            navRailView.isVisible = isNavVisible && landscape
-            navView.isVisible = isNavVisible && !landscape
-            navHostFragment.layoutParams = (navHostFragment.layoutParams as ViewGroup.MarginLayoutParams).apply {
-                marginStart = if (isNavVisible && landscape && isLayout(TV or EMULATOR)) 62.toPx else 0
+            navRailView.isVisible = isNavVisible && isLandscape()
+            navView.isVisible = isNavVisible && !isLandscape()
+            navHostFragment.apply {
+                val marginPx = resources.getDimensionPixelSize(R.dimen.nav_rail_view_width)
+                layoutParams = (navHostFragment.layoutParams as ViewGroup.MarginLayoutParams).apply {
+                    marginStart = if (isNavVisible && isLandscape() && isLayout(TV or EMULATOR)) marginPx else 0
+                }
             }
 
             /**

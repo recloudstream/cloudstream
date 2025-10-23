@@ -551,7 +551,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         val binding = SubtitleOffsetBinding.inflate(LayoutInflater.from(ctx), null, false)
 
         // Use dialog as opposed to alertdialog to get fullscreen
-        val dialog = Dialog(ctx, R.style.AlertDialogCustomBlack).apply {
+        val dialog = Dialog(ctx, R.style.DialogFullscreenPlayer).apply {
             setContentView(binding.root)
         }
         dialog.show()

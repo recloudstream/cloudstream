@@ -173,6 +173,7 @@
         <item name="white">@color/black</item>
         <item name="black">@color/white</item>
         <item name="colorOnPrimary">@color/blackText</item>
+        <item name="isLightTheme">true</item>
         <item name="android:windowLightNavigationBar">true</item>
     </style>
 
@@ -198,6 +199,7 @@
         <item name="white">@color/LavenderTextColor</item>
         <item name="black">@color/LavenderPrimaryGrayBackground</item>
         <item name="colorOnPrimary">@color/LavenderTextColor</item>
+        <item name="isLightTheme">true</item>
         <item name="android:windowLightNavigationBar">true</item>
     </style>
 
@@ -562,6 +564,17 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
+    <style name="DialogFullscreenPlayer" parent="DialogFullscreen">
+        <item name="android:windowBackground">?attr/primaryBlackBackground</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:windowTranslucentStatus">false</item>
+
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:navigationBarColor">?attr/primaryBlackBackground</item>
+        <item name="android:statusBarColor">?attr/primaryBlackBackground</item>
+        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
+    </style>
+
     <style name="DialogHalfFullscreen" parent="AlertDialogCustom">
         <item name="android:windowEnterAnimation">@anim/enter_anim</item>
         <item name="android:windowExitAnimation">@anim/exit_anim</item>
@@ -611,7 +624,7 @@
 
     <style name="SettingsItem">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">50sp</item>
+        <item name="android:layout_height">50dp</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingStart">20dp</item>
         <item name="android:paddingEnd">20dp</item>

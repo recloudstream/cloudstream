@@ -19,6 +19,7 @@ import com.lagradost.cloudstream3.plugins.VotingApi.vote
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -67,7 +68,7 @@ class PluginDetailsFragment(val data: PluginViewData) : BottomSheetDialogFragmen
         binding?.apply {
             fixSystemBarsPadding(
                 root,
-                padBottom = isLayout(TV or EMULATOR),
+                padBottom = isLandscape(),
                 padLeft = isLayout(TV or EMULATOR)
             )
             pluginIcon.loadImage(metadata.iconUrl?.replace("%size%", "$iconSize")

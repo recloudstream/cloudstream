@@ -28,7 +28,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
-import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.ListAdapter
@@ -517,10 +516,11 @@ object UIHelper {
     }
 
     fun Activity.changeStatusBarState(hide: Boolean): Int {
-        try {
+        return try {
             if (hide) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    window.insetsController?.hide(WindowInsets.Type.statusBars())
+                    val controller = WindowCompat.getInsetsController(window, window.decorView)
+                    controller.hide(WindowInsetsCompat.Type.statusBars())
                 } else {
                     @Suppress("DEPRECATION")
                     window.setFlags(
@@ -531,21 +531,18 @@ object UIHelper {
                 0
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    window.insetsController?.show(WindowInsets.Type.statusBars())
+                    val controller = WindowCompat.getInsetsController(window, window.decorView)
+                    controller.show(WindowInsetsCompat.Type.statusBars())
                 } else {
                     @Suppress("DEPRECATION")
                     window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
                 }
 
-                this.getStatusBarHeight()
+                getStatusBarHeight()
             }
         } catch (t: Throwable) {
             logError(t)
-        }
-        return if (hide) {
-            0
-        } else {
-            this.getStatusBarHeight()
+            getStatusBarHeight()
         }
     }
 
@@ -554,8 +551,10 @@ object UIHelper {
     fun Activity.showSystemUI() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val controller = WindowCompat.getInsetsController(window, window.decorView)
-            controller.show(WindowInsetsCompat.Type.systemBars())
-            changeStatusBarState(isLayout(EMULATOR))
+            if (isLayout(EMULATOR)) {
+                controller.show(WindowInsetsCompat.Type.navigationBars())
+                controller.hide(WindowInsetsCompat.Type.statusBars())
+            } else controller.show(WindowInsetsCompat.Type.systemBars())
             return
         }
 

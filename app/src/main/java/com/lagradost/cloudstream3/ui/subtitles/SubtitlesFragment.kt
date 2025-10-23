@@ -42,6 +42,7 @@ import com.lagradost.cloudstream3.ui.player.OutlineSpan
 import com.lagradost.cloudstream3.ui.player.RoundedBackgroundColorSpan
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.Event
@@ -372,11 +373,11 @@ class SubtitlesFragment : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.setWindowAnimations(R.style.DialogFullscreen)
+        dialog?.window?.setWindowAnimations(R.style.DialogFullscreenPlayer)
     }
 
     override fun getTheme(): Int {
-        return R.style.AlertDialogCustomBlack
+        return R.style.DialogFullscreenPlayer
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -391,7 +392,7 @@ class SubtitlesFragment : DialogFragment() {
 
         fixSystemBarsPadding(
             binding?.subsRoot,
-            padBottom = systemBarsAddPadding,
+            padBottom = systemBarsAddPadding || isLandscape(),
             padLeft = systemBarsAddPadding
         )
 
