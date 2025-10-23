@@ -8,9 +8,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 plugins {
     kotlin("multiplatform")
     id("maven-publish")
-    id("com.android.library")
-    id("com.codingfeline.buildkonfig")
-    id("org.jetbrains.dokka")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.buildKonfig)
+    alias(libs.plugins.dokka)
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
@@ -89,7 +89,6 @@ android {
         targetCompatibility = JavaVersion.toVersion(javaTarget.target)
     }
 
-    @Suppress("UnstableApiUsage")
     testOptions {
         targetSdk = libs.versions.targetSdk.get().toInt()
     }
