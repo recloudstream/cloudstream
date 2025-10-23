@@ -95,14 +95,21 @@ class SubtitlesFragment : DialogFragment() {
         val applyStyleEvent = Event<SaveCaptionStyle>()
         private val captionRegex = Regex("""(-\s?|)[\[({][\S\s]*?[])}]\s*""")
 
-        fun setSubtitleViewStyle(view: SubtitleView?, data: SaveCaptionStyle) {
+        fun setSubtitleViewStyle(
+            view: SubtitleView?,
+            data: SaveCaptionStyle,
+            applyElevation: Boolean
+        ) {
             if (view == null) return
             val ctx = view.context ?: return
             val style = ctx.fromSaveToStyle(data)
             view.setStyle(style)
-            view.setPadding(
-                view.paddingLeft, data.elevation.toPx, view.paddingRight, view.paddingBottom
-            )
+
+            if (applyElevation) {
+                view.setPadding(
+                    view.paddingLeft, data.elevation.toPx, view.paddingRight, view.paddingBottom
+                )
+            }
 
             // we default to 25sp, this is needed as RoundedBackgroundColorSpan breaks on override sizes
             val size = data.fixedTextSize ?: 25.0f
@@ -317,7 +324,7 @@ class SubtitlesFragment : DialogFragment() {
     private fun Context.updateState() {
         val text = getString(R.string.subtitles_example_text)
         val fixedText = SpannableString.valueOf(if (state.upperCase) text.uppercase() else text)
-        setSubtitleViewStyle(binding?.subtitleText, state)
+        setSubtitleViewStyle(binding?.subtitleText, state, false)
 
         binding?.subtitleText?.setCues(
             listOf(
@@ -704,11 +711,17 @@ class SubtitlesFragment : DialogFragment() {
             subsAutoSelectLanguage.setFocusableInTv()
             subsAutoSelectLanguage.setOnClickListener { textView ->
                 val languagesTagName =
-                    listOf( Pair(textView.context.getString(R.string.none),
-                                 textView.context.getString(R.string.none))) +
-                    languages
-                        .map { Pair(it.IETF_tag, it.nameNextToFlagEmoji()) }
-                        .sortedBy { it.second.substringAfter("\u00a0").lowercase() } // name ignoring flag emoji
+                    listOf(
+                        Pair(
+                            textView.context.getString(R.string.none),
+                            textView.context.getString(R.string.none)
+                        )
+                    ) +
+                            languages
+                                .map { Pair(it.IETF_tag, it.nameNextToFlagEmoji()) }
+                                .sortedBy {
+                                    it.second.substringAfter("\u00a0").lowercase()
+                                } // name ignoring flag emoji
 
                 val (langTagsIETF, langNames) = languagesTagName.unzip()
 
@@ -734,13 +747,15 @@ class SubtitlesFragment : DialogFragment() {
                 val languagesTagName =
                     languages
                         .map { Pair(it.IETF_tag, it.nameNextToFlagEmoji()) }
-                        .sortedBy { it.second.substringAfter("\u00a0").lowercase() } // name ignoring flag emoji
+                        .sortedBy {
+                            it.second.substringAfter("\u00a0").lowercase()
+                        } // name ignoring flag emoji
 
                 val (langTagsIETF, langNames) = languagesTagName.unzip()
 
                 val selectedLanguages = getDownloadSubsLanguageTagIETF()
-                                        .map { langTagsIETF.indexOf(it) }
-                                        .filter { it >= 0 }
+                    .map { langTagsIETF.indexOf(it) }
+                    .filter { it >= 0 }
 
                 activity?.showMultiDialog(
                     langNames,
