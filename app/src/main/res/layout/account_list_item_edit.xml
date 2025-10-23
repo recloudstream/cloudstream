@@ -6,11 +6,11 @@
     android:id="@+id/card_view"
     android:layout_width="110dp"
     android:layout_height="110dp"
-    android:animateLayoutChanges="true"
-    android:backgroundTint="?attr/primaryGrayBackground"
-    android:foreground="?attr/selectableItemBackground"
     android:layout_margin="10dp"
+    android:animateLayoutChanges="true"
+    android:backgroundTint="@color/primaryGrayBackground"
     android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
     app:cardCornerRadius="@dimen/rounded_image_radius"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintDimensionRatio="1"
@@ -42,6 +42,7 @@
         android:layout_margin="4dp"
         android:src="@drawable/video_locked"
         android:visibility="gone"
+        app:tint="@color/textColor"
         tools:visibility="visible" />
 
     <ImageView
@@ -49,7 +50,8 @@
         android:layout_width="42dp"
         android:layout_height="42dp"
         android:layout_gravity="top|start"
-        android:src="@drawable/ic_baseline_edit_24" />
+        android:src="@drawable/ic_baseline_edit_24"
+        app:tint="@color/textColor" />
 
     <TextView
         android:id="@+id/account_name"
@@ -58,6 +60,8 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:padding="10dp"
-        android:textSize="16sp" />
+        android:textColor="@color/textColor"
+        android:textSize="16sp"
+        tools:text="Hello World!" />
 
 </androidx.cardview.widget.CardView>
