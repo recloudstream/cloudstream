@@ -3,11 +3,11 @@ package com.lagradost.cloudstream3.ui.home
 import android.content.Context
 import android.os.Bundle
 import android.os.Parcelable
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
@@ -23,7 +23,6 @@ import com.google.android.material.chip.ChipGroup
 import com.google.android.material.navigation.NavigationBarItemView
 import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.CommonActivity.activity
-import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainActivity
@@ -35,13 +34,11 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.debugException
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
-import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.ViewHolderState
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountEditDialog
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
 import com.lagradost.cloudstream3.ui.account.AccountViewModel
-import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.selectHomepage
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
@@ -577,6 +574,13 @@ class HomeParentItemAdapterPreview(
             }
 
             (binding as? FragmentHomeHeadBinding)?.apply {
+                val searchExitIcon =
+                    homeSearch.findViewById<ImageView?>(androidx.appcompat.R.id.search_close_btn)
+                // Set the color for the search exit icon to the correct theme text color
+                val searchExitIconColor = TypedValue()
+                activity?.theme?.resolveAttribute(R.attr.textColor, searchExitIconColor, true)
+                searchExitIcon?.setColorFilter(searchExitIconColor.data)
+
                 homeSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String): Boolean {
                         viewModel.queryTextSubmit(query)

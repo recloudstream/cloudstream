@@ -285,7 +285,7 @@ class SearchFragment : Fragment() {
         // Set the color for the search exit icon to the correct theme text color
         val searchExitIconColor = TypedValue()
 
-        activity?.theme?.resolveAttribute(android.R.attr.textColor, searchExitIconColor, true)
+        activity?.theme?.resolveAttribute(R.attr.textColor, searchExitIconColor, true)
         searchExitIcon?.setColorFilter(searchExitIconColor.data)
 
         selectedApis = DataStoreHelper.searchPreferenceProviders.toMutableSet()

@@ -168,7 +168,7 @@ class LibraryFragment : Fragment() {
             binding?.mainSearch?.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
         val searchExitIconColor = TypedValue()
 
-        activity?.theme?.resolveAttribute(android.R.attr.textColor, searchExitIconColor, true)
+        activity?.theme?.resolveAttribute(R.attr.textColor, searchExitIconColor, true)
         searchExitIcon?.setColorFilter(searchExitIconColor.data)
 
         val searchCallback = Runnable {
