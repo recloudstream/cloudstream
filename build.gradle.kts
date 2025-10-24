@@ -1,28 +1,14 @@
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath(libs.gradle)
-        classpath(libs.jetbrains.kotlin.gradle.plugin)
-        classpath(libs.dokka.gradle.plugin)
-        // Universal build config
-        classpath(libs.buildkonfig.gradle.plugin)
-    }
+plugins {
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.buildkonfig.gradle.plugin) apply false // Universal build config
+    alias(libs.plugins.dokka.gradle.plugin) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.kotlin.multiplatform) apply false
 }
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        mavenLocal()
-        maven("https://jitpack.io")
-    }
-
-    // https://docs.gradle.org/current/userguide/upgrading_major_version_9.html#test_task_fails_when_no_tests_are_discovered
-    tasks.withType<AbstractTestTask>().configureEach {
-        failOnNoDiscoveredTests = false
-    }
+// https://docs.gradle.org/current/userguide/upgrading_major_version_9.html#test_task_fails_when_no_tests_are_discovered
+tasks.withType<AbstractTestTask>().configureEach {
+    failOnNoDiscoveredTests = false
 }
