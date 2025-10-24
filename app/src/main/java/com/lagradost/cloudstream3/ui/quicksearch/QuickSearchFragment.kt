@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -266,18 +265,6 @@ class QuickSearchFragment : Fragment() {
 
         val searchExitIcon =
             binding?.quickSearch?.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
-
-        //val searchMagIcon =
-        //    binding?.quickSearch?.findViewById<ImageView>(androidx.appcompat.R.id.search_mag_icon)
-
-        // searchMagIcon?.scaleX = 0.65f
-        // searchMagIcon?.scaleY = 0.65f
-
-        // Set the color for the search exit icon to the correct theme text color
-        val searchExitIconColor = TypedValue()
-
-        activity?.theme?.resolveAttribute(R.attr.textColor, searchExitIconColor, true)
-        searchExitIcon?.setColorFilter(searchExitIconColor.data)
 
         binding?.quickSearch?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {

@@ -7,14 +7,12 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.FOCUS_AFTER_DESCENDANTS
 import android.view.ViewGroup.FOCUS_BLOCK_DESCENDANTS
 import android.view.animation.AlphaAnimation
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.StringRes
@@ -162,14 +160,6 @@ class LibraryFragment : Fragment() {
                 binding?.searchBar?.setExpanded(true)
             }
         }
-
-        // Set the color for the search exit icon to the correct theme text color
-        val searchExitIcon =
-            binding?.mainSearch?.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
-        val searchExitIconColor = TypedValue()
-
-        activity?.theme?.resolveAttribute(R.attr.textColor, searchExitIconColor, true)
-        searchExitIcon?.setColorFilter(searchExitIconColor.data)
 
         val searchCallback = Runnable {
             val newText = binding?.mainSearch?.query?.toString() ?: return@Runnable
