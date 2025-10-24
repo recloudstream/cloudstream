@@ -515,8 +515,8 @@ object UIHelper {
         return settingsManager.getBoolean(getString(R.string.bottom_title_key), true)
     }
 
-    fun Activity.changeStatusBarState(hide: Boolean): Int {
-        return try {
+    fun Activity.changeStatusBarState(hide: Boolean) {
+        try {
             if (hide) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     val controller = WindowCompat.getInsetsController(window, window.decorView)
@@ -528,7 +528,6 @@ object UIHelper {
                         WindowManager.LayoutParams.FLAG_FULLSCREEN
                     )
                 }
-                0
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     val controller = WindowCompat.getInsetsController(window, window.decorView)
@@ -537,12 +536,9 @@ object UIHelper {
                     @Suppress("DEPRECATION")
                     window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
                 }
-
-                getStatusBarHeight()
             }
         } catch (t: Throwable) {
             logError(t)
-            getStatusBarHeight()
         }
     }
 
