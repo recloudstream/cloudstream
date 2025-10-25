@@ -251,6 +251,7 @@ class SearchFragment : Fragment() {
                 }
 
             searchRoot.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)?.tag = "tv_no_focus_tag"
+            searchAutofitResults.setRecycledViewPool(SearchAdapter.sharedPool)
             searchAutofitResults.adapter = adapter
             searchLoadingBar.alpha = 0f
         }

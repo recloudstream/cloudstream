@@ -194,7 +194,7 @@ class HomeFragment : Fragment() {
 
             // Span settings
             binding.homeExpandedRecycler.spanCount = currentSpan
-
+            binding.homeExpandedRecycler.setRecycledViewPool(SearchAdapter.sharedPool)
             binding.homeExpandedRecycler.adapter =
                 SearchAdapter(item.list.toMutableList(), binding.homeExpandedRecycler) { callback ->
                     handleSearchClickCallback(callback)

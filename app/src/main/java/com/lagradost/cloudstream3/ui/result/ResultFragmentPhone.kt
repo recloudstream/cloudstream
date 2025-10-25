@@ -406,6 +406,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             }.apply {
                 this.orientation = RecyclerView.HORIZONTAL
             }*/
+            resultCastItems.setRecycledViewPool(ActorAdaptor.sharedPool)
             resultCastItems.adapter = ActorAdaptor()
             resultEpisodes.setRecycledViewPool(EpisodeAdapter.sharedPool)
             resultEpisodes.adapter =
@@ -569,6 +570,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         recommendationBinding?.apply {
             resultRecommendationsList.apply {
                 spanCount = 3
+                setRecycledViewPool(SearchAdapter.sharedPool)
                 adapter =
                     SearchAdapter(
                         ArrayList(),
