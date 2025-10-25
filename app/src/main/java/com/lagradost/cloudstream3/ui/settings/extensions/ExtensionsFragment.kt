@@ -162,7 +162,7 @@ class ExtensionsFragment : Fragment() {
         observe(extensionViewModel.repositories) {
             binding?.repoRecyclerView?.isVisible = it.isNotEmpty()
             binding?.blankRepoScreen?.isVisible = it.isEmpty()
-            (binding?.repoRecyclerView?.adapter as? RepoAdapter)?.updateList(it)
+            (binding?.repoRecyclerView?.adapter as? RepoAdapter)?.submitList(it.toList())
         }
 
         /*binding?.repoRecyclerView?.apply {

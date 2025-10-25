@@ -25,7 +25,6 @@ import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRecyclerScrollable
-import com.lagradost.cloudstream3.utils.AppContextUtils.setMaxViewPoolSize
 
 class LoadClickCallback(
     val action: Int = 0,
@@ -71,7 +70,7 @@ open class ParentItemAdapter(
         }
     }
 
-    override fun submitList(list: List<HomeViewModel.ExpandableHomepageList>?) {
+    override fun submitList(list: Collection<HomeViewModel.ExpandableHomepageList>?) {
         super.submitList(list?.sortedBy { it.list.list.isEmpty() })
     }
 
