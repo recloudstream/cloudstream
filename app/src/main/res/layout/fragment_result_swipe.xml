@@ -243,6 +243,25 @@
                     style="@style/ExtendedFloatingActionButton"
                     tools:ignore="ContentDescription" />
 
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/reviews_fab"
+                android:visibility="gone"
+                android:alpha="0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                app:elevation="0dp"
+                android:textStyle="bold"
+
+                app:backgroundTint="?attr/primaryBlackBackground"
+                app:tint="?attr/textColor"
+                android:textColor="?attr/textColor"
+                app:iconTint="?attr/textColor"
+                app:icon="@drawable/ic_baseline_arrow_upward_24"
+
+                android:contentDescription="@string/reviews_to_top"
+                android:layout_margin="16dp" />
+
             <fragment
                     app:customCastBackgroundColor="?attr/primaryBlackBackground"
                     app:castControlButtons="@array/cast_mini_controller_control_buttons"

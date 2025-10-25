@@ -1,8 +1,17 @@
 package com.lagradost.cloudstream3.utils
 
-import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.AnimeLoadResponse
+import com.lagradost.cloudstream3.LiveStreamLoadResponse
+import com.lagradost.cloudstream3.MainAPI
+import com.lagradost.cloudstream3.MainPageRequest
+import com.lagradost.cloudstream3.MovieLoadResponse
+import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.TvSeriesLoadResponse
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.mvvm.logError
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.junit.Assert
 import kotlin.random.Random
 
@@ -84,18 +93,62 @@ object TestingUtils {
                 }
                 val homePageList = homepage?.items?.flatMap { it.list } ?: emptyList()
                 return TestResultList(homePageList)
-            } catch (e: Throwable) {
-                when (e) {
+            } catch (t: Throwable) {
+                when (t) {
                     is NotImplementedError -> {
                         Assert.fail("Provider marked as hasMainPage, while in reality is has not been implemented")
                     }
 
                     is CancellationException -> {
-                        throw e
+                        throw t
                     }
 
                     else -> {
-                        e.message?.let { logger.warn("Exception thrown when loading homepage: \"$it\"") }
+                        t.message?.let { logger.warn("Exception thrown when loading homepage: \"$it\"") }
+                    }
+                }
+            }
+        }
+        return TestResult.Pass
+    }
+
+    @Throws(AssertionError::class, CancellationException::class)
+    private suspend fun testReviews(
+        api: MainAPI,
+        result: SearchResponse,
+        logger: Logger
+    ): TestResult {
+        if (api.hasReviews) {
+            try {
+                val loadResponse = api.load(result.url)
+
+                if (loadResponse == null) {
+                    logger.error("Returned null loadResponse on ${result.url} on ${api.name}")
+                    return TestResult.Fail
+                }
+
+                val reviews = api.loadReviews(loadResponse.reviewsData ?: loadResponse.url, 1)
+
+                if (reviews.isEmpty()) {
+                    logger.log("Api ${api.name} returned an empty reviews list on ${result.url}")
+                } else logger.log("Api ${api.name} loaded ${reviews.count()} reviews successfully.")
+
+                // We don't need to fail if no reviews are actually
+                // returned since some may just not have any,
+                // but we do at least log above.
+                return TestResult.Pass
+            } catch (t: Throwable) {
+                when (t) {
+                    is NotImplementedError -> {
+                        Assert.fail("Provider marked as hasReviews, while in reality is has not been implemented")
+                    }
+
+                    is CancellationException -> {
+                        throw t
+                    }
+
+                    else -> {
+                        t.message?.let { logger.warn("Exception thrown when loading reviews: \"$it\"") }
                     }
                 }
             }
@@ -113,13 +166,13 @@ object TestingUtils {
             try {
                 logger.log("Searching for: $query")
                 api.search(query, 1)?.items?.takeIf { it.isNotEmpty() }
-            } catch (e: Throwable) {
-                if (e is NotImplementedError) {
+            } catch (t: Throwable) {
+                if (t is NotImplementedError) {
                     Assert.fail("Provider has not implemented search()")
-                } else if (e is CancellationException) {
-                    throw e
+                } else if (t is CancellationException) {
+                    throw t
                 }
-                logError(e)
+                logError(t)
                 null
             }
         }
@@ -214,11 +267,11 @@ object TestingUtils {
 //            }
 
 //            return TestResult(validResults)
-        } catch (e: Throwable) {
-            if (e is NotImplementedError) {
+        } catch (t: Throwable) {
+            if (t is NotImplementedError) {
                 Assert.fail("Provider has not implemented load()")
             }
-            throw e
+            throw t
         }
     }
 
@@ -247,15 +300,15 @@ object TestingUtils {
             } else {
                 Assert.fail("Api ${api.name} returns false on loadLinks() with $linksLoaded links loaded")
             }
-        } catch (e: Throwable) {
-            when (e) {
+        } catch (t: Throwable) {
+            when (t) {
                 is NotImplementedError -> {
                     Assert.fail("Provider has not implemented loadLinks()")
                 }
 
                 else -> {
                     logger.error("Failed link loading on ${api.name} using data: $url")
-                    throw e
+                    throw t
                 }
             }
         }
@@ -307,6 +360,10 @@ object TestingUtils {
                         }
                     }
 
+                    // Test Reviews
+                    val reviewsTest = testReviews(api, searchResults.results.first(), logger)
+                    Assert.assertTrue("Reviews failed to load", reviewsTest.success)
+
                     if (success) {
                         logger.log("Success ${api.name}")
                         TestResultProvider(true, logger.getRawLog(), null)
@@ -314,8 +371,8 @@ object TestingUtils {
                         logger.error("Link loading failed")
                         TestResultProvider(false, logger.getRawLog(), null)
                     }
-                } catch (e: Throwable) {
-                    TestResultProvider(false, logger.getRawLog(), e)
+                } catch (t: Throwable) {
+                    TestResultProvider(false, logger.getRawLog(), t)
                 }
                 callback.invoke(api, result)
             }
