@@ -407,7 +407,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 this.orientation = RecyclerView.HORIZONTAL
             }*/
             resultCastItems.adapter = ActorAdaptor()
-
+            resultEpisodes.setRecycledViewPool(EpisodeAdapter.sharedPool)
             resultEpisodes.adapter =
                 EpisodeAdapter(
                     api?.hasDownloadSupport == true,

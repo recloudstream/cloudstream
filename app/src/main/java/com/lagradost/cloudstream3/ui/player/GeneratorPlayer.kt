@@ -1989,6 +1989,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     override fun showEpisodesOverlay() {
         try {
             playerBinding?.apply {
+                playerEpisodeList.setRecycledViewPool(EpisodeAdapter.sharedPool)
                 playerEpisodeList.adapter = EpisodeAdapter(
                     false,
                     { episodeClick ->

@@ -8,6 +8,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import coil3.load
 import com.lagradost.cloudstream3.R
@@ -168,6 +169,11 @@ open class HomeChildItemAdapter(
     }
 
     companion object {
+        // The vast majority of the lag comes from creating the view
+        // This simply shares the views between all HomeChildItemAdapter
+        val sharedPool =
+            RecyclerView.RecycledViewPool().apply { this.setMaxRecycledViews(CONTENT, 20) }
+
         var minPosterSize: Int = 0
         var maxPosterSize: Int = 0
 
