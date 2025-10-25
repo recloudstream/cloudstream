@@ -4,15 +4,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewbinding.ViewBinding
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.databinding.SearchResultGridBinding
 import com.lagradost.cloudstream3.databinding.SearchResultGridExpandedBinding
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
+import com.lagradost.cloudstream3.ui.BaseDiffCallback
+import com.lagradost.cloudstream3.ui.NoStateAdapter
+import com.lagradost.cloudstream3.ui.ViewHolderState
 import com.lagradost.cloudstream3.utils.UIHelper.isBottomLayout
-import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import kotlin.math.roundToInt
 
 /** Click */
@@ -31,10 +31,15 @@ class SearchClickCallback(
 )
 
 class SearchAdapter(
-    private var cardList: List<SearchResponse>,
     private val resView: AutofitRecyclerView,
     private val clickCallback: (SearchClickCallback) -> Unit,
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : NoStateAdapter<SearchResponse>(diffCallback = BaseDiffCallback(itemSame = { a, b ->
+    if (a.id != null || b.id != null) {
+        a.id == b.id
+    } else {
+        a.name == b.name
+    }
+})) {
     companion object {
         val sharedPool =
             RecyclerView.RecycledViewPool().apply { this.setMaxRecycledViews(0, 10) }
@@ -42,7 +47,9 @@ class SearchAdapter(
 
     var hasNext: Boolean = false
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    private val coverHeight: Int get() = (resView.itemWidth / 0.68).roundToInt()
+
+    override fun onCreateContent(parent: ViewGroup): ViewHolderState<Any> {
         val inflater = LayoutInflater.from(parent.context)
 
         val layout =
@@ -54,81 +61,36 @@ class SearchAdapter(
                 inflater,
                 parent,
                 false
-            ) //R.layout.search_result_grid_expanded else R.layout.search_result_grid
-
-
-
-        return CardViewHolder(
-            layout,
-            clickCallback,
-            resView
-        )
+            )
+        return ViewHolderState(layout)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (holder) {
-            is CardViewHolder -> {
-                holder.bind(cardList[position], position)
+    override fun onClearView(holder: ViewHolderState<Any>) {
+        clearImage(
+            when (val binding = holder.view) {
+                is SearchResultGridExpandedBinding -> binding.imageView
+                is SearchResultGridBinding -> binding.imageView
+                else -> null
             }
-        }
-    }
-
-    override fun getItemCount(): Int {
-        return cardList.size
-    }
-
-    fun updateList(newList: List<SearchResponse>) {
-        val diffResult = DiffUtil.calculateDiff(
-            SearchResponseDiffCallback(cardList, newList)
         )
-        cardList = newList
-        diffResult.dispatchUpdatesTo(this)
     }
 
-    class CardViewHolder(
-        val binding: ViewBinding,
-        private val clickCallback: (SearchClickCallback) -> Unit,
-        resView: AutofitRecyclerView
-    ) :
-        RecyclerView.ViewHolder(binding.root) {
-
-        private val compactView = false//itemView.context.getGridIsCompact()
-        private val coverHeight: Int =
-            if (compactView) 80.toPx else (resView.itemWidth / 0.68).roundToInt()
-
-        private val cardView = when (binding) {
+    override fun onBindContent(holder: ViewHolderState<Any>, item: SearchResponse, position: Int) {
+        val imageView = when (val binding = holder.view) {
             is SearchResultGridExpandedBinding -> binding.imageView
             is SearchResultGridBinding -> binding.imageView
             else -> null
         }
 
-        fun bind(card: SearchResponse, position: Int) {
-            if (!compactView) {
-                cardView?.apply {
-                    layoutParams = FrameLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        coverHeight
-                    )
-                }
+        if (imageView != null) {
+            val params = FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                coverHeight
+            )
+            if (imageView.layoutParams.width != params.width || imageView.layoutParams.height != params.height) {
+                imageView.layoutParams = params
             }
-
-            SearchResultBuilder.bind(clickCallback, card, position, itemView)
         }
+        SearchResultBuilder.bind(clickCallback, item, position, holder.view.root)
     }
-}
-
-class SearchResponseDiffCallback(
-    private val oldList: List<SearchResponse>,
-    private val newList: List<SearchResponse>
-) :
-    DiffUtil.Callback() {
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-        oldList[oldItemPosition].name == newList[newItemPosition].name
-
-    override fun getOldListSize() = oldList.size
-
-    override fun getNewListSize() = newList.size
-
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-        oldList[oldItemPosition] == newList[newItemPosition]
 }

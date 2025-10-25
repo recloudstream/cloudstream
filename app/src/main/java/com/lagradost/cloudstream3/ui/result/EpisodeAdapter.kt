@@ -10,7 +10,7 @@ import androidx.core.view.setPadding
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import coil3.load
+import coil3.dispose
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
@@ -263,7 +263,7 @@ class EpisodeAdapter(
                     episodePoster.loadImage(card.poster)
                 } else {
                     // Clear the image
-                    episodePoster.load(null)
+                    episodePoster.dispose()
                 }
                 episodePoster.isVisible = posterVisible
 

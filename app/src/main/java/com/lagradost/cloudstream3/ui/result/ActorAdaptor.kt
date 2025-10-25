@@ -20,10 +20,9 @@ import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 
 class ActorAdaptor(
-    fragment: Fragment,
     private var nextFocusUpId: Int? = null,
     private val focusCallback: (View?) -> Unit = {}
-) : NoStateAdapter<ActorData>(fragment, diffCallback = BaseDiffCallback(itemSame = { a, b ->
+) : NoStateAdapter<ActorData>(diffCallback = BaseDiffCallback(itemSame = { a, b ->
     a.actor.name == b.actor.name
 })) {
     companion object {

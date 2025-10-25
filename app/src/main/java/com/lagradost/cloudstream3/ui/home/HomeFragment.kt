@@ -198,13 +198,14 @@ class HomeFragment : Fragment() {
             binding.homeExpandedRecycler.spanCount = currentSpan
             binding.homeExpandedRecycler.setRecycledViewPool(SearchAdapter.sharedPool)
             binding.homeExpandedRecycler.adapter =
-                SearchAdapter(item.list.toMutableList(), binding.homeExpandedRecycler) { callback ->
+                SearchAdapter(binding.homeExpandedRecycler) { callback ->
                     handleSearchClickCallback(callback)
                     if (callback.action == SEARCH_ACTION_LOAD || callback.action == SEARCH_ACTION_PLAY_FILE) {
                         bottomSheetDialogBuilder.ownHide() // we hide here because we want to resume it later
                         //bottomSheetDialogBuilder.dismissSafe(this)
                     }
                 }.apply {
+                    submitList(item.list)
                     hasNext = expand.hasNext
                 }
 
@@ -228,7 +229,7 @@ class HomeFragment : Fragment() {
                             expandCallback?.invoke(name)?.let { newExpand ->
                                 (recyclerView.adapter as? SearchAdapter?)?.apply {
                                     hasNext = newExpand.hasNext
-                                    updateList(newExpand.list.list)
+                                    submitList(newExpand.list.list)
                                 }
                             }
                         }
@@ -616,14 +617,14 @@ class HomeFragment : Fragment() {
 
     var lastSavedHomepage: String? = null
 
-    fun saveHomepageToTV(page :  Map<String, HomeViewModel.ExpandableHomepageList>) {
+    fun saveHomepageToTV(page: Map<String, HomeViewModel.ExpandableHomepageList>) {
         // No need to update for phone
-        if(isLayout(PHONE)) {
+        if (isLayout(PHONE)) {
             return
         }
         val (name, data) = page.entries.firstOrNull() ?: return
         // Modifying homepage is an expensive operation, and therefore we avoid it at all cost
-        if(name == lastSavedHomepage) {
+        if (name == lastSavedHomepage) {
             return
         }
         Log.i(TAG, "Adding programs $name to TV")
@@ -695,7 +696,7 @@ class HomeFragment : Fragment() {
 
             homeMasterRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if(isLayout(PHONE)) {
+                    if (isLayout(PHONE)) {
                         // Fab is only relevant to Phone
                         if (dy > 0) { //check for scroll down
                             homeApiFab.shrink() // hide

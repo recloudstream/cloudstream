@@ -110,7 +110,7 @@ class HomeParentItemAdapterPreview(
     }
 
     override fun onViewDetachedFromWindow(holder: ViewHolderState<Bundle>) {
-        when(holder) {
+        when (holder) {
             is HeaderViewHolder -> {
                 holder.onViewDetachedFromWindow()
             }
@@ -118,7 +118,7 @@ class HomeParentItemAdapterPreview(
     }
 
     override fun onViewAttachedToWindow(holder: ViewHolderState<Bundle>) {
-        when(holder) {
+        when (holder) {
             is HeaderViewHolder -> {
                 holder.onViewAttachedToWindow()
             }
@@ -155,7 +155,7 @@ class HomeParentItemAdapterPreview(
             }
         }
 
-        val previewAdapter = HomeScrollAdapter(fragment = fragment) { view, position, item ->
+        val previewAdapter = HomeScrollAdapter { view, position, item ->
             viewModel.click(
                 LoadClickCallback(0, view, position, item)
             )

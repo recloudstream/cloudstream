@@ -154,7 +154,7 @@ class ResultFragmentTv : Fragment() {
             resultRecommendationsList.isGone = isInvalid
             resultRecommendationsHolder.isGone = isInvalid
             val matchAgainst = validApiName ?: rec?.firstOrNull()?.apiName
-            (resultRecommendationsList.adapter as? SearchAdapter)?.updateList(rec?.filter { it.apiName == matchAgainst }
+            (resultRecommendationsList.adapter as? SearchAdapter)?.submitList(rec?.filter { it.apiName == matchAgainst }
                 ?: emptyList())
 
             rec?.map { it.apiName }?.distinct()?.let { apiNames ->
@@ -417,7 +417,6 @@ class ResultFragmentTv : Fragment() {
             resultRecommendationsList.setRecycledViewPool(SearchAdapter.sharedPool)
             resultRecommendationsList.adapter =
                 SearchAdapter(
-                    ArrayList(),
                     resultRecommendationsList,
                 ) { callback ->
                     if (callback.action == SEARCH_ACTION_FOCUSED)
@@ -469,7 +468,7 @@ class ResultFragmentTv : Fragment() {
             }
 
             resultCastItems.setRecycledViewPool(ActorAdaptor.sharedPool)
-            resultCastItems.adapter = ActorAdaptor(this@ResultFragmentTv, aboveCast?.id) {
+            resultCastItems.adapter = ActorAdaptor(aboveCast?.id) {
                 toggleEpisodes(false)
             }
 
