@@ -57,6 +57,8 @@ abstract class BaseAdapter<
     open val footers: Int = 0
     open val headers: Int = 0
 
+    val immutableCurrentList: List<T> get() = mDiffer.currentList
+
     fun getItem(position: Int): T {
         return mDiffer.currentList[position]
     }

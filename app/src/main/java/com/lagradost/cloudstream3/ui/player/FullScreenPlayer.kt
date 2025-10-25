@@ -601,10 +601,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
             val initialSubtitlePosition = (player.getPosition() ?: 0) - currentOffset
             subtitleAdapter =
-                SubtitleOffsetItemAdapter(initialSubtitlePosition, subtitles) { subtitleCue ->
+                SubtitleOffsetItemAdapter(initialSubtitlePosition) { subtitleCue ->
                     val playerPosition = player.getPosition() ?: 0
                     subtitleOffsetInput.text = Editable.Factory.getInstance()
                         ?.newEditable((playerPosition - subtitleCue.startTimeMs).toString())
+                }.apply {
+                    submitList(subtitles)
                 }
 
             subtitleOffsetRecyclerview.adapter = subtitleAdapter
@@ -663,7 +665,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         val speed = player.getPlaybackSpeed()
         binding.speedText.text = "%.2fx".format(speed).replace(".0x", "x")
         // Android crashes if you don't round to an exact step size
-        binding.speedBar.value = (speed.coerceIn(0.1f, 2.0f) / binding.speedBar.stepSize).roundToInt().toFloat() * binding.speedBar.stepSize
+        binding.speedBar.value =
+            (speed.coerceIn(0.1f, 2.0f) / binding.speedBar.stepSize).roundToInt()
+                .toFloat() * binding.speedBar.stepSize
     }
 
     private fun showSpeedDialog() {
@@ -1862,7 +1866,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             playerBinding?.apply {
                 playerSpeedBtt.isVisible = playBackSpeedEnabled
                 playerResizeBtt.isVisible = playerResizeEnabled
-                playerRotateBtt.isVisible = if(isLayout(TV or EMULATOR)) false else playerRotateEnabled
+                playerRotateBtt.isVisible =
+                    if (isLayout(TV or EMULATOR)) false else playerRotateEnabled
                 if (hideControlsNames) {
                     hideControlsNames()
                 }
