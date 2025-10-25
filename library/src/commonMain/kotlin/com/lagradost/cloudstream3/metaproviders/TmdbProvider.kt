@@ -1,18 +1,52 @@
 package com.lagradost.cloudstream3.metaproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.Actor
+import com.lagradost.cloudstream3.Episode
+import com.lagradost.cloudstream3.ErrorLoadingException
+import com.lagradost.cloudstream3.HomePageList
+import com.lagradost.cloudstream3.HomePageResponse
+import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.LoadResponse.Companion.addActors
 import com.lagradost.cloudstream3.LoadResponse.Companion.addImdbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
+import com.lagradost.cloudstream3.MainAPI
+import com.lagradost.cloudstream3.MainPageRequest
+import com.lagradost.cloudstream3.MovieLoadResponse
+import com.lagradost.cloudstream3.MovieSearchResponse
+import com.lagradost.cloudstream3.ProviderType
+import com.lagradost.cloudstream3.Score
+import com.lagradost.cloudstream3.SearchResponseList
+import com.lagradost.cloudstream3.TvSeriesLoadResponse
+import com.lagradost.cloudstream3.TvSeriesSearchResponse
+import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.newEpisode
+import com.lagradost.cloudstream3.newHomePageResponse
+import com.lagradost.cloudstream3.newMovieLoadResponse
+import com.lagradost.cloudstream3.newMovieSearchResponse
+import com.lagradost.cloudstream3.newTvSeriesLoadResponse
+import com.lagradost.cloudstream3.newTvSeriesSearchResponse
+import com.lagradost.cloudstream3.runAllAsync
+import com.lagradost.cloudstream3.toNewSearchResponseList
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.uwetrottmann.tmdb2.Tmdb
-import com.uwetrottmann.tmdb2.entities.*
+import com.uwetrottmann.tmdb2.entities.AppendToResponse
+import com.uwetrottmann.tmdb2.entities.BaseMovie
+import com.uwetrottmann.tmdb2.entities.BaseTvShow
+import com.uwetrottmann.tmdb2.entities.CastMember
+import com.uwetrottmann.tmdb2.entities.ContentRating
+import com.uwetrottmann.tmdb2.entities.Movie
+import com.uwetrottmann.tmdb2.entities.ReleaseDate
+import com.uwetrottmann.tmdb2.entities.ReleaseDatesResult
+import com.uwetrottmann.tmdb2.entities.TvSeason
+import com.uwetrottmann.tmdb2.entities.TvShow
+import com.uwetrottmann.tmdb2.entities.Videos
 import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem
 import com.uwetrottmann.tmdb2.enumerations.VideoType
 import retrofit2.awaitResponse
-import java.util.*
+import retrofit2.Response
+import java.util.Calendar
 
 /**
  * episode and season starting from 1
@@ -56,38 +90,39 @@ open class TmdbProvider : MainAPI() {
     }
 
     private fun BaseTvShow.toSearchResponse(): TvSeriesSearchResponse {
-        @Suppress("DEPRECATION")
-        return TvSeriesSearchResponse(
-            this.name ?: this.original_name,
-            getUrl(id, true),
-            apiName,
-            TvType.TvSeries,
-            getImageUrl(this.poster_path),
-            this.first_air_date?.let {
+        return newTvSeriesSearchResponse(
+            name = this.name ?: this.original_name,
+            url = getUrl(id, true),
+            type = TvType.TvSeries,
+            fix = false
+        ) {
+            this.id = this@toSearchResponse.id
+            this.posterUrl = getImageUrl(poster_path)
+            this.score = Score.from10(vote_average)
+            this.year = first_air_date?.let {
                 Calendar.getInstance().apply {
                     time = it
                 }.get(Calendar.YEAR)
-            },
-            null,
-            this.id
-        )
+            }
+        }
     }
 
     private fun BaseMovie.toSearchResponse(): MovieSearchResponse {
-        @Suppress("DEPRECATION")
-        return MovieSearchResponse(
-            this.title ?: this.original_title,
-            getUrl(id, false),
-            apiName,
-            TvType.TvSeries,
-            getImageUrl(this.poster_path),
-            this.release_date?.let {
+        return newMovieSearchResponse(
+            name = this.title ?: this.original_title,
+            url = getUrl(id, false),
+            type = TvType.Movie,
+            fix = false
+        ) {
+            this.id = this@toSearchResponse.id
+            this.posterUrl = getImageUrl(poster_path)
+            this.score = Score.from10(vote_average)
+            this.year = release_date?.let {
                 Calendar.getInstance().apply {
                     time = it
                 }.get(Calendar.YEAR)
-            },
-            this.id,
-        )
+            }
+        }
     }
 
     private fun List<CastMember?>?.toActors(): List<Pair<Actor, String?>>? {
@@ -100,41 +135,39 @@ open class TmdbProvider : MainAPI() {
     }
 
     private suspend fun TvShow.toLoadResponse(): TvSeriesLoadResponse {
-        val episodes = this.seasons?.filter { !disableSeasonZero || (it.season_number ?: 0) != 0 }
-            ?.mapNotNull { season ->
-                season.episodes?.map { episode ->
-                    @Suppress("DEPRECATION")
-                    Episode(
-                        TmdbLink(
-                            episode.external_ids?.imdb_id ?: this.external_ids?.imdb_id,
-                            this.id,
-                            episode.episode_number,
-                            episode.season_number,
-                            this.name ?: this.original_name,
-                        ).toJson(),
-                        episode.name,
-                        episode.season_number,
+        val tvSeasonsService = tmdb.tvSeasonsService()
+        val episodes = mutableListOf<Episode>()
+
+        val validSeasons = this.seasons?.filter { !disableSeasonZero || (it.season_number ?: 0) != 0 } ?: emptyList()
+        for (season in validSeasons) {
+            val seasonNumber = season.season_number ?: continue
+
+            val response: Response<TvSeason> = tmdb.tvSeasonsService()
+                .season(this.id, seasonNumber, "external_ids,images,episodes")
+                .awaitResponse()
+
+            val fullSeason = response.body() ?: continue
+
+            fullSeason.episodes?.forEach { episode ->
+                episodes += newEpisode(
+                    TmdbLink(
+                        episode.external_ids?.imdb_id ?: this.external_ids?.imdb_id,
+                        this.id,
                         episode.episode_number,
-                        getImageUrl(episode.still_path),
-                        episode.rating,
-                        episode.overview,
-                        episode.air_date?.time,
-                    )
-                } ?: (1..(season.episode_count ?: 1)).map { episodeNum ->
-                    @Suppress("DEPRECATION")
-                    Episode(
-                        episode = episodeNum,
-                        data = TmdbLink(
-                            this.external_ids?.imdb_id,
-                            this.id,
-                            episodeNum,
-                            season.season_number,
-                            this.name ?: this.original_name,
-                        ).toJson(),
-                        season = season.season_number
-                    )
+                        episode.season_number,
+                        this.name ?: this.original_name
+                    ).toJson()
+                ) {
+                    this.name = episode.name
+                    this.season = episode.season_number
+                    this.episode = episode.episode_number
+                    this.score = Score.from10(episode.vote_average)
+                    this.description = episode.overview
+                    this.date = episode.air_date?.time
+                    this.posterUrl = getImageUrl(episode.still_path)
                 }
-            }?.flatten() ?: listOf()
+            }
+        }
 
         return newTvSeriesLoadResponse(
             this.name ?: this.original_name,
@@ -150,16 +183,13 @@ open class TmdbProvider : MainAPI() {
             }
             plot = overview
             addImdbId(external_ids?.imdb_id)
-
             tags = genres?.mapNotNull { it.name }
             duration = episode_run_time?.average()?.toInt()
-            rating = this@toLoadResponse.rating
+            score = Score.from10(vote_average)
             addTrailer(videos.toTrailers())
-
             recommendations = (this@toLoadResponse.recommendations
                 ?: this@toLoadResponse.similar)?.results?.map { it.toSearchResponse() }
             addActors(credits?.cast?.toList().toActors())
-
             contentRating = fetchContentRating(id, "US")
         }
     }
@@ -197,7 +227,7 @@ open class TmdbProvider : MainAPI() {
             addImdbId(external_ids?.imdb_id)
             tags = genres?.mapNotNull { it.name }
             duration = runtime
-            rating = this@toLoadResponse.rating
+            score = Score.from10(vote_average)
             addTrailer(videos.toTrailers())
 
             reviewsData = tmdb.moviesService().reviews(id, 1, "en-US").awaitResponse().body()?.results?.toJson()
@@ -220,15 +250,15 @@ open class TmdbProvider : MainAPI() {
         } ?: emptyList()
     }
 
-    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
 
         // SAME AS DISCOVER IT SEEMS
-//        val popularSeries = tmdb.tvService().popular(1, "en-US").execute().body()?.results?.map {
+//        val popularSeries = tmdb.tvService().popular(page, "en-US").execute().body()?.results?.map {
 //            it.toSearchResponse()
 //        } ?: listOf()
 //
 //        val popularMovies =
-//            tmdb.moviesService().popular(1, "en-US", "840").execute().body()?.results?.map {
+//            tmdb.moviesService().popular(page, "en-US", "840").execute().body()?.results?.map {
 //                it.toSearchResponse()
 //            } ?: listOf()
 
@@ -236,32 +266,31 @@ open class TmdbProvider : MainAPI() {
         var discoverSeries: List<TvSeriesSearchResponse> = listOf()
         var topMovies: List<MovieSearchResponse> = listOf()
         var topSeries: List<TvSeriesSearchResponse> = listOf()
-        argamap(
+        runAllAsync(
             {
-                discoverMovies = tmdb.discoverMovie().build().awaitResponse().body()?.results?.map {
+                discoverMovies = tmdb.discoverMovie().page(page).build().awaitResponse().body()?.results?.map {
                     it.toSearchResponse()
                 } ?: listOf()
             }, {
-                discoverSeries = tmdb.discoverTv().build().awaitResponse().body()?.results?.map {
+                discoverSeries = tmdb.discoverTv().page(page).build().awaitResponse().body()?.results?.map {
                     it.toSearchResponse()
                 } ?: listOf()
             }, {
                 // https://en.wikipedia.org/wiki/ISO_3166-1
                 topMovies =
-                    tmdb.moviesService().topRated(1, "en-US", "US").awaitResponse()
+                    tmdb.moviesService().topRated(page, "en-US", "US").awaitResponse()
                         .body()?.results?.map {
                             it.toSearchResponse()
                         } ?: listOf()
             }, {
                 topSeries =
-                    tmdb.tvService().topRated(1, "en-US").awaitResponse().body()?.results?.map {
+                    tmdb.tvService().topRated(page, "en-US").awaitResponse().body()?.results?.map {
                         it.toSearchResponse()
                     } ?: listOf()
             }
         )
 
-        @Suppress("DEPRECATION")
-        return HomePageResponse(
+        return newHomePageResponse(
             listOf(
 //                HomePageList("Popular Series", popularSeries),
 //                HomePageList("Popular Movies", popularMovies),
@@ -381,29 +410,27 @@ open class TmdbProvider : MainAPI() {
         } else {
             loadFromTmdb(id)?.let { return it }
             if (isTvSeries) {
-                tmdb.tvService().externalIds(id, "en-US").awaitResponse().body()?.imdb_id?.let {
+                tmdb.tvService().externalIds(id).awaitResponse().body()?.imdb_id?.let {
                     val fromImdb = loadFromImdb(it)
                     val result = if (fromImdb == null) {
                         val details = tmdb.tvService().tv(id, "en-US").awaitResponse().body()
                         loadFromImdb(it, details?.seasons ?: listOf())
                             ?: loadFromTmdb(id, details?.seasons ?: listOf())
-                    } else {
-                        fromImdb
-                    }
+                    } else fromImdb
 
                     result
                 }
             } else {
-                tmdb.moviesService().externalIds(id, "en-US").awaitResponse()
+                tmdb.moviesService().externalIds(id).awaitResponse()
                     .body()?.imdb_id?.let { loadFromImdb(it) }
             }
         }
     }
 
-    override suspend fun search(query: String): List<SearchResponse>? {
-        return tmdb.searchService().multi(query, 1, "en-Us", "US", includeAdult).awaitResponse()
+    override suspend fun search(query: String, page: Int): SearchResponseList? {
+        return tmdb.searchService().multi(query, page, "en-US", "US", includeAdult).awaitResponse()
             .body()?.results?.mapNotNull {
                 it.movie?.toSearchResponse() ?: it.tvShow?.toSearchResponse()
-            }
+            }?.toNewSearchResponseList()
     }
 }
