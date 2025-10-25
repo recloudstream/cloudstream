@@ -165,7 +165,6 @@ class QuickSearchFragment : Fragment() {
             binding?.quickSearchAutofitResults?.apply {
                 setRecycledViewPool(SearchAdapter.sharedPool)
                 adapter = SearchAdapter(
-                    ArrayList(),
                     this,
                 ) { callback ->
                     SearchHelper.handleSearchClickCallback(callback)
@@ -288,7 +287,7 @@ class QuickSearchFragment : Fragment() {
                     it.value.let { data ->
                         val adapter =
                             (binding?.quickSearchAutofitResults?.adapter as? SearchAdapter)
-                        adapter?.updateList(
+                        adapter?.submitList(
                             context?.filterSearchResultByFilmQuality(data.list) ?: data.list
                         )
                         adapter?.hasNext = data.hasNext

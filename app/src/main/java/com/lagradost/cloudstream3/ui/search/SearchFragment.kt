@@ -99,7 +99,7 @@ class SearchFragment : Fragment() {
 
         fun newInstance(query: String): Bundle {
             return Bundle().apply {
-                if(query.isNotBlank()) putString(SEARCH_QUERY, query)
+                if (query.isNotBlank()) putString(SEARCH_QUERY, query)
             }
         }
     }
@@ -132,10 +132,11 @@ class SearchFragment : Fragment() {
 
 
         binding = try {
-            val layout = if (isLayout(TV or EMULATOR)) R.layout.fragment_search_tv else R.layout.fragment_search
+            val layout =
+                if (isLayout(TV or EMULATOR)) R.layout.fragment_search_tv else R.layout.fragment_search
             val root = inflater.inflate(layout, container, false)
             FragmentSearchBinding.bind(root)
-        } catch (t : Throwable) {
+        } catch (t: Throwable) {
             FragmentSearchBinding.inflate(inflater)
         }
 
@@ -184,7 +185,7 @@ class SearchFragment : Fragment() {
     fun search(query: String?) {
         if (query == null) return
         // don't resume state from prev search
-        (binding?.searchMasterRecycler?.adapter as? BaseAdapter<*,*>)?.clear()
+        (binding?.searchMasterRecycler?.adapter as? BaseAdapter<*, *>)?.clear()
         context?.let { ctx ->
             val default = enumValues<TvType>().sorted().filter { it != TvType.NSFW }
                 .map { it.ordinal.toString() }.toSet()
@@ -246,15 +247,15 @@ class SearchFragment : Fragment() {
         reloadRepos()
 
         binding?.apply {
-            val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
+            val adapter =
                 SearchAdapter(
-                    ArrayList(),
                     searchAutofitResults,
                 ) { callback ->
                     SearchHelper.handleSearchClickCallback(callback)
                 }
 
-            searchRoot.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)?.tag = "tv_no_focus_tag"
+            searchRoot.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)?.tag =
+                "tv_no_focus_tag"
             searchAutofitResults.setRecycledViewPool(SearchAdapter.sharedPool)
             searchAutofitResults.adapter = adapter
             searchLoadingBar.alpha = 0f
@@ -267,13 +268,19 @@ class SearchFragment : Fragment() {
                         showToast(R.string.speech_recognition_unavailable)
                     } else {
                         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-                            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                            putExtra(
+                                RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+                            )
                             putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-                            putExtra(RecognizerIntent.EXTRA_PROMPT, ctx.getString(R.string.begin_speaking))
+                            putExtra(
+                                RecognizerIntent.EXTRA_PROMPT,
+                                ctx.getString(R.string.begin_speaking)
+                            )
                         }
                         speechRecognizerLauncher.launch(intent)
                     }
-                } catch (_ : Throwable) {
+                } catch (_: Throwable) {
                     // launch may throw
                     showToast(R.string.speech_recognition_unavailable)
                 }
@@ -297,11 +304,12 @@ class SearchFragment : Fragment() {
 
                 builder.behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
-                val selectMainpageBinding: HomeSelectMainpageBinding = HomeSelectMainpageBinding.inflate(
-                    builder.layoutInflater,
-                    null,
-                    false
-                )
+                val selectMainpageBinding: HomeSelectMainpageBinding =
+                    HomeSelectMainpageBinding.inflate(
+                        builder.layoutInflater,
+                        null,
+                        false
+                    )
                 builder.setContentView(selectMainpageBinding.root)
                 builder.show()
                 builder.let { dialog ->
@@ -370,7 +378,10 @@ class SearchFragment : Fragment() {
                         if (selectedSearchTypes.toSet() != list.toSet()) {
                             selectedSearchTypes.clear()
                             selectedSearchTypes.addAll(list)
-                            updateChips(binding?.tvtypesChipsScroll?.tvtypesChips, selectedSearchTypes)
+                            updateChips(
+                                binding?.tvtypesChipsScroll?.tvtypesChips,
+                                selectedSearchTypes
+                            )
 
                         }
                     }
@@ -396,7 +407,7 @@ class SearchFragment : Fragment() {
                         selectedApis = currentSelectedApis
 
                         // run search when dialog is close
-                        if(previousSelectedApis != selectedApis.toSet() || previousSelectedSearchTypes != selectedSearchTypes.toSet()) {
+                        if (previousSelectedApis != selectedApis.toSet() || previousSelectedSearchTypes != selectedSearchTypes.toSet()) {
                             search(binding?.mainSearch?.query?.toString())
                         }
                     }
@@ -453,6 +464,7 @@ class SearchFragment : Fragment() {
                                 removeKeys("$currentAccount/$SEARCH_HISTORY_KEY")
                                 searchViewModel.updateHistory()
                             }
+
                             DialogInterface.BUTTON_NEGATIVE -> {
                             }
                         }
@@ -489,17 +501,21 @@ class SearchFragment : Fragment() {
                     it.value.let { data ->
                         val list = data.list
                         if (list.isNotEmpty()) {
-                            (binding?.searchAutofitResults?.adapter as? SearchAdapter)?.updateList(list)
+                            (binding?.searchAutofitResults?.adapter as? SearchAdapter)?.submitList(
+                                list
+                            )
                         }
                     }
                     searchExitIcon?.alpha = 1f
                     binding?.searchLoadingBar?.alpha = 0f
                 }
+
                 is Resource.Failure -> {
                     // Toast.makeText(activity, "Server error", Toast.LENGTH_LONG).show()
                     searchExitIcon?.alpha = 1f
                     binding?.searchLoadingBar?.alpha = 0f
                 }
+
                 is Resource.Loading -> {
                     searchExitIcon?.alpha = 0f
                     binding?.searchLoadingBar?.alpha = 1f
@@ -570,13 +586,18 @@ class SearchFragment : Fragment() {
                 SEARCH_HISTORY_OPEN -> {
                     searchViewModel.clearSearch()
                     if (searchItem.type.isNotEmpty())
-                        updateChips(binding?.tvtypesChipsScroll?.tvtypesChips, searchItem.type.toMutableList())
+                        updateChips(
+                            binding?.tvtypesChipsScroll?.tvtypesChips,
+                            searchItem.type.toMutableList()
+                        )
                     binding?.mainSearch?.setQuery(searchItem.searchText, true)
                 }
+
                 SEARCH_HISTORY_REMOVE -> {
                     removeKey("$currentAccount/$SEARCH_HISTORY_KEY", searchItem.key)
                     searchViewModel.updateHistory()
                 }
+
                 else -> {
                     // wth are you doing???
                 }
@@ -595,8 +616,9 @@ class SearchFragment : Fragment() {
             searchMasterRecycler.layoutManager = GridLayoutManager(context, 1)
 
             // Automatically search the specified query, this allows the app search to launch from intent
-            var sq = arguments?.getString(SEARCH_QUERY) ?: savedInstanceState?.getString(SEARCH_QUERY)
-            if(sq.isNullOrBlank()) {
+            var sq =
+                arguments?.getString(SEARCH_QUERY) ?: savedInstanceState?.getString(SEARCH_QUERY)
+            if (sq.isNullOrBlank()) {
                 sq = MainActivity.nextSearchQuery
             }
 
@@ -614,14 +636,14 @@ class SearchFragment : Fragment() {
         // SubtitlesFragment.push(activity)
         //searchViewModel.search("iron man")
         //(activity as AppCompatActivity).loadResult("https://shiro.is/overlord-dubbed", "overlord-dubbed", "Shiro")
-/*
-        (activity as AppCompatActivity?)?.supportFragmentManager.beginTransaction()
-            .setCustomAnimations(R.anim.enter_anim,
-                R.anim.exit_anim,
-                R.anim.pop_enter,
-                R.anim.pop_exit)
-            .add(R.id.homeRoot, PlayerFragment.newInstance(PlayerData(0, null,0)))
-            .commit()*/
+        /*
+                (activity as AppCompatActivity?)?.supportFragmentManager.beginTransaction()
+                    .setCustomAnimations(R.anim.enter_anim,
+                        R.anim.exit_anim,
+                        R.anim.pop_enter,
+                        R.anim.pop_exit)
+                    .add(R.id.homeRoot, PlayerFragment.newInstance(PlayerData(0, null,0)))
+                    .commit()*/
     }
 
 }

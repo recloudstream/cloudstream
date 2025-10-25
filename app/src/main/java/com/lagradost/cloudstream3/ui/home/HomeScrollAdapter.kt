@@ -18,9 +18,8 @@ import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 
 class HomeScrollAdapter(
-    fragment: Fragment,
     val callback: ((View, Int, LoadResponse) -> Unit)
-) : NoStateAdapter<LoadResponse>(fragment, diffCallback = BaseDiffCallback(itemSame = { a, b ->
+) : NoStateAdapter<LoadResponse>(diffCallback = BaseDiffCallback(itemSame = { a, b ->
     a.uniqueUrl == b.uniqueUrl && a.name == b.name
 })) {
     var hasMoreItems: Boolean = false

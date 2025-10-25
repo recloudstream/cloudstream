@@ -28,9 +28,8 @@ class StateViewModel : ViewModel() {
 }
 
 abstract class NoStateAdapter<T : Any>(
-    fragment: Fragment,
     diffCallback: DiffUtil.ItemCallback<T> = BaseDiffCallback()
-) : BaseAdapter<T, Any>(fragment, 0, diffCallback)
+) : BaseAdapter<T, Any>(null, 0, diffCallback)
 
 /**
  * BaseAdapter is a persistent state stored adapter that supports headers and footers.
@@ -51,7 +50,7 @@ abstract class NoStateAdapter<T : Any>(
 abstract class BaseAdapter<
         T : Any,
         S : Any>(
-    fragment: Fragment,
+    fragment: Fragment?,
     val id: Int = 0,
     diffCallback: DiffUtil.ItemCallback<T> = BaseDiffCallback()
 ) : RecyclerView.Adapter<ViewHolderState<S>>() {
@@ -135,20 +134,21 @@ abstract class BaseAdapter<
     }
 
     fun clear() {
-        stateViewModel.layoutManagerStates[id]?.clear()
+        stateViewModel?.layoutManagerStates[id]?.clear()
     }
 
     @Suppress("UNCHECKED_CAST")
     private fun getState(holder: ViewHolderState<S>): S? =
-        stateViewModel.layoutManagerStates[id]?.get(holder.absoluteAdapterPosition) as? S
+        stateViewModel?.layoutManagerStates[id]?.get(holder.absoluteAdapterPosition) as? S
 
     private fun setState(holder: ViewHolderState<S>) {
         if (id == 0) return
+        val viewModel = stateViewModel ?: return
 
-        if (!stateViewModel.layoutManagerStates.contains(id)) {
-            stateViewModel.layoutManagerStates[id] = HashMap()
+        if (!viewModel.layoutManagerStates.contains(id)) {
+            viewModel.layoutManagerStates[id] = HashMap()
         }
-        stateViewModel.layoutManagerStates[id]?.let { map ->
+        viewModel.layoutManagerStates[id]?.let { map ->
             map[holder.absoluteAdapterPosition] = holder.save()
         }
     }
@@ -182,7 +182,7 @@ abstract class BaseAdapter<
         return CONTENT
     }
 
-    private val stateViewModel: StateViewModel by fragment.viewModels()
+    private val stateViewModel: StateViewModel? by fragment?.viewModels() ?: lazyOf(null)
 
     final override fun onViewRecycled(holder: ViewHolderState<S>) {
         setState(holder)

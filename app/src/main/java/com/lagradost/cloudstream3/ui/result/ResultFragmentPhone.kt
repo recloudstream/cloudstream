@@ -405,7 +405,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 this.orientation = RecyclerView.HORIZONTAL
             }*/
             resultCastItems.setRecycledViewPool(ActorAdaptor.sharedPool)
-            resultCastItems.adapter = ActorAdaptor(this@ResultFragmentPhone)
+            resultCastItems.adapter = ActorAdaptor()
             resultEpisodes.setRecycledViewPool(EpisodeAdapter.sharedPool)
             resultEpisodes.adapter =
                 EpisodeAdapter(
@@ -571,7 +571,6 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 setRecycledViewPool(SearchAdapter.sharedPool)
                 adapter =
                     SearchAdapter(
-                        ArrayList(),
                         this,
                     ) { callback ->
                         SearchHelper.handleSearchClickCallback(callback)
@@ -610,7 +609,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                                 resume.result.season
                             )
                     }
-                    if (resume.isMovie){
+                    if (resume.isMovie) {
                         resultPlayMovie.isGone = true
                         resultResumeSeriesProgressText.isVisible = true
                         resultResumeSeriesProgressText.setText(progress.progressLeft)
@@ -623,9 +622,9 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultResumeProgressHolder.isVisible = true
                 } ?: run {
                     resultResumeProgressHolder.isVisible = false
-                    if(!resume.isMovie){
+                    if (!resume.isMovie) {
                         resultNextSeriesButton.isVisible = true
-                        resultNextSeriesButton.text =context?.getNameFull(
+                        resultNextSeriesButton.text = context?.getNameFull(
                             resume.result.name,
                             resume.result.episode,
                             resume.result.season
@@ -1252,7 +1251,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             root.isGone = isInvalid
             root.post {
                 rec?.let { list ->
-                    (resultRecommendationsList.adapter as? SearchAdapter)?.updateList(list.filter { it.apiName == matchAgainst })
+                    (resultRecommendationsList.adapter as? SearchAdapter)?.submitList(list.filter { it.apiName == matchAgainst })
                 }
             }
         }
