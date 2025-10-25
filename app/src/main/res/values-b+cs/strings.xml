@@ -753,4 +753,14 @@
     <string name="episode_action_play_mirror">Přehrát ze zrcadla</string>"
     <string name="name">Název</string>
     <string name="resolution_and_name">Rozlišení a název</string>
+    <string name="subs_subtitle_alignment">Zarovnání titulků</string>
+    <string name="bottom_left">Vlevo dole</string>
+    <string name="bottom_center">Uprostřed dole</string>
+    <string name="bottom_right">Vpravo dole</string>
+    <string name="middle_left">Vlevo uprostřed</string>
+    <string name="middle_center">Uprostřed</string>
+    <string name="middle_right">Vpravo uprostřed</string>
+    <string name="top_left">Vlevo nahoře</string>
+    <string name="top_center">Uprostřed nahoře</string>
+    <string name="top_right">Vpravo nahoře</string>
 </resources>
