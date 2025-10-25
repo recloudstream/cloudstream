@@ -1656,13 +1656,6 @@ class GeneratorPlayer : FullScreenPlayer() {
                     )
                 }
             }
-            if(nextEp){
-                when (val meta = currentMeta) {
-                    is ResultEpisode -> {
-                        setVideoWatchState(meta.id, VideoWatchState.Watched)
-                    }
-                }
-            }
         }
 
         var isOpVisible = false

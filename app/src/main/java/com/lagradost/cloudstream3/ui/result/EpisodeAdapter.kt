@@ -240,16 +240,28 @@ class EpisodeAdapter(
                 if (card.videoWatchState == VideoWatchState.Watched) {
                     // This cannot be done in getDisplayPosition() as when you have not watched something
                     // the duration and position is 0
-//                    episodeProgress.max = 1
-//                    episodeProgress.progress = 1
+                    //episodeProgress.max = 1
+                    //episodeProgress.progress = 1
                     episodePlayIcon.setImageResource(R.drawable.ic_baseline_check_24)
                     episodeProgress.isVisible = false
                 } else {
-                    episodePlayIcon.setImageResource(R.drawable.netflix_play)
                     val displayPos = card.getDisplayPosition()
-                    episodeProgress.max = (card.duration / 1000).toInt()
-                    episodeProgress.progress = (displayPos / 1000).toInt()
-                    episodeProgress.isVisible = displayPos > 0L
+                    val durationSec = (card.duration / 1000).toInt()
+                    val progressSec = (displayPos / 1000).toInt()
+
+                    val isOver95Percent = progressSec >= (durationSec * 0.95).toInt()
+
+                    if (isOver95Percent) {
+                        episodePlayIcon.setImageResource(R.drawable.ic_baseline_check_24)
+                        episodeProgress.isVisible = false
+                    } else {
+                        episodePlayIcon.setImageResource(R.drawable.netflix_play)
+                        episodeProgress.apply {
+                            max = durationSec
+                            progress = progressSec
+                            isVisible = true
+                        }
+                    }
                 }
 
                 val posterVisible = !card.poster.isNullOrBlank()
