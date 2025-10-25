@@ -699,33 +699,28 @@ class HomeFragment : Fragment() {
                             }
                         }
                     } else {
-                        // Header scrolling is only relevant to TV/Emulator
+    val scrollParent = binding?.homeApiHolder
+    val firstVisibleView = recyclerView.findViewHolderForAdapterPosition(0)?.itemView
 
-                        val view = recyclerView.findViewHolderForAdapterPosition(0)?.itemView
-                        val scrollParent = binding?.homeApiHolder
+    if (firstVisibleView == null) {
+        // Scrolled past header – hide the API provider row
+        scrollParent?.isVisible = false
+    } else {
+        // Smoothly re-show API provider row when scrolled back up
+        val rect = IntArray(2)
+        firstVisibleView.getLocationInWindow(rect)
 
-                        if (view == null) {
-                            // The first view is not visible, so we can assume we have scrolled past it
-                            scrollParent?.isVisible = false
-                        } else {
-                            // A bit weird, but this is a major limitation we are working around here
-                            // 1. We cant have a real parent to the recyclerview as android cant layout that without lagging
-                            // 2. We cant put the view in the recyclerview, as it should always be shown
-                            // 3. We cant mirror the view in the recyclerview as then it causes focus issues when swaping out the mirror view
-                            //
-                            // This means that if we want to have a parent view to the recyclerview we are out of luck
-                            // Instead this uses getLocationInWindow to calculate how much the view should be scrolled
-                            // as recyclerView has no scrollY (always 0)
-                            //
-                            // Then it manually "scrolls" it to the correct position
-                            //
-                            // Hopefully getLocationInWindow acts correctly on all devices
-                            val rect = IntArray(2)
-                            view.getLocationInWindow(rect)
-                            scrollParent?.isVisible = true
-                            scrollParent?.translationY = rect[1].toFloat() - 60.toPx
-                        }
-                    }
+        // Keep the header visible and restore translation smoothly
+        scrollParent?.apply {
+            if (!isVisible) isVisible = true
+            translationY = rect[1].toFloat() - 60.toPx
+
+            // Ensure it's not stuck hidden due to quick focus/scroll
+            if (translationY > 0f) translationY = 0f
+        }
+    }
+}
+
                     super.onScrolled(recyclerView, dx, dy)
                 }
             })
