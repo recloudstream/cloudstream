@@ -257,7 +257,7 @@ class EpisodeAdapter(
                     val durationSec = (card.duration / 1000).toInt()
                     val progressSec = (displayPos / 1000).toInt()
 
-                    if (displayPos == card.duration) {
+                    if (displayPos >= card.duration && displayPos > 0) {
                         episodePlayIcon.setImageResource(R.drawable.ic_baseline_check_24)
                         episodeProgress.isVisible = false
                     } else {
