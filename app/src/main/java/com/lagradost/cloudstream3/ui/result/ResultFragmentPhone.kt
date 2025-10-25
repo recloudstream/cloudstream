@@ -595,6 +595,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             resultBinding?.apply {
                 if (resume == null) {
                     resultResumeParent.isVisible = false
+                    resultPlayParent.isVisible = true
                     resultResumeProgressHolder.isVisible = false
                     return@observeNullable
                 }
@@ -611,7 +612,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                             )
                     }
                     if (resume.isMovie){
-                        resultPlayMovie.isGone = true
+                        resultPlayParent.isGone = true
                         resultResumeSeriesProgressText.isVisible = true
                         resultResumeSeriesProgressText.setText(progress.progressLeft)
                     }
@@ -700,6 +701,12 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         )
                     }
                     resultPlayMovie.setOnLongClickListener {
+                        viewModel.handleAction(
+                            EpisodeClickEvent(ACTION_SHOW_OPTIONS, ep)
+                        )
+                        return@setOnLongClickListener true
+                    }
+                    resultResumeSeriesButton.setOnLongClickListener {
                         viewModel.handleAction(
                             EpisodeClickEvent(ACTION_SHOW_OPTIONS, ep)
                         )
