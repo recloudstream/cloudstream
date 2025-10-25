@@ -1,0 +1,675 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
+    <string name="search_poster_img_des">পোস্টাৰ</string>
+    <string name="episode_poster_img_des">এপিচ\'ড পোস্টাৰ</string>
+    <string name="home_main_poster_img_des">প্ৰধান পোস্টাৰ</string>
+    <string name="go_back_img_des">পাছলৈ ঘূৰক</string>
+    <string name="rated_format" formatted="true">ৰেটিং: %.1f</string>
+    <string name="title_settings">ছেটিংছ</string>
+    <string name="search_hint">সন্ধান কৰক…</string>
+    <string name="search_hint_site" formatted="true">%sত সন্ধান কৰক…</string>
+    <string name="downloading">ডাউনলোড হৈ আছে</string>
+    <string name="recommendations_tooltip">পৰামৰ্শসমূহ প্ৰদৰ্শন কৰক</string>
+    <string name="player_speed">প্লেয়াৰ গতি</string>
+    <string name="subs_text_color">পাঠৰ ৰং</string>
+    <string name="subs_edge_type">কোৰা প্ৰকাৰ</string>
+    <string name="action_remove_watching">অপসাৰণ কৰক</string>
+    <string name="torrent_plot">বিৱৰণ</string>
+    <string name="show_log_cat">লগকেট প্ৰদৰ্শন কৰক 🐈</string>
+    <string name="test_log">লগ</string>
+    <string name="backup_failed_error_format">%s সংৰক্ষণত ত্ৰুটি</string>
+    <string name="search">সন্ধান কৰক</string>
+    <string name="library">পুথিভঁৰাল</string>
+    <string name="category_account">একাউণ্ট আৰু সুৰক্ষা</string>
+    <string name="category_updates">আপডেট আৰু ব্যাকআপ</string>
+    <string name="automatic_plugin_download">স্বয়ংক্ৰিয়ভাৱে প্লাগইন ডাউনলোড কৰক</string>
+    <string name="automatic_plugin_download_mode_title">প্লাগইন ডাউনলোডৰ ম\'ড নিৰ্বাচন কৰক</string>
+    <string name="automatic_plugin_download_summary">যোগ কৰা ৰিপ\'জিটৰীৰ পৰা এতিয়ালৈকে ইনষ্টল নকৰা সকলো প্লাগইন স্বয়ংক্ৰিয়ভাৱে ইনষ্টল কৰক।</string>
+    <string name="cartoons">কাৰ্টুন</string>
+    <string name="anime">এনিম</string>
+    <string name="torrent">ট’ৰেণ্ট</string>
+    <string name="ova">ওভিএ</string>
+    <string name="asian_drama_singular">এছিয়ান ড্ৰামা</string>
+    <string name="live_singular">লাইভষ্ট্ৰীম</string>
+    <string name="nsfw_singular">এনএছএফডব্লিউ</string>
+    <string name="other_singular">ভিডিঅ\'</string>
+    <string name="episode_action_play_in_app">অ্যাপত প্লে কৰক</string>
+    <string name="episode_action_reload_links">লিংকসমূহ পুনৰ ল\'ড কৰক</string>
+    <string name="episode_action_download_subtitle">সাবটাইটেল ডাউনলোড কৰক</string>
+    <string name="show_hd">গুণগত মানৰ ছপা</string>
+    <string name="show_title">শিৰোনাম</string>
+    <string name="no_update_found">কোনো আপডেট পোৱা নগ\'ল</string>
+    <string name="check_for_update">আপডেটৰ বাবে পৰীক্ষা কৰক</string>
+    <string name="dont_show_again">আৰো দেখুৱাব নালাগে</string>
+    <string name="limit_title">ভিডিঅ\' প্লেয়াৰৰ শিৰোনামৰ সৰ্বাধিক অক্ষৰ</string>
+    <string name="add_site_summary">বিদ্যমান চাইটৰ ক্লোন এটা সন্নিবিষ্ট কৰক, ভিন্ন URLৰ সৈতে</string>
+    <string name="pref_category_links">লিংকসমূহ</string>
+    <string name="category_ui">লেআউট</string>
+    <string name="automatic">স্বয়ংচালিত</string>
+    <string name="example_password">password123</string>
+    <string name="example_username">ব্যৱহাৰকাৰীনাম</string>
+    <string name="example_email">hello@world.com</string>
+    <string name="example_ip">127.0.0.1</string>
+    <string name="logout">লগ আউট</string>
+    <string name="sync_score">ৰেটিং দিয়া</string>
+    <string name="sync_score_format" formatted="true">%d / 10</string>
+    <string name="sync_total_episodes_none">/??</string>
+    <string name="sync_total_episodes_some" formatted="true">/%d</string>
+    <string name="authenticated_user" formatted="true">%s প্ৰমাণীকৃত</string>
+    <string name="authenticated_user_fail" formatted="true">%s ত লগ ইন কৰিবলৈ পৰা নগ\'ল</string>
+    <string name="error_invalid_data">অবৈধ তথ্য</string>
+    <string name="error_invalid_url">অবৈধ URL</string>
+    <string name="error">ভুল</string>
+    <string name="subtitles_remove_captions">বন্ধ কেপচনচসমূহ সাবটাইটেলৰ পৰা আঁতৰাওক</string>
+    <string name="referer">ৰেফাৰাৰ (ঐচ্ছিক)</string>
+    <string name="next">পৰৱৰ্তী</string>
+    <string name="provider_languages_tip">এই ভাষাবোৰত ভিডিঅ\' চাওক</string>
+    <string name="batch_download">ব্যাচ ডাউনলোড</string>
+    <string name="setup_extensions_subtext">আপুনি ব্যৱহাৰ কৰিব বিচৰা চাইটবোৰৰ তালিকা ডাউনলোড কৰক</string>
+    <string name="plugins_downloaded" formatted="true">ডাউনলোড কৰা: %d</string>
+    <string name="clipboard_permission_error">ক্ৰিপবোর্ডত প্ৰবেশৰ সময়ত সমস্যা। পুনৰ চেষ্টা কৰক।</string>
+    <string name="sort_alphabetical_z">বৰ্ণানুক্ৰমিক (Z ৰ পৰা A)</string>
+    <string name="subscription_episode_released">অধ্যায় %d মুক্তি পালে!</string>
+    <string name="action_subscribe">সদস্যতা কৰক</string>
+    <string name="action_unsubscribe">সদস্যতা বাতিল কৰক</string>
+    <string name="profile_number">প্ৰ\'ফাইল %d</string>
+    <string name="enter_pin">পিন সন্নিবিষ্ট কৰক</string>
+    <string name="edit_account">একাউণ্ট সম্পাদনা কৰক</string>
+    <string name="custom_media_singluar">মিডিয়া</string>
+    <string name="reset_btn">ৰিচেট কৰক</string>
+    <string name="cast_format" formatted="true">Cast: %s</string>
+    <string name="type_watching">দেখি আছে</string>
+    <string name="continue_watching">চাবলৈ জাৰি ৰাখক</string>
+    <string name="player_subtitles_settings">সাবটাইটেল</string>
+    <string name="use_system_brightness_settings">পদ্ধতিৰ উজ্জ্বলতা ব্যৱহাৰ কৰক</string>
+    <string name="backup_failed">সংৰক্ষণ অনুমতি অনুপস্থিত। পুনৰ চেষ্টা কৰক।</string>
+    <string name="min">সৰ্বনিম্ন</string>
+    <string name="quality_sd">এছ.ডি.</string>
+    <string name="setup_done">সম্পূৰ্ণ</string>
+    <string name="view_public_repositories_button_short">সৰ্বজনীন তালিকা</string>
+    <string name="stop">বন্ধ কৰক</string>
+    <string name="battery_dialog_title">বেটাৰী অপ্টিমাইজেচন নিষ্ক্ৰিয় কৰক</string>
+    <string name="subscription_list_name">সদস্যতা গ্ৰহণ কৰা</string>
+    <string name="qualities">গুণসমূহ</string>
+    <string name="duplicate_add">যোগ কৰক</string>
+    <string name="duplicate_replace">প্ৰতিস্থাপন কৰক</string>
+    <string name="biometric_authentication_title">CloudStream আনলক কৰক</string>
+    <string name="biometric_setting">বায়\'মেট্ৰিক্সৰ সৈতে লক কৰক</string>
+    <string name="password_pin_authentication_title">পাছৱাৰ্ড/পিন প্ৰমাণীকৰণ</string>
+    <string name="music_singlar">সংগীত</string>
+    <string name="audio_book_singular">অডিঅ\' বুক</string>
+    <string name="next_episode_format" formatted="true">Episode %d will be released in</string>
+    <string name="next_season_episode_format" formatted="true">Season %1$d Episode %2$d will be released in</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
+    <string name="next_episode_time_min_format" formatted="true">%dm</string>
+    <string name="result_poster_img_des">পোস্টাৰ</string>
+    <string name="home_change_provider_img_des">প্ৰদানকাৰী সলনি কৰক</string>
+    <string name="preview_background_img_des">পূৰ্বদৰ্শন পটভূমি</string>
+    <string name="home_next_random_img_des">পৰৱৰ্তী ৰেণ্ডম</string>
+    <string name="player_speed_text_format" formatted="true">গতি (%.2fx)</string>
+    <string name="next_episode">পৰৱৰ্তী এপিচ\'ড</string>
+    <string name="duration_format" formatted="true">%d মিনিট</string>
+    <string name="app_name">CloudStream</string>
+    <string name="title_home">ঘৰ</string>
+    <string name="no_data">তথ্য নাই</string>
+    <string name="episode_more_options_des">অধিক বিকল্পসমূহ</string>
+    <string name="result_share">শ্বেয়াৰ</string>
+    <string name="result_open_in_browser">ব্ৰাউজাৰত খোলক</string>
+    <string name="browser">ব্ৰাউজাৰ</string>
+    <string name="type_plan_to_watch">দেখাৰ পৰিকল্পনা</string>
+    <string name="play_torrent_button">ট\'ৰেণ্ট ষ্ট্ৰীম কৰক</string>
+    <string name="reload_error">পুনৰ সংযোগ চেষ্টা কৰক…</string>
+    <string name="go_back">পাছলৈ ঘূৰক</string>
+    <string name="pick_source">উৎসসমূহ</string>
+    <string name="downloaded">ডাউনলোড সম্পূৰ্ণ</string>
+    <string name="download_paused">ডাউনলোড ৰখা হৈছে</string>
+    <string name="download_started">ডাউনলোড আৰম্ভ হৈছে</string>
+    <string name="download_failed">ডাউনলোড বিফল</string>
+    <string name="download_canceled">ডাউনলোড বাতিল</string>
+    <string name="download_done">ডাউনলোড সম্পন্ন</string>
+    <string name="update_started">আপডেট আৰম্ভ হৈছে</string>
+    <string name="stream">নেটৱাৰ্ক ষ্ট্ৰীম</string>
+    <string name="error_loading_links_toast">লিংক লোডত ত্ৰুটি</string>
+    <string name="links_reloaded_toast">লিংক পুনৰ লোড কৰা হ’ল</string>
+    <string name="download_storage_text">অভ্যন্তৰীণ সংৰক্ষণ</string>
+    <string name="app_dubbed_text">ডাব</string>
+    <string name="app_subbed_text">চাব</string>
+    <string name="popup_delete_file">ফাইল মচক</string>
+    <string name="popup_play_file">ফাইল প্লে কৰক</string>
+    <string name="pref_disable_acra">স্বয়ংক্ৰিয় বাগ ৰিপ’ৰ্টিং নিষ্ক্ৰিয় কৰক</string>
+    <string name="popup_resume_download">ডাউনলোড পুনৰ আৰম্ভ কৰক</string>
+    <string name="popup_pause_download">ডাউনলোড ৰখা</string>
+    <string name="home_more_info">অধিক তথ্য</string>
+    <string name="home_expanded_hide">লুকুৱাওক</string>
+    <string name="home_play">প্লে কৰক</string>
+    <string name="home_info">তথ্য</string>
+    <string name="action_remove_from_bookmarks">অপসাৰণ কৰক</string>
+    <string name="action_add_to_bookmarks">দেখাৰ অৱস্থা নিৰ্ধাৰণ কৰক</string>
+    <string name="filter_bookmarks">বুকমাৰ্ক ফিল্টাৰ কৰক</string>
+    <string name="error_bookmarks_text">বুকমাৰ্ক</string>
+    <string name="sort_copy">কপি</string>
+    <string name="sort_close">বন্ধ কৰক</string>
+    <string name="sort_clear">প্ৰশস্ত কৰক</string>
+    <string name="sort_save">সংৰক্ষণ কৰক</string>
+    <string name="repo_copy_label">Repository নাম আৰু URL</string>
+    <string name="toast_copied">কপি কৰা হ’ল!</string>
+    <string name="subscribe_tooltip">নতুন এপিচ\'ডৰ সূচনা</string>
+    <string name="result_search_tooltip">অন্যান্য এক্সটেনশ্যনত সন্ধান কৰক</string>
+    <string name="subtitles_settings">চাবটাইটল ছেটিংছ</string>
+    <string name="subs_outline_color">বাহ্যৰেখা ৰং</string>
+    <string name="subs_background_color">পটভূমি ৰং</string>
+    <string name="subs_window_color">ৱিন্ড\'ৰ ৰং</string>
+    <string name="subs_subtitle_elevation">সাবটাইটেল উচুতা</string>
+    <string name="subs_font">ফণ্ট</string>
+    <string name="subs_font_size">ফণ্টৰ আকাৰ</string>
+    <string name="search_provider_text_types">প্ৰকাৰৰ দ্বাৰা সন্ধান কৰক</string>
+    <string name="search_provider_text_providers">প্ৰদানকাৰীৰে সন্ধান কৰক</string>
+    <string name="benene_count_text">%d জন ডেভেলপাৰক বেঙেনা দিয়া হৈছে</string>
+    <string name="benene_count_text_none">কোনো বেঙেনা দিয়া হোৱা নাই</string>
+    <string name="subs_auto_select_language">স্বয়ংক্ৰিয় ভাষা নিৰ্বাচন</string>
+    <string name="subs_download_languages">ভাষাসমূহ ডাউনলোড কৰক</string>
+    <string name="subs_subtitle_languages">সাবটাইটেল ভাষা</string>
+    <string name="subs_hold_to_reset_to_default">মূল পৰিৱেশলৈ সলনি কৰিবলৈ ধৰি ৰাখক</string>
+    <string name="vpn_might_be_needed">এই প্ৰদানকাৰী ঠিকমতে কাম কৰিবৰ বাবে VPNৰ প্ৰয়োজন হ\'ব পাৰে</string>
+    <string name="vpn_torrent">এই প্ৰদানকাৰী এটা ট\'ৰেণ্ট, VPNৰ পৰামৰ্শ দিয়া হৈছে</string>
+    <string name="subs_import_text" formatted="true">%s ত ফণ্টসমূহ ৰাখি সন্নিবিষ্ট কৰক</string>
+    <string name="action_open_watching">অধিক তথ্য</string>
+    <string name="action_open_play">@string/home_play</string>
+    <string name="provider_info_meta">সাইটে মেটাডাটা প্ৰদান কৰা নাই, যদি সাইটত নাথাকে তেন্তে ভিডিঅ\' মুকলি নহ\'ব পাৰে।</string>
+    <string name="normal_no_plot">কোনো কাহিনী পোৱা নগ\'ল</string>
+    <string name="torrent_no_plot">কোনো বিৱৰণ পোৱা নগ\'ল</string>
+    <string name="player_size_settings">প্লেয়াৰৰ আকাৰ পৰিবৰ্তনৰ বুটাম</string>
+    <string name="player_size_settings_des">ক’লা পাৰত আঁতৰাওক</string>
+    <string name="picture_in_picture">ছবি-ইন-ছবি</string>
+    <string name="picture_in_picture_des">অন্য এপ্‌সমূহৰ ওপৰত এটি সৰু প্লেয়াৰত প্লেবেক চলি থাকে</string>
+    <string name="player_subtitles_settings_des">প্লেয়াৰৰ সাবটাইটেল চেটিংছ</string>
+    <string name="chromecast_subtitles_settings">ক্ৰ\'মকাষ্ট সাবটাইটেল</string>
+    <string name="chromecast_subtitles_settings_des">ক্ৰ\'মকাষ্ট সাবটাইটেল চেটিংছ</string>
+    <string name="eigengraumode_settings">প্লেবেক গতিবেগ</string>
+    <string name="speed_setting_summary">প্লেয়াৰত গতিৰ বিকল্প যোগ কৰে</string>
+    <string name="swipe_to_seek_settings">সুৱাইপ কৰি সন্ধান কৰক</string>
+    <string name="swipe_to_seek_settings_des">ভিডিঅ\'ৰ অৱস্থান নিয়ন্ত্ৰণ কৰিবলৈ কাষৰ পৰা কাষলৈ সুৱাইপ কৰক</string>
+    <string name="swipe_to_change_settings">চেটিংছ সলনি কৰিবলৈ সুৱাইপ কৰক</string>
+    <string name="swipe_to_change_settings_des">উজ্জ্বলতা বা শব্দ পৰিমাণ সলনি কৰিবলৈ বাওঁ বা সোঁপিনে ওপৰলৈ সুৱাইপ কৰক</string>
+    <string name="autoplay_next_settings">পৰৱৰ্তী খণ্ড স্বয়ংক্ৰিয়ভাৱে চালাওক</string>
+    <string name="autoplay_next_settings_des">বৰ্তমানৰ খণ্ডৰ অন্তত পৰৱৰ্তী খণ্ড আৰম্ভ কৰক</string>
+    <string name="double_tap_to_seek_settings">সন্ধান কৰিবলৈ দ্বৈত টেপ কৰক</string>
+    <string name="double_tap_to_pause_settings">বিৰতিৰ বাবে দ্বৈত টেপ কৰক</string>
+    <string name="double_tap_to_seek_amount_settings">প্লেয়াৰ সন্ধানৰ পৰিমাণ (ছেকেণ্ড)</string>
+    <string name="double_tap_to_seek_settings_des">অগ্ৰসৰ বা পশ্চাদ্দেশৰ বাবে সোঁ বা বাওঁপিনে দুবাৰ টেপ কৰক</string>
+    <string name="double_tap_to_pause_settings_des">বিৰতিৰ বাবে মাজত দুবাৰ টেপ কৰক</string>
+    <string name="use_system_brightness_settings_des">এপ্‌ প্লেয়াৰত অন্ধকাৰ আবৰণৰ সলনি পদ্ধতিৰ উজ্জ্বলতা ব্যৱহাৰ কৰক</string>
+    <string name="episode_sync_settings">দেখাৰ প্ৰগতি আপডেট কৰক</string>
+    <string name="episode_sync_settings_des">স্বয়ংক্ৰিয়ভাৱে আপোনাৰ বৰ্তমানৰ খণ্ডৰ প্ৰগতি ছিঙ্ক কৰক</string>
+    <string name="restore_settings">ব্যাকআপৰ পৰা ডাটা পুনৰুদ্ধাৰ কৰক</string>
+    <string name="backup_settings">ডাটা সংৰক্ষণ কৰক</string>
+    <string name="backup_frequency">ব্যাকআপৰ সঁফলতা</string>
+    <string name="restore_failed_format" formatted="true">%s ফাইলৰ পৰা ডাটা পুনৰুদ্ধাৰত বিফল</string>
+    <string name="backup_success">ডাটা সংৰক্ষণ কৰা হৈছে</string>
+    <string name="settings_info">তথ্য</string>
+    <string name="restore_success">ব্যাকআপ ফাইল ল\'ড কৰা হৈছে</string>
+    <string name="advanced_search">উন্নত সন্ধান</string>
+    <string name="advanced_search_des">আপোনাক প্ৰদানকাৰীৰে পৃথককৃত সন্ধান ফলাফল দিব</string>
+    <string name="bug_report_settings_off">কেৱল ভূলৰ ক্ষেত্ৰত ডাটা প্ৰেৰণ কৰে</string>
+    <string name="bug_report_settings_on">কোনো ডাটা প্ৰেৰণ নকৰে</string>
+    <string name="show_fillers_settings">এনিমেৰ ফিলাৰ খণ্ড দেখুৱাওক</string>
+    <string name="show_trailers_settings">ট্ৰেইলাৰ দেখুৱাওক</string>
+    <string name="kitsu_settings">কিৎসুৰ পৰা প\'ষ্টাৰ দেখুৱাওক</string>
+    <string name="pref_filter_search_quality">সন্ধান ফলাফলে নিৰ্বাচিত ভিডিঅ\' গুণমান লুকুৱাওক</string>
+    <string name="automatic_plugin_updates">স্বয়ংক্ৰিয় প্লাগইন আপডেট</string>
+    <string name="updates_settings">এপ্‌ আপডেট দেখুৱাওক</string>
+    <string name="redo_setup_process">পুনৰ চেটআপ প্ৰক্ৰিয়া কৰক</string>
+    <string name="uprereleases_settings">প্ৰাকমুক্তিৰ বাবে আপডেট কৰক</string>
+    <string name="apk_installer_settings">APK ইনষ্টলাৰ</string>
+    <string name="apk_installer_settings_des">কিছুমান ফোনে নতুন পেকেজ ইনষ্টলাৰ সমৰ্থন নকৰে। আপডেটসমূহ ইনষ্টল নকৰিলে লিগেচি বিকল্প পৰীক্ষা কৰক।</string>
+    <string name="github">Github</string>
+    <string name="lightnovel">একেই ডেভেলপাৰৰ দ্বাৰা লাইট নভেল এপ্‌</string>
+    <string name="discord">Discordত যোগদান কৰক</string>
+    <string name="no_links_found_toast">লিংক পোৱা নগল</string>
+    <string name="benene">ডেভেলপাৰক এখন বেঙেনা দিয়ক</string>
+    <string name="benene_des">দিয়া নাম</string>
+    <string name="app_language">অ্যাপ ভাষা</string>
+    <string name="no_chromecast_support_toast">এই প্ৰদানকাৰীৰ ক্ৰোমকাষ্ট সমৰ্থন নাই</string>
+    <string name="copy_link_toast">লিংক ক্লিপব\'ৰ্ডত কপিকৰ কৰা হ’ল</string>
+    <string name="play_episode_toast">এপিচ’ড প্লে কৰক</string>
+    <string name="acra_report_toast">দুখিত, এপ্পটোৰ এক্সিডেণ্ট হৈছে। এজনামবাগ বাগ ৰিপ’ৰ্ট ডেভেলপাৰক পঠোৱা হ’ব</string>
+    <string name="season">চিজন</string>
+    <string name="subs_default_reset_toast">ডিফল্ট মানলৈ পুনৰছেট কৰক</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
+    <string name="no_season">চিজন নাই</string>
+    <string name="episode">এপিচ’ড</string>
+    <string name="episodes">এপিচ’ডসমূহ</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
+    <string name="episode_upcoming_format" formatted="true">%s ত আহি আছে</string>
+    <string name="season_short">চি</string>
+    <string name="episode_short">এ</string>
+    <string name="no_episodes_found">এপিচ’ড পোৱা নগল</string>
+    <string name="delete_file">ফাইল ডিলিট কৰক</string>
+    <string name="delete">ডিলিট কৰক</string>
+    <string name="cancel">বাতিল কৰক</string>
+    <string name="pause">থামক</string>
+    <string name="start">আৰম্ভ কৰক</string>
+    <string name="test_failed">ব্যৰ্থ</string>
+    <string name="test_passed">উত্তীৰ্ণ</string>
+    <string name="resume">পুনৰ আৰম্ভ কৰক</string>
+    <string name="go_back_30">-৩০</string>
+    <string name="go_forward_30">+৩০</string>
+    <string name="delete_message" formatted="true">এইটো স্থায়ীভাৱে %s ডিলিট কৰিব।
+\nআপুনি নিশ্চিত নেকি?</string>
+    <string name="resume_time_left" formatted="true">%dm
+\nবাকী</string>
+    <string name="resume_remaining" formatted="true">%s
+\nবাকী</string>
+    <string name="status_ongoing">চলমান</string>
+    <string name="status_completed">সম্পূৰ্ণ</string>
+    <string name="status">স্থিতি</string>
+    <string name="year">বৰ্ষ</string>
+    <string name="rating">ৰেটিং</string>
+    <string name="duration">সময়</string>
+    <string name="site">চাইট</string>
+    <string name="synopsis">সাৰাংশ</string>
+    <string name="queued">পংক্তিবদ্ধ</string>
+    <string name="no_subtitles">সাবটাইটেল নাই</string>
+    <string name="action_default">ডিফল্ট</string>
+    <string name="free_storage">ফ্ৰী</string>
+    <string name="used_storage">ব্যৱহৃত</string>
+    <string name="app_storage">অ্যাপ</string>
+    <string name="movies">চিত্ৰপট</string>
+    <string name="tv_series">টিভি ছিৰিজ</string>
+    <string name="documentaries">ডকুমেণ্টাৰী</string>
+    <string name="asian_drama">এছিয়ান ড্ৰামা</string>
+    <string name="livestreams">লাইভষ্ট্ৰীম</string>
+    <string name="nsfw">এনএছএফডব্লিউ</string>
+    <string name="others">অন্যান্য</string>
+    <string name="movies_singular">চিত্ৰপট</string>
+    <string name="tv_series_singular">ছিৰিজ</string>
+    <string name="cartoons_singular">কাৰ্টুন</string>
+    <string name="anime_singular">এনিম</string>
+    <string name="ova_singular">ওভিএ</string>
+    <string name="torrent_singular">ট’ৰেণ্ট</string>
+    <string name="documentaries_singular">ডকুমেণ্টাৰী</string>
+    <string name="source_error">সোর্স ত্ৰুটি</string>
+    <string name="remote_error">ৰিমোট ত্ৰুটি</string>
+    <string name="render_error">ৰেণ্ডাৰ ত্ৰুটি</string>
+    <string name="storage_error">ডাউনলোড ত্ৰুটি, সঞ্চয়ৰ অনুমতি চাওক</string>
+    <string name="unexpected_error">অপ্ৰত্যাশিত প্লেয়াৰ ত্ৰুটি</string>
+    <string name="episode_action_chromecast_episode">ক্ৰোমকাষ্ট এপিচ’ড</string>
+    <string name="episode_action_chromecast_mirror">ক্ৰোমকাষ্ট মিৰৰ</string>
+    <string name="episode_action_cast_mirror">কাষ্ট মিৰৰ</string>
+    <string name="show_dub">ডাব ছপা</string>
+    <string name="episode_action_play_in_format">প্লে %s ত</string>
+    <string name="episode_action_auto_download">স্বয়ংক্ৰিয় ডাউনলোড</string>
+    <string name="episode_action_download_mirror">ডাউনলোড মিৰৰ</string>
+    <string name="show_sub">সাব ছপা</string>
+    <string name="poster_ui_settings">প\'ষ্টাৰত UI উপাদানসমূহ টগল কৰক</string>
+    <string name="video_lock">লক কৰক</string>
+    <string name="video_aspect_ratio_resize">ৰিসাইজ কৰক</string>
+    <string name="video_source">উত্‍স</string>
+    <string name="update">আপডেট কৰক</string>
+    <string name="watch_quality_pref">পচন্দৰ ভিডিঅ\' মান (WiFi)</string>
+    <string name="video_skip_op">OP স্কিপ কৰক</string>
+    <string name="skip_update">এই আপডেট স্কিপ কৰক</string>
+    <string name="watch_quality_pref_data">পচন্দৰ ভিডিঅ\' মান (ম\'বাইল ডাটা)</string>
+    <string name="limit_title_rez">ভিডিঅ\' প্লেয়াৰৰ ৰিজল্যুশন</string>
+    <string name="video_buffer_size_settings">ভিডিঅ\' বাফাৰ আকাৰ</string>
+    <string name="video_buffer_length_settings">ভিডিঅ\' বাফাৰ দৈৰ্ঘ্য</string>
+    <string name="video_buffer_disk_settings">ডিস্কত ভিডিঅ\' কেশ</string>
+    <string name="video_buffer_clear_settings">ভিডিঅ\' আৰু ছবিৰ কেশ মচক</string>
+    <string name="android_tv_interface_on_seek_settings_summary">প্লেয়াৰ দেখুওৱা অৱস্থাত ব্যৱহৃত চাৰ্কৰ পৰিমাণ</string>
+    <string name="android_tv_interface_off_seek_settings">প্লেয়াৰ লুকোৱা - চাৰ্কৰ পৰিমাণ</string>
+    <string name="android_tv_interface_on_seek_settings">প্লেয়াৰ দেখুৱাব - চাৰ্কৰ পৰিমাণ</string>
+    <string name="android_tv_interface_off_seek_settings_summary">প্লেয়াৰ লুকোৱা অৱস্থাত ব্যৱহৃত চাৰ্কৰ পৰিমাণ</string>
+    <string name="video_disk_description">কম সঞ্চয়স্থলৰ (যেনেঃ Android TV) সঁজুলিসমূহত সৰৱাধিক পৰিসৰত স্থাপন কৰিলে সমস্যা সৃষ্টি কৰে।</string>
+    <string name="dns_pref">DNS ওপৰত HTTPS</string>
+    <string name="video_ram_description">কম মেম\'ৰীৰ (যেনেঃ Android TV) সঁজুলিসমূহত সৰৱাধিক পৰিসৰত স্থাপন কৰিলে সমস্যা সৃষ্টি কৰে।</string>
+    <string name="dns_pref_summary">ISP ব্লকসমূহ বাচিবলৈ সহায়কাৰী</string>
+    <string name="add_site_pref">চাইট ক্লোন কৰক</string>
+    <string name="jsdelivr_proxy">GitHub প্ৰক্সি</string>
+    <string name="jsdelivr_enabled">GitHub পাবলৈ সক্ষম নহ\'ল। jsDelivr প্ৰক্সি সক্ৰিয় কৰি দিছে…</string>
+    <string name="jsdelivr_proxy_summary">jsDelivr ব্যৱহাৰ কৰি কাঁচা GitHub URLসমূহৰ ব্লক আঁতৰ কৰক। ই আপডেট বিলম্বিত হোৱাৰ সম্ভাৱনা আছে।</string>
+    <string name="remove_site_pref">চাইট আঁতৰাওক</string>
+    <string name="download_path_pref">ডাউনলোড পথ</string>
+    <string name="nginx_url_pref">NGINX ছাৰ্ভাৰ URL</string>
+    <string name="display_subbed_dubbed_settings">ডাব কৰা/সাবটাইটেলযুক্ত এনিমে প্ৰদৰ্শন</string>
+    <string name="resize_fit">স্ক্ৰিনত মিলাওক</string>
+    <string name="resize_fill">প্ৰসাৰিত কৰক</string>
+    <string name="legal_notice">দায়ৱলী</string>
+    <string name="pref_category_bypass">ISP বাইপাছসমূহ</string>
+    <string name="resize_zoom">জুম কৰক</string>
+    <string name="pref_category_app_updates">এপ্লিকেশ্বনৰ আপডেটসমূহ</string>
+    <string name="pref_category_backup">ব্যাকআপ</string>
+    <string name="pref_category_extensions">এক্সটেনশ্বনসমূহ</string>
+    <string name="pref_category_actions">ক্ৰিয়াসমূহ</string>
+    <string name="pref_category_cache">কেশ</string>
+    <string name="pref_category_android_tv">Android TV</string>
+    <string name="pref_category_gestures">ইঙ্গিতসমূহ</string>
+    <string name="pref_category_player_features">প্লেয়াৰৰ বৈশিষ্ট্যসমূহ</string>
+    <string name="pref_category_subtitles">সাবটাইটেলসমূহ</string>
+    <string name="pref_category_player_layout">বিন্যাস</string>
+    <string name="pref_category_defaults">পূৰ্ব নিৰ্ধাৰণসমূহ</string>
+    <string name="pref_category_looks">দেখাত</string>
+    <string name="pref_category_ui_features">বৈশিষ্ট্যসমূহ</string>
+    <string name="category_general">সাধাৰণ</string>
+    <string name="random_button_settings">যৌগিক বুটাম</string>
+    <string name="random_button_settings_desc">হোমপেজ আৰু লাইব্ৰেৰীত যৌগিক বুটাম প্ৰদৰ্শন কৰক</string>
+    <string name="provider_lang_settings">এক্সটেনশ্বন ভাষাসমূহ</string>
+    <string name="app_layout">এপ্লিকেশ্বন বিন্যাস</string>
+    <string name="preferred_media_settings">পচন্দৰ মিডিয়া</string>
+    <string name="enable_nsfw_on_providers">সমৰ্থিত এক্সটেনশ্বনত NSFW সক্ৰিয় কৰক</string>
+    <string name="subtitles_encoding">সাবটাইটেল ক\'ডিং</string>
+    <string name="category_providers">প্ৰদানকাৰীসকল</string>
+    <string name="category_provider_test">প্ৰদানকাৰীৰ পৰীক্ষা</string>
+    <string name="test_extensions">সমস্ত এক্সটেনশ্বন পৰীক্ষা কৰক</string>
+    <string name="test_extensions_summary">এই টেষ্টটি মাত্ৰ ডেভেলপাৰসকলৰ বাবে আৰু ই একো এক্সটেনচনৰ কাম কৰে নে নকৰে তাৰ পৰীক্ষা নকৰে।</string>
+    <string name="tv_layout">টিভি লেআউট</string>
+    <string name="emulator_layout">এমুলেটৰ লেআউট</string>
+    <string name="primary_color_settings">প্ৰাথমিক ৰং</string>
+    <string name="app_theme_settings">এপ থিম</string>
+    <string name="bottom_title_settings">প\'ষ্টাৰৰ শিৰোনামৰ স্থান</string>
+    <string name="phone_layout">ফোন লেআউট</string>
+    <string name="bottom_title_settings_des">প\'ষ্টাৰৰ তলত শিৰোনাম ৰাখক</string>
+    <string name="example_site_name">নতুন সাইটৰ নাম</string>
+    <string name="example_site_url">https://example.com</string>
+    <string name="example_lang_name">ভাষা ক\'ড (en)</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
+    <string name="account">একাউন্ট</string>
+    <string name="login">লগ ইন</string>
+    <string name="switch_account">একাউন্ট সলনি কৰক</string>
+    <string name="add_account">একাউন্ট যোগ কৰক</string>
+    <string name="create_account">একাউন্ট সৃষ্টি কৰক</string>
+    <string name="add_sync">ট্ৰেকিং যোগ কৰক</string>
+    <string name="none">একো নহয়</string>
+    <string name="normal">সাধাৰণ</string>
+    <string name="added_sync_format" formatted="true">%s যোগ কৰা হৈছে</string>
+    <string name="upload_sync">সিঙ্ক</string>
+    <string name="disable">বন্ধ কৰক</string>
+    <string name="all">সকলো</string>
+    <string name="max">সৰ্বাধিক</string>
+    <string name="subtitles_outline">আউটলাইন</string>
+    <string name="subtitles_depressed">ডিপ্ৰেছড</string>
+    <string name="subtitles_shadow">ছাঁয়া</string>
+    <string name="subtitle_offset_hint">১০০০ মি.ছে.</string>
+    <string name="subtitles_raised">উঠা</string>
+    <string name="subtitle_offset">সাবচিট্ৰ সিঙ্ক</string>
+    <string name="subtitle_offset_title">সাবচিট্ৰৰ সময়কাল</string>
+    <string name="subtitle_offset_extra_hint_later_format">%d মি.ছে. অধিক দেখুৱাবৰ বাবে ব্যৱহাৰ কৰক</string>
+    <string name="subtitle_offset_extra_hint_none_format">কোনো সাবচিট্ৰৰ সময়কাল নাই</string>
+    <string name="subtitle_offset_extra_hint_before_format">%d মি.ছে. অলপ পিচৰ পৰা দেখুৱাবৰ বাবে ব্যৱহাৰ কৰক</string>
+    <string name="subtitles_example_text">এজন চালাক পোহা কুকুৰাই অলপ তেজী মেজাজৰ কুকুৰাৰ ওপৰেদি জাপ দিলে</string>
+    <string name="recommended">পৰামৰ্শ দিয়া হৈছে</string>
+    <string name="player_loaded_subtitles" formatted="true">%s ল\'ড হৈছে</string>
+    <string name="player_load_subtitles">ফাইলৰ পৰা ল\'ড কৰক</string>
+    <string name="player_load_subtitles_online">ইণ্টাৰনেটৰ পৰা ল\'ড কৰক</string>
+    <string name="actor_background">পটভূমি</string>
+    <string name="downloaded_file">ডাউনলোড কৰা ফাইল</string>
+    <string name="home_source">উৎস</string>
+    <string name="actor_main">মূল</string>
+    <string name="home_random">যিকোনো এটা</string>
+    <string name="coming_soon">অচিৰেই আহিব…</string>
+    <string name="actor_supporting">সহায়ক</string>
+    <string name="quality_cam">কেম</string>
+    <string name="quality_cam_rip">কেম</string>
+    <string name="quality_cam_hd">কেম</string>
+    <string name="quality_hq">উচ্চ গুণমান</string>
+    <string name="quality_hd">এইচডি</string>
+    <string name="quality_ts">টি.এছ.</string>
+    <string name="quality_blueray">ব্লু-ৰেই</string>
+    <string name="quality_workprint">ডব্লিউ.পি.</string>
+    <string name="quality_tc">টি.চি.</string>
+    <string name="quality_dvd">ডি.ভি.ডি.</string>
+    <string name="quality_4k">৪কে</string>
+    <string name="quality_uhd">ইউএইচডি</string>
+    <string name="quality_hdr">এইচডি আৰ</string>
+    <string name="quality_sdr">এছডি আৰ</string>
+    <string name="quality_webrip">ৱেব</string>
+    <string name="poster_image">পোষ্টাৰৰ ছবি</string>
+    <string name="category_player">প্লেয়াৰ</string>
+    <string name="resolution_and_title">ৰিজলিউচন আৰু শিৰোনাম</string>
+    <string name="title">শিৰোনাম</string>
+    <string name="resolution">ৰিজলিউচন</string>
+    <string name="error_invalid_id">অবৈধ আইডি</string>
+    <string name="subtitles_filter_lang">পছন্দৰ মিডিয়া ভাষাৰ দ্বাৰা ফিল্টাৰ কৰক</string>
+    <string name="subtitles_remove_bloat">অপ্রয়োজনীয়তাবোৰ সাবটাইটেলৰ পৰা আঁতৰাওক</string>
+    <string name="extras">অতিৰিক্ত</string>
+    <string name="trailer">ট্ৰেইলাৰ</string>
+    <string name="crash_reporting_title">ক্ৰেছৰ ৰিপৰ্টিং</string>
+    <string name="network_adress_example">https://example.com/example.mp4</string>
+    <string name="previous">পূৰ্বৰ</string>
+    <string name="skip_setup">ছেটআপ এৰি দিয়া</string>
+    <string name="app_layout_subtext">আপোনাৰ ডিভাইচৰ বাবে এপ্‌টোৰ চেহেৰাটো সলনি কৰক</string>
+    <string name="preferred_media_subtext">আপুনি কি চাব বিচাৰে</string>
+    <string name="extensions">বৃদ্ধিসকল</string>
+    <string name="add_repository">ৰিপ\'জিট\'ৰি যোগ কৰক</string>
+    <string name="repository_name_hint">ৰিপ\'জিট\'ৰিৰ নাম (বৈকল্পিক)</string>
+    <string name="repository_url_hint">ৰিপ\'জিট\'ৰিৰ URL বা চৰ্টকোড</string>
+    <string name="plugin_loaded">প্লাগইন লোড কৰা হ\'ল</string>
+    <string name="plugin_downloaded">প্লাগইন ডাউনলোড কৰা হ\'ল</string>
+    <string name="plugin_deleted">প্লাগইন ডিলিট কৰা হ\'ল</string>
+    <string name="plugin_load_fail" formatted="true">%s লোড কৰিব পৰা নগ\'ল</string>
+    <string name="is_adult">১৮+</string>
+    <string name="batch_download_start_format" formatted="true">%1$d %2$s ডাউনলোড কৰা আৰম্ভ হৈছে…</string>
+    <string name="batch_download_finish_format" formatted="true">%1$d %2$s ডাউনলোড সম্পূৰ্ণ</string>
+    <string name="batch_download_nothing_to_download_format" formatted="true">সকলো %s ইতিমধ্যে ডাউনলোড কৰা হৈছে</string>
+    <string name="no_plugins_found_error">ৰিপ\'জিট\'ৰিত কোনো প্লাগইন পোৱা নগ\'ল</string>
+    <string name="plugin_singular">প্লাগইন</string>
+    <string name="plugin">প্লাগইনসমূহ</string>
+    <string name="no_repository_found_error">ৰিপ\'জিট\'ৰি পোৱা নগ\'ল, URL পৰীক্ষা কৰক আৰু VPN চেষ্টা কৰক</string>
+    <string name="delete_repository_plugins">এইটোয়ে সমস্ত ৰিপ\'জিট\'ৰি প্লাগইনসমূহও ডিলিট কৰিব</string>
+    <string name="delete_repository">ৰিপ\'জিট\'ৰি ডিলিট কৰক</string>
+    <string name="plugins_updated" formatted="true">%d প্লাগইন আপডেট কৰা হ\'ল</string>
+    <string name="plugins_disabled" formatted="true">নিষ্ক্ৰিয় কৰা: %d</string>
+    <string name="plugins_not_downloaded" formatted="true">ডাউনলোড কৰা নহয়: %d</string>
+    <string name="blank_repo_message">CloudStreamত কোনো চাইট ডিফল্টভাৱে ইনষ্টল হোৱা নাই। আপুনিয়ে ৰিপ\'জিট\'ৰিবোৰৰ পৰা চাইটসমূহ ইনষ্টল কৰিব লাগিব।
+\n
+\nআমাৰ Discordত যোগদান কৰক বা অনলাইন বিচাৰক।</string>
+    <string name="view_public_repositories_button">সম্প্ৰদায়ৰ ৰিপ\'জিট\'ৰিসমূহ চাওক</string>
+    <string name="uppercase_all_subtitles">সকলো চাবটাইটল মুকলি আখৰত</string>
+    <string name="download_all_plugins_from_repo">সতর্কতা: CloudStream 3 কোৱা নাই যে তৃতীয় পক্ষৰ বৃদ্ধিসমূহ ব্যৱহাৰ কৰিবলৈ আপুনি সম্পূৰ্ণ দায়িত্ব ল\'ব আৰু কোনো সহায় নাপাব!</string>
+    <string name="single_plugin_disabled" formatted="true">%s (নিষ্ক্ৰিয়)</string>
+    <string name="tracks">ট্ৰেকসমূহ</string>
+    <string name="audio_tracks">অ\'ডিঅ\' ট্ৰেকসমূহ</string>
+    <string name="video_tracks">ভিডিঅ\' ট্ৰেকসমূহ</string>
+    <string name="apply_on_restart">এপ্‌টো পুনৰ আৰম্ভ কৰক যাতে সলনিবোৰ চাব পাৰে।</string>
+    <string name="restart">পুনৰ আৰম্ভ কৰক</string>
+    <string name="safe_mode_title">নিরাপদ মোড অন</string>
+    <string name="safe_mode_description">এটা ক্ৰেছৰ বাবে সকলো বৃদ্ধি বন্ধ কৰা হৈছে যাতে আপুনি সমস্যা উদ্ভৱ কৰা বৃদ্ধি চাব পাৰে।</string>
+    <string name="safe_mode_crash_info">ক্ৰেছৰ তথ্য চাওক</string>
+    <string name="extension_rating" formatted="true">ৰেটিং: %s</string>
+    <string name="extension_description">বিৱৰণ</string>
+    <string name="extension_version">সংস্কৰণ</string>
+    <string name="extension_status">স্থিতি</string>
+    <string name="extension_size">আকাৰ</string>
+    <string name="extension_authors">লেখক</string>
+    <string name="extension_types">সমৰ্থিত</string>
+    <string name="extension_language">ভাষা</string>
+    <string name="extension_install_first">আগতে বৃদ্ধি ইনষ্টল কৰক</string>
+    <string name="app_not_found_error">এপ্‌টো পোৱা নগ\'ল</string>
+    <string name="all_languages_preference">সকলো ভাষা</string>
+    <string name="skip_type_format" formatted="true">%s এৰি দিয়া</string>
+    <string name="skip_type_op">উদ্‌ঘাটনী</string>
+    <string name="skip_type_ed">সমাপ্তি</string>
+    <string name="skip_type_recap">সংক্ষেপ</string>
+    <string name="hls_playlist">HLS প্লেলিস্ট</string>
+    <string name="player_pref">পছন্দৰ ভিডিঅ\' প্লেয়াৰ</string>
+    <string name="player_settings_play_in_app">আভ্যন্তৰীণ প্লেয়াৰ</string>
+    <string name="player_settings_select_cast_device">কাষ্ট ডিভাইচ চয়ন কৰক</string>
+    <string name="skip_type_mixed_ed">মিশ্ৰিত সমাপ্তি</string>
+    <string name="skip_type_mixed_op">মিশ্ৰিত উদ্‌ঘাটনী</string>
+    <string name="clear_history">ইতিহাস পৰিস্কাৰ কৰক</string>
+    <string name="skip_type_creddits">স্বীকৃতি</string>
+    <string name="skip_type_intro">ভূমিকা</string>
+    <string name="history">ইতিহাস</string>
+    <string name="enable_skip_op_from_database_des">উদ্‌ঘাটনী/সমাপ্তিৰ বাবে এৰি দিয়াৰ পপআপ দেখুৱাওক</string>
+    <string name="clipboard_too_large">অতিৰিক্ত লিখা। ক্ৰিপবোর্ডত সংৰক্ষণ কৰিব পৰা নগ\'ল।</string>
+    <string name="clipboard_unknown_error">কপি কৰাৰ সময়ত সমস্যা। লগকেট কপি কৰি এপ্‌টোৰ সহায়ক দলৰ লগত যোগাযোগ কৰক।</string>
+    <string name="action_mark_as_watched">চোৱা হিচাপে চিহ্নিত কৰক</string>
+    <string name="action_remove_from_watched">চোৱা হ\'ব পৰা তালিকাৰ পৰা আঁতৰাওক</string>
+    <string name="yes">হয়</string>
+    <string name="no">না</string>
+    <string name="ok">ঠিক আছে</string>
+    <string name="confirm_exit_dialog">আপুনি নিশ্চিত যে আপুনি বাহিৰ হ\'ব বিচাৰে?</string>
+    <string name="app_unrestricted_toast">এপ্‌ৰ বেটাৰী ব্যৱহাৰ ইতিমধ্যে অবাধত সজোৱা হৈছে</string>
+    <string name="battery_dialog_message">ক্লাউডষ্ট্ৰিমক পটভূমিত চলাবলৈ অনুমতিৰ প্ৰয়োজন যাতে চাবস্ক্ৰাইব কৰা টিভি শ্ব\'সমূহৰ বাবে নিৰৱচ্ছিন্ন ডাউনলোড আৰু জাননীসমূহ নিশ্চিত কৰিব পাৰি। এটা অনুৰোধ সংলাপ প্ৰদৰ্শন কৰিবলে ঠিক আছে টিপক। তাৰ পিছত, \'Allow\' টিপক।\n\nঅনুগ্ৰহ কৰি মন কৰক, এই অনুমতিৰ অৰ্থ এইটো নহয় যে CS3 এ আপোনাৰ বেটাৰী শেষ কৰিব। ই কেৱল প্ৰয়োজনৰ সময়তহে পটভূমিত কাম কৰিব, যেনে জাননী লাভ কৰাৰ সময়ত বা অফিচিয়েল এক্সটেনচনৰ পৰা ভিডিঅ’ ডাউনলোড কৰাৰ সময়ত।</string>
+    <string name="app_info_intent_error">CloudStream-ৰ App Info খুলিব পৰা নগ\'ল।</string>
+    <string name="update_notification_failed">এপ্‌ৰ নতুন সংস্কৰণ স্থাপন কৰিব পৰা নগ\'ল</string>
+    <string name="update_notification_downloading">এপ্‌ আপডেট ডাউনলোড কৰি আছে…</string>
+    <string name="update_notification_installing">এপ্‌ আপডেট স্থাপন কৰি আছে…</string>
+    <string name="apk_installer_legacy">প্ৰাচীন</string>
+    <string name="apk_installer_package_installer">পেকেজ ইন্সটলাৰ</string>
+    <string name="delayed_update_notice">এপ্‌ নিৰ্গমন কৰোতে আপডেট হ\'ব</string>
+    <string name="sort_by">শ্ৰেণী অনুসাৰে চিহ্নিত কৰক</string>
+    <string name="sort">শ্ৰেণী</string>
+    <string name="sort_rating_desc">ৰেটিং (উচ্চৰ পৰা নিম্নলৈ)</string>
+    <string name="sort_rating_asc">ৰেটিং (নিম্নৰ পৰা উচ্চলৈ)</string>
+    <string name="sort_updated_new">আপডেট (নতুনৰ পৰা পুৰণিলৈ)</string>
+    <string name="sort_updated_old">আপডেট (পুৰণিলৈ নতুন)</string>
+    <string name="sort_alphabetical_a">বৰ্ণানুক্ৰমিক (A ৰ পৰা Z)</string>
+    <string name="select_library">পুথিভঁৰালী বাছক</string>
+    <string name="open_with">ইয়াৰ সহায়ত খুলক</string>
+    <string name="empty_library_no_accounts_message">আপোনাৰ পুথিভঁৰালী খালি আছে :(
+\nএখন পুথিভঁৰালী একাউণ্টত লগ ইন কৰক বা স্থানীয় পুথিভঁৰালীত শ্ব\'সমূহ যোগ কৰক।</string>
+    <string name="empty_library_logged_in_message">এই তালিকা খালি। অন্য এটি তালিকালৈ সলনি কৰি চাওক।</string>
+    <string name="safe_mode_file">নিরাপদ ম\'ড ফাইল পোৱা গৈছে!
+\nফাইল আঁতৰোৱা নোহোৱালৈকে কোনো এক্সটেনশ্যন আৰম্ভ নকৰা হৈছে।</string>
+    <string name="revert">ঘূৰাই দিয়া</string>
+    <string name="subscription_in_progress_notification">সদস্যতা গ্ৰহণ কৰা শ্ব\'সমূহ আপডেট কৰিছে</string>
+    <string name="subscription_new">%s-ত সদস্যতা গ্ৰহণ কৰা হৈছে</string>
+    <string name="subscription_deleted">%s-ৰ পৰা সদস্যতা বাতিল কৰা হৈছে</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="mobile_data">ম\'বাইল ডাটা</string>
+    <string name="set_default">ডিফল্ট হিচাপে সজোৱা</string>
+    <string name="use">ব্যৱহাৰ কৰক</string>
+    <string name="edit">সম্পাদনা কৰক</string>
+    <string name="profiles">প্ৰ\'ফাইলসমূহ</string>
+    <string name="help">সহায়</string>
+    <string name="quality_profile_help">ইয়াত আপুনি উৎসসমূহ কেনেকৈ ক্ৰম অনুযায়ী চিহ্নিত কৰিব সেই বিষয়ে সলনি কৰিব পাৰে। যদি এখন ভিডিঅ\'ৰ উচ্চ অগ্ৰাধিকাৰ থাকে তেন্তে সেইটো উৎস নিৰ্বাচনৰ সময়ত ওপৰত দেখা যাব। উৎস অগ্ৰাধিকাৰ আৰু গুণ অগ্ৰাধিকাৰৰ মুঠ যোগফল হৈছে ভিডিঅ\'ৰ অগ্ৰাধিকাৰ।
+\n
+\nউৎস A: 3
+\nগুণ B: 7
+\nসৰহযোগে ভিডিঅ\'ৰ অগ্ৰাধিকাৰ হ\'ব 10।
+\n
+\nদ্ৰষ্টব্য: যদি যোগফল 10 বা তাৰ ওপৰত থাকে তেন্তে প্লেয়াৰটো নিজেই লিংক ল\'ড কৰাৰ সময়ত ল\'ডিং এড়াই যাব!</string>
+    <string name="profile_background_des">প্ৰ\'ফাইলৰ পটভূমি</string>
+    <string name="unable_to_inflate">UI সঠিকভাৱে সৃষ্টি কৰিব পৰা নগ\'ল, ই এটা গুৰুত্বপূৰ্ণ সমস্যা আৰু তাক অবিলম্বে জনোৱা উচিত %s</string>
+    <string name="already_voted">আপুনি ইতিমধ্যে ভোট দিছে</string>
+    <string name="favorites_list_name">প্ৰিয় তালিকা</string>
+    <string name="favorite_added">%s প্ৰিয় তালিকাত যোগ কৰা হৈছে</string>
+    <string name="favorite_removed">%s প্ৰিয় তালিকাৰ পৰা আঁতৰ কৰা হৈছে</string>
+    <string name="action_add_to_favorites">প্ৰিয় তালিকালৈ যোগ কৰক</string>
+    <string name="action_remove_from_favorites">প্ৰিয় তালিকাৰ পৰা আঁতৰ কৰক</string>
+    <string name="duplicate_title">সম্ভাৱ্য নকল বস্ত্ত পোৱা গৈছে</string>
+    <string name="duplicate_replace_all">সকলো প্ৰতিস্থাপন কৰক</string>
+    <string name="duplicate_message_single" formatted="true">আপোনাৰ পুথিভঁৰালীতে সম্ভাৱ্য নকল বস্তু পোৱা গৈছে: \'%s.\'
+\n
+\nআপুনি এই বস্তু যিকোনো হ\'লে যোগ কৰিব বিচাৰেনে, বিদ্যমান বস্তু প্ৰতিস্থাপন কৰিব, বা কাৰ্য বাতিল কৰিব বিচাৰেনে?</string>
+    <string name="duplicate_message_multiple" formatted="true">আপোনাৰ পুথিভঁৰালীতে সম্ভাৱ্য নকল বস্তুসমূহ পোৱা গৈছে:
+\n
+\n%s
+\n
+\nআপুনি এই বস্তু যিকোনো হ\'লে যোগ কৰিব বিচাৰেনে, বিদ্যমানবোৰ প্ৰতিস্থাপন কৰিব, বা কাৰ্য বাতিল কৰিব বিচাৰেনে?</string>
+    <string name="enter_pin_with_name" formatted="true">%s ৰ বাবে পিন সন্নিবিষ্ট কৰক</string>
+    <string name="enter_current_pin">বৰ্তমান পিন সন্নিবিষ্ট কৰক</string>
+    <string name="lock_profile">প্ৰফাইল লক কৰক</string>
+    <string name="pin">পিন</string>
+    <string name="pin_error_incorrect">ভুল পিন। অনুগ্ৰহ কৰি পুনৰ চেষ্টা কৰক।</string>
+    <string name="pin_error_length">পিন ৪ অক্ষৰৰ হ\'ব লাগিব</string>
+    <string name="select_an_account">এটা একাউণ্ট বাচনি কৰক</string>
+    <string name="manage_accounts">একাউণ্টসমূহ পৰিচালনা কৰক</string>
+    <string name="skip_startup_account_select_pref">স্টাৰ্টআপত একাউণ্ট বাচনি কৰা এড়াই যোৱাঁ</string>
+    <string name="use_default_account">ডিফল্ট একাউণ্ট ব্যৱহাৰ কৰক</string>
+    <string name="rotate_video">ঘূৰাওক</string>
+    <string name="logged_account" formatted="true">%s হিচাপে লগ ইন কৰা হৈছে</string>
+    <string name="rotate_video_desc">স্ক্ৰীণৰ অভিমুখৰ বাবে টগল বুটাম প্ৰদৰ্শন কৰক</string>
+    <string name="auto_rotate_video_desc">ভিডিঅ\'ৰ অভিমুখৰ ওপৰত আধাৰিত স্ক্ৰীণৰ অভিমুখ স্বয়ংক্ৰিয়ভাৱে পৰিবৰ্তন কৰক</string>
+    <string name="auto_rotate_video">স্বয়ংক্ৰিয় ঘূৰাওক</string>
+    <string name="unfavorite">প্ৰিয় নকৰা</string>
+    <string name="biometric_unsupported">এই ডিভাইচত বায়\'মেট্ৰিক প্ৰমাণীকৰণ সমৰ্থিত নহয়</string>
+    <string name="biometric_setting_summary">আঙুলি চিহ্ন, মুখৰ আইডি, পিন, পেটাৰ্ণ আৰু পাছৱাৰ্ডৰ সৈতে এপ্লিকেচন আনলক কৰক।</string>
+    <string name="favorite">প্ৰিয়</string>
+    <string name="biometric_prompt_description">কেইবাটাও ভুল চেষ্টা কৰাৰ পিছত, প্ৰম্প্ট বন্ধ হ\'ব। পুনৰ চেষ্টা কৰিবলৈ মাত্ৰ এপ্পটো পুনৰ আৰম্ভ কৰক।</string>
+    <string name="biometric_warning">আপোনাৰ CloudStream ডেটা এতিয়া সংৰক্ষণ কৰা হৈছে। এইৰ সম্ভাৱনা অত্যন্ত কম, কিন্তু সকলো ডিভাইচৰ ব্যৱহাৰ ভিন্ন হ\'ব পাৰে। যদি এপ্লিকেচনটোত প্রবেশ কৰিব নোৱাৰা অৱস্থাত পৰাৰ কম সম্ভাৱনাৰ ঘটনা ঘটে, তেন্তে সম্পূৰ্ণভাবে এপ্প ডেটা মচি দিয়ক আৰু সংৰক্ষণৰ পৰা পুনৰুদ্ধাৰ কৰক। কোনো অশান্তিৰ বাবে আমাৰ দুখিত হওক।</string>
+    <string name="download">ডাউনলোড</string>
+    <string name="updates_settings_des">এপ্‌ আৰম্ভণিৰ পিছত নতুন আপডেটৰ সন্ধান কৰক।</string>
+    <string name="uprereleases_settings_des">কেৱল সম্পূৰ্ণ মুক্তিৰ সলনি প্ৰাকমুক্তিৰ আপডেটৰ সন্ধান কৰক</string>
+    <string name="anim">একেই ডেভেলপাৰৰ দ্বাৰা এনিম এপ্‌</string>
+    <string name="new_update_format" formatted="true">নতুন আপডেট পোৱা গ’ল!
+\n%1$s -&gt; %2$s</string>
+    <string name="filler" formatted="true">ফিলাৰ</string>
+    <string name="play_with_app_name">CloudStreamৰে প্লে কৰক</string>
+    <string name="title_search">সন্ধান</string>
+    <string name="title_downloads">ডাউনলোড</string>
+    <string name="result_tags">শ্ৰেণীসমূহ</string>
+    <string name="skip_loading">লোডিং এড়াওক</string>
+    <string name="loading">লোড হৈ আছে…</string>
+    <string name="type_on_hold">স্থগিত</string>
+    <string name="type_completed">সম্পূৰ্ণ</string>
+    <string name="type_dropped">এৰি দিয়া</string>
+    <string name="type_re_watching">পুনৰাবলোকন</string>
+    <string name="play_movie_button">চলচ্চিত্ৰ প্লে কৰক</string>
+    <string name="play_trailer_button">ট্ৰেইলাৰ প্লে কৰক</string>
+    <string name="play_livestream_button">লাইভ ষ্ট্ৰীম প্লে কৰক</string>
+    <string name="pick_subtitle">চাবটাইটলসমূহ</string>
+    <string name="play_episode">এপিচ\'ড প্লে কৰক</string>
+    <string name="sort_apply">প্ৰয়োগ কৰক</string>
+    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="delete_files">ফাইলসমূহ ডিলিট কৰক</string>
+    <string name="delete_format" formatted="true">ডিলিট (%1$d | %2$s)</string>
+    <string name="delete_message_multiple" formatted="true">আপুনি স্থায়ীভাৱে তলত দিয়া আইটেমসমূহ ডিলিট কৰিবলৈ নিশ্চিত নেকি?
+\n
+\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">%1$s ত তলত দিয়া এপিচ’ডসমূহ স্থায়ীভাৱে ডিলিট কৰিব নেকি?
+\n
+\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">আপুনি দিয়া ছিৰিজৰ সকলো এপিচ’ড স্থায়ীভাৱে ডিলিট কৰিব:
+\n
+\n%s</string>
+    <string name="delete_message_series_only" formatted="true">আপুনি দিয়া ছিৰিজৰ সকলো এপিচ’ড স্থায়ীভাৱে ডিলিট কৰিবলৈ নিশ্চিত নেকি?
+\n
+\n%s</string>
+    <string name="sort_release_date_old">মুক্তিৰ তাৰিখ (পুৰণাৰ পৰা নতুন)</string>
+    <string name="test_warning">সতৰ্কবাৰ্তা</string>
+    <string name="auth_locally">স্থানীয়ভাৱে প্ৰমাণীকৰণ কৰক</string>
+    <string name="downloads_empty">বৰ্তমান কোনো ডাউনলোড নাই।</string>
+    <string name="open_local_video">স্থানীয় ভিডিঅ’ খোলক</string>
+    <string name="pref_category_accounts">একাউণ্টসমূহ</string>
+    <string name="qr_image">কিউ আৰ কোডৰ ছবি</string>
+    <string name="delete_plugin">প্লাগইন ডিলিট কৰক</string>
+    <string name="cs3wiki">CloudStream ৱিকি</string>
+    <string name="pref_category_security">সুৰক্ষা</string>
+    <string name="device_pin_url_message">আপোনাৰ স্মাৰ্টফোন বা কম্পিউটাৰত <b>%s</b> লগ কৰক আৰু ওপৰৰ ক\'ডটো প্ৰৱিষ্ট কৰক</string>
+    <string name="device_pin_error_message">ডিভাইচ পিন ক\'ড পোৱা নাই, স্থানীয় প্ৰমাণীকৰণ চেষ্টা কৰক</string>
+    <string name="device_pin_expired_message">পিন ক\'ডৰ মেয়াদ শেষ হৈছে!</string>
+    <string name="device_pin_counter_text">ক\'ড মেয়াদ শেষ হব %1$dm %2$ds</string>
+    <string name="preview_seekbar">সীকবৰ প্ৰিভিউ</string>
+    <string name="preview_seekbar_desc">সীকবৰত প্ৰিভিউ থাম্বনেইল সক্ৰিয় কৰক</string>
+    <string name="play_from_beginning_img_des">আৰম্ভৰ পৰা প্লে কৰক</string>
+    <string name="dismiss">এৰি দিয়া</string>
+    <string name="open_downloaded_repo">ডাউনলোড কৰা ৰিপ\'জিট\'ৰি খোলক</string>
+    <string name="hide_player_control_names">প্লেয়াৰৰ নিয়ন্ত্ৰণসমূহৰ নাম লুকাওক</string>
+    <string name="downloads_delete_select">মুছিবলৈ আইটেমসমূহ নিৰ্ব্বাচন কৰক</string>
+    <string name="offline_file">অফলাইনতে চাবলৈ উপলব্ধ</string>
+    <string name="select_all">সকলো বাছক</string>
+    <string name="deselect_all">সকলো বাদ দিয়ক</string>
+    <string name="sort_release_date_new">মুক্তিৰ তাৰিখ (নতুনৰ পৰা পুৰণা)</string>
+    <string name="no_subtitles_loaded">এতিয়ালৈকে কোনো চাবটাইটেল লোড কৰা হোৱা নাই</string>
+    <string name="custom">কাষ্টম</string>
+    <string name="dont_show">নেদেখুৱাওক</string>
+    <string name="confirm_before_exiting_desc">এপ্‌ট পৰা উলাই যোৱা আগতে বাৰ্তা দেখুৱাওক</string>
+    <string name="confirm_before_exiting_title">উলাই যোৱা আগতে নিশ্চিত কৰক</string>
+    <string name="backup_path_title">ব্যাকআপ ফ\'ল্ডাৰ স্থান</string>
+    <string name="show">দেখুৱাওক</string>
+    <string name="torrent_info">এই ভিডিওটো টৰেন্ট। এই অৰ্থ হৈছে যে আপোনাৰ ভিডিও কাৰ্যকলাপ ট্ৰেক কৰা হ\'ব পাৰে।\nআগবঢ়িবলৈ আগতে টৰেণ্টিং বুজি পোৱা নিশ্চিত কৰক।</string>
+    <string name="subs_edge_size">চুকৰ মাপ</string>
+    <string name="player_load_one_subtitle_online">প্ৰথম উপলব্ধটো লোড কৰক</string>
+    <string name="audio_singluar">অডিঅ\'</string>
+    <string name="podcast_singluar">প’ডকাষ্ট</string>
+    <string name="encoding_error">এনকোডিং ত্ৰুটি</string>
+    <string name="unsupported_error">সমৰ্থিত ত্ৰুটি</string>
+    <string name="torrent_not_accepted">গ্ৰহণ কৰা হোৱা নাই টৰেণ্ট</string>
+    <string name="torrent_preferred_media">সংহতিসমূহ/প্ৰদানকাৰী/পছন্দৰ মাধ্যমত টৰেণ্ট সামৰ্থবান কৰক</string>
+    <string name="software_decoding">চফ্টৱেৰ ডিকোডিং</string>
+    <string name="software_decoding_desc">চফ্টৱেৰ ডিকোডিঙে প্লেয়াৰক আপোনাৰ ফোন দ্বাৰা সমৰ্থিত নোহোৱা ভিডিঅ\' ফাইলসমূহ চলাবলৈ সামৰ্থবান কৰে, কিন্তু উচ্চ ৰিজ\'লিউচনত লেগি বা অস্থিৰ প্লেবেকৰ সৃষ্টি কৰিব পাৰে</string>
+</resources>

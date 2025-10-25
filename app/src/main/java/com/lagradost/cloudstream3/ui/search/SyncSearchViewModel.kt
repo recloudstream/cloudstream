@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.search
 
+import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.SearchQuality
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
@@ -15,5 +16,6 @@ class SyncSearchViewModel {
         override var id: Int?,
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null,
+        override var score: Score? = null,
     ) : SearchResponse
 }

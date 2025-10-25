@@ -6,10 +6,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.core.view.setPadding
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import coil3.load
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
+import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.databinding.ResultEpisodeBinding
@@ -38,7 +41,6 @@ import java.util.Locale
  * @see VideoClickActionHolder
  */
 const val ACTION_PLAY_EPISODE_IN_PLAYER = 1
-
 const val ACTION_CHROME_CAST_EPISODE = 4
 const val ACTION_CHROME_CAST_MIRROR = 5
 
@@ -59,8 +61,11 @@ const val ACTION_DOWNLOAD_EPISODE_SUBTITLE_MIRROR = 14
 const val ACTION_MARK_AS_WATCHED = 18
 
 const val TV_EP_SIZE = 400
+const val ACTION_MARK_WATCHED_UP_TO_THIS_EPISODE = 19
 
-data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
+data class EpisodeClickEvent(val position: Int?, val action: Int, val data: ResultEpisode) {
+    constructor(action: Int, data: ResultEpisode) : this(null, action, data)
+}
 
 class EpisodeAdapter(
     private val hasDownloadSupport: Boolean,
@@ -70,10 +75,20 @@ class EpisodeAdapter(
     companion object {
         fun getPlayerAction(context: Context): Int {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-            val playerPref = settingsManager.getString(context.getString(R.string.player_default_key), "")
+            val playerPref =
+                settingsManager.getString(context.getString(R.string.player_default_key), "")
+
             return VideoClickActionHolder.uniqueIdToId(playerPref) ?: ACTION_PLAY_EPISODE_IN_PLAYER
         }
+
+        val sharedPool =
+            RecyclerView.RecycledViewPool()
+                .apply {
+                    this.setMaxRecycledViews(0, 10)
+                    this.setMaxRecycledViews(1, 10)
+                }
     }
+
 
     var cardList: MutableList<ResultEpisode> = mutableListOf()
 
@@ -145,11 +160,11 @@ class EpisodeAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is EpisodeCardViewHolderLarge -> {
-                holder.bind(getItem(position))
+                holder.bind(position, getItem(position))
             }
 
             is EpisodeCardViewHolderSmall -> {
-                holder.bind(getItem(position))
+                holder.bind(position, getItem(position))
             }
         }
     }
@@ -167,17 +182,21 @@ class EpisodeAdapter(
         var localCard: ResultEpisode? = null
 
         @SuppressLint("SetTextI18n")
-        fun bind(card: ResultEpisode) {
+        fun bind(position: Int, card: ResultEpisode) {
             localCard = card
             val setWidth =
                 if (isLayout(TV or EMULATOR)) TV_EP_SIZE.toPx else ViewGroup.LayoutParams.MATCH_PARENT
 
-            binding.episodeLinHolder.layoutParams.width = setWidth
-            binding.episodeHolderLarge.layoutParams.width = setWidth
-            binding.episodeHolder.layoutParams.width = setWidth
-
-
             binding.apply {
+                episodeLinHolder.layoutParams.width = setWidth
+                episodeHolderLarge.layoutParams.width = setWidth
+                episodeHolder.layoutParams.width = setWidth
+
+                if (isLayout(PHONE or EMULATOR) && CommonActivity.appliedTheme == R.style.AmoledMode) {
+                    episodeHolderLarge.radius = 0.0f
+                    episodeHolder.setPadding(0)
+                }
+
                 downloadButton.isVisible = hasDownloadSupport
                 downloadButton.setDefaultClickListener(
                     VideoDownloadHelper.DownloadEpisodeCached(
@@ -187,18 +206,30 @@ class EpisodeAdapter(
                         season = card.season,
                         id = card.id,
                         parentId = card.parentId,
-                        rating = card.rating,
+                        score = card.score,
                         description = card.description,
                         cacheTime = System.currentTimeMillis(),
                     ), null
                 ) {
                     when (it.action) {
                         DOWNLOAD_ACTION_DOWNLOAD -> {
-                            clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))
+                            clickCallback.invoke(
+                                EpisodeClickEvent(
+                                    position,
+                                    ACTION_DOWNLOAD_EPISODE,
+                                    card
+                                )
+                            )
                         }
 
                         DOWNLOAD_ACTION_LONG_CLICK -> {
-                            clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_MIRROR, card))
+                            clickCallback.invoke(
+                                EpisodeClickEvent(
+                                    position,
+                                    ACTION_DOWNLOAD_MIRROR,
+                                    card
+                                )
+                            )
                         }
 
                         else -> {
@@ -227,11 +258,19 @@ class EpisodeAdapter(
                     episodeProgress.isVisible = displayPos > 0L
                 }
 
-                episodePoster.loadImage(card.poster)
+                val posterVisible = !card.poster.isNullOrBlank()
+                if (posterVisible) {
+                    episodePoster.loadImage(card.poster)
+                } else {
+                    // Clear the image
+                    episodePoster.load(null)
+                }
+                episodePoster.isVisible = posterVisible
 
-                if (card.rating != null) {
+                val rating10p = card.score?.toFloat(10)
+                if (rating10p != null && rating10p > 0.1) {
                     episodeRating.text = episodeRating.context?.getString(R.string.rated_format)
-                        ?.format(card.rating.toFloat() / 10f)
+                        ?.format(rating10p) // TODO Change rated_format to use card.score.toString()
                 } else {
                     episodeRating.text = ""
                 }
@@ -245,7 +284,13 @@ class EpisodeAdapter(
                     var isExpanded = false
                     setOnClickListener {
                         if (isLayout(TV)) {
-                            clickCallback.invoke(EpisodeClickEvent(ACTION_SHOW_DESCRIPTION, card))
+                            clickCallback.invoke(
+                                EpisodeClickEvent(
+                                    position,
+                                    ACTION_SHOW_DESCRIPTION,
+                                    card
+                                )
+                            )
                         } else {
                             isExpanded = !isExpanded
                             maxLines = if (isExpanded) {
@@ -259,10 +304,11 @@ class EpisodeAdapter(
                     val isUpcoming = unixTimeMS < card.airDate
 
                     if (isUpcoming) {
+                        episodeProgress.isVisible = false
                         episodePlayIcon.isVisible = false
-                        episodeUpcomingIcon.isVisible = !episodePoster.isVisible
+                        episodeUpcomingIcon.isVisible = !posterVisible
                         episodeDate.setText(
-                            com.lagradost.cloudstream3.utils.txt(
+                            txt(
                                 R.string.episode_upcoming_format,
                                 secondsToReadable(
                                     card.airDate.minus(unixTimeMS).div(1000).toInt(),
@@ -271,6 +317,7 @@ class EpisodeAdapter(
                             )
                         )
                     } else {
+                        episodePlayIcon.isVisible = true
                         episodeUpcomingIcon.isVisible = false
 
                         val formattedAirDate = SimpleDateFormat.getDateInstance(
@@ -282,6 +329,8 @@ class EpisodeAdapter(
                         episodeDate.setText(txt(formattedAirDate))
                     }
                 } else {
+                    episodeUpcomingIcon.isVisible = false
+                    episodePlayIcon.isVisible = true
                     episodeDate.isVisible = false
                 }
 
@@ -293,18 +342,24 @@ class EpisodeAdapter(
 
                 if (isLayout(EMULATOR or PHONE)) {
                     episodePoster.setOnClickListener {
-                        clickCallback.invoke(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
+                        clickCallback.invoke(
+                            EpisodeClickEvent(
+                                position,
+                                ACTION_CLICK_DEFAULT,
+                                card
+                            )
+                        )
                     }
 
                     episodePoster.setOnLongClickListener {
-                        clickCallback.invoke(EpisodeClickEvent(ACTION_SHOW_TOAST, card))
+                        clickCallback.invoke(EpisodeClickEvent(position, ACTION_SHOW_TOAST, card))
                         return@setOnLongClickListener true
                     }
                 }
             }
 
             itemView.setOnClickListener {
-                clickCallback.invoke(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
+                clickCallback.invoke(EpisodeClickEvent(position, ACTION_CLICK_DEFAULT, card))
             }
 
             if (isLayout(TV)) {
@@ -314,7 +369,7 @@ class EpisodeAdapter(
             }
 
             itemView.setOnLongClickListener {
-                clickCallback.invoke(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
+                clickCallback.invoke(EpisodeClickEvent(position, ACTION_SHOW_OPTIONS, card))
                 return@setOnLongClickListener true
             }
 
@@ -330,7 +385,7 @@ class EpisodeAdapter(
         private val downloadClickCallback: (DownloadClickEvent) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
-        fun bind(card: ResultEpisode) {
+        fun bind(position: Int, card: ResultEpisode) {
             binding.episodeHolder.layoutParams.apply {
                 width =
                     if (isLayout(TV or EMULATOR)) TV_EP_SIZE.toPx else ViewGroup.LayoutParams.MATCH_PARENT
@@ -346,18 +401,30 @@ class EpisodeAdapter(
                         season = card.season,
                         id = card.id,
                         parentId = card.parentId,
-                        rating = card.rating,
+                        score = card.score,
                         description = card.description,
                         cacheTime = System.currentTimeMillis(),
                     ), null
                 ) {
                     when (it.action) {
                         DOWNLOAD_ACTION_DOWNLOAD -> {
-                            clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))
+                            clickCallback.invoke(
+                                EpisodeClickEvent(
+                                    position,
+                                    ACTION_DOWNLOAD_EPISODE,
+                                    card
+                                )
+                            )
                         }
 
                         DOWNLOAD_ACTION_LONG_CLICK -> {
-                            clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_MIRROR, card))
+                            clickCallback.invoke(
+                                EpisodeClickEvent(
+                                    position,
+                                    ACTION_DOWNLOAD_MIRROR,
+                                    card
+                                )
+                            )
                         }
 
                         else -> {
@@ -387,7 +454,7 @@ class EpisodeAdapter(
                 }
 
                 itemView.setOnClickListener {
-                    clickCallback.invoke(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
+                    clickCallback.invoke(EpisodeClickEvent(position, ACTION_CLICK_DEFAULT, card))
                 }
 
                 if (isLayout(TV)) {
@@ -397,7 +464,7 @@ class EpisodeAdapter(
                 }
 
                 itemView.setOnLongClickListener {
-                    clickCallback.invoke(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
+                    clickCallback.invoke(EpisodeClickEvent(position, ACTION_SHOW_OPTIONS, card))
                     return@setOnLongClickListener true
                 }
 

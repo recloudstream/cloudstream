@@ -5,10 +5,12 @@ import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import java.security.MessageDigest
 
 
@@ -106,22 +108,22 @@ open class Chillx : ExtractorApi() {
                 "user-agent" to USER_AGENT,
             )
         callback.invoke(
-            ExtractorLink(
-                name,
-                name,
-                m3u8,
-                mainUrl,
-                Qualities.P1080.value,
-                INFER_TYPE,
-                headers = header
-            )
+            newExtractorLink(
+                source = name,
+                name = name,
+                url = m3u8,
+            ) {
+                this.referer = mainUrl
+                this.quality = Qualities.P1080.value
+                this.headers = header
+            }
         )
 
         val subtitles = extractSrtSubtitles(decoded)
 
         subtitles.forEachIndexed { _, (language, url) ->
             subtitleCallback.invoke(
-                SubtitleFile(
+                newSubtitleFile(
                     language,
                     url
                 )

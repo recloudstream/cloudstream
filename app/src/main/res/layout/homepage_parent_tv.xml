@@ -24,7 +24,7 @@
         android:descendantFocusability="afterDescendants"
         android:nextFocusUp="@id/home_child_more_info"
         android:orientation="horizontal"
-        android:paddingStart="@dimen/navbar_width"
+        android:paddingStart="8dp"
         android:paddingEnd="5dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/home_result_grid" />

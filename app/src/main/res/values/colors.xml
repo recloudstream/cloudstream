@@ -34,9 +34,11 @@
     <color name="subColorText">#571711</color> <!--F53B66 FA3D79-->
     <color name="subColorBg">#F53B66</color>
     <color name="typeColorText">#BEC8FF</color>
-    <color name="typeColorBg">?attr/colorPrimaryDark</color>
+    <color name="typeColorBg">#3700B3</color>
+    <!--
     <color name="ratingColor">#4C3115</color>
     <color name="ratingColorBg">#FFA662</color>
+    -->
 
     <color name="adultColor">#FF6F63</color> <!-- same as sub color -->
 
@@ -64,6 +66,24 @@
     <color name="lightGrayTextColor">#5f6267</color>
     <color name="lightIconColor">#5f6267</color>
 
+    <!--Dracula Theme-->
+    <color name="DraculaPrimaryGrayBackground">#414450</color>
+    <color name="DraculaBitDarkerGrayBackground">#282a36</color>
+    <color name="DraculaGrayBackground">#44475A</color>
+    <color name="DraculaItemBackground">#373844</color>
+    <color name="DraculaTextColor">#F8F8F2</color>
+    <color name="DraculaGrayTextColor">#6272A4</color>
+    <color name="DraculaIconColor">#6272A4</color>
+
+    <!-- Lavender Dreams Theme -->
+    <color name="LavenderPrimaryGrayBackground">#f7eefc</color>
+    <color name="LavenderBitDarkerGrayBackground">#fdf0fb</color>
+    <color name="LavenderGrayBackground">#b794f6</color>
+    <color name="LavenderItemBackground">#f8f5ff</color>
+    <color name="LavenderTextColor">#2d1b47</color>
+    <color name="LavenderGrayTextColor">#9ab3ff</color>
+    <color name="LavenderIconColor">#7c3aed</color>
+
     <!--Other Colors -->
     <color name="colorPrimaryBlue">#5664B7</color>
     <color name="colorPrimaryRed">#D50000</color>
@@ -89,4 +109,5 @@
     <color name="colorTestPass">#48E484</color>
     <color name="colorTestFail">#ea596e</color>
     <color name="colorTestWarning">#FF9800</color>
+    <color name="playIconBackground">#B3000000</color>
 </resources>

@@ -7,26 +7,20 @@ import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.ui.player.OfflinePlaybackHelper.playLink
 import com.lagradost.cloudstream3.ui.player.OfflinePlaybackHelper.playUri
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
+import com.lagradost.cloudstream3.utils.UIHelper.enableEdgeToEdgeCompat
 
 class DownloadedPlayerActivity : AppCompatActivity() {
     private val dTAG = "DownloadedPlayerAct"
 
-    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-        CommonActivity.dispatchKeyEvent(this, event)?.let {
-            return it
-        }
-        return super.dispatchKeyEvent(event)
-    }
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean =
+        CommonActivity.dispatchKeyEvent(this, event) ?: super.dispatchKeyEvent(event)
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        CommonActivity.onKeyDown(this, keyCode, event)
-
-        return super.onKeyDown(keyCode, event)
-    }
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean =
+        CommonActivity.onKeyDown(this, keyCode, event) ?: super.onKeyDown(keyCode, event)
 
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
@@ -37,13 +31,18 @@ class DownloadedPlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         CommonActivity.loadThemes(this)
         CommonActivity.init(this)
+        enableEdgeToEdgeCompat()
         setContentView(R.layout.empty_layout)
         Log.i(dTAG, "onCreate")
 
         val data = intent.data
 
+        if (OfflinePlaybackHelper.playIntent(activity = this, intent = intent)) {
+            return
+        }
+
         if (intent?.action == Intent.ACTION_SEND || intent?.action == Intent.ACTION_OPEN_DOCUMENT || intent?.action == Intent.ACTION_VIEW) {
-            val extraText = normalSafeApiCall { // I dont trust android
+            val extraText = safe { // I dont trust android
                 intent.getStringExtra(Intent.EXTRA_TEXT)
             }
             val cd = intent.clipData

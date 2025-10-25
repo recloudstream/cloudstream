@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.AutoDownloadMode
 import com.lagradost.cloudstream3.CommonActivity.showToast
@@ -15,15 +16,16 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.databinding.LogcatBinding
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.network.initClient
+import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.services.BackupWorkManager
-import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.hideOn
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setSystemBarsPadding
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.ui.settings.utils.getChooseFolderLauncher
@@ -37,7 +39,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
-import okhttp3.internal.closeQuietly
+import com.lagradost.cloudstream3.utils.txt
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.OutputStream
@@ -50,6 +52,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar(R.string.category_updates)
+        setSystemBarsPadding()
         setPaddingBottom()
         setToolBarScrollFlags()
     }
@@ -64,6 +67,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
         }
     }
 
+    @Suppress("DEPRECATION_ERROR")
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_updates, rootKey)
@@ -104,7 +108,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
             activity?.restorePrompt()
             return@setOnPreferenceClickListener true
         }
-        getPref(R.string.backup_path_key)?.hideOn(TV or EMULATOR)?.setOnPreferenceClickListener {
+        getPref(R.string.backup_path_key)?.hideOn(EMULATOR)?.setOnPreferenceClickListener {
             val dirs = getBackupDirsForDisplay()
             val currentDir =
                 settingsManager.getString(getString(R.string.backup_dir_key), null)
@@ -137,35 +141,30 @@ class SettingsUpdates : PreferenceFragmentCompat() {
         }
 
         getPref(R.string.show_logcat_key)?.setOnPreferenceClickListener { pref ->
-            val builder =
-                AlertDialog.Builder(pref.context, R.style.AlertDialogCustom)
+            val builder = AlertDialog.Builder(pref.context, R.style.AlertDialogCustom)
 
             val binding = LogcatBinding.inflate(layoutInflater, null, false)
             builder.setView(binding.root)
 
             val dialog = builder.create()
             dialog.show()
-            val log = StringBuilder()
-            try {
-                //https://developer.android.com/studio/command-line/logcat
-                val process = Runtime.getRuntime().exec("logcat -d")
-                val bufferedReader = BufferedReader(
-                    InputStreamReader(process.inputStream)
-                )
 
-                var line: String?
-                while (bufferedReader.readLine().also { line = it } != null) {
-                    log.append("${line}\n")
-                }
+            val logList = mutableListOf<String>()
+            try {
+                // https://developer.android.com/studio/command-line/logcat
+                val process = Runtime.getRuntime().exec("logcat -d")
+                val bufferedReader = BufferedReader(InputStreamReader(process.inputStream))
+                bufferedReader.lineSequence().forEach { logList.add(it) }
             } catch (e: Exception) {
                 logError(e) // kinda ironic
             }
 
-            val text = log.toString()
-            binding.text1.text = text
+            val adapter = LogcatAdapter(logList)
+            binding.logcatRecyclerView.layoutManager = LinearLayoutManager(pref.context)
+            binding.logcatRecyclerView.adapter = adapter
 
             binding.copyBtt.setOnClickListener {
-                clipboardHelper(txt("Logcat"), text)
+                clipboardHelper(txt("Logcat"), logList.joinToString("\n"))
                 dialog.dismissSafe(activity)
             }
 
@@ -179,19 +178,17 @@ class SettingsUpdates : PreferenceFragmentCompat() {
                 var fileStream: OutputStream? = null
                 try {
                     fileStream = VideoDownloadManager.setupStream(
-                            it.context,
-                            "logcat_${date}",
-                            null,
-                            "txt",
-                            false
-                        ).openNew()
-                    fileStream.writer().write(text)
+                        it.context,
+                        "logcat_${date}",
+                        null,
+                        "txt",
+                        false
+                    ).openNew()
+                    fileStream.writer().use { writer -> writer.write(logList.joinToString("\n")) }
                     dialog.dismissSafe(activity)
                 } catch (t: Throwable) {
                     logError(t)
                     showToast(t.message)
-                } finally {
-                    fileStream?.closeQuietly()
                 }
             }
 
@@ -259,10 +256,17 @@ class SettingsUpdates : PreferenceFragmentCompat() {
             }
             return@setOnPreferenceClickListener true
         }
+
+        getPref(R.string.manual_update_plugins_key)?.setOnPreferenceClickListener {
+            ioSafe {
+                PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_manuallyReloadAndUpdatePlugins(activity ?: return@ioSafe)
+            }
+            return@setOnPreferenceClickListener true // Return true for the listener
+        }
     }
 
     private fun getBackupDirsForDisplay(): List<String> {
-        return normalSafeApiCall {
+        return safe {
             context?.let { ctx ->
                 val defaultDir = BackupUtils.getDefaultBackupDir(ctx)?.filePath()
                 val first = listOf(defaultDir)

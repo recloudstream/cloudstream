@@ -3,12 +3,13 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safeAsync
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.extractorApis
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import com.lagradost.cloudstream3.utils.loadExtractor
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import org.jsoup.Jsoup
 
 /**
@@ -43,7 +44,7 @@ open class Pelisplus(val mainUrl: String) {
             val extractorUrl = getExtractorUrl(id)
 
             /** Stolen from GogoanimeProvider.kt extractor */
-            suspendSafeApiCall {
+            safeAsync {
                 val link = getDownloadUrl(id)
                 println("Generated vidstream download link: $link")
                 val page = app.get(link, referer = extractorUrl)
@@ -61,14 +62,14 @@ open class Pelisplus(val mainUrl: String) {
 
                     if (!loadExtractor(href, link, subtitleCallback, callback)) {
                         callback.invoke(
-                            ExtractorLink(
+                            newExtractorLink(
                                 this.name,
                                 name = this.name,
-                                href,
-                                page.url,
-                                getQualityFromName(qual),
-                                type = INFER_TYPE
-                            )
+                                href
+                            ) {
+                                this.referer = page.url
+                                this.quality = getQualityFromName(qual)
+                            }
                         )
                     }
                 }

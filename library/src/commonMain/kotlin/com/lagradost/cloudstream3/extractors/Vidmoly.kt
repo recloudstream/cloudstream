@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import kotlinx.coroutines.delay
@@ -63,7 +64,7 @@ open class Vidmoly : ExtractorApi() {
         tryParseJson<List<SubSource>>("[${subData}]")
             ?.filter { it.kind == "captions" }?.map {
                 subtitleCallback.invoke(
-                    SubtitleFile(
+                    newSubtitleFile(
                         it.label.toString(),
                         fixUrl(it.file.toString())
                     )

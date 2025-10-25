@@ -8,11 +8,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentTestingBinding
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setSystemBarsPadding
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 
@@ -29,6 +30,7 @@ class TestFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setUpToolbar(R.string.category_provider_test)
+        setSystemBarsPadding()
         setToolBarScrollFlags()
         super.onViewCreated(view, savedInstanceState)
 
@@ -47,7 +49,7 @@ class TestFragment : Fragment() {
             }
 
             observeNullable(testViewModel.providerResults) {
-                normalSafeApiCall {
+                safe {
                     val newItems = it.sortedBy { api -> api.first.name }
                     (providerTestRecyclerView.adapter as? TestResultAdapter)?.updateList(
                         newItems

@@ -58,7 +58,6 @@ class ViewpagerAdapter(
             LibraryViewpagerPageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
-
     override fun onUpdateContent(
         holder: ViewHolderState<Bundle>,
         item: SyncAPI.Page,
@@ -67,6 +66,7 @@ class ViewpagerAdapter(
         val binding = holder.view
         if (binding !is LibraryViewpagerPageBinding) return
         (binding.pageRecyclerview.adapter as? PageAdapter)?.updateList(item.items)
+        binding.pageRecyclerview.scrollToPosition(0)
     }
 
     override fun onBindContent(holder: ViewHolderState<Bundle>, item: SyncAPI.Page, position: Int) {
@@ -100,7 +100,7 @@ class ViewpagerAdapter(
                     //Expand the top Appbar based on scroll direction up/down, simulate phone behavior
                     if (isLayout(TV or EMULATOR)) {
                         binding.root.rootView.findViewById<AppBarLayout>(R.id.search_bar)
-                            .apply {
+                            ?.apply {
                                 if (diff <= 0)
                                     setExpanded(true)
                                 else

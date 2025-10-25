@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import com.lagradost.cloudstream3.utils.httpsify
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 open class Embedgram : ExtractorApi() {
     override val name = "Embedgram"
@@ -22,16 +23,17 @@ open class Embedgram : ExtractorApi() {
         val link = document.select("video source:last-child").attr("src")
         val quality = document.select("video source:last-child").attr("title")
         callback.invoke(
-            ExtractorLink(
+            newExtractorLink(
                 this.name,
                 this.name,
                 httpsify(link),
-                "$mainUrl/",
-                getQualityFromName(quality),
-                headers = mapOf(
+            ) {
+                this.referer = "$mainUrl/"
+                this.quality = getQualityFromName(quality)
+                this.headers = mapOf(
                     "Range" to "bytes=0-"
                 )
-            )
+            }
         )
     }
 }

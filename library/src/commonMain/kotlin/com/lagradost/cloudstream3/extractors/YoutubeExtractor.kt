@@ -2,9 +2,13 @@ package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import com.lagradost.cloudstream3.utils.schemaStripRegex
 import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor
@@ -62,7 +66,13 @@ open class YoutubeExtractor : ExtractorApi() {
 
             }
             s.fetchPage()
-            ytVideos[url] = s.hlsUrl
+            val streamUrl = s.hlsUrl.takeIf { !it.isNullOrEmpty() }
+            ?: s.dashMpdUrl.takeIf { !it.isNullOrEmpty() }
+            ?: s.videoStreams?.firstOrNull()?.url
+
+            if (!streamUrl.isNullOrEmpty()) {
+                ytVideos[url] = streamUrl
+            }
 
             ytVideosSubtitles[url] = try {
                 s.subtitlesDefault.filterNotNull()
@@ -73,19 +83,17 @@ open class YoutubeExtractor : ExtractorApi() {
         }
         ytVideos[url]?.let {
             callback(
-                ExtractorLink(
-                    this.name,
-                    this.name,
-                    it,
-                    "",
-                    Qualities.Unknown.value,
-                    isM3u8 = true
+                newExtractorLink(
+                    source = this.name,
+                    name = this.name,
+                    url = it,
+                    type = INFER_TYPE
                 )
             )
         }
 
         ytVideosSubtitles[url]?.mapNotNull {
-            SubtitleFile(
+            newSubtitleFile(
                 it.languageTag ?: return@mapNotNull null,
                 it.content ?: return@mapNotNull null
             )

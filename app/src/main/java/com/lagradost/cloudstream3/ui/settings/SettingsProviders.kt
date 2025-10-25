@@ -2,27 +2,29 @@ package com.lagradost.cloudstream3.ui.settings
 
 import android.os.Bundle
 import android.view.View
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.NavOptions
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setSystemBarsPadding
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiDubstatusSettings
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
-import com.lagradost.cloudstream3.utils.SubtitleHelper
+import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 
 class SettingsProviders : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar(R.string.category_providers)
+        setSystemBarsPadding()
         setPaddingBottom()
         setToolBarScrollFlags()
     }
@@ -104,35 +106,25 @@ class SettingsProviders : PreferenceFragmentCompat() {
         }
 
         getPref(R.string.provider_lang_key)?.setOnPreferenceClickListener {
-            activity?.getApiProviderLangSettings()?.let { current ->
-                val languages = synchronized(APIHolder.apis) {
-                    APIHolder.apis.map { it.lang }.toSet()
-                        .sortedBy { SubtitleHelper.fromTwoLettersToLanguage(it) } + AllLanguagesName
+            activity?.getApiProviderLangSettings()?.let { currentLangTags ->
+                val languagesTagName = synchronized(APIHolder.apis) {
+                    listOf( Pair(AllLanguagesName, getString(R.string.all_languages_preference)) ) +
+                    APIHolder.apis.map { Pair(it.lang, getNameNextToFlagEmoji(it.lang) ?: it.lang) }
+                        .toSet().sortedBy { it.second.substringAfter("\u00a0").lowercase() } // name ignoring flag emoji
                 }
 
-                val currentList = current.map {
-                    languages.indexOf(it)
-                }
-
-                val names = languages.map {
-                    if (it == AllLanguagesName) {
-                        Pair(it, getString(R.string.all_languages_preference))
-                    } else {
-                        val emoji = SubtitleHelper.getFlagFromIso(it)
-                        val name = SubtitleHelper.fromTwoLettersToLanguage(it)
-                        val fullName = "$emoji $name"
-                        Pair(it, fullName)
-                    }
+                val currentIndexList = currentLangTags.map { langTag ->
+                    languagesTagName.indexOfFirst { lang -> lang.first == langTag }
                 }
 
                 activity?.showMultiDialog(
-                    names.map { it.second },
-                    currentList,
+                    languagesTagName.map { it.second },
+                    currentIndexList,
                     getString(R.string.provider_lang_settings),
                     {}) { selectedList ->
                     settingsManager.edit().putStringSet(
                         this.getString(R.string.provider_lang_key),
-                        selectedList.map { names[it].first }.toMutableSet()
+                        selectedList.map { languagesTagName[it].first }.toSet()
                     ).apply()
                     //APIRepository.providersActive = it.context.getApiSettings()
                 }

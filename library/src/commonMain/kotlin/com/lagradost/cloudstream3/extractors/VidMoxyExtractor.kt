@@ -23,7 +23,7 @@ open class VidMoxy : ExtractorApi() {
  			subUrls.add(subUrl)
 
             subtitleCallback.invoke(
-                SubtitleFile(
+                newSubtitleFile(
                     lang = subLang.replace("\\u0131", "ı").replace("\\u0130", "İ").replace("\\u00fc", "ü").replace("\\u00e7", "ç"),
                     url  = fixUrl(subUrl.replace("\\", ""))
                 )
@@ -46,14 +46,15 @@ open class VidMoxy : ExtractorApi() {
         }
 
         callback.invoke(
-            ExtractorLink(
+            newExtractorLink(
                 source  = this.name,
                 name    = this.name,
                 url     = decoded,
-                referer = extRef,
-                quality = Qualities.Unknown.value,
-                isM3u8  = true
-            )
+                type = ExtractorLinkType.M3U8
+            ) {
+                this.referer = extRef
+                this.quality = Qualities.Unknown.value
+            }
         )
     }
 }

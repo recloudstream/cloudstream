@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.dokka.gradle.engine.parameters.KotlinPlatform
 import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
@@ -15,15 +16,22 @@ plugins {
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
 
 kotlin {
-    version = "1.0.0"
+    version = "1.0.1"
     androidTarget()
     jvm()
 
     compilerOptions {
-        freeCompilerArgs.add("-Xexpect-actual-classes")
+        freeCompilerArgs.addAll(
+            "-Xexpect-actual-classes",
+            "-Xannotation-default-target=param-property"
+        )
     }
 
     sourceSets {
+        all {
+            languageSettings.optIn("com.lagradost.cloudstream3.Prerelease")
+        }
+
         commonMain.dependencies {
             implementation(libs.nicehttp) // HTTP Lib
             implementation(libs.jackson.module.kotlin) // JSON Parser
@@ -31,6 +39,7 @@ kotlin {
             implementation(libs.fuzzywuzzy) // Match Extractors
             implementation(libs.rhino) // Run JavaScript
             implementation(libs.newpipeextractor)
+            implementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
         }
     }
 }
@@ -53,6 +62,14 @@ buildkonfig {
             logger.quiet("Compiling library with release flag")
         }
         buildConfigField(FieldSpec.Type.BOOLEAN, "DEBUG", isDebug.toString())
+
+        // Reads local.properties
+        val localProperties = gradleLocalProperties(rootDir, project.providers)
+
+        buildConfigField(
+            FieldSpec.Type.STRING,
+            "MDL_API_KEY", (System.getenv("MDL_API_KEY") ?: localProperties["mdl.key"]).toString()
+        )
     }
 }
 

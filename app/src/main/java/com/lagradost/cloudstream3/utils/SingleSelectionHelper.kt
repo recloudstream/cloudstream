@@ -56,7 +56,8 @@ object SingleSelectionHelper {
     ) {
         if (this == null) return
 
-        if (isLayout(TV or EMULATOR)) {
+        // This was temporarily removed until better UI is made
+        /*if (isLayout(TV or EMULATOR)) {
             val binding = OptionsPopupTvBinding.inflate(layoutInflater)
             val dialog = AlertDialog.Builder(this, R.style.AlertDialogCustom)
                 .setView(binding.root)
@@ -81,16 +82,16 @@ object SingleSelectionHelper {
                 isGone = poster.isNullOrEmpty()
                 loadImage(poster)
             }
-        } else {
-            view?.popupMenuNoIconsAndNoStringRes(options.mapIndexed { index, s ->
-                Pair(
-                    index,
-                    s
-                )
-            }) {
-                callback(Pair(false, this.itemId))
-            }
+        } else {*/
+        view?.popupMenuNoIconsAndNoStringRes(options.mapIndexed { index, s ->
+            Pair(
+                index,
+                s
+            )
+        }) {
+            callback(Pair(false, this.itemId))
         }
+        //}
     }
 
     fun Activity?.showDialog(

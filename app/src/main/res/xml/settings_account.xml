@@ -37,7 +37,7 @@
         android:title="@string/pref_category_security"
         app:key="@string/pref_category_security_key">
 
-        <SwitchPreferenceCompat
+        <SwitchPreference
             android:key="@string/biometric_key"
             android:defaultValue="false"
             android:summary="@string/biometric_setting_summary"

@@ -55,6 +55,8 @@
     </array>
 
     <array name="limit_title_rez_pref_names">
+        <item>@string/resolution_and_name</item>
+        <item>@string/name</item>
         <item>@string/resolution_and_title</item>
         <item>@string/title</item>
         <item>@string/resolution</item>
@@ -62,6 +64,8 @@
     </array>
 
     <array name="limit_title_rez_pref_values">
+        <item>5</item>
+        <item>4</item>
         <item>3</item>
         <item>2</item>
         <item>1</item>
@@ -202,6 +206,7 @@
         <item>@string/show_hd</item>
         <item>@string/show_dub</item>
         <item>@string/show_sub</item>
+        <item>@string/show_rating</item>
         <item>@string/show_title</item>
     </array>
 
@@ -209,6 +214,7 @@
         <item>@string/show_hd_key</item>
         <item>@string/show_dub_key</item>
         <item>@string/show_sub_key</item>
+        <item>@string/show_rating_key</item>
         <item>@string/show_title_key</item>
     </array>
 
@@ -224,6 +230,18 @@
         <item>0</item>
         <item>1</item>
         <item>2</item>
+    </array>
+
+    <array name="software_decoding_switch">
+        <item>@string/automatic</item>
+        <item>@string/yes</item>
+        <item>@string/no</item>
+    </array>
+
+    <array name="software_decoding_switch_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
     </array>
 
     <array name="confirm_exit">
@@ -293,6 +311,8 @@
         <item>Flashbang</item>
         <item>System</item>
         <item>Material You</item>
+        <item>Dracula</item>
+        <item>Lavender Dreams</item>
     </string-array>
     <string-array name="themes_names_values">
         <item>AmoledLight</item>
@@ -301,6 +321,8 @@
         <item>Light</item>
         <item>System</item>
         <item>Monet</item>
+        <item>Dracula</item>
+        <item>Lavender</item>
     </string-array>
 
     <string-array name="extension_statuses">

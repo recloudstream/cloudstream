@@ -2,38 +2,36 @@ package com.lagradost.cloudstream3.syncproviders.providers
 
 import androidx.annotation.StringRes
 import androidx.core.net.toUri
-import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
-import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.LoadResponse.Companion.readIdFromString
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.SimklSyncServices
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mapper
-import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.debugPrint
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
-import com.lagradost.cloudstream3.syncproviders.AccountManager
-import com.lagradost.cloudstream3.syncproviders.AuthAPI
-import com.lagradost.cloudstream3.syncproviders.OAuth2API
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING
+import com.lagradost.cloudstream3.syncproviders.AuthData
+import com.lagradost.cloudstream3.syncproviders.AuthLoginPage
+import com.lagradost.cloudstream3.syncproviders.AuthPinData
+import com.lagradost.cloudstream3.syncproviders.AuthToken
+import com.lagradost.cloudstream3.syncproviders.AuthUser
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
-import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.DataStoreHelper.toYear
-import okhttp3.Interceptor
-import okhttp3.Response
+import com.lagradost.cloudstream3.utils.txt
 import java.math.BigInteger
 import java.security.SecureRandom
 import java.text.SimpleDateFormat
@@ -45,25 +43,22 @@ import kotlin.time.Duration
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
-class SimklApi(index: Int) : AccountManager(index), SyncAPI {
+class SimklApi : SyncAPI() {
     override var name = "Simkl"
-    override val key = "simkl-key"
-    override val redirectUrl = "simkl"
-    override val supportDeviceAuth = true
     override val idPrefix = "simkl"
+
+    val key = "simkl-key"
+    override val redirectUrlIdentifier = "simkl"
+    override val hasOAuth2 = true
+    override val hasPin = true
     override var requireLibraryRefresh = true
     override var mainUrl = "https://api.simkl.com"
     override val icon = R.drawable.simkl_logo
-    override val requiresLogin = false
     override val createAccountUrl = "$mainUrl/signup"
     override val syncIdName = SyncIdName.Simkl
-    private val token: String?
-        get() = getKey<String>(accountId, SIMKL_TOKEN_KEY).also {
-            debugAssert({ it == null }) { "No ${this.name} token!" }
-        }
 
     /** Automatically adds simkl auth headers */
-    private val interceptor = HeaderInterceptor()
+    // private val interceptor = HeaderInterceptor()
 
     /**
      * This is required to override the reported last activity as simkl activites
@@ -148,10 +143,6 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
     companion object {
         private const val CLIENT_ID: String = BuildConfig.SIMKL_CLIENT_ID
         private const val CLIENT_SECRET: String = BuildConfig.SIMKL_CLIENT_SECRET
-        private var lastLoginState = ""
-
-        const val SIMKL_TOKEN_KEY: String = "simkl_token"
-        const val SIMKL_USER_KEY: String = "simkl_user"
         const val SIMKL_CACHED_LIST: String = "simkl_cached_list"
         const val SIMKL_CACHED_LIST_TIME: String = "simkl_cached_time"
 
@@ -237,12 +228,22 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
 
         /** https://simkl.docs.apiary.io/#reference/users/settings/receive-settings */
         data class SettingsResponse(
-            val user: User
+            @JsonProperty("user")
+            val user: User,
+            @JsonProperty("account")
+            val account: Account,
         ) {
             data class User(
+                @JsonProperty("name")
                 val name: String,
                 /** Url */
+                @JsonProperty("avatar")
                 val avatar: String
+            )
+
+            data class Account(
+                @JsonProperty("id")
+                val id: Int,
             )
         }
 
@@ -365,7 +366,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
         class SimklScoreBuilder private constructor() {
             data class Builder(
                 private var url: String? = null,
-                private var interceptor: Interceptor? = null,
+                private var headers: Map<String, String>? = null,
                 private var ids: MediaObject.Ids? = null,
                 private var score: Int? = null,
                 private var status: Int? = null,
@@ -374,7 +375,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                 // Required for knowing if the status should be overwritten
                 private var onList: Boolean = false
             ) {
-                fun interceptor(interceptor: Interceptor) = apply { this.interceptor = interceptor }
+                fun token(token: AuthToken) = apply { this.headers = getHeaders(token) }
                 fun apiUrl(url: String) = apply { this.url = url }
                 fun ids(ids: MediaObject.Ids) = apply { this.ids = ids }
                 fun score(score: Int?, oldScore: Int?) = apply {
@@ -423,7 +424,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
 
                 suspend fun execute(): Boolean {
                     val time = getDateTime(unixTime)
-
+                    val headers = this.headers ?: emptyMap()
                     return if (this.status == SimklListStatusType.None.value) {
                         app.post(
                             "$url/sync/history/remove",
@@ -431,7 +432,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                                 shows = listOf(HistoryMediaObject(ids = ids)),
                                 movies = emptyList()
                             ),
-                            interceptor = interceptor
+                            headers = headers
                         ).isSuccessful
                     } else {
                         val statusResponse = this.status?.let { setStatus ->
@@ -452,7 +453,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                                         )
                                     ), movies = emptyList()
                                 ),
-                                interceptor = interceptor
+                                headers = headers
                             ).isSuccessful
                         } ?: true
 
@@ -469,7 +470,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                                     ),
                                     movies = emptyList()
                                 ),
-                                interceptor = interceptor
+                                headers = headers
                             ).isSuccessful
                         } ?: true
 
@@ -496,7 +497,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                                             )
                                         ), movies = emptyList()
                                     ),
-                                    interceptor = interceptor
+                                    headers = headers
                                 ).isSuccessful
                             } else {
                                 true
@@ -507,6 +508,9 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                 }
             }
         }
+
+        fun getHeaders(token: AuthToken): Map<String, String> =
+            mapOf("Authorization" to "Bearer ${token.accessToken}", "simkl-api-key" to CLIENT_ID)
 
         suspend fun getEpisodes(
             simklId: Int?,
@@ -664,7 +668,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                         movie.ids.simkl.toString(),
                         this.watchedEpisodesCount,
                         this.totalEpisodesCount,
-                        this.userRating?.times(10),
+                        Score.from10(this.userRating),
                         getUnixTime(lastWatchedAt) ?: 0,
                         "Simkl",
                         TvType.Movie,
@@ -697,7 +701,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                         show.ids.simkl.toString(),
                         this.watchedEpisodesCount,
                         this.totalEpisodesCount,
-                        this.userRating?.times(10),
+                        Score.from10(this.userRating),
                         getUnixTime(lastWatchedAt) ?: 0,
                         "Simkl",
                         TvType.Anime,
@@ -746,7 +750,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
     /**
      * Appends api keys to the requests
      **/
-    private inner class HeaderInterceptor : Interceptor {
+    /*private inner class HeaderInterceptor : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
             debugPrint { "${this@SimklApi.name} made request to ${chain.request().url}" }
             return chain.proceed(
@@ -757,14 +761,12 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                     .build()
             )
         }
-    }
+    }*/
 
-    private suspend fun getUser(): SettingsResponse.User? {
-        return suspendSafeApiCall {
-            app.post("$mainUrl/users/settings", interceptor = interceptor)
-                .parsedSafe<SettingsResponse>()?.user
-        }
-    }
+    private suspend fun getUser(token: AuthToken): SettingsResponse =
+        app.post("$mainUrl/users/settings", headers = getHeaders(token))
+            .parsed<SettingsResponse>()
+
 
     /**
      * Useful to get episodes on demand to prevent unnecessary requests.
@@ -782,7 +784,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
 
     class SimklSyncStatus(
         override var status: SyncWatchType,
-        override var score: Int?,
+        override var score: Score?,
         val oldScore: Int?,
         override var watchedEpisodes: Int?,
         val episodeConstructor: SimklEpisodeConstructor,
@@ -794,7 +796,8 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
         val oldStatus: String?
     ) : SyncAPI.AbstractSyncStatus()
 
-    override suspend fun getStatus(id: String): SyncAPI.AbstractSyncStatus? {
+    override suspend fun status(auth: AuthData?, id: String): SyncAPI.AbstractSyncStatus? {
+        if (auth == null) return null
         val realIds = readIdFromString(id)
 
         // Key which assumes all ids are the same each time :/
@@ -818,7 +821,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
             searchResult.hasEnded()
         )
 
-        val foundItem = getSyncListSmart()?.let { list ->
+        val foundItem = getSyncListSmart(auth)?.let { list ->
             listOf(list.shows, list.anime, list.movies).flatten().firstOrNull { show ->
                 realIds.any { (database, id) ->
                     show.getIds().matchesId(database, id)
@@ -836,7 +839,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                     )
                 }
                     ?: return null,
-                score = foundItem.userRating,
+                score = Score.from10(foundItem.userRating),
                 watchedEpisodes = foundItem.watchedEpisodesCount,
                 maxEpisodes = searchResult.totalEpisodes,
                 episodeConstructor = episodeConstructor,
@@ -847,7 +850,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
         } else {
             return SimklSyncStatus(
                 status = SyncWatchType.fromInternalId(SimklListStatusType.None.value),
-                score = 0,
+                score = null,
                 watchedEpisodes = 0,
                 maxEpisodes = if (searchResult.type == "movie") 0 else searchResult.totalEpisodes,
                 episodeConstructor = episodeConstructor,
@@ -858,22 +861,26 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    override suspend fun score(id: String, status: SyncAPI.AbstractSyncStatus): Boolean {
+    override suspend fun updateStatus(
+        auth: AuthData?,
+        id: String,
+        newStatus: AbstractSyncStatus
+    ): Boolean {
         val parsedId = readIdFromString(id)
         lastScoreTime = unixTime
-        val simklStatus = status as? SimklSyncStatus
+        val simklStatus = newStatus as? SimklSyncStatus
 
         val builder = SimklScoreBuilder.Builder()
             .apiUrl(this.mainUrl)
-            .score(status.score, simklStatus?.oldScore)
+            .score(newStatus.score?.toInt(10), simklStatus?.oldScore)
             .status(
-                status.status.internalId,
-                (status as? SimklSyncStatus)?.oldStatus?.let { oldStatus ->
+                newStatus.status.internalId,
+                (newStatus as? SimklSyncStatus)?.oldStatus?.let { oldStatus ->
                     SimklListStatusType.entries.firstOrNull {
                         it.originalName == oldStatus
                     }?.value
                 })
-            .interceptor(interceptor)
+            .token(auth?.token ?: return false)
             .ids(MediaObject.Ids.fromMap(parsedId))
 
 
@@ -881,11 +888,12 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
         val episodes = simklStatus?.episodeConstructor?.getEpisodes()
 
         // All episodes if marked as completed
-        val watchedEpisodes = if (status.status.internalId == SimklListStatusType.Completed.value) {
-            episodes?.size
-        } else {
-            status.watchedEpisodes
-        }
+        val watchedEpisodes =
+            if (newStatus.status.internalId == SimklListStatusType.Completed.value) {
+                episodes?.size
+            } else {
+                newStatus.watchedEpisodes
+            }
 
         builder.episodes(episodes?.toList(), watchedEpisodes, simklStatus?.oldEpisodes)
 
@@ -906,39 +914,26 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
         ).parsedSafe()
     }
 
-    override suspend fun search(name: String): List<SyncAPI.SyncSearchResult>? {
+    override suspend fun search(auth: AuthData?, query: String): List<SyncAPI.SyncSearchResult>? {
         return app.get(
             "$mainUrl/search/", params = mapOf("client_id" to CLIENT_ID, "q" to name)
         ).parsedSafe<Array<MediaObject>>()?.mapNotNull { it.toSyncSearchResult() }
     }
 
-    override fun authenticate(activity: FragmentActivity?) {
-        lastLoginState = BigInteger(130, SecureRandom()).toString(32)
+    override fun loginRequest(): AuthLoginPage? {
+        val lastLoginState = BigInteger(130, SecureRandom()).toString(32)
         val url =
-            "https://simkl.com/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$APP_STRING://${redirectUrl}&state=$lastLoginState"
-        openBrowser(url, activity)
+            "https://simkl.com/oauth/authorize?response_type=code&client_id=$CLIENT_ID&redirect_uri=$APP_STRING://${redirectUrlIdentifier}&state=$lastLoginState"
+
+        return AuthLoginPage(
+            url = url,
+            payload = lastLoginState
+        )
     }
 
-    override fun loginInfo(): AuthAPI.LoginInfo? {
-        return getKey<SettingsResponse.User>(accountId, SIMKL_USER_KEY)?.let { user ->
-            AuthAPI.LoginInfo(
-                name = user.name,
-                profilePicture = user.avatar,
-                accountIndex = accountIndex
-            )
-        }
-    }
+    override suspend fun load(auth: AuthData?, id: String): SyncResult? = null
 
-    override fun logOut() {
-        requireLibraryRefresh = true
-        removeAccountKeys()
-    }
-
-    override suspend fun getResult(id: String): SyncAPI.SyncResult? {
-        return null
-    }
-
-    private suspend fun getSyncListSince(since: Long?): AllItemsResponse? {
+    private suspend fun getSyncListSince(auth: AuthData, since: Long?): AllItemsResponse? {
         val params = getDateTime(since)?.let {
             mapOf("date_from" to it)
         } ?: emptyMap()
@@ -947,23 +942,22 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
         return app.get(
             "$mainUrl/sync/all-items/",
             params = params,
-            interceptor = interceptor
+            headers = getHeaders(auth.token)
         ).parsedSafe()
     }
 
-    private suspend fun getActivities(): ActivitiesResponse? {
-        return app.post("$mainUrl/sync/activities", interceptor = interceptor).parsedSafe()
+    private suspend fun getActivities(token: AuthToken): ActivitiesResponse? {
+        return app.post("$mainUrl/sync/activities", headers = getHeaders(token)).parsedSafe()
     }
 
-    private fun getSyncListCached(): AllItemsResponse? {
-        return getKey(accountId, SIMKL_CACHED_LIST)
+    private fun getSyncListCached(auth: AuthData): AllItemsResponse? {
+        return getKey<AllItemsResponse>(SIMKL_CACHED_LIST, auth.user.id.toString())
     }
 
-    private suspend fun getSyncListSmart(): AllItemsResponse? {
-        if (token == null) return null
-
-        val activities = getActivities()
-        val lastCacheUpdate = getKey<Long>(accountId, SIMKL_CACHED_LIST_TIME)
+    private suspend fun getSyncListSmart(auth: AuthData): AllItemsResponse? {
+        val activities = getActivities(auth.token)
+        val userId = auth.user.id.toString()
+        val lastCacheUpdate = getKey<Long>(SIMKL_CACHED_LIST_TIME, auth.user.id.toString())
         val lastRemoval = listOf(
             activities?.tvShows?.removedFromList,
             activities?.anime?.removedFromList,
@@ -983,26 +977,28 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
         debugPrint { "Cache times: lastCacheUpdate=$lastCacheUpdate, lastRemoval=$lastRemoval, lastRealUpdate=$lastRealUpdate" }
         val list = if (lastCacheUpdate == null || lastCacheUpdate < lastRemoval) {
             debugPrint { "Full list update in ${this.name}." }
-            setKey(accountId, SIMKL_CACHED_LIST_TIME, lastRemoval)
-            getSyncListSince(null)
+            setKey(SIMKL_CACHED_LIST_TIME, userId, lastRemoval)
+            getSyncListSince(auth, null)
         } else if (lastCacheUpdate < lastRealUpdate || lastCacheUpdate < lastScoreTime) {
             debugPrint { "Partial list update in ${this.name}." }
-            setKey(accountId, SIMKL_CACHED_LIST_TIME, lastCacheUpdate)
-            AllItemsResponse.merge(getSyncListCached(), getSyncListSince(lastCacheUpdate))
+            setKey(SIMKL_CACHED_LIST_TIME, userId, lastCacheUpdate)
+            AllItemsResponse.merge(
+                getSyncListCached(auth),
+                getSyncListSince(auth, lastCacheUpdate)
+            )
         } else {
             debugPrint { "Cached list update in ${this.name}." }
-            getSyncListCached()
+            getSyncListCached(auth)
         }
         debugPrint { "List sizes: movies=${list?.movies?.size}, shows=${list?.shows?.size}, anime=${list?.anime?.size}" }
 
-        setKey(accountId, SIMKL_CACHED_LIST, list)
+        setKey(SIMKL_CACHED_LIST, userId, list)
 
         return list
     }
 
-
-    override suspend fun getPersonalLibrary(): SyncAPI.LibraryMetadata? {
-        val list = getSyncListSmart() ?: return null
+    override suspend fun library(auth: AuthData?): SyncAPI.LibraryMetadata? {
+        val list = getSyncListSmart(auth ?: return null) ?: return null
 
         val baseMap =
             SimklListStatusType.entries
@@ -1038,17 +1034,17 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
         )
     }
 
-    override fun getIdFromUrl(url: String): String {
+    override fun urlToId(url: String): String? {
         val simklUrlRegex = Regex("""https://simkl\.com/[^/]*/(\d+).*""")
         return simklUrlRegex.find(url)?.groupValues?.get(1) ?: ""
     }
 
-    override suspend fun getDevicePin(): OAuth2API.PinAuthData? {
+    override suspend fun pinRequest(): AuthPinData? {
         val pinAuthResp = app.get(
-            "$mainUrl/oauth/pin?client_id=$CLIENT_ID&redirect_uri=$APP_STRING://${redirectUrl}"
+            "$mainUrl/oauth/pin?client_id=$CLIENT_ID&redirect_uri=$APP_STRING://${redirectUrlIdentifier}"
         ).parsedSafe<PinAuthResponse>() ?: return null
 
-        return OAuth2API.PinAuthData(
+        return AuthPinData(
             deviceCode = pinAuthResp.deviceCode,
             userCode = pinAuthResp.userCode,
             verificationUrl = pinAuthResp.verificationUrl,
@@ -1057,56 +1053,38 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
         )
     }
 
-    override suspend fun handleDeviceAuth(pinAuthData: OAuth2API.PinAuthData): Boolean {
+    override suspend fun login(payload: AuthPinData): AuthToken? {
         val pinAuthResp = app.get(
-            "$mainUrl/oauth/pin/${pinAuthData.userCode}?client_id=$CLIENT_ID"
-        ).parsedSafe<PinExchangeResponse>() ?: return false
+            "$mainUrl/oauth/pin/${payload.userCode}?client_id=$CLIENT_ID"
+        ).parsedSafe<PinExchangeResponse>() ?: return null
 
-        if (pinAuthResp.accessToken != null) {
-            switchToNewAccount()
-            setKey(accountId, SIMKL_TOKEN_KEY, pinAuthResp.accessToken)
-
-            val user = getUser()
-            if (user == null) {
-                removeKey(accountId, SIMKL_TOKEN_KEY)
-                switchToOldAccount()
-                return false
-            }
-
-            setKey(accountId, SIMKL_USER_KEY, user)
-            registerAccount()
-            requireLibraryRefresh = true
-            return true
-        }
-        return false
+        return AuthToken(
+            accessToken = pinAuthResp.accessToken ?: return null,
+        )
     }
 
-    override suspend fun handleRedirect(url: String): Boolean {
-        val uri = url.toUri()
+    override suspend fun login(redirectUrl: String, payload: String?): AuthToken? {
+        val uri = redirectUrl.toUri()
         val state = uri.getQueryParameter("state")
         // Ensure consistent state
-        if (state != lastLoginState) return false
-        lastLoginState = ""
+        if (state != payload) return null
 
-        val code = uri.getQueryParameter("code") ?: return false
-        val token = app.post(
+        val code = uri.getQueryParameter("code") ?: return null
+        val tokenResponse = app.post(
             "$mainUrl/oauth/token", json = TokenRequest(code)
-        ).parsedSafe<TokenResponse>() ?: return false
+        ).parsedSafe<TokenResponse>() ?: return null
 
-        switchToNewAccount()
-        setKey(accountId, SIMKL_TOKEN_KEY, token.accessToken)
+        return AuthToken(
+            accessToken = tokenResponse.accessToken,
+        )
+    }
 
-        val user = getUser()
-        if (user == null) {
-            removeKey(accountId, SIMKL_TOKEN_KEY)
-            switchToOldAccount()
-            return false
-        }
-
-        setKey(accountId, SIMKL_USER_KEY, user)
-        registerAccount()
-        requireLibraryRefresh = true
-
-        return true
+    override suspend fun user(token: AuthToken?): AuthUser? {
+        val user = getUser(token ?: return null)
+        return AuthUser(
+            id = user.account.id,
+            name = user.user.name,
+            profilePicture = user.user.avatar
+        )
     }
 }

@@ -8,15 +8,19 @@ import android.app.Dialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.ColorFilter
+import android.graphics.Paint
+import android.graphics.PixelFormat
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.os.TransactionTooLargeException
 import android.util.Log
 import android.view.Gravity
@@ -24,7 +28,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
-import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.ListAdapter
@@ -32,7 +35,7 @@ import android.widget.ListView
 import android.widget.Toast.LENGTH_LONG
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
-import androidx.annotation.IdRes
+import androidx.annotation.DimenRes
 import androidx.annotation.StyleRes
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.view.menu.MenuBuilder
@@ -49,8 +52,14 @@ import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import androidx.core.view.marginTop
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.palette.graphics.Palette
 import androidx.preference.PreferenceManager
@@ -59,14 +68,22 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
+import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.ui.settings.Globals
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.utils.AppContextUtils.isRtl
+import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.UIHelper.navigate
+import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.disableBackPressedCallback
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.enableBackPressedCallback
 
 object UIHelper {
     val Int.toPx: Int get() = (this * Resources.getSystem().displayMetrics.density).toInt()
@@ -85,7 +102,11 @@ object UIHelper {
                 || Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
     }
 
-    fun populateChips(view: ChipGroup?, tags: List<String>, @StyleRes style : Int = R.style.ChipFilled) {
+    fun populateChips(
+        view: ChipGroup?,
+        tags: List<String>,
+        @StyleRes style: Int = R.style.ChipFilled
+    ) {
         if (view == null) return
         view.removeAllViews()
         val context = view.context ?: return
@@ -202,7 +223,7 @@ object UIHelper {
     }
 
     fun View?.setAppBarNoScrollFlagsOnTV() {
-        if (isLayout(Globals.TV or EMULATOR)) {
+        if (isLayout(TV or EMULATOR)) {
             this?.updateLayoutParams<AppBarLayout.LayoutParams> {
                 scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_NO_SCROLL
             }
@@ -216,14 +237,69 @@ object UIHelper {
         }
     }
 
-    fun Activity?.navigate(@IdRes navigation: Int, arguments: Bundle? = null) {
-        try {
-            if (this is FragmentActivity) {
-                val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment?
-                navHostFragment?.navController?.navigate(navigation, arguments)
+    fun Activity?.navigate(
+        navigationId: Int,
+        args: Bundle? = null,
+        navOptions: NavOptions? = null // To control nav graph & manage back stack
+    ) {
+        val tag = "NavComponent"
+        if (this is FragmentActivity) {
+            try {
+                runOnUiThread {
+                    // Navigate using navigation ID
+                    val navHostFragment =
+                        supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
+                    Log.i(tag, "Navigating to fragment: $navigationId")
+                    navHostFragment?.navController?.navigate(navigationId, args, navOptions)
+                }
+            } catch (t: Throwable) {
+                logError(t)
             }
+        }
+    }
+
+    // Open activities from an activity outside the nav graph
+    fun Context.openActivity(activity: Class<*>, args: Bundle? = null) {
+        val tag = "NavComponent"
+        try {
+            val intent = Intent(this, activity)
+            if (args != null) {
+                intent.putExtras(args)
+            }
+            Log.i(tag, "Navigating to Activity: ${activity.simpleName}")
+            startActivity(intent)
         } catch (t: Throwable) {
             logError(t)
+        }
+    }
+
+    /** If you want to call this from a BackPressedCallback, pass the name of the callback to temporarily disable it */
+    fun FragmentActivity.popCurrentPage(fromBackPressedCallback : String? = null) {
+        // Use the main looper handler to post actions on the main thread
+        main {
+            // Post the back press action to the main thread handler to ensure it executes
+            // after any currently pending UI updates or fragment transactions.
+            if(fromBackPressedCallback != null) {
+                disableBackPressedCallback(fromBackPressedCallback)
+            }
+            if (!supportFragmentManager.isStateSaved) {
+                // Get the top fragment from the back stack
+                Log.d("popFragment", "Destroying Fragment")
+                // If the state is not saved, it's safe to perform the back press action.
+                onBackPressedDispatcher.onBackPressed()
+            } else {
+                // If the state is saved, retry the back press action after a slight delay.
+                // This gives the FragmentManager time to complete any ongoing state-saving
+                // operations or transactions, ensuring that we do not encounter an IllegalStateException.
+                delay(100)
+                if (!supportFragmentManager.isStateSaved) {
+                    Log.d("popFragment", "Destroying after delay")
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+            if(fromBackPressedCallback != null) {
+                enableBackPressedCallback(fromBackPressedCallback)
+            }
         }
     }
 
@@ -272,55 +348,45 @@ object UIHelper {
 
     fun Activity.hideSystemUI() {
         // Enables regular immersive mode.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val controller = WindowCompat.getInsetsController(window, window.decorView)
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            controller.hide(WindowInsetsCompat.Type.systemBars())
+            return
+        }
+
         // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
         // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        /** BUGGED AF  **/
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-            WindowInsetsControllerCompat(window, View(this)).let { controller ->
-                controller.hide(WindowInsetsCompat.Type.systemBars())
-                controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            }
-        }*/
-
-            @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility = (
-                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                            // Set the content to appear under the system bars so that the
-                            // content doesn't resize when the system bars hide and show.
-                            or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            // Hide the nav bar and status bar
-                            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            or View.SYSTEM_UI_FLAG_FULLSCREEN
-                    ) // FIXME this should be replaced
-          //}
+        @Suppress("DEPRECATION")
+        window.decorView.systemUiVisibility = (
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                // Set the content to appear under the system bars so that the
+                // content doesn't resize when the system bars hide and show.
+                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                // Hide the nav bar and status bar
+                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_FULLSCREEN
+        )
     }
 
-    fun FragmentActivity.popCurrentPage() {
-        // Post the back press action to the main thread handler to ensure it executes
-        // after any currently pending UI updates or fragment transactions.
-        Handler(Looper.getMainLooper()).post {
-            // Check if the FragmentManager state is saved. If it is, we cannot perform
-            // fragment transactions safely because the state may be inconsistent.
-            if (!supportFragmentManager.isStateSaved) {
-                // If the state is not saved, it's safe to perform the back press action.
-                this.onBackPressedDispatcher.onBackPressed()
-            } else {
-                // If the state is saved, retry the back press action after a slight delay.
-                // This gives the FragmentManager time to complete any ongoing state-saving
-                // operations or transactions, ensuring that we do not encounter an IllegalStateException.
-                Handler(Looper.getMainLooper()).postDelayed({
-                    this.onBackPressedDispatcher.onBackPressed()
-                }, 100)
-            }
-        }
+    fun Activity.enableEdgeToEdgeCompat() {
+        // edge-to-edge is very buggy on earlier versions
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return
+        WindowCompat.enableEdgeToEdge(window)
+    }
+
+    fun Activity.setNavigationBarColorCompat(@AttrRes resourceId: Int) {
+        // edge-to-edge handles this
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) return
+
+        @Suppress("DEPRECATION")
+        window?.navigationBarColor = colorFromAttribute(resourceId)
     }
 
     fun Context.getStatusBarHeight(): Int {
-        if (isLayout(Globals.TV or EMULATOR)) {
+        if (isLayout(TV or EMULATOR)) {
             return 0
         }
 
@@ -330,17 +396,6 @@ object UIHelper {
             result = resources.getDimensionPixelSize(resourceId)
         }
         return result
-    }
-
-    fun fixPaddingStatusbar(v: View?) {
-        if (v == null) return
-        val ctx = v.context ?: return
-        v.setPadding(
-            v.paddingLeft,
-            v.paddingTop + ctx.getStatusBarHeight(),
-            v.paddingRight,
-            v.paddingBottom
-        )
     }
 
     fun fixPaddingStatusbarMargin(v: View?) {
@@ -367,6 +422,84 @@ object UIHelper {
         v.layoutParams = params
     }
 
+    fun fixSystemBarsPadding(
+        v: View?,
+        @DimenRes heightResId: Int? = null,
+        @DimenRes widthResId: Int? = null,
+        padTop: Boolean = true,
+        padBottom: Boolean = true,
+        padLeft: Boolean = true,
+        padRight: Boolean = true,
+        overlayCutout: Boolean = true
+    ) {
+        if (v == null) return
+
+        // edge-to-edge is very buggy on earlier versions so we just
+        // handle the status bar here instead.
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            if (padTop) {
+                val ctx = v.context ?: return
+                v.updatePadding(top = ctx.getStatusBarHeight())
+            }
+            return
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(v) { view, windowInsets ->
+            val leftCheck = if (view.isRtl()) padRight else padLeft
+            val rightCheck = if (view.isRtl()) padLeft else padRight
+
+            val insets = windowInsets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+                    or WindowInsetsCompat.Type.displayCutout()
+            )
+
+            view.updatePadding(
+                left = if (leftCheck) insets.left else view.paddingLeft,
+                right = if (rightCheck) insets.right else view.paddingRight,
+                bottom = if (padBottom) insets.bottom else view.paddingBottom,
+                top = if (padTop) insets.top else view.paddingTop
+            )
+
+            heightResId?.let {
+                val heightPx = view.resources.getDimensionPixelSize(it)
+                view.updateLayoutParams {
+                    height = heightPx + insets.bottom
+                }
+            }
+
+            widthResId?.let {
+                val widthPx = view.resources.getDimensionPixelSize(it)
+                view.updateLayoutParams {
+                    val startInset = if (view.isRtl()) insets.right else insets.left
+                    width = if (startInset > 0) widthPx + startInset else widthPx
+                }
+            }
+
+            if (overlayCutout && isLayout(PHONE)) {
+                // Draw a black overlay over the cutout. We do this so that
+                // it doesn't use the fragment background. We want it to
+                // appear as if the screen actually ends at cutout.
+                val cutout = windowInsets.displayCutout
+                if (cutout != null) {
+                    val left = if (!leftCheck) 0 else cutout.safeInsetLeft
+                    val right = if (!rightCheck) 0 else cutout.safeInsetRight
+                    view.overlay.clear()
+                    if (left > 0 || right > 0) {
+                        view.overlay.add(
+                            CutoutOverlayDrawable(
+                                view,
+                                leftCutout = left,
+                                rightCutout = right
+                            )
+                        )
+                    }
+                }
+            }
+
+            WindowInsetsCompat.CONSUMED
+        }
+    }
+
     fun Context.getNavigationBarHeight(): Int {
         var result = 0
         val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
@@ -382,46 +515,48 @@ object UIHelper {
         return settingsManager.getBoolean(getString(R.string.bottom_title_key), true)
     }
 
-    fun Activity.changeStatusBarState(hide: Boolean): Int {
-        return if (hide) {
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                window.insetsController?.hide(WindowInsets.Type.statusBars())
-
+    fun Activity.changeStatusBarState(hide: Boolean) {
+        try {
+            if (hide) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    val controller = WindowCompat.getInsetsController(window, window.decorView)
+                    controller.hide(WindowInsetsCompat.Type.statusBars())
+                } else {
+                    @Suppress("DEPRECATION")
+                    window.setFlags(
+                        WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                        WindowManager.LayoutParams.FLAG_FULLSCREEN
+                    )
+                }
             } else {
-                @Suppress("DEPRECATION")
-                window.setFlags(
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN
-                )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    val controller = WindowCompat.getInsetsController(window, window.decorView)
+                    controller.show(WindowInsetsCompat.Type.statusBars())
+                } else {
+                    @Suppress("DEPRECATION")
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+                }
             }
-            0
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                window.insetsController?.show(WindowInsets.Type.statusBars())
-            } else {
-                @Suppress("DEPRECATION")
-                window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-            }
-
-            this.getStatusBarHeight()
+        } catch (t: Throwable) {
+            logError(t)
         }
     }
 
     // Shows the system bars by removing all the flags
     // except for the ones that make the content appear under the system bars.
     fun Activity.showSystemUI() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val controller = WindowCompat.getInsetsController(window, window.decorView)
+            if (isLayout(EMULATOR)) {
+                controller.show(WindowInsetsCompat.Type.navigationBars())
+                controller.hide(WindowInsetsCompat.Type.statusBars())
+            } else controller.show(WindowInsetsCompat.Type.systemBars())
+            return
+        }
 
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-
-            WindowCompat.setDecorFitsSystemWindows(window, true)
-            WindowInsetsControllerCompat(window, View(this)).show(WindowInsetsCompat.Type.systemBars())
-
-        } else {*/ /** WINDOW COMPAT IS BUGGY DUE TO FU*KED UP PLAYER AND TRAILERS **/
         @Suppress("DEPRECATION")
         window.decorView.systemUiVisibility =
-            (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN) // FIXME this should be replaced
-        //}
+            (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
 
         changeStatusBarState(isLayout(EMULATOR))
     }
@@ -442,22 +577,13 @@ object UIHelper {
     fun Context.hasPIPPermission(): Boolean {
         val appOps =
             getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            appOps.unsafeCheckOpNoThrow(
-                AppOpsManager.OPSTR_PICTURE_IN_PICTURE,
-                android.os.Process.myUid(),
-                packageName
-            ) == AppOpsManager.MODE_ALLOWED
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            @Suppress("DEPRECATION")
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             appOps.checkOpNoThrow(
                 AppOpsManager.OPSTR_PICTURE_IN_PICTURE,
                 android.os.Process.myUid(),
                 packageName
             ) == AppOpsManager.MODE_ALLOWED
-        } else {
-            return true
-        }
+        } else true
     }
 
     fun hideKeyboard(view: View?) {
@@ -494,7 +620,13 @@ object UIHelper {
         onMenuItemClick: MenuItem.() -> Unit,
     ): PopupMenu {
         val ctw = ContextThemeWrapper(context, R.style.PopupMenu)
-        val popup = PopupMenu(ctw, this, Gravity.NO_GRAVITY, androidx.appcompat.R.attr.actionOverflowMenuStyle, 0)
+        val popup = PopupMenu(
+            ctw,
+            this,
+            Gravity.NO_GRAVITY,
+            androidx.appcompat.R.attr.actionOverflowMenuStyle,
+            0
+        )
 
         items.forEach { (id, stringRes) ->
             popup.menu.add(0, id, 0, stringRes)
@@ -518,7 +650,13 @@ object UIHelper {
         onMenuItemClick: MenuItem.() -> Unit,
     ): PopupMenu {
         val ctw = ContextThemeWrapper(context, R.style.PopupMenu)
-        val popup = PopupMenu(ctw, this, Gravity.NO_GRAVITY, androidx.appcompat.R.attr.actionOverflowMenuStyle, 0)
+        val popup = PopupMenu(
+            ctw,
+            this,
+            Gravity.NO_GRAVITY,
+            androidx.appcompat.R.attr.actionOverflowMenuStyle,
+            0
+        )
 
         items.forEach { (id, string) ->
             popup.menu.add(0, id, 0, string)
@@ -534,4 +672,32 @@ object UIHelper {
         popup.show()
         return popup
     }
+}
+
+private class CutoutOverlayDrawable(
+    private val view: View,
+    private val leftCutout: Int,
+    private val rightCutout: Int,
+) : Drawable() {
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.BLACK
+        style = Paint.Style.FILL
+    }
+
+    override fun draw(canvas: Canvas) {
+        if (leftCutout > 0) canvas.drawRect(0f, 0f, leftCutout.toFloat(), view.height.toFloat(), paint)
+        if (rightCutout > 0) {
+            canvas.drawRect(
+                view.width - rightCutout.toFloat(),
+                0f, view.width.toFloat(),
+                view.height.toFloat(),
+                paint
+            )
+        }
+    }
+
+    override fun setAlpha(alpha: Int) {}
+    override fun setColorFilter(colorFilter: ColorFilter?) {}
+    @Suppress("OVERRIDE_DEPRECATION")
+    override fun getOpacity() = PixelFormat.OPAQUE
 }

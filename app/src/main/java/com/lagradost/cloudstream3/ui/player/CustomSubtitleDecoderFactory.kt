@@ -1,12 +1,12 @@
 package com.lagradost.cloudstream3.ui.player
 
 import android.content.Context
-import android.text.Spannable
-import android.text.SpannableString
+import android.text.Layout
 import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.Format
 import androidx.media3.common.MimeTypes
+import androidx.media3.common.text.Cue
 import androidx.media3.common.util.Consumer
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.text.SubtitleDecoderFactory
@@ -52,12 +52,24 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
             }
         }
 
+        private const val DEFAULT_MARGIN: Float = 0.05f
+        const val SSA_ALIGNMENT_BOTTOM_LEFT = 1
+        const val SSA_ALIGNMENT_BOTTOM_CENTER = 2
+        const val SSA_ALIGNMENT_BOTTOM_RIGHT = 3
+        const val SSA_ALIGNMENT_MIDDLE_LEFT = 4
+        const val SSA_ALIGNMENT_MIDDLE_CENTER = 5
+        const val SSA_ALIGNMENT_MIDDLE_RIGHT = 6
+        const val SSA_ALIGNMENT_TOP_LEFT = 7
+        const val SSA_ALIGNMENT_TOP_CENTER = 8
+        const val SSA_ALIGNMENT_TOP_RIGHT = 9
+
         /** Subtitle offset in milliseconds */
         var subtitleOffset: Long = 0
         private const val UTF_8 = "UTF-8"
         private const val TAG = "CustomDecoder"
         private var overrideEncoding: String? = null
         val style: SaveCaptionStyle get() = SubtitlesFragment.getCurrentSavedStyle()
+        private val locationRegex = Regex("""\{\\an(\d+)\}""", RegexOption.IGNORE_CASE)
         val bloatRegex =
             listOf(
                 Regex(
@@ -77,7 +89,6 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
                     RegexOption.IGNORE_CASE
                 ),
             )
-        val captionRegex = listOf(Regex("""(-\s?|)[\[({][\w\s]*?[])}]\s*"""))
 
         //https://emptycharacter.com/
         //https://www.fileformat.info/info/unicode/char/200b/index.htm
@@ -86,6 +97,100 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
                 Regex("[\u00A0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u205F]"),
                 " "
             )
+        }
+
+        private fun computeDefaultLineOrPosition(@Cue.AnchorType anchor: Int) = when (anchor) {
+            Cue.ANCHOR_TYPE_START -> DEFAULT_MARGIN
+            Cue.ANCHOR_TYPE_MIDDLE -> 0.5f
+            Cue.ANCHOR_TYPE_END -> 1.0f - DEFAULT_MARGIN
+            Cue.TYPE_UNSET -> Cue.DIMEN_UNSET
+            else -> Cue.DIMEN_UNSET
+        }
+
+        /**
+         * Fixes alignment for cues with {\anX},
+         * this is common for .vtt that should be parsed as .srt
+         *
+         * ```
+         * WEBVTT
+         *
+         * 00:00.000 --> 00:01.000
+         * {\an1}Label 1
+         *
+         * 00:01.000 --> 00:02.000
+         * {\an2}Label 2
+         *
+         * 00:02.000 --> 00:03.000
+         * {\an3}Label 3
+         *
+         * 00:03.000 --> 00:04.000
+         * {\an4}Label 4
+         *
+         * 00:04.000 --> 00:05.000
+         * {\an5}Label 5
+         *
+         * 00:05.000 --> 00:06.000
+         * {\an6}Label 6
+         *
+         * 00:06.000 --> 00:07.000
+         * {\an7}Label 7
+         *
+         * 00:07.000 --> 00:08.000
+         * {\an8}Label 8
+         *
+         * 00:08.000 --> 00:09.000
+         * {\an9}Label 9
+         * ```
+         */
+        fun Cue.Builder.fixSubtitleAlignment(): Cue.Builder {
+            var trimmed = text?.trim() ?: return this
+            // https://github.com/androidx/media/blob/main/libraries/extractor/src/main/java/androidx/media3/extractor/text/ssa/SsaStyle.java
+            // exoplayer can already parse this, however for eg webvtt it fails
+            locationRegex.find(trimmed)?.groupValues?.get(1)?.toIntOrNull()?.let { alignment ->
+                // toLineAnchor
+                this.setSubtitleAlignment(alignment)
+            }
+
+            // remove all matches, so we do not display \anx
+            trimmed = trimmed.replace(locationRegex, "")
+            setText(trimmed)
+            return this
+        }
+
+        fun Cue.Builder.setSubtitleAlignment(alignment: Int?): Cue.Builder {
+            if (alignment == null) return this
+            when (alignment) {
+                SSA_ALIGNMENT_BOTTOM_LEFT, SSA_ALIGNMENT_BOTTOM_CENTER, SSA_ALIGNMENT_BOTTOM_RIGHT -> Cue.ANCHOR_TYPE_END
+                SSA_ALIGNMENT_MIDDLE_LEFT, SSA_ALIGNMENT_MIDDLE_CENTER, SSA_ALIGNMENT_MIDDLE_RIGHT -> Cue.ANCHOR_TYPE_MIDDLE
+                SSA_ALIGNMENT_TOP_LEFT, SSA_ALIGNMENT_TOP_CENTER, SSA_ALIGNMENT_TOP_RIGHT -> Cue.ANCHOR_TYPE_START
+                else -> null
+            }?.let { anchor ->
+                setLineAnchor(anchor)
+                setLine(
+                    computeDefaultLineOrPosition(anchor), Cue.LINE_TYPE_FRACTION
+                )
+            }
+            // toPositionAnchor
+            when (alignment) {
+                SSA_ALIGNMENT_BOTTOM_LEFT, SSA_ALIGNMENT_MIDDLE_LEFT, SSA_ALIGNMENT_TOP_LEFT -> Cue.ANCHOR_TYPE_START
+                SSA_ALIGNMENT_BOTTOM_CENTER, SSA_ALIGNMENT_MIDDLE_CENTER, SSA_ALIGNMENT_TOP_CENTER -> Cue.ANCHOR_TYPE_MIDDLE
+                SSA_ALIGNMENT_BOTTOM_RIGHT, SSA_ALIGNMENT_MIDDLE_RIGHT, SSA_ALIGNMENT_TOP_RIGHT -> Cue.ANCHOR_TYPE_END
+                else -> null
+            }?.let { anchor ->
+                setPositionAnchor(anchor)
+                setPosition(computeDefaultLineOrPosition(anchor))
+            }
+
+            // toTextAlignment
+            when (alignment) {
+                SSA_ALIGNMENT_BOTTOM_LEFT, SSA_ALIGNMENT_MIDDLE_LEFT, SSA_ALIGNMENT_TOP_LEFT -> Layout.Alignment.ALIGN_NORMAL
+                SSA_ALIGNMENT_BOTTOM_CENTER, SSA_ALIGNMENT_MIDDLE_CENTER, SSA_ALIGNMENT_TOP_CENTER -> Layout.Alignment.ALIGN_CENTER
+                SSA_ALIGNMENT_BOTTOM_RIGHT, SSA_ALIGNMENT_MIDDLE_RIGHT, SSA_ALIGNMENT_TOP_RIGHT -> Layout.Alignment.ALIGN_OPPOSITE
+                else -> null
+            }?.let { anchor ->
+                setTextAlignment(anchor)
+            }
+            return this
         }
     }
 
@@ -130,7 +235,8 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
         // Cntrl is control characters: https://en.wikipedia.org/wiki/Unicode_control_characters
         // Cf is formatting characters: https://www.compart.com/en/unicode/category/Cf
         val controlCharsRegex = Regex("""[\p{Cntrl}\p{Cf}]""")
-        val trimmedText = data.trimStart { it.isWhitespace() || controlCharsRegex.matches(it.toString()) }
+        val trimmedText =
+            data.trimStart { it.isWhitespace() || controlCharsRegex.matches(it.toString()) }
 
         //https://github.com/LagradOst/CloudStream-2/blob/ddd774ee66810137ff7bd65dae70bcf3ba2d2489/CloudStreamForms/CloudStreamForms/Script/MainChrome.cs#L388
         val subtitleParser = when {
@@ -178,6 +284,7 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
 
     val currentSubtitleCues = mutableListOf<SubtitleCue>()
 
+
     override fun parse(
         data: ByteArray,
         offset: Int,
@@ -187,30 +294,18 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
     ) {
         val currentStyle = style
         val customOutput = Consumer<CuesWithTiming> { cue ->
+            val newCue =
+                CuesWithTiming(cue.cues, cue.startTimeUs, cue.durationUs)
+
+            // Do not apply the offset to the currentSubtitleCues as those are then used for sync subs
             currentSubtitleCues.add(
                 SubtitleCue(
-                    cue.startTimeUs / 1000,
-                    cue.durationUs / 1000,
-                    cue.cues.map { it.text.toString() })
+                    newCue.startTimeUs / 1000,
+                    newCue.durationUs / 1000,
+                    newCue.cues.map { it.text.toString() })
             )
 
-            // add an extra span here to change the subtitle
-            val edgeSize = currentStyle.edgeSize
-            val newCue = if (edgeSize == null) {
-                cue
-            } else {
-                CuesWithTiming(cue.cues.map { c ->
-                    c.buildUpon().apply {
-                        val customSpan = SpannableString.valueOf(text ?: return@apply)
-                        customSpan.setSpan(
-                            OutlineSpan(edgeSize), 0, customSpan.length,
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
-                        setText(customSpan)
-                    }.build()
-                }, cue.startTimeUs, cue.durationUs)
-            }
-
+            // offset timing for the final
             val updatedCues =
                 CuesWithTiming(
                     newCue.cues,
@@ -233,10 +328,6 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
                 )
                 realDecoder?.let { decoder ->
                     if (decoder !is SsaParser) {
-                        if (currentStyle.removeCaptions)
-                            captionRegex.forEach { rgx ->
-                                str = str.replace(rgx, "\n")
-                            }
                         if (currentStyle.removeBloat)
                             bloatRegex.forEach { rgx ->
                                 str = str.replace(rgx, "\n")

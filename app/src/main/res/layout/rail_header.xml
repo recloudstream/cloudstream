@@ -13,7 +13,7 @@
             android:layout_height="24dp"
             app:itemIconTint="@color/item_select_color"
             android:focusable="true"
-            android:nextFocusRight="@id/home_preview_play_btt"
+            android:nextFocusRight="@id/home_preview_info_btt"
             android:src="@drawable/notifications_icon_selector"
             android:contentDescription="@string/account"
             app:tint="@color/item_select_color" />

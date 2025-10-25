@@ -1,16 +1,12 @@
 package com.lagradost.cloudstream3.ui.library
 
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.lagradost.cloudstream3.AcraApplication
-import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.SearchResultGridExpandedBinding
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
@@ -73,7 +69,7 @@ class PageAdapter(
                 item,
                 position,
                 itemView,
-                colorCallback = { palette ->
+                /*colorCallback = { palette ->
                     AcraApplication.context?.let { ctx ->
                         val defColor = ContextCompat.getColor(ctx, R.color.ratingColorBg)
                         var bg = palette.getDarkVibrantColor(defColor)
@@ -97,6 +93,7 @@ class PageAdapter(
                         }
                     }
                 }
+                */
             )
 
             // See searchAdaptor for this, it basically fixes the height

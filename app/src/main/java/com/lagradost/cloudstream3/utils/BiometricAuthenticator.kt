@@ -28,13 +28,13 @@ object BiometricAuthenticator {
     var promptInfo: BiometricPrompt.PromptInfo? = null
     var authCallback: BiometricCallback? = null // listen to authentication success
 
-    private fun initializeBiometrics(activity: Activity) {
+    private fun initializeBiometrics(activity: FragmentActivity) {
         val executor = ContextCompat.getMainExecutor(activity)
 
         biometricManager = BiometricManager.from(activity)
 
         biometricPrompt = BiometricPrompt(
-            activity as FragmentActivity,
+            activity,
             executor,
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
@@ -139,7 +139,7 @@ object BiometricAuthenticator {
     }
 
     // function to start authentication in any fragment or activity
-    fun startBiometricAuthentication(activity: Activity, title: Int, setDeviceCred: Boolean) {
+    fun startBiometricAuthentication(activity: FragmentActivity, title: Int, setDeviceCred: Boolean) {
         initializeBiometrics(activity)
         authCallback = activity as? BiometricCallback
         if (isBiometricHardWareAvailable()) {

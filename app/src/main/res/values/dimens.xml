@@ -16,10 +16,19 @@
     <integer name="loading_time">2000</integer>
 
     <dimen name="storage_radius">3dp</dimen>
-    <dimen name="navbar_width">62dp</dimen>
+    <dimen name="navbar_width">0dp</dimen>
+
+    <dimen name="nav_view_height">70dp</dimen>
+    <dimen name="nav_rail_view_width">62dp</dimen>
 
     <dimen name="download_size">50dp</dimen>
     <dimen name="video_frame_width">1dp</dimen>
 
     <dimen name="account_select_linear_item_size">100dp</dimen>
+    <dimen name="dialog_buttons_inset">5dp</dimen>
+
+    <dimen name="home_poster_progress_size">50dp</dimen>
+    <dimen name="episode_progress_size">40dp</dimen>
+    <dimen name="continue_watching_progress_size">30dp</dimen>
+    <dimen name="circular_progress_thickness">2dp</dimen>
 </resources>

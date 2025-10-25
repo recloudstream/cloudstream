@@ -16,15 +16,14 @@
     app:cardCornerRadius="@dimen/rounded_image_radius"
     app:cardElevation="0dp">
 
+    <!-- Needed for layout tests -->
     <ImageView
         android:id="@+id/title_shadow"
-        android:visibility="gone"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_gravity="bottom"
-        android:clickable="false"
-        android:focusable="false"
+        android:visibility="gone"
         tools:ignore="ContentDescription" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -49,23 +48,71 @@
                 tools:src="@drawable/example_poster" />
 
 
-            <ImageView
-                android:id="@+id/search_item_download_play"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center"
-                android:src="@drawable/play_button" />
+            <FrameLayout
+                android:id="@+id/watch_progress_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
 
-            <androidx.core.widget.ContentLoadingProgressBar
-                android:id="@+id/watchProgress"
-                style="@android:style/Widget.Material.ProgressBar.Horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:layout_gravity="bottom"
-                android:layout_marginBottom="-1.5dp"
-                android:progressBackgroundTint="?attr/colorPrimary"
-                android:progressTint="?attr/colorPrimary"
-                tools:progress="50" />
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/search_item_download_play"
+                    style="@style/HomePlayUnderlayProgress"
+                    />
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/watchProgress"
+                    style="@style/HomeCircularProgress"
+                    tools:progress="50" />
+
+            </FrameLayout>
+<!--            <FrameLayout-->
+<!--                android:id="@+id/small_watch_progress_container"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="bottom|end"-->
+<!--                android:visibility="gone"-->
+<!--                tools:visibility="visible"-->
+<!--                >-->
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/small_episode_play_icon"-->
+<!--                    android:layout_width="30dp"-->
+<!--                    android:layout_height="30dp"-->
+<!--                    android:src="@drawable/play_button"-->
+<!--                    android:layout_gravity="center" />-->
+
+<!--                <com.google.android.material.progressindicator.CircularProgressIndicator-->
+<!--                    android:id="@+id/small_episode_progress"-->
+<!--                    android:layout_width="30dp"-->
+<!--                    android:layout_height="30dp"-->
+<!--                    app:indicatorSize="28.75dp"-->
+<!--                    app:trackThickness="2.5dp"-->
+<!--                    android:progressBackgroundTint="?attr/colorPrimary"-->
+<!--                    android:progressTint="?attr/colorPrimary"-->
+<!--                    tools:progress="50" />-->
+<!--            </FrameLayout>-->
+<!--            <FrameLayout-->
+<!--                android:id="@+id/playProgressContainer"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="bottom|end">-->
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/search_item_download_play"-->
+<!--                    android:layout_width="50dp"-->
+<!--                    android:layout_height="50dp"-->
+<!--                    android:src="@drawable/play_button"-->
+<!--                    android:layout_gravity="center" />-->
+
+<!--                <com.google.android.material.progressindicator.CircularProgressIndicator-->
+<!--                    android:id="@+id/watchProgress"-->
+<!--                    android:layout_width="25dp"-->
+<!--                    android:layout_height="25dp"-->
+<!--                    app:indicatorSize="23.75dp"-->
+<!--                    app:trackThickness="2.5dp"-->
+<!--                    android:progressBackgroundTint="?attr/colorPrimary"-->
+<!--                    android:progressTint="?attr/colorPrimary"-->
+<!--                    tools:progress="50" />-->
+<!--            </FrameLayout>-->
 
             <!--<View
                     android:id="@+id/search_result_lang"
@@ -84,20 +131,16 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp">
             </ImageView>-->
-            <TextView android:id="@+id/text_quality" style="@style/TypeButton" />
+            <TextView
+                android:id="@+id/text_quality"
+                style="@style/TypeButton" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="end"
                 android:orientation="vertical">
 
-                <!--
-                            <ImageView android:id="@+id/text_is_dub" android:tint="?attr/colorPrimary"
-                                       android:src="@drawable/ic_baseline_subtitles_24" android:layout_width="wrap_content"
-                                       android:layout_height="20dp">
-
-                            </ImageView>-->
                 <TextView
                     android:id="@+id/text_is_dub"
                     style="@style/DubButton"
@@ -107,6 +150,12 @@
                     android:id="@+id/text_is_sub"
                     style="@style/SubButton"
                     android:layout_gravity="end" />
+
+                <TextView
+                    android:id="@+id/text_rating"
+                    style="@style/RatingButton"
+                    android:layout_gravity="end"
+                    tools:text="7.7" />
 
                 <TextView
                     android:id="@+id/text_flag"

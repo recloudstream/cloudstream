@@ -1,0 +1,742 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- KEYS DON'T TRANSLATE -->
+    <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Tập %2$d</string>
+    <string name="cast_format" formatted="true">Diễn viên: %s</string>
+    <string name="next_episode_format" formatted="true">Tập %d sẽ ra mắt sau</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dng %2$dg %3$dph</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dgi %2$dph</string>
+    <string name="next_episode_time_min_format" formatted="true">%dm</string>
+    <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
+    <string name="result_poster_img_des">Poster</string>
+    <string name="search_poster_img_des">Ảnh bìa</string>
+    <string name="episode_poster_img_des">Episode Poster</string>
+    <string name="home_main_poster_img_des">Main Poster</string>
+    <string name="home_next_random_img_des">Next Random</string>
+    <string name="go_back_img_des">Go back</string>
+    <string name="home_change_provider_img_des">Change Provider</string>
+    <string name="preview_background_img_des">Preview Background</string>
+    <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
+    <string name="player_speed_text_format" formatted="true">Tốc độ (%.2fx)</string>
+    <string name="rated_format" formatted="true">Đánh giá: %.1f</string>
+    <string name="new_update_format" formatted="true">Đã tìm thấy bản cập nhật mới!
+\n%1$s -&gt; %2$s</string>
+    <string name="filler" formatted="true">Bộ lọc</string>
+    <string name="duration_format" formatted="true">%d phút</string>
+    <string name="app_name">CloudStream</string>
+    <string name="play_with_app_name">Mở với CloudStream</string>
+    <string name="title_home">Trang Chủ</string>
+    <string name="title_search">Tìm Kiếm</string>
+    <string name="title_downloads">Tải Về</string>
+    <string name="title_settings">Cài Đặt</string>
+    <string name="search_hint">Tìm kiếm…</string>
+    <string name="search_hint_site" formatted="true">Tìm kiếm %s…</string>
+    <string name="no_data">Không có dữ liệu</string>
+    <string name="episode_more_options_des">Thêm tuỳ chọn</string>
+    <string name="next_episode">Tập tiếp theo</string>
+    <string name="result_tags">Thể loại</string>
+    <string name="result_share">Chia sẻ</string>
+    <string name="result_open_in_browser">Mở bằng trình duyệt</string>
+    <string name="skip_loading">Bỏ qua</string>
+    <string name="loading">Đang tải…</string>
+    <string name="type_watching">Đang xem</string>
+    <string name="type_on_hold">Đang chờ</string>
+    <string name="type_completed">Đã xem</string>
+    <string name="type_dropped">Bỏ qua</string>
+    <string name="type_plan_to_watch">Xem sau</string>
+    <string name="type_re_watching">Xem lại</string>
+    <string name="play_movie_button">Xem Ngay</string>
+    <string name="play_livestream_button">Phát trực tiếp</string>
+    <string name="play_torrent_button">Xem Torrent</string>
+    <string name="pick_source">Nguồn Phim</string>
+    <string name="pick_subtitle">Phụ đề</string>
+    <string name="reload_error">Thử kết nối lại…</string>
+    <string name="go_back">Quay lại</string>
+    <string name="play_episode">Xem Tập Phim</string>
+    <!--<string name="need_storage">Allow to download episodes</string>-->
+    <string name="download">Tải xuống</string>
+    <string name="downloaded">Đã tải</string>
+    <string name="downloading">Đang tải</string>
+    <string name="download_paused">Tạm dừng</string>
+    <string name="download_started">Đã bắt đầu tải</string>
+    <string name="download_failed">Tải lỗi</string>
+    <string name="download_canceled">Đã hủy</string>
+    <string name="download_done">Tải thành công</string>
+    <string name="stream">Luồng mạng</string>
+    <string name="error_loading_links_toast">Đã có lỗi xảy ra</string>
+    <string name="download_storage_text">Bộ nhớ trong</string>
+    <string name="app_dubbed_text">L.Tiếng</string>
+    <string name="app_subbed_text">P.Đề</string>
+    <string name="popup_delete_file">Xóa Tệp</string>
+    <string name="popup_play_file">Xem Tệp</string>
+    <string name="popup_resume_download">Tiếp tục tải</string>
+    <string name="popup_pause_download">Tạm dừng tải</string>
+    <string name="pref_disable_acra">Tắt tự động gửi dữ liệu khi xảy ra lỗi</string>
+    <string name="home_more_info">Thông tin thêm</string>
+    <string name="home_expanded_hide">Ẩn</string>
+    <string name="home_play">Xem ngay</string>
+    <string name="home_info">Thông tin</string>
+    <string name="filter_bookmarks">Lọc theo danh sách đã lưu</string>
+    <string name="error_bookmarks_text">Danh sách đã lưu</string>
+    <string name="action_remove_from_bookmarks">Xóa</string>
+    <string name="action_add_to_bookmarks">Đặt trạng thái xem</string>
+    <string name="sort_apply">Áp dụng</string>
+    <string name="sort_copy">Sao lưu</string>
+    <string name="sort_close">Đóng</string>
+    <string name="sort_clear">Huỷ bỏ</string>
+    <string name="sort_save">Lưu</string>
+    <string name="player_speed">Tốc độ phát</string>
+    <string name="subtitles_settings">Cài đặt hiển thị phụ đề</string>
+    <string name="subs_text_color">Màu chữ</string>
+    <string name="subs_outline_color">Màu viền chữ</string>
+    <string name="subs_background_color">Màu nền</string>
+    <string name="subs_window_color">Màu cửa sổ</string>
+    <string name="subs_edge_type">Kiểu viền</string>
+    <string name="subs_subtitle_elevation">Độ nâng</string>
+    <string name="subs_font">Kiểu chữ</string>
+    <string name="subs_font_size">Kích thước chữ</string>
+    <string name="search_provider_text_providers">Tìm kiếm theo nguồn phim</string>
+    <string name="search_provider_text_types">Tìm kiếm theo thể loại</string>
+    <string name="benene_count_text">%d lời cảm ơn đã được gửi tặng nhà phát triển</string>
+    <string name="benene_count_text_none">Hãy tặng cho nhà phát triển một lời cảm ơn</string>
+    <string name="subs_auto_select_language">Tự động chọn ngôn ngữ</string>
+    <string name="subs_download_languages">Ngôn ngữ khi tải xuống</string>
+    <string name="subs_subtitle_languages">Ngôn ngữ phụ đề</string>
+    <string name="subs_hold_to_reset_to_default">Giữ để làm mới toàn bộ</string>
+    <string name="subs_import_text" formatted="true">Thêm phông chữ tại %s</string>
+    <string name="continue_watching">Tiếp tục xem</string>
+    <string name="action_remove_watching">Loại bỏ</string>
+    <string name="action_open_watching">Thông tin thêm</string>
+    <string name="action_open_play">@string/home_play</string>
+    <string name="vpn_might_be_needed">Bạn có thể sẽ cần sử dụng VPN để xem phim này</string>
+    <string name="vpn_torrent">Phim này được chiếu dưới dạng Torrent. Hãy sử dụng VPN để xem</string>
+    <string name="torrent_plot">Thông tin phim</string>
+    <string name="normal_no_plot">Đang cập nhật</string>
+    <string name="torrent_no_plot">Không tìm thấy thông tin</string>
+    <string name="show_log_cat">Hiển thị Logcat 🐈</string>
+    <string name="picture_in_picture">Chế độ cửa sổ nhỏ</string>
+    <string name="picture_in_picture_des">Tiếp tục xem phim khi thoát ứng dụng hoặc khi tìm kiếm</string>
+    <string name="player_size_settings">Bật nút thu phóng khi xem</string>
+    <string name="player_size_settings_des">Xóa khoảng đen của phim</string>
+    <string name="player_subtitles_settings">Phụ đề</string>
+    <string name="player_subtitles_settings_des">Cài đặt phụ đề</string>
+    <string name="chromecast_subtitles_settings">Phụ đề Chromecast</string>
+    <string name="chromecast_subtitles_settings_des">Cài đặt phụ đề Chromecast</string>
+    <string name="eigengraumode_settings">Tốc độ phát</string>
+    <string name="swipe_to_seek_settings">Vuốt để tua nhanh</string>
+    <string name="swipe_to_seek_settings_des">Vuốt sang trái hoặc phải để tua video</string>
+    <string name="swipe_to_change_settings">Vuốt để chỉnh độ sáng và âm lượng</string>
+    <string name="swipe_to_change_settings_des">Vuốt lên hoặc vuốt xuống ở hai bên để điều chỉnh độ sáng và âm lượng</string>
+    <string name="autoplay_next_settings">Tự động phát tập tiếp theo</string>
+    <string name="autoplay_next_settings_des">Phát tập tiếp theo sau khi hết tập hiện tại</string>
+    <string name="double_tap_to_seek_settings">Nhấn 2 lần để tua</string>
+    <string name="double_tap_to_pause_settings">Nhấn 2 lần để tạm dừng</string>
+    <string name="double_tap_to_seek_amount_settings">Thời lượng tua (Giây)</string>
+    <string name="double_tap_to_seek_settings_des">Nhấn 2 lần vào bên trái hoặc bên phải màn hình để tua trước hoặc sau</string>
+    <string name="double_tap_to_pause_settings_des">Nhấn vào giữa hai lần để tạm dừng</string>
+    <string name="use_system_brightness_settings">Sử dụng độ sáng hệ thống</string>
+    <string name="use_system_brightness_settings_des">Sử dụng độ sáng hệ thống trong trình phát ứng dụng</string>
+    <string name="episode_sync_settings">Cập nhật tiến trình xem</string>
+    <string name="episode_sync_settings_des">Tự động đồng bộ tiến trình hiện tại của bạn</string>
+    <string name="restore_settings">Khôi phục dữ liệu từ bản sao lưu</string>
+    <string name="backup_settings">Sao lưu dữ liệu</string>
+    <string name="restore_success">Đã tải dữ liệu sao lưu</string>
+    <string name="restore_failed_format" formatted="true">Không thể khôi phục dữ liệu từ %s</string>
+    <string name="backup_success">Sao lưu dữ liệu thành công</string>
+    <string name="backup_failed">Thiếu quyền truy cập bộ nhớ, hãy thử lại.</string>
+    <string name="backup_failed_error_format">Lỗi khi sao lưu %s</string>
+    <string name="search">Tìm kiếm</string>
+    <string name="category_account">Tài khoản và Bảo mật</string>
+    <string name="category_updates">Cập nhật và Sao lưu</string>
+    <string name="settings_info">Thông tin</string>
+    <string name="advanced_search">Tìm kiếm nâng cao</string>
+    <string name="advanced_search_des">Cho phép tìm kiếm theo bộ lọc từng nhà cung cấp</string>
+    <string name="bug_report_settings_off">Chỉ gửi dữ liệu khi xảy ra lỗi đến nhà phát triển</string>
+    <string name="bug_report_settings_on">Không gửi dữ liệu</string>
+    <string name="show_fillers_settings">Hiển thị tập phụ cho anime</string>
+    <string name="show_trailers_settings">Hiển thị trailer</string>
+    <string name="kitsu_settings">Hiển thị poster từ Kitsu</string>
+    <string name="pref_filter_search_quality">Ẩn chất lượng video khi tìm kiếm</string>
+    <string name="automatic_plugin_updates">Tự động cập nhật plugin</string>
+    <string name="updates_settings">Hiển thị thông báo cập nhật App</string>
+    <string name="updates_settings_des">Tự động tìm kiếm bản cập nhật mới sau khi khởi động app.</string>
+    <string name="uprereleases_settings">Cập nhật phiên bản Beta</string>
+    <string name="uprereleases_settings_des">Tìm kiếm các phiên bản Beta thay vì đợi bản cập nhật chính thức</string>
+    <string name="github">Github</string>
+    <string name="lightnovel">Ứng dụng đọc tiểu thuyết của cùng nhà phát triển</string>
+    <string name="anim">Ứng dụng xem Anime của cùng nhà phát triển</string>
+    <string name="discord">Tham gia cộng đồng trên Discord</string>
+    <string name="benene">Gửi lời cảm ơn tới nhà phát triển</string>
+    <string name="benene_des">Gửi lời cảm ơn</string>
+    <string name="app_language">Ngôn ngữ ứng dụng</string>
+    <string name="no_chromecast_support_toast">Nguồn phim này chưa hỗ trợ Chromecast</string>
+    <string name="no_links_found_toast">Không tìm thấy link</string>
+    <string name="copy_link_toast">Đã copy link vào bộ nhớ đệm</string>
+    <string name="play_episode_toast">Xem Phim</string>
+    <string name="subs_default_reset_toast">Làm mới toàn bộ cài đặt</string>
+    <string name="acra_report_toast">Rất tiếc! Ứng dụng đã xảy ra lỗi. Chúng tôi đang tìm hiểu nguyên nhân và khắc phục nó</string>
+    <string name="season">Mùa</string>
+    <string name="no_season">Không có mùa nào</string>
+    <string name="episode">Tập</string>
+    <string name="episodes">Tập</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
+    <string name="season_short">M</string>
+    <string name="episode_short">T</string>
+    <string name="no_episodes_found">Không có tập nào</string>
+    <string name="delete_file">Xóa Tệp</string>
+    <string name="delete">Xóa</string>
+    <string name="cancel">Hủy bỏ</string>
+    <string name="pause">Tạm Dừng</string>
+    <string name="resume">Tiếp Tục</string>
+    <string name="go_back_30">-30</string>
+    <string name="go_forward_30">+30</string>
+    <string name="delete_message">%s sẽ bị xoá vĩnh viễn
+\nBạn có chắc chắn muốn xóa?</string>
+    <string name="resume_time_left" formatted="true">%dm
+\ncòn lại</string>
+    <string name="status_ongoing">Đang chiếu</string>
+    <string name="status_completed">Hoàn Thành</string>
+    <string name="status">Trạng Thái</string>
+    <string name="year">Năm</string>
+    <string name="rating">Đánh Giá</string>
+    <string name="duration">Thời Lượng</string>
+    <string name="site">Nguồn</string>
+    <string name="synopsis">Thông tin</string>
+    <string name="queued">Hàng chờ</string>
+    <string name="no_subtitles">Không có phụ đề</string>
+    <string name="action_default">Mặc Định</string>
+    <string name="free_storage">Còn trống</string>
+    <string name="used_storage">Đã sử dụng</string>
+    <string name="app_storage">App</string>
+    <!--plural-->
+    <string name="movies">Phim Lẻ</string>
+    <string name="tv_series">Phim Bộ</string>
+    <string name="cartoons">Hoạt Hình</string>
+    <string name="anime">Anime</string>
+    <string name="ova">OVA</string>
+    <string name="torrent">Torrent</string>
+    <string name="documentaries">Phim Tài Liệu</string>
+    <string name="asian_drama">Truyền Hình Châu Á</string>
+    <string name="livestreams">Trực tiếp</string>
+    <string name="nsfw">NSFW</string>
+    <string name="others">Khác</string>
+    <!--singular-->
+    <string name="movies_singular">Phim Lẻ</string>
+    <string name="tv_series_singular">Phim Bộ</string>
+    <string name="cartoons_singular">Hoạt Hình</string>
+    <string name="anime_singular">Anime</string>
+    <string name="ova_singular">OVA</string>
+    <string name="torrent_singular">Torrent</string>
+    <string name="documentaries_singular">Phim Tài Liệu</string>
+    <string name="asian_drama_singular">Truyền Hình Châu Á</string>
+    <string name="live_singular">Trực tiếp</string>
+    <string name="nsfw_singular">NSFW</string>
+    <string name="other_singular">Video</string>
+    <string name="source_error">Lỗi nguồn phim</string>
+    <string name="remote_error">Lỗi kết nối tới máy chủ</string>
+    <string name="render_error">Không thể render</string>
+    <string name="unexpected_error">Đã có lỗi xảy ra. Vui lòng thử lại sau</string>
+    <string name="storage_error">Lỗi tải xuống. Hãy kiểm tra quyền truy cập bộ nhớ của ứng dụng</string>
+    <string name="episode_action_chromecast_episode">Tập Chromecast</string>
+    <string name="episode_action_chromecast_mirror">Chiếu Chromecast</string>
+    <string name="episode_action_play_in_app">Xem với trình phát mặc định</string>
+    <string name="episode_action_play_in_format">Xem với trình phát %s</string>
+    <string name="episode_action_auto_download">Tự động tải xuống</string>
+    <string name="episode_action_download_mirror">Nguồn tải xuống</string>
+    <string name="episode_action_reload_links">Lấy link mới nhất</string>
+    <string name="episode_action_download_subtitle">Tải phụ đề</string>
+    <string name="show_hd">Nhãn chất lượng phim</string>
+    <string name="show_dub">Nhãn lồng tiếng</string>
+    <string name="show_sub">Nhãn phụ đề</string>
+    <string name="show_title">Tiêu đề</string>
+    <string name="poster_ui_settings">Thay đổi giao diện trên poster</string>
+    <string name="no_update_found">Bạn đang dùng phiên bản mới nhất</string>
+    <string name="check_for_update">Kiểm tra cập nhật</string>
+    <string name="video_lock">Khóa</string>
+    <string name="video_aspect_ratio_resize">Thu Phóng</string>
+    <string name="video_source">Nguồn &amp; Phụ đề</string>
+    <string name="video_skip_op">Bỏ qua OP</string>
+    <string name="dont_show_again">Không hiện lại</string>
+    <string name="skip_update">Bỏ qua bản cập nhật này</string>
+    <string name="update">Cập nhật</string>
+    <string name="watch_quality_pref">Chất lượng xem ưu tiên (WiFi)</string>
+    <string name="limit_title">Kí tự tối đa trên tiêu đề</string>
+    <string name="limit_title_rez">Nội dung trình phát video</string>
+    <string name="video_buffer_size_settings">Kích thước bộ nhớ đệm video</string>
+    <string name="video_buffer_length_settings">Thời lượng bộ nhớ đệm</string>
+    <string name="video_buffer_disk_settings">Lưu bộ nhớ đệm video trên ổ cứng</string>
+    <string name="video_buffer_clear_settings">Xoá bộ nhớ đệm hình ảnh và video</string>
+    <string name="video_ram_description">Sẽ gây lỗi nếu đặt quá cao trên máy có dung lượng ram thấp như Android TV.</string>
+    <string name="video_disk_description">Sẽ gây lỗi nếu đặt quá cao trên máy có dung lượng lưu trữ thấp như Android TV.</string>
+    <string name="dns_pref">DNS over HTTPS</string>
+    <string name="dns_pref_summary">Rất hữu ích để bỏ chặn ISP</string>
+    <string name="add_site_pref">Sao chép trang web</string>
+    <string name="remove_site_pref">Xoá trang web</string>
+    <string name="add_site_summary">Thêm bản sao của một trang web, với một địa chỉ khác</string>
+    <string name="download_path_pref">Đường dẫn tải xuống</string>
+    <string name="nginx_url_pref">Địa chỉ máy chủ Nginx</string>
+    <string name="display_subbed_dubbed_settings">Hiển thị nhãn Phụ đề hoặc Thuyết minh</string>
+    <string name="resize_fit">Vừa màn hình</string>
+    <string name="resize_fill">Kéo dãn</string>
+    <string name="resize_zoom">Phóng to</string>
+    <string name="legal_notice">Disclaimer</string>
+    <string name="category_general">Tổng quan</string>
+    <string name="random_button_settings">Nút ngẫu nhiên</string>
+    <string name="random_button_settings_desc">Hiện nút ngẫu nhiên trên Trang chủ và Thư viện</string>
+    <string name="provider_lang_settings">Ngôn ngữ mở rộng</string>
+    <string name="app_layout">Giao diện App</string>
+    <string name="preferred_media_settings">Thể loại ưu tiên</string>
+    <string name="enable_nsfw_on_providers">Kích hoạt NSFW trên các tiện ích mở rộng được hỗ trợ</string>
+    <string name="subtitles_encoding">Mã hoá phụ đề</string>
+    <string name="category_providers">Nguồn phim</string>
+    <string name="category_ui">Giao diện</string>
+    <string name="automatic">Tự động</string>
+    <string name="tv_layout">Giao diện TV</string>
+    <string name="phone_layout">Giao diện điện thoại</string>
+    <string name="emulator_layout">Giao diện giả lập</string>
+    <string name="primary_color_settings">Màu chính</string>
+    <string name="app_theme_settings">Chủ đề App</string>
+    <string name="bottom_title_settings">Vị trí tiêu đề</string>
+    <string name="bottom_title_settings_des">Đặt tiêu đề dưới poster</string>
+    <!-- account stuff -->
+    <string name="example_password">Mật khẩu</string>
+    <string name="example_username">Tài khoản</string>
+    <string name="example_email">Email</string>
+    <string name="example_ip">127.0.0.1</string>
+    <string name="example_site_name">Tên mới</string>
+    <string name="example_site_url">https://example.com</string>
+    <string name="example_lang_name">Mã ngôn ngữ (vi)</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
+    <string name="account">tài khoản</string>
+    <string name="logout">Đăng xuất</string>
+    <string name="login">Đăng nhập</string>
+    <string name="switch_account">Đổi tài khoản</string>
+    <string name="add_account">Thêm tài khoản</string>
+    <string name="create_account">Tạo tài khoản</string>
+    <string name="add_sync">Thêm theo dõi</string>
+    <string name="added_sync_format" formatted="true">Đã thêm %s</string>
+    <string name="upload_sync">Đồng bộ</string>
+    <string name="sync_score">Đánh giá</string>
+    <string name="sync_score_format" formatted="true">%d / 10</string>
+    <string name="sync_total_episodes_none">/??</string>
+    <string name="sync_total_episodes_some" formatted="true">/%d</string>
+    <string name="authenticated_user" formatted="true">Đã xác thực %s</string>
+    <string name="authenticated_user_fail" formatted="true">Không thể xác thực %s</string>
+    <!-- ============ -->
+    <string name="none">Mặc định</string>
+    <string name="normal">Bình thường</string>
+    <string name="all">Tất cả</string>
+    <string name="max">Tối đa</string>
+    <string name="min">Tối thiểu</string>
+    <string name="subtitles_outline">Viền</string>
+    <string name="subtitles_depressed">Chìm</string>
+    <string name="subtitles_shadow">Đổ bóng</string>
+    <string name="subtitles_raised">Nâng</string>
+    <string name="subtitle_offset">Chỉnh phụ đề</string>
+    <string name="subtitle_offset_hint">1000ms</string>
+    <string name="subtitle_offset_title">Độ trễ phụ đề</string>
+    <string name="subtitle_offset_extra_hint_later_format">Dùng nếu phụ đề bị nhanh %dms</string>
+    <string name="subtitle_offset_extra_hint_before_format">Dùng nếu phụ đề bị trễ %dms</string>
+    <string name="subtitle_offset_extra_hint_none_format">Không chỉnh</string>
+    <!--
+    Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
+    see: 
+	https://en.wikipedia.org/w/index.php?title=Pangram&oldid=225849300
+	https://en.wikipedia.org/wiki/The_quick_brown_fox_jumps_over_the_lazy_dog
+    -->
+    <string name="subtitles_example_text">Xem trước mẫu phụ đề</string>
+    <string name="recommended">Được đề xuất</string>
+    <string name="player_loaded_subtitles" formatted="true">Đã tải %s</string>
+    <string name="player_load_subtitles">Chọn từ máy</string>
+    <string name="player_load_subtitles_online">Chọn từ Internet</string>
+    <string name="downloaded_file">Tệp đã tải</string>
+    <string name="actor_main">Vai chính</string>
+    <string name="actor_supporting">Vai phụ</string>
+    <string name="actor_background">Lý lịch</string>
+    <string name="home_source">Nguồn</string>
+    <string name="home_random">Ngẫu nhiên</string>
+    <string name="coming_soon">Sắp có…</string>
+    <string name="quality_cam">Cam</string>
+    <string name="quality_cam_rip">Cam</string>
+    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_hq">HQ</string>
+    <string name="quality_hd">HD</string>
+    <string name="quality_ts">TS</string>
+    <string name="quality_tc">TC</string>
+    <string name="quality_blueray">Blu-ray</string>
+    <string name="quality_workprint">WP</string>
+    <string name="quality_dvd">DVD</string>
+    <string name="quality_4k">4K</string>
+    <string name="quality_sd">SD</string>
+    <string name="quality_uhd">UHD</string>
+    <string name="quality_hdr">HDR</string>
+    <string name="quality_sdr">SDR</string>
+    <string name="quality_webrip">Web</string>
+    <string name="poster_image">Ảnh áp phích</string>
+    <string name="category_player">Trình phát</string>
+    <string name="resolution_and_title">Độ phân giải và Tên nguồn</string>
+    <string name="title">Tên nguồn</string>
+    <string name="resolution">Độ phân giải</string>
+    <string name="error_invalid_id">Id không hợp lệ</string>
+    <string name="error_invalid_data">Lỗi dữ liệu</string>
+    <string name="error_invalid_url">Lỗi đường dẫn</string>
+    <string name="error">Lỗi</string>
+    <string name="subtitles_remove_captions">Xoá phụ đề đã dùng</string>
+    <string name="subtitles_remove_bloat">Loại bỏ mã hoá phụ đề</string>
+    <string name="subtitles_filter_lang">Lọc theo ngôn ngữ media được chuộng hơn</string>
+    <string name="extras">Thêm</string>
+    <string name="trailer">Trailer</string>
+    <string name="network_adress_example">https://example.com/example.mp4</string>
+    <string name="referer">Đề xuất (tuỳ chọn)</string>
+    <string name="next">Tiếp theo</string>
+    <string name="provider_languages_tip">Xem video bằng các ngôn ngữ này</string>
+    <string name="previous">Trước đó</string>
+    <string name="skip_setup">Bỏ qua cài đặt setup</string>
+    <string name="app_layout_subtext">Chọn giao diện phù hợp với thiết bị của bạn</string>
+    <string name="crash_reporting_title">Báo cáo sự cố</string>
+    <string name="preferred_media_subtext">Bạn muốn xem gì</string>
+    <string name="setup_done">Hoàn tất</string>
+    <string name="extensions">Tiện ích mở rộng</string>
+    <string name="add_repository">Thêm kho lưu trữ</string>
+    <string name="repository_name_hint">Tên kho lưu trữ (Tùy chọn)</string>
+    <string name="repository_url_hint">Đường dẫn kho lưu trữ hoặc Mã ngắn</string>
+    <string name="plugin_loaded">Đã tải plugin</string>
+    <string name="plugin_deleted">Plugin đã xoá</string>
+    <string name="plugin_load_fail" formatted="true">Không tải được %s</string>
+    <string name="is_adult">18+</string>
+    <string name="batch_download_start_format" formatted="true">Đã bắt đầu tải xuống %1$d %2$s…</string>
+    <string name="batch_download_finish_format" formatted="true">Đã tải xuống %1$d %2$s</string>
+    <string name="batch_download_nothing_to_download_format" formatted="true">Toàn bộ %s đã được tải xuống</string>
+    <string name="batch_download">Tải hàng loạt</string>
+    <string name="plugin_singular">plugin</string>
+    <string name="plugin">plugin</string>
+    <string name="delete_repository_plugins">Tất cả plugin của kho lưu trữ sẽ bị xoá</string>
+    <string name="delete_repository">Xoá kho lưu trữ</string>
+    <string name="setup_extensions_subtext">Tải nguồn phim bạn muốn dùng</string>
+    <string name="plugins_downloaded" formatted="true">Đã tải: %d</string>
+    <string name="plugins_disabled" formatted="true">Đã vô hiệu: %d</string>
+    <string name="plugins_not_downloaded" formatted="true">Không tải: %d</string>
+    <string name="blank_repo_message">CloudStream không có sẵn trang web nào. Bạn cần cài đặt các trang web từ kho lưu trữ.
+\n
+\nHãy tham gia Discord của chúng tôi hoặc tìm kiếm trực tuyến.</string>
+    <string name="view_public_repositories_button">Xem kho lưu trữ của cộng đồng</string>
+    <string name="view_public_repositories_button_short">Danh sách công khai</string>
+    <string name="uppercase_all_subtitles">In hoa toàn bộ phụ đề</string>
+    <string name="download_all_plugins_from_repo">Cảnh báo: CloudStream 3 không chịu trách nhiệm về các tiện ích bên thứ ba và không cung cấp bất kỳ sự hỗ trợ nào!</string>
+    <string name="single_plugin_disabled" formatted="true">%s (Đã vô hiệu hoá)</string>
+    <string name="tracks">Âm thanh &amp; Chất lượng</string>
+    <string name="audio_tracks">Âm thanh</string>
+    <string name="video_tracks">Chất lượng Video</string>
+    <string name="apply_on_restart">Áp dụng khi khởi động lại ứng dụng.</string>
+    <string name="safe_mode_title">Chế độ an toàn được bật</string>
+    <string name="safe_mode_description">Đã xảy ra sự cố và chúng tôi đã tự động tắt tất cả các tiện ích mở rộng, hãy tìm và xóa tiện ích mở rộng đang gây ra sự cố.</string>
+    <string name="safe_mode_crash_info">Xem thông tin sự cố</string>
+    <string name="history">Lịch sử</string>
+    <string name="action_mark_as_watched">Đánh dấu là đã xem</string>
+    <string name="automatic_plugin_download">Tự động tải xuống plugin</string>
+    <string name="redo_setup_process">Thiết lập lại</string>
+    <string name="apk_installer_settings">Bộ cài APK</string>
+    <string name="apk_installer_settings_des">Một số máy không hỗ trợ trình cài đặt gói mới. Hãy thử tùy chọn cũ nếu các bản cập nhật không cài đặt.</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
+    <string name="play_trailer_button">Xem Trailer</string>
+    <string name="automatic_plugin_download_summary">Tự động tải plugin còn thiếu.</string>
+    <string name="update_started">Bắt đầu cập nhật</string>
+    <string name="pref_category_links">Liên kết</string>
+    <string name="hls_playlist">Danh sách HLS</string>
+    <string name="player_pref">Trình phát ưu tiên</string>
+    <string name="player_settings_play_in_app">Trình phát mặc định</string>
+    <string name="extension_rating" formatted="true">Đánh giá: %s</string>
+    <string name="no">Không</string>
+    <string name="extension_version">Phiên bản</string>
+    <string name="extension_authors">Tác giả</string>
+    <string name="pref_category_app_updates">Cập nhật ứng dụng</string>
+    <string name="pref_category_backup">Sao lưu</string>
+    <string name="pref_category_extensions">Tiện ích</string>
+    <string name="pref_category_actions">Hành động</string>
+    <string name="pref_category_cache">Cache</string>
+    <string name="pref_category_gestures">Cử chỉ</string>
+    <string name="pref_category_player_features">Tính năng trình phát</string>
+    <string name="pref_category_subtitles">Phụ đề</string>
+    <string name="pref_category_player_layout">Bố cục</string>
+    <string name="pref_category_defaults">Mặc định</string>
+    <string name="pref_category_looks">Giao diện</string>
+    <string name="pref_category_ui_features">Tính năng</string>
+    <string name="plugins_updated" formatted="true">Đã cập nhật %d plugin</string>
+    <string name="extension_description">Mô tả</string>
+    <string name="extension_status">Trạng thái</string>
+    <string name="extension_size">Kích thước</string>
+    <string name="extension_types">Hỗ trợ</string>
+    <string name="extension_language">Ngôn ngữ</string>
+    <string name="extension_install_first">Cài đặt tiện ích trước</string>
+    <string name="app_not_found_error">Không thấy ứng dụng</string>
+    <string name="all_languages_preference">Tất cả ngôn ngữ</string>
+    <string name="skip_type_format" formatted="true">Tua %s</string>
+    <string name="skip_type_op">Mở đầu</string>
+    <string name="skip_type_ed">Kết thúc</string>
+    <string name="skip_type_recap">Tóm tắt</string>
+    <string name="skip_type_mixed_ed">Các kết thúc hỗn hợp</string>
+    <string name="skip_type_mixed_op">Các mở đầu hỗn hợp</string>
+    <string name="skip_type_creddits">Danh đề</string>
+    <string name="skip_type_intro">Giới thiệu</string>
+    <string name="clear_history">Xoá lịch sử</string>
+    <string name="enable_skip_op_from_database_des">Hiển thị nút tua nhanh cho mở đầu/kết thúc</string>
+    <string name="clipboard_too_large">Văn bản quá dài. Không thể lưu vào khay nhớ tạm.</string>
+    <string name="action_remove_from_watched">Xoá khỏi đã xem</string>
+    <string name="confirm_exit_dialog">Bạn có chắc muốn thoát?</string>
+    <string name="yes">Có</string>
+    <string name="update_notification_downloading">Đang tải bản cập nhật…</string>
+    <string name="update_notification_installing">Đang cài bản cập nhật…</string>
+    <string name="update_notification_failed">Không thể cài đặt phiên bản mới</string>
+    <string name="delayed_update_notice">Ứng dụng sẽ được cập nhật khi thoát</string>
+    <string name="library">Thư viện</string>
+    <string name="browser">Trình duyệt</string>
+    <string name="plugin_downloaded">Plugin đã tải</string>
+    <string name="apk_installer_legacy">Legacy</string>
+    <string name="sort_updated_new">Đã cập nhật (Mới đến Cũ)</string>
+    <string name="sort_updated_old">Đã cập nhật (Cũ đến Mới)</string>
+    <string name="empty_library_no_accounts_message">Thư viện của bạn đang trống :(
+\nĐăng nhập vào tài khoản thư viện hoặc thêm phim vào thư viện cục bộ.</string>
+    <string name="open_with">Mở với</string>
+    <string name="provider_info_meta">Thông tin dữ liệu không được cung cấp bởi trang web, video sẽ không tìm thấy link nếu nó không tồn tại trên trang web.</string>
+    <string name="apk_installer_package_installer">PackageInstaller</string>
+    <string name="sort">Sắp xếp</string>
+    <string name="sort_rating_desc">Xếp hạng (Cao đến Thấp)</string>
+    <string name="sort_rating_asc">Xếp hạng (Thấp đến Cao)</string>
+    <string name="sort_alphabetical_z">Chữ cái (Z đến A)</string>
+    <string name="sort_by">Sắp xếp theo</string>
+    <string name="empty_library_logged_in_message">Danh sách này trống, hãy thử chuyển sang danh sách khác.</string>
+    <string name="sort_alphabetical_a">Chữ cái (A đến Z)</string>
+    <string name="select_library">Chọn Thư viện</string>
+    <string name="test_log">Nhật ký</string>
+    <string name="watch_quality_pref_data">Chất lượng xem ưu tiên (Dữ liệu di động)</string>
+    <string name="test_failed">Thất bại</string>
+    <string name="test_passed">Thành công</string>
+    <string name="start">Bắt đầu</string>
+    <string name="category_provider_test">Kiểm tra nguồn phim</string>
+    <string name="jsdelivr_proxy">GitHub Proxy</string>
+    <string name="jsdelivr_enabled">Không thể kết nối được tới GitHub. Đang bật jsDelivr proxy…</string>
+    <string name="pref_category_android_tv">Android TV</string>
+    <string name="restart">Khởi động lại</string>
+    <string name="subscription_new">Đã đăng kí %s</string>
+    <string name="subscription_episode_released">Tập %d đã ra mắt!</string>
+    <string name="subscription_list_name">Đã đăng kí</string>
+    <string name="stop">Dừng lại</string>
+    <string name="pref_category_bypass">Bỏ qua ISP</string>
+    <string name="subscription_deleted">Đã bỏ đăng ký %s</string>
+    <string name="safe_mode_file">Tìm thấy tệp Safe mode!
+\nKhông tải bất cứ tiện ích mở rộng nào khi khởi động cho đến khi loại bỏ tệp.</string>
+    <string name="revert">Đảo ngược lại</string>
+    <string name="subscription_in_progress_notification">Đang cập nhật các phim đã đăng kí</string>
+    <string name="jsdelivr_proxy_summary">Bỏ qua chặn đường link GitHub bằng cách dùng jsDelivr. Có thể gây ra việc cập nhật bị chậm vài ngày.</string>
+    <string name="android_tv_interface_off_seek_settings_summary">Lượng tua thêm được sử dụng khi trình phát ẩn</string>
+    <string name="android_tv_interface_off_seek_settings">Lượng tua thêm</string>
+    <string name="android_tv_interface_on_seek_settings_summary">Lượng tua thêm được sử dụng khi trình phát hiện lên</string>
+    <string name="android_tv_interface_on_seek_settings">Lượng tua thêm</string>
+    <string name="profile_number">Hồ sơ %d</string>
+    <string name="mobile_data">Dữ liệu di động</string>
+    <string name="set_default">Đặt mặc định</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="use">Sử dụng</string>
+    <string name="edit">Điều chỉnh</string>
+    <string name="profiles">Hồ sơ</string>
+    <string name="help">Trợ giúp</string>
+    <string name="profile_background_des">Nền hồ sơ</string>
+    <string name="quality_profile_help">Tại đây bạn có thể thay đổi cách sắp xếp các nguồn. Nếu video có mức độ ưu tiên cao hơn thì video đó sẽ xuất hiện cao hơn trong lựa chọn nguồn. Tổng ưu tiên nguồn và ưu tiên chất lượng là ưu tiên video.
+\n
+\nNguồn A: 3
+\nChất lượng B: 7
+\nSẽ có mức độ ưu tiên video kết hợp là 10.
+\n
+\nLƯU Ý: Nếu tổng là 10 hoặc nhiều hơn, trình phát sẽ tự động bỏ tải khi liên kết đó được tải!</string>
+    <string name="qualities">Các chất lượng</string>
+    <string name="already_voted">Bạn đã bình chọn</string>
+    <string name="disable">Vô hiệu hoá</string>
+    <string name="no_repository_found_error">Không tìm thấy tiện ích, hãy kiểm tra URL và thử lại với VPN</string>
+    <string name="no_plugins_found_error">Không tìm thấy plugin</string>
+    <string name="unable_to_inflate">Không thể khởi tạo UI, đây là một LỖI LỚN và cần được báo cáo ngay lập tức tới %s</string>
+    <string name="automatic_plugin_download_mode_title">Chọn chế độ để lọc plugin tải xuống</string>
+    <string name="favorite_removed">%s đã loại bỏ khỏi mục yêu thích</string>
+    <string name="favorites_list_name">Yêu thích</string>
+    <string name="favorite_added">%s đã thêm vào mục yêu thích</string>
+    <string name="duplicate_message_multiple" formatted="true">Các mục có thể trùng lặp đã được tìm thấy trong thư viện của bạn:
+\n
+\n%s
+\n
+\nBạn vẫn muốn thêm mục này, thay thế những mục hiện có hay hủy hành động?</string>
+    <string name="backup_frequency">Tần suất sao lưu</string>
+    <string name="duplicate_title">Đã tìm thấy bản sao tiềm năng</string>
+    <string name="lock_profile">Khóa hồ sơ</string>
+    <string name="action_add_to_favorites">Thêm vào mục yêu thích</string>
+    <string name="duplicate_replace_all">Thay thế tất cả</string>
+    <string name="pin_error_incorrect">Mã PIN không chính xác. Vui lòng thử lại.</string>
+    <string name="action_unsubscribe">Hủy đăng ký</string>
+    <string name="pin_error_length">Mã PIN phải có 4 ký tự</string>
+    <string name="duplicate_replace">Thay thế</string>
+    <string name="duplicate_add">Thêm vào</string>
+    <string name="action_subscribe">Đăng ký</string>
+    <string name="action_remove_from_favorites">Loại bỏ khỏi mục yêu thích</string>
+    <string name="select_an_account">Chọn một tài khoản</string>
+    <string name="duplicate_message_single">Có vẻ như một mục có khả năng trùng lặp đã tồn tại trong thư viện của bạn: \'%s.\'
+\n
+\nBạn vẫn muốn thêm mục này, thay thế mục hiện có hay hủy hành động?</string>
+    <string name="enter_pin">Nhập PIN</string>
+    <string name="pin">PIN</string>
+    <string name="enter_current_pin">Nhập mã PIN hiện tại</string>
+    <string name="logged_account" formatted="true">Đã đăng nhập với tư cách %s</string>
+    <string name="enter_pin_with_name" formatted="true">Nhập mã PIN cho %s</string>
+    <string name="use_default_account">Sử dụng tài khoản mặc định</string>
+    <string name="skip_startup_account_select_pref">Bỏ qua lựa chọn tài khoản khi khởi động</string>
+    <string name="manage_accounts">Quản lý tài khoản</string>
+    <string name="edit_account">Chỉnh sửa tài khoản</string>
+    <string name="links_reloaded_toast">Tải lại link</string>
+    <string name="result_search_tooltip">Tìm kiếm tiện ích khác</string>
+    <string name="recommendations_tooltip">Hiển thị đề xuất</string>
+    <string name="test_extensions">Kiểm tra nguồn phim</string>
+    <string name="rotate_video">Xoay</string>
+    <string name="subscribe_tooltip">Thông báo tập mới</string>
+    <string name="speed_setting_summary">Chỉnh tốc độ trong trình phát</string>
+    <string name="rotate_video_desc">Hiển thị nút xoay màn hình</string>
+    <string name="auto_rotate_video_desc">Kích hoạt chế độ xoay màn hình tự động</string>
+    <string name="auto_rotate_video">Tự động xoay</string>
+    <string name="toast_copied">đã sao chép!</string>
+    <string name="clipboard_permission_error">Vấn đề truy cập Bảng ghi tạm, Hãy thử lại.</string>
+    <string name="clipboard_unknown_error">Lỗi sao chép, Hãy sao chép logcat và liên hệ hỗ trợ ứng dụng.</string>
+    <string name="favorite">Yêu thích</string>
+    <string name="ok">OK</string>
+    <string name="battery_dialog_title">Vô hiệu Tối ưu pin</string>
+    <string name="app_info_intent_error">Không thể mở thông tin ứng dụng của CloudStream.</string>
+    <string name="unfavorite">Không thích</string>
+    <string name="biometric_authentication_title">Mở khóa Cloudstream</string>
+    <string name="music_singlar">Nhạc</string>
+    <string name="audio_book_singular">Sách nói</string>
+    <string name="biometric_setting">Khóa với sinh trắc học</string>
+    <string name="resume_remaining" formatted="true">%s
+\ncòn lại</string>
+    <string name="biometric_unsupported">Xác thực bằng sinh trắc học không được hỗ trợ trên thiết bị này</string>
+    <string name="password_pin_authentication_title">Mật khẩu/PIN Xác thực</string>
+    <string name="biometric_warning">Dữ liệu CloudStream của bạn hiện đã được sao lưu. Mặc dù khả năng xảy ra điều này là rất thấp nhưng tất cả các thiết bị đều có thể hoạt động khác nhau. Trong trường hợp hiếm gặp là bạn bị khóa truy cập ứng dụng, hãy xóa hoàn toàn dữ liệu ứng dụng và khôi phục từ bản sao lưu. Chúng tôi rất xin lỗi vì bất kỳ sự bất tiện nào phát sinh từ việc này.</string>
+    <string name="biometric_setting_summary">Mở khóa ứng dụng bằng Vân tay, Khuôn mặt, PIN, Hình vẽ và Mật khẩu.</string>
+    <string name="biometric_prompt_description">Màn hình bị đóng sau nhiều lần thử thất bại. Hãy khởi động lại ứng dụng.</string>
+    <string name="test_extensions_summary">Bài kiểm tra này chỉ dành cho các nhà phát triển và không xác nhận hay phủ nhận việc hoạt động của bất kỳ nguồn phim nào.</string>
+    <string name="app_unrestricted_toast">Chế độ tiêu thụ pin của ứng dụng đã được đặt ở mức không giới hạn</string>
+    <string name="custom_media_singluar">Phương tiện</string>
+    <string name="repo_copy_label">Tên và URL kho lưu trữ</string>
+    <string name="reset_btn">Đặt lại</string>
+    <string name="battery_dialog_message">Để đảm bảo quá trình tải xuống và thông báo cho các chương trình truyền hình đã đăng ký không bị gián đoạn, CloudStream cần có quyền chạy ở chế độ nền. Bằng cách nhấn OK, một hộp thoại yêu cầu sẽ hiển thị. Hãy nhấn \"Cho phép\".\n\nXin lưu ý, quyền này không có nghĩa là CS3 sẽ làm hao pin của bạn. Nó sẽ chỉ hoạt động ở chế độ nền khi cần thiết, chẳng hạn như khi nhận được thông báo hoặc tải xuống video từ các tiện ích mở rộng chính thức.</string>
+    <string name="next_season_episode_format" formatted="true">Mùa %1$d Tập %2$d sẽ được phát hành vào</string>
+    <string name="episode_upcoming_format" formatted="true">Sắp tới sau %s</string>
+    <string name="player_settings_select_cast_device">Chọn thiết bị truyền</string>
+    <string name="pref_category_security">Bảo mật</string>
+    <string name="pref_category_accounts">Tài khoản</string>
+    <string name="qr_image">Mã QR</string>
+    <string name="dismiss">Bỏ qua</string>
+    <string name="open_downloaded_repo">Mở tiện ích mở rộng</string>
+    <string name="cs3wiki">CloudStream Wiki</string>
+    <string name="device_pin_url_message">Truy cập <b>%s</b> trên điện thoại hoặc máy tính và nhập mã bên trên</string>
+    <string name="device_pin_expired_message">Mã PIN đã hết hạn!</string>
+    <string name="device_pin_counter_text">Mã sẽ hết hạn trong %1$dm %2$ds</string>
+    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="device_pin_error_message">Không lấy được mã PIN, hãy thử xác thực cục bộ</string>
+    <string name="downloads_empty">Hiện không có bản tải xuống nào.</string>
+    <string name="auth_locally">Xác thực cục bộ</string>
+    <string name="episode_action_cast_mirror">Cast mirror</string>
+    <string name="play_from_beginning_img_des">Xem từ đầu</string>
+    <string name="open_local_video">Mở video có sẵn</string>
+    <string name="test_warning">Cảnh báo</string>
+    <string name="sort_release_date_new">Ngày phát hành (Mới đến Cũ)</string>
+    <string name="downloads_delete_select">Chọn mục để xoá</string>
+    <string name="offline_file">Có thể xem ngoại tuyến</string>
+    <string name="select_all">Chọn tất cả</string>
+    <string name="deselect_all">Bỏ chọn tất cả</string>
+    <string name="delete_files">Xoá tập tin</string>
+    <string name="delete_format" formatted="true">Xoá (%1$d | %2$s)</string>
+    <string name="delete_message_multiple" formatted="true">Bạn có chắc chắn muốn xóa vĩnh viễn các mục sau không?
+\n
+\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Bạn có chắc chắn muốn xóa vĩnh viễn các tập trong %1$s?
+\n
+\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">Bạn cũng sẽ xóa vĩnh viễn tất cả các tập trong loạt phim sau:
+\n
+\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Bạn có chắc chắn muốn xóa vĩnh viễn tất cả các tập trong loạt phim này không?
+\n
+\n%s</string>
+    <string name="delete_plugin">Xóa plugin</string>
+    <string name="sort_release_date_old">Ngày phát hành (Cũ đến mới)</string>
+    <string name="hide_player_control_names">Ẩn tên các nút điều khiển</string>
+    <string name="preview_seekbar_desc">Bật chế độ xem trước hình thu nhỏ trên seekbar</string>
+    <string name="preview_seekbar">Xem trước Seekbar</string>
+    <string name="no_subtitles_loaded">Chưa tải phụ đề</string>
+    <string name="confirm_before_exiting_title">Xác nhận trước khi thoát</string>
+    <string name="confirm_before_exiting_desc">Hiện hộp thoại xác nhận thoát ứng dụng</string>
+    <string name="dont_show">Không hiển thị</string>
+    <string name="show">Hiển thị</string>
+    <string name="backup_path_title">Vị trí thư mục sao lưu</string>
+    <string name="custom">Tuỳ chỉnh</string>
+    <string name="subs_edge_size">Kích thước cạnh</string>
+    <string name="torrent_info">Video này là Torrent, điều này có nghĩa là hoạt động video của bạn có thể được theo dõi.\nHãy đảm bảo rằng bạn hiểu về Torrent trước khi tiếp tục.</string>
+    <string name="encoding_error">Lỗi mã hóa</string>
+    <string name="software_decoding_desc">Cho phép trình phát các tệp video không được điện thoại của bạn hỗ trợ, nhưng có thể bị lag ở độ phân giải cao</string>
+    <string name="software_decoding">Bộ giải mã ứng dụng</string>
+    <string name="torrent_not_accepted">Khởi động lại ứng dụng và chấp nhận cửa sổ Stream Torrent để tiếp tục</string>
+    <string name="torrent_preferred_media">Kích hoạt torrent trong Cài đặt/Nguồn phim/Thể loại ưu tiên</string>
+    <string name="player_load_one_subtitle_online">Tải phụ đề đầu tiên có sẵn</string>
+    <string name="audio_singluar">Âm thanh</string>
+    <string name="podcast_singluar">Podcast</string>
+    <string name="unsupported_error">Lỗi không được hỗ trợ</string>
+    <string name="sort_episodes_rating_low_high">Xếp hạng (Thấp nhất)</string>
+    <string name="sort_episodes_number_asc">Tập (Tăng dần)</string>
+    <string name="sort_episodes_date_newest">Ngày phát sóng (Mới nhất)</string>
+    <string name="sort_button_rating">Xếp hạng %s</string>
+    <string name="sort_button_date">Ngày %s</string>
+    <string name="sort_button_episode">Tập %s</string>
+    <string name="update_plugins">Cập nhật plugin</string>
+    <string name="no_plugins_updated_manually">Không có plugin nào được cập nhật.</string>
+    <string name="sort_episodes_date_oldest">Ngày phát hành (Cũ nhất)</string>
+    <string name="plugins_updated_manually">Đã cập nhật thành công %d plugin!</string>
+    <string name="sort_episodes_rating_high_low">Xếp hạng (Cao nhất)</string>
+    <string name="update_plugins_manually">Cập nhật plugin thủ công</string>
+    <string name="sort_episodes_number_desc">Tập (Giảm dần)</string>
+    <string name="starting_plugin_update_manually">Bắt đầu quá trình cập nhật plugin!</string>
+    <string name="player_notification_channel_name">Thông báo trình phát</string>
+    <string name="player_notification_channel_description">Thông báo trình phát để điều khiển phát lại từ nền</string>
+    <string name="begin_speaking">Bắt đầu nói…</string>
+    <string name="speech_recognition_unavailable">Tìm kiếm giọng nói không khả dụng</string>
+    <string name="subtitles_from_online">Trực tuyến</string>
+    <string name="background_radius">Bo tròn nền</string>
+    <string name="volume_exceeded_100">Âm lượng đã vượt quá 100%</string>
+    <string name="slide_up_again_to_exceed_100">Vuốt lên lần nữa để vượt quá 100%</string>
+    <string name="subtitles_from_embedded">Được nhúng</string>
+    <string name="all_subtitles_bold">Làm tất cả phụ đề in đậm</string>
+    <string name="all_subtitles_italic">Làm tất cả phụ đề in nghiêng</string>
+    <string name="player_settings_always_ask">Luôn hỏi</string>
+    <string name="show_rating">Nhãn đánh giá</string>
+    <string name="download_parallel_settings_des">Số lượng mục khác nhau có thể tải xuống cùng lúc</string>
+    <string name="parallel_downloads">Tải xuống song song</string>
+    <string name="concurrent_connections">Kết nối đồng thời</string>
+    <string name="concurrent_connections_settings_des">Số lượng kết nối đồng thời có thể sử dụng cho mỗi lượt tải</string>
+    <string name="go_to_downloads">Đến mục tải xuống</string>
+    <string name="no_internet_connection">Không có kết nối Internet. \n\nVui lòng kết nối Internet rồi thử lại, hoặc xem các nội dung đã tải xuống khi đang ngoại tuyến.</string>
+    <string name="overscan_settings_des">Thay đổi khung hiển thị màn hình</string>
+    <string name="overscan_settings">Vượt khung</string>
+    <string name="poster_size_settings_des">Thay đổi kích thước của hình poster</string>
+    <string name="poster_size_settings">Kích thước poster</string>
+    <string name="speedup_title">Tăng tốc độ phát khi nhấn giữ</string>
+    <string name="speedup_summary">Nhấn giữ để tăng tốc độ phát 2x</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dh %2$dm %3$ds</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dm %2$ds</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$ds</string>
+    <string name="no_account">Không có tài khoản</string>
+    <string name="edit_profile_image_title">Đổi hình đại điện</string>
+    <string name="edit_profile_image_hint">Nhập url hình đại diện</string>
+    <string name="edit_profile_image_error_empty">Không tìm thấy url</string>
+    <string name="edit_profile_image_error_invalid">URL hoặc hình không hợp lệ</string>
+    <string name="edit_profile_image_success">Tải hình lên thành công</string>
+    <string name="action_mark_watched_up_to_this_episode">Đánh dấu là đã xem đến tập này</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">Xóa những tập đã xem đến tập này</string>
+    <string name="action_reload">Đã tải lại</string>
+    <string name="reload_provider">Tải lại nguồn phát</string>
+</resources>

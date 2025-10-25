@@ -7,54 +7,18 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromLanguageToTagIETF
 import com.lagradost.cloudstream3.utils.SubtitleUtils.cleanDisplayName
 import com.lagradost.cloudstream3.utils.SubtitleUtils.isMatchingSubtitle
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getDownloadFileInfoAndUpdateSettings
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getFolder
-import kotlin.math.max
-import kotlin.math.min
 
 class DownloadFileGenerator(
-    private val episodes: List<ExtractorUri>,
-    private var currentIndex: Int = 0
-) : IGenerator {
+    episodes: List<ExtractorUri>,
+    currentIndex: Int = 0
+) : VideoGenerator<ExtractorUri>(episodes, currentIndex) {
     override val hasCache = false
     override val canSkipLoading = false
-
-    override fun hasNext(): Boolean {
-        return currentIndex < episodes.size - 1
-    }
-
-    override fun hasPrev(): Boolean {
-        return currentIndex > 0
-    }
-
-    override fun next() {
-        if (hasNext())
-            currentIndex++
-    }
-
-    override fun prev() {
-        if (hasPrev())
-            currentIndex--
-    }
-
-    override fun goto(index: Int) {
-        // clamps value
-        currentIndex = min(episodes.size - 1, max(0, index))
-    }
-
-    override fun getCurrentId(): Int? {
-        return episodes[currentIndex].id
-    }
-
-    override fun getCurrent(offset: Int): Any? {
-        return episodes.getOrNull(currentIndex + offset)
-    }
-
-    override fun getAll(): List<Any>? {
-        return null
-    }
 
     override suspend fun generateLinks(
         clearCache: Boolean,
@@ -64,7 +28,7 @@ class DownloadFileGenerator(
         offset: Int,
         isCasting: Boolean
     ): Boolean {
-        val meta = episodes[currentIndex + offset]
+        val meta = getCurrent(offset) ?: return false
 
         if (meta.uri == Uri.EMPTY) {
             // We do this here so that we only load it when
@@ -90,16 +54,19 @@ class DownloadFileGenerator(
         getFolder(ctx, relative, meta.basePath)?.forEach { (name, uri) ->
             if (isMatchingSubtitle(name, display, cleanDisplay)) {
                 val cleanName = cleanDisplayName(name)
-                val realName = cleanName.removePrefix(cleanDisplay)
+                val lastNum = Regex(" ([0-9]+)$")
+                val nameSuffix = lastNum.find(cleanName)?.groupValues?.get(1) ?: ""
+                val originalName = cleanName.removePrefix(cleanDisplay).replace(lastNum, "").trim()
 
                 subtitleCallback(
                     SubtitleData(
-                        realName.ifBlank { ctx.getString(R.string.default_subtitles) },
+                        originalName.ifBlank { ctx.getString(R.string.default_subtitles) },
+                        nameSuffix,
                         uri.toString(),
                         SubtitleOrigin.DOWNLOADED_FILE,
                         name.toSubtitleMimeType(),
                         emptyMap(),
-                        null
+                        fromLanguageToTagIETF(originalName, true)
                     )
                 )
             }

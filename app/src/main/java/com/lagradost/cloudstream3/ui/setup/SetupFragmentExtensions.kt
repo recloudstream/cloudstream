@@ -11,14 +11,13 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentSetupExtensionsBinding
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.ui.settings.extensions.PluginsViewModel
 import com.lagradost.cloudstream3.ui.settings.extensions.RepoAdapter
 import com.lagradost.cloudstream3.utils.Coroutines.main
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
-
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 
 class SetupFragmentExtensions : Fragment() {
     companion object {
@@ -86,15 +85,15 @@ class SetupFragmentExtensions : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fixPaddingStatusbar(binding?.setupRoot)
+        fixSystemBarsPadding(binding?.setupRoot)
         val isSetup = arguments?.getBoolean(SETUP_EXTENSION_BUNDLE_IS_SETUP) ?: false
 
 //        view_public_repositories_button?.setOnClickListener {
 //            openBrowser(PUBLIC_REPOSITORIES_LIST, isTvSettings(), this)
 //        }
 
-        normalSafeApiCall {
-           // val ctx = context ?: return@normalSafeApiCall
+        safe {
+           // val ctx = context ?: return@safe
             setRepositories()
             binding?.apply {
                 if (!isSetup) {

@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.hideOn
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.hidePrefs
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setSystemBarsPadding
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.ui.subtitles.ChromecastSubtitlesFragment
@@ -29,6 +30,7 @@ class SettingsPlayer : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar(R.string.category_player)
+        setSystemBarsPadding()
         setPaddingBottom()
         setToolBarScrollFlags()
     }
@@ -42,7 +44,8 @@ class SettingsPlayer : PreferenceFragmentCompat() {
             listOf(
                 R.string.pref_category_gestures_key,
                 R.string.rotate_video_key,
-                R.string.auto_rotate_video_key
+                R.string.auto_rotate_video_key,
+                R.string.speedup_key
             ),
             TV or EMULATOR
         )
@@ -83,6 +86,24 @@ class SettingsPlayer : PreferenceFragmentCompat() {
                 {}) {
                 settingsManager.edit()
                     .putInt(getString(R.string.prefer_limit_title_key), prefValues[it])
+                    .apply()
+            }
+            return@setOnPreferenceClickListener true
+        }
+
+        getPref(R.string.software_decoding_key)?.setOnPreferenceClickListener {
+            val prefNames = resources.getStringArray(R.array.software_decoding_switch)
+            val prefValues = resources.getIntArray(R.array.software_decoding_switch_values)
+            val current = settingsManager.getInt(getString(R.string.software_decoding_key), -1)
+
+            activity?.showBottomDialog(
+                prefNames.toList(),
+                prefValues.indexOf(current),
+                getString(R.string.software_decoding),
+                true,
+                {}) {
+                settingsManager.edit()
+                    .putInt(getString(R.string.software_decoding_key), prefValues[it])
                     .apply()
             }
             return@setOnPreferenceClickListener true

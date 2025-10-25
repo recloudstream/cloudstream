@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -12,6 +13,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.AttributeSet
 import android.util.Log
+import android.view.Gravity
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -31,6 +33,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
+import androidx.core.view.get
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -48,6 +51,7 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.Session
 import com.google.android.gms.cast.framework.SessionManager
@@ -79,30 +83,28 @@ import com.lagradost.cloudstream3.databinding.ActivityMainTvBinding
 import com.lagradost.cloudstream3.databinding.BottomResultviewPreviewBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.plugins.PluginManager
-import com.lagradost.cloudstream3.plugins.PluginManager.loadAllOnlinePlugins
+import com.lagradost.cloudstream3.plugins.PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins
 import com.lagradost.cloudstream3.plugins.PluginManager.loadSinglePlugin
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.services.SubscriptionWorkManager
+import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_PLAYER
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_REPO
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_RESUME_WATCHING
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_SEARCH
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.OAuth2Apis
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.inAppAuths
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_SHARE
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.localListApi
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
-import com.lagradost.cloudstream3.ui.account.AccountViewModel
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.home.HomeViewModel
 import com.lagradost.cloudstream3.ui.library.LibraryViewModel
@@ -118,6 +120,7 @@ import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
 import com.lagradost.cloudstream3.ui.settings.SettingsGeneral
@@ -160,12 +163,14 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SnackbarHelper.showSnackbar
 import com.lagradost.cloudstream3.utils.UIHelper.changeStatusBarState
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
-import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.enableEdgeToEdgeCompat
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
+import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
@@ -182,6 +187,15 @@ import java.net.URLDecoder
 import java.nio.charset.Charset
 import kotlin.math.abs
 import kotlin.math.absoluteValue
+import kotlin.system.exitProcess
+import androidx.core.net.toUri
+import androidx.tvprovider.media.tv.Channel
+import androidx.tvprovider.media.tv.TvContractCompat
+import android.content.ComponentName
+import android.content.ContentUris
+
+import com.lagradost.cloudstream3.ui.home.HomeFragment
+import com.lagradost.cloudstream3.utils.TvChannelUtils
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
     companion object {
@@ -192,6 +206,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         var lastError: String? = null
 
         private const val FILE_DELETE_KEY = "FILES_TO_DELETE_KEY"
+        const val API_NAME_EXTRA_KEY = "API_NAME_EXTRA_KEY"
 
         /**
          * Transient files to delete on application exit.
@@ -251,16 +266,18 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
          * @return true if the str has launched an app task (be it successful or not)
          * @param isWebview does not handle providers and opening download page if true. Can still add repos and login.
          * */
+        @Suppress("DEPRECATION_ERROR")
         fun handleAppIntentUrl(
             activity: FragmentActivity?,
             str: String?,
-            isWebview: Boolean
+            isWebview: Boolean,
+            extraArgs: Bundle? = null
         ): Boolean =
             with(activity) {
                 // TODO MUCH BETTER HANDLING
 
                 // Invalid URIs can crash
-                fun safeURI(uri: String) = normalSafeApiCall { URI(uri) }
+                fun safeURI(uri: String) = safe { URI(uri) }
 
                 if (str != null && this != null) {
                     if (str.startsWith("https://cs.repo")) {
@@ -269,28 +286,29 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         loadRepository(realUrl)
                         return true
                     } else if (str.contains(APP_STRING)) {
-                        for (api in OAuth2Apis) {
-                            if (str.contains("/${api.redirectUrl}")) {
+                        for (api in AccountManager.allApis) {
+                            if (api.isValidRedirectUrl(str)) {
                                 ioSafe {
                                     Log.i(TAG, "handleAppIntent $str")
-                                    val isSuccessful = api.handleRedirect(str)
-
-                                    if (isSuccessful) {
-                                        Log.i(TAG, "authenticated ${api.name}")
-                                    } else {
-                                        Log.i(TAG, "failed to authenticate ${api.name}")
-                                    }
-
-                                    this@with.runOnUiThread {
-                                        try {
-                                            showToast(
-                                                getString(if (isSuccessful) R.string.authenticated_user else R.string.authenticated_user_fail).format(
-                                                    api.name
-                                                )
-                                            )
-                                        } catch (e: Exception) {
-                                            logError(e) // format might fail
+                                    try {
+                                        val isSuccessful = api.login(str)
+                                        if (isSuccessful) {
+                                            Log.i(TAG, "authenticated ${api.name}")
+                                        } else {
+                                            Log.i(TAG, "failed to authenticate ${api.name}")
                                         }
+                                        showToast(
+                                            if (isSuccessful) {
+                                                txt(R.string.authenticated_user, api.name)
+                                            } else {
+                                                txt(R.string.authenticated_user_fail, api.name)
+                                            }
+                                        )
+                                    } catch (t: Throwable) {
+                                        logError(t)
+                                        showToast(
+                                            txt(R.string.authenticated_user_fail, api.name)
+                                        )
                                     }
                                 }
                                 return true
@@ -299,7 +317,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         // This specific intent is used for the gradle deployWithAdb
                         // https://github.com/recloudstream/gradle/blob/master/src/main/kotlin/com/lagradost/cloudstream3/gradle/tasks/DeployWithAdbTask.kt#L46
                         if (str == "$APP_STRING:") {
-                            PluginManager.hotReloadAllLocalPlugins(activity)
+                            ioSafe {
+                                PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_hotReloadAllLocalPlugins(
+                                    activity
+                                )
+                            }
                         }
                     } else if (safeURI(str)?.scheme == APP_STRING_REPO) {
                         val url = str.replaceFirst(APP_STRING_REPO, "https")
@@ -347,11 +369,35 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                                 START_ACTION_RESUME_LATEST
                             )
                         }
+                    } else if (str.startsWith(APP_STRING_SHARE)) {
+                        try {
+                            val data = str.substringAfter("$APP_STRING_SHARE:")
+                            val parts = data.split("?", limit = 2)
+                            loadResult(
+                                String(base64DecodeArray(parts[1]), Charsets.UTF_8),
+                                String(base64DecodeArray(parts[0]), Charsets.UTF_8),
+                                ""
+                            )
+                            return true
+                        } catch (e: Exception) {
+                            showToast("Invalid Uri", Toast.LENGTH_SHORT)
+                            return false
+                        }
                     } else if (!isWebview) {
                         if (str.startsWith(DOWNLOAD_NAVIGATE_TO)) {
                             this.navigate(R.id.navigation_downloads)
                             return true
                         } else {
+                            val apiName = extraArgs?.getString(API_NAME_EXTRA_KEY)
+                                ?.takeIf { it.isNotBlank() }
+                            // if provided, try to match the api name instead of the api url
+                            // this is in order to also support providers that use JSON dataUrls
+                            // for example
+                            if (apiName != null) {
+                                loadResult(str, apiName, "")
+                                return true
+                            }
+
                             synchronized(apis) {
                                 for (api in apis) {
                                     if (str.startsWith(api.mainUrl)) {
@@ -365,7 +411,26 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
                 return false
             }
+
+
+        fun centerView(view: View?) {
+            if (view == null) return
+            try {
+                Log.v(TAG, "centerView: $view")
+                val r = Rect(0, 0, 0, 0)
+                view.getDrawingRect(r)
+                val x = r.centerX()
+                val y = r.centerY()
+                val dx = r.width() / 2 //screenWidth / 2
+                val dy = screenHeight / 2
+                val r2 = Rect(x - dx, y - dy, x + dx, y + dy)
+                view.requestRectangleOnScreen(r2, false)
+                // TvFocus.current =TvFocus.current.copy(y=y.toFloat())
+            } catch (_: Throwable) {
+            }
+        }
     }
+
 
     var lastPopup: SearchResponse? = null
     fun loadPopup(result: SearchResponse, load: Boolean = true) {
@@ -444,7 +509,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         ).contains(destination.id)
 
 
-        val dontPush = listOf(
+        /*val dontPush = listOf(
             R.id.navigation_home,
             R.id.navigation_search,
             R.id.navigation_results_phone,
@@ -475,25 +540,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             }
 
             layoutParams = params
-        }
-
-        val landscape = when (resources.configuration.orientation) {
-            Configuration.ORIENTATION_LANDSCAPE -> {
-                true
-            }
-
-            Configuration.ORIENTATION_PORTRAIT -> {
-                isLayout(TV or EMULATOR)
-            }
-
-            else -> {
-                false
-            }
-        }
+        }*/
 
         binding?.apply {
-            navRailView.isVisible = isNavVisible && landscape
-            navView.isVisible = isNavVisible && !landscape
+            navRailView.isVisible = isNavVisible && isLandscape()
+            navView.isVisible = isNavVisible && !isLandscape()
+            navHostFragment.apply {
+                val marginPx = resources.getDimensionPixelSize(R.dimen.nav_rail_view_width)
+                layoutParams = (navHostFragment.layoutParams as ViewGroup.MarginLayoutParams).apply {
+                    marginStart = if (isNavVisible && isLandscape() && isLayout(TV or EMULATOR)) marginPx else 0
+                }
+            }
 
             /**
              * We need to make sure if we return to a sub-fragment,
@@ -505,6 +562,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     navRailView.menu.findItem(R.id.navigation_downloads).isChecked = true
                     navView.menu.findItem(R.id.navigation_downloads).isChecked = true
                 }
+
                 in listOf(
                     R.id.navigation_settings,
                     R.id.navigation_subtitles,
@@ -591,18 +649,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
     }
 
-    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-        val response = CommonActivity.dispatchKeyEvent(this, event)
-        if (response != null)
-            return response
-        return super.dispatchKeyEvent(event)
-    }
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean =
+        CommonActivity.dispatchKeyEvent(this, event) ?: super.dispatchKeyEvent(event)
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        CommonActivity.onKeyDown(this, keyCode, event)
-
-        return super.onKeyDown(keyCode, event)
-    }
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean =
+        CommonActivity.onKeyDown(this, keyCode, event) ?: super.onKeyDown(keyCode, event)
 
 
     override fun onUserLeaveHint() {
@@ -615,7 +666,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         val confirmBeforeExit = settingsManager.getInt(getString(R.string.confirm_exit_key), -1)
 
         if (confirmBeforeExit == 1 || (confirmBeforeExit == -1 && isLayout(PHONE))) {
-            finish()
+            // finish() causes a bug on some TVs where player
+            // may keep playing after closing the app.
+            if (isLayout(TV)) exitProcess(0) else finish()
             return
         }
 
@@ -629,7 +682,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 if (dontShowAgainCheck.isChecked) {
                     settingsManager.edit().putInt(getString(R.string.confirm_exit_key), 1).commit()
                 }
-                finish()
+                // finish() causes a bug on some TVs where player
+                // may keep playing after closing the app.
+                if (isLayout(TV)) exitProcess(0) else finish()
             }
 
         builder.show().setDefaultFocus()
@@ -662,13 +717,55 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         if (intent == null) return
         val str = intent.dataString
         loadCache()
-        handleAppIntentUrl(this, str, false)
+
+        handleAppIntentUrl(this, str, false, intent.extras)
     }
 
     private fun NavDestination.matchDestination(@IdRes destId: Int): Boolean =
         hierarchy.any { it.id == destId }
 
+    private var lastNavTime = 0L
     private fun onNavDestinationSelected(item: MenuItem, navController: NavController): Boolean {
+        val currentTime = System.currentTimeMillis()
+        // safeDebounce: Check if a previous tap happened within the last 400ms
+        if (currentTime - lastNavTime < 400) return false
+        lastNavTime = currentTime
+
+        val destinationId = item.itemId
+
+        // Check if we are already at the selected destination
+        if (navController.currentDestination?.id == destinationId) return false
+
+        // Make all nav buttons focus on this specific view when nextFocusRightId
+        val targetView = when (destinationId) {
+            // Please note that if R.id.navigation_home is readded, then it will only take affect when
+            // navigation to home for the second time as onNavDestinationSelected will not get called
+            // when first loading up the app
+
+            // R.id.navigation_home -> R.id.home_preview_change_api
+            R.id.navigation_search -> R.id.main_search
+            R.id.navigation_library -> R.id.main_search
+            R.id.navigation_downloads -> R.id.download_appbar
+            else -> null
+        }
+        if (targetView != null && isLayout(TV or EMULATOR)) {
+            val fromView = binding?.navRailView
+            if (fromView != null) {
+                fromView.nextFocusRightId = targetView
+
+                for (focusView in arrayOf(
+                    R.id.navigation_downloads,
+                    R.id.navigation_home,
+                    R.id.navigation_search,
+                    R.id.navigation_library,
+                    R.id.navigation_settings,
+                )) {
+                    fromView.findViewById<View?>(focusView)?.nextFocusRightId = targetView
+                }
+            }
+        }
+
+
         val builder = NavOptions.Builder().setLaunchSingleTop(true).setRestoreState(true)
             .setEnterAnim(R.anim.enter_anim)
             .setExitAnim(R.anim.exit_anim)
@@ -681,14 +778,15 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 saveState = true
             )
         }
-        val options = builder.build()
         return try {
-            navController.navigate(item.itemId, null, options)
-            navController.currentDestination?.matchDestination(item.itemId) == true
+            navController.navigate(destinationId, null, builder.build())
+            navController.currentDestination?.matchDestination(destinationId) == true
         } catch (e: IllegalArgumentException) {
+            Log.e("NavigationError", "Failed to navigate: ${e.message}")
             false
         }
     }
+
 
     private val pluginsLock = Mutex()
     private fun onAllPluginsLoaded(success: Boolean = false) {
@@ -701,12 +799,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                             list.forEach { custom ->
                                 allProviders.firstOrNull { it.javaClass.simpleName == custom.parentJavaClass }
                                     ?.let {
-                                        allProviders.add(it.javaClass.getDeclaredConstructor().newInstance().apply {
-                                            name = custom.name
-                                            lang = custom.lang
-                                            mainUrl = custom.url.trimEnd('/')
-                                            canBeOverridden = false
-                                        })
+                                        allProviders.add(
+                                            it.javaClass.getDeclaredConstructor().newInstance()
+                                                .apply {
+                                                    name = custom.name
+                                                    lang = custom.lang
+                                                    mainUrl = custom.url.trimEnd('/')
+                                                    canBeOverridden = false
+                                                })
                                     }
                             }
                         }
@@ -725,7 +825,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     lateinit var viewModel: ResultViewModel2
     lateinit var syncViewModel: SyncViewModel
     private var libraryViewModel: LibraryViewModel? = null
-    private var accountViewModel: AccountViewModel? = null
 
     /** kinda dirty, however it signals that we should use the watch status as sync or not*/
     var isLocalList: Boolean = false
@@ -743,16 +842,31 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         bottomPreviewBinding = null
     }
 
-    private var bottomPreviewPopup: BottomSheetDialog? = null
+    private var bottomPreviewPopup: Dialog? = null
     private var bottomPreviewBinding: BottomResultviewPreviewBinding? = null
     private fun showPreviewPopupDialog(): BottomResultviewPreviewBinding {
         val ret = (bottomPreviewBinding ?: run {
-            val builder =
-                BottomSheetDialog(this)
-            val binding: BottomResultviewPreviewBinding =
-                BottomResultviewPreviewBinding.inflate(builder.layoutInflater, null, false)
+
+            val builder: Dialog
+            val layout: Int
+
+            if (isLayout(PHONE)) {
+                builder =
+                    BottomSheetDialog(this)
+                layout = R.layout.bottom_resultview_preview
+            } else {
+                builder =
+                    Dialog(this, R.style.DialogHalfFullscreen)
+                layout = R.layout.bottom_resultview_preview_tv
+                // No way to do this in styles :(
+                builder.window?.setGravity(Gravity.CENTER_VERTICAL or Gravity.END)
+            }
+
+            val root = layoutInflater.inflate(layout, null, false)
+            val binding = BottomResultviewPreviewBinding.bind(root)
+
             bottomPreviewBinding = binding
-            builder.setContentView(binding.root)
+            builder.setContentView(root)
             builder.setOnDismissListener {
                 bottomPreviewPopup = null
                 bottomPreviewBinding = null
@@ -1043,23 +1157,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
     }
 
-    private fun centerView(view: View?) {
-        if (view == null) return
-        try {
-            Log.v(TAG, "centerView: $view")
-            val r = Rect(0, 0, 0, 0)
-            view.getDrawingRect(r)
-            val x = r.centerX()
-            val y = r.centerY()
-            val dx = r.width() / 2 //screenWidth / 2
-            val dy = screenHeight / 2
-            val r2 = Rect(x - dx, y - dy, x + dx, y + dy)
-            view.requestRectangleOnScreen(r2, false)
-            // TvFocus.current =TvFocus.current.copy(y=y.toFloat())
-        } catch (_: Throwable) {
-        }
-    }
-
+    @Suppress("DEPRECATION_ERROR")
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
@@ -1079,11 +1177,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         MainAPI.settingsForProvider = settingsForProvider
 
         loadThemes(this)
+        enableEdgeToEdgeCompat()
+        setNavigationBarColorCompat(R.attr.primaryGrayBackground)
         updateLocale()
         super.onCreate(savedInstanceState)
         try {
             if (isCastApiAvailable()) {
-                CastContext.getSharedInstance(this) {it.run()}.addOnSuccessListener { mSessionManager = it.sessionManager }
+                CastContext.getSharedInstance(this) { it.run() }
+                    .addOnSuccessListener { mSessionManager = it.sessionManager }
             }
         } catch (t: Throwable) {
             logError(t)
@@ -1093,15 +1194,15 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         updateTv()
 
         // backup when we update the app, I don't trust myself to not boot lock users, might want to make this a setting?
-        normalSafeApiCall {
+        safe {
             val appVer = BuildConfig.VERSION_NAME
             val lastAppAutoBackup: String = getKey("VERSION_NAME") ?: ""
             if (appVer != lastAppAutoBackup) {
                 setKey("VERSION_NAME", BuildConfig.VERSION_NAME)
-                normalSafeApiCall {
+                safe {
                     backup(this)
                 }
-                normalSafeApiCall {
+                safe {
                     // Recompile oat on new version
                     PluginManager.deleteAllOatFiles(this)
                 }
@@ -1129,7 +1230,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 if (isLayout(TV)) {
                     // Put here any button you don't want focusing it to center the view
                     val exceptionButtons = listOf(
-                        R.id.home_preview_play_btt,
+                        //R.id.home_preview_play_btt,
                         R.id.home_preview_info_btt,
                         R.id.home_preview_hidden_next_focus,
                         R.id.home_preview_hidden_prev_focus,
@@ -1160,6 +1261,24 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             showToast(txt(R.string.unable_to_inflate, t.message ?: ""), Toast.LENGTH_LONG)
             null
         }
+
+        fixSystemBarsPadding(
+            binding?.navView,
+            heightResId = R.dimen.nav_view_height,
+            padTop = false,
+            overlayCutout = false
+        )
+
+        fixSystemBarsPadding(
+            binding?.navRailView,
+            widthResId = R.dimen.nav_rail_view_width,
+            padRight = false,
+            padTop = false
+        )
+
+        // overscan
+        val padding = settingsManager.getInt(getString(R.string.overscan_key), 0).toPx
+        binding?.homeRoot?.setPadding(padding, padding, padding, padding)
 
         changeStatusBarState(isLayout(EMULATOR))
 
@@ -1202,7 +1321,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         ioSafe { SafeFile.check(this@MainActivity) }
 
         if (PluginManager.checkSafeModeFile()) {
-            normalSafeApiCall {
+            safe {
                 showToast(R.string.safe_mode_file, Toast.LENGTH_LONG)
             }
         } else if (lastError == null) {
@@ -1219,9 +1338,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                             true
                         )
                     ) {
-                        PluginManager.updateAllOnlinePluginsAndLoadThem(this@MainActivity)
+                        PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_updateAllOnlinePluginsAndLoadThem(
+                            this@MainActivity
+                        )
                     } else {
-                        loadAllOnlinePlugins(this@MainActivity)
+                        ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(this@MainActivity)
                     }
 
                     //Automatically download not existing plugins, using mode specified.
@@ -1232,7 +1353,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         )
                     ) ?: AutoDownloadMode.Disable
                     if (autoDownloadPlugin != AutoDownloadMode.Disable) {
-                        PluginManager.downloadNotExistingPluginsAndLoad(
+                        PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_downloadNotExistingPluginsAndLoad(
                             this@MainActivity,
                             autoDownloadPlugin
                         )
@@ -1240,8 +1361,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
 
                 ioSafe {
-                    PluginManager.loadAllLocalPlugins(this@MainActivity, false)
+                    PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(
+                        this@MainActivity,
+                        false
+                    )
                 }
+
+// Add your channel creation here
+
             }
         } else {
             val builder: AlertDialog.Builder = AlertDialog.Builder(this)
@@ -1366,9 +1493,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         resultviewPreviewMetaRating.setText(d.ratingText)
 
                         resultviewPreviewDescription.setTextHtml(d.plotText)
-                        resultviewPreviewPoster.loadImage(
-                            d.posterImage ?: d.posterBackgroundImage
-                        )
+                        if (isLayout(PHONE)) {
+                            resultviewPreviewPoster.loadImage(
+                                d.posterImage ?: d.posterBackgroundImage,
+                                headers = d.posterHeaders
+                            )
+                        } else {
+                            resultviewPreviewPoster.loadImage(
+                                d.posterBackgroundImage ?: d.posterImage,
+                                headers = d.posterHeaders
+                            )
+                        }
 
                         setUserData(syncViewModel.userData.value)
                         setWatchStatus(viewModel.watchStatus.value)
@@ -1471,18 +1606,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
         // init accounts
         ioSafe {
-            for (api in accountManagers) {
-                api.init()
-            }
-
-            inAppAuths.amap { api ->
-                try {
-                    api.initialize()
-                } catch (e: Exception) {
-                    logError(e)
-                }
-            }
-
             // we need to run this after we init all apis, otherwise currentSyncApi will fuck itself
             this@MainActivity.runOnUiThread {
                 // Change library icon with logo of current api in sync
@@ -1535,9 +1658,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             if (navDestination.matchDestination(R.id.navigation_home)) {
                 attachBackPressedCallback("MainActivity") {
                     showConfirmExitDialog(settingsManager)
-                    @Suppress("DEPRECATION")
-                    window?.navigationBarColor =
-                        colorFromAttribute(R.attr.primaryGrayBackground)
+                    setNavigationBarColorCompat(R.attr.primaryGrayBackground)
                     updateLocale()
                 }
             } else detachBackPressedCallback("MainActivity")
@@ -1566,17 +1687,27 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     navController
                 )
             }
+
         }
 
         binding?.navRailView?.apply {
-            itemRippleColor = rippleColor
-            itemActiveIndicatorColor = rippleColor
+            if (isLayout(PHONE)) {
+                itemRippleColor = rippleColor
+                itemActiveIndicatorColor = rippleColor
+            } else {
+                val rippleColor = ColorStateList.valueOf(getResourceColor(R.attr.textColor, 1.0f))
+                val rippleColorTransparent =
+                    ColorStateList.valueOf(getResourceColor(R.attr.textColor, 0.2f))
+                itemSpacing = 12.toPx // expandedItemSpacing does not have an attr
+                itemRippleColor = rippleColorTransparent
+                itemActiveIndicatorColor = rippleColor
+            }
             setupWithNavController(navController)
-            if (isLayout(TV or EMULATOR)) {
+            /*if (isLayout(TV or EMULATOR)) {
                 background?.alpha = 200
             } else {
                 background?.alpha = 255
-            }
+            }*/
 
             setOnItemSelectedListener { item ->
                 onNavDestinationSelected(
@@ -1584,6 +1715,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     navController
                 )
             }
+
 
             fun noFocus(view: View) {
                 view.tag = view.context.getString(R.string.tv_no_focus_tag)
@@ -1620,6 +1752,104 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
             } else {
                 navProfileRoot.isGone = true
+            }
+        }
+
+        val rail = binding?.navRailView
+        if (rail != null) {
+            binding?.navRailView?.labelVisibilityMode =
+                NavigationRailView.LABEL_VISIBILITY_UNLABELED
+            //val focus = mutableSetOf<Int>()
+
+            var prevId: Int? = null
+            var prevView: View? = null
+
+            // The genius engineers at google did not actually 
+            // write a nextFocus for the navrail
+            rail.findViewById<View?>(R.id.navigation_settings)?.nextFocusDownId =
+                R.id.nav_footer_profile_card
+            for (id in arrayOf(
+                R.id.navigation_home,
+                R.id.navigation_search,
+                R.id.navigation_library,
+                R.id.navigation_downloads,
+                R.id.navigation_settings
+            )) {
+                val view = rail.findViewById<View?>(id) ?: continue
+                prevId?.let { view.nextFocusUpId = it }
+                prevView?.nextFocusDownId = id
+
+                prevView = view
+                prevId = id
+                // Uncomment for focus expand
+                /*if (!isLayout(TV)) {
+                    view.onFocusChangeListener = null
+                } else {
+                    view.onFocusChangeListener =
+                        View.OnFocusChangeListener { v, hasFocus ->
+                            if (hasFocus) {
+                                focus += id
+                                binding?.navRailView?.labelVisibilityMode =
+                                    NavigationRailView.LABEL_VISIBILITY_LABELED
+                                binding?.navRailView?.expand()
+                            } else {
+                                focus -= id
+                                v.post {
+                                    if (focus.isEmpty()) {
+                                        binding?.navRailView?.labelVisibilityMode =
+                                            NavigationRailView.LABEL_VISIBILITY_UNLABELED
+                                        binding?.navRailView?.collapse()
+                                    }
+                                }
+                            }
+                        }
+                }*/
+            }
+        }
+
+        // Navigation button long click functionality to scroll to top
+        for (view in listOf(binding?.navView, binding?.navRailView)) {
+            view?.findViewById<View?>(R.id.navigation_home)?.setOnLongClickListener {
+                val recycler = binding?.root?.findViewById<RecyclerView?>(R.id.home_master_recycler)
+                recycler?.smoothScrollToPosition(0)
+                return@setOnLongClickListener recycler != null
+            }
+
+            view?.findViewById<View?>(R.id.navigation_library)?.setOnLongClickListener {
+                val viewPager = binding?.root?.findViewById<ViewPager2?>(R.id.viewpager)
+                    ?: return@setOnLongClickListener false
+                try {
+                    val children = (viewPager[0] as? RecyclerView)?.children
+                        ?: return@setOnLongClickListener false
+                    for (child in children) {
+                        child.findViewById<RecyclerView?>(R.id.page_recyclerview)
+                            ?.smoothScrollToPosition(0)
+                    }
+                } catch (_: IndexOutOfBoundsException) {
+                } catch (t: Throwable) {
+                    logError(t)
+                }
+                return@setOnLongClickListener true
+            }
+
+            view?.findViewById<View?>(R.id.navigation_search)?.setOnLongClickListener {
+                for (recyclerId in arrayOf(
+                    R.id.search_master_recycler,
+                    R.id.search_autofit_results,
+                    R.id.search_history_recycler
+                )) {
+                    val recycler = binding?.root?.findViewById<RecyclerView?>(recyclerId)
+                        ?: return@setOnLongClickListener false
+                    recycler.smoothScrollToPosition(0)
+                }
+                return@setOnLongClickListener true
+            }
+
+            view?.findViewById<View?>(R.id.navigation_downloads)?.setOnLongClickListener {
+                val recycler: RecyclerView? = binding?.root?.findViewById(R.id.download_list)
+                    ?: binding?.root?.findViewById(R.id.download_child_list)
+                recycler?.smoothScrollToPosition(0)
+                return@setOnLongClickListener recycler != null
             }
         }
 
@@ -1751,6 +1981,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             migrateResumeWatching()
         }
 
+        main {
+            val channelId =
+                TvChannelUtils.getChannelId(this@MainActivity, getString(R.string.app_name))
+            if (channelId == null) {
+                Log.d("TvChannel", "Channel not found, creating")
+                TvChannelUtils.createTvChannel(this@MainActivity)
+            } else {
+                Log.d("TvChannel", "Channel ID: $channelId")
+            }
+        }
+
         getKey<String>(USER_SELECTED_HOMEPAGE_API)?.let { homepage ->
             DataStoreHelper.currentHomePage = homepage
             removeKey(USER_SELECTED_HOMEPAGE_API)
@@ -1786,8 +2027,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             this,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    @Suppress("DEPRECATION")
-                    window?.navigationBarColor = colorFromAttribute(R.attr.primaryGrayBackground)
+                    setNavigationBarColorCompat(R.attr.primaryGrayBackground)
                     updateLocale()
 
                     // If we don't disable we end up in a loop with default behavior calling
@@ -1799,6 +2039,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
             }
         )
+
+
     }
 
     /** Biometric stuff **/

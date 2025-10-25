@@ -19,7 +19,12 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 // https://github.com/videolan/vlc-android/blob/3706c4be2da6800b3d26344fc04fab03ffa4b860/application/vlc-android/src/org/videolan/vlc/gui/video/VideoPlayerActivity.kt#L1898
 // https://wiki.videolan.org/Android_Player_Intents/
 
-class VlcPackage: OpenInAppAction(
+class VlcNightlyPackage : VlcPackage() {
+    override val packageName = "org.videolan.vlc.debug"
+    override val appName = txt("VLC Nightly")
+}
+
+open class VlcPackage: OpenInAppAction(
     appName = txt("VLC"),
     packageName = "org.videolan.vlc",
     intentClass = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {

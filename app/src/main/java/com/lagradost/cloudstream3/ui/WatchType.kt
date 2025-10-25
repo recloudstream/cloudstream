@@ -50,7 +50,7 @@ enum class SyncWatchType(val internalId: Int, @StringRes val stringRes: Int, @Dr
     ONHOLD(internalId = 2, R.string.type_on_hold, R.drawable.ic_baseline_bookmark_24),
     DROPPED(internalId = 3, R.string.type_dropped, R.drawable.ic_baseline_bookmark_24),
     PLANTOWATCH(internalId = 4, R.string.type_plan_to_watch, R.drawable.ic_baseline_bookmark_24),
-    REWATCHING(internalId = 5, R.string.type_re_watching, R.drawable.ic_baseline_bookmark_24),
+    REWATCHING(internalId = 5, R.string.type_re_watching, R.drawable.ic_baseline_bookmark_24);
 
     // Any types with negative internal IDs, or those for which the order is important, 
     // should be placed at the bottom, except for "NONE", which has a negative ID but is 

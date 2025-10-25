@@ -1,15 +1,13 @@
 package com.lagradost.cloudstream3.utils
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.Service
 import android.content.*
 import android.content.pm.PackageManager
-import android.content.pm.ServiceInfo
-import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
@@ -19,6 +17,7 @@ import androidx.annotation.DrawableRes
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.PendingIntentCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
@@ -27,12 +26,10 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import coil3.Extras
-import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import coil3.asDrawable
 import coil3.request.ImageRequest
 import coil3.request.SuccessResult
-import coil3.request.allowHardware
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
@@ -45,7 +42,6 @@ import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.services.PackageInstallerService.Companion.UPDATE_NOTIFICATION_ID
 import com.lagradost.cloudstream3.services.VideoDownloadService
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -71,7 +67,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.Closeable
-import java.io.File
 import java.io.IOException
 import java.io.OutputStream
 import java.util.*
@@ -81,8 +76,14 @@ const val DOWNLOAD_CHANNEL_NAME = "Downloads"
 const val DOWNLOAD_CHANNEL_DESCRIPT = "The download notification channel"
 
 object VideoDownloadManager {
-    var maxConcurrentDownloads = 3
-    var maxConcurrentConnections = 3
+    private fun maxConcurrentDownloads(context: Context): Int =
+        PreferenceManager.getDefaultSharedPreferences(context)
+            ?.getInt(context.getString(R.string.download_parallel_key), 3) ?: 3
+
+    private fun maxConcurrentConnections(context: Context): Int =
+        PreferenceManager.getDefaultSharedPreferences(context)
+            ?.getInt(context.getString(R.string.download_concurrent_key), 3) ?: 3
+
     private var currentDownloads = mutableListOf<Int>()
     const val TAG = "VDM"
 
@@ -259,7 +260,8 @@ object VideoDownloadManager {
 
             val bitmap = runBlocking {
                 val result = imageLoader.execute(request)
-                (result as? SuccessResult)?.image?.asDrawable(applicationContext.resources)?.toBitmap()
+                (result as? SuccessResult)?.image?.asDrawable(applicationContext.resources)
+                    ?.toBitmap()
             }
 
             bitmap?.let {
@@ -272,10 +274,37 @@ object VideoDownloadManager {
             return null
         }
     }
-
+    //calculate the time
+    private fun getEstimatedTimeLeft(context:Context,bytesPerSecond: Long, progress: Long, total: Long):String{
+        if(bytesPerSecond <= 0 ) return  ""
+        val timeInSec = (total - progress)/bytesPerSecond
+        val hrs = timeInSec/3600
+        val mins =  (timeInSec%3600)/ 60
+        val secs = timeInSec % 60
+        val timeFormated:UiText? = when{
+            hrs>0 -> txt(
+                R.string.download_time_left_hour_min_sec_format,
+                hrs,
+                mins,
+                secs
+            )
+            mins>0 -> txt(
+                R.string.download_time_left_min_sec_format,
+                mins,
+                secs
+            )
+            secs>0 -> txt(
+                R.string.download_time_left_sec_format,
+                secs
+            )
+            else -> null
+        }
+        return timeFormated?.asString(context) ?: ""
+    }
     /**
      * @param hlsProgress will together with hlsTotal display another notification if used, to lessen the confusion about estimated size.
      * */
+    @SuppressLint("StringFormatInvalid")
     private suspend fun createNotification(
         context: Context,
         source: String?,
@@ -321,13 +350,8 @@ object VideoDownloadManager {
                     data = source.toUri()
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 }
-                val pendingIntent: PendingIntent =
-                    if (SDK_INT >= Build.VERSION_CODES.M) {
-                        PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-                    } else {
-                        //fixme Specify a better flag
-                        PendingIntent.getActivity(context, 0, intent, 0)
-                    }
+                val pendingIntent =
+                    PendingIntentCompat.getActivity(context, 0, intent, 0, false)
                 builder.setContentIntent(pendingIntent)
             }
 
@@ -380,10 +404,15 @@ object VideoDownloadManager {
                         " ($mbFormat/s)".format(bytesPerSecond.toFloat() / 1000000f)
                     } else ""
 
+                val remainingTime =
+                    if(state == DownloadType.IsDownloading){
+                        getEstimatedTimeLeft(context,bytesPerSecond, progress, total)
+                    }else ""
+
                 val bigText =
                     when (state) {
                         DownloadType.IsDownloading, DownloadType.IsPaused -> {
-                            (if (linkName == null) "" else "$linkName\n") + "$rowTwo\n$progressPercentage % ($progressMbString/$totalMbString)$suffix$mbPerSecondString"
+                            (if (linkName == null) "" else "$linkName\n") + "$rowTwo\n$progressPercentage % ($progressMbString/$totalMbString)$suffix$mbPerSecondString $remainingTime"
                         }
 
                         DownloadType.IsPending -> {
@@ -537,7 +566,7 @@ object VideoDownloadManager {
         val base = basePathToFile(context, basePath)
         val folder =
             base?.gotoDirectory(relativePath, createMissingDirectories = false) ?: return null
-        
+
         //if (folder.isDirectory() != false) return null
 
         return folder.listFiles()
@@ -886,7 +915,7 @@ object VideoDownloadManager {
         val downloadLength: Long?,
         val chuckSize: Long,
         val bufferSize: Int,
-        val isResumed : Boolean,
+        val isResumed: Boolean,
     ) {
         val size get() = chuckStartByte.size
 
@@ -998,7 +1027,7 @@ object VideoDownloadManager {
         var contentLength = headRequest.size
         if (contentLength != null && contentLength <= 0) contentLength = null
 
-        val hasRangeSupport = when(headRequest.headers["Accept-Ranges"]?.lowercase()?.trim()) {
+        val hasRangeSupport = when (headRequest.headers["Accept-Ranges"]?.lowercase()?.trim()) {
             // server has stated it has no support
             "none" -> false
             // server has stated it has support
@@ -1006,7 +1035,7 @@ object VideoDownloadManager {
             // if null or undefined (as bytes is the only range unit formally defined)
             // If the get request returns partial content we support range
             else -> {
-                headRequest.headers["Accept-Ranges"]?.let { range->
+                headRequest.headers["Accept-Ranges"]?.let { range ->
                     Log.v(TAG, "Unknown Accept-Ranges tag: $range")
                 }
                 // as we don't poll the body this should be fine
@@ -1017,7 +1046,7 @@ object VideoDownloadManager {
                             // we don't want to request more than the actual file
                             // but also more than 0 bytes
                             contentLength?.let { max ->
-                                minOf(maxOf(max-1L,3L),1023L)
+                                minOf(maxOf(max - 1L, 3L), 1023L)
                             } ?: 1023L
                         }"
                     ),
@@ -1027,17 +1056,17 @@ object VideoDownloadManager {
                 // if head request did not work then we can just look for the size here too
                 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Range
                 if (contentLength == null) {
-                    contentLength = getRequest.headers["Content-Range"]?.trim()?.lowercase()?.let { range ->
-                        // we only support "bytes" unit
-                        if (range.startsWith("bytes")) {
-                            // may be '*' if unknown
-                            range.substringAfter("/").toLongOrNull()
+                    contentLength =
+                        getRequest.headers["Content-Range"]?.trim()?.lowercase()?.let { range ->
+                            // we only support "bytes" unit
+                            if (range.startsWith("bytes")) {
+                                // may be '*' if unknown
+                                range.substringAfter("/").toLongOrNull()
+                            } else {
+                                Log.v(TAG, "Unknown Content-Range unit: $range")
+                                null
+                            }
                         }
-                        else {
-                            Log.v(TAG, "Unknown Content-Range unit: $range")
-                            null
-                        }
-                    }
                 }
 
                 // supports range if status is partial content https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/206
@@ -1045,7 +1074,10 @@ object VideoDownloadManager {
             }
         }
 
-        Log.d(TAG, "Starting stream with url=$url, startByte=$startByte, contentLength=$contentLength, hasRangeSupport=$hasRangeSupport")
+        Log.d(
+            TAG,
+            "Starting stream with url=$url, startByte=$startByte, contentLength=$contentLength, hasRangeSupport=$hasRangeSupport"
+        )
 
         var downloadLength: Long? = null
 
@@ -1433,7 +1465,7 @@ object VideoDownloadManager {
                 )
             )
 
-            val items = M3u8Helper2.hslLazy(listOf(m3u8))
+            val items = M3u8Helper2.hslLazy(m3u8, selectBest = true, requireAudio = true)
 
             metadata.hlsTotal = items.size
             metadata.type = DownloadType.IsDownloading
@@ -1706,7 +1738,7 @@ object VideoDownloadManager {
                         folder ?: "",
                         ep.id,
                         startIndex,
-                        callback, parallelConnections = maxConcurrentConnections
+                        callback, parallelConnections = maxConcurrentConnections(context)
                     )
                 }
 
@@ -1720,7 +1752,7 @@ object VideoDownloadManager {
                         tryResume,
                         ep.id,
                         callback,
-                        parallelConnections = maxConcurrentConnections,
+                        parallelConnections = maxConcurrentConnections(context),
                         /** We require at least 10 MB video files */
                         minimumSize = (1 shl 20) * 10
                     )
@@ -1738,7 +1770,7 @@ object VideoDownloadManager {
     suspend fun downloadCheck(
         context: Context, notificationCallback: (Int, Notification) -> Unit,
     ) {
-        if (!(currentDownloads.size < maxConcurrentDownloads && downloadQueue.size > 0)) return
+        if (!(currentDownloads.size < maxConcurrentDownloads(context) && downloadQueue.size > 0)) return
 
         val pkg = downloadQueue.removeAt(0)
         val item = pkg.item
@@ -1812,7 +1844,10 @@ object VideoDownloadManager {
         getDownloadFileInfo(context, id)
 
     private fun DownloadedFileInfo.toFile(context: Context): SafeFile? {
-        return basePathToFile(context, this.basePath)?.gotoDirectory(relativePath, createMissingDirectories = false)
+        return basePathToFile(context, this.basePath)?.gotoDirectory(
+            relativePath,
+            createMissingDirectories = false
+        )
             ?.findFile(displayName)
     }
 

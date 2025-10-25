@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cast_format" formatted="true">Oyunçu heyəti: %s</string>
+    <string name="next_episode_format" formatted="true">Bölüm %d bu tarixdə yayımlanacaq</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dg%2$ds%3$dd</string>
+    <string name="next_episode_time_min_format" formatted="true">%dd</string>
+    <string name="result_poster_img_des">Poster</string>
+    <string name="home_main_poster_img_des">Əsas Afişa</string>
+    <string name="episode_poster_img_des">Bölüm Afişası</string>
+    <string name="home_next_random_img_des">Sonrakı Təsadüfi</string>
+    <string name="go_back_img_des">Geri get</string>
+    <string name="play_from_beginning_img_des">Əvvəldən oynat</string>
+    <string name="home_change_provider_img_des">Provayderi dəyişdir</string>
+    <string name="preview_background_img_des">Arxaplana ilkin baxış keçir</string>
+    <string name="rated_format" formatted="true">Xal: %.1f</string>
+    <string name="new_update_format" formatted="true">Yeniləmə mövcuddur!\n%1$s -&gt; %2$s</string>
+    <string name="title_home">Ana səhifə</string>
+    <string name="title_search">Axtar</string>
+    <string name="title_downloads">Yükləmələr</string>
+    <string name="no_data">Məlumat yoxdur</string>
+    <string name="episode_more_options_des">Daha çox seçimlər</string>
+    <string name="next_episode">Sonrakı bölüm</string>
+    <string name="result_tags">Janrlar</string>
+    <string name="result_share">Paylaş</string>
+    <string name="result_open_in_browser">Brauzerdə aç</string>
+    <string name="browser">Brauzer</string>
+    <string name="skip_loading">Yükləməni keç</string>
+    <string name="loading">Yüklənir…</string>
+    <string name="type_watching">İzlənir</string>
+    <string name="type_on_hold">Gözləmədə</string>
+    <string name="type_dropped">Yarıda dayandırıldı</string>
+    <string name="type_plan_to_watch">İzləməyə planlandı</string>
+    <string name="type_re_watching">Yenidən izlənilir</string>
+    <string name="play_movie_button">Filmi oynat</string>
+    <string name="play_trailer_button">Fraqmanı Oynat</string>
+    <string name="play_livestream_button">Canlı Yayını oynat</string>
+    <string name="pick_source">Mənbələr</string>
+    <string name="pick_subtitle">Altyazılar</string>
+    <string name="reload_error">Yenidən bağlanmaya cəhd edin…</string>
+    <string name="go_back">Geri dön</string>
+    <string name="play_episode">Bölümü oynat</string>
+    <string name="downloaded">Yükləndi</string>
+    <string name="download_paused">Yükləmə dayandırıldı</string>
+    <string name="download_started">Yükləmə başladıldı</string>
+    <string name="download_failed">Yükləmə uğursuz oldu</string>
+    <string name="download_canceled">Yükləmə ləğv edildi</string>
+    <string name="downloads_delete_select">Silinəcək faylları seçin</string>
+    <string name="downloads_empty">Hal-hazırda heç bir yükləmə yoxdur.</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Böl. %2$d</string>
+    <string name="duration_format" formatted="true">%d dəqiqə</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$ds %2$dd</string>
+    <string name="next_season_episode_format" formatted="true">Sezon %1$d Bölüm %2$d bu tarixdə yayımlanacaq</string>
+    <string name="search_poster_img_des">Afişa</string>
+    <string name="player_speed_text_format" formatted="true">Sürət (%.2fx)</string>
+    <string name="app_name">CloudStream</string>
+    <string name="play_with_app_name">CloudStream ilə oynat</string>
+    <string name="type_completed">Tamamlandı</string>
+    <string name="title_settings">Parametrlər</string>
+    <string name="search_hint">Axtar…</string>
+    <string name="download">Yüklə</string>
+    <string name="downloading">Yüklənir</string>
+    <string name="download_done">Yükləmə bitdi</string>
+    <string name="torrent_plot">Açıqlama</string>
+    <string name="player_size_settings_des">Qara sərhədləri, kənarları sil</string>
+    <string name="torrent_no_plot">Açıqlama Tapılmadı</string>
+    <string name="picture_in_picture">Şəkil içində şəkil</string>
+    <string name="player_size_settings">Pleyeri yenidən ölçüləndirmə düyməsini</string>
+    <string name="player_subtitles_settings">Subtitrlər</string>
+    <string name="player_subtitles_settings_des">Pleyerin subtitr parametrləri</string>
+    <string name="chromecast_subtitles_settings">Chromecast Subtitrləri</string>
+    <string name="chromecast_subtitles_settings_des">Chromecast subtitr parametrləri</string>
+    <string name="eigengraumode_settings">Pleyer oynadılma sürəti</string>
+    <string name="settings_info">Məlumat</string>
+    <string name="category_updates">Yeniləmələr və Ehtiyat Nüsxələmə</string>
+    <string name="pref_filter_search_quality">Seçilmiş video keyfiyyətini axtarış nəticələrində gizlət</string>
+    <string name="double_tap_to_pause_settings_des">Dayandırma üçün videonun ortasına iki dəfə toxunun</string>
+    <string name="use_system_brightness_settings">Sistem parlaqlığından istifadə et</string>
+    <string name="restore_settings">Ehtiyat nüsxədən məlumatları bərpa et</string>
+    <string name="backup_settings">Məlumatları ehtiyata nüsxələ</string>
+    <string name="backup_frequency">Ehtiyat nüsxələmə sıxlığı</string>
+    <string name="restore_success">Ehtiyat nüsxələmə faylı yükləndi</string>
+    <string name="restore_failed_format" formatted="true">%s faylından məlumatları bərpa etmək mümkün olmadı</string>
+    <string name="backup_success">Məlumat ehtiyata nüsxələndi</string>
+    <string name="backup_failed">Yaddaş icazəsi yoxdur. Zəhmət olmasa, yenidən yoxlayın.</string>
+    <string name="backup_failed_error_format">%s ehtiyata nüsxələnirkən xəta baş verdi</string>
+    <string name="search">Axtar</string>
+    <string name="library">Kitabxana</string>
+    <string name="category_account">Hesablar və Təhlükəsizlik</string>
+    <string name="advanced_search">Təkmilləşdirilmiş Axtarış</string>
+    <string name="bug_report_settings_on">Məlumat göndərmə</string>
+    <string name="show_trailers_settings">Treylerləri göstər</string>
+    <string name="kitsu_settings">Kitsu afişalarını, posterlərini göstər</string>
+    <string name="copy_link_toast">Link mübadilə buferinə nüsxələndi</string>
+    <string name="subs_default_reset_toast">Standart dəyərlərə sıfırla</string>
+    <string name="acra_report_toast">Üzr istəyirik, tətbiqdə xəta baş verdi. Gizli xəta hesabatı tərtibatçılara göndəriləcək</string>
+    <string name="season">Sezon</string>
+    <string name="pause">Dayandır</string>
+    <string name="start">Başlat</string>
+    <string name="test_failed">Uğursuz oldu</string>
+    <string name="delete_message_multiple" formatted="true">Aşağıdakı faylları həmişəlik silmək istədiyinizə əminsinizmi?\n\n%s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="season_short">S</string>
+    <string name="no_episodes_found">Bölümlər tapılmadı</string>
+    <string name="delete">Sil</string>
+    <string name="delete_file">Faylı sil</string>
+    <string name="delete_files">Faylları sil</string>
+    <string name="delete_format" formatted="true">Sil (%1$d | %2$s)</string>
+    <string name="cancel">Ləğv et</string>
+    <string name="test_passed">Uğurlu oldu</string>
+    <string name="test_warning">Xəbərdarlıq</string>
+    <string name="resume">Davam et</string>
+    <string name="go_back_30">-30</string>
+    <string name="go_forward_30">+30</string>
+    <string name="delete_message" formatted="true">%s həmişəlik silinəcək\nƏminsiniz?</string>
+    <string name="delete_message_series_episodes" formatted="true">%1$s içindəki aşağıdakı bölümləri həmişəlik silmək istədiyinizdən əminsinizmi?\n\n%2$s</string>
+    <string name="episode_format" formatted="true">%1$d%2$s</string>
+    <string name="ova">OVA</string>
+    <string name="movies_singular">Film</string>
+    <string name="documentaries">Sənədli filmlər</string>
+    <string name="torrent_singular">Torrent</string>
+    <string name="documentaries_singular">Sənədli film</string>
+    <string name="storage_error">Yükləmə xətası, yaddaş icazələrini yoxlayın</string>
+    <string name="custom_media_singluar">Media</string>
+    <string name="encoding_error">Kodlama xətası</string>
+    <string name="cartoons">Cizgi filmləri</string>
+    <string name="anime">Anime-lər</string>
+    <string name="torrent">Torrent-lər</string>
+    <string name="asian_drama">Asiya serialları (dramalar)</string>
+    <string name="livestreams">Canlı yayımlar</string>
+    <string name="nsfw">+18 məzmun</string>
+    <string name="others">Digərləri</string>
+    <string name="tv_series_singular">Seriallar</string>
+    <string name="cartoons_singular">Cizgi filmi</string>
+    <string name="anime_singular">Anime</string>
+    <string name="ova_singular">OVA</string>
+    <string name="asian_drama_singular">Asiya serialı (drama)</string>
+    <string name="live_singular">Canlı yayım</string>
+    <string name="nsfw_singular">+18 məzmun</string>
+    <string name="other_singular">Video</string>
+    <string name="music_singlar">Musiqi</string>
+    <string name="audio_book_singular">Səsli Kitab</string>
+    <string name="audio_singluar">Səs</string>
+    <string name="podcast_singluar">Podkast</string>
+    <string name="source_error">Mənbə xətası</string>
+    <string name="remote_error">Server xətası</string>
+    <string name="unsupported_error">Dəstəklənməyən xəta</string>
+    <string name="unexpected_error">Gözlənilməyən oynadıcı xətası</string>
+    <string name="episode_action_cast_mirror">Ekran yansıtma</string>
+</resources>

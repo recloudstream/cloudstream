@@ -12,7 +12,9 @@ import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIE
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
+import com.lagradost.cloudstream3.utils.getImageFromDrawable
 
 class RepoAdapter(
     val isSetup: Boolean,
@@ -61,6 +63,17 @@ class RepoAdapter(
         diffResult.dispatchUpdatesTo(this)
     }
 
+    // Clear coil image because setImageResource doesn't override
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        if (holder is RepoViewHolder) {
+            when(holder.binding){
+                is RepositoryItemBinding -> holder.binding.entryIcon.loadImage(R.drawable.ic_github_logo)
+                is RepositoryItemTvBinding -> holder.binding.entryIcon.loadImage(R.drawable.ic_github_logo)
+            }
+        }
+        super.onViewRecycled(holder)
+    }
+
     inner class RepoViewHolder(
         val binding: ViewBinding
     ) :
@@ -89,6 +102,11 @@ class RepoAdapter(
                         }
                         mainText.text = repositoryData.name
                         subText.text = repositoryData.url
+                        if(!repositoryData.iconUrl.isNullOrEmpty()){
+                            entryIcon.loadImage(repositoryData.iconUrl){
+                                error(getImageFromDrawable(itemView.context,R.drawable.ic_github_logo))
+                            }
+                        }
                     }
                 }
 
@@ -109,17 +127,26 @@ class RepoAdapter(
                         }
 
                         repositoryItemRoot.setOnLongClickListener {
-                            val shareableRepoData = "${repositoryData.name} : \n ${repositoryData.url}"
+                            val shareableRepoData = "${repositoryData.name}$SHAREABLE_REPO_SEPARATOR\n ${repositoryData.url}"
                             clipboardHelper(txt(R.string.repo_copy_label), shareableRepoData)
                             true
                         }
 
                         mainText.text = repositoryData.name
                         subText.text = repositoryData.url
+                        if(!repositoryData.iconUrl.isNullOrEmpty()){
+                            entryIcon.loadImage(repositoryData.iconUrl){
+                                error(getImageFromDrawable(itemView.context,R.drawable.ic_github_logo))
+                            }
+                        }
                     }
                 }
             }
         }
+    }
+
+    companion object {
+        const val SHAREABLE_REPO_SEPARATOR = " : "
     }
 }
 
