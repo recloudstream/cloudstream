@@ -252,9 +252,9 @@ abstract class BaseAdapter<
     }
 
     companion object {
-        private const val HEADER: Int = 1
-        private const val FOOTER: Int = 2
-        private const val CONTENT: Int = 0
+        const val HEADER: Int = 1
+        const val FOOTER: Int = 2
+        const val CONTENT: Int = 0
     }
 }
 

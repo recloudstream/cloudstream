@@ -201,6 +201,7 @@ class QuickSearchFragment : Fragment() {
                 logError(e)
             }
         } else {
+            binding?.quickSearchMasterRecycler?.setRecycledViewPool(ParentItemAdapter.sharedPool)
             binding?.quickSearchMasterRecycler?.adapter =
                 ParentItemAdapter(
                     fragment = this,

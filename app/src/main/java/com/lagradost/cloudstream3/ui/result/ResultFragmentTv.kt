@@ -427,6 +427,7 @@ class ResultFragmentTv : Fragment() {
                         SearchHelper.handleSearchClickCallback(callback)
                 }
 
+            resultEpisodes.setRecycledViewPool(EpisodeAdapter.sharedPool)
             resultEpisodes.adapter =
                 EpisodeAdapter(
                     false,
