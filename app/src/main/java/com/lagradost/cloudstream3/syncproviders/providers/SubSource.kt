@@ -29,7 +29,7 @@ class SubSourceApi : SubtitleAPI() {
 
         //Only supports Imdb Id search for now
         if (query.imdbId == null) return null
-        val queryLang = SubtitleHelper.fromTwoLettersToLanguage(query.lang!!)
+        val queryLang = SubtitleHelper.fromTagToEnglishLanguageName(query.lang)
         val type = if ((query.seasonNumber ?: 0) > 0) TvType.TvSeries else TvType.Movie
 
         val searchRes = app.post(

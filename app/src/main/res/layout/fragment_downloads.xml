@@ -342,6 +342,7 @@
             style="?attr/floatingActionButtonSmallStyle"
             android:backgroundTint="?attr/primaryGrayBackground"
             android:src="@drawable/netflix_play"
+            app:tint="?attr/textColor"
             android:layout_marginEnd="16dp"
             android:tooltipText="@string/open_local_video"
             android:layout_gravity="bottom|end"

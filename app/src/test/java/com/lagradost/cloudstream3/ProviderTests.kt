@@ -48,14 +48,14 @@ class ProviderTests {
 //         var searchResult: List<SearchResponse>? = null
 //         for (query in searchQueries) {
 //             val response = try {
-//                 api.search(query)
+//                 api.search(query, 1)
 //             } catch (e: Exception) {
 //                 if (e.cause is NotImplementedError) {
 //                     Assert.fail("Provider has not implemented .search")
 //                 }
 //                 logError(e)
 //                 null
-//             }
+//             }?.items
 //             if (!response.isNullOrEmpty()) {
 //                 correctResponses++
 //                 if (searchResult == null) {

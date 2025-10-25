@@ -80,7 +80,15 @@ class EpisodeAdapter(
 
             return VideoClickActionHolder.uniqueIdToId(playerPref) ?: ACTION_PLAY_EPISODE_IN_PLAYER
         }
+
+        val sharedPool =
+            RecyclerView.RecycledViewPool()
+                .apply {
+                    this.setMaxRecycledViews(0, 10)
+                    this.setMaxRecycledViews(1, 10)
+                }
     }
+
 
     var cardList: MutableList<ResultEpisode> = mutableListOf()
 
@@ -251,7 +259,7 @@ class EpisodeAdapter(
                 }
 
                 val posterVisible = !card.poster.isNullOrBlank()
-                if(posterVisible) {
+                if (posterVisible) {
                     episodePoster.loadImage(card.poster)
                 } else {
                     // Clear the image

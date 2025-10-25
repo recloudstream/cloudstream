@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.settings
 import android.app.UiModeManager
 import android.content.Context
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Build
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
@@ -43,6 +44,11 @@ object Globals {
     fun Context.updateTv() {
         layoutId = layoutIntCorrected()
     }
+
+    /** Returns true if the current orientation is landscape. */
+    fun isLandscape(): Boolean =
+        isLayout(TV or EMULATOR) ||
+            Resources.getSystem().configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     /** Returns true if the layout is any of the flags,
      * so isLayout(TV or EMULATOR) is a valid statement for checking if the layout is in the emulator

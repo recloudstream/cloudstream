@@ -35,6 +35,11 @@ class SearchAdapter(
     private val resView: AutofitRecyclerView,
     private val clickCallback: (SearchClickCallback) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    companion object {
+        val sharedPool =
+            RecyclerView.RecycledViewPool().apply { this.setMaxRecycledViews(0, 10) }
+    }
+
     var hasNext: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -91,7 +96,7 @@ class SearchAdapter(
         private val coverHeight: Int =
             if (compactView) 80.toPx else (resView.itemWidth / 0.68).roundToInt()
 
-        private val cardView = when(binding) {
+        private val cardView = when (binding) {
             is SearchResultGridExpandedBinding -> binding.imageView
             is SearchResultGridBinding -> binding.imageView
             else -> null

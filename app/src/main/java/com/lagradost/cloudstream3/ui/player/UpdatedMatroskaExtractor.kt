@@ -69,7 +69,7 @@ import kotlin.math.min
 
 /** Extracts data from the Matroska and WebM container formats.  */
 @UnstableApi
-class UpdatedMatroskaExtractor internal constructor(
+class UpdatedMatroskaExtractor private constructor(
     private val reader: EbmlReader,
     flags: @Flags Int,
     subtitleParserFactory: SubtitleParser.Factory
