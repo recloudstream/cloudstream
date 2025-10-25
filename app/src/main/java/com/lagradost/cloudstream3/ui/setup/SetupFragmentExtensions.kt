@@ -72,7 +72,7 @@ class SetupFragmentExtensions : Fragment() {
             if (hasRepos) {
                 binding?.repoRecyclerView?.adapter = RepoAdapter(true, {}, {
                     PluginsViewModel.downloadAll(activity, it.url, null)
-                }).apply { updateList(repositories) }
+                }).apply { submitList(repositories.toList()) }
             }
 //            else {
 //                list_repositories?.setOnClickListener {
@@ -93,7 +93,7 @@ class SetupFragmentExtensions : Fragment() {
 //        }
 
         safe {
-           // val ctx = context ?: return@safe
+            // val ctx = context ?: return@safe
             setRepositories()
             binding?.apply {
                 if (!isSetup) {

@@ -104,7 +104,7 @@ abstract class BaseAdapter<
         submitList(list)
     }
 
-    open fun submitList(list: List<T>?) {
+    open fun submitList(list: Collection<T>?) {
         // deep copy at least the top list, because otherwise adapter can go crazy
         mDiffer.submitList(list?.let { CopyOnWriteArrayList(it) })
     }
