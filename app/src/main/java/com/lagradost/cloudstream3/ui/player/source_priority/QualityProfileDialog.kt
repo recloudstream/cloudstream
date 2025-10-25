@@ -12,6 +12,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
+import com.lagradost.cloudstream3.utils.setText
 
 class QualityProfileDialog(
     val activity: FragmentActivity,
@@ -39,12 +40,11 @@ class QualityProfileDialog(
             }
 
             fun refreshProfiles() {
-                currentlySelectedProfileText.text = getProfileName(usedProfile).asString(context)
-                (profilesRecyclerview.adapter as? ProfilesAdapter)?.updateList(getProfiles())
+                currentlySelectedProfileText.setText(getProfileName(usedProfile))
+                (profilesRecyclerview.adapter as? ProfilesAdapter)?.submitList(getProfiles())
             }
 
             profilesRecyclerview.adapter = ProfilesAdapter(
-                mutableListOf(),
                 usedProfile,
             ) { oldIndex: Int?, newIndex: Int ->
                 profilesRecyclerview.adapter?.notifyItemChanged(newIndex)
