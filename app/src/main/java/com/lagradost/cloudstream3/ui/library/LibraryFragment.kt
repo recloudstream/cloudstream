@@ -158,13 +158,14 @@ class LibraryFragment : Fragment() {
         binding?.sortFab?.setOnClickListener(sortChangeClickListener)
         binding?.librarySort?.setOnClickListener(sortChangeClickListener)
 
-        binding?.libraryRoot?.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)?.apply {
-            tag = "tv_no_focus_tag"
-            //Expand the Appbar when search bar is focused, fixing scroll up issue
-            setOnFocusChangeListener { _, _ ->
-                binding?.searchBar?.setExpanded(true)
+        binding?.libraryRoot?.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
+            ?.apply {
+                tag = "tv_no_focus_tag"
+                //Expand the Appbar when search bar is focused, fixing scroll up issue
+                setOnFocusChangeListener { _, _ ->
+                    binding?.searchBar?.setExpanded(true)
+                }
             }
-        }
 
         val searchCallback = Runnable {
             val newText = binding?.mainSearch?.query?.toString() ?: return@Runnable
@@ -203,7 +204,8 @@ class LibraryFragment : Fragment() {
             val items = libraryViewModel.availableApiNames
             val currentItem = libraryViewModel.currentApiName.value
 
-            activity?.showBottomDialog(items,
+            activity?.showBottomDialog(
+                items,
                 items.indexOf(currentItem),
                 txt(R.string.select_library).asString(it.context),
                 false,
@@ -308,7 +310,6 @@ class LibraryFragment : Fragment() {
         binding?.viewpager?.setPageTransformer(LibraryScrollTransformer())
 
         binding?.viewpager?.adapter = ViewpagerAdapter(
-            fragment = this,
             { isScrollingDown: Boolean ->
                 if (isScrollingDown) {
                     binding?.sortFab?.shrink()
@@ -585,7 +586,8 @@ class LibraryFragment : Fragment() {
             txt(it.stringRes).asString(view.context)
         }
 
-        activity?.showBottomDialog(methods,
+        activity?.showBottomDialog(
+            methods,
             libraryViewModel.sortingMethods.indexOf(libraryViewModel.currentSortingMethod),
             txt(R.string.sort_by).asString(view.context),
             false,

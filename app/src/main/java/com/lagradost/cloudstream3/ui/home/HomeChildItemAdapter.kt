@@ -47,13 +47,11 @@ class HomeScrollViewHolderState(view: ViewBinding) : ViewHolderState<Boolean>(vi
 }
 
 class ResumeItemAdapter(
-    fragment: Fragment,
     nextFocusUp: Int? = null,
     nextFocusDown: Int? = null,
     clickCallback: (SearchClickCallback) -> Unit,
     private val removeCallback: (View) -> Unit,
 ) : HomeChildItemAdapter(
-    fragment = fragment,
     id = "resumeAdapter".hashCode(),
     nextFocusUp = nextFocusUp,
     nextFocusDown = nextFocusDown,
@@ -111,14 +109,13 @@ class ResumeItemAdapter(
 /** Remember to set `updatePosterSize` to cache the poster size,
  * otherwise the width and height is unset */
 open class HomeChildItemAdapter(
-    fragment: Fragment,
     id: Int,
     var nextFocusUp: Int? = null,
     var nextFocusDown: Int? = null,
     var clickCallback: (SearchClickCallback) -> Unit,
 ) :
     BaseAdapter<SearchResponse, Boolean>(
-        fragment, id, diffCallback = BaseDiffCallback(
+        id, diffCallback = BaseDiffCallback(
             itemSame = { a, b ->
                 a.url == b.url
             },

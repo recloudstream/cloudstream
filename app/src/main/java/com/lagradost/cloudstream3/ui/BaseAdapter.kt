@@ -4,9 +4,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.view.children
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.AsyncDifferConfig
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -21,15 +18,9 @@ open class ViewHolderState<T>(val view: ViewBinding) : ViewHolder(view.root) {
     open fun restore(state: T) = Unit
 }
 
-
-// Based of the concept https://github.com/brahmkshatriya/echo/blob/main/app%2Fsrc%2Fmain%2Fjava%2Fdev%2Fbrahmkshatriya%2Fecho%2Fui%2Fadapters%2FMediaItemsContainerAdapter.kt#L108-L154
-class StateViewModel : ViewModel() {
-    val layoutManagerStates = hashMapOf<Int, HashMap<Int, Any?>>()
-}
-
 abstract class NoStateAdapter<T : Any>(
     diffCallback: DiffUtil.ItemCallback<T> = BaseDiffCallback()
-) : BaseAdapter<T, Any>(null, 0, diffCallback)
+) : BaseAdapter<T, Any>(0, diffCallback)
 
 /**
  * BaseAdapter is a persistent state stored adapter that supports headers and footers.
@@ -50,7 +41,6 @@ abstract class NoStateAdapter<T : Any>(
 abstract class BaseAdapter<
         T : Any,
         S : Any>(
-    fragment: Fragment?,
     val id: Int = 0,
     diffCallback: DiffUtil.ItemCallback<T> = BaseDiffCallback()
 ) : RecyclerView.Adapter<ViewHolderState<S>>() {
@@ -136,21 +126,19 @@ abstract class BaseAdapter<
     }
 
     fun clear() {
-        stateViewModel?.layoutManagerStates[id]?.clear()
+        layoutManagerStates[id]?.clear()
     }
 
     @Suppress("UNCHECKED_CAST")
     private fun getState(holder: ViewHolderState<S>): S? =
-        stateViewModel?.layoutManagerStates[id]?.get(holder.absoluteAdapterPosition) as? S
+        layoutManagerStates[id]?.get(holder.absoluteAdapterPosition) as? S
 
     private fun setState(holder: ViewHolderState<S>) {
         if (id == 0) return
-        val viewModel = stateViewModel ?: return
-
-        if (!viewModel.layoutManagerStates.contains(id)) {
-            viewModel.layoutManagerStates[id] = HashMap()
+        if (!layoutManagerStates.contains(id)) {
+            layoutManagerStates[id] = HashMap()
         }
-        viewModel.layoutManagerStates[id]?.let { map ->
+        layoutManagerStates[id]?.let { map ->
             map[holder.absoluteAdapterPosition] = holder.save()
         }
     }
@@ -183,8 +171,6 @@ abstract class BaseAdapter<
 
         return CONTENT
     }
-
-    private val stateViewModel: StateViewModel? by fragment?.viewModels() ?: lazyOf(null)
 
     final override fun onViewRecycled(holder: ViewHolderState<S>) {
         setState(holder)
@@ -259,6 +245,7 @@ abstract class BaseAdapter<
     }
 
     companion object {
+        val layoutManagerStates = hashMapOf<Int, HashMap<Int, Any?>>()
         fun clearImage(image: ImageView?) {
             image?.dispose()
         }

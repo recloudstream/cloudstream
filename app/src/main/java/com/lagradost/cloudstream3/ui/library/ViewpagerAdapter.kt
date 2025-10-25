@@ -40,11 +40,9 @@ class ViewpagerAdapterViewHolderState(val binding: LibraryViewpagerPageBinding) 
 }
 
 class ViewpagerAdapter(
-    fragment: Fragment,
     val scrollCallback: (isScrollingDown: Boolean) -> Unit,
     val clickCallback: (SearchClickCallback) -> Unit
 ) : BaseAdapter<SyncAPI.Page, Bundle>(
-    fragment,
     id = "ViewpagerAdapter".hashCode(),
     diffCallback = BaseDiffCallback(
         itemSame = { a, b ->

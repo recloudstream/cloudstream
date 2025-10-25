@@ -12,7 +12,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
@@ -60,11 +60,11 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarView
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 
 class HomeParentItemAdapterPreview(
-    override val fragment: Fragment,
+    val fragment: LifecycleOwner,
     private val viewModel: HomeViewModel,
     private val accountViewModel: AccountViewModel
 ) : ParentItemAdapter(
-    fragment, id = "HomeParentItemAdapterPreview".hashCode(),
+    id = "HomeParentItemAdapterPreview".hashCode(),
     clickCallback = {
         viewModel.click(it)
     }, moreInfoClickCallback = {
@@ -102,7 +102,7 @@ class HomeParentItemAdapterPreview(
             )
         }
 
-        return HeaderViewHolder(binding, viewModel, accountViewModel, fragment = fragment)
+        return HeaderViewHolder(binding, viewModel, accountViewModel, fragment)
     }
 
     override fun onBindHeader(holder: ViewHolderState<Bundle>) {
@@ -129,7 +129,7 @@ class HomeParentItemAdapterPreview(
         val binding: ViewBinding,
         val viewModel: HomeViewModel,
         accountViewModel: AccountViewModel,
-        fragment: Fragment,
+        fragment: LifecycleOwner,
     ) :
         ViewHolderState<Bundle>(binding) {
 
@@ -162,7 +162,6 @@ class HomeParentItemAdapterPreview(
         }
 
         private val resumeAdapter = ResumeItemAdapter(
-            fragment,
             nextFocusUp = itemView.nextFocusUpId,
             nextFocusDown = itemView.nextFocusDownId,
             removeCallback = { v ->
@@ -245,7 +244,6 @@ class HomeParentItemAdapterPreview(
                 }
             })
         private val bookmarkAdapter = HomeChildItemAdapter(
-            fragment,
             id = "bookmarkAdapter".hashCode(),
             nextFocusUp = itemView.nextFocusUpId,
             nextFocusDown = itemView.nextFocusDownId
@@ -496,7 +494,7 @@ class HomeParentItemAdapterPreview(
             headProfilePicCard?.isGone = isLayout(TV or EMULATOR)
             alternateHeadProfilePicCard?.isGone = isLayout(TV or EMULATOR)
 
-            viewModel.currentAccount.observe(fragment.viewLifecycleOwner) { currentAccount ->
+            fragment.observe(viewModel.currentAccount) { currentAccount ->
                 headProfilePic?.loadImage(currentAccount?.image)
                 alternateHeadProfilePic?.loadImage(currentAccount?.image)
             }

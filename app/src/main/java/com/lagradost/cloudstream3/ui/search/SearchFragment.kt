@@ -568,7 +568,7 @@ class SearchFragment : Fragment() {
         //main_search.onActionViewExpanded()*/
 
         val masterAdapter =
-            ParentItemAdapter(fragment = this, id = "masterAdapter".hashCode(), { callback ->
+            ParentItemAdapter(id = "masterAdapter".hashCode(), { callback ->
                 SearchHelper.handleSearchClickCallback(callback)
             }, { item ->
                 bottomSheetDialog = activity?.loadHomepageList(item, dismissCallback = {
