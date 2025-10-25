@@ -20,7 +20,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.settings.appLanguages
 import com.lagradost.cloudstream3.ui.settings.getCurrentLocale
 import com.lagradost.cloudstream3.ui.settings.nameNextToFlagEmoji
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 
 const val HAS_DONE_SETUP_KEY = "HAS_DONE_SETUP"
 
@@ -48,7 +48,7 @@ class SetupFragmentLanguage : Fragment() {
 
         // We don't want a crash for all users
         safe {
-            fixPaddingStatusbar(binding?.setupRoot)
+            fixSystemBarsPadding(binding?.setupRoot)
 
             val ctx = context ?: return@safe
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)

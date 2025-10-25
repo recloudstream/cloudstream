@@ -14,7 +14,7 @@
 
         <com.google.android.material.navigationrail.NavigationRailView
             android:id="@+id/nav_rail_view"
-            android:layout_width="62dp"
+            android:layout_width="@dimen/nav_rail_view_width"
             android:layout_height="match_parent"
             android:background="?attr/primaryGrayBackground"
             android:descendantFocusability="afterDescendants"
@@ -36,7 +36,7 @@
                   -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/nav_view"
-            android:layout_height="70dp"
+            android:layout_height="@dimen/nav_view_height"
             android:layout_width="0dp"
             app:labelVisibilityMode="unlabeled"
             android:background="?attr/primaryGrayBackground"
