@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.ui.home
 
-import android.content.res.Configuration
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +12,7 @@ import com.lagradost.cloudstream3.ui.NoStateAdapter
 import com.lagradost.cloudstream3.ui.ViewHolderState
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 
@@ -40,11 +40,9 @@ class HomeScrollAdapter(
     ) {
         val binding = holder.view
         val itemView = holder.itemView
-        val isHorizontal =
-            binding is HomeScrollViewTvBinding || itemView.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
         val posterUrl =
-            if (isHorizontal) item.backgroundPosterUrl ?: item.posterUrl else item.posterUrl
+            if (isLandscape()) item.backgroundPosterUrl ?: item.posterUrl else item.posterUrl
                 ?: item.backgroundPosterUrl
 
         when (binding) {

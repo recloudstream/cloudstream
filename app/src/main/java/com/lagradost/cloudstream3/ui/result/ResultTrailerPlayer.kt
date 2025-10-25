@@ -3,12 +3,14 @@ package com.lagradost.cloudstream3.ui.result
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.core.view.ViewCompat
 import com.lagradost.cloudstream3.CommonActivity.screenHeight
 import com.lagradost.cloudstream3.CommonActivity.screenWidth
 import com.lagradost.cloudstream3.LoadResponse
@@ -18,6 +20,7 @@ import com.lagradost.cloudstream3.ui.player.PlayerEventSource
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 
 open class ResultTrailerPlayer : ResultFragmentPhone() {
 
@@ -46,6 +49,21 @@ open class ResultTrailerPlayer : ResultFragmentPhone() {
     }
 
     private fun fixPlayerSize() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            binding?.apply {
+                if (isFullScreenPlayer) {
+                    // Remove listener
+                    ViewCompat.setOnApplyWindowInsetsListener(root, null)
+                    root.overlay.clear() // Clear the cutout overlay
+                    root.setPadding(0, 0, 0, 0) // Reset padding for full screen
+                } else {
+                    // Reapply padding when not in full screen
+                    fixSystemBarsPadding(root)
+                    ViewCompat.requestApplyInsets(root)
+                }
+            }
+        }
+
         playerWidthHeight?.let { (w, h) ->
             if(w <= 0 || h <= 0) return@let
 

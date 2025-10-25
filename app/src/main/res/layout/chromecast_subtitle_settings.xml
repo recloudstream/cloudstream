@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/subs_root"
+    android:background="?attr/primaryBlackBackground"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/subs_root"
-        android:background="?attr/primaryBlackBackground">
+        android:layout_height="match_parent">
 
-    <LinearLayout
-            android:orientation="vertical"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <TextView
+            <TextView
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
                 android:layout_marginTop="20dp"
@@ -23,28 +28,28 @@
                 android:layout_rowWeight="1"
                 android:layout_height="wrap_content" />
 
-        <FrameLayout
+            <FrameLayout
                 android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="75sp">
 
-            <ImageView
+                <ImageView
                     android:scaleType="centerCrop"
                     android:src="@drawable/subtitles_preview_background"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/preview_background_img_des" />
 
-            <androidx.media3.ui.SubtitleView
+                <androidx.media3.ui.SubtitleView
                     android:id="@+id/subtitle_text"
 
                     android:layout_width="match_parent"
                     android:layout_gravity="center"
                     android:foregroundGravity="center"
                     android:layout_height="match_parent" />
-        </FrameLayout>
+            </FrameLayout>
 
-        <TextView
+            <TextView
                 android:nextFocusDown="@id/subs_font_size"
                 android:nextFocusLeft="@id/apply_btt"
                 android:nextFocusRight="@id/cancel_btt"
@@ -53,7 +58,7 @@
                 android:text="@string/subs_font"
                 style="@style/SettingsItem" />
 
-        <TextView
+            <TextView
                 android:nextFocusUp="@id/subs_font"
                 android:nextFocusDown="@id/subs_text_color"
                 android:nextFocusLeft="@id/apply_btt"
@@ -63,7 +68,7 @@
                 android:text="@string/subs_font_size"
                 style="@style/SettingsItem" />
 
-        <TextView
+            <TextView
                 android:nextFocusUp="@id/subs_font_size"
                 android:nextFocusDown="@id/subs_outline_color"
                 android:nextFocusLeft="@id/apply_btt"
@@ -73,7 +78,7 @@
                 android:text="@string/subs_text_color"
                 style="@style/SettingsItem" />
 
-        <TextView
+            <TextView
                 android:nextFocusUp="@id/subs_text_color"
                 android:nextFocusDown="@id/subs_background_color"
                 android:nextFocusLeft="@id/apply_btt"
@@ -83,7 +88,7 @@
                 android:text="@string/subs_outline_color"
                 style="@style/SettingsItem" />
 
-        <TextView
+            <TextView
                 android:nextFocusUp="@id/subs_outline_color"
                 android:nextFocusDown="@id/subs_window_color"
                 android:nextFocusLeft="@id/apply_btt"
@@ -93,7 +98,7 @@
                 android:text="@string/subs_background_color"
                 style="@style/SettingsItem" />
 
-        <TextView
+            <TextView
                 android:visibility="gone"
                 android:nextFocusUp="@id/subs_background_color"
                 android:nextFocusDown="@id/subs_edge_type"
@@ -104,7 +109,7 @@
                 android:text="@string/subs_window_color"
                 style="@style/SettingsItem" />
 
-        <TextView
+            <TextView
                 android:nextFocusUp="@id/subs_window_color"
                 android:nextFocusDown="@id/apply_btt"
                 android:nextFocusLeft="@id/apply_btt"
@@ -114,7 +119,7 @@
                 android:text="@string/subs_edge_type"
                 style="@style/SettingsItem" />
 
-        <TextView
+            <TextView
                 android:gravity="center"
                 android:text="@string/subs_hold_to_reset_to_default"
                 android:textSize="14sp"
@@ -124,14 +129,14 @@
                 android:layout_rowWeight="1"
                 android:layout_height="wrap_content" />
 
-        <LinearLayout
+            <LinearLayout
                 android:orientation="horizontal"
                 android:layout_gravity="bottom"
                 android:gravity="bottom|end"
                 android:layout_width="match_parent"
                 android:layout_height="60dp">
 
-            <com.google.android.material.button.MaterialButton
+                <com.google.android.material.button.MaterialButton
                     android:nextFocusUp="@id/subs_edge_type"
                     android:nextFocusRight="@id/cancel_btt"
                     style="@style/WhiteButton"
@@ -141,10 +146,10 @@
                     android:id="@+id/apply_btt"
                     android:layout_width="wrap_content">
 
-                <requestFocus />
-            </com.google.android.material.button.MaterialButton>
+                    <requestFocus />
+                </com.google.android.material.button.MaterialButton>
 
-            <com.google.android.material.button.MaterialButton
+                <com.google.android.material.button.MaterialButton
                     android:nextFocusUp="@id/subs_edge_type"
                     android:nextFocusLeft="@id/apply_btt"
                     style="@style/BlackButton"
@@ -152,6 +157,7 @@
                     android:text="@string/sort_cancel"
                     android:id="@+id/cancel_btt"
                     android:layout_width="wrap_content" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

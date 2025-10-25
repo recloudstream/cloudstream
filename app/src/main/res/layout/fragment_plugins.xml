@@ -6,7 +6,8 @@
     android:id="@+id/extensions_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="?attr/primaryGrayBackground">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -38,6 +39,7 @@
         android:nextFocusUp="@id/tvtypes_chips"
 
         android:clipToPadding="false"
+        android:background="?attr/primaryBlackBackground"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:listitem="@layout/repository_item" />
