@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.databinding.HomeScrollViewBinding
 import com.lagradost.cloudstream3.databinding.HomeScrollViewTvBinding
+import com.lagradost.cloudstream3.ui.BaseDiffCallback
 import com.lagradost.cloudstream3.ui.NoStateAdapter
 import com.lagradost.cloudstream3.ui.ViewHolderState
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
@@ -18,8 +19,10 @@ import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 
 class HomeScrollAdapter(
     fragment: Fragment,
-    val callback : ((View, Int, LoadResponse) -> Unit)
-) : NoStateAdapter<LoadResponse>(fragment) {
+    val callback: ((View, Int, LoadResponse) -> Unit)
+) : NoStateAdapter<LoadResponse>(fragment, diffCallback = BaseDiffCallback(itemSame = { a, b ->
+    a.uniqueUrl == b.uniqueUrl && a.name == b.name
+})) {
     var hasMoreItems: Boolean = false
 
     override fun onCreateContent(parent: ViewGroup): ViewHolderState<Any> {
@@ -39,7 +42,6 @@ class HomeScrollAdapter(
         position: Int,
     ) {
         val binding = holder.view
-        val itemView = holder.itemView
 
         val posterUrl =
             if (isLandscape()) item.backgroundPosterUrl ?: item.posterUrl else item.posterUrl

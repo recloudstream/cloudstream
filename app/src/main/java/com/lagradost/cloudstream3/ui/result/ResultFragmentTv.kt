@@ -469,7 +469,7 @@ class ResultFragmentTv : Fragment() {
             }
 
             resultCastItems.setRecycledViewPool(ActorAdaptor.sharedPool)
-            resultCastItems.adapter = ActorAdaptor(aboveCast?.id) {
+            resultCastItems.adapter = ActorAdaptor(this@ResultFragmentTv, aboveCast?.id) {
                 toggleEpisodes(false)
             }
 
@@ -949,8 +949,8 @@ class ResultFragmentTv : Fragment() {
 
                         populateChips(resultTag, d.tags)
                         resultCastItems.isGone = d.actors.isNullOrEmpty()
-                        (resultCastItems.adapter as? ActorAdaptor)?.updateList(
-                            d.actors ?: emptyList()
+                        (resultCastItems.adapter as? ActorAdaptor)?.submitList(
+                            d.actors
                         )
 
                         if (d.contentRatingText == null) {

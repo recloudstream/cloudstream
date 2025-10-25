@@ -109,6 +109,22 @@ class HomeParentItemAdapterPreview(
         (holder as? HeaderViewHolder)?.bind()
     }
 
+    override fun onViewDetachedFromWindow(holder: ViewHolderState<Bundle>) {
+        when(holder) {
+            is HeaderViewHolder -> {
+                holder.onViewDetachedFromWindow()
+            }
+        }
+    }
+
+    override fun onViewAttachedToWindow(holder: ViewHolderState<Bundle>) {
+        when(holder) {
+            is HeaderViewHolder -> {
+                holder.onViewAttachedToWindow()
+            }
+        }
+    }
+
     private class HeaderViewHolder(
         val binding: ViewBinding,
         val viewModel: HomeViewModel,
@@ -428,7 +444,7 @@ class HomeParentItemAdapterPreview(
                 }
             }
 
-        override fun onViewDetachedFromWindow() {
+        fun onViewDetachedFromWindow() {
             previewViewpager.unregisterOnPageChangeCallback(previewCallback)
         }
 
@@ -702,7 +718,7 @@ class HomeParentItemAdapterPreview(
             }
         }
 
-        override fun onViewAttachedToWindow() {
+        fun onViewAttachedToWindow() {
             previewViewpager.registerOnPageChangeCallback(previewCallback)
 
             binding.root.findViewTreeLifecycleOwner()?.apply {
