@@ -51,6 +51,7 @@ import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.services.SubscriptionWorkManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_SHARE
+import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_LONG_CLICK
@@ -1016,15 +1017,10 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         }
         context?.let { ctx ->
             val arrayAdapter = ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
-            /*
-            -1 -> None
-            0 -> Watching
-            1 -> Completed
-            2 -> OnHold
-            3 -> Dropped
-            4 -> PlanToWatch
-            5 -> ReWatching
-            */
+            /**
+             * @see SyncWatchType.internalId
+             * For the corresponding values.
+             */
             val items = listOf(
                 R.string.none,
                 R.string.type_watching,
@@ -1032,7 +1028,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 R.string.type_on_hold,
                 R.string.type_dropped,
                 R.string.type_plan_to_watch,
-                R.string.type_re_watching
+                R.string.type_re_watching,
+                R.string.type_not_interested
             ).map { ctx.getString(it) }
             arrayAdapter.addAll(items)
             syncBinding?.apply {
