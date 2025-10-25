@@ -405,7 +405,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 this.orientation = RecyclerView.HORIZONTAL
             }*/
             resultCastItems.setRecycledViewPool(ActorAdaptor.sharedPool)
-            resultCastItems.adapter = ActorAdaptor()
+            resultCastItems.adapter = ActorAdaptor(this@ResultFragmentPhone)
             resultEpisodes.setRecycledViewPool(EpisodeAdapter.sharedPool)
             resultEpisodes.adapter =
                 EpisodeAdapter(
@@ -802,7 +802,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultDataHolder.isGone = d.comingSoon
 
                     resultCastItems.isGone = d.actors.isNullOrEmpty()
-                    (resultCastItems.adapter as? ActorAdaptor)?.updateList(d.actors ?: emptyList())
+                    (resultCastItems.adapter as? ActorAdaptor)?.submitList(d.actors)
 
                     if (d.contentRatingText == null) {
                         // If there is no rating to display, we don't want an empty gap

@@ -44,15 +44,6 @@ class HomeScrollViewHolderState(view: ViewBinding) : ViewHolderState<Boolean>(vi
             }
         }
     }
-
-    override fun onViewRecycled() {
-        super.onViewRecycled()
-
-        // Clear the image, idk if this saves ram or not, but I guess?
-        view.root.findViewById<ImageView>(R.id.imageView)?.apply {
-            load(null)
-        }
-    }
 }
 
 class ResumeItemAdapter(
@@ -80,6 +71,11 @@ class ResumeItemAdapter(
             false
         ) else HomeRemoveGridBinding.inflate(inflater, parent, false)
         return HomeScrollViewHolderState(binding)
+    }
+
+    override fun onClearView(holder: ViewHolderState<Boolean>) {
+        // Clear the image, idk if this saves ram or not, but I guess?
+        clearImage(holder.view.root.findViewById(R.id.imageView))
     }
 
     override fun onBindFooter(holder: ViewHolderState<Boolean>) {
