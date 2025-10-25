@@ -53,15 +53,15 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
         }
 
         private const val DEFAULT_MARGIN: Float = 0.05f
-        private const val SSA_ALIGNMENT_BOTTOM_LEFT = 1
-        private const val SSA_ALIGNMENT_BOTTOM_CENTER = 2
-        private const val SSA_ALIGNMENT_BOTTOM_RIGHT = 3
-        private const val SSA_ALIGNMENT_MIDDLE_LEFT = 4
-        private const val SSA_ALIGNMENT_MIDDLE_CENTER = 5
-        private const val SSA_ALIGNMENT_MIDDLE_RIGHT = 6
-        private const val SSA_ALIGNMENT_TOP_LEFT = 7
-        private const val SSA_ALIGNMENT_TOP_CENTER = 8
-        private const val SSA_ALIGNMENT_TOP_RIGHT = 9
+        const val SSA_ALIGNMENT_BOTTOM_LEFT = 1
+        const val SSA_ALIGNMENT_BOTTOM_CENTER = 2
+        const val SSA_ALIGNMENT_BOTTOM_RIGHT = 3
+        const val SSA_ALIGNMENT_MIDDLE_LEFT = 4
+        const val SSA_ALIGNMENT_MIDDLE_CENTER = 5
+        const val SSA_ALIGNMENT_MIDDLE_RIGHT = 6
+        const val SSA_ALIGNMENT_TOP_LEFT = 7
+        const val SSA_ALIGNMENT_TOP_CENTER = 8
+        const val SSA_ALIGNMENT_TOP_RIGHT = 9
 
         /** Subtitle offset in milliseconds */
         var subtitleOffset: Long = 0
@@ -108,7 +108,7 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
         }
 
         /**
-         * Fixes alignment for cues with {\anX}, 
+         * Fixes alignment for cues with {\anX},
          * this is common for .vtt that should be parsed as .srt
          *
          * ```
@@ -148,42 +148,48 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
             // exoplayer can already parse this, however for eg webvtt it fails
             locationRegex.find(trimmed)?.groupValues?.get(1)?.toIntOrNull()?.let { alignment ->
                 // toLineAnchor
-                when (alignment) {
-                    SSA_ALIGNMENT_BOTTOM_LEFT, SSA_ALIGNMENT_BOTTOM_CENTER, SSA_ALIGNMENT_BOTTOM_RIGHT -> Cue.ANCHOR_TYPE_END
-                    SSA_ALIGNMENT_MIDDLE_LEFT, SSA_ALIGNMENT_MIDDLE_CENTER, SSA_ALIGNMENT_MIDDLE_RIGHT -> Cue.ANCHOR_TYPE_MIDDLE
-                    SSA_ALIGNMENT_TOP_LEFT, SSA_ALIGNMENT_TOP_CENTER, SSA_ALIGNMENT_TOP_RIGHT -> Cue.ANCHOR_TYPE_START
-                    else -> null
-                }?.let { anchor ->
-                    setLineAnchor(anchor)
-                    setLine(
-                        computeDefaultLineOrPosition(anchor), Cue.LINE_TYPE_FRACTION
-                    )
-                }
-                // toPositionAnchor
-                when (alignment) {
-                    SSA_ALIGNMENT_BOTTOM_LEFT, SSA_ALIGNMENT_MIDDLE_LEFT, SSA_ALIGNMENT_TOP_LEFT -> Cue.ANCHOR_TYPE_START
-                    SSA_ALIGNMENT_BOTTOM_CENTER, SSA_ALIGNMENT_MIDDLE_CENTER, SSA_ALIGNMENT_TOP_CENTER -> Cue.ANCHOR_TYPE_MIDDLE
-                    SSA_ALIGNMENT_BOTTOM_RIGHT, SSA_ALIGNMENT_MIDDLE_RIGHT, SSA_ALIGNMENT_TOP_RIGHT -> Cue.ANCHOR_TYPE_END
-                    else -> null
-                }?.let { anchor ->
-                    setPositionAnchor(anchor)
-                    setPosition(computeDefaultLineOrPosition(anchor))
-                }
-
-                // toTextAlignment
-                when (alignment) {
-                    SSA_ALIGNMENT_BOTTOM_LEFT, SSA_ALIGNMENT_MIDDLE_LEFT, SSA_ALIGNMENT_TOP_LEFT -> Layout.Alignment.ALIGN_NORMAL
-                    SSA_ALIGNMENT_BOTTOM_CENTER, SSA_ALIGNMENT_MIDDLE_CENTER, SSA_ALIGNMENT_TOP_CENTER -> Layout.Alignment.ALIGN_CENTER
-                    SSA_ALIGNMENT_BOTTOM_RIGHT, SSA_ALIGNMENT_MIDDLE_RIGHT, SSA_ALIGNMENT_TOP_RIGHT -> Layout.Alignment.ALIGN_OPPOSITE
-                    else -> null
-                }?.let { anchor ->
-                    setTextAlignment(anchor)
-                }
+                this.setSubtitleAlignment(alignment)
             }
 
             // remove all matches, so we do not display \anx
             trimmed = trimmed.replace(locationRegex, "")
             setText(trimmed)
+            return this
+        }
+
+        fun Cue.Builder.setSubtitleAlignment(alignment: Int?): Cue.Builder {
+            if (alignment == null) return this
+            when (alignment) {
+                SSA_ALIGNMENT_BOTTOM_LEFT, SSA_ALIGNMENT_BOTTOM_CENTER, SSA_ALIGNMENT_BOTTOM_RIGHT -> Cue.ANCHOR_TYPE_END
+                SSA_ALIGNMENT_MIDDLE_LEFT, SSA_ALIGNMENT_MIDDLE_CENTER, SSA_ALIGNMENT_MIDDLE_RIGHT -> Cue.ANCHOR_TYPE_MIDDLE
+                SSA_ALIGNMENT_TOP_LEFT, SSA_ALIGNMENT_TOP_CENTER, SSA_ALIGNMENT_TOP_RIGHT -> Cue.ANCHOR_TYPE_START
+                else -> null
+            }?.let { anchor ->
+                setLineAnchor(anchor)
+                setLine(
+                    computeDefaultLineOrPosition(anchor), Cue.LINE_TYPE_FRACTION
+                )
+            }
+            // toPositionAnchor
+            when (alignment) {
+                SSA_ALIGNMENT_BOTTOM_LEFT, SSA_ALIGNMENT_MIDDLE_LEFT, SSA_ALIGNMENT_TOP_LEFT -> Cue.ANCHOR_TYPE_START
+                SSA_ALIGNMENT_BOTTOM_CENTER, SSA_ALIGNMENT_MIDDLE_CENTER, SSA_ALIGNMENT_TOP_CENTER -> Cue.ANCHOR_TYPE_MIDDLE
+                SSA_ALIGNMENT_BOTTOM_RIGHT, SSA_ALIGNMENT_MIDDLE_RIGHT, SSA_ALIGNMENT_TOP_RIGHT -> Cue.ANCHOR_TYPE_END
+                else -> null
+            }?.let { anchor ->
+                setPositionAnchor(anchor)
+                setPosition(computeDefaultLineOrPosition(anchor))
+            }
+
+            // toTextAlignment
+            when (alignment) {
+                SSA_ALIGNMENT_BOTTOM_LEFT, SSA_ALIGNMENT_MIDDLE_LEFT, SSA_ALIGNMENT_TOP_LEFT -> Layout.Alignment.ALIGN_NORMAL
+                SSA_ALIGNMENT_BOTTOM_CENTER, SSA_ALIGNMENT_MIDDLE_CENTER, SSA_ALIGNMENT_TOP_CENTER -> Layout.Alignment.ALIGN_CENTER
+                SSA_ALIGNMENT_BOTTOM_RIGHT, SSA_ALIGNMENT_MIDDLE_RIGHT, SSA_ALIGNMENT_TOP_RIGHT -> Layout.Alignment.ALIGN_OPPOSITE
+                else -> null
+            }?.let { anchor ->
+                setTextAlignment(anchor)
+            }
             return this
         }
     }

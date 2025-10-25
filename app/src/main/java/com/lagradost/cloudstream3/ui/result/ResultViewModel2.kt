@@ -524,12 +524,11 @@ class ResultViewModel2 : ViewModel() {
             return this?.firstOrNull { it.season == season }
         }
 
-        private fun List<SeasonData>?.getSeasonTxt(season: Int?): UiText? {
+        fun seasonToTxt(seasonData: SeasonData?, season: Int?): UiText? {
             if (season == 0) {
                 return txt(R.string.no_season)
             }
 
-            val seasonData = getSeason(season)
             // If displaySeason is null then only show the name!
             return if (seasonData?.name != null && seasonData.displaySeason == null) {
                 txt(seasonData.name)
@@ -543,6 +542,10 @@ class ResultViewModel2 : ViewModel() {
                 )
             }
         }
+
+        private fun List<SeasonData>?.getSeasonTxt(season: Int?): UiText? =
+            seasonToTxt(getSeason(season), season)
+
 
         private fun filterName(name: String?): String? {
             if (name == null) return null
@@ -2340,7 +2343,7 @@ class ResultViewModel2 : ViewModel() {
                                     filterName(i.name),
                                     i.posterUrl,
                                     episode,
-                                    seasonData?.season ?: i.season,
+                                    i.season,
                                     if (seasonData != null) seasonData.displaySeason else i.season,
                                     i.data,
                                     loadResponse.apiName,
@@ -2354,6 +2357,7 @@ class ResultViewModel2 : ViewModel() {
                                     totalIndex,
                                     airDate = i.date,
                                     runTime = i.runTime,
+                                    seasonData = seasonData,
                                 )
 
                             val season = eps.seasonIndex ?: 0
@@ -2396,7 +2400,7 @@ class ResultViewModel2 : ViewModel() {
                                 filterName(episode.name),
                                 episode.posterUrl,
                                 episodeIndex,
-                                seasonData?.season ?: episode.season,
+                                episode.season,
                                 if (seasonData != null) seasonData.displaySeason else episode.season,
                                 episode.data,
                                 loadResponse.apiName,
@@ -2410,6 +2414,7 @@ class ResultViewModel2 : ViewModel() {
                                 totalIndex,
                                 airDate = episode.date,
                                 runTime = episode.runTime,
+                                seasonData = seasonData,
                             )
 
                         val season = ep.seasonIndex ?: 0

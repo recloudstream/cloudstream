@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
@@ -23,7 +22,6 @@ import com.google.android.material.chip.ChipGroup
 import com.google.android.material.navigation.NavigationBarItemView
 import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.CommonActivity.activity
-import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainActivity
@@ -35,13 +33,11 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.debugException
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
-import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.ViewHolderState
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountEditDialog
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
 import com.lagradost.cloudstream3.ui.account.AccountViewModel
-import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.selectHomepage
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
@@ -111,6 +107,22 @@ class HomeParentItemAdapterPreview(
 
     override fun onBindHeader(holder: ViewHolderState<Bundle>) {
         (holder as? HeaderViewHolder)?.bind()
+    }
+
+    override fun onViewDetachedFromWindow(holder: ViewHolderState<Bundle>) {
+        when(holder) {
+            is HeaderViewHolder -> {
+                holder.onViewDetachedFromWindow()
+            }
+        }
+    }
+
+    override fun onViewAttachedToWindow(holder: ViewHolderState<Bundle>) {
+        when(holder) {
+            is HeaderViewHolder -> {
+                holder.onViewAttachedToWindow()
+            }
+        }
     }
 
     private class HeaderViewHolder(
@@ -432,7 +444,7 @@ class HomeParentItemAdapterPreview(
                 }
             }
 
-        override fun onViewDetachedFromWindow() {
+        fun onViewDetachedFromWindow() {
             previewViewpager.unregisterOnPageChangeCallback(previewCallback)
         }
 
@@ -453,12 +465,14 @@ class HomeParentItemAdapterPreview(
 
             previewViewpager.adapter = previewAdapter
             resumeRecyclerView.adapter = resumeAdapter
+            bookmarkRecyclerView.setRecycledViewPool(HomeChildItemAdapter.sharedPool)
             bookmarkRecyclerView.adapter = bookmarkAdapter
 
             resumeRecyclerView.setLinearListLayout(
                 nextLeft = R.id.nav_rail_view,
                 nextRight = FOCUS_SELF
             )
+
             bookmarkRecyclerView.setLinearListLayout(
                 nextLeft = R.id.nav_rail_view,
                 nextRight = FOCUS_SELF
@@ -522,7 +536,7 @@ class HomeParentItemAdapterPreview(
             }
 
             (binding as? FragmentHomeHeadTvBinding)?.apply {
-                homePreviewChangeApi.setOnClickListener { view ->
+                /*homePreviewChangeApi.setOnClickListener { view ->
                     view.context.selectHomepage(viewModel.repo?.name) { api ->
                         viewModel.loadAndCancel(api, forceReload = true, fromUI = true)
                     }
@@ -539,7 +553,7 @@ class HomeParentItemAdapterPreview(
                 homePreviewSearchButton.setOnClickListener { _ ->
                     // Open blank screen.
                     viewModel.queryTextSubmit("")
-                }
+                }*/
 
                 // A workaround to the focus problem of always centering the view on focus
                 // as that causes higher android versions to stretch the ui when switching between shows
@@ -598,9 +612,7 @@ class HomeParentItemAdapterPreview(
                     params.height = 0
                     layoutParams = params
                 }
-            } else {
-                fixPaddingStatusbarView(homeNonePadding)
-            }
+            } else fixPaddingStatusbarView(homeNonePadding)
 
             when (preview) {
                 is Resource.Success -> {
@@ -706,19 +718,19 @@ class HomeParentItemAdapterPreview(
             }
         }
 
-        override fun onViewAttachedToWindow() {
+        fun onViewAttachedToWindow() {
             previewViewpager.registerOnPageChangeCallback(previewCallback)
 
             binding.root.findViewTreeLifecycleOwner()?.apply {
                 observe(viewModel.preview) {
                     updatePreview(it)
                 }
-                if (binding is FragmentHomeHeadTvBinding) {
+                /*if (binding is FragmentHomeHeadTvBinding) {
                     observe(viewModel.apiName) { name ->
                         binding.homePreviewChangeApi.text = name
                         binding.homePreviewReloadProvider.isGone = (name == noneApi.name)
                     }
-                }
+                }*/
                 observe(viewModel.resumeWatching) {
                     updateResume(it)
                 }

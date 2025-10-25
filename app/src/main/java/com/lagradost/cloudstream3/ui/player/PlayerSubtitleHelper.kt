@@ -118,7 +118,7 @@ class PlayerSubtitleHelper {
     fun setSubStyle(style: SaveCaptionStyle) {
         Log.i(TAG, "SET STYLE = $style")
         subtitleView?.translationY = -style.elevation.toPx.toFloat()
-        setSubtitleViewStyle(subtitleView, style)
+        setSubtitleViewStyle(subtitleView, style, true)
     }
 
     fun initSubtitles(subView: SubtitleView?, subHolder: FrameLayout?, style: SaveCaptionStyle?) {

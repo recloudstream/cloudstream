@@ -254,6 +254,7 @@ abstract class AuthAPI {
         else -> throw NotImplementedError("Unknown inheritance from AuthAPI")
     }
 
+    @Suppress("DEPRECATION")
     @Deprecated("Please the the new api for AuthAPI", level = DeprecationLevel.WARNING)
     fun loginInfo(): LoginInfo? {
         return this.toRepo().authUser()?.let { user ->
@@ -267,6 +268,7 @@ abstract class AuthAPI {
 
     @Deprecated("Please the the new api for AuthAPI", level = DeprecationLevel.WARNING)
     suspend fun getPersonalLibrary(): SyncAPI.LibraryMetadata? {
+        @Suppress("DEPRECATION")
         return (this.toRepo() as? SyncRepo)?.library()?.getOrThrow()
     }
 

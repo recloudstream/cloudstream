@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui
 
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -12,14 +13,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.viewbinding.ViewBinding
+import coil3.dispose
 import java.util.concurrent.CopyOnWriteArrayList
 
 open class ViewHolderState<T>(val view: ViewBinding) : ViewHolder(view.root) {
     open fun save(): T? = null
     open fun restore(state: T) = Unit
-    open fun onViewAttachedToWindow() = Unit
-    open fun onViewDetachedFromWindow() = Unit
-    open fun onViewRecycled() = Unit
 }
 
 
@@ -28,7 +27,10 @@ class StateViewModel : ViewModel() {
     val layoutManagerStates = hashMapOf<Int, HashMap<Int, Any?>>()
 }
 
-abstract class NoStateAdapter<T : Any>(fragment: Fragment) : BaseAdapter<T, Any>(fragment, 0)
+abstract class NoStateAdapter<T : Any>(
+    fragment: Fragment,
+    diffCallback: DiffUtil.ItemCallback<T> = BaseDiffCallback()
+) : BaseAdapter<T, Any>(fragment, 0, diffCallback)
 
 /**
  * BaseAdapter is a persistent state stored adapter that supports headers and footers.
@@ -120,13 +122,8 @@ abstract class BaseAdapter<
     open fun onCreateFooter(parent: ViewGroup): ViewHolderState<S> = throw NotImplementedError()
     open fun onCreateHeader(parent: ViewGroup): ViewHolderState<S> = throw NotImplementedError()
 
-    override fun onViewAttachedToWindow(holder: ViewHolderState<S>) {
-        holder.onViewAttachedToWindow()
-    }
-
-    override fun onViewDetachedFromWindow(holder: ViewHolderState<S>) {
-        holder.onViewDetachedFromWindow()
-    }
+    override fun onViewAttachedToWindow(holder: ViewHolderState<S>) {}
+    override fun onViewDetachedFromWindow(holder: ViewHolderState<S>) {}
 
     @Suppress("UNCHECKED_CAST")
     fun save(recyclerView: RecyclerView) {
@@ -146,7 +143,7 @@ abstract class BaseAdapter<
         stateViewModel.layoutManagerStates[id]?.get(holder.absoluteAdapterPosition) as? S
 
     private fun setState(holder: ViewHolderState<S>) {
-        if(id == 0) return
+        if (id == 0) return
 
         if (!stateViewModel.layoutManagerStates.contains(id)) {
             stateViewModel.layoutManagerStates[id] = HashMap()
@@ -189,9 +186,17 @@ abstract class BaseAdapter<
 
     final override fun onViewRecycled(holder: ViewHolderState<S>) {
         setState(holder)
-        holder.onViewRecycled()
+        onClearView(holder)
         super.onViewRecycled(holder)
     }
+
+    /** Same as onViewRecycled, but for the purpose of cleaning the view of any relevant data.
+     *
+     * If an item view has large or expensive data bound to it such as large bitmaps, this may be a good place to release those resources.
+     *
+     * Use this with `clearImage`
+     * */
+    open fun onClearView(holder: ViewHolderState<S>) {}
 
     final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderState<S> {
         return when (viewType) {
@@ -252,9 +257,13 @@ abstract class BaseAdapter<
     }
 
     companion object {
-        private const val HEADER: Int = 1
-        private const val FOOTER: Int = 2
-        private const val CONTENT: Int = 0
+        fun clearImage(image: ImageView?) {
+            image?.dispose()
+        }
+
+        const val HEADER: Int = 1
+        const val FOOTER: Int = 2
+        const val CONTENT: Int = 0
     }
 }
 

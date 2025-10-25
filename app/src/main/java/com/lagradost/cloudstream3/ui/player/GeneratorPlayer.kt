@@ -38,7 +38,6 @@ import androidx.media3.common.Format.NO_VALUE
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.common.util.Util
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerNotificationManager
 import androidx.media3.ui.PlayerNotificationManager.EXTRA_INSTANCE_ID
@@ -86,6 +85,7 @@ import com.lagradost.cloudstream3.ui.result.EpisodeAdapter
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.ResultFragment
+import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.result.SyncViewModel
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
@@ -116,6 +116,7 @@ import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
@@ -256,11 +257,9 @@ class GeneratorPlayer : FullScreenPlayer() {
     ): PendingIntent {
         val intent: Intent = Intent(action).setPackage(context.packageName)
         intent.putExtra(EXTRA_INSTANCE_ID, instanceId)
-        val pendingFlags = if (Util.SDK_INT >= 23) {
+        val pendingFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        } else {
-            PendingIntent.FLAG_UPDATE_CURRENT
-        }
+        } else PendingIntent.FLAG_UPDATE_CURRENT
 
         return PendingIntent.getBroadcast(context, instanceId, intent, pendingFlags)
     }
@@ -616,14 +615,14 @@ class GeneratorPlayer : FullScreenPlayer() {
         val providers = subsProviders.toList()
         val isSingleProvider = subsProviders.size == 1
 
-        val dialog = Dialog(context, R.style.AlertDialogCustomBlack)
+        val dialog = Dialog(context, R.style.DialogFullscreenPlayer)
         val binding =
             DialogOnlineSubtitlesBinding.inflate(LayoutInflater.from(context), null, false)
         dialog.setContentView(binding.root)
+        fixSystemBarsPadding(binding.root)
 
         var currentSubtitles: List<AbstractSubtitleEntities.SubtitleEntity> = emptyList()
         var currentSubtitle: AbstractSubtitleEntities.SubtitleEntity? = null
-
 
         val layout = R.layout.sort_bottom_single_choice_double_text
         val arrayAdapter =
@@ -1038,11 +1037,12 @@ class GeneratorPlayer : FullScreenPlayer() {
                 player.handleEvent(CSPlayerEvent.Pause, PlayerEventSource.UI)
                 val currentSubtitles = sortSubs(currentSubs)
 
-                val sourceDialog = Dialog(ctx, R.style.AlertDialogCustomBlack)
+                val sourceDialog = Dialog(ctx, R.style.DialogFullscreenPlayer)
                 val binding =
                     PlayerSelectSourceAndSubsBinding.inflate(LayoutInflater.from(ctx), null, false)
                 sourceDialog.setContentView(binding.root)
 
+                fixSystemBarsPadding(binding.root)
                 selectSourceDialog = sourceDialog
 
                 sourceDialog.show()
@@ -1063,7 +1063,9 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 binding.subtitleSettingsBtt.setOnClickListener {
                     safe {
-                        SubtitlesFragment().show(this.parentFragmentManager, "SubtitleSettings")
+                        val subtitlesFragment = SubtitlesFragment()
+                        subtitlesFragment.systemBarsAddPadding = true
+                        subtitlesFragment.show(this.parentFragmentManager, "SubtitleSettings")
                     }
                 }
 
@@ -1297,7 +1299,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     val activity = activity ?: return@setOnClickListener
                     QualityProfileDialog(
                         activity,
-                        R.style.AlertDialogCustomBlack,
+                        R.style.DialogFullscreenPlayer,
                         currentLinks.mapNotNull { it.first },
                         currentQualityProfile
                     ) { profile ->
@@ -1395,9 +1397,11 @@ class GeneratorPlayer : FullScreenPlayer() {
                 val currentAudioTracks = tracks.allAudioTracks
                 val binding: PlayerSelectTracksBinding =
                     PlayerSelectTracksBinding.inflate(LayoutInflater.from(ctx), null, false)
-                val trackDialog = Dialog(ctx, R.style.AlertDialogCustomBlack)
+                val trackDialog = Dialog(ctx, R.style.DialogFullscreenPlayer)
                 trackDialog.setContentView(binding.root)
                 trackDialog.show()
+
+                fixSystemBarsPadding(binding.root)
 
 //                selectTracksDialog = tracksDialog
 
@@ -1857,6 +1861,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     " - "
                 }
             }$extra"
+
             4 -> headerName
             5 -> "$headerName${
                 if (headerName.isBlank()) {
@@ -1865,6 +1870,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     " - "
                 }
             }$extra"
+
             else -> ""
         }
         playerBinding?.playerVideoTitleRez?.apply {
@@ -1989,10 +1995,12 @@ class GeneratorPlayer : FullScreenPlayer() {
     override fun showEpisodesOverlay() {
         try {
             playerBinding?.apply {
+                playerEpisodeList.setRecycledViewPool(EpisodeAdapter.sharedPool)
                 playerEpisodeList.adapter = EpisodeAdapter(
                     false,
                     { episodeClick ->
                         if (episodeClick.action == ACTION_CLICK_DEFAULT) {
+                            isNextEpisode = false
                             player.release()
                             playerEpisodeOverlay.isGone = true
                             episodeClick.position?.let { viewModel.loadThisEpisode(it) }
@@ -2038,11 +2046,15 @@ class GeneratorPlayer : FullScreenPlayer() {
                         val topIndex = layoutManager.findFirstCompletelyVisibleItemPosition()
                         if (topIndex != RecyclerView.NO_POSITION && topIndex != lastTopIndex) {
                             lastTopIndex = topIndex
-                            val topItem = episodes.getOrNull(topIndex)?.season
+                            val topItem = episodes.getOrNull(topIndex)
+
                             topItem?.let {
-                                val paddedSeasonString = String.format("%02d", topItem)
-                                playerEpisodeOverlayTitle.text =
-                                    "${context?.getString(R.string.episodes)}:${context?.getString(R.string.season_short)}${paddedSeasonString}"
+                                playerEpisodeOverlayTitle.setText(
+                                    ResultViewModel2.seasonToTxt(
+                                        topItem.seasonData,
+                                        topItem.seasonIndex
+                                    )
+                                )
                             }
                         }
                     }

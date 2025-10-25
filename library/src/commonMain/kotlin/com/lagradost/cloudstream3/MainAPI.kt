@@ -42,7 +42,7 @@ import kotlin.math.roundToInt
 @RequiresOptIn(
     message = "This API is only available on prerelease builds. " +
               "Using it will cause CloudStream stable to crash.",
-    level = RequiresOptIn.Level.WARNING
+    level = RequiresOptIn.Level.ERROR
 )
 annotation class Prerelease
 
@@ -403,7 +403,7 @@ fun newHomePageResponse(
     list: List<SearchResponse>,
     hasNext: Boolean? = null,
 ): HomePageResponse {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     return HomePageResponse(
         listOf(HomePageList(name, list)),
         hasNext = hasNext ?: list.isNotEmpty()
@@ -415,7 +415,7 @@ fun newHomePageResponse(
     list: List<SearchResponse>,
     hasNext: Boolean? = null,
 ): HomePageResponse {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     return HomePageResponse(
         listOf(HomePageList(data.name, list, data.horizontalImages)),
         hasNext = hasNext ?: list.isNotEmpty()
@@ -423,16 +423,15 @@ fun newHomePageResponse(
 }
 
 fun newHomePageResponse(list: HomePageList, hasNext: Boolean? = null): HomePageResponse {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     return HomePageResponse(listOf(list), hasNext = hasNext ?: list.list.isNotEmpty())
 }
 
 fun newHomePageResponse(list: List<HomePageList>, hasNext: Boolean? = null): HomePageResponse {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     return HomePageResponse(list, hasNext = hasNext ?: list.any { it.list.isNotEmpty() })
 }
 
-@Prerelease
 fun newSearchResponseList(
     list: List<SearchResponse>,
     hasNext: Boolean? = null,
@@ -444,7 +443,6 @@ fun newSearchResponseList(
     )
 }
 
-@Prerelease
 fun List<SearchResponse>.toNewSearchResponseList(hasNext: Boolean? = null) : SearchResponseList {
     return newSearchResponseList(this, hasNext)
 }
@@ -596,7 +594,6 @@ abstract class MainAPI {
         throw NotImplementedError()
     }
 
-    @Prerelease
     /** Paginated search, starts with page: 1 */
     open suspend fun search(query: String, page: Int): SearchResponseList? {
         val searchResults = search(query) ?: return null
@@ -835,6 +832,10 @@ class Score private constructor(
     override fun hashCode(): Int = this.data.hashCode()
     override fun equals(other: Any?): Boolean = other is Score && this.data == other.data
 
+    @Deprecated(
+        "toOld() is deprecated. Use other Score methods instead.",
+        level = DeprecationLevel.ERROR
+    )
     fun toOld(): Int = toInt(10000)
 
     fun toByte(maxScore: Int): Byte = toLong(maxScore).toByte()
@@ -933,6 +934,10 @@ class Score private constructor(
         const val MAX_ZEROS: Int = 9
         private const val TAG: String = "Score"
 
+        @Deprecated(
+            "Score.fromOld is deprecated. Use other Score.from* methods instead.",
+            level = DeprecationLevel.ERROR
+        )
         fun fromOld(value: Int?): Score? {
             if (value == null) return null
             if (value < 0 || value > 10000) {
@@ -1109,12 +1114,10 @@ data class SubtitleFile private constructor(
     var url: String,
     var headers: Map<String, String>?
 ) {
-    /** Backwards compatible constructor, mark this as deprecated when new stable comes out */
-    // @Deprecated("Use newSubtitleFile method", level = DeprecationLevel.WARNING)
+    @Deprecated("Use newSubtitleFile method", level = DeprecationLevel.WARNING)
     constructor(lang: String, url: String) : this(lang = lang, url = url, headers = null)
 
     /** Language code to properly filter auto select / download subtitles */
-    @Prerelease
     val langTag: String?
         get() = fromCodeToLangTagIETF(lang) ?: fromLanguageToTagIETF(lang, true)
 
@@ -1125,13 +1128,12 @@ data class SubtitleFile private constructor(
 }
 
 // No `MainAPI.` to be able to use this in extractors
-@Prerelease
 suspend fun newSubtitleFile(
     lang: String,
     url: String,
     initializer: suspend SubtitleFile.() -> Unit = { }
 ): SubtitleFile {
-    // @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION")
     val builder = SubtitleFile(
         lang, url
     )
@@ -1145,7 +1147,7 @@ suspend fun newSubtitleFile(
  * @property hasNext if there is a next page or not.
  * */
 data class HomePageResponse
-@Deprecated("Use newHomePageResponse method", level = DeprecationLevel.WARNING)
+@Deprecated("Use newHomePageResponse method", level = DeprecationLevel.ERROR)
 constructor(
     val items: List<HomePageList>,
     val hasNext: Boolean = false
@@ -1166,7 +1168,6 @@ data class HomePageList(
  * @property items list of [SearchResponse] items that will be added to the search row.
  * @property hasNext if there is a next page or not.
  * */
-@Prerelease
 data class SearchResponseList
 @Deprecated("Use newSearchResponseList method", level = DeprecationLevel.ERROR)
 constructor(
@@ -1750,12 +1751,15 @@ interface LoadResponse {
 
     @Deprecated(
         "`rating` is the old scoring system, use score instead",
-        replaceWith = ReplaceWith("score")
+        replaceWith = ReplaceWith("score"),
+        level = DeprecationLevel.ERROR
     )
     var rating: Int?
         set(value) {
+            @Suppress("DEPRECATION_ERROR")
             this.score = Score.fromOld(value)
         }
+        @Suppress("DEPRECATION_ERROR")
         get() = score?.toOld()
 
     companion object {
@@ -1945,12 +1949,20 @@ interface LoadResponse {
             this.addSimklId(SimklSyncServices.Imdb, id)
         }
 
-        @Deprecated("Outdated API due to misspelling", ReplaceWith("addTraktId(id)"))
+        @Deprecated(
+            "Outdated API due to misspelling",
+            replaceWith = ReplaceWith("addTraktId(id)"),
+            level = DeprecationLevel.ERROR
+        )
         fun LoadResponse.addTrackId(id: String?) {
             this.addTraktId(id)
         }
 
-        @Deprecated("Outdated API due to missing capitalization", ReplaceWith("addKitsuId(id)"))
+        @Deprecated(
+            "Outdated API due to missing capitalization",
+            replaceWith = ReplaceWith("addKitsuId(id)"),
+            level = DeprecationLevel.ERROR
+        )
         fun LoadResponse.addkitsuId(id: String?) {
             this.addKitsuId(id)
         }
@@ -1978,12 +1990,22 @@ interface LoadResponse {
             this.score = score
         }
 
+        @Deprecated(
+            "Use addScore",
+            replaceWith = ReplaceWith("addScore"),
+            level = DeprecationLevel.ERROR
+        )
         fun LoadResponse.addRating(text: String?) {
             this.score = Score.from10(text)
         }
 
-        @Deprecated("Use addScore", replaceWith = ReplaceWith("addScore"))
+        @Deprecated(
+            "Use addScore",
+            replaceWith = ReplaceWith("addScore"),
+            level = DeprecationLevel.ERROR
+        )
         fun LoadResponse.addRating(value: Int?) {
+            @Suppress("DEPRECATION_ERROR")
             this.score = Score.fromOld(value)
         }
 
@@ -2114,20 +2136,7 @@ data class NextAiring(
     val episode: Int,
     val unixTime: Long,
     val season: Int? = null,
-) {
-    /**
-     * Secondary constructor for backwards compatibility without season.
-     *  TODO Remove this constructor after there is a new stable release and extensions are updated to support season.
-     */
-    constructor(
-        episode: Int,
-        unixTime: Long,
-    ) : this(
-        episode,
-        unixTime,
-        null
-    )
-}
+)
 
 /** Data class holds season info.
  * @param season To be mapped with episode season, not shown in UI if displaySeason is defined
@@ -2199,59 +2208,7 @@ constructor(
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
-) : LoadResponse {
-    /**
-     * Secondary constructor for backwards compatibility without contentRating.
-     * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
-     */
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(
-        "Use newTorrentLoadResponse method with contentRating included",
-        level = DeprecationLevel.ERROR
-    )
-    constructor(
-        name: String,
-        url: String,
-        apiName: String,
-        magnet: String?,
-        torrent: String?,
-        plot: String?,
-        type: TvType = TvType.Torrent,
-        posterUrl: String? = null,
-        year: Int? = null,
-        rating: Int? = null,
-        tags: List<String>? = null,
-        duration: Int? = null,
-        trailers: MutableList<TrailerData> = mutableListOf(),
-        recommendations: List<SearchResponse>? = null,
-        actors: List<ActorData>? = null,
-        comingSoon: Boolean = false,
-        syncData: MutableMap<String, String> = mutableMapOf(),
-        posterHeaders: Map<String, String>? = null,
-        backgroundPosterUrl: String? = null,
-    ) : this(
-        name,
-        url,
-        apiName,
-        magnet,
-        torrent,
-        plot,
-        type,
-        posterUrl,
-        year,
-        Score.fromOld(rating),
-        tags,
-        duration,
-        trailers,
-        recommendations,
-        actors,
-        comingSoon,
-        syncData,
-        posterHeaders,
-        backgroundPosterUrl,
-        null
-    )
-}
+) : LoadResponse
 
 suspend fun MainAPI.newTorrentLoadResponse(
     name: String,
@@ -2337,68 +2294,6 @@ constructor(
             }
         } + episode
     }
-
-    /**
-     * Secondary constructor for backwards compatibility without contentRating.
-     * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
-     */
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(
-        "Use newAnimeLoadResponse method with contentRating included",
-        level = DeprecationLevel.ERROR
-    )
-    constructor(
-        engName: String? = null,
-        japName: String? = null,
-        name: String,
-        url: String,
-        apiName: String,
-        type: TvType,
-        posterUrl: String? = null,
-        year: Int? = null,
-        episodes: MutableMap<DubStatus, List<Episode>> = mutableMapOf(),
-        showStatus: ShowStatus? = null,
-        plot: String? = null,
-        tags: List<String>? = null,
-        synonyms: List<String>? = null,
-        rating: Int? = null,
-        duration: Int? = null,
-        trailers: MutableList<TrailerData> = mutableListOf(),
-        recommendations: List<SearchResponse>? = null,
-        actors: List<ActorData>? = null,
-        comingSoon: Boolean = false,
-        syncData: MutableMap<String, String> = mutableMapOf(),
-        posterHeaders: Map<String, String>? = null,
-        nextAiring: NextAiring? = null,
-        seasonNames: List<SeasonData>? = null,
-        backgroundPosterUrl: String? = null,
-    ) : this(
-        engName,
-        japName,
-        name,
-        url,
-        apiName,
-        type,
-        posterUrl,
-        year,
-        episodes,
-        showStatus,
-        plot,
-        tags,
-        synonyms,
-        Score.fromOld(rating),
-        duration,
-        trailers,
-        recommendations,
-        actors,
-        comingSoon,
-        syncData,
-        posterHeaders,
-        nextAiring,
-        seasonNames,
-        backgroundPosterUrl,
-        null
-    )
 }
 
 /**
@@ -2458,57 +2353,7 @@ constructor(
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
-) : LoadResponse {
-    /**
-     * Secondary constructor for backwards compatibility without contentRating.
-     * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
-     */
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(
-        "Use newLiveStreamLoadResponse method with contentRating included",
-        level = DeprecationLevel.ERROR
-    )
-    constructor(
-        name: String,
-        url: String,
-        apiName: String,
-        dataUrl: String,
-        posterUrl: String? = null,
-        year: Int? = null,
-        plot: String? = null,
-        type: TvType = TvType.Live,
-        rating: Int? = null,
-        tags: List<String>? = null,
-        duration: Int? = null,
-        trailers: MutableList<TrailerData> = mutableListOf(),
-        recommendations: List<SearchResponse>? = null,
-        actors: List<ActorData>? = null,
-        comingSoon: Boolean = false,
-        syncData: MutableMap<String, String> = mutableMapOf(),
-        posterHeaders: Map<String, String>? = null,
-        backgroundPosterUrl: String? = null,
-    ) : this(
-        name,
-        url,
-        apiName,
-        dataUrl,
-        posterUrl,
-        year,
-        plot,
-        type,
-        Score.fromOld(rating),
-        tags,
-        duration,
-        trailers,
-        recommendations,
-        actors,
-        comingSoon,
-        syncData,
-        posterHeaders,
-        backgroundPosterUrl,
-        null
-    )
-}
+) : LoadResponse
 
 suspend fun MainAPI.newLiveStreamLoadResponse(
     name: String,
@@ -2556,57 +2401,7 @@ constructor(
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
-) : LoadResponse {
-    /**
-     * Secondary constructor for backwards compatibility without contentRating.
-     * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
-     */
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(
-        "Use newMovieLoadResponse method with contentRating included",
-        level = DeprecationLevel.ERROR
-    )
-    constructor(
-        name: String,
-        url: String,
-        apiName: String,
-        type: TvType,
-        dataUrl: String,
-        posterUrl: String? = null,
-        year: Int? = null,
-        plot: String? = null,
-        rating: Int? = null,
-        tags: List<String>? = null,
-        duration: Int? = null,
-        trailers: MutableList<TrailerData> = mutableListOf(),
-        recommendations: List<SearchResponse>? = null,
-        actors: List<ActorData>? = null,
-        comingSoon: Boolean = false,
-        syncData: MutableMap<String, String> = mutableMapOf(),
-        posterHeaders: Map<String, String>? = null,
-        backgroundPosterUrl: String? = null,
-    ) : this(
-        name,
-        url,
-        apiName,
-        type,
-        dataUrl,
-        posterUrl,
-        year,
-        plot,
-        Score.fromOld(rating),
-        tags,
-        duration,
-        trailers,
-        recommendations,
-        actors,
-        comingSoon,
-        syncData,
-        posterHeaders,
-        backgroundPosterUrl,
-        null
-    )
-}
+) : LoadResponse
 
 suspend fun <T> MainAPI.newMovieLoadResponse(
     name: String,
@@ -2684,32 +2479,14 @@ constructor(
 ) {
     @Deprecated(
         "`rating` is the old scoring system, use score instead",
-        replaceWith = ReplaceWith("score")
+        replaceWith = ReplaceWith("score"),
+        level = DeprecationLevel.ERROR
     )
     var rating: Int?
         set(value) {
             this.score = Score.from(value, 100)
         }
         get() = score?.toInt(100)
-
-    /**
-     * Secondary constructor for backwards compatibility without runTime.
-     *  TODO Remove this constructor after there is a new stable release and extensions are updated to support runTime.
-     */
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated("Use newEpisode method", level = DeprecationLevel.ERROR)
-    constructor(
-        data: String,
-        name: String? = null,
-        season: Int? = null,
-        episode: Int? = null,
-        posterUrl: String? = null,
-        rating: Int? = null,
-        description: String? = null,
-        date: Long? = null,
-    ) : this(
-        data, name, season, episode, posterUrl, Score.fromOld(rating), description, date, null
-    )
 }
 
 fun Episode.addDate(date: String?, format: String = "yyyy-MM-dd") {
@@ -2825,62 +2602,6 @@ constructor(
             episodeSeason in 1..<season
         } + episode
     }
-
-    /**
-     * Secondary constructor for backwards compatibility without contentRating.
-     * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
-     */
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(
-        "Use newTvSeriesLoadResponse method with contentRating included",
-        level = DeprecationLevel.ERROR
-    )
-    constructor(
-        name: String,
-        url: String,
-        apiName: String,
-        type: TvType,
-        episodes: List<Episode>,
-        posterUrl: String? = null,
-        year: Int? = null,
-        plot: String? = null,
-        showStatus: ShowStatus? = null,
-        rating: Int? = null,
-        tags: List<String>? = null,
-        duration: Int? = null,
-        trailers: MutableList<TrailerData> = mutableListOf(),
-        recommendations: List<SearchResponse>? = null,
-        actors: List<ActorData>? = null,
-        comingSoon: Boolean = false,
-        syncData: MutableMap<String, String> = mutableMapOf(),
-        posterHeaders: Map<String, String>? = null,
-        nextAiring: NextAiring? = null,
-        seasonNames: List<SeasonData>? = null,
-        backgroundPosterUrl: String? = null,
-    ) : this(
-        name,
-        url,
-        apiName,
-        type,
-        episodes,
-        posterUrl,
-        year,
-        plot,
-        showStatus,
-        Score.fromOld(rating),
-        tags,
-        duration,
-        trailers,
-        recommendations,
-        actors,
-        comingSoon,
-        syncData,
-        posterHeaders,
-        nextAiring,
-        seasonNames,
-        backgroundPosterUrl,
-        null
-    )
 }
 
 suspend fun MainAPI.newTvSeriesLoadResponse(
@@ -2912,6 +2633,10 @@ fun fetchUrls(text: String?): List<String> {
     return linkRegex.findAll(text).map { it.value.trim().removeSurrounding("\"") }.toList()
 }
 
+@Deprecated(
+    "toRatingInt() is deprecated. Use new score API instead.",
+    level = DeprecationLevel.ERROR
+)
 fun String?.toRatingInt(): Int? =
     this?.replace(" ", "")?.trim()?.toDoubleOrNull()?.absoluteValue?.times(1000f)?.toInt()
 

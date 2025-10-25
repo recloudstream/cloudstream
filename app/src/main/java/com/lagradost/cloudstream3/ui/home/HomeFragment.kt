@@ -11,7 +11,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AbsListView
+import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ListView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -22,9 +28,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
-import com.lagradost.cloudstream3.*
+import com.lagradost.api.Log
 import com.lagradost.cloudstream3.APIHolder.apis
+import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.MainAPI
+import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.databinding.FragmentHomeBinding
 import com.lagradost.cloudstream3.databinding.HomeEpisodesExpandedBinding
 import com.lagradost.cloudstream3.databinding.HomeSelectMainpageBinding
@@ -36,12 +47,15 @@ import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
-import com.lagradost.cloudstream3.utils.txt
-import com.lagradost.cloudstream3.ui.search.*
+import com.lagradost.cloudstream3.ui.account.AccountViewModel
+import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
+import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_PLAY_FILE
+import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
@@ -55,25 +69,14 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
+import com.lagradost.cloudstream3.utils.TvChannelUtils
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
-import java.util.*
-import androidx.tvprovider.media.tv.TvContractCompat
-import androidx.tvprovider.media.tv.PreviewProgram
-import com.lagradost.api.Log
-import android.content.ContentUris
-import com.lagradost.cloudstream3.utils.AppContextUtils
-import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.withTimeout
-import org.schabi.newpipe.extractor.timeago.patterns.de
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import android.os.Parcelable
-import com.lagradost.cloudstream3.ui.account.AccountViewModel
-import com.lagradost.cloudstream3.utils.TvChannelUtils
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import com.lagradost.cloudstream3.utils.txt
 
 
 private const val TAG = "HomeFragment"
@@ -193,7 +196,7 @@ class HomeFragment : Fragment() {
 
             // Span settings
             binding.homeExpandedRecycler.spanCount = currentSpan
-
+            binding.homeExpandedRecycler.setRecycledViewPool(SearchAdapter.sharedPool)
             binding.homeExpandedRecycler.adapter =
                 SearchAdapter(item.list.toMutableList(), binding.homeExpandedRecycler) { callback ->
                     handleSearchClickCallback(callback)
@@ -641,6 +644,12 @@ class HomeFragment : Fragment() {
         context?.let { HomeChildItemAdapter.updatePosterSize(it) }
 
         binding?.apply {
+            fixSystemBarsPadding(
+                root,
+                padTop = false,
+                padBottom = isLandscape(),
+                padLeft = isLayout(TV or EMULATOR)
+            )
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
             homeApiFab.setOnClickListener(apiChangeClickListener)
@@ -664,20 +673,65 @@ class HomeFragment : Fragment() {
                 fragment = this@HomeFragment,
                 homeViewModel, accountViewModel
             )
+            homeMasterRecycler.setRecycledViewPool(ParentItemAdapter.sharedPool)
             homeMasterRecycler.adapter = homeMasterAdapter
-            //fixPaddingStatusbar(homeLoadingStatusbar)
 
             homeApiFab.isVisible = isLayout(PHONE)
 
+            homePreviewReloadProvider.setOnClickListener {
+                homeViewModel.loadAndCancel(
+                    homeViewModel.apiName.value ?: noneApi.name,
+                    forceReload = true,
+                    fromUI = true
+                )
+                showToast(R.string.action_reload, Toast.LENGTH_SHORT)
+                true
+            }
+
+            homePreviewSearchButton.setOnClickListener { _ ->
+                // Open blank screen.
+                homeViewModel.queryTextSubmit("")
+            }
+
             homeMasterRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (dy > 0) { //check for scroll down
-                        homeApiFab.shrink() // hide
-                        homeRandom.shrink()
-                    } else if (dy < -5) {
-                        if (isLayout(PHONE)) {
-                            homeApiFab.extend() // show
-                            homeRandom.extend()
+                    if(isLayout(PHONE)) {
+                        // Fab is only relevant to Phone
+                        if (dy > 0) { //check for scroll down
+                            homeApiFab.shrink() // hide
+                            homeRandom.shrink()
+                        } else if (dy < -5) {
+                            if (isLayout(PHONE)) {
+                                homeApiFab.extend() // show
+                                homeRandom.extend()
+                            }
+                        }
+                    } else {
+                        // Header scrolling is only relevant to TV/Emulator
+
+                        val view = recyclerView.findViewHolderForAdapterPosition(0)?.itemView
+                        val scrollParent = binding?.homeApiHolder
+
+                        if (view == null) {
+                            // The first view is not visible, so we can assume we have scrolled past it
+                            scrollParent?.isVisible = false
+                        } else {
+                            // A bit weird, but this is a major limitation we are working around here
+                            // 1. We cant have a real parent to the recyclerview as android cant layout that without lagging
+                            // 2. We cant put the view in the recyclerview, as it should always be shown
+                            // 3. We cant mirror the view in the recyclerview as then it causes focus issues when swaping out the mirror view
+                            //
+                            // This means that if we want to have a parent view to the recyclerview we are out of luck
+                            // Instead this uses getLocationInWindow to calculate how much the view should be scrolled
+                            // as recyclerView has no scrollY (always 0)
+                            //
+                            // Then it manually "scrolls" it to the correct position
+                            //
+                            // Hopefully getLocationInWindow acts correctly on all devices
+                            val rect = IntArray(2)
+                            view.getLocationInWindow(rect)
+                            scrollParent?.isVisible = true
+                            scrollParent?.translationY = rect[1].toFloat() - 60.toPx
                         }
                     }
                     super.onScrolled(recyclerView, dx, dy)
@@ -699,8 +753,12 @@ class HomeFragment : Fragment() {
 
         observe(homeViewModel.apiName) { apiName ->
             currentApiName = apiName
-            binding?.homeApiFab?.text = apiName
-            binding?.homeChangeApi?.text = apiName
+            binding?.apply {
+                homeApiFab.text = apiName
+                homeChangeApi.text = apiName
+                homePreviewReloadProvider.isGone = (apiName == noneApi.name)
+                homePreviewSearchButton.isGone = (apiName == noneApi.name)
+            }
         }
 
         observe(homeViewModel.page) { data ->
@@ -798,10 +856,6 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-
-
-        //context?.fixPaddingStatusbarView(home_statusbar)
-        //context?.fixPaddingStatusbar(home_padding)
 
         observeNullable(homeViewModel.popup) { item ->
             if (item == null) {
