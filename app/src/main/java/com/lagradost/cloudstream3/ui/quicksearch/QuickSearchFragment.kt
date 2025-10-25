@@ -43,9 +43,9 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.filterSearchResultByFilm
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRecyclerScrollable
 import com.lagradost.cloudstream3.utils.AppContextUtils.ownShow
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
-import com.lagradost.cloudstream3.utils.UIHelper
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
+import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import java.util.concurrent.locks.ReentrantLock
@@ -149,7 +149,7 @@ class QuickSearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fixPaddingStatusbar(binding?.quickSearchRoot)
+        fixSystemBarsPadding(binding?.quickSearchRoot)
         fixGrid()
 
         arguments?.getStringArray(PROVIDER_KEY)?.let {
@@ -164,6 +164,7 @@ class QuickSearchFragment : Fragment() {
         val firstProvider = providers?.firstOrNull()
         if (isSingleProvider && firstProvider != null) {
             binding?.quickSearchAutofitResults?.apply {
+                setRecycledViewPool(SearchAdapter.sharedPool)
                 adapter = SearchAdapter(
                     ArrayList(),
                     this,
@@ -201,6 +202,7 @@ class QuickSearchFragment : Fragment() {
                 logError(e)
             }
         } else {
+            binding?.quickSearchMasterRecycler?.setRecycledViewPool(ParentItemAdapter.sharedPool)
             binding?.quickSearchMasterRecycler?.adapter =
                 ParentItemAdapter(
                     fragment = this,
@@ -276,13 +278,13 @@ class QuickSearchFragment : Fragment() {
         // Set the color for the search exit icon to the correct theme text color
         val searchExitIconColor = TypedValue()
 
-        activity?.theme?.resolveAttribute(android.R.attr.textColor, searchExitIconColor, true)
+        activity?.theme?.resolveAttribute(R.attr.textColor, searchExitIconColor, true)
         searchExitIcon?.setColorFilter(searchExitIconColor.data)
 
         binding?.quickSearch?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 if (search(context, query, false))
-                    UIHelper.hideKeyboard(binding?.quickSearch)
+                    hideKeyboard(binding?.quickSearch)
                 return true
             }
 
@@ -321,13 +323,6 @@ class QuickSearchFragment : Fragment() {
             }
         }
 
-
-        //quick_search.setOnQueryTextFocusChangeListener { _, b ->
-        //    if (b) {
-        //        // https://stackoverflow.com/questions/12022715/unable-to-show-keyboard-automatically-in-the-searchview
-        //        UIHelper.showInputMethod(view.findFocus())
-        //    }
-        //}
         if (isLayout(PHONE or EMULATOR)) {
             binding?.quickSearchBack?.apply {
                 isVisible = true

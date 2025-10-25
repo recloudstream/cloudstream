@@ -40,14 +40,16 @@ import com.lagradost.cloudstream3.ui.player.CustomDecoder
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.setSubtitleAlignment
 import com.lagradost.cloudstream3.ui.player.OutlineSpan
 import com.lagradost.cloudstream3.ui.player.RoundedBackgroundColorSpan
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper.languages
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
@@ -95,14 +97,21 @@ class SubtitlesFragment : DialogFragment() {
         val applyStyleEvent = Event<SaveCaptionStyle>()
         private val captionRegex = Regex("""(-\s?|)[\[({][\S\s]*?[])}]\s*""")
 
-        fun setSubtitleViewStyle(view: SubtitleView?, data: SaveCaptionStyle) {
+        fun setSubtitleViewStyle(
+            view: SubtitleView?,
+            data: SaveCaptionStyle,
+            applyElevation: Boolean
+        ) {
             if (view == null) return
             val ctx = view.context ?: return
             val style = ctx.fromSaveToStyle(data)
             view.setStyle(style)
-            view.setPadding(
-                view.paddingLeft, data.elevation.toPx, view.paddingRight, view.paddingBottom
-            )
+
+            if (applyElevation) {
+                view.setPadding(
+                    view.paddingLeft, data.elevation.toPx, view.paddingRight, view.paddingBottom
+                )
+            }
 
             // we default to 25sp, this is needed as RoundedBackgroundColorSpan breaks on override sizes
             val size = data.fixedTextSize ?: 25.0f
@@ -317,7 +326,7 @@ class SubtitlesFragment : DialogFragment() {
     private fun Context.updateState() {
         val text = getString(R.string.subtitles_example_text)
         val fixedText = SpannableString.valueOf(if (state.upperCase) text.uppercase() else text)
-        setSubtitleViewStyle(binding?.subtitleText, state)
+        setSubtitleViewStyle(binding?.subtitleText, state, false)
 
         binding?.subtitleText?.setCues(
             listOf(
@@ -362,6 +371,8 @@ class SubtitlesFragment : DialogFragment() {
     private lateinit var state: SaveCaptionStyle
     private var hide: Boolean = true
 
+    var systemBarsAddPadding = isLayout(TV or EMULATOR)
+
     override fun onDestroy() {
         super.onDestroy()
         onColorSelectedEvent -= ::onColorSelected
@@ -369,11 +380,11 @@ class SubtitlesFragment : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.setWindowAnimations(R.style.DialogFullscreen)
+        dialog?.window?.setWindowAnimations(R.style.DialogFullscreenPlayer)
     }
 
     override fun getTheme(): Int {
-        return R.style.DialogFullscreen
+        return R.style.DialogFullscreenPlayer
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -386,7 +397,11 @@ class SubtitlesFragment : DialogFragment() {
             context?.getExternalFilesDir(null)?.absolutePath.toString() + "/Fonts"
         )
 
-        fixPaddingStatusbar(binding?.subsRoot)
+        fixSystemBarsPadding(
+            binding?.subsRoot,
+            padBottom = systemBarsAddPadding || isLandscape(),
+            padLeft = systemBarsAddPadding
+        )
 
         state = getCurrentSavedStyle()
         context?.updateState()
@@ -704,11 +719,17 @@ class SubtitlesFragment : DialogFragment() {
             subsAutoSelectLanguage.setFocusableInTv()
             subsAutoSelectLanguage.setOnClickListener { textView ->
                 val languagesTagName =
-                    listOf( Pair(textView.context.getString(R.string.none),
-                                 textView.context.getString(R.string.none))) +
-                    languages
-                        .map { Pair(it.IETF_tag, it.nameNextToFlagEmoji()) }
-                        .sortedBy { it.second.substringAfter("\u00a0").lowercase() } // name ignoring flag emoji
+                    listOf(
+                        Pair(
+                            textView.context.getString(R.string.none),
+                            textView.context.getString(R.string.none)
+                        )
+                    ) +
+                            languages
+                                .map { Pair(it.IETF_tag, it.nameNextToFlagEmoji()) }
+                                .sortedBy {
+                                    it.second.substringAfter("\u00a0").lowercase()
+                                } // name ignoring flag emoji
 
                 val (langTagsIETF, langNames) = languagesTagName.unzip()
 
@@ -734,13 +755,15 @@ class SubtitlesFragment : DialogFragment() {
                 val languagesTagName =
                     languages
                         .map { Pair(it.IETF_tag, it.nameNextToFlagEmoji()) }
-                        .sortedBy { it.second.substringAfter("\u00a0").lowercase() } // name ignoring flag emoji
+                        .sortedBy {
+                            it.second.substringAfter("\u00a0").lowercase()
+                        } // name ignoring flag emoji
 
                 val (langTagsIETF, langNames) = languagesTagName.unzip()
 
                 val selectedLanguages = getDownloadSubsLanguageTagIETF()
-                                        .map { langTagsIETF.indexOf(it) }
-                                        .filter { it >= 0 }
+                    .map { langTagsIETF.indexOf(it) }
+                    .filter { it >= 0 }
 
                 activity?.showMultiDialog(
                     langNames,

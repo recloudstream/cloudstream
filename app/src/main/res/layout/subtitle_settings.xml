@@ -1,314 +1,315 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/subs_root"
+    android:background="?attr/primaryBlackBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/primaryBlackBackground">
+    android:orientation="vertical">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_rowWeight="1"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="10dp"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:text="@string/subtitles_settings"
-            android:textColor="?attr/textColor"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="75sp">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/preview_background_img_des"
-                android:scaleType="centerCrop"
-                android:src="@drawable/subtitles_preview_background" />
-
-            <androidx.media3.ui.SubtitleView
-                android:id="@+id/subtitle_text"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:foregroundGravity="center" />
-        </FrameLayout>
-
-        <TextView
-            android:id="@+id/subs_font"
-            style="@style/SettingsItem"
-            android:nextFocusLeft="@id/apply_btt"
-
-            android:nextFocusRight="@id/cancel_btt"
-            android:nextFocusDown="@id/subs_font_size"
-            android:text="@string/subs_font" />
-
-        <TextView
-            android:id="@+id/subs_font_size"
-            style="@style/SettingsItem"
-            android:nextFocusLeft="@id/apply_btt"
-            android:nextFocusRight="@id/cancel_btt"
-
-            android:nextFocusUp="@id/subs_font"
-            android:nextFocusDown="@id/subs_text_color"
-            android:text="@string/subs_font_size" />
-
-        <TextView
-            android:id="@+id/subs_text_color"
-            style="@style/SettingsItem"
-            android:nextFocusLeft="@id/apply_btt"
-            android:nextFocusRight="@id/cancel_btt"
-
-            android:nextFocusUp="@id/subs_font_size"
-            android:nextFocusDown="@id/subs_outline_color"
-            android:text="@string/subs_text_color" />
-
-        <TextView
-            android:id="@+id/subs_outline_color"
-            style="@style/SettingsItem"
-            android:nextFocusLeft="@id/apply_btt"
-            android:nextFocusRight="@id/cancel_btt"
-
-            android:nextFocusUp="@id/subs_text_color"
-            android:nextFocusDown="@id/subs_background_color"
-            android:text="@string/subs_outline_color" />
-
-        <TextView
-            android:id="@+id/subs_background_color"
-            style="@style/SettingsItem"
-            android:nextFocusLeft="@id/apply_btt"
-            android:nextFocusRight="@id/cancel_btt"
-
-            android:nextFocusUp="@id/subs_outline_color"
-            android:nextFocusDown="@id/subs_background_radius"
-            android:text="@string/subs_background_color" />
-
-        <TextView
-            android:id="@+id/subs_background_radius"
-            style="@style/SettingsItem"
-            android:nextFocusLeft="@id/apply_btt"
-            android:nextFocusRight="@id/cancel_btt"
-
-            android:nextFocusUp="@id/subs_background_color"
-            android:nextFocusDown="@id/subs_window_color"
-            android:text="@string/background_radius" />
-
-        <TextView
-            android:id="@+id/subs_window_color"
-            style="@style/SettingsItem"
-            android:nextFocusLeft="@id/apply_btt"
-            android:nextFocusRight="@id/cancel_btt"
-
-            android:nextFocusUp="@id/subs_background_radius"
-            android:nextFocusDown="@id/subs_edge_type"
-            android:text="@string/subs_window_color" />
-
-        <TextView
-            android:id="@+id/subs_edge_type"
-            style="@style/SettingsItem"
-            android:nextFocusLeft="@id/apply_btt"
-            android:nextFocusRight="@id/cancel_btt"
-
-            android:nextFocusUp="@id/subs_window_color"
-            android:nextFocusDown="@id/subs_edge_size"
-            android:text="@string/subs_edge_type" />
-
-
-        <TextView
-            android:id="@+id/subs_edge_size"
-            style="@style/SettingsItem"
-            android:nextFocusLeft="@id/apply_btt"
-            android:nextFocusRight="@id/cancel_btt"
-
-            android:nextFocusUp="@id/subs_edge_type"
-            android:nextFocusDown="@id/subs_subtitle_alignment"
-            android:text="@string/subs_edge_size" />
-
-        <TextView
-            android:id="@+id/subs_subtitle_alignment"
-            style="@style/SettingsItem"
-            android:nextFocusLeft="@id/apply_btt"
-            android:nextFocusRight="@id/cancel_btt"
-
-            android:nextFocusUp="@id/subs_edge_size"
-            android:nextFocusDown="@id/subs_subtitle_elevation"
-            android:text="@string/subs_subtitle_alignment" />
-
-        <TextView
-            android:id="@+id/subs_subtitle_elevation"
-            style="@style/SettingsItem"
-            android:nextFocusLeft="@id/apply_btt"
-            android:nextFocusRight="@id/cancel_btt"
-
-            android:nextFocusUp="@id/subs_subtitle_alignment"
-            android:nextFocusDown="@id/subs_auto_select_language"
-            android:text="@string/subs_subtitle_elevation" />
-
-        <TextView
-            android:id="@+id/subs_auto_select_language"
-            style="@style/SettingsItem"
-            android:nextFocusLeft="@id/apply_btt"
-            android:nextFocusRight="@id/cancel_btt"
-
-            android:nextFocusUp="@id/subs_subtitle_elevation"
-            android:nextFocusDown="@id/subs_download_languages"
-            android:text="@string/subs_auto_select_language" />
-
-        <TextView
-            android:id="@+id/subs_download_languages"
-            style="@style/SettingsItem"
-            android:nextFocusLeft="@id/apply_btt"
-            android:nextFocusRight="@id/cancel_btt"
-
-            android:nextFocusUp="@id/subs_auto_select_language"
-            android:nextFocusDown="@id/subtitles_remove_bloat"
-            android:text="@string/subs_download_languages" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/subtitles_remove_bloat"
-            style="@style/SettingsItem"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fontFamily="@font/google_sans"
-            android:nextFocusLeft="@id/apply_btt"
-            android:nextFocusRight="@id/cancel_btt"
-            android:nextFocusUp="@id/subs_download_languages"
-            android:nextFocusDown="@id/subtitles_remove_captions"
-            android:text="@string/subtitles_remove_bloat"
-            app:trackTint="@color/toggle_selector"
-            app:drawableEndCompat="@null" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/subtitles_remove_captions"
-            style="@style/SettingsItem"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fontFamily="@font/google_sans"
-            android:nextFocusLeft="@id/apply_btt"
-            android:nextFocusRight="@id/cancel_btt"
-            android:nextFocusUp="@id/subtitles_remove_bloat"
-            android:nextFocusDown="@id/subtitles_filter_sub_lang"
-            android:text="@string/subtitles_remove_captions"
-            app:trackTint="@color/toggle_selector"
-            app:drawableEndCompat="@null" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/subtitles_filter_sub_lang"
-            style="@style/SettingsItem"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fontFamily="@font/google_sans"
-            android:nextFocusLeft="@id/apply_btt"
-            android:nextFocusRight="@id/cancel_btt"
-            android:nextFocusUp="@id/subtitles_remove_captions"
-            android:nextFocusDown="@id/subtitles_uppercase"
-            android:text="@string/subtitles_filter_lang"
-            app:trackTint="@color/toggle_selector"
-            app:drawableEndCompat="@null" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/subtitles_uppercase"
-            style="@style/SettingsItem"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fontFamily="@font/google_sans"
-            android:nextFocusLeft="@id/apply_btt"
-            android:nextFocusRight="@id/cancel_btt"
-            android:nextFocusUp="@id/subtitles_filter_sub_lang"
-            android:nextFocusDown="@id/subtitles_bold"
-            android:text="@string/uppercase_all_subtitles"
-            app:trackTint="@color/toggle_selector"
-            app:drawableEndCompat="@null" />
-
-
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/subtitles_bold"
-            style="@style/SettingsItem"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fontFamily="@font/google_sans"
-            android:nextFocusLeft="@id/apply_btt"
-            android:nextFocusRight="@id/cancel_btt"
-            android:nextFocusUp="@id/subtitles_uppercase"
-            android:nextFocusDown="@id/subtitles_italic"
-            android:text="@string/all_subtitles_bold"
-            app:trackTint="@color/toggle_selector"
-            app:drawableEndCompat="@null" />
-
-
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/subtitles_italic"
-            style="@style/SettingsItem"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fontFamily="@font/google_sans"
-            android:nextFocusLeft="@id/apply_btt"
-            android:nextFocusRight="@id/cancel_btt"
-            android:nextFocusUp="@id/subtitles_bold"
-            android:nextFocusDown="@id/apply_btt"
-            android:text="@string/all_subtitles_italic"
-            app:trackTint="@color/toggle_selector"
-            app:drawableEndCompat="@null" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_rowWeight="1"
-
-            android:gravity="center"
-            android:text="@string/subs_hold_to_reset_to_default"
-            android:textColor="?attr/textColor"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/subs_import_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_rowWeight="1"
-            android:gravity="center"
-            android:text="@string/subs_import_text"
-            android:textColor="?attr/textColor"
-            android:textSize="14sp" />
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_gravity="bottom"
-            android:gravity="bottom|end"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/apply_btt"
-                style="@style/WhiteButton"
-                android:layout_width="wrap_content"
-                android:layout_gravity="center_vertical|end"
-                android:nextFocusRight="@id/cancel_btt"
-                android:nextFocusUp="@id/subtitles_italic"
-                android:text="@string/sort_apply"
-                android:visibility="visible">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_rowWeight="1"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:text="@string/subtitles_settings"
+                android:textColor="?attr/textColor"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-                <requestFocus />
-            </com.google.android.material.button.MaterialButton>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="75sp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/cancel_btt"
-                style="@style/BlackButton"
-                android:layout_width="wrap_content"
-                android:layout_gravity="center_vertical|end"
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/preview_background_img_des"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/subtitles_preview_background" />
+
+                <androidx.media3.ui.SubtitleView
+                    android:id="@+id/subtitle_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:foregroundGravity="center" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/subs_font"
+                style="@style/SettingsItem"
                 android:nextFocusLeft="@id/apply_btt"
+
+                android:nextFocusRight="@id/cancel_btt"
+                android:nextFocusDown="@id/subs_font_size"
+                android:text="@string/subs_font" />
+
+            <TextView
+                android:id="@+id/subs_font_size"
+                style="@style/SettingsItem"
+                android:nextFocusLeft="@id/apply_btt"
+                android:nextFocusRight="@id/cancel_btt"
+
+                android:nextFocusUp="@id/subs_font"
+                android:nextFocusDown="@id/subs_text_color"
+                android:text="@string/subs_font_size" />
+
+            <TextView
+                android:id="@+id/subs_text_color"
+                style="@style/SettingsItem"
+                android:nextFocusLeft="@id/apply_btt"
+                android:nextFocusRight="@id/cancel_btt"
+
+                android:nextFocusUp="@id/subs_font_size"
+                android:nextFocusDown="@id/subs_outline_color"
+                android:text="@string/subs_text_color" />
+
+            <TextView
+                android:id="@+id/subs_outline_color"
+                style="@style/SettingsItem"
+                android:nextFocusLeft="@id/apply_btt"
+                android:nextFocusRight="@id/cancel_btt"
+
+                android:nextFocusUp="@id/subs_text_color"
+                android:nextFocusDown="@id/subs_background_color"
+                android:text="@string/subs_outline_color" />
+
+            <TextView
+                android:id="@+id/subs_background_color"
+                style="@style/SettingsItem"
+                android:nextFocusLeft="@id/apply_btt"
+                android:nextFocusRight="@id/cancel_btt"
+
+                android:nextFocusUp="@id/subs_outline_color"
+                android:nextFocusDown="@id/subs_background_radius"
+                android:text="@string/subs_background_color" />
+
+            <TextView
+                android:id="@+id/subs_background_radius"
+                style="@style/SettingsItem"
+                android:nextFocusLeft="@id/apply_btt"
+                android:nextFocusRight="@id/cancel_btt"
+
+                android:nextFocusUp="@id/subs_background_color"
+                android:nextFocusDown="@id/subs_window_color"
+                android:text="@string/background_radius" />
+
+            <TextView
+                android:id="@+id/subs_window_color"
+                style="@style/SettingsItem"
+                android:nextFocusLeft="@id/apply_btt"
+                android:nextFocusRight="@id/cancel_btt"
+
+                android:nextFocusUp="@id/subs_background_radius"
+                android:nextFocusDown="@id/subs_edge_type"
+                android:text="@string/subs_window_color" />
+
+            <TextView
+                android:id="@+id/subs_edge_type"
+                style="@style/SettingsItem"
+                android:nextFocusLeft="@id/apply_btt"
+                android:nextFocusRight="@id/cancel_btt"
+
+                android:nextFocusUp="@id/subs_window_color"
+                android:nextFocusDown="@id/subs_edge_size"
+                android:text="@string/subs_edge_type" />
+
+            <TextView
+                android:id="@+id/subs_edge_size"
+                style="@style/SettingsItem"
+                android:nextFocusLeft="@id/apply_btt"
+                android:nextFocusRight="@id/cancel_btt"
+
+                android:nextFocusUp="@id/subs_edge_type"
+                android:nextFocusDown="@id/subs_subtitle_alignment"
+                android:text="@string/subs_edge_size" />
+
+            <TextView
+                android:id="@+id/subs_subtitle_alignment"
+                style="@style/SettingsItem"
+                android:nextFocusLeft="@id/apply_btt"
+                android:nextFocusRight="@id/cancel_btt"
+
+                android:nextFocusUp="@id/subs_edge_size"
+                android:nextFocusDown="@id/subs_subtitle_elevation"
+                android:text="@string/subs_subtitle_alignment" />
+
+            <TextView
+                android:id="@+id/subs_subtitle_elevation"
+                style="@style/SettingsItem"
+                android:nextFocusLeft="@id/apply_btt"
+                android:nextFocusRight="@id/cancel_btt"
+
+                android:nextFocusUp="@id/subs_subtitle_alignment"
+                android:nextFocusDown="@id/subs_auto_select_language"
+                android:text="@string/subs_subtitle_elevation" />
+
+            <TextView
+                android:id="@+id/subs_auto_select_language"
+                style="@style/SettingsItem"
+                android:nextFocusLeft="@id/apply_btt"
+                android:nextFocusRight="@id/cancel_btt"
+
+                android:nextFocusUp="@id/subs_subtitle_elevation"
+                android:nextFocusDown="@id/subs_download_languages"
+                android:text="@string/subs_auto_select_language" />
+
+            <TextView
+                android:id="@+id/subs_download_languages"
+                style="@style/SettingsItem"
+                android:nextFocusLeft="@id/apply_btt"
+                android:nextFocusRight="@id/cancel_btt"
+
+                android:nextFocusUp="@id/subs_auto_select_language"
+                android:nextFocusDown="@id/subtitles_remove_bloat"
+                android:text="@string/subs_download_languages" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/subtitles_remove_bloat"
+                style="@style/SettingsItem"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/google_sans"
+                android:nextFocusLeft="@id/apply_btt"
+                android:nextFocusRight="@id/cancel_btt"
+                android:nextFocusUp="@id/subs_download_languages"
+                android:nextFocusDown="@id/subtitles_remove_captions"
+                android:text="@string/subtitles_remove_bloat"
+                app:trackTint="@color/toggle_selector"
+                app:drawableEndCompat="@null" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/subtitles_remove_captions"
+                style="@style/SettingsItem"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/google_sans"
+                android:nextFocusLeft="@id/apply_btt"
+                android:nextFocusRight="@id/cancel_btt"
+                android:nextFocusUp="@id/subtitles_remove_bloat"
+                android:nextFocusDown="@id/subtitles_filter_sub_lang"
+                android:text="@string/subtitles_remove_captions"
+                app:trackTint="@color/toggle_selector"
+                app:drawableEndCompat="@null" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/subtitles_filter_sub_lang"
+                style="@style/SettingsItem"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/google_sans"
+                android:nextFocusLeft="@id/apply_btt"
+                android:nextFocusRight="@id/cancel_btt"
                 android:nextFocusUp="@id/subtitles_remove_captions"
-                android:text="@string/sort_cancel" />
+                android:nextFocusDown="@id/subtitles_uppercase"
+                android:text="@string/subtitles_filter_lang"
+                app:trackTint="@color/toggle_selector"
+                app:drawableEndCompat="@null" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/subtitles_uppercase"
+                style="@style/SettingsItem"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/google_sans"
+                android:nextFocusLeft="@id/apply_btt"
+                android:nextFocusRight="@id/cancel_btt"
+                android:nextFocusUp="@id/subtitles_filter_sub_lang"
+                android:nextFocusDown="@id/subtitles_bold"
+                android:text="@string/uppercase_all_subtitles"
+                app:trackTint="@color/toggle_selector"
+                app:drawableEndCompat="@null" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/subtitles_bold"
+                style="@style/SettingsItem"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/google_sans"
+                android:nextFocusLeft="@id/apply_btt"
+                android:nextFocusRight="@id/cancel_btt"
+                android:nextFocusUp="@id/subtitles_uppercase"
+                android:nextFocusDown="@id/subtitles_italic"
+                android:text="@string/all_subtitles_bold"
+                app:trackTint="@color/toggle_selector"
+                app:drawableEndCompat="@null" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/subtitles_italic"
+                style="@style/SettingsItem"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/google_sans"
+                android:nextFocusLeft="@id/apply_btt"
+                android:nextFocusRight="@id/cancel_btt"
+                android:nextFocusUp="@id/subtitles_bold"
+                android:nextFocusDown="@id/apply_btt"
+                android:text="@string/all_subtitles_italic"
+                app:trackTint="@color/toggle_selector"
+                app:drawableEndCompat="@null" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_rowWeight="1"
+
+                android:gravity="center"
+                android:text="@string/subs_hold_to_reset_to_default"
+                android:textColor="?attr/textColor"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/subs_import_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_rowWeight="1"
+                android:gravity="center"
+                android:text="@string/subs_import_text"
+                android:textColor="?attr/textColor"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="bottom"
+                android:gravity="bottom|end"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/apply_btt"
+                    style="@style/WhiteButton"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center_vertical|end"
+                    android:nextFocusRight="@id/cancel_btt"
+                    android:nextFocusUp="@id/subtitles_italic"
+                    android:text="@string/sort_apply"
+                    android:visibility="visible">
+
+                    <requestFocus />
+                </com.google.android.material.button.MaterialButton>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/cancel_btt"
+                    style="@style/BlackButton"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center_vertical|end"
+                    android:nextFocusLeft="@id/apply_btt"
+                    android:nextFocusUp="@id/subtitles_remove_captions"
+                    android:text="@string/sort_cancel" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

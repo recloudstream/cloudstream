@@ -17,7 +17,7 @@ import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 
 class SetupFragmentProviderLanguage : Fragment() {
     var binding: FragmentSetupProviderLanguagesBinding? = null
@@ -40,7 +40,7 @@ class SetupFragmentProviderLanguage : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fixPaddingStatusbar(binding?.setupRoot)
+        fixSystemBarsPadding(binding?.setupRoot)
 
         safe {
             val ctx = context ?: return@safe

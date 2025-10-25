@@ -103,9 +103,11 @@ object SubtitleHelper {
         return langMetadata
     }
 
-    // @Deprecated(
-    //     "Default language code changed to IETF BCP 47 tag",
-    //     replaceWith = ReplaceWith("fromLanguageToTagIETF(input, looseCheck)"))
+    @Deprecated(
+        "Default language code changed to IETF BCP 47 tag",
+        replaceWith = ReplaceWith("fromLanguageToTagIETF(input, looseCheck)"),
+        level = DeprecationLevel.WARNING
+    )
     /**
      * Language name (english or native) -> ISO_639_1
      * @param input language name
@@ -115,10 +117,11 @@ object SubtitleHelper {
         return getLanguageDataFromName(input, looseCheck)?.ISO_639_1
     }
 
-
-    // @Deprecated(
-    //     "Default language code changed to IETF BCP 47 tag",
-    //     replaceWith = ReplaceWith("fromLanguageToTagIETF(input)"))
+    @Deprecated(
+        "Default language code changed to IETF BCP 47 tag",
+        replaceWith = ReplaceWith("fromLanguageToTagIETF(input)"),
+        level = DeprecationLevel.WARNING
+    )
     /**
      * Language name (english or native) -> ISO_639_3
     */
@@ -154,9 +157,11 @@ object SubtitleHelper {
         return languages.getOrNull(index)
     }
 
-    // @Deprecated(
-    //     "Default language code changed to IETF BCP 47 tag",
-    //     replaceWith = ReplaceWith("fromTagToLanguageName(input)"))
+    @Deprecated(
+        "Default language code changed to IETF BCP 47 tag",
+        replaceWith = ReplaceWith("fromTagToEnglishLanguageName(input)"),
+        level = DeprecationLevel.WARNING
+    )
     /**
      * Language code -> language english name
     */
@@ -164,9 +169,11 @@ object SubtitleHelper {
         return getLanguageDataFromCode(input)?.languageName
     }
 
-    // @Deprecated(
-    //     "Default language code changed to IETF BCP 47 tag",
-    //     replaceWith = ReplaceWith("fromTagToLanguageName(input)"))
+    @Deprecated(
+        "Default language code changed to IETF BCP 47 tag",
+        replaceWith = ReplaceWith("fromTagToEnglishLanguageName(input)"),
+        level = DeprecationLevel.WARNING
+    )
     /**
      * Language code -> language english name
     */

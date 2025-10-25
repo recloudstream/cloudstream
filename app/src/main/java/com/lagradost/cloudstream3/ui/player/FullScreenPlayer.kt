@@ -73,6 +73,7 @@ import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPres
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.getNavigationBarHeight
 import com.lagradost.cloudstream3.utils.UIHelper.getStatusBarHeight
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
@@ -550,10 +551,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         val binding = SubtitleOffsetBinding.inflate(LayoutInflater.from(ctx), null, false)
 
         // Use dialog as opposed to alertdialog to get fullscreen
-        val dialog = Dialog(ctx, R.style.AlertDialogCustomBlack).apply {
+        val dialog = Dialog(ctx, R.style.DialogFullscreenPlayer).apply {
             setContentView(binding.root)
         }
         dialog.show()
+        fixSystemBarsPadding(binding.root)
 
         var currentOffset = subtitleDelay
         binding.apply {

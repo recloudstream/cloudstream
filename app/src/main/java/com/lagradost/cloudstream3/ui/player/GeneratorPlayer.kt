@@ -116,6 +116,7 @@ import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
@@ -614,14 +615,14 @@ class GeneratorPlayer : FullScreenPlayer() {
         val providers = subsProviders.toList()
         val isSingleProvider = subsProviders.size == 1
 
-        val dialog = Dialog(context, R.style.AlertDialogCustomBlack)
+        val dialog = Dialog(context, R.style.DialogFullscreenPlayer)
         val binding =
             DialogOnlineSubtitlesBinding.inflate(LayoutInflater.from(context), null, false)
         dialog.setContentView(binding.root)
+        fixSystemBarsPadding(binding.root)
 
         var currentSubtitles: List<AbstractSubtitleEntities.SubtitleEntity> = emptyList()
         var currentSubtitle: AbstractSubtitleEntities.SubtitleEntity? = null
-
 
         val layout = R.layout.sort_bottom_single_choice_double_text
         val arrayAdapter =
@@ -1036,11 +1037,12 @@ class GeneratorPlayer : FullScreenPlayer() {
                 player.handleEvent(CSPlayerEvent.Pause, PlayerEventSource.UI)
                 val currentSubtitles = sortSubs(currentSubs)
 
-                val sourceDialog = Dialog(ctx, R.style.AlertDialogCustomBlack)
+                val sourceDialog = Dialog(ctx, R.style.DialogFullscreenPlayer)
                 val binding =
                     PlayerSelectSourceAndSubsBinding.inflate(LayoutInflater.from(ctx), null, false)
                 sourceDialog.setContentView(binding.root)
 
+                fixSystemBarsPadding(binding.root)
                 selectSourceDialog = sourceDialog
 
                 sourceDialog.show()
@@ -1061,7 +1063,9 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 binding.subtitleSettingsBtt.setOnClickListener {
                     safe {
-                        SubtitlesFragment().show(this.parentFragmentManager, "SubtitleSettings")
+                        val subtitlesFragment = SubtitlesFragment()
+                        subtitlesFragment.systemBarsAddPadding = true
+                        subtitlesFragment.show(this.parentFragmentManager, "SubtitleSettings")
                     }
                 }
 
@@ -1295,7 +1299,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     val activity = activity ?: return@setOnClickListener
                     QualityProfileDialog(
                         activity,
-                        R.style.AlertDialogCustomBlack,
+                        R.style.DialogFullscreenPlayer,
                         currentLinks.mapNotNull { it.first },
                         currentQualityProfile
                     ) { profile ->
@@ -1393,9 +1397,11 @@ class GeneratorPlayer : FullScreenPlayer() {
                 val currentAudioTracks = tracks.allAudioTracks
                 val binding: PlayerSelectTracksBinding =
                     PlayerSelectTracksBinding.inflate(LayoutInflater.from(ctx), null, false)
-                val trackDialog = Dialog(ctx, R.style.AlertDialogCustomBlack)
+                val trackDialog = Dialog(ctx, R.style.DialogFullscreenPlayer)
                 trackDialog.setContentView(binding.root)
                 trackDialog.show()
+
+                fixSystemBarsPadding(binding.root)
 
 //                selectTracksDialog = tracksDialog
 
@@ -1989,6 +1995,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     override fun showEpisodesOverlay() {
         try {
             playerBinding?.apply {
+                playerEpisodeList.setRecycledViewPool(EpisodeAdapter.sharedPool)
                 playerEpisodeList.adapter = EpisodeAdapter(
                     false,
                     { episodeClick ->

@@ -272,6 +272,7 @@ object DataStoreHelper {
         var rating: Int? = null
             set(value) {
                 if (value != null) {
+                    @Suppress("DEPRECATION_ERROR")
                     score = Score.fromOld(value)
                 }
             }

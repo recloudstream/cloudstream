@@ -20,6 +20,11 @@ class ActorAdaptor(
     private var nextFocusUpId: Int? = null,
     private val focusCallback: (View?) -> Unit = {}
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    companion object {
+        val sharedPool =
+            RecyclerView.RecycledViewPool().apply { this.setMaxRecycledViews(0, 10) }
+    }
+
     data class ActorMetaData(
         var isInverted: Boolean,
         val actor: ActorData,
