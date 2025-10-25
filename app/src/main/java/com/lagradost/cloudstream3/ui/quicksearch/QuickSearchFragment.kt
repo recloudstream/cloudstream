@@ -164,6 +164,7 @@ class QuickSearchFragment : Fragment() {
         val firstProvider = providers?.firstOrNull()
         if (isSingleProvider && firstProvider != null) {
             binding?.quickSearchAutofitResults?.apply {
+                setRecycledViewPool(SearchAdapter.sharedPool)
                 adapter = SearchAdapter(
                     ArrayList(),
                     this,
