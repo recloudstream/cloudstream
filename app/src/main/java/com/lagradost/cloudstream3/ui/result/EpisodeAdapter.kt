@@ -10,7 +10,7 @@ import androidx.core.view.setPadding
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import coil3.load
+import coil3.dispose
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
@@ -80,7 +80,15 @@ class EpisodeAdapter(
 
             return VideoClickActionHolder.uniqueIdToId(playerPref) ?: ACTION_PLAY_EPISODE_IN_PLAYER
         }
+
+        val sharedPool =
+            RecyclerView.RecycledViewPool()
+                .apply {
+                    this.setMaxRecycledViews(0, 10)
+                    this.setMaxRecycledViews(1, 10)
+                }
     }
+
 
     var cardList: MutableList<ResultEpisode> = mutableListOf()
 
@@ -251,11 +259,11 @@ class EpisodeAdapter(
                 }
 
                 val posterVisible = !card.poster.isNullOrBlank()
-                if(posterVisible) {
+                if (posterVisible) {
                     episodePoster.loadImage(card.poster)
                 } else {
                     // Clear the image
-                    episodePoster.load(null)
+                    episodePoster.dispose()
                 }
                 episodePoster.isVisible = posterVisible
 

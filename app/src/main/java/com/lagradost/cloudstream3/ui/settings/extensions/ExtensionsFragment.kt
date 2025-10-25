@@ -31,6 +31,7 @@ import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setSystemBarsPadding
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.AppContextUtils.addRepositoryDialog
@@ -84,9 +85,8 @@ class ExtensionsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //context?.fixPaddingStatusbar(extensions_root)
-
         setUpToolbar(R.string.extensions)
+        setSystemBarsPadding()
         setToolBarScrollFlags()
 
         binding?.repoRecyclerView?.apply {

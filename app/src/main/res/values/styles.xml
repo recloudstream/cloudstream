@@ -1,26 +1,22 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. Material3 -->
     <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>
-        <item name="android:navigationBarColor">?attr/primaryBlackBackground</item>
         <item name="android:colorEdgeEffect">?attr/textColor</item>
 
-        <!-- Opt out of edgeToEdge enforcement in >= Android 15 -->
-        <!-- However this will be deprecated in future (ETA ~ 1.6 years) -->
-        <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="35">true</item>
-        <!--<item name="android:navigationBarColor">@color/darkBackground</item>-->
+        <item name="android:navigationBarColor">?attr/primaryBlackBackground</item>
         <item name="android:statusBarColor">?attr/iconGrayBackground</item>
+
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">false</item>
 
         <item name="android:scrollbarThumbVertical">@null</item>
         <item name="android:scrollbarThumbHorizontal">@null</item>
 
-        <item name="android:windowTranslucentStatus">true</item> <!--true-->
-        <item name="android:windowTranslucentNavigation">false</item>
-        <item name="alertDialogTheme">@style/Theme.AlertDialog</item>
-
         <item name="android:textViewStyle">@style/AppTextViewStyle</item>
         <item name="android:buttonStyle">@style/AppButtonStyle</item>
         <item name="android:editTextStyle">@style/AppEditStyle</item>
+        <item name="alertDialogTheme">@style/Theme.AlertDialog</item>
         <item name="materialButtonStyle">@style/AppMaterialButtonStyle</item>
         <item name="preferenceFragmentCompatStyle">@style/PreferenceTheme</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
@@ -140,6 +136,9 @@
 
     <style name="DubButton" parent="@style/SearchBox">
         <item name="android:text">@string/app_dubbed_text</item>
+        <!-- Background is set programmatically -->
+        <item name="textColor">?attr/primaryGrayBackground</item>
+        <item name="android:textColor">?attr/primaryGrayBackground</item>
     </style>
 
     <style name="SubButton" parent="@style/SearchBox">
@@ -173,8 +172,9 @@
         <item name="grayTextColor">@color/lightGrayTextColor</item>
         <item name="white">@color/black</item>
         <item name="black">@color/white</item>
-
         <item name="colorOnPrimary">@color/blackText</item>
+        <item name="isLightTheme">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="DraculaMode">
@@ -199,6 +199,8 @@
         <item name="white">@color/LavenderTextColor</item>
         <item name="black">@color/LavenderPrimaryGrayBackground</item>
         <item name="colorOnPrimary">@color/LavenderTextColor</item>
+        <item name="isLightTheme">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="MonetMode">
@@ -447,6 +449,7 @@
         <item name="android:queryHint">@string/search_hint</item>
         <item name="android:background">@color/transparent</item>
         <item name="android:fontFamily">@font/google_sans</item>
+        <item name="closeIcon">@drawable/ic_baseline_close_24</item>
     </style>
 
     <style name="AppBottomSheetDialogTheme">
@@ -562,6 +565,17 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
+    <style name="DialogFullscreenPlayer" parent="DialogFullscreen">
+        <item name="android:windowBackground">?attr/primaryBlackBackground</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:windowTranslucentStatus">false</item>
+
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:navigationBarColor">?attr/primaryBlackBackground</item>
+        <item name="android:statusBarColor">?attr/primaryBlackBackground</item>
+        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
+    </style>
+
     <style name="DialogHalfFullscreen" parent="AlertDialogCustom">
         <item name="android:windowEnterAnimation">@anim/enter_anim</item>
         <item name="android:windowExitAnimation">@anim/exit_anim</item>
@@ -611,7 +625,7 @@
 
     <style name="SettingsItem">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">50sp</item>
+        <item name="android:layout_height">50dp</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingStart">20dp</item>
         <item name="android:paddingEnd">20dp</item>
@@ -741,7 +755,7 @@
         <item name="backgroundTint">?attr/iconGrayBackground</item>
         <item name="iconTint">?attr/textColor</item>
         <item name="android:textColor">?attr/textColor</item>
-        <item name="rippleColor">?attr/textColor</item>
+        <item name="rippleColor">@color/black_button_ripple</item>
     </style>
 
     <style name="SmallBlackButton" parent="BlackButton">

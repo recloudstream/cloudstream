@@ -73,14 +73,16 @@ import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
-import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
+import com.lagradost.cloudstream3.utils.UIHelper.setListViewHeightBasedOnItems
+import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
@@ -305,11 +307,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
     override fun onResume() {
         afterPluginsLoadedEvent += ::reloadViewModel
-        activity?.let {
-            @Suppress("DEPRECATION")
-            it.window?.navigationBarColor =
-                it.colorFromAttribute(R.attr.primaryBlackBackground)
-        }
+        activity?.setNavigationBarColorCompat(R.attr.primaryBlackBackground)
         super.onResume()
         PanelsChildGestureRegionObserver.Provider.get()
             .addGestureRegionsUpdateListener(gestureRegionsListener)
@@ -330,7 +328,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         super.onViewCreated(view, savedInstanceState)
 
         // ===== setup =====
-        UIHelper.fixPaddingStatusbar(binding?.resultTopBar)
+        fixSystemBarsPadding(binding?.root)
         val storedData = getStoredData() ?: return
         activity?.window?.decorView?.clearFocus()
         activity?.loadCache()
@@ -406,8 +404,9 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             }.apply {
                 this.orientation = RecyclerView.HORIZONTAL
             }*/
+            resultCastItems.setRecycledViewPool(ActorAdaptor.sharedPool)
             resultCastItems.adapter = ActorAdaptor()
-
+            resultEpisodes.setRecycledViewPool(EpisodeAdapter.sharedPool)
             resultEpisodes.adapter =
                 EpisodeAdapter(
                     api?.hasDownloadSupport == true,
@@ -569,9 +568,9 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         recommendationBinding?.apply {
             resultRecommendationsList.apply {
                 spanCount = 3
+                setRecycledViewPool(SearchAdapter.sharedPool)
                 adapter =
                     SearchAdapter(
-                        ArrayList(),
                         this,
                     ) { callback ->
                         SearchHelper.handleSearchClickCallback(callback)
@@ -624,9 +623,9 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultResumeProgressHolder.isVisible = true
                 } ?: run {
                     resultResumeProgressHolder.isVisible = false
-                    if(!resume.isMovie){
+                    if (!resume.isMovie) {
                         resultNextSeriesButton.isVisible = true
-                        resultNextSeriesButton.text =context?.getNameFull(
+                        resultNextSeriesButton.text = context?.getNameFull(
                             resume.result.name,
                             resume.result.episode,
                             resume.result.season
@@ -809,7 +808,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultDataHolder.isGone = d.comingSoon
 
                     resultCastItems.isGone = d.actors.isNullOrEmpty()
-                    (resultCastItems.adapter as? ActorAdaptor)?.updateList(d.actors ?: emptyList())
+                    (resultCastItems.adapter as? ActorAdaptor)?.submitList(d.actors)
 
                     if (d.contentRatingText == null) {
                         // If there is no rating to display, we don't want an empty gap
@@ -1039,7 +1038,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             syncBinding?.apply {
                 resultSyncCheck.choiceMode = AbsListView.CHOICE_MODE_SINGLE
                 resultSyncCheck.adapter = arrayAdapter
-                UIHelper.setListViewHeightBasedOnItems(resultSyncCheck)
+                setListViewHeightBasedOnItems(resultSyncCheck)
 
                 resultSyncCheck.setOnItemClickListener { _, _, which, _ ->
                     syncModel.setStatus(which - 1)
@@ -1259,7 +1258,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             root.isGone = isInvalid
             root.post {
                 rec?.let { list ->
-                    (resultRecommendationsList.adapter as? SearchAdapter)?.updateList(list.filter { it.apiName == matchAgainst })
+                    (resultRecommendationsList.adapter as? SearchAdapter)?.submitList(list.filter { it.apiName == matchAgainst })
                 }
             }
         }
