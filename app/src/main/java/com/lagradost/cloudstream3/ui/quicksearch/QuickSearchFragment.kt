@@ -203,7 +203,6 @@ class QuickSearchFragment : Fragment() {
             binding?.quickSearchMasterRecycler?.setRecycledViewPool(ParentItemAdapter.sharedPool)
             binding?.quickSearchMasterRecycler?.adapter =
                 ParentItemAdapter(
-                    fragment = this,
                     id = "quickSearchMasterRecycler".hashCode(),
                     { callback ->
                         SearchHelper.handleSearchClickCallback(callback)

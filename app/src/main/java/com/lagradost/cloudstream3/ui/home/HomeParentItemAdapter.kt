@@ -34,13 +34,11 @@ class LoadClickCallback(
 )
 
 open class ParentItemAdapter(
-    open val fragment: Fragment,
     id: Int,
     private val clickCallback: (SearchClickCallback) -> Unit,
     private val moreInfoClickCallback: (HomeViewModel.ExpandableHomepageList) -> Unit,
     private val expandCallback: ((String) -> Unit)? = null,
 ) : BaseAdapter<HomeViewModel.ExpandableHomepageList, Bundle>(
-    fragment,
     id,
     diffCallback = BaseDiffCallback(
         itemSame = { a, b -> a.list.name == b.list.name },
@@ -99,7 +97,6 @@ open class ParentItemAdapter(
             if (currentAdapter == null) {
                 homeChildRecyclerview.setRecycledViewPool(HomeChildItemAdapter.sharedPool)
                 homeChildRecyclerview.adapter = HomeChildItemAdapter(
-                    fragment = fragment,
                     id = id + position + 100,
                     clickCallback = clickCallback,
                     nextFocusUp = homeChildRecyclerview.nextFocusUpId,
