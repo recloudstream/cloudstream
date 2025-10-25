@@ -326,6 +326,7 @@ class MALApi : SyncAPI() {
                 SyncWatchType.DROPPED -> MalStatusType.Dropped
                 SyncWatchType.PLANTOWATCH -> MalStatusType.PlanToWatch
                 SyncWatchType.REWATCHING -> MalStatusType.Watching
+                else -> MalStatusType.None
             }
         }
 
