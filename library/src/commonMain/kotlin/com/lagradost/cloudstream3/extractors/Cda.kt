@@ -6,9 +6,10 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import java.net.URLDecoder
 
-open class Cda: ExtractorApi() {
+open class Cda : ExtractorApi() {
     override var mainUrl = "https://ebd.cda.pl"
     override var name = "Cda"
     override val requiresReferer = false
@@ -18,20 +19,25 @@ open class Cda: ExtractorApi() {
         val mediaId = url
             .split("/").last()
             .split("?").first()
-        val doc = app.get("https://ebd.cda.pl/647x500/$mediaId", headers=mapOf(
-            "Referer" to "https://ebd.cda.pl/647x500/$mediaId",
-            "User-Agent" to USER_AGENT,
-            "Cookie" to "cda.player=html5"
-        )).document
+        val doc = app.get(
+            "https://ebd.cda.pl/647x500/$mediaId", headers = mapOf(
+                "Referer" to "https://ebd.cda.pl/647x500/$mediaId",
+                "User-Agent" to USER_AGENT,
+                "Cookie" to "cda.player=html5"
+            )
+        ).document
         val dataRaw = doc.selectFirst("[player_data]")?.attr("player_data") ?: return null
         val playerData = tryParseJson<PlayerData>(dataRaw) ?: return null
-        return listOf(ExtractorLink(
-            name,
-            name,
-            getFile(playerData.video.file),
-            referer = "https://ebd.cda.pl/647x500/$mediaId",
-            quality = Qualities.Unknown.value
-        ))
+        return listOf(
+            newExtractorLink(
+                source = name,
+                name = name,
+                url = getFile(playerData.video.file),
+            ) {
+                this.referer = "https://ebd.cda.pl/647x500/$mediaId"
+                this.quality = Qualities.Unknown.value
+            }
+        )
     }
 
     private fun rot13(a: String): String {
@@ -46,7 +52,7 @@ open class Cda: ExtractorApi() {
 
     private fun cdaUggc(a: String): String {
         val decoded = rot13(a)
-        return if (decoded.endsWith("adc.mp4")) decoded.replace("adc.mp4",".mp4")
+        return if (decoded.endsWith("adc.mp4")) decoded.replace("adc.mp4", ".mp4")
         else decoded
     }
 
@@ -72,7 +78,7 @@ open class Cda: ExtractorApi() {
             .replace(".2cda.pl", ".cda.pl")
             .replace(".3cda.pl", ".cda.pl")
         return if (a.contains("/upstream")) "https://" + a.replace("/upstream", ".mp4/upstream")
-            else "https://${a}.mp4"
+        else "https://${a}.mp4"
     }
 
     private fun getFile(a: String) = when {

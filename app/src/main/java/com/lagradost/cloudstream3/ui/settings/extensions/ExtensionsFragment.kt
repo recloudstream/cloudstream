@@ -31,6 +31,7 @@ import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setSystemBarsPadding
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.AppContextUtils.addRepositoryDialog
@@ -84,9 +85,8 @@ class ExtensionsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //context?.fixPaddingStatusbar(extensions_root)
-
         setUpToolbar(R.string.extensions)
+        setSystemBarsPadding()
         setToolBarScrollFlags()
 
         binding?.repoRecyclerView?.apply {
@@ -162,7 +162,7 @@ class ExtensionsFragment : Fragment() {
         observe(extensionViewModel.repositories) {
             binding?.repoRecyclerView?.isVisible = it.isNotEmpty()
             binding?.blankRepoScreen?.isVisible = it.isEmpty()
-            (binding?.repoRecyclerView?.adapter as? RepoAdapter)?.updateList(it)
+            (binding?.repoRecyclerView?.adapter as? RepoAdapter)?.submitList(it.toList())
         }
 
         /*binding?.repoRecyclerView?.apply {
@@ -232,8 +232,15 @@ class ExtensionsFragment : Fragment() {
             dialog.show()
             (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager?)?.primaryClip?.getItemAt(
                 0
-            )?.text?.toString()?.let { copy ->
-                binding.repoUrlInput.setText(copy)
+            )?.text?.toString()?.let { copiedText ->
+                if (copiedText.contains(RepoAdapter.SHAREABLE_REPO_SEPARATOR)) {
+                    // text is of format <repository name> : <repository url>
+                    val (name, url) = copiedText.split(RepoAdapter.SHAREABLE_REPO_SEPARATOR, limit = 2)
+                    binding.repoUrlInput.setText(url.trim())
+                    binding.repoNameInput.setText(name.trim())
+                } else {
+                    binding.repoUrlInput.setText(copiedText)
+                }
             }
 
 //            dialog.list_repositories?.setOnClickListener {
@@ -263,8 +270,7 @@ class ExtensionsFragment : Fragment() {
 
                         val fixedName = if (!name.isNullOrBlank()) name
                         else repository.name
-
-                        val newRepo = RepositoryData(fixedName, url)
+                        val newRepo = RepositoryData(repository.iconUrl,fixedName, url)
                         RepositoryManager.addRepository(newRepo)
                         extensionViewModel.loadStats()
                         extensionViewModel.loadRepositories()

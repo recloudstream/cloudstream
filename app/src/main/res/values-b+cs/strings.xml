@@ -1,0 +1,756 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- KEYS DON'T TRANSLATE -->
+    <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
+    <string name="cast_format" formatted="true">Hrají: %s</string>
+    <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
+    <string name="result_poster_img_des">Plakát</string>
+    <string name="search_poster_img_des">Plakát</string>
+    <string name="episode_poster_img_des">Plakát epizody</string>
+    <string name="home_main_poster_img_des">Hlavní plakát</string>
+    <string name="home_next_random_img_des">Další náhodný</string>
+    <string name="go_back_img_des">Přejít zpět</string>
+    <string name="home_change_provider_img_des">Změnit poskytovatele</string>
+    <string name="preview_background_img_des">Náhled pozadí</string>
+    <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
+    <string name="player_speed_text_format" formatted="true">Rychlost (%.2fx)</string>
+    <string name="rated_format" formatted="true">Hodnocení: %.1f</string>
+    <string name="new_update_format" formatted="true">Nalezena nová aktualizace!
+\n%1$s -&gt; %2$s</string>
+    <string name="filler" formatted="true">Výplň</string>
+    <string name="duration_format" formatted="true">%d min</string>
+    <string name="app_name">CloudStream</string>
+    <string name="title_home">Domů</string>
+    <string name="title_search">Hledat</string>
+    <string name="title_downloads">Stahování</string>
+    <string name="title_settings">Nastavení</string>
+    <string name="search_hint">Hledat…</string>
+    <string name="search_hint_site" formatted="true">Hledat %s…</string>
+    <string name="no_data">Žádná data</string>
+    <string name="episode_more_options_des">Další možnosti</string>
+    <string name="next_episode">Další epizoda</string>
+    <string name="result_tags">Žánry</string>
+    <string name="result_share">Sdílet</string>
+    <string name="result_open_in_browser">Otevřít v prohlížeči</string>
+    <string name="skip_loading">Přeskočit načítání</string>
+    <string name="loading">Načítání…</string>
+    <string name="type_watching">Sledování</string>
+    <string name="type_on_hold">Pozastaveno</string>
+    <string name="type_completed">Dokončeno</string>
+    <string name="type_dropped">Zahozeno</string>
+    <string name="type_plan_to_watch">Plánuji sledovat</string>
+    <string name="type_re_watching">Opětovné sledování</string>
+    <string name="play_movie_button">Přehrát film</string>
+    <string name="play_torrent_button">Streamovat torrent</string>
+    <string name="pick_source">Zdroje</string>
+    <string name="pick_subtitle">Titulky</string>
+    <string name="reload_error">Opakovat připojení…</string>
+    <string name="go_back">Návrat zpět</string>
+    <string name="play_episode">Přehrát epizodu</string>
+    <!--<string name="need_storage">Umožnit stahování epizod</string>-->
+    <string name="download">Stáhnout</string>
+    <string name="downloaded">Stáhnuto</string>
+    <string name="downloading">Stahování</string>
+    <string name="download_paused">Stahování pozastaveno</string>
+    <string name="download_started">Stahování spuštěno</string>
+    <string name="download_failed">Stahování selhalo</string>
+    <string name="download_canceled">Stahování zrušeno</string>
+    <string name="download_done">Stahování dokončeno</string>
+    <string name="error_loading_links_toast">Chyba při načítání odkazů</string>
+    <string name="download_storage_text">Interní úložiště</string>
+    <string name="app_dubbed_text">Dab</string>
+    <string name="app_subbed_text">Tit</string>
+    <string name="popup_delete_file">Smazat soubor</string>
+    <string name="popup_play_file">Přehrát soubor</string>
+    <string name="popup_resume_download">Pokračovat ve stahování</string>
+    <string name="popup_pause_download">Pozastavit stahování</string>
+    <string name="pref_disable_acra">Zakázat automatické nahlašování chyb</string>
+    <string name="home_more_info">Více informací</string>
+    <string name="home_expanded_hide">Skrýt</string>
+    <string name="home_play">Přehrát</string>
+    <string name="home_info">Info</string>
+    <string name="filter_bookmarks">Filtrovat záložky</string>
+    <string name="error_bookmarks_text">Záložky</string>
+    <string name="action_remove_from_bookmarks">Odebrat</string>
+    <string name="action_add_to_bookmarks">Nastavit stav sledování</string>
+    <string name="sort_apply">Použít</string>
+    <string name="sort_copy">Kopírovat</string>
+    <string name="sort_close">Zavřít</string>
+    <string name="sort_clear">Vymazat</string>
+    <string name="sort_save">Uložit</string>
+    <string name="player_speed">Rychlost přehrávání</string>
+    <string name="subtitles_settings">Nastavení titulků</string>
+    <string name="subs_text_color">Barva texta</string>
+    <string name="subs_outline_color">Barva ohraničení</string>
+    <string name="subs_background_color">Barva pozadí</string>
+    <string name="subs_window_color">Barva okna</string>
+    <string name="subs_edge_type">Typ hran</string>
+    <string name="subs_subtitle_elevation">Zvýšení titulků</string>
+    <string name="subs_font">Písmo</string>
+    <string name="subs_font_size">Velikost písma</string>
+    <string name="search_provider_text_providers">Hledat pomocí poskytovatelů</string>
+    <string name="search_provider_text_types">Hledat pomocí typů</string>
+    <string name="benene_count_text">%d benénů darováno vývojářům</string>
+    <string name="benene_count_text_none">Nedarovali jste žádné benény</string>
+    <string name="subs_auto_select_language">Automaticky vybrat jazyk</string>
+    <string name="subs_download_languages">Stáhnout jazyky</string>
+    <string name="subs_subtitle_languages">Jazyk titulků</string>
+    <string name="subs_hold_to_reset_to_default">Podržte pro obnovení na výchozí</string>
+    <string name="subs_import_text" formatted="true">Importovat písma umístěním jich do %s</string>
+    <string name="continue_watching">Pokračovat ve sledování</string>
+    <string name="action_remove_watching">Odebrat</string>
+    <string name="action_open_watching">Další informace</string>
+    <string name="action_open_play">@string/home_play</string>
+    <string name="vpn_might_be_needed">Aby tento poskytovatel fungoval správně, budete možná potřebovat VPN</string>
+    <string name="vpn_torrent">Tento poskytovatel je torrent, je doporučená VPN</string>
+    <string name="provider_info_meta">Web neposkytnul žádná metadata, načítání videa selže, pokud na webu neexistuje.</string>
+    <string name="torrent_plot">Popis</string>
+    <string name="normal_no_plot">Příběh nenalezen</string>
+    <string name="torrent_no_plot">Popis nenalezen</string>
+    <string name="show_log_cat">Zobrazit Logcat 🐈</string>
+    <string name="picture_in_picture">Obraz v obraze</string>
+    <string name="picture_in_picture_des">Přehrávání bude pokračovat v miniaturním přehrávači na vrchu ostatních aplikací</string>
+    <string name="player_size_settings">Tlačítko pro změnu velikosti přehrávače</string>
+    <string name="player_size_settings_des">Odebrat černá ohraničení</string>
+    <string name="player_subtitles_settings">Titulky</string>
+    <string name="player_subtitles_settings_des">Nastavení titulků přehrávače</string>
+    <string name="chromecast_subtitles_settings">Titulky Chromecastu</string>
+    <string name="chromecast_subtitles_settings_des">Natavení titulků Chromecastu</string>
+    <string name="eigengraumode_settings">Rychlost přehrávání</string>
+    <string name="swipe_to_seek_settings">Přejet pro posun</string>
+    <string name="swipe_to_seek_settings_des">Přejeďte prstem ze strany na stranu pro ovládání své pozice ve videu</string>
+    <string name="swipe_to_change_settings">Přejet pro změnu nastavení</string>
+    <string name="swipe_to_change_settings_des">Přejeďte prstem nahoru nebo dolů na levé nebo pravé straně pro změnu jasu nebo hlasitosti</string>
+    <string name="double_tap_to_seek_settings">Dvojité klepnutí pro posun</string>
+    <string name="double_tap_to_pause_settings">Dvojité klepnutí pro pozastavení</string>
+    <string name="double_tap_to_seek_amount_settings">Množství času k posunu (sekundy)</string>
+    <string name="double_tap_to_seek_settings_des">Klepněte dvakrát vpravo nebo vlevo pro posun vpřed nebo vzad</string>
+    <string name="double_tap_to_pause_settings_des">Klepněte dvakrát doprostřed pro pozastavení</string>
+    <string name="use_system_brightness_settings">Použít systémový jas</string>
+    <string name="use_system_brightness_settings_des">V přehrávači použít systémový jas namísto tmavého překrytí</string>
+    <string name="episode_sync_settings">Aktualizovat postup sledování</string>
+    <string name="episode_sync_settings_des">Automaticky synchronizovat postup sledování současné epizody</string>
+    <string name="restore_settings">Obnovit data ze zálohy</string>
+    <string name="backup_settings">Zálohovat data</string>
+    <string name="restore_success">Načten soubor zálohy</string>
+    <string name="restore_failed_format" formatted="true">Nepodařilo se obnovit data ze soubory %s</string>
+    <string name="backup_success">Data uložena</string>
+    <string name="backup_failed">Chybí oprávnění k úložišti. Zkuste to prosím znovu.</string>
+    <string name="backup_failed_error_format">Chyba při zálohování %s</string>
+    <string name="search">Search</string>
+    <string name="category_account">Účty a zabezpečení</string>
+    <string name="category_updates">Aktualizace a záloha</string>
+    <string name="settings_info">Informace</string>
+    <string name="advanced_search">Pokročilé hledání</string>
+    <string name="advanced_search_des">Zobrazí vám výsledky hledání oddělené poskytovatelem</string>
+    <string name="bug_report_settings_off">Odešle data pouze při pádech</string>
+    <string name="bug_report_settings_on">Nebude odesílat žádná data</string>
+    <string name="show_fillers_settings">Zobrazit výplňové epizody u anime</string>
+    <string name="updates_settings">Zobrazit aktualizace aplikace</string>
+    <string name="updates_settings_des">Při spuštění aplikace automaticky zkontrolovat nové aktualizace.</string>
+    <string name="uprereleases_settings">Aktualizovat na předběžná vydání</string>
+    <string name="uprereleases_settings_des">Kontrolovat aktualizace předběžných vydání, místo normálních plných vydání</string>
+    <string name="github">GitHub</string>
+    <string name="lightnovel">Nenáročná aplikace pro romány od stejných vývojářů</string>
+    <string name="anim">Anime aplikace od stejných vývojářů</string>
+    <string name="discord">Připojte se na Discord</string>
+    <string name="benene">Darujte benén vývojářům</string>
+    <string name="benene_des">Benén darován</string>
+    <string name="app_language">Jazyk aplikace</string>
+    <string name="no_chromecast_support_toast">Tento poskytovatel nemá podporu pro Chromecast</string>
+    <string name="no_links_found_toast">Nenalezeny žádné odkazy</string>
+    <string name="copy_link_toast">Odkaz zkopírován do schránky</string>
+    <string name="play_episode_toast">Přehrát epizodu</string>
+    <string name="subs_default_reset_toast">Obnovit na výchozí hodnoty</string>
+    <string name="acra_report_toast">Omlouváme se, aplikace spadla. Vývojářům bude odesláno anonymní hlášení o pádu</string>
+    <string name="season">Sezóna</string>
+    <string name="no_season">Žádná sezóna</string>
+    <string name="episode">Epizoda</string>
+    <string name="episodes">Epizody</string>
+    <string name="season_short">S</string>
+    <string name="episode_short">E</string>
+    <string name="no_episodes_found">Nenalezeny žádné epizody</string>
+    <string name="delete_file">Smazat soubor</string>
+    <string name="delete">Smazat</string>
+    <string name="cancel">Zrušit</string>
+    <string name="pause">Pozastavit</string>
+    <string name="resume">Pokračovat</string>
+    <string name="go_back_30">-30</string>
+    <string name="go_forward_30">+30</string>
+    <string name="delete_message" formatted="true">Toto nevratně smaže %s
+\nJste si jisti?</string>
+    <string name="resume_time_left" formatted="true">%dm
+\nzbývá</string>
+    <string name="status_ongoing">Probíhající</string>
+    <string name="status_completed">Dokončena</string>
+    <string name="status">Stav</string>
+    <string name="year">Rok</string>
+    <string name="rating">Hodnocení</string>
+    <string name="duration">Trvání</string>
+    <string name="site">Místo</string>
+    <string name="synopsis">Synopse</string>
+    <string name="queued">ve frontě</string>
+    <string name="no_subtitles">Žádné titulky</string>
+    <string name="action_default">Výchozí</string>
+    <string name="free_storage">Volné</string>
+    <string name="used_storage">Použito</string>
+    <string name="app_storage">Aplikace</string>
+    <!--plural-->
+    <string name="movies">Filmy</string>
+    <string name="tv_series">Seriály</string>
+    <string name="cartoons">Animované</string>
+    <string name="anime">Anime</string>
+    <string name="torrent">Torrenty</string>
+    <string name="documentaries">Dokumenty</string>
+    <string name="ova">OVA</string>
+    <string name="asian_drama">Asijská dramata</string>
+    <!--singular-->
+    <string name="movies_singular">Film</string>
+    <string name="tv_series_singular">Seriál</string>
+    <string name="cartoons_singular">Animovaný</string>
+    <string name="anime_singular">Anime</string>
+    <string name="ova_singular">OVA</string>
+    <string name="torrent_singular">Torrent</string>
+    <string name="documentaries_singular">Dokument</string>
+    <string name="asian_drama_singular">Asijské drama</string>
+    <string name="source_error">Chyba zdroje</string>
+    <string name="remote_error">Chyba vzdáleného zdroje</string>
+    <string name="render_error">Chyba vykreslování</string>
+    <string name="unexpected_error">Neočekávaná chyba přehrávače</string>
+    <string name="storage_error">Chyba stahování, zkontrolujte oprávnění úložiště</string>
+    <string name="episode_action_chromecast_episode">Chromecastovat epizodu</string>
+    <string name="episode_action_chromecast_mirror">Chromecast jako zrcadlo</string>
+    <string name="episode_action_play_in_app">Přehrát v aplikace</string>
+    <string name="episode_action_play_in_format">Přehrát ve %s</string>
+    <string name="episode_action_auto_download">Automaticky stáhnout</string>
+    <string name="episode_action_download_mirror">Zrcadlo stahování</string>
+    <string name="episode_action_reload_links">Obnovit odkazy</string>
+    <string name="episode_action_download_subtitle">Stáhnout titulky</string>
+    <string name="show_hd">Štítek s kvalitou</string>
+    <string name="show_dub">Štítek dabingu</string>
+    <string name="show_sub">Štítek titulků</string>
+    <string name="show_title">Název</string>
+    <string name="poster_ui_settings">Přepnout prvky UI na plakátu</string>
+    <string name="no_update_found">Nenalezeny žádné aktualizace</string>
+    <string name="check_for_update">Zkontrolovat aktualizace</string>
+    <string name="video_lock">Uzamknout</string>
+    <string name="video_aspect_ratio_resize">Změnit velikost</string>
+    <string name="video_source">Zdroj</string>
+    <string name="video_skip_op">Přeskočit OP</string>
+    <string name="dont_show_again">Již nezobrazovat</string>
+    <string name="skip_update">Přeskočit tuto aktualizace</string>
+    <string name="update">Aktualizovat</string>
+    <string name="watch_quality_pref">Upřednostněná kvalita sledování (WiFi)</string>
+    <string name="limit_title">Maximální počet znaků v názvu přehrávače</string>
+    <string name="limit_title_rez">Rozlišení přehrávače</string>
+    <string name="video_buffer_size_settings">Velikost vyrovnávací paměti videa</string>
+    <string name="video_buffer_length_settings">Délka vyrovnávací paměti videa</string>
+    <string name="video_buffer_disk_settings">Mezipaměť videa na disku</string>
+    <string name="video_buffer_clear_settings">Vymazat mezipamět videí a obrázků</string>
+    <string name="video_ram_description">Při nastavení příliš vysoké hodnoty na zařízeních s malou pamětí, jako je například Android TV, může způsobit pády.</string>
+    <string name="video_disk_description">Při nastavení příliš vysoké hodnoty na zařízeních s malým dostupným úložištěm, jako je například Android TV, může způsobit pády.</string>
+    <string name="dns_pref">DNS přes HTTPS</string>
+    <string name="dns_pref_summary">Užitečné pro obcházení blokací ISP</string>
+    <string name="download_path_pref">Cesta stahování</string>
+    <string name="nginx_url_pref">URL serveru NGINX</string>
+    <string name="display_subbed_dubbed_settings">Zobrazit dabované anime/anime s titulky</string>
+    <string name="resize_fit">Vyplnit na obrazovku</string>
+    <string name="resize_fill">Roztáhnout</string>
+    <string name="resize_zoom">Přiblížit</string>
+    <string name="legal_notice">Odmítnutí odpovědnosti</string>
+    <string name="legal_notice_text" translatable="false">Jakékoli právní otázky týkající se obsahu této aplikace je třeba řešit se samotnými hostiteli a poskytovateli souborů, protože s nimi nejsme nijak spojeni. V případě porušení autorských práv se obraťte přímo na odpovědné strany nebo na webové stránky, na kterých se streamování odehrává. Aplikace je určena výhradně pro vzdělávací a osobní účely. CloudStream 3 v aplikaci nehostuje žádný obsah a nemá žádnou kontrolu nad tím, jaká média jsou v aplikaci umístěna nebo odstraněna. CloudStream 3 funguje jako jakýkoli jiný vyhledávač, například Google. Služba CloudStream 3 nehostuje, nenahrává ani nespravuje žádná videa, filmy ani obsah. Pouze vyhledává, agreguje a zobrazuje odkazy v pohodlném, uživatelsky přívětivém rozhraní. Pouze shromažďuje webové stránky třetích stran, které jsou veřejně přístupné prostřednictvím jakéhokoli běžného webového prohlížeče. Je odpovědností uživatele, aby se vyvaroval jakýchkoli akcí, které by mohly porušovat zákony platné v jeho lokalitě. Použijte CloudStream 3 na vlastní nebezpečí.</string>
+    <string name="category_general">Obecné</string>
+    <string name="random_button_settings">Náhodné tlačítko</string>
+    <string name="random_button_settings_desc">Zobrazit na domovské stránce a v knihovně náhodné tlačítko</string>
+    <string name="provider_lang_settings">Jazyky rozšíření</string>
+    <string name="app_layout">Rozložení aplikace</string>
+    <string name="preferred_media_settings">Preferovaná média</string>
+    <string name="subtitles_encoding">Kódování titulků</string>
+    <string name="category_ui">Rozložení</string>
+    <string name="automatic">Automaticky</string>
+    <string name="tv_layout">TV rozložení</string>
+    <string name="phone_layout">Mobilní rozložení</string>
+    <string name="emulator_layout">Rozložení emulátoru</string>
+    <string name="primary_color_settings">Primární barva</string>
+    <string name="app_theme_settings">Motiv aplikace</string>
+    <string name="bottom_title_settings">Umístění názvu plakátu</string>
+    <string name="bottom_title_settings_des">Umístit název pod plakát</string>
+    <!-- account stuff -->
+    <string name="example_password">heslo123</string>
+    <string name="example_username">Uživatelské jméno</string>
+    <string name="example_email">ahoj@svete.cz</string>
+    <string name="example_ip">127.0.0.1</string>
+    <!--
+    <string name="mal_account_settings" translatable="false">MAL</string>
+    <string name="anilist_account_settings" translatable="false">AniList</string>
+    <string name="tmdb_account_settings" translatable="false">TMDB</string>
+    <string name="imdb_account_settings" translatable="false">IMDB</string>
+    <string name="kitsu_account_settings" translatable="false">Kitsu</string>
+    <string name="trakt_account_settings" translatable="false">Trakt</string>
+    -->
+    <string name="login_format" formatted="true">%1$s %2$s</string>
+    <string name="account">účet</string>
+    <string name="logout">Odhlásit se</string>
+    <string name="login">Přihlásit se</string>
+    <string name="switch_account">Přepnout účet</string>
+    <string name="add_account">Přidat účet</string>
+    <string name="create_account">Vytvořit účet</string>
+    <string name="add_sync">Sledování aplikace</string>
+    <string name="added_sync_format" formatted="true">Přidáno %s</string>
+    <string name="upload_sync">Synchronizovat</string>
+    <string name="sync_score">Hodnoceno</string>
+    <string name="sync_score_format" formatted="true">%d / 10</string>
+    <string name="sync_total_episodes_none">/??</string>
+    <string name="sync_total_episodes_some" formatted="true">/%d</string>
+    <string name="authenticated_user" formatted="true">Přihlášeno k %s</string>
+    <string name="authenticated_user_fail" formatted="true">Nepodařilo se přihlásit k %s</string>
+    <!-- ============ -->
+    <string name="none">Žádné</string>
+    <string name="normal">Normální</string>
+    <string name="all">Vše</string>
+    <string name="max">Max</string>
+    <string name="min">Min</string>
+    <string name="subtitles_outline">Ohraničení</string>
+    <string name="subtitles_depressed">Potlačené</string>
+    <string name="subtitles_shadow">Stín</string>
+    <string name="subtitles_raised">Vyvýšené</string>
+    <string name="subtitle_offset">Synch. titulky</string>
+    <string name="subtitle_offset_hint">1000 ms</string>
+    <string name="subtitle_offset_title">Zpoždění titulků</string>
+    <string name="subtitle_offset_extra_hint_later_format">Toto použijte, pokud jsou titulky zobrazeny o %d ms dříve</string>
+    <string name="subtitle_offset_extra_hint_before_format">Toto použijte, pokud jsou titulky zobrazeny o %d ms později</string>
+    <string name="subtitle_offset_extra_hint_none_format">Žádné zpoždění titulků</string>
+    <!--
+    Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
+    see: 
+	https://en.wikipedia.org/w/index.php?title=Pangram&oldid=225849300
+	https://en.wikipedia.org/wiki/The_quick_brown_fox_jumps_over_the_lazy_dog
+    -->
+    <string name="subtitles_example_text">Příliš žluťoučký kůň úpěl ďábelské ódy</string>
+    <string name="recommended">Doporučeno</string>
+    <string name="player_loaded_subtitles" formatted="true">Načteno %s</string>
+    <string name="player_load_subtitles">Načíst ze souboru</string>
+    <string name="player_load_subtitles_online">Načíst z internetu</string>
+    <string name="downloaded_file">Stažen soubor</string>
+    <string name="actor_main">Hlavní</string>
+    <string name="actor_supporting">Podpora</string>
+    <string name="actor_background">Pozadí</string>
+    <string name="home_source">Zdroj</string>
+    <string name="home_random">Náhodný</string>
+    <string name="coming_soon">Již brzy…</string>
+    <string name="quality_cam">Kam</string>
+    <string name="quality_cam_rip">Kam</string>
+    <string name="quality_cam_hd">Kam</string>
+    <string name="quality_hq">HQ</string>
+    <string name="quality_hd">HD</string>
+    <string name="quality_ts">TS</string>
+    <string name="quality_tc">TC</string>
+    <string name="quality_blueray">Blu-ray</string>
+    <string name="quality_workprint">WP</string>
+    <string name="quality_dvd">DVD</string>
+    <string name="quality_4k">4K</string>
+    <string name="quality_sd">SD</string>
+    <string name="quality_uhd">UHD</string>
+    <string name="quality_hdr">HDR</string>
+    <string name="quality_sdr">SDR</string>
+    <string name="quality_webrip">Web</string>
+    <string name="poster_image">Obrázek plakátu</string>
+    <string name="category_player">Přehrávač</string>
+    <string name="resolution_and_title">Rozlišení a název</string>
+    <string name="title">Název</string>
+    <string name="resolution">Rozlišení</string>
+    <string name="error_invalid_id">Neplatné ID</string>
+    <string name="subtitles_remove_captions">Odstranit skryté titulky z titulků</string>
+    <string name="subtitles_remove_bloat">Odstranit nadbytečné titulky</string>
+    <string name="extras">Extra</string>
+    <string name="action_mark_as_watched">Označit jako zhlédnuté</string>
+    <string name="history">Historie</string>
+    <string name="next_episode_time_min_format" formatted="true">%dm</string>
+    <string name="play_with_app_name">Přehrát s CloudStream</string>
+    <string name="autoplay_next_settings_des">Přehrát další epizodu po skončení aktuální</string>
+    <string name="show_trailers_settings">Zobrazit trailery</string>
+    <string name="pref_filter_search_quality">Skrýt vybranou kvalitu videa ve výsledcích vyhledávání</string>
+    <string name="automatic_plugin_updates">Automatické aktualizace doplňků</string>
+    <string name="remove_site_pref">Odebrat web</string>
+    <string name="error_invalid_data">Neplatné údaje</string>
+    <string name="error">Chyba</string>
+    <string name="repository_name_hint">Název repozitáře (volitelné)</string>
+    <string name="plugin_loaded">Doplněk načten</string>
+    <string name="setup_extensions_subtext">Stáhněte si seznam webů, které chcete používat</string>
+    <string name="plugins_downloaded" formatted="true">Staženo: %d</string>
+    <string name="audio_tracks">Zvukové stopy</string>
+    <string name="video_tracks">Videostopy</string>
+    <string name="apply_on_restart">Restartujte aplikaci pro použití změn.</string>
+    <string name="safe_mode_title">Bezpečný režim povolen</string>
+    <string name="extension_size">Velikost</string>
+    <string name="extension_authors">Autoři</string>
+    <string name="repository_url_hint">Adresa URL nebo krátký kód repozitáře</string>
+    <string name="error_invalid_url">Neplatná adresa URL</string>
+    <string name="automatic_plugin_download_summary">Automaticky instalovat všechny dosud nenainstalované doplňky z přidaných repozitářů.</string>
+    <string name="others">Ostatní</string>
+    <string name="trailer">Trailer</string>
+    <string name="network_adress_example">https://example.com/priklad.mp4</string>
+    <string name="skip_setup">Přeskočit nastavení</string>
+    <string name="add_repository">Přidat repozitář</string>
+    <string name="plugin_deleted">Doplněk odstraněn</string>
+    <string name="plugin_load_fail" formatted="true">Nepodařilo se načíst %s</string>
+    <string name="view_public_repositories_button_short">Veřejný seznam</string>
+    <string name="uppercase_all_subtitles">Velká písmena u všech titulků</string>
+    <string name="hls_playlist">Playlist HLS</string>
+    <string name="app_not_found_error">Aplikace nenalezena</string>
+    <string name="skip_type_format" formatted="true">Přeskočit %s</string>
+    <string name="skip_type_op">Úvod</string>
+    <string name="skip_type_ed">Konec</string>
+    <string name="clipboard_too_large">Příliš mnoho textu. Nepodařilo se uložit do schránky.</string>
+    <string name="yes">Ano</string>
+    <string name="browser">Prohlížeč</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="library">Knihovna</string>
+    <string name="kitsu_settings">Zobrazit plakáty z Kitsu</string>
+    <string name="automatic_plugin_download">Automaticky stahovat doplňky</string>
+    <string name="redo_setup_process">Znovu provést proces nastavení</string>
+    <string name="apk_installer_settings">Instalátor APK</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
+    <string name="apk_installer_settings_des">Některé telefony nepodporují nový instalátor balíčků. Pokud se aktualizace nenainstalují, zkuste použít starší možnost.</string>
+    <string name="pref_category_cache">Mezipaměť</string>
+    <string name="next_episode_format" formatted="true">Epizoda %d bude vydána za</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
+    <string name="play_livestream_button">Přehrát přímý přenos</string>
+    <string name="pref_category_extensions">Rozšíření</string>
+    <string name="pref_category_actions">Akce</string>
+    <string name="pref_category_looks">Vzhled</string>
+    <string name="pref_category_links">Odkazy</string>
+    <string name="pref_category_ui_features">Funkce</string>
+    <string name="example_site_name">NovýNázevWebu</string>
+    <string name="enable_nsfw_on_providers">Povolit NSFW u podporovaných rozšíření</string>
+    <string name="category_providers">Poskytovatelé</string>
+    <string name="crash_reporting_title">Hlášení pádů</string>
+    <string name="previous">Předchozí</string>
+    <string name="app_layout_subtext">Změnit vzhled aplikace tak, aby vám vyhovoval</string>
+    <string name="preferred_media_subtext">Co chcete vidět</string>
+    <string name="plugin_downloaded">Doplněk stažen</string>
+    <string name="is_adult">18+</string>
+    <string name="batch_download_start_format" formatted="true">Spuštěno stahování %1$d %2$s…</string>
+    <string name="blank_repo_message">CloudStream nemá ve výchozím nastavení nainstalované žádné zdroje. Je třeba je nainstalovat z repozitářů.
+\n
+\nPřipojte se na náš Discord nebo hledejte na internetu.</string>
+    <string name="plugins_disabled" formatted="true">Zakázáno: %d</string>
+    <string name="plugins_updated" formatted="true">Aktualizováno %d doplňků</string>
+    <string name="safe_mode_crash_info">Zobrazit informace o pádu</string>
+    <string name="extension_rating" formatted="true">Hodnocení: %s</string>
+    <string name="action_remove_from_watched">Odebrat ze zhlédnutých</string>
+    <string name="update_notification_installing">Instalace aktualizace aplikace…</string>
+    <string name="safe_mode_description">Všechna rozšíření byla vypnuta z důvodu pádu, abyste mohli najít to, které způsobuje potíže.</string>
+    <string name="extension_version">Verze</string>
+    <string name="player_pref">Preferovaný přehrávač videí</string>
+    <string name="extension_description">Popis</string>
+    <string name="extension_status">Stav</string>
+    <string name="extension_install_first">Nejprve nainstalujte rozšíření</string>
+    <string name="skip_type_mixed_ed">Smíšený konec</string>
+    <string name="extension_language">Jazyk</string>
+    <string name="player_settings_play_in_app">Interní přehrávač</string>
+    <string name="skip_type_recap">Rekapitulace</string>
+    <string name="clear_history">Vymazat historii</string>
+    <string name="all_languages_preference">Všechny jazyky</string>
+    <string name="skip_type_mixed_op">Smíšený úvod</string>
+    <string name="skip_type_creddits">Poděkování</string>
+    <string name="skip_type_intro">Znělka</string>
+    <string name="enable_skip_op_from_database_des">Zobrazit vyskakovací okna pro přeskočení úvodu/konce</string>
+    <string name="update_notification_downloading">Stahování aktualizace aplikace…</string>
+    <string name="confirm_exit_dialog">Opravdu chcete opustit aplikaci?</string>
+    <string name="update_notification_failed">Nepodařilo se nainstalovat novou verzi aplikace</string>
+    <string name="apk_installer_legacy">Původní</string>
+    <string name="delayed_update_notice">Aplikace bude po ukončení aktualizována</string>
+    <string name="empty_library_no_accounts_message">Vaše knihovna je prázdná :(
+\nPřihlaste se k účtu v knihovně nebo přidejte pořady do místní knihovny.</string>
+    <string name="select_library">Vybrat knihovnu</string>
+    <string name="sort_rating_desc">Hodnocení (od nejvyššího)</string>
+    <string name="sort_rating_asc">Hodnocení (od nejnižšího)</string>
+    <string name="sort_alphabetical_z">Abecedně (od Z do A)</string>
+    <string name="sort_by">Seřadit podle</string>
+    <string name="sort">Řazení</string>
+    <string name="empty_library_logged_in_message">Tento seznam je prázdný. Zkuste přepnout na jiný.</string>
+    <string name="safe_mode_file">Nalezen soubor bezpečného režimu!
+\nDo odebrání souboru nebudeme načítat žádná rozšíření.</string>
+    <string name="sort_updated_new">Aktualizováno (od nejnovějšího)</string>
+    <string name="sort_updated_old">Aktualizováno (od nejstaršího)</string>
+    <string name="sort_alphabetical_a">Abecedně (od A do Z)</string>
+    <string name="open_with">Otevřít pomocí</string>
+    <string name="pref_category_backup">Záloha</string>
+    <string name="pref_category_gestures">Gesta</string>
+    <string name="add_site_pref">Klonovat web</string>
+    <string name="add_site_summary">Přidat klon existujícího webu s jinou adresou URL</string>
+    <string name="example_site_url">https://example.com</string>
+    <string name="example_lang_name">Kód jazyka (cs)</string>
+    <string name="download_all_plugins_from_repo">Varování: CloudStream 3 nenese žádnou zodpovědnost za používání rozšíření třetích stran a neposkytuje pro ně žádnou podporu!</string>
+    <string name="single_plugin_disabled" formatted="true">%s (zakázáno)</string>
+    <string name="tracks">Stopy</string>
+    <string name="nsfw">NSFW</string>
+    <string name="other_singular">Video</string>
+    <string name="pref_category_player_features">Funkce přehrávače</string>
+    <string name="pref_category_subtitles">Titulky</string>
+    <string name="pref_category_player_layout">Rozložení</string>
+    <string name="pref_category_defaults">Výchozí hodnoty</string>
+    <string name="apk_installer_package_installer">Instalátor balíčků</string>
+    <string name="pref_category_app_updates">Aktualizace aplikace</string>
+    <string name="setup_done">Hotovo</string>
+    <string name="extension_types">Podporováno</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
+    <string name="live_singular">Živý přenos</string>
+    <string name="nsfw_singular">NSFW</string>
+    <string name="extensions">Rozšíření</string>
+    <string name="play_trailer_button">Přehrát trailer</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
+    <string name="view_public_repositories_button">Zobrazit komunitní repozitáře</string>
+    <string name="update_started">Aktualizace zahájena</string>
+    <string name="stream">Síťový stream</string>
+    <string name="autoplay_next_settings">Automaticky přehrát další epizodu</string>
+    <string name="livestreams">Živé přenosy</string>
+    <string name="subtitles_filter_lang">Filtrování podle preferovaného jazyka médií</string>
+    <string name="referer">Referent (volitelný)</string>
+    <string name="next">Další</string>
+    <string name="provider_languages_tip">Sledovat videa v těchto jazycích</string>
+    <string name="batch_download_finish_format" formatted="true">Staženo %1$d %2$s</string>
+    <string name="batch_download_nothing_to_download_format" formatted="true">Všechny %s jsou již staženy</string>
+    <string name="batch_download">Hromadné stahování</string>
+    <string name="plugin_singular">doplněk</string>
+    <string name="plugin">doplňků</string>
+    <string name="delete_repository_plugins">Tímto také odstraníte všechny doplňky repozitářů</string>
+    <string name="delete_repository">Odstranit repozitář</string>
+    <string name="plugins_not_downloaded" formatted="true">Nestaženo: %d</string>
+    <string name="no">Ne</string>
+    <string name="android_tv_interface_off_seek_settings">Skrytý přehrávač - doba hledání</string>
+    <string name="android_tv_interface_off_seek_settings_summary">Množství vyhledávané doby při skrytém přehrávači</string>
+    <string name="android_tv_interface_on_seek_settings">Zobrazený přehrávač - doba hledání</string>
+    <string name="pref_category_android_tv">Android TV</string>
+    <string name="android_tv_interface_on_seek_settings_summary">Množství vyhledávané doby při zobrazeném přehrávači</string>
+    <string name="test_log">Protokol</string>
+    <string name="category_provider_test">Test poskytovatele</string>
+    <string name="test_failed">Neúspěšné</string>
+    <string name="test_passed">Úspěšné</string>
+    <string name="restart">Restart</string>
+    <string name="start">Spustit</string>
+    <string name="stop">Zastavit</string>
+    <string name="subscription_in_progress_notification">Aktualizace odebíraných pořadů</string>
+    <string name="subscription_new">Přihlášeno k odběru %s</string>
+    <string name="subscription_deleted">Odhlášen odběr od %s</string>
+    <string name="subscription_episode_released">Byla vydána epizoda %d!</string>
+    <string name="subscription_list_name">Odebíráno</string>
+    <string name="jsdelivr_proxy">Proxy GitHub</string>
+    <string name="jsdelivr_enabled">Nelze se připojit k serveru GitHub. Zapínání proxy jsDelivr…</string>
+    <string name="watch_quality_pref_data">Upřednostněná kvalita sledování (mobilní data)</string>
+    <string name="revert">Vrátit zpět</string>
+    <string name="jsdelivr_proxy_summary">Obejít blokování přímých adres GitHub pomocí jsDelivr. Může způsobit zpoždění aktualizací o několik dní.</string>
+    <string name="pref_category_bypass">Obcházení ISP</string>
+    <string name="profile_number">Profil %d</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="mobile_data">Mobilní data</string>
+    <string name="set_default">Nastavit jako výchozí</string>
+    <string name="use">Použít</string>
+    <string name="edit">Upravit</string>
+    <string name="profiles">Profily</string>
+    <string name="help">Nápověda</string>
+    <string name="qualities">Kvality</string>
+    <string name="profile_background_des">Pozadí profilu</string>
+    <string name="quality_profile_help">Zde můžete změnit pořadí zdrojů. Pokud má video vyšší prioritu, objeví se ve výběru zdrojů výše. Součet priority zdroje a priority kvality je priorita videa.
+\n
+\nZdroj A: 3
+\nKvalita B: 7
+\nBudou mít celkovou prioritu videa 10.
+\n
+\nPOZNÁMKA: Pokud je součet 10 nebo vyšší, přehrávač automaticky přeskočí načítání při načtení daného odkazu!</string>
+    <string name="unable_to_inflate">Nepodařilo se správně vytvořit rozhraní. Toto je VÁŽNÁ CHYBA, kterou je potřeba ihned nahlásit %s</string>
+    <string name="disable">Vypnout</string>
+    <string name="automatic_plugin_download_mode_title">Výběr režimu pro filtrování stahování doplňků</string>
+    <string name="no_plugins_found_error">V repozitáři nebyly nalezeny žádné doplňky</string>
+    <string name="no_repository_found_error">Repozitář nenalezen, zkontrolujte adresu URL a zkuste použít VPN</string>
+    <string name="already_voted">Již jste hlasovali</string>
+    <string name="favorite_removed">%s odebráno z oblíbených</string>
+    <string name="favorites_list_name">Oblíbené</string>
+    <string name="favorite_added">%s přidáno do oblíbených</string>
+    <string name="duplicate_message_multiple" formatted="true">Ve vaší knihovně byl nalezen potenciální duplikát:
+\n
+\n%s
+\n
+\nChcete přesto přidat tuto položku, nahradit existující nebo zrušit akci?</string>
+    <string name="backup_frequency">Frekvence záloh</string>
+    <string name="duplicate_title">Nalezena potenciální duplicita</string>
+    <string name="lock_profile">Zamknout profil</string>
+    <string name="action_add_to_favorites">Přidat do oblíbených</string>
+    <string name="duplicate_replace_all">Nahradit vše</string>
+    <string name="pin_error_incorrect">Nesprávný PIN. Zkuste to prosím znovu.</string>
+    <string name="action_unsubscribe">Zrušit odběr</string>
+    <string name="pin_error_length">PIN musí obsahovat 4 znaky</string>
+    <string name="duplicate_replace">Nahradit</string>
+    <string name="duplicate_add">Přidat</string>
+    <string name="action_subscribe">Odebírat</string>
+    <string name="action_remove_from_favorites">Odebrat z oblíbených</string>
+    <string name="select_an_account">Vyberte účet</string>
+    <string name="duplicate_message_single">Vypadá to, že ve vaší knihovně již existuje potenciální duplikát: „%s“.
+\n
+\nChcete přesto přidat tuto položku, nahradit existující nebo zrušit akci?</string>
+    <string name="enter_pin">Zadejte PIN</string>
+    <string name="pin">PIN</string>
+    <string name="enter_current_pin">Zadejte současný PIN</string>
+    <string name="logged_account" formatted="true">Přihlášeni jako %s</string>
+    <string name="enter_pin_with_name" formatted="true">Zadejte PIN pro %s</string>
+    <string name="use_default_account">Použít výchozí účet</string>
+    <string name="skip_startup_account_select_pref">Přeskočit výběr účtu při spuštění</string>
+    <string name="manage_accounts">Správce účtů</string>
+    <string name="edit_account">Upravit účet</string>
+    <string name="links_reloaded_toast">Odkazy znovu načteny</string>
+    <string name="rotate_video_desc">Zobrazit tlačítko pro přepnutí otočení obrazovky</string>
+    <string name="rotate_video_key">rotate_video_key</string>
+    <string name="auto_rotate_video_key">auto_rotate_video_key</string>
+    <string name="auto_rotate_video">Automatické otáčení</string>
+    <string name="rotate_video">Otočení</string>
+    <string name="auto_rotate_video_desc">Zapnout automatické otáčení obrazovky v závislosti na orientaci videa</string>
+    <string name="test_extensions">Otestovat všechna rozšíření</string>
+    <string name="test_extensions_summary">Tento test slouží pouze pro vývojáře a neověřuje funkčnost jakéhokoli rozšíření.</string>
+    <string name="result_search_tooltip">Hledat v ostatních rozšířeních</string>
+    <string name="subscribe_tooltip">Oznámení o nové epizodě</string>
+    <string name="recommendations_tooltip">Zobrazit doporučené</string>
+    <string name="speed_setting_summary">Přidá nastavení rychlosti do přehrávače</string>
+    <string name="biometric_authentication_title">Odemknout CloudStream</string>
+    <string name="biometric_setting">Zamknout biometrikou</string>
+    <string name="password_pin_authentication_title">Ověření heslem/PINem</string>
+    <string name="biometric_unsupported">Biometrické ověření není na tomto zařízení podporováno</string>
+    <string name="biometric_setting_summary">Odemkněte aplikaci otiskem prstu, obličejem, PINem, gestem nebo heslem.</string>
+    <string name="biometric_prompt_description">Po několika nezdařilých pokusech se okno zavře. Pro opětovný pokus restartujte aplikaci.</string>
+    <string name="biometric_warning">Vaše data z aplikace CloudStream byla nyní zálohována. Ačkoli je tato možnost velmi malá, různá zařízení se mohou chovat různě. Ve výjimečném případě, že se vám přístup k aplikaci zablokuje, data aplikace zcela vymažte a obnovte je ze zálohy. Velmi se omlouváme za případné nepříjemnosti z toho plynoucí.</string>
+    <string name="unfavorite">Odebrat z oblíbených</string>
+    <string name="resume_remaining" formatted="true">%s
+\nzbývá</string>
+    <string name="favorite">Přidat do oblíbených</string>
+    <string name="repo_copy_label">Název a adresa repozitáře</string>
+    <string name="clipboard_unknown_error">Chyba při kopírování, zkopírujte prosím protokol a kontaktujte podporu aplikace.</string>
+    <string name="toast_copied">Zkopírováno!</string>
+    <string name="clipboard_permission_error">Chyba při přístupu ke schránce, zkuste to prosím znovu.</string>
+    <string name="ok">OK</string>
+    <string name="app_unrestricted_toast">Využití baterie aplikací je již nastaveno na neomezené</string>
+    <string name="app_info_intent_error">Nepodařilo se otevřít informace o aplikaci CloudStream.</string>
+    <string name="music_singlar">Hudba</string>
+    <string name="custom_media_singluar">Média</string>
+    <string name="battery_dialog_title">Zakažte optimalizace baterie</string>
+    <string name="battery_dialog_message">Aby bylo zajištěno nepřetržité stahování a upozornění na odebírané seriály, potřebuje aplikace CloudStream povolení ke spuštění na pozadí. Po stisknutí tlačítka OK se vám zobrazí dialog se žádostí. Stiskněte prosím „Povolit“.\n\nUpozorňujeme, že toto oprávnění neznamená, že CS3 bude vybíjet baterii. Na pozadí bude pracovat pouze v případě potřeby, například při přijímání oznámení nebo stahování videí z oficiálních rozšíření.</string>
+    <string name="audio_book_singular">Audiokniha</string>
+    <string name="reset_btn">Resetovat</string>
+    <string name="episode_upcoming_format" formatted="true">Vychází %s</string>
+    <string name="next_season_episode_format" formatted="true">Epizoda %2$d ze série %1$d bude vydána za</string>
+    <string name="episode_action_cast_mirror">Vysílat zrcadlení</string>
+    <string name="player_settings_select_cast_device">Vyberte zařízení k vysílání</string>
+    <string name="cs3wiki">CloudStream Wiki</string>
+    <string name="pref_category_security">Zabezpečení</string>
+    <string name="qr_image">Obrázek QR kódu</string>
+    <string name="dismiss">Zavřít</string>
+    <string name="open_downloaded_repo">Otevřít repozitář</string>
+    <string name="device_pin_url_message">Navštivte <b>%s</b> na vašem zařízení nebo počítači a zadejte kód výše</string>
+    <string name="device_pin_error_message">Nepodařilo se získat PIN kód, zkuste místní ověření</string>
+    <string name="device_pin_counter_text">Kód vyprší za %1$dm %2$ds</string>
+    <string name="pref_category_accounts">Účty</string>
+    <string name="auth_locally">Lokální ověření</string>
+    <string name="device_pin_expired_message">PIN kód vypršel!</string>
+    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="play_from_beginning_img_des">Přehrát od začátku</string>
+    <string name="downloads_empty">Aktuálně neprobíhají žádná stahování.</string>
+    <string name="open_local_video">Otevřít místní video</string>
+    <string name="delete_plugin">Odstranit doplněk</string>
+    <string name="hide_player_control_names">Skrýt názvy ovládání přehrávače</string>
+    <string name="test_warning">Varování</string>
+    <string name="sort_release_date_new">Datum vydání (od nových)</string>
+    <string name="sort_release_date_old">Datum vydání (od starých)</string>
+    <string name="downloads_delete_select">Zvolte položky k odstranění</string>
+    <string name="offline_file">Dostupné pro sledování offline</string>
+    <string name="select_all">Vybrat vše</string>
+    <string name="delete_message_multiple" formatted="true">Opravdu chcete trvale odstranit následující položky?
+\n
+\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Opravdu chcete trvale odstranit následující epizody v %1$s?
+\n
+\n%2$s</string>
+    <string name="delete_message_series_only" formatted="true">Opravdu chcete trvale odstranit všechny epizody v následujících sériích?
+\n
+\n%s</string>
+    <string name="deselect_all">Zrušit výběr všeho</string>
+    <string name="delete_files">Odstranit soubory</string>
+    <string name="delete_message_series_section" formatted="true">Také trvale odstraníte všechny epizody v následujících sériích:
+\n
+\n%s</string>
+    <string name="delete_format" formatted="true">Odstranit (%1$d | %2$s)</string>
+    <string name="preview_seekbar">Náhled v liště přehrávače</string>
+    <string name="preview_seekbar_desc">Povolit náhled miniatur na liště přehrávače</string>
+    <string name="no_subtitles_loaded">Zatím nenačteny žádné titulky</string>
+    <string name="confirm_before_exiting_title">Potvrdit před ukončením</string>
+    <string name="confirm_before_exiting_desc">Zobrazit dialog před ukončením aplikace</string>
+    <string name="show">Zobrazit</string>
+    <string name="dont_show">Nezobrazovat</string>
+    <string name="backup_path_title">Umístění složky záloh</string>
+    <string name="custom">Vlastní</string>
+    <string name="torrent_info">Toto video je torrent, což znamená, že lze sledovat vaší aktivitu v něm.\nPřed pokračováním se ujistěte, že chápete, co to je torrentování.</string>
+    <string name="subs_edge_size">Velikost okraje</string>
+    <string name="audio_singluar">Zvuk</string>
+    <string name="podcast_singluar">Podcast</string>
+    <string name="encoding_error">Chyba kódování</string>
+    <string name="unsupported_error">Nepodporovaná chyba</string>
+    <string name="player_load_one_subtitle_online">Načíst první dostupné</string>
+    <string name="torrent_not_accepted">Pro pokračování restartujte aplikaci a potvrďte dialog o streamování torrentu.</string>
+    <string name="torrent_preferred_media">Povolte torrent v Nastavení/Poskytovatelé/Preferovaná média</string>
+    <string name="software_decoding">Softwarové dekódování</string>
+    <string name="software_decoding_desc">Softwarové dekódování umožňuje přehrávači přehrávat video soubory, které telefon nepodporuje, ale může způsobit zpoždění nebo nestabilní přehrávání ve vysokém rozlišení</string>
+    <string name="sort_episodes_rating_high_low">Hodnocení (nejvyšší)</string>
+    <string name="sort_episodes_date_newest">Datum vysílání (nejnovější)</string>
+    <string name="sort_episodes_date_oldest">Datum vysílání (nejstarší)</string>
+    <string name="sort_button_rating">Hodnocení %s</string>
+    <string name="sort_button_date">Datum %s</string>
+    <string name="update_plugins">Aktualizovat doplňky</string>
+    <string name="starting_plugin_update_manually">Spouštím proces aktualizace doplňků!</string>
+    <string name="no_plugins_updated_manually">Nebyly aktualizovány žádné doplňky.</string>
+    <string name="sort_button_episode">Ep %s</string>
+    <string name="plugins_updated_manually">Úspěšně aktualizováno %d doplňků!</string>
+    <string name="sort_episodes_number_desc">Epizoda (sestupně)</string>
+    <string name="sort_episodes_rating_low_high">Hodnocení (nejnižší)</string>
+    <string name="update_plugins_manually">Ručně aktualizovat doplňky</string>
+    <string name="sort_episodes_number_asc">Epizoda (vzestupně)</string>
+    <string name="player_notification_channel_name">Oznámení přehrávače</string>
+    <string name="player_notification_channel_description">Oznámení přehrávače pro ovládání přehrávání na pozadí</string>
+    <string name="speech_recognition_unavailable">Rozpoznávání řeči není k dispozici</string>
+    <string name="begin_speaking">Začněte mluvit…</string>
+    <string name="subtitles_from_embedded">Vložené</string>
+    <string name="subtitles_from_online">Online</string>
+    <string name="all_subtitles_bold">Vykreslit všechny titulky tučně</string>
+    <string name="all_subtitles_italic">Vykreslit všechny titulky kurzívou</string>
+    <string name="background_radius">Poloměr pozadí</string>
+    <string name="slide_up_again_to_exceed_100">Přejeďte opět nahoru pro pokračování nad 100 %</string>
+    <string name="volume_exceeded_100">Hlasitost překročila 100 %</string>
+    <string name="download_parallel_settings_des">Počet různých položek, které lze stahovat v jednu chvíli</string>
+    <string name="poster_size_settings_des">Změní velikost plakátů</string>
+    <string name="no_internet_connection">Žádné připojení k internetu. \n\nPřipojte se prosím k internetu a zkuste to znovu, nebo sledujte stažené, zatímco jste offline.</string>
+    <string name="poster_size_settings">Velikost plakátů</string>
+    <string name="overscan_settings_des">Změní hranice obrazovky</string>
+    <string name="overscan_settings">Oříznutí</string>
+    <string name="parallel_downloads">Paralelní stahování</string>
+    <string name="concurrent_connections">Souběžná připojení</string>
+    <string name="concurrent_connections_settings_des">Kolik souběžných připojení může každé stahování použít</string>
+    <string name="go_to_downloads">Přejít na stažené</string>
+    <string name="player_settings_always_ask">Vždy se zeptat</string>
+    <string name="speedup_title">Přepínač rychlosti při podržení</string>
+    <string name="speedup_summary">Podržte pro 2x rychlost</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dh %2$dmin %3$ds</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dmin %2$ds</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$ds</string>
+    <string name="show_rating">Štítek hodnocení</string>
+    <string name="no_account">Žádný účet</string>
+    <string name="edit_profile_image_title">Upravit profilový obrázek</string>
+    <string name="edit_profile_image_hint">Zadejte adresu profilového obrázku</string>
+    <string name="edit_profile_image_error_empty">Adresa nenalezena</string>
+    <string name="edit_profile_image_error_invalid">Neplatná adresa nebo obrázek</string>
+    <string name="edit_profile_image_success">Obrázek úspěšně upraven</string>
+    <string name="action_mark_watched_up_to_this_episode">Označit jako zhlédnuté po tuto epizodu</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">Odebrat zhlédnutí po tuto epizodu</string>
+    <string name="action_reload">Znovu načteno</string>
+    <string name="reload_provider">Znovu načíst poskytovatele</string>
+    <string name="episode_action_play_mirror">Přehrát ze zrcadla</string>"
+    <string name="name">Název</string>
+    <string name="resolution_and_name">Rozlišení a název</string>
+</resources>

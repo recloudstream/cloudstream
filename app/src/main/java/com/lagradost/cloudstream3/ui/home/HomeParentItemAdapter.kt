@@ -34,13 +34,11 @@ class LoadClickCallback(
 )
 
 open class ParentItemAdapter(
-    open val fragment: Fragment,
     id: Int,
     private val clickCallback: (SearchClickCallback) -> Unit,
     private val moreInfoClickCallback: (HomeViewModel.ExpandableHomepageList) -> Unit,
     private val expandCallback: ((String) -> Unit)? = null,
 ) : BaseAdapter<HomeViewModel.ExpandableHomepageList, Bundle>(
-    fragment,
     id,
     diffCallback = BaseDiffCallback(
         itemSame = { a, b -> a.list.name == b.list.name },
@@ -48,6 +46,11 @@ open class ParentItemAdapter(
             a.list.list == b.list.list
         })
 ) {
+    companion object {
+        val sharedPool =
+            RecyclerView.RecycledViewPool().apply { this.setMaxRecycledViews(CONTENT, 4) }
+    }
+
     data class ParentItemHolder(val binding: ViewBinding) : ViewHolderState<Bundle>(binding) {
         override fun save(): Bundle = Bundle().apply {
             val recyclerView = (binding as? HomepageParentBinding)?.homeChildRecyclerview
@@ -60,12 +63,12 @@ open class ParentItemAdapter(
 
         override fun restore(state: Bundle) {
             (binding as? HomepageParentBinding)?.homeChildRecyclerview?.layoutManager?.onRestoreInstanceState(
-                    state.getSafeParcelable<Parcelable>("value")
+                state.getSafeParcelable<Parcelable>("value")
             )
         }
     }
 
-    override fun submitList(list: List<HomeViewModel.ExpandableHomepageList>?) {
+    override fun submitList(list: Collection<HomeViewModel.ExpandableHomepageList>?) {
         super.submitList(list?.sortedBy { it.list.list.isEmpty() })
     }
 
@@ -90,17 +93,30 @@ open class ParentItemAdapter(
         if (binding !is HomepageParentBinding) return
         val info = item.list
         binding.apply {
-            homeChildRecyclerview.adapter = HomeChildItemAdapter(
-                fragment = fragment,
-                id = id + position + 100,
-                clickCallback = clickCallback,
-                nextFocusUp = homeChildRecyclerview.nextFocusUpId,
-                nextFocusDown = homeChildRecyclerview.nextFocusDownId,
-            ).apply {
-                isHorizontal = info.isHorizontalImages
-                hasNext = item.hasNext
-                submitList(item.list.list)
+            val currentAdapter = homeChildRecyclerview.adapter as? HomeChildItemAdapter
+            if (currentAdapter == null) {
+                homeChildRecyclerview.setRecycledViewPool(HomeChildItemAdapter.sharedPool)
+                homeChildRecyclerview.adapter = HomeChildItemAdapter(
+                    id = id + position + 100,
+                    clickCallback = clickCallback,
+                    nextFocusUp = homeChildRecyclerview.nextFocusUpId,
+                    nextFocusDown = homeChildRecyclerview.nextFocusDownId,
+                ).apply {
+                    isHorizontal = info.isHorizontalImages
+                    hasNext = item.hasNext
+                    submitList(item.list.list)
+                }
+            } else {
+                currentAdapter.apply {
+                    isHorizontal = info.isHorizontalImages
+                    hasNext = item.hasNext
+                    this.clickCallback = this@ParentItemAdapter.clickCallback
+                    nextFocusUp = homeChildRecyclerview.nextFocusUpId
+                    nextFocusDown = homeChildRecyclerview.nextFocusDownId
+                    submitIncomparableList(item.list.list)
+                }
             }
+
             homeChildRecyclerview.setLinearListLayout(
                 isHorizontal = true,
                 nextLeft = startFocus,

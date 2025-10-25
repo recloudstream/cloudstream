@@ -8,6 +8,7 @@
     android:screenOrientation="landscape"
     tools:orientation="vertical">
 
+
     <!--
         <LinearLayout android:layout_width="match_parent"
                       android:layout_height="wrap_content"
@@ -156,8 +157,9 @@
                         android:textStyle="bold"
                         android:visibility="visible"
                         tools:text="Hello world" />
-                </LinearLayout>
 
+
+                </LinearLayout>
 
                 <!-- Removed as it has no use anymore-->
                 <!--<androidx.mediarouter.app.MediaRouteButton
@@ -170,6 +172,8 @@
                         android:visibility="visible"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />-->
+
+
 
                 <LinearLayout
                     android:id="@+id/player_go_back_holder"
@@ -441,8 +445,8 @@
                             android:id="@+id/download_header_toggle"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
-                            android:layout_gravity="center_vertical|end"
-                            android:layout_marginEnd="60dp"
+                            android:layout_gravity="center_vertical|start"
+                            android:layout_marginStart="60dp"
                             android:background="@drawable/video_tap_button_always_white"
                             android:padding="10dp"
                             android:src="@drawable/baseline_downloading_24"
@@ -454,7 +458,7 @@
                             android:id="@+id/download_header"
                             android:layout_width="200dp"
                             android:layout_height="80dp"
-                            android:layout_gravity="end|center_vertical"
+                            android:layout_gravity="start|center_vertical"
                             android:layout_margin="10dp"
                             android:elevation="10dp"
                             app:cardBackgroundColor="@color/darkBar"
@@ -835,7 +839,8 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:alpha="1"
                 tools:visibility="visible">
-                <!--VERY hacky layout -->
+
+                <!-- VERY hacky layout -->
                 <ImageView
                     android:id="@+id/player_progressbar_left_icon"
                     android:layout_width="wrap_content"
@@ -844,13 +849,10 @@
                     android:layout_marginBottom="220dp"
                     android:src="@drawable/ic_baseline_volume_up_24"
                     app:tint="@android:color/white"
-                    tools:ignore="ContentDescription">
-
-                </ImageView>
+                    tools:ignore="ContentDescription" />
 
                 <ProgressBar
-                    android:id="@+id/player_progressbar_left"
-                    style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                    android:id="@+id/player_progressbar_left_level1"
                     android:layout_width="5dp"
                     android:layout_height="150dp"
                     android:layout_centerInParent="true"
@@ -860,8 +862,28 @@
                     android:max="100"
                     android:progress="100"
                     android:progressDrawable="@drawable/progress_drawable_vertical"
-                    tools:progress="30" />
+                    android:progressTint="@color/white"
+                    android:progressTintMode="src_in"
+                    tools:progress="30"
+                    style="@android:style/Widget.Material.ProgressBar.Horizontal" />
+
+                <ProgressBar
+                    android:id="@+id/player_progressbar_left_level2"
+                    android:layout_width="5dp"
+                    android:layout_height="150dp"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginStart="40dp"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/progress_drawable_vertical"
+                    android:progressTint="@color/colorPrimaryOrange"
+                    android:progressTintMode="src_in"
+                    tools:progress="0"
+                    style="@android:style/Widget.Material.ProgressBar.Horizontal" />
             </RelativeLayout>
+
 
             <RelativeLayout
                 android:id="@+id/player_progressbar_right_holder"
@@ -906,47 +928,7 @@
         </LinearLayout>
 
 
-        <!--
-            <ImageView
-                    android:padding="15dp"
-                    android:id="@+id/player_episodes_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|center_vertical"
-                    android:src="@drawable/ic_baseline_arrow_back_ios_24"
-                    android:background="@drawable/video_tap_button_always_white"
 
-                    app:tint="@android:color/white"
-                    tools:ignore="ContentDescription"></ImageView>
-
-            <LinearLayout
-                    android:visibility="gone"
-                    android:background="?attr/primaryBlackBackground"
-                    android:orientation="vertical"
-                    android:layout_gravity="end"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
-
-                <TextView
-                        android:padding="10dp"
-                        style="@style/WatchHeaderText"
-                        android:textSize="15sp"
-                        android:layout_marginEnd="0dp"
-                        android:text="@string/episodes"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                        android:requiresFadingEdge="vertical"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        android:id="@+id/player_episode_list"
-                        tools:listitem="@layout/player_episodes"
-                        android:layout_width="200dp"
-                        android:layout_height="match_parent">
-
-                </androidx.recyclerview.widget.RecyclerView>
-            </LinearLayout>
-            -->
 
     </FrameLayout>
 
@@ -956,4 +938,80 @@
         android:layout_height="match_parent">
 
     </FrameLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/player_speedup_button"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        app:iconPadding="0dp"
+        app:iconGravity="textStart"
+        android:clickable="false"
+        android:focusable="false"
+        android:textAllCaps="false"
+        android:visibility="gone"
+        app:icon="@drawable/speedup"
+        app:iconTint="@color/textColor"
+        android:foreground="@null"
+        android:backgroundTint="@color/skipOpTransparent"
+        tools:visibility="visible" />
+    <LinearLayout
+        android:id="@+id/player_episodes_button_root"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="end|center_vertical"
+        >
+        <ImageView
+            android:padding="15dp"
+            android:id="@+id/player_episodes_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:foregroundGravity="center"
+            android:src="@drawable/ic_baseline_arrow_back_ios_24"
+            android:background="@drawable/video_tap_button_always_white"
+            app:tint="@android:color/white"
+            tools:ignore="ContentDescription" />
+        <TextView
+            android:id="@+id/player_episodes_button_text"
+            style="@style/ResultMarqueeButtonText"
+            android:layout_marginTop="5dp"
+            android:text="@string/episodes"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/player_episode_overlay"
+        android:visibility="gone"
+        android:padding="5dp"
+        android:background="?attr/primaryBlackBackground"
+        android:orientation="vertical"
+        android:layout_gravity="end"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/player_episode_overlay_title"
+            android:padding="10dp"
+            style="@style/WatchHeaderText"
+            android:textSize="15sp"
+            android:layout_marginEnd="0dp"
+            android:text="@string/episodes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:requiresFadingEdge="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:id="@+id/player_episode_list"
+            tools:listitem="@layout/player_episodes"
+            android:nextFocusLeft="@id/player_episodes_button"
+            android:layout_width="350dp"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:descendantFocusability="afterDescendants">
+
+        </androidx.recyclerview.widget.RecyclerView>
+    </LinearLayout>
 </FrameLayout>

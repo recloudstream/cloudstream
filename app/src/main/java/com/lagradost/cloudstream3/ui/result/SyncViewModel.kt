@@ -4,10 +4,12 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.SyncApis
+import com.lagradost.cloudstream3.mvvm.throwAbleToResource
+import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.simklApi
@@ -31,7 +33,7 @@ class SyncViewModel : ViewModel() {
         const val TAG = "SYNCVM"
     }
 
-    private val repos = SyncApis
+    private val repos = AccountManager.syncApis
 
     private val _metaResponse: MutableLiveData<Resource<SyncAPI.SyncResult>?> =
         MutableLiveData(null)
@@ -65,7 +67,7 @@ class SyncViewModel : ViewModel() {
                 it.name,
                 it.idPrefix,
                 syncs.containsKey(it.idPrefix),
-                it.hasAccount(),
+                it.authUser() != null,
                 it.icon,
             )
         }
@@ -157,7 +159,7 @@ class SyncViewModel : ViewModel() {
         }
     }
 
-    fun setScore(score: Int) {
+    fun setScore(score: Score?) {
         Log.i(TAG, "setScore = $score")
         val user = userData.value
         if (user is Resource.Success) {
@@ -181,7 +183,7 @@ class SyncViewModel : ViewModel() {
         val user = userData.value
         if (user is Resource.Success) {
             syncs.forEach { (prefix, id) ->
-                repos.firstOrNull { it.idPrefix == prefix }?.score(id, user.value)
+                repos.firstOrNull { it.idPrefix == prefix }?.updateStatus(id, user.value)
             }
         }
         updateUserData()
@@ -203,17 +205,10 @@ class SyncViewModel : ViewModel() {
         ioSafe {
             syncs.amap { (prefix, id) ->
                 repos.firstOrNull { it.idPrefix == prefix }?.let { repo ->
-                    if (repo.hasAccount()) {
-                        val result = repo.getStatus(id)
-                        if (result is Resource.Success) {
-                            update(result.value)?.let { newData ->
-                                Log.i(TAG, "modifyData ${repo.name} => $newData")
-                                repo.score(id, newData)
-                            }
-                        } else if (result is Resource.Failure) {
-                            Log.e(TAG, "modifyData getStatus error ${result.errorString}")
-                        }
-                    }
+                    val result =
+                        update(repo.status(id).getOrNull() ?: return@let null) ?: return@let null
+                    Log.i(TAG, "modifyData ${repo.name} => $result")
+                    repo.updateStatus(id, result)
                 }
             }
         }
@@ -221,29 +216,24 @@ class SyncViewModel : ViewModel() {
     fun updateUserData() = ioSafe {
         Log.i(TAG, "updateUserData")
         _userDataResponse.postValue(Resource.Loading())
-        var lastError: Resource<SyncAPI.SyncStatus> = Resource.Failure(false, null, null, "No data")
-        syncs.forEach { (prefix, id) ->
-            repos.firstOrNull { it.idPrefix == prefix }?.let { repo ->
-                if (repo.hasAccount()) {
-                    val result = repo.getStatus(id)
-                    if (result is Resource.Success) {
-                        _userDataResponse.postValue(result)
-                        return@ioSafe
-                    } else if (result is Resource.Failure) {
-                        Log.e(TAG, "updateUserData error ${result.errorString}")
-                        lastError = result
-                    }
-                }
-            }
+
+        val status = syncs.firstNotNullOfOrNull { (prefix, id) ->
+            repos.firstOrNull { it.idPrefix == prefix }
+                ?.status(id)?.getOrNull()
         }
-        _userDataResponse.postValue(lastError)
+
+        if (status == null) {
+            _userDataResponse.postValue(Resource.Failure(false, "No data"))
+        } else {
+            _userDataResponse.postValue(Resource.Success(status))
+        }
     }
 
     private fun updateMetadata() = ioSafe {
         Log.i(TAG, "updateMetadata")
 
         _metaResponse.postValue(Resource.Loading())
-        var lastError: Resource<SyncAPI.SyncResult> = Resource.Failure(false, null, null, "No data")
+        var lastError: Resource<SyncAPI.SyncResult> = Resource.Failure(false, "No data")
         val current = ArrayList(syncs.toList())
 
         // shitty way to sort anilist first, as it has trailers while mal does not
@@ -261,19 +251,20 @@ class SyncViewModel : ViewModel() {
 
         current.forEach { (prefix, id) ->
             repos.firstOrNull { it.idPrefix == prefix }?.let { repo ->
-                if (!repo.requiresLogin || repo.hasAccount()) {
-                    Log.i(TAG, "updateMetadata loading ${repo.idPrefix}")
-                    val result = repo.getResult(id)
-                    if (result is Resource.Success) {
-                        _metaResponse.postValue(result)
-                        return@ioSafe
-                    } else if (result is Resource.Failure) {
-                        Log.e(
-                            TAG,
-                            "updateMetadata error $id at ${repo.idPrefix} ${result.errorString}"
-                        )
-                        lastError = result
-                    }
+                Log.i(TAG, "updateMetadata loading ${repo.idPrefix}")
+                val result = repo.load(id)
+                val resultValue = result.getOrNull()
+                val resultError = result.exceptionOrNull()
+                if (resultValue != null) {
+                    _metaResponse.postValue(Resource.Success(resultValue))
+                    return@ioSafe
+                } else if (resultError != null) {
+
+                    /*Log.e(
+                        TAG,
+                        "updateMetadata error $id at ${repo.idPrefix} ${result.errorString}"
+                    )*/
+                    lastError = throwAbleToResource(resultError)
                 }
             }
         }
@@ -281,9 +272,9 @@ class SyncViewModel : ViewModel() {
         setEpisodesDelta(0)
     }
 
-    fun syncName(syncName: String) : String? {
+    fun syncName(syncName: String): String? {
         // fix because of bad old data :pensive:
-        val realName = when(syncName) {
+        val realName = when (syncName) {
             "MAL" -> malApi.idPrefix
             "Simkl" -> simklApi.idPrefix
             "AniList" -> aniListApi.idPrefix
@@ -292,7 +283,7 @@ class SyncViewModel : ViewModel() {
         return repos.firstOrNull { it.idPrefix == realName }?.idPrefix
     }
 
-    fun setSync(syncName : String, syncId : String) {
+    fun setSync(syncName: String, syncId: String) {
         syncs.clear()
         syncs[syncName] = syncId
     }

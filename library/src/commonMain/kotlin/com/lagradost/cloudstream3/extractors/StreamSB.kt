@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.extractors
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
@@ -165,7 +166,7 @@ open class StreamSB : ExtractorApi() {
 
         mapped.streamData.subs?.map {sub ->
             subtitleCallback.invoke(
-                SubtitleFile(
+                newSubtitleFile(
                     sub.label.toString(),
                     sub.file ?: return@map null,
                 )

@@ -5,7 +5,7 @@ import android.webkit.CookieManager
 import androidx.annotation.AnyThread
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.debugWarning
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.nicehttp.Requests.Companion.await
 import com.lagradost.nicehttp.cookies
 import kotlinx.coroutines.runBlocking
@@ -32,7 +32,7 @@ class CloudflareKiller : Interceptor {
 
     init {
         // Needs to clear cookies between sessions to generate new cookies.
-        normalSafeApiCall {
+        safe {
             // This can throw an exception on unsupported devices :(
             CookieManager.getInstance().removeAllCookies(null)
         }
@@ -77,7 +77,7 @@ class CloudflareKiller : Interceptor {
     }
 
     private fun getWebViewCookie(url: String): String? {
-        return normalSafeApiCall {
+        return safe {
             CookieManager.getInstance()?.getCookie(url)
         }
     }

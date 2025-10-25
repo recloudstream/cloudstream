@@ -10,21 +10,25 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
-import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentPluginDetailsBinding
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.VotingApi.canVote
 import com.lagradost.cloudstream3.plugins.VotingApi.getVotes
 import com.lagradost.cloudstream3.plugins.VotingApi.hasVoted
 import com.lagradost.cloudstream3.plugins.VotingApi.vote
+import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
-import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
-import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
-import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
-import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
-import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
+import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
+import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
 
 
 class PluginDetailsFragment(val data: PluginViewData) : BottomSheetDialogFragment() {
@@ -62,6 +66,11 @@ class PluginDetailsFragment(val data: PluginViewData) : BottomSheetDialogFragmen
         super.onViewCreated(view, savedInstanceState)
         val metadata = data.plugin.second
         binding?.apply {
+            fixSystemBarsPadding(
+                root,
+                padBottom = isLandscape(),
+                padLeft = isLayout(TV or EMULATOR)
+            )
             pluginIcon.loadImage(metadata.iconUrl?.replace("%size%", "$iconSize")
                 ?.replace("%exact_size%", "$iconSizeExact")) {
                 error { getImageFromDrawable(context ?: return@error null , R.drawable.ic_baseline_extension_24) }
@@ -85,9 +94,9 @@ class PluginDetailsFragment(val data: PluginViewData) : BottomSheetDialogFragmen
                     ", "
                 )
             pluginLang.text = if (metadata.language == null)
-                getString(R.string.no_data)
-            else
-                "${getFlagFromIso(metadata.language)} ${fromTwoLettersToLanguage(metadata.language)}"
+                    getString(R.string.no_data)
+                else
+                    getNameNextToFlagEmoji(metadata.language) ?: metadata.language
 
             githubBtn.setOnClickListener {
                 if (metadata.repositoryUrl != null) {

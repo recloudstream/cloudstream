@@ -29,7 +29,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentDownloadsBinding
 import com.lagradost.cloudstream3.databinding.StreamInputBinding
 import com.lagradost.cloudstream3.isEpisodeBased
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.player.BasicLink
@@ -38,7 +38,9 @@ import com.lagradost.cloudstream3.ui.player.LinkGenerator
 import com.lagradost.cloudstream3.ui.player.OfflinePlaybackHelper.playUri
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadResult
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
@@ -46,7 +48,7 @@ import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPres
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.setAppBarNoScrollFlagsOnTV
@@ -87,7 +89,7 @@ class DownloadFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         hideKeyboard()
-        binding?.downloadStorageAppbar?.setAppBarNoScrollFlagsOnTV()
+        binding?.downloadAppbar?.setAppBarNoScrollFlagsOnTV()
         binding?.downloadDeleteAppbar?.setAppBarNoScrollFlagsOnTV()
 
         /**
@@ -136,12 +138,15 @@ class DownloadFragment : Fragment() {
                 binding?.downloadUsed
             )
 
-            // Prevent race condition and make sure
-            // we don't display it early
-            if (
-                downloadsViewModel.isMultiDeleteState.value == null ||
-                downloadsViewModel.isMultiDeleteState.value == false
-            ) binding?.downloadStorageAppbar?.isVisible = it > 0
+            val hasBytes = it > 0
+            if(hasBytes) {
+                binding?.downloadLoadingBytes?.stopShimmer()
+            } else {
+                binding?.downloadLoadingBytes?.startShimmer()
+            }
+
+            binding?.downloadBytesBar?.isVisible = hasBytes
+            binding?.downloadLoadingBytes?.isGone = hasBytes
         }
         observe(downloadsViewModel.downloadBytes) {
             updateStorageInfo(
@@ -165,7 +170,7 @@ class DownloadFragment : Fragment() {
                 // Prevent race condition and make sure
                 // we don't display it early
                 if (downloadsViewModel.usedBytes.value?.let { it > 0 } == true) {
-                    binding?.downloadStorageAppbar?.isVisible = true
+                    binding?.downloadAppbar?.isVisible = true
                 }
             }
         }
@@ -218,6 +223,12 @@ class DownloadFragment : Fragment() {
                 isGone = isLayout(TV)
                 setOnClickListener { showStreamInputDialog(it.context) }
             }
+
+            downloadStreamButtonTv.isFocusableInTouchMode = isLayout(TV)
+            downloadAppbar.isFocusableInTouchMode = isLayout(TV)
+
+            downloadStreamButtonTv.setOnClickListener { showStreamInputDialog(it.context) }
+            steamImageviewHolder.isVisible = isLayout(TV)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -227,7 +238,11 @@ class DownloadFragment : Fragment() {
         }
 
         context?.let { downloadsViewModel.updateHeaderList(it) }
-        fixPaddingStatusbar(binding?.downloadRoot)
+        fixSystemBarsPadding(
+            binding?.downloadRoot,
+            padBottom = isLandscape(),
+            padLeft = isLayout(TV or EMULATOR)
+        )
     }
 
     private fun handleItemClick(click: DownloadHeaderClickEvent) {
@@ -252,7 +267,7 @@ class DownloadFragment : Fragment() {
     private fun handleSelectedChange(selected: MutableSet<Int>) {
         if (selected.isNotEmpty()) {
             binding?.downloadDeleteAppbar?.isVisible = true
-            binding?.downloadStorageAppbar?.isVisible = false
+            binding?.downloadAppbar?.isVisible = false
             activity?.attachBackPressedCallback("Downloads") {
                 downloadsViewModel.setIsMultiDeleteState(false)
             }
@@ -309,7 +324,7 @@ class DownloadFragment : Fragment() {
             .setType("video/*")
             .addCategory(Intent.CATEGORY_OPENABLE)
             .addFlags(FLAG_GRANT_READ_URI_PERMISSION) // Request temporary access
-        normalSafeApiCall {
+        safe {
             videoResultLauncher.launch(
                 Intent.createChooser(
                     intent,
@@ -352,8 +367,7 @@ class DownloadFragment : Fragment() {
                         LinkGenerator(
                             listOf(BasicLink(url)),
                             extract = true,
-                            referer = referer,
-                            isM3u8 = binding.hlsSwitch.isChecked
+                            refererUrl = referer,
                         )
                     )
                 )
@@ -367,7 +381,7 @@ class DownloadFragment : Fragment() {
     }
 
     private fun activateSwitchOnHls(text: String?, binding: StreamInputBinding) {
-        binding.hlsSwitch.isChecked = normalSafeApiCall {
+        binding.hlsSwitch.isChecked = safe {
             URI(text).path?.substringAfterLast(".")?.contains("m3u")
         } == true
     }

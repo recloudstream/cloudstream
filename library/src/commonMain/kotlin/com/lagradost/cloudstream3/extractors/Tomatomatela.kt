@@ -49,13 +49,10 @@ open class Tomatomatela : ExtractorApi() {
         ).parsedSafe<Tomato>()
         if (server?.file != null) {
             sources.add(
-                ExtractorLink(
+                newExtractorLink(
                     name,
                     name,
                     server.file,
-                    "",
-                    Qualities.Unknown.value,
-                    isM3u8 = false
                 )
             )
         }

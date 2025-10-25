@@ -11,30 +11,29 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
-import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
-import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.databinding.RepositoryItemBinding
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.VotingApi.getVotes
-import com.lagradost.cloudstream3.utils.setText
-import com.lagradost.cloudstream3.utils.txt
-import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
+import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
-import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
-import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
-import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
-import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
-import org.junit.Assert
-import org.junit.Test
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
+import com.lagradost.cloudstream3.utils.setText
+import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
+import com.lagradost.cloudstream3.utils.txt
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import java.text.DecimalFormat
 import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.pow
+import org.junit.Assert
+import org.junit.Test
 
 data class PluginViewData(
     val plugin: Plugin,
@@ -216,8 +215,7 @@ class PluginAdapter(
                 binding.langIcon.isVisible = false
             } else {
                 binding.langIcon.isVisible = true
-                binding.langIcon.text =
-                    "${getFlagFromIso(metadata.language)} ${fromTwoLettersToLanguage(metadata.language)}"
+                binding.langIcon.text = getNameNextToFlagEmoji(metadata.language) ?: metadata.language
             }
 
             binding.extVotes.isVisible = false

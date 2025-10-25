@@ -1,26 +1,22 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. Material3 -->
     <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>
-        <item name="android:navigationBarColor">?attr/primaryBlackBackground</item>
         <item name="android:colorEdgeEffect">?attr/textColor</item>
 
-        <!-- Opt out of edgeToEdge enforcement in >= Android 15 -->
-        <!-- However this will be deprecated in future (ETA ~ 1.6 years) -->
-        <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="35">true</item>
-        <!--<item name="android:navigationBarColor">@color/darkBackground</item>-->
+        <item name="android:navigationBarColor">?attr/primaryBlackBackground</item>
         <item name="android:statusBarColor">?attr/iconGrayBackground</item>
+
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">false</item>
 
         <item name="android:scrollbarThumbVertical">@null</item>
         <item name="android:scrollbarThumbHorizontal">@null</item>
 
-        <item name="android:windowTranslucentStatus">true</item> <!--true-->
-        <item name="android:windowTranslucentNavigation">false</item>
-        <item name="alertDialogTheme">@style/Theme.AlertDialog</item>
-
         <item name="android:textViewStyle">@style/AppTextViewStyle</item>
         <item name="android:buttonStyle">@style/AppButtonStyle</item>
         <item name="android:editTextStyle">@style/AppEditStyle</item>
+        <item name="alertDialogTheme">@style/Theme.AlertDialog</item>
         <item name="materialButtonStyle">@style/AppMaterialButtonStyle</item>
         <item name="preferenceFragmentCompatStyle">@style/PreferenceTheme</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
@@ -67,14 +63,19 @@
         <item name="iconColor">@color/iconColor</item>
         <item name="white">@color/white</item>
         <item name="black">@color/black</item>
-
+        <item name="focusBackground">?android:attr/selectableItemBackground</item>
         <item name="preferenceTheme">@style/CustomPreferenceThemeOverlay</item>
-
 
         <item name="download_icon_color">?attr/white</item>
         <item name="download_fill_color">?attr/white</item>
         <item name="download_outline_color">?attr/white</item>
         <item name="download_icon_scale">1.0</item>
+
+        <item name="cpv_focusBorderColor">?attr/white</item>
+    </style>
+
+    <style name="AppThemeTvOverlay">
+        <item name="focusBackground">@drawable/outline_drawable_less</item>
     </style>
 
     <style name="ListViewStyle" parent="Widget.AppCompat.ListView">
@@ -85,6 +86,7 @@
 
     <style name="AmoledModeLight" parent="AmoledMode">
         <item name="primaryGrayBackground">@color/amoledModeLight</item>
+        <item name="boxItemBackground">@color/amoledModeLight</item>
     </style>
 
     <style name="ChipReviewAlt" parent="ChipFilled">
@@ -149,15 +151,14 @@
     </style>
 
     <style name="DubButton" parent="@style/SearchBox">
-        <item name="android:background">@drawable/dub_bg_color</item>
         <item name="android:text">@string/app_dubbed_text</item>
-        <item name="android:textColor">@color/dubColorText</item>
+        <!-- Background is set programmatically -->
+        <item name="textColor">?attr/primaryGrayBackground</item>
+        <item name="android:textColor">?attr/primaryGrayBackground</item>
     </style>
 
     <style name="SubButton" parent="@style/SearchBox">
-        <item name="android:background">@drawable/sub_bg_color</item>
         <item name="android:text">@string/app_subbed_text</item>
-        <item name="android:textColor">@color/subColorText</item>
     </style>
 
     <!--<style name="RatingButton" parent="@style/SearchBox">
@@ -167,16 +168,15 @@
 
     <style name="RatingButton" parent="@style/SearchBox">
         <item name="android:minWidth">40dp</item>
-        <item name="android:background">@drawable/rating_bg_color</item>
-        <item name="drawableTint">@color/ratingColor</item>
-        <item name="android:textColor">@color/ratingColor</item>
-        <item name="drawableStartCompat">@drawable/ic_baseline_star_24</item>
+        <item name="drawableTint">?attr/textColor</item>
+        <item name="drawableSize">10sp</item>
+
+        <item name="drawableEndCompat">@drawable/kid_star_24px</item>
     </style>
 
     <style name="TypeButton" parent="@style/SearchBox">
-        <item name="android:background">@drawable/type_bg_color</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:text">@string/quality_hd</item>
-        <item name="android:textColor">@color/typeColorText</item>
     </style>
 
     <style name="LightMode">
@@ -188,8 +188,35 @@
         <item name="grayTextColor">@color/lightGrayTextColor</item>
         <item name="white">@color/black</item>
         <item name="black">@color/white</item>
-
         <item name="colorOnPrimary">@color/blackText</item>
+        <item name="isLightTheme">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+
+    <style name="DraculaMode">
+        <item name="primaryGrayBackground">@color/DraculaPrimaryGrayBackground</item>
+        <item name="primaryBlackBackground">@color/DraculaBitDarkerGrayBackground</item>
+        <item name="iconGrayBackground">@color/DraculaGrayBackground</item>
+        <item name="boxItemBackground">@color/DraculaItemBackground</item>
+        <item name="textColor">@color/DraculaTextColor</item>
+        <item name="iconColor">@color/DraculaIconColor</item>
+        <item name="white">@color/DraculaTextColor</item>
+        <item name="black">@color/DraculaPrimaryGrayBackground</item>
+        <item name="colorOnPrimary">@color/DraculaTextColor</item>
+    </style>
+
+    <style name="LavenderMode">
+        <item name="primaryGrayBackground">@color/LavenderPrimaryGrayBackground</item>
+        <item name="primaryBlackBackground">@color/LavenderBitDarkerGrayBackground</item>
+        <item name="iconGrayBackground">@color/LavenderGrayBackground</item>
+        <item name="boxItemBackground">@color/LavenderItemBackground</item>
+        <item name="textColor">@color/LavenderTextColor</item>
+        <item name="iconColor">@color/LavenderIconColor</item>
+        <item name="white">@color/LavenderTextColor</item>
+        <item name="black">@color/LavenderPrimaryGrayBackground</item>
+        <item name="colorOnPrimary">@color/LavenderTextColor</item>
+        <item name="isLightTheme">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="MonetMode">
@@ -438,6 +465,7 @@
         <item name="android:queryHint">@string/search_hint</item>
         <item name="android:background">@color/transparent</item>
         <item name="android:fontFamily">@font/google_sans</item>
+        <item name="closeIcon">@drawable/ic_baseline_close_24</item>
     </style>
 
     <style name="AppBottomSheetDialogTheme">
@@ -466,6 +494,10 @@
         <item name="android:windowMinWidthMinor">@dimen/abc_dialog_min_width_minor</item>
         <item name="android:windowBackground">@drawable/dialog__window_background</item>
         <item name="textAllCaps">false</item>
+
+        <item name="buttonBarPositiveButtonStyle">@style/WhiteButton.Dialog</item>
+        <item name="buttonBarNegativeButtonStyle">@style/BlackButton.Dialog</item>
+        <item name="buttonBarNeutralButtonStyle">@style/BlackButton.Dialog</item>
     </style>
 
     <style name="TabNoCaps" parent="TextAppearance.Design.Tab">
@@ -519,7 +551,7 @@
         <item name="android:navigationBarColor">?attr/colorPrimary</item>
     </style>
 
-    <style name="AlertDialogCustom" parent="Theme.AppCompat.Dialog.Alert">
+    <style name="AlertDialogCustom" parent="Theme.AlertDialog">
         <item name="android:windowFullscreen">true</item>
         <item name="android:textColor">?attr/textColor</item>
         <item name="android:textColorPrimary">?attr/textColor</item>
@@ -549,6 +581,25 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
+    <style name="DialogFullscreenPlayer" parent="DialogFullscreen">
+        <item name="android:windowBackground">?attr/primaryBlackBackground</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:windowTranslucentStatus">false</item>
+
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:navigationBarColor">?attr/primaryBlackBackground</item>
+        <item name="android:statusBarColor">?attr/primaryBlackBackground</item>
+        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
+    </style>
+
+    <style name="DialogHalfFullscreen" parent="AlertDialogCustom">
+        <item name="android:windowEnterAnimation">@anim/enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/exit_anim</item>
+
+        <item name="android:windowMinWidthMajor">45%</item> <!-- 65% -->
+        <item name="android:windowMinWidthMinor">95%</item> <!-- 95% -->
+    </style>
+
     <style name="AlertDialogCustomBlack" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:windowBackground">?attr/primaryBlackBackground</item>
         <item name="android:layout_width">match_parent</item>
@@ -566,17 +617,36 @@
 
     <style name="CustomPreferenceThemeOverlay" parent="@style/PreferenceThemeOverlay">
         <item name="android:layout">@layout/settings_title_top</item>
+        <item name="preferenceStyle">@style/CustomPreferenceStyle</item>
+        <item name="switchPreferenceStyle">@style/CustomSwitchPreferenceStyle</item>
+        <item name="seekBarPreferenceStyle">@style/CustomSeekBarPreferenceStyle</item>
+    </style>
+
+    <!--
+    <style name="CustomPreferenceCategoryStyle" parent="@style/Preference.Category.Material">
+        <item name="android:layout">@layout/custom_preference_category_material</item>
+    </style>-->
+
+    <style name="CustomSwitchPreferenceStyle" parent="@style/Preference.SwitchPreference.Material">
+        <item name="android:layout">@layout/custom_preference_material</item>
+    </style>
+
+    <style name="CustomSeekBarPreferenceStyle" parent="@style/Preference.SeekBarPreference.Material">
+        <item name="android:layout">@layout/custom_preference_widget_seekbar</item>
+    </style>
+
+    <style name="CustomPreferenceStyle" parent="@style/Preference.Material">
+        <item name="android:layout">@layout/custom_preference_material</item>
     </style>
 
     <style name="SettingsItem">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">50sp</item>
+        <item name="android:layout_height">50dp</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingStart">20dp</item>
         <item name="android:paddingEnd">20dp</item>
         <item name="android:selectAllOnFocus">true</item>
-        <item name="android:background">@drawable/outline_drawable_less</item>
-        <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:background">?attr/focusBackground</item>
         <item name="android:textColor">?attr/textColor</item>
         <item name="android:textAppearance">?android:attr/textAppearanceListItemSmall</item>
         <item name="drawableEndCompat">@drawable/ic_baseline_keyboard_arrow_right_24</item>
@@ -593,20 +663,22 @@
     </style>
 
     <style name="SearchBox">
+        <item name="android:background">@drawable/bg_color_both</item>
+        <item name="android:minWidth">40dp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:minWidth">50dp</item>
         <item name="android:gravity">center</item>
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">5dp</item>
         <item name="android:paddingLeft">7dp</item>
         <item name="android:paddingRight">7dp</item>
         <item name="android:paddingTop">3dp</item>
         <item name="android:paddingBottom">3dp</item>
-        <item name="android:textSize">12sp</item>
-        <item name="textColor">@color/textColor</item>
-        <item name="android:textColor">@color/textColor</item>
-        <item name="android:layout_margin">2dp</item>
+        <item name="android:textSize">10sp</item>
+        <item name="textColor">?attr/textColor</item>
+        <item name="android:textColor">?attr/textColor</item>
+        <item name="android:layout_marginLeft">1dp</item>
+        <item name="android:layout_marginRight">1dp</item>
+        <item name="android:layout_marginTop">1dp</item>
     </style>
 
     <style name="NiceButton">
@@ -636,6 +708,21 @@
         <item name="iconTint">?attr/iconGrayBackground</item>
         <item name="android:textColor">?attr/iconGrayBackground</item>
         <item name="rippleColor">?attr/primaryBlackBackground</item>
+    </style>
+    <!-- This is so shit, because android has no native way to either changing the layout (android:layout) or changing the layout_height for no reason.
+    So the only way to shrink the buttons is by using insetTop+insetBottom along with the drawable.
+    https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/layout/alert_dialog.xml <- old xml for reference, but new use m3_alert_dialog
+    -->
+    <style name="BlackButton.Dialog" parent="BlackButton">
+        <item name="android:foreground">@drawable/outline_drawable_less_inset</item>
+        <item name="android:insetTop">@dimen/dialog_buttons_inset</item>
+        <item name="android:insetBottom">@dimen/dialog_buttons_inset</item>
+    </style>
+
+    <style name="WhiteButton.Dialog" parent="WhiteButton">
+        <item name="android:foreground">@drawable/outline_drawable_less_inset</item>
+        <item name="android:insetTop">@dimen/dialog_buttons_inset</item>
+        <item name="android:insetBottom">@dimen/dialog_buttons_inset</item>
     </style>
 
     <style name="BlackLabel" parent="@style/Widget.MaterialComponents.Tooltip">
@@ -667,13 +754,24 @@
         <item name="android:drawablePadding">20dp</item>
     </style>
 
+    <!-- https://github.com/material-components/material-components-android/blob/4e4e8f3388beb7e82a87cb67142aa34444a79740/lib/java/com/google/android/material/navigation/res/values/attrs.xml#L129 -->
+    <!-- https://developer.android.com/design/ui/tv/guides/components/navigation-drawer -->
+    <style name="CustomIndicator" parent="Widget.Material3Expressive.NavigationRailView.ActiveIndicator">
+        <item name="expandedHeight">48dp</item>
+        <item name="expandedWidth">180dp</item>
+        <item name="android:height">48dp</item>
+        <item name="android:width">48dp</item>
+
+        <item name="expandedActiveIndicatorPaddingTop">0dp</item>
+        <item name="expandedActiveIndicatorPaddingBottom">0dp</item>
+    </style>
 
     <style name="BlackButton" parent="NiceButton">
         <item name="strokeColor">?attr/textColor</item>
         <item name="backgroundTint">?attr/iconGrayBackground</item>
         <item name="iconTint">?attr/textColor</item>
         <item name="android:textColor">?attr/textColor</item>
-        <item name="rippleColor">?attr/textColor</item>
+        <item name="rippleColor">@color/black_button_ripple</item>
     </style>
 
     <style name="SmallBlackButton" parent="BlackButton">
@@ -951,5 +1049,53 @@
         <item name="castClosedCaptionsButtonDrawable">
             @drawable/cast_ic_mini_controller_closed_caption
         </item>
+    </style>
+    <style name="RoundedImageView">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+    <style name="PlayUnderlayProgress">
+        <item name="shapeAppearanceOverlay">@style/RoundedImageView</item>
+        <item name="android:scaleType">center</item>
+        <item name="android:src">@drawable/netflix_play</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+    <style name="CircularProgress">
+        <item name="trackThickness">@dimen/circular_progress_thickness</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="indicatorColor">@color/white</item>
+    </style>
+    <style name="HomePlayUnderlayProgress" parent="PlayUnderlayProgress">
+        <item name="tint">@color/white</item>
+        <item name="android:layout_width">@dimen/home_poster_progress_size</item>
+        <item name="android:layout_height">@dimen/home_poster_progress_size</item>
+        <item name="android:background">@color/playIconBackground</item>
+    </style>
+    <style name="HomeCircularProgress" parent="CircularProgress">
+        <item name="android:layout_width">@dimen/home_poster_progress_size</item>
+        <item name="android:layout_height">@dimen/home_poster_progress_size</item>
+        <item name="indicatorSize">@dimen/home_poster_progress_size</item>
+    </style>
+    <style name="EpisodePlayUnderlayProgress" parent="PlayUnderlayProgress">
+        <item name="tint">@color/white</item>
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:background">@color/playIconBackground</item>
+    </style>
+    <style name="EpisodeCircularProgress" parent="CircularProgress">
+        <item name="android:layout_width">@dimen/episode_progress_size</item>
+        <item name="android:layout_height">@dimen/episode_progress_size</item>
+        <item name="indicatorSize">@dimen/episode_progress_size</item>
+    </style>
+    <style name="ContinueWatchingPlayUnderlayProgress">
+        <item name="android:layout_width">@dimen/continue_watching_progress_size</item>
+        <item name="android:layout_height">@dimen/continue_watching_progress_size</item>
+        <item name="android:src">@drawable/play_button_transparent</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+    <style name="ContinueWatchingCircularProgress" parent="CircularProgress">
+        <item name="android:layout_width">@dimen/continue_watching_progress_size</item>
+        <item name="android:layout_height">@dimen/continue_watching_progress_size</item>
+        <item name="indicatorSize">@dimen/continue_watching_progress_size</item>
     </style>
 </resources>

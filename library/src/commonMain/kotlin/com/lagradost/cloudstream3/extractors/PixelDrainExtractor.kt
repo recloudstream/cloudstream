@@ -15,24 +15,24 @@ open class PixelDrain : ExtractorApi() {
         if (mId.isNullOrEmpty())
         {
             callback.invoke(
-                ExtractorLink(
+                newExtractorLink(
                     this.name,
                     this.name,
-                    url,
-                    url,
-                    Qualities.Unknown.value,
-                )
+                    url
+                ) {
+                    this.referer = url
+                }
             )
         }
         else {
             callback.invoke(
-                ExtractorLink(
+                newExtractorLink(
                     this.name,
                     this.name,
                     "$mainUrl/api/file/${mId}?download",
-                    url,
-                    Qualities.Unknown.value,
-                )
+                ) {
+                    this.referer = url
+                }
             )
         }
     }

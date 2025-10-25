@@ -13,6 +13,10 @@
         <item name="customCastBackgroundColor">?attr/colorPrimary</item>
     </style>
 
+    <declare-styleable name="Focus">
+        <attr name="focusBackground" format="reference" />
+    </declare-styleable>
+
     <declare-styleable name="TestView">
         <attr name="header_text" format="string" />
     </declare-styleable>
@@ -66,5 +70,10 @@
         <attr name="iconColor" format="color" />
         <attr name="white" format="color" />
         <attr name="black" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="PercentageCropImageView">
+        <attr name="cropYCenterOffsetPct" format="float" />
+        <attr name="cropXCenterOffsetPct" format="float" />
     </declare-styleable>
 </resources>

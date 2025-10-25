@@ -3,27 +3,33 @@ package com.lagradost.cloudstream3.syncproviders.providers
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.subtitles.AbstractSubProvider
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.subtitles.SubtitleResource
+import com.lagradost.cloudstream3.syncproviders.AuthData
+import com.lagradost.cloudstream3.syncproviders.SubtitleAPI
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 
-class SubSourceApi : AbstractSubProvider {
+class SubSourceApi : SubtitleAPI() {
+    override val name = "SubSource"
     override val idPrefix = "subsource"
-    val name = "SubSource"
+
+    override val requiresLogin = false
 
     companion object {
         const val APIURL = "https://api.subsource.net/api"
         const val DOWNLOADENDPOINT = "https://api.subsource.net/api/downloadSub"
     }
 
-    override suspend fun search(query: AbstractSubtitleEntities.SubtitleSearch): List<AbstractSubtitleEntities.SubtitleEntity>? {
+    override suspend fun search(
+        auth: AuthData?,
+        query: AbstractSubtitleEntities.SubtitleSearch
+    ): List<AbstractSubtitleEntities.SubtitleEntity>? {
 
         //Only supports Imdb Id search for now
         if (query.imdbId == null) return null
-        val queryLang = SubtitleHelper.fromTwoLettersToLanguage(query.lang!!)
+        val queryLang = SubtitleHelper.fromTagToEnglishLanguageName(query.lang)
         val type = if ((query.seasonNumber ?: 0) > 0) TvType.TvSeries else TvType.Movie
 
         val searchRes = app.post(
@@ -87,15 +93,17 @@ class SubSourceApi : AbstractSubProvider {
         }
     }
 
-    override suspend fun SubtitleResource.getResources(data: AbstractSubtitleEntities.SubtitleEntity) {
-
-        val parsedSub = parseJson<SubData>(data.data)
+    override suspend fun SubtitleResource.getResources(
+        auth: AuthData?,
+        subtitle: AbstractSubtitleEntities.SubtitleEntity
+    ) {
+        val parsedSub = parseJson<SubData>(subtitle.data)
 
         val subRes = app.post(
             url = "$APIURL/getSub",
             data = mapOf(
                 "movie" to parsedSub.movie,
-                "lang" to data.lang,
+                "lang" to subtitle.lang,
                 "id" to parsedSub.id
             )
         ).parsedSafe<SubTitleLink>() ?: return

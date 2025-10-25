@@ -10,6 +10,11 @@ class VidHidePro1 : VidHidePro() {
     override var mainUrl = "https://filelions.live"
 }
 
+class Dhcplay: VidHidePro() {
+    override var name = "DHC Play"
+    override var mainUrl = "https://dhcplay.com"
+}
+
 class VidHidePro2 : VidHidePro() {
     override var mainUrl = "https://filelions.online"
 }
@@ -30,19 +35,19 @@ class VidHidePro6 : VidHidePro() {
     override val mainUrl = "https://vidhidepre.com"
 }
 
-class Lulustream1 : VidHidePro() {
-    override val name = "Lulustream"
-    override val mainUrl = "https://lulustream.com"
+class Smoothpre: VidHidePro() {
+    override var name = "EarnVids"
+    override var mainUrl = "https://smoothpre.com"
 }
 
-class Lulustream2 : VidHidePro() {
-    override val name = "Lulustream"
-    override val mainUrl = "https://luluvdo.com"
+class Dhtpre: VidHidePro() {
+    override var name = "EarnVids"
+    override var mainUrl = "https://dhtpre.com"
 }
 
-class Lulustream3 : VidHidePro() {
-    override val name = "Lulustream"
-    override val mainUrl = "https://kinoger.pw"
+class Peytonepre : VidHidePro() {
+    override var name = "EarnVids"
+    override var mainUrl = "https://peytonepre.com"
 }
 
 open class VidHidePro : ExtractorApi() {
@@ -57,29 +62,33 @@ open class VidHidePro : ExtractorApi() {
         callback: (ExtractorLink) -> Unit
     ) {
         val headers = mapOf(
-            "Accept" to "*/*",
-            "Connection" to "keep-alive",
             "Sec-Fetch-Dest" to "empty",
             "Sec-Fetch-Mode" to "cors",
             "Sec-Fetch-Site" to "cross-site",
-            "Origin" to "$mainUrl/",
+            "Origin" to mainUrl,
 	        "User-Agent" to USER_AGENT,
         )
         
         val response = app.get(getEmbedUrl(url), referer = referer)
         val script = if (!getPacked(response.text).isNullOrEmpty()) {
-            getAndUnpack(response.text)
+            var result = getAndUnpack(response.text)
+            if(result.contains("var links")){
+                result = result.substringAfter("var links")
+            }
+            result
         } else {
             response.document.selectFirst("script:containsData(sources:)")?.data()
+        } ?: return
+
+        // m3u8 urls could be prefixed by 'file:', 'hls2:' or 'hls4:', so we just match ':'
+        Regex(":\\s*\"(.*?m3u8.*?)\"").findAll(script).forEach { m3u8Match ->
+            generateM3u8(
+                name,
+                fixUrl(m3u8Match.groupValues[1]),
+                referer = "$mainUrl/",
+                headers = headers
+            ).forEach(callback)
         }
-        val m3u8 =
-            Regex("file:\\s*\"(.*?m3u8.*?)\"").find(script ?: return)?.groupValues?.getOrNull(1)
-        generateM3u8(
-            name,
-            m3u8 ?: return,
-            mainUrl,
-	        headers = headers
-        ).forEach(callback)
     }
 
     private fun getEmbedUrl(url: String): String {

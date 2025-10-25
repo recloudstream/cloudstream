@@ -3,10 +3,12 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.StringUtils.decodeUri
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import org.jsoup.nodes.Document
 
 open class InternetArchive : ExtractorApi() {
@@ -50,7 +52,7 @@ open class InternetArchive : ExtractorApi() {
         subtitleLinks.forEach {
             val subtitleUrl = mainUrl + it.attr("href")
             val fileName = subtitleUrl.substringAfterLast('/')
-            val subtitleFile = SubtitleFile(
+            val subtitleFile = newSubtitleFile(
                 lang = fileName.substringBeforeLast(".")
                     .substringAfterLast("."),
                 url = subtitleUrl
@@ -98,13 +100,13 @@ open class InternetArchive : ExtractorApi() {
                     "$fileNameCleaned ($fileExtension)"
                 } else this.name
                 callback(
-                    ExtractorLink(
+                    newExtractorLink(
                         this.name,
                         name,
-                        mediaUrl,
-                        "",
-                        quality
-                    )
+                        mediaUrl
+                    ) {
+                        this.quality = quality
+                    }
                 )
             }
         }

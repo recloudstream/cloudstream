@@ -3,7 +3,10 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
-import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
+import com.lagradost.api.Log
+import com.lagradost.cloudstream3.network.WebViewResolver
+
+
 
 class Guccihide : Filesim() {
     override val name = "Guccihide"
@@ -18,11 +21,6 @@ class Ahvsh : Filesim() {
 class Moviesm4u : Filesim() {
     override val mainUrl = "https://moviesm4u.com"
     override val name = "Moviesm4u"
-}
-
-class FileMoonIn : Filesim() {
-    override val mainUrl = "https://filemoon.in"
-    override val name = "FileMoon"
 }
 
 class StreamhideTo : Filesim() {
@@ -44,15 +42,6 @@ class Ztreamhub : Filesim() {
     override val mainUrl: String = "https://ztreamhub.com" //Here 'cause works
     override val name = "Zstreamhub"
 }
-class FileMoon : Filesim() {
-    override val mainUrl = "https://filemoon.to"
-    override val name = "FileMoon"
-}
-
-class FileMoonSx : Filesim() {
-    override val mainUrl = "https://filemoon.sx"
-    override val name = "FileMoonSx"
-}
 
 open class Filesim : ExtractorApi() {
     override val name = "Filesim"
@@ -66,30 +55,61 @@ open class Filesim : ExtractorApi() {
         callback: (ExtractorLink) -> Unit
     ) {
         val embedUrl = url.replace("/download/", "/e/")
-        val response = app.get(embedUrl, referer = referer)
-        var script = if (!getPacked(response.text).isNullOrEmpty()) {
-            getAndUnpack(response.text)
+        var pageResponse = app.get(embedUrl, referer = referer)
+
+        val iframeElement = pageResponse.document.selectFirst("iframe")
+        if (iframeElement != null) {
+            val iframeUrl = iframeElement.attr("src")
+            pageResponse = app.get(
+                iframeUrl,
+                headers = mapOf(
+                    "Accept-Language" to "en-US,en;q=0.5",
+                    "Sec-Fetch-Dest" to "iframe"
+                ),
+                referer = pageResponse.url
+            )
+        }
+
+        val scriptData = if (!getPacked(pageResponse.text).isNullOrEmpty()) {
+            getAndUnpack(pageResponse.text)
         } else {
-            response.document.selectFirst("script:containsData(sources:)")?.data()
+            pageResponse.document.selectFirst("script:containsData(sources:)")?.data()
         }
 
-         //In my case packed function is not directly available in the first response, instead it is in iframe response
-        if(script == null){
-            val iframeUrl = Regex("""<iframe src="(.*?)"""").find(response.text,0)?.groupValues?.getOrNull(1)
-            if(iframeUrl != null){
-                val iframeResponse = app.get(iframeUrl,referer=null, headers = mapOf("Accept-Language" to "en-US,en;q=0.5"))
-                script = if (!getPacked(iframeResponse.text).isNullOrEmpty()) { getAndUnpack(iframeResponse.text) } else return
+        val m3u8Url = scriptData?.let {
+            Regex("""file:\s*"(.*?m3u8.*?)"""").find(it)?.groupValues?.getOrNull(1)
+        }
+
+        if (!m3u8Url.isNullOrEmpty()) {
+            M3u8Helper.generateM3u8(
+                name,
+                m3u8Url,
+                mainUrl
+            ).forEach(callback)
+        } else {
+            // Fallback using WebViewResolver
+            val resolver = WebViewResolver(
+                interceptUrl = Regex("""(m3u8|master\.txt)"""),
+                additionalUrls = listOf(Regex("""(m3u8|master\.txt)""")),
+                useOkhttp = false,
+                timeout = 15_000L
+            )
+
+            val interceptedUrl = app.get(
+                url = pageResponse.url,
+                referer = referer,
+                interceptor = resolver
+            ).url
+
+            if (interceptedUrl.isNotEmpty()) {
+                M3u8Helper.generateM3u8(
+                    name,
+                    interceptedUrl,
+                    mainUrl
+                ).forEach(callback)
+            } else {
+                Log.d("Filesim", "No m3u8 found via script or WebView fallback.")
             }
-            else return
         }
-
-        val m3u8 =
-            Regex("file:\\s*\"(.*?m3u8.*?)\"").find(script ?: return)?.groupValues?.getOrNull(1)
-        generateM3u8(
-            name,
-            m3u8 ?: return,
-            mainUrl
-        ).forEach(callback)
     }
-
 }

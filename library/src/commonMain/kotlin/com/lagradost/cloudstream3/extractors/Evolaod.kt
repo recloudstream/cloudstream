@@ -23,13 +23,14 @@ open class Evoload : ExtractorApi() {
         val r = app.post("https://evoload.io/SecurePlayer", data=(payload)).text
         val link = Regex("src\":\"(.*?)\"").find(r)?.destructured?.component1() ?: return listOf()
         return listOf(
-            ExtractorLink(
+            newExtractorLink(
                 name,
                 name,
                 link,
-                url,
-                Qualities.Unknown.value,
-            )
+            ) {
+                this.referer = url
+                this.quality = Qualities.Unknown.value
+            }
         )
     }
 }

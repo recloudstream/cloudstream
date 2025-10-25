@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.USER_AGENT
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.nicehttp.Requests
 import com.lagradost.nicehttp.ignoreAllSSLErrors
 import okhttp3.Cache
@@ -20,7 +20,7 @@ fun Requests.initClient(context: Context) {
 }
 
 fun buildDefaultClient(context: Context): OkHttpClient {
-    normalSafeApiCall { Security.insertProviderAt(Conscrypt.newProvider(), 1) }
+    safe { Security.insertProviderAt(Conscrypt.newProvider(), 1) }
     
     val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
     val dns = settingsManager.getInt(context.getString(R.string.dns_pref), 0)

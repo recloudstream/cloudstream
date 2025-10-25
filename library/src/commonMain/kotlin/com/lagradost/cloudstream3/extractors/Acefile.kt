@@ -24,13 +24,10 @@ open class Acefile : ExtractorApi() {
         val video = app.get(serverUrl ?: return, referer = "$mainUrl/").parsedSafe<Source>()?.data
 
         callback.invoke(
-            ExtractorLink(
+            newExtractorLink(
                 this.name,
                 this.name,
-                video ?: return,
-                "",
-                Qualities.Unknown.value,
-                INFER_TYPE
+                video ?: return
             )
         )
 

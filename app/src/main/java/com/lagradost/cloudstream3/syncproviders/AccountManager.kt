@@ -1,60 +1,127 @@
 package com.lagradost.cloudstream3.syncproviders
 
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.LoadResponse
-import com.lagradost.cloudstream3.syncproviders.providers.*
+import com.lagradost.cloudstream3.syncproviders.providers.Addic7ed
+import com.lagradost.cloudstream3.syncproviders.providers.AniListApi
+import com.lagradost.cloudstream3.syncproviders.providers.LocalList
+import com.lagradost.cloudstream3.syncproviders.providers.MALApi
+import com.lagradost.cloudstream3.syncproviders.providers.OpenSubtitlesApi
+import com.lagradost.cloudstream3.syncproviders.providers.SimklApi
+import com.lagradost.cloudstream3.syncproviders.providers.SubDlApi
+import com.lagradost.cloudstream3.syncproviders.providers.SubSourceApi
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import java.util.concurrent.TimeUnit
 
-abstract class AccountManager(private val defIndex: Int) : AuthAPI {
+abstract class AccountManager {
     companion object {
-        val malApi = MALApi(0).also { api ->
-            LoadResponse.Companion.malIdPrefix = api.idPrefix
-        }
-        val aniListApi = AniListApi(0).also { api ->
-            LoadResponse.Companion.aniListIdPrefix = api.idPrefix
-        }
-        val simklApi = SimklApi(0).also { api ->
-            LoadResponse.Companion.simklIdPrefix = api.idPrefix
-        }
-        val openSubtitlesApi = OpenSubtitlesApi(0)
-        val addic7ed = Addic7ed()
-        val subDlApi = SubDlApi(0)
+        const val NONE_ID: Int = -1
+        val malApi = MALApi()
+        val aniListApi = AniListApi()
+        val simklApi = SimklApi()
         val localListApi = LocalList()
+
+        val openSubtitlesApi = OpenSubtitlesApi()
+        val addic7ed = Addic7ed()
+        val subDlApi = SubDlApi()
         val subSourceApi = SubSourceApi()
 
-        // used to login via app intent
-        val OAuth2Apis
-            get() = listOf<OAuth2API>(
-                malApi, aniListApi, simklApi
-            )
+        var cachedAccounts: MutableMap<String, Array<AuthData>>
+        var cachedAccountIds: MutableMap<String, Int>
 
-        // this needs init with context and can be accessed in settings
-        val accountManagers
-            get() = listOf(
-                malApi, aniListApi, openSubtitlesApi, subDlApi, simklApi //nginxApi
-            )
+        const val ACCOUNT_TOKEN = "auth_tokens"
+        const val ACCOUNT_IDS = "auth_ids"
 
-        // used for active syncing
-        val SyncApis
-            get() = listOf(
-                SyncRepo(malApi), SyncRepo(aniListApi), SyncRepo(localListApi), SyncRepo(simklApi)
-            )
+        fun accounts(prefix: String): Array<AuthData> {
+            require(prefix != "NONE")
+            return getKey<Array<AuthData>>(
+                ACCOUNT_TOKEN,
+                "${prefix}/${DataStoreHelper.currentAccount}"
+            ) ?: arrayOf()
+        }
 
-        val inAppAuths
-            get() = listOf<InAppAuthAPIManager>(
-                openSubtitlesApi,
-                subDlApi
-                )//, nginxApi)
+        fun updateAccounts(prefix: String, array: Array<AuthData>) {
+            require(prefix != "NONE")
+            setKey(ACCOUNT_TOKEN, "${prefix}/${DataStoreHelper.currentAccount}", array)
+            synchronized(cachedAccounts) {
+                cachedAccounts[prefix] = array
+            }
+        }
 
-        val subtitleProviders
-            get() = listOf(
-                openSubtitlesApi,
-                addic7ed,
-                subDlApi,
-                subSourceApi
-            )
+        fun updateAccountsId(prefix: String, id: Int) {
+            require(prefix != "NONE")
+            setKey(ACCOUNT_IDS, "${prefix}/${DataStoreHelper.currentAccount}", id)
+            synchronized(cachedAccountIds) {
+                cachedAccountIds[prefix] = id
+            }
+        }
+
+        val allApis = arrayOf(
+            SyncRepo(malApi),
+            SyncRepo(aniListApi),
+            SyncRepo(simklApi),
+            SyncRepo(localListApi),
+
+            SubtitleRepo(openSubtitlesApi),
+            SubtitleRepo(addic7ed),
+            SubtitleRepo(subDlApi)
+        )
+
+        fun updateAccountIds() {
+            val ids = mutableMapOf<String, Int>()
+            for (api in allApis) {
+                ids.put(
+                    api.idPrefix,
+                    getKey<Int>(
+                        ACCOUNT_IDS,
+                        "${api.idPrefix}/${DataStoreHelper.currentAccount}",
+                        NONE_ID
+                    ) ?: NONE_ID
+                )
+            }
+            synchronized(cachedAccountIds) {
+                cachedAccountIds = ids
+            }
+        }
+
+        init {
+            val data = mutableMapOf<String, Array<AuthData>>()
+            val ids = mutableMapOf<String, Int>()
+            for (api in allApis) {
+                data.put(api.idPrefix, accounts(api.idPrefix))
+                ids.put(
+                    api.idPrefix,
+                    getKey<Int>(
+                        ACCOUNT_IDS,
+                        "${api.idPrefix}/${DataStoreHelper.currentAccount}",
+                        NONE_ID
+                    ) ?: NONE_ID
+                )
+            }
+            cachedAccounts = data
+            cachedAccountIds = ids
+        }
+
+        // I do not want to place this in the init block as JVM initialization order is weird, and it may cause exceptions
+        // accessing other classes
+        fun initMainAPI() {
+            LoadResponse.malIdPrefix = malApi.idPrefix
+            LoadResponse.aniListIdPrefix = aniListApi.idPrefix
+            LoadResponse.simklIdPrefix = simklApi.idPrefix
+        }
+
+        val subtitleProviders = arrayOf(
+            SubtitleRepo(openSubtitlesApi),
+            SubtitleRepo(addic7ed),
+            SubtitleRepo(subDlApi)
+        )
+        val syncApis = arrayOf(
+            SyncRepo(malApi),
+            SyncRepo(aniListApi),
+            SyncRepo(simklApi),
+            SyncRepo(localListApi)
+        )
 
         const val APP_STRING = "cloudstreamapp"
         const val APP_STRING_REPO = "cloudstreamrepo"
@@ -66,12 +133,7 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
         // Instantly resume watching a show
         const val APP_STRING_RESUME_WATCHING = "cloudstreamcontinuewatching"
 
-        val unixTime: Long
-            get() = System.currentTimeMillis() / 1000L
-        val unixTimeMs: Long
-            get() = System.currentTimeMillis()
-
-        const val MAX_STALE = 60 * 10
+        const val APP_STRING_SHARE = "csshare"
 
         fun secondsToReadable(seconds: Int, completedValue: String): String {
             var secondsLong = seconds.toLong()
@@ -92,58 +154,5 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
             //println("$days $hours $minutes")
             return "${if (days != 0L) "$days" + "d " else ""}${if (hours != 0L) "$hours" + "h " else ""}${minutes}m"
         }
-    }
-
-    var accountIndex = defIndex
-    private var lastAccountIndex = defIndex
-    protected val accountId get() = "${idPrefix}_account_$accountIndex"
-    private val accountActiveKey get() = "${idPrefix}_active"
-
-    // int array of all accounts indexes
-    private val accountsKey get() = "${idPrefix}_accounts"
-
-    protected fun removeAccountKeys() {
-        removeKeys(accountId)
-        val accounts = getAccounts()?.toMutableList() ?: mutableListOf()
-        accounts.remove(accountIndex)
-        setKey(accountsKey, accounts.toIntArray())
-
-        init()
-    }
-
-    fun getAccounts(): IntArray? {
-        return getKey(accountsKey, intArrayOf())
-    }
-
-    fun init() {
-        accountIndex = getKey(accountActiveKey, defIndex)!!
-        val accounts = getAccounts()
-        if (accounts?.isNotEmpty() == true && this.loginInfo() == null) {
-            accountIndex = accounts.first()
-        }
-    }
-
-    protected fun switchToNewAccount() {
-        val accounts = getAccounts()
-        lastAccountIndex = accountIndex
-        accountIndex = (accounts?.maxOrNull() ?: 0) + 1
-    }
-    protected fun switchToOldAccount() {
-        accountIndex = lastAccountIndex
-    }
-
-    protected fun registerAccount() {
-        setKey(accountActiveKey, accountIndex)
-        val accounts = getAccounts()?.toMutableList() ?: mutableListOf()
-        if (!accounts.contains(accountIndex)) {
-            accounts.add(accountIndex)
-        }
-
-        setKey(accountsKey, accounts.toIntArray())
-    }
-
-    fun changeAccount(index: Int) {
-        accountIndex = index
-        setKey(accountActiveKey, index)
     }
 }

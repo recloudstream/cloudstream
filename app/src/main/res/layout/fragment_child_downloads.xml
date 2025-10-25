@@ -32,7 +32,7 @@
                 android:contentDescription="@string/cancel"
                 android:padding="8dp"
                 android:layout_gravity="center_vertical"
-                android:nextFocusLeft="@id/nav_rail_view"
+                android:nextFocusLeft="@id/navigation_downloads"
                 app:tint="@android:color/white" />
 
             <Button
@@ -87,7 +87,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?attr/primaryBlackBackground"
-        android:nextFocusLeft="@id/nav_rail_view"
+        android:nextFocusLeft="@id/navigation_downloads"
         android:nextFocusUp="@id/download_child_toolbar"
         android:padding="10dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"

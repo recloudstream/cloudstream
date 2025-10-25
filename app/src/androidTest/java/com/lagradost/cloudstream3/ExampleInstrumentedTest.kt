@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.viewbinding.ViewBinding
+import com.lagradost.cloudstream3.databinding.BottomResultviewPreviewBinding
 import com.lagradost.cloudstream3.databinding.FragmentHomeBinding
 import com.lagradost.cloudstream3.databinding.FragmentHomeTvBinding
 import com.lagradost.cloudstream3.databinding.FragmentLibraryBinding
@@ -88,6 +89,8 @@ class ExampleInstrumentedTest {
                // testAllLayouts<ActivityMainBinding>(activity,R.layout.activity_main, R.layout.activity_main_tv)
                 //testAllLayouts<ActivityMainBinding>(activity, R.layout.activity_main_tv)
 
+                testAllLayouts<BottomResultviewPreviewBinding>(activity, R.layout.bottom_resultview_preview,R.layout.bottom_resultview_preview_tv)
+
                 testAllLayouts<FragmentPlayerBinding>(activity, R.layout.fragment_player,R.layout.fragment_player_tv)
                 testAllLayouts<FragmentPlayerTvBinding>(activity, R.layout.fragment_player,R.layout.fragment_player_tv)
 
@@ -133,14 +136,14 @@ class ExampleInstrumentedTest {
     @Test
     @Throws(AssertionError::class)
     fun providerCorrectData() {
-        val isoNames = SubtitleHelper.languages.map { it.ISO_639_1 }
-        Assert.assertFalse("ISO does not contain any languages", isoNames.isNullOrEmpty())
+        val langTagsIETF = SubtitleHelper.languages.map { it.IETF_tag }
+        Assert.assertFalse("IETFTagNames does not contain any languages", langTagsIETF.isNullOrEmpty())
         for (api in getAllProviders()) {
             Assert.assertTrue("Api does not contain a mainUrl", api.mainUrl != "NONE")
             Assert.assertTrue("Api does not contain a name", api.name != "NONE")
             Assert.assertTrue(
                 "Api ${api.name} does not contain a valid language code",
-                isoNames.contains(api.lang)
+                langTagsIETF.contains(api.lang)
             )
             Assert.assertTrue(
                 "Api ${api.name} does not contain any supported types",

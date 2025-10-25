@@ -42,10 +42,10 @@ import com.lagradost.cloudstream3.CommonActivity.keyEventListener
 import com.lagradost.cloudstream3.CommonActivity.playerEventListener
 import com.lagradost.cloudstream3.CommonActivity.screenWidth
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.unixTimeMs
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.AppContextUtils
@@ -76,10 +76,9 @@ const val NEXT_WATCH_EPISODE_PERCENTAGE = 90
 const val UPDATE_SYNC_PROGRESS_PERCENTAGE = 80
 
 abstract class AbstractPlayerFragment(
-    val player: IPlayer = CS3IPlayer()
+    var player: IPlayer = CS3IPlayer()
 ) : Fragment() {
     var resizeMode: Int = 0
-    var subStyle: SaveCaptionStyle? = null
     var subView: SubtitleView? = null
     var isBuffering = true
     protected open var hasPipModeSupport = true
@@ -106,7 +105,7 @@ abstract class AbstractPlayerFragment(
         throw NotImplementedError()
     }
 
-    open fun playerStatusChanged(){}
+    open fun playerStatusChanged() {}
 
     open fun playerDimensionsLoaded(width: Int, height: Int) {
         throw NotImplementedError()
@@ -243,7 +242,7 @@ abstract class AbstractPlayerFragment(
                 exitedPipMode()
                 pipReceiver?.let {
                     // Prevents java.lang.IllegalArgumentException: Receiver not registered
-                    normalSafeApiCall {
+                    safe {
                         activity?.unregisterReceiver(it)
                     }
                 }
@@ -360,9 +359,9 @@ abstract class AbstractPlayerFragment(
 
             is SocketTimeoutException -> {
                 /**
-                 * Ensures this is run on the UI thread to prevent issues 
-                 * caused by SocketTimeoutException in torrents. Running 
-                 * on another thread can break player interactions or 
+                 * Ensures this is run on the UI thread to prevent issues
+                 * caused by SocketTimeoutException in torrents. Running
+                 * on another thread can break player interactions or
                  * prevent switching to the next source.
                  */
                 activity?.runOnUiThread {
@@ -373,33 +372,47 @@ abstract class AbstractPlayerFragment(
                 }
             }
 
+            is ErrorLoadingException -> {
+                exception.message?.let {
+                    showToast(
+                        it,
+                        gotoNext = true
+                    )
+                } ?: showToast(
+                    exception.toString(),
+                    gotoNext = true
+                )
+            }
+
             else -> {
                 exception.message?.let {
                     showToast(
                         it,
                         gotoNext = false
                     )
-                }
+                } ?: showToast(
+                    exception.toString(),
+                    gotoNext = false
+                )
             }
         }
     }
 
     private fun onSubStyleChanged(style: SaveCaptionStyle) {
-        if (player is CS3IPlayer) {
-            player.updateSubtitleStyle(style)
-            // Forcefully update the subtitle encoding in case the edge size is changed
-            player.seekTime(-1)
-        }
+        player.updateSubtitleStyle(style)
+        // Forcefully update the subtitle encoding in case the edge size is changed
+        player.seekTime(-1)
     }
 
+
     @SuppressLint("UnsafeOptInUsageError")
-    private fun playerUpdated(player: Any?) {
+    open fun playerUpdated(player: Any?) {
         if (player is ExoPlayer) {
             context?.let { ctx ->
                 mMediaSession?.release()
                 mMediaSession = MediaSession.Builder(ctx, player)
                     // Ensure unique ID for concurrent players
-                    .setId(unixTimeMs.toString())
+                    .setId(System.currentTimeMillis().toString())
                     .build()
             }
 
@@ -411,7 +424,7 @@ abstract class AbstractPlayerFragment(
         }
     }
 
-    private var mMediaSession: MediaSession? = null
+    protected var mMediaSession: MediaSession? = null
 
     // this can be used in the future for players other than exoplayer
     //private val mMediaSessionCallback: MediaSessionCompat.Callback = object : MediaSessionCompat.Callback() {
@@ -434,20 +447,21 @@ abstract class AbstractPlayerFragment(
     //    }
     //}
 
-    open fun onDownload(event : DownloadEvent) = Unit
+    open fun onDownload(event: DownloadEvent) = Unit
 
     /** This receives the events from the player, if you want to append functionality you do it here,
      * do note that this only receives events for UI changes,
      * and returning early WONT stop it from changing in eg the player time or pause status */
     open fun mainCallback(event: PlayerEvent) {
         // we don't want to spam DownloadEvent
-        if(event !is DownloadEvent) {
+        if (event !is DownloadEvent) {
             Log.i(TAG, "Handle event: $event")
         }
         when (event) {
             is DownloadEvent -> {
                 onDownload(event)
             }
+
             is ResizedEvent -> {
                 playerDimensionsLoaded(event.width, event.height)
             }
@@ -542,6 +556,7 @@ abstract class AbstractPlayerFragment(
             ),
         )
 
+        val player = player
         if (player is CS3IPlayer) {
             // preview bar
             val progressBar: PreviewTimeBar? = playerView?.findViewById(R.id.exo_progress)
@@ -558,6 +573,11 @@ abstract class AbstractPlayerFragment(
                             CSPlayerEvent.Pause,
                             PlayerEventSource.Player
                         )
+
+                        // No clashing UI
+                        if (hasPreview) {
+                            subView?.isVisible = false
+                        }
                     }
 
                     override fun onScrubMove(
@@ -569,6 +589,13 @@ abstract class AbstractPlayerFragment(
 
                     override fun onScrubStop(previewBar: PreviewBar?) {
                         if (resume) player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.Player)
+                        // Delay to prevent the small flicker of subtitle before seeking
+                        subView?.postDelayed({
+                            // If we are not scrubbing then show subtitles again
+                            if (previewBar == null || !previewBar.isPreviewEnabled || !previewBar.isShowingPreview) {
+                                subView?.isVisible = true
+                            }
+                        }, 200)
                     }
                 })
                 progressBar.attachPreviewView(previewFrameLayout)
@@ -580,8 +607,7 @@ abstract class AbstractPlayerFragment(
             }
 
             subView = playerView?.findViewById(androidx.media3.ui.R.id.exo_subtitles)
-            subStyle = SubtitlesFragment.getCurrentSavedStyle()
-            player.initSubtitles(subView, subtitleHolder, subStyle)
+            player.initSubtitles(subView, subtitleHolder, CustomDecoder.style)
             (player.imageGenerator as? PreviewGenerator)?.params = ImageParams.new16by9(screenWidth)
 
             /*previewImageView?.doOnLayout {

@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/library_root"
+    android:background="?attr/primaryGrayBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -24,7 +25,6 @@
         android:background="?attr/primaryGrayBackground">
 
         <LinearLayout
-            android:id="@+id/search_status_bar_padding"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -50,10 +50,10 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:contentDescription="@string/change_providers_img_des"
                 android:padding="5dp"
-                android:visibility="gone"
-                tools:visibility="visible"
                 android:src="@drawable/ic_baseline_sort_24"
-                app:tint="?attr/textColor" />
+                android:visibility="gone"
+                app:tint="?attr/textColor"
+                tools:visibility="visible" />
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -78,11 +78,11 @@
 
                     android:nextFocusRight="@id/search_filter"
                     android:paddingStart="-10dp"
+                    app:closeIcon="@drawable/ic_baseline_close_24"
                     app:iconifiedByDefault="false"
                     app:queryBackground="@color/transparent"
                     app:queryHint="@string/search_hint"
                     app:searchIcon="@drawable/search_icon"
-                    app:closeIcon="@drawable/ic_baseline_close_24"
                     tools:ignore="RtlSymmetry">
 
                 </androidx.appcompat.widget.SearchView>
@@ -110,6 +110,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"
+        android:background="?attr/primaryBlackBackground"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.viewpager2.widget.ViewPager2
@@ -159,6 +160,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="40dp">
+
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/library_random"
             style="@style/ExtendedFloatingActionButton"
@@ -195,6 +197,7 @@
         app:tabIndicatorGravity="center"
         app:tabIndicatorHeight="30dp"
         app:tabMode="scrollable"
+        app:tabRippleColor="?attr/textColor"
         app:tabSelectedTextColor="?attr/primaryBlackBackground"
         app:tabTextAppearance="@style/TabNoCaps"
         app:tabTextColor="?attr/textColor" />

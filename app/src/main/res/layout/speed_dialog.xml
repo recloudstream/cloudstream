@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="500dp"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/speed_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="20dp"
+        android:gravity="center_horizontal"
+        android:text="1.00x"
+        android:textSize="20sp"
+        tools:ignore="HardcodedText" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/speed_minus"
+            style="@style/ExtendedFloatingActionButton"
+            android:layout_gravity="center_vertical"
+
+            android:foreground="@drawable/outline_drawable"
+            android:nextFocusLeft="@id/speed_plus"
+            android:nextFocusRight="@id/speed_bar"
+            android:nextFocusUp="@id/speed_minus"
+            android:nextFocusDown="@id/speed_25"
+            android:src="@drawable/media3_icon_minus"
+            app:tint="?attr/textColor" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/speed_bar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:nextFocusLeft="@id/speed_minus"
+            android:nextFocusRight="@id/speed_plus"
+            android:nextFocusUp="@id/speed_bar"
+            android:nextFocusDown="@id/speed_125"
+            android:progressTint="?attr/white"
+            android:stepSize="0.05"
+            android:thumbTint="?attr/white"
+            android:value="1.0"
+            android:valueFrom="0.1"
+            android:valueTo="2.0"
+            app:labelStyle="@style/BlackLabel"
+            app:thumbColor="?attr/white"
+            app:tickVisible="false"
+            app:trackColorActive="?attr/white"
+            app:trackColorInactive="?attr/primaryGrayBackground">
+
+            <requestFocus />
+        </com.google.android.material.slider.Slider>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/speed_plus"
+            style="@style/ExtendedFloatingActionButton"
+            android:layout_gravity="center_vertical"
+            android:foreground="@drawable/outline_drawable"
+            android:nextFocusLeft="@id/speed_bar"
+            android:nextFocusRight="@id/speed_minus"
+            android:nextFocusDown="@id/speed_200"
+            android:src="@drawable/media3_icon_plus"
+            app:tint="?attr/textColor" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="14dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/speed_25"
+            style="@style/BlackButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:nextFocusLeft="@id/speed_200"
+            android:nextFocusRight="@id/speed_100"
+            android:nextFocusUp="@id/speed_minus"
+            android:nextFocusDown="@id/speed_25"
+            android:text="0.25x"
+            tools:ignore="HardcodedText" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/speed_100"
+            style="@style/BlackButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:nextFocusLeft="@id/speed_25"
+            android:nextFocusRight="@id/speed_125"
+            android:nextFocusUp="@id/speed_bar"
+            android:nextFocusDown="@id/speed_100"
+            android:text="1.0x"
+            tools:ignore="HardcodedText" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/speed_125"
+            style="@style/BlackButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:nextFocusLeft="@id/speed_100"
+            android:nextFocusRight="@id/speed_150"
+            android:nextFocusUp="@id/speed_bar"
+            android:nextFocusDown="@id/speed_125"
+            android:text="1.25x"
+            tools:ignore="HardcodedText" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/speed_150"
+            style="@style/BlackButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:nextFocusLeft="@id/speed_125"
+            android:nextFocusRight="@id/speed_200"
+            android:nextFocusUp="@id/speed_bar"
+            android:nextFocusDown="@id/speed_150"
+            android:text="1.5x"
+            tools:ignore="HardcodedText" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/speed_200"
+            style="@style/BlackButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:nextFocusLeft="@id/speed_150"
+            android:nextFocusRight="@id/speed_25"
+            android:nextFocusUp="@id/speed_plus"
+            android:nextFocusDown="@id/speed_200"
+            android:text="2.0x"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+
+</LinearLayout>

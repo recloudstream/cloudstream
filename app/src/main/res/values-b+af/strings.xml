@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_remove_from_bookmarks">Verwyder</string>
+    <string name="player_speed_text_format" formatted="true">Spoed (%.2fx)</string>
+    <string name="error_bookmarks_text">Boekmerke</string>
+    <string name="download_started">Aflaai het begin</string>
+    <string name="home_next_random_img_des">Volgende lukraak</string>
+    <string name="preview_background_img_des">Voorskou Agtergrond</string>
+    <string name="play_movie_button">Speel Fliek</string>
+    <string name="subs_hold_to_reset_to_default">Hou in om terug te stel na standaard</string>
+    <string name="pref_disable_acra">Deaktiveer outomatiese foutrapportering</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
+    <string name="sort_clear">Maak leeg</string>
+    <string name="subs_outline_color">Omtrek kleur</string>
+    <string name="search_poster_img_des">Plakkaat</string>
+    <string name="filter_bookmarks">Filter boekmerke</string>
+    <string name="subs_font_size">Lettertipe grootte</string>
+    <string name="type_plan_to_watch">Beplan om te Kyk</string>
+    <string name="update_started">Opdatering het begin</string>
+    <string name="sort_copy">Kopieer</string>
+    <string name="home_more_info">Meer inligting</string>
+    <string name="title_downloads">Aflaaie</string>
+    <string name="subs_auto_select_language">Outo-kies taal</string>
+    <string name="error_loading_links_toast">Kon nie skakels laai nie</string>
+    <string name="subs_edge_type">Rand tipe</string>
+    <string name="download_done">Klaar Afgelaai</string>
+    <string name="continue_watching">Kyk verder</string>
+    <string name="new_update_format" formatted="true">Nuwe opdatering gevind!
+\n%1$s -&gt; %2$s</string>
+    <string name="subs_download_languages">Laai Tale af</string>
+    <string name="search_provider_text_providers">Soek deur verskaffers te gebruik</string>
+    <string name="go_back_img_des">Gaan terug</string>
+    <string name="downloading">Laai tans af</string>
+    <string name="episode_more_options_des">Meer Opsies</string>
+    <string name="play_episode">Speel Episode</string>
+    <string name="player_speed">Spelerspoed</string>
+    <string name="benene_count_text">%d Benenes gegee aan devs</string>
+    <string name="type_watching">Kyk tans</string>
+    <string name="result_tags">Genres</string>
+    <string name="episode_poster_img_des">Episode plakkaat</string>
+    <string name="type_dropped">Geval</string>
+    <string name="search_hint_site" formatted="true">Soek %s…</string>
+    <string name="filler" formatted="true">Vuller</string>
+    <string name="benene_count_text_none">Geen Benenes gegee</string>
+    <string name="subs_subtitle_languages">Onderskriftaal</string>
+    <string name="home_change_provider_img_des">Verander Verskaffer</string>
+    <string name="subs_background_color">Agtergrondkleur</string>
+    <string name="search_hint">Soek…</string>
+    <string name="popup_pause_download">Laat aflaai rus</string>
+    <string name="app_dubbed_text">Dub</string>
+    <string name="subtitles_settings">Onderskrifinstellings</string>
+    <string name="subs_window_color">Venster kleur</string>
+    <string name="play_torrent_button">Stroom Torrent</string>
+    <string name="download_canceled">Aflaai gekanselleer</string>
+    <string name="rated_format" formatted="true">Gegradeer: %.1f</string>
+    <string name="home_expanded_hide">Versteek</string>
+    <string name="sort_apply">Pas toe</string>
+    <string name="browser">Blaaier</string>
+    <string name="pick_subtitle">Onderskrifte</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$du %3$dm</string>
+    <string name="next_episode">Volgende episode</string>
+    <string name="download_paused">Aflaai op rus</string>
+    <string name="download">Laai af</string>
+    <string name="reload_error">Probeer weer verbind…</string>
+    <string name="popup_delete_file">Vee lêer uit</string>
+    <string name="downloaded">Afgelaai</string>
+    <string name="popup_resume_download">Hervat aflaai</string>
+    <string name="subs_text_color">Teks kleur</string>
+    <string name="type_completed">Voltooi</string>
+    <string name="play_trailer_button">Speel Lokprent</string>
+    <string name="play_livestream_button">Speel Regstreeks</string>
+    <string name="next_episode_time_min_format" formatted="true">%dm</string>
+    <string name="duration_format" formatted="true">%d min</string>
+    <string name="result_poster_img_des">Plakkaat</string>
+    <string name="popup_play_file">Speel lêer</string>
+    <string name="type_re_watching">Herkyk tans</string>
+    <string name="result_open_in_browser">Maak Oop In Blaaier</string>
+    <string name="no_data">Geen Data</string>
+    <string name="subs_font">Lettertipe</string>
+    <string name="go_back">Gaan Terug</string>
+    <string name="title_home">Tuis</string>
+    <string name="skip_loading">Slaan Laai Oor</string>
+    <string name="home_info">Inligting</string>
+    <string name="next_episode_format" formatted="true">Episode %d sal vrygestel word in</string>
+    <string name="sort_save">Stoor</string>
+    <string name="download_failed">Aflaai het misluk</string>
+    <string name="result_share">Deel</string>
+    <string name="home_main_poster_img_des">Hoofplakkaat</string>
+    <string name="pick_source">Bronne</string>
+    <string name="title_settings">Instellings</string>
+    <string name="title_search">Soek</string>
+    <string name="loading">Laai tans…</string>
+    <string name="app_subbed_text">Sub</string>
+    <string name="action_remove_watching">Verwyder</string>
+    <string name="stream">Netwerk stroom</string>
+    <string name="type_on_hold">Op rus</string>
+    <string name="app_name">CloudStream</string>
+    <string name="home_play">Speel</string>
+    <string name="download_storage_text">Interne Berging</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
+    <string name="sort_close">Maak toe</string>
+    <string name="action_add_to_bookmarks">Stel kykstatus</string>
+    <string name="play_with_app_name">Speel met CloudStream</string>
+    <string name="subs_subtitle_elevation">Onderskrif hoogte</string>
+    <string name="search_provider_text_types">Soek met behulp van tipes</string>
+    <string name="subs_import_text" formatted="true">Voer lettertipes in deur dit in %s te plaas</string>
+    <string name="cast_format" formatted="true">Rolverdeling: %s</string>
+    <string name="subscribe_tooltip">Nuwe episode notifikasie</string>
+    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="free_storage">Gratis</string>
+    <string name="use">Gebruik</string>
+    <string name="delete">Wis Uit</string>
+    <string name="cancel">Kanselleer</string>
+    <string name="actor_background">Agtergrond</string>
+    <string name="previous">Vorige</string>
+    <string name="settings_info">Inligting</string>
+    <string name="edit">Wysig</string>
+    <string name="season">Seisoen</string>
+    <string name="select_all">Kies Alles</string>
+    <string name="downloads_delete_select">Kies items om te verwyder</string>
+    <string name="duplicate_replace">Vervang</string>
+    <string name="pin_error_length">PIN moet 4 karakters bevat</string>
+    <string name="pin_error_incorrect">Verkeerde PIN. Probeer weer.</string>
+    <string name="category_providers">Verskaffers</string>
+</resources>

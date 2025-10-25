@@ -15,43 +15,57 @@
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nav_host_fragment"
             android:name="androidx.navigation.fragment.NavHostFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             app:defaultNavHost="true"
-            app:layout_constraintBottom_toTopOf="@id/cast_mini_controller_holder"
+            app:layout_constraintBottom_toTopOf="@+id/cast_mini_controller_holder"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:navGraph="@navigation/mobile_navigation" />
 
         <com.google.android.material.navigationrail.NavigationRailView
             android:id="@+id/nav_rail_view"
-            android:layout_width="62dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            app:itemIconTint="@color/item_select_color"
-            app:itemTextColor="@color/item_select_color"
             android:background="?attr/primaryGrayBackground"
             android:descendantFocusability="afterDescendants"
+            android:maxWidth="@dimen/nav_rail_view_width"
+            android:minWidth="@dimen/nav_rail_view_width"
+            app:collapsedItemMinHeight="0dp"
+            app:expanded="false"
+            app:expandedItemMinHeight="0dp"
+            app:expandedMaxWidth="220dp"
+
             app:headerLayout="@layout/rail_header"
+            app:itemActiveIndicatorStyle="@style/CustomIndicator"
+            app:itemIconSize="24dp"
+            app:itemIconTint="@color/item_select_color_tv"
+
+            app:itemMinHeight="0dp"
+            app:itemPaddingBottom="0dp"
+            app:itemPaddingTop="0dp"
+            app:itemSpacing="12dp"
+            app:itemTextColor="@color/item_select_color_tv"
             app:labelVisibilityMode="unlabeled"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:menu="@menu/bottom_nav_menu"
             app:menuGravity="center">
 
-            <include layout="@layout/rail_footer"/>
+            <include layout="@layout/rail_footer" />
 
         </com.google.android.material.navigationrail.NavigationRailView>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/nav_view"
-            android:layout_height="70dp"
             android:layout_width="0dp"
-            app:labelVisibilityMode="unlabeled"
-            android:visibility="gone"
+            android:layout_height="@dimen/nav_view_height"
             android:background="?attr/primaryGrayBackground"
-
+            android:visibility="gone"
             app:itemIconTint="@color/item_select_color"
             app:itemTextColor="@color/item_select_color"
+            app:labelVisibilityMode="unlabeled"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -84,15 +98,14 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:clickable="false"
-            android:visibility="gone"
             android:id="@+id/focus_outline"
-            android:src="@drawable/outline"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:importantForAccessibility="no">
-        </ImageView>
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:importantForAccessibility="no"
+            android:src="@drawable/outline"
+            android:visibility="gone" />
     </FrameLayout>
 </FrameLayout>

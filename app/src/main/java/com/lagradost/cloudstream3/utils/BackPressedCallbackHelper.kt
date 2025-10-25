@@ -22,6 +22,14 @@ object BackPressedCallbackHelper {
         onBackPressedDispatcher.addCallback(this, newCallback)
     }
 
+    fun ComponentActivity.disableBackPressedCallback(id : String) {
+        backPressedCallbacks[this]?.get(id)?.isEnabled = false
+    }
+
+    fun ComponentActivity.enableBackPressedCallback(id : String) {
+        backPressedCallbacks[this]?.get(id)?.isEnabled = true
+    }
+
     fun ComponentActivity.detachBackPressedCallback(id: String) {
         val callbackMap = backPressedCallbacks[this] ?: return
 

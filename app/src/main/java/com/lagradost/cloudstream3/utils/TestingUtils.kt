@@ -165,7 +165,7 @@ object TestingUtils {
         val searchResults = testQueries.firstNotNullOfOrNull { query ->
             try {
                 logger.log("Searching for: $query")
-                api.search(query).takeIf { !it.isNullOrEmpty() }
+                api.search(query, 1)?.items?.takeIf { it.isNotEmpty() }
             } catch (t: Throwable) {
                 if (t is NotImplementedError) {
                     Assert.fail("Provider has not implemented search()")

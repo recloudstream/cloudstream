@@ -26,24 +26,28 @@ enum class SubtitleOrigin {
 }
 
 /**
- * @param name To be displayed in the player
+ * @param originalName the start of the name to be displayed in the player
+ * @param nameSuffix An extra suffix added to the subtitle to make sure it is unique
  * @param url Url for the subtitle, when EMBEDDED_IN_VIDEO this variable is used as the real backend id
  * @param headers if empty it will use the base onlineDataSource headers else only the specified headers
- * @param languageCode Not guaranteed to follow any standard. Could be something like "English 4" or "en".
+ * @param languageCode usually, tags such as "en", "es-mx", or "zh-hant-TW". But it could be something like "English 4"
  * */
 data class SubtitleData(
-    val name: String,
+    val originalName: String,
+    val nameSuffix: String,
     val url: String,
     val origin: SubtitleOrigin,
     val mimeType: String,
     val headers: Map<String, String>,
-    val languageCode: String?
+    val languageCode: String?,
 ) {
     /** Internal ID for exoplayer, unique for each link*/
     fun getId(): String {
         return if (origin == SubtitleOrigin.EMBEDDED_IN_VIDEO) url
         else "$url|$name"
     }
+
+    val name = "$originalName $nameSuffix"
 
     /**
      * Gets the URL, but tries to fix it if it is malformed.
@@ -76,8 +80,7 @@ class PlayerSubtitleHelper {
         allSubtitles = list
     }
 
-    private var subStyle: SaveCaptionStyle? = null
-    private var subtitleView: SubtitleView? = null
+    var subtitleView: SubtitleView? = null
 
     companion object {
         fun String.toSubtitleMimeType(): String {
@@ -91,12 +94,13 @@ class PlayerSubtitleHelper {
 
         fun getSubtitleData(subtitleFile: SubtitleFile): SubtitleData {
             return SubtitleData(
-                name = subtitleFile.lang,
+                originalName = subtitleFile.lang,
+                nameSuffix = "",
                 url = subtitleFile.url,
                 origin = SubtitleOrigin.URL,
                 mimeType = subtitleFile.url.toSubtitleMimeType(),
-                headers = emptyMap(),
-                languageCode = subtitleFile.lang
+                headers = subtitleFile.headers ?: emptyMap(),
+                languageCode = subtitleFile.langTag ?: subtitleFile.lang
             )
         }
     }
@@ -112,16 +116,9 @@ class PlayerSubtitleHelper {
     }
 
     fun setSubStyle(style: SaveCaptionStyle) {
-        subStyle = style
         Log.i(TAG, "SET STYLE = $style")
-        setSubtitleViewStyle(subtitleView, style)
         subtitleView?.translationY = -style.elevation.toPx.toFloat()
-        val size = style.fixedTextSize
-        if (size != null) {
-            subtitleView?.setFixedTextSize(TypedValue.COMPLEX_UNIT_SP, size)
-        } else {
-            subtitleView?.setUserDefaultTextSize()
-        }
+        setSubtitleViewStyle(subtitleView, style, true)
     }
 
     fun initSubtitles(subView: SubtitleView?, subHolder: FrameLayout?, style: SaveCaptionStyle?) {

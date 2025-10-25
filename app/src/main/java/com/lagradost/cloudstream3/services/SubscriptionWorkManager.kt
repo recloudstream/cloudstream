@@ -1,14 +1,12 @@
 package com.lagradost.cloudstream3.services
 
-import android.annotation.SuppressLint
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
-import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import androidx.core.app.NotificationCompat
+import androidx.core.app.PendingIntentCompat
 import androidx.core.net.toUri
 import androidx.work.*
 import com.lagradost.cloudstream3.*
@@ -99,8 +97,7 @@ class SubscriptionWorkManager(val context: Context, workerParams: WorkerParamete
                 .build()
         )
     }
-
-    @SuppressLint("UnspecifiedImmutableFlag")
+    @Suppress("DEPRECATION_ERROR")
     override suspend fun doWork(): Result {
         try {
 //        println("Update subscriptions!")
@@ -131,18 +128,18 @@ class SubscriptionWorkManager(val context: Context, workerParams: WorkerParamete
             updateProgress(max, progress, true)
 
             // We need all plugins loaded.
-            PluginManager.loadAllOnlinePlugins(context)
-            PluginManager.loadAllLocalPlugins(context, false)
+            PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(context)
+            PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(context, false)
 
-            subscriptions.apmap { savedData ->
+            subscriptions.amap { savedData ->
                 try {
-                    val id = savedData.id ?: return@apmap null
-                    val api = getApiFromNameNull(savedData.apiName) ?: return@apmap null
+                    val id = savedData.id ?: return@amap null
+                    val api = getApiFromNameNull(savedData.apiName) ?: return@amap null
 
                     // Reasonable timeout to prevent having this worker run forever.
                     val response = withTimeoutOrNull(60_000) {
                         api.load(savedData.url) as? EpisodeResponse
-                    } ?: return@apmap null
+                    } ?: return@amap null
 
                     val dubPreference =
                         getDub(id) ?: if (
@@ -186,19 +183,10 @@ class SubscriptionWorkManager(val context: Context, workerParams: WorkerParamete
                         val intent = Intent(context, MainActivity::class.java).apply {
                             data = savedData.url.toUri()
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        }
+                        }.putExtra(MainActivity.API_NAME_EXTRA_KEY, api.name)
 
                         val pendingIntent =
-                            if (SDK_INT >= Build.VERSION_CODES.M) {
-                                PendingIntent.getActivity(
-                                    context,
-                                    0,
-                                    intent,
-                                    PendingIntent.FLAG_IMMUTABLE
-                                )
-                            } else {
-                                PendingIntent.getActivity(context, 0, intent, 0)
-                            }
+                            PendingIntentCompat.getActivity(context, 0, intent, 0, false)
 
                         val poster = ioWork {
                             savedData.posterUrl?.let { url ->

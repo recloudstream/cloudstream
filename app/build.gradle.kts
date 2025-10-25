@@ -8,6 +8,7 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("org.jetbrains.dokka")
+
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
@@ -61,12 +62,14 @@ android {
         applicationId = "com.lagradost.cloudstream3"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 64
-        versionName = "4.5.0"
+        versionCode = 67
+        versionName = "4.6.1"
 
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
         resValue("string", "commit_hash", getGitCommitHash())
         resValue("bool", "is_prerelease", "false")
+
+        manifestPlaceholders["target_sdk_version"] = libs.versions.targetSdk.get()
 
         // Reads local.properties
         val localProperties = gradleLocalProperties(rootDir, project.providers)
@@ -160,10 +163,9 @@ dependencies {
     // Android Core & Lifecycle
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
-    implementation(libs.navigation.ui.ktx)
+    implementation(libs.bundles.navigationKtx)
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
-    implementation(libs.navigation.fragment.ktx)
 
     // Design & UI
     implementation(libs.preference.ktx)
@@ -205,7 +207,6 @@ dependencies {
     implementation(libs.quickjs)
     implementation(libs.fuzzywuzzy) // Library/Ext Searching with Levenshtein Distance
     implementation(libs.safefile) // To Prevent the URI File Fu*kery
-    implementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
     coreLibraryDesugaring(libs.desugar.jdk.libs.nio) // NIO Flavor Needed for NewPipeExtractor
     implementation(libs.conscrypt.android) {
         version {
@@ -272,7 +273,11 @@ tasks.register<Jar>("makeJar") {
 tasks.withType<KotlinJvmCompile> {
     compilerOptions {
         jvmTarget.set(javaTarget)
-        freeCompilerArgs.add("-Xjvm-default=all-compatibility")
+        freeCompilerArgs.addAll(
+            "-Xjvm-default=all-compatibility",
+            "-Xannotation-default-target=param-property",
+            "-opt-in=com.lagradost.cloudstream3.Prerelease"
+        )
     }
 }
 

@@ -1,0 +1,776 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
+    <string name="extra_info_format" formatted="true" translatable="false">%d %s | %s</string>
+    <string name="storage_size_format" formatted="true" translatable="false">%s • %s</string>
+    <string name="download_size_format" formatted="true" translatable="false">%s / %s</string>
+    <string name="episode_name_format" formatted="true" translatable="false">%s %s</string>
+    <string name="ffw_text_format" formatted="true" translatable="false">+%d</string>
+    <string name="rew_text_format" formatted="true" translatable="false">-%d</string>
+    <string name="ffw_text_regular_format" formatted="true" translatable="false">%d</string>
+    <string name="rew_text_regular_format" formatted="true" translatable="false">%d</string>
+    <string name="year_format" formatted="true" translatable="false">%d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s 共 %2$d 集</string>
+    <string name="cast_format" formatted="true">演员：%s</string>
+    <string name="next_episode_format" formatted="true">第 %d 集将发布于</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
+    <string name="next_episode_time_min_format" formatted="true">%dm</string>
+    <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
+    <string name="result_poster_img_des">封面</string>
+    <string name="search_poster_img_des">封面</string>
+    <string name="episode_poster_img_des">剧集封面</string>
+    <string name="home_main_poster_img_des">主封面</string>
+    <string name="home_next_random_img_des">随机下一个</string>
+    <string name="episode_play_img_des" translatable="false">@string/play_episode</string>
+    <string name="go_back_img_des">返回</string>
+    <string name="change_providers_img_des" translatable="false">@string/home_change_provider_img_des</string>
+    <string name="home_change_provider_img_des">更改片源</string>
+    <string name="preview_background_img_des">预览背景</string>
+    <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
+    <string name="player_speed_text_format" formatted="true">速度（%.2fx）</string>
+    <string name="rated_format" formatted="true">评分：%.1f</string>
+    <string name="new_update_format" formatted="true">发现新版本！
+\n%1$s -&gt; %2$s</string>
+    <string name="filler" formatted="true">填充</string>
+    <string name="duration_format" formatted="true">%d 分钟</string>
+    <string name="app_name">CloudStream</string>
+    <string name="play_with_app_name">使用 CloudStream 播放</string>
+    <string name="title_home">主页</string>
+    <string name="title_search">搜索</string>
+    <string name="title_downloads">下载</string>
+    <string name="title_settings">设置</string>
+    <string name="search_hint">搜索…</string>
+    <string name="search_hint_site" formatted="true">搜索 %s…</string>
+    <string name="no_data">无数据</string>
+    <string name="episode_more_options_des">更多选项</string>
+    <string name="next_episode">下一集</string>
+    <string name="result_plot" translatable="false">@string/synopsis</string>
+    <string name="result_tags">类型</string>
+    <string name="result_share">分享</string>
+    <string name="result_open_in_browser">在浏览器中打开</string>
+    <string name="skip_loading">跳过加载</string>
+    <string name="loading">加载中…</string>
+    <string name="type_watching">正在观看</string>
+    <string name="type_on_hold">暂时搁置</string>
+    <string name="type_completed">观看完毕</string>
+    <string name="type_dropped">放弃观看</string>
+    <string name="type_plan_to_watch">计划观看</string>
+    <string name="type_re_watching">重新观看</string>
+    <string name="play_movie_button">播放电影</string>
+    <string name="play_livestream_button">播放直播</string>
+    <string name="play_torrent_button">播放种子</string>
+    <string name="pick_source">来源</string>
+    <string name="pick_subtitle">字幕</string>
+    <string name="reload_error">重试连接…</string>
+    <string name="go_back">返回</string>
+    <string name="play_episode">播放剧集</string>
+    <!--<string name="need_storage">允许下载剧集</string>-->
+    <string name="download">下载</string>
+    <string name="downloaded">已下载</string>
+    <string name="downloading">下载中</string>
+    <string name="download_paused">下载暂停</string>
+    <string name="download_started">下载开始</string>
+    <string name="download_failed">下载失败</string>
+    <string name="download_canceled">下载取消</string>
+    <string name="download_done">下载完毕</string>
+    <string name="download_format" translatable="false">%s - %s</string>
+    <string name="stream">播放</string>
+    <string name="error_loading_links_toast">加载链接错误</string>
+    <string name="download_storage_text">内部存储</string>
+    <string name="app_dubbed_text">配音</string>
+    <string name="app_subbed_text">字幕</string>
+    <string name="popup_delete_file">删除文件</string>
+    <string name="popup_play_file">播放文件</string>
+    <string name="popup_resume_download">继续下载</string>
+    <string name="popup_pause_download">暂停下载</string>
+    <string name="pref_disable_acra">禁用自动错误报告</string>
+    <string name="home_more_info">更多信息</string>
+    <string name="home_expanded_hide">隐藏</string>
+    <string name="home_play">播放</string>
+    <string name="home_info">信息</string>
+    <string name="filter_bookmarks">筛选书签</string>
+    <string name="error_bookmarks_text">书签</string>
+    <string name="action_remove_from_bookmarks">移除</string>
+    <string name="action_add_to_bookmarks">设置观看状态</string>
+    <string name="sort_apply">应用</string>
+    <string name="sort_copy">复制</string>
+    <string name="sort_close">关闭</string>
+    <string name="sort_clear">清除</string>
+    <string name="sort_save">保存</string>
+    <string name="player_speed">播放速度</string>
+    <string name="subtitles_settings">字幕设置</string>
+    <string name="subs_text_color">文本颜色</string>
+    <string name="subs_outline_color">轮廓颜色</string>
+    <string name="subs_background_color">背景颜色</string>
+    <string name="subs_window_color">窗口颜色</string>
+    <string name="subs_edge_type">边缘类型</string>
+    <string name="subs_subtitle_elevation">字幕高度</string>
+    <string name="subs_font">字体</string>
+    <string name="subs_font_size">字体大小</string>
+    <string name="search_provider_text_providers">按片源搜索</string>
+    <string name="search_provider_text_types">按类型搜索</string>
+    <string name="benene_count_text">给开发者送 %d 根香蕉</string>
+    <string name="benene_count_text_none">不送香蕉</string>
+    <string name="subs_auto_select_language">自动选择语言</string>
+    <string name="subs_download_languages">下载语言</string>
+    <string name="subs_subtitle_languages">字幕语言</string>
+    <string name="subs_hold_to_reset_to_default">按住重置为默认值</string>
+    <string name="subs_import_text" formatted="true">将字体导入到 %s</string>
+    <string name="continue_watching">继续观看</string>
+    <string name="action_remove_watching">移除</string>
+    <string name="action_open_watching">更多信息</string>
+    <string name="action_open_play">@string/home_play</string>
+    <string name="vpn_might_be_needed">此片源可能需要 VPN 才能正常使用</string>
+    <string name="vpn_torrent">此片源为种子文件，建议使用 VPN</string>
+    <string name="provider_info_meta">站点不提供元数据，如果站点上不存在元数据，视频加载将失败。</string>
+    <string name="torrent_plot">简介</string>
+    <string name="normal_no_plot">未找到简介</string>
+    <string name="torrent_no_plot">未找到简介</string>
+    <string name="show_log_cat">显示 Logcat 🐈</string>
+    <string name="picture_in_picture">画中画</string>
+    <string name="picture_in_picture_des">在其他应用上层的迷你播放器中继续播放</string>
+    <string name="player_size_settings">播放器画面调整按钮</string>
+    <string name="player_size_settings_des">移除黑色边框</string>
+    <string name="player_subtitles_settings">字幕</string>
+    <string name="player_subtitles_settings_des">播放器字幕设置</string>
+    <string name="chromecast_subtitles_settings">Chromecast 字幕</string>
+    <string name="chromecast_subtitles_settings_des">Chromecast 字幕设置</string>
+    <string name="eigengraumode_settings">播放速度</string>
+    <string name="swipe_to_seek_settings">滑动控制进度</string>
+    <string name="swipe_to_seek_settings_des">左右滑动以控制视频中的位置</string>
+    <string name="swipe_to_change_settings">滑动更改设置</string>
+    <string name="swipe_to_change_settings_des">上下滑动修改亮度或音量</string>
+    <string name="autoplay_next_settings">自动播放下一集</string>
+    <string name="autoplay_next_settings_des">播放完毕后播放下一集</string>
+    <string name="double_tap_to_seek_settings">双击控制进度</string>
+    <string name="double_tap_to_pause_settings">双击暂停</string>
+    <string name="double_tap_to_seek_amount_settings">双击控制进度时间 （秒）</string>
+    <string name="double_tap_to_seek_settings_des">在左右侧双击快进或快退</string>
+    <string name="double_tap_to_pause_settings_des">双击中间暂停</string>
+    <string name="use_system_brightness_settings">使用系统亮度</string>
+    <string name="use_system_brightness_settings_des">在应用播放器中使用系统亮度替代黑色遮罩</string>
+    <string name="episode_sync_settings">更新观看进度</string>
+    <string name="episode_sync_settings_des">自动同步当前剧集进度</string>
+    <string name="restore_settings">从备份中恢复数据</string>
+    <string name="backup_settings">备份数据</string>
+    <string name="restore_success">已加载备份文件</string>
+    <string name="restore_failed_format" formatted="true">无法从 %s 文件中还原数据</string>
+    <string name="backup_success">数据已储存</string>
+    <string name="backup_failed">缺少存储权限，请重试。</string>
+    <string name="backup_failed_error_format">备份 %s 出错</string>
+    <string name="search">搜索</string>
+    <string name="category_account">账户和安全</string>
+    <string name="category_updates">更新与备份</string>
+    <string name="settings_info">信息</string>
+    <string name="advanced_search">高级搜索</string>
+    <string name="advanced_search_des">按片源分割搜索结果</string>
+    <string name="bug_report_settings_off">仅发送关于崩溃的数据</string>
+    <string name="bug_report_settings_on">不发送数据</string>
+    <string name="show_fillers_settings">显示动画外传</string>
+    <string name="show_trailers_settings">显示预告片</string>
+    <string name="kitsu_settings">显示来自 Kitsu 的封面</string>
+    <string name="pref_filter_search_quality">在搜索结果中隐藏选中视频画质</string>
+    <string name="automatic_plugin_updates">自动更新插件</string>
+    <string name="automatic_plugin_download">自动下载插件</string>
+    <string name="updates_settings">显示应用更新</string>
+    <string name="updates_settings_des">启动应用后自动搜索更新。</string>
+    <string name="uprereleases_settings">更新至预览版</string>
+    <string name="uprereleases_settings_des">搜索预览版更新替代仅搜索完整版本</string>
+    <string name="github">Github</string>
+    <string name="lightnovel">由相同开发者开发的轻小说应用</string>
+    <string name="anim">由相同开发者开发的动漫应用</string>
+    <string name="discord">加入 Discord</string>
+    <string name="benene">给开发者送一根香蕉</string>
+    <string name="benene_des">送香蕉</string>
+    <string name="app_language">应用语言</string>
+    <string name="no_chromecast_support_toast">此片源不支持 Chromecast</string>
+    <string name="no_links_found_toast">未找到链接</string>
+    <string name="copy_link_toast">链接已复制到剪贴板</string>
+    <string name="play_episode_toast">播放剧集</string>
+    <string name="subs_default_reset_toast">重置为默认值</string>
+    <string name="acra_report_toast">抱歉，应用崩溃了，将发送一份匿名错误报告给开发者</string>
+    <string name="season">季</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
+    <string name="no_season">无季</string>
+    <string name="episode">集</string>
+    <string name="episodes">集</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
+    <string name="season_short">S</string>
+    <string name="episode_short">E</string>
+    <string name="no_episodes_found">未找到剧集</string>
+    <string name="delete_file">删除文件</string>
+    <string name="delete">删除</string>
+    <string name="cancel">取消</string>
+    <string name="pause">暂停</string>
+    <string name="resume">继续</string>
+    <string name="go_back_30">-30</string>
+    <string name="go_forward_30">+30</string>
+    <string name="delete_message" formatted="true">这将永久删除 %s
+\n您确定吗?</string>
+    <string name="resume_time_left" formatted="true">%d 分钟
+\n剩余</string>
+    <string name="status_ongoing">连载中</string>
+    <string name="status_completed">已完结</string>
+    <string name="status">状态</string>
+    <string name="year">年份</string>
+    <string name="rating">评分</string>
+    <string name="duration">时间</string>
+    <string name="site">网站</string>
+    <string name="synopsis">简介</string>
+    <string name="queued">已加入队列</string>
+    <string name="no_subtitles">无字幕</string>
+    <string name="action_default">默认</string>
+    <string name="free_storage">空闲</string>
+    <string name="used_storage">已使用</string>
+    <string name="app_storage">应用</string>
+    <!--plural-->
+    <string name="movies">电影</string>
+    <string name="tv_series">电视剧</string>
+    <string name="cartoons">卡通</string>
+    <string name="anime">动漫</string>
+    <string name="torrent">种子</string>
+    <string name="documentaries">纪录片</string>
+    <string name="ova">OVA</string>
+    <string name="asian_drama">亚洲剧</string>
+    <string name="livestreams">直播</string>
+    <string name="nsfw">NSFW</string>
+    <string name="others">其他</string>
+    <!--singular-->
+    <string name="movies_singular">电影</string>
+    <string name="tv_series_singular">电视剧</string>
+    <string name="cartoons_singular">卡通</string>
+    <string name="anime_singular">动漫</string>
+    <string name="ova_singular">OVA</string>
+    <string name="torrent_singular">种子</string>
+    <string name="documentaries_singular">纪录片</string>
+    <string name="asian_drama_singular">亚洲剧</string>
+    <string name="live_singular">直播</string>
+    <string name="nsfw_singular">NSFW</string>
+    <string name="other_singular">其他</string>
+    <string name="source_error">来源错误</string>
+    <string name="remote_error">远程错误</string>
+    <string name="render_error">渲染器错误</string>
+    <string name="unexpected_error">意外的播放器错误</string>
+    <string name="storage_error">下载错误，请检查存储权限</string>
+    <string name="episode_action_chromecast_episode">Chromecast 剧集</string>
+    <string name="episode_action_chromecast_mirror">Chromecast 镜像</string>
+    <string name="episode_action_play_in_app">在应用中播放</string>
+    <string name="episode_action_play_in_format">在 %s 中播放</string>
+    <string name="episode_action_auto_download">自动下载</string>
+    <string name="episode_action_download_mirror">下载镜像</string>
+    <string name="episode_action_reload_links">重新加载链接</string>
+    <string name="episode_action_download_subtitle">下载字幕</string>
+    <string name="show_hd">画质标签</string>
+    <string name="show_dub">配音标签</string>
+    <string name="show_sub">字幕标签</string>
+    <string name="show_title">标题</string>
+    <string name="show_hd_key" translatable="false">show_hd_key</string>
+    <string name="show_dub_key" translatable="false">show_dub_key</string>
+    <string name="show_sub_key" translatable="false">show_sub_key</string>
+    <string name="show_title_key" translatable="false">show_title_key</string>
+    <string name="poster_ui_settings">封面内容</string>
+    <string name="no_update_found">未找到更新</string>
+    <string name="check_for_update">检查更新</string>
+    <string name="video_lock">锁定</string>
+    <string name="video_aspect_ratio_resize">调整画面</string>
+    <string name="video_source">来源</string>
+    <string name="video_skip_op">跳过片头</string>
+    <string name="dont_show_again">不再显示</string>
+    <string name="skip_update">跳过此更新</string>
+    <string name="update">更新</string>
+    <string name="watch_quality_pref">首选播放画质（WiFi）</string>
+    <string name="limit_title">视频播放器标题最多字符</string>
+    <string name="limit_title_rez">视频播放器标题</string>
+    <string name="video_buffer_size_settings">视频缓冲大小</string>
+    <string name="video_buffer_length_settings">视频缓冲长度</string>
+    <string name="video_buffer_disk_settings">视频缓存存储</string>
+    <string name="video_buffer_clear_settings">清除视频与图像缓存</string>
+    <string name="video_ram_description">如果在内存较少的设备（例如 Android TV）上设置得太高会导致崩溃。</string>
+    <string name="video_disk_description">如果在存储空间较小的设备（例如 Android TV）上设置过高会导致问题。</string>
+    <string name="dns_pref">DNS over HTTPS</string>
+    <string name="dns_pref_summary">用于绕过 ISP 的封锁</string>
+    <string name="add_site_pref">复制片源</string>
+    <string name="remove_site_pref">移除片源</string>
+    <string name="add_site_summary">添加不同链接的已有片源复制</string>
+    <string name="download_path_pref">下载路径</string>
+    <string name="nginx_url_pref">NGINX 服务器链接</string>
+    <string name="display_subbed_dubbed_settings">显示带配音/字幕的动漫</string>
+    <string name="resize_fit">适应</string>
+    <string name="resize_fill">拉伸</string>
+    <string name="resize_zoom">缩放</string>
+    <string name="legal_notice">免责声明</string>
+    <string name="legal_notice_key" translatable="false">legal_notice_key</string>
+    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
+    <string name="category_general">通用</string>
+    <string name="random_button_settings">随机按钮</string>
+    <string name="random_button_settings_desc">在主页和库中显示随机按钮</string>
+    <string name="provider_lang_settings">扩展语言</string>
+    <string name="app_layout">应用布局</string>
+    <string name="preferred_media_settings">首选类型</string>
+    <string name="enable_nsfw_on_providers">在支持的扩展程序中启用 NSFW 内容</string>
+    <string name="subtitles_encoding">字幕编码</string>
+    <string name="category_providers">片源</string>
+    <string name="category_ui">布局</string>
+    <string name="automatic">自动</string>
+    <string name="tv_layout">电视布局</string>
+    <string name="phone_layout">手机布局</string>
+    <string name="emulator_layout">模拟器布局</string>
+    <string name="primary_color_settings">主题色</string>
+    <string name="app_theme_settings">应用主题</string>
+    <string name="bottom_title_settings">封面标题位置</string>
+    <string name="bottom_title_settings_des">将标题移至封面下方</string>
+    <!-- account stuff -->
+    <string name="anilist_key" translatable="false">anilist_key</string>
+    <string name="mal_key" translatable="false">mal_key</string>
+    <string name="opensubtitles_key" translatable="false">opensubtitles_key</string>
+    <string name="nginx_key" translatable="false">nginx_key</string>
+    <string name="example_password">密码</string>
+    <string name="example_username">用户名</string>
+    <string name="example_email">邮箱</string>
+    <string name="example_ip">IP</string>
+    <string name="example_site_name">网站名称</string>
+    <string name="example_site_url">网站链接</string>
+    <string name="example_lang_name">语言代码 (zh)</string>
+    <!--
+    <string name="mal_account_settings" translatable="false">MAL</string>
+    <string name="anilist_account_settings" translatable="false">AniList</string>
+    <string name="tmdb_account_settings" translatable="false">TMDB</string>
+    <string name="imdb_account_settings" translatable="false">IMDB</string>
+    <string name="kitsu_account_settings" translatable="false">Kitsu</string>
+    <string name="trakt_account_settings" translatable="false">Trakt</string>
+    -->
+    <string name="login_format" formatted="true">%1$s %2$s</string>
+    <string name="account">账户</string>
+    <string name="logout">注销</string>
+    <string name="login">登录</string>
+    <string name="switch_account">切换账户</string>
+    <string name="add_account">添加账户</string>
+    <string name="create_account">创建账户</string>
+    <string name="add_sync">添加同步</string>
+    <string name="added_sync_format" formatted="true">已添加 %s</string>
+    <string name="upload_sync">同步</string>
+    <string name="sync_score">评分</string>
+    <string name="sync_score_format" formatted="true">%d / 10</string>
+    <string name="sync_total_episodes_none">/??</string>
+    <string name="sync_total_episodes_some" formatted="true">/%d</string>
+    <string name="authenticated_user" formatted="true">已验证 %s</string>
+    <string name="authenticated_user_fail" formatted="true">无法登录到 %s</string>
+    <!-- ============ -->
+    <string name="none">无</string>
+    <string name="normal">普通</string>
+    <string name="all">全部</string>
+    <string name="max">最大</string>
+    <string name="min">最小</string>
+    <string name="subtitles_none" translatable="false">@string/none</string>
+    <string name="subtitles_outline">轮廓</string>
+    <string name="subtitles_depressed">凹陷</string>
+    <string name="subtitles_shadow">阴影</string>
+    <string name="subtitles_raised">凸出</string>
+    <string name="subtitle_offset">同步字幕</string>
+    <string name="subtitle_offset_hint">1000 ms</string>
+    <string name="subtitle_offset_title">字幕延迟</string>
+    <string name="subtitle_offset_extra_hint_later_format">如果字幕过早显示 %d ms，请使用此选项</string>
+    <string name="subtitle_offset_extra_hint_before_format">如果字幕过晚显示 %d ms，请使用此选项</string>
+    <string name="subtitle_offset_extra_hint_none_format">无字幕延迟</string>
+    <!--
+    Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
+    see: 
+	https://en.wikipedia.org/w/index.php?title=Pangram&oldid=225849300
+	https://en.wikipedia.org/wiki/The_quick_brown_fox_jumps_over_the_lazy_dog
+    -->
+    <string name="subtitles_example_text">The quick brown fox jumps over the lazy dog</string>
+    <string name="recommended">推荐</string>
+    <string name="player_loaded_subtitles" formatted="true">已加载 %s</string>
+    <string name="player_load_subtitles">从文件加载</string>
+    <string name="player_load_subtitles_online">从互联网加载</string>
+    <string name="downloaded_file">下载的文件</string>
+    <string name="actor_main">主演</string>
+    <string name="actor_supporting">配演</string>
+    <string name="actor_background">群演</string>
+    <string name="home_source">来源</string>
+    <string name="home_random">随机</string>
+    <string name="coming_soon">即将到来…</string>
+    <string name="quality_cam">Cam</string>
+    <string name="quality_cam_rip">Cam</string>
+    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_hq">HQ</string>
+    <string name="quality_hd">HD</string>
+    <string name="quality_ts">TS</string>
+    <string name="quality_tc">TC</string>
+    <string name="quality_blueray">Blu-ray</string>
+    <string name="quality_workprint">WP</string>
+    <string name="quality_dvd">DVD</string>
+    <string name="quality_4k">4K</string>
+    <string name="quality_sd">SD</string>
+    <string name="quality_uhd">UHD</string>
+    <string name="quality_hdr">HDR</string>
+    <string name="quality_sdr">SDR</string>
+    <string name="quality_webrip">Web</string>
+    <string name="poster_image">封面图像</string>
+    <string name="category_player">播放器</string>
+    <string name="resolution_and_title">分辨率与标题</string>
+    <string name="title">标题</string>
+    <string name="resolution">分辨率</string>
+    <string name="error_invalid_id">无效 ID</string>
+    <string name="error_invalid_data">无效数据</string>
+    <string name="error_invalid_url">无效链接</string>
+    <string name="error">错误</string>
+    <string name="subtitles_remove_captions">移除隐藏式字幕</string>
+    <string name="subtitles_remove_bloat">移除字幕广告</string>
+    <string name="subtitles_filter_lang">按首选片源语言过滤</string>
+    <string name="extras">附加</string>
+    <string name="trailer">预告片</string>
+    <string name="network_adress_example">播放链接</string>
+    <string name="referer">参考者（可选项）</string>
+    <string name="next">下一个</string>
+    <string name="provider_languages_tip">观看这些语言的视频</string>
+    <string name="previous">上一个</string>
+    <string name="skip_setup">跳过设置向导</string>
+    <string name="app_layout_subtext">更改为适应您的设备的应用布局</string>
+    <string name="crash_reporting_title">崩溃报告</string>
+    <string name="preferred_media_subtext">您想要看什么</string>
+    <string name="setup_done">完成</string>
+    <string name="extensions">扩展</string>
+    <string name="add_repository">添加仓库</string>
+    <string name="repository_name_hint">仓库名称（可选）</string>
+    <string name="repository_url_hint">仓库链接或短代码</string>
+    <string name="plugin_loaded">插件已加载</string>
+    <string name="plugin_deleted">插件已删除</string>
+    <string name="plugin_load_fail" formatted="true">无法加载 %s</string>
+    <string name="is_adult">18+</string>
+    <string name="batch_download_start_format" formatted="true">开始下载 %1$d %2$s…</string>
+    <string name="batch_download_finish_format" formatted="true">已下载 %1$d %2$s</string>
+    <string name="batch_download_nothing_to_download_format" formatted="true">全部 %s 已经下载</string>
+    <string name="batch_download">批量下载</string>
+    <string name="plugin_singular">插件</string>
+    <string name="plugin">插件</string>
+    <string name="delete_repository_plugins">这也将删除所有仓库插件</string>
+    <string name="delete_repository">删除仓库</string>
+    <string name="setup_extensions_subtext">下载您所需的片源</string>
+    <string name="plugins_downloaded" formatted="true">已下载：%d</string>
+    <string name="plugins_disabled" formatted="true">已禁用：%d</string>
+    <string name="plugins_not_downloaded" formatted="true">未下载：%d</string>
+    <string name="plugins_updated" formatted="true">已更新 %d 插件</string>
+    <string name="blank_repo_message">CloudStream 默认不安装片源。您需要从仓库中安装片源。
+\n
+\n加入我们的 Discord 或在网上搜索。</string>
+    <string name="view_public_repositories_button">查看社区仓库</string>
+    <string name="view_public_repositories_button_short">公开列表</string>
+    <string name="uppercase_all_subtitles">字幕全大写</string>
+    <string name="download_all_plugins_from_repo">警告： CloudStream 3 对使用第三方插件不承担任何责任和提供任何支持！</string>
+    <string name="single_plugin_disabled" formatted="true">%s（禁用）</string>
+    <string name="tracks">轨道</string>
+    <string name="audio_tracks">音频轨道</string>
+    <string name="video_tracks">视频轨道</string>
+    <string name="apply_on_restart">重启生效。</string>
+    <string name="safe_mode_title">安全模式已启用</string>
+    <string name="safe_mode_description">由于崩溃，所有扩展都已关闭，以帮助您找到导致问题的扩展。</string>
+    <string name="safe_mode_crash_info">查看崩溃信息</string>
+    <string name="extension_rating" formatted="true">评分：%s</string>
+    <string name="extension_description">简介</string>
+    <string name="extension_version">版本</string>
+    <string name="extension_status">状态</string>
+    <string name="extension_size">大小</string>
+    <string name="extension_authors">作者</string>
+    <string name="extension_types">类型</string>
+    <string name="extension_language">语言</string>
+    <string name="extension_install_first">请先安装扩展</string>
+    <string name="hls_playlist">HLS 播放列表</string>
+    <string name="player_pref">首选视频播放器</string>
+    <string name="player_settings_play_in_app">内部播放器</string>
+    <string name="app_not_found_error">未找到应用</string>
+    <string name="all_languages_preference">所有语言</string>
+    <string name="skip_type_format" formatted="true">跳过 %s</string>
+    <string name="skip_type_op">片头</string>
+    <string name="skip_type_ed">片尾</string>
+    <string name="skip_type_recap">前情回顾</string>
+    <string name="skip_type_mixed_ed">混合片尾</string>
+    <string name="skip_type_mixed_op">混合片头</string>
+    <string name="skip_type_creddits">致谢名单</string>
+    <string name="skip_type_intro">介绍</string>
+    <string name="clear_history">清除历史记录</string>
+    <string name="history">历史记录</string>
+    <string name="enable_skip_op_from_database_des">显示跳过片头/片尾弹窗</string>
+    <string name="clipboard_too_large">文本过多，无法保存到剪贴板。</string>
+    <string name="action_mark_as_watched">标记为已观看</string>
+    <string name="confirm_exit_dialog">您确定要离开吗？</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+    <string name="update_notification_downloading">正在下载应用更新…</string>
+    <string name="update_notification_installing">正在安装应用更新…</string>
+    <string name="update_notification_failed">无法安装新版的应用</string>
+    <string name="automatic_plugin_download_summary">自动安装已添加的仓库内所有未安装的插件。</string>
+    <string name="apk_installer_settings">APK 安装器</string>
+    <string name="apk_installer_settings_des">部分手机不支持新的软件包安装程序。如果未安装更新，请尝试使用传统选项。</string>
+    <string name="apk_installer_legacy">传统</string>
+    <string name="apk_installer_package_installer">软件包安装程序</string>
+    <string name="play_trailer_button">播放预告片</string>
+    <string name="pref_category_ui_features">功能</string>
+    <string name="pref_category_defaults">默认</string>
+    <string name="redo_setup_process">重置设置向导</string>
+    <string name="pref_category_player_layout">布局</string>
+    <string name="pref_category_links">链接</string>
+    <string name="pref_category_extensions">扩展</string>
+    <string name="pref_category_subtitles">字幕</string>
+    <string name="pref_category_app_updates">应用更新</string>
+    <string name="pref_category_backup">备份</string>
+    <string name="pref_category_cache">缓存</string>
+    <string name="pref_category_gestures">手势</string>
+    <string name="pref_category_player_features">播放器功能</string>
+    <string name="pref_category_actions">行为</string>
+    <string name="pref_category_looks">外观</string>
+    <string name="update_started">更新开始</string>
+    <string name="delayed_update_notice">应用退出后将会更新</string>
+    <string name="plugin_downloaded">插件已下载</string>
+    <string name="action_remove_from_watched">从已观看中移除</string>
+    <string name="safe_mode_file">发现安全模式文件！
+\n启动时不加载任何扩展，直到文件被删除。</string>
+    <string name="browser">浏览器</string>
+    <string name="library">库</string>
+    <string name="sort_by">排序方式</string>
+    <string name="sort">排序</string>
+    <string name="sort_rating_desc">评分（从高到低）</string>
+    <string name="sort_rating_asc">评分（从低到高）</string>
+    <string name="sort_updated_new">更新（从新到旧）</string>
+    <string name="sort_updated_old">更新（从旧到新）</string>
+    <string name="sort_alphabetical_a">字母排序（从 A 到 Z）</string>
+    <string name="sort_alphabetical_z">字母排序（从 Z 到 A）</string>
+    <string name="select_library">选择库</string>
+    <string name="open_with">打开方式</string>
+    <string name="empty_library_no_accounts_message">您的库是空的 :(
+\n登录库账户或添加节目到您的本地库。</string>
+    <string name="empty_library_logged_in_message">此列表是空的，请尝试切换到另一个。</string>
+    <string name="android_tv_interface_on_seek_settings">播放器显示 - 快进快退秒数</string>
+    <string name="android_tv_interface_on_seek_settings_summary">播放器可见时使用的快进快退秒数</string>
+    <string name="android_tv_interface_off_seek_settings">播放器隐藏 - 快进快退秒数</string>
+    <string name="android_tv_interface_off_seek_settings_summary">播放器隐藏时使用的快进快退秒数</string>
+    <string name="pref_category_android_tv">Android TV</string>
+    <string name="test_failed">失败</string>
+    <string name="category_provider_test">片源测试</string>
+    <string name="restart">重启</string>
+    <string name="stop">停止</string>
+    <string name="subscription_in_progress_notification">正在更新订阅节目</string>
+    <string name="subscription_list_name">已订阅</string>
+    <string name="subscription_new">已订阅 %s</string>
+    <string name="subscription_deleted">已取消订阅 %s</string>
+    <string name="start">开始</string>
+    <string name="subscription_episode_released">第 %d 集已发布！</string>
+    <string name="test_passed">成功</string>
+    <string name="test_log">日志</string>
+    <string name="jsdelivr_proxy">GitHub 代理</string>
+    <string name="jsdelivr_enabled">无法访问 GitHub。正在开启 jsDelivr 代理…</string>
+    <string name="jsdelivr_proxy_summary">使用 jsDelivr 绕过 raw github URL 的封锁。可能会延迟几天的更新。</string>
+    <string name="pref_category_bypass">ISP 绕过</string>
+    <string name="revert">还原</string>
+    <string name="watch_quality_pref_data">首选播放画质（移动数据）</string>
+    <string name="profile_number">简介 %d</string>
+    <string name="wifi">无线网络</string>
+    <string name="set_default">设为默认</string>
+    <string name="use">使用</string>
+    <string name="edit">编辑</string>
+    <string name="profiles">配置文件</string>
+    <string name="help">帮助</string>
+    <string name="mobile_data">移动流量</string>
+    <string name="quality_profile_help">在这里，您可以更改源的排序方式。如果视频具有更高的优先级，它将在源选择中显示得更高。源优先级和质量优先级的总和就是视频优先级。
+\n
+\n来源 A：3
+\n质量 B： 7
+\n组合视频优先级为 10。
+\n
+\n注意：如果总和为 10 或更多，则加载该链接时播放器将自动跳过加载！</string>
+    <string name="qualities">质量</string>
+    <string name="profile_background_des">个人资料背景</string>
+    <string name="pin">PIN</string>
+    <string name="links_reloaded_toast">链接已重新加载</string>
+    <string name="disable">禁用</string>
+    <string name="pin_error_incorrect">PIN码不正确，请再试一次。</string>
+    <string name="pin_error_length">PIN码必须为4个字符</string>
+    <string name="select_an_account">选择一个账户</string>
+    <string name="manage_accounts">账户管理</string>
+    <string name="action_subscribe">订阅</string>
+    <string name="action_unsubscribe">取消订阅</string>
+    <string name="duplicate_add">添加</string>
+    <string name="duplicate_replace">替换</string>
+    <string name="duplicate_replace_all">替换全部</string>
+    <string name="no_plugins_found_error">仓库中未找到任何插件</string>
+    <string name="rotate_video">旋转</string>
+    <string name="auto_rotate_video">自动旋转</string>
+    <string name="logged_account" formatted="true">以%s的身份登录</string>
+    <string name="use_default_account">使用默认账户</string>
+    <string name="automatic_plugin_download_mode_title">选择过滤插件的下载模式</string>
+    <string name="favorites_list_name">收藏夹</string>
+    <string name="action_remove_from_favorites">从收藏夹删除</string>
+    <string name="enter_current_pin">输入当前 PIN</string>
+    <string name="backup_frequency">自动备份频率</string>
+    <string name="no_repository_found_error">仓库未找到，请检查你的URL或尝试使用VPN</string>
+    <string name="unable_to_inflate">无法正确的创建用户界面，这是一个重大BUG，应立即报告%s</string>
+    <string name="already_voted">您已投票</string>
+    <string name="favorite_added">%s已添加到收藏夹</string>
+    <string name="favorite_removed">%s已从收藏夹中删除</string>
+    <string name="duplicate_message_single" formatted="true">您的资料库中似乎已经存在一个可能相同的项目：\'%s.\'
+\n
+\n您想添加该项目、替换现有项目还是取消操作？</string>
+    <string name="duplicate_message_multiple" formatted="true">在您的资料库中发现了潜在的重复项目：
+\n
+\n%s
+\n
+\n您想添加此项目、替换现有项目还是取消操作？</string>
+    <string name="enter_pin">确认PIN</string>
+    <string name="enter_pin_with_name" formatted="true">输入来自 %s 的 PIN 码</string>
+    <string name="lock_profile">锁定个人资料</string>
+    <string name="rotate_video_desc">显示屏幕方向切换按钮</string>
+    <string name="edit_account">编辑账户</string>
+    <string name="duplicate_title">发现潜在重复</string>
+    <string name="action_add_to_favorites">添加到收藏夹</string>
+    <string name="skip_startup_account_select_pref">启动时跳过账户选择</string>
+    <string name="auto_rotate_video_desc">根据视频方向自动切换屏幕方向</string>
+    <string name="subscribe_tooltip">新剧集通知</string>
+    <string name="result_search_tooltip">在其他扩展中搜索</string>
+    <string name="recommendations_tooltip">显示推荐</string>
+    <string name="speed_setting_summary">在播放器中添加速度选项</string>
+    <string name="biometric_unsupported">这台设备不支持生物验证</string>
+    <string name="unfavorite">不喜欢</string>
+    <string name="favorite">喜欢</string>
+    <string name="biometric_authentication_title">解锁 CloudStream</string>
+    <string name="biometric_setting">使用生物识别技术锁定</string>
+    <string name="password_pin_authentication_title">密码或 PIN 验证</string>
+    <string name="resume_remaining" formatted="true">%s
+\n剩余</string>
+    <string name="test_extensions">测试所有扩展</string>
+    <string name="toast_copied">已复制！</string>
+    <string name="clipboard_permission_error">访问剪贴板出错，请重试。</string>
+    <string name="app_unrestricted_toast">应用程序电池使用量已设置为不受限制</string>
+    <string name="audio_book_singular">有声书</string>
+    <string name="custom_media_singluar">媒体</string>
+    <string name="battery_dialog_title">禁用电池最佳化</string>
+    <string name="music_singlar">音乐</string>
+    <string name="app_info_intent_error">无法打开 CloudStream 的应用程序信息。</string>
+    <string name="biometric_setting_summary">使用指纹、面部 ID、PIN 码、图案和密码解锁应用程序。</string>
+    <string name="test_extensions_summary">此测试仅适用于开发人员，不会验证或否认任何扩展的工作。</string>
+    <string name="battery_dialog_message">为了确保已订阅电视节目的不间断下载和通知，CloudStream 需要获得在后台运行的权限。 点击“确定”将显示请求对话框。请按下“允许”。\n\n请注意，此权限并不意味着 Cloudstream 3 会耗尽您的电池。 它只会在必要时在后台运行，例如接收通知或从官方扩展下载视频时。</string>
+    <string name="biometric_warning">您的CloudStream数据现已备份。 尽管发生这种情况的可能性非常低，但不同设备的行为都会有所不同。 在极少数情况下，您可能会被锁定而无法访问该应用程序，请完全清除应用程序数据并从备份中恢复。 对于由此造成的任何不便，我们深表歉意。</string>
+    <string name="repo_copy_label">存储库名称和 URL</string>
+    <string name="clipboard_unknown_error">复制错误，请复制 logcat 并联系应用程序支持。</string>
+    <string name="ok">好的</string>
+    <string name="reset_btn">重置</string>
+    <string name="biometric_prompt_description">在多次尝试失败后，提示将关闭。只需重启应用程序再试。</string>
+    <string name="episode_upcoming_format" formatted="true">即将在 %s</string>
+    <string name="cs3wiki">CloudStream Wiki</string>
+    <string name="player_settings_select_cast_device">选择投射设备</string>
+    <string name="next_season_episode_format" formatted="true">%1$d季%2$d集将在</string>
+    <string name="episode_action_cast_mirror">投射镜像</string>
+    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="downloads_empty">目前尚无下载。</string>
+    <string name="open_local_video">打开本地视频</string>
+    <string name="pref_category_security">安全</string>
+    <string name="device_pin_url_message">访问智能手机或电脑上的 <b>%s</b> 并输入上述代码</string>
+    <string name="preview_seekbar">进度条预览</string>
+    <string name="preview_seekbar_desc">启用进度条预览缩略图</string>
+    <string name="delete_plugin">删除插件</string>
+    <string name="auth_locally">本地授权</string>
+    <string name="play_from_beginning_img_des">从头播放</string>
+    <string name="qr_image">二维码图像</string>
+    <string name="test_warning">警告</string>
+    <string name="pref_category_accounts">账户</string>
+    <string name="dismiss">取消</string>
+    <string name="open_downloaded_repo">开源仓库</string>
+    <string name="sort_release_date_old">发布日期（由旧到新）</string>
+    <string name="hide_player_control_names">隐藏播放器控件名称</string>
+    <string name="downloads_delete_select">选择要删除的项</string>
+    <string name="offline_file">可脱机观看</string>
+    <string name="select_all">全选</string>
+    <string name="deselect_all">全不选</string>
+    <string name="delete_files">删除文件</string>
+    <string name="delete_format" formatted="true">删除 (%1$d | %2$s)</string>
+    <string name="delete_message_multiple" formatted="true">您确定要永久删除以下项目吗？
+\n
+\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">您确定要永久删除 %1$s中的下述剧集吗？
+\n
+\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">您还将永久删除下述系列中的所有剧集：
+\n
+\n%s</string>
+    <string name="delete_message_series_only" formatted="true">您确定要永久删除下述系列的所有剧集吗？
+\n
+\n%s</string>
+    <string name="sort_release_date_new">发布日期（从新至旧）</string>
+    <string name="device_pin_error_message">无法获取设备 PIN 码，尝试本地身份验证</string>
+    <string name="device_pin_expired_message">PIN 码现已过期！</string>
+    <string name="device_pin_counter_text">验证码 %1$dm %2$ds 后过期</string>
+    <string name="no_subtitles_loaded">字幕尚未载入</string>
+    <string name="custom">自定义</string>
+    <string name="confirm_before_exiting_title">退出前确认</string>
+    <string name="confirm_before_exiting_desc">退出 App 前弹窗确认</string>
+    <string name="show">显示</string>
+    <string name="dont_show">不显示</string>
+    <string name="torrent_info">这是个 Torrent 的视频，这意味着您的视频活动可以被追踪。\n请确认您了解 Torrenting 后，再继续。</string>
+    <string name="backup_path_title">备份文件夹位置</string>
+    <string name="subs_edge_size">边缘大小</string>
+    <string name="audio_singluar">音频</string>
+    <string name="podcast_singluar">播客</string>
+    <string name="encoding_error">编码错误</string>
+    <string name="unsupported_error">不受支持的错误</string>
+    <string name="player_load_one_subtitle_online">加载第一个可用的字幕</string>
+    <string name="torrent_preferred_media">在设置/提供者/首选媒体处开启 torrent</string>
+    <string name="torrent_not_accepted">重启应用并接受在线播放 Torrent 弹窗以继续。</string>
+    <string name="software_decoding">软件解码</string>
+    <string name="software_decoding_desc">软件解码让播放器能够播放你的手机所不支持的视频文件，但可能导致播放高分辨率视频时的延迟或不稳定</string>
+    <string name="sort_episodes_number_desc">集数（降序）</string>
+    <string name="sort_episodes_date_oldest">播放日期（最旧）</string>
+    <string name="sort_button_rating">得分 %s</string>
+    <string name="sort_button_date">日期 %s</string>
+    <string name="update_plugins">更新插件</string>
+    <string name="plugins_updated_manually">成功更新了 %d 个插件！</string>
+    <string name="no_plugins_updated_manually">没有插件被更新。</string>
+    <string name="update_plugins_manually">手动更新插件</string>
+    <string name="sort_episodes_number_asc">集数（升序）</string>
+    <string name="sort_episodes_date_newest">播出日期（最新）</string>
+    <string name="sort_episodes_rating_high_low">评分（最高）</string>
+    <string name="sort_episodes_rating_low_high">评分（最低）</string>
+    <string name="sort_button_episode">第 %s 集</string>
+    <string name="starting_plugin_update_manually">正在开始插件更新过程！</string>
+    <string name="player_notification_channel_description">控制后台播放的播放器通知</string>
+    <string name="player_notification_channel_name">播放器通知</string>
+    <string name="begin_speaking">开始说话…</string>
+    <string name="speech_recognition_unavailable">语音识别不可用</string>
+    <string name="subtitles_from_embedded">内嵌</string>
+    <string name="subtitles_from_online">在线</string>
+    <string name="all_subtitles_italic">让所有字幕变为斜体</string>
+    <string name="background_radius">背景半径</string>
+    <string name="all_subtitles_bold">加粗所有字幕</string>
+    <string name="volume_exceeded_100">音量已经超过 100%</string>
+    <string name="slide_up_again_to_exceed_100">再次上滑让音量超过 100%</string>
+    <string name="parallel_downloads">并行下载</string>
+    <string name="concurrent_connections">并发连接</string>
+    <string name="overscan_settings_des">更改屏幕边界</string>
+    <string name="overscan_settings">过扫描</string>
+    <string name="go_to_downloads">转到下载</string>
+    <string name="download_parallel_settings_des">可同时下载多少项目</string>
+    <string name="concurrent_connections_settings_des">每个下载项目下载期间可同时使用多少个连接</string>
+    <string name="no_internet_connection">无互联网连接。\n\n请连接到互联网并重试，或者在离线时观看已下载项目。</string>
+    <string name="poster_size_settings_des">更改海报尺寸</string>
+    <string name="poster_size_settings">海报尺寸</string>
+    <string name="player_settings_always_ask">始终询问</string>
+    <string name="speedup_title">长按速度开关</string>
+    <string name="speedup_summary">按住获得 2 倍速</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$d小时 %2$d分钟 %3$d秒</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$d分钟 %2$d秒</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$d秒</string>
+    <string name="show_rating">评分标签</string>
+    <string name="no_account">无账户</string>
+    <string name="edit_profile_image_title">编辑个人资料图片</string>
+    <string name="edit_profile_image_hint">输入个人资料图片 URL</string>
+    <string name="edit_profile_image_error_empty">未找到 URL</string>
+    <string name="edit_profile_image_error_invalid">无效 URL 或图片</string>
+    <string name="edit_profile_image_success">成功更新了图片</string>
+    <string name="action_mark_watched_up_to_this_episode">将这一集和之前的标为已观看</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">去除这一集和之前集数的已观看状态</string>
+    <string name="action_reload">已重新加载</string>
+    <string name="reload_provider">重新加载视频源</string>
+    <string name="episode_action_play_mirror">播放镜像</string>"
+    <string name="name">名称</string>
+    <string name="resolution_and_name">分辨率和名称</string>
+</resources>

@@ -5,6 +5,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 class GoodstreamExtractor : ExtractorApi() {
     override var name = "Goodstream"
@@ -22,13 +23,13 @@ class GoodstreamExtractor : ExtractorApi() {
                 val urlRegex = Regex("file: \"(https:\\/\\/[a-z0-9.\\/-_?=&]+)\",")
                 urlRegex.find(script.data())?.groupValues?.get(1).let { link ->
                     callback.invoke(
-                        ExtractorLink(
+                        newExtractorLink(
                             name,
                             name,
                             link!!,
-                            mainUrl,
-                            Qualities.Unknown.value,
-                        )
+                        ) {
+                            this.referer = mainUrl
+                        }
                     )
                 }
             }

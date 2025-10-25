@@ -11,12 +11,14 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.LoadResponse
@@ -42,18 +44,22 @@ import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRtl
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppContextUtils.updateHasTrailers
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
-import com.lagradost.cloudstream3.utils.UIHelper
-import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
+import com.lagradost.cloudstream3.utils.UIHelper.populateChips
+import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
@@ -65,6 +71,7 @@ class ResultFragmentTv : Fragment() {
     override fun onDestroyView() {
         binding = null
         updateUIEvent -= ::updateUI
+        activity?.detachBackPressedCallback(this@ResultFragmentTv.toString())
         super.onDestroyView()
     }
 
@@ -147,15 +154,17 @@ class ResultFragmentTv : Fragment() {
             resultRecommendationsList.isGone = isInvalid
             resultRecommendationsHolder.isGone = isInvalid
             val matchAgainst = validApiName ?: rec?.firstOrNull()?.apiName
-            (resultRecommendationsList.adapter as? SearchAdapter)?.updateList(rec?.filter { it.apiName == matchAgainst }
+            (resultRecommendationsList.adapter as? SearchAdapter)?.submitList(rec?.filter { it.apiName == matchAgainst }
                 ?: emptyList())
 
             rec?.map { it.apiName }?.distinct()?.let { apiNames ->
                 // very dirty selection
                 resultRecommendationsFilterSelection.isVisible = apiNames.size > 1
-                resultRecommendationsFilterSelection.update(apiNames.map { com.lagradost.cloudstream3.utils.txt(
-                    it
-                ) to it })
+                resultRecommendationsFilterSelection.update(apiNames.map {
+                    com.lagradost.cloudstream3.utils.txt(
+                        it
+                    ) to it
+                })
                 resultRecommendationsFilterSelection.select(apiNames.indexOf(matchAgainst))
             } ?: run {
                 resultRecommendationsFilterSelection.isVisible = false
@@ -181,11 +190,7 @@ class ResultFragmentTv : Fragment() {
     }
 
     override fun onResume() {
-        activity?.let {
-            @Suppress("DEPRECATION")
-            it.window?.navigationBarColor =
-                it.colorFromAttribute(R.attr.primaryBlackBackground)
-        }
+        activity?.setNavigationBarColorCompat(R.attr.primaryBlackBackground)
         afterPluginsLoadedEvent += ::reloadViewModel
         super.onResume()
     }
@@ -226,6 +231,13 @@ class ResultFragmentTv : Fragment() {
 
     private fun toggleEpisodes(show: Boolean) {
         binding?.apply {
+            if (show) {
+                activity?.attachBackPressedCallback(this@ResultFragmentTv.toString()) {
+                    toggleEpisodes(false)
+                }
+            } else {
+                activity?.detachBackPressedCallback(this@ResultFragmentTv.toString())
+            }
             episodesShadow.fade(show)
             episodeHolderTv.fade(show)
             if (episodesShadow.isRtl()) {
@@ -242,6 +254,7 @@ class ResultFragmentTv : Fragment() {
 
         // ===== setup =====
         val storedData = getStoredData() ?: return
+        fixSystemBarsPadding(binding?.root, padTop = false)
         activity?.window?.decorView?.clearFocus()
         activity?.loadCache()
         hideKeyboard()
@@ -315,7 +328,7 @@ class ResultFragmentTv : Fragment() {
                 resultSubscribeButton to resultSubscribeText,
                 resultSearchButton to resultSearchText,
                 resultEpisodesShowButton to resultEpisodesShowText
-            ).forEach { (button , text) ->
+            ).forEach { (button, text) ->
 
                 button.setOnFocusChangeListener { view, hasFocus ->
                     if (!hasFocus) {
@@ -325,13 +338,14 @@ class ResultFragmentTv : Fragment() {
                     }
 
                     text.isSelected = true
-                    if (button.tag == context?.getString(R.string.tv_no_focus_tag)){
-                        resultFinishLoading.scrollTo(0,0)
+                    if (button.tag == context?.getString(R.string.tv_no_focus_tag)) {
+                        resultFinishLoading.scrollTo(0, 0)
                     }
                     when (button.id) {
                         R.id.result_episodes_show_button -> {
                             toggleEpisodes(true)
                         }
+
                         else -> {
                             toggleEpisodes(false)
                         }
@@ -400,9 +414,9 @@ class ResultFragmentTv : Fragment() {
             //}
 
             resultRecommendationsList.spanCount = 8
+            resultRecommendationsList.setRecycledViewPool(SearchAdapter.sharedPool)
             resultRecommendationsList.adapter =
                 SearchAdapter(
-                    ArrayList(),
                     resultRecommendationsList,
                 ) { callback ->
                     if (callback.action == SEARCH_ACTION_FOCUSED)
@@ -411,6 +425,7 @@ class ResultFragmentTv : Fragment() {
                         SearchHelper.handleSearchClickCallback(callback)
                 }
 
+            resultEpisodes.setRecycledViewPool(EpisodeAdapter.sharedPool)
             resultEpisodes.adapter =
                 EpisodeAdapter(
                     false,
@@ -451,8 +466,16 @@ class ResultFragmentTv : Fragment() {
             ).firstOrNull {
                 it?.isVisible == true
             }
+
+            resultCastItems.setRecycledViewPool(ActorAdaptor.sharedPool)
             resultCastItems.adapter = ActorAdaptor(aboveCast?.id) {
                 toggleEpisodes(false)
+            }
+
+            if (isLayout(EMULATOR)) {
+                episodesShadow.setOnClickListener {
+                    toggleEpisodes(false)
+                }
             }
         }
 
@@ -468,6 +491,15 @@ class ResultFragmentTv : Fragment() {
 
                 // show progress no matter if series or movie
                 resume.progress?.let { progress ->
+                    resultResumeSeriesTitle.apply {
+                        isVisible = !resume.isMovie
+                        text =
+                            if (resume.isMovie) null else context?.getNameFull(
+                                resume.result.name,
+                                resume.result.episode,
+                                resume.result.season
+                            )
+                    }
                     resultResumeSeriesProgressText.setText(progress.progressLeft)
                     resultResumeSeriesProgress.apply {
                         isVisible = true
@@ -488,7 +520,12 @@ class ResultFragmentTv : Fragment() {
                     when {
                         resume.isMovie -> context?.getString(R.string.resume)
                         resume.result.season != null ->
-                            "${getString(R.string.season_short)}${resume.result.season}:${getString(R.string.episode_short)}${resume.result.episode}"
+                            "${getString(R.string.season_short)}${resume.result.season}:${
+                                getString(
+                                    R.string.episode_short
+                                )
+                            }${resume.result.episode}"
+
                         else -> "${getString(R.string.episode)} ${resume.result.episode}"
                     }
 
@@ -585,12 +622,14 @@ class ResultFragmentTv : Fragment() {
                         }
 
                         val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                            ?: com.lagradost.cloudstream3.utils.txt(R.string.no_data).asStringNull(context) ?: ""
+                            ?: com.lagradost.cloudstream3.utils.txt(R.string.no_data)
+                                .asStringNull(context) ?: ""
                         CommonActivity.showToast(
                             com.lagradost.cloudstream3.utils.txt(
                                 message,
                                 name
-                            ), Toast.LENGTH_SHORT)
+                            ), Toast.LENGTH_SHORT
+                        )
                     }
                 }
             }
@@ -632,12 +671,14 @@ class ResultFragmentTv : Fragment() {
                         }
 
                         val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                            ?: com.lagradost.cloudstream3.utils.txt(R.string.no_data).asStringNull(context) ?: ""
+                            ?: com.lagradost.cloudstream3.utils.txt(R.string.no_data)
+                                .asStringNull(context) ?: ""
                         CommonActivity.showToast(
                             com.lagradost.cloudstream3.utils.txt(
                                 message,
                                 name
-                            ), Toast.LENGTH_SHORT)
+                            ), Toast.LENGTH_SHORT
+                        )
                     }
                 }
 
@@ -653,7 +694,7 @@ class ResultFragmentTv : Fragment() {
         }
 
         observeNullable(viewModel.movie) { data ->
-            if (data == null ) {
+            if (data == null) {
                 return@observeNullable
             }
 
@@ -727,14 +768,21 @@ class ResultFragmentTv : Fragment() {
                     loadingDialog = null
                     viewModel.cancelLinks()
                 }
-                //builder.setOnCancelListener {
-                //    it?.dismiss()
-                //}
                 builder.setCanceledOnTouchOutside(true)
                 builder.show()
                 builder
             }
-
+            loadingDialog?.findViewById<MaterialButton>(R.id.overlay_loading_skip_button)?.apply {
+                if (load.linksLoaded <= 0) {
+                    isInvisible = true
+                } else {
+                    setOnClickListener {
+                        viewModel.skipLoading()
+                    }
+                    isVisible = true
+                    text = "${context.getString(R.string.skip_loading)} (${load.linksLoaded})"
+                }
+            }
         }
 
 
@@ -796,13 +844,19 @@ class ResultFragmentTv : Fragment() {
                         ep.getWatchProgress() >= NEXT_WATCH_EPISODE_PERCENTAGE.toFloat() / 100.0f || ep.videoWatchState == VideoWatchState.Watched
                     }
 
-                    val firstUnwatched = episodes.value.getOrElse(lastWatchedIndex + 1) { episodes.value.firstOrNull() }
+                    val firstUnwatched =
+                        episodes.value.getOrElse(lastWatchedIndex + 1) { episodes.value.firstOrNull() }
 
                     if (firstUnwatched != null) {
                         resultPlaySeriesText.text =
                             when {
                                 firstUnwatched.season != null ->
-                                    "${getString(R.string.season_short)}${firstUnwatched.season}:${getString(R.string.episode_short)}${firstUnwatched.episode}"
+                                    "${getString(R.string.season_short)}${firstUnwatched.season}:${
+                                        getString(
+                                            R.string.episode_short
+                                        )
+                                    }${firstUnwatched.episode}"
+
                                 else -> "${getString(R.string.episode)} ${firstUnwatched.episode}"
                             }
                         resultPlaySeriesButton.setOnClickListener {
@@ -885,19 +939,17 @@ class ResultFragmentTv : Fragment() {
                             R.drawable.profile_bg_red,
                             R.drawable.profile_bg_teal
                         ).random()
-                        //Change poster crop area to 20% from Top
-                        backgroundPoster.cropYCenterOffsetPct = 0.20F
-                        
+
                         backgroundPoster.loadImage(d.posterBackgroundImage) {
                             error { getImageFromDrawable(context ?: return@error null, error) }
                         }
                         comingSoon = d.comingSoon
                         resultTvComingSoon.isVisible = d.comingSoon
 
-                        UIHelper.populateChips(resultTag, d.tags)
+                        populateChips(resultTag, d.tags)
                         resultCastItems.isGone = d.actors.isNullOrEmpty()
-                        (resultCastItems.adapter as? ActorAdaptor)?.updateList(
-                            d.actors ?: emptyList()
+                        (resultCastItems.adapter as? ActorAdaptor)?.submitList(
+                            d.actors
                         )
 
                         if (d.contentRatingText == null) {

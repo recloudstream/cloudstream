@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="delete">حذف</string>
+    <string name="pause">مکث</string>
+    <string name="queued">در صف</string>
+    <string name="download">دانلود</string>
+    <string name="downloading">در حال دانلود</string>
+    <string name="download_done">داتلود پایان یافت</string>
+    <string name="stream">پخش آنلاین</string>
+    <string name="download_failed">دانلود ناموفق بود</string>
+    <string name="filter_bookmarks">فیلتر کردن نشانک ها</string>
+    <string name="search">جست‌وجو</string>
+    <string name="resize_fit">اندازه کردن با صفحه نمایش</string>
+    <string name="resize_fill">پر کردن</string>
+    <string name="resize_zoom">بزرگ‌نمایی</string>
+    <string name="all">همه</string>
+    <string name="tracks">قطعه‌ها</string>
+    <string name="status">وضعیت</string>
+    <string name="loading">درحال بارگیری…</string>
+    <string name="show_title">عنوان منبع</string>
+    <string name="logout">خروج</string>
+    <string name="login">ورود</string>
+    <string name="none">هیچ‌کدام</string>
+    <string name="title">عنوان</string>
+    <string name="history">تاریخچه</string>
+    <string name="search_poster_img_des">پوستر</string>
+    <string name="result_poster_img_des">پوستر</string>
+    <string name="episode_poster_img_des">پوستر قسمت</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dروز %2$dساعت %3$dدقیقه</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s قسمت %2$d</string>
+    <string name="cast_format" formatted="true">بازیگران: %s</string>
+    <string name="next_episode_format" formatted="true">قسمت %d پخش خواهد شد در</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dساعت %2$dدقیقه</string>
+    <string name="next_episode_time_min_format" formatted="true">%dدقیقه</string>
+    <string name="home_main_poster_img_des">پوستر اصلی</string>
+    <string name="torrent">تورنت‌ها</string>
+    <string name="free_storage">آزاد</string>
+    <string name="documentaries">مستند‌ها</string>
+    <string name="ova">انیمیشن ویدیویی اصلی</string>
+    <string name="max">حداکثر</string>
+    <string name="movies">فیلم‌ها</string>
+    <string name="tv_series">سریال های تلویزیونی</string>
+    <string name="asian_drama">درام‌های آسیایی</string>
+    <string name="anime">انیمه</string>
+    <string name="cartoons">کارتون‌ها</string>
+    <string name="used_storage">استفاده شده</string>
+    <string name="app_storage">برنامه</string>
+    <string name="go_back_img_des">بازگشت</string>
+    <string name="autoplay_next_settings_des">آغاز قسمت بعد پس از پایان قسمت فعلی</string>
+    <string name="home_change_provider_img_des">تغییر ارائه‌دهنده</string>
+    <string name="action_remove_watching">حذف</string>
+    <string name="action_open_watching">اطلاعات بیشتر</string>
+    <string name="torrent_plot">توضیحات</string>
+    <string name="subs_subtitle_languages">زبان زیرنویس</string>
+    <string name="player_subtitles_settings">زیرنویس‌ها</string>
+    <string name="action_remove_from_bookmarks">حذف</string>
+    <string name="download_started">دانلود آغاز شد</string>
+    <string name="pref_disable_acra">غیرفعال کردن گذارش باگ خودکار</string>
+    <string name="sort_clear">پاک کردن</string>
+    <string name="update_started">به‌روزرسانی آغاز شد</string>
+    <string name="sort_copy">کپی</string>
+    <string name="home_more_info">اطلاعات بیشتر</string>
+    <string name="subs_auto_select_language">انتخاب زبان خودکار</string>
+    <string name="continue_watching">ادامهٔ تماشا</string>
+    <string name="subs_download_languages">دانلود زبان‌ها</string>
+    <string name="subs_background_color">رنگ پس‌زمینه</string>
+    <string name="popup_pause_download">توقف دانلود</string>
+    <string name="app_dubbed_text">دوبله</string>
+    <string name="torrent_no_plot">هیچ توضیحی یافت نشد</string>
+    <string name="subtitles_settings">تنظیمات زیرنویس</string>
+    <string name="subs_window_color">رنگ پنجره</string>
+    <string name="download_canceled">دانلود لغو شد</string>
+    <string name="home_expanded_hide">پنهان کردن</string>
+    <string name="sort_apply">اعمال کردن</string>
+    <string name="normal_no_plot">پیرنگی یافت نشد</string>
+    <string name="download_paused">دانلود متوقف شده</string>
+    <string name="popup_delete_file">حذف فایل</string>
+    <string name="downloaded">دانلود شده</string>
+    <string name="popup_resume_download">ازسرگیری دانلود</string>
+    <string name="subs_text_color">رنگ متن</string>
+    <string name="popup_play_file">نمایش فایل</string>
+    <string name="go_back">بازگشت</string>
+    <string name="sort_save">ذخیره</string>
+    <string name="home_play">نمایش</string>
+    <string name="autoplay_next_settings">پخش خودکار قسمت بعد</string>
+    <string name="picture_in_picture">تصویر در تصویر</string>
+    <string name="sort_close">بستن</string>
+    <string name="home_next_random_img_des">تصادفی بعدی</string>
+    <string name="preview_background_img_des">پیش‌نمایش پس‌زمینه</string>
+    <string name="filler" formatted="true">فیلتر</string>
+    <string name="duration_format" formatted="true">%d دقیقه</string>
+    <string name="app_name">CloudStream</string>
+    <string name="play_with_app_name">پخش با CloudStream</string>
+    <string name="title_home">خانه</string>
+    <string name="title_search">جست‌وجو</string>
+    <string name="title_settings">تنظیمات</string>
+    <string name="search_hint">جست‌وجو…</string>
+    <string name="search_hint_site" formatted="true">جست‌و‌جوی %s…</string>
+    <string name="result_tags">ژانرها</string>
+    <string name="play_livestream_button">پخش‌زنده</string>
+    <string name="pick_subtitle">زیرنویس‌ها</string>
+    <string name="reload_error">تلاش دوباره برای اتصال…</string>
+    <string name="type_re_watching">تماشای دوباره</string>
+    <string name="pick_source">منابع</string>
+    <string name="no_data">داده‌ای نیست</string>
+    <string name="episode_more_options_des">گزینه‌های بیشتر</string>
+    <string name="next_episode">قسمت بعدی</string>
+    <string name="skip_loading">پرش از بارگذاری</string>
+    <string name="subscribe_tooltip">اعلان قسمت جدید</string>
+    <string name="result_search_tooltip">جست‌و‌جو در سایر افزونه‌ها</string>
+    <string name="recommendations_tooltip">نمایش پیشنهادات</string>
+    <string name="links_reloaded_toast">پیوندها دوباره بارگیری شدند</string>
+    <string name="player_speed">سرعت پخش‌کننده</string>
+    <string name="type_watching">در حال تماشا</string>
+    <string name="title_downloads">بارگیری‌ها</string>
+    <string name="player_speed_text_format" formatted="true">سرعت (%.2f برابر)</string>
+    <string name="new_update_format" formatted="true">بروزرسانی جدید پیدا شد!
+\n%1$s -&gt; %2$s</string>
+    <string name="play_movie_button">پخش فیلم</string>
+    <string name="browser">مرورگر</string>
+    <string name="play_episode">پخش قسمت</string>
+    <string name="action_add_to_bookmarks">تنظیم وضعیت تماشا</string>
+    <string name="download_storage_text">حافظه درونی(داخلی)</string>
+    <string name="result_share">اشتراک‌گذاری</string>
+    <string name="play_trailer_button">پخش تریلر</string>
+    <string name="error_loading_links_toast">خطای بارگذاری پیوندها</string>
+    <string name="error_bookmarks_text">نشانک‌ها</string>
+    <string name="type_completed">کامل شده</string>
+    <string name="result_open_in_browser">باز کردن در مرورگر</string>
+    <string name="type_plan_to_watch">برنامه‌ریزی برای تماشا</string>
+    <string name="subs_hold_to_reset_to_default">برای بازنشانی به پیشفرض نگه‌دارید</string>
+    <string name="library">کتابخانه</string>
+    <string name="status_ongoing">در ادامه</string>
+    <string name="delete_message" formatted="true">این فرآیند بطور کامل %s را حذف می‌کند
+\nآیا از این کار اطمینان دارید؟</string>
+    <string name="repo_copy_label">نام مخزن و نشانی</string>
+    <string name="toast_copied">کپی شد!</string>
+    <string name="settings_info">درباره</string>
+    <string name="subs_font">قلم</string>
+    <string name="subs_font_size">اندازه قلم</string>
+    <string name="swipe_to_change_settings">برای تغییر تنظیمات بکشید</string>
+    <string name="swipe_to_change_settings_des">برای تغییر میزان روشنایی یا صدا در گوشه چپ و راست به بالا یا پایین بکشید</string>
+    <string name="automatic_plugin_updates">بروزرسانی خودکار پلاگین</string>
+    <string name="start">آغاز</string>
+    <string name="app_language">زبان برنامه</string>
+    <string name="play_episode_toast">پخش قسمت</string>
+    <string name="year">سال</string>
+    <string name="movies_singular">فیلم</string>
+    <string name="tv_series_singular">سریال</string>
+    <string name="anime_singular">انیمه</string>
+    <string name="subs_outline_color">رنگ حاشیه متن</string>
+    <string name="player_size_settings">دکمه تغییر‌اندازه پخش‌کننده</string>
+    <string name="speed_setting_summary">گزینه سرعت در پخش‌کننده را اضافه می‌کند</string>
+    <string name="category_updates">بروزرسانی و پشتیبانی</string>
+    <string name="kitsu_settings">نمیش پوستر از kitsu</string>
+    <string name="advanced_search">جستجوی پیشرفته</string>
+    <string name="season">فصل</string>
+    <string name="episode">قسمت</string>
+    <string name="season_short">ف</string>
+    <string name="episode_short">ق</string>
+    <string name="other_singular">ویدئو</string>
+    <string name="source_error">خطای منبع</string>
+    <string name="test_log">گزارش</string>
+    <string name="player_size_settings_des">حذف حاشیه سیاه</string>
+    <string name="player_subtitles_settings_des">تنظیمات زیرنویس‌های پخش‌کننده</string>
+    <string name="category_account">حساب‌ها و امنیت</string>
+    <string name="show_log_cat">نمایش Logcat 🐈</string>
+    <string name="copy_link_toast">پیوند در حافظه موقت کپی شد</string>
+    <string name="no_links_found_toast">هیچ پیوندی یافت‌ نشد</string>
+    <string name="asian_drama_singular">درام آسیایی</string>
+    <string name="automatic_plugin_download">بارگیری خودکار افزونه‌ها (پلاگین ها)</string>
+    <string name="documentaries_singular">مستند</string>
+    <string name="eigengraumode_settings">سرعت پخش</string>
+    <string name="no_episodes_found">هیچ قسمتی یافت‌ نشد</string>
+    <string name="rated_format" formatted="true">امتیاز: %.1f</string>
+    <string name="subs_import_text" formatted="true">قلم‌ها را با گذاشتن در %s وارد کنید</string>
+    <string name="resume">ادامه</string>
+    <string name="subs_default_reset_toast">بازگردانی به مقدار پیشفرض</string>
+    <string name="go_back_30">−۳۰</string>
+    <string name="go_forward_30">+۳۰</string>
+    <string name="delete_file">حذف پرونده</string>
+    <string name="show_trailers_settings">نمایش تریلر ها</string>
+    <string name="episodes">قسمت‌ها</string>
+    <string name="resume_time_left" formatted="true">%dد
+\nباقی‌مانده</string>
+    <string name="github">گیتهاب</string>
+    <string name="pref_filter_search_quality">پنهان کردن ویدیو مشخص شده از نتایج جستجو</string>
+    <string name="cancel">لغو</string>
+    <string name="resume_remaining" formatted="true">%s
+\nباقی‌مانده</string>
+    <string name="action_default">پیش‌فرض</string>
+    <string name="cartoons_singular">کارتون</string>
+    <string name="torrent_singular">تورنت</string>
+    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="vpn_torrent">این ارائه‌دهنده تورنتی است، استفاده از VPN توصیه می‌شود</string>
+    <string name="restore_success">بارگزاری پرونده پشتیبانی‌</string>
+    <string name="subs_subtitle_elevation">ارتفاع زیرنویس</string>
+    <string name="search_provider_text_providers">جستجو از طریق ارائه‌دهنده‌ها</string>
+    <string name="backup_frequency">فرکانس پشتیبان‌گیری</string>
+    <string name="swipe_to_seek_settings">برای جلورفتن بکشید</string>
+    <string name="backup_success">داده ذخیره‌سازی شده</string>
+    <string name="render_error">خطای پردازنده</string>
+    <string name="others">سایر</string>
+    <string name="duration">طول</string>
+    <string name="vpn_might_be_needed">شاید برای درست کارکردن این ارائه‌دهنده به VPN نیاز باشد</string>
+    <string name="use_system_brightness_settings">استفاده از میزان روشنایی دستگاه</string>
+    <string name="subs_edge_type">نوع گوشه</string>
+    <string name="no_season">بدون فصل</string>
+    <string name="show_fillers_settings">نمایش فیلتر قسمت برای انیمه</string>
+    <string name="type_dropped">رها شده</string>
+    <string name="app_subbed_text">زیرنویس</string>
+    <string name="home_info">درباره</string>
+    <string name="search_provider_text_types">جستجو از طریق انواع</string>
+    <string name="backup_settings">پشتیبانی‌گیری داده</string>
+    <string name="restore_failed_format" formatted="true">مشکل در بازگردانی داده از پرونده %s</string>
+    <string name="site">وبگاه</string>
+    <string name="benene_des">انعام دادن</string>
+    <string name="discord">عضویت در دیسکورد</string>
+    <string name="benene">هدیه انعام به توسعه‌دهندگان</string>
+    <string name="status_completed">تمام‌شده</string>
+    <string name="no_subtitles">بدون زیرنویس</string>
+    <string name="test_passed">متوقف‌شده</string>
+    <string name="action_open_play">@string/home_play</string>
+    <string name="open_local_video">باز کردن ویدیو محلی</string>
+    <string name="provider_info_meta">متاداده توسط سایت ارائه نشده، اگه در سایت وجود نداشته باشد بارگیری به مشکل می‌خورد .</string>
+    <string name="type_on_hold">در انتظار</string>
+    <string name="play_from_beginning_img_des">پخش از ابتدا</string>
+    <string name="downloads_empty">در حال حاضر دانلودی وجود ندارد.</string>
+    <string name="next_season_episode_format" formatted="true">فصل %1$d قسمت %2$d پخش خواهد شد در</string>
+    <string name="play_torrent_button">استریم تورنت</string>
+    <string name="downloads_delete_select">انتخاب برای حذف</string>
+    <string name="offline_file">در دسترس برای تماشای آفلاین</string>
+    <string name="select_all">انتخاب همه</string>
+    <string name="deselect_all">انتخاب نکردن همه</string>
+    <string name="benene_count_text">%d Benenes به توسعه دهندگان داده می‌شود</string>
+    <string name="benene_count_text_none">بدون Benenes</string>
+    <string name="chromecast_subtitles_settings">زیرنویس Chromecast</string>
+    <string name="torrent_info">این ویدیو یک تورنت است، این بدان معنی است که فعالیت ویدیویی شما قابل ردیابی است. \nقبل از ادامه، مطمئن شوید که تورنت را درک کرده اید.</string>
+    <string name="picture_in_picture_des">پخش را در یک پخش کننده مینیاتوری در بالای برنامه های دیگر ادامه می دهد</string>
+    <string name="error_invalid_data">داده نامعتبر</string>
+    <string name="check_for_update">چک‌کردن به‌روزرسانی</string>
+    <string name="wifi">وای‌فای</string>
+    <string name="pref_category_player_features">قابلیت‌های پخش‌کننده</string>
+    <string name="remote_error">خطای ریموت</string>
+    <string name="watch_quality_pref_data">کیفیت تماشای برگزیده (برای دیتای گوشی)</string>
+    <string name="add_site_pref">مبدل‌سازی سایت</string>
+    <string name="nginx_url_pref">نشانی سرور NGINX</string>
+    <string name="provider_lang_settings">زبان‌های افزونه</string>
+    <string name="preferred_media_settings">محتوا برگزیده</string>
+    <string name="limit_title_rez">کیفیت پخش‌کننده ویدئو</string>
+    <string name="preferred_media_subtext">چه می‌خواهید تماشا کنید</string>
+    <string name="all_languages_preference">تمام زبان‌ها</string>
+    <string name="watch_quality_pref">کیفیت تماشای برگزیده (برای وای‌فای)</string>
+    <string name="mobile_data">دیتای گوشی</string>
+    <string name="torrent_preferred_media">تورنت را در تنظیمات/ارائه‌دهنده/محتوا برگزیده فعال کنید</string>
+    <string name="chromecast_subtitles_settings_des">تنظیمات زیرنویس‌های Chromecast</string>
+    <string name="error_invalid_url">نشانی نامعتبر</string>
+    <string name="category_provider_test">تست ارائه‌دهنده</string>
+    <string name="swipe_to_seek_settings_des">از گوشه به گوشه برای کنترل موقعیت خود در یک ویدئو بکشید</string>
+    <string name="extension_language">زبان</string>
+    <string name="app_not_found_error">برنامه پیدا نشد</string>
+    <string name="error">خطا</string>
+    <string name="pref_category_ui_features">قابلیت‌ها</string>
+    <string name="category_providers">ارائه‌دهنده ها</string>
+    <string name="storage_error">خطای دانلود، دسترسی به حافظه را چک کنید</string>
+    <string name="resolution">کیفیت</string>
+    <string name="resolution_and_title">کیفیت و عنوان</string>
+    <string name="custom_media_singluar">محتوا</string>
+    <string name="double_tap_to_seek_amount_settings">مقدار جلورفتن پخش‌کننده</string>
+    <string name="no_repository_found_error">مخزن پیدا نشد، نشانی را چک کنید و فیلترشکن را امتحان کنید</string>
+    <string name="example_lang_name">کد زبان (انگلیسی)</string>
+    <string name="unexpected_error">خطا غیرمنتظره پخش‌کننده</string>
+    <string name="unsupported_error">خطای پشتیبانی‌نشده</string>
+    <string name="provider_languages_tip">تماشای ویدئوها در این زبان‌ها</string>
+    <string name="subtitles_filter_lang">فیلتر توسط زبان محتوا برگزیده</string>
+    <string name="player_pref">پخش‌کننده ویدئو برگزیده</string>
+    <string name="error_invalid_id">شناسه نامعتبر</string>
+    <string name="repository_url_hint">نشانی مخزن یا Shortcode</string>
+    <string name="open_downloaded_repo">بازکردن مخزن</string>
+    <string name="backup_path_title">مکان پوشه پشتیبانی</string>
+    <string name="clipboard_permission_error">خطا در دسترسی به حافظه موقت، لطفا دوباره تلاش کنید.</string>
+    <string name="repository_name_hint">نام مخزن (اختیاری)</string>
+    <string name="no_plugins_found_error">هیچ افزونه‌ای در مخزن پیدا نشد</string>
+    <string name="delete_repository">حذف مخزن</string>
+    <string name="backup_failed_error_format">خطا در پشتیبانی‌گیری %s</string>
+    <string name="backup_failed">دسترسی به حافظه فعال نیست. لطفا دوباره تلاش کنید.</string>
+    <string name="delete_files">حذف پرونده‌ها</string>
+    <string name="delete_format" formatted="true">حذف (%1$d | %2$s)</string>
+    <string name="add_repository">افزودن مخزن</string>
+    <string name="plugin_deleted">افزونه حذف شد</string>
+    <string name="restore_settings">بازیابی داده از پشتیبانی</string>
+    <string name="pref_category_bypass">دورزدن سرویس‌دهنده اینترنت</string>
+    <string name="pref_category_backup">پشتیبانی</string>
+    <string name="clipboard_unknown_error">خطا در کپی کردن، لطفا Logcat را کپی کنید و با پشتیبانی برنامه تماس بگیرید.</string>
+    <string name="add_site_summary">یک بدل از یک سایت موجود اضافه کنید، با یک نشانی متفاوت</string>
+    <string name="jsdelivr_proxy_summary">دورزدن نشانی‌های خام github توسط jsDelivr. ممکن است باعث تاخیر چند روزه به‌روزرسانی شود.</string>
+    <string name="dns_pref_summary">برای دورزدن سرویس‌دهنده اینترنت مفید است</string>
+    <string name="encoding_error">خطای رمزگذاری</string>
+    <string name="subtitles_encoding">رمزگذاری زیرنویس</string>
+    <string name="delete_plugin">حذف افزونه</string>
+    <string name="delete_repository_plugins">این همچنین تمام مخزن افزونه‌ها را پاک می‌کند</string>
+    <string name="referer">مرجع (اختیاری)</string>
+    <string name="double_tap_to_pause_settings">برای مکث دوبار ضربه بزنید</string>
+    <string name="double_tap_to_seek_settings">برای جستجو دو ضربه بزنید</string>
+    <string name="double_tap_to_seek_settings_des">دو بار در سمت راست یا چپ ضربه بزنید تا به جلو یا عقب بگردید</string>
+    <string name="double_tap_to_pause_settings_des">برای مکث دو بار در وسط ضربه بزنید</string>
+    <string name="use_system_brightness_settings_des">Use system brightness in the app player instead of a dark overlay</string>
+    <string name="episode_sync_settings">به‌روزرسانی پیشرفت ساعت</string>
+    <string name="begin_speaking">شروع کنید به صحبت کردن…</string>
+    <string name="advanced_search_des">جواب سرچ های شما با تامین کننده</string>
+    <string name="bug_report_settings_off">فقط درصورت کرش اطلاعات فرستاده می شوند</string>
+    <string name="bug_report_settings_on">هیچ اطلاعاتی (دیتایی) فرستاده نمی شود</string>
+    <string name="updates_settings">نشان دادن آپدیت های برنامه</string>
+    <string name="redo_setup_process">دوباره پروسه راه اندازی را انجام بده</string>
+    <string name="uprereleases_settings">نسخه های پیشین را آپدیت کن</string>
+    <string name="apk_installer_settings">نصب کننده APK</string>
+    <string name="lightnovel">برنامه سبک رمان از توسعه دهندگان یکسان</string>
+    <string name="anim">برنامه انیمه از توسعه دهندگان یکسان</string>
+    <string name="no_chromecast_support_toast">این ارائه دهنده هیچ پشتیبانی از کروم کست ندارد</string>
+    <string name="acra_report_toast">متأسفیم، برنامه کرش کرد. یک گزارش از این باگ بطور ناشناس به توسعه دهندگان فرستاده می‌شود</string>
+    <string name="test_failed">با شکست مواجه شد</string>
+    <string name="test_warning">اخطار</string>
+    <string name="rating">امتیاز</string>
+    <string name="livestreams">استریم های زنده</string>
+    <string name="nsfw">مثبت ۱۸ سال</string>
+    <string name="ova_singular">انیمه خانگی</string>
+    <string name="live_singular">پخش زنده</string>
+    <string name="nsfw_singular">مثبت ۱۸ سال</string>
+    <string name="music_singlar">موسیقی</string>
+    <string name="audio_book_singular">کتاب صوتی</string>
+    <string name="audio_singluar">صدا</string>
+    <string name="podcast_singluar">پادکست</string>
+    <string name="episode_action_play_in_app">پخش کردن در برنامه</string>
+    <string name="episode_action_auto_download">دانلود اتوماتیک</string>
+    <string name="no_update_found">هیچ آپدیتی پیدا نشد</string>
+    <string name="video_lock">قفل</string>
+    <string name="video_aspect_ratio_resize">تغییر اندازه</string>
+    <string name="video_source">منبع</string>
+    <string name="dont_show_again">دیگر نمایش نده</string>
+    <string name="skip_update">این آپدیت را اسکیپ کن</string>
+    <string name="update">آپدیت</string>
+    <string name="video_ram_description">اگر در دستگاه های دارای حافظه کم در تنظیمات بالا گذاشته شود باعث کرش می‌شود، مانند تلویزیون های اندروید</string>
+    <string name="remove_site_pref">از بین بردن سایت</string>
+    <string name="download_path_pref">راه دانلود</string>
+    <string name="display_subbed_dubbed_settings">نمایش دادن انیمه های دوبله شده یا دارای زیرنویس</string>
+    <string name="legal_notice">هشدار</string>
+    <string name="pref_category_links">لینک ها</string>
+    <string name="pref_category_app_updates">آپدیت های برنامه</string>
+    <string name="pref_category_extensions">افزونه ها</string>
+    <string name="pref_category_android_tv">تلویزیون اندروید</string>
+    <string name="pref_category_security">محافظت</string>
+    <string name="pref_category_accounts">اکانت ها</string>
+    <string name="pref_category_subtitles">زیرنویس ها</string>
+    <string name="pref_category_defaults">حالت عادی</string>
+    <string name="category_general">کلی</string>
+    <string name="random_button_settings">دکمه رندوم</string>
+    <string name="test_extensions">­همه افزونه ها را تست کنید</string>
+    <string name="automatic">خودکار</string>
+    <string name="primary_color_settings">رنگ اصلی</string>
+</resources>

@@ -19,16 +19,17 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.MainSettingsBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
+import com.lagradost.cloudstream3.syncproviders.AuthRepo
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.errorProfilePic
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
-import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
@@ -122,7 +123,6 @@ class SettingsFragment : Fragment() {
                     }
                 }
             }
-            UIHelper.fixPaddingStatusbar(settingsToolbar)
         }
 
         fun Fragment?.setUpToolbar(@StringRes title: Int) {
@@ -139,7 +139,14 @@ class SettingsFragment : Fragment() {
                     }
                 }
             }
-            UIHelper.fixPaddingStatusbar(settingsToolbar)
+        }
+
+        fun Fragment.setSystemBarsPadding() {
+            fixSystemBarsPadding(
+                view,
+                padLeft = isLayout(TV or EMULATOR),
+                padBottom = isLandscape()
+            )
         }
 
         fun getFolderSize(dir: File): Long {
@@ -175,6 +182,12 @@ class SettingsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        fixSystemBarsPadding(
+            binding?.root,
+            padBottom = isLandscape(),
+            padLeft = isLayout(TV or EMULATOR)
+        )
+
         fun navigate(id: Int) {
             activity?.navigate(id, Bundle())
         }
@@ -183,9 +196,9 @@ class SettingsFragment : Fragment() {
         showToast(activity,"${VideoDownloadManager.downloadStatusEvent.size} :
         ${VideoDownloadManager.downloadProgressEvent.size}") **/
 
-        fun hasProfilePictureFromAccountManagers(accountManagers: List<AccountManager>): Boolean {
+        fun hasProfilePictureFromAccountManagers(accountManagers: Array<AuthRepo>): Boolean {
             for (syncApi in accountManagers) {
-                val login = syncApi.loginInfo()
+                val login = syncApi.authUser()
                 val pic = login?.profilePicture ?: continue
 
                 binding?.settingsProfilePic?.let { imageView ->
@@ -196,13 +209,12 @@ class SettingsFragment : Fragment() {
                 }
                 binding?.settingsProfileText?.text = login.name
                 return true // sync profile exists
-
             }
             return false // not syncing
         }
 
         // display local account information if not syncing
-        if (!hasProfilePictureFromAccountManagers(accountManagers)) {
+        if (!hasProfilePictureFromAccountManagers(AccountManager.allApis)) {
             val activity = activity ?: return
             val currentAccount = try {
                 DataStoreHelper.accounts.firstOrNull {

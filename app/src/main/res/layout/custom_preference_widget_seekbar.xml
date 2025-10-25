@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2018 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!-- Layout used by SeekBarPreference for the seekbar widget style. -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="?android:attr/listPreferredItemHeightSmall"
+    android:gravity="center_vertical"
+    android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
+    android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+    android:paddingRight="?android:attr/listPreferredItemPaddingRight"
+    android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+    android:background="?attr/focusBackground"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:baselineAligned="false">
+
+    <include layout="@layout/image_frame"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:clipChildren="false"
+        android:clipToPadding="false">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@android:id/title"
+                android:labelFor="@id/seekbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:textAppearance="?android:attr/textAppearanceListItem"
+                android:ellipsize="marquee"/>
+
+            <TextView
+                android:id="@android:id/summary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@android:id/title"
+                android:layout_alignLeft="@android:id/title"
+                android:layout_alignStart="@android:id/title"
+                android:layout_gravity="start"
+                android:textAlignment="viewStart"
+                android:textColor="?android:attr/textColorSecondary"
+                android:maxLines="4"
+                style="@style/PreferenceSummaryTextStyle"/>
+
+        </RelativeLayout>
+
+        <!-- Using UnPressableLinearLayout as a workaround to disable the pressed state propagation
+        to the children of this container layout. Otherwise, the animated pressed state will also
+        play for the thumb in the AbsSeekBar in addition to the preference's ripple background.
+        The background of the SeekBar is also set to null to disable the ripple background -->
+        <androidx.preference.UnPressableLinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingLeft="0dp"
+            android:paddingStart="0dp"
+            android:paddingRight="16dp"
+            android:paddingEnd="16dp"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+
+            <!-- The total height of the Seekbar widget's area should be 48dp - this allows for an
+            increased touch area so you do not need to exactly tap the thumb to move it. However,
+            setting the Seekbar height directly causes the thumb and seekbar to be misaligned on
+            API 22 and 23 - so instead we just set 15dp padding above and below, to account for the
+            18dp default height of the Seekbar thumb for a total of 48dp.
+            Note: we set 0dp padding at the start and end of this seekbar to allow it to properly
+            fit into the layout, but this means that there's no leeway on either side for touch
+            input - this might be something we should reconsider down the line. -->
+            <SeekBar
+                android:id="@+id/seekbar"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/preference_seekbar_padding_horizontal"
+                android:paddingStart="@dimen/preference_seekbar_padding_horizontal"
+                android:paddingRight="@dimen/preference_seekbar_padding_horizontal"
+                android:paddingEnd="@dimen/preference_seekbar_padding_horizontal"
+                android:paddingTop="@dimen/preference_seekbar_padding_vertical"
+                android:paddingBottom="@dimen/preference_seekbar_padding_vertical"
+                android:background="@null"/>
+
+            <!-- If the value is shown, we reserve a minimum width of 36dp to allow for consistent
+            seekbar width for smaller values. If the value is ~4 or more digits, it will expand
+            into the seekbar width. -->
+            <TextView
+                android:id="@+id/seekbar_value"
+                android:minWidth="@dimen/preference_seekbar_value_minWidth"
+                android:paddingLeft="8dp"
+                android:paddingStart="8dp"
+                android:paddingRight="0dp"
+                android:paddingEnd="0dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:singleLine="true"
+                android:textAppearance="?android:attr/textAppearanceListItem"
+                android:ellipsize="marquee"
+                android:fadingEdge="horizontal"
+                android:scrollbars="none"/>
+
+        </androidx.preference.UnPressableLinearLayout>
+    </LinearLayout>
+</LinearLayout>

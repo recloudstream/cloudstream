@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
+    <string name="player_speed_text_format" formatted="true">स्पीड (%.2fx)</string>
+    <string name="new_update_format" formatted="true">नया अपडेट आया है!
+\n%1$s -&gt; %2$s</string>
+    <string name="title_home">होम</string>
+    <string name="title_search">खोजें</string>
+    <string name="title_downloads">डाउनलोडस</string>
+    <string name="title_settings">सेटिंग्स</string>
+    <string name="no_data">डेटा उपलब्ध नहीं</string>
+    <string name="episode_more_options_des">और विकल्प</string>
+    <string name="next_episode">अगला एपिसोड</string>
+    <string name="result_tags">शैलियां</string>
+    <string name="result_share">साझा करें</string>
+    <string name="result_open_in_browser">ब्राउज़र में खोलें</string>
+    <string name="type_watching">देखा जा रहा है</string>
+    <string name="type_on_hold">होल्ड पर</string>
+    <string name="type_completed">पूरा देखा</string>
+    <string name="type_dropped">अधूरा छोड़ा</string>
+    <string name="type_plan_to_watch">देखने की योजना</string>
+    <string name="play_movie_button">मूवी चलाएं</string>
+    <string name="play_torrent_button">टोरेंट चलाएं</string>
+    <string name="pick_source">सोर्स</string>
+    <string name="reload_error">पुनः प्रयास करें…</string>
+    <string name="go_back">वापिस जाए</string>
+    <string name="play_episode">एपिसोड चलाएं</string>
+    <!--<string name="need_storage">Allow to download episodes</string>-->
+    <string name="download">डाउनलोड</string>
+    <string name="downloaded">डाउनलोड किया गया</string>
+    <string name="downloading">डाउनलोड हो रहा</string>
+    <string name="download_paused">डाउनलोड रोका गया</string>
+    <string name="download_started">डाउनलोड शुरू हुआ</string>
+    <string name="download_failed">डाउनलोड विफल</string>
+    <string name="download_canceled">डाउनलोड रद्द</string>
+    <string name="download_done">डाउनलोड मुकम्मल</string>
+    <string name="error_loading_links_toast">लिंक लोड करने में त्रुटि</string>
+    <string name="download_storage_text">अंदरूनी स्टोरेज</string>
+    <string name="popup_delete_file">फ़ाइल मिटाएँ</string>
+    <string name="popup_play_file">फ़ाइल चलाएं</string>
+    <string name="popup_resume_download">डाउनलोड फिर शुरू करें</string>
+    <string name="popup_pause_download">डाउनलोड रोकें</string>
+    <string name="pref_disable_acra">स्वचालित बग रिपोर्टिंग अक्षम करें</string>
+    <string name="home_more_info">और जानकारी</string>
+    <string name="home_expanded_hide">छिपाएं</string>
+    <string name="home_play">चलाएं</string>
+    <string name="home_info">जानकारी</string>
+    <string name="filter_bookmarks">बुकमार्क छांटे</string>
+    <string name="error_bookmarks_text">बुकमार्क्स</string>
+    <string name="action_remove_from_bookmarks">हटाएँ</string>
+    <string name="sort_apply">लागू करें</string>
+    <string name="player_speed">प्लेयर स्पीड</string>
+    <string name="search_provider_text_providers">प्रोवाइडरों का उपयोग कर खोजें</string>
+    <string name="search_provider_text_types">प्रकार का उपयोग करके खोजें</string>
+    <string name="benene_count_text">%d केले डेवलपर्स को दिए गए</string>
+    <string name="benene_count_text_none">कोई केले नहीं दिए गए</string>
+    <string name="subs_hold_to_reset_to_default">डिफ़ॉल्ट पर रीसेट करने के लिए दबाए रखें</string>
+    <string name="continue_watching">देखना जारी रखें</string>
+    <string name="action_remove_watching">हटाएँ</string>
+    <string name="action_open_watching">अधिक जानकारी</string>
+    <string name="vpn_might_be_needed">इस प्रोवाइडर को सही ढंग से काम करने के लिए VPN की ज़रूरत पड़ सकती है</string>
+    <string name="vpn_torrent">यह प्रोवाइडर एक torrent है, एक VPN इस्तेमाल करने की सिफारिश की जाती है</string>
+    <string name="torrent_plot">वर्णन</string>
+    <string name="normal_no_plot">कोई विषय नहीं मिला</string>
+    <string name="torrent_no_plot">कोई वर्णन नहीं मिला</string>
+    <string name="picture_in_picture_des">अन्य ऐप्स के ऊपर एक लघु प्लेयर में प्लेबैक जारी रखता है</string>
+    <string name="player_size_settings_des">काले बॉर्डर हटाएँ</string>
+    <string name="player_subtitles_settings_des">प्लेयर उपशीर्षक सेटिंग्स</string>
+    <string name="swipe_to_seek_settings_des">किसी वीडियो में अपनी स्थिति नियंत्रित करने के लिए एक ओर से दूसरी ओर स्वाइप करें</string>
+    <string name="swipe_to_change_settings_des">चमक या वॉल्यूम बदलने के लिए बाईं या दाईं ओर ऊपर या नीचे स्लाइड करें</string>
+    <string name="double_tap_to_seek_settings_des">आगे या पीछे करने के लिए दाईं या बाईं ओर दो बार टैप करें</string>
+    <string name="search">खोजें</string>
+    <string name="settings_info">जानकारी</string>
+    <string name="advanced_search_des">खोज नतीजों को प्रोवाइडरों के हिसाब से अलग-अलग आपको दिखाता है</string>
+    <string name="bug_report_settings_off">केवल क्रैश पर जानकारी भेजी जाएगी</string>
+    <string name="bug_report_settings_on">आपकी जानकारी नहीं भेजी जाएगी</string>
+    <string name="updates_settings_des">हर बार एप खुलने पर स्वचालित रूप से नए अपडेट खोजें।</string>
+    <string name="uprereleases_settings_des">केवल पूर्ण रिलीज़ के बजाय प्रीरिलीज़ अपडेट खोजें</string>
+    <string name="lightnovel">उन्हीं डेवलपर्स द्वारा Light novel ऐप</string>
+    <string name="anim">उन्हीं डेवलपर्स द्वारा Anime ऐप</string>
+    <string name="discord">Discord से जुड़िये</string>
+    <string name="benene">इस प्रोग्राम के निर्माता को केला दें</string>
+    <string name="benene_des">केले दे दिए गए</string>
+    <string name="app_language">ऍप की भाषा</string>
+    <string name="no_chromecast_support_toast">यह प्रोवाइडर क्रोमकास्ट का समर्थन नहीं करता</string>
+    <string name="no_links_found_toast">कोई लिंक नहीं मिले</string>
+    <string name="copy_link_toast">लिंक क्लिपबोर्ड पर कॉपी किया गया</string>
+    <string name="play_episode_toast">एपिसोड चलायें</string>
+    <string name="acra_report_toast">क्षमा करें, एप्प क्रैश हो गया है । निर्माताओं को एक अनाम बग रिपोर्ट भेजी जाएगी</string>
+    <string name="delete_file">फ़ाइल डिलीट करें</string>
+    <string name="delete">डिलीट</string>
+    <string name="cancel">रद्द करें</string>
+    <string name="pause">रोकें</string>
+    <string name="resume">फिर से चलाएं</string>
+    <string name="delete_message">इससे %s स्थायी रूप से हट जाएगा
+\nक्या आपका निर्णय निश्चित है ?</string>
+    <string name="status_ongoing">अभी चालू है</string>
+    <string name="status_completed">मुकम्मल हुया</string>
+    <string name="status">स्थिति</string>
+    <string name="year">साल</string>
+    <string name="rating">रेटिंग</string>
+    <string name="duration">अवधि</string>
+    <string name="site">साइट</string>
+    <string name="synopsis">सारांश</string>
+    <string name="free_storage">ख़ाली</string>
+    <string name="used_storage">इस्तेमाल में</string>
+    <string name="app_storage">ऍप</string>
+    <string name="movies">मूवीज</string>
+    <string name="tv_series">टीवी सीरियल</string>
+    <string name="cartoons">कार्टून</string>
+    <string name="anime">एनिमे</string>
+    <string name="torrent">टोरेंट</string>
+    <string name="episode_action_chromecast_episode">क्रोमकास्ट एपिसोड</string>
+    <string name="episode_action_chromecast_mirror">क्रोमकास्ट मिरर</string>
+    <string name="episode_action_play_in_app">एप्प में चलाएं</string>
+    <string name="episode_action_play_in_format">%s में चलाएं</string>
+    <string name="episode_action_auto_download">डाउनलोड करें</string>
+    <string name="episode_action_download_mirror">मिरर डाउनलोड</string>
+    <string name="episode_action_reload_links">लिंक दोबारा लोड करें</string>
+    <string name="no_update_found">कोई अपडेट नहीं मिला</string>
+    <string name="check_for_update">अपडेट के लिये जांचें</string>
+    <string name="video_lock">ताला</string>
+    <string name="video_aspect_ratio_resize">आकार बदलें</string>
+    <string name="video_source">सोर्स</string>
+    <string name="video_skip_op">OP स्किप करें</string>
+    <string name="dont_show_again">फिर ना दिखाएँ</string>
+    <string name="update">अपडेट</string>
+    <string name="watch_quality_pref">देखने की तरजीही क्वालिटी (वाईफ़ाई)</string>
+    <string name="dns_pref_summary">ISP ब्लॉक से छुटकारा पाएं</string>
+    <string name="provider_lang_settings">एक्सटेंशन की भाषाएं</string>
+    <string name="app_layout">ऐप का लेआउट</string>
+    <string name="preferred_media_settings">तरजीही मीडिया</string>
+    <string name="download_path_pref">डाउनलोड पथ</string>
+    <string name="display_subbed_dubbed_settings">डब किए /सबब् किए एनीमे दिखाएं</string>
+    <string name="tv_layout">टीवी लेआउट</string>
+    <string name="phone_layout">फ़ोन लेआउट</string>
+    <string name="primary_color_settings">मुख्य रंग</string>
+    <string name="app_theme_settings">ऐप का थीम</string>
+    <string name="action_mark_as_watched">देखा हुआ चिह्नित करें</string>
+    <string name="history">इतिहास</string>
+    <string name="next_episode_format" formatted="true">भाग %d रिलीज़ किया जाएगा</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
+    <string name="next_episode_time_min_format" formatted="true">%dm</string>
+    <string name="home_next_random_img_des">अगला रैंडम</string>
+    <string name="go_back_img_des">वापिस जाओ</string>
+    <string name="search_poster_img_des">पोस्टर</string>
+    <string name="preview_background_img_des">प्रीव्यू बैकग्राउंड</string>
+    <string name="home_change_provider_img_des">प्रोवाइडर बदलें</string>
+    <string name="cast_format" formatted="true">Cast: %s</string>
+    <string name="home_main_poster_img_des">मुख्य पोस्टर</string>
+    <string name="episode_poster_img_des">एपिसोड का पोस्टर</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
+    <string name="filler" formatted="true">पूरक</string>
+    <string name="rated_format" formatted="true">रेटिंग: %.1f</string>
+    <string name="search_hint_site" formatted="true">%s पर खोजें…</string>
+    <string name="search_hint">खोजें…</string>
+    <string name="duration_format" formatted="true">%d मिनट</string>
+    <string name="app_name">क्लाउडस्ट्रीम</string>
+    <string name="play_with_app_name">क्लाउडस्ट्रीम के साथ चलाएं</string>
+    <string name="duplicate_message_multiple" formatted="true">आपकी लाइब्रेरी में संभावित डुप्लिकेट आइटम पाए गए हैं:
+\n
+\n%s
+\n
+\nक्या आप किसी भी तरह इस आइटम को जोड़ना चाहेंगे, मौजूदा आइटम को बदलना चाहेंगे, या कार्रवाई रद्द करना चाहेंगे?</string>
+    <string name="enter_pin_with_name" formatted="true">%s के लिए पिन दर्ज करें</string>
+    <string name="duplicate_title">संभावित डुप्लिकेट मिला</string>
+    <string name="update_started">अपडेट शुरू हुआ</string>
+    <string name="lock_profile">प्रोफ़ाइल लॉक करें</string>
+    <string name="duplicate_replace_all">सबको बदली करें</string>
+    <string name="pin_error_incorrect">ग़लत पिन. कृपया पुन: प्रयास करें।</string>
+    <string name="browser">ब्राउज़र</string>
+    <string name="pick_subtitle">उपशीर्षक</string>
+    <string name="pin_error_length">पिन 4 अक्षर का होना चाहिए</string>
+    <string name="duplicate_replace">बदली</string>
+    <string name="duplicate_add">जोड़े</string>
+    <string name="play_trailer_button">ट्रेलर देखे</string>
+    <string name="play_livestream_button">लाइवस्ट्रीम देखे</string>
+    <string name="result_poster_img_des">विज्ञापन</string>
+    <string name="type_re_watching">दोबारा देखे</string>
+    <string name="auto_rotate_video">स्वत: घुमाएँ</string>
+    <string name="select_an_account">अकाउंट चुनिये</string>
+    <string name="skip_loading">लोडिंग स्किप करे</string>
+    <string name="loading">लोडिंग…</string>
+    <string name="duplicate_message_single" formatted="true">ऐसा प्रतीत होता है कि संभावित रूप से डुप्लिकेट आइटम आपकी लाइब्रेरी में पहले से मौजूद है: \'%s.\'
+\n
+\nक्या आप किसी भी तरह इस आइटम को जोड़ना चाहेंगे, मौजूदा आइटम को बदलना चाहेंगे, या कार्रवाई रद्द करना चाहेंगे?</string>
+    <string name="enter_pin">पिन दर्ज करें</string>
+    <string name="pin">पिन</string>
+    <string name="links_reloaded_toast">लिंक पुन्ह खुली</string>
+    <string name="enter_current_pin">वर्तमान पिन दर्ज करें</string>
+    <string name="stream">नेटवर्क स्ट्रीम</string>
+    <string name="sort_clear">साफ़ करें</string>
+    <string name="subtitles_settings">उपशीर्षक सेटिंग्स</string>
+    <string name="subs_font_size">अक्षर का माप</string>
+    <string name="sort_close">बंद करें</string>
+    <string name="repo_copy_label">रिपॉजिटरी का नाम और यूआरएल</string>
+    <string name="toast_copied">कॉपी!</string>
+    <string name="sort_save">सहेजें</string>
+    <string name="subscribe_tooltip">नये एपिसोड की अधिसूचना</string>
+    <string name="result_search_tooltip">अन्य एक्सटेंशन में खोजें</string>
+    <string name="recommendations_tooltip">सुझाव दिखाएं</string>
+    <string name="subs_background_color">पृष्ठभूमि का रंग</string>
+    <string name="subs_edge_type">रूपरेखा प्रकार</string>
+    <string name="subs_text_color">अक्षर का रंग</string>
+    <string name="subs_window_color">बॉक्स का रंग</string>
+    <string name="subs_outline_color">रूपरेखा रंग</string>
+    <string name="subs_subtitle_elevation">उपशीर्षक ऊंचाई</string>
+    <string name="subs_font">मुद्रलिपि</string>
+    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="downloads_empty">वर्तमान में कोई डाउनलोड नहीं है।</string>
+    <string name="play_from_beginning_img_des">आरम्भ से शुरू करें</string>
+    <string name="downloads_delete_select">मिटाने के लिए वस्तु चुनें</string>
+    <string name="subs_import_text" formatted="true">फ़ॉन्ट को %s में रखकर आयात करें</string>
+    <string name="test_log">अभिलेख</string>
+    <string name="open_local_video">स्थानीय वीडियो खोलें</string>
+    <string name="subs_subtitle_languages">उपशीर्षक भाषा</string>
+    <string name="player_size_settings">प्लेयर आकार परिवर्तन बटन</string>
+    <string name="eigengraumode_settings">प्रतिश्रवण गति</string>
+    <string name="autoplay_next_settings">आगामी प्रकरण स्वतः चलाएं</string>
+    <string name="autoplay_next_settings_des">वर्तमान प्रकरण समाप्त होने पर आगामी प्रकरण चलाएं</string>
+    <string name="app_subbed_text">सब</string>
+    <string name="action_add_to_bookmarks">दर्शन स्थिति सेट करें</string>
+    <string name="swipe_to_seek_settings">आगे पीछे जाने के लिए स्वाइप करें</string>
+    <string name="subs_auto_select_language">स्वतः चयन भाषा</string>
+    <string name="show_log_cat">लोगकैट दिखाएं</string>
+    <string name="sort_copy">प्रतिलिपि</string>
+    <string name="provider_info_meta">मेटाडाटा साइट द्वारा प्रदान नहीं किया गया है, अगर यह साइट पर विद्यमान नहीं है तो वीडियो लोडिंग विफल हो जाएगी।</string>
+    <string name="next_season_episode_format" formatted="true">सीजन %1$d एपिसोड %2$d में जारी किया जाएगा</string>
+    <string name="picture_in_picture">चित्र में चित्र</string>
+    <string name="chromecast_subtitles_settings">क्रोमकास्ट उपशीर्षक</string>
+    <string name="chromecast_subtitles_settings_des">क्रोमकास्ट उपशीर्षक सेटिंग्स</string>
+    <string name="double_tap_to_seek_settings">आगे पीछे जाने के लिए दो बार टैप करें</string>
+    <string name="double_tap_to_pause_settings">रुकने के लिए दो बार टैप करें</string>
+    <string name="offline_file">ऑफ़लाइन देखने के लिए उपलब्ध</string>
+    <string name="select_all">सभी चुनें</string>
+    <string name="deselect_all">सभी अचयनित करें</string>
+    <string name="app_dubbed_text">डब</string>
+    <string name="subs_download_languages">भाषा डाउनलोड करें</string>
+    <string name="player_subtitles_settings">उपशीर्षक</string>
+    <string name="speed_setting_summary">प्लेयर में गति विकल्प जोड़ता है</string>
+    <string name="swipe_to_change_settings">सेटिंग्स परिवर्तित करने के लिए स्वाइप करें</string>
+    <string name="ova">OVA</string>
+    <string name="cartoons_singular">हास्यचित्र</string>
+    <string name="show_trailers_settings">झलकी दिखाएं</string>
+    <string name="others">अन्य</string>
+    <string name="episode">प्रकरण</string>
+    <string name="use_system_brightness_settings_des">ऐप प्लेयर में सिस्टम ब्राइटनेस इस्तेमाल करें काले ओवरले को छोड़कर</string>
+    <string name="restore_success">बैकअप फाइल सहेज ली गई है</string>
+    <string name="season">सत्र</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
+    <string name="no_season">सत्र मौजूद नहीं है</string>
+    <string name="start">शुरू करें</string>
+    <string name="test_warning">चेतावनी</string>
+    <string name="go_forward_30">+३०</string>
+    <string name="ova_singular">OVA</string>
+    <string name="anime_singular">एनिमे</string>
+    <string name="torrent_singular">टोरेंट</string>
+    <string name="remote_error">दूरस्थ त्रुटि</string>
+    <string name="episode_sync_settings_des">अपने वर्तमान प्रकरण की प्रगति को स्वचालित रूप से समकालीन बनाएं</string>
+    <string name="show_fillers_settings">एनीमे के लिए पूरक प्रकरण दिखाएं</string>
+    <string name="backup_success">आंकड़े संगृहीत हो गए</string>
+    <string name="music_singlar">संगीत</string>
+    <string name="torrent_info">यह वीडियो एक टॉरेंट है, इसका मतलब यह है कि आपकी वीडियो गतिविधि पर नजर रखी जा सकती है।\nजारी रखने से पहले सुनिश्चित करें कि आप टोरेंटिंग को समझते है।</string>
+    <string name="double_tap_to_pause_settings_des">रोकने के लिए बीच में दो बार टैप करें</string>
+    <string name="episode_sync_settings">देखा हुआ प्रोग्रेस अपडेट करें</string>
+    <string name="restore_failed_format" formatted="true">फाइल %s से आंकड़ों को पुनर्स्थापित करने में विफल</string>
+    <string name="backup_failed_error_format">%s के बैकअप करने में विफलता</string>
+    <string name="delete_message_series_only" formatted="true">क्या आप वाकई निम्नलिखित श्रृंखला के सभी प्रकरण को स्थायी रूप से हटाना चाहते हैं?\n\n%s</string>
+    <string name="category_updates">अद्यतन और बैकअप</string>
+    <string name="no_episodes_found">कोई प्रकरण नहीं मिले</string>
+    <string name="go_back_30">-३०</string>
+    <string name="other_singular">वीडियो</string>
+    <string name="use_system_brightness_settings">सिस्टम की चमक का इस्तेमाल करें</string>
+    <string name="backup_settings">डाटा काबैकअप</string>
+    <string name="backup_frequency">बैकअप आवृत्ति</string>
+    <string name="backup_failed">संग्रहण अनुमतियाँ अनुपलब्ध हैं। कृपया फिर से कोशिश करें।</string>
+    <string name="category_account">खाते और सुरक्षा</string>
+    <string name="advanced_search">उन्नत खोज</string>
+    <string name="kitsu_settings">Kitsu से पोस्टर दिखाएं</string>
+    <string name="automatic_plugin_updates">स्वचालित प्लग-इन अद्यतन</string>
+    <string name="episode_upcoming_format" formatted="true">%s में</string>
+    <string name="delete_files">फ़ाइलें हटाएँ</string>
+    <string name="delete_format" formatted="true">(%1$d | %2$s) हटाएं</string>
+    <string name="test_passed">उत्तीर्ण</string>
+    <string name="delete_message_multiple" formatted="true">क्या आप वाकई निम्नलिखित चीजों को स्थायी रूप से हटाना चाहते हैं?\n\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">क्या आप वाकई %1$s से निम्नलिखित प्रकरण को स्थायी रूप से हटाना चाहते हैं?\n\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">आप निम्नलिखित श्रृंखला के सभी प्रकरण भी स्थायी रूप से हटा देंगे:\n\n%s</string>
+    <string name="resume_remaining" formatted="true">%s\nबाकी</string>
+    <string name="queued">कतार में</string>
+    <string name="no_subtitles">कोई उपशीर्षक नहीं</string>
+    <string name="action_default">डिफॉल्ट</string>
+    <string name="tv_series_singular">सीरीज</string>
+    <string name="documentaries_singular">वृत्तचित्र</string>
+    <string name="asian_drama_singular">एशियाई नाटक</string>
+    <string name="live_singular">लाइव स्ट्रीम</string>
+    <string name="audio_book_singular">ऑडियो बुक</string>
+    <string name="source_error">स्रोत से त्रुटि</string>
+    <string name="poster_ui_settings">पोस्टर तत्वों को सक्षम या अक्षम करें</string>
+    <string name="livestreams">लाइव स्ट्रीम</string>
+    <string name="movies_singular">फिल्म</string>
+    <string name="nsfw_singular">NSFW</string>
+    <string name="test_failed">विफ़ल</string>
+    <string name="restore_settings">बैकअप से आंकड़े पुनर्स्थापित करें</string>
+    <string name="asian_drama">एशियाई नाटक</string>
+    <string name="automatic_plugin_download">स्वचालित रूप से प्लगइन डाउनलोड करें</string>
+    <string name="nsfw">NSFW</string>
+    <string name="github">गिटहब</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
+    <string name="season_short">S</string>
+    <string name="episode_short">E</string>
+    <string name="resume_time_left" formatted="true">%dm\nबाकी</string>
+    <string name="documentaries">वृत्तचित्र</string>
+    <string name="unexpected_error">अप्रत्याशित प्लेयर त्रुटि</string>
+    <string name="episode_action_download_subtitle">उपशीर्षक डाउनलोड करें</string>
+    <string name="show_title">शीर्षक</string>
+    <string name="library">लाइब्रेरी</string>
+    <string name="custom_media_singluar">मीडिया</string>
+    <string name="pref_filter_search_quality">खोज परिणामों में चयनित वीडियो गुणवत्ता छुपाएं</string>
+    <plurals name="episodes" translatable="false">
+        <item quantity="one">प्रकरण</item>
+        <item quantity="other"/>
+    </plurals>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="action_open_play">@string/home_play</string>
+    <string name="double_tap_to_seek_amount_settings">प्लेयर में आगे पीछे जाने का समय (सेकंड्स)</string>
+    <string name="automatic_plugin_download_summary">जोड़े गए रिपॉजिटरीज से अभी तक इंस्टॉल नहीं किए गए सभी प्लगइन्स को स्वचालित रूप से इंस्टॉल करें।</string>
+    <string name="speech_recognition_unavailable">वाक् पहचान उपलब्ध नहीं है</string>
+    <string name="begin_speaking">बोलना शुरू करें…</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">"%1$dघं  %2$d मि  %3$dसे"</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$d मि %2$d से</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$d सेकंड</string>
+    <string name="automatic_plugin_download_mode_title">प्लगइन डाउनलोड को फ़िल्टर करने के लिए मोड चुने</string>
+    <string name="updates_settings">ऐप अपडेट दिखाएं</string>
+    <string name="redo_setup_process">सेटअप प्रक्रिया दोबारा करें</string>
+    <string name="uprereleases_settings">प्री-रिलीज़ पर अपडेट करें</string>
+    <string name="apk_installer_settings">APK इंस्टॉलर</string>
+    <string name="apk_installer_settings_des">कुछ फ़ोन नए पैकेज इंस्टॉलर का समर्थन नहीं करते हैं। यदि अपडेट इंस्टॉल नहीं हो रहे हैं, तो पुराने विकल्प का उपयोग करें।</string>
+    <string name="subs_default_reset_toast">डिफ़ॉल्ट मान पर रीसेट करें</string>
+    <string name="audio_singluar">ऑडियो</string>
+    <string name="podcast_singluar">पॉडकास्ट</string>
+    <string name="render_error">रेंडरर त्रुटि</string>
+    <string name="encoding_error">एन्कोडिंग त्रुटि</string>
+</resources>

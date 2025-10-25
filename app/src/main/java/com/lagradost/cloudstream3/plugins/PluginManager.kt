@@ -1,7 +1,10 @@
 package com.lagradost.cloudstream3.plugins
 
 import android.Manifest
-import android.app.*
+import android.app.Activity
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.AssetManager
@@ -15,41 +18,47 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.google.gson.Gson
-import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.removePluginMapping
-import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.AllLanguagesName
+import com.lagradost.cloudstream3.AutoDownloadMode
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainAPI.Companion.settingsForProvider
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
+import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
+import com.lagradost.cloudstream3.PROVIDER_STATUS_OK
+import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.actions.VideoClickAction
 import com.lagradost.cloudstream3.actions.VideoClickActionHolder
+import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.mvvm.debugPrint
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.plugins.RepositoryManager.ONLINE_PLUGINS_FOLDER
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.plugins.RepositoryManager.downloadPluginToFile
 import com.lagradost.cloudstream3.plugins.RepositoryManager.getRepoPlugins
-import com.lagradost.cloudstream3.utils.UiText
-import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
+import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import com.lagradost.cloudstream3.utils.extractorApis
+import com.lagradost.cloudstream3.utils.txt
 import dalvik.system.PathClassLoader
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
 import java.io.InputStreamReader
-import java.util.*
 
 // Different keys for local and not since local can be removed at any time without app knowing, hence the local are getting rebuilt on every app start
 const val PLUGINS_KEY = "PLUGINS_KEY"
@@ -135,7 +144,7 @@ object PluginManager {
                 !it.filePath.contains(repositoryPath)
             }
             val file = File(repositoryPath)
-            normalSafeApiCall {
+            safe {
                 if (file.exists()) file.deleteRecursively()
             }
             setKey(PLUGINS_KEY, plugins)
@@ -187,7 +196,6 @@ object PluginManager {
 
     var loadedOnlinePlugins = false
         private set
-    private val gson = Gson()
 
     private suspend fun maybeLoadPlugin(context: Context, file: File) {
         val name = file.name
@@ -246,16 +254,28 @@ object PluginManager {
      * 2. If disabled do nothing
      * 3. If outdated download and load the plugin
      * 4. Else load the plugin normally
-     **/
-    fun updateAllOnlinePluginsAndLoadThem(activity: Activity) {
+     *
+     * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
+     * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
+     */
+    @Suppress("FunctionName", "DEPRECATION_ERROR")
+    @Deprecated(
+        "Calling this function from a plugin will lead to crashes, use loadPlugin and unloadPlugin",
+        replaceWith = ReplaceWith("loadPlugin"),
+        level = DeprecationLevel.ERROR
+    )
+    @Throws
+    suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_updateAllOnlinePluginsAndLoadThem(activity: Activity) {
+        assertNonRecursiveCallstack()
+
         // Load all plugins as fast as possible!
-        loadAllOnlinePlugins(activity)
+        ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(activity)
         afterPluginsLoadedEvent.invoke(false)
 
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
             ?: emptyArray()) + PREBUILT_REPOSITORIES
 
-        val onlinePlugins = urls.toList().apmap {
+        val onlinePlugins = urls.toList().amap {
             getRepoPlugins(it.url)?.toList() ?: emptyList()
         }.flatten().distinctBy { it.second.url }
 
@@ -276,7 +296,7 @@ object PluginManager {
 
         val updatedPlugins = mutableListOf<String>()
 
-        outdatedPlugins.apmap { pluginData ->
+        outdatedPlugins.amap { pluginData ->
             if (pluginData.isDisabled) {
                 //updatedPlugins.add(activity.getString(R.string.single_plugin_disabled, pluginData.onlineData.second.name))
                 unloadPlugin(pluginData.savedData.filePath)
@@ -315,12 +335,27 @@ object PluginManager {
      * 1. Gets all online data from online plugins repo
      * 2. Fetch all not downloaded plugins
      * 3. Download them and reload plugins
-     **/
-    fun downloadNotExistingPluginsAndLoad(activity: Activity, mode: AutoDownloadMode) {
+     *
+     * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
+     * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
+     */
+    @Suppress("FunctionName", "DEPRECATION_ERROR")
+    @Deprecated(
+        "Calling this function from a plugin will lead to crashes, use loadPlugin and unloadPlugin",
+        replaceWith = ReplaceWith("loadPlugin"),
+        level = DeprecationLevel.ERROR
+    )
+    @Throws
+    suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_downloadNotExistingPluginsAndLoad(
+        activity: Activity,
+        mode: AutoDownloadMode
+    ) {
+        assertNonRecursiveCallstack()
+
         val newDownloadPlugins = mutableListOf<String>()
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
             ?: emptyArray()) + PREBUILT_REPOSITORIES
-        val onlinePlugins = urls.toList().apmap {
+        val onlinePlugins = urls.toList().amap {
             getRepoPlugins(it.url)?.toList() ?: emptyList()
         }.flatten().distinctBy { it.second.url }
 
@@ -380,7 +415,7 @@ object PluginManager {
         }
         //Log.i(TAG, "notDownloadedPlugins => ${notDownloadedPlugins.toJson()}")
 
-        notDownloadedPlugins.apmap { pluginData ->
+        notDownloadedPlugins.amap { pluginData ->
             downloadPlugin(
                 activity,
                 pluginData.onlineData.second.url,
@@ -405,12 +440,31 @@ object PluginManager {
         Log.i(TAG, "Plugin download done!")
     }
 
+    @Throws
+    private fun assertNonRecursiveCallstack() {
+        if (Thread.currentThread().stackTrace.any { it.methodName == "loadPlugin" }) {
+            throw Error("You tried to call a function that will recursively call loadPlugin, this will cause crashes or memory leaks. Do not do this, there is better ways to implement the feature than reloading plugins. Are you sure you read the compile error or docs?")
+        }
+    }
+
     /**
      * Use updateAllOnlinePluginsAndLoadThem
-     * */
-    fun loadAllOnlinePlugins(context: Context) {
+     *
+     * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
+     * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
+     */
+    @Suppress("FunctionName", "DEPRECATION_ERROR")
+    @Deprecated(
+        "Calling this function from a plugin will lead to crashes, use loadPlugin and unloadPlugin",
+        replaceWith = ReplaceWith("loadPlugin"),
+        level = DeprecationLevel.ERROR
+    )
+    @Throws
+    suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(context: Context) {
+        assertNonRecursiveCallstack()
+
         // Load all plugins as fast as possible!
-        (getPluginsOnline()).toList().apmap { pluginData ->
+        (getPluginsOnline()).toList().amap { pluginData ->
             loadPlugin(
                 context,
                 File(pluginData.filePath),
@@ -421,21 +475,45 @@ object PluginManager {
 
     /**
      * Reloads all local plugins and forces a page update, used for hot reloading with deployWithAdb
-     **/
-    fun hotReloadAllLocalPlugins(activity: FragmentActivity?) {
+     *
+     * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
+     * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
+     */
+    @Suppress("FunctionName", "DEPRECATION_ERROR")
+    @Throws
+    @Deprecated(
+        "Calling this function from a plugin will lead to crashes, use loadPlugin and unloadPlugin",
+        replaceWith = ReplaceWith("loadPlugin"),
+        level = DeprecationLevel.ERROR
+    )
+    suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_hotReloadAllLocalPlugins(activity: FragmentActivity?) {
+        assertNonRecursiveCallstack()
+
         Log.d(TAG, "Reloading all local plugins!")
         if (activity == null) return
         getPluginsLocal().forEach {
             unloadPlugin(it.filePath)
         }
-        loadAllLocalPlugins(activity, true)
+        ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(activity, true)
     }
 
     /**
      * @param forceReload see afterPluginsLoadedEvent, basically a way to load all local plugins
      * and reload all pages even if they are previously valid
-     **/
-    fun loadAllLocalPlugins(context: Context, forceReload: Boolean) {
+     *
+     * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
+     * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
+     */
+    @Suppress("FunctionName", "DEPRECATION_ERROR")
+    @Deprecated(
+        "Calling this function from a plugin will lead to crashes, use loadPlugin and unloadPlugin",
+        replaceWith = ReplaceWith("loadPlugin"),
+        level = DeprecationLevel.ERROR
+    )
+    @Throws
+    suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(context: Context, forceReload: Boolean) {
+        assertNonRecursiveCallstack()
+
         val dir = File(LOCAL_PLUGINS_PATH)
 
         if (!dir.exists()) {
@@ -462,7 +540,7 @@ object PluginManager {
         // Make sure all local plugins are fully refreshed.
         removeKey(PLUGINS_KEY_LOCAL)
 
-        sortedPlugins?.sortedBy { it.name }?.apmap { file ->
+        sortedPlugins?.sortedBy { it.name }?.amap { file ->
             try {
                 val destinationFile = File(pluginDirectory, file.name)
 
@@ -470,7 +548,8 @@ object PluginManager {
                 // has been modified (check file length and modification time).
                 if (!destinationFile.exists() ||
                     destinationFile.length() != file.length() ||
-                    destinationFile.lastModified() != file.lastModified()) {
+                    destinationFile.lastModified() != file.lastModified()
+                ) {
 
                     // Copy the file to the app-specific plugin directory
                     file.copyTo(destinationFile, overwrite = true)
@@ -498,9 +577,9 @@ object PluginManager {
      * @return true if safe mode file is present
      **/
     fun checkSafeModeFile(): Boolean {
-        return normalSafeApiCall {
+        return safe {
             val folder = File(CLOUD_STREAM_FOLDER)
-            if (!folder.exists()) return@normalSafeApiCall false
+            if (!folder.exists()) return@safe false
             val files = folder.listFiles { _, name ->
                 name.equals("safe", ignoreCase = true)
             }
@@ -537,10 +616,7 @@ object PluginManager {
                     return false
                 }
                 InputStreamReader(stream).use { reader ->
-                    manifest = gson.fromJson(
-                        reader,
-                        BasePlugin.Manifest::class.java
-                    )
+                    manifest = parseJson(reader, BasePlugin.Manifest::class.java)
                 }
             }
 
@@ -595,7 +671,7 @@ object PluginManager {
         } catch (e: Throwable) {
             Log.e(TAG, "Failed to load $file: ${Log.getStackTraceString(e)}")
             showToast(
-                context.getActivity(),
+                // context.getActivity(), // we are not always on the main thread
                 context.getString(R.string.plugin_load_fail).format(fileName),
                 Toast.LENGTH_LONG
             )
@@ -726,6 +802,87 @@ object PluginManager {
         } catch (e: Exception) {
             false
         }
+    }
+
+    /**
+     * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
+     * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
+     */
+    @Suppress("FunctionName", "DEPRECATION_ERROR")
+    @Throws
+    @Deprecated(
+        "Calling this function from a plugin will lead to crashes, use loadPlugin and unloadPlugin",
+        replaceWith = ReplaceWith("loadPlugin"),
+        level = DeprecationLevel.ERROR
+    )
+    suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_manuallyReloadAndUpdatePlugins(activity: Activity) {
+        assertNonRecursiveCallstack()
+
+        showToast(activity.getString(R.string.starting_plugin_update_manually), Toast.LENGTH_LONG)
+
+        ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(activity)
+        afterPluginsLoadedEvent.invoke(false)
+
+        val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
+            ?: emptyArray()) + PREBUILT_REPOSITORIES
+        val onlinePlugins = urls.toList().amap {
+            getRepoPlugins(it.url)?.toList() ?: emptyList()
+        }.flatten().distinctBy { it.second.url }
+
+        val allPlugins = getPluginsOnline().flatMap { savedData ->
+            onlinePlugins
+                .filter { it.second.internalName == savedData.internalName }
+                .mapNotNull { onlineData ->
+                    OnlinePluginData(savedData, onlineData).takeIf { it.validOnlineData(activity) }
+                }
+        }.distinctBy { it.onlineData.second.url }
+
+        val updatedPlugins = mutableListOf<String>()
+
+        allPlugins.amap { pluginData ->
+            if (pluginData.isDisabled) {
+                Log.e(
+                    "PluginManager",
+                    "Unloading disabled plugin: ${pluginData.onlineData.second.name}"
+                )
+                unloadPlugin(pluginData.savedData.filePath)
+            } else {
+                val existingFile = File(pluginData.savedData.filePath)
+                if (existingFile.exists()) existingFile.delete()
+
+                if (downloadPlugin(
+                        activity,
+                        pluginData.onlineData.second.url,
+                        pluginData.savedData.internalName,
+                        existingFile,
+                        true
+                    )
+                ) {
+                    updatedPlugins.add(pluginData.onlineData.second.name)
+                }
+            }
+        }.also {
+            main {
+                val message = if (updatedPlugins.isNotEmpty()) {
+                    activity.getString(R.string.plugins_updated_manually, updatedPlugins.size)
+                } else {
+                    activity.getString(R.string.no_plugins_updated_manually)
+                }
+                showToast(message, Toast.LENGTH_LONG)
+
+                val notificationText = UiText.StringResource(
+                    R.string.plugins_updated_manually,
+                    listOf(updatedPlugins.size)
+                )
+                createNotification(activity, notificationText, updatedPlugins)
+
+            }
+        }
+
+        loadedOnlinePlugins = true
+        afterPluginsLoadedEvent.invoke(false)
+
+        Log.i("PluginManager", "Plugin update done!")
     }
 
     private fun Context.createNotificationChannel() {

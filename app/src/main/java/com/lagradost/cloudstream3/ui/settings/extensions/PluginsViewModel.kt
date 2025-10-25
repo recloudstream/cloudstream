@@ -26,6 +26,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import java.io.File
 
+// String => repository url
 typealias Plugin = Pair<String, SitePlugin>
 /**
  * The boolean signifies if the plugin list should be scrolled to the top, used for searching.
@@ -36,13 +37,27 @@ class PluginsViewModel : ViewModel() {
 
     /** plugins is an unaltered list of plugins */
     private var plugins: List<PluginViewData> = emptyList()
+        set(value) {
+            // Also set all the plugin languages for easier filtering
+            value.map{ pluginViewData ->
+                val language = pluginViewData.plugin.second.language?.lowercase()
+                pluginLanguages.add(
+                    when {
+                        language.isNullOrBlank() -> "none"
+                        else -> language.lowercase()
+                    })
+                    // not sorting as most likely this is a language tag instead of name
+            }
+            field = value
+        }
+    var pluginLanguages = mutableSetOf<String>() // set to avoid duplicates
 
     /** filteredPlugins is a subset of plugins following the current search query and tv type selection */
     private var _filteredPlugins = MutableLiveData<PluginViewDataUpdate>()
     var filteredPlugins: LiveData<PluginViewDataUpdate> = _filteredPlugins
 
     val tvTypes = mutableListOf<String>()
-    var languages = listOf<String>()
+    var selectedLanguages = listOf<String>()
     private var currentQuery: String? = null
 
     companion object {
@@ -213,12 +228,12 @@ class PluginsViewModel : ViewModel() {
     }
 
     private fun List<PluginViewData>.filterLang(): List<PluginViewData> {
-        if (languages.isEmpty()) return this
+        if (selectedLanguages.isEmpty()) return this // do not filter
         return this.filter {
             if (it.plugin.second.language == null) {
-                return@filter languages.contains("none")
+                return@filter selectedLanguages.contains("none")
             }
-            languages.contains(it.plugin.second.language)
+            selectedLanguages.contains(it.plugin.second.language?.lowercase())
         }
     }
 
@@ -227,7 +242,12 @@ class PluginsViewModel : ViewModel() {
             // Return list to base state if no query
             this.sortedBy { it.plugin.second.name }
         } else {
-            this.sortedBy { -FuzzySearch.partialRatio(it.plugin.second.name.lowercase(), query.lowercase()) }
+            this.sortedBy {
+                -FuzzySearch.partialRatio(
+                    it.plugin.second.name.lowercase(),
+                    query.lowercase()
+                )
+            }
         }
     }
 

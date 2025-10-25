@@ -11,6 +11,7 @@ import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 
 class SourcePriorityDialog(
     val ctx: Context,
@@ -24,8 +25,10 @@ class SourcePriorityDialog(
     private val updatedCallback: () -> Unit
 ) : Dialog(ctx, themeRes) {
     override fun show() {
-        val binding = PlayerSelectSourcePriorityBinding.inflate(LayoutInflater.from(ctx), null, false)
+        val binding =
+            PlayerSelectSourcePriorityBinding.inflate(LayoutInflater.from(ctx), null, false)
         setContentView(binding.root)
+        fixSystemBarsPadding(binding.root)
         val sourcesRecyclerView = binding.sortSources
         val qualitiesRecyclerView = binding.sortQualities
         val profileText = binding.profileTextEditable
@@ -36,45 +39,46 @@ class SourcePriorityDialog(
         profileText.setText(QualityDataHelper.getProfileName(profile.id).asString(context))
         profileText.hint = txt(R.string.profile_number, profile.id).asString(context)
 
-        sourcesRecyclerView.adapter = PriorityAdapter(
-            links.map { link ->
+        sourcesRecyclerView.adapter = PriorityAdapter<Nothing?>(
+        ).apply {
+            submitList(links.map { link ->
                 SourcePriority(
                     null,
                     link.source,
                     QualityDataHelper.getSourcePriority(profile.id, link.source)
                 )
-            }.distinctBy { it.name }.sortedBy { -it.priority }.toMutableList()
-        )
+            }.distinctBy { it.name }.sortedBy { -it.priority })
+        }
 
-        qualitiesRecyclerView.adapter = PriorityAdapter(
-            Qualities.entries.mapNotNull {
+        qualitiesRecyclerView.adapter = PriorityAdapter<Qualities>(
+        ).apply {
+            submitList(Qualities.entries.mapNotNull {
                 SourcePriority(
                     it,
                     Qualities.getStringByIntFull(it.value).ifBlank { return@mapNotNull null },
                     QualityDataHelper.getQualityPriority(profile.id, it)
                 )
-            }.sortedBy { -it.priority }.toMutableList()
-        )
+            }.sortedBy { -it.priority })
+        }
 
         @Suppress("UNCHECKED_CAST") // We know the types
         saveBtt.setOnClickListener {
             val qualityAdapter = qualitiesRecyclerView.adapter as? PriorityAdapter<Qualities>
-            val sourcesAdapter = sourcesRecyclerView.adapter as? PriorityAdapter<Nothing>
+            val sourcesAdapter = sourcesRecyclerView.adapter as? PriorityAdapter<Nothing?>
 
-            val qualities = qualityAdapter?.items ?: emptyList()
-            val sources = sourcesAdapter?.items ?: emptyList()
+            val qualities = qualityAdapter?.immutableCurrentList ?: emptyList()
+            val sources = sourcesAdapter?.immutableCurrentList ?: emptyList()
 
             qualities.forEach {
-                val data = it.data as? Qualities ?: return@forEach
-                QualityDataHelper.setQualityPriority(profile.id, data, it.priority)
+                QualityDataHelper.setQualityPriority(profile.id, it.data, it.priority)
             }
 
             sources.forEach {
                 QualityDataHelper.setSourcePriority(profile.id, it.name, it.priority)
             }
 
-            qualityAdapter?.updateList(qualities.sortedBy { -it.priority })
-            sourcesAdapter?.updateList(sources.sortedBy { -it.priority })
+            qualityAdapter?.submitList(qualities.sortedBy { -it.priority })
+            sourcesAdapter?.submitList(sources.sortedBy { -it.priority })
 
             val savedProfileName = profileText.text.toString()
             if (savedProfileName.isBlank()) {

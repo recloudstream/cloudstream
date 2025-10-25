@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.search
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -10,8 +11,6 @@ import androidx.cardview.widget.CardView
 import androidx.core.view.isVisible
 import androidx.palette.graphics.Palette
 import androidx.preference.PreferenceManager
-import coil3.request.error
-import coil3.toBitmap
 import com.lagradost.cloudstream3.AnimeSearchResponse
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.LiveSearchResponse
@@ -27,7 +26,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SubtitleHelper
-import com.lagradost.cloudstream3.utils.UIHelper.createPaletteAsync
+import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 
 object SearchResultBuilder {
@@ -50,7 +49,7 @@ object SearchResultBuilder {
         itemView: View,
         nextFocusUp: Int? = null,
         nextFocusDown: Int? = null,
-        colorCallback : ((Palette) -> Unit)? = null
+        colorCallback: ((Palette) -> Unit)? = null
     ) {
         val cardView: ImageView = itemView.findViewById(R.id.imageView)
         val cardText: TextView? = itemView.findViewById(R.id.imageText)
@@ -81,15 +80,20 @@ object SearchResultBuilder {
         val showDub = showCache[textIsDub?.context?.getString(R.string.show_dub_key)] ?: false
         val showTitle = showCache[cardText?.context?.getString(R.string.show_title_key)] ?: false
         val showHd = showCache[textQuality?.context?.getString(R.string.show_hd_key)] ?: false
-
-        if(card is SyncAPI.LibraryItem) {
-            val showRating = (card.personalRating ?: 0) != 0
+        val showRatingView =
+            showCache[textQuality?.context?.getString(R.string.show_rating_key)] ?: false
+        if (card is SyncAPI.LibraryItem) {
+            val ratingText = card.personalRating?.toStringNull(0.1, 10, 1)
+            val showRating = !ratingText.isNullOrBlank()
             rating?.isVisible = showRating
             if (showRating) {
-                // We want to show 8.5 but not 8.0 hence the replace
-                val ratingText = ((card.personalRating ?: 0).toDouble() / 10).toString()
-                    .replace(".0", "")
-
+                rating?.text = ratingText
+            }
+        } else if (showRatingView) {
+            val ratingText = card.score?.toStringNull(0.1, 10, 1)
+            val showRating = !ratingText.isNullOrBlank()
+            rating?.isVisible = showRating
+            if (showRating) {
                 rating?.text = ratingText
             }
         }
@@ -126,15 +130,17 @@ object SearchResultBuilder {
         cardView.isVisible = true
         cardView.loadImage(card.posterUrl, card.posterHeaders) {
             error { getImageFromDrawable(itemView.context, R.drawable.default_cover) }
+            /*
+            createPaletteAsync is currently disabled as we use hardware acceleration on images
             val posterUrl = card.posterUrl
             if (posterUrl != null && colorCallback != null) {
                 this.listener(onSuccess = { _,success ->
                     val bitmap = success.image.toBitmap()
                     createPaletteAsync(posterUrl, bitmap, colorCallback)
                 })
-            }
+            }*/
         }
-        
+
         fun click(view: View?) {
             clickCallback.invoke(
                 SearchClickCallback(
@@ -172,7 +178,7 @@ object SearchResultBuilder {
 
         bg.isFocusable = false
         bg.isFocusableInTouchMode = false
-        if(!isLayout(TV)) {
+        if (!isLayout(TV)) {
             bg.setOnClickListener {
                 click(it)
             }
@@ -182,7 +188,7 @@ object SearchResultBuilder {
             }
         }
         //
-       //
+        //
         //
 
         itemView.setOnClickListener {
@@ -216,9 +222,9 @@ object SearchResultBuilder {
         */
 
         if (isLayout(TV)) {
-           // bg.isFocusable = true
-           // bg.isFocusableInTouchMode = true
-           // bg.touchscreenBlocksFocus = false
+            // bg.isFocusable = true
+            // bg.isFocusableInTouchMode = true
+            // bg.touchscreenBlocksFocus = false
             itemView.isFocusableInTouchMode = true
             itemView.isFocusable = true
         }
@@ -247,6 +253,7 @@ object SearchResultBuilder {
                     }
                 }
             }
+
             is DataStoreHelper.ResumeWatchingResult -> {
                 val pos = card.watchPos?.fixVisual()
                 if (pos != null) {
@@ -262,6 +269,7 @@ object SearchResultBuilder {
                         cardText?.context?.getNameFull(card.name, card.episode, card.season)
                 }
             }
+
             is AnimeSearchResponse -> {
                 val dubStatus = card.dubStatus
                 if (!dubStatus.isNullOrEmpty()) {
@@ -296,6 +304,30 @@ object SearchResultBuilder {
                     }
                 }
             }
+        }
+
+        // This is the logic for making the rounded corners more round on the top and bottom element
+        // a bit dirty to do memory allocation, but it makes it more extensible and is easier to reason about
+        // then a large if statement
+
+        // Requires that the ordering here is the same as in the xml
+        val boxes = arrayListOf<TextView>()
+        for (view in arrayOf(textIsDub, textIsSub, rating)) {
+            if (view?.isVisible == true) {
+                boxes.add(view)
+            }
+        }
+        if (boxes.size == 1) {
+            boxes[0].setBackgroundResource(R.drawable.bg_color_both)
+        } else if (boxes.size > 1) {
+            boxes[0].setBackgroundResource(R.drawable.bg_color_top)
+            for (i in 1 until boxes.size) {
+                boxes[i].setBackgroundResource(R.drawable.bg_color_center)
+            }
+            boxes[boxes.size - 1].setBackgroundResource(R.drawable.bg_color_bottom)
+        }
+        textIsDub?.apply {
+            backgroundTintList = ColorStateList.valueOf(context.colorFromAttribute(R.attr.textColor))
         }
     }
 }

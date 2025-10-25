@@ -61,14 +61,15 @@ open class PlayLtXyz: ExtractorApi() {
                     val linkUrl = item.data ?: ""
                     if (linkUrl.isNotBlank()) {
                         extractedLinksList.add(
-                            ExtractorLink(
+                            newExtractorLink(
                                 source = name,
                                 name = name,
                                 url = linkUrl,
-                                referer = url,
-                                quality = Qualities.Unknown.value,
-                                isM3u8 = true
-                            )
+                                type = ExtractorLinkType.M3U8
+                            ) {
+                                this.referer = url
+                                this.quality = Qualities.Unknown.value
+                            }
                         )
                     }
                 }

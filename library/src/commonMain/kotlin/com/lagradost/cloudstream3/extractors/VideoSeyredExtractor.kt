@@ -26,7 +26,7 @@ open class VideoSeyred : ExtractorApi() {
         for (track in response.tracks) {
             if (track.label != null && track.kind == "captions") {
                 subtitleCallback.invoke(
-                    SubtitleFile(
+                    newSubtitleFile(
                         lang = track.label,
                         url  = fixUrl(track.file)
                     )
@@ -36,14 +36,14 @@ open class VideoSeyred : ExtractorApi() {
 
         for (source in response.sources) {
             callback.invoke(
-                ExtractorLink(
+                newExtractorLink(
                     source  = this.name,
                     name    = this.name,
                     url     = source.file,
-                    referer = "${mainUrl}/",
-                    quality = Qualities.Unknown.value,
-                    type    = INFER_TYPE
-                )
+                ) {
+                    this.referer = "${mainUrl}/"
+                    this.quality = Qualities.Unknown.value
+                }
             )
         }
     }
