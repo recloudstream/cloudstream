@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
-import androidx.fragment.app.Fragment
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.databinding.HomeScrollViewBinding
 import com.lagradost.cloudstream3.databinding.HomeScrollViewTvBinding
@@ -33,6 +32,18 @@ class HomeScrollAdapter(
         }
 
         return ViewHolderState(binding)
+    }
+
+    override fun onClearView(holder: ViewHolderState<Any>) {
+        when (val binding = holder.view) {
+            is HomeScrollViewBinding -> {
+                clearImage(binding.homeScrollPreview)
+            }
+
+            is HomeScrollViewTvBinding -> {
+                clearImage(binding.homeScrollPreview)
+            }
+        }
     }
 
     override fun onBindContent(

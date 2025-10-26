@@ -77,6 +77,8 @@ class EpisodeAdapter(
     private val downloadClickCallback: (DownloadClickEvent) -> Unit,
 ) : NoStateAdapter<ResultEpisode>(diffCallback = BaseDiffCallback(itemSame = { a, b ->
     a.id == b.id
+}, contentSame = { a, b ->
+    a == b
 })) {
     companion object {
         const val HAS_POSTER: Int = 0

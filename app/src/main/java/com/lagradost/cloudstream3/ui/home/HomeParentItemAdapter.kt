@@ -182,11 +182,6 @@ open class ParentItemAdapter(
 
         return ParentItemHolder(binding)
     }
-
-    fun updateList(newList: List<HomePageList>) {
-        submitList(newList.map { HomeViewModel.ExpandableHomepageList(it, 1, false) }
-            .toMutableList())
-    }
 }
 
 @Suppress("DEPRECATION")

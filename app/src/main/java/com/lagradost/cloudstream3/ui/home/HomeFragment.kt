@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +13,6 @@ import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
@@ -77,6 +75,8 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.txt
+import androidx.core.net.toUri
+import androidx.core.view.isInvisible
 
 
 private const val TAG = "HomeFragment"
@@ -766,27 +766,24 @@ class HomeFragment : Fragment() {
             binding?.apply {
                 when (data) {
                     is Resource.Success -> {
-                        homeLoadingShimmer.stopShimmer()
-
                         val d = data.value
-                        saveHomepageToTV(d)
-
-                        val mutableListOfResponse = mutableListOf<SearchResponse>()
-                        listHomepageItems.clear()
-
                         (homeMasterRecycler.adapter as? ParentItemAdapter)?.submitList(d.values.map {
-
                             it.copy(
                                 list = it.list.copy(list = it.list.list.toMutableList())
                             )
-                        }.toMutableList())
+                        })
 
+                        saveHomepageToTV(d)
+
+                        listHomepageItems.clear()
                         homeLoading.isVisible = false
                         homeLoadingError.isVisible = false
                         homeMasterRecycler.isVisible = true
+                        homeLoadingShimmer.stopShimmer()
                         //home_loaded?.isVisible = true
                         if (toggleRandomButton) {
                             //Flatten list
+                            val mutableListOfResponse = mutableListOf<SearchResponse>()
                             d.values.forEach { dlist ->
                                 mutableListOfResponse.addAll(dlist.list.list)
                             }
@@ -812,7 +809,7 @@ class HomeFragment : Fragment() {
                             }) {
                                 try {
                                     val i = Intent(Intent.ACTION_VIEW)
-                                    i.data = Uri.parse(validAPIs[itemId].mainUrl)
+                                    i.data = validAPIs[itemId].mainUrl.toUri()
                                     startActivity(i)
                                 } catch (e: Exception) {
                                     logError(e)
@@ -822,7 +819,7 @@ class HomeFragment : Fragment() {
 
                         homeLoading.isVisible = false
                         homeLoadingError.isVisible = true
-                        homeMasterRecycler.isVisible = false
+                        homeMasterRecycler.isInvisible = true
 
                         // Based on https://github.com/recloudstream/cloudstream/pull/1438
                         val hasNoNetworkConnection = context?.isNetworkAvailable() == false
@@ -844,14 +841,22 @@ class HomeFragment : Fragment() {
                         homeReloadConnectionGoToDownloads.setOnClickListener {
                             activity.navigate(R.id.navigation_downloads)
                         }
+
+                        (homeMasterRecycler.adapter as? ParentItemAdapter)?.apply {
+                            submitList(null)
+                            clearState()
+                        }
                     }
 
                     is Resource.Loading -> {
-                        (homeMasterRecycler.adapter as? ParentItemAdapter)?.submitList(listOf())
                         homeLoadingShimmer.startShimmer()
                         homeLoading.isVisible = true
                         homeLoadingError.isVisible = false
-                        homeMasterRecycler.isVisible = false
+                        homeMasterRecycler.isInvisible = true
+                        (homeMasterRecycler.adapter as? ParentItemAdapter)?.apply {
+                            submitList(null)
+                            clearState()
+                        }
                         //home_loaded?.isVisible = false
                     }
                 }

@@ -96,7 +96,11 @@ abstract class BaseAdapter<
 
     open fun submitList(list: Collection<T>?) {
         // deep copy at least the top list, because otherwise adapter can go crazy
-        mDiffer.submitList(list?.let { CopyOnWriteArrayList(it) })
+        if (list.isNullOrEmpty()) {
+            mDiffer.submitList(null) // It is "faster" to submit null than emptyList()
+        } else {
+            mDiffer.submitList(CopyOnWriteArrayList(list))
+        }
     }
 
     override fun getItemCount(): Int {
@@ -139,7 +143,7 @@ abstract class BaseAdapter<
         }
     }
 
-    fun clear() {
+    fun clearState() {
         layoutManagerStates[id]?.clear()
     }
 
@@ -286,5 +290,5 @@ class BaseDiffCallback<T : Any>(
 ) : DiffUtil.ItemCallback<T>() {
     override fun areItemsTheSame(oldItem: T, newItem: T): Boolean = itemSame(oldItem, newItem)
     override fun areContentsTheSame(oldItem: T, newItem: T): Boolean = contentSame(oldItem, newItem)
-    override fun getChangePayload(oldItem: T, newItem: T): Any = Any()
+    override fun getChangePayload(oldItem: T, newItem: T): Any? = Any()
 }

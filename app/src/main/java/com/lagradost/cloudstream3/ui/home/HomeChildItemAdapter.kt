@@ -117,7 +117,7 @@ open class HomeChildItemAdapter(
     BaseAdapter<SearchResponse, Boolean>(
         id, diffCallback = BaseDiffCallback(
             itemSame = { a, b ->
-                a.url == b.url
+                a.url == b.url && a.name == b.name
             },
             contentSame = { a, b ->
                 a == b
