@@ -76,13 +76,11 @@ class SearchViewModel : ViewModel() {
         onGoingSearch = search(query, providersActive, ignoreSettings, isQuickSearch)
     }
 
-    fun updateHistory() = viewModelScope.launch {
-        ioSafe {
-            val items = getKeys("$currentAccount/$SEARCH_HISTORY_KEY")?.mapNotNull {
-                getKey<SearchHistoryItem>(it)
-            }?.sortedByDescending { it.searchedAt } ?: emptyList()
-            _currentHistory.postValue(items)
-        }
+    fun updateHistory() = ioSafe {
+        val items = getKeys("$currentAccount/$SEARCH_HISTORY_KEY")?.mapNotNull {
+            getKey<SearchHistoryItem>(it)
+        }?.sortedByDescending { it.searchedAt } ?: emptyList()
+        _currentHistory.postValue(items)
     }
 
     private val lock: MutableSet<String> = mutableSetOf()

@@ -488,13 +488,6 @@ class SearchFragment : Fragment() {
 
         }
 
-        observe(searchViewModel.currentHistory) { list ->
-            binding?.searchClearCallHistory?.isVisible = list.isNotEmpty()
-            (binding?.searchHistoryRecycler?.adapter as? SearchHistoryAdaptor?)?.updateList(list)
-        }
-
-        searchViewModel.updateHistory()
-
         observe(searchViewModel.searchResponse) {
             when (it) {
                 is Resource.Success -> {
@@ -580,7 +573,7 @@ class SearchFragment : Fragment() {
                 }
             })
 
-        val historyAdapter = SearchHistoryAdaptor(mutableListOf()) { click ->
+        val historyAdapter = SearchHistoryAdaptor { click ->
             val searchItem = click.item
             when (click.clickAction) {
                 SEARCH_HISTORY_OPEN -> {
@@ -632,6 +625,12 @@ class SearchFragment : Fragment() {
             }
         }
 
+        observe(searchViewModel.currentHistory) { list ->
+            binding?.searchClearCallHistory?.isVisible = list.isNotEmpty()
+            (binding?.searchHistoryRecycler?.adapter as? SearchHistoryAdaptor?)?.submitList(list)
+        }
+
+        searchViewModel.updateHistory()
 
         // SubtitlesFragment.push(activity)
         //searchViewModel.search("iron man")
