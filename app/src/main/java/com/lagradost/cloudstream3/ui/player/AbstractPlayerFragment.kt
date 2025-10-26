@@ -678,6 +678,10 @@ abstract class AbstractPlayerFragment(
     }
 
     override fun onDestroy() {
+        player.release()
+        player.releaseCallbacks()
+        player = CS3IPlayer()
+
         playerEventListener = null
         keyEventListener = null
         canEnterPipMode = false

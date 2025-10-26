@@ -516,9 +516,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     override fun onDestroy() {
         exitFullscreen()
-        player.release()
-        player.releaseCallbacks()
-        player = CS3IPlayer()
         super.onDestroy()
     }
 
