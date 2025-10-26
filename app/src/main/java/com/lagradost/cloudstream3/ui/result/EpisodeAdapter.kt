@@ -29,6 +29,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.html
+import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
@@ -99,6 +100,12 @@ class EpisodeAdapter(
     override fun onClearView(holder: ViewHolderState<Any>) {
         if (holder.itemView.hasFocus()) {
             holder.itemView.clearFocus()
+        }
+
+        when (val binding = holder.view) {
+            is ResultEpisodeLargeBinding -> {
+                clearImage(binding.episodePoster)
+            }
         }
         super.onClearView(holder)
     }
@@ -224,7 +231,21 @@ class EpisodeAdapter(
 
                     val posterVisible = !item.poster.isNullOrBlank()
                     if (posterVisible) {
-                        episodePoster.loadImage(item.poster)
+                        val isUpcoming = item.airDate != null && unixTimeMS < item.airDate
+                        episodePoster.loadImage(item.poster) {
+                            if (isUpcoming) {
+                                error {
+                                    // If the poster has an url, but it is faulty then
+                                    // we use the episodeUpcomingIcon if it is an upcoming episode
+                                    main {
+                                        // Make sure it is on the main thread
+                                        episodeUpcomingIcon.isVisible = true
+                                    }
+
+                                    null // We only care about the runnable
+                                }
+                            }
+                        }
                     } else {
                         // Clear the image
                         episodePoster.dispose()
