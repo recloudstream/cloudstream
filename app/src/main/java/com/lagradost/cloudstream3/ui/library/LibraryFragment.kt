@@ -45,6 +45,7 @@ import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.utils.txt
+import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_SHOW_METADATA
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
@@ -83,7 +84,7 @@ data class ProviderLibraryData(
     val apiName: String
 )
 
-class LibraryFragment : Fragment() {
+class LibraryFragment : BaseFragment<FragmentLibraryBinding>(FragmentLibraryBinding::inflate) {
     companion object {
 
         val listLibraryItems = mutableListOf<SyncAPI.LibraryItem>()
@@ -97,7 +98,6 @@ class LibraryFragment : Fragment() {
 
     private val libraryViewModel: LibraryViewModel by activityViewModels()
 
-    var binding: FragmentLibraryBinding? = null
     private var toggleRandomButton = false
 
     override fun onCreateView(
@@ -106,7 +106,7 @@ class LibraryFragment : Fragment() {
         val layout =
             if (isLayout(TV or EMULATOR)) R.layout.fragment_library_tv else R.layout.fragment_library
         val root = inflater.inflate(layout, container, false)
-        binding = try {
+        _binding = try {
             FragmentLibraryBinding.bind(root)
         } catch (t: Throwable) {
             CommonActivity.showToast(
@@ -118,13 +118,6 @@ class LibraryFragment : Fragment() {
         }
 
         return root
-
-        //return inflater.inflate(R.layout.fragment_library, container, false)
-    }
-
-    override fun onDestroyView() {
-        binding = null
-        super.onDestroyView()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -147,14 +140,7 @@ class LibraryFragment : Fragment() {
     }
 
     @SuppressLint("ResourceType", "CutPasteId")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        fixSystemBarsPadding(
-            binding?.root,
-            padBottom = isLandscape(),
-            padLeft = isLayout(TV or EMULATOR)
-        )
-
+    override fun onBindingCreated(binding: FragmentLibraryBinding, savedInstanceState: Bundle?) {
         binding?.sortFab?.setOnClickListener(sortChangeClickListener)
         binding?.librarySort?.setOnClickListener(sortChangeClickListener)
 
