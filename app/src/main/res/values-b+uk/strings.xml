@@ -701,4 +701,14 @@
     <string name="episode_action_play_mirror">Грати в дзеркало</string>"
     <string name="name">Ім\'я</string>
     <string name="resolution_and_name">Роздільна здатність та назва</string>
+    <string name="subs_subtitle_alignment">Вирівнювання субтитрів</string>
+    <string name="bottom_left">Внизу ліворуч</string>
+    <string name="bottom_center">Внизу по центру</string>
+    <string name="bottom_right">Внизу праворуч</string>
+    <string name="middle_left">Середній лівий</string>
+    <string name="middle_center">Середній центр</string>
+    <string name="middle_right">Середній правий</string>
+    <string name="top_left">Угорі ліворуч</string>
+    <string name="top_center">Верхній центр</string>
+    <string name="top_right">Угорі праворуч</string>
 </resources>
