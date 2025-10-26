@@ -252,7 +252,7 @@ object CommonActivity {
                         ?: return@registerForActivityResult
                     action.onResultSafe(act, result.data)
                     removeKey("last_click_action")
-                    removeKey("last_opened_id")
+                    removeKey("last_opened")
                 }
             }
 

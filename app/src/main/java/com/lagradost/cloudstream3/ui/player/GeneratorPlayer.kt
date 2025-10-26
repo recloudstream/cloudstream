@@ -1610,56 +1610,15 @@ class GeneratorPlayer : FullScreenPlayer() {
                 viewModel.loadStamps(duration)
         }
 
-        viewModel.getId()?.let {
-            DataStoreHelper.setViewPos(it, position, duration)
-            when(val meta = currentMeta){
-                is ResultEpisode->{
-                    if(meta.videoWatchState == VideoWatchState.Watched){
-                        setVideoWatchState(it, VideoWatchState.None)
-                    }
-                }
-            }
-        }
-
         val percentage = position * 100L / duration
 
-        val nextEp = percentage >= NEXT_WATCH_EPISODE_PERCENTAGE
-        val resumeMeta = if (nextEp) nextMeta else currentMeta
-        if (resumeMeta == null && nextEp) {
-            // remove last watched as it is the last episode and you have watched too much
-            when (val newMeta = currentMeta) {
-                is ResultEpisode -> {
-                    DataStoreHelper.removeLastWatched(newMeta.parentId)
-                }
-
-                is ExtractorUri -> {
-                    DataStoreHelper.removeLastWatched(newMeta.parentId)
-                }
-            }
-        } else {
-            // save resume
-            when (resumeMeta) {
-                is ResultEpisode -> {
-                    DataStoreHelper.setLastWatched(
-                        resumeMeta.parentId,
-                        resumeMeta.id,
-                        resumeMeta.episode,
-                        resumeMeta.season,
-                        isFromDownload = false
-                    )
-                }
-
-                is ExtractorUri -> {
-                    DataStoreHelper.setLastWatched(
-                        resumeMeta.parentId,
-                        resumeMeta.id,
-                        resumeMeta.episode,
-                        resumeMeta.season,
-                        isFromDownload = true
-                    )
-                }
-            }
-        }
+        DataStoreHelper.setViewPosAndResume(
+            viewModel.getId(),
+            position,
+            duration,
+            currentMeta,
+            nextMeta
+        )
 
         var isOpVisible = false
         when (val meta = currentMeta) {

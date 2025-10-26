@@ -23,7 +23,10 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
+import com.lagradost.cloudstream3.ui.player.ExtractorUri
+import com.lagradost.cloudstream3.ui.player.NEXT_WATCH_EPISODE_PERCENTAGE
 import com.lagradost.cloudstream3.ui.result.EpisodeSortType
+import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.VideoWatchState
 import com.lagradost.cloudstream3.utils.AppContextUtils.filterProviderByPreferredMedia
 import java.util.Calendar
@@ -643,6 +646,62 @@ object DataStoreHelper {
         setKey("$currentAccount/$VIDEO_POS_DUR", id.toString(), PosDur(pos, dur))
     }
 
+    /** Sets the position, duration, and resume data of an episode/movie,
+     *
+     * if nextEpisode is not specified it will not be able to set the next episode as resumable if progress > NEXT_WATCH_EPISODE_PERCENTAGE
+     * */
+    fun setViewPosAndResume(id: Int?, position: Long, duration: Long, currentEpisode: Any?, nextEpisode: Any?) {
+        setViewPos(id, position, duration)
+        if (id != null) {
+            when (val meta = currentEpisode) {
+                is ResultEpisode -> {
+                    if (meta.videoWatchState == VideoWatchState.Watched) {
+                        setVideoWatchState(id, VideoWatchState.None)
+                    }
+                }
+            }
+        }
+
+        val percentage = position * 100L / duration
+        val nextEp = percentage >= NEXT_WATCH_EPISODE_PERCENTAGE
+        val resumeMeta = if (nextEp) nextEpisode else currentEpisode
+        if (resumeMeta == null && nextEp) {
+            // remove last watched as it is the last episode and you have watched too much
+            when (val newMeta = currentEpisode) {
+                is ResultEpisode -> {
+                    removeLastWatched(newMeta.parentId)
+                }
+
+                is ExtractorUri -> {
+                    removeLastWatched(newMeta.parentId)
+                }
+            }
+        } else {
+            // save resume
+            when (resumeMeta) {
+                is ResultEpisode -> {
+                    setLastWatched(
+                        resumeMeta.parentId,
+                        resumeMeta.id,
+                        resumeMeta.episode,
+                        resumeMeta.season,
+                        isFromDownload = false
+                    )
+                }
+
+                is ExtractorUri -> {
+                    setLastWatched(
+                        resumeMeta.parentId,
+                        resumeMeta.id,
+                        resumeMeta.episode,
+                        resumeMeta.season,
+                        isFromDownload = true
+                    )
+                }
+            }
+        }
+    }
+
     fun getViewPos(id: Int?): PosDur? {
         if (id == null) return null
         return getKey("$currentAccount/$VIDEO_POS_DUR", id.toString(), null)
@@ -665,7 +724,7 @@ object DataStoreHelper {
     }
 
     fun getDub(id: Int): DubStatus? {
-        return DubStatus.values()
+        return DubStatus.entries
             .getOrNull(getKey("$currentAccount/$RESULT_DUB", id.toString(), -1) ?: -1)
     }
 
@@ -717,7 +776,8 @@ object DataStoreHelper {
             getKey("${idPrefix}_sync", id.toString())
         }
     }
-   var pinnedProviders:Array<String>
+
+    var pinnedProviders: Array<String>
         get() = getKey(USER_PINNED_PROVIDERS) ?: emptyArray<String>()
         set(value) = setKey(USER_PINNED_PROVIDERS, value)
 
