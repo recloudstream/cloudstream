@@ -42,7 +42,7 @@ class SearchAdapter(
 })) {
     companion object {
         val sharedPool =
-            RecyclerView.RecycledViewPool().apply { this.setMaxRecycledViews(0, 10) }
+            RecyclerView.RecycledViewPool().apply { this.setMaxRecycledViews(CONTENT, 10) }
     }
 
     var hasNext: Boolean = false

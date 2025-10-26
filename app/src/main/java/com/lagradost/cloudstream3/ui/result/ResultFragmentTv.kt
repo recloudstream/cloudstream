@@ -882,7 +882,7 @@ class ResultFragmentTv : Fragment() {
                     }
 
 
-                    (resultEpisodes.adapter as? EpisodeAdapter)?.updateList(episodes.value)
+                    (resultEpisodes.adapter as? EpisodeAdapter)?.submitList(episodes.value)
                 }
             }
         }

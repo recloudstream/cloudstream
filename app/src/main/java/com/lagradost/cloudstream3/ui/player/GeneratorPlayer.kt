@@ -2026,7 +2026,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     nextRight = FOCUS_SELF,
                 )
                 val episodes = allMeta ?: emptyList()
-                (playerEpisodeList.adapter as? EpisodeAdapter)?.updateList(episodes)
+                (playerEpisodeList.adapter as? EpisodeAdapter)?.submitList(episodes)
 
                 // Scroll to current episode
                 viewModel.getCurrentIndex()?.let { index ->

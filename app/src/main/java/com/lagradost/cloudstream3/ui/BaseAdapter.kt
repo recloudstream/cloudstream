@@ -110,8 +110,22 @@ abstract class BaseAdapter<
     open fun onBindFooter(holder: ViewHolderState<S>) = Unit
     open fun onBindHeader(holder: ViewHolderState<S>) = Unit
     open fun onCreateContent(parent: ViewGroup): ViewHolderState<S> = throw NotImplementedError()
+    open fun onCreateCustomContent(
+        parent: ViewGroup,
+        viewType: Int
+    ) = onCreateContent(parent)
+
     open fun onCreateFooter(parent: ViewGroup): ViewHolderState<S> = throw NotImplementedError()
+    open fun onCreateCustomFooter(
+        parent: ViewGroup,
+        viewType: Int
+    ) = onCreateFooter(parent)
+
     open fun onCreateHeader(parent: ViewGroup): ViewHolderState<S> = throw NotImplementedError()
+    open fun onCreateCustomHeader(
+        parent: ViewGroup,
+        viewType: Int
+    ) = onCreateHeader(parent)
 
     override fun onViewAttachedToWindow(holder: ViewHolderState<S>) {}
     override fun onViewDetachedFromWindow(holder: ViewHolderState<S>) {}
@@ -161,15 +175,19 @@ abstract class BaseAdapter<
         super.onDetachedFromRecyclerView(recyclerView)
     }
 
+    open fun customContentViewType(item: T): Int = 0
+    open fun customFooterViewType(): Int = 0
+    open fun customHeaderViewType(): Int = 0
+
     final override fun getItemViewType(position: Int): Int {
         if (position < headers) {
-            return HEADER
+            return HEADER or customHeaderViewType()
         }
-        if (position - headers >= mDiffer.currentList.size) {
-            return FOOTER
+        val realPosition = position - headers
+        if (realPosition >= mDiffer.currentList.size) {
+            return FOOTER or customFooterViewType()
         }
-
-        return CONTENT
+        return CONTENT or customContentViewType(getItem(realPosition))
     }
 
     final override fun onViewRecycled(holder: ViewHolderState<S>) {
@@ -187,10 +205,10 @@ abstract class BaseAdapter<
     open fun onClearView(holder: ViewHolderState<S>) {}
 
     final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderState<S> {
-        return when (viewType) {
-            CONTENT -> onCreateContent(parent)
-            HEADER -> onCreateHeader(parent)
-            FOOTER -> onCreateFooter(parent)
+        return when (viewType and TYPE_MASK) {
+            CONTENT -> onCreateCustomContent(parent, viewType and CUSTOM_MASK)
+            HEADER -> onCreateCustomHeader(parent, viewType and CUSTOM_MASK)
+            FOOTER -> onCreateCustomFooter(parent, viewType and CUSTOM_MASK)
             else -> throw NotImplementedError()
         }
     }
@@ -205,7 +223,7 @@ abstract class BaseAdapter<
             super.onBindViewHolder(holder, position, payloads)
             return
         }
-        when (getItemViewType(position)) {
+        when (getItemViewType(position) and TYPE_MASK) {
             CONTENT -> {
                 val realPosition = position - headers
                 val item = getItem(realPosition)
@@ -223,7 +241,7 @@ abstract class BaseAdapter<
     }
 
     final override fun onBindViewHolder(holder: ViewHolderState<S>, position: Int) {
-        when (getItemViewType(position)) {
+        when (getItemViewType(position) and TYPE_MASK) {
             CONTENT -> {
                 val realPosition = position - headers
                 val item = getItem(realPosition)
@@ -250,9 +268,15 @@ abstract class BaseAdapter<
             image?.dispose()
         }
 
-        const val HEADER: Int = 1
-        const val FOOTER: Int = 2
-        const val CONTENT: Int = 0
+        // Use the lowermost MASK_SIZE bits for the custom content,
+        // use the uppermost 32 - MASK_SIZE to the type
+        private const val MASK_SIZE = 28
+        private const val CUSTOM_MASK = (1 shl MASK_SIZE) - 1
+        private const val TYPE_MASK = CUSTOM_MASK.inv()
+        const val HEADER: Int = 3 shl MASK_SIZE
+        const val FOOTER: Int = 2 shl MASK_SIZE
+        /** For custom content, write `CONTENT or X` when calling setMaxRecycledViews  */
+        const val CONTENT: Int = 1 shl MASK_SIZE
     }
 }
 
