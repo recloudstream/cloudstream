@@ -137,9 +137,11 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
                 dialog?.dismissSafe(activity)
             }
 
-            val adapter = AccountAdapter(accounts) {
+            val adapter = AccountAdapter {
                 dialog?.dismissSafe(activity)
                 api.accountId = it.card.user.id
+            }.apply {
+                submitList(accounts.toList())
             }
             val list = dialog.findViewById<RecyclerView>(R.id.account_list)
             list?.adapter = adapter

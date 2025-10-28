@@ -41,6 +41,7 @@ import com.lagradost.cloudstream3.ui.player.PlayerEventType
 import com.lagradost.cloudstream3.ui.player.Torrent
 import com.lagradost.cloudstream3.ui.result.ActorAdaptor
 import com.lagradost.cloudstream3.ui.result.EpisodeAdapter
+import com.lagradost.cloudstream3.ui.result.ImageAdapter
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -238,7 +239,7 @@ object CommonActivity {
         for (pool in arrayOf(
             PluginAdapter.sharedPool, HomeChildItemAdapter.sharedPool,
             ParentItemAdapter.sharedPool, ActorAdaptor.sharedPool, EpisodeAdapter.sharedPool,
-            SearchAdapter.sharedPool
+            SearchAdapter.sharedPool, ImageAdapter.sharedPool
         )) {
             pool.clear()
         }

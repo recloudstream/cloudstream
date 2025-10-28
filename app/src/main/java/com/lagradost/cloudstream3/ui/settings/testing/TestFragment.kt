@@ -35,9 +35,7 @@ class TestFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding?.apply {
-            providerTestRecyclerView.adapter = TestResultAdapter(
-                mutableListOf()
-            )
+            providerTestRecyclerView.adapter = TestResultAdapter()
 
             testViewModel.init()
             if (testViewModel.isRunningTest) {
@@ -51,7 +49,7 @@ class TestFragment : Fragment() {
             observeNullable(testViewModel.providerResults) {
                 safe {
                     val newItems = it.sortedBy { api -> api.first.name }
-                    (providerTestRecyclerView.adapter as? TestResultAdapter)?.updateList(
+                    (providerTestRecyclerView.adapter as? TestResultAdapter)?.submitList(
                         newItems
                     )
                 }

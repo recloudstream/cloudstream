@@ -159,7 +159,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
                 logError(e) // kinda ironic
             }
 
-            val adapter = LogcatAdapter(logList)
+            val adapter = LogcatAdapter().apply { submitList(logList) }
             binding.logcatRecyclerView.layoutManager = LinearLayoutManager(pref.context)
             binding.logcatRecyclerView.adapter = adapter
 
