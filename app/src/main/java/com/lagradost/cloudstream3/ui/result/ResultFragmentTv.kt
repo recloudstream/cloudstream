@@ -121,7 +121,7 @@ class ResultFragmentTv : Fragment() {
     }
 
     private fun RecyclerView?.update(data: List<SelectData>) {
-        (this?.adapter as? SelectAdaptor?)?.updateSelectionList(data)
+        (this?.adapter as? SelectAdaptor?)?.submitList(data)
         this?.isVisible = data.size > 1
     }
 

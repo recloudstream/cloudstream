@@ -2,10 +2,11 @@ package com.lagradost.cloudstream3.ui.result
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.databinding.ResultSelectionBinding
+import com.lagradost.cloudstream3.ui.BaseDiffCallback
+import com.lagradost.cloudstream3.ui.NoStateAdapter
+import com.lagradost.cloudstream3.ui.ViewHolderState
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.UiText
@@ -13,93 +14,56 @@ import com.lagradost.cloudstream3.utils.setText
 
 typealias SelectData = Pair<UiText?, Any>
 
-class SelectAdaptor(val callback: (Any) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private val selection: MutableList<SelectData> = mutableListOf()
+class SelectAdaptor(val callback: (Any) -> Unit) :
+    NoStateAdapter<SelectData>(diffCallback = BaseDiffCallback(itemSame = { a, b ->
+        a.second == b.second
+    }, contentSame = { a, b ->
+        a == b
+    })) {
     private var selectedIndex: Int = -1
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return SelectViewHolder(
-            ResultSelectionBinding.inflate(LayoutInflater.from(parent.context), parent, false),
-
-                    //LayoutInflater.from(parent.context).inflate(R.layout.result_selection, parent, false),
+    override fun onCreateContent(parent: ViewGroup): ViewHolderState<Any> {
+        return ViewHolderState(
+            ResultSelectionBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
         )
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (holder) {
-            is SelectViewHolder -> {
-                holder.bind(selection[position], position == selectedIndex, callback)
+    override fun onBindContent(holder: ViewHolderState<Any>, item: SelectData, position: Int) {
+        when (val binding = holder.view) {
+            is ResultSelectionBinding -> {
+                binding.root.apply {
+                    if (isLayout(TV)) {
+                        isFocusable = true
+                        isFocusableInTouchMode = true
+                    }
+
+                    isSelected = position == selectedIndex
+                    setText(item.first)
+                    setOnClickListener {
+                        callback.invoke(item.second)
+                    }
+                }
             }
         }
     }
 
-    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
-        if(holder.itemView.hasFocus()) {
+    override fun onViewDetachedFromWindow(holder: ViewHolderState<Any>) {
+        if (holder.itemView.hasFocus()) {
             holder.itemView.clearFocus()
         }
     }
 
-    override fun getItemCount(): Int {
-        return selection.size
-    }
-
     fun select(newIndex: Int, recyclerView: RecyclerView?) {
-        if(recyclerView == null) return
-        if(newIndex == selectedIndex) return
+        if (recyclerView == null) return
+        if (newIndex == selectedIndex) return
         val oldIndex = selectedIndex
         selectedIndex = newIndex
 
         notifyItemChanged(selectedIndex)
         notifyItemChanged(oldIndex)
     }
-
-    fun updateSelectionList(newList: List<SelectData>) {
-        val diffResult = DiffUtil.calculateDiff(
-            SelectDataCallback(this.selection, newList)
-        )
-
-        selection.clear()
-        selection.addAll(newList)
-
-        diffResult.dispatchUpdatesTo(this)
-    }
-
-
-    private class SelectViewHolder(
-        binding: ResultSelectionBinding,
-    ) :
-        RecyclerView.ViewHolder(binding.root) {
-        private val item: MaterialButton = binding.root
-
-        fun bind(
-            data: SelectData, isSelected: Boolean, callback: (Any) -> Unit
-        ) {
-            if (isLayout(TV)) {
-                item.isFocusable = true
-                item.isFocusableInTouchMode = true
-            }
-
-            item.isSelected = isSelected
-            item.setText(data.first)
-            item.setOnClickListener {
-                callback.invoke(data.second)
-            }
-        }
-    }
-}
-
-class SelectDataCallback(
-    private val oldList: List<SelectData>,
-    private val newList: List<SelectData>
-) :
-    DiffUtil.Callback() {
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-        oldList[oldItemPosition].second == newList[newItemPosition].second
-
-    override fun getOldListSize() = oldList.size
-
-    override fun getNewListSize() = newList.size
-
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-        oldList[oldItemPosition] == newList[newItemPosition]
 }
