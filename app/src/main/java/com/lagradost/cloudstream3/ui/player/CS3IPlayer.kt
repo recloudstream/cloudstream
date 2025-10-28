@@ -37,6 +37,7 @@ import androidx.media3.datasource.HttpDataSource
 import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
 import androidx.media3.datasource.cache.SimpleCache
+import androidx.media3.datasource.cronet.CronetDataSource
 import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.DefaultRenderersFactory
@@ -95,13 +96,16 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
 import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
 import kotlinx.coroutines.delay
+import org.chromium.net.CronetEngine
 import java.io.File
 import java.util.UUID
+import java.util.concurrent.Executors
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
 import kotlin.collections.HashSet
 import kotlin.text.StringBuilder
+import androidx.core.net.toUri
 
 const val TAG = "CS3ExoPlayer"
 const val PREFERRED_AUDIO_LANGUAGE_KEY = "preferred_audio_language"
@@ -204,8 +208,20 @@ class CS3IPlayer : IPlayer {
         }
     }
 
+    /**
+     * As initCallbacks and releaseCallbacks must always be done,
+     * we use this to say that the player is in use.
+     * */
+    @Volatile
+    var isPlayerActive: Boolean = false
+
     override fun releaseCallbacks() {
         eventHandler = null
+        if (isPlayerActive) {
+            isPlayerActive = false
+            activePlayers -= 1
+            releaseCronetEngine()
+        }
     }
 
     override fun initCallbacks(
@@ -214,6 +230,10 @@ class CS3IPlayer : IPlayer {
     ) {
         this.requestedListeningPercentages = requestedListeningPercentages
         this.eventHandler = eventHandler
+        if (!isPlayerActive) {
+            isPlayerActive = true
+            activePlayers += 1
+        }
     }
 
     // I know, this is not a perfect solution, however it works for fixing subs
@@ -639,6 +659,62 @@ class CS3IPlayer : IPlayer {
     }
 
     companion object {
+        private const val CRONET_TIMEOUT_MS = 15_000
+
+        /**
+         * Single shared engine, to minimize the overhead of maintaining many as:
+         * 1. Cpu time/Startup time
+         * 2. Mem consumption/GC
+         * 3. Disk usage, as we simply use the same folder
+         * */
+        private var cronetEngine: CronetEngine? = null
+
+        /**
+         * How many active sessions we have.
+         *
+         * However in reality it should never go negative or be more than 1,
+         * but this makes more sense architecturally.
+         * */
+        @Volatile
+        private var activePlayers = 0
+
+        /** Unique monotonically increasing id to keep track of the last release call */
+        @Volatile
+        private var cronetReleasedId = 0
+
+        fun releaseCronetEngine() {
+            if (cronetEngine == null) return
+
+            // Delayed release, as we do not want to restart it when opening trailers ect
+            val id = ++cronetReleasedId
+            val posted = Handler(Looper.getMainLooper()).postDelayed({
+                // This might get dropped, but that should be very rare
+                // and should not affect it.
+                releaseCronetEngineInstantly(id)
+            }, 60_000) // 1min timeout before release
+
+            // If not posted, then run instantly
+            if (!posted) {
+                releaseCronetEngineInstantly(id)
+            }
+        }
+
+        private fun releaseCronetEngineInstantly(id: Int) {
+            // We should release if and only if this was the last call, and
+            // there is no active players
+            if (activePlayers == 0 && id == cronetReleasedId) {
+                try {
+                    cronetEngine?.shutdown()
+                } catch (t: Throwable) {
+                    logError(t)
+                } finally {
+                    Log.d(TAG, "CronetEngine shutdown")
+                    // Even if it fails to shutdown, the GC should take care of it
+                    cronetEngine = null
+                }
+            }
+        }
+
         /**
          * Setting this variable is permanent across app sessions.
          **/
@@ -664,7 +740,42 @@ class CS3IPlayer : IPlayer {
             }
         }
 
-        private fun createOnlineSource(link: ExtractorLink): HttpDataSource.Factory {
+        fun tryCreateEngine(context: Context, diskCacheSize: Long): CronetEngine? {
+            // Fast case, no need to recreate it
+            cronetEngine?.let {
+                return it
+            }
+
+            // https://gist.github.com/ShivamKumarJha/3c8398b47053ae05112d2a8f8b5de531
+            return try {
+                val cacheDirectory = File(context.cacheDir, "CronetEngine")
+                cacheDirectory.deleteRecursively()
+                if (!cacheDirectory.exists()) {
+                    cacheDirectory.mkdirs()
+                }
+                CronetEngine.Builder(context)
+                    .enableQuic(true)
+                    .setStoragePath(cacheDirectory.absolutePath)
+                    .setLibraryLoader(null)
+                    .enableHttpCache(CronetEngine.Builder.HTTP_CACHE_DISK, diskCacheSize)
+                    .build().also { buildEngine ->
+                        Log.d(
+                            TAG,
+                            "Created CronetEngine with cache at ${cacheDirectory.absolutePath}"
+                        )
+                        cronetEngine = buildEngine
+                    }
+            } catch (t: Throwable) {
+                logError(t)
+                // Something went wrong, so we use the backup okhttp
+                null
+            }
+        }
+
+        private fun createOnlineSource(
+            link: ExtractorLink,
+            engine: CronetEngine?
+        ): HttpDataSource.Factory {
             val provider = getApiFromNameNull(link.source)
             val interceptor = provider?.getVideoInterceptor(link)
             val userAgent = link.headers.entries.find {
@@ -672,10 +783,22 @@ class CS3IPlayer : IPlayer {
             }?.value
 
             val source = if (interceptor == null) {
-                DefaultHttpDataSource.Factory() //TODO USE app.baseClient
-                    .setUserAgent(userAgent ?: USER_AGENT)
-                    .setAllowCrossProtocolRedirects(true)   //https://stackoverflow.com/questions/69040127/error-code-io-bad-http-status-exoplayer-android
+                if (engine == null) {
+                    Log.d(TAG, "Using DefaultHttpDataSource for $link")
+                    DefaultHttpDataSource.Factory() //TODO USE app.baseClient
+                        .setUserAgent(userAgent ?: USER_AGENT)
+                        .setAllowCrossProtocolRedirects(true) // https://stackoverflow.com/questions/69040127/error-code-io-bad-http-status-exoplayer-android
+                } else {
+                    Log.d(TAG, "Using CronetDataSource for $link")
+                    CronetDataSource.Factory(engine, Executors.newSingleThreadExecutor())
+                        .setUserAgent(userAgent ?: USER_AGENT)
+                        .setConnectionTimeoutMs(CRONET_TIMEOUT_MS)
+                        .setReadTimeoutMs(CRONET_TIMEOUT_MS)
+                        .setResetTimeoutOnRedirects(true)
+                        .setHandleSetCookieRequests(true)
+                }
             } else {
+                Log.d(TAG, "Using OkHttpDataSource for $link")
                 val client = app.baseClient.newBuilder()
                     .addInterceptor(interceptor)
                     .build()
@@ -1508,7 +1631,7 @@ class CS3IPlayer : IPlayer {
     ): Pair<List<SingleSampleMediaSource>, List<SubtitleData>> {
         val activeSubtitles = ArrayList<SubtitleData>()
         val subSources = subHelper.getAllSubtitles().mapNotNull { sub ->
-            val subConfig = MediaItem.SubtitleConfiguration.Builder(Uri.parse(sub.getFixedUrl()))
+            val subConfig = MediaItem.SubtitleConfiguration.Builder(sub.getFixedUrl().toUri())
                 .setMimeType(sub.mimeType)
                 .setLanguage("_${sub.name}")
                 .setId(sub.getId())
@@ -1717,7 +1840,8 @@ class CS3IPlayer : IPlayer {
                 )
             }
 
-            val onlineSourceFactory = createOnlineSource(link)
+            val onlineSourceFactory =
+                createOnlineSource(link, tryCreateEngine(context, simpleCacheSize))
             val offlineSourceFactory = context.createOfflineSource()
 
             val (subSources, activeSubtitles) = getSubSources(
