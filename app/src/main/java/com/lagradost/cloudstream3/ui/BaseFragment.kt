@@ -11,9 +11,11 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceFragmentCompat
 import androidx.viewbinding.ViewBinding
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setSystemBarsPadding
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 
@@ -208,20 +210,16 @@ abstract class BaseDialogFragment<T : ViewBinding>(
     }
 }
 
-abstract class BasePreferenceFragmentCompat<T : ViewBinding>(
+abstract class BaseBottomSheetDialogFragment<T : ViewBinding>(
     override val bindingCreator: BaseFragment.BindingCreator<T>
-) : PreferenceFragmentCompat(), BaseFragmentHelper<T> {
+) : BottomSheetDialogFragment(), BaseFragmentHelper<T> {
     override var _binding: T? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        // We can't have null for this one
-        return createBinding(inflater, container, savedInstanceState) ?:
-            super.onCreateView(inflater, container, savedInstanceState)
-    }
+    ): View? = createBinding(inflater, container, savedInstanceState)
 
     final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -237,5 +235,17 @@ abstract class BasePreferenceFragmentCompat<T : ViewBinding>(
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+}
+
+abstract class BasePreferenceFragmentCompat(): PreferenceFragmentCompat() {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setSystemBarsPadding()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        setSystemBarsPadding()
     }
 }
