@@ -19,7 +19,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
@@ -47,6 +46,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.BaseAdapter
+import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.bindChips
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.currentSpan
@@ -79,7 +79,9 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import java.util.Locale
 import java.util.concurrent.locks.ReentrantLock
 
-class SearchFragment : Fragment() {
+class SearchFragment : BaseFragment<FragmentSearchBinding>(
+    BaseFragment.BindingCreator.Bind(FragmentSearchBinding::bind)
+) {
     companion object {
         fun List<SearchResponse>.filterSearchResponse(): List<SearchResponse> {
             return this.filter { response ->
@@ -105,7 +107,6 @@ class SearchFragment : Fragment() {
 
     private val searchViewModel: SearchViewModel by activityViewModels()
     private var bottomSheetDialog: BottomSheetDialog? = null
-    var binding: FragmentSearchBinding? = null
 
     private val speechRecognizerLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -119,6 +120,9 @@ class SearchFragment : Fragment() {
             }
         }
 
+    override fun pickLayout(): Int? =
+        if (isLayout(TV or EMULATOR)) R.layout.fragment_search_tv else R.layout.fragment_search
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -128,18 +132,7 @@ class SearchFragment : Fragment() {
             WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE
         )
         bottomSheetDialog?.ownShow()
-
-
-        binding = try {
-            val layout =
-                if (isLayout(TV or EMULATOR)) R.layout.fragment_search_tv else R.layout.fragment_search
-            val root = inflater.inflate(layout, container, false)
-            FragmentSearchBinding.bind(root)
-        } catch (t: Throwable) {
-            FragmentSearchBinding.inflate(inflater)
-        }
-
-        return binding?.root
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     private fun fixGrid() {
@@ -159,7 +152,6 @@ class SearchFragment : Fragment() {
     override fun onDestroyView() {
         hideKeyboard()
         bottomSheetDialog?.ownHide()
-        binding = null
         super.onDestroyView()
     }
 
@@ -233,19 +225,22 @@ class SearchFragment : Fragment() {
         }
     }
 
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun fixPadding(view: View) {
         fixSystemBarsPadding(
-            binding?.searchRoot,
+            view,
             padBottom = isLandscape(),
             padLeft = isLayout(TV or EMULATOR)
         )
+    }
 
+    override fun onBindingCreated(
+        binding: FragmentSearchBinding,
+        savedInstanceState: Bundle?
+    ) {
         fixGrid()
         reloadRepos()
 
-        binding?.apply {
+        binding.apply {
             val adapter =
                 SearchAdapter(
                     searchAutofitResults,
@@ -260,7 +255,7 @@ class SearchFragment : Fragment() {
             searchLoadingBar.alpha = 0f
         }
 
-        binding?.voiceSearch?.setOnClickListener { searchView ->
+        binding.voiceSearch.setOnClickListener { searchView ->
             searchView?.context?.let { ctx ->
                 try {
                     if (!SpeechRecognizer.isRecognitionAvailable(ctx)) {
@@ -287,11 +282,11 @@ class SearchFragment : Fragment() {
         }
 
         val searchExitIcon =
-            binding?.mainSearch?.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
+            binding.mainSearch.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
 
         selectedApis = DataStoreHelper.searchPreferenceProviders.toMutableSet()
 
-        binding?.searchFilter?.setOnClickListener { searchView ->
+        binding.searchFilter.setOnClickListener { searchView ->
             searchView?.context?.let { ctx ->
                 val validAPIs = ctx.filterProviderByPreferredMedia(hasHomePageIsRequired = false)
                 var currentValidApis = listOf<MainAPI>()
@@ -378,7 +373,7 @@ class SearchFragment : Fragment() {
                             selectedSearchTypes.clear()
                             selectedSearchTypes.addAll(list)
                             updateChips(
-                                binding?.tvtypesChipsScroll?.tvtypesChips,
+                                binding.tvtypesChipsScroll.tvtypesChips,
                                 selectedSearchTypes
                             )
 
@@ -407,7 +402,7 @@ class SearchFragment : Fragment() {
 
                         // run search when dialog is close
                         if (previousSelectedApis != selectedApis.toSet() || previousSelectedSearchTypes != selectedSearchTypes.toSet()) {
-                            search(binding?.mainSearch?.query?.toString())
+                            search(binding.mainSearch.query.toString())
                         }
                     }
                     updateList(selectedSearchTypes.toList())
@@ -421,15 +416,15 @@ class SearchFragment : Fragment() {
         selectedSearchTypes = DataStoreHelper.searchPreferenceTags.toMutableList()
 
         if (isLayout(TV)) {
-            binding?.searchFilter?.isFocusable = true
-            binding?.searchFilter?.isFocusableInTouchMode = true
+            binding.searchFilter.isFocusable = true
+            binding.searchFilter.isFocusableInTouchMode = true
         }
 
-        binding?.mainSearch?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding.mainSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 search(query)
 
-                binding?.mainSearch?.let {
+                binding.mainSearch.let {
                     hideKeyboard(it)
                 }
 
@@ -443,7 +438,7 @@ class SearchFragment : Fragment() {
                     searchViewModel.clearSearch()
                     searchViewModel.updateHistory()
                 }
-                binding?.apply {
+                binding.apply {
                     searchHistoryHolder.isVisible = showHistory
                     searchMasterRecycler.isVisible = !showHistory && isAdvancedSearch
                     searchAutofitResults.isVisible = !showHistory && !isAdvancedSearch
@@ -453,7 +448,7 @@ class SearchFragment : Fragment() {
             }
         })
 
-        binding?.searchClearCallHistory?.setOnClickListener {
+        binding.searchClearCallHistory.setOnClickListener {
             activity?.let { ctx ->
                 val builder: AlertDialog.Builder = AlertDialog.Builder(ctx)
                 val dialogClickListener =
@@ -493,24 +488,24 @@ class SearchFragment : Fragment() {
                     it.value.let { data ->
                         val list = data.list
                         if (list.isNotEmpty()) {
-                            (binding?.searchAutofitResults?.adapter as? SearchAdapter)?.submitList(
+                            (binding.searchAutofitResults.adapter as? SearchAdapter)?.submitList(
                                 list
                             )
                         }
                     }
                     searchExitIcon?.alpha = 1f
-                    binding?.searchLoadingBar?.alpha = 0f
+                    binding.searchLoadingBar.alpha = 0f
                 }
 
                 is Resource.Failure -> {
                     // Toast.makeText(activity, "Server error", Toast.LENGTH_LONG).show()
                     searchExitIcon?.alpha = 1f
-                    binding?.searchLoadingBar?.alpha = 0f
+                    binding.searchLoadingBar.alpha = 0f
                 }
 
                 is Resource.Loading -> {
                     searchExitIcon?.alpha = 0f
-                    binding?.searchLoadingBar?.alpha = 1f
+                    binding.searchLoadingBar.alpha = 1f
                 }
             }
         }
@@ -520,7 +515,7 @@ class SearchFragment : Fragment() {
             try {
                 // https://stackoverflow.com/questions/6866238/concurrent-modification-exception-adding-to-an-arraylist
                 listLock.lock()
-                (binding?.searchMasterRecycler?.adapter as ParentItemAdapter?)?.apply {
+                (binding.searchMasterRecycler.adapter as? ParentItemAdapter)?.apply {
                     val newItems = list.map { ongoing ->
                         val dataList = ongoing.value.list
                         val dataListFiltered =
@@ -579,10 +574,10 @@ class SearchFragment : Fragment() {
                     searchViewModel.clearSearch()
                     if (searchItem.type.isNotEmpty())
                         updateChips(
-                            binding?.tvtypesChipsScroll?.tvtypesChips,
+                            binding.tvtypesChipsScroll.tvtypesChips,
                             searchItem.type.toMutableList()
                         )
-                    binding?.mainSearch?.setQuery(searchItem.searchText, true)
+                    binding.mainSearch.setQuery(searchItem.searchText, true)
                 }
 
                 SEARCH_HISTORY_REMOVE -> {
@@ -596,7 +591,7 @@ class SearchFragment : Fragment() {
             }
         }
 
-        binding?.apply {
+        binding.apply {
             searchHistoryRecycler.adapter = historyAdapter
             searchHistoryRecycler.setLinearListLayout(isHorizontal = false, nextRight = FOCUS_SELF)
             //searchHistoryRecycler.layoutManager = GridLayoutManager(context, 1)
@@ -625,23 +620,10 @@ class SearchFragment : Fragment() {
         }
 
         observe(searchViewModel.currentHistory) { list ->
-            binding?.searchClearCallHistory?.isVisible = list.isNotEmpty()
-            (binding?.searchHistoryRecycler?.adapter as? SearchHistoryAdaptor?)?.submitList(list)
+            binding.searchClearCallHistory.isVisible = list.isNotEmpty()
+            (binding.searchHistoryRecycler.adapter as? SearchHistoryAdaptor?)?.submitList(list)
         }
 
         searchViewModel.updateHistory()
-
-        // SubtitlesFragment.push(activity)
-        //searchViewModel.search("iron man")
-        //(activity as AppCompatActivity).loadResult("https://shiro.is/overlord-dubbed", "overlord-dubbed", "Shiro")
-        /*
-                (activity as AppCompatActivity?)?.supportFragmentManager.beginTransaction()
-                    .setCustomAnimations(R.anim.enter_anim,
-                        R.anim.exit_anim,
-                        R.anim.pop_enter,
-                        R.anim.pop_exit)
-                    .add(R.id.homeRoot, PlayerFragment.newInstance(PlayerData(0, null,0)))
-                    .commit()*/
     }
-
 }
