@@ -148,6 +148,11 @@ android {
         buildConfig = true
     }
 
+    // https://developer.android.com/guide/topics/resources/app-languages?hl=en#auto-localeconfig
+    androidResources {
+        generateLocaleConfig = true
+    }
+
     namespace = "com.lagradost.cloudstream3"
 }
 

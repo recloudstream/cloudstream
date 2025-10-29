@@ -2,31 +2,34 @@ package com.lagradost.cloudstream3.ui.settings
 
 import android.content.Context
 import android.net.Uri
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.ConfigurationCompat
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lagradost.cloudstream3.APIHolder.allProviders
 import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.APIHolder.allProviders
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.CommonActivity.showToast
-import com.lagradost.cloudstream3.MainActivity
-import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.databinding.AddRemoveSitesBinding
 import com.lagradost.cloudstream3.databinding.AddSiteInputBinding
+import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.network.initClient
+import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ui.settings.Globals.beneneCount
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
-import com.lagradost.cloudstream3.ui.settings.Globals.beneneCount
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.hideOn
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
@@ -52,7 +55,12 @@ import java.util.Locale
 fun getCurrentLocale(context: Context): String {
     val conf = context.resources.configuration
 
-    return ConfigurationCompat.getLocales(conf)?.get(0)?.toLanguageTag() ?: "en"
+    return if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU)
+        // initial step for android 13+ language per-app support
+        // https://developer.android.com/guide/topics/resources/app-languages
+        AppCompatDelegate.getApplicationLocales().get(0)?.toLanguageTag() ?: "en"
+    else
+        ConfigurationCompat.getLocales(conf)?.get(0)?.toLanguageTag() ?: "en"
 }
 
 /**
