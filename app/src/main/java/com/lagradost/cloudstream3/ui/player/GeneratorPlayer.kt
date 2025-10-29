@@ -541,8 +541,11 @@ class GeneratorPlayer : FullScreenPlayer() {
             )
         }
 
-        if (!sameEpisode)
-            player.addTimeStamps(listOf()) // clear stamps
+        if (!sameEpisode) {
+            player.addTimeStamps(emptyList()) // clear stamps
+            // Resets subtitle delay, as we watch some other content
+            player.setSubtitleOffset(0)
+        }
     }
 
     private fun closestQuality(target: Int?): Qualities {
@@ -1549,15 +1552,19 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun nextEpisode() {
-        isNextEpisode = true
-        player.release()
-        viewModel.loadLinksNext()
+        if (viewModel.hasNextEpisode() == true) {
+            isNextEpisode = true
+            player.release()
+            viewModel.loadLinksNext()
+        }
     }
 
     override fun prevEpisode() {
-        isNextEpisode = true
-        player.release()
-        viewModel.loadLinksPrev()
+        if (viewModel.hasPrevEpisode() == true) {
+            isNextEpisode = true
+            player.release()
+            viewModel.loadLinksPrev()
+        }
     }
 
     override fun hasNextMirror(): Boolean {
