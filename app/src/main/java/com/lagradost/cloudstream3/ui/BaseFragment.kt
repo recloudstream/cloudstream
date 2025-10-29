@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.LayoutRes
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceFragmentCompat
 import androidx.viewbinding.ViewBinding
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
@@ -30,14 +32,13 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
  * @param T The type of ViewBinding for this Fragment.
  * @param bindingCreator The strategy used to create the binding instance.
  */
-abstract class BaseFragment<T : ViewBinding>(
-    private val bindingCreator: BindingCreator<T>
-) : Fragment() {
+private interface BaseFragmentHelper<T : ViewBinding> {
+    val bindingCreator: BaseFragment.BindingCreator<T>
 
-    private var _binding: T? = null
-    protected val binding: T? get() = _binding
+    var _binding: T?
+    val binding: T? get() = _binding
 
-    override fun onCreateView(
+    fun createBinding(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -45,10 +46,10 @@ abstract class BaseFragment<T : ViewBinding>(
         val layoutId = pickLayout()
         val root: View? = layoutId?.let { inflater.inflate(it, container, false) }
         _binding = try {
-            when (bindingCreator) {
-                is BindingCreator.Inflate -> bindingCreator.fn(inflater, container, false)
-                is BindingCreator.Bind -> {
-                    if (root != null) bindingCreator.fn(root)
+            when (val creator = bindingCreator) {
+                is BaseFragment.BindingCreator.Inflate -> creator.fn(inflater, container, false)
+                is BaseFragment.BindingCreator.Bind -> {
+                    if (root != null) creator.fn(root)
                     else throw IllegalStateException("Root view is null for bind()")
                 }
             }
@@ -71,8 +72,7 @@ abstract class BaseFragment<T : ViewBinding>(
      * system bar padding adjustments are applied before any subclass logic runs.
      * Subclasses should use [onBindingCreated] instead of overriding this method directly.
      */
-    final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    fun onViewReady(view: View, savedInstanceState: Bundle?) {
         fixPadding(view)
         binding?.let { onBindingCreated(it, savedInstanceState) }
     }
@@ -84,7 +84,7 @@ abstract class BaseFragment<T : ViewBinding>(
      * @param binding The safely created ViewBinding.
      * @param savedInstanceState Saved state bundle or null.
      */
-    protected open fun onBindingCreated(binding: T, savedInstanceState: Bundle?) {
+    fun onBindingCreated(binding: T, savedInstanceState: Bundle?) {
         onBindingCreated(binding)
     }
 
@@ -94,22 +94,15 @@ abstract class BaseFragment<T : ViewBinding>(
      *
      * @param binding The safely created ViewBinding.
      */
-    protected open fun onBindingCreated(binding: T) {}
+    fun onBindingCreated(binding: T) {}
 
     /**
      * Called when the device configuration changes (e.g., orientation).
      * Re-applies system bar padding fixes to the root view to ensure it
      * readjusts for orientation changes.
      */
-    override fun onConfigurationChanged(newConfig: Configuration) {
+    fun handleConfigurationChanged(newConfig: Configuration) {
         binding?.apply { fixPadding(root) }
-        super.onConfigurationChanged(newConfig)
-    }
-
-    /** Cleans up the binding reference when the view is destroyed to avoid memory leaks. */
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     /**
@@ -121,15 +114,43 @@ abstract class BaseFragment<T : ViewBinding>(
      * @return Layout resource ID or null.
      */
     @LayoutRes
-    protected open fun pickLayout(): Int? = null
+    fun pickLayout(): Int? = null
 
     /**
      * Apply padding adjustments for system bars to the root view.
      *
      * @param view The root view to adjust.
      */
-    protected open fun fixPadding(view: View) {
+    fun fixPadding(view: View) {
         fixSystemBarsPadding(view)
+    }
+}
+
+abstract class BaseFragment<T : ViewBinding>(
+    override val bindingCreator: BindingCreator<T>
+) : Fragment(), BaseFragmentHelper<T> {
+    override var _binding: T? = null
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? = createBinding(inflater, container, savedInstanceState)
+
+    final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        onViewReady(view, savedInstanceState)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        handleConfigurationChanged(newConfig)
+    }
+
+    /** Cleans up the binding reference when the view is destroyed to avoid memory leaks. */
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     /**
@@ -156,5 +177,65 @@ abstract class BaseFragment<T : ViewBinding>(
         class Bind<T : ViewBinding>(
             val fn: (View) -> T
         ) : BindingCreator<T>()
+    }
+}
+
+abstract class BaseDialogFragment<T : ViewBinding>(
+    override val bindingCreator: BaseFragment.BindingCreator<T>
+) : DialogFragment(), BaseFragmentHelper<T> {
+    override var _binding: T? = null
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? = createBinding(inflater, container, savedInstanceState)
+
+    final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        onViewReady(view, savedInstanceState)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        handleConfigurationChanged(newConfig)
+    }
+
+    /** Cleans up the binding reference when the view is destroyed to avoid memory leaks. */
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+}
+
+abstract class BasePreferenceFragmentCompat<T : ViewBinding>(
+    override val bindingCreator: BaseFragment.BindingCreator<T>
+) : PreferenceFragmentCompat(), BaseFragmentHelper<T> {
+    override var _binding: T? = null
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        // We can't have null for this one
+        return createBinding(inflater, container, savedInstanceState) ?:
+            super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        onViewReady(view, savedInstanceState)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        handleConfigurationChanged(newConfig)
+    }
+
+    /** Cleans up the binding reference when the view is destroyed to avoid memory leaks. */
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
