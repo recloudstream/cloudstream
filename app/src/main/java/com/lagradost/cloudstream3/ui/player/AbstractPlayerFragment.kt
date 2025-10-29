@@ -513,6 +513,11 @@ abstract class AbstractPlayerFragment(
             }
 
             is PositionEvent -> {
+                val player = player
+                if (player is CS3IPlayer) {
+                    player.hasNextEpisode = hasNextEpisode
+                }
+
                 playerPositionChanged(position = event.toMs, duration = event.durationMs)
             }
 
@@ -560,7 +565,6 @@ abstract class AbstractPlayerFragment(
 
         val player = player
         if (player is CS3IPlayer) {
-            player.hasNextEpisode = hasNextEpisode
             // preview bar
             val progressBar: PreviewTimeBar? = playerView?.findViewById(R.id.exo_progress)
             val previewImageView: ImageView? = playerView?.findViewById(R.id.previewImageView)
