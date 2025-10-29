@@ -21,6 +21,7 @@ import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.utils.AppContextUtils.getEpisodeFull
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
@@ -79,6 +80,7 @@ object SearchResultBuilder {
         val showSub = showCache[textIsDub?.context?.getString(R.string.show_sub_key)] ?: false
         val showDub = showCache[textIsDub?.context?.getString(R.string.show_dub_key)] ?: false
         val showTitle = showCache[cardText?.context?.getString(R.string.show_title_key)] ?: false
+        val showEpisodeLabel = showCache[cardText?.context?.getString(R.string.show_episode_label_key)] ?: false
         val showHd = showCache[textQuality?.context?.getString(R.string.show_hd_key)] ?: false
         val showRatingView =
             showCache[textQuality?.context?.getString(R.string.show_rating_key)] ?: false
@@ -263,10 +265,16 @@ object SearchResultBuilder {
                 }
 
                 playImg?.visibility = View.VISIBLE
+                if (card.type?.isMovieType() == false && showEpisodeLabel) {
+                    val context = cardText?.context
+                    val text = when {
+                        showTitle -> context?.getNameFull(card.name, card.episode, card.season)
+                        else -> context?.getEpisodeFull(card.episode, card.season)
+                    }
 
-                if (card.type?.isMovieType() == false) {
-                    cardText?.text =
-                        cardText?.context?.getNameFull(card.name, card.episode, card.season)
+                    cardText?.text = text
+                    cardText?.isVisible = true
+                    shadow?.isVisible = true
                 }
             }
 
