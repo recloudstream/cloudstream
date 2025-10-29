@@ -2036,6 +2036,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        hasNextEpisode = viewModel.hasNextEpisode() ?: false
         var langFilterList = listOf<String>()
         var filterSubByLang = false
 

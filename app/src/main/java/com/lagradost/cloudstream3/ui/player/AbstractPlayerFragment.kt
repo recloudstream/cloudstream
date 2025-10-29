@@ -81,6 +81,7 @@ abstract class AbstractPlayerFragment(
     var resizeMode: Int = 0
     var subView: SubtitleView? = null
     var isBuffering = true
+    protected var hasNextEpisode = false
     protected open var hasPipModeSupport = true
 
     var playerPausePlayHolderHolder: FrameLayout? = null
@@ -519,6 +520,7 @@ abstract class AbstractPlayerFragment(
                 context?.let { ctx ->
                     // Resets subtitle delay on ended video
                     player.setSubtitleOffset(0)
+                    if (!hasNextEpisode) return@let
 
                     // Only play next episode if autoplay is on (default)
                     if (PreferenceManager.getDefaultSharedPreferences(ctx)
@@ -558,6 +560,7 @@ abstract class AbstractPlayerFragment(
 
         val player = player
         if (player is CS3IPlayer) {
+            player.hasNextEpisode = hasNextEpisode
             // preview bar
             val progressBar: PreviewTimeBar? = playerView?.findViewById(R.id.exo_progress)
             val previewImageView: ImageView? = playerView?.findViewById(R.id.previewImageView)

@@ -137,6 +137,7 @@ class CS3IPlayer : IPlayer {
     var videoBufferMs = 0L
 
     val imageGenerator = IPreviewGenerator.new()
+    var hasNextEpisode = false
 
     private val seekActionTime = 30000L
     private val isMediaSeekable
@@ -1497,7 +1498,7 @@ class CS3IPlayer : IPlayer {
                             setSubtitleOffset(0)
 
                             // Only play next episode if autoplay is on (default)
-                            if (PreferenceManager.getDefaultSharedPreferences(context)
+                            if (hasNextEpisode && PreferenceManager.getDefaultSharedPreferences(context)
                                     ?.getBoolean(
                                         context.getString(R.string.autoplay_next_key),
                                         true
