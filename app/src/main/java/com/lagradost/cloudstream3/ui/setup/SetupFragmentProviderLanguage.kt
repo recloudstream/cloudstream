@@ -1,13 +1,8 @@
 package com.lagradost.cloudstream3.ui.setup
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import androidx.core.util.forEach
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.AllLanguagesName
@@ -15,33 +10,14 @@ import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.databinding.FragmentSetupProviderLanguagesBinding
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
-import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 
-class SetupFragmentProviderLanguage : Fragment() {
-    var binding: FragmentSetupProviderLanguagesBinding? = null
-
-    override fun onDestroyView() {
-        binding = null
-        super.onDestroyView()
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val localBinding = FragmentSetupProviderLanguagesBinding.inflate(inflater, container, false)
-        binding = localBinding
-        return localBinding.root
-        //return inflater.inflate(R.layout.fragment_setup_provider_languages, container, false)
-    }
-
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        fixSystemBarsPadding(binding?.setupRoot)
-
+class SetupFragmentProviderLanguage : BaseFragment<FragmentSetupProviderLanguagesBinding>(
+    BaseFragment.BindingCreator.Inflate(FragmentSetupProviderLanguagesBinding::inflate)
+) {
+    override fun onBindingCreated(binding: FragmentSetupProviderLanguagesBinding) {
         safe {
             val ctx = context ?: return@safe
 
@@ -63,7 +39,7 @@ class SetupFragmentProviderLanguage : Fragment() {
             }.filter { it > -1 }
 
             arrayAdapter.addAll(languagesTagName.map { it.second })
-            binding?.apply {
+            binding.apply {
                 listview1.adapter = arrayAdapter
                 listview1.choiceMode = AbsListView.CHOICE_MODE_MULTIPLE
                 currentIndexList.forEach {
