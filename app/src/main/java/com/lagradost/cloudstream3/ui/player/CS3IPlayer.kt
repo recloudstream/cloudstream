@@ -614,7 +614,12 @@ class CS3IPlayer : IPlayer {
             }
 
             stop()
-            release()
+            Log.d(TAG, "about to be released")
+            while(!isReleased) {
+                Log.d(TAG, "is not released")
+                release()
+            }
+            Log.d(TAG, "released")
         }
         //simpleCache?.release()
 
