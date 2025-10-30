@@ -12,16 +12,13 @@ import android.text.SpannableString
 import android.text.style.StyleSpan
 import android.util.DisplayMetrics
 import android.util.TypedValue
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.FontRes
 import androidx.annotation.OptIn
 import androidx.annotation.Px
 import androidx.core.content.res.ResourcesCompat
-import androidx.fragment.app.DialogFragment
 import androidx.media3.common.text.Cue
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.CaptionStyleCompat
@@ -36,6 +33,8 @@ import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.SubtitleSettingsBinding
+import com.lagradost.cloudstream3.ui.BaseDialogFragment
+import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.player.CustomDecoder
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.setSubtitleAlignment
 import com.lagradost.cloudstream3.ui.player.OutlineSpan
@@ -92,7 +91,9 @@ data class SaveCaptionStyle @OptIn(UnstableApi::class) constructor(
 const val DEF_SUBS_ELEVATION = 20
 
 @OptIn(androidx.media3.common.util.UnstableApi::class)
-class SubtitlesFragment : DialogFragment() {
+class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
+    BaseFragment.BindingCreator.Inflate(SubtitleSettingsBinding::inflate)
+) {
     companion object {
         val applyStyleEvent = Event<SaveCaptionStyle>()
         private val captionRegex = Regex("""(-\s?|)[\[({][\S\s]*?[])}]\s*""")
@@ -351,27 +352,8 @@ class SubtitlesFragment : DialogFragment() {
         return if (color == Color.TRANSPARENT) Color.BLACK else color
     }
 
-    override fun onDestroyView() {
-        binding = null
-        super.onDestroyView()
-    }
-
-    var binding: SubtitleSettingsBinding? = null
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val localBinding = SubtitleSettingsBinding.inflate(inflater, container, false)
-        binding = localBinding
-        return localBinding.root
-        //return inflater.inflate(R.layout.subtitle_settings, container, false)
-    }
-
     private lateinit var state: SaveCaptionStyle
     private var hide: Boolean = true
-
-    var systemBarsAddPadding = isLayout(TV or EMULATOR)
 
     override fun onDestroy() {
         super.onDestroy()
@@ -387,27 +369,28 @@ class SubtitlesFragment : DialogFragment() {
         return R.style.DialogFullscreenPlayer
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    var systemBarsAddPadding = isLayout(TV or EMULATOR)
+    override fun fixPadding(view: View) {
+        fixSystemBarsPadding(
+            view,
+            padBottom = systemBarsAddPadding || isLandscape(),
+            padLeft = systemBarsAddPadding
+        )
+    }
+
+    override fun onBindingCreated(binding: SubtitleSettingsBinding) {
         hide = arguments?.getBoolean("hide") ?: true
         val popFragment = arguments?.getBoolean("popFragment") ?: false
         onColorSelectedEvent += ::onColorSelected
         onDialogDismissedEvent += ::onDialogDismissed
-        binding?.subsImportText?.text = getString(R.string.subs_import_text).format(
+        binding.subsImportText.text = getString(R.string.subs_import_text).format(
             context?.getExternalFilesDir(null)?.absolutePath.toString() + "/Fonts"
-        )
-
-        fixSystemBarsPadding(
-            binding?.subsRoot,
-            padBottom = systemBarsAddPadding || isLandscape(),
-            padLeft = systemBarsAddPadding
         )
 
         state = getCurrentSavedStyle()
         context?.updateState()
 
         val isTvTrueSettings = isLayout(TV)
-
         fun View.setFocusableInTv() {
             this.isFocusableInTouchMode = isTvTrueSettings
         }
@@ -431,7 +414,7 @@ class SubtitlesFragment : DialogFragment() {
                 return@setOnLongClickListener true
             }
         }
-        binding?.apply {
+        binding.apply {
             subsTextColor.setup(0)
             subsOutlineColor.setup(1)
             subsBackgroundColor.setup(2)
