@@ -157,6 +157,11 @@ object BackupUtils {
             context.restoreMap(backupFile.datastore.long)
             context.restoreMap(backupFile.datastore.stringSet)
         }
+
+        // Make sure the library is fresh
+        for(api in AccountManager.syncApis) {
+            api.requireLibraryRefresh = true
+        }
     }
 
     @SuppressLint("SimpleDateFormat")
