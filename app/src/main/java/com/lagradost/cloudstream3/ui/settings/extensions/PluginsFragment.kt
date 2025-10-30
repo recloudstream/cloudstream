@@ -1,19 +1,17 @@
 package com.lagradost.cloudstream3.ui.settings.extensions
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.Fragment
 import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.databinding.FragmentPluginsBinding
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.bindChips
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
@@ -32,29 +30,22 @@ const val PLUGINS_BUNDLE_NAME = "name"
 const val PLUGINS_BUNDLE_URL = "url"
 const val PLUGINS_BUNDLE_LOCAL = "isLocal"
 
-class PluginsFragment : Fragment() {
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        val localBinding = FragmentPluginsBinding.inflate(inflater, container, false)
-        binding = localBinding
-        return localBinding.root//inflater.inflate(R.layout.fragment_plugins, container, false)
-    }
+class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
+    BaseFragment.BindingCreator.Inflate(FragmentPluginsBinding::inflate)
+) {
+
+    private val pluginViewModel: PluginsViewModel by activityViewModels()
 
     override fun onDestroyView() {
-        binding = null
         pluginViewModel.clear() // clear for the next observe
         super.onDestroyView()
     }
 
-    private val pluginViewModel: PluginsViewModel by activityViewModels()
-    var binding: FragmentPluginsBinding? = null
+    override fun fixPadding(view: View) {
+        setSystemBarsPadding()
+    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+    override fun onBindingCreated(binding: FragmentPluginsBinding) {
         // Since the ViewModel is getting reused the tvTypes must be cleared between uses
         pluginViewModel.tvTypes.clear()
         pluginViewModel.selectedLanguages = listOf()
@@ -72,7 +63,7 @@ class PluginsFragment : Fragment() {
         val url = arguments?.getString(PLUGINS_BUNDLE_URL)
         val isLocal = arguments?.getBoolean(PLUGINS_BUNDLE_LOCAL) == true
         // download all extensions button
-        val downloadAllButton = binding?.settingsToolbar?.menu?.findItem(R.id.download_all)
+        val downloadAllButton = binding.settingsToolbar.menu?.findItem(R.id.download_all)
 
         if (url == null || name == null) {
             activity?.onBackPressedDispatcher?.onBackPressed()
@@ -81,8 +72,7 @@ class PluginsFragment : Fragment() {
 
         setToolBarScrollFlags()
         setUpToolbar(name)
-        setSystemBarsPadding()
-        binding?.settingsToolbar?.apply {
+        binding.settingsToolbar.apply {
             setOnMenuItemClickListener { menuItem ->
                 when (menuItem?.itemId) {
                     R.id.download_all -> {
@@ -161,7 +151,7 @@ class PluginsFragment : Fragment() {
 
         // Because onActionViewCollapsed doesn't wanna work we need this workaround :(
 
-        binding?.pluginRecyclerView?.apply {
+        binding.pluginRecyclerView.apply {
             setLinearListLayout(
                 isHorizontal = false,
                 nextDown = FOCUS_SELF,
@@ -176,33 +166,31 @@ class PluginsFragment : Fragment() {
 
         if (isLayout(TV or EMULATOR)) {
             // Scrolling down does not reveal the whole RecyclerView on TV, add to bypass that.
-            binding?.pluginRecyclerView?.setPadding(0, 0, 0, 200.toPx)
+            binding.pluginRecyclerView.setPadding(0, 0, 0, 200.toPx)
         }
 
         observe(pluginViewModel.filteredPlugins) { (scrollToTop, list) ->
-            (binding?.pluginRecyclerView?.adapter as? PluginAdapter)?.submitList(list)
+            (binding.pluginRecyclerView.adapter as? PluginAdapter)?.submitList(list)
             if (scrollToTop) {
-                binding?.pluginRecyclerView?.scrollToPosition(0)
+                binding.pluginRecyclerView.scrollToPosition(0)
             }
         }
 
         if (isLocal) {
             // No download button and no categories on local
             downloadAllButton?.isVisible = false
-            binding?.settingsToolbar?.menu?.findItem(R.id.lang_filter)?.isVisible = false
+            binding.settingsToolbar.menu?.findItem(R.id.lang_filter)?.isVisible = false
             pluginViewModel.updatePluginListLocal()
 
-            binding?.tvtypesChipsScroll?.root?.isVisible = false
+            binding.tvtypesChipsScroll.root.isVisible = false
         } else {
             pluginViewModel.updatePluginList(context, url)
-            binding?.tvtypesChipsScroll?.root?.isVisible = true
+            binding.tvtypesChipsScroll.root.isVisible = true
             // not needed for users but may be useful for devs
             downloadAllButton?.isVisible = BuildConfig.DEBUG
 
-
-
             bindChips(
-                binding?.tvtypesChipsScroll?.tvtypesChips,
+                binding.tvtypesChipsScroll.tvtypesChips,
                 emptyList(),
                 TvType.entries.toList(),
                 callback = { list ->
