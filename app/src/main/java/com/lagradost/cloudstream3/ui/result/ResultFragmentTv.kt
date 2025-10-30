@@ -14,7 +14,6 @@ import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -30,6 +29,7 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.services.SubscriptionWorkManager
+import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.player.ExtractorLinkGenerator
@@ -64,12 +64,13 @@ import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
 
-class ResultFragmentTv : Fragment() {
+class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
+    BaseFragment.BindingCreator.Inflate(FragmentResultTvBinding::inflate)
+) {
+
     private lateinit var viewModel: ResultViewModel2
-    private var binding: FragmentResultTvBinding? = null
 
     override fun onDestroyView() {
-        binding = null
         updateUIEvent -= ::updateUI
         activity?.detachBackPressedCallback(this@ResultFragmentTv.toString())
         super.onDestroyView()
@@ -79,15 +80,13 @@ class ResultFragmentTv : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         viewModel =
             ViewModelProvider(this)[ResultViewModel2::class.java]
         viewModel.EPISODE_RANGE_SIZE = 50
         updateUIEvent += ::updateUI
 
-        val localBinding = FragmentResultTvBinding.inflate(inflater, container, false)
-        binding = localBinding
-        return localBinding.root
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     private fun updateUI(id: Int?) {
@@ -248,13 +247,14 @@ class ResultFragmentTv : Fragment() {
         }
     }
 
-    @SuppressLint("SetTextI18n")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun fixPadding(view: View) {
+        fixSystemBarsPadding(view, padTop = false)
+    }
 
+    @SuppressLint("SetTextI18n")
+    override fun onBindingCreated(binding: FragmentResultTvBinding) {
         // ===== setup =====
         val storedData = getStoredData() ?: return
-        fixSystemBarsPadding(binding?.root, padTop = false)
         activity?.window?.decorView?.clearFocus()
         activity?.loadCache()
         hideKeyboard()
@@ -270,7 +270,7 @@ class ResultFragmentTv : Fragment() {
         // ===== ===== =====
         var comingSoon = false
 
-        binding?.apply {
+        binding.apply {
             //episodesShadow.rotationX = 180.0f//if(episodesShadow.isRtl()) 180.0f else 0.0f
 
             // parallax on background
@@ -282,7 +282,7 @@ class ResultFragmentTv : Fragment() {
                 if (!hasFocus) return@setOnFocusChangeListener
                 toggleEpisodes(false)
 
-                binding?.apply {
+                binding.apply {
                     val views = listOf(
                         resultPlayMovieButton,
                         resultPlaySeriesButton,
@@ -303,7 +303,7 @@ class ResultFragmentTv : Fragment() {
             redirectToEpisodes.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) return@setOnFocusChangeListener
                 toggleEpisodes(true)
-                binding?.apply {
+                binding.apply {
                     val views = listOf(
                         resultDubSelection,
                         resultSeasonSelection,
@@ -407,7 +407,7 @@ class ResultFragmentTv : Fragment() {
 
             resultCastItems.setOnFocusChangeListener { _, hasFocus ->
                 // Always escape focus
-                if (hasFocus) binding?.resultBookmarkButton?.requestFocus()
+                if (hasFocus) binding.resultBookmarkButton.requestFocus()
             }
             //resultBack.setOnClickListener {
             //    activity?.popCurrentPage()
@@ -419,10 +419,9 @@ class ResultFragmentTv : Fragment() {
                 SearchAdapter(
                     resultRecommendationsList,
                 ) { callback ->
-                    if (callback.action == SEARCH_ACTION_FOCUSED)
+                    if (callback.action == SEARCH_ACTION_FOCUSED) {
                         toggleEpisodes(false)
-                    else
-                        SearchHelper.handleSearchClickCallback(callback)
+                    } else SearchHelper.handleSearchClickCallback(callback)
                 }
 
             resultEpisodes.setRecycledViewPool(EpisodeAdapter.sharedPool)
@@ -437,8 +436,7 @@ class ResultFragmentTv : Fragment() {
                     }
                 )
 
-            resultCastItems.layoutManager = object : LinearListLayout(view.context) {
-
+            resultCastItems.layoutManager = object : LinearListLayout(root.context) {
                 override fun onRequestChildFocus(
                     parent: RecyclerView,
                     state: RecyclerView.State,
@@ -454,18 +452,14 @@ class ResultFragmentTv : Fragment() {
                         super.onRequestChildFocus(parent, state, child, focused)
                     }
                 }
-            }.apply {
-                setHorizontal()
-            }
+            }.apply { setHorizontal() }
 
             val aboveCast = listOf(
-                binding?.resultEpisodesShow,
-                binding?.resultBookmark,
-                binding?.resultFavorite,
-                binding?.resultSubscribe,
-            ).firstOrNull {
-                it?.isVisible == true
-            }
+                binding.resultEpisodesShow,
+                binding.resultBookmark,
+                binding.resultFavorite,
+                binding.resultSubscribe,
+            ).firstOrNull { it.isVisible }
 
             resultCastItems.setRecycledViewPool(ActorAdaptor.sharedPool)
             resultCastItems.adapter = ActorAdaptor(aboveCast?.id) {
@@ -480,11 +474,11 @@ class ResultFragmentTv : Fragment() {
         }
 
         observeNullable(viewModel.resumeWatching) { resume ->
-            binding?.apply {
-
+            binding.apply {
                 if (resume == null) {
                     return@observeNullable
                 }
+
                 resultResumeSeries.isVisible = true
                 resultPlayMovie.isVisible = false
                 resultPlaySeries.isVisible = false
@@ -552,7 +546,7 @@ class ResultFragmentTv : Fragment() {
             context?.updateHasTrailers()
             if (!LoadResponse.isTrailersEnabled) return@observe
             val trailers = trailersLinks.flatMap { it.mirros }
-            binding?.apply {
+            binding.apply {
                 resultPlayTrailer.isGone = trailers.isEmpty()
                 resultPlayTrailerButton.setOnClickListener {
                     if (trailers.isEmpty()) return@setOnClickListener
@@ -569,16 +563,13 @@ class ResultFragmentTv : Fragment() {
         }
 
         observe(viewModel.watchStatus) { watchType ->
-            binding?.apply {
+            binding.apply {
                 resultBookmarkText.setText(watchType.stringRes)
 
                 resultBookmarkButton.apply {
-
                     val drawable = if (watchType.stringRes == R.string.type_none) {
                         R.drawable.outline_bookmark_add_24
-                    } else {
-                        R.drawable.ic_baseline_bookmark_24
-                    }
+                    } else R.drawable.ic_baseline_bookmark_24
                     setIconResource(drawable)
 
                     setOnClickListener { view ->
@@ -596,19 +587,13 @@ class ResultFragmentTv : Fragment() {
         }
 
         observeNullable(viewModel.favoriteStatus) { isFavorite ->
-
-            binding?.resultFavorite?.isVisible = isFavorite != null
-
-            binding?.resultFavoriteButton?.apply {
-
+            binding.resultFavorite.isVisible = isFavorite != null
+            binding.resultFavoriteButton.apply {
                 if (isFavorite == null) return@observeNullable
 
                 val drawable = if (isFavorite) {
                     R.drawable.ic_baseline_favorite_24
-                } else {
-                    R.drawable.ic_baseline_favorite_border_24
-                }
-
+                } else R.drawable.ic_baseline_favorite_border_24
                 setIconResource(drawable)
 
                 setOnClickListener {
@@ -617,9 +602,7 @@ class ResultFragmentTv : Fragment() {
 
                         val message = if (newStatus) {
                             R.string.favorite_added
-                        } else {
-                            R.string.favorite_removed
-                        }
+                        } else R.string.favorite_removed
 
                         val name = (viewModel.page.value as? Resource.Success)?.value?.title
                             ?: com.lagradost.cloudstream3.utils.txt(R.string.no_data)
@@ -634,28 +617,22 @@ class ResultFragmentTv : Fragment() {
                 }
             }
 
-            binding?.resultFavoriteText?.apply {
+            binding.resultFavoriteText.apply {
                 val text = if (isFavorite == true) {
                     R.string.unfavorite
-                } else {
-                    R.string.favorite
-                }
+                } else R.string.favorite
                 setText(text)
             }
         }
 
         observeNullable(viewModel.subscribeStatus) { isSubscribed ->
-            binding?.resultSubscribe?.isVisible = isSubscribed != null && isLayout(EMULATOR)
-            binding?.resultSubscribeButton?.apply {
-
+            binding.resultSubscribe.isVisible = isSubscribed != null && isLayout(EMULATOR)
+            binding.resultSubscribeButton.apply {
                 if (isSubscribed == null) return@observeNullable
 
                 val drawable = if (isSubscribed) {
                     R.drawable.ic_baseline_notifications_active_24
-                } else {
-                    R.drawable.baseline_notifications_none_24
-                }
-
+                } else R.drawable.baseline_notifications_none_24
                 setIconResource(drawable)
 
                 setOnClickListener {
@@ -666,9 +643,7 @@ class ResultFragmentTv : Fragment() {
                             // Kinda icky to have this here, but it works.
                             SubscriptionWorkManager.enqueuePeriodicWork(context)
                             R.string.subscription_new
-                        } else {
-                            R.string.subscription_deleted
-                        }
+                        } else R.string.subscription_deleted
 
                         val name = (viewModel.page.value as? Resource.Success)?.value?.title
                             ?: com.lagradost.cloudstream3.utils.txt(R.string.no_data)
@@ -682,12 +657,10 @@ class ResultFragmentTv : Fragment() {
                     }
                 }
 
-                binding?.resultSubscribeText?.apply {
+                binding.resultSubscribeText.apply {
                     val text = if (isSubscribed) {
                         R.string.action_unsubscribe
-                    } else {
-                        R.string.action_subscribe
-                    }
+                    } else R.string.action_subscribe
                     setText(text)
                 }
             }
@@ -698,10 +671,8 @@ class ResultFragmentTv : Fragment() {
                 return@observeNullable
             }
 
-            binding?.apply {
-
+            binding.apply {
                 (data as? Resource.Success)?.value?.let { (_, ep) ->
-
                     resultPlayMovieButton.setOnClickListener {
                         viewModel.handleAction(
                             EpisodeClickEvent(ACTION_CLICK_DEFAULT, ep)
@@ -715,10 +686,9 @@ class ResultFragmentTv : Fragment() {
                     }
 
                     resultPlayMovie.isVisible = !comingSoon && resultResumeSeries.isGone
-                    if (comingSoon)
+                    if (comingSoon) {
                         resultBookmarkButton.requestFocus()
-                    else
-                        resultPlayMovieButton.requestFocus()
+                    } else resultPlayMovieButton.requestFocus()
 
                     // Stops last button right focus
                     resultSearchButton.nextFocusRightId = R.id.result_search_Button
@@ -787,26 +757,26 @@ class ResultFragmentTv : Fragment() {
 
 
         observeNullable(viewModel.episodesCountText) { count ->
-            binding?.resultEpisodesText.setText(count)
+            binding.resultEpisodesText.setText(count)
         }
 
         observe(viewModel.selectedRangeIndex) { selected ->
-            binding?.resultRangeSelection.select(selected)
+            binding.resultRangeSelection.select(selected)
         }
         observe(viewModel.selectedSeasonIndex) { selected ->
-            binding?.resultSeasonSelection.select(selected)
+            binding.resultSeasonSelection.select(selected)
         }
         observe(viewModel.selectedDubStatusIndex) { selected ->
-            binding?.resultDubSelection.select(selected)
+            binding.resultDubSelection.select(selected)
         }
         observe(viewModel.rangeSelections) {
-            binding?.resultRangeSelection.update(it)
+            binding.resultRangeSelection.update(it)
         }
         observe(viewModel.dubSubSelections) {
-            binding?.resultDubSelection.update(it)
+            binding.resultDubSelection.update(it)
         }
         observe(viewModel.seasonSelections) {
-            binding?.resultSeasonSelection.update(it)
+            binding.resultSeasonSelection.update(it)
         }
         observe(viewModel.recommendations) { recommendations ->
             setRecommendations(recommendations, null)
@@ -814,7 +784,7 @@ class ResultFragmentTv : Fragment() {
 
         if (isLayout(TV)) {
             observe(viewModel.episodeSynopsis) { description ->
-                view.context?.let { ctx ->
+                context?.let { ctx ->
                     val builder: AlertDialog.Builder =
                         AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
                     builder.setMessage(description.html())
@@ -831,15 +801,11 @@ class ResultFragmentTv : Fragment() {
         var hasLoadedEpisodesOnce = false
         observeNullable(viewModel.episodes) { episodes ->
             if (episodes == null) return@observeNullable
-
-            binding?.apply {
-
-                if (comingSoon)
-                    resultBookmarkButton.requestFocus()
+            binding.apply {
+                if (comingSoon) resultBookmarkButton.requestFocus()
 
                 //    resultEpisodeLoading.isVisible = episodes is Resource.Loading
                 if (episodes is Resource.Success) {
-
                     val lastWatchedIndex = episodes.value.indexOfLast { ep ->
                         ep.getWatchProgress() >= NEXT_WATCH_EPISODE_PERCENTAGE.toFloat() / 100.0f || ep.videoWatchState == VideoWatchState.Watched
                     }
@@ -889,7 +855,7 @@ class ResultFragmentTv : Fragment() {
 
         observeNullable(viewModel.page) { data ->
             if (data == null) return@observeNullable
-            binding?.apply {
+            binding.apply {
                 when (data) {
                     is Resource.Success -> {
                         val d = data.value
@@ -919,7 +885,7 @@ class ResultFragmentTv : Fragment() {
                                         Integer.MAX_VALUE
                                     } else 10
                                 } else {
-                                    view.context?.let { ctx ->
+                                    context?.let { ctx ->
                                         val builder: AlertDialog.Builder =
                                             AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
                                         builder.setMessage(d.plotText.asString(ctx).html())
@@ -962,9 +928,7 @@ class ResultFragmentTv : Fragment() {
                         }
                     }
 
-                    is Resource.Loading -> {
-
-                    }
+                    is Resource.Loading -> {}
 
                     is Resource.Failure -> {
                         resultErrorText.text =
