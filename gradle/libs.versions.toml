@@ -46,6 +46,8 @@ video = "1.0.0"
 workRuntime = "2.10.5"
 workRuntimeKtx = "2.10.5"
 
+dnsjava = "3.6.3"
+
 jvmTarget = "1.8"
 minSdk = "21"
 compileSdk = "36"
@@ -112,6 +114,7 @@ tvprovider = { module = "androidx.tvprovider:tvprovider", version.ref = "tvprovi
 video = { module = "com.google.android.mediahome:video", version.ref = "video" }
 work-runtime = { module = "androidx.work:work-runtime", version.ref = "workRuntime" }
 work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
+dnsjava = { module = "dnsjava:dnsjava", version.ref = "dnsjava" }
 
 [plugins]
 
