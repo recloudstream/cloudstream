@@ -313,6 +313,8 @@ object CommonActivity {
     }
 
     fun onUserLeaveHint(act: Activity?) {
+        // On Android 12 and later we use setAutoEnterEnabled() instead.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) return
         if (canEnterPipMode && canShowPipMode) {
             act?.enterPIPMode()
         }
