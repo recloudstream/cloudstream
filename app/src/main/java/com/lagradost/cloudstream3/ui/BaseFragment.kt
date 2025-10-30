@@ -121,6 +121,9 @@ private interface BaseFragmentHelper<T : ViewBinding> {
     /**
      * Apply padding adjustments for system bars to the root view.
      *
+     * `fixPadding` should be idempotent in respect to the configuration, as the function may be
+     * called many times on the same view in case of configuration change like device orientation.
+     *
      * @param view The root view to adjust.
      */
     fun fixPadding(view: View) {
