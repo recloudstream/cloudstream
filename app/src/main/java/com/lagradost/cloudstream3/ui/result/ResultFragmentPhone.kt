@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
@@ -321,6 +322,11 @@ open class ResultFragmentPhone : FullScreenPlayer() {
     private fun updateUI(id: Int?) {
         syncModel.updateUserData()
         viewModel.reloadEpisodes()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        fixSystemBarsPadding(binding?.root)
     }
 
     @SuppressLint("SetTextI18n")
