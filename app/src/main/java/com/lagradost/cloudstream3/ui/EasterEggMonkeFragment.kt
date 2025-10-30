@@ -4,17 +4,13 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
-import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentEasterEggMonkeBinding
@@ -26,10 +22,9 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-class EasterEggMonkeFragment : Fragment() {
-
-    private var _binding: FragmentEasterEggMonkeBinding? = null
-    private val binding get() = _binding!!
+class EasterEggMonkeFragment : BaseFragment<FragmentEasterEggMonkeBinding>(
+    BaseFragment.BindingCreator.Inflate(FragmentEasterEggMonkeBinding::inflate)
+) {
 
     // planet of monks
     private val monkeys: List<Int> = listOf(
@@ -51,27 +46,22 @@ class EasterEggMonkeFragment : Fragment() {
     private val activeMonkeys = mutableListOf<ImageView>()
     private var spawningJob: Job? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentEasterEggMonkeBinding.inflate(layoutInflater)
-        return binding.root
+    override fun fixPadding(view: View) {
+        // Don't need any padding here
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+    override fun onBindingCreated(binding: FragmentEasterEggMonkeBinding) {
         activity?.hideSystemUI()
         spawningJob = lifecycleScope.launch {
             delay(1000)
             while (isActive) {
-                spawnMonkey()
+                spawnMonkey(binding)
                 delay(500)
             }
         }
     }
 
-    private fun spawnMonkey() {
+    private fun spawnMonkey(binding: FragmentEasterEggMonkeBinding) {
         val newMonkey = ImageView(context ?: return).apply {
             setImageResource(monkeys.random())
             isVisible = true
@@ -102,12 +92,12 @@ class EasterEggMonkeFragment : Fragment() {
         }
 
         @SuppressLint("ClickableViewAccessibility")
-        newMonkey.setOnTouchListener { view, event -> handleTouch(view, event) }
+        newMonkey.setOnTouchListener { view, event -> handleTouch(view, event, binding) }
 
-        startFloatingAnimation(newMonkey)
+        startFloatingAnimation(newMonkey, binding)
     }
 
-    private fun startFloatingAnimation(monkey: ImageView) {
+    private fun startFloatingAnimation(monkey: ImageView, binding: FragmentEasterEggMonkeBinding) {
         val floatUpAnimator = ObjectAnimator.ofFloat(
             monkey, View.TRANSLATION_Y, monkey.y, -monkey.height.toFloat()
         ).apply {
@@ -117,11 +107,8 @@ class EasterEggMonkeFragment : Fragment() {
 
         floatUpAnimator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
-                // necessary check because binding becomes null but monkes are still moving until onDestroy()
-                if (_binding != null) {
-                    binding.frame.removeView(monkey)
-                    activeMonkeys.remove(monkey)
-                }
+                binding.frame.removeView(monkey)
+                activeMonkeys.remove(monkey)
             }
         })
 
@@ -129,7 +116,11 @@ class EasterEggMonkeFragment : Fragment() {
         monkey.tag = floatUpAnimator
     }
 
-    private fun handleTouch(view: View, event: MotionEvent): Boolean {
+    private fun handleTouch(
+        view: View,
+        event: MotionEvent,
+        binding: FragmentEasterEggMonkeBinding
+    ): Boolean {
         val monkey = view as ImageView
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
@@ -143,17 +134,17 @@ class EasterEggMonkeFragment : Fragment() {
                 monkey.y = event.rawY - monkey.height / 2
 
                 // Check if monkey touches the screen edge
-                if (isTouchingEdge(monkey)) {
-                    removeMonkey(monkey)
+                if (isTouchingEdge(monkey, binding)) {
+                    removeMonkey(monkey, binding)
                 }
                 return true
             }
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                if (isTouchingEdge(monkey)) {
-                    removeMonkey(monkey)
+                if (isTouchingEdge(monkey, binding)) {
+                    removeMonkey(monkey, binding)
                 } else {
-                    startFloatingAnimation(monkey)
+                    startFloatingAnimation(monkey, binding)
                 }
                 return true
             }
@@ -161,12 +152,12 @@ class EasterEggMonkeFragment : Fragment() {
         return false
     }
 
-    private fun isTouchingEdge(monkey: ImageView): Boolean {
+    private fun isTouchingEdge(monkey: ImageView, binding: FragmentEasterEggMonkeBinding): Boolean {
         return monkey.x <= 0 || monkey.x + monkey.width >= binding.frame.width ||
                 monkey.y <= 0 || monkey.y + monkey.height >= binding.frame.height
     }
 
-    private fun removeMonkey(monkey: ImageView) {
+    private fun removeMonkey(monkey: ImageView, binding: FragmentEasterEggMonkeBinding) {
         // Fade out and remove the monkey
         ObjectAnimator.ofFloat(monkey, View.ALPHA, 1f, 0f).apply {
             duration = 300
@@ -184,6 +175,5 @@ class EasterEggMonkeFragment : Fragment() {
         super.onDestroyView()
         activity?.showSystemUI()
         spawningJob?.cancel()
-        _binding = null
     }
 }
