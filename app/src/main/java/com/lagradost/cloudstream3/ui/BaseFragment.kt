@@ -185,6 +185,29 @@ abstract class BaseFragment<T : ViewBinding>(
     }
 }
 
+/**
+ * Simple BaseFragment to just handle padding should not be used
+ * except for ResultFragmentPhone via AbstractPlayerFragment.
+ * This can be removed when AbstractPlayerFragment is
+ * eventually migrated to BaseFragment, but that
+ * requires converting more to ViewBinding and
+ * doing more significant refactoring, so for
+ * now we just use this to handle padding.
+ */
+abstract class SimpleBaseFragment(): Fragment() {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        fixPadding(view)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        view?.let { fixPadding(it) }
+    }
+
+    protected open fun fixPadding(view: View) {}
+}
+
 abstract class BaseDialogFragment<T : ViewBinding>(
     override val bindingCreator: BaseFragment.BindingCreator<T>
 ) : DialogFragment(), BaseFragmentHelper<T> {
