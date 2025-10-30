@@ -730,4 +730,24 @@
     <string name="speedup_summary">Segure para duplicar a velocidade</string>
     <string name="no_account">Sem conta</string>
     <string name="episode_action_play_mirror">Espelhar vídeo</string>"
-    </resources>
+    <string name="edit_profile_image_title">Editar Foto de Perfil</string>
+    <string name="edit_profile_image_hint">Inserir URL de Foto de Perfil</string>
+    <string name="edit_profile_image_error_empty">Nenhum URL Encontrado</string>
+    <string name="edit_profile_image_error_invalid">URL ou Imagem inválidos</string>
+    <string name="edit_profile_image_success">Imagem Atualizada com Sucesso</string>
+    <string name="action_mark_watched_up_to_this_episode">Marcar como assistido até este episódio</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">Remover \"assistido até este episódio\"</string>
+    <string name="action_reload">Recarregado</string>
+    <string name="reload_provider">Recarregar Fonte</string>
+    <string name="name">Nome</string>
+    <string name="subs_subtitle_alignment">Posição das Legendas</string>
+    <string name="bottom_left">Inferior esquerdo</string>
+    <string name="bottom_center">Inferior centralizado</string>
+    <string name="bottom_right">Inferior direito</string>
+    <string name="middle_left">Centro esquerdo</string>
+    <string name="middle_center">Centralizado</string>
+    <string name="middle_right">Centro direito</string>
+    <string name="top_left">Superior esquerdo</string>
+    <string name="top_center">Superior centralizado</string>
+    <string name="top_right">Superior direito</string>
+</resources>

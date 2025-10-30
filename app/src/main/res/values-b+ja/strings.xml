@@ -189,11 +189,7 @@
     <string name="subtitle_offset">字幕を同期</string>
     <string name="add_repository">リポジトリを追加</string>
     <string name="repository_name_hint">リポジトリ名 (オプション)</string>
-    <string name="blank_repo_message">CloudStreamはデフォルトでサイトがインストールされていません。リポジトリからサイトをインストールする必要があります。
-\n
-\nSky UK Limitedによる無脳なDMCAテイクダウンのため🤮、アプリ内でリポジトリサイトをリンクすることができません。
-\n
-\n私たちのDiscordに参加するか、オンラインで検索してください。</string>
+    <string name="blank_repo_message">CloudStreamはデフォルトでサイトがインストールされていません。リポジトリからサイトをインストールする必要があります。 \n \n私たちのDiscordに参加するか、オンラインで検索してください。</string>
     <string name="preview_background_img_des">バックグラウンドをプレビュー</string>
     <string name="play_livestream_button">ライブストリームの再生</string>
     <string name="home_change_provider_img_des">プロバイダーの変更</string>
@@ -490,7 +486,7 @@
     <string name="benene_des">与えられたベネネ</string>
     <string name="use">使用</string>
     <string name="quality_sd">SD</string>
-    <string name="apk_installer_settings_des">一部の携帯電話は新しいパッケージインストーラをサポートしていません。アップデートがインストールされない場合はレガシーオプションを試してください。</string>
+    <string name="apk_installer_settings_des">一部のスマートフォンは新しいパッケージインストーラをサポートしていません。アップデートがインストールされない場合はレガシーオプションを試してください。</string>
     <string name="episode_action_chromecast_mirror">Chromecastミラー</string>
     <string name="double_tap_to_seek_settings_des">前後にシークするために右側または左側をダブルタップ</string>
     <string name="quality_hdr">HDR</string>
@@ -545,7 +541,7 @@
     <string name="result_search_tooltip">他の拡張機能で検索</string>
     <string name="test_extensions_summary">このテストは開発者専用であり、拡張機能の動作を検証または否定しません。</string>
     <string name="biometric_setting">生体認証でロック</string>
-    <string name="resume_remaining" formatted="true">残り %s</string>
+    <string name="resume_remaining" formatted="true">%s\n残り</string>
     <string name="clipboard_unknown_error">コピー中にエラーが発生しました。logcatをコピーしてアプリサポートに連絡してください。</string>
     <string name="ok">OK</string>
     <string name="battery_dialog_title">バッテリー最適化を無効にする</string>
@@ -560,7 +556,7 @@
     <string name="jsdelivr_proxy_summary">jsDelivrを使用して生のGitHub URLのブロックを回避します。アップデートが数日遅れる可能性があります。</string>
     <string name="speech_recognition_unavailable">音声認識は利用できません</string>
     <string name="begin_speaking">話し始めてください…</string>
-    <string name="torrent_info">このビデオはトレントです。つまり、ビデオの活動が追跡される可能性があります。続行する前にトレントについて理解してください。</string>
+    <string name="torrent_info">このビデオはトレントのため、ビデオの活動が追跡される可能性があります。\n続行する前にトレントについて理解してください。</string>
     <string name="watch_quality_pref_data">優先視聴品質 (モバイルデータ)</string>
     <string name="limit_title">ビデオプレーヤーのタイトル最大文字数</string>
     <string name="video_disk_description">ストレージが少ないデバイス（Android TVなど）で高く設定すると問題が発生します。</string>
@@ -688,4 +684,31 @@
     <string name="poster_size_settings">ポスター</string>
     <string name="speedup_title">長押し速度トグル</string>
     <string name="speedup_summary">ホールドで2倍速に</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$d時間 %2$d分 %3$d秒</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$d分 %2$d秒</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$d秒</string>
+    <string name="episode_action_play_mirror">ミラーを再生</string>"
+    <string name="show_rating">評価</string>
+    <string name="no_account">アカウントなし</string>
+    <string name="edit_profile_image_title">プロフィール画像を編集</string>
+    <string name="edit_profile_image_hint">プロフィール画像のURLを入力</string>
+    <string name="edit_profile_image_error_empty">URLが見つかりません</string>
+    <string name="edit_profile_image_error_invalid">無効なURLまたは画像です</string>
+    <string name="edit_profile_image_success">画像を正常に更新しました</string>
+    <string name="action_mark_watched_up_to_this_episode">このエピソードまでを視聴済みにする</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">このエピソードまでの視聴済みマークを解除</string>
+    <string name="action_reload">再読み込みが完了しました</string>
+    <string name="reload_provider">プロバイダーを再読み込み</string>
+    <string name="name">名前</string>
+    <string name="resolution_and_name">解像度と名前</string>
+    <string name="subs_subtitle_alignment">字幕の配置</string>
+    <string name="bottom_left">左下</string>
+    <string name="bottom_center">中央下</string>
+    <string name="bottom_right">右下</string>
+    <string name="middle_left">中央左</string>
+    <string name="middle_center">中央</string>
+    <string name="middle_right">中央右</string>
+    <string name="top_left">左上</string>
+    <string name="top_center">上中央</string>
+    <string name="top_right">右上</string>
 </resources>
