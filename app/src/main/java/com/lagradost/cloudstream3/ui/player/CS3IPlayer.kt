@@ -122,6 +122,7 @@ const val toleranceAfterUs = 300_000L
 
 @OptIn(UnstableApi::class)
 class CS3IPlayer : IPlayer {
+    private var playerListener: Player.Listener? = null
     private var isPlaying = false
     private var exoPlayer: ExoPlayer? = null
         set(value) {
@@ -612,7 +613,10 @@ class CS3IPlayer : IPlayer {
                 // No documented exception, but just to be extra safe
                 logError(t)
             }
-
+            playerListener?.let {
+                removeListener(it)
+                playerListener = null
+            }
             stop()
             release()
         }
@@ -1529,7 +1533,7 @@ class CS3IPlayer : IPlayer {
                     onRenderFirst()
                     updatedTime(source = PlayerEventSource.Player)
                 }
-            })
+            }.also { playerListener = it })
         } catch (t: Throwable) {
             Log.e(TAG, "loadExo error", t)
             event(ErrorEvent(t))
