@@ -4,10 +4,8 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Build
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -15,7 +13,6 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.marginBottom
 import androidx.core.view.marginTop
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.lagradost.cloudstream3.CommonActivity.showToast
@@ -26,9 +23,9 @@ import com.lagradost.cloudstream3.databinding.FragmentExtensionsBinding
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.plugins.RepositoryManager
+import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
-import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setSystemBarsPadding
@@ -39,23 +36,13 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.setText
 
-class ExtensionsFragment : Fragment() {
-    var binding: FragmentExtensionsBinding? = null
-    override fun onDestroyView() {
-        binding = null
-        super.onDestroyView()
-    }
+class ExtensionsFragment : BaseFragment<FragmentExtensionsBinding>(
+    BaseFragment.BindingCreator.Inflate(FragmentExtensionsBinding::inflate)
+) {
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        val localBinding = FragmentExtensionsBinding.inflate(inflater, container, false)
-        binding = localBinding
-        return localBinding.root//inflater.inflate(R.layout.fragment_extensions, container, false)
-    }
+    private val extensionViewModel: ExtensionsViewModel by activityViewModels()
 
     private fun View.setLayoutWidth(weight: Int) {
         val param = LinearLayout.LayoutParams(
@@ -65,8 +52,6 @@ class ExtensionsFragment : Fragment() {
         )
         this.layoutParams = param
     }
-
-    private val extensionViewModel: ExtensionsViewModel by activityViewModels()
 
     override fun onResume() {
         super.onResume()
@@ -83,23 +68,25 @@ class ExtensionsFragment : Fragment() {
         extensionViewModel.loadRepositories()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setUpToolbar(R.string.extensions)
+    override fun fixPadding(view: View) {
         setSystemBarsPadding()
+    }
+
+    override fun onBindingCreated(binding: FragmentExtensionsBinding) {
+        setUpToolbar(R.string.extensions)
         setToolBarScrollFlags()
 
-        binding?.repoRecyclerView?.apply {
+        binding.repoRecyclerView.apply {
             setLinearListLayout(
                 isHorizontal = false,
-                nextUp = R.id.settings_toolbar, //FOCUS_SELF, // back has no id so we cant :pensive:
+                nextUp = R.id.settings_toolbar, // FOCUS_SELF, // back has no id so we cant :pensive:
                 nextDown = R.id.plugin_storage_appbar,
                 nextRight = FOCUS_SELF,
                 nextLeft = R.id.nav_rail_view
             )
 
             if (!isLayout(TV))
-                binding?.addRepoButton?.let { button ->
+                binding.addRepoButton.let { button ->
                     button.post {
                         setPadding(
                             paddingLeft,
@@ -113,10 +100,10 @@ class ExtensionsFragment : Fragment() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
                     val dy = scrollY - oldScrollY
-                    if (dy > 0) { //check for scroll down
-                        binding?.addRepoButton?.shrink() // hide
+                    if (dy > 0) { // check for scroll down
+                        binding.addRepoButton.shrink() // hide
                     } else if (dy < -5) {
-                        binding?.addRepoButton?.extend() // show
+                        binding.addRepoButton.extend() // show
                     }
                 }
             }
@@ -132,13 +119,13 @@ class ExtensionsFragment : Fragment() {
             }, { repo ->
                 // Prompt user before deleting repo
                 main {
-                    val builder = AlertDialog.Builder(context ?: view.context)
+                    val builder = AlertDialog.Builder(context ?: binding.root.context)
                     val dialogClickListener =
                         DialogInterface.OnClickListener { _, which ->
                             when (which) {
                                 DialogInterface.BUTTON_POSITIVE -> {
                                     ioSafe {
-                                        RepositoryManager.removeRepository(view.context, repo)
+                                        RepositoryManager.removeRepository(binding.root.context, repo)
                                         extensionViewModel.loadStats()
                                         extensionViewModel.loadRepositories()
                                     }
@@ -160,37 +147,15 @@ class ExtensionsFragment : Fragment() {
         }
 
         observe(extensionViewModel.repositories) {
-            binding?.repoRecyclerView?.isVisible = it.isNotEmpty()
-            binding?.blankRepoScreen?.isVisible = it.isEmpty()
-            (binding?.repoRecyclerView?.adapter as? RepoAdapter)?.submitList(it.toList())
+            binding.repoRecyclerView.isVisible = it.isNotEmpty()
+            binding.blankRepoScreen.isVisible = it.isEmpty()
+            (binding.repoRecyclerView.adapter as? RepoAdapter)?.submitList(it.toList())
         }
 
-        /*binding?.repoRecyclerView?.apply {
-            context?.let { ctx ->
-                layoutManager = LinearRecycleViewLayoutManager(ctx, nextFocusUpId, nextFocusDownId)
-            }
-        }*/
-
-//        list_repositories?.setOnClickListener {
-//            // Open webview on tv if browser fails
-//            val isTv = isTvSettings()
-//            openBrowser(PUBLIC_REPOSITORIES_LIST, isTv, this)
-//
-//            // Set clipboard on TV because the browser might not exist or work properly
-//            if (isTv) {
-//                val serviceClipboard =
-//                    (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?)
-//                        ?: return@setOnClickListener
-//                val clip = ClipData.newPlainText("Repository url", PUBLIC_REPOSITORIES_LIST)
-//                serviceClipboard.setPrimaryClip(clip)
-//            }
-//        }
-
         observeNullable(extensionViewModel.pluginStats) { value ->
-            binding?.apply {
+            binding.apply {
                 if (value == null) {
                     pluginStorageAppbar.isVisible = false
-
                     return@observeNullable
                 }
 
@@ -210,7 +175,7 @@ class ExtensionsFragment : Fragment() {
             }
         }
 
-        binding?.pluginStorageAppbar?.setOnClickListener {
+        binding.pluginStorageAppbar.setOnClickListener {
             findNavController().navigate(
                 R.id.navigation_settings_extensions_to_navigation_settings_plugins,
                 PluginsFragment.newInstance(
@@ -230,7 +195,7 @@ class ExtensionsFragment : Fragment() {
 
             val dialog = builder.create()
             dialog.show()
-            (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager?)?.primaryClip?.getItemAt(
+            (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager)?.primaryClip?.getItemAt(
                 0
             )?.text?.toString()?.let { copiedText ->
                 if (copiedText.contains(RepoAdapter.SHAREABLE_REPO_SEPARATOR)) {
@@ -243,13 +208,6 @@ class ExtensionsFragment : Fragment() {
                 }
             }
 
-//            dialog.list_repositories?.setOnClickListener {
-//                // Open webview on tv if browser fails
-//                openBrowser(PUBLIC_REPOSITORIES_LIST, isTvSettings(), this)
-//                dialog.dismissSafe()
-//            }
-
-//            dialog.text2?.text = provider.name
             binding.applyBtt.setOnClickListener secondListener@{
                 val name = binding.repoNameInput.text?.toString()
                 ioSafe {
@@ -294,7 +252,7 @@ class ExtensionsFragment : Fragment() {
         }
 
         val isTv = isLayout(TV)
-        binding?.apply {
+        binding.apply {
             addRepoButton.isGone = isTv
             addRepoButtonImageviewHolder.isVisible = isTv
 
