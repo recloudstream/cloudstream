@@ -17,6 +17,7 @@ import com.lagradost.cloudstream3.actions.AlwaysAskAction
 import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
+import com.lagradost.cloudstream3.APIHolder.getApiFromUrlNull
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.CommonActivity.activity
@@ -89,6 +90,8 @@ import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToEnglishLanguageN
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /** This starts at 1 */
 data class EpisodeRange(
@@ -513,6 +516,72 @@ class ResultViewModel2 : ViewModel() {
 
     private val _favoriteStatus: MutableLiveData<Boolean?> = MutableLiveData(null)
     val favoriteStatus: LiveData<Boolean?> = _favoriteStatus
+
+    val currentTabIndex: MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>(0)
+    }
+
+    val currentTabPosition: MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>(0)
+    }
+
+    val reviews: MutableLiveData<Resource<ArrayList<ReviewResponse>>> by lazy {
+        MutableLiveData<Resource<ArrayList<ReviewResponse>>>()
+    }
+    private var currentReviews: ArrayList<ReviewResponse> = arrayListOf()
+
+    private val reviewPage: MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>(0)
+    }
+
+    private val loadMoreReviewsMutex = Mutex()
+    private fun loadMoreReviews(data: String) {
+        viewModelScope.launch {
+            if (loadMoreReviewsMutex.isLocked) return@launch
+            loadMoreReviewsMutex.withLock {
+                val loadPage = (reviewPage.value ?: 0) + 1
+                if (loadPage == 1) {
+                    reviews.postValue(Resource.Loading())
+                }
+                val repo = currentRepo ?: return@launch
+                when (val response = repo.loadReviews(data, loadPage)) {
+                    is Resource.Success -> {
+                        val moreReviews = response.value
+                        currentReviews.addAll(moreReviews)
+
+                        reviews.postValue(Resource.Success(currentReviews))
+                        reviewPage.postValue(loadPage)
+                    }
+
+                    else -> {}
+                }
+            }
+        }
+    }
+
+    private val loadMutex = Mutex()
+    fun loadMoreReviews(verify: Boolean = true) = viewModelScope.launch {
+        loadMutex.withLock {
+            if (!hasLoaded()) return@launch
+            if (verify && currentTabIndex.value == 0) return@launch
+            loadMoreReviews(
+                currentResponse?.reviewsData ?: currentResponse?.url ?: return@launch
+            )
+        }
+    }
+
+    fun switchTab(index: Int?, position: Int?) {
+        val newPos = index ?: return
+        currentTabPosition.postValue(position ?: return)
+        currentTabIndex.postValue(newPos)
+        if (newPos == 1 && currentReviews.isEmpty()) {
+            loadMoreReviews(verify = false)
+        }
+    }
+
+    fun isInReviews(): Boolean {
+        return currentTabIndex.value == 1
+    }
 
     companion object {
         const val TAG = "RVM2"
@@ -2694,6 +2763,7 @@ class ResultViewModel2 : ViewModel() {
         override var posterHeaders: Map<String, String>? = null,
         override var backgroundPosterUrl: String? = null,
         override var contentRating: String? = null,
+        override var reviewsData: String? = null,
         override var uniqueUrl: String = url,
         val id: Int?,
     ) : LoadResponse
@@ -2703,7 +2773,7 @@ class ResultViewModel2 : ViewModel() {
         _page.postValue(Resource.Loading(url))
         _episodes.postValue(Resource.Loading())
         val api =
-            APIHolder.getApiFromNameNull(searchResponse.apiName) ?: APIHolder.getApiFromUrlNull(
+            getApiFromNameNull(searchResponse.apiName) ?: getApiFromUrlNull(
                 searchResponse.url
             ) ?: APIRepository.noneApi
         val repo = APIRepository(api)
@@ -2754,7 +2824,7 @@ class ResultViewModel2 : ViewModel() {
             currentShowFillers = showFillers
 
             // set api
-            val api = APIHolder.getApiFromNameNull(apiName) ?: APIHolder.getApiFromUrlNull(url)
+            val api = getApiFromNameNull(apiName) ?: getApiFromUrlNull(url)
             if (api == null) {
                 _page.postValue(
                     Resource.Failure(

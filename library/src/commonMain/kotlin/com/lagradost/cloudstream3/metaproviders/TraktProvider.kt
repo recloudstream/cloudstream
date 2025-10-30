@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainPageRequest
 import com.lagradost.cloudstream3.NextAiring
 import com.lagradost.cloudstream3.ProviderType
+import com.lagradost.cloudstream3.ReviewResponse
 import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.SearchResponseList
@@ -28,6 +29,7 @@ import com.lagradost.cloudstream3.newEpisode
 import com.lagradost.cloudstream3.newHomePageResponse
 import com.lagradost.cloudstream3.newMovieLoadResponse
 import com.lagradost.cloudstream3.newMovieSearchResponse
+import com.lagradost.cloudstream3.newReviewResponse
 import com.lagradost.cloudstream3.newSearchResponseList
 import com.lagradost.cloudstream3.newTvSeriesLoadResponse
 import com.lagradost.cloudstream3.newTvSeriesSearchResponse
@@ -38,6 +40,7 @@ import java.util.Locale
 
 open class TraktProvider : MainAPI() {
     override var name = "Trakt"
+    override val hasReviews = true
     override val hasMainPage = true
     override val providerType = ProviderType.MetaProvider
     override val supportedTypes = setOf(
@@ -105,6 +108,22 @@ open class TraktProvider : MainAPI() {
         return newSearchResponseList(parseJson<List<MediaDetails>>(apiResponse).map { element ->
             element.toSearchResponse()
         })
+    }
+
+    override suspend fun loadReviews(data: String, page: Int): List<ReviewResponse> {
+        return try {
+            parseJson<List<TraktReview>>(data).filter { it.review == true }.map {
+                newReviewResponse {
+                    author = it.user?.username
+                    content = it.comment
+                    rating = it.userRating
+                    isSpoiler = it.spoiler == true
+                    addDate(it.createdAt)
+                }
+            }
+        } catch (_: Exception) {
+            emptyList<ReviewResponse>()
+        }
     }
 
     override suspend fun load(url: String): LoadResponse {
@@ -184,6 +203,8 @@ open class TraktProvider : MainAPI() {
                 //posterHeaders
                 this.backgroundPosterUrl = backDropUrl
                 this.contentRating = mediaDetails.certification
+                this.reviewsData =
+                    getApi("$traktApiUrl/$moviesOrShows/${mediaDetails?.ids?.slug}/comments/newest")
                 addTrailer(mediaDetails.trailer)
                 addImdbId(mediaDetails.ids?.imdb)
                 addTMDbId(mediaDetails.ids?.tmdb.toString())
@@ -319,6 +340,19 @@ open class TraktProvider : MainAPI() {
     data class Data(
         val type: TvType? = null,
         val mediaDetails: MediaDetails? = null,
+    )
+
+    data class TraktReview(
+        @JsonProperty("user") val user: TraktUser? = null,
+        @JsonProperty("comment") val comment: String? = null,
+        @JsonProperty("review") val review: Boolean? = null,
+        @JsonProperty("spoiler") val spoiler: Boolean? = null,
+        @JsonProperty("user_rating") val userRating: Int? = null,
+        @JsonProperty("created_at") val createdAt: String? = null
+    )
+
+    data class TraktUser(
+        @JsonProperty("username") val username: String? = null
     )
 
     data class MediaDetails(
