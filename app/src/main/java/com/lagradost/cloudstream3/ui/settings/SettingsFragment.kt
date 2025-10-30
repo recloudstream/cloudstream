@@ -143,11 +143,13 @@ class SettingsFragment : BaseFragment<MainSettingsBinding>(
         }
 
         fun Fragment.setSystemBarsPadding() {
-            fixSystemBarsPadding(
-                view,
-                padLeft = isLayout(TV or EMULATOR),
-                padBottom = isLandscape()
-            )
+            view?.let {
+                fixSystemBarsPadding(
+                    it,
+                    padLeft = isLayout(TV or EMULATOR),
+                    padBottom = isLandscape()
+                )
+            }
         }
 
         fun getFolderSize(dir: File): Long {

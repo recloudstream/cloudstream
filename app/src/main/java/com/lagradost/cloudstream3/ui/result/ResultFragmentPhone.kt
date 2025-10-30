@@ -326,7 +326,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        fixSystemBarsPadding(binding?.root)
+        view?.let { fixSystemBarsPadding(it) }
     }
 
     @SuppressLint("SetTextI18n")
@@ -334,7 +334,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         super.onViewCreated(view, savedInstanceState)
 
         // ===== setup =====
-        fixSystemBarsPadding(binding?.root)
+        fixSystemBarsPadding(view)
         val storedData = getStoredData() ?: return
         activity?.window?.decorView?.clearFocus()
         activity?.loadCache()

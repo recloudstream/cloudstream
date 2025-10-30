@@ -423,7 +423,7 @@ object UIHelper {
     }
 
     fun fixSystemBarsPadding(
-        v: View?,
+        v: View,
         @DimenRes heightResId: Int? = null,
         @DimenRes widthResId: Int? = null,
         padTop: Boolean = true,
@@ -432,8 +432,6 @@ object UIHelper {
         padRight: Boolean = true,
         overlayCutout: Boolean = true
     ) {
-        if (v == null) return
-
         // edge-to-edge is very buggy on earlier versions so we just
         // handle the status bar here instead.
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
