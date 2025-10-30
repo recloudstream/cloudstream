@@ -99,15 +99,6 @@ private interface BaseFragmentHelper<T : ViewBinding> {
     fun onBindingCreated(binding: T) {}
 
     /**
-     * Called when the device configuration changes (e.g., orientation).
-     * Re-applies system bar padding fixes to the root view to ensure it
-     * readjusts for orientation changes.
-     */
-    fun handleConfigurationChanged(newConfig: Configuration) {
-        binding?.apply { fixPadding(root) }
-    }
-
-    /**
      * Pick a layout resource ID for the fragment.
      *
      * Return `null` by default. Override to provide a layout resource when using
@@ -147,9 +138,14 @@ abstract class BaseFragment<T : ViewBinding>(
         onViewReady(view, savedInstanceState)
     }
 
+    /**
+     * Called when the device configuration changes (e.g., orientation).
+     * Re-applies system bar padding fixes to the root view to ensure it
+     * readjusts for orientation changes.
+     */
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        handleConfigurationChanged(newConfig)
+        view?.let { fixPadding(it) }
     }
 
     /** Cleans up the binding reference when the view is destroyed to avoid memory leaks. */
@@ -201,9 +197,10 @@ abstract class BaseDialogFragment<T : ViewBinding>(
         onViewReady(view, savedInstanceState)
     }
 
+    /** @see [BaseFragment.onConfigurationChanged] for documentation. */
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        handleConfigurationChanged(newConfig)
+        view?.let { fixPadding(it) }
     }
 
     /** Cleans up the binding reference when the view is destroyed to avoid memory leaks. */
@@ -229,9 +226,10 @@ abstract class BaseBottomSheetDialogFragment<T : ViewBinding>(
         onViewReady(view, savedInstanceState)
     }
 
+    /** @see [BaseFragment.onConfigurationChanged] for documentation. */
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        handleConfigurationChanged(newConfig)
+        view?.let { fixPadding(it) }
     }
 
     /** Cleans up the binding reference when the view is destroyed to avoid memory leaks. */
