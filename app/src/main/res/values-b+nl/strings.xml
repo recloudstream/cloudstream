@@ -277,7 +277,7 @@
     <string name="category_general">Algemeen</string>
     <string name="random_button_settings">Willekeurige knop</string>
     <string name="random_button_settings_desc">Toon willekeurige knop op Homepage</string>
-    <string name="provider_lang_settings">Provider talen</string>
+    <string name="provider_lang_settings">Extensietalen</string>
     <string name="app_layout">App Layout</string>
     <string name="preferred_media_settings">Preferred media</string>
     <string name="subtitles_encoding">Subtitle encoding</string>
@@ -292,7 +292,7 @@
     <string name="bottom_title_settings_des">Zet de titel onder de poster</string>
     <!-- account stuff -->
     <string name="example_password">wachtwoord123</string>
-    <string name="example_username">MijnCoolGebruikersnaam</string>
+    <string name="example_username">Gebruikersnaam</string>
     <string name="example_email">hello@Wereld.com</string>
     <string name="example_ip">127.0.0.1</string>
     <string name="example_site_name">MyCoolSite</string>
@@ -620,4 +620,25 @@
     <string name="select_all">Selecteer alles</string>
     <string name="deselect_all">Deselecteer alles</string>
     <string name="subscribe_tooltip">Bericht voor nieuwe afleveringen</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$d u %2$d m %3$d s</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$d m %2$d s</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$d s</string>
+    <string name="episode_upcoming_format" formatted="true">Binnenkort beschikbaar in %s</string>
+    <string name="delete_files">Verwijder bestanden</string>
+    <string name="delete_format" formatted="true">Verwijder (%1$d | %2$s)</string>
+    <string name="test_warning">Waarschuwing</string>
+    <string name="delete_message_multiple" formatted="true">Weet je zeker dat je de volgende items permanent wil verwijderen?\n\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Weet je zeker dat je de volgende afleveringen in %1$s permanent wilt verwijderen?\n\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">Hiermee worden ook alle afleveringen van de volgende series permanent verwijderd:\n\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Weet je zeker dat je alle afleveringen van de volgende series permanent wil verwijderen?\n\n%s</string>
+    <string name="resume_remaining" formatted="true">%s\nresterend</string>
+    <string name="music_singlar">Muziek</string>
+    <string name="audio_book_singular">Luisterboek</string>
+    <string name="custom_media_singluar">Media</string>
+    <string name="audio_singluar">Audio</string>
+    <string name="podcast_singluar">Podcast</string>
+    <string name="encoding_error">Coderingsfout</string>
+    <string name="unsupported_error">Fout: wordt niet ondersteund</string>
+    <string name="pref_category_security">Beveiliging</string>
+    <string name="pref_category_accounts">Accounts</string>
 </resources>

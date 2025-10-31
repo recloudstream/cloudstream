@@ -712,4 +712,17 @@
     <string name="action_remove_mark_watched_up_to_this_episode">Удалите просмотренное до этой серии</string>
     <string name="action_reload">Перезагружен</string>
     <string name="reload_provider">Перезагрузить провайдера</string>
+    <string name="episode_action_play_mirror">Запустить зеркало</string>"
+    <string name="name">Имя</string>
+    <string name="resolution_and_name">Решение и имя</string>
+    <string name="subs_subtitle_alignment">Выравнивание Субтитров</string>
+    <string name="bottom_left">Нижний левый</string>
+    <string name="bottom_center">Нижний центральный</string>
+    <string name="bottom_right">Нижний правый</string>
+    <string name="middle_left">Средний левый</string>
+    <string name="middle_center">Средний центр</string>
+    <string name="middle_right">Средний правый</string>
+    <string name="top_left">Вверху слева</string>
+    <string name="top_center">Вверху центр</string>
+    <string name="top_right">Вверху правый</string>
 </resources>

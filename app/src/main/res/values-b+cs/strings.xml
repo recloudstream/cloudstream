@@ -412,7 +412,7 @@
     <string name="redo_setup_process">Znovu provést proces nastavení</string>
     <string name="apk_installer_settings">Instalátor APK</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
-    <string name="apk_installer_settings_des">Některé telefony nepodporují nový instalátor balíčků. Pokud se aktualizace nenainstalují, zkuste použít starší možnost.</string>
+    <string name="apk_installer_settings_des">Některá zařízení nepodporují nový instalátor balíčků. Pokud se aktualizace nenainstalují, zkuste použít starší možnost.</string>
     <string name="pref_category_cache">Mezipaměť</string>
     <string name="next_episode_format" formatted="true">Epizoda %d bude vydána za</string>
     <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
@@ -753,4 +753,14 @@
     <string name="episode_action_play_mirror">Přehrát ze zrcadla</string>"
     <string name="name">Název</string>
     <string name="resolution_and_name">Rozlišení a název</string>
+    <string name="subs_subtitle_alignment">Zarovnání titulků</string>
+    <string name="bottom_left">Vlevo dole</string>
+    <string name="bottom_center">Uprostřed dole</string>
+    <string name="bottom_right">Vpravo dole</string>
+    <string name="middle_left">Vlevo uprostřed</string>
+    <string name="middle_center">Uprostřed</string>
+    <string name="middle_right">Vpravo uprostřed</string>
+    <string name="top_left">Vlevo nahoře</string>
+    <string name="top_center">Uprostřed nahoře</string>
+    <string name="top_right">Vpravo nahoře</string>
 </resources>

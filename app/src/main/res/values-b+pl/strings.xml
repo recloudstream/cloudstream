@@ -443,7 +443,7 @@
     <string name="search_poster_img_des">Poster</string>
     <string name="skip_type_recap">Podsumowanie</string>
     <string name="apk_installer_settings">Instalator APK</string>
-    <string name="apk_installer_settings_des">Niektóre telefony nie obsługują nowego instalatora pakietów. Wypróbuj tryb legacy, jeśli aktualizacje nie zostaną zainstalowane.</string>
+    <string name="apk_installer_settings_des">Niektóre urządzenia nie obsługują nowego instalatora pakietów. Wypróbuj tryb legacy, jeśli aktualizacje nie zostaną zainstalowane.</string>
     <string name="example_password">hasło123</string>
     <string name="ova_singular">@string/ova</string>
     <string name="example_site_name">NowaNazwaWitryny</string>
@@ -730,4 +730,14 @@
     <string name="episode_action_play_mirror">Odtwarzaj inne źródło</string>"
     <string name="name">Nazwa</string>
     <string name="resolution_and_name">Rozdzielczość i nazwa</string>
+    <string name="bottom_left">Dolne lewe</string>
+    <string name="subs_subtitle_alignment">Wyrównanie napisów</string>
+    <string name="bottom_center">Dolne środkowe</string>
+    <string name="bottom_right">Dolne prawe</string>
+    <string name="middle_left">Środkowe lewe</string>
+    <string name="middle_center">Środkowe</string>
+    <string name="middle_right">Środkowe prawe</string>
+    <string name="top_left">Górne lewe</string>
+    <string name="top_center">Górne środkowe</string>
+    <string name="top_right">Górne prawe</string>
 </resources>

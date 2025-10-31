@@ -503,7 +503,7 @@
     <string name="update_notification_failed">无法安装新版的应用</string>
     <string name="automatic_plugin_download_summary">自动安装已添加的仓库内所有未安装的插件。</string>
     <string name="apk_installer_settings">APK 安装器</string>
-    <string name="apk_installer_settings_des">部分手机不支持新的软件包安装程序。如果未安装更新，请尝试使用传统选项。</string>
+    <string name="apk_installer_settings_des">部分设备不支持新的软件包安装程序。如果未安装更新，请尝试使用传统选项。</string>
     <string name="apk_installer_legacy">传统</string>
     <string name="apk_installer_package_installer">软件包安装程序</string>
     <string name="play_trailer_button">播放预告片</string>
@@ -773,4 +773,14 @@
     <string name="episode_action_play_mirror">播放镜像</string>"
     <string name="name">名称</string>
     <string name="resolution_and_name">分辨率和名称</string>
+    <string name="subs_subtitle_alignment">字幕对齐</string>
+    <string name="bottom_left">左下</string>
+    <string name="bottom_center">底部居中</string>
+    <string name="bottom_right">右下</string>
+    <string name="middle_left">中左</string>
+    <string name="middle_center">正中</string>
+    <string name="middle_right">中右</string>
+    <string name="top_left">左上</string>
+    <string name="top_center">顶部居中</string>
+    <string name="top_right">右上</string>
 </resources>
