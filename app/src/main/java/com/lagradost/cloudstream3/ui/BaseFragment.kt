@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,11 +41,22 @@ private interface BaseFragmentHelper<T : ViewBinding> {
     var _binding: T?
     val binding: T? get() = _binding
 
+	companion object {
+        const val TAG = "BaseFragment"
+	}
+
     fun createBinding(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // Try to reuse a binding from the pool first
+        BaseFragmentPool.acquire<T>(javaClass.name)?.let {
+			Log.d(TAG, "Binding acquired from pool")
+            _binding = it
+            return it.root
+        }
+
         val layoutId = pickLayout()
         val root: View? = layoutId?.let { inflater.inflate(it, container, false) }
         _binding = try {
@@ -120,6 +132,48 @@ private interface BaseFragmentHelper<T : ViewBinding> {
     fun fixPadding(view: View) {
         fixSystemBarsPadding(view)
     }
+
+    /** Called by fragments when they’re destroyed, so the binding can be recycled. */
+    fun recycleBindingOnDestroy() {
+        _binding?.let {
+            BaseFragmentPool.release(javaClass.name, it)
+			Log.d(TAG, "Binding released to pool")
+            _binding = null
+        }
+    }
+}
+
+/**
+ * A global pool for reusing [ViewBinding] instances across fragments to reduce
+ * layout inflation overhead and improve navigation performance.
+ *
+ * This pool is intended for use with fragments that extend [BaseFragment],
+ * [BaseDialogFragment], or [BaseBottomSheetDialogFragment] which support
+ * recycling of their bindings.
+ */
+object BaseFragmentPool {
+	private val pool = mutableMapOf<String, MutableList<ViewBinding>>()
+
+	/** Attempts to acquire a recycled binding from the pool. */
+	fun <T : ViewBinding> acquire(key: String): T? {
+		val list = pool[key] ?: return null
+		val binding = list.removeLastOrNull() as? T ?: return null
+		(binding.root.parent as? ViewGroup)?.removeView(binding.root)
+		if (list.isEmpty()) pool.remove(key)
+		return binding
+	}
+
+	/** Releases a binding back to the pool for later reuse. */
+	fun <T : ViewBinding> release(key: String, binding: T) {
+		val list = pool.getOrPut(key) { mutableListOf() }
+		list.add(binding)
+	}
+
+	/** Clears all cached bindings from the pool. */
+	fun clearAll() {
+		pool.values.flatten().forEach { (it.root.parent as? ViewGroup)?.removeView(it.root) }
+		pool.clear()
+	}
 }
 
 abstract class BaseFragment<T : ViewBinding>(
@@ -151,7 +205,7 @@ abstract class BaseFragment<T : ViewBinding>(
     /** Cleans up the binding reference when the view is destroyed to avoid memory leaks. */
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        recycleBindingOnDestroy()
     }
 
     /**
@@ -206,7 +260,7 @@ abstract class BaseDialogFragment<T : ViewBinding>(
     /** Cleans up the binding reference when the view is destroyed to avoid memory leaks. */
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        recycleBindingOnDestroy()
     }
 }
 
@@ -235,7 +289,7 @@ abstract class BaseBottomSheetDialogFragment<T : ViewBinding>(
     /** Cleans up the binding reference when the view is destroyed to avoid memory leaks. */
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        recycleBindingOnDestroy()
     }
 }
 
