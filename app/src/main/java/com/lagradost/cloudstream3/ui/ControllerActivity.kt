@@ -245,7 +245,12 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                             .setPlayPosition(startAt)
                                             .setAutoplay(true)
                                             .build()
-                                    awaitLinks(remoteMediaClient?.load(mediaItem, mediaLoadOptions)) {
+                                    awaitLinks(
+                                        remoteMediaClient?.load(
+                                            mediaItem,
+                                            mediaLoadOptions
+                                        )
+                                    ) {
                                         loadMirror(index + 1)
                                     }
                                 }
@@ -299,7 +304,13 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                     val currentDuration = remoteMediaClient?.streamDuration
                     val currentPosition = remoteMediaClient?.approximateStreamPosition
                     if (currentDuration != null && currentPosition != null)
-                        DataStoreHelper.setViewPos(epData.id, currentPosition, currentDuration)
+                        DataStoreHelper.setViewPosAndResume(
+                            epData.id,
+                            currentPosition,
+                            currentDuration,
+                            epData,
+                            meta.episodes.getOrNull(index + 1)
+                        )
                 } catch (t: Throwable) {
                     logError(t)
                 }
@@ -323,7 +334,8 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                 }, subtitleCallback = {
                                     currentSubs.add(it)
                                 },
-                                isCasting = true)
+                                isCasting = true
+                            )
                         }
 
                         val sortedLinks = sortUrls(currentLinks)

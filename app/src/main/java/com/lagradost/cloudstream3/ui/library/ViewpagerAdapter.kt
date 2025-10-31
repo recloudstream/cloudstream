@@ -40,24 +40,25 @@ class ViewpagerAdapterViewHolderState(val binding: LibraryViewpagerPageBinding) 
 }
 
 class ViewpagerAdapter(
-    fragment: Fragment,
     val scrollCallback: (isScrollingDown: Boolean) -> Unit,
     val clickCallback: (SearchClickCallback) -> Unit
-) : BaseAdapter<SyncAPI.Page, Bundle>(fragment,
+) : BaseAdapter<SyncAPI.Page, Bundle>(
     id = "ViewpagerAdapter".hashCode(),
     diffCallback = BaseDiffCallback(
-    itemSame = { a, b ->
-        a.title == b.title
-    },
-    contentSame = { a, b ->
-        a.items == b.items && a.title == b.title
-    }
-)) {
+        itemSame = { a, b ->
+            a.title == b.title
+        },
+        contentSame = { a, b ->
+            a.items == b.items && a.title == b.title
+        }
+    )) {
+
     override fun onCreateContent(parent: ViewGroup): ViewHolderState<Bundle> {
         return ViewpagerAdapterViewHolderState(
             LibraryViewpagerPageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
+
     override fun onUpdateContent(
         holder: ViewHolderState<Bundle>,
         item: SyncAPI.Page,
@@ -65,7 +66,7 @@ class ViewpagerAdapter(
     ) {
         val binding = holder.view
         if (binding !is LibraryViewpagerPageBinding) return
-        (binding.pageRecyclerview.adapter as? PageAdapter)?.updateList(item.items)
+        (binding.pageRecyclerview.adapter as? PageAdapter)?.submitList(item.items)
         binding.pageRecyclerview.scrollToPosition(0)
     }
 
@@ -83,13 +84,14 @@ class ViewpagerAdapter(
                 // If this fails then item height becomes 0 when there is only one item
                 doOnAttach {
                     adapter = PageAdapter(
-                        item.items.toMutableList(),
                         this,
                         clickCallback
-                    )
+                    ).apply {
+                        submitList(item.items)
+                    }
                 }
             } else {
-                (adapter as? PageAdapter)?.updateList(item.items)
+                (adapter as? PageAdapter)?.submitList(item.items)
                 // scrollToPosition(0)
             }
 

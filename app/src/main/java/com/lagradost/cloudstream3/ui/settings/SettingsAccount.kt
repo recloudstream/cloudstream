@@ -14,7 +14,6 @@ import androidx.core.content.edit
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
-import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreference
 import androidx.recyclerview.widget.RecyclerView
@@ -38,6 +37,7 @@ import com.lagradost.cloudstream3.syncproviders.AuthRepo
 import com.lagradost.cloudstream3.syncproviders.AuthUser
 import com.lagradost.cloudstream3.syncproviders.SubtitleRepo
 import com.lagradost.cloudstream3.syncproviders.SyncRepo
+import com.lagradost.cloudstream3.ui.BasePreferenceFragmentCompat
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
@@ -45,7 +45,6 @@ import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.hideOn
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setSystemBarsPadding
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.AppContextUtils.html
@@ -67,7 +66,7 @@ import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.txt
 import qrcode.QRCode
 
-class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
+class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
     companion object {
         /** Used by nginx plugin too */
         @SuppressLint("StringFormatInvalid")
@@ -137,9 +136,11 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
                 dialog?.dismissSafe(activity)
             }
 
-            val adapter = AccountAdapter(accounts) {
+            val adapter = AccountAdapter {
                 dialog?.dismissSafe(activity)
                 api.accountId = it.card.user.id
+            }.apply {
+                submitList(accounts.toList())
             }
             val list = dialog.findViewById<RecyclerView>(R.id.account_list)
             list?.adapter = adapter
@@ -429,7 +430,6 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar(R.string.category_account)
-        setSystemBarsPadding()
         setPaddingBottom()
         setToolBarScrollFlags()
     }

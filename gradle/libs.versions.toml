@@ -1,5 +1,6 @@
 [versions]
 acraCore = "5.13.1"
+activity = "1.11.0"
 appcompat = "1.7.1"
 biometric = "1.4.0-alpha04"
 buildkonfigGradlePlugin = "0.17.1"
@@ -54,6 +55,7 @@ targetSdk = "35"
 [libraries]
 acra-core = { module = "ch.acra:acra-core", version.ref = "acraCore" }
 acra-toast = { module = "ch.acra:acra-toast", version.ref = "acraCore" }
+activity = { module = "androidx.activity:activity", version.ref = "activity" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 buildkonfig-gradle-plugin = { module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin", version.ref = "buildkonfigGradlePlugin" }
@@ -88,6 +90,7 @@ media3-exoplayer-dash = { module = "androidx.media3:media3-exoplayer-dash", vers
 media3-exoplayer-hls = { module = "androidx.media3:media3-exoplayer-hls", version.ref = "media3" }
 media3-session = { module = "androidx.media3:media3-session", version.ref = "media3" }
 media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
+media3-datasource-cronet = { group = "androidx.media3", name = "media3-datasource-cronet", version.ref = "media3" }
 navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationKtx" }
 navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationKtx" }
 newpipeextractor = { module = "com.github.teamnewpipe:NewPipeExtractor", version.ref = "newpipeextractor" }
@@ -114,6 +117,6 @@ work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "w
 [plugins]
 
 [bundles]
-media3 = ["media3-cast", "media3-common", "media3-datasource-okhttp", "media3-exoplayer", "media3-exoplayer-dash", "media3-exoplayer-hls", "media3-session", "media3-ui"]
+media3 = ["media3-cast", "media3-common", "media3-datasource-okhttp", "media3-datasource-cronet", "media3-exoplayer", "media3-exoplayer-dash", "media3-exoplayer-hls", "media3-session", "media3-ui"]
 nextlibMedia3 = ["nextlib-media3ext", "nextlib-mediainfo"]
 navigationKtx = ["navigation-ui-ktx", "navigation-fragment-ktx"]

@@ -39,14 +39,15 @@ class PluginsViewModel : ViewModel() {
     private var plugins: List<PluginViewData> = emptyList()
         set(value) {
             // Also set all the plugin languages for easier filtering
-            value.map{ pluginViewData ->
+            value.map { pluginViewData ->
                 val language = pluginViewData.plugin.second.language?.lowercase()
                 pluginLanguages.add(
                     when {
                         language.isNullOrBlank() -> "none"
                         else -> language.lowercase()
-                    })
-                    // not sorting as most likely this is a language tag instead of name
+                    }
+                )
+                // not sorting as most likely this is a language tag instead of name
             }
             field = value
         }
@@ -254,6 +255,13 @@ class PluginsViewModel : ViewModel() {
     fun updateFilteredPlugins() {
         _filteredPlugins.postValue(
             false to plugins.filterTvTypes().filterLang().sortByQuery(currentQuery)
+        )
+    }
+
+    fun clear() {
+        currentQuery = null
+        _filteredPlugins.postValue(
+            false to emptyList()
         )
     }
 

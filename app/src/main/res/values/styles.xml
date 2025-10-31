@@ -478,6 +478,7 @@
         <item name="android:windowMinWidthMinor">@dimen/abc_dialog_min_width_minor</item>
         <item name="android:windowBackground">@drawable/dialog__window_background</item>
         <item name="textAllCaps">false</item>
+        <item name="android:textColorPrimary">?attr/grayTextColor</item>
 
         <item name="buttonBarPositiveButtonStyle">@style/WhiteButton.Dialog</item>
         <item name="buttonBarNegativeButtonStyle">@style/BlackButton.Dialog</item>
@@ -1034,49 +1035,58 @@
             @drawable/cast_ic_mini_controller_closed_caption
         </item>
     </style>
+
     <style name="RoundedImageView">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+
     <style name="PlayUnderlayProgress">
         <item name="shapeAppearanceOverlay">@style/RoundedImageView</item>
         <item name="android:scaleType">center</item>
         <item name="android:src">@drawable/netflix_play</item>
         <item name="android:layout_gravity">center</item>
     </style>
+
     <style name="CircularProgress">
         <item name="trackThickness">@dimen/circular_progress_thickness</item>
         <item name="android:layout_gravity">center</item>
         <item name="indicatorColor">@color/white</item>
     </style>
+
     <style name="HomePlayUnderlayProgress" parent="PlayUnderlayProgress">
         <item name="tint">@color/white</item>
         <item name="android:layout_width">@dimen/home_poster_progress_size</item>
         <item name="android:layout_height">@dimen/home_poster_progress_size</item>
         <item name="android:background">@color/playIconBackground</item>
     </style>
+
     <style name="HomeCircularProgress" parent="CircularProgress">
         <item name="android:layout_width">@dimen/home_poster_progress_size</item>
         <item name="android:layout_height">@dimen/home_poster_progress_size</item>
         <item name="indicatorSize">@dimen/home_poster_progress_size</item>
     </style>
+
     <style name="EpisodePlayUnderlayProgress" parent="PlayUnderlayProgress">
         <item name="tint">@color/white</item>
         <item name="android:layout_width">40dp</item>
         <item name="android:layout_height">40dp</item>
         <item name="android:background">@color/playIconBackground</item>
     </style>
+
     <style name="EpisodeCircularProgress" parent="CircularProgress">
         <item name="android:layout_width">@dimen/episode_progress_size</item>
         <item name="android:layout_height">@dimen/episode_progress_size</item>
         <item name="indicatorSize">@dimen/episode_progress_size</item>
     </style>
+
     <style name="ContinueWatchingPlayUnderlayProgress">
         <item name="android:layout_width">@dimen/continue_watching_progress_size</item>
         <item name="android:layout_height">@dimen/continue_watching_progress_size</item>
         <item name="android:src">@drawable/play_button_transparent</item>
         <item name="android:layout_gravity">center</item>
     </style>
+
     <style name="ContinueWatchingCircularProgress" parent="CircularProgress">
         <item name="android:layout_width">@dimen/continue_watching_progress_size</item>
         <item name="android:layout_height">@dimen/continue_watching_progress_size</item>

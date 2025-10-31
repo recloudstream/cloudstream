@@ -1,15 +1,12 @@
 package com.lagradost.cloudstream3.ui
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.annotation.OptIn
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.media3.common.util.UnstableApi
 import androidx.navigation.fragment.findNavController
@@ -19,18 +16,20 @@ import com.lagradost.cloudstream3.databinding.FragmentWebviewBinding
 import com.lagradost.cloudstream3.network.WebViewResolver
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadRepository
 
+class WebviewFragment : BaseFragment<FragmentWebviewBinding>(
+    BaseFragment.BindingCreator.Inflate(FragmentWebviewBinding::inflate)
+) {
 
-class WebviewFragment : Fragment() {
+    override fun fixPadding(view: View) {
+        // Don't need any padding here
+    }
 
-    var binding: FragmentWebviewBinding? = null
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onBindingCreated(binding: FragmentWebviewBinding) {
         val url = arguments?.getString(WEBVIEW_URL) ?: "".also {
             findNavController().popBackStack()
         }
 
-        binding?.webView?.webViewClient = object : WebViewClient() {
+        binding.webView.webViewClient = object : WebViewClient() {
             @OptIn(UnstableApi::class)
             override fun shouldOverrideUrlLoading(
                 view: WebView?,
@@ -46,28 +45,17 @@ class WebviewFragment : Fragment() {
                 return super.shouldOverrideUrlLoading(view, request)
             }
         }
-        binding?.webView?.apply {
+        binding.webView.apply {
             WebViewResolver.webViewUserAgent = settings.userAgentString
 
             addJavascriptInterface(RepoApi(activity), "RepoApi")
             settings.javaScriptEnabled = true
             settings.userAgentString = USER_AGENT
             settings.domStorageEnabled = true
-//        WebView.setWebContentsDebuggingEnabled(true)
 
             loadUrl(url)
         }
 
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val localBinding = FragmentWebviewBinding.inflate(inflater, container, false)
-        binding = localBinding
-        // Inflate the layout for this fragment
-        return localBinding.root//inflater.inflate(R.layout.fragment_webview, container, false)
     }
 
     companion object {

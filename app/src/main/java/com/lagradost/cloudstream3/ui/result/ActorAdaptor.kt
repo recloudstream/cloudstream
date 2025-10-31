@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.ActorRole
@@ -20,15 +19,14 @@ import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 
 class ActorAdaptor(
-    fragment: Fragment,
     private var nextFocusUpId: Int? = null,
     private val focusCallback: (View?) -> Unit = {}
-) : NoStateAdapter<ActorData>(fragment, diffCallback = BaseDiffCallback(itemSame = { a, b ->
+) : NoStateAdapter<ActorData>(diffCallback = BaseDiffCallback(itemSame = { a, b ->
     a.actor.name == b.actor.name
 })) {
     companion object {
         val sharedPool =
-            RecyclerView.RecycledViewPool().apply { this.setMaxRecycledViews(0, 10) }
+            RecyclerView.RecycledViewPool().apply { this.setMaxRecycledViews(CONTENT, 10) }
     }
 
     // Easier to store it here than to store it in the ActorData

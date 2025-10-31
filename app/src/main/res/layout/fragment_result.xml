@@ -618,7 +618,8 @@
                                         android:textAllCaps="false"
                                         android:maxLines="1"
                                         android:ellipsize="end"
-                                        />
+                                        android:clickable="false"
+                                        android:focusable="false" />
                                     <TextView
                                         android:id="@+id/result_resume_series_progress_text"
                                         style="@style/Widget.MaterialComponents.Button.TextButton"
@@ -634,7 +635,9 @@
                                         android:visibility="gone"
                                         tools:visibility="visible"
                                         android:maxLines="1"
-                                        android:textAllCaps="false"/>
+                                        android:textAllCaps="false"
+                                        android:clickable="false"
+                                        android:focusable="false"/>
                                 </LinearLayout>
                         </FrameLayout>
                         <LinearLayout
@@ -667,16 +670,18 @@
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
                             tools:visibility="visible">
-
+                            <LinearLayout
+                                android:id="@+id/result_play_parent"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="10dp">
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/result_play_movie"
                                 style="@style/WhiteButton"
                                 android:layout_width="match_parent"
-
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginStart="0dp"
                                 android:layout_marginEnd="0dp"
-                                android:layout_marginBottom="10dp"
                                 android:nextFocusUp="@id/result_bookmark_Button"
                                 android:nextFocusDown="@id/result_download_movie"
                                 android:text="@string/play_movie_button"
@@ -686,8 +691,7 @@
                                 <requestFocus />
 
                             </com.google.android.material.button.MaterialButton>
-
-
+                            </LinearLayout>
                             <!--<com.google.android.material.button.MaterialButton
                                     android:nextFocusUp="@id/result_play_movie"
                                     android:nextFocusDown="@id/result_season_button"

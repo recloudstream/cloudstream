@@ -1,43 +1,35 @@
 package com.lagradost.cloudstream3.ui.settings.testing
 
-import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentTestingBinding
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
+import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setSystemBarsPadding
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 
-
-class TestFragment : Fragment() {
+class TestFragment : BaseFragment<FragmentTestingBinding>(
+    BaseFragment.BindingCreator.Inflate(FragmentTestingBinding::inflate)
+) {
 
     private val testViewModel: TestViewModel by activityViewModels()
-    var binding: FragmentTestingBinding? = null
 
-    override fun onDestroyView() {
-        binding = null
-        super.onDestroyView()
+    override fun fixPadding(view: View) {
+        setSystemBarsPadding()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onBindingCreated(binding: FragmentTestingBinding) {
         setUpToolbar(R.string.category_provider_test)
-        setSystemBarsPadding()
         setToolBarScrollFlags()
-        super.onViewCreated(view, savedInstanceState)
 
-        binding?.apply {
-            providerTestRecyclerView.adapter = TestResultAdapter(
-                mutableListOf()
-            )
+        binding.apply {
+            providerTestRecyclerView.adapter = TestResultAdapter()
 
             testViewModel.init()
             if (testViewModel.isRunningTest) {
@@ -51,7 +43,7 @@ class TestFragment : Fragment() {
             observeNullable(testViewModel.providerResults) {
                 safe {
                     val newItems = it.sortedBy { api -> api.first.name }
-                    (providerTestRecyclerView.adapter as? TestResultAdapter)?.updateList(
+                    (providerTestRecyclerView.adapter as? TestResultAdapter)?.submitList(
                         newItems
                     )
                 }
@@ -97,14 +89,5 @@ class TestFragment : Fragment() {
                 focusRecyclerView()
             }
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val localBinding = FragmentTestingBinding.inflate(inflater, container, false)
-        binding = localBinding
-        return localBinding.root//inflater.inflate(R.layout.fragment_testing, container, false)
     }
 }

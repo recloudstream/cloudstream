@@ -525,7 +525,7 @@ class HomeViewModel : ViewModel() {
                 } else {
                     _page.postValue(Resource.Loading())
                     if (preferredApiName != null)
-                        _apiName.postValue(preferredApiName!!)
+                        _apiName.postValue(preferredApiName)
                 }
             } else {
                 // if the api is found, then set it to it and save key

@@ -4,9 +4,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.view.children
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.AsyncDifferConfig
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -21,16 +18,9 @@ open class ViewHolderState<T>(val view: ViewBinding) : ViewHolder(view.root) {
     open fun restore(state: T) = Unit
 }
 
-
-// Based of the concept https://github.com/brahmkshatriya/echo/blob/main/app%2Fsrc%2Fmain%2Fjava%2Fdev%2Fbrahmkshatriya%2Fecho%2Fui%2Fadapters%2FMediaItemsContainerAdapter.kt#L108-L154
-class StateViewModel : ViewModel() {
-    val layoutManagerStates = hashMapOf<Int, HashMap<Int, Any?>>()
-}
-
 abstract class NoStateAdapter<T : Any>(
-    fragment: Fragment,
     diffCallback: DiffUtil.ItemCallback<T> = BaseDiffCallback()
-) : BaseAdapter<T, Any>(fragment, 0, diffCallback)
+) : BaseAdapter<T, Any>(0, diffCallback)
 
 /**
  * BaseAdapter is a persistent state stored adapter that supports headers and footers.
@@ -51,12 +41,13 @@ abstract class NoStateAdapter<T : Any>(
 abstract class BaseAdapter<
         T : Any,
         S : Any>(
-    fragment: Fragment,
     val id: Int = 0,
     diffCallback: DiffUtil.ItemCallback<T> = BaseDiffCallback()
 ) : RecyclerView.Adapter<ViewHolderState<S>>() {
     open val footers: Int = 0
     open val headers: Int = 0
+
+    val immutableCurrentList: List<T> get() = mDiffer.currentList
 
     fun getItem(position: Int): T {
         return mDiffer.currentList[position]
@@ -103,9 +94,13 @@ abstract class BaseAdapter<
         submitList(list)
     }
 
-    open fun submitList(list: List<T>?) {
+    open fun submitList(list: Collection<T>?) {
         // deep copy at least the top list, because otherwise adapter can go crazy
-        mDiffer.submitList(list?.let { CopyOnWriteArrayList(it) })
+        if (list.isNullOrEmpty()) {
+            mDiffer.submitList(null) // It is "faster" to submit null than emptyList()
+        } else {
+            mDiffer.submitList(CopyOnWriteArrayList(list))
+        }
     }
 
     override fun getItemCount(): Int {
@@ -119,8 +114,22 @@ abstract class BaseAdapter<
     open fun onBindFooter(holder: ViewHolderState<S>) = Unit
     open fun onBindHeader(holder: ViewHolderState<S>) = Unit
     open fun onCreateContent(parent: ViewGroup): ViewHolderState<S> = throw NotImplementedError()
+    open fun onCreateCustomContent(
+        parent: ViewGroup,
+        viewType: Int
+    ) = onCreateContent(parent)
+
     open fun onCreateFooter(parent: ViewGroup): ViewHolderState<S> = throw NotImplementedError()
+    open fun onCreateCustomFooter(
+        parent: ViewGroup,
+        viewType: Int
+    ) = onCreateFooter(parent)
+
     open fun onCreateHeader(parent: ViewGroup): ViewHolderState<S> = throw NotImplementedError()
+    open fun onCreateCustomHeader(
+        parent: ViewGroup,
+        viewType: Int
+    ) = onCreateHeader(parent)
 
     override fun onViewAttachedToWindow(holder: ViewHolderState<S>) {}
     override fun onViewDetachedFromWindow(holder: ViewHolderState<S>) {}
@@ -134,21 +143,20 @@ abstract class BaseAdapter<
         }
     }
 
-    fun clear() {
-        stateViewModel.layoutManagerStates[id]?.clear()
+    fun clearState() {
+        layoutManagerStates[id]?.clear()
     }
 
     @Suppress("UNCHECKED_CAST")
     private fun getState(holder: ViewHolderState<S>): S? =
-        stateViewModel.layoutManagerStates[id]?.get(holder.absoluteAdapterPosition) as? S
+        layoutManagerStates[id]?.get(holder.absoluteAdapterPosition) as? S
 
     private fun setState(holder: ViewHolderState<S>) {
         if (id == 0) return
-
-        if (!stateViewModel.layoutManagerStates.contains(id)) {
-            stateViewModel.layoutManagerStates[id] = HashMap()
+        if (!layoutManagerStates.contains(id)) {
+            layoutManagerStates[id] = HashMap()
         }
-        stateViewModel.layoutManagerStates[id]?.let { map ->
+        layoutManagerStates[id]?.let { map ->
             map[holder.absoluteAdapterPosition] = holder.save()
         }
     }
@@ -171,18 +179,20 @@ abstract class BaseAdapter<
         super.onDetachedFromRecyclerView(recyclerView)
     }
 
+    open fun customContentViewType(item: T): Int = 0
+    open fun customFooterViewType(): Int = 0
+    open fun customHeaderViewType(): Int = 0
+
     final override fun getItemViewType(position: Int): Int {
         if (position < headers) {
-            return HEADER
+            return HEADER or customHeaderViewType()
         }
-        if (position - headers >= mDiffer.currentList.size) {
-            return FOOTER
+        val realPosition = position - headers
+        if (realPosition >= mDiffer.currentList.size) {
+            return FOOTER or customFooterViewType()
         }
-
-        return CONTENT
+        return CONTENT or customContentViewType(getItem(realPosition))
     }
-
-    private val stateViewModel: StateViewModel by fragment.viewModels()
 
     final override fun onViewRecycled(holder: ViewHolderState<S>) {
         setState(holder)
@@ -199,10 +209,10 @@ abstract class BaseAdapter<
     open fun onClearView(holder: ViewHolderState<S>) {}
 
     final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderState<S> {
-        return when (viewType) {
-            CONTENT -> onCreateContent(parent)
-            HEADER -> onCreateHeader(parent)
-            FOOTER -> onCreateFooter(parent)
+        return when (viewType and TYPE_MASK) {
+            CONTENT -> onCreateCustomContent(parent, viewType and CUSTOM_MASK)
+            HEADER -> onCreateCustomHeader(parent, viewType and CUSTOM_MASK)
+            FOOTER -> onCreateCustomFooter(parent, viewType and CUSTOM_MASK)
             else -> throw NotImplementedError()
         }
     }
@@ -217,7 +227,7 @@ abstract class BaseAdapter<
             super.onBindViewHolder(holder, position, payloads)
             return
         }
-        when (getItemViewType(position)) {
+        when (getItemViewType(position) and TYPE_MASK) {
             CONTENT -> {
                 val realPosition = position - headers
                 val item = getItem(realPosition)
@@ -235,7 +245,7 @@ abstract class BaseAdapter<
     }
 
     final override fun onBindViewHolder(holder: ViewHolderState<S>, position: Int) {
-        when (getItemViewType(position)) {
+        when (getItemViewType(position) and TYPE_MASK) {
             CONTENT -> {
                 val realPosition = position - headers
                 val item = getItem(realPosition)
@@ -257,13 +267,20 @@ abstract class BaseAdapter<
     }
 
     companion object {
+        val layoutManagerStates = hashMapOf<Int, HashMap<Int, Any?>>()
         fun clearImage(image: ImageView?) {
             image?.dispose()
         }
 
-        const val HEADER: Int = 1
-        const val FOOTER: Int = 2
-        const val CONTENT: Int = 0
+        // Use the lowermost MASK_SIZE bits for the custom content,
+        // use the uppermost 32 - MASK_SIZE to the type
+        private const val MASK_SIZE = 28
+        private const val CUSTOM_MASK = (1 shl MASK_SIZE) - 1
+        private const val TYPE_MASK = CUSTOM_MASK.inv()
+        const val HEADER: Int = 3 shl MASK_SIZE
+        const val FOOTER: Int = 2 shl MASK_SIZE
+        /** For custom content, write `CONTENT or X` when calling setMaxRecycledViews  */
+        const val CONTENT: Int = 1 shl MASK_SIZE
     }
 }
 
@@ -273,5 +290,5 @@ class BaseDiffCallback<T : Any>(
 ) : DiffUtil.ItemCallback<T>() {
     override fun areItemsTheSame(oldItem: T, newItem: T): Boolean = itemSame(oldItem, newItem)
     override fun areContentsTheSame(oldItem: T, newItem: T): Boolean = contentSame(oldItem, newItem)
-    override fun getChangePayload(oldItem: T, newItem: T): Any = Any()
+    override fun getChangePayload(oldItem: T, newItem: T): Any? = Any()
 }

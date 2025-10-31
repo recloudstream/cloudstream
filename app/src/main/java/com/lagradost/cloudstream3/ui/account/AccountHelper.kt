@@ -392,7 +392,6 @@ object AccountHelper {
 
         activity.observe(viewModel.accounts) { liveAccounts ->
             recyclerView.adapter = AccountAdapter(
-                liveAccounts,
                 accountSelectCallback = { account ->
                     viewModel.handleAccountSelect(account, activity)
                     builder.dismissSafe()
@@ -400,7 +399,9 @@ object AccountHelper {
                 accountCreateCallback = { viewModel.handleAccountUpdate(it, activity) },
                 accountEditCallback = { viewModel.handleAccountUpdate(it, activity) },
                 accountDeleteCallback = { viewModel.handleAccountDelete(it, activity) }
-            )
+            ).apply {
+                submitList(liveAccounts)
+            }
 
             activity.observe(viewModel.selectedKeyIndex) { selectedKeyIndex ->
                 // Scroll to current account (which is focused by default)

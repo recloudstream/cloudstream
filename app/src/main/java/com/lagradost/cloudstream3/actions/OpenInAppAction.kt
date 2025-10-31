@@ -21,7 +21,8 @@ import java.io.File
 
 fun updateDurationAndPosition(position: Long, duration: Long) {
     if (position <= 0 || duration <= 0) return
-    DataStoreHelper.setViewPos(getKey("last_opened_id"), position, duration)
+    val episode = getKey<ResultEpisode>("last_opened") ?: return
+    DataStoreHelper.setViewPosAndResume(episode.id, position, duration, episode, null)
     ResultFragment.updateUI()
 }
 
@@ -98,7 +99,7 @@ abstract class OpenInAppAction(
             intent.component = ComponentName(packageName, intentClass)
         }
         putExtra(context, intent, video, result, index)
-        setKey("last_opened_id", video.id)
+        setKey("last_opened", video)
         launchResult(intent)
     }
 

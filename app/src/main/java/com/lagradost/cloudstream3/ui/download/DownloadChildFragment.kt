@@ -4,15 +4,13 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.format.Formatter.formatShortFileSize
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentChildDownloadsBinding
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
@@ -26,9 +24,10 @@ import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPres
 import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.setAppBarNoScrollFlagsOnTV
 
-class DownloadChildFragment : Fragment() {
-    private lateinit var downloadsViewModel: DownloadViewModel
-    private var binding: FragmentChildDownloadsBinding? = null
+class DownloadChildFragment : BaseFragment<FragmentChildDownloadsBinding>(
+    BaseFragment.BindingCreator.Inflate(FragmentChildDownloadsBinding::inflate)
+) {
+    private val downloadViewModel: DownloadViewModel by activityViewModels()
 
     companion object {
         fun newInstance(headerName: String, folder: String): Bundle {
@@ -41,24 +40,18 @@ class DownloadChildFragment : Fragment() {
 
     override fun onDestroyView() {
         activity?.detachBackPressedCallback("Downloads")
-        binding = null
         super.onDestroyView()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        downloadsViewModel = ViewModelProvider(this)[DownloadViewModel::class.java]
-        val localBinding = FragmentChildDownloadsBinding.inflate(inflater, container, false)
-        binding = localBinding
-        return localBinding.root
+    override fun fixPadding(view: View) {
+        fixSystemBarsPadding(
+            view,
+            padBottom = isLandscape(),
+            padLeft = isLayout(TV or EMULATOR)
+        )
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+    override fun onBindingCreated(binding: FragmentChildDownloadsBinding) {
         /**
          * We never want to retain multi-delete state
          * when navigating to downloads. Setting this state
@@ -71,7 +64,7 @@ class DownloadChildFragment : Fragment() {
          * observer to properly receive and handle the state change.
          */
         Handler(Looper.getMainLooper()).post {
-            downloadsViewModel.setIsMultiDeleteState(false)
+            downloadViewModel.setIsMultiDeleteState(false)
         }
 
         /**
@@ -80,7 +73,7 @@ class DownloadChildFragment : Fragment() {
          * inconsistent state where selected items do
          * not match the multi delete state we are in.
          */
-        downloadsViewModel.clearSelectedItems()
+        downloadViewModel.clearSelectedItems()
 
         val folder = arguments?.getString("folder")
         val name = arguments?.getString("name")
@@ -89,7 +82,7 @@ class DownloadChildFragment : Fragment() {
             return
         }
 
-        binding?.downloadChildToolbar?.apply {
+        binding.downloadChildToolbar.apply {
             title = name
             if (isLayout(PHONE or EMULATOR)) {
                 setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
@@ -100,40 +93,40 @@ class DownloadChildFragment : Fragment() {
             setAppBarNoScrollFlagsOnTV()
         }
 
-        binding?.downloadDeleteAppbar?.setAppBarNoScrollFlagsOnTV()
+        binding.downloadDeleteAppbar.setAppBarNoScrollFlagsOnTV()
 
-        observe(downloadsViewModel.childCards) {
+        observe(downloadViewModel.childCards) {
             if (it.isEmpty()) {
                 activity?.onBackPressedDispatcher?.onBackPressed()
                 return@observe
             }
 
-            (binding?.downloadChildList?.adapter as? DownloadAdapter)?.submitList(it)
+            (binding.downloadChildList.adapter as? DownloadAdapter)?.submitList(it)
         }
-        observe(downloadsViewModel.isMultiDeleteState) { isMultiDeleteState ->
-            val adapter = binding?.downloadChildList?.adapter as? DownloadAdapter
+        observe(downloadViewModel.isMultiDeleteState) { isMultiDeleteState ->
+            val adapter = binding.downloadChildList.adapter as? DownloadAdapter
             adapter?.setIsMultiDeleteState(isMultiDeleteState)
-            binding?.downloadDeleteAppbar?.isVisible = isMultiDeleteState
+            binding.downloadDeleteAppbar.isVisible = isMultiDeleteState
             if (!isMultiDeleteState) {
                 activity?.detachBackPressedCallback("Downloads")
-                downloadsViewModel.clearSelectedItems()
-                binding?.downloadChildToolbar?.isVisible = true
+                downloadViewModel.clearSelectedItems()
+                binding.downloadChildToolbar.isVisible = true
             }
         }
-        observe(downloadsViewModel.selectedBytes) {
-            updateDeleteButton(downloadsViewModel.selectedItemIds.value?.count() ?: 0, it)
+        observe(downloadViewModel.selectedBytes) {
+            updateDeleteButton(downloadViewModel.selectedItemIds.value?.count() ?: 0, it)
         }
-        observe(downloadsViewModel.selectedItemIds) {
+        observe(downloadViewModel.selectedItemIds) {
             handleSelectedChange(it)
-            updateDeleteButton(it.count(), downloadsViewModel.selectedBytes.value ?: 0L)
+            updateDeleteButton(it.count(), downloadViewModel.selectedBytes.value ?: 0L)
 
-            binding?.btnDelete?.isVisible = it.isNotEmpty()
-            binding?.selectItemsText?.isVisible = it.isEmpty()
+            binding.btnDelete.isVisible = it.isNotEmpty()
+            binding.selectItemsText.isVisible = it.isEmpty()
 
-            val allSelected = downloadsViewModel.isAllSelected()
+            val allSelected = downloadViewModel.isAllSelected()
             if (allSelected) {
-                binding?.btnToggleAll?.setText(R.string.deselect_all)
-            } else binding?.btnToggleAll?.setText(R.string.select_all)
+                binding.btnToggleAll.setText(R.string.deselect_all)
+            } else binding.btnToggleAll.setText(R.string.select_all)
         }
 
         val adapter = DownloadAdapter(
@@ -141,18 +134,18 @@ class DownloadChildFragment : Fragment() {
             { click ->
                 if (click.action == DOWNLOAD_ACTION_DELETE_FILE) {
                     context?.let { ctx ->
-                        downloadsViewModel.handleSingleDelete(ctx, click.data.id)
+                        downloadViewModel.handleSingleDelete(ctx, click.data.id)
                     }
                 } else handleDownloadClick(click)
             },
             { itemId, isChecked ->
                 if (isChecked) {
-                    downloadsViewModel.addSelected(itemId)
-                } else downloadsViewModel.removeSelected(itemId)
+                    downloadViewModel.addSelected(itemId)
+                } else downloadViewModel.removeSelected(itemId)
             }
         )
 
-        binding?.downloadChildList?.apply {
+        binding.downloadChildList?.apply {
             setHasFixedSize(true)
             setItemViewCacheSize(20)
             this.adapter = adapter
@@ -163,12 +156,7 @@ class DownloadChildFragment : Fragment() {
             )
         }
 
-        context?.let { downloadsViewModel.updateChildList(it, folder) }
-        fixSystemBarsPadding(
-            binding?.downloadChildRoot,
-            padBottom = isLandscape(),
-            padLeft = isLayout(TV or EMULATOR)
-        )
+        context?.let { downloadViewModel.updateChildList(it, folder) }
     }
 
     private fun handleSelectedChange(selected: MutableSet<Int>) {
@@ -176,32 +164,32 @@ class DownloadChildFragment : Fragment() {
             binding?.downloadDeleteAppbar?.isVisible = true
             binding?.downloadChildToolbar?.isVisible = false
             activity?.attachBackPressedCallback("Downloads") {
-                downloadsViewModel.setIsMultiDeleteState(false)
+                downloadViewModel.setIsMultiDeleteState(false)
             }
 
             binding?.btnDelete?.setOnClickListener {
                 context?.let { ctx ->
-                    downloadsViewModel.handleMultiDelete(ctx)
+                    downloadViewModel.handleMultiDelete(ctx)
                 }
             }
 
             binding?.btnCancel?.setOnClickListener {
-                downloadsViewModel.setIsMultiDeleteState(false)
+                downloadViewModel.setIsMultiDeleteState(false)
             }
 
             binding?.btnToggleAll?.setOnClickListener {
-                val allSelected = downloadsViewModel.isAllSelected()
+                val allSelected = downloadViewModel.isAllSelected()
                 val adapter = binding?.downloadChildList?.adapter as? DownloadAdapter
                 if (allSelected) {
                     adapter?.notifySelectionStates()
-                    downloadsViewModel.clearSelectedItems()
+                    downloadViewModel.clearSelectedItems()
                 } else {
                     adapter?.notifyAllSelected()
-                    downloadsViewModel.selectAllItems()
+                    downloadViewModel.selectAllItems()
                 }
             }
 
-            downloadsViewModel.setIsMultiDeleteState(true)
+            downloadViewModel.setIsMultiDeleteState(true)
         }
     }
 
