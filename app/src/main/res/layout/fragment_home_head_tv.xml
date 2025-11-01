@@ -321,14 +321,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:nextFocusLeft="@id/navigation_home"
-                        android:nextFocusRight="@id/home_plan_to_watch_btt"
+                        android:nextFocusRight="@id/home_type_plan_to_watch_btt"
 
                         android:nextFocusUp="@id/home_watch_child_recyclerview"
                         android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
                         android:text="@string/type_watching" />
 
                     <com.google.android.material.chip.Chip
-                        android:id="@+id/home_plan_to_watch_btt"
+                        android:id="@+id/home_type_plan_to_watch_btt"
                         style="@style/ChipFilled"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -344,7 +344,7 @@
                         style="@style/ChipFilled"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:nextFocusLeft="@id/home_plan_to_watch_btt"
+                        android:nextFocusLeft="@id/home_type_plan_to_watch_btt"
                         android:nextFocusRight="@id/home_type_dropped_btt"
 
                         android:nextFocusUp="@id/home_watch_child_recyclerview"
@@ -369,10 +369,22 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:nextFocusLeft="@id/home_type_dropped_btt"
+                        android:nextFocusRight="@id/home_type_not_interested_btt"
 
                         android:nextFocusUp="@id/home_watch_child_recyclerview"
                         android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
                         android:text="@string/type_completed" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/home_type_not_interested_btt"
+                        style="@style/ChipFilled"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:nextFocusLeft="@id/home_type_completed_btt"
+
+                        android:nextFocusUp="@id/home_watch_child_recyclerview"
+                        android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
+                        android:text="@string/type_not_interested" />
                 </com.google.android.material.chip.ChipGroup>
             </HorizontalScrollView>
 
