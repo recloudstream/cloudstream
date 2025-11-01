@@ -686,6 +686,21 @@ object AppContextUtils {
         }
         return ""
     }
+    fun Context.getEpisodeFull(episode: Int?, season: Int?): String {
+        val rEpisode = if (episode == 0) null else episode
+        val rSeason = if (season == 0) null else season
+        val seasonNameShort = getString(R.string.season_short)
+        val episodeNameShort = getString(R.string.episode_short)
+
+
+        return if (rEpisode != null && rSeason != null) {
+           "$seasonNameShort${rSeason}:$episodeNameShort${rEpisode}"
+        } else if (rEpisode != null) {
+           "$episodeNameShort$rEpisode"
+        }else{
+           ""
+        }
+    }
 
     fun Activity?.loadCache() {
         try {
