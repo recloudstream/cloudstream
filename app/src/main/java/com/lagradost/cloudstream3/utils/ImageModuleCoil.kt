@@ -27,10 +27,11 @@ import coil3.util.DebugLogger
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.network.buildDefaultClient
-import okhttp3.HttpUrl
-import okio.Path.Companion.toOkioPath
 import java.io.File
 import java.nio.ByteBuffer
+import kotlinx.coroutines.Dispatchers
+import okhttp3.HttpUrl
+import okio.Path.Companion.toOkioPath
 
 object ImageLoader {
 
@@ -38,11 +39,12 @@ object ImageLoader {
 
     internal fun buildImageLoader(context: PlatformContext): ImageLoader = ImageLoader.Builder(context)
             .crossfade(200)
-            .allowHardware(SDK_INT >= 28) // SDK_INT >= 28, cant use hardware bitmaps for Palette Builder
+            .allowHardware(SDK_INT >= 28) // SDK_INT < 28, can't use hardware bitmaps for Palette Builder
             .diskCachePolicy(CachePolicy.ENABLED)
+            .memoryCachePolicy(CachePolicy.ENABLED)
             .networkCachePolicy(CachePolicy.ENABLED)
             .memoryCache {
-                MemoryCache.Builder().maxSizePercent(context, 0.1) // Use 10 % of the app's available memory for caching
+                MemoryCache.Builder().maxSizePercent(context, 0.1) // Use 10% of the app's available memory for caching
                     .build()
             }
             .diskCache {
@@ -52,6 +54,8 @@ object ImageLoader {
                     .maxSizePercent(0.04) // Use 4 % of the device's storage space for disk caching
                     .build()
             }
+            .fetcherCoroutineContext(Dispatchers.IO.limitedParallelism(8))
+            .decoderCoroutineContext(Dispatchers.IO.limitedParallelism(3))
             /** Pass interceptors with care, unnecessary passing tokens to servers
             or image hosting services causes unauthorized exceptions **/
             .components { add(OkHttpNetworkFetcherFactory(callFactory = { buildDefaultClient(context) })) }
@@ -85,13 +89,19 @@ object ImageLoader {
         headers: Map<String, String>? = null,
         builder: ImageRequest.Builder.() -> Unit = {} // for placeholder, error & transformations
     ) {
-        // clear image to avoid loading & flickering issue at fast scrolling (e.g, an image recycler)
-        this.dispose()
+        if (imageData == null) {
+            this.setImageDrawable(null)
+            return
+        }
 
-        if(imageData == null) return // Just in case
+        // Only dispose if a different image is requested to avoid unnecessary reloads
+        if (this.tag != imageData) {
+            this.dispose()
+            this.tag = imageData
+        }
 
         // setImageResource is better than coil3 on resources due to attr
-        if(imageData is Int) {
+        if (imageData is Int) {
             this.setImageResource(imageData)
             return
         }
@@ -99,11 +109,9 @@ object ImageLoader {
         // Use Coil's built-in load method but with our custom module & a decent USER-AGENT always
         // which can be overridden by extensions.
         this.load(imageData, SingletonImageLoader.get(context)) {
-            this.httpHeaders(NetworkHeaders.Builder().also { headerBuilder ->
+            httpHeaders(NetworkHeaders.Builder().also { headerBuilder ->
                 headerBuilder["User-Agent"] = USER_AGENT
-                headers?.forEach { (key, value) ->
-                    headerBuilder[key] = value
-                }
+                headers?.forEach { (key, value) -> headerBuilder[key] = value }
             }.build())
 
             builder() // if passed
