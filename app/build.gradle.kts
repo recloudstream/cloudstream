@@ -217,9 +217,9 @@ dependencies {
     } // To Fix SSL Fu*kery on Android 9
     implementation(libs.jackson.module.kotlin) {
         version {
-            strictly("2.13.1")
+            strictly("2.13.5")
         }
-        because("Don't Bump Jackson above 2.13.1, Crashes on Android TV's and FireSticks that have Min API Level 25 or Less.")
+        because("Don't Bump Jackson above 2.13.5, Crashes on Android TV's and FireSticks that have Min API Level 25 or Less.")
     } // JSON Parser
 
     // Torrent Support
