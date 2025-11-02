@@ -52,7 +52,7 @@ private interface BaseFragmentHelper<T : ViewBinding> {
     ): View? {
         // Try to reuse a binding from the pool first
         BaseFragmentPool.acquire<T>(javaClass.name)?.let {
-			Log.d(TAG, "Binding acquired from pool")
+			Log.d(TAG, "Binding acquired from pool for ${javaClass.name}")
             _binding = it
             return it.root
         }
@@ -137,7 +137,7 @@ private interface BaseFragmentHelper<T : ViewBinding> {
     fun recycleBindingOnDestroy() {
         _binding?.let {
             BaseFragmentPool.release(javaClass.name, it)
-			Log.d(TAG, "Binding released to pool")
+			Log.d(TAG, "Binding released to pool for ${javaClass.name}")
             _binding = null
         }
     }
