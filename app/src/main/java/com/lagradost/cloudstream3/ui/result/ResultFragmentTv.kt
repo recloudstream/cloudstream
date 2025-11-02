@@ -247,7 +247,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         }
     }
 
-    override fun fixPadding(view: View) {
+    override fun fixLayout(view: View) {
         fixSystemBarsPadding(view, padTop = false)
     }
 

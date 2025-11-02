@@ -68,7 +68,7 @@ class ExtensionsFragment : BaseFragment<FragmentExtensionsBinding>(
         extensionViewModel.loadRepositories()
     }
 
-    override fun fixPadding(view: View) {
+    override fun fixLayout(view: View) {
         setSystemBarsPadding()
     }
 

@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.setup
 
+import android.view.View
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import androidx.navigation.fragment.findNavController
@@ -9,10 +10,16 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentSetupLayoutBinding
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.ui.BaseFragment
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 
 class SetupFragmentLayout : BaseFragment<FragmentSetupLayoutBinding>(
     BaseFragment.BindingCreator.Inflate(FragmentSetupLayoutBinding::inflate)
 ) {
+
+    override fun fixLayout(view: View) {
+        fixSystemBarsPadding(view)
+    }
+
     override fun onBindingCreated(binding: FragmentSetupLayoutBinding) {
         safe {
             val ctx = context ?: return@safe

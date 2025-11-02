@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.setup
 
+import android.view.View
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import androidx.core.util.forEach
@@ -11,10 +12,16 @@ import com.lagradost.cloudstream3.databinding.FragmentSetupMediaBinding
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 
 class SetupFragmentMedia : BaseFragment<FragmentSetupMediaBinding>(
     BaseFragment.BindingCreator.Inflate(FragmentSetupMediaBinding::inflate)
 ) {
+
+    override fun fixLayout(view: View) {
+        fixSystemBarsPadding(view)
+    }
+
     override fun onBindingCreated(binding: FragmentSetupMediaBinding) {
         safe {
             val ctx = context ?: return@safe
