@@ -8,7 +8,6 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("org.jetbrains.dokka")
-
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
@@ -204,6 +203,7 @@ dependencies {
     implementation(libs.qrcode.kotlin) // QR Code for PIN Auth on TV
 
     // Extensions & Other Libs
+    implementation(libs.jsoup) // HTML Parser
     implementation(libs.rhino) // Run JavaScript
     implementation(libs.quickjs)
     implementation(libs.fuzzywuzzy) // Library/Ext Searching with Levenshtein Distance
