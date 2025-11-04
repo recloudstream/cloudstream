@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.settings
 
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -11,6 +12,9 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchQuality
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.BasePreferenceFragmentCompat
+import com.lagradost.cloudstream3.ui.home.HomeChildItemAdapter
+import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
+import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
@@ -28,6 +32,18 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 
 class SettingsUI : BasePreferenceFragmentCompat() {
+    // Use a listener to apply when preferences are actually committed in
+    // order to prevent any potential race conditions.
+    private val posterSizeListener =
+        SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            if (key == getString(R.string.poster_size_key)) {
+                HomeChildItemAdapter.sharedPool.clear()
+                ParentItemAdapter.sharedPool.clear()
+                SearchAdapter.sharedPool.clear()
+                context?.let { HomeChildItemAdapter.updatePosterSize(it) }
+            }
+        }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar(R.string.category_ui)
@@ -47,6 +63,15 @@ class SettingsUI : BasePreferenceFragmentCompat() {
             (perf.context.getActivity() as? MainActivity)?.binding?.homeRoot?.setPadding(padding, padding, padding, padding)
             return@setOnPreferenceChangeListener true
         }
+
+        getPref(R.string.bottom_title_key)?.setOnPreferenceChangeListener { _, _ ->
+            HomeChildItemAdapter.sharedPool.clear()
+            ParentItemAdapter.sharedPool.clear()
+            SearchAdapter.sharedPool.clear()
+            true
+        }
+
+        settingsManager.registerOnSharedPreferenceChangeListener(posterSizeListener)
 
         getPref(R.string.poster_ui_key)?.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.poster_ui_options)
@@ -224,5 +249,11 @@ class SettingsUI : BasePreferenceFragmentCompat() {
             )
             return@setOnPreferenceClickListener true
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+            .unregisterOnSharedPreferenceChangeListener(posterSizeListener)
     }
 }
