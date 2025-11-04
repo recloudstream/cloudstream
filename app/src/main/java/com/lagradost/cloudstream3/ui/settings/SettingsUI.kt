@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.ui.settings
 
-import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -32,24 +31,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 
 class SettingsUI : BasePreferenceFragmentCompat() {
-    /**
-     * Use a listener to apply when preferences are actually committed and
-     * not just changed, since `updatePosterSize()` relies on the value of
-     * this setting, we have to run it after its actually committed and
-     * not just changed. We need to run `updatePosterSize()` because
-     * otherwise you have to visit the homepage before it updates
-     * in either search or the homepage.
-     */
-    private val posterSizeListener =
-        SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (key == getString(R.string.poster_size_key)) {
-                HomeChildItemAdapter.sharedPool.clear()
-                ParentItemAdapter.sharedPool.clear()
-                SearchAdapter.sharedPool.clear()
-                context?.let { HomeChildItemAdapter.updatePosterSize(it) }
-            }
-        }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar(R.string.category_ui)
@@ -64,9 +45,9 @@ class SettingsUI : BasePreferenceFragmentCompat() {
 
         getPref(R.string.random_button_key)?.hideOn(EMULATOR or TV)
 
-        (getPref(R.string.overscan_key)?.hideOn(PHONE or EMULATOR) as? SeekBarPreference)?.setOnPreferenceChangeListener { perf, newValue ->
+        (getPref(R.string.overscan_key)?.hideOn(PHONE or EMULATOR) as? SeekBarPreference)?.setOnPreferenceChangeListener { pref, newValue ->
             val padding = (newValue as? Int)?.toPx ?: return@setOnPreferenceChangeListener true
-            (perf.context.getActivity() as? MainActivity)?.binding?.homeRoot?.setPadding(padding, padding, padding, padding)
+            (pref.context.getActivity() as? MainActivity)?.binding?.homeRoot?.setPadding(padding, padding, padding, padding)
             return@setOnPreferenceChangeListener true
         }
 
@@ -77,7 +58,13 @@ class SettingsUI : BasePreferenceFragmentCompat() {
             true
         }
 
-        settingsManager.registerOnSharedPreferenceChangeListener(posterSizeListener)
+        getPref(R.string.poster_size_key)?.setOnPreferenceChangeListener { _, newValue ->
+            HomeChildItemAdapter.sharedPool.clear()
+            ParentItemAdapter.sharedPool.clear()
+            SearchAdapter.sharedPool.clear()
+            context?.let { HomeChildItemAdapter.updatePosterSize(it, newValue as? Int) }
+            true
+        }
 
         getPref(R.string.poster_ui_key)?.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.poster_ui_options)
@@ -255,11 +242,5 @@ class SettingsUI : BasePreferenceFragmentCompat() {
             )
             return@setOnPreferenceClickListener true
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        PreferenceManager.getDefaultSharedPreferences(requireContext())
-            .unregisterOnSharedPreferenceChangeListener(posterSizeListener)
     }
 }
