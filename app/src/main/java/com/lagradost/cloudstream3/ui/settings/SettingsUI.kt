@@ -32,8 +32,14 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 
 class SettingsUI : BasePreferenceFragmentCompat() {
-    // Use a listener to apply when preferences are actually committed in
-    // order to prevent any potential race conditions.
+    /**
+     * Use a listener to apply when preferences are actually committed and
+     * not just changed, since `updatePosterSize()` relies on the value of
+     * this setting, we have to run it after its actually committed and
+     * not just changed. We need to run `updatePosterSize()` because
+     * otherwise you have to visit the homepage before it updates
+     * in either search or the homepage.
+     */
     private val posterSizeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             if (key == getString(R.string.poster_size_key)) {
