@@ -167,7 +167,7 @@ class SettingsFragment : BaseFragment<MainSettingsBinding>(
         }
     }
 
-    override fun fixPadding(view: View) {
+    override fun fixLayout(view: View) {
         fixSystemBarsPadding(
             view,
             padBottom = isLandscape(),

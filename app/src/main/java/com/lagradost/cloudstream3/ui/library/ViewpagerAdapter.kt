@@ -76,8 +76,7 @@ class ViewpagerAdapter(
 
         binding.pageRecyclerview.tag = position
         binding.pageRecyclerview.apply {
-            spanCount =
-                binding.root.context.getSpanCount() ?: 3
+            spanCount = binding.root.context.getSpanCount()
             if (adapter == null) { //  || rebind
                 // Only add the items after it has been attached since the items rely on ItemWidth
                 // Which is only determined after the recyclerview is attached.

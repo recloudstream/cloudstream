@@ -46,10 +46,6 @@ class EasterEggMonkeFragment : BaseFragment<FragmentEasterEggMonkeBinding>(
     private val activeMonkeys = mutableListOf<ImageView>()
     private var spawningJob: Job? = null
 
-    override fun fixPadding(view: View) {
-        // Don't need any padding here
-    }
-
     override fun onBindingCreated(binding: FragmentEasterEggMonkeBinding) {
         activity?.hideSystemUI()
         spawningJob = lifecycleScope.launch {

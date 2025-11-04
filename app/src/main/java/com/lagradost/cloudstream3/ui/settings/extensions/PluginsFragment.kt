@@ -41,7 +41,7 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
         super.onDestroyView()
     }
 
-    override fun fixPadding(view: View) {
+    override fun fixLayout(view: View) {
         setSystemBarsPadding()
     }
 
