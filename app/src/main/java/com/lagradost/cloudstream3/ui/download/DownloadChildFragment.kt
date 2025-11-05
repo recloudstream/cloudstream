@@ -27,6 +27,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.setAppBarNoScrollFlagsOnTV
 class DownloadChildFragment : BaseFragment<FragmentChildDownloadsBinding>(
     BaseFragment.BindingCreator.Inflate(FragmentChildDownloadsBinding::inflate)
 ) {
+
     private val downloadViewModel: DownloadViewModel by activityViewModels()
 
     companion object {
@@ -43,7 +44,7 @@ class DownloadChildFragment : BaseFragment<FragmentChildDownloadsBinding>(
         super.onDestroyView()
     }
 
-    override fun fixPadding(view: View) {
+    override fun fixLayout(view: View) {
         fixSystemBarsPadding(
             view,
             padBottom = isLandscape(),

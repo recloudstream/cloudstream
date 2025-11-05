@@ -18,7 +18,6 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setSystemBarsPadding
 import com.lagradost.cloudstream3.utils.txt
-import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 
 /**
  * A base Fragment class that simplifies ViewBinding usage and handles view inflation safely.
@@ -41,9 +40,9 @@ private interface BaseFragmentHelper<T : ViewBinding> {
     var _binding: T?
     val binding: T? get() = _binding
 
-	companion object {
+    companion object {
         const val TAG = "BaseFragment"
-	}
+    }
 
     fun createBinding(
         inflater: LayoutInflater,
@@ -52,7 +51,7 @@ private interface BaseFragmentHelper<T : ViewBinding> {
     ): View? {
         // Try to reuse a binding from the pool first
         BaseFragmentPool.acquire<T>(javaClass.name)?.let {
-			Log.d(TAG, "Binding acquired from pool for ${javaClass.name}")
+            Log.d(TAG, "Binding acquired from pool for ${javaClass.name}")
             _binding = it
             return it.root
         }
@@ -87,7 +86,7 @@ private interface BaseFragmentHelper<T : ViewBinding> {
      * Subclasses should use [onBindingCreated] instead of overriding this method directly.
      */
     fun onViewReady(view: View, savedInstanceState: Bundle?) {
-        fixPadding(view)
+        fixLayout(view)
         binding?.let { onBindingCreated(it, savedInstanceState) }
     }
 
@@ -122,22 +121,22 @@ private interface BaseFragmentHelper<T : ViewBinding> {
     fun pickLayout(): Int? = null
 
     /**
-     * Apply padding adjustments for system bars to the root view.
+     * Ensures the layout of the root view is correctly adjusted for the current configuration.
      *
-     * `fixPadding` should be idempotent in respect to the configuration, as the function may be
-     * called many times on the same view in case of configuration change like device orientation.
+     * This may include applying padding for system bars, adjusting insets, or performing other
+     * layout updates. `fixLayout` should remain idempotent, as it can be called multiple
+     * times on the same view, such as during configuration changes (e.g. device rotation) or when
+     * the view is recreated.
      *
      * @param view The root view to adjust.
      */
-    fun fixPadding(view: View) {
-        fixSystemBarsPadding(view)
-    }
+    fun fixLayout(view: View) {}
 
     /** Called by fragments when they’re destroyed, so the binding can be recycled. */
     fun recycleBindingOnDestroy() {
         _binding?.let {
             BaseFragmentPool.release(javaClass.name, it)
-			Log.d(TAG, "Binding released to pool for ${javaClass.name}")
+            Log.d(TAG, "Binding released to pool for ${javaClass.name}")
             _binding = null
         }
     }
@@ -152,28 +151,28 @@ private interface BaseFragmentHelper<T : ViewBinding> {
  * recycling of their bindings.
  */
 object BaseFragmentPool {
-	private val pool = mutableMapOf<String, MutableList<ViewBinding>>()
+    private val pool = mutableMapOf<String, MutableList<ViewBinding>>()
 
-	/** Attempts to acquire a recycled binding from the pool. */
-	fun <T : ViewBinding> acquire(key: String): T? {
-		val list = pool[key] ?: return null
-		val binding = list.removeLastOrNull() as? T ?: return null
-		(binding.root.parent as? ViewGroup)?.removeView(binding.root)
-		if (list.isEmpty()) pool.remove(key)
-		return binding
-	}
+    /** Attempts to acquire a recycled binding from the pool. */
+    fun <T : ViewBinding> acquire(key: String): T? {
+        val list = pool[key] ?: return null
+        val binding = list.removeLastOrNull() as? T ?: return null
+        (binding.root.parent as? ViewGroup)?.removeView(binding.root)
+        if (list.isEmpty()) pool.remove(key)
+        return binding
+    }
 
-	/** Releases a binding back to the pool for later reuse. */
-	fun <T : ViewBinding> release(key: String, binding: T) {
-		val list = pool.getOrPut(key) { mutableListOf() }
-		list.add(binding)
-	}
+    /** Releases a binding back to the pool for later reuse. */
+    fun <T : ViewBinding> release(key: String, binding: T) {
+        val list = pool.getOrPut(key) { mutableListOf() }
+        list.add(binding)
+    }
 
-	/** Clears all cached bindings from the pool. */
-	fun clearAll() {
-		pool.values.flatten().forEach { (it.root.parent as? ViewGroup)?.removeView(it.root) }
-		pool.clear()
-	}
+    /** Clears all cached bindings from the pool. */
+    fun clearAll() {
+        pool.values.flatten().forEach { (it.root.parent as? ViewGroup)?.removeView(it.root) }
+        pool.clear()
+    }
 }
 
 abstract class BaseFragment<T : ViewBinding>(
@@ -199,7 +198,7 @@ abstract class BaseFragment<T : ViewBinding>(
      */
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        view?.let { fixPadding(it) }
+        view?.let { fixLayout(it) }
     }
 
     /** Cleans up the binding reference when the view is destroyed to avoid memory leaks. */
@@ -254,7 +253,7 @@ abstract class BaseDialogFragment<T : ViewBinding>(
     /** @see [BaseFragment.onConfigurationChanged] for documentation. */
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        view?.let { fixPadding(it) }
+        view?.let { fixLayout(it) }
     }
 
     /** Cleans up the binding reference when the view is destroyed to avoid memory leaks. */
@@ -283,7 +282,7 @@ abstract class BaseBottomSheetDialogFragment<T : ViewBinding>(
     /** @see [BaseFragment.onConfigurationChanged] for documentation. */
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        view?.let { fixPadding(it) }
+        view?.let { fixLayout(it) }
     }
 
     /** Cleans up the binding reference when the view is destroyed to avoid memory leaks. */

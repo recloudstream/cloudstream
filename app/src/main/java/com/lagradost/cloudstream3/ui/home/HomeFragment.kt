@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -568,13 +567,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         super.onDestroyView()
     }
 
-    private fun fixGrid() {
-        activity?.getSpanCount()?.let {
-            currentSpan = it
-        }
-        configEvent.invoke(currentSpan)
-    }
-
     private val apiChangeClickListener = View.OnClickListener { view ->
         view.context.selectHomepage(currentApiName) { api ->
             homeViewModel.loadAndCancel(api, forceReload = true, fromUI = true)
@@ -586,11 +578,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         view.popupMenuNoIconsAndNoStringRes(validAPIs.mapIndexed { index, api -> Pair(index, api.name) }) {
             homeViewModel.loadAndCancel(validAPIs[itemId].name)
         }*/
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        fixGrid()
     }
 
     private var currentApiName: String? = null
@@ -621,20 +608,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         }
     }
 
-    override fun fixPadding(view: View) {
+    override fun fixLayout(view: View) {
         fixSystemBarsPadding(
             view,
             padTop = false,
             padBottom = isLandscape(),
             padLeft = isLayout(TV or EMULATOR)
         )
+
+        // Fix grid
+        currentSpan = view.context.getSpanCount()
+        configEvent.invoke(currentSpan)
     }
 
     @SuppressLint("SetTextI18n")
     override fun onBindingCreated(binding: FragmentHomeBinding) {
-        fixGrid()
         context?.let { HomeChildItemAdapter.updatePosterSize(it) }
-
         binding.apply {
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)

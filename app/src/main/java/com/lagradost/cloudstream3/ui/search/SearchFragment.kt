@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.ui.search
 import android.app.Activity
 import android.content.Intent
 import android.content.DialogInterface
-import android.content.res.Configuration
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.os.Bundle
@@ -135,20 +134,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
-    private fun fixGrid() {
-        activity?.getSpanCount()?.let {
-            currentSpan = it
-        }
-        binding?.searchAutofitResults?.spanCount = currentSpan
-        currentSpan = currentSpan
-        HomeFragment.configEvent.invoke(currentSpan)
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        fixGrid()
-    }
-
     override fun onDestroyView() {
         hideKeyboard()
         bottomSheetDialog?.ownHide()
@@ -225,21 +210,24 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
         }
     }
 
-    override fun fixPadding(view: View) {
+    override fun fixLayout(view: View) {
         fixSystemBarsPadding(
             view,
             padBottom = isLandscape(),
             padLeft = isLayout(TV or EMULATOR)
         )
+
+        // Fix grid
+        currentSpan = view.context.getSpanCount()
+        binding?.searchAutofitResults?.spanCount = currentSpan
+        HomeFragment.configEvent.invoke(currentSpan)
     }
 
     override fun onBindingCreated(
         binding: FragmentSearchBinding,
         savedInstanceState: Bundle?
     ) {
-        fixGrid()
         reloadRepos()
-
         binding.apply {
             val adapter =
                 SearchAdapter(
