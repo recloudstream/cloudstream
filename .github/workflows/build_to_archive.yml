@@ -34,15 +34,17 @@ jobs:
         repository: "recloudstream/cloudstream-archive"
 
     - uses: actions/checkout@v5
-    - name: Set up JDK 17
+
+    - name: Set up JDK 21
       uses: actions/setup-java@v5
       with:
-        java-version: '17'
-        distribution: 'adopt'
+        java-version: 21
+        distribution: adopt
         cache: gradle
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+
     - name: Fetch keystore
       id: fetch_keystore
       run: |
@@ -55,14 +57,14 @@ jobs:
         echo "key_pwd=$KEY_PWD" >> $GITHUB_OUTPUT
 
     - name: Run Gradle
-      run: |
-        ./gradlew assemblePrerelease
+      run: ./gradlew assemblePrerelease
       env:
         SIGNING_KEY_ALIAS: "key0"
         SIGNING_KEY_PASSWORD: ${{ steps.fetch_keystore.outputs.key_pwd }}
         SIGNING_STORE_PASSWORD: ${{ steps.fetch_keystore.outputs.key_pwd }}
         SIMKL_CLIENT_ID: ${{ secrets.SIMKL_CLIENT_ID }}
         SIMKL_CLIENT_SECRET: ${{ secrets.SIMKL_CLIENT_SECRET }}
+
     - uses: actions/checkout@v5
       with:
         repository: "recloudstream/cloudstream-archive"
@@ -72,7 +74,7 @@ jobs:
     - name: Move build
       run: |
         cp app/build/outputs/apk/prerelease/release/*.apk "archive/$(git rev-parse --short HEAD).apk"
-    
+
     - name: Push archive
       run: |
         cd $GITHUB_WORKSPACE/archive

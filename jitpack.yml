@@ -1,2 +1,2 @@
 jdk:
-  - openjdk17 # Same JDK as github workflow
+  - openjdk21 # Same JDK as github workflow
