@@ -370,7 +370,7 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
     }
 
     var systemBarsAddPadding = isLayout(TV or EMULATOR)
-    override fun fixPadding(view: View) {
+    override fun fixLayout(view: View) {
         fixSystemBarsPadding(
             view,
             padBottom = systemBarsAddPadding || isLandscape(),
