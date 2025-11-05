@@ -246,3 +246,7 @@
     </application>
     
 </manifest>
+<activity
+    android:name=".UpdateActivity"
+    android:exported="false"
+    android:theme="@style/Theme.AppCompat.Light.NoActionBar" />

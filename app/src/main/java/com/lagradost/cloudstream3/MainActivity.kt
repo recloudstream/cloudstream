@@ -1,5 +1,43 @@
 package com.lagradost.cloudstream3
 
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.*
+
+class UpdateActivity : AppCompatActivity() {
+    private val uiScope = CoroutineScope(Dispatchers.Main + Job())
+override fun onDestroy() {
+    super.onDestroy()
+    NotificationHelper.createUpdateNotification(this)
+}
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // Clear the notification
+        NotificationHelper.createUpdateNotification(this)
+
+        uiScope.launch {
+            // Call your real update code here
+            runUpdateNow()
+
+            // Close app completely after update
+            finishAffinity()
+        }
+    }
+
+    override fun onDestroy() {
+        uiScope.cancel()
+        super.onDestroy()
+    }
+
+    private fun runUpdateNow() {
+        // TODO: Replace this with your actual update logic (e.g., start update service)
+        Thread.sleep(500)
+    }
+}
+package com.lagradost.cloudstream3
+
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Dialog
