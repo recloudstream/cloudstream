@@ -118,7 +118,10 @@ private interface BaseFragmentHelper<T : ViewBinding> {
      *
      * @param view The root view to adjust.
      */
-    fun fixLayout(view: View) {}
+    @Throws
+    fun fixLayout(view: View) {
+        throw NotImplementedError()
+    }
 }
 
 abstract class BaseFragment<T : ViewBinding>(
