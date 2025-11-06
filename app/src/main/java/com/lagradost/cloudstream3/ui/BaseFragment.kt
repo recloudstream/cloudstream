@@ -50,8 +50,8 @@ private interface BaseFragmentHelper<T : ViewBinding> {
         savedInstanceState: Bundle?
     ): View? {
         // Try to reuse a binding from the pool first
-        BaseFragmentPool.acquire<T>(javaClass.name)?.let {
-            Log.d(TAG, "Binding acquired from pool for ${javaClass.name}")
+        BaseFragmentPool.acquire<T>(getPoolKey())?.let {
+            Log.d(TAG, "Binding acquired from pool for ${getPoolKey()}")
             _binding = it
             return it.root
         }
@@ -77,6 +77,8 @@ private interface BaseFragmentHelper<T : ViewBinding> {
 
         return _binding?.root ?: root
     }
+
+    fun getPoolKey(): String = javaClass.name
 
     /**
      * Called after the fragment's view has been created.
@@ -135,8 +137,8 @@ private interface BaseFragmentHelper<T : ViewBinding> {
     /** Called by fragments when they’re destroyed, so the binding can be recycled. */
     fun recycleBindingOnDestroy() {
         _binding?.let {
-            BaseFragmentPool.release(javaClass.name, it)
-            Log.d(TAG, "Binding released to pool for ${javaClass.name}")
+            BaseFragmentPool.release(getPoolKey(), it)
+            Log.d(TAG, "Binding released to pool for ${getPoolKey()}")
             _binding = null
         }
     }
@@ -152,9 +154,11 @@ private interface BaseFragmentHelper<T : ViewBinding> {
  */
 object BaseFragmentPool {
     private val pool = mutableMapOf<String, MutableList<ViewBinding>>()
+    private const val MAX_PER_PREFIX = 3
 
     /** Attempts to acquire a recycled binding from the pool. */
     fun <T : ViewBinding> acquire(key: String): T? {
+        if (key == "") return null
         val list = pool[key] ?: return null
         val binding = list.removeLastOrNull() as? T ?: return null
         (binding.root.parent as? ViewGroup)?.removeView(binding.root)
@@ -164,14 +168,32 @@ object BaseFragmentPool {
 
     /** Releases a binding back to the pool for later reuse. */
     fun <T : ViewBinding> release(key: String, binding: T) {
+        if (key == "") return
         val list = pool.getOrPut(key) { mutableListOf() }
         list.add(binding)
+        trimPrefixIfNeeded(key)
     }
 
     /** Clears all cached bindings from the pool. */
     fun clearAll() {
         pool.values.flatten().forEach { (it.root.parent as? ViewGroup)?.removeView(it.root) }
         pool.clear()
+    }
+
+    /** Trims bindings for a prefix if total exceeds MAX_PER_PREFIX */
+    private fun trimPrefixIfNeeded(key: String) {
+        val prefix = key.substringBefore(":")
+        val prefixKeys = pool.keys.filter { it.startsWith("$prefix:") }
+        var total = prefixKeys.sumOf { pool[it]?.size ?: 0 }
+
+        while (total > MAX_PER_PREFIX && prefixKeys.isNotEmpty()) {
+            // Remove oldest from the first key with items
+            val oldestKey = prefixKeys.firstOrNull { pool[it]?.isNotEmpty() == true } ?: break
+            val removed = pool[oldestKey]?.removeFirstOrNull() ?: break
+            (removed.root.parent as? ViewGroup)?.removeView(removed.root)
+            if (pool[oldestKey]?.isEmpty() == true) pool.remove(oldestKey)
+            total--
+        }
     }
 }
 
