@@ -132,7 +132,7 @@ private interface BaseFragmentHelper<T : ViewBinding> {
      *
      * @param view The root view to adjust.
      */
-    fun fixLayout(view: View) {}
+    fun fixLayout(view: View)
 
     /** Called by fragments when they’re destroyed, so the binding can be recycled. */
     fun recycleBindingOnDestroy() {
