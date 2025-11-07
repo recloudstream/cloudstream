@@ -287,7 +287,7 @@ class UpdatedDefaultExtractorsFactory : ExtractorsFactory {
      */
     @Synchronized
     fun setTsSubtitleFormats(subtitleFormats: List<Format>?): UpdatedDefaultExtractorsFactory {
-        tsSubtitleFormats = ImmutableList.copyOf(subtitleFormats)
+        tsSubtitleFormats = subtitleFormats?.let { ImmutableList.copyOf(it) }
         return this
     }
 
@@ -304,26 +304,6 @@ class UpdatedDefaultExtractorsFactory : ExtractorsFactory {
         timestampSearchBytes: Int
     ): UpdatedDefaultExtractorsFactory {
         tsTimestampSearchBytes = timestampSearchBytes
-        return this
-    }
-
-    @Deprecated(
-        """This method (and all support for 'legacy' subtitle decoding during rendering) will
-        be removed in a future release."""
-    )
-    @Synchronized
-    fun setTextTrackTranscodingEnabled(
-        textTrackTranscodingEnabled: Boolean
-    ): UpdatedDefaultExtractorsFactory {
-        return experimentalSetTextTrackTranscodingEnabled(textTrackTranscodingEnabled)
-    }
-
-    @Deprecated("")
-    @Synchronized
-    override fun experimentalSetTextTrackTranscodingEnabled(
-        textTrackTranscodingEnabled: Boolean
-    ): UpdatedDefaultExtractorsFactory {
-        this.textTrackTranscodingEnabled = textTrackTranscodingEnabled
         return this
     }
 
