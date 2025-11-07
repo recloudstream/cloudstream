@@ -104,13 +104,7 @@ class HubCloud : ExtractorApi() {
                 }
 
                 text.contains("pixeldra", ignoreCase = true) || text.contains("pixel", ignoreCase = true) -> {
-                    callback.invoke(
-                        newExtractorLink(
-                            "Pixeldrain",
-                            "Pixeldrain $labelExtras",
-                            link,
-                        ) { this.quality = quality }
-                    )
+                    PixelDrain().getUrl(link,"",subtitleCallback,callback)
                 }
 
                 text.contains("S3 Server", ignoreCase = true) -> {
