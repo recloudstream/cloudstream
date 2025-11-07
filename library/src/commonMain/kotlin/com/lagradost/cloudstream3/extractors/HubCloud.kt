@@ -8,6 +8,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.loadExtractor
+import com.lagradost.cloudstream3.utils.loadSourceNameExtractor
 import com.lagradost.cloudstream3.utils.newExtractorLink
 import java.net.URI
 import java.net.URL
@@ -104,7 +105,7 @@ class HubCloud : ExtractorApi() {
                 }
 
                 text.contains("pixeldra", ignoreCase = true) || text.contains("pixel", ignoreCase = true) -> {
-                    PixelDrain().getUrl(link,"",subtitleCallback,callback)
+                    loadSourceNameExtractor(labelExtras,link,"",quality,subtitleCallback,callback)
                 }
 
                 text.contains("S3 Server", ignoreCase = true) -> {
