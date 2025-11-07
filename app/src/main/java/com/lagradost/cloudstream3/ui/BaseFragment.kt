@@ -160,6 +160,7 @@ object BaseFragmentPool {
     fun <T : ViewBinding> acquire(key: String): T? {
         if (key == "") return null
         val list = pool[key] ?: return null
+        @Suppress("UNCHECKED_CAST")
         val binding = list.removeLastOrNull() as? T ?: return null
         (binding.root.parent as? ViewGroup)?.removeView(binding.root)
         if (list.isEmpty()) pool.remove(key)
