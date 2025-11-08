@@ -462,8 +462,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         activity?.apply {
             if (lockRotation) {
                 if (isLocked || rotatedManually) {
-                    // Allow flipping with manual rotation but lock
-                    // between portrait and landscape.
                     // Allow reverse rotation within the same orientation (landscape to reverse landscape
                     // or portrait to reverse portrait) only when manually rotated and not fully locked.
                     lockOrientation(this, rotatedManually && !isLocked)
