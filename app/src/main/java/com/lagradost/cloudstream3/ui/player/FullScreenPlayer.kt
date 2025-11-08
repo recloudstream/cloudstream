@@ -142,6 +142,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected var doubleTapEnabled = false
     protected var doubleTapPauseEnabled = true
     protected var playerRotateEnabled = false
+    protected var manualOrientation = false
     protected var autoPlayerRotateEnabled = false
     private var hideControlsNames = false
     protected var speedupEnabled = false
@@ -447,7 +448,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     private fun updateOrientation(ignoreDynamicOrientation: Boolean = false) {
         activity?.apply {
             if (lockRotation) {
-                if (isLocked) {
+                if (isLocked || manualOrientation) {
                     lockOrientation(this)
                 } else {
                     if (ignoreDynamicOrientation) {
@@ -2027,6 +2028,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     private fun toggleRotate() {
         activity?.let {
             toggleOrientationWithSensor(it)
+            manualOrientation = true
         }
     }
 
