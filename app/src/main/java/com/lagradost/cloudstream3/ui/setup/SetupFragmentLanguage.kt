@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.setup
 
+import android.view.View
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
@@ -16,12 +17,18 @@ import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.settings.appLanguages
 import com.lagradost.cloudstream3.ui.settings.getCurrentLocale
 import com.lagradost.cloudstream3.ui.settings.nameNextToFlagEmoji
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 
 const val HAS_DONE_SETUP_KEY = "HAS_DONE_SETUP"
 
 class SetupFragmentLanguage : BaseFragment<FragmentSetupLanguageBinding>(
     BaseFragment.BindingCreator.Inflate(FragmentSetupLanguageBinding::inflate)
 ) {
+
+    override fun fixLayout(view: View) {
+        fixSystemBarsPadding(view)
+    }
+
     override fun onBindingCreated(binding: FragmentSetupLanguageBinding) {
         // We don't want a crash for all users
         safe {

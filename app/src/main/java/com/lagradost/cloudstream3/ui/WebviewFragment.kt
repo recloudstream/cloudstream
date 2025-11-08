@@ -20,9 +20,7 @@ class WebviewFragment : BaseFragment<FragmentWebviewBinding>(
     BaseFragment.BindingCreator.Inflate(FragmentWebviewBinding::inflate)
 ) {
 
-    override fun fixPadding(view: View) {
-        // Don't need any padding here
-    }
+    override fun fixLayout(view: View) = Unit
 
     override fun onBindingCreated(binding: FragmentWebviewBinding) {
         val url = arguments?.getString(WEBVIEW_URL) ?: "".also {

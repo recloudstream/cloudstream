@@ -151,7 +151,7 @@ class ChromecastSubtitlesFragment : BaseFragment<ChromecastSubtitleSettingsBindi
         onColorSelectedEvent -= ::onColorSelected
     }
 
-    override fun fixPadding(view: View) {
+    override fun fixLayout(view: View) {
         fixSystemBarsPadding(
             view,
             padBottom = isLandscape(),

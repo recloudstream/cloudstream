@@ -250,20 +250,20 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
         getPref(R.string.video_buffer_clear_key)?.let { pref ->
             val cacheDir = context?.cacheDir ?: return@let
 
-            fun updateSummery() {
+            fun updateSummary() {
                 try {
-                    pref.summary = formatShortFileSize(view?.context, getFolderSize(cacheDir))
+                    pref.summary = formatShortFileSize(pref.context, getFolderSize(cacheDir))
                 } catch (e: Exception) {
                     logError(e)
                 }
             }
 
-            updateSummery()
+            updateSummary()
 
             pref.setOnPreferenceClickListener {
                 try {
                     cacheDir.deleteRecursively()
-                    updateSummery()
+                    updateSummary()
                 } catch (e: Exception) {
                     logError(e)
                 }

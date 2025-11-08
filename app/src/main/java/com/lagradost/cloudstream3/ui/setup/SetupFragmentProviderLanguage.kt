@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.setup
 
+import android.view.View
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import androidx.core.util.forEach
@@ -13,10 +14,16 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 
 class SetupFragmentProviderLanguage : BaseFragment<FragmentSetupProviderLanguagesBinding>(
     BaseFragment.BindingCreator.Inflate(FragmentSetupProviderLanguagesBinding::inflate)
 ) {
+
+    override fun fixLayout(view: View) {
+        fixSystemBarsPadding(view)
+    }
+
     override fun onBindingCreated(binding: FragmentSetupProviderLanguagesBinding) {
         safe {
             val ctx = context ?: return@safe

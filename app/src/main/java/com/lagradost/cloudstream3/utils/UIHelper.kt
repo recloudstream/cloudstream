@@ -202,17 +202,15 @@ object UIHelper {
         listView.requestLayout()
     }
 
-    fun Context?.getSpanCount(): Int? {
+    fun Context.getSpanCount(): Int {
         val compactView = false
         val spanCountLandscape = if (compactView) 2 else 6
         val spanCountPortrait = if (compactView) 1 else 3
-        val orientation = this?.resources?.configuration?.orientation ?: return null
+        val orientation = resources.configuration.orientation
 
         return if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             spanCountLandscape
-        } else {
-            spanCountPortrait
-        }
+        } else spanCountPortrait
     }
 
     fun Fragment.hideKeyboard() {

@@ -56,6 +56,7 @@ const val DOWNLOAD_NAVIGATE_TO = "downloadpage"
 class DownloadFragment : BaseFragment<FragmentDownloadsBinding>(
     BaseFragment.BindingCreator.Inflate(FragmentDownloadsBinding::inflate)
 ) {
+
     private val downloadViewModel: DownloadViewModel by activityViewModels()
 
     private fun View.setLayoutWidth(weight: Long) {
@@ -72,7 +73,7 @@ class DownloadFragment : BaseFragment<FragmentDownloadsBinding>(
         super.onDestroyView()
     }
 
-    override fun fixPadding(view: View) {
+    override fun fixLayout(view: View) {
         fixSystemBarsPadding(
             view,
             padBottom = isLandscape(),
