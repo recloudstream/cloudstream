@@ -97,8 +97,8 @@
                         android:id="@+id/subtitles_encoding_format"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingHorizontal="10dp"
                         android:textColor="?attr/textColor"
+                        android:padding="10dp"
                         android:textSize="15sp"
                         android:ellipsize="end"
                         android:singleLine="true"
@@ -111,7 +111,7 @@
                     android:layout_height="44dp"
                     android:contentDescription="@string/subtitles_settings"
                     android:foreground="@drawable/outline_drawable_forced"
-                    android:paddingHorizontal="10dp"
+                    android:padding="10dp"
                     android:src="@drawable/ic_outline_settings_24" />
             </LinearLayout>
 
