@@ -594,6 +594,47 @@ abstract class MainAPI {
         throw NotImplementedError()
     }
 
+    /*open val hasReviews: Boolean = false
+    open suspend fun loadReviews(data: String, page: Int): List<ReviewResponse> {
+        throw NotImplementedError()
+    }*/
+
+    open val hasReviews: Boolean = true
+    open suspend fun loadReviews(data: String, page: Int): List<ReviewResponse> {
+        val reviews = mutableListOf<ReviewResponse>()
+
+        for (i in 1..10) {
+            val review = newReviewResponse {
+                content = "Review content #$i"
+                title = "Title #$i"
+                author = "Author $i"
+                avatarUrl =
+                    "https://avatars.githubusercontent.com/u/142361265?v=4"
+                avatarHeaders = null
+                rating = if (kotlin.random.Random.nextBoolean()) {
+                    (1..10).random()
+                } else String.format("%.1f", kotlin.random.Random.nextDouble(1.0, 10.0)).toFloat()
+
+                val rating = if (kotlin.random.Random.nextBoolean()) {
+                    (1..10).random()
+                } else String.format("%.1f", kotlin.random.Random.nextDouble(1.0, 10.0)).toFloat()
+
+                ratingFormat = RatingFormat.STAR
+
+                isSpoiler = kotlin.random.Random.nextBoolean()
+
+                addRatingCategory(rating, "Testing1")
+                addRatingCategory(rating, "Testing2")
+                addRatingCategory(rating, "Testing3")
+                addRatingCategory(rating, "Testing4")
+                addDate("2025-01-31")
+            }
+            reviews.add(review)
+        }
+
+        return reviews
+    }
+
     /** Paginated search, starts with page: 1 */
     open suspend fun search(query: String, page: Int): SearchResponseList? {
         val searchResults = search(query) ?: return null
@@ -1281,6 +1322,114 @@ fun MainAPI.updateUrl(url: String): String {
     }
 }
 
+/**
+ * Enum class representing different rating formats.
+ *
+ * This enum defines various formats for representing ratings, including:
+ * - [STAR] for a star rating (e.g., ★)
+ * - [OUT_OF_10] for a rating out of 10 (e.g., 8/10)
+ * - [OUT_OF_100] for a rating out of 100 (e.g., 85/100)
+ * - [POSITIVE_NEGATIVE] for a binary positive or negative rating (e.g., Positive, Negative)
+ * - [PERCENT] for a percentage-based rating (e.g., 80%)
+ */
+@Prerelease
+enum class RatingFormat {
+    STAR,
+    OUT_OF_10,
+    OUT_OF_100,
+    POSITIVE_NEGATIVE,
+    PERCENT
+}
+
+/**
+ * Data class representing a user's review.
+ *
+ * This class contains details about a user's review, including their rating,
+ * review content, and metadata such as username, avatar, and date.
+ * It also supports different types of rating formats via the [ratingFormat] property.
+ *
+ * The constructor for this class can not be called directly, you must use [newReviewResponse].
+ *
+ * @param content The content of the review text.
+ * @param title The title of the review.
+ * @param author The author of the review.
+ * @param timestamp The timestamp of when the review was submitted.
+ * @param avatarUrl The URL for the reviewer's avatar image.
+ * @param avatarHeaders The headers for the avatar URL.
+ * @param isSpoiler Whether the review contains spoilers.
+ * @param rating The overall rating of the review.
+ * @param ratings A list of additional ratings for specific categories (e.g., acting, story, etc.).
+ * @param ratingFormat The format used for displaying the rating (defaults to [RatingFormat.STAR]).
+ *
+ * @see newReviewResponse
+ */
+@Prerelease
+@ConsistentCopyVisibility
+data class ReviewResponse internal constructor(
+    var content: String? = null,
+    var title: String? = null,
+    var author: String? = null,
+    var timestamp: Long? = null,
+    var avatarUrl: String? = null,
+    var avatarHeaders: Map<String, String>? = null,
+    var isSpoiler: Boolean = false,
+    var rating: Number? = null,
+    var ratings: List<Pair<Number, String>>? = null,
+    var ratingFormat: RatingFormat = RatingFormat.STAR,
+) {
+    /**
+     * Adds a review date to the [ReviewResponse] object by parsing a string date.
+     *
+     * @param date The date string to parse.
+     * @param format The format of the date string (default is "yyyy-MM-dd").
+     */
+    fun addDate(date: String?, format: String = "yyyy-MM-dd") {
+        try {
+            this@ReviewResponse.timestamp =
+                SimpleDateFormat(format).parse(date ?: return)?.time
+        } catch (e: Exception) {
+            logError(e)
+        }
+    }
+
+    /**
+     * Adds a review date to the [ReviewResponse] object directly from a [Date] object.
+     *
+     * @param date The [Date] object to use for the review date.
+     */
+    fun addDate(date: Date?) {
+        this@ReviewResponse.timestamp = date?.time
+    }
+
+    /**
+     * Adds a rating for a specific category to the [ReviewResponse].
+     *
+     * @param rating The rating value for the category (e.g., a numeric rating).
+     * @param category The name of the category being rated (e.g., "Acting", "Story").
+     */
+    fun addRatingCategory(rating: Number, category: String) {
+        val updatedRatings = this@ReviewResponse.ratings?.toMutableList() ?: mutableListOf()
+        updatedRatings.add(Pair(rating, category))
+        this@ReviewResponse.ratings = updatedRatings
+    }
+}
+
+/**
+ * Extension function to add a new user review via the [MainAPI].
+ *
+ * This function creates a new instance of [ReviewResponse] and allows for initialization
+ * of its properties through the provided [initializer] block.
+ *
+ * @param initializer A lambda function to apply to the new [ReviewResponse] instance.
+ * @return A new [ReviewResponse] object with the provided initializer applied.
+ *
+ * @see [ReviewResponse] for more information on its properties and usage.
+ */
+@Prerelease
+fun MainAPI.newReviewResponse(
+    initializer: ReviewResponse.() -> Unit = {}
+): ReviewResponse = ReviewResponse().apply(initializer)
+
 /** Abstract interface of SearchResponse. */
 interface SearchResponse {
     val name: String
@@ -1700,7 +1849,9 @@ data class TrailerData(
     // var subtitles: List<SubtitleFile> = emptyList(),
 )
 
-/** Abstract interface of LoadResponse responses
+/**
+ * Abstract interface of LoadResponse responses
+ *
  * @property name Title of the media, appears on result page.
  * @property url Url of the media.
  * @property apiName Plugin name, appears on result page.
@@ -1720,11 +1871,12 @@ data class TrailerData(
  * @property posterHeaders headers map used by network request to get the poster.
  * @property backgroundPosterUrl Url of the media background poster.
  * @property contentRating content rating of the media, appears on result page.
+ * @property reviewsData JSON reviews data or API URL for [MainAPI.loadReviews]; defaults to [url] if not provided.
  * @property uniqueUrl The key used for storing the persistent data about an entry.
  * On older versions `url` was used instead, but this was added to support JSON that can change as the url parameter.
  *
  * If you have JSON that can change you can set `url = jsonObject.toJson()` and `uniqueId = jsonObject.id.toString()`
- * */
+ */
 interface LoadResponse {
     var name: String
     var url: String
@@ -1746,6 +1898,7 @@ interface LoadResponse {
     var posterHeaders: Map<String, String>?
     var backgroundPosterUrl: String?
     var contentRating: String?
+    var reviewsData: String?
 
     var uniqueUrl: String
 
@@ -2189,7 +2342,8 @@ constructor(
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
-    override var uniqueUrl: String = url
+    override var reviewsData: String? = null,
+    override var uniqueUrl: String = url,
 ) : LoadResponse
 
 suspend fun MainAPI.newTorrentLoadResponse(
@@ -2249,7 +2403,8 @@ constructor(
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
-    override var uniqueUrl: String = url
+    override var reviewsData: String? = null,
+    override var uniqueUrl: String = url,
 ) : LoadResponse, EpisodeResponse {
 
     override fun getLatestEpisodes(): Map<DubStatus, Int?> {
@@ -2334,7 +2489,8 @@ constructor(
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
-    override var uniqueUrl: String = url
+    override var reviewsData: String? = null,
+    override var uniqueUrl: String = url,
 ) : LoadResponse
 
 suspend fun MainAPI.newLiveStreamLoadResponse(
@@ -2382,7 +2538,8 @@ constructor(
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
-    override var uniqueUrl: String = url
+    override var reviewsData: String? = null,
+    override var uniqueUrl: String = url,
 ) : LoadResponse
 
 suspend fun <T> MainAPI.newMovieLoadResponse(
@@ -2561,7 +2718,8 @@ constructor(
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
-    override var uniqueUrl: String = url
+    override var reviewsData: String? = null,
+    override var uniqueUrl: String = url,
 ) : LoadResponse, EpisodeResponse {
     override fun getLatestEpisodes(): Map<DubStatus, Int?> {
         val maxSeason =

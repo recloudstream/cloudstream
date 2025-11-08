@@ -32,6 +32,8 @@ import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.tabs.TabLayout
+import com.lagradost.api.Log
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.DubStatus
@@ -46,6 +48,7 @@ import com.lagradost.cloudstream3.databinding.FragmentResultSwipeBinding
 import com.lagradost.cloudstream3.databinding.ResultRecommendationsBinding
 import com.lagradost.cloudstream3.databinding.ResultSyncBinding
 import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.debugException
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
@@ -84,6 +87,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.setListViewHeightBasedOnItems
 import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
@@ -463,6 +467,10 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         player.handleEvent(CSPlayerEvent.Pause)
                     }
                 }
+
+                if (viewModel.isInReviews()) {
+                    binding?.reviewsFab?.alpha = scrollY / 50.toPx.toFloat()
+                }
             })
         }
 
@@ -810,6 +818,87 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
                     populateChips(resultTag, d.tags)
 
+                    resultTabs.removeAllTabs()
+                    resultTabs.isVisible = false
+                    if (api?.hasReviews == true) {
+                        resultTabs.isVisible = true
+                        resultTabs.addTab(resultTabs.newTab().setText(R.string.details).setId(0))
+                        resultTabs.addTab(
+                            resultTabs.newTab().setText(R.string.reviews).setId(1)
+                        )
+                    }
+
+                    val target = viewModel.currentTabIndex.value
+                    if (target != null) {
+                        resultTabs.getTabAt(target)?.let { new ->
+                            resultTabs.selectTab(new)
+                        }
+                    }
+
+                    val reviewAdapter = ReviewAdapter()
+
+                    resultReviews.adapter = reviewAdapter
+                    resultReviews.loadMoreListener = { viewModel.loadMoreReviews() }
+
+                    resultReviews.setLinearListLayout(isHorizontal = false)
+
+                    observe(viewModel.reviews) { reviews ->
+                        when (reviews) {
+                            is Resource.Success -> {
+                                resultviewReviewsLoading.isVisible = false
+                                resultviewReviewsLoadingShimmer.startShimmer()
+                                resultReviews.isVisible = true
+                                resultNoReviews.isVisible = reviews.value.isEmpty()
+                                reviewAdapter.submitList(reviews.value)
+                            }
+
+                            is Resource.Loading -> {
+                                resultviewReviewsLoadingShimmer.stopShimmer()
+                                resultviewReviewsLoading.isVisible = true
+                                resultReviews.isVisible = false
+                            }
+
+                            is Resource.Failure -> {
+                                debugException { "This should never happen." }
+                            }
+                        }
+                    }
+
+                    resultTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                        override fun onTabSelected(tab: TabLayout.Tab?) {
+                            Log.i("ResultFragment", "addOnTabSelectedListener ${resultTabs.selectedTabPosition}")
+                            viewModel.switchTab(tab?.id, resultTabs.selectedTabPosition)
+
+                            tab?.id?.let { tabId ->
+                                val observer = PanelsChildGestureRegionObserver.Provider.get()
+                                when (tabId) {
+                                    0 -> observer.unregister(resultReviews)
+                                    1 -> observer.register(resultReviews)
+                                }
+                            }
+                        }
+
+                        override fun onTabUnselected(tab: TabLayout.Tab?) {}
+
+                        override fun onTabReselected(tab: TabLayout.Tab?) {}
+                    })
+
+                    observe(viewModel.currentTabIndex) { pos ->
+                        binding.apply {
+                            resultDescription.isVisible = 0 == pos
+                            resultDetailsholder.isVisible = 0 == pos
+                            binding?.resultBookmarkFab?.isVisible = 0 == pos
+                            binding?.reviewsFab?.isVisible = 1 == pos
+                            resultReviewsholder.isVisible = 1 == pos
+                        }
+                    }
+
+                    observe(viewModel.currentTabPosition) { pos ->
+                        if (resultTabs.selectedTabPosition != pos) {
+                            resultTabs.selectTab(resultTabs.getTabAt(pos))
+                        }
+                    }
+
                     resultComingSoon.isVisible = d.comingSoon
                     resultDataHolder.isGone = d.comingSoon
 
@@ -858,6 +947,11 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         resultBookmarkFab.apply {
                             isVisible = true
                             extend()
+                        }
+
+                        reviewsFab.setOnClickListener {
+                            resultReviews.smoothScrollToPosition(0)
+                            resultScroll.smoothScrollTo(0, 0)
                         }
                     }
                 }
