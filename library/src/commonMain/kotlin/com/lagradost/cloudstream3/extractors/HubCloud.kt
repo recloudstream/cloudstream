@@ -105,7 +105,17 @@ class HubCloud : ExtractorApi() {
                 }
 
                 text.contains("pixeldra", ignoreCase = true) || text.contains("pixel", ignoreCase = true) -> {
-                    loadSourceNameExtractor(labelExtras,link,"",quality,subtitleCallback,callback)
+                    val baseUrlLink = getBaseUrl(link)
+                    val finalURL = if (link.contains("download", true)) link
+                    else "$baseUrlLink/api/file/${link.substringAfterLast("/")}?download"
+
+                    callback(
+                        newExtractorLink(
+                            "Pixeldrain",
+                            "Pixeldrain $labelExtras",
+                            finalURL
+                        ) { this.quality = quality }
+                    )
                 }
 
                 text.contains("S3 Server", ignoreCase = true) -> {
