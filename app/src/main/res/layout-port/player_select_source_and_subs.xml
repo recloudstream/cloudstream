@@ -77,25 +77,33 @@
                 android:gravity="center_vertical"
                 android:padding="10dp">
 
-                <TextView
-                    android:id="@+id/subtitles_text"
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/pick_subtitle"
-                    android:textColor="?attr/textColor"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
-                <TextView
-                    android:id="@+id/subtitles_encoding_format"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:paddingHorizontal="10dp"
-                    android:textColor="?attr/textColor"
-                    android:textSize="15sp"
-                    tools:text="Thai (TIS 620-2533/ISO 8859-11)" />
+                    <TextView
+                        android:id="@+id/subtitles_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pick_subtitle"
+                        android:textColor="?attr/textColor"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/subtitles_encoding_format"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="10dp"
+                        android:textColor="?attr/textColor"
+                        android:textSize="15sp"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        tools:text="Thai (TIS 620-2533/ISO 8859-11)" />
+                </LinearLayout>
 
                 <ImageView
                     android:id="@+id/subtitle_settings_btt"
@@ -103,7 +111,7 @@
                     android:layout_height="44dp"
                     android:contentDescription="@string/subtitles_settings"
                     android:foreground="@drawable/outline_drawable_forced"
-                    android:padding="10dp"
+                    android:paddingHorizontal="10dp"
                     android:src="@drawable/ic_outline_settings_24" />
             </LinearLayout>
 
@@ -142,21 +150,20 @@
         android:layout_height="wrap_content"
         android:gravity="end|center_vertical"
         android:padding="8dp"
-        android:orientation="horizontal"
-        android:weightSum="2">
+        android:orientation="horizontal">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/apply_btt"
-            style="@style/WhiteButton"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:text="@string/sort_apply" />
+            android:text="@string/sort_apply"
+            style="@style/WhiteButton" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/cancel_btt"
-            style="@style/BlackButton"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:text="@string/sort_cancel" />
+            android:text="@string/sort_cancel"
+            style="@style/BlackButton" />
     </LinearLayout>
 </LinearLayout>

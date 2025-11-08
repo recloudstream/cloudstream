@@ -107,19 +107,19 @@
             android:textColor="?attr/textColor"
             android:textSize="20sp"
             android:textStyle="bold"
-            tools:text="@string/profile_number"
-            android:autofillHints="username" />
+            android:autofillHints="username"
+            tools:text="@string/profile_number" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/save_btt"
-            style="@style/WhiteButton"
             android:layout_width="wrap_content"
-            android:text="@string/sort_save" />
+            android:text="@string/sort_save"
+            style="@style/WhiteButton" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/close_btt"
-            style="@style/BlackButton"
             android:layout_width="wrap_content"
-            android:text="@string/sort_close" />
+            android:text="@string/sort_close"
+            style="@style/BlackButton" />
     </LinearLayout>
 </LinearLayout>

@@ -31,7 +31,7 @@
             android:requiresFadingEdge="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/subtitle_offset_item"
-            tools:visibility="gone"/>
+            tools:visibility="gone" />
     </FrameLayout>
 
     <LinearLayout
@@ -42,12 +42,12 @@
         android:paddingVertical="10dp">
 
         <TextView
-            style="@style/WatchHeaderText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="0dp"
             android:paddingTop="10dp"
-            android:text="@string/subtitle_offset_title" />
+            android:text="@string/subtitle_offset_title"
+            style="@style/WatchHeaderText" />
 
         <TextView
             android:id="@+id/subtitle_offset_sub_title"
@@ -61,8 +61,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:paddingTop="8dp"
-            android:weightSum="5">
+            android:paddingTop="8dp">
 
             <ImageView
                 android:id="@+id/subtitle_offset_subtract_more"
@@ -73,7 +72,7 @@
                 android:padding="10dp"
                 android:src="@drawable/ic_baseline_keyboard_arrow_left_24"
                 app:tint="?attr/white"
-                tools:ignore="ContentDescription"/>
+                tools:ignore="ContentDescription" />
 
             <ImageView
                 android:id="@+id/subtitle_offset_subtract"
@@ -84,7 +83,7 @@
                 android:padding="10dp"
                 android:src="@drawable/baseline_remove_24"
                 app:tint="?attr/white"
-                tools:ignore="ContentDescription"/>
+                tools:ignore="ContentDescription" />
 
             <EditText
                 android:id="@+id/subtitle_offset_input"
@@ -95,7 +94,7 @@
                 android:gravity="center"
                 android:hint="@string/subtitle_offset_hint"
                 android:inputType="numberSigned"
-                tools:ignore="LabelFor"/>
+                tools:ignore="LabelFor" />
 
             <ImageView
                 android:id="@+id/subtitle_offset_add"
@@ -106,7 +105,7 @@
                 android:padding="10dp"
                 android:src="@drawable/ic_baseline_add_24"
                 app:tint="?attr/white"
-                tools:ignore="ContentDescription"/>
+                tools:ignore="ContentDescription" />
 
             <ImageView
                 android:id="@+id/subtitle_offset_add_more"
@@ -117,7 +116,7 @@
                 android:padding="10dp"
                 android:src="@drawable/ic_baseline_keyboard_arrow_right_24"
                 app:tint="?attr/white"
-                tools:ignore="ContentDescription"/>
+                tools:ignore="ContentDescription" />
         </LinearLayout>
     </LinearLayout>
 
@@ -126,28 +125,27 @@
         android:layout_height="wrap_content"
         android:gravity="end|center_vertical"
         android:orientation="horizontal"
-        android:padding="8dp"
-        android:weightSum="3">
+        android:padding="8dp">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/apply_btt"
-            style="@style/WhiteButton"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:text="@string/sort_apply"/>
+            android:text="@string/sort_apply"
+            style="@style/WhiteButton" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/reset_btt"
-            style="@style/BlackButton"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:text="@string/reset_btn"/>
+            android:text="@string/reset_btn"
+            style="@style/BlackButton" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/cancel_btt"
-            style="@style/BlackButton"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:text="@string/sort_cancel"/>
+            android:text="@string/sort_cancel"
+            style="@style/BlackButton" />
     </LinearLayout>
 </LinearLayout>
