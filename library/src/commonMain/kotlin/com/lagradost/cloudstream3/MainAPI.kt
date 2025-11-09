@@ -1949,24 +1949,6 @@ interface LoadResponse {
             this.addSimklId(SimklSyncServices.Imdb, id)
         }
 
-        @Deprecated(
-            "Outdated API due to misspelling",
-            replaceWith = ReplaceWith("addTraktId(id)"),
-            level = DeprecationLevel.ERROR
-        )
-        fun LoadResponse.addTrackId(id: String?) {
-            this.addTraktId(id)
-        }
-
-        @Deprecated(
-            "Outdated API due to missing capitalization",
-            replaceWith = ReplaceWith("addKitsuId(id)"),
-            level = DeprecationLevel.ERROR
-        )
-        fun LoadResponse.addkitsuId(id: String?) {
-            this.addKitsuId(id)
-        }
-
         @Suppress("UNUSED_PARAMETER")
         fun LoadResponse.addTraktId(id: String?) {
             // TODO add Trakt sync

@@ -6,7 +6,7 @@ biometric = "1.4.0-alpha04"
 buildkonfigGradlePlugin = "0.17.1"
 coil = "3.3.0"
 colorpicker = "6b46b49bd5"
-conscryptAndroid = "2.5.2"
+conscryptAndroid = { strictly = "2.5.2" } # 2.5.3 crashes everything
 constraintlayout = "2.2.1"
 coreKtx = "1.17.0"
 desugar_jdk_libs_nio = "2.1.5"
@@ -14,7 +14,7 @@ dokkaGradlePlugin = "2.0.0"
 espressoCore = "3.7.0"
 fuzzywuzzy = "1.4.0"
 gradle = "8.13.0"
-jacksonModuleKotlin = "2.13.1"
+jacksonModuleKotlin = { strictly = "2.13.1" } # Later versions don't support minSdk <26 (Crashes on Android TV's and FireSticks)
 json = "20250517"
 junit = "4.13.2"
 junitKtx = "1.3.0"
@@ -26,7 +26,7 @@ lifecycleLivedataKtx = "2.9.4"
 lifecycleViewmodelKtx = "2.9.4"
 material = "1.14.0-alpha06"
 media3 = "1.8.0"
-navigationKtx = "2.9.5"
+navigationKtx = "2.9.6"
 newpipeextractor = "v0.24.8"
 nextlibMedia3 = "1.8.0-0.9.0"
 nicehttp = "0.4.13"
@@ -83,13 +83,13 @@ lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx
 material = { module = "com.google.android.material:material", version.ref = "material" }
 media3-cast = { module = "androidx.media3:media3-cast", version.ref = "media3" }
 media3-common = { module = "androidx.media3:media3-common", version.ref = "media3" }
+media3-datasource-cronet = { group = "androidx.media3", name = "media3-datasource-cronet", version.ref = "media3" }
 media3-datasource-okhttp = { module = "androidx.media3:media3-datasource-okhttp", version.ref = "media3" }
 media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
 media3-exoplayer-dash = { module = "androidx.media3:media3-exoplayer-dash", version.ref = "media3" }
 media3-exoplayer-hls = { module = "androidx.media3:media3-exoplayer-hls", version.ref = "media3" }
 media3-session = { module = "androidx.media3:media3-session", version.ref = "media3" }
 media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
-media3-datasource-cronet = { group = "androidx.media3", name = "media3-datasource-cronet", version.ref = "media3" }
 navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationKtx" }
 navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationKtx" }
 newpipeextractor = { module = "com.github.teamnewpipe:NewPipeExtractor", version.ref = "newpipeextractor" }
@@ -101,8 +101,8 @@ palette-ktx = { module = "androidx.palette:palette-ktx", version.ref = "paletteK
 preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
 previewseekbar-media3 = { module = "com.github.rubensousa:previewseekbar-media3", version.ref = "previewseekbarMedia3" }
 qrcode-kotlin = { module = "io.github.g0dkar:qrcode-kotlin", version.ref = "qrcodeKotlin" }
-rhino = { module = "org.mozilla:rhino", version.ref = "rhino" }
 quickjs = { module = "app.cash.quickjs:quickjs-android", version = "0.9.2" }
+rhino = { module = "org.mozilla:rhino", version.ref = "rhino" }
 safefile = { module = "com.github.LagradOst:SafeFile", version.ref = "safefile" }
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
 swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
@@ -116,6 +116,6 @@ work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "w
 [plugins]
 
 [bundles]
-media3 = ["media3-cast", "media3-common", "media3-datasource-okhttp", "media3-datasource-cronet", "media3-exoplayer", "media3-exoplayer-dash", "media3-exoplayer-hls", "media3-session", "media3-ui"]
+media3 = ["media3-cast", "media3-common", "media3-datasource-cronet", "media3-datasource-okhttp", "media3-exoplayer", "media3-exoplayer-dash", "media3-exoplayer-hls", "media3-session", "media3-ui"]
+navigationKtx = ["navigation-fragment-ktx", "navigation-ui-ktx"]
 nextlibMedia3 = ["nextlib-media3ext", "nextlib-mediainfo"]
-navigationKtx = ["navigation-ui-ktx", "navigation-fragment-ktx"]
