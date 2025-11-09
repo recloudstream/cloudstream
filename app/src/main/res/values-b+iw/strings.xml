@@ -50,7 +50,7 @@
     <string name="download_failed">ההורדה נכשלה</string>
     <string name="download_canceled">ההורדה בוטלה</string>
     <string name="download_done">נגן טריילר</string>
-    <string name="stream">להזרים טורנט</string>
+    <string name="stream">זרם רשתי</string>
     <string name="error_loading_links_toast">שגיאה בטעינת קישורים</string>
     <string name="download_storage_text">אחסון פנימי</string>
     <string name="app_subbed_text">עם כתוביות</string>
@@ -280,9 +280,9 @@
     <string name="backup_failed">חסרות הרשאות אחסון. אנא נסה שוב.</string>
     <string name="backup_failed_error_format">שגיאה בגיבוי %s</string>
     <string name="search">חיפוש</string>
-    <string name="category_account">חשבונות</string>
+    <string name="category_account">חשבונות ובטיחות</string>
     <string name="benene_count_text_none">לא ניתנו בנינים</string>
-    <string name="eigengraumode_settings">מצב איגנגראבי</string>
+    <string name="eigengraumode_settings">מהירות ניגון</string>
     <string name="bug_report_settings_off">שולח נתונים רק בקריסות</string>
     <string name="bug_report_settings_on">לא שולח נתונים</string>
     <string name="show_trailers_settings">הצג טריילרים</string>
@@ -545,4 +545,26 @@
 \n
 \nשימו לב: אם הסכום הוא 10 או יותר, הנגן ידלג על טעינת הסרטון כאשר הלינק נטען!</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="next_season_episode_format" formatted="true">עונה %1$d פרק %2$d תשודר ב:</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$d שעות %2$d דקות %3$d שניות</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$d דקות %2$d שניות</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$d שניות</string>
+    <string name="play_from_beginning_img_des">נגן מההתחלה</string>
+    <string name="speech_recognition_unavailable">זיהוי דיבור לא זמין</string>
+    <string name="begin_speaking">התחל לדבר…</string>
+    <string name="torrent_info">וידיאו זה הוא טורנט, זה אומר שניתן לעקוב אחרי פעילות הוידיאו שלך.\nנא וודא שהינך מבין טורנטים לפני המשך.</string>
+    <string name="downloads_delete_select">בחר פריטים למחוק</string>
+    <string name="downloads_empty">אין הורדות כרגע.</string>
+    <string name="offline_file">זמין לצפיה אופליין</string>
+    <string name="select_all">בחר הכל</string>
+    <string name="deselect_all">הסר בחירה מהכל</string>
+    <string name="open_local_video">פתח וידיאו מקומי</string>
+    <string name="links_reloaded_toast">קישורים נטענו</string>
+    <string name="repo_copy_label">שם ו-URL רפוזיטורי</string>
+    <string name="toast_copied">הועתק!</string>
+    <string name="subscribe_tooltip">התרעת פרק חדש</string>
+    <string name="result_search_tooltip">חיפוש בתוספים אחרים</string>
+    <string name="recommendations_tooltip">הראה המלצות</string>
+    <string name="speed_setting_summary">מוסיף אפשרות מהירות בנגן</string>
+    <string name="backup_frequency">תדירות גיבוי</string>
 </resources>

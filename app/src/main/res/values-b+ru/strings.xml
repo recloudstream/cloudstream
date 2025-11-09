@@ -231,7 +231,7 @@
     <string name="restore_settings">Восстановить данные из резервной копии</string>
     <string name="show_fillers_settings">Показывать Филлер серии для аниме</string>
     <string name="kitsu_settings">Показывать афиши из Kitsu</string>
-    <string name="apk_installer_settings_des">Некоторые телефоны не поддерживают новые установщики. Попробуйте использовать legacy (старый) вариант, если обновления не устанавливаются.</string>
+    <string name="apk_installer_settings_des">Некоторые устройства не поддерживают новые установщики. Попробуйте использовать legacy (старый) вариант, если обновления не устанавливаются.</string>
     <string name="status_ongoing">Выходит</string>
     <string name="video_lock">Блокировка</string>
     <string name="no_update_found">Обновление не найдено</string>
@@ -712,4 +712,17 @@
     <string name="action_remove_mark_watched_up_to_this_episode">Удалите просмотренное до этой серии</string>
     <string name="action_reload">Перезагружен</string>
     <string name="reload_provider">Перезагрузить провайдера</string>
+    <string name="episode_action_play_mirror">Запустить зеркало</string>"
+    <string name="name">Имя</string>
+    <string name="resolution_and_name">Решение и имя</string>
+    <string name="subs_subtitle_alignment">Выравнивание Субтитров</string>
+    <string name="bottom_left">Нижний левый</string>
+    <string name="bottom_center">Нижний центральный</string>
+    <string name="bottom_right">Нижний правый</string>
+    <string name="middle_left">Средний левый</string>
+    <string name="middle_center">Средний центр</string>
+    <string name="middle_right">Средний правый</string>
+    <string name="top_left">Вверху слева</string>
+    <string name="top_center">Вверху центр</string>
+    <string name="top_right">Вверху правый</string>
 </resources>

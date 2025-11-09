@@ -703,4 +703,16 @@
     <string name="action_reload">Повторно вчитано</string>
     <string name="reload_provider">Повторно вчитај провајдер</string>
     <string name="episode_action_play_mirror">Пушти друг линк</string>"
-    </resources>
+    <string name="name">Име</string>
+    <string name="resolution_and_name">Резолуција и име</string>
+    <string name="subs_subtitle_alignment">Усогласување на превод</string>
+    <string name="bottom_left">Доле на лево</string>
+    <string name="bottom_center">Доле во центар</string>
+    <string name="bottom_right">Доле на десно</string>
+    <string name="middle_left">Средина на лево</string>
+    <string name="middle_center">Средина во центар</string>
+    <string name="middle_right">Средина на десно</string>
+    <string name="top_left">Горе на лево</string>
+    <string name="top_center">Горе во центар</string>
+    <string name="top_right">Горе на десно</string>
+</resources>

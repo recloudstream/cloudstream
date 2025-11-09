@@ -486,7 +486,7 @@
     <string name="play_trailer_button">Fragmanı Oynat</string>
     <string name="automatic_plugin_download_summary">Eklenmiş depolardan henüz kurulmamış tüm eklentileri otomatik olarak kur.</string>
     <string name="update_started">Güncelleme Başladı</string>
-    <string name="apk_installer_settings_des">Bazı cihazlar yeni paket kurulumunu desteklemez.. Güncellemeler kurulmazsa eski seçeneği deneyin.</string>
+    <string name="apk_installer_settings_des">Bazı cihazlar yeni paket yükleyiciyi desteklemiyor. Güncellemeler yüklenmezse eski seçeneği deneyin.</string>
     <string name="automatic_plugin_download">Eklentileri otomatik olarak indir</string>
     <string name="apk_installer_settings">APK kurucu</string>
     <string name="pref_category_links">Bağlantılar</string>
@@ -767,10 +767,20 @@
     <string name="edit_profile_image_error_invalid">Geçersiz Bağlantı veya Görsel</string>
     <string name="edit_profile_image_success">Görsel Başarıyla Güncellendi</string>
     <string name="episode_action_play_mirror">Ekranda oynat</string>"
-    <string name="action_mark_watched_up_to_this_episode">Bu bölümü izlenmiş olarak işaretle</string>
+    <string name="action_mark_watched_up_to_this_episode">Bu bölüme kadar izlenmiş olarak işaretle</string>
     <string name="action_remove_mark_watched_up_to_this_episode">Bu bölümü izlenmemiş olarak işaretle</string>
     <string name="action_reload">Yeniden yükle</string>
     <string name="reload_provider">Sağlayıcıyı yeniden yükle</string>
     <string name="name">Ad</string>
     <string name="resolution_and_name">Çözünürlük ve ad</string>
+    <string name="bottom_left">Sol alt</string>
+    <string name="bottom_center">Alt orta</string>
+    <string name="bottom_right">Sağ alt</string>
+    <string name="middle_left">Orta sol</string>
+    <string name="middle_center">Orta merkez</string>
+    <string name="middle_right">Orta sağ</string>
+    <string name="top_left">Sol üst</string>
+    <string name="top_center">Üst orta</string>
+    <string name="top_right">Sağ üst</string>
+    <string name="subs_subtitle_alignment">Altyazı Hizalama</string>
 </resources>

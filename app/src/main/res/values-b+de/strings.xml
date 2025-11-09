@@ -450,7 +450,7 @@
     <string name="automatic_plugin_download_summary">Automatische Installation aller noch nicht installierten Plugins aus hinzugefügten Repositories.</string>
     <string name="redo_setup_process">Einrichtungsvorgang wiederholen</string>
     <string name="apk_installer_settings">APK-Installer</string>
-    <string name="apk_installer_settings_des">Einige Smartphones unterstützen den neuen Package-Installer nicht. Benutze die Legacy-Option, wenn sich die Updates nicht installieren lassen.</string>
+    <string name="apk_installer_settings_des">Einige Geräte unterstützen den neuen Package-Installer nicht. Benutze die Legacy-Option, wenn sich die Updates nicht installieren lassen.</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="pref_category_links">Links</string>
     <string name="pref_category_app_updates">App-Updates</string>
@@ -723,4 +723,17 @@
     <string name="action_mark_watched_up_to_this_episode">Označi kao gledano do ove epizode</string>
     <string name="action_remove_mark_watched_up_to_this_episode">Ukloni epizodu koju sam gledao do sada</string>
     <string name="action_reload">Ponovo učitano</string>
+    <string name="name">Name</string>
+    <string name="resolution_and_name">Auflösung und Name</string>
+    <string name="reload_provider">Anbieter erneut laden</string>
+    <string name="subs_subtitle_alignment">Untertitelausrichtung</string>
+    <string name="bottom_left">Unten links</string>
+    <string name="bottom_center">Unten Mitte</string>
+    <string name="bottom_right">Unten rechts</string>
+    <string name="middle_left">Mitte links</string>
+    <string name="middle_center">Mitte</string>
+    <string name="middle_right">Mitte rechts</string>
+    <string name="top_left">Oben links</string>
+    <string name="top_center">Oben mitte</string>
+    <string name="top_right">Oben rechts</string>
 </resources>
