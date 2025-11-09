@@ -247,15 +247,15 @@ abstract class AuthAPI {
     open suspend fun invalidateToken(token: AuthToken): Nothing = throw NotImplementedError()
 
     @Throws
-    @Deprecated("Please the the new api for AuthAPI", level = DeprecationLevel.WARNING)
+    @Deprecated("Please use the new API for AuthAPI", level = DeprecationLevel.ERROR)
     fun toRepo(): AuthRepo = when (this) {
         is SubtitleAPI -> SubtitleRepo(this)
         is SyncAPI -> SyncRepo(this)
         else -> throw NotImplementedError("Unknown inheritance from AuthAPI")
     }
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Please the the new api for AuthAPI", level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated("Please use the new API for AuthAPI", level = DeprecationLevel.ERROR)
     fun loginInfo(): LoginInfo? {
         return this.toRepo().authUser()?.let { user ->
             LoginInfo(
@@ -266,20 +266,16 @@ abstract class AuthAPI {
         }
     }
 
-    @Deprecated("Please the the new api for AuthAPI", level = DeprecationLevel.WARNING)
+    @Deprecated("Please use the new API for AuthAPI", level = DeprecationLevel.ERROR)
     suspend fun getPersonalLibrary(): SyncAPI.LibraryMetadata? {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         return (this.toRepo() as? SyncRepo)?.library()?.getOrThrow()
     }
 
-    @Deprecated("Please the the new api for AuthAPI", level = DeprecationLevel.WARNING)
+    @Deprecated("Please use the new API for AuthAPI", level = DeprecationLevel.ERROR)
     class LoginInfo(
         val profilePicture: String? = null,
         val name: String?,
         val accountIndex: Int,
     )
 }
-
-
-
-

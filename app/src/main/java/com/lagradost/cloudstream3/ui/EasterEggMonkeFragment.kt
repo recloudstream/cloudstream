@@ -46,6 +46,8 @@ class EasterEggMonkeFragment : BaseFragment<FragmentEasterEggMonkeBinding>(
     private val activeMonkeys = mutableListOf<ImageView>()
     private var spawningJob: Job? = null
 
+    override fun fixLayout(view: View) = Unit
+
     override fun onBindingCreated(binding: FragmentEasterEggMonkeBinding) {
         activity?.hideSystemUI()
         spawningJob = lifecycleScope.launch {
