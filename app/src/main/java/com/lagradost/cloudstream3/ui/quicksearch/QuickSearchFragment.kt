@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.ui.quicksearch
 
 import android.app.Activity
 import android.content.Context
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -42,6 +41,7 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.filterSearchResultByFilm
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRecyclerScrollable
 import com.lagradost.cloudstream3.utils.AppContextUtils.ownShow
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
@@ -92,6 +92,15 @@ class QuickSearchFragment : BaseFragment<QuickSearchBinding>(
 
     private var bottomSheetDialog: BottomSheetDialog? = null
 
+    override fun fixLayout(view: View) {
+        fixSystemBarsPadding(view)
+
+        // Fix grid
+        HomeFragment.currentSpan = view.context.getSpanCount()
+        binding?.quickSearchAutofitResults?.spanCount = HomeFragment.currentSpan
+        HomeFragment.configEvent.invoke(HomeFragment.currentSpan)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -124,21 +133,7 @@ class QuickSearchFragment : BaseFragment<QuickSearchBinding>(
         return false
     }
 
-    private fun fixGrid() {
-        activity?.getSpanCount()?.let {
-            HomeFragment.currentSpan = it
-        }
-        binding?.quickSearchAutofitResults?.spanCount = HomeFragment.currentSpan
-        HomeFragment.configEvent.invoke(HomeFragment.currentSpan)
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        fixGrid()
-    }
-
     override fun onBindingCreated(binding: QuickSearchBinding) {
-        fixGrid()
         arguments?.getStringArray(PROVIDER_KEY)?.let {
             providers = it.toSet()
         }

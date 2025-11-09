@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.setup
 
 import android.os.Bundle
+import android.view.View
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.lagradost.cloudstream3.APIHolder.apis
@@ -14,6 +15,7 @@ import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.settings.extensions.PluginsViewModel
 import com.lagradost.cloudstream3.ui.settings.extensions.RepoAdapter
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 
 class SetupFragmentExtensions : BaseFragment<FragmentSetupExtensionsBinding>(
     BaseFragment.BindingCreator.Inflate(FragmentSetupExtensionsBinding::inflate)
@@ -39,6 +41,10 @@ class SetupFragmentExtensions : BaseFragment<FragmentSetupExtensionsBinding>(
     override fun onStop() {
         super.onStop()
         afterRepositoryLoadedEvent -= ::setRepositories
+    }
+
+    override fun fixLayout(view: View) {
+        fixSystemBarsPadding(view)
     }
 
     private fun setRepositories(success: Boolean = true) {

@@ -317,12 +317,13 @@ abstract class MyDramaListAPI : MainAPI() {
         }
 
         fun fixGenres(): List<String> {
-            return (genres as List<*>).mapNotNull {
-                when (it) {
-                    is String -> it
-                    else -> (it as? Map<String, String>)?.getValue("name")
+            return (genres as? List<*>)?.mapNotNull { item ->
+                when (item) {
+                    is String -> item
+                    is Map<*, *> -> item["name"] as? String
+                    else -> null
                 }
-            }
+            } ?: emptyList()
         }
     }
 

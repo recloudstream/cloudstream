@@ -20,7 +20,7 @@ class TestFragment : BaseFragment<FragmentTestingBinding>(
 
     private val testViewModel: TestViewModel by activityViewModels()
 
-    override fun fixPadding(view: View) {
+    override fun fixLayout(view: View) {
         setSystemBarsPadding()
     }
 

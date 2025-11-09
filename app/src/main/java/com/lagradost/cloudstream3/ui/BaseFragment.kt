@@ -17,7 +17,6 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setSystemBarsPadding
 import com.lagradost.cloudstream3.utils.txt
-import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 
 /**
  * A base Fragment class that simplifies ViewBinding usage and handles view inflation safely.
@@ -75,7 +74,7 @@ private interface BaseFragmentHelper<T : ViewBinding> {
      * Subclasses should use [onBindingCreated] instead of overriding this method directly.
      */
     fun onViewReady(view: View, savedInstanceState: Bundle?) {
-        fixPadding(view)
+        fixLayout(view)
         binding?.let { onBindingCreated(it, savedInstanceState) }
     }
 
@@ -110,16 +109,16 @@ private interface BaseFragmentHelper<T : ViewBinding> {
     fun pickLayout(): Int? = null
 
     /**
-     * Apply padding adjustments for system bars to the root view.
+     * Ensures the layout of the root view is correctly adjusted for the current configuration.
      *
-     * `fixPadding` should be idempotent in respect to the configuration, as the function may be
-     * called many times on the same view in case of configuration change like device orientation.
+     * This may include applying padding for system bars, adjusting insets, or performing other
+     * layout updates. `fixLayout` should remain idempotent, as it can be called multiple
+     * times on the same view, such as during configuration changes (e.g. device rotation) or when
+     * the view is recreated.
      *
      * @param view The root view to adjust.
      */
-    fun fixPadding(view: View) {
-        fixSystemBarsPadding(view)
-    }
+    fun fixLayout(view: View)
 }
 
 abstract class BaseFragment<T : ViewBinding>(
@@ -145,7 +144,7 @@ abstract class BaseFragment<T : ViewBinding>(
      */
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        view?.let { fixPadding(it) }
+        view?.let { fixLayout(it) }
     }
 
     /** Cleans up the binding reference when the view is destroyed to avoid memory leaks. */
@@ -200,7 +199,7 @@ abstract class BaseDialogFragment<T : ViewBinding>(
     /** @see [BaseFragment.onConfigurationChanged] for documentation. */
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        view?.let { fixPadding(it) }
+        view?.let { fixLayout(it) }
     }
 
     /** Cleans up the binding reference when the view is destroyed to avoid memory leaks. */
@@ -229,7 +228,7 @@ abstract class BaseBottomSheetDialogFragment<T : ViewBinding>(
     /** @see [BaseFragment.onConfigurationChanged] for documentation. */
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        view?.let { fixPadding(it) }
+        view?.let { fixLayout(it) }
     }
 
     /** Cleans up the binding reference when the view is destroyed to avoid memory leaks. */

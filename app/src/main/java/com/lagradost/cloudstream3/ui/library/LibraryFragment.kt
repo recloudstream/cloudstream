@@ -114,7 +114,7 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(
         } else binding.libraryRandom.isGone = true
     }
 
-    override fun fixPadding(view: View) {
+    override fun fixLayout(view: View) {
         fixSystemBarsPadding(
             view,
             padBottom = isLandscape(),
@@ -329,7 +329,7 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(
 
         val startLoading = Runnable {
             binding.apply {
-                gridview.numColumns = context?.getSpanCount() ?: 3
+                gridview.numColumns = root.context.getSpanCount()
                 gridview.adapter =
                     context?.let { LoadingPosterAdapter(it, 6 * 3) }
                 libraryLoadingOverlay.isVisible = true
@@ -538,10 +538,10 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(
 
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onConfigurationChanged(newConfig: Configuration) {
-        binding?.viewpager?.adapter?.notifyDataSetChanged()
         super.onConfigurationChanged(newConfig)
+        val adapter = binding?.viewpager?.adapter ?: return
+        adapter.notifyItemRangeChanged(0, adapter.itemCount)
     }
 
     private val sortChangeClickListener = View.OnClickListener { view ->
