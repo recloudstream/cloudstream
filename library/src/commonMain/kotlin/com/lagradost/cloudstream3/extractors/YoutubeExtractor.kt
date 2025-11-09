@@ -68,7 +68,7 @@ open class YoutubeExtractor : ExtractorApi() {
             s.fetchPage()
             val streamUrl = s.hlsUrl.takeIf { !it.isNullOrEmpty() }
             ?: s.dashMpdUrl.takeIf { !it.isNullOrEmpty() }
-            ?: s.videoStreams?.firstOrNull()?.url
+            ?: s.videoStreams?.firstOrNull()?.content
 
             if (!streamUrl.isNullOrEmpty()) {
                 ytVideos[url] = streamUrl

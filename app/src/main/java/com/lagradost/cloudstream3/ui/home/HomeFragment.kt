@@ -5,8 +5,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.res.Configuration
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,14 +12,12 @@ import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
@@ -46,6 +42,7 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
+import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
 import com.lagradost.cloudstream3.ui.account.AccountViewModel
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
@@ -77,11 +74,14 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.txt
-
+import androidx.core.net.toUri
+import androidx.core.view.isInvisible
 
 private const val TAG = "HomeFragment"
 
-class HomeFragment : Fragment() {
+class HomeFragment : BaseFragment<FragmentHomeBinding>(
+    BaseFragment.BindingCreator.Bind(FragmentHomeBinding::bind)
+) {
     companion object {
         val configEvent = Event<Int>()
         var currentSpan = 1
@@ -198,13 +198,14 @@ class HomeFragment : Fragment() {
             binding.homeExpandedRecycler.spanCount = currentSpan
             binding.homeExpandedRecycler.setRecycledViewPool(SearchAdapter.sharedPool)
             binding.homeExpandedRecycler.adapter =
-                SearchAdapter(item.list.toMutableList(), binding.homeExpandedRecycler) { callback ->
+                SearchAdapter(binding.homeExpandedRecycler) { callback ->
                     handleSearchClickCallback(callback)
                     if (callback.action == SEARCH_ACTION_LOAD || callback.action == SEARCH_ACTION_PLAY_FILE) {
                         bottomSheetDialogBuilder.ownHide() // we hide here because we want to resume it later
                         //bottomSheetDialogBuilder.dismissSafe(this)
                     }
                 }.apply {
+                    submitList(item.list)
                     hasNext = expand.hasNext
                 }
 
@@ -228,7 +229,7 @@ class HomeFragment : Fragment() {
                             expandCallback?.invoke(name)?.let { newExpand ->
                                 (recyclerView.adapter as? SearchAdapter?)?.apply {
                                     hasNext = newExpand.hasNext
-                                    updateList(newExpand.list.list)
+                                    submitList(newExpand.list.list)
                                 }
                             }
                         }
@@ -549,44 +550,21 @@ class HomeFragment : Fragment() {
         }
     }
 
-    var binding: FragmentHomeBinding? = null
-
+    override fun pickLayout(): Int? =
+        if (isLayout(PHONE)) R.layout.fragment_home else R.layout.fragment_home_tv
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        //homeViewModel =
-        //     ViewModelProvider(this).get(HomeViewModel::class.java)
-
         bottomSheetDialog?.ownShow()
-        val layout =
-            if (isLayout(TV or EMULATOR)) R.layout.fragment_home_tv else R.layout.fragment_home
-        val root = inflater.inflate(layout, container, false)
-        binding = try {
-            FragmentHomeBinding.bind(root)
-        } catch (t: Throwable) {
-            showToast(txt(R.string.unable_to_inflate, t.message ?: ""), Toast.LENGTH_LONG)
-            logError(t)
-            null
-        }
-
-        return root
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onDestroyView() {
-
         bottomSheetDialog?.ownHide()
-        binding = null
         super.onDestroyView()
-    }
-
-    private fun fixGrid() {
-        activity?.getSpanCount()?.let {
-            currentSpan = it
-        }
-        configEvent.invoke(currentSpan)
     }
 
     private val apiChangeClickListener = View.OnClickListener { view ->
@@ -602,12 +580,6 @@ class HomeFragment : Fragment() {
         }*/
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        //(home_preview_viewpager?.adapter as? HomeScrollAdapter)?.notifyDataSetChanged()
-        fixGrid()
-    }
-
     private var currentApiName: String? = null
     private var toggleRandomButton = false
 
@@ -616,14 +588,14 @@ class HomeFragment : Fragment() {
 
     var lastSavedHomepage: String? = null
 
-    fun saveHomepageToTV(page :  Map<String, HomeViewModel.ExpandableHomepageList>) {
+    fun saveHomepageToTV(page: Map<String, HomeViewModel.ExpandableHomepageList>) {
         // No need to update for phone
-        if(isLayout(PHONE)) {
+        if (isLayout(PHONE)) {
             return
         }
         val (name, data) = page.entries.firstOrNull() ?: return
         // Modifying homepage is an expensive operation, and therefore we avoid it at all cost
-        if(name == lastSavedHomepage) {
+        if (name == lastSavedHomepage) {
             return
         }
         Log.i(TAG, "Adding programs $name to TV")
@@ -636,20 +608,23 @@ class HomeFragment : Fragment() {
         }
     }
 
+    override fun fixLayout(view: View) {
+        fixSystemBarsPadding(
+            view,
+            padTop = false,
+            padBottom = isLandscape(),
+            padLeft = isLayout(TV or EMULATOR)
+        )
+
+        // Fix grid
+        currentSpan = view.context.getSpanCount()
+        configEvent.invoke(currentSpan)
+    }
+
     @SuppressLint("SetTextI18n")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        fixGrid()
-
+    override fun onBindingCreated(binding: FragmentHomeBinding) {
         context?.let { HomeChildItemAdapter.updatePosterSize(it) }
-
-        binding?.apply {
-            fixSystemBarsPadding(
-                root,
-                padTop = false,
-                padBottom = isLandscape(),
-                padLeft = isLayout(TV or EMULATOR)
-            )
+        binding.apply {
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
             homeApiFab.setOnClickListener(apiChangeClickListener)
@@ -695,7 +670,7 @@ class HomeFragment : Fragment() {
 
             homeMasterRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if(isLayout(PHONE)) {
+                    if (isLayout(PHONE)) {
                         // Fab is only relevant to Phone
                         if (dy > 0) { //check for scroll down
                             homeApiFab.shrink() // hide
@@ -710,11 +685,11 @@ class HomeFragment : Fragment() {
                         // Header scrolling is only relevant to TV/Emulator
 
                         val view = recyclerView.findViewHolderForAdapterPosition(0)?.itemView
-                        val scrollParent = binding?.homeApiHolder
+                        val scrollParent = binding.homeApiHolder
 
                         if (view == null) {
                             // The first view is not visible, so we can assume we have scrolled past it
-                            scrollParent?.isVisible = false
+                            scrollParent.isVisible = false
                         } else {
                             // A bit weird, but this is a major limitation we are working around here
                             // 1. We cant have a real parent to the recyclerview as android cant layout that without lagging
@@ -730,8 +705,8 @@ class HomeFragment : Fragment() {
                             // Hopefully getLocationInWindow acts correctly on all devices
                             val rect = IntArray(2)
                             view.getLocationInWindow(rect)
-                            scrollParent?.isVisible = true
-                            scrollParent?.translationY = rect[1].toFloat() - 60.toPx
+                            scrollParent.isVisible = true
+                            scrollParent.translationY = rect[1].toFloat() - 60.toPx
                         }
                     }
                     super.onScrolled(recyclerView, dx, dy)
@@ -748,12 +723,12 @@ class HomeFragment : Fragment() {
                     getString(R.string.random_button_key),
                     false
                 ) && isLayout(PHONE)
-            binding?.homeRandom?.visibility = View.GONE
+            binding.homeRandom.visibility = View.GONE
         }
 
         observe(homeViewModel.apiName) { apiName ->
             currentApiName = apiName
-            binding?.apply {
+            binding.apply {
                 homeApiFab.text = apiName
                 homeChangeApi.text = apiName
                 homePreviewReloadProvider.isGone = (apiName == noneApi.name)
@@ -762,30 +737,27 @@ class HomeFragment : Fragment() {
         }
 
         observe(homeViewModel.page) { data ->
-            binding?.apply {
+            binding.apply {
                 when (data) {
                     is Resource.Success -> {
-                        homeLoadingShimmer.stopShimmer()
-
                         val d = data.value
-                        saveHomepageToTV(d)
-
-                        val mutableListOfResponse = mutableListOf<SearchResponse>()
-                        listHomepageItems.clear()
-
                         (homeMasterRecycler.adapter as? ParentItemAdapter)?.submitList(d.values.map {
-
                             it.copy(
                                 list = it.list.copy(list = it.list.list.toMutableList())
                             )
-                        }.toMutableList())
+                        })
 
+                        saveHomepageToTV(d)
+
+                        listHomepageItems.clear()
                         homeLoading.isVisible = false
                         homeLoadingError.isVisible = false
                         homeMasterRecycler.isVisible = true
+                        homeLoadingShimmer.stopShimmer()
                         //home_loaded?.isVisible = true
                         if (toggleRandomButton) {
                             //Flatten list
+                            val mutableListOfResponse = mutableListOf<SearchResponse>()
                             d.values.forEach { dlist ->
                                 mutableListOfResponse.addAll(dlist.list.list)
                             }
@@ -811,7 +783,7 @@ class HomeFragment : Fragment() {
                             }) {
                                 try {
                                     val i = Intent(Intent.ACTION_VIEW)
-                                    i.data = Uri.parse(validAPIs[itemId].mainUrl)
+                                    i.data = validAPIs[itemId].mainUrl.toUri()
                                     startActivity(i)
                                 } catch (e: Exception) {
                                     logError(e)
@@ -821,7 +793,7 @@ class HomeFragment : Fragment() {
 
                         homeLoading.isVisible = false
                         homeLoadingError.isVisible = true
-                        homeMasterRecycler.isVisible = false
+                        homeMasterRecycler.isInvisible = true
 
                         // Based on https://github.com/recloudstream/cloudstream/pull/1438
                         val hasNoNetworkConnection = context?.isNetworkAvailable() == false
@@ -843,14 +815,22 @@ class HomeFragment : Fragment() {
                         homeReloadConnectionGoToDownloads.setOnClickListener {
                             activity.navigate(R.id.navigation_downloads)
                         }
+
+                        (homeMasterRecycler.adapter as? ParentItemAdapter)?.apply {
+                            submitList(null)
+                            clearState()
+                        }
                     }
 
                     is Resource.Loading -> {
-                        (homeMasterRecycler.adapter as? ParentItemAdapter)?.submitList(listOf())
                         homeLoadingShimmer.startShimmer()
                         homeLoading.isVisible = true
                         homeLoadingError.isVisible = false
-                        homeMasterRecycler.isVisible = false
+                        homeMasterRecycler.isInvisible = true
+                        (homeMasterRecycler.adapter as? ParentItemAdapter)?.apply {
+                            submitList(null)
+                            clearState()
+                        }
                         //home_loaded?.isVisible = false
                     }
                 }

@@ -81,6 +81,10 @@ class PlayerGeneratorViewModel : ViewModel() {
         return generator?.hasNext()
     }
 
+    fun hasPrevEpisode(): Boolean? {
+        return generator?.hasPrev()
+    }
+
     fun preLoadNextLinks() {
         val id = getId()
         // Do not preload if already loading

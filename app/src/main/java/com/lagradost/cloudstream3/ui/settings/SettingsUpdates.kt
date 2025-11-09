@@ -6,7 +6,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.navigation.fragment.findNavController
-import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lagradost.cloudstream3.AcraApplication
@@ -20,12 +19,12 @@ import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.services.BackupWorkManager
+import com.lagradost.cloudstream3.ui.BasePreferenceFragmentCompat
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.hideOn
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setSystemBarsPadding
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.ui.settings.utils.getChooseFolderLauncher
@@ -48,11 +47,10 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class SettingsUpdates : PreferenceFragmentCompat() {
+class SettingsUpdates : BasePreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar(R.string.category_updates)
-        setSystemBarsPadding()
         setPaddingBottom()
         setToolBarScrollFlags()
     }
@@ -159,7 +157,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
                 logError(e) // kinda ironic
             }
 
-            val adapter = LogcatAdapter(logList)
+            val adapter = LogcatAdapter().apply { submitList(logList) }
             binding.logcatRecyclerView.layoutManager = LinearLayoutManager(pref.context)
             binding.logcatRecyclerView.adapter = adapter
 

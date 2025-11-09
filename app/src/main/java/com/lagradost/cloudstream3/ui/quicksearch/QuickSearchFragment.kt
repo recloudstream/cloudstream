@@ -2,9 +2,7 @@ package com.lagradost.cloudstream3.ui.quicksearch
 
 import android.app.Activity
 import android.content.Context
-import android.content.res.Configuration
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +11,6 @@ import android.widget.ImageView
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,6 +23,7 @@ import com.lagradost.cloudstream3.databinding.QuickSearchBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.loadHomepageList
 import com.lagradost.cloudstream3.ui.home.HomeViewModel
@@ -50,7 +48,9 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import java.util.concurrent.locks.ReentrantLock
 
-class QuickSearchFragment : Fragment() {
+class QuickSearchFragment : BaseFragment<QuickSearchBinding>(
+    BaseFragment.BindingCreator.Inflate(QuickSearchBinding::inflate)
+) {
     companion object {
         const val AUTOSEARCH_KEY = "autosearch"
         const val PROVIDER_KEY = "providers"
@@ -89,30 +89,29 @@ class QuickSearchFragment : Fragment() {
 
     private var providers: Set<String>? = null
     private lateinit var searchViewModel: SearchViewModel
-    var binding: QuickSearchBinding? = null
-
 
     private var bottomSheetDialog: BottomSheetDialog? = null
+
+    override fun fixLayout(view: View) {
+        fixSystemBarsPadding(view)
+
+        // Fix grid
+        HomeFragment.currentSpan = view.context.getSpanCount()
+        binding?.quickSearchAutofitResults?.spanCount = HomeFragment.currentSpan
+        HomeFragment.configEvent.invoke(HomeFragment.currentSpan)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         activity?.window?.setSoftInputMode(
             WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE
         )
         searchViewModel = ViewModelProvider(this)[SearchViewModel::class.java]
         bottomSheetDialog?.ownShow()
-        val localBinding = QuickSearchBinding.inflate(inflater, container, false)
-        binding = localBinding
-        return localBinding.root
-        //return inflater.inflate(R.layout.quick_search, container, false)
-    }
-
-    override fun onDestroyView() {
-        binding = null
-        super.onDestroyView()
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onDestroy() {
@@ -134,24 +133,7 @@ class QuickSearchFragment : Fragment() {
         return false
     }
 
-    private fun fixGrid() {
-        activity?.getSpanCount()?.let {
-            HomeFragment.currentSpan = it
-        }
-        binding?.quickSearchAutofitResults?.spanCount = HomeFragment.currentSpan
-        HomeFragment.configEvent.invoke(HomeFragment.currentSpan)
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        fixGrid()
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        fixSystemBarsPadding(binding?.quickSearchRoot)
-        fixGrid()
-
+    override fun onBindingCreated(binding: QuickSearchBinding) {
         arguments?.getStringArray(PROVIDER_KEY)?.let {
             providers = it.toSet()
         }
@@ -163,17 +145,16 @@ class QuickSearchFragment : Fragment() {
 
         val firstProvider = providers?.firstOrNull()
         if (isSingleProvider && firstProvider != null) {
-            binding?.quickSearchAutofitResults?.apply {
+            binding.quickSearchAutofitResults.apply {
                 setRecycledViewPool(SearchAdapter.sharedPool)
                 adapter = SearchAdapter(
-                    ArrayList(),
                     this,
                 ) { callback ->
                     SearchHelper.handleSearchClickCallback(callback)
                 }
             }
 
-            binding?.quickSearchAutofitResults?.addOnScrollListener(object :
+            binding.quickSearchAutofitResults.addOnScrollListener(object :
                 RecyclerView.OnScrollListener() {
                 var expandCount = 0
 
@@ -196,16 +177,15 @@ class QuickSearchFragment : Fragment() {
             })
 
             try {
-                binding?.quickSearch?.queryHint =
+                binding.quickSearch.queryHint =
                     getString(R.string.search_hint_site).format(firstProvider)
             } catch (e: Exception) {
                 logError(e)
             }
         } else {
-            binding?.quickSearchMasterRecycler?.setRecycledViewPool(ParentItemAdapter.sharedPool)
-            binding?.quickSearchMasterRecycler?.adapter =
+            binding.quickSearchMasterRecycler.setRecycledViewPool(ParentItemAdapter.sharedPool)
+            binding.quickSearchMasterRecycler.adapter =
                 ParentItemAdapter(
-                    fragment = this,
                     id = "quickSearchMasterRecycler".hashCode(),
                     { callback ->
                         SearchHelper.handleSearchClickCallback(callback)
@@ -226,17 +206,17 @@ class QuickSearchFragment : Fragment() {
                             searchViewModel.expandAndReturn(name)
                         }
                     })
-            binding?.quickSearchMasterRecycler?.layoutManager = GridLayoutManager(context, 1)
+            binding.quickSearchMasterRecycler.layoutManager = GridLayoutManager(context, 1)
         }
-        binding?.quickSearchAutofitResults?.isVisible = isSingleProvider
-        binding?.quickSearchMasterRecycler?.isGone = isSingleProvider
+        binding.quickSearchAutofitResults.isVisible = isSingleProvider
+        binding.quickSearchMasterRecycler.isGone = isSingleProvider
 
         val listLock = ReentrantLock()
         observe(searchViewModel.currentSearch) { list ->
             try {
                 // https://stackoverflow.com/questions/6866238/concurrent-modification-exception-adding-to-an-arraylist
                 listLock.lock()
-                (binding?.quickSearchMasterRecycler?.adapter as ParentItemAdapter?)?.apply {
+                (binding.quickSearchMasterRecycler.adapter as? ParentItemAdapter)?.apply {
                     val newItems = list.map { ongoing ->
                         val dataList = ongoing.value.list
                         val dataListFiltered =
@@ -267,24 +247,12 @@ class QuickSearchFragment : Fragment() {
         }
 
         val searchExitIcon =
-            binding?.quickSearch?.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
+            binding.quickSearch.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
 
-        //val searchMagIcon =
-        //    binding?.quickSearch?.findViewById<ImageView>(androidx.appcompat.R.id.search_mag_icon)
-
-        // searchMagIcon?.scaleX = 0.65f
-        // searchMagIcon?.scaleY = 0.65f
-
-        // Set the color for the search exit icon to the correct theme text color
-        val searchExitIconColor = TypedValue()
-
-        activity?.theme?.resolveAttribute(R.attr.textColor, searchExitIconColor, true)
-        searchExitIcon?.setColorFilter(searchExitIconColor.data)
-
-        binding?.quickSearch?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding.quickSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 if (search(context, query, false))
-                    hideKeyboard(binding?.quickSearch)
+                    hideKeyboard(binding.quickSearch)
                 return true
             }
 
@@ -294,37 +262,37 @@ class QuickSearchFragment : Fragment() {
                 return true
             }
         })
-        binding?.quickSearchLoadingBar?.alpha = 0f
+        binding.quickSearchLoadingBar.alpha = 0f
         observe(searchViewModel.searchResponse) {
             when (it) {
                 is Resource.Success -> {
                     it.value.let { data ->
                         val adapter =
-                            (binding?.quickSearchAutofitResults?.adapter as? SearchAdapter)
-                        adapter?.updateList(
+                            (binding.quickSearchAutofitResults.adapter as? SearchAdapter)
+                        adapter?.submitList(
                             context?.filterSearchResultByFilmQuality(data.list) ?: data.list
                         )
                         adapter?.hasNext = data.hasNext
                     }
                     searchExitIcon?.alpha = 1f
-                    binding?.quickSearchLoadingBar?.alpha = 0f
+                    binding.quickSearchLoadingBar.alpha = 0f
                 }
 
                 is Resource.Failure -> {
                     // Toast.makeText(activity, "Server error", Toast.LENGTH_LONG).show()
                     searchExitIcon?.alpha = 1f
-                    binding?.quickSearchLoadingBar?.alpha = 0f
+                    binding.quickSearchLoadingBar.alpha = 0f
                 }
 
                 is Resource.Loading -> {
                     searchExitIcon?.alpha = 0f
-                    binding?.quickSearchLoadingBar?.alpha = 1f
+                    binding.quickSearchLoadingBar.alpha = 1f
                 }
             }
         }
 
         if (isLayout(PHONE or EMULATOR)) {
-            binding?.quickSearchBack?.apply {
+            binding.quickSearchBack.apply {
                 isVisible = true
                 setOnClickListener {
                     activity?.popCurrentPage()
@@ -333,11 +301,11 @@ class QuickSearchFragment : Fragment() {
         }
 
         if (isLayout(TV)) {
-            binding?.quickSearch?.requestFocus()
+            binding.quickSearch.requestFocus()
         }
 
         arguments?.getString(AUTOSEARCH_KEY)?.let {
-            binding?.quickSearch?.setQuery(it, true)
+            binding.quickSearch.setQuery(it, true)
             arguments?.remove(AUTOSEARCH_KEY)
         }
     }

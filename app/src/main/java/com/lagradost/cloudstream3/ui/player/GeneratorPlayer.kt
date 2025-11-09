@@ -88,6 +88,7 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.result.SyncViewModel
+import com.lagradost.cloudstream3.ui.result.VideoWatchState
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
@@ -101,6 +102,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setVideoWatchState
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
@@ -539,8 +541,11 @@ class GeneratorPlayer : FullScreenPlayer() {
             )
         }
 
-        if (!sameEpisode)
-            player.addTimeStamps(listOf()) // clear stamps
+        if (!sameEpisode) {
+            player.addTimeStamps(emptyList()) // clear stamps
+            // Resets subtitle delay, as we watch some other content
+            player.setSubtitleOffset(0)
+        }
     }
 
     private fun closestQuality(target: Int?): Qualities {
@@ -1547,15 +1552,19 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun nextEpisode() {
-        isNextEpisode = true
-        player.release()
-        viewModel.loadLinksNext()
+        if (viewModel.hasNextEpisode() == true) {
+            isNextEpisode = true
+            player.release()
+            viewModel.loadLinksNext()
+        }
     }
 
     override fun prevEpisode() {
-        isNextEpisode = true
-        player.release()
-        viewModel.loadLinksPrev()
+        if (viewModel.hasPrevEpisode() == true) {
+            isNextEpisode = true
+            player.release()
+            viewModel.loadLinksPrev()
+        }
     }
 
     override fun hasNextMirror(): Boolean {
@@ -1608,49 +1617,15 @@ class GeneratorPlayer : FullScreenPlayer() {
                 viewModel.loadStamps(duration)
         }
 
-        viewModel.getId()?.let {
-            DataStoreHelper.setViewPos(it, position, duration)
-        }
-
         val percentage = position * 100L / duration
 
-        val nextEp = percentage >= NEXT_WATCH_EPISODE_PERCENTAGE
-        val resumeMeta = if (nextEp) nextMeta else currentMeta
-        if (resumeMeta == null && nextEp) {
-            // remove last watched as it is the last episode and you have watched too much
-            when (val newMeta = currentMeta) {
-                is ResultEpisode -> {
-                    DataStoreHelper.removeLastWatched(newMeta.parentId)
-                }
-
-                is ExtractorUri -> {
-                    DataStoreHelper.removeLastWatched(newMeta.parentId)
-                }
-            }
-        } else {
-            // save resume
-            when (resumeMeta) {
-                is ResultEpisode -> {
-                    DataStoreHelper.setLastWatched(
-                        resumeMeta.parentId,
-                        resumeMeta.id,
-                        resumeMeta.episode,
-                        resumeMeta.season,
-                        isFromDownload = false
-                    )
-                }
-
-                is ExtractorUri -> {
-                    DataStoreHelper.setLastWatched(
-                        resumeMeta.parentId,
-                        resumeMeta.id,
-                        resumeMeta.episode,
-                        resumeMeta.season,
-                        isFromDownload = true
-                    )
-                }
-            }
-        }
+        DataStoreHelper.setViewPosAndResume(
+            viewModel.getId(),
+            position,
+            duration,
+            currentMeta,
+            nextMeta
+        )
 
         var isOpVisible = false
         when (val meta = currentMeta) {
@@ -2017,7 +1992,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     nextRight = FOCUS_SELF,
                 )
                 val episodes = allMeta ?: emptyList()
-                (playerEpisodeList.adapter as? EpisodeAdapter)?.updateList(episodes)
+                (playerEpisodeList.adapter as? EpisodeAdapter)?.submitList(episodes)
 
                 // Scroll to current episode
                 viewModel.getCurrentIndex()?.let { index ->

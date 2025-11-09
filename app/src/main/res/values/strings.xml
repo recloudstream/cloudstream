@@ -288,7 +288,7 @@
     <string name="uprereleases_settings">Update to prereleases</string>
     <string name="uprereleases_settings_des">Search for prerelease updates instead of full releases only</string>
     <string name="apk_installer_settings">APK Installer</string>
-    <string name="apk_installer_settings_des">Some phones do not support the new package installer. Try the legacy option if updates do not install. </string>
+    <string name="apk_installer_settings_des">Some devices do not support the new package installer. Try the legacy option if updates do not install.</string>
     <string name="github">Github</string>
     <string name="lightnovel">Light novel app by the same devs</string>
     <string name="anim">Anime app by the same devs</string>

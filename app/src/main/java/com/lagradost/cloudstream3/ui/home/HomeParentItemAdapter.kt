@@ -25,7 +25,6 @@ import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRecyclerScrollable
-import com.lagradost.cloudstream3.utils.AppContextUtils.setMaxViewPoolSize
 
 class LoadClickCallback(
     val action: Int = 0,
@@ -35,13 +34,11 @@ class LoadClickCallback(
 )
 
 open class ParentItemAdapter(
-    open val fragment: Fragment,
     id: Int,
     private val clickCallback: (SearchClickCallback) -> Unit,
     private val moreInfoClickCallback: (HomeViewModel.ExpandableHomepageList) -> Unit,
     private val expandCallback: ((String) -> Unit)? = null,
 ) : BaseAdapter<HomeViewModel.ExpandableHomepageList, Bundle>(
-    fragment,
     id,
     diffCallback = BaseDiffCallback(
         itemSame = { a, b -> a.list.name == b.list.name },
@@ -71,7 +68,7 @@ open class ParentItemAdapter(
         }
     }
 
-    override fun submitList(list: List<HomeViewModel.ExpandableHomepageList>?) {
+    override fun submitList(list: Collection<HomeViewModel.ExpandableHomepageList>?) {
         super.submitList(list?.sortedBy { it.list.list.isEmpty() })
     }
 
@@ -100,7 +97,6 @@ open class ParentItemAdapter(
             if (currentAdapter == null) {
                 homeChildRecyclerview.setRecycledViewPool(HomeChildItemAdapter.sharedPool)
                 homeChildRecyclerview.adapter = HomeChildItemAdapter(
-                    fragment = fragment,
                     id = id + position + 100,
                     clickCallback = clickCallback,
                     nextFocusUp = homeChildRecyclerview.nextFocusUpId,
@@ -185,11 +181,6 @@ open class ParentItemAdapter(
         }
 
         return ParentItemHolder(binding)
-    }
-
-    fun updateList(newList: List<HomePageList>) {
-        submitList(newList.map { HomeViewModel.ExpandableHomepageList(it, 1, false) }
-            .toMutableList())
     }
 }
 

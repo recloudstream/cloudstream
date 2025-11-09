@@ -12,6 +12,7 @@ import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import coil3.disk.DiskCache
+import coil3.dispose
 import coil3.load
 import coil3.memory.MemoryCache
 import coil3.network.NetworkHeaders
@@ -85,9 +86,15 @@ object ImageLoader {
         builder: ImageRequest.Builder.() -> Unit = {} // for placeholder, error & transformations
     ) {
         // clear image to avoid loading & flickering issue at fast scrolling (e.g, an image recycler)
-        this.load(null)
+        this.dispose()
 
         if(imageData == null) return // Just in case
+
+        // setImageResource is better than coil3 on resources due to attr
+        if(imageData is Int) {
+            this.setImageResource(imageData)
+            return
+        }
 
         // Use Coil's built-in load method but with our custom module & a decent USER-AGENT always
         // which can be overridden by extensions.

@@ -708,7 +708,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         super.onDestroy()
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         handleAppIntent(intent)
         super.onNewIntent(intent)
     }
@@ -1262,19 +1262,21 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             null
         }
 
-        fixSystemBarsPadding(
-            binding?.navView,
-            heightResId = R.dimen.nav_view_height,
-            padTop = false,
-            overlayCutout = false
-        )
+        binding?.apply {
+            fixSystemBarsPadding(
+                navView,
+                heightResId = R.dimen.nav_view_height,
+                padTop = false,
+                overlayCutout = false
+            )
 
-        fixSystemBarsPadding(
-            binding?.navRailView,
-            widthResId = R.dimen.nav_rail_view_width,
-            padRight = false,
-            padTop = false
-        )
+            fixSystemBarsPadding(
+                navRailView,
+                widthResId = R.dimen.nav_rail_view_width,
+                padRight = false,
+                padTop = false
+            )
+        }
 
         // overscan
         val padding = settingsManager.getInt(getString(R.string.overscan_key), 0).toPx
