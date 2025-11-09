@@ -65,7 +65,6 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
         }
     }
 
-    @Suppress("DEPRECATION_ERROR")
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_updates, rootKey)
@@ -257,7 +256,7 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
 
         getPref(R.string.manual_update_plugins_key)?.setOnPreferenceClickListener {
             ioSafe {
-                PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_manuallyReloadAndUpdatePlugins(activity ?: return@ioSafe)
+                PluginManager.manuallyReloadAndUpdatePlugins(activity ?: return@ioSafe)
             }
             return@setOnPreferenceClickListener true // Return true for the listener
         }

@@ -258,18 +258,12 @@ object PluginManager {
      * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
      * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
      */
-    @Suppress("FunctionName", "DEPRECATION_ERROR")
-    @Deprecated(
-        "Calling this function from a plugin will lead to crashes, use loadPlugin and unloadPlugin",
-        replaceWith = ReplaceWith("loadPlugin"),
-        level = DeprecationLevel.ERROR
-    )
     @Throws
-    suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_updateAllOnlinePluginsAndLoadThem(activity: Activity) {
+    internal suspend fun updateAllOnlinePluginsAndLoadThem(activity: Activity) {
         assertNonRecursiveCallstack()
 
         // Load all plugins as fast as possible!
-        ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(activity)
+        loadAllOnlinePlugins(activity)
         afterPluginsLoadedEvent.invoke(false)
 
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
@@ -339,14 +333,8 @@ object PluginManager {
      * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
      * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
      */
-    @Suppress("FunctionName", "DEPRECATION_ERROR")
-    @Deprecated(
-        "Calling this function from a plugin will lead to crashes, use loadPlugin and unloadPlugin",
-        replaceWith = ReplaceWith("loadPlugin"),
-        level = DeprecationLevel.ERROR
-    )
     @Throws
-    suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_downloadNotExistingPluginsAndLoad(
+    internal suspend fun downloadNotExistingPluginsAndLoad(
         activity: Activity,
         mode: AutoDownloadMode
     ) {
@@ -453,14 +441,8 @@ object PluginManager {
      * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
      * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
      */
-    @Suppress("FunctionName", "DEPRECATION_ERROR")
-    @Deprecated(
-        "Calling this function from a plugin will lead to crashes, use loadPlugin and unloadPlugin",
-        replaceWith = ReplaceWith("loadPlugin"),
-        level = DeprecationLevel.ERROR
-    )
     @Throws
-    suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(context: Context) {
+    internal suspend fun loadAllOnlinePlugins(context: Context) {
         assertNonRecursiveCallstack()
 
         // Load all plugins as fast as possible!
@@ -479,14 +461,8 @@ object PluginManager {
      * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
      * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
      */
-    @Suppress("FunctionName", "DEPRECATION_ERROR")
     @Throws
-    @Deprecated(
-        "Calling this function from a plugin will lead to crashes, use loadPlugin and unloadPlugin",
-        replaceWith = ReplaceWith("loadPlugin"),
-        level = DeprecationLevel.ERROR
-    )
-    suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_hotReloadAllLocalPlugins(activity: FragmentActivity?) {
+    internal suspend fun hotReloadAllLocalPlugins(activity: FragmentActivity?) {
         assertNonRecursiveCallstack()
 
         Log.d(TAG, "Reloading all local plugins!")
@@ -494,7 +470,7 @@ object PluginManager {
         getPluginsLocal().forEach {
             unloadPlugin(it.filePath)
         }
-        ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(activity, true)
+        loadAllLocalPlugins(activity, true)
     }
 
     /**
@@ -504,14 +480,8 @@ object PluginManager {
      * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
      * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
      */
-    @Suppress("FunctionName", "DEPRECATION_ERROR")
-    @Deprecated(
-        "Calling this function from a plugin will lead to crashes, use loadPlugin and unloadPlugin",
-        replaceWith = ReplaceWith("loadPlugin"),
-        level = DeprecationLevel.ERROR
-    )
     @Throws
-    suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(context: Context, forceReload: Boolean) {
+    internal suspend fun loadAllLocalPlugins(context: Context, forceReload: Boolean) {
         assertNonRecursiveCallstack()
 
         val dir = File(LOCAL_PLUGINS_PATH)
@@ -808,19 +778,13 @@ object PluginManager {
      * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
      * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
      */
-    @Suppress("FunctionName", "DEPRECATION_ERROR")
     @Throws
-    @Deprecated(
-        "Calling this function from a plugin will lead to crashes, use loadPlugin and unloadPlugin",
-        replaceWith = ReplaceWith("loadPlugin"),
-        level = DeprecationLevel.ERROR
-    )
-    suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_manuallyReloadAndUpdatePlugins(activity: Activity) {
+    internal suspend fun manuallyReloadAndUpdatePlugins(activity: Activity) {
         assertNonRecursiveCallstack()
 
         showToast(activity.getString(R.string.starting_plugin_update_manually), Toast.LENGTH_LONG)
 
-        ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(activity)
+        loadAllOnlinePlugins(activity)
         afterPluginsLoadedEvent.invoke(false)
 
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
