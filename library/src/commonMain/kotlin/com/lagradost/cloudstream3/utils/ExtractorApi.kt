@@ -308,11 +308,17 @@ import com.lagradost.cloudstream3.extractors.Ztreamhub
 import com.lagradost.cloudstream3.extractors.FileMoon
 import com.lagradost.cloudstream3.extractors.FileMoonSx
 import com.lagradost.cloudstream3.extractors.FilemoonV2
+import com.lagradost.cloudstream3.extractors.HubCloud
+import com.lagradost.cloudstream3.extractors.PixelDrainDev
 import com.lagradost.cloudstream3.extractors.Techinmind
 import com.lagradost.cloudstream3.mvvm.logError
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.jsoup.Jsoup
 import java.net.URI
@@ -842,6 +848,7 @@ suspend fun loadExtractor(
     )
 }
 
+
 /**
  * Tries to load the appropriate extractor based on link, returns true if any extractor is loaded.
  * */
@@ -1001,6 +1008,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     VidMoxy(),
     Sobreatsesuyp(),
     PixelDrain(),
+    PixelDrainDev(),
     MailRu(),
 
     Tomatomatela(),
@@ -1238,6 +1246,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     VinovoSi(),
     VinovoTo(),
     CloudMailRu(),
+    HubCloud(),
 )
 
 
