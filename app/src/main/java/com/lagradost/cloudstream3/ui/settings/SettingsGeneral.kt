@@ -50,8 +50,7 @@ import java.util.Locale
 // Change local language settings in the app.
 fun getCurrentLocale(context: Context): String {
     val conf = context.resources.configuration
-
-    return ConfigurationCompat.getLocales(conf)?.get(0)?.toLanguageTag() ?: "en"
+    return ConfigurationCompat.getLocales(conf).get(0)?.toLanguageTag() ?: "en"
 }
 
 /**

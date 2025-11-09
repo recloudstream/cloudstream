@@ -1266,7 +1266,7 @@ suspend fun getPostForm(requestUrl: String, html: String): String? {
     var hash: String? = null
 
     for (input in inputs) {
-        val value = input.attr("value") ?: continue
+        val value = input.attr("value")
         when (input.attr("name")) {
             "op" -> op = value
             "id" -> id = value

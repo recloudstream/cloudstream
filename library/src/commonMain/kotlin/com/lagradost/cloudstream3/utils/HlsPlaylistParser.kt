@@ -1240,7 +1240,7 @@ object HlsPlaylistParser {
         if (concatenatedCharacteristics.isNullOrEmpty()) {
             return 0
         }
-        val characteristics = Util.split(concatenatedCharacteristics!!, ",")
+        val characteristics = Util.split(concatenatedCharacteristics, ",")
         //@RoleFlags
         var roleFlags = 0
         if (characteristics.contains("public.accessibility.describes-video")) {
