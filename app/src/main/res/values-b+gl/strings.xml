@@ -282,7 +282,7 @@
     <string name="season">Temporada</string>
     <plurals name="episodes" translatable="false">
         <item quantity="one">Capítulos</item>
-        <item quantity="other"></item>
+        <item quantity="other"/>
     </plurals>
     <string name="episodes_range">%1$d-%2$d</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
