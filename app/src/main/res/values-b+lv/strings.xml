@@ -522,4 +522,15 @@
     <string name="subscription_list_name">Abonēts</string>
     <string name="subscription_new">Abonēts %s</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="next_season_episode_format" formatted="true">%1$d. sezona un %2$d. sērija tiks izlaista pēc</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dh %2$dm %3$ds</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dm %2$ds</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$ds</string>
+    <string name="play_from_beginning_img_des">Atskaņot no sākuma</string>
+    <string name="speech_recognition_unavailable">Runas atpazīšana nav pieejama</string>
+    <string name="begin_speaking">Sāciet runāt…</string>
+    <string name="torrent_info">Šis video ir torrenta fails, kas nozīmē, ka jūsu video aktivitātes var izsekot.\nPirms turpināt, pārliecinieties, ka saprotat torrenta failu lietošanu.</string>
+    <string name="downloads_delete_select">Atlasiet dzēšamos vienumus</string>
+    <string name="downloads_empty">Pašlaik nav lejupielāžu.</string>
+    <string name="offline_file">Pieejams skatīšanai bezsaistē</string>
 </resources>

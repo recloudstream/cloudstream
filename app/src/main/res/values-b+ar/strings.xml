@@ -758,4 +758,7 @@
     <string name="action_remove_mark_watched_up_to_this_episode">ازالة علامة تمت المشاهدة لهذه الحلقة</string>
     <string name="action_reload">تم تحديث الصفحة</string>
     <string name="reload_provider">تحديث المزود</string>
+    <string name="episode_action_play_mirror">تشغيل مصدر بديل</string>"
+    <string name="name">اسم</string>
+    <string name="resolution_and_name">الدقة و الاسم</string>
 </resources>

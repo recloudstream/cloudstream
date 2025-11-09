@@ -14,7 +14,7 @@
     <string name="episode_poster_img_des">Episode Poster</string>
     <string name="home_main_poster_img_des">Main Poster</string>
     <string name="home_next_random_img_des">Next Random</string>
-    <string name="go_back_img_des">Go back</string>
+    <string name="go_back_img_des">Quay trở lại</string>
     <string name="home_change_provider_img_des">Change Provider</string>
     <string name="preview_background_img_des">Preview Background</string>
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
@@ -64,10 +64,10 @@
     <string name="download_canceled">Đã hủy</string>
     <string name="download_done">Tải thành công</string>
     <string name="stream">Luồng mạng</string>
-    <string name="error_loading_links_toast">Đã có lỗi xảy ra</string>
+    <string name="error_loading_links_toast">Lỗi khi tải liên kết</string>
     <string name="download_storage_text">Bộ nhớ trong</string>
-    <string name="app_dubbed_text">L.Tiếng</string>
-    <string name="app_subbed_text">P.Đề</string>
+    <string name="app_dubbed_text">Lồng tiếng</string>
+    <string name="app_subbed_text">Phụ đề</string>
     <string name="popup_delete_file">Xóa Tệp</string>
     <string name="popup_play_file">Xem Tệp</string>
     <string name="popup_resume_download">Tiếp tục tải</string>
@@ -82,7 +82,7 @@
     <string name="action_remove_from_bookmarks">Xóa</string>
     <string name="action_add_to_bookmarks">Đặt trạng thái xem</string>
     <string name="sort_apply">Áp dụng</string>
-    <string name="sort_copy">Sao lưu</string>
+    <string name="sort_copy">Sao chép</string>
     <string name="sort_close">Đóng</string>
     <string name="sort_clear">Huỷ bỏ</string>
     <string name="sort_save">Lưu</string>
@@ -157,12 +157,12 @@
     <string name="show_fillers_settings">Hiển thị tập phụ cho anime</string>
     <string name="show_trailers_settings">Hiển thị trailer</string>
     <string name="kitsu_settings">Hiển thị poster từ Kitsu</string>
-    <string name="pref_filter_search_quality">Ẩn chất lượng video khi tìm kiếm</string>
+    <string name="pref_filter_search_quality">Ẩn chất lượng video trong kết quả tìm kiếm</string>
     <string name="automatic_plugin_updates">Tự động cập nhật plugin</string>
-    <string name="updates_settings">Hiển thị thông báo cập nhật App</string>
-    <string name="updates_settings_des">Tự động tìm kiếm bản cập nhật mới sau khi khởi động app.</string>
-    <string name="uprereleases_settings">Cập nhật phiên bản Beta</string>
-    <string name="uprereleases_settings_des">Tìm kiếm các phiên bản Beta thay vì đợi bản cập nhật chính thức</string>
+    <string name="updates_settings">Hiển thị thông báo cập nhật ứng dụng</string>
+    <string name="updates_settings_des">Tự động tìm kiếm bản cập nhật mới sau khi khởi động ứng dụng.</string>
+    <string name="uprereleases_settings">Cập nhật phiên bản phát hành trước</string>
+    <string name="uprereleases_settings_des">Tìm kiếm các cập nhật phiên bản phát hành trước thay vì phiên bản đầy đủ</string>
     <string name="github">Github</string>
     <string name="lightnovel">Ứng dụng đọc tiểu thuyết của cùng nhà phát triển</string>
     <string name="anim">Ứng dụng xem Anime của cùng nhà phát triển</string>
@@ -171,11 +171,11 @@
     <string name="benene_des">Gửi lời cảm ơn</string>
     <string name="app_language">Ngôn ngữ ứng dụng</string>
     <string name="no_chromecast_support_toast">Nguồn phim này chưa hỗ trợ Chromecast</string>
-    <string name="no_links_found_toast">Không tìm thấy link</string>
-    <string name="copy_link_toast">Đã copy link vào bộ nhớ đệm</string>
+    <string name="no_links_found_toast">Không tìm thấy liên kết</string>
+    <string name="copy_link_toast">Đã sao chép liên kết vào bộ nhớ tạm</string>
     <string name="play_episode_toast">Xem Phim</string>
-    <string name="subs_default_reset_toast">Làm mới toàn bộ cài đặt</string>
-    <string name="acra_report_toast">Rất tiếc! Ứng dụng đã xảy ra lỗi. Chúng tôi đang tìm hiểu nguyên nhân và khắc phục nó</string>
+    <string name="subs_default_reset_toast">Thiết lập lại giá trị mặc định</string>
+    <string name="acra_report_toast">Rất tiếc! Ứng dụng đã xảy ra lỗi. Một báo cáo lỗi ẩn danh sẽ được gửi đến nhà phát triển</string>
     <string name="season">Mùa</string>
     <string name="no_season">Không có mùa nào</string>
     <string name="episode">Tập</string>
@@ -436,12 +436,12 @@
     <string name="history">Lịch sử</string>
     <string name="action_mark_as_watched">Đánh dấu là đã xem</string>
     <string name="automatic_plugin_download">Tự động tải xuống plugin</string>
-    <string name="redo_setup_process">Thiết lập lại</string>
+    <string name="redo_setup_process">Làm lại tiến trình cài đặt</string>
     <string name="apk_installer_settings">Bộ cài APK</string>
-    <string name="apk_installer_settings_des">Một số máy không hỗ trợ trình cài đặt gói mới. Hãy thử tùy chọn cũ nếu các bản cập nhật không cài đặt.</string>
+    <string name="apk_installer_settings_des">Một số thiết bị không hỗ trợ trình cài đặt gói mới. Hãy thử tùy chọn cũ nếu các bản cập nhật không cài đặt.</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="play_trailer_button">Xem Trailer</string>
-    <string name="automatic_plugin_download_summary">Tự động tải plugin còn thiếu.</string>
+    <string name="automatic_plugin_download_summary">Tự động cài đặt tất cả plugin chưa được cài đặt từ những kho lưu trữ đã thêm vào.</string>
     <string name="update_started">Bắt đầu cập nhật</string>
     <string name="pref_category_links">Liên kết</string>
     <string name="hls_playlist">Danh sách HLS</string>
@@ -590,7 +590,7 @@
     <string name="skip_startup_account_select_pref">Bỏ qua lựa chọn tài khoản khi khởi động</string>
     <string name="manage_accounts">Quản lý tài khoản</string>
     <string name="edit_account">Chỉnh sửa tài khoản</string>
-    <string name="links_reloaded_toast">Tải lại link</string>
+    <string name="links_reloaded_toast">Tải lại liên kết</string>
     <string name="result_search_tooltip">Tìm kiếm tiện ích khác</string>
     <string name="recommendations_tooltip">Hiển thị đề xuất</string>
     <string name="test_extensions">Kiểm tra nguồn phim</string>
@@ -641,7 +641,7 @@
     <string name="device_pin_error_message">Không lấy được mã PIN, hãy thử xác thực cục bộ</string>
     <string name="downloads_empty">Hiện không có bản tải xuống nào.</string>
     <string name="auth_locally">Xác thực cục bộ</string>
-    <string name="episode_action_cast_mirror">Cast mirror</string>
+    <string name="episode_action_cast_mirror">Phản chiếu màn hình</string>
     <string name="play_from_beginning_img_des">Xem từ đầu</string>
     <string name="open_local_video">Mở video có sẵn</string>
     <string name="test_warning">Cảnh báo</string>
@@ -650,7 +650,7 @@
     <string name="offline_file">Có thể xem ngoại tuyến</string>
     <string name="select_all">Chọn tất cả</string>
     <string name="deselect_all">Bỏ chọn tất cả</string>
-    <string name="delete_files">Xoá tập tin</string>
+    <string name="delete_files">Xoá các tệp</string>
     <string name="delete_format" formatted="true">Xoá (%1$d | %2$s)</string>
     <string name="delete_message_multiple" formatted="true">Bạn có chắc chắn muốn xóa vĩnh viễn các mục sau không?
 \n
@@ -739,4 +739,17 @@
     <string name="action_remove_mark_watched_up_to_this_episode">Xóa những tập đã xem đến tập này</string>
     <string name="action_reload">Đã tải lại</string>
     <string name="reload_provider">Tải lại nguồn phát</string>
+    <string name="name">Tên</string>
+    <string name="resolution_and_name">Độ phân giải và tên</string>
+    <string name="episode_action_play_mirror">Xem phản chiếu</string>"
+    <string name="subs_subtitle_alignment">Căn chỉnh phụ đề</string>
+    <string name="bottom_left">Dưới trái</string>
+    <string name="bottom_center">Dưới giữa</string>
+    <string name="bottom_right">Dưới phải</string>
+    <string name="top_left">Trên trái</string>
+    <string name="top_right">Trên phải</string>
+    <string name="top_center">Trên giữa</string>
+    <string name="middle_center">Trung tâm</string>
+    <string name="middle_left">Giữa trái</string>
+    <string name="middle_right">Giữa phải</string>
 </resources>
