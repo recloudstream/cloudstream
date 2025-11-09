@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.os.Build
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -84,9 +85,16 @@ class ExceptionHandler(val errorFile: File, val onError: (() -> Unit)) :
     override fun uncaughtException(thread: Thread, error: Throwable) {
         ACRA.errorReporter.handleException(error)
         try {
+            val threadId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                thread.threadId()
+            } else {
+                @Suppress("DEPRECATION")
+                thread.id
+            }
+
             PrintStream(errorFile).use { ps ->
                 ps.println("Currently loading extension: ${PluginManager.currentlyLoading ?: "none"}")
-                ps.println("Fatal exception on thread ${thread.name} (${thread.id})")
+                ps.println("Fatal exception on thread ${thread.name} (${threadId})")
                 error.printStackTrace(ps)
             }
         } catch (ignored: FileNotFoundException) {
@@ -97,7 +105,6 @@ class ExceptionHandler(val errorFile: File, val onError: (() -> Unit)) :
         }
         exitProcess(1)
     }
-
 }
 
 class AcraApplication : Application(), SingletonImageLoader.Factory {
