@@ -1409,7 +1409,8 @@ class CS3IPlayer : IPlayer {
                     }
                 }
 
-                //fixme: Use onPlaybackStateChanged(int) and onPlayWhenReadyChanged(boolean, int) instead.
+                // fixme: Use onPlaybackStateChanged(int) and onPlayWhenReadyChanged(boolean, int) instead.
+                @Suppress("OVERRIDE_DEPRECATION")
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     exoPlayer?.let { exo ->
                         event(
