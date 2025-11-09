@@ -1,3 +1,14 @@
+@file:Suppress(
+    "ALL",
+    "DEPRECATION",
+    "RedundantVisibilityModifier",
+    "RemoveRedundantQualifierName",
+    "UNCHECKED_CAST",
+    "UNUSED",
+    "UNUSED_PARAMETER",
+    "UNUSED_VARIABLE"
+)
+
 /*
  * Copyright (C) 2016 The Android Open Source Project
  *
