@@ -15,8 +15,8 @@ open class AStreamHub : ExtractorApi() {
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val sources = mutableListOf<ExtractorLink>()
-        app.get(url).document.selectFirst("body > script").let { script ->
-            val text = script?.html() ?: ""
+        app.get(url).document.selectFirst("body > script")?.let { script ->
+            val text = script.html()
             Log.i("Dev", "text => $text")
             if (text.isNotBlank()) {
                 val m3link = "(?<=file:)(.*)(?=,)".toRegex().find(text)

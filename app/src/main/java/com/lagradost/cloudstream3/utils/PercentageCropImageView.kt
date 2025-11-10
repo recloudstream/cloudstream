@@ -92,12 +92,12 @@ class PercentageCropImageView : androidx.appcompat.widget.AppCompatImageView {
                 var dy = 0f
                 if (dWidth * vHeight > vWidth * dHeight) {
                     val cropXCenterOffsetPct =
-                        if (mCropXCenterOffsetPct != null) mCropXCenterOffsetPct!!.toFloat() else 0.5f
+                        if (mCropXCenterOffsetPct != null) mCropXCenterOffsetPct!! else 0.5f
                     scale = vHeight.toFloat() / dHeight.toFloat()
                     dx = (vWidth - dWidth * scale) * cropXCenterOffsetPct
                 } else {
                     val cropYCenterOffsetPct =
-                        if (mCropYCenterOffsetPct != null) mCropYCenterOffsetPct!!.toFloat() else 0f
+                        if (mCropYCenterOffsetPct != null) mCropYCenterOffsetPct!! else 0f
                     scale = vWidth.toFloat() / dWidth.toFloat()
                     dy = (vHeight - dHeight * scale) * cropYCenterOffsetPct
                 }

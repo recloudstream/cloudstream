@@ -106,7 +106,7 @@ open class Vidplay : ExtractorApi() {
                 "exchange" -> vrf = exchange(
                     vrf,
                     step.keys?.get(0) ?: return@forEach,
-                    step.keys?.get(1) ?: return@forEach
+                    step.keys.get(1)
                 )
 
                 "rc4" -> vrf = rc4Encryption(step.keys?.get(0) ?: return@forEach, vrf)
@@ -126,7 +126,7 @@ open class Vidplay : ExtractorApi() {
                 "exchange" -> vrf = exchange(
                     vrf,
                     step.keys?.get(1) ?: return@forEach,
-                    step.keys?.get(0) ?: return@forEach
+                    step.keys.get(0)
                 )
 
                 "rc4" -> vrf = rc4Decryption(step.keys?.get(0) ?: return@forEach, vrf)
