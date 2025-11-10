@@ -157,7 +157,9 @@ import com.lagradost.cloudstream3.extractors.Neonime8n
 import com.lagradost.cloudstream3.extractors.Obeywish
 import com.lagradost.cloudstream3.extractors.Odnoklassniki
 import com.lagradost.cloudstream3.extractors.OkRuHTTP
+import com.lagradost.cloudstream3.extractors.OkRuHTTPMobile
 import com.lagradost.cloudstream3.extractors.OkRuSSL
+import com.lagradost.cloudstream3.extractors.OkRuSSLMobile
 import com.lagradost.cloudstream3.extractors.Okrulink
 import com.lagradost.cloudstream3.extractors.PeaceMakerst
 import com.lagradost.cloudstream3.extractors.Peytonepre
@@ -1015,7 +1017,9 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     TomatomatelalClub(),
     Cinestart(),
     OkRuSSL(),
+    OkRuSSLMobile(),
     OkRuHTTP(),
+    OkRuHTTPMobile(),
     Okrulink(),
     Sendvid(),
 
