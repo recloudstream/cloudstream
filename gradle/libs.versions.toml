@@ -10,7 +10,7 @@ conscryptAndroid = { strictly = "2.5.2" } # 2.5.3 crashes everything
 constraintlayout = "2.2.1"
 coreKtx = "1.17.0"
 desugar_jdk_libs_nio = "2.1.5"
-dokkaGradlePlugin = "2.0.0"
+dokkaGradlePlugin = "2.1.0"
 espressoCore = "3.7.0"
 fuzzywuzzy = "1.4.0"
 gradle = "8.13.0"

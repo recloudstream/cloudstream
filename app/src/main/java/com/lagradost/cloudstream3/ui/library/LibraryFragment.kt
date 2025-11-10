@@ -470,7 +470,7 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(
             val all = binding.viewpager.allViews.toList()
                 .filterIsInstance<AutofitRecyclerView>()
 
-            all?.forEach { view ->
+            all.forEach { view ->
                 view.isVisible = view.tag == position
                 view.isFocusable = view.tag == position
 

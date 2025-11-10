@@ -31,7 +31,7 @@ open class VidSrcExtractor : ExtractorApi() {
 
         val srcrcpList =
             iframedoc.select("div.serversList > div.server").mapNotNull {
-                val datahash = it.attr("data-hash") ?: return@mapNotNull null
+                val datahash = it.attr("data-hash")
                 val rcpLink = "$apiUrl/rcp/$datahash"
                 val rcpRes = app.get(rcpLink, referer = apiUrl).text
                 val srcrcpLink =

@@ -309,7 +309,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             val pairList = getPairList(header)
             for ((button, types) in pairList) {
                 button?.isChecked =
-                    button?.isVisible == true && selectedTypes.any { types.contains(it) }
+                    button.isVisible && selectedTypes.any { types.contains(it) }
             }
         }
 
@@ -419,7 +419,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                         val name = getItem(position)
                         titleText?.text = name
                         val isPinned =
-                            pinnedphashset.contains(currentValidApis[position].name ?: "")
+                            pinnedphashset.contains(currentValidApis[position].name)
                         pinIcon.visibility = if (isPinned) View.VISIBLE else View.GONE
                         return view
                     }
