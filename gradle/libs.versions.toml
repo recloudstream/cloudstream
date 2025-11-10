@@ -13,7 +13,7 @@ desugar_jdk_libs_nio = "2.1.5"
 dokkaGradlePlugin = "2.1.0"
 espressoCore = "3.7.0"
 fuzzywuzzy = "1.4.0"
-gradle = "8.13.0"
+gradle = "8.13.1"
 jacksonModuleKotlin = { strictly = "2.13.1" } # Later versions don't support minSdk <26 (Crashes on Android TV's and FireSticks)
 json = "20250517"
 junit = "4.13.2"
