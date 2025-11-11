@@ -479,7 +479,7 @@
     <string name="update_notification_downloading">Download aggiornamento dell\'app…</string>
     <string name="automatic_plugin_download_summary">Installa automaticamente tutti i plugin non ancora installati dai repository aggiunti.</string>
     <string name="apk_installer_package_installer">ProgrammaInstallazionePacchetti</string>
-    <string name="apk_installer_settings_des">Alcuni telefoni non supportano il nuovo programma di installazione dei pacchetti. Prova l\'opzione legacy se gli aggiornamenti non vengono installati.</string>
+    <string name="apk_installer_settings_des">Alcuni dispositivi non supportano il nuovo programma di installazione dei pacchetti. Se gli aggiornamenti non vengono installati, prova l\'opzione legacy.</string>
     <string name="apk_installer_settings">Installer APK</string>
     <string name="apk_installer_legacy">Legacy</string>
     <string name="play_trailer_button">Riproduci trailer</string>
@@ -746,4 +746,17 @@
     <string name="action_mark_watched_up_to_this_episode">Contrassegna come visto fino a questo episodio</string>
     <string name="action_reload">Ricaricato</string>
     <string name="reload_provider">Ricarica provider</string>
+    <string name="name">Nome</string>
+    <string name="resolution_and_name">Risoluzione e nome</string>
+    <string name="subs_subtitle_alignment">Allineamento sottotitoli</string>
+    <string name="bottom_left">In basso a sinistra</string>
+    <string name="episode_action_play_mirror">Riproduci mirror</string>"
+    <string name="bottom_center">In basso al centro</string>
+    <string name="bottom_right">In basso a destra</string>
+    <string name="middle_center">In centro</string>
+    <string name="middle_right">In centro a destra</string>
+    <string name="top_left">In alto a sinistra</string>
+    <string name="top_center">In alto al centro</string>
+    <string name="top_right">In alto a destra</string>
+    <string name="middle_left">In centro a sinistra</string>
 </resources>

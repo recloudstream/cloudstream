@@ -146,7 +146,7 @@ class DownloadChildFragment : BaseFragment<FragmentChildDownloadsBinding>(
             }
         )
 
-        binding.downloadChildList?.apply {
+        binding.downloadChildList.apply {
             setHasFixedSize(true)
             setItemViewCacheSize(20)
             this.adapter = adapter

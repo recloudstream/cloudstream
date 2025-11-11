@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/no_subtitles_loaded_notice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="18sp"
+            android:textStyle="italic"
+            android:alpha="0.7"
+            android:text="@string/no_subtitles_loaded" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/subtitle_offset_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingVertical="10dp"
+            android:requiresFadingEdge="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/subtitle_offset_item"
+            tools:visibility="gone" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:paddingVertical="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="0dp"
+            android:paddingTop="10dp"
+            android:text="@string/subtitle_offset_title"
+            style="@style/WatchHeaderText" />
+
+        <TextView
+            android:id="@+id/subtitle_offset_sub_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/grayTextColor"
+            tools:text="@string/subtitle_offset_extra_hint_none_format" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingTop="8dp">
+
+            <ImageView
+                android:id="@+id/subtitle_offset_subtract_more"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="10dp"
+                android:src="@drawable/ic_baseline_keyboard_arrow_left_24"
+                app:tint="?attr/white"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/subtitle_offset_subtract"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="10dp"
+                android:src="@drawable/baseline_remove_24"
+                app:tint="?attr/white"
+                tools:ignore="ContentDescription" />
+
+            <EditText
+                android:id="@+id/subtitle_offset_input"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autofillHints="no"
+                android:gravity="center"
+                android:hint="@string/subtitle_offset_hint"
+                android:inputType="numberSigned"
+                tools:ignore="LabelFor" />
+
+            <ImageView
+                android:id="@+id/subtitle_offset_add"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="10dp"
+                android:src="@drawable/ic_baseline_add_24"
+                app:tint="?attr/white"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/subtitle_offset_add_more"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="10dp"
+                android:src="@drawable/ic_baseline_keyboard_arrow_right_24"
+                app:tint="?attr/white"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end|center_vertical"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/apply_btt"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/sort_apply"
+            style="@style/WhiteButton" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/reset_btt"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/reset_btn"
+            style="@style/BlackButton" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cancel_btt"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/sort_cancel"
+            style="@style/BlackButton" />
+    </LinearLayout>
+</LinearLayout>
