@@ -1,7 +1,7 @@
 [versions]
 acraCore = "5.13.1"
 activityKtx = "1.11.0"
-androidGradlePlugin = "8.13.0"
+androidGradlePlugin = "8.13.1"
 appcompat = "1.7.1"
 biometric = "1.4.0-alpha04"
 buildkonfigGradlePlugin = "0.17.1"
