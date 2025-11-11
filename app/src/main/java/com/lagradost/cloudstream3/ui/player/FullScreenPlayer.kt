@@ -417,56 +417,41 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         activity.requestedOrientation = orientation
     }
 
-    open fun lockOrientation(activity: Activity, allowReverse: Boolean = false) {
-        val display = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-            @Suppress("DEPRECATION")
+    open fun lockOrientation(activity: Activity) {
+        @Suppress("DEPRECATION")
+        val display = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R)
             (activity.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
-        } else activity.display!!
-
+        else activity.display!!
         val rotation = display.rotation
         val currentOrientation = activity.resources.configuration.orientation
         val orientation: Int
-
         when (currentOrientation) {
-            Configuration.ORIENTATION_LANDSCAPE -> {
-                orientation = if (allowReverse) {
-                    // Allow both landscape and reverse landscape
-                    ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-                } else {
-                    // Lock to current landscape direction only
-                    if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_90) {
+            Configuration.ORIENTATION_LANDSCAPE ->
+                orientation =
+                    if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_90)
                         ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                    } else ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
-                }
-            }
+                    else
+                        ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
 
-            Configuration.ORIENTATION_PORTRAIT -> {
-                orientation = if (allowReverse) {
-                    // Allow both portrait and reverse portrait
-                    ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
-                } else {
-                    // Lock to current portrait direction only
-                    if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_270) {
+            Configuration.ORIENTATION_PORTRAIT ->
+                orientation =
+                    if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_270)
                         ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                    } else ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
-                }
-            }
+                    else
+                        ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
 
             else -> orientation = dynamicOrientation()
         }
-
         activity.requestedOrientation = orientation
     }
 
     private fun updateOrientation(ignoreDynamicOrientation: Boolean = false) {
         activity?.apply {
             if (lockRotation) {
-                if (isLocked || rotatedManually) {
-                    // Allow reverse rotation within the same orientation (landscape to reverse landscape
-                    // or portrait to reverse portrait) only when manually rotated and not fully locked.
-                    lockOrientation(this, rotatedManually && !isLocked)
+                if (isLocked) {
+                    lockOrientation(this)
                 } else {
-                    if (ignoreDynamicOrientation) {
+                    if (ignoreDynamicOrientation || rotatedManually) {
                         // restore when lock is disabled
                         restoreOrientationWithSensor(this)
                     } else {
