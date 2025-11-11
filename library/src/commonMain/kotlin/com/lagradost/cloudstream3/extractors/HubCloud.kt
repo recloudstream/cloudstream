@@ -10,7 +10,6 @@ import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.loadExtractor
 import com.lagradost.cloudstream3.utils.newExtractorLink
 import java.net.URI
-import java.net.URL
 
 class HubCloud : ExtractorApi() {
     override val name = "Hub-Cloud"
@@ -25,7 +24,7 @@ class HubCloud : ExtractorApi() {
     ) {
         val tag = "HubCloud"
         val realUrl = url.takeIf {
-            try { URL(it); true } catch (e: Exception) { Log.e(tag, "Invalid URL: ${e.message}"); false }
+            try { URI(it).toURL(); true } catch (e: Exception) { Log.e(tag, "Invalid URL: ${e.message}"); false }
         } ?: return
 
         val baseUrl=getBaseUrl(realUrl)
