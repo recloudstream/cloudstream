@@ -161,7 +161,7 @@ dependencies {
 
     // Android Core & Lifecycle
     implementation(libs.core.ktx)
-    implementation(libs.activity)
+    implementation(libs.activity.ktx)
     implementation(libs.appcompat)
     implementation(libs.bundles.navigationKtx)
     implementation(libs.lifecycle.livedata.ktx)

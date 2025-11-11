@@ -758,6 +758,8 @@ class CS3IPlayer : IPlayer {
                     cacheDirectory.mkdirs()
                 }
                 CronetEngine.Builder(context)
+                    .enableBrotli(true)
+                    .enableHttp2(true)
                     .enableQuic(true)
                     .setStoragePath(cacheDirectory.absolutePath)
                     .setLibraryLoader(null)

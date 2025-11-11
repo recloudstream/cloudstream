@@ -8,9 +8,10 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="10dp"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
         android:animateLayoutChanges="true"
         android:backgroundTint="@color/primaryGrayBackground"
         android:focusable="true"
