@@ -943,7 +943,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             if (!isCurrentTouchValid && isShowing && index == currentTapIndex && player.getIsPlaying()) {
                 onClickChange()
             }
-        }, 2000)
+        }, 3000)
     }
 
     // this is used because you don't want to hide UI when double tap seeking
@@ -1987,6 +1987,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             // it is !not! a bug that you cant touch the right side, it does not register inputs on navbar or status bar
             playerHolder.setOnTouchListener { callView, event ->
                 return@setOnTouchListener handleMotionEvent(callView, event)
+            }
+
+            playerControlsScroll.setOnScrollChangeListener { _, _, _, _, _ ->
+                autoHide()
             }
 
             exoProgress.setOnTouchListener { _, event ->
