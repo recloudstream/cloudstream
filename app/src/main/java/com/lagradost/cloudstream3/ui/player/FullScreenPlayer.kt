@@ -189,7 +189,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     )
 
     private var isShowingEpisodeOverlay: Boolean = false
-
+    private var previousPlayStatus: Boolean = false
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -2083,11 +2083,13 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     private fun toggleEpisodesOverlay(show: Boolean) {
         if (show && !isShowingEpisodeOverlay) {
+            previousPlayStatus = player.getIsPlaying()
             player.handleEvent(CSPlayerEvent.Pause)
             showEpisodesOverlay()
             isShowingEpisodeOverlay = true
             animateEpisodesOverlay(true)
         } else if (isShowingEpisodeOverlay) {
+            if(previousPlayStatus) player.handleEvent(CSPlayerEvent.Play)
             isShowingEpisodeOverlay = false
             animateEpisodesOverlay(false)
         }
