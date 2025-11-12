@@ -711,6 +711,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <HorizontalScrollView
+                    android:id="@+id/player_controls_scroll"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center">

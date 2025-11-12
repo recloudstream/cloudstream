@@ -96,7 +96,7 @@
             android:layout_height="wrap_content"
             android:autofillHints="password"
             android:hint="@string/example_password"
-            android:inputType="textVisiblePassword"
+            android:inputType="textPassword"
             android:nextFocusLeft="@id/apply_btt"
 
             android:nextFocusRight="@id/cancel_btt"

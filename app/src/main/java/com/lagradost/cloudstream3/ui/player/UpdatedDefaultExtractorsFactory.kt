@@ -1,3 +1,14 @@
+@file:Suppress(
+    "ALL",
+    "DEPRECATION",
+    "RedundantVisibilityModifier",
+    "RemoveRedundantQualifierName",
+    "UNCHECKED_CAST",
+    "UNUSED",
+    "UNUSED_PARAMETER",
+    "UNUSED_VARIABLE"
+)
+
 package com.lagradost.cloudstream3.ui.player
 
 import android.net.Uri
@@ -287,7 +298,7 @@ class UpdatedDefaultExtractorsFactory : ExtractorsFactory {
      */
     @Synchronized
     fun setTsSubtitleFormats(subtitleFormats: List<Format>?): UpdatedDefaultExtractorsFactory {
-        tsSubtitleFormats = ImmutableList.copyOf(subtitleFormats)
+        tsSubtitleFormats = subtitleFormats?.let { ImmutableList.copyOf(it) }
         return this
     }
 

@@ -169,7 +169,7 @@ dependencies {
 
     // Android Core & Lifecycle
     implementation(libs.core.ktx)
-    implementation(libs.activity)
+    implementation(libs.activity.ktx)
     implementation(libs.appcompat)
     implementation(libs.bundles.navigationKtx)
     implementation(libs.lifecycle.livedata.ktx)
@@ -211,6 +211,7 @@ dependencies {
     implementation(libs.qrcode.kotlin) // QR Code for PIN Auth on TV
 
     // Extensions & Other Libs
+    implementation(libs.jsoup) // HTML Parser
     implementation(libs.rhino) // Run JavaScript
     implementation(libs.quickjs)
     implementation(libs.fuzzywuzzy) // Library/Ext Searching with Levenshtein Distance

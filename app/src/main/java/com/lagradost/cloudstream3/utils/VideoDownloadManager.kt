@@ -388,7 +388,7 @@ object VideoDownloadManager {
                 val mbFormat = "%.1f MB"
 
                 if (hlsProgress != null && hlsTotal != null) {
-                    progressPercentage = hlsProgress.toLong() * 100 / hlsTotal
+                    progressPercentage = hlsProgress * 100 / hlsTotal
                     progressMbString = hlsProgress.toString()
                     totalMbString = hlsTotal.toString()
                     suffix = " - $mbFormat".format(progress / 1000000f)

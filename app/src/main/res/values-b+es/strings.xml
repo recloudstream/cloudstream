@@ -40,7 +40,7 @@
     <string name="episode_action_download_subtitle">Descargar subtítulos</string>
     <string name="pref_category_subtitles">Subtítulos</string>
     <string name="subtitles_depressed">Deprimido</string>
-    <string name="subtitles_example_text">Le gustaba cenar un exquisito sándwich de jamón con zumo de piña y vodka fría</string>
+    <string name="subtitles_example_text">El pingüino Wenceslao hizo kilómetros bajo exhaustiva lluvia y frío; añoraba a su querido cachorro</string>
     <string name="player_load_subtitles">Cargar desde archivo</string>
     <string name="player_load_subtitles_online">Cargar desde Internet</string>
     <string name="autoplay_next_settings">Reproducir automáticamente episodio siguiente</string>
@@ -84,7 +84,7 @@
 \nEstá seguro?</string>
     <string name="confirm_exit_dialog">Está seguro que quiere salir?</string>
     <string name="popup_resume_download">Continuar Descarga</string>
-    <string name="example_lang_name">Código de idioma (es_LA)</string>
+    <string name="example_lang_name">Código de idioma (es_ES)</string>
     <string name="home_main_poster_img_des">Póster principal</string>
     <string name="app_language">Idioma de la aplicación</string>
     <string name="provider_languages_tip">Ver videos en estos idiomas</string>
@@ -105,7 +105,7 @@
     <string name="skip_loading">Omitir carga</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep. %2$d</string>
     <string name="next_episode_time_day_format" formatted="true">%1$d d %2$d h %3$d m</string>
-    <string name="cast_format" formatted="true">Elenco: %s</string>
+    <string name="cast_format" formatted="true">Reparto: %s</string>
     <string name="filler" formatted="true">Relleno</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="app_name">CloudStream</string>
@@ -182,7 +182,7 @@
     <string name="subs_hold_to_reset_to_default">Mantenga pulsado para restablecer los valores predeterminados</string>
     <string name="subs_import_text" formatted="true">Importar fuentes colocándolas en %s</string>
     <string name="continue_watching">Continuar Viendo</string>
-    <string name="action_remove_watching">Remover</string>
+    <string name="action_remove_watching">Eliminar</string>
     <string name="action_open_watching">Más info</string>
     <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">Tal vez se requiera una VPN para que este proveedor funcione correctamente</string>
@@ -724,4 +724,9 @@
     <string name="edit_profile_image_hint">Introducir URL de imagen de perfil</string>
     <string name="reload_provider">Recargar proveedor</string>
     <string name="name">Nombre</string>
+    <string name="resolution_and_name">Resolución y nombre</string>
+    <string name="subs_subtitle_alignment">Alineación de subtítulos</string>
+    <string name="bottom_left">Inferior izquierda</string>
+    <string name="bottom_center">Inferior central</string>
+    <string name="bottom_right">Inferior derecho</string>
 </resources>
