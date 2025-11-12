@@ -5,11 +5,10 @@ buildscript {
     }
 
     dependencies {
-        classpath(libs.gradle)
-        classpath(libs.jetbrains.kotlin.gradle.plugin)
+        classpath(libs.android.gradle.plugin)
+        classpath(libs.buildkonfig.gradle.plugin) // Universal build config
         classpath(libs.dokka.gradle.plugin)
-        // Universal build config
-        classpath(libs.buildkonfig.gradle.plugin)
+        classpath(libs.kotlin.gradle.plugin)
     }
 }
 

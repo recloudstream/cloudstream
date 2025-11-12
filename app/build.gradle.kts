@@ -8,7 +8,6 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("org.jetbrains.dokka")
-
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
@@ -170,6 +169,7 @@ dependencies {
 
     // Android Core & Lifecycle
     implementation(libs.core.ktx)
+    implementation(libs.activity.ktx)
     implementation(libs.appcompat)
     implementation(libs.bundles.navigationKtx)
     implementation(libs.lifecycle.livedata.ktx)
@@ -211,23 +211,14 @@ dependencies {
     implementation(libs.qrcode.kotlin) // QR Code for PIN Auth on TV
 
     // Extensions & Other Libs
+    implementation(libs.jsoup) // HTML Parser
     implementation(libs.rhino) // Run JavaScript
     implementation(libs.quickjs)
     implementation(libs.fuzzywuzzy) // Library/Ext Searching with Levenshtein Distance
     implementation(libs.safefile) // To Prevent the URI File Fu*kery
     coreLibraryDesugaring(libs.desugar.jdk.libs.nio) // NIO Flavor Needed for NewPipeExtractor
-    implementation(libs.conscrypt.android) {
-        version {
-            strictly("2.5.2")
-        }
-        because("2.5.3 crashes everything for everyone.")
-    } // To Fix SSL Fu*kery on Android 9
-    implementation(libs.jackson.module.kotlin) {
-        version {
-            strictly("2.13.1")
-        }
-        because("Don't Bump Jackson above 2.13.1, Crashes on Android TV's and FireSticks that have Min API Level 25 or Less.")
-    } // JSON Parser
+    implementation(libs.conscrypt.android) // To Fix SSL Fu*kery on Android 9
+    implementation(libs.jackson.module.kotlin) // JSON Parser
 
     // Torrent Support
     implementation(libs.torrentserver)

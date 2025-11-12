@@ -55,6 +55,7 @@ import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
+import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
 import java.net.SocketTimeoutException
 
 enum class PlayerResize(@StringRes val nameRes: Int) {
@@ -191,12 +192,12 @@ abstract class AbstractPlayerFragment(
             }
         }
 
-        canEnterPipMode = isPlayingRightNow && hasPipModeSupport
+        canEnterPipMode = (isPlayingRightNow || isBuffering) && hasPipModeSupport
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             activity?.let { act ->
                 PlayerPipHelper.updatePIPModeActions(
                     act,
-                    isPlayingRightNow,
+                    act.shouldShowPIPMode(canEnterPipMode),
                     player.getAspectRatio()
                 )
             }
@@ -517,9 +518,6 @@ abstract class AbstractPlayerFragment(
 
             is VideoEndedEvent -> {
                 context?.let { ctx ->
-                    // Resets subtitle delay on ended video
-                    player.setSubtitleOffset(0)
-
                     // Only play next episode if autoplay is on (default)
                     if (PreferenceManager.getDefaultSharedPreferences(ctx)
                             ?.getBoolean(
@@ -678,6 +676,10 @@ abstract class AbstractPlayerFragment(
     }
 
     override fun onDestroy() {
+        player.release()
+        player.releaseCallbacks()
+        player = CS3IPlayer()
+
         playerEventListener = null
         keyEventListener = null
         canEnterPipMode = false

@@ -92,7 +92,7 @@ object FillerEpisodeCheck {
             if (!localList.containsKey(realQuery)) return null
             val href = localList[realQuery]?.replace(MAIN_URL, "") ?: return null // JUST IN CASE
             val result = app.get("$MAIN_URL$href").text
-            val documented = Jsoup.parse(result) ?: return null
+            val documented = Jsoup.parse(result)
             val hashMap = HashMap<Int, Boolean>()
             documented.select("table.EpisodeList > tbody > tr").forEach {
                 val type = it.selectFirst("td.Type > span")?.text() == "Filler"

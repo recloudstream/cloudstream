@@ -149,6 +149,7 @@
                         tools:text="1920x1080" />
 
                     <TextView
+                        android:maxLines="2"
                         android:id="@+id/player_video_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -710,6 +711,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <HorizontalScrollView
+                    android:id="@+id/player_controls_scroll"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center">

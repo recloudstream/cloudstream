@@ -547,45 +547,6 @@ object AppContextUtils {
         }
     }
 
-    abstract class DiffAdapter<T>(
-        open val items: MutableList<T>,
-        val comparison: (first: T, second: T) -> Boolean = { first, second ->
-            first.hashCode() == second.hashCode()
-        }
-    ) :
-        RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-        override fun getItemCount(): Int {
-            return items.size
-        }
-
-        fun updateList(newList: List<T>) {
-            val diffResult = DiffUtil.calculateDiff(
-                GenericDiffCallback(this.items, newList)
-            )
-
-            items.clear()
-            items.addAll(newList)
-
-            diffResult.dispatchUpdatesTo(this)
-        }
-
-        inner class GenericDiffCallback(
-            private val oldList: List<T>,
-            private val newList: List<T>
-        ) :
-            DiffUtil.Callback() {
-            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-                comparison(oldList[oldItemPosition], newList[newItemPosition])
-
-            override fun getOldListSize() = oldList.size
-
-            override fun getNewListSize() = newList.size
-
-            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-                oldList[oldItemPosition] == newList[newItemPosition]
-        }
-    }
-
     fun Activity.addRepositoryDialog(
         repositoryName: String,
         repositoryURL: String,

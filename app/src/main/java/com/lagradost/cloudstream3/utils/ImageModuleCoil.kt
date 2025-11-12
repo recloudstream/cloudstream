@@ -90,6 +90,12 @@ object ImageLoader {
 
         if(imageData == null) return // Just in case
 
+        // setImageResource is better than coil3 on resources due to attr
+        if(imageData is Int) {
+            this.setImageResource(imageData)
+            return
+        }
+
         // Use Coil's built-in load method but with our custom module & a decent USER-AGENT always
         // which can be overridden by extensions.
         this.load(imageData, SingletonImageLoader.get(context)) {

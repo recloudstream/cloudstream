@@ -311,7 +311,7 @@
     <string name="episode_short">E</string>
     <string name="resume_time_left" formatted="true">%dm\nबाकी</string>
     <string name="documentaries">वृत्तचित्र</string>
-    <string name="unexpected_error">अप्रत्याशित प्लेयर त्रुटि</string>
+    <string name="unexpected_error">कोई नहीं जानता ये प्लेयर एरर क्यों आया</string>
     <string name="episode_action_download_subtitle">उपशीर्षक डाउनलोड करें</string>
     <string name="show_title">शीर्षक</string>
     <string name="library">लाइब्रेरी</string>
@@ -341,4 +341,9 @@
     <string name="podcast_singluar">पॉडकास्ट</string>
     <string name="render_error">रेंडरर त्रुटि</string>
     <string name="encoding_error">एन्कोडिंग त्रुटि</string>
+    <string name="unsupported_error">एरर क्योंकि सपोर्टेड नहीं</string>
+    <string name="storage_error">डाउनलोड नहीं कर पाए , प्लीज स्टोरेज परमिशन चेक करे</string>
+    <string name="episode_action_cast_mirror">टीवी में देखे</string>
+    <string name="episode_action_play_mirror">Play mirror</string>"
+    <string name="show_hd">कितना hd है वो वाला लेबल</string>
 </resources>

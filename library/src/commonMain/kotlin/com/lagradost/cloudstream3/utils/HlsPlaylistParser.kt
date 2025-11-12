@@ -788,12 +788,6 @@ object HlsPlaylistParser {
         const val APPLICATION_MP4CEA608: String = "$BASE_TYPE_APPLICATION/x-mp4-cea-608"
 
 
-        @Deprecated(
-            """RawCC is a Google-internal subtitle format that isn't supported by this version of
-        Media3. There is no replacement for this value."""
-        )
-        const val APPLICATION_RAWCC: String = "$BASE_TYPE_APPLICATION/x-rawcc"
-
         const val APPLICATION_VOBSUB: String = "$BASE_TYPE_APPLICATION/vobsub"
         const val APPLICATION_PGS: String = "$BASE_TYPE_APPLICATION/pgs"
         const val APPLICATION_SCTE35: String = "$BASE_TYPE_APPLICATION/x-scte35"
@@ -1025,7 +1019,6 @@ object HlsPlaylistParser {
                 || APPLICATION_TTML == mimeType
                 || APPLICATION_TX3G == mimeType
                 || APPLICATION_MP4VTT == mimeType
-                || APPLICATION_RAWCC == mimeType
                 || APPLICATION_VOBSUB == mimeType
                 || APPLICATION_PGS == mimeType
                 || APPLICATION_DVBSUBS == mimeType;
@@ -1247,7 +1240,7 @@ object HlsPlaylistParser {
         if (concatenatedCharacteristics.isNullOrEmpty()) {
             return 0
         }
-        val characteristics = Util.split(concatenatedCharacteristics!!, ",")
+        val characteristics = Util.split(concatenatedCharacteristics, ",")
         //@RoleFlags
         var roleFlags = 0
         if (characteristics.contains("public.accessibility.describes-video")) {

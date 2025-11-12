@@ -5,6 +5,9 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
 
+class PixelDrainDev : PixelDrain(){
+    override var mainUrl = "https://pixeldrain.dev"
+}
 open class PixelDrain : ExtractorApi() {
     override val name            = "PixelDrain"
     override val mainUrl         = "https://pixeldrain.com"
@@ -37,3 +40,5 @@ open class PixelDrain : ExtractorApi() {
         }
     }
 }
+
+

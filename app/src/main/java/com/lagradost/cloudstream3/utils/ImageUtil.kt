@@ -7,9 +7,9 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.createBitmap
 import coil3.Image
 import coil3.asImage
-import coil3.request.ImageRequest
 
 /// Type safe any image, because THIS IS NOT PYTHON
 sealed class UiImage {
@@ -30,11 +30,7 @@ fun drawableToBitmap(drawable: Drawable): Bitmap? {
     return when (drawable) {
         is BitmapDrawable -> drawable.bitmap
         else -> {
-            val bitmap = Bitmap.createBitmap(
-                drawable.intrinsicWidth,
-                drawable.intrinsicHeight,
-                Bitmap.Config.ARGB_8888
-            )
+            val bitmap = createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight)
             val canvas = Canvas(bitmap)
             drawable.setBounds(0, 0, canvas.width, canvas.height)
             drawable.draw(canvas)

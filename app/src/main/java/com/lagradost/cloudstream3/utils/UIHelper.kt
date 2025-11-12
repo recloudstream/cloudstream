@@ -202,17 +202,15 @@ object UIHelper {
         listView.requestLayout()
     }
 
-    fun Context?.getSpanCount(): Int? {
+    fun Context.getSpanCount(): Int {
         val compactView = false
         val spanCountLandscape = if (compactView) 2 else 6
         val spanCountPortrait = if (compactView) 1 else 3
-        val orientation = this?.resources?.configuration?.orientation ?: return null
+        val orientation = resources.configuration.orientation
 
         return if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             spanCountLandscape
-        } else {
-            spanCountPortrait
-        }
+        } else spanCountPortrait
     }
 
     fun Fragment.hideKeyboard() {
@@ -423,7 +421,7 @@ object UIHelper {
     }
 
     fun fixSystemBarsPadding(
-        v: View?,
+        v: View,
         @DimenRes heightResId: Int? = null,
         @DimenRes widthResId: Int? = null,
         padTop: Boolean = true,
@@ -432,8 +430,6 @@ object UIHelper {
         padRight: Boolean = true,
         overlayCutout: Boolean = true
     ) {
-        if (v == null) return
-
         // edge-to-edge is very buggy on earlier versions so we just
         // handle the status bar here instead.
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {

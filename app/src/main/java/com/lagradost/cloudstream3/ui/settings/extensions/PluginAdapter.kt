@@ -163,10 +163,13 @@ class PluginAdapter(
             binding.langIcon.text = getNameNextToFlagEmoji(metadata.language) ?: metadata.language
         }
 
-        val oldRecycleCount = (holder as? RepositoryViewHolderState)?.recycleCount
+        //val oldRecycleCount = (holder as? RepositoryViewHolderState)?.recycleCount
 
         binding.extVotes.isVisible = false
-        if (!isLocal) {
+
+        // Disable this for now as the vote api is down, this will also significantly improve the lag
+        // from doing all these network requests
+        /*if (!isLocal) {
             ioSafe {
                 metadata.getVotes().main { votes ->
                     val currentRecycleCount = (holder as? RepositoryViewHolderState)?.recycleCount
@@ -178,7 +181,7 @@ class PluginAdapter(
                     }
                 }
             }
-        }
+        }*/
 
         if (metadata.fileSize != null) {
             binding.extFilesize.isVisible = true

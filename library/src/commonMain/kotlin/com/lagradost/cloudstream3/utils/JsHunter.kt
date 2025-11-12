@@ -34,8 +34,8 @@ class JsHunter(private val hunterJS: String) {
                 )
             val searchResults: Matcher = p.matcher(hunterJS)
             if (searchResults.find() && searchResults.groupCount() == 4) {
-                val h = searchResults.group(1)!!.toString()
-                val n = searchResults.group(2)!!.toString()
+                val h = searchResults.group(1)!!
+                val n = searchResults.group(2)!!
                 val t = searchResults.group(3)!!.toInt()
                 val e = searchResults.group(4)!!.toInt()
                 return hunter(h, n, t, e)

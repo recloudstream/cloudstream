@@ -55,7 +55,8 @@ class AccountSelectActivity : FragmentActivity(), BiometricCallback {
         )
 
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-        val skipStartup = settingsManager.getBoolean(getString(R.string.skip_startup_account_select_key), false
+        val skipStartup = settingsManager.getBoolean(
+            getString(R.string.skip_startup_account_select_key), false
         ) || accounts.count() <= 1
 
         fun askBiometricAuth() {
@@ -91,10 +92,12 @@ class AccountSelectActivity : FragmentActivity(), BiometricCallback {
                 accountViewModel.handleAccountSelect(currentAccount, this, true)
             } else {
                 if (accounts.count() > 1) {
-                    showToast(this, getString(
-                        R.string.logged_account,
-                        currentAccount?.name
-                    ))
+                    showToast(
+                        this, getString(
+                            R.string.logged_account,
+                            currentAccount?.name
+                        )
+                    )
                 }
 
                 navigateToMainActivity()
@@ -113,7 +116,6 @@ class AccountSelectActivity : FragmentActivity(), BiometricCallback {
 
         observe(accountViewModel.accounts) { liveAccounts ->
             val adapter = AccountAdapter(
-                liveAccounts,
                 // Handle the selected account
                 accountSelectCallback = {
                     accountViewModel.handleAccountSelect(it, this)
@@ -121,7 +123,6 @@ class AccountSelectActivity : FragmentActivity(), BiometricCallback {
                 accountCreateCallback = { accountViewModel.handleAccountUpdate(it, this) },
                 accountEditCallback = {
                     accountViewModel.handleAccountUpdate(it, this)
-
                     // We came from MainActivity, return there
                     // and switch to the edited account
                     if (isEditingFromMainActivity) {
@@ -129,8 +130,10 @@ class AccountSelectActivity : FragmentActivity(), BiometricCallback {
                         navigateToMainActivity()
                     }
                 },
-                accountDeleteCallback = { accountViewModel.handleAccountDelete(it,this) }
-            )
+                accountDeleteCallback = { accountViewModel.handleAccountDelete(it, this) }
+            ).apply {
+                submitList(liveAccounts)
+            }
 
             recyclerView.adapter = adapter
 
@@ -191,7 +194,7 @@ class AccountSelectActivity : FragmentActivity(), BiometricCallback {
     }
 
     override fun onAuthenticationSuccess() {
-       Log.i(BiometricAuthenticator.TAG,"Authentication successful in AccountSelectActivity")
+        Log.i(BiometricAuthenticator.TAG, "Authentication successful in AccountSelectActivity")
     }
 
     override fun onAuthenticationError() {

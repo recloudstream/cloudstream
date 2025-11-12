@@ -35,11 +35,18 @@ import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.databinding.ToastBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
+import com.lagradost.cloudstream3.ui.home.HomeChildItemAdapter
+import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
 import com.lagradost.cloudstream3.ui.player.PlayerEventType
 import com.lagradost.cloudstream3.ui.player.Torrent
+import com.lagradost.cloudstream3.ui.result.ActorAdaptor
+import com.lagradost.cloudstream3.ui.result.EpisodeAdapter
+import com.lagradost.cloudstream3.ui.result.ImageAdapter
+import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
+import com.lagradost.cloudstream3.ui.settings.extensions.PluginAdapter
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRtl
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Event
@@ -110,8 +117,8 @@ object CommonActivity {
 
     var playerEventListener: ((PlayerEventType) -> Unit)? = null
     var keyEventListener: ((Pair<KeyEvent?, Boolean>) -> Boolean)? = null
-    var appliedTheme : Int = 0
-    var appliedColor : Int = 0
+    var appliedTheme: Int = 0
+    var appliedColor: Int = 0
 
     private var currentToast: Toast? = null
 
@@ -199,7 +206,7 @@ object CommonActivity {
      * https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
      * https://android.googlesource.com/platform/frameworks/base/+/android-16.0.0_r2/core/res/res/values/locale_config.xml
      * https://iso639-3.sil.org/code_tables/639/data/all
-    */
+     */
     fun setLocale(context: Context?, languageTag: String?) {
         if (context == null || languageTag == null) return
         val locale = Locale.forLanguageTag(languageTag)
@@ -227,6 +234,15 @@ object CommonActivity {
     fun init(act: Activity) {
         setActivityInstance(act)
         ioSafe { Torrent.deleteAllFiles() }
+
+        // Clear all pools to apply the correct theme
+        for (pool in arrayOf(
+            PluginAdapter.sharedPool, HomeChildItemAdapter.sharedPool,
+            ParentItemAdapter.sharedPool, ActorAdaptor.sharedPool, EpisodeAdapter.sharedPool,
+            SearchAdapter.sharedPool, ImageAdapter.sharedPool
+        )) {
+            pool.clear()
+        }
 
         val componentActivity = activity as? ComponentActivity ?: return
 
@@ -297,6 +313,8 @@ object CommonActivity {
     }
 
     fun onUserLeaveHint(act: Activity?) {
+        // On Android 12 and later we use setAutoEnterEnabled() instead.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) return
         if (canEnterPipMode && canShowPipMode) {
             act?.enterPIPMode()
         }
@@ -338,6 +356,7 @@ object CommonActivity {
                 "AmoledLight" -> R.style.AmoledModeLight
                 "Monet" -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                     R.style.MonetMode else R.style.AppTheme
+
                 "Dracula" -> R.style.DraculaMode
                 "Lavender" -> R.style.LavenderMode
 

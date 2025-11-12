@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
@@ -323,12 +324,17 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         viewModel.reloadEpisodes()
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        view?.let { fixSystemBarsPadding(it) }
+    }
+
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         // ===== setup =====
-        fixSystemBarsPadding(binding?.root)
+        fixSystemBarsPadding(view)
         val storedData = getStoredData() ?: return
         activity?.window?.decorView?.clearFocus()
         activity?.loadCache()
@@ -467,7 +473,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 activity?.popCurrentPage()
             }
 
-
+            resultMiniSync.setRecycledViewPool(ImageAdapter.sharedPool)
             resultMiniSync.adapter = ImageAdapter(
                 nextFocusDown = R.id.result_sync_set_score,
                 clickCallback = { action ->
@@ -610,7 +616,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                                 resume.result.season
                             )
                     }
-                    if (resume.isMovie){
+                    if (resume.isMovie) {
                         resultPlayParent.isGone = true
                         resultResumeSeriesProgressText.isVisible = true
                         resultResumeSeriesProgressText.setText(progress.progressLeft)
@@ -914,7 +920,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             val newList = list.filter { it.isSynced && it.hasAccount }
 
             binding?.resultMiniSync?.isVisible = newList.isNotEmpty()
-            (binding?.resultMiniSync?.adapter as? ImageAdapter)?.updateList(newList.mapNotNull { it.icon })
+            (binding?.resultMiniSync?.adapter as? ImageAdapter)?.submitList(newList.mapNotNull { it.icon })
         }
 
 
