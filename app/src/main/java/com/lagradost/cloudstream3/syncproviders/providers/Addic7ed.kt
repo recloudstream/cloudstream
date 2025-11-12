@@ -86,7 +86,7 @@ class Addic7ed : SubtitleAPI() {
                     newSubtitleEntity(
                         displayName = node.select("td:eq(2)").text() + "\n" + node.select("td:eq(4)").text(),
                         link = node.selectFirst("a[href~=updated\\/|original\\/]")?.attr("href")?.fixUrl(),
-                        isHearingImpaired = node.select("td:eq(6)")!!.text().isNotEmpty()
+                        isHearingImpaired = node.select("td:eq(6)").text().isNotEmpty()
                     )
                 else null
             }

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/sort_sources_holder"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingBottom="8dp">
+        
+        <LinearLayout
+            android:id="@+id/subtitles_click_settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+            android:paddingEnd="?android:attr/listPreferredItemPaddingEnd">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/pick_source"
+                android:textColor="?attr/textColor"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/help_btt"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="10dp"
+                android:src="@drawable/baseline_help_outline_24"
+                android:contentDescription="@string/help" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/sort_sources"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="?attr/primaryBlackBackground"
+            android:requiresFadingEdge="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:layout_height="200dp"
+            tools:listitem="@layout/player_prioritize_item" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/sort_subtitles_holder"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingBottom="8dp">
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+            android:paddingTop="10dp"
+            android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+            android:paddingBottom="10dp"
+            android:text="@string/qualities"
+            android:textColor="?attr/textColor"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/sort_qualities"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="?attr/primaryBlackBackground"
+            android:requiresFadingEdge="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:layout_height="200dp"
+            tools:listfooter="@layout/sort_bottom_footer_add_choice"
+            tools:listitem="@layout/player_prioritize_item" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/apply_btt_holder"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="?android:attr/listPreferredItemPaddingStart">
+
+        <EditText
+            android:id="@+id/profile_text_editable"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="text"
+            android:maxLength="32"
+            android:textColor="?attr/textColor"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:autofillHints="username"
+            tools:text="@string/profile_number" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/save_btt"
+            android:layout_width="wrap_content"
+            android:text="@string/sort_save"
+            style="@style/WhiteButton" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/close_btt"
+            android:layout_width="wrap_content"
+            android:text="@string/sort_close"
+            style="@style/BlackButton" />
+    </LinearLayout>
+</LinearLayout>

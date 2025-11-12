@@ -852,7 +852,7 @@
     <string name="torrent_not_accepted">Restart app and accept Stream Torrent pop-up to proceed.</string>
     <string name="software_decoding_key" translatable="false">software_decoding_key2</string>
     <string name="software_decoding">Software decoding</string>
-    <string name="software_decoding_desc">Software decoding enables the player to play video files not supported by your phone, but may cause laggy or unstable playback on high resolution</string>
+    <string name="software_decoding_desc">Software decoding enables the player to play video files not supported by your device, but may cause laggy or unstable playback on high resolution.</string>
     <string name="volume_exceeded_100">Volume has exceeded 100%</string>
     <string name="slide_up_again_to_exceed_100">Slide up again to go beyond 100%</string>
     <string name="update_plugins">Update Plugins</string>

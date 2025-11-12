@@ -386,7 +386,7 @@ class DownloadFragment : BaseFragment<FragmentDownloadsBinding>(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode != Activity.RESULT_OK) return@registerForActivityResult
-        val selectedVideoUri = result?.data?.data ?: return@registerForActivityResult
+        val selectedVideoUri = result.data?.data ?: return@registerForActivityResult
         playUri(activity ?: return@registerForActivityResult, selectedVideoUri)
     }
 }

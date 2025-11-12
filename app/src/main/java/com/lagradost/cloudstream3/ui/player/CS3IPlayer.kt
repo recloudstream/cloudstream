@@ -758,6 +758,8 @@ class CS3IPlayer : IPlayer {
                     cacheDirectory.mkdirs()
                 }
                 CronetEngine.Builder(context)
+                    .enableBrotli(true)
+                    .enableHttp2(true)
                     .enableQuic(true)
                     .setStoragePath(cacheDirectory.absolutePath)
                     .setLibraryLoader(null)
@@ -1409,7 +1411,8 @@ class CS3IPlayer : IPlayer {
                     }
                 }
 
-                //fixme: Use onPlaybackStateChanged(int) and onPlayWhenReadyChanged(boolean, int) instead.
+                // fixme: Use onPlaybackStateChanged(int) and onPlayWhenReadyChanged(boolean, int) instead.
+                @Suppress("OVERRIDE_DEPRECATION")
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     exoPlayer?.let { exo ->
                         event(
