@@ -1052,6 +1052,7 @@
         <item name="trackThickness">@dimen/circular_progress_thickness</item>
         <item name="android:layout_gravity">center</item>
         <item name="indicatorColor">@color/white</item>
+        <item name="indicatorTrackGapSize">0dp</item>
     </style>
 
     <style name="HomePlayUnderlayProgress" parent="PlayUnderlayProgress">

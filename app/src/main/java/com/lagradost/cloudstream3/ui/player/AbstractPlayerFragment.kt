@@ -192,7 +192,7 @@ abstract class AbstractPlayerFragment(
             }
         }
 
-        canEnterPipMode = isPlayingRightNow && hasPipModeSupport
+        canEnterPipMode = (isPlayingRightNow || isBuffering) && hasPipModeSupport
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             activity?.let { act ->
                 PlayerPipHelper.updatePIPModeActions(

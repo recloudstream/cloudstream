@@ -142,6 +142,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected var doubleTapEnabled = false
     protected var doubleTapPauseEnabled = true
     protected var playerRotateEnabled = false
+    protected var rotatedManually = false
     protected var autoPlayerRotateEnabled = false
     private var hideControlsNames = false
     protected var speedupEnabled = false
@@ -189,7 +190,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     )
 
     private var isShowingEpisodeOverlay: Boolean = false
-
+    private var previousPlayStatus: Boolean = false
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -450,7 +451,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 if (isLocked) {
                     lockOrientation(this)
                 } else {
-                    if (ignoreDynamicOrientation) {
+                    if (ignoreDynamicOrientation || rotatedManually) {
                         // restore when lock is disabled
                         restoreOrientationWithSensor(this)
                     } else {
@@ -943,7 +944,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             if (!isCurrentTouchValid && isShowing && index == currentTapIndex && player.getIsPlaying()) {
                 onClickChange()
             }
-        }, 2000)
+        }, 3000)
     }
 
     // this is used because you don't want to hide UI when double tap seeking
@@ -1989,6 +1990,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 return@setOnTouchListener handleMotionEvent(callView, event)
             }
 
+            playerControlsScroll.setOnScrollChangeListener { _, _, _, _, _ ->
+                autoHide()
+            }
+
             exoProgress.setOnTouchListener { _, event ->
                 // this makes the bar not disappear when sliding
                 when (event.action) {
@@ -2027,6 +2032,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     private fun toggleRotate() {
         activity?.let {
             toggleOrientationWithSensor(it)
+            rotatedManually = true
         }
     }
 
@@ -2083,11 +2089,13 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     private fun toggleEpisodesOverlay(show: Boolean) {
         if (show && !isShowingEpisodeOverlay) {
+            previousPlayStatus = player.getIsPlaying()
             player.handleEvent(CSPlayerEvent.Pause)
             showEpisodesOverlay()
             isShowingEpisodeOverlay = true
             animateEpisodesOverlay(true)
         } else if (isShowingEpisodeOverlay) {
+            if(previousPlayStatus) player.handleEvent(CSPlayerEvent.Play)
             isShowingEpisodeOverlay = false
             animateEpisodesOverlay(false)
         }
