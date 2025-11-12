@@ -1667,28 +1667,25 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+    private fun SubtitleData.matchesLanguage(langCode: String): Boolean {
+        val langName = fromTagToEnglishLanguageName(langCode) ?: return false
+        val cleanedName = originalName.replace(Regex("[^\\p{L}\\p{Mn}\\p{Mc}\\p{Me} ]"), "").trim()
+        return languageCode == langCode || cleanedName == langName || cleanedName.contains(langName) || cleanedName == langCode
+    }
+
     private fun getAutoSelectSubtitle(
         subtitles: Set<SubtitleData>, settings: Boolean, downloads: Boolean
     ): SubtitleData? {
         val langCode = preferredAutoSelectSubtitles ?: return null
-        val langName = fromTagToEnglishLanguageName(langCode) ?: return null
         if (downloads) {
-            return subtitles.firstOrNull { sub ->
-                sub.origin == SubtitleOrigin.DOWNLOADED_FILE &&
-                        sub.originalName == context?.getString(R.string.default_subtitles)
-            }
+            return sortSubs(subtitles).firstOrNull { it.origin == SubtitleOrigin.DOWNLOADED_FILE && it.matchesLanguage(langCode) }
         }
 
         if (!settings) return null
 
-        return sortSubs(subtitles).firstOrNull { sub ->
-            // rely first on sub.languageCode
-            val t = sub.originalName.replace(Regex("[^\\p{L}\\p{Mn}\\p{Mc}\\p{Me} ]"), "")
-                .trim() // keep letters from any language
-            sub.languageCode == langCode || t == langName || t.contains(langName) || t == langCode
-        }
+        return sortSubs(subtitles).firstOrNull { it.matchesLanguage(langCode) }
     }
-
+    
     private fun autoSelectFromSettings(): Boolean {
         // auto select subtitle based on settings
         val langCode = preferredAutoSelectSubtitles
