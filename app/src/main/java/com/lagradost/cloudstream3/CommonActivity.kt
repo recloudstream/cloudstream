@@ -38,6 +38,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.ui.home.HomeChildItemAdapter
 import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
 import com.lagradost.cloudstream3.ui.player.PlayerEventType
+import com.lagradost.cloudstream3.ui.player.PlayerPipHelper.isPIPPossible
 import com.lagradost.cloudstream3.ui.player.Torrent
 import com.lagradost.cloudstream3.ui.result.ActorAdaptor
 import com.lagradost.cloudstream3.ui.result.EpisodeAdapter
@@ -51,8 +52,6 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.isRtl
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.UIHelper
-import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
-import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.UiText
 import java.lang.ref.WeakReference
@@ -108,8 +107,7 @@ object CommonActivity {
             return displayMetrics.heightPixels
         }
 
-    var canEnterPipMode: Boolean = false
-    var canShowPipMode: Boolean = false
+    var isPipDesired: Boolean = false
     var isInPIPMode: Boolean = false
 
     val onColorSelectedEvent = Event<Pair<Int, Int>>()
@@ -246,12 +244,6 @@ object CommonActivity {
 
         val componentActivity = activity as? ComponentActivity ?: return
 
-        //https://stackoverflow.com/questions/52594181/how-to-know-if-user-has-disabled-picture-in-picture-feature-permission
-        //https://developer.android.com/guide/topics/ui/picture-in-picture
-        canShowPipMode =
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && // OS SUPPORT
-                    componentActivity.packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE) && // HAS FEATURE, MIGHT BE BLOCKED DUE TO POWER DRAIN
-                    componentActivity.hasPIPPermission() // CHECK IF FEATURE IS ENABLED IN SETTINGS
 
         componentActivity.updateLocale()
         componentActivity.updateTv()
@@ -290,13 +282,15 @@ object CommonActivity {
         }
     }
 
+    /** Enters pip mode if it is both possible and desired to do so*/
     private fun Activity.enterPIPMode() {
-        if (!shouldShowPIPMode(canEnterPipMode) || !canShowPipMode) return
+        if (!isPipDesired || !this.isPIPPossible()) return
+
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 try {
                     enterPictureInPictureMode(PictureInPictureParams.Builder().build())
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     // Use fallback just in case
                     @Suppress("DEPRECATION")
                     enterPictureInPictureMode()
@@ -312,12 +306,10 @@ object CommonActivity {
         }
     }
 
-    fun onUserLeaveHint(act: Activity?) {
+    fun onUserLeaveHint(act: Activity) {
         // On Android 12 and later we use setAutoEnterEnabled() instead.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) return
-        if (canEnterPipMode && canShowPipMode) {
-            act?.enterPIPMode()
-        }
+        act.enterPIPMode()
     }
 
     fun updateTheme(act: Activity) {

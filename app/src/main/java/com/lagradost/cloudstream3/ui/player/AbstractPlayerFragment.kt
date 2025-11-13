@@ -36,7 +36,6 @@ import androidx.preference.PreferenceManager
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.github.rubensousa.previewseekbar.PreviewBar
 import com.github.rubensousa.previewseekbar.media3.PreviewTimeBar
-import com.lagradost.cloudstream3.CommonActivity.canEnterPipMode
 import com.lagradost.cloudstream3.CommonActivity.isInPIPMode
 import com.lagradost.cloudstream3.CommonActivity.keyEventListener
 import com.lagradost.cloudstream3.CommonActivity.playerEventListener
@@ -55,7 +54,6 @@ import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
-import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
 import java.net.SocketTimeoutException
 
 enum class PlayerResize(@StringRes val nameRes: Int) {
@@ -81,7 +79,6 @@ abstract class AbstractPlayerFragment(
 ) : Fragment() {
     var resizeMode: Int = 0
     var subView: SubtitleView? = null
-    var isBuffering = true
     protected open var hasPipModeSupport = true
 
     var playerPausePlayHolderHolder: FrameLayout? = null
@@ -153,7 +150,7 @@ abstract class AbstractPlayerFragment(
 
         keepScreenOn(!isPausedRightNow)
 
-        isBuffering = CSPlayerLoading.IsBuffering == isPlaying
+        val isBuffering = CSPlayerLoading.IsBuffering == isPlaying
         if (isBuffering) {
             playerPausePlayHolderHolder?.isVisible = false
             playerBuffering?.isVisible = true
@@ -192,16 +189,12 @@ abstract class AbstractPlayerFragment(
             }
         }
 
-        canEnterPipMode = (isPlayingRightNow || isBuffering) && hasPipModeSupport
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            activity?.let { act ->
-                PlayerPipHelper.updatePIPModeActions(
-                    act,
-                    act.shouldShowPIPMode(canEnterPipMode),
-                    player.getAspectRatio()
-                )
-            }
-        }
+        PlayerPipHelper.updatePIPModeActions(
+            activity,
+            isPlaying,
+            hasPipModeSupport,
+            player.getAspectRatio()
+        )
     }
 
     private var pipReceiver: BroadcastReceiver? = null
@@ -682,7 +675,9 @@ abstract class AbstractPlayerFragment(
 
         playerEventListener = null
         keyEventListener = null
-        canEnterPipMode = false
+
+        PlayerPipHelper.updatePIPModeActions(activity, CSPlayerLoading.IsPaused, false, null)
+
         mMediaSession?.release()
         mMediaSession = null
         playerView?.player = null
