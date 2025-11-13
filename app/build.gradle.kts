@@ -189,10 +189,6 @@ dependencies {
     // FFmpeg Decoding
     implementation(libs.bundles.nextlibMedia3)
 
-    // Crash Reports (AcraApplication.kt)
-    implementation(libs.acra.core)
-    implementation(libs.acra.toast)
-
     // UI Stuff
     implementation(libs.shimmer) // Shimmering Effect (Loading Skeleton)
     implementation(libs.palette.ktx) // Palette for Images -> Colors

@@ -12,7 +12,7 @@ import androidx.annotation.MainThread
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DELETE_FILE
