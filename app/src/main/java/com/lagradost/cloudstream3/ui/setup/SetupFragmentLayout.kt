@@ -20,6 +20,10 @@ class SetupFragmentLayout : BaseFragment<FragmentSetupLayoutBinding>(
         fixSystemBarsPadding(view)
     }
 
+    // No cache, it should not be shown very often,
+    // and it just adds to memory usage.
+    override fun getPoolKey(): String = ""
+
     override fun onBindingCreated(binding: FragmentSetupLayoutBinding) {
         safe {
             val ctx = context ?: return@safe
