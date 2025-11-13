@@ -19,7 +19,7 @@ jobs:
       run: chmod +x gradlew
 
     - name: Run Gradle
-      run: ./gradlew assemblePrereleaseDebug
+      run: ./gradlew assemblePrereleaseDebug testPrereleaseReleaseUnitTest
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v5
