@@ -489,7 +489,7 @@
     <string name="confirm_exit_dialog">هل أنت متأكد أنك تريد الخروج؟</string>
     <string name="automatic_plugin_download_summary">قم بتثبيت جميع المكونات الإضافية التي لم يتم تثبيتها بعد تلقائيا من المستودعات المضافة.</string>
     <string name="apk_installer_settings">مثبت الحزم</string>
-    <string name="apk_installer_settings_des">بعض الهواتف لا تدعم مثبت الحزمة الجديد. جرب الخيار القديم إذا لم يتم تثبيت التحديثات.</string>
+    <string name="apk_installer_settings_des">بعض الاجهزة لا تدعم مثبت الحزمة الجديد. جرب الخيار القديم إذا لم يتم تثبيت التحديثات.</string>
     <string name="apk_installer_legacy">قياسي</string>
     <string name="apk_installer_package_installer">مثبت الحزمة</string>
     <string name="pref_category_player_layout">التخطيط</string>
@@ -704,7 +704,7 @@
     <string name="player_load_one_subtitle_online">تحميل أول ترجمة متاحة</string>
     <string name="torrent_preferred_media">تفعيل التورنت من خلال الاعدادات/المصادر/المحتوى المفضل</string>
     <string name="torrent_not_accepted">قم بإعادة تشغيل التطبيق و قبول التنبيه الخاص بالتورنت للمتابعة.</string>
-    <string name="software_decoding_desc">يمكّن فك تشفير البرمجي المشغل من تشغيل ملفات الفيديو التي لا يدعمها هاتفك، ولكنه قد يتسبب في بطء أو عدم استقرار التشغيل على الدقة العالية</string>
+    <string name="software_decoding_desc">يمكّن فك تشفير البرمجي المشغل من تشغيل ملفات الفيديو التي لا يدعمها جهازك، ولكنه قد يتسبب في بطء أو عدم استقرار التشغيل على الدقة العالية</string>
     <string name="software_decoding">فك الترميز البرمجي</string>
     <string name="sort_episodes_rating_high_low">تقييم (الأعلى)</string>
     <string name="sort_episodes_rating_low_high">تقييم (الأقل)</string>
@@ -761,4 +761,14 @@
     <string name="episode_action_play_mirror">تشغيل مصدر بديل</string>"
     <string name="name">اسم</string>
     <string name="resolution_and_name">الدقة و الاسم</string>
+    <string name="subs_subtitle_alignment">محاذاة الترجمة</string>
+    <string name="bottom_left">أسفل اليسار</string>
+    <string name="bottom_center">اسفل وسط</string>
+    <string name="bottom_right">أسفل اليمين</string>
+    <string name="middle_left">منتصف اليسار</string>
+    <string name="middle_center">منتصف وسط</string>
+    <string name="middle_right">منتصف يمين</string>
+    <string name="top_left">اعلى يسار</string>
+    <string name="top_center">اعلى وسط</string>
+    <string name="top_right">اعلى يمين</string>
 </resources>

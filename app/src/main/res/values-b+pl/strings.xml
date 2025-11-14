@@ -674,7 +674,7 @@
     <string name="torrent_not_accepted">Uruchom ponownie aplikację i zaakceptuj wyskakujące okienko Otwórz torrent, aby kontynuować.</string>
     <string name="torrent_preferred_media">Włącz torrent w Ustawienia/Źródła/Preferowane multimedia</string>
     <string name="software_decoding">Dekodowanie programowe</string>
-    <string name="software_decoding_desc">Dekodowanie programowe umożliwia odtwarzaczowi odtwarzanie plików wideo, których Twój telefon nie obsługuje, ale może powodować opóźnienia lub niestabilność odtwarzania w wysokiej rozdzielczości</string>
+    <string name="software_decoding_desc">Dekodowanie programowe umożliwia odtwarzaczowi odtwarzanie plików wideo, których to urządzenie nie obsługuje, ale może powodować opóźnienia lub niestabilność odtwarzania w wysokiej rozdzielczości.</string>
     <string name="sort_episodes_rating_low_high">Ocena (najniższa)</string>
     <string name="sort_button_rating">Ocena %s</string>
     <string name="sort_episodes_date_newest">Data emisji (najnowsza)</string>

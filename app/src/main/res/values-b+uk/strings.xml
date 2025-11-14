@@ -645,7 +645,7 @@
     <string name="torrent_preferred_media">Увімкніть торент у Налаштування/Постачальники/Бажані медіа</string>
     <string name="torrent_not_accepted">Перезапустіть застосунок та прийміть спливне вікно Stream Torrent, щоби продовжити.</string>
     <string name="software_decoding">Програмне декодування</string>
-    <string name="software_decoding_desc">Програмне декодування дозволяє програвачу відтворювати відеофайли, не підтримувані вашим телефоном. Однак, це може призвести до затримок або нестабільного відтворення у високій роздільній здатності</string>
+    <string name="software_decoding_desc">Програмне декодування дозволяє плеєру відтворювати відеофайли, які не підтримуються вашим пристроєм, але може спричинити затримки або нестабільне відтворення у високій роздільній здатності.</string>
     <string name="sort_episodes_date_newest">Датою виходу (найновіша)</string>
     <string name="sort_episodes_number_asc">Епізодом (за зростанням)</string>
     <string name="sort_episodes_rating_low_high">Рейтингом (найнижчий)</string>
