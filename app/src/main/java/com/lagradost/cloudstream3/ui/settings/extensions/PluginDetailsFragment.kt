@@ -5,7 +5,7 @@ import android.text.format.Formatter.formatFileSize
 import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
-import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.openBrowser
 import com.lagradost.cloudstream3.databinding.FragmentPluginDetailsBinding
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.VotingApi.canVote

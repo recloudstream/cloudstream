@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.preference.PreferenceManager
 import androidx.preference.SeekBarPreference
-import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getActivity
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchQuality
