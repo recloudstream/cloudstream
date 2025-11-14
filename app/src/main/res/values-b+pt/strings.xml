@@ -724,4 +724,17 @@
     <string name="action_remove_mark_watched_up_to_this_episode">Removar marcação de assistido até esse episódio</string>
     <string name="action_reload">Recarregado</string>
     <string name="reload_provider">Provedor de Recarregamento</string>
+    <string name="episode_action_play_mirror">Reproduzir do servidor alternativo</string>"
+    <string name="name">Nome</string>
+    <string name="resolution_and_name">Resolução e nome</string>
+    <string name="subs_subtitle_alignment">Alinhamento da Legenda</string>
+    <string name="bottom_left">Esquerda embaixo</string>
+    <string name="bottom_center">Centro embaixo</string>
+    <string name="bottom_right">Direita embaixo</string>
+    <string name="middle_left">Esquerda no centro</string>
+    <string name="middle_center">Centro</string>
+    <string name="middle_right">Direita no centro</string>
+    <string name="top_left">Esquerda encima</string>
+    <string name="top_center">Centro em cima</string>
+    <string name="top_right">Direita em cima</string>
 </resources>

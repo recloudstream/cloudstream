@@ -697,7 +697,7 @@
     <string name="torrent_not_accepted">Pro pokračování restartujte aplikaci a potvrďte dialog o streamování torrentu.</string>
     <string name="torrent_preferred_media">Povolte torrent v Nastavení/Poskytovatelé/Preferovaná média</string>
     <string name="software_decoding">Softwarové dekódování</string>
-    <string name="software_decoding_desc">Softwarové dekódování umožňuje přehrávači přehrávat video soubory, které telefon nepodporuje, ale může způsobit zpoždění nebo nestabilní přehrávání ve vysokém rozlišení</string>
+    <string name="software_decoding_desc">Softwarové dekódování umožňuje přehrávači přehrávat video soubory, které vaše zařízení nepodporuje, ale může způsobit zpoždění nebo nestabilní přehrávání ve vysokém rozlišení.</string>
     <string name="sort_episodes_rating_high_low">Hodnocení (nejvyšší)</string>
     <string name="sort_episodes_date_newest">Datum vysílání (nejnovější)</string>
     <string name="sort_episodes_date_oldest">Datum vysílání (nejstarší)</string>
