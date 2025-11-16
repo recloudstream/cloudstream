@@ -36,23 +36,8 @@ open class VkExtractor : ExtractorApi() {
         )
         val cookie = app.get(url, headers = headers, allowRedirects = false).cookies
 
-        val cheaders = mapOf(
-            "User-Agent" to "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:144.0) Gecko/20100101 Firefox/144.0",
-            "Accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Accept-Language" to "en-US,en;q=0.5",
-            "Sec-GPC" to "1",
-            "Connection" to "keep-alive",
-            "Upgrade-Insecure-Requests" to "1",
-            "Sec-Fetch-Dest" to "document",
-            "Sec-Fetch-Mode" to "navigate",
-            "Sec-Fetch-Site" to "none",
-            "Sec-Fetch-User" to "?1",
-            "Priority" to "u=0, i",
-            "Pragma" to "no-cache",
-            "Cache-Control" to "no-cache"
-        )
         val response =
-            app.get(url, headers = cheaders, allowRedirects = false, cookies = cookie).text
+            app.get(url, headers = headers, allowRedirects = false, cookies = cookie).text
 
         val listUrl = listOf("url144", "url240", "url360", "url480", "url720", "dash_sep", "hls")
 
