@@ -598,7 +598,7 @@
                                             android:id="@+id/result_resume_series_progress"
                                             style="@style/ContinueWatchingCircularProgress"
                                             app:indicatorColor="?attr/iconGrayBackground"
-                                            app:trackColor="?attr/iconColor"
+                                            app:trackColor="@color/skipOpTransparent"
                                             tools:progress="50" />
                                     </FrameLayout>
                                     <TextView

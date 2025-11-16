@@ -14,30 +14,44 @@
     app:cardCornerRadius="@dimen/rounded_image_radius"
     app:cardElevation="0dp">
 
-    <androidx.core.widget.ContentLoadingProgressBar
-        android:id="@+id/download_child_episode_progress"
-        style="@android:style/Widget.Material.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="-1.5dp"
-        android:progressBackgroundTint="?attr/colorPrimary"
-        android:progressTint="?attr/colorPrimary"
-        tools:progress="50" />
+<!--    <androidx.core.widget.ContentLoadingProgressBar-->
+<!--        android:id="@+id/download_child_episode_progress"-->
+<!--        style="@android:style/Widget.Material.ProgressBar.Horizontal"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="5dp"-->
+<!--        android:layout_gravity="bottom"-->
+<!--        android:layout_marginBottom="-1.5dp"-->
+<!--        android:progressBackgroundTint="?attr/colorPrimary"-->
+<!--        android:progressTint="?attr/colorPrimary"-->
+<!--        tools:progress="50" />-->
 
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:foreground="?android:attr/selectableItemBackgroundBorderless">
 
-        <ImageView
-            android:id="@+id/download_child_episode_play"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:contentDescription="@string/episode_play_img_des"
-            android:src="@drawable/ic_baseline_play_arrow_24"
-            android:visibility="gone" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <FrameLayout
+                android:id="@+id/watch_progress_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="5dp">
+
+                <ImageView
+                    android:id="@+id/download_child_episode_play"
+                    style="@style/ContinueWatchingPlayUnderlayProgress"
+                    android:layout_margin="4dp"/>
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/download_child_episode_progress"
+                    style="@style/ContinueWatchingCircularProgress"
+                    android:progress="50"/>
+            </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -72,7 +86,7 @@
                 android:textColor="?attr/grayTextColor"
                 tools:text="128MB / 237MB" />
         </LinearLayout>
-
+        </LinearLayout>
         <com.lagradost.cloudstream3.ui.download.button.PieFetchButton
             android:id="@+id/download_button"
             android:layout_width="@dimen/download_size"
