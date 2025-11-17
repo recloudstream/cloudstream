@@ -75,6 +75,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
+import com.lagradost.cloudstream3.utils.UIHelper.showInputMethod
 import java.util.Locale
 import java.util.concurrent.locks.ReentrantLock
 
@@ -221,6 +222,10 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
         currentSpan = view.context.getSpanCount()
         binding?.searchAutofitResults?.spanCount = currentSpan
         HomeFragment.configEvent.invoke(currentSpan)
+
+        // Fix focus being lost
+        val searchText = view.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
+        searchText?.post { searchText?.requestFocus() }
     }
 
     override fun onBindingCreated(
@@ -236,8 +241,12 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
                     SearchHelper.handleSearchClickCallback(callback)
                 }
 
-            searchRoot.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)?.tag =
-                "tv_no_focus_tag"
+            val searchText = searchRoot.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
+            searchText?.tag = "tv_no_focus_tag"
+            // Set a focus listener to show the keyboard when focused
+            searchText?.setOnFocusChangeListener { view, hasFocus ->
+                if (hasFocus) showInputMethod(view)
+            }
             searchAutofitResults.setRecycledViewPool(SearchAdapter.sharedPool)
             searchAutofitResults.adapter = adapter
             searchLoadingBar.alpha = 0f
@@ -411,16 +420,11 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
         binding.mainSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 search(query)
-
-                binding.mainSearch.let {
-                    hideKeyboard(it)
-                }
-
+                hideKeyboard(binding.mainSearch)
                 return true
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                //searchViewModel.quickSearch(newText)
                 val showHistory = newText.isBlank()
                 if (showHistory) {
                     searchViewModel.clearSearch()
@@ -532,15 +536,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
                 listLock.unlock()
             }
         }
-
-
-        /*main_search.setOnQueryTextFocusChangeListener { _, b ->
-            if (b) {
-                // https://stackoverflow.com/questions/12022715/unable-to-show-keyboard-automatically-in-the-searchview
-                showInputMethod(view.findFocus())
-            }
-        }*/
-        //main_search.onActionViewExpanded()*/
 
         val masterAdapter =
             ParentItemAdapter(id = "masterAdapter".hashCode(), { callback ->
