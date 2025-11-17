@@ -654,7 +654,7 @@
     <string name="torrent_preferred_media">設定/プロバイダ/優先メディアでトレントを有効にする</string>
     <string name="torrent_not_accepted">アプリを再起動し、ポップアップに同意して続行します。</string>
     <string name="software_decoding">ソフトウェアデコーディング</string>
-    <string name="software_decoding_desc">ソフトウェアデコーディングにより、携帯電話でサポートされていないビデオファイルを再生できますが、高解像度で遅延や不安定な再生を引き起こす可能性があります</string>
+    <string name="software_decoding_desc">ソフトウェアデコーディングにより、機器でサポートされていないビデオファイルを再生できますが、高解像度で遅延や不安定な再生を引き起こす可能性があります。</string>
     <string name="plugins_updated_manually">%d 個のプラグインを正常に更新しました！</string>
     <string name="no_plugins_updated_manually">更新されたプラグインはありません。</string>
     <string name="player_notification_channel_name">プレーヤー通知</string>
