@@ -145,6 +145,7 @@
     <string name="play_trailer_button">Play Trailer</string>
     <string name="play_livestream_button">Play Livestream</string>
     <string name="play_torrent_button">Stream Torrent</string>
+    <string name="play_full_series_button">Play Full Series</string>
     <string name="torrent_info">This video is a Torrent, this means that your video activity can be tracked.\nMake sure you understand Torrenting before continuing.</string>
     <string name="pick_source">Sources</string>
     <string name="pick_subtitle">Subtitles</string>
@@ -883,8 +884,8 @@
     <string name="poster_size_settings_des">Changes size of posters</string>
     <string name="poster_size_settings">Poster size</string>
     <string name="speedup_key" translatable="false">speedup_key</string>
-    <string name="speedup_title" >LongPress Speed Toggle</string>
-    <string name="speedup_summary" >Hold to get 2x speed</string>
+    <string name="speedup_title">LongPress Speed Toggle</string>
+    <string name="speedup_summary">Hold to get 2x speed</string>
     <string name="edit_profile_image_title">Edit Profile Image</string>
     <string name="edit_profile_image_hint">Enter Profile Image URL</string>
     <string name="edit_profile_image_error_empty">No URL Found</string>
@@ -894,10 +895,9 @@
     <string name="action_remove_mark_watched_up_to_this_episode">Remove watched up to this episode</string>
     <string name="action_reload">Reloaded</string>
     <string name="reload_provider">Reload Provider</string>
-	<string name="name">Name</string>
+    <string name="name">Name</string>
     <string name="resolution_and_name">Resolution and name</string>
     <string name="subs_subtitle_alignment">Subtitle Alignment</string>
-
     <string name="bottom_left">Bottom left</string>
     <string name="bottom_center">Bottom center</string>
     <string name="bottom_right">Bottom right</string>

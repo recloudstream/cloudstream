@@ -693,7 +693,7 @@
     <string name="torrent_not_accepted">Riavvia l\'app e accetta il pop-up Stream Torrent per procedere.</string>
     <string name="torrent_preferred_media">Abilita torrent in Impostazioni/Provider/Media preferiti</string>
     <string name="software_decoding">Decodifica software</string>
-    <string name="software_decoding_desc">La decodifica software consente al lettore di riprodurre file video non supportati dal telefono, ma potrebbe causare una riproduzione lenta o instabile ad alta risoluzione</string>
+    <string name="software_decoding_desc">La decodifica software consente al lettore di riprodurre file video non supportati dal dispositivo, ma potrebbe causare una riproduzione lenta o instabile ad alta risoluzione.</string>
     <string name="sort_episodes_rating_high_low">Valutazione (più alta)</string>
     <string name="sort_episodes_rating_low_high">Valutazione (più bassa)</string>
     <string name="sort_episodes_date_newest">Data di messa in onda (più recente)</string>

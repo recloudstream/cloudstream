@@ -48,6 +48,7 @@ workRuntime = "2.10.5"
 workRuntimeKtx = "2.10.5"
 
 jvmTarget = "1.8"
+jdkToolchain = "17"
 minSdk = "21"
 compileSdk = "36"
 targetSdk = "36"
