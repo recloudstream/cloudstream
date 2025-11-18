@@ -266,7 +266,7 @@ object SearchResultBuilder {
 
                 if (card.type?.isMovieType() == false) {
                     cardText?.text =
-                        cardText?.context?.getNameFull(card.name, card.episode, card.season)
+                        cardText.context?.getNameFull(card.name, card.episode, card.season)
                 }
             }
 

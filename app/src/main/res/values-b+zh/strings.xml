@@ -503,7 +503,7 @@
     <string name="update_notification_failed">无法安装新版的应用</string>
     <string name="automatic_plugin_download_summary">自动安装已添加的仓库内所有未安装的插件。</string>
     <string name="apk_installer_settings">APK 安装器</string>
-    <string name="apk_installer_settings_des">部分手机不支持新的软件包安装程序。如果未安装更新，请尝试使用传统选项。</string>
+    <string name="apk_installer_settings_des">部分设备不支持新的软件包安装程序。如果未安装更新，请尝试使用传统选项。</string>
     <string name="apk_installer_legacy">传统</string>
     <string name="apk_installer_package_installer">软件包安装程序</string>
     <string name="play_trailer_button">播放预告片</string>
@@ -717,7 +717,7 @@
     <string name="torrent_preferred_media">在设置/提供者/首选媒体处开启 torrent</string>
     <string name="torrent_not_accepted">重启应用并接受在线播放 Torrent 弹窗以继续。</string>
     <string name="software_decoding">软件解码</string>
-    <string name="software_decoding_desc">软件解码让播放器能够播放你的手机所不支持的视频文件，但可能导致播放高分辨率视频时的延迟或不稳定</string>
+    <string name="software_decoding_desc">软件解码让播放器能够播放你的设备所不支持的视频文件，但可能导致播放高分辨率视频时的延迟或不稳定。</string>
     <string name="sort_episodes_number_desc">集数（降序）</string>
     <string name="sort_episodes_date_oldest">播放日期（最旧）</string>
     <string name="sort_button_rating">得分 %s</string>
@@ -773,4 +773,14 @@
     <string name="episode_action_play_mirror">播放镜像</string>"
     <string name="name">名称</string>
     <string name="resolution_and_name">分辨率和名称</string>
+    <string name="subs_subtitle_alignment">字幕对齐</string>
+    <string name="bottom_left">左下</string>
+    <string name="bottom_center">底部居中</string>
+    <string name="bottom_right">右下</string>
+    <string name="middle_left">中左</string>
+    <string name="middle_center">正中</string>
+    <string name="middle_right">中右</string>
+    <string name="top_left">左上</string>
+    <string name="top_center">顶部居中</string>
+    <string name="top_right">右上</string>
 </resources>

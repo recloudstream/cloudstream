@@ -747,4 +747,16 @@
     <string name="action_reload">Dimuat Ulang</string>
     <string name="reload_provider">Muat Ulang Penyedia</string>
     <string name="episode_action_play_mirror">Putar mirror</string>"
-    </resources>
+    <string name="name">Nama</string>
+    <string name="resolution_and_name">Resolusi dan nama</string>
+    <string name="subs_subtitle_alignment">Penyelarasan Subtitle</string>
+    <string name="bottom_left">Bawah kiri</string>
+    <string name="bottom_center">Bawah tengah</string>
+    <string name="bottom_right">Bawah kanan</string>
+    <string name="middle_left">Tengah kiri</string>
+    <string name="middle_center">Tengah tengah</string>
+    <string name="middle_right">Tengah kanan</string>
+    <string name="top_left">Atas kiri</string>
+    <string name="top_center">Atas tengah</string>
+    <string name="top_right">Atas kanan</string>
+</resources>

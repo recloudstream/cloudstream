@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui
 
 import android.os.Bundle
+import android.view.View
 import android.webkit.JavascriptInterface
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -18,6 +19,8 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.loadRepository
 class WebviewFragment : BaseFragment<FragmentWebviewBinding>(
     BaseFragment.BindingCreator.Inflate(FragmentWebviewBinding::inflate)
 ) {
+
+    override fun fixLayout(view: View) = Unit
 
     override fun onBindingCreated(binding: FragmentWebviewBinding) {
         val url = arguments?.getString(WEBVIEW_URL) ?: "".also {

@@ -228,7 +228,7 @@
     <string name="updates_settings_des">Автоматично перевіряти нові оновлення після запуску застосунку.</string>
     <string name="uprereleases_settings">Оновлюватися до бета-версій</string>
     <string name="copy_link_toast">Покликання скопійовано до буфера обміну</string>
-    <string name="apk_installer_settings_des">Деякі телефони не підтримують новий установлювач пакунків. Спробуйте стару версію, якщо оновлення не встановлюються.</string>
+    <string name="apk_installer_settings_des">Деякі пристрої не підтримують новий інсталятор пакетів. Спробуйте старий варіант, якщо оновлення не встановлюються.</string>
     <string name="discord">Приєднуйтеся до Discord</string>
     <string name="benene_des">Дано бананів</string>
     <string name="year">Рік</string>
@@ -645,7 +645,7 @@
     <string name="torrent_preferred_media">Увімкніть торент у Налаштування/Постачальники/Бажані медіа</string>
     <string name="torrent_not_accepted">Перезапустіть застосунок та прийміть спливне вікно Stream Torrent, щоби продовжити.</string>
     <string name="software_decoding">Програмне декодування</string>
-    <string name="software_decoding_desc">Програмне декодування дозволяє програвачу відтворювати відеофайли, не підтримувані вашим телефоном. Однак, це може призвести до затримок або нестабільного відтворення у високій роздільній здатності</string>
+    <string name="software_decoding_desc">Програмне декодування дозволяє плеєру відтворювати відеофайли, які не підтримуються вашим пристроєм, але може спричинити затримки або нестабільне відтворення у високій роздільній здатності.</string>
     <string name="sort_episodes_date_newest">Датою виходу (найновіша)</string>
     <string name="sort_episodes_number_asc">Епізодом (за зростанням)</string>
     <string name="sort_episodes_rating_low_high">Рейтингом (найнижчий)</string>
@@ -701,4 +701,14 @@
     <string name="episode_action_play_mirror">Грати в дзеркало</string>"
     <string name="name">Ім\'я</string>
     <string name="resolution_and_name">Роздільна здатність та назва</string>
+    <string name="subs_subtitle_alignment">Вирівнювання субтитрів</string>
+    <string name="bottom_left">Внизу ліворуч</string>
+    <string name="bottom_center">Внизу по центру</string>
+    <string name="bottom_right">Внизу праворуч</string>
+    <string name="middle_left">Середній лівий</string>
+    <string name="middle_center">Середній центр</string>
+    <string name="middle_right">Середній правий</string>
+    <string name="top_left">Угорі ліворуч</string>
+    <string name="top_center">Верхній центр</string>
+    <string name="top_right">Угорі праворуч</string>
 </resources>

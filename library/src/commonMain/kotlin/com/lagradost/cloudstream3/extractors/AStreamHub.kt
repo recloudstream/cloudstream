@@ -15,11 +15,10 @@ open class AStreamHub : ExtractorApi() {
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val sources = mutableListOf<ExtractorLink>()
-        app.get(url).document.selectFirst("body > script").let { script ->
-            val text = script?.html() ?: ""
-            Log.i("Dev", "text => $text")
-            if (text.isNotBlank()) {
-                val m3link = "(?<=file:)(.*)(?=,)".toRegex().find(text)
+        app.get(url).document.selectFirst("body > script")?.data()?.let { script ->
+            Log.i("Dev", "script => $script")
+            if (script.isNotBlank()) {
+                val m3link = "(?<=file:)(.*)(?=,)".toRegex().find(script)
                     ?.groupValues?.get(0)?.trim()?.trim('"') ?: ""
                 Log.i("Dev", "m3link => $m3link")
                 if (m3link.isNotBlank()) {
@@ -39,5 +38,4 @@ open class AStreamHub : ExtractorApi() {
         }
         return sources
     }
-
 }

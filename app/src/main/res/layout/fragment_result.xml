@@ -568,7 +568,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
-                            android:paddingBottom="10dp"
+                            android:paddingVertical="5dp"
                             android:visibility="gone"
                             tools:visibility="visible">
                             <com.google.android.material.button.MaterialButton
@@ -651,7 +651,7 @@
                                 android:id="@+id/result_next_series_button"
                                 style="@style/WhiteButton"
                                 android:layout_width="match_parent"
-                                android:layout_marginBottom="10dp"
+                                android:layout_marginVertical="5dp"
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginStart="0dp"
                                 android:layout_marginEnd="0dp"
@@ -674,7 +674,7 @@
                                 android:id="@+id/result_play_parent"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="10dp">
+                                android:layout_marginVertical="5dp">
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/result_play_movie"
                                 style="@style/WhiteButton"
@@ -714,6 +714,7 @@
                                 android:id="@+id/download_button"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
                                 app:download_layout="@layout/download_button_layout" />
 
                             <!--<androidx.core.widget.ContentLoadingProgressBar

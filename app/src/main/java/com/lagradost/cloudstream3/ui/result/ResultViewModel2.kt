@@ -2057,6 +2057,7 @@ class ResultViewModel2 : ViewModel() {
         val text = txt(
             when (response.type) {
                 TvType.Torrent -> R.string.play_torrent_button
+                TvType.TvSeries -> R.string.play_full_series_button
                 else -> {
                     if (response.type.isLiveStream())
                         R.string.play_livestream_button

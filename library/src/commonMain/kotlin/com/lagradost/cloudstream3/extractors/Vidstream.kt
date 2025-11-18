@@ -57,8 +57,8 @@ class Vidstream(val mainUrl: String) {
                 val qualityRegex = Regex("(\\d+)P")
 
                 //a[download]
-                pageDoc.select(".dowload > a")?.amap { element ->
-                    val href = element.attr("href") ?: return@amap
+                pageDoc.select(".dowload > a").amap { element ->
+                    val href = element.attr("href")
                     val qual = if (element.text()
                             .contains("HDP")
                     ) "1080" else qualityRegex.find(element.text())?.destructured?.component1()
