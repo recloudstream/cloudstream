@@ -427,7 +427,8 @@ object UIHelper {
         padBottom: Boolean = true,
         padLeft: Boolean = true,
         padRight: Boolean = true,
-        overlayCutout: Boolean = true
+        overlayCutout: Boolean = true,
+        fixIme: Boolean = false
     ) {
         // edge-to-edge is very buggy on earlier versions so we just
         // handle the status bar here instead.
@@ -443,10 +444,11 @@ object UIHelper {
             val leftCheck = if (view.isRtl()) padRight else padLeft
             val rightCheck = if (view.isRtl()) padLeft else padRight
 
-            val insets = windowInsets.getInsets(
-                WindowInsetsCompat.Type.systemBars()
-                        or WindowInsetsCompat.Type.displayCutout()
-            )
+            val insetTypes = WindowInsetsCompat.Type.systemBars() or
+                WindowInsetsCompat.Type.displayCutout() or
+                if (fixIme) WindowInsetsCompat.Type.ime() else 0
+
+            val insets = windowInsets.getInsets(insetTypes)
 
             view.updatePadding(
                 left = if (leftCheck) insets.left else view.paddingLeft,
