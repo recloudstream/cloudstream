@@ -313,6 +313,7 @@ import com.lagradost.cloudstream3.extractors.FilemoonV2
 import com.lagradost.cloudstream3.extractors.HubCloud
 import com.lagradost.cloudstream3.extractors.PixelDrainDev
 import com.lagradost.cloudstream3.extractors.Techinmind
+import com.lagradost.cloudstream3.extractors.VkExtractor
 import com.lagradost.cloudstream3.mvvm.logError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -1251,6 +1252,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     VinovoTo(),
     CloudMailRu(),
     HubCloud(),
+    VkExtractor(),
 )
 
 

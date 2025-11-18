@@ -717,7 +717,7 @@
     <string name="torrent_preferred_media">在设置/提供者/首选媒体处开启 torrent</string>
     <string name="torrent_not_accepted">重启应用并接受在线播放 Torrent 弹窗以继续。</string>
     <string name="software_decoding">软件解码</string>
-    <string name="software_decoding_desc">软件解码让播放器能够播放你的手机所不支持的视频文件，但可能导致播放高分辨率视频时的延迟或不稳定</string>
+    <string name="software_decoding_desc">软件解码让播放器能够播放你的设备所不支持的视频文件，但可能导致播放高分辨率视频时的延迟或不稳定。</string>
     <string name="sort_episodes_number_desc">集数（降序）</string>
     <string name="sort_episodes_date_oldest">播放日期（最旧）</string>
     <string name="sort_button_rating">得分 %s</string>

@@ -642,7 +642,7 @@
     <string name="auth_locally">Войти локально</string>
     <string name="preview_seekbar">Предпросмотр поисковой строки</string>
     <string name="preview_seekbar_desc">Включить предпросмотр миниатюр в поисковой строке</string>
-    <string name="no_subtitles_loaded">Субтитры еще не скачаны</string>
+    <string name="no_subtitles_loaded">Субтитры пока что не скачаны</string>
     <string name="confirm_before_exiting_title">Подтвердить перед выходом</string>
     <string name="confirm_before_exiting_desc">Показать диалог перед выходом из приложения</string>
     <string name="show">Показать</string>
@@ -665,7 +665,7 @@
     <string name="sort_button_rating">Оценка %s</string>
     <string name="sort_button_date">Дата %s</string>
     <string name="sort_episodes_date_newest">Дата выпуска (Новейшие)</string>
-    <string name="software_decoding_desc">Программное декодирование позволяет плееру воспроизводить видео, которые не поддерживаются вашим телефоном, но может быть с задержками или нестабильным при высоком разрешении</string>
+    <string name="software_decoding_desc">Программное декодирование позволяет проигрователю воспроизводить видео, которые не поддерживаются вашим устройством, но может быть с задержками или нестабильным воспроизведением при высоком разрешении</string>
     <string name="software_decoding">Программное декодирование</string>
     <string name="player_notification_channel_description">Уведомление проигрывателя для управления воспроизведением в фоновом режиме</string>
     <string name="update_plugins">Обновить дополнения</string>
@@ -696,7 +696,7 @@
     <string name="poster_size_settings_des">Изменение размера плакатов</string>
     <string name="poster_size_settings">Размер плаката</string>
     <string name="player_settings_always_ask">Спрашивать всегда</string>
-    <string name="speedup_title">Переключатель скорости LongPress</string>
+    <string name="speedup_title">Переключение скорости при длительном нажатии</string>
     <string name="speedup_summary">Удерживайте, чтобы увеличить скорость в 2 раза</string>
     <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dч %2$dм %3$dс</string>
     <string name="download_time_left_min_sec_format" formatted="true">%1$dм %2$dс</string>
@@ -707,14 +707,14 @@
     <string name="edit_profile_image_hint">Введите URL изображения профиля</string>
     <string name="edit_profile_image_error_empty">URL не найден</string>
     <string name="edit_profile_image_error_invalid">Неверный URL или изображение</string>
-    <string name="edit_profile_image_success">Успешное обновление изображения</string>
-    <string name="action_mark_watched_up_to_this_episode">Отметить как просмотренное до этой серии</string>
-    <string name="action_remove_mark_watched_up_to_this_episode">Удалите просмотренное до этой серии</string>
-    <string name="action_reload">Перезагружен</string>
-    <string name="reload_provider">Перезагрузить провайдера</string>
+    <string name="edit_profile_image_success">Изображение успешно обновлено</string>
+    <string name="action_mark_watched_up_to_this_episode">Отметить как просмотренное до этого эпизода</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">Удалить просмотренное до этой серии</string>
+    <string name="action_reload">Перезагрузка</string>
+    <string name="reload_provider">Перезагрузить провайдер</string>
     <string name="episode_action_play_mirror">Запустить зеркало</string>"
     <string name="name">Имя</string>
-    <string name="resolution_and_name">Решение и имя</string>
+    <string name="resolution_and_name">Резолюция и название</string>
     <string name="subs_subtitle_alignment">Выравнивание Субтитров</string>
     <string name="bottom_left">Нижний левый</string>
     <string name="bottom_center">Нижний центральный</string>
