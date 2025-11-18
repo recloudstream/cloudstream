@@ -553,7 +553,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             setContentView(binding.root)
         }
         dialog.show()
-        fixSystemBarsPadding(binding.root)
+
+        val isPortrait = ctx.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+        fixSystemBarsPadding(binding.root, fixIme = isPortrait)
 
         var currentOffset = subtitleDelay
         binding.apply {
