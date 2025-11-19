@@ -171,9 +171,8 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.activity.ktx)
     implementation(libs.appcompat)
-    implementation(libs.bundles.navigationKtx)
-    implementation(libs.lifecycle.livedata.ktx)
-    implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.bundles.lifecycle)
+    implementation(libs.bundles.navigation)
 
     // Design & UI
     implementation(libs.preference.ktx)
@@ -182,20 +181,19 @@ dependencies {
     implementation(libs.swiperefreshlayout)
 
     // Coil Image Loading
-    implementation(libs.coil)
-    implementation(libs.coil.network.okhttp)
+    implementation(libs.bundles.coil)
 
     // Media 3 (ExoPlayer)
     implementation(libs.bundles.media3)
     implementation(libs.video)
 
+    // FFmpeg Decoding
+    implementation(libs.bundles.nextlib)
+
     // PlayBack
     implementation(libs.colorpicker) // Subtitle Color Picker
     implementation(libs.newpipeextractor) // For Trailers
     implementation(libs.juniversalchardet) // Subtitle Decoding
-
-    // FFmpeg Decoding
-    implementation(libs.bundles.nextlibMedia3)
 
     // Crash Reports (AcraApplication.kt)
     implementation(libs.acra.core)
