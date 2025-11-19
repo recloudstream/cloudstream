@@ -62,7 +62,6 @@
     <string name="app_subbed_text">সাব</string>
     <string name="popup_play_file">ফাইল চালান</string>
     <string name="popup_pause_download">ডাউনলোড থামান</string>
-    <string name="pref_disable_acra">আটো বাগ রিপোর্ট বন্ধ করুন</string>
     <string name="home_more_info">আরো তথ্য</string>
     <string name="home_expanded_hide">বন্ধ করুন</string>
     <string name="home_play">চালান</string>
@@ -120,7 +119,6 @@
     <string name="player_size_settings_des">কালো প্রান্ত অপসারণ করুন</string>
     <string name="search">অনুসন্ধান করুন</string>
     <string name="category_account">অ্যাকাউন্টসমূহ এবং নিরাপত্তা</string>
-    <string name="bug_report_settings_on">কোনো উপাত্ত পাঠাবে না</string>
     <string name="double_tap_to_pause_settings_des">বিরতি দিতে মাঝে দুইবার চাপুন</string>
     <string name="use_system_brightness_settings">সিস্টেম এর উজ্জ্বলতা ব্যবহার করুন</string>
     <string name="play_trailer_button">ট্রেইলার চালু করুন</string>
@@ -150,8 +148,6 @@
     <string name="double_tap_to_seek_amount_settings">প্লেয়ারে এগিয়ে যাওয়ার পরিমাণ (সেকেন্ডে)</string>
     <string name="double_tap_to_seek_settings_des">সামনে বা পিছনের দিকে যেতে ডান বা বাম দিকে দুবার আলতো চাপুন</string>
     <string name="delete_file">ফাইল ডিলিট</string>
-    <string name="acra_report_toast">দুঃখিত, অ্যাপ্লিকেশন ক্র্যাশ হয়েছে। ডেভেলপারদের কাছে একটি বেনামী বাগ রিপোর্ট পাঠানো হবে</string>
-    <string name="bug_report_settings_off">শুধুমাত্র ক্র্যাশ এর তথ্য পাঠায়</string>
     <string name="subs_default_reset_toast">মান ডিফল্ট এ রিসেট করুন</string>
     <string name="uprereleases_settings_des">ফুল রিলিজের পরিবর্তে শুধুমাত্র প্রি-রিলিজ আপডেটের জন্য অনুসন্ধান করুন</string>
     <string name="updates_settings_des">স্টার্টআপে নতুন আপডেটের জন্য স্বয়ংক্রিয়ভাবে অনুসন্ধান করুন</string>
