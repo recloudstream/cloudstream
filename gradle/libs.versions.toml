@@ -44,7 +44,6 @@ tmdbJava = "2.13.0"
 torrentserver = "7861970e038b35cd8c6918384e49caf26903e09e"
 tvprovider = "1.1.0"
 video = "1.0.0"
-workRuntime = "2.10.5"
 workRuntimeKtx = "2.10.5"
 
 jvmTarget = "1.8"
@@ -115,7 +114,6 @@ tmdb-java = { module = "com.uwetrottmann.tmdb2:tmdb-java", version.ref = "tmdbJa
 torrentserver = { module = "com.github.recloudstream:torrentserver", version.ref = "torrentserver" }
 tvprovider = { module = "androidx.tvprovider:tvprovider", version.ref = "tvprovider" }
 video = { module = "com.google.android.mediahome:video", version.ref = "video" }
-work-runtime = { module = "androidx.work:work-runtime", version.ref = "workRuntime" }
 work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 
 [plugins]
