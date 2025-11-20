@@ -7,18 +7,35 @@ import java.util.WeakHashMap
 object BackPressedCallbackHelper {
     private val backPressedCallbacks = WeakHashMap<ComponentActivity, MutableMap<String, OnBackPressedCallback>>()
 
-    fun ComponentActivity.attachBackPressedCallback(id: String, callback: () -> Unit) {
-        val callbackMap = backPressedCallbacks.getOrPut(this) { mutableMapOf() }
+    class CallbackHelper(
+        private val activity: ComponentActivity,
+        private val callback: OnBackPressedCallback
+    ) {
+        fun runDefault() {
+            val wasEnabled = callback.isEnabled
+            callback.isEnabled = false
+            try {
+                activity.onBackPressedDispatcher.onBackPressed()
+            } finally {
+                callback.isEnabled = wasEnabled
+            }
+        }
+    }
 
+    fun ComponentActivity.attachBackPressedCallback(
+        id: String,
+        callback: CallbackHelper.() -> Unit
+    ) {
+        val callbackMap = backPressedCallbacks.getOrPut(this) { mutableMapOf() }
         if (callbackMap.containsKey(id)) return
 
         val newCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                callback.invoke()
+                CallbackHelper(this@attachBackPressedCallback, this).callback()
             }
         }
-        callbackMap[id] = newCallback
 
+        callbackMap[id] = newCallback
         onBackPressedDispatcher.addCallback(this, newCallback)
     }
 
@@ -32,7 +49,6 @@ object BackPressedCallbackHelper {
 
     fun ComponentActivity.detachBackPressedCallback(id: String) {
         val callbackMap = backPressedCallbacks[this] ?: return
-
         callbackMap[id]?.let { callback ->
             callback.isEnabled = false
             callbackMap.remove(id)
