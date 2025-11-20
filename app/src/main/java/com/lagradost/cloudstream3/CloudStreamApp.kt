@@ -70,8 +70,8 @@ class CloudStreamApp : Application(), SingletonImageLoader.Factory {
 
     override fun onCreate() {
         super.onCreate()
-        // If we want to initialize Coil as early as possible
-        // (maybe when loading an image or GIF using in a splash screen activity)
+        // If we want to initialize Coil as early as possible, maybe when
+        // loading an image or GIF in a splash screen activity.
         // buildImageLoader(applicationContext)
 
         ExceptionHandler(filesDir.resolve("last_error")) {
@@ -96,7 +96,7 @@ class CloudStreamApp : Application(), SingletonImageLoader.Factory {
     companion object {
         var exceptionHandler: ExceptionHandler? = null
 
-        /** Use to get Activity from Context */
+        /** Use to get Activity from Context. */
         tailrec fun Context.getActivity(): Activity? {
             return when (this) {
                 is Activity -> this
