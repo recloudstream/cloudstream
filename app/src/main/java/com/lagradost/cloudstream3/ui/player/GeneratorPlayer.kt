@@ -85,7 +85,7 @@ import com.lagradost.cloudstream3.ui.result.EpisodeAdapter
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.ResultFragment
-import com.lagradost.cloudstream3.ui.result.ResultViewModel2
+import com.lagradost.cloudstream3.ui.result.ResultViewModel
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.result.SyncViewModel
 import com.lagradost.cloudstream3.ui.result.VideoWatchState
@@ -2022,7 +2022,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                             topItem?.let {
                                 playerEpisodeOverlayTitle.setText(
-                                    ResultViewModel2.seasonToTxt(
+                                    ResultViewModel.seasonToTxt(
                                         topItem.seasonData,
                                         topItem.seasonIndex
                                     )

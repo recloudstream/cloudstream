@@ -2081,7 +2081,7 @@ fun TvType?.isEpisodeBased(): Boolean {
  * Non-episode-based types will return a base folder name, while episode-based types will
  * have their files placed in subfolders using a sanitized title name.
  *
- * For the actual folder path, refer to `ResultViewModel2().getFolder()`, which combines
+ * For the actual folder path, refer to `ResultViewModel().getFolder()`, which combines
  * the folder prefix and, if necessary, the sanitized name to a sub-folder. The folder prefix
  * will be used in the root directory of the configured downloads directory.
  *

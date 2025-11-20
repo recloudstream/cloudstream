@@ -19,7 +19,7 @@ class AlwaysAskAction : VideoClickAction() {
         result: LinkLoadingResult,
         index: Int?
     ) {
-        // This is handled specially in ResultViewModel2.kt by detecting the AlwaysAskAction
+        // This is handled specially in ResultViewModel by detecting the AlwaysAskAction
         // and showing the player selection dialog instead of executing the action directly
         throw NotImplementedError("AlwaysAskAction is handled specially by the calling code")
     }

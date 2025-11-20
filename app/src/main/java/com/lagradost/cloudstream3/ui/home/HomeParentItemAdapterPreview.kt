@@ -39,7 +39,7 @@ import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountEditDialog
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
 import com.lagradost.cloudstream3.ui.account.AccountViewModel
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
-import com.lagradost.cloudstream3.ui.result.ResultViewModel2
+import com.lagradost.cloudstream3.ui.result.ResultViewModel
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.result.getId
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
@@ -405,7 +405,7 @@ class HomeParentItemAdapterPreview(
                         {}) {
                         val newValue = WatchType.entries[it]
 
-                        ResultViewModel2().updateWatchStatus(
+                        ResultViewModel().updateWatchStatus(
                             newValue,
                             fab.context,
                             item

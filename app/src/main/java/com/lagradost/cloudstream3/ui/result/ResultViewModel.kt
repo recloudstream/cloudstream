@@ -309,7 +309,7 @@ data class ExtractorSubtitleLink(
 
 fun LoadResponse.getId(): Int {
     // this fixes an issue with outdated api as getLoadResponseIdFromUrl might be fucked
-    return (if (this is ResultViewModel2.LoadResponseFromSearch) this.id else null)
+    return (if (this is ResultViewModel.LoadResponseFromSearch) this.id else null)
         ?: getLoadResponseIdFromUrl(uniqueUrl, apiName)
 }
 
@@ -393,7 +393,7 @@ data class ExtractedTrailerData(
     var subtitles: List<SubtitleFile> = emptyList(),
 )
 
-class ResultViewModel2 : ViewModel() {
+class ResultViewModel : ViewModel() {
     private var currentResponse: LoadResponse? = null
     var EPISODE_RANGE_SIZE: Int = 20
     fun clear() {
