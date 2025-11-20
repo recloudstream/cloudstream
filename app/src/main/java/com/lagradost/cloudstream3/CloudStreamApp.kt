@@ -9,6 +9,7 @@ import android.os.Build
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import com.lagradost.api.setContext
@@ -25,7 +26,7 @@ import com.lagradost.cloudstream3.utils.DataStore.getKeys
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKeys
 import com.lagradost.cloudstream3.utils.DataStore.setKey
-import com.lagradost.cloudstream3.utils.ImageLoader
+import com.lagradost.cloudstream3.utils.ImageLoader.buildImageLoader
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.io.FileNotFoundException
@@ -35,8 +36,11 @@ import java.util.Locale
 import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
-class ExceptionHandler(val errorFile: File, val onError: (() -> Unit)) :
-    Thread.UncaughtExceptionHandler {
+class ExceptionHandler(
+    val errorFile: File,
+    val onError: (() -> Unit)
+) : Thread.UncaughtExceptionHandler {
+
     override fun uncaughtException(thread: Thread, error: Throwable) {
         try {
             val threadId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
@@ -48,14 +52,14 @@ class ExceptionHandler(val errorFile: File, val onError: (() -> Unit)) :
 
             PrintStream(errorFile).use { ps ->
                 ps.println("Currently loading extension: ${PluginManager.currentlyLoading ?: "none"}")
-                ps.println("Fatal exception on thread ${thread.name} (${threadId})")
+                ps.println("Fatal exception on thread ${thread.name} ($threadId)")
                 error.printStackTrace(ps)
             }
-        } catch (ignored: FileNotFoundException) {
+        } catch (_: FileNotFoundException) {
         }
         try {
-            onError.invoke()
-        } catch (ignored: Exception) {
+            onError()
+        } catch (_: Exception) {
         }
         exitProcess(1)
     }
@@ -66,9 +70,9 @@ class CloudStreamApp : Application(), SingletonImageLoader.Factory {
 
     override fun onCreate() {
         super.onCreate()
-        // if we want to initialise coil at earliest
-        // (maybe when loading an image or gif using in splash screen activity)
-        //ImageLoader.buildImageLoader(applicationContext)
+        // If we want to initialize Coil as early as possible
+        // (maybe when loading an image or GIF using in a splash screen activity)
+        // buildImageLoader(applicationContext)
 
         ExceptionHandler(filesDir.resolve("last_error")) {
             val intent = context!!.packageManager.getLaunchIntentForPackage(context!!.packageName)
@@ -84,15 +88,15 @@ class CloudStreamApp : Application(), SingletonImageLoader.Factory {
         context = base
     }
 
-    override fun newImageLoader(context: PlatformContext): coil3.ImageLoader {
-        // Coil Module will be initialized & setSafe globally when first loadImage() is invoked
-        return ImageLoader.buildImageLoader(applicationContext)
+    override fun newImageLoader(context: PlatformContext): ImageLoader {
+        // Coil module will be initialized globally when first loadImage() is invoked.
+        return buildImageLoader(applicationContext)
     }
 
     companion object {
         var exceptionHandler: ExceptionHandler? = null
 
-        /** Use to get activity from Context */
+        /** Use to get Activity from Context */
         tailrec fun Context.getActivity(): Activity? {
             return when (this) {
                 is Activity -> this
@@ -157,14 +161,12 @@ class CloudStreamApp : Application(), SingletonImageLoader.Factory {
             context?.removeKey(path)
         }
 
-        /**
-         * If fallbackWebview is true and a fragment is supplied then it will open a webview with the url if the browser fails.
-         * */
-        fun openBrowser(url: String, fallbackWebview: Boolean = false, fragment: Fragment? = null) {
-            context?.openBrowser(url, fallbackWebview, fragment)
+        /** If fallbackWebView is true and a fragment is supplied then it will open a WebView with the URL if the browser fails. */
+        fun openBrowser(url: String, fallbackWebView: Boolean = false, fragment: Fragment? = null) {
+            context?.openBrowser(url, fallbackWebView, fragment)
         }
 
-        /** Will fallback to webview if in TV layout */
+        /** Will fall back to WebView if in TV or emulator layout. */
         fun openBrowser(url: String, activity: FragmentActivity?) {
             openBrowser(
                 url,
