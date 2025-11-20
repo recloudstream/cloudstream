@@ -26,12 +26,12 @@ jobs:
           private_key: ${{ secrets.GH_APP_KEY }}
           repository: "recloudstream/dokka"
       - name: Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@v6
         with:
           path: "src"
 
       - name: Checkout dokka
-        uses: actions/checkout@master
+        uses: actions/checkout@v6
         with:
           repository: "recloudstream/dokka"
           path: "dokka"

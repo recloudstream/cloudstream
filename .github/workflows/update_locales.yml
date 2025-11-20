@@ -23,7 +23,7 @@ jobs:
         app_id: ${{ secrets.GH_APP_ID }}
         private_key: ${{ secrets.GH_APP_KEY }}
         repository: "recloudstream/cloudstream"
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       with:
         token: ${{ steps.generate_token.outputs.token }}
     - name: Install dependencies
