@@ -692,7 +692,7 @@
     <string name="player_load_one_subtitle_online">Muat yang pertama tersedia</string>
     <string name="torrent_preferred_media">Aktifkan torrent di dalam Pengaturan/Penyedia/Media pilihan</string>
     <string name="torrent_not_accepted">Mulai ulang aplikasi dan terima pop-up Stream Torrent untuk melanjutkan.</string>
-    <string name="software_decoding_desc">Dekode perangkat lunak memungkinkan pemutar memainkan berkas video yang tidak didukung perangkat Anda, tetapi dapat memperburuk performa atau pemutaran yang tidak stabil pada resolusi tinggi</string>
+    <string name="software_decoding_desc">Dekode perangkat lunak memungkinkan pemutar memainkan berkas video yang tidak didukung perangkat Anda, tetapi dapat memperburuk performa atau pemutaran yang tidak stabil pada resolusi tinggi.</string>
     <string name="software_decoding">Dekode perangkat lunak</string>
     <string name="sort_episodes_rating_low_high">Rating (terendah)</string>
     <string name="sort_button_date">Tanggal %s</string>
@@ -759,4 +759,5 @@
     <string name="top_left">Atas kiri</string>
     <string name="top_center">Atas tengah</string>
     <string name="top_right">Atas kanan</string>
+    <string name="play_full_series_button">Putar Seri Penuh</string>
 </resources>

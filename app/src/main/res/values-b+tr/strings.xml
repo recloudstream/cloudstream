@@ -717,7 +717,7 @@
     <string name="torrent_preferred_media">Ayarlar/Sağlayıcılar/Tercih edilen medya bölümünden torrenti etkinleştirin</string>
     <string name="torrent_not_accepted">Uygulamayı yeniden başlatın ve devam etmek için Stream Torrent açılır penceresini kabul edin.</string>
     <string name="software_decoding">Yazılımsal çözücü</string>
-    <string name="software_decoding_desc">Yazılımsal kod çözücü, oynatıcının telefon tarafından desteklenmeyen video dosyalarını oynatmasını sağlar, ancak yüksek çözünürlükte gecikmeli veya dengesiz oynatmaya neden olabilir</string>
+    <string name="software_decoding_desc">Yazılımsal kod çözücü, oynatıcının cihazınız tarafından desteklenmeyen video dosyalarını oynatmasını sağlar, ancak yüksek çözünürlükte gecikmeli veya dengesiz oynatmaya neden olabilir.</string>
     <string name="sort_episodes_number_asc">Bölüm (Artan)</string>
     <string name="sort_episodes_number_desc">Bölüm (Azalan)</string>
     <string name="sort_episodes_rating_high_low">Puanlama (En Yüksek)</string>
@@ -760,7 +760,7 @@
     <string name="download_time_left_min_sec_format" formatted="true">%1$ddk %2$dsn</string>
     <string name="download_time_left_sec_format" formatted="true">%1$dsn</string>
     <string name="show_rating">Reyting etiketi</string>
-    <string name="no_account">Hesap yok</string>
+    <string name="no_account">hesap yok</string>
     <string name="edit_profile_image_title">Profil Resmini düzenle</string>
     <string name="edit_profile_image_hint">Profil Resmi Bağlantısını Girin</string>
     <string name="edit_profile_image_error_empty">URL bulunamadı</string>
@@ -783,4 +783,5 @@
     <string name="top_center">Üst orta</string>
     <string name="top_right">Sağ üst</string>
     <string name="subs_subtitle_alignment">Altyazı Hizalama</string>
+    <string name="play_full_series_button">Tüm Seriyi Oyna</string>
 </resources>
