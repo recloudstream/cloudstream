@@ -128,7 +128,6 @@ import com.lagradost.cloudstream3.extractors.MailRu
 import com.lagradost.cloudstream3.extractors.Maxstream
 import com.lagradost.cloudstream3.extractors.Mcloud
 import com.lagradost.cloudstream3.extractors.Mediafire
-import com.lagradost.cloudstream3.extractors.MegaF
 import com.lagradost.cloudstream3.extractors.Megacloud
 import com.lagradost.cloudstream3.extractors.Meownime
 import com.lagradost.cloudstream3.extractors.MetaGnathTuggers
@@ -148,7 +147,6 @@ import com.lagradost.cloudstream3.extractors.Multimovies
 import com.lagradost.cloudstream3.extractors.Mvidoo
 import com.lagradost.cloudstream3.extractors.Mwish
 import com.lagradost.cloudstream3.extractors.MwvnVizcloudInfo
-import com.lagradost.cloudstream3.extractors.MyCloud
 import com.lagradost.cloudstream3.extractors.NathanFromSubject
 import com.lagradost.cloudstream3.extractors.Nekostream
 import com.lagradost.cloudstream3.extractors.Nekowish
@@ -254,9 +252,6 @@ import com.lagradost.cloudstream3.extractors.VidHidePro4
 import com.lagradost.cloudstream3.extractors.VidHidePro5
 import com.lagradost.cloudstream3.extractors.VidHidePro6
 import com.lagradost.cloudstream3.extractors.VidMoxy
-import com.lagradost.cloudstream3.extractors.VidSrcExtractor
-import com.lagradost.cloudstream3.extractors.VidSrcExtractor2
-import com.lagradost.cloudstream3.extractors.VidSrcTo
 import com.lagradost.cloudstream3.extractors.VidStack
 import com.lagradost.cloudstream3.extractors.VideoSeyred
 import com.lagradost.cloudstream3.extractors.VideoVard
@@ -271,8 +266,6 @@ import com.lagradost.cloudstream3.extractors.VidhideExtractor
 import com.lagradost.cloudstream3.extractors.Vidmoly
 import com.lagradost.cloudstream3.extractors.Vidmolyme
 import com.lagradost.cloudstream3.extractors.Vido
-import com.lagradost.cloudstream3.extractors.Vidplay
-import com.lagradost.cloudstream3.extractors.VidplayOnline
 import com.lagradost.cloudstream3.extractors.Vidstreamz
 import com.lagradost.cloudstream3.extractors.Vidxstream
 import com.lagradost.cloudstream3.extractors.VinovoSi
@@ -1153,15 +1146,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     YoutubeMobileExtractor(),
     YoutubeNoCookieExtractor(),
     Streamlare(),
-    VidSrcExtractor(),
-    VidSrcExtractor2(),
-    VidSrcTo(),
     PlayLtXyz(),
     AStreamHub(),
-    Vidplay(),
-    VidplayOnline(),
-    MyCloud(),
-    MegaF(),
 
     Cda(),
     Dailymotion(),
