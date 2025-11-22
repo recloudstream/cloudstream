@@ -225,7 +225,6 @@ dependencies {
     implementation(libs.torrentserver)
 
     // Downloading & Networking
-    implementation(libs.work.runtime)
     implementation(libs.work.runtime.ktx)
     implementation(libs.nicehttp) // HTTP Lib
 
