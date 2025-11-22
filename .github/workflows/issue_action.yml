@@ -37,7 +37,7 @@ jobs:
               repo: context.repo.repo,
               labels: ["possible duplicate"]
             })
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Automatically close issues that dont follow the issue template
         uses: lucasbento/auto-close-issues@v1.0.2
         with:
