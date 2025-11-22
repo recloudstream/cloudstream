@@ -423,16 +423,24 @@ class EpisodeAdapter(
                     episodeText.isSelected = true // is needed for text repeating
 
                     if (item.videoWatchState == VideoWatchState.Watched) {
-                        // This cannot be done in getDisplayPosition() as when you have not watched something
-                        // the duration and position is 0
-                        episodeProgress.max = 1
-                        episodeProgress.progress = 1
-                        episodeProgress.isVisible = true
+                        episodePlayIcon.setImageResource(R.drawable.ic_baseline_check_24)
+                        episodeProgress.isVisible = false
                     } else {
                         val displayPos = item.getDisplayPosition()
-                        episodeProgress.max = (item.duration / 1000).toInt()
-                        episodeProgress.progress = (displayPos / 1000).toInt()
-                        episodeProgress.isVisible = displayPos > 0L
+                        val durationSec = (item.duration / 1000).toInt()
+                        val progressSec = (displayPos / 1000).toInt()
+
+                        if (displayPos >= item.duration && displayPos > 0) {
+                            episodePlayIcon.setImageResource(R.drawable.ic_baseline_check_24)
+                            episodeProgress.isVisible = false
+                        } else {
+                            episodePlayIcon.setImageResource(R.drawable.play_button_transparent)
+                            episodeProgress.apply {
+                                max = durationSec
+                                progress = progressSec
+                                isVisible = displayPos > 0L
+                            }
+                        }
                     }
 
                     itemView.setOnClickListener {

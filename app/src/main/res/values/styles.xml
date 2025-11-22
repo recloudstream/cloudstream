@@ -1093,4 +1093,16 @@
         <item name="android:layout_height">@dimen/continue_watching_progress_size</item>
         <item name="indicatorSize">@dimen/continue_watching_progress_size</item>
     </style>
+
+    <style name="DownloadHeaderCircularProgress" parent="CircularProgress">
+        <item name="android:layout_width">@dimen/download_header_progress_size</item>
+        <item name="android:layout_height">@dimen/download_header_progress_size</item>
+        <item name="indicatorSize">@dimen/download_header_progress_size</item>
+    </style>
+    <style name="DownloadHeaderPlayUnderlayProgress" parent="PlayUnderlayProgress">
+        <item name="tint">@color/white</item>
+        <item name="android:layout_width">@dimen/download_header_progress_size</item>
+        <item name="android:layout_height">@dimen/download_header_progress_size</item>
+        <item name="android:background">@color/playIconBackground</item>
+    </style>
 </resources>
