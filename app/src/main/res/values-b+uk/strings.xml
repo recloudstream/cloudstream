@@ -711,4 +711,5 @@
     <string name="top_left">Угорі ліворуч</string>
     <string name="top_center">Верхній центр</string>
     <string name="top_right">Угорі праворуч</string>
+    <string name="play_full_series_button">Відтворити повну серію</string>
 </resources>

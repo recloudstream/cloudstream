@@ -763,4 +763,5 @@
     <string name="top_left">Vlevo nahoře</string>
     <string name="top_center">Uprostřed nahoře</string>
     <string name="top_right">Vpravo nahoře</string>
+    <string name="play_full_series_button">Přehrát celý seriál</string>
 </resources>
