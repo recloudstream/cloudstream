@@ -18,7 +18,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "CloudStream"
-
-include(":app")
-include(":library")
-include(":docs")
+include(":app", ":library", ":docs")
