@@ -525,23 +525,35 @@ object PluginManager {
         // Make sure all local plugins are fully refreshed.
         removeKey(PLUGINS_KEY_LOCAL)
 
-        // Clean up all existing files to avoid stale plugins
-        pluginDirectory.listFiles()?.forEach { it.delete() }
-
         val dir = File(LOCAL_PLUGINS_PATH)
 
         if (!dir.exists()) {
-          Log.d(TAG, "No local plugins folder found at '${LOCAL_PLUGINS_PATH}'")
-          // Since there are no local plugins, we can consider them loaded
-          loadedLocalPlugins = true
-          return
+            Log.d(TAG, "No local plugins folder found at '${LOCAL_PLUGINS_PATH}'")
+            // Clean up all existing plugins since the local plugins folder doesn't exist
+            // This is required since the user might stop using local plugins but still have old
+            // plugins lying around taking up space.
+            // These cannot be deleted without manually by the user without root access
+            pluginDirectory.listFiles()?.forEach { it.delete() }
+
+            // Since there are no local plugins, we can consider them loaded
+            loadedLocalPlugins = true
+            return
         }
 
         // Always sort plugins alphabetically for reproducible results
-        val sortedPlugins = dir.listFiles()
+        val sortedPlugins = dir.listFiles()?.sortedBy { it.name }
         Log.d(TAG, "Files in '${LOCAL_PLUGINS_PATH}' folder: ${sortedPlugins?.size}")
 
-        sortedPlugins?.sortedBy { it.name }?.amap { file ->
+        val sortedPluginNames = sortedPlugins?.mapTo(HashSet()) { it.name }
+        pluginDirectory.listFiles()?.sortedBy { it.name }?.amap {
+            // If the plugin doesn't exist in the local plugins folder, delete it
+            if (!it.isDirectory && sortedPluginNames?.contains(it.name) == false) {
+                Log.d(TAG, "Deleting removed local plugin: ${it.name}")
+                it.delete()
+            }
+        }
+
+        sortedPlugins?.amap { file ->
             try {
                 val destinationFile = File(pluginDirectory, file.name)
 
