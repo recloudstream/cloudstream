@@ -529,9 +529,9 @@ object PluginManager {
 
         Log.d(TAG, "Files in '${LOCAL_PLUGINS_PATH}' folder: ${sortedPlugins?.size}")
 
-        // Use app-specific external files directory and copy the file there.
+        // Use app-specific files directory and copy the file there.
         // We have to do this because on Android 14+, it otherwise gives SecurityException
-        // due to dex files and setReadOnly seems to have no effect unless it it here.
+        // due to dex files and setReadOnly seems to have no effect unless it is here.
         val pluginDirectory = File(context.filesDir, "plugins")
         if (!pluginDirectory.exists()) {
             pluginDirectory.mkdirs() // Ensure the plugins directory exists
