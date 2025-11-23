@@ -68,7 +68,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
     BaseFragment.BindingCreator.Inflate(FragmentResultTvBinding::inflate)
 ) {
 
-    private lateinit var viewModel: ResultViewModel2
+    private lateinit var viewModel: ResultViewModel
 
     override fun onDestroyView() {
         updateUIEvent -= ::updateUI
@@ -82,7 +82,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         savedInstanceState: Bundle?
     ): View? {
         viewModel =
-            ViewModelProvider(this)[ResultViewModel2::class.java]
+            ViewModelProvider(this)[ResultViewModel::class.java]
         viewModel.EPISODE_RANGE_SIZE = 50
         updateUIEvent += ::updateUI
 

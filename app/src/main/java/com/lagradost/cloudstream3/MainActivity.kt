@@ -112,7 +112,7 @@ import com.lagradost.cloudstream3.ui.player.BasicLink
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.LinkGenerator
 import com.lagradost.cloudstream3.ui.result.LinearListLayout
-import com.lagradost.cloudstream3.ui.result.ResultViewModel2
+import com.lagradost.cloudstream3.ui.result.ResultViewModel
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.result.SyncViewModel
 import com.lagradost.cloudstream3.ui.search.SearchFragment
@@ -822,7 +822,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
     }
 
-    lateinit var viewModel: ResultViewModel2
+    lateinit var viewModel: ResultViewModel
     lateinit var syncViewModel: SyncViewModel
     private var libraryViewModel: LibraryViewModel? = null
 
@@ -830,7 +830,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     var isLocalList: Boolean = false
     override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
 
-        viewModel = ViewModelProvider(this)[ResultViewModel2::class.java]
+        viewModel = ViewModelProvider(this)[ResultViewModel::class.java]
         syncViewModel = ViewModelProvider(this)[SyncViewModel::class.java]
 
         return super.onCreateView(name, context, attrs)

@@ -101,7 +101,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             }
         }
 
-    protected lateinit var viewModel: ResultViewModel2
+    protected lateinit var viewModel: ResultViewModel
     protected lateinit var syncModel: SyncViewModel
 
     protected var binding: FragmentResultSwipeBinding? = null
@@ -117,7 +117,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         savedInstanceState: Bundle?
     ): View? {
         viewModel =
-            ViewModelProvider(this)[ResultViewModel2::class.java]
+            ViewModelProvider(this)[ResultViewModel::class.java]
         syncModel =
             ViewModelProvider(this)[SyncViewModel::class.java]
         updateUIEvent += ::updateUI
