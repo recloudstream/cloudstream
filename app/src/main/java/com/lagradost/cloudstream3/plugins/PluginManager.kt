@@ -514,31 +514,32 @@ object PluginManager {
     suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(context: Context, forceReload: Boolean) {
         assertNonRecursiveCallstack()
 
-        val dir = File(LOCAL_PLUGINS_PATH)
-
-        if (!dir.exists()) {
-            val res = dir.mkdirs()
-            if (!res) {
-                Log.w(TAG, "Failed to create local directories")
-                return
-            }
-        }
-
-        val sortedPlugins = dir.listFiles()
-        // Always sort plugins alphabetically for reproducible results
-
-        Log.d(TAG, "Files in '${LOCAL_PLUGINS_PATH}' folder: ${sortedPlugins?.size}")
-
-        // Use app-specific external files directory and copy the file there.
+        // Use app-specific files directory and copy the file there.
         // We have to do this because on Android 14+, it otherwise gives SecurityException
-        // due to dex files and setReadOnly seems to have no effect unless it it here.
-        val pluginDirectory = File(context.getExternalFilesDir(null), "plugins")
+        // due to dex files and setReadOnly seems to have no effect unless it is here.
+        val pluginDirectory = File(context.filesDir, "plugins")
         if (!pluginDirectory.exists()) {
             pluginDirectory.mkdirs() // Ensure the plugins directory exists
         }
 
         // Make sure all local plugins are fully refreshed.
         removeKey(PLUGINS_KEY_LOCAL)
+
+        // Clean up all existing files to avoid stale plugins
+        pluginDirectory.listFiles()?.forEach { it.delete() }
+
+        val dir = File(LOCAL_PLUGINS_PATH)
+
+        if (!dir.exists()) {
+          Log.d(TAG, "No local plugins folder found at '${LOCAL_PLUGINS_PATH}'")
+          // Since there are no local plugins, we can consider them loaded
+          loadedLocalPlugins = true
+          return
+        }
+
+        // Always sort plugins alphabetically for reproducible results
+        val sortedPlugins = dir.listFiles()
+        Log.d(TAG, "Files in '${LOCAL_PLUGINS_PATH}' folder: ${sortedPlugins?.size}")
 
         sortedPlugins?.sortedBy { it.name }?.amap { file ->
             try {
