@@ -532,13 +532,15 @@ object PluginManager {
         // Use app-specific external files directory and copy the file there.
         // We have to do this because on Android 14+, it otherwise gives SecurityException
         // due to dex files and setReadOnly seems to have no effect unless it it here.
-        val pluginDirectory = File(context.getExternalFilesDir(null), "plugins")
+        val pluginDirectory = File(context.filesDir, "plugins")
         if (!pluginDirectory.exists()) {
             pluginDirectory.mkdirs() // Ensure the plugins directory exists
         }
 
         // Make sure all local plugins are fully refreshed.
         removeKey(PLUGINS_KEY_LOCAL)
+        // Clean up all existing files to avoid stale plugins
+        pluginDirectory.listFiles()?.forEach { it.delete() }
 
         sortedPlugins?.sortedBy { it.name }?.amap { file ->
             try {
