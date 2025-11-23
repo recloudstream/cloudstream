@@ -27,12 +27,12 @@ jobs:
           repository: "recloudstream/dokka"
 
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           path: "src"
 
       - name: Checkout dokka
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: "recloudstream/dokka"
           path: "dokka"
