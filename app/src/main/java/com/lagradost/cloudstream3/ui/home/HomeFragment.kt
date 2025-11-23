@@ -83,8 +83,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     BaseFragment.BindingCreator.Bind(FragmentHomeBinding::bind)
 ) {
     companion object {
-        val configEvent = Event<Int>()
         var currentSpan = 1
+        var useBindingPool = true
+        val configEvent = Event<Int>()
         val listHomepageItems = mutableListOf<SearchResponse>()
 
         private val errorProfilePics = listOf(
@@ -552,6 +553,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     override fun pickLayout(): Int? =
         if (isLayout(PHONE)) R.layout.fragment_home else R.layout.fragment_home_tv
+
+    override fun getPoolKey(): String {
+        if (!useBindingPool) return ""
+        return "HomeFragment"
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
