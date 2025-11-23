@@ -1,14 +1,13 @@
 name: Fix locale issues
 
 on:
-  workflow_dispatch:
   push:
+    branches: [ master ]
     paths:
       - '**.xml'
-    branches:
-      - master
+  workflow_dispatch:
 
-concurrency: 
+concurrency:
   group: "locale"
   cancel-in-progress: true
 

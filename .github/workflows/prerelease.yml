@@ -8,7 +8,7 @@ on:
       - '*.json'
       - '**/wcokey.txt'
 
-concurrency: 
+concurrency:
   group: "pre-release"
   cancel-in-progress: true
 

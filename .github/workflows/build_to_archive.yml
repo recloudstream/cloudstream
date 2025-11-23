@@ -9,7 +9,7 @@ on:
       - '**/wcokey.txt'
   workflow_dispatch:
 
-concurrency: 
+concurrency:
   group: "Archive-build"
   cancel-in-progress: true
 
@@ -72,8 +72,7 @@ jobs:
         path: "archive"
 
     - name: Move build
-      run: |
-        cp app/build/outputs/apk/prerelease/release/*.apk "archive/$(git rev-parse --short HEAD).apk"
+      run: cp app/build/outputs/apk/prerelease/release/*.apk "archive/$(git rev-parse --short HEAD).apk"
 
     - name: Push archive
       run: |

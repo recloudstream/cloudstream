@@ -1,18 +1,14 @@
 name: Dokka
 
-# https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#concurrency
-concurrency: 
-  group: "dokka"
-  cancel-in-progress: true
-
 on:
   push:
-    branches:
-      # choose your default branch
-      - master
-      - main
+    branches: [ master ]
     paths-ignore:
       - '*.md'
+
+concurrency:
+  group: "dokka"
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -61,8 +57,7 @@ jobs:
           ./gradlew docs:dokkaGeneratePublicationHtml
 
       - name: Copy Dokka
-        run: |
-          cp -r $GITHUB_WORKSPACE/src/docs/build/dokka/html/* $GITHUB_WORKSPACE/dokka/
+        run: cp -r $GITHUB_WORKSPACE/src/docs/build/dokka/html/* $GITHUB_WORKSPACE/dokka/
 
       - name: Push builds
         run: |
