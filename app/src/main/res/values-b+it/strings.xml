@@ -759,4 +759,5 @@
     <string name="top_center">In alto al centro</string>
     <string name="top_right">In alto a destra</string>
     <string name="middle_left">In centro a sinistra</string>
+    <string name="play_full_series_button">Riproduci serie completa</string>
 </resources>
