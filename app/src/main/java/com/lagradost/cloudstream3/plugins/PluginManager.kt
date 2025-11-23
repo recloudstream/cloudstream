@@ -517,11 +517,11 @@ object PluginManager {
         val dir = File(LOCAL_PLUGINS_PATH)
 
         if (!dir.exists()) {
-            val res = dir.mkdirs()
-            if (!res) {
-                Log.w(TAG, "Failed to create local directories")
-                return
-            }
+            Log.d(TAG, "No local plugins folder found at '${LOCAL_PLUGINS_PATH}'")
+
+            // Since there are no local plugins, we can consider them loaded
+            loadedLocalPlugins = true
+            return
         }
 
         val sortedPlugins = dir.listFiles()
