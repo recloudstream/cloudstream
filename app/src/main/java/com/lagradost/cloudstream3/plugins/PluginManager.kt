@@ -532,7 +532,7 @@ object PluginManager {
             // Clean up all existing plugins since the local plugins folder doesn't exist
             // This is required since the user might stop using local plugins but still have old
             // plugins lying around taking up space.
-            // These cannot be deleted without manually by the user without root access
+            // These cannot be deleted manually by the user without root access
             pluginDirectory.listFiles()?.forEach { it.delete() }
 
             // Since there are no local plugins, we can consider them loaded
