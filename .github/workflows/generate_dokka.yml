@@ -1,18 +1,14 @@
 name: Dokka
 
-# https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#concurrency
-concurrency: 
-  group: "dokka"
-  cancel-in-progress: true
-
 on:
   push:
-    branches:
-      # choose your default branch
-      - master
-      - main
+    branches: [ master ]
     paths-ignore:
       - '*.md'
+
+concurrency:
+  group: "dokka"
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -25,6 +21,7 @@ jobs:
           app_id: ${{ secrets.GH_APP_ID }}
           private_key: ${{ secrets.GH_APP_KEY }}
           repository: "recloudstream/dokka"
+
       - name: Checkout
         uses: actions/checkout@v6
         with:
@@ -36,21 +33,21 @@ jobs:
           repository: "recloudstream/dokka"
           path: "dokka"
           token: ${{ steps.generate_token.outputs.token }}
-      
+
       - name: Clean old builds
         run: |
           cd $GITHUB_WORKSPACE/dokka/
           rm -rf "./app"
           rm -rf "./library"
 
-      - name: Setup JDK 17
+      - name: Set up JDK 17
         uses: actions/setup-java@v5
         with:
           java-version: 17
-          distribution: 'adopt'
+          distribution: adopt
           cache: gradle
 
-      - name: Setup Android SDK
+      - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
       - name: Generate Dokka
@@ -60,8 +57,7 @@ jobs:
           ./gradlew docs:dokkaGeneratePublicationHtml
 
       - name: Copy Dokka
-        run: |
-          cp -r $GITHUB_WORKSPACE/src/docs/build/dokka/html/* $GITHUB_WORKSPACE/dokka/
+        run: cp -r $GITHUB_WORKSPACE/src/docs/build/dokka/html/* $GITHUB_WORKSPACE/dokka/
 
       - name: Push builds
         run: |
