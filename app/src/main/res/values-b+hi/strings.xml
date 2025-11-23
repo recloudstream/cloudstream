@@ -40,7 +40,6 @@
     <string name="popup_play_file">फ़ाइल चलाएं</string>
     <string name="popup_resume_download">डाउनलोड फिर शुरू करें</string>
     <string name="popup_pause_download">डाउनलोड रोकें</string>
-    <string name="pref_disable_acra">स्वचालित बग रिपोर्टिंग अक्षम करें</string>
     <string name="home_more_info">और जानकारी</string>
     <string name="home_expanded_hide">छिपाएं</string>
     <string name="home_play">चलाएं</string>
@@ -72,8 +71,6 @@
     <string name="search">खोजें</string>
     <string name="settings_info">जानकारी</string>
     <string name="advanced_search_des">खोज नतीजों को प्रोवाइडरों के हिसाब से अलग-अलग आपको दिखाता है</string>
-    <string name="bug_report_settings_off">केवल क्रैश पर जानकारी भेजी जाएगी</string>
-    <string name="bug_report_settings_on">आपकी जानकारी नहीं भेजी जाएगी</string>
     <string name="updates_settings_des">हर बार एप खुलने पर स्वचालित रूप से नए अपडेट खोजें।</string>
     <string name="uprereleases_settings_des">केवल पूर्ण रिलीज़ के बजाय प्रीरिलीज़ अपडेट खोजें</string>
     <string name="lightnovel">उन्हीं डेवलपर्स द्वारा Light novel ऐप</string>
@@ -86,7 +83,6 @@
     <string name="no_links_found_toast">कोई लिंक नहीं मिले</string>
     <string name="copy_link_toast">लिंक क्लिपबोर्ड पर कॉपी किया गया</string>
     <string name="play_episode_toast">एपिसोड चलायें</string>
-    <string name="acra_report_toast">क्षमा करें, एप्प क्रैश हो गया है । निर्माताओं को एक अनाम बग रिपोर्ट भेजी जाएगी</string>
     <string name="delete_file">फ़ाइल डिलीट करें</string>
     <string name="delete">डिलीट</string>
     <string name="cancel">रद्द करें</string>

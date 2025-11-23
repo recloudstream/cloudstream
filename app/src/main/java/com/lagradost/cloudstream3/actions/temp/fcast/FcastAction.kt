@@ -1,7 +1,7 @@
 package com.lagradost.cloudstream3.actions.temp.fcast
 
 import android.content.Context
-import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.actions.VideoClickAction

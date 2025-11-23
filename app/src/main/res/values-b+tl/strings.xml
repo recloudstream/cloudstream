@@ -60,7 +60,6 @@
     <string name="popup_play_file">I-play ang file</string>
     <string name="popup_resume_download">I-resume ang download</string>
     <string name="popup_pause_download">I-pause ang download</string>
-    <string name="pref_disable_acra">Huwag awtomatikong mag-ulat ng bug</string>
     <string name="home_more_info">More Info</string>
     <string name="home_expanded_hide">Itago</string>
     <string name="home_play">I-play</string>
@@ -113,8 +112,6 @@
     <string name="settings_info">Impormasyon</string>
     <string name="advanced_search">Adbans na maghanap</string>
     <string name="advanced_search_des">Magbibigay ng pinaghiwa-hiwalay na resulta</string>
-    <string name="bug_report_settings_off">Nagpapadala lamang ng data kung nag-crash ang app</string>
-    <string name="bug_report_settings_on">Hindi magpapadala ng kahit anong data</string>
     <string name="show_fillers_settings">Ipakita ang filler episode sa anime</string>
     <string name="updates_settings">Ipakita kung may bagong update</string>
     <string name="updates_settings_des">Awtomatikong mag-check ng bagong update pagbukas ng app</string>
@@ -132,7 +129,6 @@
     <string name="copy_link_toast">Link copied to clipboard</string>
     <string name="play_episode_toast">Play Episode</string>
     <string name="subs_default_reset_toast">I-reset sa default value</string>
-    <string name="acra_report_toast">Paumanhin, ang app ay nag-crash. Isang anonymous bug report ang ipapadala sa developers</string>
     <string name="season">Season</string>
     <string name="no_season">No season</string>
     <string name="episode">Episode</string>

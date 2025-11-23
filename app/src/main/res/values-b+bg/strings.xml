@@ -67,7 +67,6 @@
     <string name="popup_play_file">Възпроизвеждане на файл</string>
     <string name="popup_resume_download">Възобновете изтеглянето</string>
     <string name="popup_pause_download">Пауза на изтеглянето</string>
-    <string name="pref_disable_acra">Деактивирайте автоматичното докладване на грешки</string>
     <string name="home_more_info">Повече информация</string>
     <string name="home_expanded_hide">Скрий</string>
     <string name="home_play">Пусни</string>
@@ -148,8 +147,6 @@
     <string name="settings_info">Информация</string>
     <string name="advanced_search">Подробно търсене</string>
     <string name="advanced_search_des">Дава ви резултатите от търсенето, разделени по доставчик</string>
-    <string name="bug_report_settings_off">Изпраща данни само за сривове</string>
-    <string name="bug_report_settings_on">Не изпраща данни</string>
     <string name="show_fillers_settings">Показване заместващ епизод за аниме</string>
     <string name="show_trailers_settings">Показване на трейлъри</string>
     <string name="kitsu_settings">Покажете плакати от Kitsu</string>
@@ -171,7 +168,6 @@
     <string name="copy_link_toast">Връзката е копирана в клипборда</string>
     <string name="play_episode_toast">Пусни епизода</string>
     <string name="subs_default_reset_toast">Възстановяване на стойността по подразбиране</string>
-    <string name="acra_report_toast">За съжаление приложението се срина. Анонимен доклад за грешка ще бъде изпратен до разработчиците</string>
     <string name="season">Сезон</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Без сезон</string>
@@ -390,7 +386,6 @@
     <string name="previous">Предишен</string>
     <string name="skip_setup">Пропуснете настройката</string>
     <string name="app_layout_subtext">Променете външния вид на приложението, за да отговаря на вашето устройство</string>
-    <string name="crash_reporting_title">Докладване за сривове</string>
     <string name="preferred_media_subtext">Какво искате да видите</string>
     <string name="setup_done">Край</string>
     <string name="extensions">Разширения</string>

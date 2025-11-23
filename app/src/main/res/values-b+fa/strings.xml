@@ -55,7 +55,6 @@
     <string name="player_subtitles_settings">زیرنویس‌ها</string>
     <string name="action_remove_from_bookmarks">حذف</string>
     <string name="download_started">دانلود آغاز شد</string>
-    <string name="pref_disable_acra">غیرفعال کردن گذارش باگ خودکار</string>
     <string name="sort_clear">پاک کردن</string>
     <string name="update_started">به‌روزرسانی آغاز شد</string>
     <string name="sort_copy">کپی</string>
@@ -308,8 +307,6 @@
     <string name="episode_sync_settings">به‌روزرسانی پیشرفت ساعت</string>
     <string name="begin_speaking">شروع کنید به صحبت کردن…</string>
     <string name="advanced_search_des">جواب سرچ های شما با تامین کننده</string>
-    <string name="bug_report_settings_off">فقط درصورت کرش اطلاعات فرستاده می شوند</string>
-    <string name="bug_report_settings_on">هیچ اطلاعاتی (دیتایی) فرستاده نمی شود</string>
     <string name="updates_settings">نشان دادن آپدیت های برنامه</string>
     <string name="redo_setup_process">دوباره پروسه راه اندازی را انجام بده</string>
     <string name="uprereleases_settings">نسخه های پیشین را آپدیت کن</string>
@@ -317,7 +314,6 @@
     <string name="lightnovel">برنامه سبک رمان از توسعه دهندگان یکسان</string>
     <string name="anim">برنامه انیمه از توسعه دهندگان یکسان</string>
     <string name="no_chromecast_support_toast">این ارائه دهنده هیچ پشتیبانی از کروم کست ندارد</string>
-    <string name="acra_report_toast">متأسفیم، برنامه کرش کرد. یک گزارش از این باگ بطور ناشناس به توسعه دهندگان فرستاده می‌شود</string>
     <string name="test_failed">با شکست مواجه شد</string>
     <string name="test_warning">اخطار</string>
     <string name="rating">امتیاز</string>

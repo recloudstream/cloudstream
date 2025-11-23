@@ -84,7 +84,6 @@
     <string name="popup_play_file">Dosyayı Oynat</string>
     <string name="popup_resume_download">İndirmeyi Sürdür</string>
     <string name="popup_pause_download">İndirmeyi Duraklat</string>
-    <string name="pref_disable_acra">Otomatik hata raporlamayı kapat</string>
     <string name="home_more_info">Daha fazla bilgi</string>
     <string name="home_expanded_hide">Gizle</string>
     <string name="home_play">Oynat</string>
@@ -165,8 +164,6 @@
     <string name="settings_info">Bilgi</string>
     <string name="advanced_search">Gelişmiş arama</string>
     <string name="advanced_search_des">Arama sonuçlarını sağlayıcıya göre ayırır</string>
-    <string name="bug_report_settings_off">Yalnızca çökmelerle ilgili verileri gönderir</string>
-    <string name="bug_report_settings_on">Veri göndermez</string>
     <string name="show_fillers_settings">Anime için dolgu bölümünü göster</string>
     <string name="show_trailers_settings">Fragmanları göster</string>
     <string name="kitsu_settings">Kitsu posterlerini göster</string>
@@ -188,7 +185,6 @@
     <string name="copy_link_toast">Bağlantı panoya kopyalandı</string>
     <string name="play_episode_toast">Bölümü oynat</string>
     <string name="subs_default_reset_toast">Varsayılan değere sıfırla</string>
-    <string name="acra_report_toast">Üzgünüz, uygulama çöktü. Geliştiricilere anonim bir hata raporu gönderilecek</string>
     <string name="season">Sezon</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Sezon yok</string>
@@ -427,7 +423,6 @@
     <string name="previous">Önceki</string>
     <string name="skip_setup">Kurulumu atla</string>
     <string name="app_layout_subtext">Cihazınıza uygun uygulama görünümünü seçin</string>
-    <string name="crash_reporting_title">Çökme raporları</string>
     <string name="preferred_media_subtext">Ne izlemek istiyorsunuz</string>
     <string name="setup_done">Bitti</string>
     <string name="extensions">Eklentiler</string>

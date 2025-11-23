@@ -69,7 +69,6 @@
     <string name="popup_play_file">Reproduzir arquivo</string>
     <string name="popup_resume_download">Continuar download</string>
     <string name="popup_pause_download">Pausar download</string>
-    <string name="pref_disable_acra">Desative o relatório automático de erros</string>
     <string name="home_more_info">Mais informações</string>
     <string name="home_expanded_hide">Ocultar</string>
     <string name="home_play">Reproduzir</string>
@@ -148,8 +147,6 @@
     <string name="settings_info">Info</string>
     <string name="advanced_search">Pesquisa avançada</string>
     <string name="advanced_search_des">Mostrar resultados separados por fornecedor</string>
-    <string name="bug_report_settings_off">Enviar apenas dados de falhas</string>
-    <string name="bug_report_settings_on">Não enviar nenhum dado</string>
     <string name="show_fillers_settings">Mostrar episódios extras de animes</string>
     <string name="show_trailers_settings">Mostrar trailers</string>
     <string name="kitsu_settings">Mostrar posters do Kitsu</string>
@@ -171,7 +168,6 @@
     <string name="copy_link_toast">Link copiado para área de transferência</string>
     <string name="play_episode_toast">Assistir episódio</string>
     <string name="subs_default_reset_toast">Restaurar para o padrão</string>
-    <string name="acra_report_toast">Desculpe :/, o aplicativo travou. Um relatório de erro anônimo será enviado aos desenvolvedores</string>
     <string name="season">Temporada</string>
     <string name="no_season">Nenhuma temporada</string>
     <string name="episode">Episódio</string>
@@ -390,7 +386,6 @@
     <string name="previous">Anterior</string>
     <string name="skip_setup">Saltar setup</string>
     <string name="app_layout_subtext">Change the look of the app to suit your device</string>
-    <string name="crash_reporting_title">Crash reporting</string>
     <string name="preferred_media_subtext">What do you want to see</string>
     <string name="setup_done">Feito</string>
     <string name="extensions">Extensões</string>

@@ -63,7 +63,6 @@
     <string name="popup_play_file">تشغيل الملف</string>
     <string name="popup_resume_download">متابعة التنزيل</string>
     <string name="popup_pause_download">إيقاف التنزيل مؤقتًا</string>
-    <string name="pref_disable_acra">قم بتعطيل الإبلاغ عن الأخطاء تلقائيًا</string>
     <string name="home_more_info">مزيد من المعلومات</string>
     <string name="home_expanded_hide">إخفاء</string>
     <string name="home_play">تشغيل</string>
@@ -143,8 +142,6 @@
     <string name="settings_info">معلومات</string>
     <string name="advanced_search">البحث المتقدم</string>
     <string name="advanced_search_des">يعطيك نتائج البحث مفصولة عن طريق المزود</string>
-    <string name="bug_report_settings_off">إرسال البيانات عند الأعطال فقط</string>
-    <string name="bug_report_settings_on">لا ترسل أي بيانات</string>
     <string name="show_fillers_settings">عرض حلقات الفلر للأنمي</string>
     <string name="show_trailers_settings">عرض المقاطع الدعائية</string>
     <string name="kitsu_settings">عرض ملصقات من كيتسو</string>
@@ -167,7 +164,6 @@
     <string name="copy_link_toast">تم نسخ الرابط إلى الحافظة</string>
     <string name="play_episode_toast">تشغيل الحلقة</string>
     <string name="subs_default_reset_toast">إعادة التعيين إلى القيمة الافتراضية</string>
-    <string name="acra_report_toast">عذرا، تعطل التطبيق. سيتم إرسال تقرير خطأ مجهول إلى المطورين</string>
     <string name="season">موسم</string>
     <string name="no_season">لا موسم</string>
     <string name="episode">حلقة</string>
@@ -404,7 +400,6 @@
     <string name="previous">السابق</string>
     <string name="skip_setup">تخطي الإعداد</string>
     <string name="app_layout_subtext">قم بتغيير مظهر التطبيق ليناسب جهازك</string>
-    <string name="crash_reporting_title">إبلاغ الأعطال</string>
     <string name="preferred_media_subtext">ماذا تريد ان تري</string>
     <string name="setup_done">تم</string>
     <string name="extensions">الإضافات</string>

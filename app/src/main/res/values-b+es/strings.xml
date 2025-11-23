@@ -223,8 +223,6 @@
     <string name="settings_info">Información</string>
     <string name="advanced_search">Búsqueda Avanzada</string>
     <string name="advanced_search_des">Mostrar los resultados de la búsqueda por proveedor</string>
-    <string name="bug_report_settings_off">Solo envíar los datos si la App se cierra / falla inesperadamente</string>
-    <string name="bug_report_settings_on">No enviar datos</string>
     <string name="show_trailers_settings">Mostrar avances</string>
     <string name="kitsu_settings">Mostrar pósters de Kitsu</string>
     <string name="uprereleases_settings">Actualizar a las versiones preliminares</string>
@@ -239,7 +237,6 @@
     <string name="no_links_found_toast">Enlaces no encontrados</string>
     <string name="copy_link_toast">Enlaces copiados al portapapeles</string>
     <string name="subs_default_reset_toast">Reiniciar a valores predefinidos</string>
-    <string name="acra_report_toast">Lo sentimos, la aplicación se bloqueó. Se enviará un informe de error anónimo a los desarrolladores</string>
     <string name="season">Temporada</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Ninguna Temporada</string>
@@ -286,7 +283,6 @@
     <string name="updates_settings">Mostrar actualizaciones de la aplicación</string>
     <string name="apk_installer_settings">Instalador de APK</string>
     <string name="apk_installer_settings_des">Algunos dispositivos no soportan el nuevo instalador de paquetes. Pruebe la opción antigua (legacy) si las actualizaciones no se instalan.</string>
-    <string name="pref_disable_acra">Desactivar reporte automático de bugs</string>
     <string name="episode_sync_settings_des">Sincronizar automáticamente el progreso de su episodio actual</string>
     <string name="automatic_plugin_updates">Actualización automática de plugins</string>
     <string name="pref_category_player_features">Características del reproductor</string>
@@ -467,7 +463,6 @@
     <string name="update_notification_installing">Instalando actualización de la aplicación…</string>
     <string name="update_notification_failed">No se pudo instalar la nueva versión de la aplicación</string>
     <string name="app_not_found_error">App no encontrada</string>
-    <string name="crash_reporting_title">Reporte de fallos</string>
     <string name="plugin_deleted">Plugin Borrado</string>
     <string name="plugin_load_fail" formatted="true">No puede cargar %s</string>
     <string name="extension_description">Descripción</string>

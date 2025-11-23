@@ -21,7 +21,7 @@ import coil3.ImageLoader
 import coil3.request.ImageRequest
 import coil3.request.allowHardware
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getActivity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R

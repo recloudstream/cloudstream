@@ -179,7 +179,6 @@
     <string name="popup_play_file">Play File</string>
     <string name="popup_resume_download">Resume Download</string>
     <string name="popup_pause_download">Pause Download</string>
-    <string name="pref_disable_acra">Disable automatic bug reporting</string>
     <string name="home_more_info">More info</string>
     <string name="home_expanded_hide">Hide</string>
     <string name="home_play">Play</string>
@@ -273,8 +272,6 @@
     <string name="settings_info">Info</string>
     <string name="advanced_search">Advanced Search</string>
     <string name="advanced_search_des">Gives you the search results separated by provider</string>
-    <string name="bug_report_settings_off">Only sends data on crashes</string>
-    <string name="bug_report_settings_on">Sends no data</string>
     <string name="show_fillers_settings">Show filler episode for anime</string>
     <string name="show_trailers_settings">Show trailers</string>
     <string name="kitsu_settings">Show posters from Kitsu</string>
@@ -302,9 +299,6 @@
     <string name="copy_link_toast">Link copied to clipboard</string>
     <string name="play_episode_toast">Play Episode</string>
     <string name="subs_default_reset_toast">Reset to default value</string>
-    <string name="acra_report_toast">Sorry, the application crashed. An anonymous bug report will be sent to the
-        developers
-    </string>
     <string name="season">Season</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">No Season</string>
@@ -623,7 +617,6 @@
     <string name="previous">Previous</string>
     <string name="skip_setup">Skip setup</string>
     <string name="app_layout_subtext">Change the look of the app to suit your device</string>
-    <string name="crash_reporting_title">Crash reporting</string>
     <string name="preferred_media_subtext">What do you want to see</string>
     <string name="setup_done">Done</string>
     <string name="extensions">Extensions</string>

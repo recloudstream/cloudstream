@@ -38,7 +38,6 @@
     <string name="app_subbed_text">ahooo</string>
     <string name="popup_delete_file">ouuhhh</string>
     <string name="popup_play_file">ahhaauugghh</string>
-    <string name="pref_disable_acra">ooo-ahahoohahoooooo-ahahouuhhhoouuhaaahhu</string>
     <string name="home_more_info">ahooo a aaaghhouuhhh</string>
     <string name="home_expanded_hide">oh ahhh</string>
     <string name="home_main_poster_img_des">ahhhahaaaaaahhhaaaghh</string>
@@ -91,8 +90,6 @@
     <string name="settings_info">aauugghh ah</string>
     <string name="advanced_search">aah ouuhhhooo-ahah aaaghh</string>
     <string name="advanced_search_des">aauugghh ahahooo ouuhhhahh ooh oouuhahoooahhaaahhu ohaooh oouuhooo-ahah</string>
-    <string name="bug_report_settings_off">aaaaa ahhhahhohoouuhahoooaaaghh aahhhaaaaa</string>
-    <string name="bug_report_settings_on">oouuhoooohh ahhooo-ahah</string>
     <string name="updates_settings">haa oohaauugghhooh oh</string>
     <string name="updates_settings_des">aaaagggoooogg uuuugg aak aah aaaahhh ooogg uuuuuukh aah ooh</string>
     <string name="uprereleases_settings">aaaghh ahhhahoooooo-ahah aaaghh</string>
@@ -109,7 +106,6 @@
     <string name="copy_link_toast">ooh oouuh ahoooah ohaa oh ouuhhh</string>
     <string name="play_episode_toast">ouuhhhoouuh ouuhhh</string>
     <string name="subs_default_reset_toast">haaahhh ooo-ahah haaoh haaooh</string>
-    <string name="acra_report_toast">oooooahoohaaaghh oouuhoooohhaaaaaoha ohaaauugghh oohaaaaaahooo ooo-ahah aaaaaa ahooo</string>
     <string name="error_loading_links_toast">ahooo oouuhoooohh oooohhaaaghh oouuh</string>
     <string name="season">ooo-ahah</string>
     <string name="no_season">aauuh ohaahooo</string>
@@ -407,7 +403,6 @@
     <string name="video_ram_description">uuuugg aaaaggg ug aah uug aahh ug uuuuhhh oohh aah memory, oohh og oooohhh ug</string>
     <string name="extension_version">aaaahhh</string>
     <string name="previous">oooogggh</string>
-    <string name="crash_reporting_title">ooohh aaaaaakag</string>
     <string name="title">ooogg</string>
     <string name="batch_download_start_format" formatted="true">aaaaggg aaaahhhuuhh %1$d %2$s…</string>
     <string name="skip_type_mixed_ed">uuuhh aaaagg</string>

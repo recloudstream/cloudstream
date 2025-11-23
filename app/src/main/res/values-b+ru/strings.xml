@@ -117,7 +117,6 @@
     <string name="download_storage_text">Внутренняя память</string>
     <string name="popup_resume_download">Продолжить Скачать</string>
     <string name="popup_pause_download">Остановить скачивание</string>
-    <string name="pref_disable_acra">Отключить автоматическое информирование об ошибках</string>
     <string name="subs_import_text" formatted="true">Импортируйте шрифты поместив их в %s</string>
     <string name="continue_watching">Продолжить смотреть</string>
     <string name="action_remove_watching">Убрать</string>
@@ -165,7 +164,6 @@
     <string name="no_links_found_toast">Ссылок не найдено</string>
     <string name="copy_link_toast">Ссылка скопирована в буфер обмена</string>
     <string name="subs_default_reset_toast">Восстановить по умолчанию</string>
-    <string name="acra_report_toast">Извините, приложение прекратило работу. Анонимный отчёт об ошибке будет отправлен разработчикам</string>
     <string name="episode">Серия</string>
     <string name="episodes">Серии</string>
     <string name="season_short">С</string>
@@ -220,7 +218,6 @@
     <string name="pref_category_extensions">Дополнения</string>
     <string name="category_player">Плеер</string>
     <string name="backup_settings">Резервное копирование данных</string>
-    <string name="bug_report_settings_off">Отправлять данные только при вылетах</string>
     <string name="used_storage">Использовано</string>
     <string name="double_tap_to_pause_settings">Двойное нажатие для паузы</string>
     <string name="double_tap_to_seek_settings_des">Коснитесь дважды правой или левой стороны для поиска вперед или назад</string>
@@ -453,7 +450,6 @@
     <string name="update_notification_downloading">Скачивание обновления приложения…</string>
     <string name="error_invalid_url">Недопустимый URL</string>
     <string name="apply_on_restart">Перезапустите приложение, чтобы увидеть изменения.</string>
-    <string name="crash_reporting_title">Отчеты ошибках</string>
     <string name="preferred_media_subtext">Что вы хотите увидеть</string>
     <string name="provider_languages_tip">Смотрите видео на этих языках</string>
     <string name="downloaded_file">Скачано файл</string>
@@ -485,7 +481,6 @@
     <string name="random_button_settings_desc">Отображать случайную кнопку в библиотеке и главной странице</string>
     <string name="random_button_settings">Случайная кнопка</string>
     <string name="apk_installer_legacy">Устаревший</string>
-    <string name="bug_report_settings_on">Не отправляет данные</string>
     <string name="episode_action_reload_links">Перезагрузить ссылки</string>
     <string name="preferred_media_settings">Предпочтительные медиа</string>
     <string name="subtitles_depressed">Опущенные</string>

@@ -92,7 +92,6 @@
     <string name="category_updates">အပ်ဒိတ်များနှင့်အရန်သိမ်းဆည်းမှု</string>
     <string name="advanced_search">နက်နက်ရှိုင်းရှိုင်းရှာခြင်း</string>
     <string name="advanced_search_des">သင့်ကိုဝန်ဆောင်မှုပေးသူအလိုက်ရှာဖွေမှုရလဒ်များပေးမည်</string>
-    <string name="bug_report_settings_off">ချို့ယွင်းမှုအကြီးစားဖြစ်မှသာဒေတာများပေးပို့ပါ</string>
     <string name="show_fillers_settings">anime များအတွက်ဖြည့်စွက်အပိုင်းကိုပြရန်</string>
     <string name="show_trailers_settings">ထွေလာများကိုပြရန်</string>
     <string name="kitsu_settings">Kitsu မှ ပိုစတာများကိုပြရန်</string>
@@ -239,7 +238,6 @@
     <string name="popup_play_file">ဖိုင်ကို ဖွင့်ရန်</string>
     <string name="popup_resume_download">ဒေါင်းလုဒ် ဆက်လုပ်ရန်</string>
     <string name="popup_pause_download">ဒေါင်းလုဒ် ရပ်ရန်</string>
-    <string name="pref_disable_acra">အလိုအလျောက်အက်ပ်ချို့ယွင်းချက်ပေးပို့ခြင်းကိုပိတ်မည်</string>
     <string name="home_more_info">ပိုမို၍</string>
     <string name="search_provider_text_providers">ပ့ံပိုးပေးသောဝန်ဆောင်မှုများအသုံးပြု၍ရှာရန်</string>
     <string name="home_expanded_hide">ဝုက်ရန်</string>
@@ -267,7 +265,6 @@
     <string name="search">ရှာရန်</string>
     <string name="category_account">အကောင့်များ</string>
     <string name="settings_info">အချက်အလက်</string>
-    <string name="bug_report_settings_on">ဒေတာများမပို့ရန်</string>
     <string name="android_tv_interface_on_seek_settings">ကြည့်ရှုပြီးသောအချိန်ပမာဏ</string>
     <string name="video_disk_description">Android TV ကဲ့သို့သော သိုလှောင်မှုနေရာနည်းပါးသော စက်ပစ္စည်းများတွင် အလွန်မြင့်မားစွာ သတ်မှတ်ပါက ပြဿနာများ ဖြစ်လာနိုင်သည်။</string>
     <string name="dns_pref_summary">ISP ပိတ်ဆို့ခြင်းကို ကျော်လွှားရန်အတွက် အသုံးဝင်သည်</string>
@@ -287,7 +284,6 @@
     <string name="benene_des">ပေးခဲ့သောစာအရေအတွက်</string>
     <string name="app_language">အက်ပ်ဘာသာစကား</string>
     <string name="subs_default_reset_toast">မူလအခြေအနေများကိုပြန်ထားပါ</string>
-    <string name="acra_report_toast">စိတ်မကောင်းပါ။အက်ပ်ရပ်တန့်သွားပါတယ်။အမည်မဖော်ထားတဲ့တင်ပြချက်ကို အက်ပ်ရေးသားသူများထံ ပို့မှာဖြစ်ပါတယ်</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="season_short">အတွဲ</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
@@ -457,7 +453,6 @@
     <string name="quality_tc">TC</string>
     <string name="resolution">အရည်အသွေး</string>
     <string name="skip_setup">အစီအစဥ်ချခြင်းကိုကျော်မည်</string>
-    <string name="crash_reporting_title">ချို့ယွင်းမှုသတင်းပေးပို့ခြင်း</string>
     <string name="preferred_media_subtext">ဘာတွေကြည့်ချင်လဲ</string>
     <string name="setup_done">ပြီးပြီ</string>
     <string name="extensions">အဆက်များ</string>

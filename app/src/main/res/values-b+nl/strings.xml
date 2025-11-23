@@ -71,7 +71,6 @@
     <string name="popup_play_file">Bestand afspelen</string>
     <string name="popup_resume_download">Download hervatten</string>
     <string name="popup_pause_download">Download pauzeren</string>
-    <string name="pref_disable_acra">Automatische bugrapportage uitschakelen</string>
     <string name="home_more_info">Meer info</string>
     <string name="home_expanded_hide">Verberg</string>
     <string name="home_play">Speel</string>
@@ -150,8 +149,6 @@
     <string name="settings_info">Info</string>
     <string name="advanced_search">Geavanceerd zoeken</string>
     <string name="advanced_search_des">Geeft u de zoekresultaten gescheiden door provider</string>
-    <string name="bug_report_settings_off">Stuurt alleen gegevens bij crashes</string>
-    <string name="bug_report_settings_on">Verstuurt geen gegevens</string>
     <string name="show_fillers_settings">Toon filler episode voor anime</string>
     <string name="show_trailers_settings">Toon trailers</string>
     <string name="kitsu_settings">Toon posters van Kitsu</string>
@@ -171,7 +168,6 @@
     <string name="copy_link_toast">Link gekopieerd naar klembord</string>
     <string name="play_episode_toast">Aflevering afspelen</string>
     <string name="subs_default_reset_toast">Reset naar standaardwaarde</string>
-    <string name="acra_report_toast">Sorry, de applicatie is gecrasht. Er wordt een anoniem bugrapport naar de ontwikkelaars gestuurd</string>
     <string name="season">Seizoen</string>
     <string name="no_season">Geen seizoen</string>
     <string name="episode">Aflevering</string>
@@ -392,7 +388,6 @@
     <string name="previous">Vorige</string>
     <string name="skip_setup">Instelling overslaan</string>
     <string name="app_layout_subtext">Pas het uiterlijk van de app aan uw apparaat aan</string>
-    <string name="crash_reporting_title">Crashrapportage</string>
     <string name="preferred_media_subtext">Wat wil je zien</string>
     <string name="setup_done">Klaar</string>
     <string name="action_mark_as_watched">Markeer als bekeken</string>

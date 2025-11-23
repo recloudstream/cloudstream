@@ -34,7 +34,6 @@
     <string name="popup_delete_file">கோப்பை அழி</string>
     <string name="popup_play_file">கோப்பு</string>
     <string name="popup_pause_download">இடைநிறுத்தம் பதிவிறக்கம்</string>
-    <string name="pref_disable_acra">தானியங்கி பிழை அறிக்கையை முடக்கு</string>
     <string name="home_more_info">மேலும் செய்தி</string>
     <string name="home_expanded_hide">மறை</string>
     <string name="action_remove_from_bookmarks">அகற்று</string>
@@ -203,7 +202,6 @@
     <string name="backup_frequency">காப்பு அதிர்வெண்</string>
     <string name="backup_success">தரவு சேமிக்கப்பட்டது</string>
     <string name="backup_failed">சேமிப்பக அனுமதிகள் இல்லை. தயவு செய்து மீண்டும் முயற்சிக்கவும்.</string>
-    <string name="bug_report_settings_off">செயலிழப்புகள் குறித்த தரவை மட்டுமே அனுப்புகிறது</string>
     <string name="poster_ui_settings">சுவரொட்டியில் இடைமுகம் கூறுகளை மாற்றவும்</string>
     <string name="check_for_update">மேம்படுத்தல் சோதிக்க</string>
     <string name="video_lock">பூட்டு</string>
@@ -213,7 +211,6 @@
     <string name="home_source">மூலம்</string>
     <string name="quality_cam_hd">கேம்</string>
     <string name="poster_image">சுவரொட்டி படம்</string>
-    <string name="crash_reporting_title">செயலிழப்பு அறிக்கை</string>
     <string name="view_public_repositories_button_short">பொது பட்டியல்</string>
     <string name="extension_version">பதிப்பு</string>
     <string name="select_library">நூலகத்தைத் தேர்ந்தெடுக்கவும்</string>
@@ -410,13 +407,11 @@
     <string name="storage_error">பிழையைப் பதிவிறக்குங்கள், சேமிப்பக அனுமதிகளை சரிபார்க்கவும்</string>
     <string name="home_change_provider_img_des">வழங்குநரை மாற்றவும்</string>
     <string name="preview_background_img_des">முன்னோட்டம் பின்னணி</string>
-    <string name="bug_report_settings_on">எந்த தரவை அனுப்பவில்லை</string>
     <string name="show_fillers_settings">அனிமேசுக்கு நிரப்பு அத்தியாயத்தைக் காட்டு</string>
     <string name="automatic_plugin_download_summary">கூடுதல் களஞ்சியங்களிலிருந்து இன்னும் நிறுவப்படாத அனைத்து செருகுநிரல்களையும் தானாக நிறுவவும்.</string>
     <string name="uprereleases_settings_des">முழு வெளியீடுகளுக்கு பதிலாக மட்டுமே புதுப்பிப்புகளைத் தேடுங்கள்</string>
     <string name="anim">அதே தேவ்சின் அனிம் பயன்பாடு</string>
     <string name="episodes">அத்தியாயங்கள்</string>
-    <string name="acra_report_toast">மன்னிக்கவும், விண்ணப்பம் செயலிழந்தது. ஒரு அநாமதேய பிழை அறிக்கை டெவலப்பர்களுக்கு அனுப்பப்படும்</string>
     <string name="status_completed">முடிந்தது</string>
     <string name="no_subtitles">வசன வரிகள் இல்லை</string>
     <string name="cartoons">கார்ட்டூன்கள்</string>

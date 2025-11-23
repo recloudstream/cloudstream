@@ -115,7 +115,6 @@
     <string name="popup_delete_file">Hassar il-fajl</string>
     <string name="popup_resume_download">Kompli Nizzel</string>
     <string name="popup_pause_download">Ieqaf Nizzel</string>
-    <string name="pref_disable_acra">Iddiżattiva r-rappurtar awtomatiku tal-bugs</string>
     <string name="home_more_info">Iktar Informazzjoni</string>
     <string name="home_expanded_hide">Aħbi</string>
     <string name="filter_bookmarks">Iffiltra l-Bookmarks</string>

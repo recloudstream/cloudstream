@@ -85,11 +85,9 @@
     <string name="settings_info">معلومات</string>
     <string name="category_updates">التحديثات والنسخ الاحتياطي</string>
     <string name="advanced_search_des">يعطيك نتائج البحث مفصولة حسب المزود</string>
-    <string name="bug_report_settings_off">يرسل فقط البيانات عن الأعطال</string>
     <string name="show_trailers_settings">عرض المقطورات</string>
     <string name="kitsu_settings">عرض الملصقات من كيتسو</string>
     <string name="category_account">حسابات</string>
-    <string name="bug_report_settings_on">لا يرسل أي بيانات</string>
     <string name="show_fillers_settings">عرض حلقة حشو للأنمي</string>
     <string name="pref_filter_search_quality">إخفاء جودة الفيديو المحددة في نتائج البحث</string>
     <string name="automatic_plugin_updates">تحديثات البرنامج المساعد التلقائي</string>
@@ -132,7 +130,6 @@
     <string name="no_chromecast_support_toast">لا يتمتع هذا المزود بدعم كرومكاست</string>
     <string name="no_links_found_toast">لم يتم العثور على أي روابط</string>
     <string name="play_episode_toast">تشغيل الحلقة</string>
-    <string name="acra_report_toast">عذرًا، تعطل التطبيق. سيتم إرسال تقرير خطأ مجهول إلى المطورين</string>
     <string name="season_format">%1$s%2$d%3$s</string>
     <string name="no_season">لا يوجد موسم</string>
     <string name="episode">حلقة</string>
@@ -218,7 +215,6 @@
     <string name="subs_window_color">لون النافذة</string>
     <string name="subs_subtitle_elevation">ارتفاع الترجمة</string>
     <string name="popup_delete_file">حذف ملف</string>
-    <string name="pref_disable_acra">تعطيل الإبلاغ التلقائي عن الأخطاء</string>
     <string name="update_started">بدأ التحديث</string>
     <string name="sort_copy">انسخ</string>
     <string name="stream">بث</string>

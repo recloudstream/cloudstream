@@ -42,8 +42,6 @@
     <string name="popup_play_file">Αναπαραγωγή αρχείου</string>
     <string name="popup_resume_download">Συνέχιση λήψης</string>
     <string name="popup_pause_download">Παύση λήψης</string>
-    <string name="acra_report_toast">Λυπόμαστε, η εφαρμογή κατέρρευσε. Μια ανώνυμη αναφορά σφαλμάτων θα σταλεί στους προγραμματιστές</string>
-    <string name="pref_disable_acra">Απενεργοποιήστε την αυτόματη αναφορά σφαλμάτων</string>
     <string name="show_log_cat">Εμφάνιση Logcat 🐈</string>
     <string name="home_more_info">Περαιτέρω πληροφορίες</string>
     <string name="home_expanded_hide">Απόκρυψη</string>
@@ -102,8 +100,6 @@
     <string name="settings_info">Πληροφορίες</string>
     <string name="advanced_search">Προχωρημένη Αναζήτηση</string>
     <string name="advanced_search_des">Δίνει τα αποτελέσματα αναζήτησης ταξινομημένα ανά πάροχο</string>
-    <string name="bug_report_settings_off">Αποστέλλει δεδομένα μόνο για καταρρεύσεις</string>
-    <string name="bug_report_settings_on">Δεν στέλνει δεδομένα</string>
     <string name="updates_settings">Εμφάνιση ενημερώσεων</string>
     <string name="updates_settings_des">Αυτόματη αναζήτηση νέων ενημερώσεων κατά την εκκίνηση της εφαρμογής.</string>
     <string name="uprereleases_settings">Ενημέρωση σε προ-εκδόσεις (beta)</string>
@@ -307,7 +303,6 @@
     <string name="previous">Προηγούμενο</string>
     <string name="skip_setup">Παράλειψη διαμόρφωσης της εφαρμογής</string>
     <string name="app_layout_subtext">Αλλαγή της εμφάνισης της συσκευής για να ταιριάζει με την συσκευή σας</string>
-    <string name="crash_reporting_title">Αναφορά κατάρρευσης</string>
     <string name="preferred_media_subtext">Τι θα θέλατε να δείτε</string>
     <string name="setup_done">Έγινε</string>
     <string name="extensions">Extensions</string>

@@ -68,7 +68,6 @@
     <string name="popup_play_file">Reproduzir Ficheiro</string>
     <string name="popup_resume_download">Retomar Transferência</string>
     <string name="popup_pause_download">Pausar Transferência</string>
-    <string name="pref_disable_acra">Desativar relatório automático de erros</string>
     <string name="home_more_info">Mais info</string>
     <string name="home_expanded_hide">Esconder</string>
     <string name="home_play">Reproduzir</string>
@@ -147,8 +146,6 @@
     <string name="settings_info">Info</string>
     <string name="advanced_search">Procura Avançada</string>
     <string name="advanced_search_des">Mostra resultados separados por fornecedor</string>
-    <string name="bug_report_settings_off">Só envia dados sobre falhas</string>
-    <string name="bug_report_settings_on">Não envia nenhum dado</string>
     <string name="show_fillers_settings">Mostrar episódios de enchimento para anime</string>
     <string name="show_trailers_settings">Mostrar trailers</string>
     <string name="kitsu_settings">Mostrar posters do kitsu</string>
@@ -169,7 +166,6 @@
     <string name="copy_link_toast">Link copiado para a área de transferência</string>
     <string name="play_episode_toast">Reproduzir episódio</string>
     <string name="subs_default_reset_toast">Restaurar para o padrão</string>
-    <string name="acra_report_toast">Desculpe, a aplicação falhou. Um relatório de erro anónimo será enviado para os desenvolvedores</string>
     <string name="season">Temporada</string>
     <string name="no_season">Nenhuma Temporada</string>
     <string name="episode">Episódio</string>
@@ -349,7 +345,6 @@
     <string name="previous">Anterior</string>
     <string name="skip_setup">Saltar setup</string>
     <string name="app_layout_subtext">Change the look of the app to suit your device</string>
-    <string name="crash_reporting_title">Crash reporting</string>
     <string name="preferred_media_subtext">What do you want to see</string>
     <string name="setup_done">Feito</string>
     <string name="extensions">Extensões</string>

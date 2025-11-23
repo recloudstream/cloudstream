@@ -57,7 +57,6 @@
     <string name="popup_play_file">Spill av fil</string>
     <string name="popup_resume_download">Fortsett nedlasting</string>
     <string name="popup_pause_download">Stopp nedlastingen</string>
-    <string name="pref_disable_acra">Deaktiver automatisk feilrapportering</string>
     <string name="home_more_info">Mer informasjon</string>
     <string name="home_expanded_hide">Gjemme seg</string>
     <string name="home_play">Spille</string>
@@ -110,8 +109,6 @@
     <string name="settings_info">Informasjon</string>
     <string name="advanced_search">Avansert søk</string>
     <string name="advanced_search_des">Gir deg søkeresultatene atskilt etter leverandør</string>
-    <string name="bug_report_settings_off">Sender bare rapportere om krasjer</string>
-    <string name="bug_report_settings_on">Sender ingen rapportere</string>
     <string name="show_fillers_settings">Vis filler-episode til anime</string>
     <string name="updates_settings">Vis appoppdateringer</string>
     <string name="updates_settings_des">Søk automatisk etter nye oppdateringer etter at appen har startet.</string>
@@ -129,7 +126,6 @@
     <string name="copy_link_toast">Linken er kopiert til utklippstavlen</string>
     <string name="play_episode_toast">spille episode</string>
     <string name="subs_default_reset_toast">tilbakestill standardverdien</string>
-    <string name="acra_report_toast">Beklager, programmet krasjet. En anonym feilrapport vil bli sendt til utviklerne</string>
     <string name="season">Sesong</string>
     <string name="no_season">Ingen sesong</string>
     <string name="episode">Episode</string>
@@ -346,7 +342,6 @@
     <string name="example_password">passord123</string>
     <string name="example_lang_name">Språkkode (nb_NO)</string>
     <string name="previous">Forrige</string>
-    <string name="crash_reporting_title">Krasjrapportering</string>
     <string name="extensions">Utvidelser</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="example_username">MittKuleBrukernavn</string>

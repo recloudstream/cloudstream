@@ -87,12 +87,10 @@
     <string name="library">Kitabxana</string>
     <string name="category_account">Hesablar və Təhlükəsizlik</string>
     <string name="advanced_search">Təkmilləşdirilmiş Axtarış</string>
-    <string name="bug_report_settings_on">Məlumat göndərmə</string>
     <string name="show_trailers_settings">Treylerləri göstər</string>
     <string name="kitsu_settings">Kitsu afişalarını, posterlərini göstər</string>
     <string name="copy_link_toast">Link mübadilə buferinə nüsxələndi</string>
     <string name="subs_default_reset_toast">Standart dəyərlərə sıfırla</string>
-    <string name="acra_report_toast">Üzr istəyirik, tətbiqdə xəta baş verdi. Gizli xəta hesabatı tərtibatçılara göndəriləcək</string>
     <string name="season">Sezon</string>
     <string name="pause">Dayandır</string>
     <string name="start">Başlat</string>

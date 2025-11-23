@@ -50,7 +50,6 @@
     <string name="loading">Načítavanie…</string>
     <string name="type_completed">Dokončené</string>
     <string name="type_plan_to_watch">Plánujem pozerať</string>
-    <string name="pref_disable_acra">Zakázať automatické nahlasovanie chýb</string>
     <string name="home_more_info">Viac informácií</string>
     <string name="error_bookmarks_text">Záložky</string>
     <string name="play_movie_button">Prehrať film</string>
@@ -151,7 +150,6 @@
     <string name="double_tap_to_seek_settings">Dvojitým ťuknutím pretočiť</string>
     <string name="automatic_plugin_download">Automaticky sťahovať doplnky</string>
     <string name="discord">Pripojte sa na Discord</string>
-    <string name="bug_report_settings_on">Neodosiela žiadne dáta</string>
     <string name="player_size_settings_des">Odstrániť čierne okraje</string>
     <string name="updates_settings_des">Automaticky vyhľadať nové aktualizácie po spustení aplikácie.</string>
     <string name="play_episode_toast">Prehrať epizódu</string>
@@ -167,7 +165,6 @@
     <string name="use_system_brightness_settings_des">V prehrávači použiť systémový jas namiesto tmavého prekrytia</string>
     <string name="show_trailers_settings">Zobraziť upútavky</string>
     <string name="automatic_plugin_download_summary">Automaticky nainštalovať všetky ešte nenainštalované doplnky z pridaných repozitárov.</string>
-    <string name="bug_report_settings_off">Odosiela dáta len pri pádoch</string>
     <string name="library">Knižnica</string>
     <string name="github">GitHub</string>
     <string name="search">Hľadať</string>
@@ -180,7 +177,6 @@
     <string name="updates_settings">Zobraziť aktualizácie aplikácie</string>
     <string name="uprereleases_settings">Aktualizácia na predbežné vydania</string>
     <string name="uprereleases_settings_des">Vyhľadať aktualizácie predbežných vydaní namiesto plných vydaní</string>
-    <string name="acra_report_toast">Ospravedlňujeme sa, aplikácia spadla. Vývojárom bude odoslané anonymné hlásenie o páde</string>
     <string name="subs_default_reset_toast">Obnoviť predvolenú hodnotu</string>
     <string name="season">Sezóna</string>
     <string name="synopsis">Synopsa</string>
@@ -435,7 +431,6 @@
     <string name="error_invalid_data">Neplatné dáta</string>
     <string name="error_invalid_url">Neplatná URL adresa</string>
     <string name="subtitles_remove_captions">Odstráňte uzavreté titulky od titulkov</string>
-    <string name="crash_reporting_title">Správy zlyhania</string>
     <string name="recommendations_tooltip">Zobraziť odporúčania</string>
     <string name="test_extensions">Otestujte všetky rozšírenia</string>
     <string name="episode_upcoming_format" formatted="true">Nadchádzajúce o %s</string>

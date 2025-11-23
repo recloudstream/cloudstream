@@ -83,7 +83,6 @@
     <string name="type_re_watching">पुन: हेर्दै</string>
     <string name="play_torrent_button">स्ट्रिम टोरेन्ट</string>
     <string name="pick_source">स्रोतहरू</string>
-    <string name="pref_disable_acra">स्वचालित बग रिपोर्टिङ असक्षम गर्नुहोस्</string>
     <string name="sort_apply">लागू गर्नुहोस्</string>
     <string name="provider_info_meta">साइट ले मेटाडाटा दिएको छैन,मेटाडाटा बिना भिडियो लोड नहुन सक्छ।</string>
     <string name="next_season_episode_format" formatted="true">प्रकरण %1$d प्रसङ्ग %2$d प्रशारण हुनेवाला छ</string>

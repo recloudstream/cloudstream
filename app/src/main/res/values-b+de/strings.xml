@@ -78,7 +78,6 @@
     <string name="popup_play_file">Datei abspielen</string>
     <string name="popup_resume_download">Download fortsetzen</string>
     <string name="popup_pause_download">Download pausieren</string>
-    <string name="pref_disable_acra">Automatische Fehlerberichtserstattung deaktivieren</string>
     <string name="home_more_info">Mehr Infos</string>
     <string name="home_expanded_hide">Verstecken</string>
     <string name="home_play">Abspielen</string>
@@ -155,8 +154,6 @@
     <string name="settings_info">Info</string>
     <string name="advanced_search">Erweiterte Suche</string>
     <string name="advanced_search_des">Liefert die Suchergebnisse getrennt nach Anbietern</string>
-    <string name="bug_report_settings_off">Sendet Daten nur bei Abstürzen</string>
-    <string name="bug_report_settings_on">Sendet keine Daten</string>
     <string name="show_fillers_settings">Füller-Episoden für Animes anzeigen</string>
     <string name="show_trailers_settings">Trailer anzeigen</string>
     <string name="kitsu_settings">Vorschaubilder von Kitsu anzeigen</string>
@@ -177,7 +174,6 @@
     <string name="copy_link_toast">Link in die Zwischenablage kopiert</string>
     <string name="play_episode_toast">Episode abspielen</string>
     <string name="subs_default_reset_toast">Auf Standardwert zurücksetzen</string>
-    <string name="acra_report_toast">Sorry, die Anwendung ist abgestürzt. Ein anonymer Fehlerbericht wird an die Entwickler gesendet</string>
     <string name="season">Staffel</string>
     <string name="no_season">Keine Staffel</string>
     <string name="episode">Episode</string>
@@ -385,7 +381,6 @@
     <string name="previous">Vorherige</string>
     <string name="skip_setup">Einrichtung überspringen</string>
     <string name="app_layout_subtext">Aussehen der App passend zu dem des Geräts ändern</string>
-    <string name="crash_reporting_title">Absturzmeldung</string>
     <string name="preferred_media_subtext">Was möchten Sie sehen</string>
     <string name="setup_done">Fertig</string>
     <string name="extensions">Erweiterungen</string>
