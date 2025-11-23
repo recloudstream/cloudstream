@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.dokka.gradle.plugin)
+    alias(libs.plugins.dokka)
     alias(libs.plugins.kotlin.android)
 }
 

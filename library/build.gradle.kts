@@ -7,10 +7,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     id("maven-publish") // Gradle core plugin
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.buildkonfig.gradle.plugin)
-    alias(libs.plugins.dokka.gradle.plugin)
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.buildkonfig)
+    alias(libs.plugins.dokka)
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
