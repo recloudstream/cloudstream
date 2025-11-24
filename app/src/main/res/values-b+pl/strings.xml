@@ -740,4 +740,5 @@
     <string name="top_left">Górne lewe</string>
     <string name="top_center">Górne środkowe</string>
     <string name="top_right">Górne prawe</string>
+    <string name="play_full_series_button">Odtwórz całą serię</string>
 </resources>
