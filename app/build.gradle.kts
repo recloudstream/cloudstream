@@ -154,6 +154,7 @@ android {
 
     buildFeatures {
         buildConfig = true
+        resValues = true
     }
 
     namespace = "com.lagradost.cloudstream3"
