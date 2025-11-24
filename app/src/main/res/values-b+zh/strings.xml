@@ -84,7 +84,6 @@
     <string name="popup_play_file">播放文件</string>
     <string name="popup_resume_download">继续下载</string>
     <string name="popup_pause_download">暂停下载</string>
-    <string name="pref_disable_acra">禁用自动错误报告</string>
     <string name="home_more_info">更多信息</string>
     <string name="home_expanded_hide">隐藏</string>
     <string name="home_play">播放</string>
@@ -165,8 +164,6 @@
     <string name="settings_info">信息</string>
     <string name="advanced_search">高级搜索</string>
     <string name="advanced_search_des">按片源分割搜索结果</string>
-    <string name="bug_report_settings_off">仅发送关于崩溃的数据</string>
-    <string name="bug_report_settings_on">不发送数据</string>
     <string name="show_fillers_settings">显示动画外传</string>
     <string name="show_trailers_settings">显示预告片</string>
     <string name="kitsu_settings">显示来自 Kitsu 的封面</string>
@@ -189,7 +186,6 @@
     <string name="copy_link_toast">链接已复制到剪贴板</string>
     <string name="play_episode_toast">播放剧集</string>
     <string name="subs_default_reset_toast">重置为默认值</string>
-    <string name="acra_report_toast">抱歉，应用崩溃了，将发送一份匿名错误报告给开发者</string>
     <string name="season">季</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">无季</string>
@@ -429,7 +425,6 @@
     <string name="previous">上一个</string>
     <string name="skip_setup">跳过设置向导</string>
     <string name="app_layout_subtext">更改为适应您的设备的应用布局</string>
-    <string name="crash_reporting_title">崩溃报告</string>
     <string name="preferred_media_subtext">您想要看什么</string>
     <string name="setup_done">完成</string>
     <string name="extensions">扩展</string>
@@ -783,4 +778,5 @@
     <string name="top_left">左上</string>
     <string name="top_center">顶部居中</string>
     <string name="top_right">右上</string>
+    <string name="play_full_series_button">播放全剧</string>
 </resources>

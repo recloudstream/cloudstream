@@ -84,12 +84,5 @@
             android:icon="@drawable/ic_baseline_construction_24"
             android:title="@string/redo_setup_process"
             app:key="@string/redo_setup_key" />
-        <!--<SwitchPreference
-            android:defaultValue="true"
-            android:icon="@drawable/ic_baseline_bug_report_24"
-            android:key="acra.disable"
-            android:summaryOff="@string/bug_report_settings_off"
-            android:summaryOn="@string/bug_report_settings_on"
-            android:title="@string/pref_disable_acra" />-->
     </PreferenceCategory>
 </PreferenceScreen>

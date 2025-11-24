@@ -157,12 +157,22 @@ class DownloadAdapter(
             downloadHeaderGotoChild.isVisible = false
 
             val posDur = getViewPos(card.data.id)
+            watchProgressContainer.isVisible = true
             downloadHeaderEpisodeProgress.apply {
                 isVisible = posDur != null
                 posDur?.let {
-                    val visualPos = it.fixVisual()
-                    max = (visualPos.duration / 1000).toInt()
-                    progress = (visualPos.position / 1000).toInt()
+                    val max = (it.duration / 1000).toInt()
+                    val progress = (it.position / 1000).toInt()
+
+                    if (max > 0 && progress >= (0.95 * max).toInt()) {
+                        playIcon.setImageResource(R.drawable.ic_baseline_check_24)
+                        isVisible = false
+                    } else {
+                        playIcon.setImageResource(R.drawable.netflix_play)
+                        this.max = max
+                        this.progress = progress
+                        isVisible = true
+                    }
                 }
             }
 
@@ -254,9 +264,18 @@ class DownloadAdapter(
                 downloadChildEpisodeProgress.apply {
                     isVisible = posDur != null
                     posDur?.let {
-                        val visualPos = it.fixVisual()
-                        max = (visualPos.duration / 1000).toInt()
-                        progress = (visualPos.position / 1000).toInt()
+                        val max = (it.duration / 1000).toInt()
+                        val progress = (it.position / 1000).toInt()
+
+                        if (max > 0 && progress >= (0.95 * max).toInt()) {
+                            downloadChildEpisodePlay.setImageResource(R.drawable.ic_baseline_check_24)
+                            isVisible = false
+                        } else {
+                            downloadChildEpisodePlay.setImageResource(R.drawable.play_button_transparent)
+                            this.max = max
+                            this.progress = progress
+                            isVisible = true
+                        }
                     }
                 }
 

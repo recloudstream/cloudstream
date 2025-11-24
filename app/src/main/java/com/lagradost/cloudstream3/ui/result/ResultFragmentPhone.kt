@@ -68,6 +68,10 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppContextUtils.openBrowser
 import com.lagradost.cloudstream3.utils.AppContextUtils.updateHasTrailers
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.disableBackPressedCallback
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.enableBackPressedCallback
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.openBatteryOptimizationSettings
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
@@ -116,16 +120,13 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel =
-            ViewModelProvider(this)[ResultViewModel2::class.java]
-        syncModel =
-            ViewModelProvider(this)[SyncViewModel::class.java]
+        viewModel = ViewModelProvider(this)[ResultViewModel2::class.java]
+        syncModel = ViewModelProvider(this)[SyncViewModel::class.java]
         updateUIEvent += ::updateUI
 
         val root = super.onCreateView(inflater, container, savedInstanceState) ?: return null
         FragmentResultSwipeBinding.bind(root).let { bind ->
-            resultBinding =
-                bind.fragmentResult//FragmentResultBinding.bind(binding.root.findViewById(R.id.fragment_result))
+            resultBinding = bind.fragmentResult
             recommendationBinding = bind.resultRecommendations
             syncBinding = bind.resultSync
             binding = bind
@@ -136,7 +137,6 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         PanelsChildGestureRegionObserver.Provider.get().apply {
             resultBinding?.resultCastItems?.let { register(it) }
         }
@@ -248,6 +248,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         resultBinding = null
         syncBinding = null
         recommendationBinding = null
+        activity?.detachBackPressedCallback(this@ResultFragmentPhone.toString())
         super.onDestroyView()
     }
 
@@ -473,16 +474,25 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 activity?.popCurrentPage()
             }
 
+            activity?.attachBackPressedCallback(this@ResultFragmentPhone.toString()) {
+                if (resultOverlappingPanels.getSelectedPanel().ordinal == 1) {
+                    // If we don't disable we end up in a loop with default behavior calling
+                    // this callback as well, so we disable it, run default behavior,
+                    // then re-enable this callback so it can be used for next back press.
+                    activity?.disableBackPressedCallback(this@ResultFragmentPhone.toString())
+                    activity?.onBackPressedDispatcher?.onBackPressed()
+                    activity?.enableBackPressedCallback(this@ResultFragmentPhone.toString())
+                } else resultOverlappingPanels.closePanels()
+            }
+
             resultMiniSync.setRecycledViewPool(ImageAdapter.sharedPool)
             resultMiniSync.adapter = ImageAdapter(
                 nextFocusDown = R.id.result_sync_set_score,
                 clickCallback = { action ->
                     if (action == IMAGE_CLICK || action == IMAGE_LONG_CLICK) {
-                        if (binding?.resultOverlappingPanels?.getSelectedPanel()?.ordinal == 1) {
-                            binding?.resultOverlappingPanels?.openStartPanel()
-                        } else {
-                            binding?.resultOverlappingPanels?.closePanels()
-                        }
+                        if (resultOverlappingPanels.getSelectedPanel().ordinal == 1) {
+                            resultOverlappingPanels.openStartPanel()
+                        } else resultOverlappingPanels.closePanels()
                     }
                 })
             resultSubscribe.setOnClickListener {

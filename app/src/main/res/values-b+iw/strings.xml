@@ -58,7 +58,6 @@
     <string name="popup_play_file">נגן קובץ</string>
     <string name="popup_resume_download">המשך הורדה</string>
     <string name="popup_pause_download">השהה את ההורדה</string>
-    <string name="pref_disable_acra">השבת את דיווח הבאגים האוטומטי</string>
     <string name="home_play">נגן</string>
     <string name="home_info">מידע</string>
     <string name="filter_bookmarks">סנן סימניות</string>
@@ -191,7 +190,6 @@
     <string name="automatic_plugin_updates">עדכוני תוספים אוטומטיים</string>
     <string name="benene_des">כמות בנינים שניתנו</string>
     <string name="season">עונה</string>
-    <string name="acra_report_toast">מצטערים, האפליקציה קרסה. דוח באג אנונימי יישלח למפתחים</string>
     <string name="torrent">טורנטים</string>
     <string name="nsfw">NSFW</string>
     <string name="render_error">שגיאת מעבד</string>
@@ -283,8 +281,6 @@
     <string name="category_account">חשבונות ובטיחות</string>
     <string name="benene_count_text_none">לא ניתנו בנינים</string>
     <string name="eigengraumode_settings">מהירות ניגון</string>
-    <string name="bug_report_settings_off">שולח נתונים רק בקריסות</string>
-    <string name="bug_report_settings_on">לא שולח נתונים</string>
     <string name="show_trailers_settings">הצג טריילרים</string>
     <string name="kitsu_settings">הצג פוסטרים מKitsu</string>
     <string name="pref_filter_search_quality">הסתר את איכות הסרטון שנבחרה בתוצאות החיפוש</string>
@@ -413,7 +409,6 @@
     <string name="provider_languages_tip">צפה בסרטונים בשפות אלה</string>
     <string name="previous">קודם</string>
     <string name="app_layout_subtext">שנה את מראה האפליקציה כך שיתאים למכשירך</string>
-    <string name="crash_reporting_title">דיווח על קריסה</string>
     <string name="setup_done">סוים</string>
     <string name="extensions">הרחבות</string>
     <string name="add_repository">הוסף מאגר</string>

@@ -47,7 +47,6 @@
     <string name="popup_play_file">Пушти датотека</string>
     <string name="popup_resume_download">Продолжи со преземање</string>
     <string name="popup_pause_download">Паузирај со преземање</string>
-    <string name="pref_disable_acra">Оневозможи автоматско известување за грешки</string>
     <string name="home_more_info">Повеќе информации</string>
     <string name="home_expanded_hide">Скриј</string>
     <string name="home_play">Пушти</string>
@@ -101,8 +100,6 @@
     <string name="settings_info">Информации</string>
     <string name="advanced_search">Напредно пребарување</string>
     <string name="advanced_search_des">Ви ги дава резултатите од пребарувањето одделени по провајдер</string>
-    <string name="bug_report_settings_off">Испраќај податоци само за падови на апликацијата</string>
-    <string name="bug_report_settings_on">Не испраќа податоци</string>
     <string name="show_fillers_settings">Прикажи епизода за полнење за аниме</string>
     <string name="updates_settings">Прикажи ажурирања на апликации</string>
     <string name="updates_settings_des">Автоматски пребарувај нови ажурирања откако ќе ја стартуваш апликацијата.</string>
@@ -120,7 +117,6 @@
     <string name="copy_link_toast">Линкот е копиран во таблата со исечоци</string>
     <string name="play_episode_toast">Пушти ја епизодата</string>
     <string name="subs_default_reset_toast">Ресетирање на стандардните вредности</string>
-    <string name="acra_report_toast">За жал, апликацијата падна. Ќе се испрати анонимен извештај за грешка до програмерите</string>
     <string name="season">Сезона</string>
     <string name="no_season">Нема сезона</string>
     <string name="episode">Епизода</string>
@@ -466,7 +462,6 @@
     <string name="previous">Претходно</string>
     <string name="skip_setup">Прескокни го поставувањето</string>
     <string name="app_layout_subtext">Промени го изгледот на апликацијата за да одговара на твојот уред</string>
-    <string name="crash_reporting_title">Известување за пад</string>
     <string name="preferred_media_subtext">Што сакате да видите</string>
     <string name="repository_name_hint">Име на изворот (Опционално)</string>
     <string name="plugin_downloaded">Приклучокот е преземен</string>

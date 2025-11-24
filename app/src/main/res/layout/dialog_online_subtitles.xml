@@ -27,20 +27,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                tools:ignore="UseCompoundDrawables">
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/search_background"
-                    android:visibility="visible">
+                tools:ignore="UseCompoundDrawables"
+                android:padding="10dp">
 
                     <FrameLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="30dp"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginEnd="40dp">
+                        android:layout_marginEnd="10dp"
+                        android:background="@drawable/search_background">
 
                         <androidx.appcompat.widget.SearchView
                             android:id="@+id/subtitles_search"
@@ -52,6 +48,7 @@
                             android:inputType="text"
 
                             android:paddingStart="-10dp"
+                            android:paddingEnd="10dp"
                             app:iconifiedByDefault="false"
 
                             app:queryBackground="@color/transparent"
@@ -64,46 +61,33 @@
                                         app:searchHintIcon="@drawable/search_white"
                                         -->
                         </androidx.appcompat.widget.SearchView>
+                        <androidx.core.widget.ContentLoadingProgressBar
+                            android:id="@+id/search_loading_bar"
+                            style="@style/Widget.AppCompat.ProgressBar"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="end|center_vertical"
+                            android:foregroundTint="@color/white"
+                            android:progressTint="@color/white"
+                            android:visibility="visible"
+                            tools:visibility="visible">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="end"
-                            android:gravity="end">
-
-                            <androidx.core.widget.ContentLoadingProgressBar
-                                android:id="@+id/search_loading_bar"
-                                style="@style/Widget.AppCompat.ProgressBar"
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:layout_gravity="center"
-                                android:layout_marginEnd="10dp"
-                                android:foregroundTint="@color/white"
-                                android:progressTint="@color/white"
-                                android:visibility="visible"
-                                tools:visibility="visible">
-
-                            </androidx.core.widget.ContentLoadingProgressBar>
-
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/year_btt"
-                                style="@style/WhiteButton"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center_vertical|end"
-                                android:nextFocusLeft="@id/subtitles_search"
-                                android:nextFocusRight="@id/search_filter"
-                                android:text="@string/none"
-                                />
-                        </LinearLayout>
+                        </androidx.core.widget.ContentLoadingProgressBar>
                     </FrameLayout>
-
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/year_btt"
+                        style="@style/WhiteButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center_vertical|end"
+                        android:nextFocusLeft="@id/subtitles_search"
+                        android:nextFocusRight="@id/search_filter"
+                        android:text="@string/none" />
                     <ImageView
                         android:id="@+id/search_filter"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="end|center_vertical"
-
                         android:layout_margin="10dp"
                         android:background="?selectableItemBackgroundBorderless"
                         android:contentDescription="@string/change_providers_img_des"
@@ -114,8 +98,6 @@
                         android:nextFocusDown="@id/search_autofit_results"
                         android:src="@drawable/ic_baseline_tune_24"
                         app:tint="?attr/textColor" />
-                </FrameLayout>
-
 
             </LinearLayout>
 

@@ -6,7 +6,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.net.toUri
 import com.lagradost.api.Log
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.actions.OpenInAppAction
 import com.lagradost.cloudstream3.actions.makeTempM3U8Intent
 import com.lagradost.cloudstream3.actions.updateDurationAndPosition
