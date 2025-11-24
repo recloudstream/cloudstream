@@ -65,7 +65,6 @@
     <string name="popup_play_file">Přehrát soubor</string>
     <string name="popup_resume_download">Pokračovat ve stahování</string>
     <string name="popup_pause_download">Pozastavit stahování</string>
-    <string name="pref_disable_acra">Zakázat automatické nahlašování chyb</string>
     <string name="home_more_info">Více informací</string>
     <string name="home_expanded_hide">Skrýt</string>
     <string name="home_play">Přehrát</string>
@@ -144,8 +143,6 @@
     <string name="settings_info">Informace</string>
     <string name="advanced_search">Pokročilé hledání</string>
     <string name="advanced_search_des">Zobrazí vám výsledky hledání oddělené poskytovatelem</string>
-    <string name="bug_report_settings_off">Odešle data pouze při pádech</string>
-    <string name="bug_report_settings_on">Nebude odesílat žádná data</string>
     <string name="show_fillers_settings">Zobrazit výplňové epizody u anime</string>
     <string name="updates_settings">Zobrazit aktualizace aplikace</string>
     <string name="updates_settings_des">Při spuštění aplikace automaticky zkontrolovat nové aktualizace.</string>
@@ -163,7 +160,6 @@
     <string name="copy_link_toast">Odkaz zkopírován do schránky</string>
     <string name="play_episode_toast">Přehrát epizodu</string>
     <string name="subs_default_reset_toast">Obnovit na výchozí hodnoty</string>
-    <string name="acra_report_toast">Omlouváme se, aplikace spadla. Vývojářům bude odesláno anonymní hlášení o pádu</string>
     <string name="season">Sezóna</string>
     <string name="no_season">Žádná sezóna</string>
     <string name="episode">Epizoda</string>
@@ -425,7 +421,6 @@
     <string name="example_site_name">NovýNázevWebu</string>
     <string name="enable_nsfw_on_providers">Povolit NSFW u podporovaných rozšíření</string>
     <string name="category_providers">Poskytovatelé</string>
-    <string name="crash_reporting_title">Hlášení pádů</string>
     <string name="previous">Předchozí</string>
     <string name="app_layout_subtext">Změnit vzhled aplikace tak, aby vám vyhovoval</string>
     <string name="preferred_media_subtext">Co chcete vidět</string>
@@ -763,4 +758,5 @@
     <string name="top_left">Vlevo nahoře</string>
     <string name="top_center">Uprostřed nahoře</string>
     <string name="top_right">Vpravo nahoře</string>
+    <string name="play_full_series_button">Přehrát celý seriál</string>
 </resources>

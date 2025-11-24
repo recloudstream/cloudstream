@@ -83,7 +83,6 @@
     <string name="popup_play_file">Reprodueix el fitxer</string>
     <string name="popup_resume_download">Continua la descàrrega</string>
     <string name="popup_pause_download">Posa la descàrrega en espera</string>
-    <string name="pref_disable_acra">Deshabilita el report automàtic d\'errors</string>
     <string name="home_more_info">Més informació</string>
     <string name="home_expanded_hide">Amaga</string>
     <string name="home_play">Reprodueix</string>
@@ -290,7 +289,6 @@
     <string name="previous">Anterior</string>
     <string name="skip_setup">Omet la configuració</string>
     <string name="app_layout_subtext">Canvia l\'aspecte de la aplicació perquè s\'adapti al vostre dispositiu</string>
-    <string name="crash_reporting_title">Informe d\'errors</string>
     <string name="preferred_media_subtext">Què vols veure</string>
     <string name="setup_done">Fet</string>
     <string name="extensions">Extensions</string>

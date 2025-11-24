@@ -1,13 +1,14 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.dokka.gradle.engine.parameters.KotlinPlatform
 import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
-    id("com.android.application")
-    id("kotlin-android")
-    id("org.jetbrains.dokka")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.kotlin.android)
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
@@ -153,6 +154,7 @@ android {
 
     buildFeatures {
         buildConfig = true
+        resValues = true
     }
 
     packaging {
@@ -204,10 +206,6 @@ dependencies {
 
     // FFmpeg Decoding
     implementation(libs.bundles.nextlibMedia3)
-
-    // Crash Reports (AcraApplication.kt)
-    implementation(libs.acra.core)
-    implementation(libs.acra.toast)
 
     // UI Stuff
     implementation(libs.shimmer) // Shimmering Effect (Loading Skeleton)
@@ -280,11 +278,9 @@ tasks.register<Jar>("makeJar") {
 tasks.withType<KotlinJvmCompile> {
     compilerOptions {
         jvmTarget.set(javaTarget)
-        freeCompilerArgs.addAll(
-            "-Xjvm-default=all-compatibility",
-            "-Xannotation-default-target=param-property",
-            "-opt-in=com.lagradost.cloudstream3.Prerelease"
-        )
+        jvmDefault.set(JvmDefaultMode.ENABLE)
+        optIn.add("com.lagradost.cloudstream3.Prerelease")
+        freeCompilerArgs.add("-Xannotation-default-target=param-property")
     }
 }
 

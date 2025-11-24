@@ -26,10 +26,10 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
-import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
 import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.AnimeSearchResponse
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKeys
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.MainAPI
