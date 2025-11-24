@@ -248,7 +248,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         resultBinding = null
         syncBinding = null
         recommendationBinding = null
-        activity?.detachBackPressedCallback("ResultFragmentPhone")
+        activity?.detachBackPressedCallback(this@ResultFragmentPhone.toString())
         super.onDestroyView()
     }
 
@@ -474,14 +474,14 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 activity?.popCurrentPage()
             }
 
-            activity?.attachBackPressedCallback("ResultFragmentPhone") {
+            activity?.attachBackPressedCallback(this@ResultFragmentPhone.toString()) {
                 if (resultOverlappingPanels.getSelectedPanel().ordinal == 1) {
                     // If we don't disable we end up in a loop with default behavior calling
                     // this callback as well, so we disable it, run default behavior,
                     // then re-enable this callback so it can be used for next back press.
-                    activity?.disableBackPressedCallback("ResultFragmentPhone")
+                    activity?.disableBackPressedCallback(this@ResultFragmentPhone.toString())
                     activity?.onBackPressedDispatcher?.onBackPressed()
-                    activity?.enableBackPressedCallback("ResultFragmentPhone")
+                    activity?.enableBackPressedCallback(this@ResultFragmentPhone.toString())
                 } else resultOverlappingPanels.closePanels()
             }
 
