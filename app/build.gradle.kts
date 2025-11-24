@@ -1,6 +1,7 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.dokka.gradle.engine.parameters.KotlinPlatform
 import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
@@ -153,6 +154,7 @@ android {
 
     buildFeatures {
         buildConfig = true
+        resValues = true
     }
 
     namespace = "com.lagradost.cloudstream3"
@@ -194,10 +196,6 @@ dependencies {
     implementation(libs.colorpicker) // Subtitle Color Picker
     implementation(libs.newpipeextractor) // For Trailers
     implementation(libs.juniversalchardet) // Subtitle Decoding
-
-    // Crash Reports (AcraApplication.kt)
-    implementation(libs.acra.core)
-    implementation(libs.acra.toast)
 
     // UI Stuff
     implementation(libs.shimmer) // Shimmering Effect (Loading Skeleton)
@@ -270,11 +268,9 @@ tasks.register<Jar>("makeJar") {
 tasks.withType<KotlinJvmCompile> {
     compilerOptions {
         jvmTarget.set(javaTarget)
-        freeCompilerArgs.addAll(
-            "-Xjvm-default=all-compatibility",
-            "-Xannotation-default-target=param-property",
-            "-opt-in=com.lagradost.cloudstream3.Prerelease"
-        )
+        jvmDefault.set(JvmDefaultMode.ENABLE)
+        optIn.add("com.lagradost.cloudstream3.Prerelease")
+        freeCompilerArgs.add("-Xannotation-default-target=param-property")
     }
 }
 

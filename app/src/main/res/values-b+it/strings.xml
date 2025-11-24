@@ -70,7 +70,6 @@
     <string name="popup_play_file">Riproduci file</string>
     <string name="popup_resume_download">Riprendi download</string>
     <string name="popup_pause_download">Ferma download</string>
-    <string name="pref_disable_acra">Disabilita segnalazione automatica di bug</string>
     <string name="home_more_info">Più info</string>
     <string name="home_expanded_hide">Nascondi</string>
     <string name="home_play">Riproduci</string>
@@ -151,8 +150,6 @@
     <string name="settings_info">Info</string>
     <string name="advanced_search">Ricerca avanzata</string>
     <string name="advanced_search_des">Dividi i risultati della ricerca per provider</string>
-    <string name="bug_report_settings_off">Invia i dati solo in caso di crash</string>
-    <string name="bug_report_settings_on">Non inviare alcun dato</string>
     <string name="show_fillers_settings">Mostra tag [filler] per anime</string>
     <string name="show_trailers_settings">Mostra trailer</string>
     <string name="kitsu_settings">Mostra poster da Kitsu</string>
@@ -174,7 +171,6 @@
     <string name="copy_link_toast">Link copiato negli appunti</string>
     <string name="play_episode_toast">Riproduci episodio</string>
     <string name="subs_default_reset_toast">Ripristina il valore predefinito</string>
-    <string name="acra_report_toast">Spiacente, l\'applicazione è andata in crash. Una segnalazione anonima di bug sarà inviata agli sviluppatori</string>
     <string name="season">Stagione</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Nessuna stagione</string>
@@ -395,7 +391,6 @@
     <string name="previous">Precedente</string>
     <string name="skip_setup">Salta configurazione</string>
     <string name="app_layout_subtext">Cambia l\'aspetto dell\'app per adattarla al proprio dispositivo</string>
-    <string name="crash_reporting_title">Segnala crash</string>
     <string name="preferred_media_subtext">Cosa vuoi vedere</string>
     <string name="setup_done">Fatto</string>
     <string name="extensions">Estensioni</string>
@@ -759,4 +754,5 @@
     <string name="top_center">In alto al centro</string>
     <string name="top_right">In alto a destra</string>
     <string name="middle_left">In centro a sinistra</string>
+    <string name="play_full_series_button">Riproduci serie completa</string>
 </resources>

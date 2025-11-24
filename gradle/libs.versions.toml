@@ -1,5 +1,4 @@
 [versions]
-acraCore = "5.13.1"
 activityKtx = "1.11.0"
 androidGradlePlugin = "8.13.1"
 appcompat = "1.7.1"
@@ -53,8 +52,6 @@ compileSdk = "36"
 targetSdk = "36"
 
 [libraries]
-acra-core = { module = "ch.acra:acra-core", version.ref = "acraCore" }
-acra-toast = { module = "ch.acra:acra-toast", version.ref = "acraCore" }
 activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
 android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "androidGradlePlugin" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }

@@ -13,7 +13,7 @@ import java.net.URI
 
 class HubCloud : ExtractorApi() {
     override val name = "Hub-Cloud"
-    override val mainUrl = "https://hubcloud.ink"
+    override val mainUrl = "https://hubcloud.*"
     override val requiresReferer = false
 
     override suspend fun getUrl(
@@ -137,6 +137,16 @@ class HubCloud : ExtractorApi() {
                     )
                 }
 
+                text.contains("Mega Server", ignoreCase = true) -> {
+                    callback.invoke(
+                        newExtractorLink(
+                            "$referer [Mega Server]",
+                            "$referer [Mega Server] $labelExtras",
+                            link,
+                        ) { this.quality = quality }
+                    )
+                }
+
                 text.contains("10Gbps", ignoreCase = true) -> {
                     var currentLink = link
                     var redirectUrl: String?
@@ -187,7 +197,7 @@ class HubCloud : ExtractorApi() {
     private fun getBaseUrl(url: String): String {
         return try {
             URI(url).let { "${it.scheme}://${it.host}" }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             ""
         }
     }
