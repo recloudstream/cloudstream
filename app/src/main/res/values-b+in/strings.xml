@@ -63,7 +63,6 @@
     <string name="popup_play_file">Putar Berkas</string>
     <string name="popup_resume_download">Lanjutkan Unduh</string>
     <string name="popup_pause_download">Jeda Unduh</string>
-    <string name="pref_disable_acra">Nonaktifkan pelaporan bug otomatis</string>
     <string name="home_more_info">Lebih banyak info</string>
     <string name="home_expanded_hide">Sembunyikan</string>
     <string name="home_play">Putar</string>
@@ -141,8 +140,6 @@
     <string name="settings_info">Info</string>
     <string name="advanced_search">Pencarian Lanjutan</string>
     <string name="advanced_search_des">Memberikan hasil pencarian yang dipisahkan berdasarkan penyedia</string>
-    <string name="bug_report_settings_off">Hanya mengirim data saat ngecrash</string>
-    <string name="bug_report_settings_on">Tidak mengirim data</string>
     <string name="show_fillers_settings">Tampilkan episode filler untuk anime</string>
     <string name="updates_settings">Tampilkan update aplikasi</string>
     <string name="updates_settings_des">Secara otomatis mencari update terbaru setelah aplikasi dibuka.</string>
@@ -160,7 +157,6 @@
     <string name="copy_link_toast">Tautan disalin ke papan klip</string>
     <string name="play_episode_toast">Putar Episode</string>
     <string name="subs_default_reset_toast">Ulang ke pengaturan default</string>
-    <string name="acra_report_toast">Maaf, aplikasi ngecrash. Laporan bug anonim akan dikirim ke developer</string>
     <string name="season">Season</string>
     <string name="no_season">Tidak Ada Season</string>
     <string name="episode">Episode</string>
@@ -453,7 +449,6 @@
     <string name="next">Selanjutnya</string>
     <string name="previous">Sebelumnya</string>
     <string name="app_layout_subtext">Ubah tampilan aplikasi</string>
-    <string name="crash_reporting_title">Laporkan Crash</string>
     <string name="setup_done">Selesai</string>
     <string name="extensions">Ekstensi</string>
     <string name="delete_repository">Hapus Repositori</string>
@@ -692,7 +687,7 @@
     <string name="player_load_one_subtitle_online">Muat yang pertama tersedia</string>
     <string name="torrent_preferred_media">Aktifkan torrent di dalam Pengaturan/Penyedia/Media pilihan</string>
     <string name="torrent_not_accepted">Mulai ulang aplikasi dan terima pop-up Stream Torrent untuk melanjutkan.</string>
-    <string name="software_decoding_desc">Dekode perangkat lunak memungkinkan pemutar memainkan berkas video yang tidak didukung perangkat Anda, tetapi dapat memperburuk performa atau pemutaran yang tidak stabil pada resolusi tinggi</string>
+    <string name="software_decoding_desc">Dekode perangkat lunak memungkinkan pemutar memainkan berkas video yang tidak didukung perangkat Anda, tetapi dapat memperburuk performa atau pemutaran yang tidak stabil pada resolusi tinggi.</string>
     <string name="software_decoding">Dekode perangkat lunak</string>
     <string name="sort_episodes_rating_low_high">Rating (terendah)</string>
     <string name="sort_button_date">Tanggal %s</string>
@@ -759,4 +754,5 @@
     <string name="top_left">Atas kiri</string>
     <string name="top_center">Atas tengah</string>
     <string name="top_right">Atas kanan</string>
+    <string name="play_full_series_button">Putar Seri Penuh</string>
 </resources>

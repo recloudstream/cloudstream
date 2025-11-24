@@ -47,7 +47,6 @@
     <string name="popup_play_file">Lire le fichier</string>
     <string name="popup_resume_download">Reprendre le téléchargement</string>
     <string name="popup_pause_download">Mettre en pause le téléchargement</string>
-    <string name="pref_disable_acra">Désactiver le rapport de bug automatique</string>
     <string name="home_more_info">Plus d\'information</string>
     <string name="home_expanded_hide">Cacher</string>
     <string name="home_main_poster_img_des">Affiche principale</string>
@@ -69,7 +68,6 @@
     <string name="copy_link_toast">Lien copié dans le presse-papier</string>
     <string name="play_episode_toast">Lecture de l\'episode</string>
     <string name="subs_default_reset_toast">Réinitialiser aux valeurs par défault</string>
-    <string name="acra_report_toast">Désolé, l\'application à crashé. Un rapport de bug anonyme va être envoyé aux développeurs</string>
     <string name="season">Saison</string>
     <string name="no_season">Pas de Saison</string>
     <string name="episode">Épisode</string>
@@ -282,8 +280,6 @@
     <string name="settings_info">Info</string>
     <string name="advanced_search">Recherche avancée</string>
     <string name="advanced_search_des">Vous donne les résultats de la recherche séparés par fournisseur</string>
-    <string name="bug_report_settings_off">Envoi de données uniquement en cas d\'accident</string>
-    <string name="bug_report_settings_on">N\'envoie aucune donnée</string>
     <string name="show_fillers_settings">Afficher les épisodes spéciaux pour les animés</string>
     <string name="show_trailers_settings">Montrer les bandes-annonces</string>
     <string name="kitsu_settings">Montrer les affiches provenant de Kitsu</string>
@@ -435,7 +431,6 @@
     <string name="apk_installer_settings_des">Certains téléphones ne supporte pas le nouvel installateur d\'application. Essayez l\'option de l\'ancien installateur si les mises-à-jour ne s\'installe pas.</string>
     <string name="previous">Précédent</string>
     <string name="skip_setup">Ignorer la configuration</string>
-    <string name="crash_reporting_title">Rapport de crash</string>
     <string name="repository_name_hint">Nom de dépôt (optionnel)</string>
     <string name="plugin_singular">plugin</string>
     <string name="delete_repository">Supprimer le repository</string>
