@@ -67,7 +67,6 @@
     <string name="app_dubbed_text">Trj</string>
     <string name="download_started">Way bilaabmatay soo dejintu</string>
     <string name="stream">Daalaco</string>
-    <string name="pref_disable_acra">Jooji cillad gudbinta iskeed ah</string>
     <string name="download_canceled">Waa la joojiyey dejintan</string>
     <string name="update_started">Way bilaabantay cuaboonaysiintu</string>
     <string name="error_loading_links_toast">Soo raridda lifaaqyadu way fashilantay</string>
@@ -96,7 +95,6 @@
     <string name="category_updates">Gurmadka iyo cusbooneysiinta</string>
     <string name="restore_success">Waa la kaydiyet xogta gurmadka</string>
     <string name="advanced_search_des">Raadinta waxay kuugu kala qaybinaysaa mid kasta iyo qaybiyihiisa</string>
-    <string name="bug_report_settings_on">Ma jirto xog la dirayo</string>
     <string name="restore_failed_format" formatted="true">Way fashilantay in xogta laga soo celiyo faylka gurmadka%s</string>
     <string name="apk_installer_settings_des">Moobillada qaar ayaa awoodin iney Rakibaha cusub een isticmaalnay, kan ku day haddii cusbooneysiintu kuu shaqayn weydo.</string>
     <string name="go_forward_30">+30</string>
@@ -108,7 +106,6 @@
     <string name="automatic_plugin_download">Si iskii ah usoo deji sidkanaha</string>
     <string name="pref_filter_search_quality">Qari tayada muqaalka aad dooratay natiijada waxa aad raadiso</string>
     <string name="advanced_search">Raadin heer-sare ah</string>
-    <string name="bug_report_settings_off">Keliya xogta waxaa ka dirayaa marka appku duqeeyo</string>
     <string name="show_fillers_settings">Xalqad buuxis ah tusi anemiga</string>
     <string name="benene">Dhiseyaasha appka sii beniin</string>
     <string name="storage_error">Way fashilantay dejintu, hubi ogolaanshaha isticmaalka kaydka</string>
@@ -176,7 +173,6 @@
     <string name="no_chromecast_support_toast">Bixiyahan kuma shaqeeyo koromakaastiga</string>
     <string name="subs_default_reset_toast">Asalkiisii hore kusoo celi</string>
     <string name="synopsis">Dulucuda</string>
-    <string name="acra_report_toast">Raalliahow, wuu duqeeyey appku, waxa warbixin cillad-saarka ka caawisa loo direy dhiseyaasha</string>
     <string name="season">Kalka</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="episode">Xalqad</string>
@@ -453,7 +449,6 @@
     <string name="previous">Kii hore</string>
     <string name="skip_setup">Is dhaafi fadhiisintan</string>
     <string name="app_layout_subtext">Beddel sida appku u muuqdo si uu ugu habboonaado moobilekaaga</string>
-    <string name="crash_reporting_title">Warbixinra cillad-saarka</string>
     <string name="preferred_media_subtext">Maxaad rabtaa inaad daawato</string>
     <string name="setup_done">Dhan</string>
     <string name="add_repository">Ku dar kayd-weyne</string>

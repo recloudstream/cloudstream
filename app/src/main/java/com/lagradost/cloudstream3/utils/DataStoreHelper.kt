@@ -3,13 +3,14 @@ package com.lagradost.cloudstream3.utils
 import android.content.Context
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
-import com.lagradost.cloudstream3.AcraApplication
-import com.lagradost.cloudstream3.AcraApplication.Companion.context
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
-import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.context
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKeyClass
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKeys
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKeys
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKeyClass
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.EpisodeResponse
@@ -56,7 +57,7 @@ class UserPreferenceDelegate<T : Any>(
     private val klass: KClass<out T> = default::class
     private val realKey get() = "${DataStoreHelper.currentAccount}/$key"
     operator fun getValue(self: Any?, property: KProperty<*>) =
-        AcraApplication.getKeyClass(realKey, klass.java) ?: default
+        getKeyClass(realKey, klass.java) ?: default
 
     operator fun setValue(
         self: Any?,
@@ -66,7 +67,7 @@ class UserPreferenceDelegate<T : Any>(
         if (t == null) {
             removeKey(realKey)
         } else {
-            AcraApplication.setKeyClass(realKey, t)
+            setKeyClass(realKey, t)
         }
     }
 }
