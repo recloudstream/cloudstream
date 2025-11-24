@@ -86,20 +86,24 @@ abstract class BaseAdapter<
      *
      * Use `submitList` for general use, as that can reuse old views.
      * */
-    open fun submitIncomparableList(list: List<T>?) {
+    open fun submitIncomparableList(list: List<T>?, commitCallback : Runnable? = null) {
         // This leverages a quirk in the submitList function that has a fast case for null arrays
         // What this implies is that as long as we do a double submit we can ensure no pop-ins,
         // as the changes are the entire list instead of calculating deltas
         submitList(null)
-        submitList(list)
+        submitList(list, commitCallback)
     }
 
-    open fun submitList(list: Collection<T>?) {
+    /**
+     * @param commitCallback Optional runnable that is executed when the List is committed, if it is committed.
+     * This is needed for some tasks as submitList will use a background thread for diff
+     * */
+    open fun submitList(list: Collection<T>?, commitCallback : Runnable? = null) {
         // deep copy at least the top list, because otherwise adapter can go crazy
         if (list.isNullOrEmpty()) {
-            mDiffer.submitList(null) // It is "faster" to submit null than emptyList()
+            mDiffer.submitList(null, commitCallback) // It is "faster" to submit null than emptyList()
         } else {
-            mDiffer.submitList(CopyOnWriteArrayList(list))
+            mDiffer.submitList(CopyOnWriteArrayList(list), commitCallback)
         }
     }
 

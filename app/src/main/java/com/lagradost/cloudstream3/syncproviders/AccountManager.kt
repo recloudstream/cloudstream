@@ -1,7 +1,7 @@
 package com.lagradost.cloudstream3.syncproviders
 
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.syncproviders.providers.Addic7ed
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi

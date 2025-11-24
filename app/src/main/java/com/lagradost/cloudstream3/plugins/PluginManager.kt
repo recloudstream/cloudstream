@@ -20,11 +20,11 @@ import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.removePluginMapping
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.AutoDownloadMode
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainAPI.Companion.settingsForProvider
