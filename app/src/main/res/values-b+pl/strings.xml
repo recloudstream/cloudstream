@@ -61,7 +61,6 @@
     <string name="popup_play_file">Odtwórz plik</string>
     <string name="popup_resume_download">Wznów pobieranie</string>
     <string name="popup_pause_download">Wstrzymaj pobieranie</string>
-    <string name="pref_disable_acra">Wyłącz przekazywanie błędów</string>
     <string name="home_more_info">Więcej informacji</string>
     <string name="home_expanded_hide">Ukryj</string>
     <string name="home_play">Odtwórz</string>
@@ -141,8 +140,6 @@
     <string name="settings_info">Informacje</string>
     <string name="advanced_search">Zaawansowane wyszukiwanie</string>
     <string name="advanced_search_des">Szukaj z podziałem na źródła</string>
-    <string name="bug_report_settings_off">Wysyłaj dane tylko przy awariach</string>
-    <string name="bug_report_settings_on">Nie wysyłaj żadnych danych</string>
     <string name="show_fillers_settings">Pokaż fillery dla anime</string>
     <string name="show_trailers_settings">Pokaż zwiastuny</string>
     <string name="kitsu_settings">Pokaż obrazki z Kitsu</string>
@@ -165,7 +162,6 @@
     <string name="copy_link_toast">Skopiowano do schowka</string>
     <string name="play_episode_toast">Odtwórz odcinek</string>
     <string name="subs_default_reset_toast">Zresetowano</string>
-    <string name="acra_report_toast">Awaria aplikacji. Anonimowe zgłoszenie błędu zostanie wysłane programistom</string>
     <string name="season">Sezon</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Brak sezonu</string>
@@ -368,7 +364,6 @@
     <string name="previous">Poprzedni</string>
     <string name="skip_setup">Pomiń konfigurację</string>
     <string name="app_layout_subtext">Dostosuj wygląd aplikacji do urządzenia</string>
-    <string name="crash_reporting_title">Zgłaszanie błędów</string>
     <string name="preferred_media_subtext">Co chcesz obejrzeć</string>
     <string name="setup_done">Gotowe</string>
     <string name="extensions">Rozszerzenia</string>
@@ -740,4 +735,5 @@
     <string name="top_left">Górne lewe</string>
     <string name="top_center">Górne środkowe</string>
     <string name="top_right">Górne prawe</string>
+    <string name="play_full_series_button">Odtwórz całą serię</string>
 </resources>

@@ -54,7 +54,6 @@
     <string name="popup_delete_file">Slett fil</string>
     <string name="popup_play_file">Spel av fil</string>
     <string name="popup_pause_download">Sett nedlasting på vent</string>
-    <string name="pref_disable_acra">Deaktiver automatisk feilrapportering</string>
     <string name="home_expanded_hide">Gøym</string>
     <string name="home_play">Spel(e) av</string>
     <string name="home_info">Informasjon</string>
@@ -103,7 +102,6 @@
     <string name="copy_link_toast">Kopiert lenke til utklipptavle</string>
     <string name="play_episode_toast">Spel av episode</string>
     <string name="subs_default_reset_toast">Tilbakestill til standardverdi</string>
-    <string name="acra_report_toast">Beklager, programmet har krasjet. Ein anonymisert feilrapport vil bli sendt til utviklarane</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Ingen sesong</string>
     <string name="episode">Episode</string>
