@@ -22,7 +22,7 @@
     <ListView
             android:nextFocusRight="@id/cancel_btt"
             android:nextFocusLeft="@id/apply_btt"
-
+            android:dividerHeight="1dp"
             android:id="@+id/listview1"
             android:layout_marginBottom="60dp"
             android:paddingTop="10dp"

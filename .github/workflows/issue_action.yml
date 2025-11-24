@@ -14,6 +14,7 @@ jobs:
         with:
           app_id: ${{ secrets.GH_APP_ID }}
           private_key: ${{ secrets.GH_APP_KEY }}
+
       - name: Similarity analysis
         id: similarity
         uses: actions-cool/issues-similarity-analysis@v1
@@ -25,6 +26,7 @@ jobs:
             ### Your issue looks similar to these issues:
             Please close if duplicate.
           comment-body: '${index}. ${similarity} #${number}'
+
       - name: Label if possible duplicate
         if: steps.similarity.outputs.similar-issues-found =='true'
         uses: actions/github-script@v8
@@ -37,7 +39,9 @@ jobs:
               repo: context.repo.repo,
               labels: ["possible duplicate"]
             })
+
       - uses: actions/checkout@v6
+
       - name: Automatically close issues that dont follow the issue template
         uses: lucasbento/auto-close-issues@v1.0.2
         with:
@@ -46,6 +50,7 @@ jobs:
             @${issue.user.login}: hello! :wave:
             This issue is being automatically closed because it does not follow the issue template." 
           closed-issues-label: "invalid"
+
       - name: Check if issue mentions a provider
         id: provider_check
         env:
@@ -55,6 +60,7 @@ jobs:
           pip3 install httpx
           RES="$(python3 ./check_issue.py)"
           echo "name=${RES}" >> $GITHUB_OUTPUT
+
       - name: Comment if issue mentions a provider
         if: steps.provider_check.outputs.name != 'none'
         uses: actions-cool/issues-helper@v3
@@ -66,6 +72,7 @@ jobs:
             Please do not report any provider bugs here. This repository does not contain any providers. Please find the appropriate repository and report your issue there or join the [discord](https://discord.gg/5Hus6fM).
             
             Found provider name: `${{ steps.provider_check.outputs.name }}`
+
       - name: Label if mentions provider
         if: steps.provider_check.outputs.name != 'none'
         uses: actions/github-script@v8
@@ -78,11 +85,10 @@ jobs:
               repo: context.repo.repo,
               labels: ["possible provider issue"]
             })
+
       - name: Add eyes reaction to all issues
         uses: actions-cool/emoji-helper@v1.0.0
         with:
           type: 'issue'
           token: ${{ steps.generate_token.outputs.token }}
           emoji: 'eyes'
-          
-          

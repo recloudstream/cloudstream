@@ -213,7 +213,6 @@
     <string name="error_loading_links_toast">リンクの読み込みエラー</string>
     <string name="enter_pin">137905</string>
     <string name="links_reloaded_toast">リンクがリロードされました</string>
-    <string name="pref_disable_acra">自動バグ報告を無効にする</string>
     <string name="player_speed">プレーヤーの速度</string>
     <string name="subtitles_settings">字幕設定</string>
     <string name="app_dubbed_text">ダブ</string>
@@ -238,7 +237,6 @@
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="filter_bookmarks">ブックマークのフィルタ</string>
     <string name="normal_no_plot">プロットが見つかりません</string>
-    <string name="bug_report_settings_on">データを送信しない</string>
     <string name="double_tap_to_pause_settings">ダブルタップで一時停止</string>
     <string name="show_trailers_settings">トレーラーを表示</string>
     <string name="jsdelivr_proxy">GitHub プロキシ</string>
@@ -315,7 +313,6 @@
     <string name="updates_settings_des">アプリ起動後に自動的に更新を探します。</string>
     <string name="uprereleases_settings">プレリリースにアップデート</string>
     <string name="subs_default_reset_toast">初期値にリセット</string>
-    <string name="acra_report_toast">残念ながらアプリがクラッシュしました。匿名のバグ報告が開発者に送信されます</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="no_episodes_found">エピソードが見つかりません</string>
     <string name="app_theme_settings">アプリのテーマ</string>
@@ -565,12 +562,10 @@
     <string name="subtitles_depressed">凹んだ</string>
     <string name="qr_image">QRコード画像</string>
     <string name="previous">前へ</string>
-    <string name="crash_reporting_title">クラッシュレポート</string>
     <string name="preferred_media_subtext">表示したいもの</string>
     <string name="batch_download_finish_format" formatted="true">%1$d %2$s をダウンロードしました</string>
     <string name="lock_profile">プロフィールをロック</string>
     <string name="password_pin_authentication_title">パスワード/PIN認証</string>
-    <string name="bug_report_settings_off">クラッシュ時のみデータを送信</string>
     <string name="pref_filter_search_quality">検索結果で選択したビデオ品質を非表示</string>
     <string name="automatic_plugin_download_summary">追加されたリポジトリから未インストールのすべてのプラグインを自動的にインストールします。</string>
     <string name="redo_setup_process">セットアッププロセスを再実行</string>
@@ -711,4 +706,5 @@
     <string name="top_left">左上</string>
     <string name="top_center">上中央</string>
     <string name="top_right">右上</string>
+    <string name="play_full_series_button">全シリーズを再生</string>
 </resources>
