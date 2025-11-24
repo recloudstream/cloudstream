@@ -84,7 +84,6 @@
     <string name="popup_play_file">Dosyayı Oynat</string>
     <string name="popup_resume_download">İndirmeyi Sürdür</string>
     <string name="popup_pause_download">İndirmeyi Duraklat</string>
-    <string name="pref_disable_acra">Otomatik hata raporlamayı kapat</string>
     <string name="home_more_info">Daha fazla bilgi</string>
     <string name="home_expanded_hide">Gizle</string>
     <string name="home_play">Oynat</string>
@@ -165,8 +164,6 @@
     <string name="settings_info">Bilgi</string>
     <string name="advanced_search">Gelişmiş arama</string>
     <string name="advanced_search_des">Arama sonuçlarını sağlayıcıya göre ayırır</string>
-    <string name="bug_report_settings_off">Yalnızca çökmelerle ilgili verileri gönderir</string>
-    <string name="bug_report_settings_on">Veri göndermez</string>
     <string name="show_fillers_settings">Anime için dolgu bölümünü göster</string>
     <string name="show_trailers_settings">Fragmanları göster</string>
     <string name="kitsu_settings">Kitsu posterlerini göster</string>
@@ -188,7 +185,6 @@
     <string name="copy_link_toast">Bağlantı panoya kopyalandı</string>
     <string name="play_episode_toast">Bölümü oynat</string>
     <string name="subs_default_reset_toast">Varsayılan değere sıfırla</string>
-    <string name="acra_report_toast">Üzgünüz, uygulama çöktü. Geliştiricilere anonim bir hata raporu gönderilecek</string>
     <string name="season">Sezon</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Sezon yok</string>
@@ -427,7 +423,6 @@
     <string name="previous">Önceki</string>
     <string name="skip_setup">Kurulumu atla</string>
     <string name="app_layout_subtext">Cihazınıza uygun uygulama görünümünü seçin</string>
-    <string name="crash_reporting_title">Çökme raporları</string>
     <string name="preferred_media_subtext">Ne izlemek istiyorsunuz</string>
     <string name="setup_done">Bitti</string>
     <string name="extensions">Eklentiler</string>
@@ -717,7 +712,7 @@
     <string name="torrent_preferred_media">Ayarlar/Sağlayıcılar/Tercih edilen medya bölümünden torrenti etkinleştirin</string>
     <string name="torrent_not_accepted">Uygulamayı yeniden başlatın ve devam etmek için Stream Torrent açılır penceresini kabul edin.</string>
     <string name="software_decoding">Yazılımsal çözücü</string>
-    <string name="software_decoding_desc">Yazılımsal kod çözücü, oynatıcının telefon tarafından desteklenmeyen video dosyalarını oynatmasını sağlar, ancak yüksek çözünürlükte gecikmeli veya dengesiz oynatmaya neden olabilir</string>
+    <string name="software_decoding_desc">Yazılımsal kod çözücü, oynatıcının cihazınız tarafından desteklenmeyen video dosyalarını oynatmasını sağlar, ancak yüksek çözünürlükte gecikmeli veya dengesiz oynatmaya neden olabilir.</string>
     <string name="sort_episodes_number_asc">Bölüm (Artan)</string>
     <string name="sort_episodes_number_desc">Bölüm (Azalan)</string>
     <string name="sort_episodes_rating_high_low">Puanlama (En Yüksek)</string>
@@ -760,7 +755,7 @@
     <string name="download_time_left_min_sec_format" formatted="true">%1$ddk %2$dsn</string>
     <string name="download_time_left_sec_format" formatted="true">%1$dsn</string>
     <string name="show_rating">Reyting etiketi</string>
-    <string name="no_account">Hesap yok</string>
+    <string name="no_account">hesap yok</string>
     <string name="edit_profile_image_title">Profil Resmini düzenle</string>
     <string name="edit_profile_image_hint">Profil Resmi Bağlantısını Girin</string>
     <string name="edit_profile_image_error_empty">URL bulunamadı</string>
@@ -783,4 +778,5 @@
     <string name="top_center">Üst orta</string>
     <string name="top_right">Sağ üst</string>
     <string name="subs_subtitle_alignment">Altyazı Hizalama</string>
+    <string name="play_full_series_button">Tüm Seriyi Oyna</string>
 </resources>

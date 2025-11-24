@@ -138,7 +138,6 @@
     <string name="app_subbed_text">চাব</string>
     <string name="popup_delete_file">ফাইল মচক</string>
     <string name="popup_play_file">ফাইল প্লে কৰক</string>
-    <string name="pref_disable_acra">স্বয়ংক্ৰিয় বাগ ৰিপ’ৰ্টিং নিষ্ক্ৰিয় কৰক</string>
     <string name="popup_resume_download">ডাউনলোড পুনৰ আৰম্ভ কৰক</string>
     <string name="popup_pause_download">ডাউনলোড ৰখা</string>
     <string name="home_more_info">অধিক তথ্য</string>
@@ -212,8 +211,6 @@
     <string name="restore_success">ব্যাকআপ ফাইল ল\'ড কৰা হৈছে</string>
     <string name="advanced_search">উন্নত সন্ধান</string>
     <string name="advanced_search_des">আপোনাক প্ৰদানকাৰীৰে পৃথককৃত সন্ধান ফলাফল দিব</string>
-    <string name="bug_report_settings_off">কেৱল ভূলৰ ক্ষেত্ৰত ডাটা প্ৰেৰণ কৰে</string>
-    <string name="bug_report_settings_on">কোনো ডাটা প্ৰেৰণ নকৰে</string>
     <string name="show_fillers_settings">এনিমেৰ ফিলাৰ খণ্ড দেখুৱাওক</string>
     <string name="show_trailers_settings">ট্ৰেইলাৰ দেখুৱাওক</string>
     <string name="kitsu_settings">কিৎসুৰ পৰা প\'ষ্টাৰ দেখুৱাওক</string>
@@ -234,7 +231,6 @@
     <string name="no_chromecast_support_toast">এই প্ৰদানকাৰীৰ ক্ৰোমকাষ্ট সমৰ্থন নাই</string>
     <string name="copy_link_toast">লিংক ক্লিপব\'ৰ্ডত কপিকৰ কৰা হ’ল</string>
     <string name="play_episode_toast">এপিচ’ড প্লে কৰক</string>
-    <string name="acra_report_toast">দুখিত, এপ্পটোৰ এক্সিডেণ্ট হৈছে। এজনামবাগ বাগ ৰিপ’ৰ্ট ডেভেলপাৰক পঠোৱা হ’ব</string>
     <string name="season">চিজন</string>
     <string name="subs_default_reset_toast">ডিফল্ট মানলৈ পুনৰছেট কৰক</string>
     <string name="season_format">%1$s %2$d%3$s</string>
@@ -435,7 +431,6 @@
     <string name="subtitles_remove_bloat">অপ্রয়োজনীয়তাবোৰ সাবটাইটেলৰ পৰা আঁতৰাওক</string>
     <string name="extras">অতিৰিক্ত</string>
     <string name="trailer">ট্ৰেইলাৰ</string>
-    <string name="crash_reporting_title">ক্ৰেছৰ ৰিপৰ্টিং</string>
     <string name="network_adress_example">https://example.com/example.mp4</string>
     <string name="previous">পূৰ্বৰ</string>
     <string name="skip_setup">ছেটআপ এৰি দিয়া</string>

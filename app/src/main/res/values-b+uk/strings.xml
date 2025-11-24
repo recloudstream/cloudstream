@@ -47,7 +47,6 @@
     <string name="app_subbed_text">Суб.</string>
     <string name="popup_delete_file">Видалити файл</string>
     <string name="popup_resume_download">Відновити завантаження</string>
-    <string name="pref_disable_acra">Вимкнути автонадсилання звітів про помилки</string>
     <string name="home_expanded_hide">Приховати</string>
     <string name="home_play">Переглянути</string>
     <string name="home_info">Подробиці</string>
@@ -144,8 +143,6 @@
     <string name="settings_info">Подробиці</string>
     <string name="advanced_search">Розширений пошук</string>
     <string name="advanced_search_des">Показувати результати пошуку, розділені за постачальниками</string>
-    <string name="bug_report_settings_off">Надсилати лише дані про збої</string>
-    <string name="bug_report_settings_on">Не надсилати дані</string>
     <string name="show_fillers_settings">Показувати наповнювачі для аніме</string>
     <string name="show_trailers_settings">Показувати трейлери</string>
     <string name="pref_filter_search_quality">Приховати вибрану якість відео у результатах пошуку</string>
@@ -233,7 +230,6 @@
     <string name="benene_des">Дано бананів</string>
     <string name="year">Рік</string>
     <string name="go_forward_30">+30</string>
-    <string name="acra_report_toast">Вибачте, у застосунку стався збій. Буде відправлено анонімне повідомлення про помилку розробникам</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="episode">Епізод</string>
     <string name="episodes_range">%1$d-%2$d</string>
@@ -398,7 +394,6 @@
     <string name="next">Далі</string>
     <string name="provider_languages_tip">Переглядайте відео на цих мовах</string>
     <string name="skip_setup">Пропустити налаштування</string>
-    <string name="crash_reporting_title">Звітування про збої</string>
     <string name="preferred_media_subtext">Що ви хочете побачити</string>
     <string name="setup_done">Готово</string>
     <string name="extensions">Розширення</string>
@@ -711,4 +706,5 @@
     <string name="top_left">Угорі ліворуч</string>
     <string name="top_center">Верхній центр</string>
     <string name="top_right">Угорі праворуч</string>
+    <string name="play_full_series_button">Відтворити повну серію</string>
 </resources>

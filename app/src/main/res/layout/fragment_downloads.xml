@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:background="?attr/colorPrimary"
+            android:background="?attr/primaryGrayBackground"
             android:padding="8dp"
             android:visibility="gone">
 
@@ -36,7 +36,7 @@
                 android:padding="8dp"
                 android:layout_gravity="center_vertical"
                 android:nextFocusLeft="@id/navigation_downloads"
-                app:tint="@android:color/white" />
+                app:tint="?attr/white" />
 
             <Button
                 android:id="@+id/btnDelete"
@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
                 android:text="@string/delete"
-                android:textColor="@android:color/white"
+                android:textColor="?attr/white"
                 android:layout_gravity="center_vertical" />
 
             <TextView
@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
                 android:text="@string/downloads_delete_select"
-                android:textColor="@android:color/white"
+                android:textColor="?attr/white"
                 android:layout_gravity="center_vertical"
                 android:visibility="gone" />
 
@@ -68,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
                 android:text="@string/select_all"
-                android:textColor="@android:color/white"
+                android:textColor="?attr/white"
                 android:layout_marginEnd="8dp"
                 android:nextFocusDown="@id/download_list" />
         </LinearLayout>

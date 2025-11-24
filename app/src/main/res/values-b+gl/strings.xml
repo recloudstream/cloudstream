@@ -76,7 +76,6 @@
     <string name="popup_play_file">Reproducir Arquivo</string>
     <string name="popup_resume_download">Continuar Descarga</string>
     <string name="popup_pause_download">Pausar Descarga</string>
-    <string name="pref_disable_acra">Desactivar reporte automático de bugs</string>
     <string name="home_more_info">Máis información</string>
     <string name="home_expanded_hide">Agochar</string>
     <string name="home_play">Reproducir</string>
@@ -153,8 +152,6 @@
     <string name="player_subtitles_settings">Subtítulos</string>
     <string name="episode_sync_settings_des">Sincronizar automáticamente o progreso do episodio actual</string>
     <string name="use_system_brightness_settings_des">Use o brillo do sistema no reprodutor da aplicación en lugar dunha superposición oscura</string>
-    <string name="bug_report_settings_off">Só envía datos se a aplicacción falla inesperadamente</string>
-    <string name="bug_report_settings_on">Non enviar datos</string>
     <string name="show_fillers_settings">Mostrar episodio de recheo para Anime</string>
     <string name="show_trailers_settings">Mostrar Trailers</string>
     <string name="kitsu_settings">Mostrar pósters de Kitsu</string>
@@ -278,7 +275,6 @@
     <string name="no_links_found_toast">Ligazóns non atopadas</string>
     <string name="copy_link_toast">Ligazón copiada ó portapapeis</string>
     <string name="play_episode_toast">Reproducir capítulo</string>
-    <string name="acra_report_toast">O sentimos, o aplicativo bloqueouse. Enviarase un informe de error anónimo aos desenvolvedores</string>
     <string name="season">Temporada</string>
     <plurals name="episodes" translatable="false">
         <item quantity="one">Capítulos</item>
