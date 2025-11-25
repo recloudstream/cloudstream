@@ -24,8 +24,7 @@ junitVersion = "1.3.0"
 juniversalchardet = "2.5.0"
 kotlinGradlePlugin = "2.2.21"
 kotlinxCoroutinesCore = "1.10.2"
-lifecycleLivedataKtx = "2.9.4"
-lifecycleViewmodelKtx = "2.9.4"
+lifecycleKtx = "2.9.4"
 material = "1.14.0-alpha06"
 media3 = "1.8.0"
 navigationKtx = "2.9.6"
@@ -45,7 +44,6 @@ tmdbJava = "2.13.0"
 torrentserver = "7861970e038b35cd8c6918384e49caf26903e09e"
 tvprovider = "1.1.0"
 video = "1.0.0"
-workRuntime = "2.10.5"
 workRuntimeKtx = "2.10.5"
 
 jvmTarget = "1.8"
@@ -77,8 +75,8 @@ junit = { module = "junit:junit", version.ref = "junit" }
 junit-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "junitKtx" }
 juniversalchardet = { module = "com.github.albfernandez:juniversalchardet", version.ref = "juniversalchardet" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
+lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleKtx" }
+lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleKtx" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 media3-cast = { module = "androidx.media3:media3-cast", version.ref = "media3" }
 media3-common = { module = "androidx.media3:media3-common", version.ref = "media3" }
@@ -110,7 +108,6 @@ tmdb-java = { module = "com.uwetrottmann.tmdb2:tmdb-java", version.ref = "tmdbJa
 torrentserver = { module = "com.github.recloudstream:torrentserver", version.ref = "torrentserver" }
 tvprovider = { module = "androidx.tvprovider:tvprovider", version.ref = "tvprovider" }
 video = { module = "com.google.android.mediahome:video", version.ref = "video" }
-work-runtime = { module = "androidx.work:work-runtime", version.ref = "workRuntime" }
 work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 
 [plugins]
@@ -123,6 +120,8 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm" , version.ref = "kotlinGradlePlug
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlinGradlePlugin" }
 
 [bundles]
+coil = ["coil", "coil-network-okhttp"]
+lifecycle = ["lifecycle-livedata-ktx", "lifecycle-viewmodel-ktx"]
 media3 = ["media3-cast", "media3-common", "media3-container", "media3-datasource-cronet", "media3-datasource-okhttp", "media3-exoplayer", "media3-exoplayer-dash", "media3-exoplayer-hls", "media3-session", "media3-ui"]
-navigationKtx = ["navigation-fragment-ktx", "navigation-ui-ktx"]
-nextlibMedia3 = ["nextlib-media3ext", "nextlib-mediainfo"]
+navigation = ["navigation-fragment-ktx", "navigation-ui-ktx"]
+nextlib = ["nextlib-media3ext", "nextlib-mediainfo"]
