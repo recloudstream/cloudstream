@@ -18,7 +18,7 @@ import java.lang.ref.WeakReference
     level = DeprecationLevel.WARNING
 )*/
 class AcraApplication {
-	// All methods bere can be changed to be a wrapper around CloudStream app
+	// All methods here can be changed to be a wrapper around CloudStream app
 	// without a seperate deprecation after next stable. All methods should
 	// also be deprecated at that time.
 	companion object {
