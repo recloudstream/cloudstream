@@ -25,6 +25,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentDownloadsBinding
 import com.lagradost.cloudstream3.databinding.StreamInputBinding
 import com.lagradost.cloudstream3.isEpisodeBased
+import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.BaseFragment
@@ -101,19 +102,27 @@ class DownloadFragment : BaseFragment<FragmentDownloadsBinding>(
             downloadViewModel.setIsMultiDeleteState(false)
         }
 
-        /**
-         * We have to make sure selected items are
-         * cleared here as well so we don't run in an
-         * inconsistent state where selected items do
-         * not match the multi delete state we are in.
-         */
-        downloadViewModel.clearSelectedItems()
+        observe(downloadViewModel.headerCards) { cards ->
+            when (cards) {
+                is Resource.Success -> {
+                    (binding.downloadList.adapter as? DownloadAdapter)?.submitList(cards.value)
+                    binding.textNoDownloads.isVisible = cards.value.isEmpty()
+                    binding.downloadLoading.isVisible = false
+                    binding.downloadList.isVisible = true
+                }
 
-        observe(downloadViewModel.headerCards) {
-            (binding.downloadList.adapter as? DownloadAdapter)?.submitList(it)
-            binding.downloadLoading.isVisible = false
-            binding.textNoDownloads.isVisible = it.isEmpty()
+                is Resource.Loading -> {
+                    binding.downloadList.isVisible = false
+                    binding.downloadLoading.isVisible = true
+                }
+
+                is Resource.Failure -> {
+                    binding.downloadList.isVisible = true
+                    binding.downloadLoading.isVisible = false
+                }
+            }
         }
+
         observe(downloadViewModel.availableBytes) {
             updateStorageInfo(
                 binding.root.context,
@@ -173,7 +182,7 @@ class DownloadFragment : BaseFragment<FragmentDownloadsBinding>(
             binding.btnDelete.isVisible = it.isNotEmpty()
             binding.selectItemsText.isVisible = it.isEmpty()
 
-            val allSelected = downloadViewModel.isAllSelected()
+            val allSelected = downloadViewModel.isAllHeadersSelected()
             if (allSelected) {
                 binding.btnToggleAll.setText(R.string.deselect_all)
             } else binding.btnToggleAll.setText(R.string.select_all)
@@ -251,7 +260,7 @@ class DownloadFragment : BaseFragment<FragmentDownloadsBinding>(
         }
     }
 
-    private fun handleSelectedChange(selected: MutableSet<Int>) {
+    private fun handleSelectedChange(selected: Set<Int>) {
         if (selected.isNotEmpty()) {
             binding?.downloadDeleteAppbar?.isVisible = true
             binding?.downloadAppbar?.isVisible = false
@@ -270,14 +279,11 @@ class DownloadFragment : BaseFragment<FragmentDownloadsBinding>(
             }
 
             binding?.btnToggleAll?.setOnClickListener {
-                val allSelected = downloadViewModel.isAllSelected()
-                val adapter = binding?.downloadList?.adapter as? DownloadAdapter
+                val allSelected = downloadViewModel.isAllHeadersSelected()
                 if (allSelected) {
-                    adapter?.notifySelectionStates()
                     downloadViewModel.clearSelectedItems()
                 } else {
-                    adapter?.notifyAllSelected()
-                    downloadViewModel.selectAllItems()
+                    downloadViewModel.selectAllHeaders()
                 }
             }
 
