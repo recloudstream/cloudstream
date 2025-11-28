@@ -254,5 +254,4 @@
     <string name="confirm_exit_dialog">Ar tikrai norite išeiti?</string>
     <string name="action_remove_from_watched">Pašalinti iš žiūrimų</string>
     <string name="audio_tracks">Garso takelis</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>

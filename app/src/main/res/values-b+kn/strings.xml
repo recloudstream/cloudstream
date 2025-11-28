@@ -129,5 +129,4 @@
     <string name="swipe_to_change_settings_des">Brightness ಅಥವಾ volume ಬದಲಾಯಿಸಲು ಎಡ ಅಥವಾ ಬಲಭಾಗದಲ್ಲಿ ಮೇಲಕ್ಕೆ ಅಥವಾ ಕೆಳಕ್ಕೆ ಸ್ಲೈಡ್ ಮಾಡಿ</string>
     <string name="autoplay_next_settings_des">ಈಗಿನ ಎಪಿಸೋಡ್ ಮುಗಿದಾಗ ಮುಂದಿನ ಎಪಿಸೋಡ್ ಅನ್ನು ಪ್ರಾರಂಭಿಸಿ</string>
     <string name="swipe_to_change_settings">ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಬದಲಾಯಿಸಲು ಸ್ವೈಪ್ ಮಾಡಿ</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
