@@ -66,7 +66,6 @@
     <string name="sort_clear">Buang</string>
     <string name="toast_copied">disalin!</string>
     <string name="player_speed">Kelajuan Pemain</string>
-    <string name="pref_disable_acra">Lumpuhkan pelaporan pepijat automatik</string>
     <string name="action_remove_from_bookmarks">Buang</string>
     <string name="autoplay_next_settings_des">Mulakan episod seterusnya apabila episod semasa tamat</string>
     <string name="open_local_video">Buka video tempatan</string>
@@ -163,7 +162,6 @@
     <string name="category_player">Pemain</string>
     <string name="delayed_update_notice">Aplikasi akan dikemas kini ketika keluar</string>
     <string name="player_settings_play_in_app">Pemain dalaman</string>
-    <string name="bug_report_settings_on">Tiada data dihantar</string>
     <string name="duration">Durasi</string>
     <string name="site">Laman web</string>
     <string name="synopsis">Sinopsis</string>
@@ -416,7 +414,6 @@
     <string name="quality_hd">HD</string>
     <string name="previous">Sebelum</string>
     <string name="app_layout_subtext">Tukar kelihatan aplikasi mengikut peranti</string>
-    <string name="crash_reporting_title">Laporkan ralat</string>
     <string name="setup_done">Tamat</string>
     <string name="extensions">Tambahan</string>
     <string name="add_repository">Tambah repositori</string>
@@ -514,7 +511,6 @@
     <string name="copy_link_toast">Pautan disalin ke papan klip</string>
     <string name="play_episode_toast">Main episod</string>
     <string name="subs_default_reset_toast">Tetapkan semula ke nilai lalai</string>
-    <string name="acra_report_toast">Maaf, permohonan itu terhempas. Laporan bug tanpa nama akan dihantar kepada pemaju</string>
     <string name="season">Musim</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Tiada musim</string>
@@ -522,7 +518,6 @@
     <string name="backup_settings">Sandarkan data</string>
     <string name="restore_failed_format" formatted="true">Gagal pulihkan data dari fail %s</string>
     <string name="backup_failed_error_format">Ralat sandaran %s</string>
-    <string name="bug_report_settings_off">Hanya hantar data apabila mengalami kegagalan</string>
     <plurals name="episodes" translatable="false">
         <item quantity="other">Episode</item>
     </plurals>

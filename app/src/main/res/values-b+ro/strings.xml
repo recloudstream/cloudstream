@@ -68,7 +68,6 @@
     <string name="popup_play_file">Redare fișier</string>
     <string name="popup_resume_download">Continuați descărcarea</string>
     <string name="popup_pause_download">Opriți descărcarea</string>
-    <string name="pref_disable_acra">Dezactivați raportarea automată a erorilor</string>
     <string name="home_more_info">Mai multe informații</string>
     <string name="home_expanded_hide">Ascunde</string>
     <string name="home_play">Începe</string>
@@ -147,8 +146,6 @@
     <string name="settings_info">Informații</string>
     <string name="advanced_search">Căutare avansată</string>
     <string name="advanced_search_des">Împărțiți rezultatele căutării în funcție de furnizor</string>
-    <string name="bug_report_settings_off">Trimiteți date numai în cazul unui accident</string>
-    <string name="bug_report_settings_on">Nu trimiteți niciun fel de date</string>
     <string name="show_fillers_settings">Afișează etichetele [filler] pentru anime</string>
     <string name="show_trailers_settings">Arată trailerul</string>
     <string name="kitsu_settings">Arată afișele de la Kitsu</string>
@@ -168,7 +165,6 @@
     <string name="copy_link_toast">Link copiat în clipboard</string>
     <string name="play_episode_toast">Redare episod</string>
     <string name="subs_default_reset_toast">Restabilirea la valorile implicite</string>
-    <string name="acra_report_toast">Ne pare rău, aplicația s-a blocat. Un raport de eroare anonim va fi trimis dezvoltatorilor</string>
     <string name="season">Sezonul</string>
     <string name="no_season">Nu există sezon</string>
     <string name="episode">Episodul</string>
@@ -436,7 +432,6 @@
     <string name="pref_category_links">Linkuri</string>
     <string name="pref_category_ui_features">Funcții</string>
     <string name="extension_authors">Autori</string>
-    <string name="crash_reporting_title">Raportarea accidentelor</string>
     <string name="add_repository">Adaugă depozit</string>
     <string name="empty_library_no_accounts_message">Biblioteca ta este goală :(
 \nConectați-vă într-un cont de bibliotecă sau adăugați emisiuni la biblioteca locală.</string>

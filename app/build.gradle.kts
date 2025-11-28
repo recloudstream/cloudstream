@@ -6,9 +6,9 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
-    id("com.android.application")
-    id("kotlin-android")
-    id("org.jetbrains.dokka")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.kotlin.android)
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
@@ -154,6 +154,7 @@ android {
 
     buildFeatures {
         buildConfig = true
+        resValues = true
     }
 
     namespace = "com.lagradost.cloudstream3"
@@ -172,9 +173,8 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.activity.ktx)
     implementation(libs.appcompat)
-    implementation(libs.bundles.navigationKtx)
-    implementation(libs.lifecycle.livedata.ktx)
-    implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.bundles.lifecycle)
+    implementation(libs.bundles.navigation)
 
     // Design & UI
     implementation(libs.preference.ktx)
@@ -183,24 +183,19 @@ dependencies {
     implementation(libs.swiperefreshlayout)
 
     // Coil Image Loading
-    implementation(libs.coil)
-    implementation(libs.coil.network.okhttp)
+    implementation(libs.bundles.coil)
 
     // Media 3 (ExoPlayer)
     implementation(libs.bundles.media3)
     implementation(libs.video)
 
+    // FFmpeg Decoding
+    implementation(libs.bundles.nextlib)
+
     // PlayBack
     implementation(libs.colorpicker) // Subtitle Color Picker
     implementation(libs.newpipeextractor) // For Trailers
     implementation(libs.juniversalchardet) // Subtitle Decoding
-
-    // FFmpeg Decoding
-    implementation(libs.bundles.nextlibMedia3)
-
-    // Crash Reports (AcraApplication.kt)
-    implementation(libs.acra.core)
-    implementation(libs.acra.toast)
 
     // UI Stuff
     implementation(libs.shimmer) // Shimmering Effect (Loading Skeleton)
@@ -225,7 +220,6 @@ dependencies {
     implementation(libs.torrentserver)
 
     // Downloading & Networking
-    implementation(libs.work.runtime)
     implementation(libs.work.runtime.ktx)
     implementation(libs.nicehttp) // HTTP Lib
 
@@ -247,6 +241,7 @@ tasks.register<Jar>("androidSourcesJar") {
 }
 
 tasks.register<Copy>("copyJar") {
+    dependsOn("build", ":library:jvmJar")
     from(
         "build/intermediates/compile_app_classes_jar/prereleaseDebug/bundlePrereleaseDebugClassesToCompileJar",
         "../library/build/libs"
