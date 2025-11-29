@@ -199,6 +199,7 @@ class DownloadAdapter(
                 )
         }
 
+        downloadHeaderInfo.isVisible = true
         downloadButton.setDefaultClickListener(card.child, downloadHeaderInfo, onItemClickEvent)
         downloadButton.isVisible = !isMultiDeleteState
 
@@ -218,11 +219,14 @@ class DownloadAdapter(
         card: VisualDownloadCached.Header,
         formattedSize: String
     ) {
+        downloadButton.resetViewData()
+        watchProgressContainer.isVisible = false
         downloadButton.isVisible = false
         downloadHeaderEpisodeProgress.isVisible = false
         downloadHeaderGotoChild.isVisible = !isMultiDeleteState
 
         try {
+            downloadHeaderInfo.isVisible = true
             downloadHeaderInfo.text =
                 downloadHeaderInfo.context.getString(R.string.extra_info_format).format(
                     card.totalDownloads,
