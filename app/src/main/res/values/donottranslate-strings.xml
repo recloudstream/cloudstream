@@ -88,6 +88,7 @@
     <string name="confirm_exit_key">confirm_exit_key</string>
     <string name="software_decoding_key">software_decoding_key2</string>
     <string name="manual_update_plugins_key">manual_update_plugins</string>
+    <string name="legal_notice_key">legal_notice_key</string>
     <string name="speedup_key">speedup_key</string>
     <string name="anilist_key">anilist_key</string>
     <string name="simkl_key">simkl_key</string>
@@ -98,6 +99,8 @@
     <string name="pref_category_security_key">pref_category_security_key</string>
     <string name="pref_category_gestures_key">pref_category_gestures_key</string>
     <string name="pref_category_android_tv_key">pref_category_android_tv_key</string>
+
+    <string name="tv_no_focus_tag">tv_no_focus_tag</string>
 
     <!-- FORMAT WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" formatted="true">%1$d %2$s | %3$s</string>
@@ -116,16 +119,13 @@
     <string name="change_providers_img_des">@string/home_change_provider_img_des</string>
     <string name="result_plot">@string/synopsis</string>
 
+    <string name="subtitles_none">@string/none</string>
     <string name="type_none">@string/none</string>
+    <string name="duplicate_cancel">@string/cancel</string>
     <string name="sort_cancel">@string/cancel</string>
     <string name="default_subtitles">@string/action_default</string>
     <string name="default_account">@string/action_default</string>
-    <string name="subtitles_none">@string/none</string>
-    <plurals name="episodes">
-        <item quantity="one">@string/episode</item>
-        <item quantity="other">@string/episodes</item>
-    </plurals>
-    <string name="legal_notice_key">legal_notice_key</string>
+
     <string name="legal_notice_text">Any legal issues regarding the content on this application
         should be taken up with the actual file hosts and providers themselves as we are not affiliated with them.
 
@@ -143,6 +143,8 @@
         CloudStream at your own risk.
     </string>
 
-    <string name="duplicate_cancel">@string/cancel</string>
-    <string name="tv_no_focus_tag">tv_no_focus_tag</string>
+    <plurals name="episodes">
+        <item quantity="one">@string/episode</item>
+        <item quantity="other">@string/episodes</item>
+    </plurals>
 </resources>
