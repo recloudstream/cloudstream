@@ -108,9 +108,7 @@
             <TextView
                 android:id="@+id/seekbar_value"
                 android:minWidth="@dimen/preference_seekbar_value_minWidth"
-                android:paddingLeft="8dp"
                 android:paddingStart="8dp"
-                android:paddingRight="0dp"
                 android:paddingEnd="0dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
