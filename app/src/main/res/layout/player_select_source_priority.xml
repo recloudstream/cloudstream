@@ -142,6 +142,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:autofillHints="username"
             android:inputType="text"
             android:maxLength="32"
             android:layout_marginHorizontal="?android:attr/listPreferredItemPaddingStart"
@@ -151,7 +152,7 @@
             android:textSize="20sp"
             android:textStyle="bold"
             tools:text="@string/profile_number"
-            android:autofillHints="username" />
+            tools:ignore="LabelFor" />
         <!--        <ImageView-->
         <!--            android:layout_width="50dp"-->
         <!--            android:layout_height="50dp"-->
