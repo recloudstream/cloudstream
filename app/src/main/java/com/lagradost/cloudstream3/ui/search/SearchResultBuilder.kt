@@ -128,18 +128,11 @@ object SearchResultBuilder {
         cardText?.text = card.name
         cardText?.isVisible = showTitle
         cardView.isVisible = true
-        cardView.loadImage(card.posterUrl, card.posterHeaders) {
-            error { getImageFromDrawable(itemView.context, R.drawable.default_cover) }
-            /*
-            createPaletteAsync is currently disabled as we use hardware acceleration on images
-            val posterUrl = card.posterUrl
-            if (posterUrl != null && colorCallback != null) {
-                this.listener(onSuccess = { _,success ->
-                    val bitmap = success.image.toBitmap()
-                    createPaletteAsync(posterUrl, bitmap, colorCallback)
-                })
-            }*/
-        }
+        if (!card.posterUrl.isNullOrEmpty()) {
+            cardView.loadImage(card.posterUrl, card.posterHeaders) {
+                error { getImageFromDrawable(itemView.context, R.drawable.default_cover) }
+            }
+        } else cardView.loadImage(R.drawable.default_cover)
 
         fun click(view: View?) {
             clickCallback.invoke(
