@@ -128,7 +128,7 @@ object SearchResultBuilder {
         cardText?.text = card.name
         cardText?.isVisible = showTitle
         cardView.isVisible = true
-        if (card.posterUrl != null) {
+        if (!card.posterUrl.isNullOrEmpty()) {
             cardView.loadImage(card.posterUrl, card.posterHeaders) {
                 error { getImageFromDrawable(itemView.context, R.drawable.default_cover) }
             }
