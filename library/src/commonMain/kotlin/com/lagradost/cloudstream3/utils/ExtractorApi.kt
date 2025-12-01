@@ -797,7 +797,7 @@ fun getQualityFromName(qualityName: String?): Int {
     }?.value ?: match.toIntOrNull() ?: Qualities.Unknown.value
 }
 
-private val packedRegex = Regex("""eval\(function\(p,a,c,k,e,.*\)\)""")
+private val packedRegex = Regex("""eval\(function\(p,\s*a,\s*c,\s*k,\s*e,.*\)""")
 fun getPacked(string: String): String? {
     return packedRegex.find(string)?.value
 }

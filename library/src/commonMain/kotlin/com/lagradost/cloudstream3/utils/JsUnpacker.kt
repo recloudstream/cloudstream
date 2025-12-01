@@ -15,7 +15,7 @@ class JsUnpacker(packedJS: String?) {
      */
     fun detect(): Boolean {
         val js = packedJS!!.replace(" ", "")
-        val p = Pattern.compile("eval\\(function\\(p,a,c,k,e,[rd]")
+        val p = Pattern.compile("""eval\(function\(p,\s*a,\s*c,\s*k,\s*e,.*\)""")
         val m = p.matcher(js)
         return m.find()
     }
