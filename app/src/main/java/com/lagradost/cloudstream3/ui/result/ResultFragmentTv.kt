@@ -89,6 +89,12 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
+    override fun getPoolKey(): String {
+        // Prevent poisoned pool by using no cache if we can't get key for it
+        val storedData = getStoredData() ?: return ""
+        return "ResultFragmentTv:${storedData.name}-${storedData.apiName}"
+    }
+
     private fun updateUI(id: Int?) {
         viewModel.reloadEpisodes()
     }

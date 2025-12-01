@@ -35,6 +35,7 @@ import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.databinding.ToastBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
+import com.lagradost.cloudstream3.ui.BaseFragmentPool
 import com.lagradost.cloudstream3.ui.home.HomeChildItemAdapter
 import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
 import com.lagradost.cloudstream3.ui.player.PlayerEventType
@@ -234,6 +235,7 @@ object CommonActivity {
         ioSafe { Torrent.deleteAllFiles() }
 
         // Clear all pools to apply the correct theme
+        BaseFragmentPool.clearAll()
         for (pool in arrayOf(
             PluginAdapter.sharedPool, HomeChildItemAdapter.sharedPool,
             ParentItemAdapter.sharedPool, ActorAdaptor.sharedPool, EpisodeAdapter.sharedPool,
