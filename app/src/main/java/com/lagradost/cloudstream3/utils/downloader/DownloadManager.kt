@@ -90,6 +90,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -112,7 +115,8 @@ object VideoDownloadManager {
         PreferenceManager.getDefaultSharedPreferences(context)
             ?.getInt(context.getString(R.string.download_concurrent_key), 3) ?: 3
 
-    var currentDownloads = mutableSetOf<Int>()
+    private val _currentDownloads: MutableStateFlow<Set<Int>> = MutableStateFlow(emptySet())
+    val currentDownloads: StateFlow<Set<Int>> = _currentDownloads
 
     const val TAG = "VDM"
 
@@ -1622,12 +1626,14 @@ object VideoDownloadManager {
         ) {
             val item = downloadResumePackage.item
             val id = item.ep.id
-            if (currentDownloads.contains(id)) { // IF IT IS ALREADY DOWNLOADING, RESUME IT
+            if (currentDownloads.value.contains(id)) { // IF IT IS ALREADY DOWNLOADING, RESUME IT
                 downloadEvent.invoke(id to DownloadActionType.Resume)
                 return
             }
 
-            currentDownloads.add(id)
+            _currentDownloads.update { downloads ->
+                downloads + id
+            }
             try {
                 for (index in (downloadResumePackage.linkIndex ?: 0) until item.links.size) {
                     val link = item.links[index]
@@ -1679,7 +1685,9 @@ object VideoDownloadManager {
                 logError(e)
                 isFailed = true
             } finally {
-                currentDownloads.remove(id)
+                _currentDownloads.update { downloads ->
+                    downloads - id
+                }
             }
         }
 

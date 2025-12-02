@@ -17,7 +17,13 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.flow.update
 
 class DownloadQueueService : Service() {
     companion object {
@@ -33,10 +39,20 @@ class DownloadQueueService : Service() {
         ): Intent {
             return Intent(context, DownloadQueueService::class.java)
         }
+
+        private val _downloadInstances: MutableStateFlow<List<VideoDownloadManager.EpisodeDownloadInstance>> =
+            MutableStateFlow(emptyList())
+        val downloadInstances: StateFlow<List<VideoDownloadManager.EpisodeDownloadInstance>> =
+            _downloadInstances
+
+        private val totalDownloadFlow =
+            downloadInstances.combine(DownloadQueueManager.queue) { instances, queue ->
+                instances to queue
+            }.combine(VideoDownloadManager.currentDownloads) { (instances, queue), currentDownloads ->
+                Triple(instances, queue, currentDownloads)
+            }
     }
 
-    private var downloadInstances: MutableList<VideoDownloadManager.EpisodeDownloadInstance> =
-        mutableListOf()
 
     private val baseNotification by lazy {
         val intent = Intent(this, MainActivity::class.java)
@@ -78,8 +94,11 @@ class DownloadQueueService : Service() {
             .notify(DOWNLOAD_QUEUE_NOTIFICATION_ID, newNotification)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     override fun onCreate() {
         isRunning = true
+        val context: Context = this // To make code more readable
+
         Log.d(TAG, "Download queue service started.")
         this.createNotificationChannel(
             DOWNLOAD_QUEUE_CHANNEL_ID,
@@ -96,44 +115,46 @@ class DownloadQueueService : Service() {
             startForeground(DOWNLOAD_QUEUE_NOTIFICATION_ID, baseNotification.build())
         }
 
-        val context = this.applicationContext
-
         ioSafe {
-            while (isRunning && (DownloadQueueManager.queue.isNotEmpty() || downloadInstances.isNotEmpty())) {
-                // Remove any completed or failed works
-                downloadInstances =
-                    downloadInstances.filterNot { it.isCompleted || it.isFailed }.toMutableList()
+            totalDownloadFlow
+                .takeWhile { (instances, queue) -> isRunning && (instances.isNotEmpty() || queue.isNotEmpty()) }
+                .collect { (instances, queue, currentDownloads) ->
+                    // Remove completed or failed
+                    _downloadInstances.update { currentInstances ->
+                        currentInstances.filterNot { it.isCompleted || it.isFailed }
+                    }
 
-                val maxDownloads = VideoDownloadManager.maxConcurrentDownloads(context)
-                val currentDownloads = downloadInstances.size
+                    val maxDownloads = VideoDownloadManager.maxConcurrentDownloads(context)
+                    val currentInstances = instances.size
 
-                val newDownloads = minOf(
-                    // Cannot exceed the max downloads
-                    maxOf(0, maxDownloads - currentDownloads),
-                    // Cannot start more downloads than the queue size
-                    DownloadQueueManager.queue.size
-                )
+                    val newDownloads = minOf(
+                        // Cannot exceed the max downloads
+                        maxOf(0, maxDownloads - currentInstances),
+                        // Cannot start more downloads than the queue size
+                        queue.size
+                    )
 
-                repeat(newDownloads) {
-                    val downloadInstance = DownloadQueueManager.popQueue(context) ?: return@repeat
-                    downloadInstance.startDownload()
-                    downloadInstances.add(downloadInstance)
+                    repeat(newDownloads) {
+                        val downloadInstance =
+                            DownloadQueueManager.popQueue(context) ?: return@repeat
+                        downloadInstance.startDownload()
+                        _downloadInstances.update { currentInstances ->
+                            currentInstances + downloadInstance
+                        }
+                    }
+
+                    // The downloads actually displayed to the user with a notification
+                    val currentVisualDownloads =
+                        currentDownloads.size + instances.count {
+                            currentDownloads.contains(it.downloadQueueWrapper.id)
+                                .not()
+                        }
+                    // Just the queue
+                    val currentVisualQueue = queue.size
+
+                    updateNotification(context, currentVisualDownloads, currentVisualQueue)
                 }
 
-                // The downloads actually displayed to the user with a notification
-                val currentVisualDownloads =
-                    VideoDownloadManager.currentDownloads.size + downloadInstances.count {
-                        VideoDownloadManager.currentDownloads.contains(it.downloadQueueWrapper.id)
-                            .not()
-                    }
-                // Just the queue
-                val currentVisualQueue = DownloadQueueManager.queue.size
-
-                updateNotification(context, currentVisualDownloads, currentVisualQueue)
-
-                // Arbitrary delay to prevent hogging the CPU, decrease to make the queue feel slightly more responsive
-                delay(500)
-            }
             stopSelf()
         }
     }

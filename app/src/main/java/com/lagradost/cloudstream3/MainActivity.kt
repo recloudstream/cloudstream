@@ -489,6 +489,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             R.id.navigation_downloads,
             R.id.navigation_settings,
             R.id.navigation_download_child,
+            R.id.navigation_download_queue,
             R.id.navigation_subtitles,
             R.id.navigation_chrome_subtitles,
             R.id.navigation_settings_player,
