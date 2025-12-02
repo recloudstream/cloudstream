@@ -1142,6 +1142,48 @@ suspend fun newSubtitleFile(
     return builder
 }
 
+/** Data class for the Audio file/track info.
+ * @property lang Audio track language.
+ * @property url Audio file url to download/load the file.
+ * @property label Optional label to display (e.g., "English 5.1", "Japanese Stereo").
+ * @see newAudioFile
+ * */
+@ConsistentCopyVisibility
+data class AudioFile private constructor(
+    var lang: String,
+    var url: String,
+    var label: String? = null,
+    var headers: Map<String, String>? = null
+) {
+    @Deprecated("Use newAudioFile method", level = DeprecationLevel.WARNING)
+    constructor(lang: String, url: String, label: String? = null) : this(lang = lang, url = url, label = label, headers = null)
+
+    /** Language code to properly filter auto select audio tracks */
+    val langTag: String?
+        get() = fromCodeToLangTagIETF(lang) ?: fromLanguageToTagIETF(lang, true)
+
+    /** Backwards compatible copy */
+    fun copy(
+        lang: String = this.lang, url: String = this.url, label: String? = this.label
+    ): AudioFile = AudioFile(lang = lang, url = url, label = label, headers = this.headers)
+}
+
+// No `MainAPI.` to be able to use this in extractors
+suspend fun newAudioFile(
+    lang: String,
+    url: String,
+    label: String? = null,
+    initializer: suspend AudioFile.() -> Unit = { }
+): AudioFile {
+    @Suppress("DEPRECATION")
+    val builder = AudioFile(
+        lang, url, label
+    )
+    builder.initializer()
+
+    return builder
+}
+
 /** Data class for the Homepage response info.
  * @property items List of [HomePageList] items.
  * @property hasNext if there is a next page or not.
