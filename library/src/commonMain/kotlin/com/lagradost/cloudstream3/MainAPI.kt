@@ -1142,6 +1142,42 @@ suspend fun newSubtitleFile(
     return builder
 }
 
+/** Data class for the Audio file/track info.
+ * @property lang Audio track language.
+ * @property url Audio file url to download/load the file.
+ * @property label Optional label to display (e.g., "English 5.1", "Japanese Stereo").
+ * @property headers Optional headers for the audio file request.
+ * @see newAudioFile
+ * */
+data class AudioFile internal constructor(
+    var lang: String,
+    var url: String,
+    var label: String? = null,
+    var headers: Map<String, String>? = null
+) {
+    /** Language code to properly filter auto select audio tracks */
+    val langTag: String?
+        get() = fromCodeToLangTagIETF(lang) ?: fromLanguageToTagIETF(lang, true)
+}
+
+/** Creates an AudioFile with optional initializer for setting additional properties.
+ * @param lang Audio track language.
+ * @param url Audio file url.
+ * @param label Optional label to display.
+ * @param initializer Lambda to configure additional properties like headers.
+ * @return Configured AudioFile instance.
+ * */
+suspend fun newAudioFile(
+    lang: String,
+    url: String,
+    label: String? = null,
+    initializer: suspend AudioFile.() -> Unit = { }
+): AudioFile {
+    val builder = AudioFile(lang, url, label)
+    builder.initializer()
+    return builder
+}
+
 /** Data class for the Homepage response info.
  * @property items List of [HomePageList] items.
  * @property hasNext if there is a next page or not.
