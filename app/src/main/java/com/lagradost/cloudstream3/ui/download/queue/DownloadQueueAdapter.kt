@@ -37,7 +37,7 @@ class DownloadAdapterItem(val item: DownloadQueueAdapterInfo?) {
 
 
 class DownloadQueueAdapter(val fragment: Fragment) : BaseAdapter<DownloadAdapterItem, Unit>(
-    fragment, diffCallback = BaseDiffCallback(
+    diffCallback = BaseDiffCallback(
         itemSame = { a, b -> a.item?.queueWrapper?.id == b.item?.queueWrapper?.id },
         contentSame = { a, b ->
             a.item?.queueWrapper?.id == b.item?.queueWrapper?.id
@@ -80,16 +80,15 @@ class DownloadQueueAdapter(val fragment: Fragment) : BaseAdapter<DownloadAdapter
         submitList(list.map { DownloadAdapterItem(it) })
     }
 
-    override fun submitList(list: List<DownloadAdapterItem>?) {
+    override fun submitList(list: Collection<DownloadAdapterItem>?, commitCallback: Runnable?) {
         val maxDownloads = fragment.context?.let { VideoDownloadManager.maxConcurrentDownloads(it) }
-
         val newList = list?.filterNot { it.isSeparator }?.toMutableList()?.apply {
             if (maxDownloads != null && list.size > maxDownloads) {
                 add(maxDownloads, DownloadAdapterItem(null))
             }
         }
 
-        super.submitList(newList)
+        super.submitList(newList, commitCallback)
     }
 
     fun bindSeparator(binding: DownloadQueueItemBinding) {
