@@ -200,10 +200,10 @@ object UIHelper {
         listView.requestLayout()
     }
 
-    fun Context.getSpanCount(): Int {
-        val compactView = false
-        val spanCountLandscape = if (compactView) 2 else 6
-        val spanCountPortrait = if (compactView) 1 else 3
+    fun Context.getSpanCount(isHorizontal:Boolean=false): Int {
+//        val compactView = false
+        val spanCountLandscape = if (isHorizontal) 3 else 6
+        val spanCountPortrait = if (isHorizontal) 2 else 3
         val orientation = resources.configuration.orientation
 
         return if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
