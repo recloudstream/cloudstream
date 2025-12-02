@@ -65,7 +65,6 @@ android {
         versionCode = 67
         versionName = "4.6.1"
 
-        resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
         resValue("string", "commit_hash", getGitCommitHash())
         resValue("bool", "is_prerelease", "false")
 
@@ -78,6 +77,11 @@ android {
             "long",
             "BUILD_DATE",
             "${System.currentTimeMillis()}"
+        )
+        buildConfigField(
+            "String",
+            "APP_VERSION",
+            "\"$versionName\""
         )
         buildConfigField(
             "String",
@@ -129,6 +133,11 @@ android {
                 logger.warn("No prerelease signing config!")
             }
             versionNameSuffix = "-PRE"
+            buildConfigField(
+                "String",
+                "APP_VERSION",
+                "\"${defaultConfig.versionName}$versionNameSuffix\""
+            )
             versionCode = (System.currentTimeMillis() / 60000).toInt()
         }
     }
