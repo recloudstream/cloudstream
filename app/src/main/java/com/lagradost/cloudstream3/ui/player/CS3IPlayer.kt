@@ -55,6 +55,7 @@ import androidx.media3.exoplayer.source.ConcatenatingMediaSource
 import androidx.media3.exoplayer.source.ConcatenatingMediaSource2
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.source.MergingMediaSource
+import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.SingleSampleMediaSource
 import androidx.media3.exoplayer.text.TextOutput
 import androidx.media3.exoplayer.text.TextRenderer
@@ -71,6 +72,7 @@ import com.lagradost.cloudstream3.MainActivity.Companion.deleteFileOnExit
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.USER_AGENT
+import com.lagradost.cloudstream3.AudioFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.logError
@@ -1061,7 +1063,7 @@ class CS3IPlayer : IPlayer {
          **/
         maxVideoHeight: Int? = null,
         /** External audio tracks to merge with the video */
-        audioSources: List<androidx.media3.exoplayer.source.MediaSource> = emptyList()
+        audioSources: List<MediaSource> = emptyList()
     ): ExoPlayer {
         val exoPlayerBuilder =
             ExoPlayer.Builder(context)
@@ -1328,7 +1330,7 @@ class CS3IPlayer : IPlayer {
         mediaSlices: List<MediaItemSlice>,
         subSources: List<SingleSampleMediaSource>,
         cacheFactory: CacheDataSource.Factory? = null,
-        audioSources: List<androidx.media3.exoplayer.source.MediaSource> = emptyList()
+        audioSources: List<MediaSource> = emptyList()
     ) {
         Log.i(TAG, "loadExo")
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
@@ -1694,9 +1696,9 @@ class CS3IPlayer : IPlayer {
      * @return List of MediaSource for audio tracks
      */
     private fun getAudioSources(
-        audioTracks: List<com.lagradost.cloudstream3.AudioFile>,
+        audioTracks: List<AudioFile>,
         onlineSourceFactory: HttpDataSource.Factory?
-    ): List<androidx.media3.exoplayer.source.MediaSource> {
+    ): List<MediaSource> {
         if (onlineSourceFactory == null || audioTracks.isEmpty()) return emptyList()
         
         return audioTracks.mapNotNull { audio ->
