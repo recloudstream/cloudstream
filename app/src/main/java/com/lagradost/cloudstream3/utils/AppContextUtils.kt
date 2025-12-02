@@ -40,7 +40,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.tvprovider.media.tv.PreviewChannelHelper
@@ -86,6 +85,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
 import com.lagradost.cloudstream3.utils.FillerEpisodeCheck.toClassDir
 import com.lagradost.cloudstream3.utils.JsUnpacker.Companion.load
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okhttp3.Cache
@@ -94,12 +94,6 @@ import java.net.URL
 import java.net.URLDecoder
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
-import android.net.Uri
-import android.util.Log
-import androidx.tvprovider.media.tv.TvContractCompat
-import com.lagradost.cloudstream3.SearchResponse
-import android.content.Intent
-import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 
 
 object AppContextUtils {

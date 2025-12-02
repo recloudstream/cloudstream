@@ -103,6 +103,7 @@ import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.utils.VIDEO_WATCH_STATE
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.sanitizeFilename
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDownloadEpisodeMetadata
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import com.lagradost.cloudstream3.utils.downloader.DownloadUtils.downloadSubtitle
@@ -871,6 +872,27 @@ class ResultViewModel2 : ViewModel() {
             }
         }
     }
+
+    private fun getMeta(
+        episode: ResultEpisode,
+        titleName: String,
+        apiName: String,
+        currentPoster: String?,
+        currentIsMovie: Boolean,
+        tvType: TvType,
+    ): DownloadObjects.DownloadEpisodeMetadata {
+        return DownloadObjects.DownloadEpisodeMetadata(
+            episode.id,
+            sanitizeFilename(titleName),
+            apiName,
+            episode.poster ?: currentPoster,
+            episode.name,
+            if (currentIsMovie) null else episode.season,
+            if (currentIsMovie) null else episode.episode,
+            tvType,
+        )
+    }
+
 
     /**
      * Toggles the favorite status of an item.

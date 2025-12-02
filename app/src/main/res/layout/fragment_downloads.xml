@@ -365,10 +365,7 @@
             android:contentDescription="@string/open_local_video"
             android:src="@drawable/netflix_play"
             app:tint="?attr/textColor"
-            android:layout_marginEnd="16dp"
-            android:tooltipText="@string/open_local_video"
-            android:layout_gravity="bottom|end"
-            android:contentDescription="@string/open_local_video" />
+            android:tooltipText="@string/open_local_video" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/download_stream_button"

@@ -61,7 +61,7 @@ object DownloadObjects {
         @JsonProperty("description") val description: String?,
         @JsonProperty("cacheTime") val cacheTime: Long,
         override val id: Int,
-    ) : DownloadCached(id) {
+    ): DownloadCached(id) {
         @JsonProperty("rating", access = JsonProperty.Access.WRITE_ONLY)
         @Deprecated(
             "`rating` is the old scoring system, use score instead",
@@ -71,7 +71,8 @@ object DownloadObjects {
         var rating: Int? = null
             set(value) {
                 if (value != null) {
-                    score = Score.Companion.fromOld(value)
+                    @Suppress("DEPRECATION_ERROR")
+                    score = Score.fromOld(value)
                 }
             }
     }
