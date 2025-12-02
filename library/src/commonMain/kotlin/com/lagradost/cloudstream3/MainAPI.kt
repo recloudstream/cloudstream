@@ -1149,16 +1149,12 @@ suspend fun newSubtitleFile(
  * @property headers Optional headers for the audio file request.
  * @see newAudioFile
  * */
-@ConsistentCopyVisibility
-data class AudioFile private constructor(
+data class AudioFile internal constructor(
     var lang: String,
     var url: String,
-    var label: String?,
-    var headers: Map<String, String>?
+    var label: String? = null,
+    var headers: Map<String, String>? = null
 ) {
-    @Deprecated("Use newAudioFile", level = DeprecationLevel.WARNING)
-    constructor(lang: String, url: String, label: String? = null) : this(lang = lang, url = url, label = label, headers = null)
-
     /** Language code to properly filter auto select audio tracks */
     val langTag: String?
         get() = fromCodeToLangTagIETF(lang) ?: fromLanguageToTagIETF(lang, true)
