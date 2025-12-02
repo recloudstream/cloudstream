@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.GitInfo.currentCommitHash
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okio.BufferedSink
@@ -180,14 +181,7 @@ class InAppUpdater {
 
             Log.d(LOG_TAG, "Fetched GitHub tag: ${tagResponse.githubObject.sha.take(7)}")
 
-            val shouldUpdate =
-                (getString(R.string.commit_hash)
-                    .trim { c -> c.isWhitespace() }
-                    .take(7)
-                        !=
-                        tagResponse.githubObject.sha
-                            .trim { c -> c.isWhitespace() }
-                            .take(7))
+            val shouldUpdate = currentCommitHash() != tagResponse.githubObject.sha.trim().take(7)
 
             return if (foundAsset != null) {
                 Update(
