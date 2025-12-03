@@ -113,6 +113,16 @@
             layout="@layout/tvtypes_chips_scroll" />
     </LinearLayout>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_suggestions_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/primaryGrayBackground"
+        android:maxHeight="300dp"
+        android:visibility="gone"
+        android:elevation="4dp"
+        tools:listitem="@layout/search_suggestion_item" />
+
 
     <com.lagradost.cloudstream3.ui.AutofitRecyclerView
         android:id="@+id/search_autofit_results"

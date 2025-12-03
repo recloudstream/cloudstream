@@ -21,6 +21,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -411,6 +412,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
         binding.mainSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 search(query)
+                searchViewModel.clearSuggestions()
 
                 binding.mainSearch.let {
                     hideKeyboard(it)
@@ -425,11 +427,17 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
                 if (showHistory) {
                     searchViewModel.clearSearch()
                     searchViewModel.updateHistory()
+                    searchViewModel.clearSuggestions()
+                } else {
+                    // Fetch suggestions when user is typing
+                    searchViewModel.fetchSuggestions(newText)
                 }
                 binding.apply {
                     searchHistoryHolder.isVisible = showHistory
                     searchMasterRecycler.isVisible = !showHistory && isAdvancedSearch
                     searchAutofitResults.isVisible = !showHistory && !isAdvancedSearch
+                    // Hide suggestions when showing history or showing search results
+                    searchSuggestionsRecycler.isVisible = !showHistory
                 }
 
                 return true
@@ -579,10 +587,28 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
             }
         }
 
+        val suggestionAdapter = SearchSuggestionAdapter { callback ->
+            when (callback.clickAction) {
+                SEARCH_SUGGESTION_CLICK -> {
+                    // Search directly
+                    binding.mainSearch.setQuery(callback.suggestion, true)
+                    searchViewModel.clearSuggestions()
+                }
+                SEARCH_SUGGESTION_FILL -> {
+                    // Fill the search box without searching
+                    binding.mainSearch.setQuery(callback.suggestion, false)
+                }
+            }
+        }
+
         binding.apply {
             searchHistoryRecycler.adapter = historyAdapter
             searchHistoryRecycler.setLinearListLayout(isHorizontal = false, nextRight = FOCUS_SELF)
             //searchHistoryRecycler.layoutManager = GridLayoutManager(context, 1)
+
+            // Setup suggestions RecyclerView
+            searchSuggestionsRecycler.adapter = suggestionAdapter
+            searchSuggestionsRecycler.layoutManager = LinearLayoutManager(context)
 
             searchMasterRecycler.setRecycledViewPool(ParentItemAdapter.sharedPool)
             searchMasterRecycler.adapter = masterAdapter
@@ -610,6 +636,12 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
         observe(searchViewModel.currentHistory) { list ->
             binding.searchClearCallHistory.isVisible = list.isNotEmpty()
             (binding.searchHistoryRecycler.adapter as? SearchHistoryAdaptor?)?.submitList(list)
+        }
+
+        // Observe search suggestions
+        observe(searchViewModel.searchSuggestions) { suggestions ->
+            binding.searchSuggestionsRecycler.isVisible = suggestions.isNotEmpty()
+            (binding.searchSuggestionsRecycler.adapter as? SearchSuggestionAdapter?)?.submitList(suggestions)
         }
 
         searchViewModel.updateHistory()
