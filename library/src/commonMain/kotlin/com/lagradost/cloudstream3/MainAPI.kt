@@ -1149,6 +1149,7 @@ suspend fun newSubtitleFile(
  * @property headers Optional headers for the audio file request.
  * @see newAudioFile
  * */
+@ConsistentCopyVisibility
 data class AudioFile internal constructor(
     var lang: String,
     var url: String,
