@@ -1703,16 +1703,14 @@ class CS3IPlayer : IPlayer {
         
         return audioTracks.mapNotNull { audio ->
             try {
-                val audioUri = audio.url.toUri()
-                val mediaItem = MediaItem.Builder()
-                    .setUri(audioUri)
-                    .build()
+                val mediaItem = getMediaItem(MimeTypes.AUDIO_UNKNOWN, audio.url)
                 
                 // Create a factory with custom headers if provided
-                val factory = if (audio.headers?.isNotEmpty() == true) {
+                val headers = audio.headers
+                val factory = if (!headers.isNullOrEmpty()) {
                     DefaultHttpDataSource.Factory()
                         .setUserAgent(USER_AGENT)
-                        .setDefaultRequestProperties(audio.headers!!)
+                        .setDefaultRequestProperties(headers)
                 } else {
                     onlineSourceFactory
                 }
