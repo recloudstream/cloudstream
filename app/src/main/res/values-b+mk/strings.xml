@@ -448,7 +448,7 @@
     <string name="autoplay_next_settings_des">Започни ја следната епизода кога ќе заврши тековната</string>
     <string name="backup_failed_error_format">Грешка при правење резервна копија на %s</string>
     <string name="pref_filter_search_quality">Сокриј го избраниот квалитет на видеото во резултатите од пребарувањето</string>
-    <string name="apk_installer_settings_des">Некои телефони не го поддржуваат новиот инсталатор на пакети. Испробај ја легаси опцијата ако ажурирањата не се инсталираат.</string>
+    <string name="apk_installer_settings_des">Некои уреди не го поддржуваат новиот инсталатор на пакети. Испробај ја легаси(старата) опција, ако ажурирањата не се инсталираат.</string>
     <string name="limit_title_rez">Резолуција на видео плеер</string>
     <string name="video_buffer_size_settings">Големина на видео баферот</string>
     <string name="pref_category_player_layout">Распоред</string>
@@ -643,7 +643,7 @@
     <string name="player_load_one_subtitle_online">Вчитај прво достапно</string>
     <string name="torrent_not_accepted">Рестартирај ја апликацијата и прифати го Stream Torrent искачувачкиот прозорец за да продолжиш.</string>
     <string name="torrent_preferred_media">Овозможи torrent во Поставки/Провајдери/Претпочитани медиуми</string>
-    <string name="software_decoding_desc">Софтверското декодирање овозможува плеерот да воспоставува видео фајлови кои не се поддржани од вашиот телефон, но може да предизвика застој или нестабилно репродуцирање при висока резолуција</string>
+    <string name="software_decoding_desc">Софтверското декодирање овозможува плеерот да воспоставува видео фајлови кои не се поддржани од вашиот уред, но може да предизвика застој или нестабилно репродуцирање при висока резолуција.</string>
     <string name="software_decoding">Софтверско декодирање</string>
     <string name="starting_plugin_update_manually">Започнување на процесот на ажурирање на приклучоци!</string>
     <string name="update_plugins">Ажурирај приклучоци</string>
@@ -710,4 +710,5 @@
     <string name="top_left">Горе на лево</string>
     <string name="top_center">Горе во центар</string>
     <string name="top_right">Горе на десно</string>
+    <string name="play_full_series_button">Пушти ја целата серија</string>
 </resources>
