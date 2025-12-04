@@ -103,7 +103,7 @@ class SearchViewModel : ViewModel() {
             return
         }
         
-        suggestionJob = viewModelScope.launch(Dispatchers.IO) {
+        suggestionJob = ioSafe {
             delay(300) // Debounce
             val suggestions = SearchSuggestionApi.getSuggestions(query)
             _searchSuggestions.postValue(suggestions)

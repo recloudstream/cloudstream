@@ -190,7 +190,7 @@
         android:id="@+id/search_suggestions_recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="110dp"
+        android:layout_marginTop="100dp"
         android:background="?attr/primaryGrayBackground"
         android:elevation="8dp"
         android:visibility="gone"

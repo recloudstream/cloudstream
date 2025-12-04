@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.search
 
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.nicehttp.NiceResponse
 
 /**
  * API for fetching search suggestions from external sources.
@@ -27,12 +28,11 @@ object SearchSuggestionApi {
                     "q" to query,
                     "hl" to "en"  // Language hint
                 ),
-                cacheTime = 60  // Cache for 1 minute
+                cacheTime = 60 * 24  // Cache for 1 day (cacheUnit default is Minutes)
             )
             
             // Response format: ["query",["suggestion1","suggestion2",...]]
-            val text = response.text
-            parseSuggestions(text)
+            parseSuggestions(response)
         } catch (e: Exception) {
             logError(e)
             emptyList()
@@ -43,48 +43,15 @@ object SearchSuggestionApi {
      * Parses the Google suggestion JSON response.
      * Format: ["query",["suggestion1","suggestion2",...]]
      */
-    private fun parseSuggestions(json: String): List<String> {
+    private fun parseSuggestions(response: NiceResponse): List<String> {
         return try {
-            // Simple parsing without full JSON library
-            // Find the array between the first [ after the query and the last ]
-            val startIndex = json.indexOf("[", json.indexOf(","))
-            val endIndex = json.lastIndexOf("]")
-            
-            if (startIndex == -1 || endIndex == -1 || startIndex >= endIndex) {
-                return emptyList()
+            val parsed = response.parsed<Array<Any>>()
+            val suggestions = parsed.getOrNull(1)
+            when (suggestions) {
+                is List<*> -> suggestions.filterIsInstance<String>().take(10)
+                is Array<*> -> suggestions.filterIsInstance<String>().take(10)
+                else -> emptyList()
             }
-            
-            val arrayContent = json.substring(startIndex + 1, endIndex)
-            
-            // Extract strings from the array
-            val suggestions = mutableListOf<String>()
-            var inQuote = false
-            var currentString = StringBuilder()
-            var escaped = false
-            
-            for (char in arrayContent) {
-                when {
-                    escaped -> {
-                        currentString.append(char)
-                        escaped = false
-                    }
-                    char == '\\' -> {
-                        escaped = true
-                    }
-                    char == '"' -> {
-                        if (inQuote) {
-                            suggestions.add(currentString.toString())
-                            currentString = StringBuilder()
-                        }
-                        inQuote = !inQuote
-                    }
-                    inQuote -> {
-                        currentString.append(char)
-                    }
-                }
-            }
-            
-            suggestions.take(10) // Limit to 10 suggestions
         } catch (e: Exception) {
             logError(e)
             emptyList()

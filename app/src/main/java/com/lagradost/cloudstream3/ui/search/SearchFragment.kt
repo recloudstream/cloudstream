@@ -401,12 +401,20 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
 
         val settingsManager = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
         val isAdvancedSearch = settingsManager?.getBoolean("advanced_search", true) ?: true
+        val isSearchSuggestionsEnabled = settingsManager?.getBoolean("search_suggestions_enabled", true) ?: true
 
         selectedSearchTypes = DataStoreHelper.searchPreferenceTags.toMutableList()
 
         if (isLayout(TV)) {
             binding.searchFilter.isFocusable = true
             binding.searchFilter.isFocusableInTouchMode = true
+        }
+
+        // Hide suggestions when search view loses focus
+        binding.mainSearch.setOnQueryTextFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                searchViewModel.clearSuggestions()
+            }
         }
 
         binding.mainSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -429,15 +437,17 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
                     searchViewModel.updateHistory()
                     searchViewModel.clearSuggestions()
                 } else {
-                    // Fetch suggestions when user is typing
-                    searchViewModel.fetchSuggestions(newText)
+                    // Fetch suggestions when user is typing (if enabled)
+                    if (isSearchSuggestionsEnabled) {
+                        searchViewModel.fetchSuggestions(newText)
+                    }
                 }
                 binding.apply {
                     searchHistoryHolder.isVisible = showHistory
                     searchMasterRecycler.isVisible = !showHistory && isAdvancedSearch
                     searchAutofitResults.isVisible = !showHistory && !isAdvancedSearch
                     // Hide suggestions when showing history or showing search results
-                    searchSuggestionsRecycler.isVisible = !showHistory
+                    searchSuggestionsRecycler.isVisible = !showHistory && isSearchSuggestionsEnabled
                 }
 
                 return true
