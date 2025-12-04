@@ -98,7 +98,7 @@ class QuickSearchFragment : BaseFragment<QuickSearchBinding>(
         // Fix grid
         HomeFragment.currentSpan = view.context.getSpanCount()
         binding?.quickSearchAutofitResults?.spanCount = HomeFragment.currentSpan
-        HomeFragment.configEvent.invoke(HomeFragment.currentSpan)
+        HomeFragment.configEvent.invoke()
     }
 
     override fun onCreateView(
