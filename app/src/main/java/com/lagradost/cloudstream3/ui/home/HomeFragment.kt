@@ -195,10 +195,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
 
             // Span settings
-            binding.homeExpandedRecycler.spanCount = currentSpan
+            binding.homeExpandedRecycler.spanCount = context.getSpanCount(item.isHorizontalImages)
             binding.homeExpandedRecycler.setRecycledViewPool(SearchAdapter.sharedPool)
             binding.homeExpandedRecycler.adapter =
-                SearchAdapter(binding.homeExpandedRecycler) { callback ->
+                SearchAdapter(binding.homeExpandedRecycler,item.isHorizontalImages) { callback ->
                     handleSearchClickCallback(callback)
                     if (callback.action == SEARCH_ACTION_LOAD || callback.action == SEARCH_ACTION_PLAY_FILE) {
                         bottomSheetDialogBuilder.ownHide() // we hide here because we want to resume it later
@@ -238,7 +238,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             })
 
             val spanListener = { span: Int ->
-                binding.homeExpandedRecycler.spanCount = span
+                if(item.isHorizontalImages){
+                    binding.homeExpandedRecycler.spanCount = context.getSpanCount(true)
+                }else{
+                    binding.homeExpandedRecycler.spanCount = span
+                }
                 //(recycle.adapter as SearchAdapter).notifyDataSetChanged()
             }
 
