@@ -1149,6 +1149,7 @@ suspend fun newSubtitleFile(
  * @property headers Optional headers for the audio file request.
  * @see newAudioFile
  * */
+@Prerelease
 @ConsistentCopyVisibility
 data class AudioFile internal constructor(
     var lang: String,
@@ -1168,6 +1169,7 @@ data class AudioFile internal constructor(
  * @param initializer Lambda to configure additional properties like headers.
  * @return Configured AudioFile instance.
  * */
+@Prerelease
 suspend fun newAudioFile(
     lang: String,
     url: String,
