@@ -57,6 +57,7 @@ import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
@@ -405,11 +406,13 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
 
         selectedSearchTypes = DataStoreHelper.searchPreferenceTags.toMutableList()
 
-        if (isLayout(TV)) {
+        if (!isLayout(PHONE)) {
             binding.searchFilter.isFocusable = true
             binding.searchFilter.isFocusableInTouchMode = true
-        } else {
-            // Hide suggestions when search view loses focus
+        }
+        
+        // Hide suggestions when search view loses focus (phone only)
+        if (isLayout(PHONE)) {
             binding.mainSearch.setOnQueryTextFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
                     searchViewModel.clearSuggestions()
@@ -660,8 +663,9 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
             binding.searchSuggestionsHolder.isVisible = hasSuggestions
             (binding.searchSuggestionsRecycler.adapter as? SearchSuggestionAdapter?)?.submitList(suggestions)
             
-            // On TV, redirect focus from chips to suggestions when visible
-            if (isLayout(TV or EMULATOR)) {
+            // On non-phone layouts, show clear button and redirect focus
+            if (!isLayout(PHONE)) {
+                binding.clearSuggestionsButton.isVisible = hasSuggestions
                 if (hasSuggestions) {
                     binding.tvtypesChipsScroll.tvtypesChips.root.nextFocusDownId = R.id.search_suggestions_recycler
                 } else {
