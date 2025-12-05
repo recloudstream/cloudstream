@@ -408,14 +408,15 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
         if (isLayout(TV)) {
             binding.searchFilter.isFocusable = true
             binding.searchFilter.isFocusableInTouchMode = true
-        }
-
-        // Hide suggestions when search view loses focus
-        binding.mainSearch.setOnQueryTextFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) {
-                searchViewModel.clearSuggestions()
+        } else {
+            // Hide suggestions when search view loses focus
+            binding.mainSearch.setOnQueryTextFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    searchViewModel.clearSuggestions()
+                }
             }
         }
+
 
         binding.mainSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
@@ -447,12 +448,17 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
                     searchMasterRecycler.isVisible = !showHistory && isAdvancedSearch
                     searchAutofitResults.isVisible = !showHistory && !isAdvancedSearch
                     // Hide suggestions when showing history or showing search results
-                    searchSuggestionsRecycler.isVisible = !showHistory && isSearchSuggestionsEnabled
+                    searchSuggestionsHolder.isVisible = !showHistory && isSearchSuggestionsEnabled
                 }
 
                 return true
             }
         })
+
+        // Clear suggestions button (for TV)
+        binding.clearSuggestionsButton.setOnClickListener {
+            searchViewModel.clearSuggestions()
+        }
 
         binding.searchClearCallHistory.setOnClickListener {
             activity?.let { ctx ->
@@ -650,8 +656,19 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
 
         // Observe search suggestions
         observe(searchViewModel.searchSuggestions) { suggestions ->
-            binding.searchSuggestionsRecycler.isVisible = suggestions.isNotEmpty()
+            val hasSuggestions = suggestions.isNotEmpty()
+            binding.searchSuggestionsHolder.isVisible = hasSuggestions
             (binding.searchSuggestionsRecycler.adapter as? SearchSuggestionAdapter?)?.submitList(suggestions)
+            
+            // On TV, redirect focus from chips to suggestions when visible
+            if (isLayout(TV or EMULATOR)) {
+                if (hasSuggestions) {
+                    binding.tvtypesChipsScroll.tvtypesChips.root.nextFocusDownId = R.id.search_suggestions_recycler
+                } else {
+                    // Reset to default focus target (history)
+                    binding.tvtypesChipsScroll.tvtypesChips.root.nextFocusDownId = R.id.search_history_recycler
+                }
+            }
         }
 
         searchViewModel.updateHistory()

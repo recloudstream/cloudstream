@@ -186,14 +186,32 @@
     </LinearLayout>
 
     <!-- Suggestions overlay - appears on top of content -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/search_suggestions_recycler"
+    <FrameLayout
+        android:id="@+id/search_suggestions_holder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
         android:background="?attr/primaryGrayBackground"
         android:elevation="8dp"
-        android:visibility="gone"
-        tools:listitem="@layout/search_suggestion_item" />
+        android:visibility="gone">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/search_suggestions_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/search_suggestion_item" />
+
+        <!-- Clear button hidden on phone, only for TV -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/clear_suggestions_button"
+            style="@style/BlackButton"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom"
+            android:visibility="gone"
+            android:text="@string/clear_suggestions"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/ic_baseline_close_24" />
+    </FrameLayout>
 
 </FrameLayout>
