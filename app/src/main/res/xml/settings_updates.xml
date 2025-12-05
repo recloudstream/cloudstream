@@ -7,8 +7,7 @@
         <Preference
             android:title="@string/check_for_update"
             app:icon="@drawable/ic_baseline_system_update_24"
-            app:key="@string/manual_check_update_key"
-            app:summary="@string/app_version" />
+            app:key="@string/manual_check_update_key" />
         <SwitchPreference
             android:icon="@drawable/ic_baseline_developer_mode_24"
             android:summary="@string/uprereleases_settings_des"
