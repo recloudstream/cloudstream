@@ -70,8 +70,8 @@
         android:nextFocusUp="@id/repo_recycler_view"
         android:orientation="horizontal"
         android:padding="10dp"
-
-        android:visibility="visible">
+        android:visibility="visible"
+        android:baselineAligned="false">
 
         <LinearLayout
             android:layout_width="0dp"

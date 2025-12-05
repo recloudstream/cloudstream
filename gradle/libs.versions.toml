@@ -14,6 +14,7 @@ coreKtx = "1.17.0"
 desugar_jdk_libs_nio = "2.1.5"
 dokkaGradlePlugin = "2.1.0"
 espressoCore = "3.7.0"
+fragmentKtx = "1.8.9"
 fuzzywuzzy = "1.4.0"
 jacksonModuleKotlin = { strictly = "2.13.1" } # Later versions don't support minSdk <26 (Crashes on Android TV's and FireSticks)
 json = "20250517"
@@ -25,7 +26,7 @@ juniversalchardet = "2.5.0"
 kotlinGradlePlugin = "2.2.21"
 kotlinxCoroutinesCore = "1.10.2"
 lifecycleKtx = "2.9.4"
-material = "1.14.0-alpha06"
+material = "1.14.0-alpha07"
 media3 = "1.8.0"
 navigationKtx = "2.9.6"
 newpipeextractor = "v0.24.8"
@@ -67,6 +68,7 @@ databinding = { module = "androidx.databinding:viewbinding", version.ref = "andr
 desugar_jdk_libs_nio = { module = "com.android.tools:desugar_jdk_libs_nio", version.ref = "desugar_jdk_libs_nio" }
 espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
 ext-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
+fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
 fuzzywuzzy = { module = "me.xdrop:fuzzywuzzy", version.ref = "fuzzywuzzy" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jacksonModuleKotlin" }
 json = { module = "org.json:json", version.ref = "json" }

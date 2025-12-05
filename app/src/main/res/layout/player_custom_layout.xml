@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:screenOrientation="landscape"
     tools:orientation="vertical">
 
 
@@ -181,6 +180,7 @@
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:layout_margin="5dp"
+                    android:orientation="horizontal"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
