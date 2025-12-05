@@ -80,6 +80,7 @@
             android:id="@+id/login_server_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:autofillHints="no"
             android:hint="@string/example_ip"
             android:inputType="textUri"
             android:nextFocusLeft="@id/apply_btt"

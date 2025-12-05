@@ -102,13 +102,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:autofillHints="username"
             android:inputType="text"
             android:maxLength="32"
             android:textColor="?attr/textColor"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:autofillHints="username"
-            tools:text="@string/profile_number" />
+            tools:text="@string/profile_number"
+            tools:ignore="LabelFor" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/save_btt"

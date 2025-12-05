@@ -9,7 +9,6 @@
         android:id="@+id/player_background"
         app:backgroundTint="@android:color/black"
         android:background="@android:color/black"
-        android:screenOrientation="sensorLandscape"
         app:surface_type="texture_view">
     <!--
           app:fastforward_increment="10000"
