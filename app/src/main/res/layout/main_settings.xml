@@ -115,12 +115,12 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/version_info"
+                    android:id="@+id/app_version"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
-                    android:text="@string/app_version"
-                    android:textColor="?attr/textColor" />
+                    android:textColor="?attr/textColor"
+                    tools:text="0.0.0" />
 
                 <TextView
                     android:id="@+id/delimiter0"
