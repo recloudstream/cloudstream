@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.api.Log
+import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
@@ -11,6 +12,7 @@ import com.lagradost.cloudstream3.utils.loadExtractor
 import com.lagradost.cloudstream3.utils.newExtractorLink
 import java.net.URI
 
+@Prerelease
 class HubCloud : ExtractorApi() {
     override val name = "Hub-Cloud"
     override val mainUrl = "https://hubcloud.*"
@@ -137,6 +139,16 @@ class HubCloud : ExtractorApi() {
                     )
                 }
 
+                text.contains("Mega Server", ignoreCase = true) -> {
+                    callback.invoke(
+                        newExtractorLink(
+                            "$referer [Mega Server]",
+                            "$referer [Mega Server] $labelExtras",
+                            link,
+                        ) { this.quality = quality }
+                    )
+                }
+
                 text.contains("10Gbps", ignoreCase = true) -> {
                     var currentLink = link
                     var redirectUrl: String?
@@ -187,7 +199,7 @@ class HubCloud : ExtractorApi() {
     private fun getBaseUrl(url: String): String {
         return try {
             URI(url).let { "${it.scheme}://${it.host}" }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             ""
         }
     }

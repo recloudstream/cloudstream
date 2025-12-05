@@ -40,7 +40,6 @@
     <string name="app_subbed_text">Sub</string>
     <string name="popup_delete_file">Radera fil</string>
     <string name="popup_play_file">Spela upp fil</string>
-    <string name="pref_disable_acra">Inaktivera automatisk felrapportering</string>
     <string name="home_more_info">Mer information</string>
     <string name="home_expanded_hide">Göm</string>
     <string name="home_main_poster_img_des">@string/result_poster_img_des</string>
@@ -94,8 +93,6 @@
     <string name="settings_info">Information</string>
     <string name="advanced_search">Avancerade sökresultat</string>
     <string name="advanced_search_des">Presenterar sökresultaten i flera olika rader baserat på leverantören</string>
-    <string name="bug_report_settings_off">Skickar endast data när appen kraschar</string>
-    <string name="bug_report_settings_on">Skickar ingen data</string>
     <string name="updates_settings">Visa appuppdateringar</string>
     <string name="updates_settings_des">Sök automatiskt efter nya uppdateringar vid start.</string>
     <string name="uprereleases_settings">Uppdatera till beta-version</string>
@@ -112,7 +109,6 @@
     <string name="copy_link_toast">Länken kopierades till urklipp</string>
     <string name="play_episode_toast">Spela upp avsnitt</string>
     <string name="subs_default_reset_toast">Återställd till standardvärdet</string>
-    <string name="acra_report_toast">Programmet kraschade tyvärr. En anonym felrapport kommer att skickas till utvecklarna</string>
     <string name="error_loading_links_toast">Fel uppstod vid laddning av länkarna</string>
     <string name="season">Säsong</string>
     <string name="no_season">Ingen Säsong</string>
@@ -310,7 +306,6 @@
     <string name="home_random">Slumpmässig</string>
     <string name="coming_soon">Kommer snart…</string>
     <string name="subtitles_filter_lang">Filtrera efter föredraget språk</string>
-    <string name="crash_reporting_title">Kraschrapportering</string>
     <string name="authenticated_user_fail" formatted="true">Kunde inte logga in på %s</string>
     <string name="pref_category_looks">Utseende</string>
     <string name="category_ui">Layout</string>

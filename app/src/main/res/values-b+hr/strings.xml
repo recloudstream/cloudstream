@@ -80,7 +80,6 @@
     <string name="popup_play_file">Pokreni datoteku</string>
     <string name="popup_resume_download">Nastavi preuzimanje</string>
     <string name="popup_pause_download">Pauziraj preuzimanje</string>
-    <string name="pref_disable_acra">Onemogući automatsko izvješćivanje o greškama</string>
     <string name="home_more_info">Više informacija</string>
     <string name="home_expanded_hide">Sakrij</string>
     <string name="home_play">Pokreni</string>
@@ -161,8 +160,6 @@
     <string name="settings_info">Informacije</string>
     <string name="advanced_search">Napredna pretraga</string>
     <string name="advanced_search_des">Daje rezultate pretrage odvojene prema pružatelju usluga</string>
-    <string name="bug_report_settings_off">Šalje samo podatke o padovima aplikacije</string>
-    <string name="bug_report_settings_on">Ne šalje podatke</string>
     <string name="show_fillers_settings">Prikaži dodatnu epizodu za anime</string>
     <string name="show_trailers_settings">Prikaži trailere</string>
     <string name="kitsu_settings">Prikaži postere iz Kitsua</string>
@@ -184,7 +181,6 @@
     <string name="copy_link_toast">Poveznica je kopirana u međuspremnik</string>
     <string name="play_episode_toast">Pokreni epizodu</string>
     <string name="subs_default_reset_toast">Vrati na zadanu vrijednost</string>
-    <string name="acra_report_toast">Nažalost se aplikacija srušila. Anonimno izvješće o grešci će se poslati programerima</string>
     <string name="season">Sezona</string>
     <string name="no_season">Nema sezone</string>
     <string name="episode">Epizoda</string>
@@ -405,7 +401,6 @@
     <string name="previous">Prethodno</string>
     <string name="skip_setup">Preskoči postavljanje</string>
     <string name="app_layout_subtext">Promijeni izgled aplikacije kako bi odgovarao tvom uređaju</string>
-    <string name="crash_reporting_title">Izvještavanje o rušenju</string>
     <string name="preferred_media_subtext">Što želiš vidjeti</string>
     <string name="setup_done">Gotovo</string>
     <string name="extensions">Proširenja</string>

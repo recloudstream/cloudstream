@@ -124,8 +124,6 @@
     <string name="category_account">اکاؤنٹس اور سیکیورٹی</string>
     <string name="settings_info">معلومات</string>
     <string name="advanced_search_des">آپ کو فراہم کنندہ کے ذریعہ علیحدہ کردہ تلاش کے نتائج فراہم کرتا ہے</string>
-    <string name="bug_report_settings_off">صرف کریش پر ڈیٹا بھیجتا ہے</string>
-    <string name="bug_report_settings_on">کوئی ڈیٹا نہیں بھیجتا</string>
     <string name="pref_filter_search_quality">تلاش کے نتائج میں منتخب ویڈیو کوالٹی چھپائیں</string>
     <string name="automatic_plugin_updates">خودکار پلگ ان اپ ڈیٹس</string>
     <string name="updates_settings">ایپ کی تازہ کاریاں نمایش کریں</string>
@@ -156,7 +154,6 @@
     <string name="download_done">ڈاؤن لوڈ ہو گیا</string>
     <string name="download_storage_text">انٹرنل سٹوریج</string>
     <string name="popup_pause_download">ڈاؤن لوڈ کو روکیں</string>
-    <string name="pref_disable_acra">خودکار بگ رپورٹنگ کو غیر فعال کریں</string>
     <string name="search_provider_text_providers">ذرائع کا استعمال کرتے ہوئے تلاش کریں</string>
     <string name="vpn_might_be_needed">اس فراہم کنندہ کو مناسب طریقے سے کام کرنے کے لیے VPN کی ضرورت پڑ سکتی ہے</string>
     <string name="subs_hold_to_reset_to_default">ڈیفالٹ سیٹنگز پر ری سیٹ کرنے کے لیے دبائیں اور تھامیں</string>
@@ -177,7 +174,6 @@
     <string name="automatic_plugin_download_summary">شامل کردہ ذخیروں سے خود بخود تمام ابھی تک انسٹال نہیں ہوئے پلگ ان انسٹال کریں۔</string>
     <string name="updates_settings_des">اپلیکیشن کو شروع کرنے کے بعد خود بخود نئی اپ ڈیٹس کی تلاش کریں۔</string>
     <string name="apk_installer_settings_des">کچھ فون نئے پیکیج انسٹالر کو سپورٹ نہیں کرتے ہیں. اگر اپ ڈیٹس انسٹال نہیں ہوتے ہیں تو لیگیسی آپشن کو آزمائیں.</string>
-    <string name="acra_report_toast">معذرت، ایپلی کیشن کریش ہو گئی. ایک گمنام بگ رپورٹ ڈویلپرز کو بھیجی جائے گی</string>
     <string name="season">سیزن</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">کوئی سیزن نہیں</string>
@@ -396,7 +392,6 @@
     <string name="referer">حوالہ دینے والا (مرضی پر)</string>
     <string name="provider_languages_tip">ان زبانوں میں ویڈیوز دیکھیں</string>
     <string name="skip_setup">سیٹ اپ کو چھوڑ دیں</string>
-    <string name="crash_reporting_title">کریش رپورٹنگ</string>
     <string name="setup_done">ہو گیا</string>
     <string name="extensions">ایکسٹینشنز</string>
     <string name="repository_url_hint">ذخیرہ URL</string>
