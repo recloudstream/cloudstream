@@ -56,7 +56,6 @@
     <string name="popup_play_file">Palaist failu</string>
     <string name="popup_resume_download">Atsākt ielādi</string>
     <string name="popup_pause_download">Pauzēt ielādi</string>
-    <string name="pref_disable_acra">Atslēgt automātisko kļūdu ziņošanu</string>
     <string name="home_more_info">Vairāk informācijas</string>
     <string name="home_expanded_hide">Slēpt</string>
     <string name="home_play">Atskaņot</string>
@@ -153,8 +152,6 @@
     <string name="settings_info">Informācija</string>
     <string name="advanced_search">Advancēta meklēšana</string>
     <string name="advanced_search_des">Dod tev meklēšanas rezultātus citus no devēja</string>
-    <string name="bug_report_settings_off">Tikai sūtīt datus no kļudām</string>
-    <string name="bug_report_settings_on">Nesutīt datus</string>
     <string name="show_fillers_settings">Radīt fillera epizodi priekš animē</string>
     <string name="show_trailers_settings">Radīt feel</string>
     <string name="kitsu_settings">Radīt plakātu no kitsu</string>
@@ -389,7 +386,6 @@
     <string name="previous">Iepriekšējais</string>
     <string name="skip_setup">Izlaist uzstādīšanu</string>
     <string name="app_layout_subtext">Mainiet lietotnes izskatu, lai tā atbilstu savai ierīcei</string>
-    <string name="crash_reporting_title">Avārijas ziņošana</string>
     <string name="preferred_media_subtext">Ko tu vēlies redzēt</string>
     <string name="setup_done">Pabeigts</string>
     <string name="extensions">Papildinājumi</string>
@@ -473,7 +469,6 @@
     <string name="github">Github</string>
     <string name="no_subtitles">Nav subtitru</string>
     <string name="play_episode_toast">Atskaņot epizodi</string>
-    <string name="acra_report_toast">Piedodiet, bet aplikācijā bija kļūda. Anonīms kļūdas ziņojums tika aizsūtīts izstrādātājiem</string>
     <string name="status_ongoing">Iet</string>
     <string name="free_storage">Bezmaksas</string>
     <string name="poster_ui_settings">Ieslēgt elementus uz plakātiem</string>

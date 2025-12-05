@@ -32,6 +32,7 @@ class SearchClickCallback(
 
 class SearchAdapter(
     private val resView: AutofitRecyclerView,
+    private val isHorizontal:Boolean = false,
     private val clickCallback: (SearchClickCallback) -> Unit,
 ) : NoStateAdapter<SearchResponse>(diffCallback = BaseDiffCallback(itemSame = { a, b ->
     if (a.id != null || b.id != null) {
@@ -47,7 +48,9 @@ class SearchAdapter(
 
     var hasNext: Boolean = false
 
-    private val coverHeight: Int get() = (resView.itemWidth / 0.68).roundToInt()
+    private val coverRatio = if(isHorizontal) 1.8 else 0.68
+
+    private val coverHeight: Int get() = (resView.itemWidth / coverRatio).roundToInt()
 
     override fun onCreateContent(parent: ViewGroup): ViewHolderState<Any> {
         val inflater = LayoutInflater.from(parent.context)

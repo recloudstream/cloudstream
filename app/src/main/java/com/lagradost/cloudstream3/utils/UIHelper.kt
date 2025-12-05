@@ -67,7 +67,7 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
-import com.lagradost.cloudstream3.AcraApplication.Companion.context
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.context
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
@@ -200,10 +200,10 @@ object UIHelper {
         listView.requestLayout()
     }
 
-    fun Context.getSpanCount(): Int {
-        val compactView = false
-        val spanCountLandscape = if (compactView) 2 else 6
-        val spanCountPortrait = if (compactView) 1 else 3
+    fun Context.getSpanCount(isHorizontal:Boolean=false): Int {
+//        val compactView = false
+        val spanCountLandscape = if (isHorizontal) 3 else 6
+        val spanCountPortrait = if (isHorizontal) 2 else 3
         val orientation = resources.configuration.orientation
 
         return if (orientation == Configuration.ORIENTATION_LANDSCAPE) {

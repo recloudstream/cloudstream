@@ -80,7 +80,6 @@
     <string name="popup_play_file">Fájl lejátszása</string>
     <string name="popup_resume_download">Letöltés folytatása</string>
     <string name="popup_pause_download">Letöltés szüneteltetése</string>
-    <string name="pref_disable_acra">Automatikus hibajelentés kikapcsolása</string>
     <string name="home_more_info">Több információ</string>
     <string name="home_expanded_hide">Elrejtés</string>
     <string name="home_play">Lejátszás</string>
@@ -188,7 +187,6 @@
     <string name="backup_failed_error_format">Hiba a biztonsági mentés során %s</string>
     <string name="category_account">Fiókok és Biztonság</string>
     <string name="advanced_search_des">Szolgáltató szerint elkülönítve adja meg a keresési eredményeket</string>
-    <string name="bug_report_settings_on">Nem küld adatokat</string>
     <string name="kitsu_settings">Poszterek megjelenítése Kitsu-ról</string>
     <string name="pref_filter_search_quality">Kiválasztott videóminőségek elrejtése keresési eredményekbe</string>
     <string name="automatic_plugin_updates">Automatikus bővítményfrissítések</string>
@@ -206,7 +204,6 @@
     <string name="copy_link_toast">A link vágólapra másolva</string>
     <string name="play_episode_toast">Epizód lejátszása</string>
     <string name="subs_default_reset_toast">Alapértelmezett értékre visszaállítása</string>
-    <string name="acra_report_toast">Az alkalmazás összeomlott. Egy névtelen hibabejelentés küldünk a fejlesztőknek</string>
     <string name="season">Évad</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Nincs évad</string>
@@ -253,7 +250,6 @@
     <string name="update_started">Frissítés elkezdődött</string>
     <string name="restore_failed_format" formatted="true">Nem sikerült visszaállítani az adatokat a %s fájlból</string>
     <string name="backup_failed">Tárolási engedélyek hiányoznak. Kérjük próbálja újra.</string>
-    <string name="bug_report_settings_off">Csak összeomlásokról küld adatokat</string>
     <string name="apk_installer_settings">APK Telepítő</string>
     <string name="apk_installer_settings_des">Egyes telefonok nem támogatják az új csomag telepítőt. Ha a frissítések nem települnek, próbálja meg a régi opciót.</string>
     <string name="benene_des">Banán adva</string>
@@ -405,7 +401,6 @@
     <string name="player_load_subtitles">Betöltés fájlból</string>
     <string name="quality_hdr">HDR</string>
     <string name="app_layout_subtext">Az alkalmazás megjelenésének módosítása, hogy az megfeleljen az eszközödnek</string>
-    <string name="crash_reporting_title">Összeomlás jelentése</string>
     <string name="view_public_repositories_button_short">Nyilvános lista</string>
     <string name="extension_status">Állapot</string>
     <string name="skip_type_recap">Összefoglaló</string>

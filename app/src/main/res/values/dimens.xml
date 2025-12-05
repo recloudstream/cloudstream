@@ -29,6 +29,7 @@
 
     <dimen name="home_poster_progress_size">50dp</dimen>
     <dimen name="episode_progress_size">40dp</dimen>
-    <dimen name="continue_watching_progress_size">30dp</dimen>
+    <dimen name="continue_watching_progress_size">25dp</dimen>
     <dimen name="circular_progress_thickness">2dp</dimen>
+    <dimen name="download_header_progress_size">35dp</dimen>
 </resources>

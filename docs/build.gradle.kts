@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm")
-    id("org.jetbrains.dokka")
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.dokka)
 }
 
 dependencies {

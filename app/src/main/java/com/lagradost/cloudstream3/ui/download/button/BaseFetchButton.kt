@@ -62,6 +62,7 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
 
     open fun resetViewData() {
         // lastRequest = null
+        progressText = null
         isZeroBytes = true
         doSetProgress = true
         persistentId = null
