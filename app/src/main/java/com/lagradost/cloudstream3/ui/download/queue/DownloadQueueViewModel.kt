@@ -22,19 +22,18 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-/** An item in the adapter can either be a separator or a real item */
-data class DownloadQueueAdapterInfo(
-    val queueWrapper: DownloadObjects.DownloadQueueWrapper,
-    val childCard: VisualDownloadCached.Child?,
+data class DownloadAdapterQueue(
+    val currentDownloads: List<DownloadObjects.DownloadQueueWrapper>,
+    val queue: List<DownloadObjects.DownloadQueueWrapper>,
 )
 
 class DownloadQueueViewModel : ViewModel() {
-    private val _childCards = MutableLiveData<List<DownloadQueueAdapterInfo>>()
-    val childCards: LiveData<List<DownloadQueueAdapterInfo>> = _childCards
+    private val _childCards = MutableLiveData<DownloadAdapterQueue>()
+    val childCards: LiveData<DownloadAdapterQueue> = _childCards
     private val totalDownloadFlow =
         downloadInstances.combine(DownloadQueueManager.queue) { instances, queue ->
             val current = instances.map { it.downloadQueueWrapper }
-            current + queue
+            DownloadAdapterQueue(current, queue.toList())
         }.combine(VideoDownloadManager.currentDownloads) { total, _ ->
             // We want to update the flow when currentDownloads updates, but we do not care about its value
             total
@@ -48,45 +47,8 @@ class DownloadQueueViewModel : ViewModel() {
         }
     }
 
-    fun updateChildList(queue: List<DownloadObjects.DownloadQueueWrapper>) =
+    fun updateChildList(downloads: DownloadAdapterQueue) =
         viewModelScope.launchSafe {
-            // Gets all the cached episodes and associates those with QueueWrappers
-            // after that it merges it to a total list with all QueueWrappers (with and without cached episodes)
-            val context = AcraApplication.context ?: return@launchSafe
-            val totalQueue = queue.associate { it.id to DownloadQueueAdapterInfo(it, null) }
-
-            val childCards = withContext(Dispatchers.IO) {
-                context.getKeys(DOWNLOAD_EPISODE_CACHE)
-                    .mapNotNull { key ->
-                        // Filter away IDs not currently in queue
-                        val childKey = key.substringAfterLast("/").toIntOrNull()
-                        if (childKey == null || !totalQueue.contains(childKey)) {
-                            return@mapNotNull null
-                        }
-
-                        context.getKey<DownloadObjects.DownloadEpisodeCached>(key)
-                            ?: return@mapNotNull null
-                    }
-                    .mapNotNull { episode ->
-                        val info =
-                            getDownloadFileInfo(context, episode.id) ?: return@mapNotNull null
-                        val child = VisualDownloadCached.Child(
-                            currentBytes = info.fileLength,
-                            totalBytes = info.totalBytes,
-                            isSelected = false,
-                            data = episode,
-                        )
-                        val item = totalQueue[episode.id] ?: return@mapNotNull null
-                        episode.id to DownloadQueueAdapterInfo(
-                            item.queueWrapper,
-                            child
-                        )
-                    }.toMap()
-            } + totalQueue
-
-            val list = childCards.values.toList()
-
-            _childCards.postValue(list)
+            _childCards.postValue(downloads)
         }
-
 }

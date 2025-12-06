@@ -46,6 +46,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement
 import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.getBasePath
+import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import java.util.Locale
 
 // Change local language settings in the app.
@@ -347,6 +348,12 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
         settingsManager.edit { putBoolean(getString(R.string.jsdelivr_proxy_key), getKey(getString(R.string.jsdelivr_proxy_key), false) ?: false) }
         getPref(R.string.jsdelivr_proxy_key)?.setOnPreferenceChangeListener { _, newValue ->
             setKey(getString(R.string.jsdelivr_proxy_key), newValue)
+            return@setOnPreferenceChangeListener true
+        }
+
+        getPref(R.string.download_parallel_key)?.setOnPreferenceChangeListener { _, _ ->
+            // Notify that the queue logic has been changed
+            DownloadQueueManager.forceRefreshQueue()
             return@setOnPreferenceChangeListener true
         }
 

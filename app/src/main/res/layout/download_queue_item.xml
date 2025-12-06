@@ -22,17 +22,6 @@
         app:cardCornerRadius="@dimen/rounded_image_radius"
         app:cardElevation="0dp">
 
-        <androidx.core.widget.ContentLoadingProgressBar
-            android:id="@+id/download_child_episode_progress"
-            style="@android:style/Widget.Material.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="-1.5dp"
-            android:progressBackgroundTint="?attr/colorPrimary"
-            android:progressTint="?attr/colorPrimary"
-            tools:progress="50" />
-
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -79,7 +68,7 @@
                     android:layout_marginEnd="10dp"
                     android:gravity="center_vertical"
                     android:textColor="?attr/grayTextColor"
-                    tools:text="128MB / 237MB" />
+                    tools:text="One piece" />
             </LinearLayout>
 
             <com.lagradost.cloudstream3.ui.download.button.PieFetchButton
@@ -89,6 +78,7 @@
                 android:layout_gravity="center_vertical|end"
                 android:layout_marginStart="-50dp"
                 android:focusable="true"
+                app:download_animate_waiting="true"
                 android:foreground="@drawable/outline_drawable"
                 android:nextFocusLeft="@id/download_child_episode_holder"
                 android:padding="10dp" />

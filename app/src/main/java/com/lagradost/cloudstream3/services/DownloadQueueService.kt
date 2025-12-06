@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.updateAndGet
 
 class DownloadQueueService : Service() {
     companion object {
@@ -48,9 +49,10 @@ class DownloadQueueService : Service() {
         private val totalDownloadFlow =
             downloadInstances.combine(DownloadQueueManager.queue) { instances, queue ->
                 instances to queue
-            }.combine(VideoDownloadManager.currentDownloads) { (instances, queue), currentDownloads ->
-                Triple(instances, queue, currentDownloads)
             }
+                .combine(VideoDownloadManager.currentDownloads) { (instances, queue), currentDownloads ->
+                    Triple(instances, queue, currentDownloads)
+                }
     }
 
 
@@ -118,28 +120,32 @@ class DownloadQueueService : Service() {
         ioSafe {
             totalDownloadFlow
                 .takeWhile { (instances, queue) -> isRunning && (instances.isNotEmpty() || queue.isNotEmpty()) }
-                .collect { (instances, queue, currentDownloads) ->
+                .collect { (_, queue, currentDownloads) ->
                     // Remove completed or failed
-                    _downloadInstances.update { currentInstances ->
-                        currentInstances.filterNot { it.isCompleted || it.isFailed }
-                    }
+                    val instances = _downloadInstances.updateAndGet { currentInstances ->
+                        val newInstances = currentInstances.filterNot { it.isCompleted || it.isFailed }
 
-                    val maxDownloads = VideoDownloadManager.maxConcurrentDownloads(context)
-                    val currentInstances = instances.size
+                        val maxDownloads = VideoDownloadManager.maxConcurrentDownloads(context)
+                        val currentInstanceCount = newInstances.size
 
-                    val newDownloads = minOf(
-                        // Cannot exceed the max downloads
-                        maxOf(0, maxDownloads - currentInstances),
-                        // Cannot start more downloads than the queue size
-                        queue.size
-                    )
+                        val newDownloads = minOf(
+                            // Cannot exceed the max downloads
+                            maxOf(0, maxDownloads - currentInstanceCount),
+                            // Cannot start more downloads than the queue size
+                            queue.size
+                        )
 
-                    repeat(newDownloads) {
-                        val downloadInstance =
-                            DownloadQueueManager.popQueue(context) ?: return@repeat
-                        downloadInstance.startDownload()
-                        _downloadInstances.update { currentInstances ->
-                            currentInstances + downloadInstance
+                        // Cant start multiple downloads at once. If this is rerun it may start too many downloads.
+                        if (newDownloads > 0) {
+                            val downloadInstance = DownloadQueueManager.popQueue(context)
+                            if (downloadInstance != null) {
+                                downloadInstance.startDownload()
+                                newInstances + downloadInstance
+                            } else {
+                                newInstances
+                            }
+                        } else {
+                            newInstances
                         }
                     }
 

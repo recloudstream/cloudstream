@@ -98,6 +98,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import org.schabi.newpipe.extractor.timeago.patterns.fi
 import java.io.Closeable
 import java.io.IOException
 import java.io.OutputStream
@@ -182,11 +183,13 @@ object VideoDownloadManager {
     private val DOWNLOAD_BAD_CONFIG =
         DownloadStatus(retrySame = false, tryNext = false, success = false)
 
-    const val KEY_RESUME_PACKAGES = "download_resume"
+    const val KEY_RESUME_PACKAGES = "download_resume_2"
     const val KEY_DOWNLOAD_INFO = "download_info"
 
-    /** A key to save all the downloads which have not yet started, using [DownloadQueueWrapper] */
-    const val KEY_PRE_RESUME = "download_pre_resume_key"
+    /** A key to save all the downloads which have not yet started and those currently running, using [DownloadQueueWrapper]
+     * [KEY_RESUME_PACKAGES] can store keys which should not be automatically queued, unlike this key.
+     */
+    const val KEY_RESUME_IN_QUEUE = "download_resume_queue_key"
 //    private const val KEY_RESUME_QUEUE_PACKAGES = "download_q_resume"
 
     val downloadStatus = HashMap<Int, DownloadType>()
@@ -561,7 +564,8 @@ object VideoDownloadManager {
                     DownloadActionType.Stop -> {
                         type = DownloadType.IsStopped
                         removeKey(KEY_RESUME_PACKAGES, event.first.toString())
-//                        saveQueue()
+                        removeKey(KEY_RESUME_IN_QUEUE, event.first.toString())
+                        DownloadQueueManager.removeFromQueue(event.first)
                         stopListener?.invoke()
                         stopListener = null
                     }
@@ -1233,6 +1237,7 @@ object VideoDownloadManager {
             // push the metadata
             metadata.setResumeLength(stream.startAt)
             metadata.hlsProgress = startAt
+            metadata.hlsWrittenProgress = startAt
             metadata.type = DownloadType.IsPending
             metadata.setDownloadFileInfoTemplate(
                 DownloadedFileInfo(
@@ -1498,7 +1503,7 @@ object VideoDownloadManager {
             val file = info.toFile(context)
 
             // only delete the key if the file is not found
-            if (file == null || !file.existsOrThrow()) {
+            if (file == null || file.exists() == false) {
                 //if (removeKeys) context.removeKey(KEY_DOWNLOAD_INFO, id.toString()) // TODO READD
                 return null
             }
@@ -1570,8 +1575,8 @@ object VideoDownloadManager {
         return context.getKey(KEY_RESUME_PACKAGES, id.toString())
     }
 
-    fun getPreDownloadResumePackage(context: Context, id: Int): DownloadQueueWrapper? {
-        return context.getKey(KEY_PRE_RESUME, id.toString())
+    fun getDownloadQueuePackage(context: Context, id: Int): DownloadQueueWrapper? {
+        return context.getKey(KEY_RESUME_IN_QUEUE, id.toString())
     }
 
     fun getDownloadEpisodeMetadata(
@@ -1584,6 +1589,7 @@ object VideoDownloadManager {
     ): DownloadEpisodeMetadata {
         return DownloadEpisodeMetadata(
             episode.id,
+            episode.parentId,
             sanitizeFilename(titleName),
             apiName,
             episode.poster ?: currentPoster,
@@ -1604,14 +1610,18 @@ object VideoDownloadManager {
         var isCompleted = false
             set(value) {
                 field = value
-                removeKey(KEY_PRE_RESUME, downloadQueueWrapper.id.toString())
+                if (value) {
+                    removeKey(KEY_RESUME_IN_QUEUE, downloadQueueWrapper.id.toString())
+                }
             }
 
         var isFailed = false
             set(value) {
                 field = value
                 // Clean up failed work
-                removeKey(KEY_PRE_RESUME, downloadQueueWrapper.id.toString())
+                if (value) {
+                    removeKey(KEY_RESUME_IN_QUEUE, downloadQueueWrapper.id.toString())
+                }
             }
 
         companion object {
@@ -1634,13 +1644,11 @@ object VideoDownloadManager {
             _currentDownloads.update { downloads ->
                 downloads + id
             }
+
             try {
                 for (index in (downloadResumePackage.linkIndex ?: 0) until item.links.size) {
                     val link = item.links[index]
                     val resume = downloadResumePackage.linkIndex == index
-
-                    // We do not want pre-resume keys once the resume key is set
-                    removeKey(KEY_PRE_RESUME, id.toString())
 
                     setKey(
                         KEY_RESUME_PACKAGES,
@@ -1672,7 +1680,6 @@ object VideoDownloadManager {
                     }
 
                     if (connectionResult.success) { // SUCCESS
-                        removeKey(KEY_RESUME_PACKAGES, id.toString())
                         isCompleted = true
                         break
                     } else if (!connectionResult.tryNext || index >= item.links.lastIndex) {
@@ -1682,9 +1689,11 @@ object VideoDownloadManager {
                     }
                 }
             } catch (e: Exception) {
-                logError(e)
+                downloadStatusEvent.invoke(Pair(id, DownloadType.IsFailed))
                 isFailed = true
+                logError(e)
             } finally {
+                isFailed = !isCompleted
                 _currentDownloads.update { downloads ->
                     downloads - id
                 }
@@ -1731,7 +1740,7 @@ object VideoDownloadManager {
 
         fun startDownload() {
             Log.d(TAG, "Starting download ${downloadQueueWrapper.id}")
-            setKey(KEY_PRE_RESUME, downloadQueueWrapper.id.toString(), downloadQueueWrapper)
+            setKey(KEY_RESUME_IN_QUEUE, downloadQueueWrapper.id.toString(), downloadQueueWrapper)
 
             ioSafe {
                 if (downloadQueueWrapper.resumePackage != null) {

@@ -883,6 +883,7 @@ class ResultViewModel2 : ViewModel() {
     ): DownloadObjects.DownloadEpisodeMetadata {
         return DownloadObjects.DownloadEpisodeMetadata(
             episode.id,
+            episode.parentId,
             sanitizeFilename(titleName),
             apiName,
             episode.poster ?: currentPoster,
