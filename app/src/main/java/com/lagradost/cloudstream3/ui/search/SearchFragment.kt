@@ -21,6 +21,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -56,6 +57,7 @@ import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
@@ -400,17 +402,29 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
 
         val settingsManager = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
         val isAdvancedSearch = settingsManager?.getBoolean("advanced_search", true) ?: true
+        val isSearchSuggestionsEnabled = settingsManager?.getBoolean("search_suggestions_enabled", true) ?: true
 
         selectedSearchTypes = DataStoreHelper.searchPreferenceTags.toMutableList()
 
-        if (isLayout(TV)) {
+        if (!isLayout(PHONE)) {
             binding.searchFilter.isFocusable = true
             binding.searchFilter.isFocusableInTouchMode = true
         }
+        
+        // Hide suggestions when search view loses focus (phone only)
+        if (isLayout(PHONE)) {
+            binding.mainSearch.setOnQueryTextFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    searchViewModel.clearSuggestions()
+                }
+            }
+        }
+
 
         binding.mainSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 search(query)
+                searchViewModel.clearSuggestions()
 
                 binding.mainSearch.let {
                     hideKeyboard(it)
@@ -425,16 +439,29 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
                 if (showHistory) {
                     searchViewModel.clearSearch()
                     searchViewModel.updateHistory()
+                    searchViewModel.clearSuggestions()
+                } else {
+                    // Fetch suggestions when user is typing (if enabled)
+                    if (isSearchSuggestionsEnabled) {
+                        searchViewModel.fetchSuggestions(newText)
+                    }
                 }
                 binding.apply {
                     searchHistoryHolder.isVisible = showHistory
                     searchMasterRecycler.isVisible = !showHistory && isAdvancedSearch
                     searchAutofitResults.isVisible = !showHistory && !isAdvancedSearch
+                    // Hide suggestions when showing history or showing search results
+                    searchSuggestionsHolder.isVisible = !showHistory && isSearchSuggestionsEnabled
                 }
 
                 return true
             }
         })
+
+        // Clear suggestions button (for TV)
+        binding.clearSuggestionsButton.setOnClickListener {
+            searchViewModel.clearSuggestions()
+        }
 
         binding.searchClearCallHistory.setOnClickListener {
             activity?.let { ctx ->
@@ -579,10 +606,28 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
             }
         }
 
+        val suggestionAdapter = SearchSuggestionAdapter { callback ->
+            when (callback.clickAction) {
+                SEARCH_SUGGESTION_CLICK -> {
+                    // Search directly
+                    binding.mainSearch.setQuery(callback.suggestion, true)
+                    searchViewModel.clearSuggestions()
+                }
+                SEARCH_SUGGESTION_FILL -> {
+                    // Fill the search box without searching
+                    binding.mainSearch.setQuery(callback.suggestion, false)
+                }
+            }
+        }
+
         binding.apply {
             searchHistoryRecycler.adapter = historyAdapter
             searchHistoryRecycler.setLinearListLayout(isHorizontal = false, nextRight = FOCUS_SELF)
             //searchHistoryRecycler.layoutManager = GridLayoutManager(context, 1)
+
+            // Setup suggestions RecyclerView
+            searchSuggestionsRecycler.adapter = suggestionAdapter
+            searchSuggestionsRecycler.layoutManager = LinearLayoutManager(context)
 
             searchMasterRecycler.setRecycledViewPool(ParentItemAdapter.sharedPool)
             searchMasterRecycler.adapter = masterAdapter
@@ -610,6 +655,24 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
         observe(searchViewModel.currentHistory) { list ->
             binding.searchClearCallHistory.isVisible = list.isNotEmpty()
             (binding.searchHistoryRecycler.adapter as? SearchHistoryAdaptor?)?.submitList(list)
+        }
+
+        // Observe search suggestions
+        observe(searchViewModel.searchSuggestions) { suggestions ->
+            val hasSuggestions = suggestions.isNotEmpty()
+            binding.searchSuggestionsHolder.isVisible = hasSuggestions
+            (binding.searchSuggestionsRecycler.adapter as? SearchSuggestionAdapter?)?.submitList(suggestions)
+            
+            // On non-phone layouts, show clear button and redirect focus
+            if (!isLayout(PHONE)) {
+                binding.clearSuggestionsButton.isVisible = hasSuggestions
+                if (hasSuggestions) {
+                    binding.tvtypesChipsScroll.tvtypesChips.root.nextFocusDownId = R.id.search_suggestions_recycler
+                } else {
+                    // Reset to default focus target (history)
+                    binding.tvtypesChipsScroll.tvtypesChips.root.nextFocusDownId = R.id.search_history_recycler
+                }
+            }
         }
 
         searchViewModel.updateHistory()
