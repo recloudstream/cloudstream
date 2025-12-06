@@ -11,18 +11,17 @@ import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKeys
 import com.lagradost.cloudstream3.services.DownloadQueueService
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.DownloadQueueWrapper
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.KEY_PRE_RESUME
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.KEY_RESUME_PACKAGES
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.KEY_RESUME_IN_QUEUE
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.downloadStatus
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.downloadStatusEvent
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDownloadFileInfo
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDownloadQueuePackage
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDownloadResumePackage
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getPreDownloadResumePackage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.updateAndGet
-import org.schabi.newpipe.extractor.timeago.patterns.it
 
 // 1. Put a download on the queue
 // 2. The queue manager starts a foreground service to handle the queue
@@ -50,32 +49,26 @@ object DownloadQueueManager {
         }
 
         ioSafe {
-            val resumePackages =
-                // We do not want to resume downloads already downloading
-                getResumeIds().filterNot { VideoDownloadManager.currentDownloads.value.contains(it) }
-                    .mapNotNull { id ->
-                        getDownloadResumePackage(context, id)?.toWrapper()
-                    }
-
             val resumeQueue =
                 getPreResumeIds().filterNot {
                     VideoDownloadManager.currentDownloads.value.contains(it)
                 }
                     .mapNotNull { id ->
-                        getPreDownloadResumePackage(context, id)
+                        getDownloadResumePackage(context, id)?.toWrapper()
+                            ?: getDownloadQueuePackage(context, id)
                     }
 
             val newQueue = _queue.updateAndGet { localQueue ->
                 // Add resume packages to the first part of the queue, since they may have been removed from the queue when they started
-                (resumePackages + resumeQueue + localQueue).distinctBy { it.id }.toTypedArray()
+                (resumeQueue + localQueue).distinctBy { it.id }.toTypedArray()
             }
 
             // Once added to the queue they can be safely removed
-            removeKeys(KEY_PRE_RESUME)
+            removeKeys(KEY_RESUME_IN_QUEUE)
 
             // Make sure the download buttons display a pending status
             newQueue.forEach { obj ->
-                setQueueStatus(obj)
+                setQueueStatus(obj.id, VideoDownloadManager.DownloadType.IsPending)
             }
             if (newQueue.any()) {
                 startQueueService(context)
@@ -83,39 +76,58 @@ object DownloadQueueManager {
         }
     }
 
-    fun getResumeIds(): Set<Int> {
-        return getKeys(KEY_RESUME_PACKAGES)?.mapNotNull {
-            it.substringAfter("$KEY_RESUME_PACKAGES/").toIntOrNull()
-        }?.toSet()
-            ?: emptySet()
-    }
-
-    /** Downloads not yet started, but forcefully stopped by app closure. */
+    /** Downloads not yet started or in progress. */
     private fun getPreResumeIds(): Set<Int> {
-        return getKeys(KEY_PRE_RESUME)?.mapNotNull {
-            it.substringAfter("$KEY_PRE_RESUME/").toIntOrNull()
+        return getKeys(KEY_RESUME_IN_QUEUE)?.mapNotNull {
+            it.substringAfter("$KEY_RESUME_IN_QUEUE/").toIntOrNull()
         }?.toSet()
             ?: emptySet()
     }
 
-    /** Adds an object to the internal persistent queue. It does not re-add an existing item.  */
-    private fun add(downloadQueueWrapper: DownloadQueueWrapper) {
+    /** Adds an object to the internal persistent queue. It does not re-add an existing item. @return true if successfully added  */
+    private fun add(downloadQueueWrapper: DownloadQueueWrapper): Boolean {
         Log.d(TAG, "Download added to queue: $downloadQueueWrapper")
-        _queue.update { localQueue ->
+        val newQueue = _queue.updateAndGet { localQueue ->
             // Do not add the same episode twice
-            if (localQueue.any { it.id == downloadQueueWrapper.id }) {
-                return@update localQueue
+            if (downloadQueueWrapper.isCurrentlyDownloading() || localQueue.any { it.id == downloadQueueWrapper.id }) {
+                return@updateAndGet localQueue
             }
             localQueue + downloadQueueWrapper
         }
+        return newQueue.any { it.id == downloadQueueWrapper.id }
     }
 
     /** Removes all objects with the same id from the internal persistent queue */
-    private fun remove(downloadQueueWrapper: DownloadQueueWrapper) {
-        Log.d(TAG, "Download removed from the queue: $downloadQueueWrapper")
+    private fun remove(id: Int) {
+        Log.d(TAG, "Download removed from the queue: $id")
         _queue.update { localQueue ->
-            val id = downloadQueueWrapper.id
+            // The check is to prevent unnecessary updates
+            if (!localQueue.any { it.id == id }) {
+                return@update localQueue
+            }
+
             localQueue.filter { it.id != id }.toTypedArray()
+        }
+    }
+
+    /** Removes all items and returns the previous queue */
+    private fun removeAll(): Array<DownloadQueueWrapper> {
+        Log.d(TAG, "Removed everything from queue")
+        return _queue.getAndUpdate {
+            emptyArray()
+        }
+    }
+
+    private fun reorder(downloadQueueWrapper: DownloadQueueWrapper, newPosition: Int) {
+        _queue.update { localQueue ->
+            val newIndex = newPosition.coerceIn(0, localQueue.size)
+            val id = downloadQueueWrapper.id
+
+            val newQueue = localQueue.filter { it.id != id }.toMutableList().apply {
+                this.add(newIndex, downloadQueueWrapper)
+            }.toTypedArray()
+
+            newQueue
         }
     }
 
@@ -123,7 +135,7 @@ object DownloadQueueManager {
     fun popQueue(context: Context): VideoDownloadManager.EpisodeDownloadInstance? {
         val first = queue.value.firstOrNull() ?: return null
 
-        remove(first)
+        remove(first.id)
 
         val downloadInstance = VideoDownloadManager.EpisodeDownloadInstance(context, first)
 
@@ -131,14 +143,14 @@ object DownloadQueueManager {
     }
 
     /** Marks the item as in queue for the download button */
-    private fun setQueueStatus(downloadQueueWrapper: DownloadQueueWrapper) {
+    private fun setQueueStatus(id: Int, status: VideoDownloadManager.DownloadType) {
         downloadStatusEvent.invoke(
             Pair(
-                downloadQueueWrapper.id,
-                VideoDownloadManager.DownloadType.IsPending
+                id,
+                status
             )
         )
-        downloadStatus[downloadQueueWrapper.id] = VideoDownloadManager.DownloadType.IsPending
+        downloadStatus[id] = status
     }
 
     private fun startQueueService(context: Context?) {
@@ -157,22 +169,55 @@ object DownloadQueueManager {
         }
     }
 
+    /** Removes all queued items */
+    fun removeAllFromQueue() {
+        removeAll().forEach { wrapper ->
+            setQueueStatus(wrapper.id, VideoDownloadManager.DownloadType.IsStopped)
+        }
+    }
+
+    /** Removes all objects with the same id from the internal persistent queue  */
+    fun removeFromQueue(id: Int) {
+        ioSafe {
+            remove(id)
+            setQueueStatus(id, VideoDownloadManager.DownloadType.IsStopped)
+        }
+    }
+
+    /** Will move the download queue wrapper to a new position in the queue.
+     * If the item does not exist it will also insert it. */
+    fun reorderItem(downloadQueueWrapper: DownloadQueueWrapper, newPosition: Int) {
+        ioSafe {
+            reorder(downloadQueueWrapper, newPosition)
+        }
+    }
+
     /** Add a new object to the queue. Will not queue completed downloads or current downloads. */
     fun addToQueue(downloadQueueWrapper: DownloadQueueWrapper) {
         ioSafe {
             val context = AcraApplication.context ?: return@ioSafe
             val fileInfo = getDownloadFileInfo(context, downloadQueueWrapper.id)
-            val isComplete = fileInfo != null && (fileInfo.fileLength <= fileInfo.totalBytes)
+            val isComplete = fileInfo != null &&
+                    // Assure no division by 0
+                    fileInfo.totalBytes > 0 &&
+                    // If more than 98% downloaded then do not add to queue
+                    (fileInfo.fileLength.toFloat() / fileInfo.totalBytes.toFloat()) > 0.98f
             // Do not queue completed files!
             if (isComplete) return@ioSafe
-            // Do not queue already downloading files
-            if (VideoDownloadManager.currentDownloads.value.contains(downloadQueueWrapper.id)) {
-                return@ioSafe
-            }
 
-            add(downloadQueueWrapper)
-            setQueueStatus(downloadQueueWrapper)
-            startQueueService(context)
+            if (add(downloadQueueWrapper)) {
+                setQueueStatus(downloadQueueWrapper.id, VideoDownloadManager.DownloadType.IsPending)
+                startQueueService(context)
+            }
+        }
+    }
+
+
+    /** Refreshes the queue flow with the same value, but copied.
+     * Good to run if the downloads are affected by some outside value change. */
+    fun forceRefreshQueue() {
+        _queue.update { localQueue ->
+            localQueue.copyOf()
         }
     }
 }

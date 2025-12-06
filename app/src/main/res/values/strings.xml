@@ -892,7 +892,9 @@
     <string name="name">Name</string>
     <string name="resolution_and_name">Resolution and name</string>
     <string name="download_all">Download all</string>
+    <string name="cancel_all">Cancel all</string>
     <string name="download_episode_range">Do you want to download episode %s?</string>
+    <string name="cancel_queue_message">Do you want to cancel all queued downloads?</string>
     <string name="subs_subtitle_alignment">Subtitle Alignment</string>
     <string name="bottom_left">Bottom left</string>
     <string name="bottom_center">Bottom center</string>

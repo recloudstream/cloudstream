@@ -4,6 +4,7 @@ import android.net.Uri
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.services.DownloadQueueService
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -14,8 +15,7 @@ import java.util.Objects
 
 object DownloadObjects {
     /** An item can either be something to resume or something new to start */
-    @ConsistentCopyVisibility
-    data class DownloadQueueWrapper internal constructor(
+    data class DownloadQueueWrapper(
         @JsonProperty("resumePackage") val resumePackage: DownloadResumePackage?,
         @JsonProperty("downloadItem") val downloadItem: DownloadQueueItem?,
     ) {
@@ -25,7 +25,16 @@ object DownloadObjects {
             }
         }
 
-        @JsonProperty("id") val id = resumePackage?.item?.ep?.id ?: downloadItem!!.episode.id
+        /** Loop through the current download instances to see if it is currently downloading*/
+        fun isCurrentlyDownloading(): Boolean {
+            return DownloadQueueService.downloadInstances.value.any { it.downloadQueueWrapper.id == this.id }
+        }
+
+        @JsonProperty("id")
+        val id = resumePackage?.item?.ep?.id ?: downloadItem!!.episode.id
+
+        @JsonProperty("parentId")
+        val parentId = resumePackage?.item?.ep?.parentId ?: downloadItem!!.episode.parentId
     }
 
     /** General data about the episode and show to start a download from. */
@@ -61,7 +70,7 @@ object DownloadObjects {
         @JsonProperty("description") val description: String?,
         @JsonProperty("cacheTime") val cacheTime: Long,
         override val id: Int,
-    ): DownloadCached(id) {
+    ) : DownloadCached(id) {
         @JsonProperty("rating", access = JsonProperty.Access.WRITE_ONLY)
         @Deprecated(
             "`rating` is the old scoring system, use score instead",
@@ -108,6 +117,7 @@ object DownloadObjects {
     /** Metadata for a specific episode and how to display it. */
     data class DownloadEpisodeMetadata(
         @JsonProperty("id") val id: Int,
+        @JsonProperty("parentId") val parentId: Int,
         @JsonProperty("mainName") val mainName: String,
         @JsonProperty("sourceApiName") val sourceApiName: String?,
         @JsonProperty("poster") val poster: String?,

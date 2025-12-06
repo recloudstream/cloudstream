@@ -20,6 +20,7 @@
             android:layout_height="wrap_content"
             android:background="?attr/primaryGrayBackground"
             android:paddingTop="@dimen/navbar_height"
+            app:menu="@menu/download_queue"
             app:layout_scrollFlags="scroll|enterAlways"
             app:navigationIconTint="?attr/iconColor"
             app:titleTextColor="?attr/textColor"

@@ -12,37 +12,45 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.DownloadQueueItemBinding
 import com.lagradost.cloudstream3.ui.BaseAdapter
 import com.lagradost.cloudstream3.ui.BaseDiffCallback
 import com.lagradost.cloudstream3.ui.ViewHolderState
+import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_CANCEL_PENDING
+import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DELETE_FILE
+import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_PAUSE_DOWNLOAD
+import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_RESUME_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
-import com.lagradost.cloudstream3.ui.download.VisualDownloadCached
+import com.lagradost.cloudstream3.ui.download.DownloadClickEvent
 import com.lagradost.cloudstream3.ui.download.button.DownloadStatusTell
 import com.lagradost.cloudstream3.ui.download.queue.DownloadQueueAdapter.Companion.DOWNLOAD_SEPARATOR_TAG
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.DataStore.getFolderName
-import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
-import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.DownloadQueueWrapper
+import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDownloadFileInfo
 
-/** An item in the adapter can either be a separator or a real item */
-class DownloadAdapterItem(val item: DownloadQueueAdapterInfo?) {
+/** An item in the adapter can either be a separator or a real item.
+ * isCurrentlyDownloading is used to fully update items as opposed to just moving them. */
+class DownloadAdapterItem(val item: DownloadQueueWrapper?) {
     val isSeparator = item == null
 }
 
 
 class DownloadQueueAdapter(val fragment: Fragment) : BaseAdapter<DownloadAdapterItem, Unit>(
     diffCallback = BaseDiffCallback(
-        itemSame = { a, b -> a.item?.queueWrapper?.id == b.item?.queueWrapper?.id },
+        itemSame = { a, b -> a.item?.id == b.item?.id },
         contentSame = { a, b ->
-            a.item?.queueWrapper?.id == b.item?.queueWrapper?.id
+            a.item?.id == b.item?.id
         })
 ) {
+    var currentDownloads = 0
+
     companion object {
         val DOWNLOAD_SEPARATOR_TAG = "DOWNLOAD_SEPARATOR_TAG"
     }
@@ -58,10 +66,6 @@ class DownloadQueueAdapter(val fragment: Fragment) : BaseAdapter<DownloadAdapter
         item: DownloadAdapterItem,
         position: Int
     ) {
-        applyBinding(holder, item)
-    }
-
-    fun applyBinding(holder: ViewHolderState<Unit>, item: DownloadAdapterItem) {
         when (val binding = holder.view) {
             is DownloadQueueItemBinding -> {
                 if (item.item == null) {
@@ -69,26 +73,27 @@ class DownloadQueueAdapter(val fragment: Fragment) : BaseAdapter<DownloadAdapter
                     bindSeparator(binding)
                 } else {
                     holder.itemView.tag = null
-                    bind(binding, item.item.queueWrapper, item.item.childCard)
+                    bind(binding, item.item)
                 }
             }
         }
     }
 
-    @JvmName("submitListShortcut")
-    fun submitList(list: List<DownloadQueueAdapterInfo>) {
-        submitList(list.map { DownloadAdapterItem(it) })
-    }
+    fun submitQueue(newQueue: DownloadAdapterQueue) {
+        val index = newQueue.currentDownloads.size
+        val current = newQueue.currentDownloads
+        val queue = newQueue.queue
+        currentDownloads = current.size
 
-    override fun submitList(list: Collection<DownloadAdapterItem>?, commitCallback: Runnable?) {
-        val maxDownloads = fragment.context?.let { VideoDownloadManager.maxConcurrentDownloads(it) }
-        val newList = list?.filterNot { it.isSeparator }?.toMutableList()?.apply {
-            if (maxDownloads != null && list.size > maxDownloads) {
-                add(maxDownloads, DownloadAdapterItem(null))
-            }
-        }
-
-        super.submitList(newList, commitCallback)
+        val newList =
+            (current + queue).distinctBy { it.id }.map { DownloadAdapterItem(it) }.toMutableList()
+                .apply {
+                    // Only add the separator if it actually separates something
+                    if (index < this.size) {
+                        add(index, DownloadAdapterItem(null))
+                    }
+                }
+        submitList(newList)
     }
 
     fun bindSeparator(binding: DownloadQueueItemBinding) {
@@ -101,69 +106,64 @@ class DownloadQueueAdapter(val fragment: Fragment) : BaseAdapter<DownloadAdapter
     fun bind(
         binding: DownloadQueueItemBinding,
         queueWrapper: DownloadQueueWrapper,
-        childCard: VisualDownloadCached.Child?
     ) {
         val context = binding.root.context
         val downloadInfo = getDownloadFileInfo(context, queueWrapper.id)
 
-        val episodeCached =
-            (queueWrapper.downloadItem?.resultId ?: childCard?.data?.parentId)?.toString()
-                ?.let { folder ->
-                    getKey<DownloadObjects.DownloadEpisodeCached>(
-                        DOWNLOAD_EPISODE_CACHE,
-                        getFolderName(folder, queueWrapper.id.toString())
-                    )
-                }
+
 
         binding.apply {
             separatorHolder.isGone = true
             downloadChildEpisodeHolder.isGone = false
 
-            // The layout looks better if downloadChildEpisodeTextExtra is hidden when its empty, to make the other text centered.
-            downloadChildEpisodeTextExtra.isVisible = false
-            downloadChildEpisodeTextExtra.doOnTextChanged { text, _, _, _ ->
-                downloadChildEpisodeTextExtra.isVisible = text == null || text.isNotEmpty()
-            }
-
-            val posDur = getViewPos(queueWrapper.id)
-            downloadChildEpisodeProgress.apply {
-                isVisible = posDur != null
-                posDur?.let {
-                    val visualPos = it.fixVisual()
-                    max = (visualPos.duration / 1000).toInt()
-                    progress = (visualPos.position / 1000).toInt()
-                }
-            }
-
-            downloadButton.setPersistentId(queueWrapper.id)
-
-            if (episodeCached != null) {
-                downloadButton.setDefaultClickListener(
-                    episodeCached, downloadChildEpisodeTextExtra
-                ) {
-                    handleDownloadClick(it)
-//                    when (it.action) {
-//                        DOWNLOAD_ACTION_DOWNLOAD -> {
-//                            DownloadQueueManager.addToQueue(queueWrapper)
-//                        }
-//
-//                        DOWNLOAD_ACTION_LONG_CLICK -> {
-//
-//                        }
-//
-//                        DOWNLOAD_ACTION_PAUSE_DOWNLOAD -> {
-//                            VideoDownloadManager.downloadEvent.invoke(
-//                                Pair(queueWrapper.id, VideoDownloadManager.DownloadActionType.Pause)
-//                            )
-//                        }
-//                    }
-                }
-            }
+            downloadChildEpisodeTextExtra.text = queueWrapper.downloadItem?.resultName ?: queueWrapper.resumePackage?.item?.ep?.mainName
 
             val status = VideoDownloadManager.downloadStatus[queueWrapper.id]
+
+            downloadButton.setOnClickListener { view ->
+                val episodeCached =
+                    getKey<DownloadObjects.DownloadEpisodeCached>(
+                        DOWNLOAD_EPISODE_CACHE,
+                        getFolderName(queueWrapper.parentId.toString(), queueWrapper.id.toString())
+                    )
+                val isCurrentlyDownloading = queueWrapper.isCurrentlyDownloading()
+                if (isCurrentlyDownloading && episodeCached != null) {
+                    val list = arrayListOf(
+                        Pair(DOWNLOAD_ACTION_DELETE_FILE, R.string.popup_delete_file),
+                    )
+                    val currentStatus = VideoDownloadManager.downloadStatus[queueWrapper.id]
+
+                    list.add(
+                        if (currentStatus == VideoDownloadManager.DownloadType.IsDownloading)
+                            Pair(DOWNLOAD_ACTION_PAUSE_DOWNLOAD, R.string.popup_pause_download)
+                        else Pair(DOWNLOAD_ACTION_RESUME_DOWNLOAD, R.string.popup_resume_download)
+                    )
+
+                    view.popupMenuNoIcons(
+                        list
+                    ) {
+                        handleDownloadClick(DownloadClickEvent(itemId, episodeCached))
+                    }
+                } else if (!isCurrentlyDownloading) {
+                    val list = arrayListOf(
+                        Pair(DOWNLOAD_ACTION_CANCEL_PENDING, R.string.cancel),
+                    )
+
+                    view.popupMenuNoIcons(
+                        list
+                    ) {
+                        when (itemId) {
+                            DOWNLOAD_ACTION_CANCEL_PENDING -> {
+                                DownloadQueueManager.removeFromQueue(queueWrapper.id)
+                            }
+                        }
+                    }
+                }
+            }
+
             downloadButton.resetView()
             downloadButton.setStatus(status)
-//            val status = downloadButton.getStatus(item.id, card.currentBytes, card.totalBytes)
+            downloadButton.setPersistentId(queueWrapper.id)
 
             if (status == DownloadStatusTell.IsDone) {
                 // We do this here instead if we are finished downloading
@@ -177,27 +177,12 @@ class DownloadQueueAdapter(val fragment: Fragment) : BaseAdapter<DownloadAdapter
                         downloadInfo.fileLength,
                         downloadInfo.totalBytes
                     )
-                    downloadChildEpisodeTextExtra.text =
-                        formatShortFileSize(
-                            downloadChildEpisodeTextExtra.context,
-                            downloadInfo.totalBytes
-                        )
                 }
 
-                // We will let the view model handle this
                 downloadButton.doSetProgress = false
-                downloadButton.progressBar.progressDrawable =
-                    downloadButton.getDrawableFromStatus(status)
-                        ?.let { ContextCompat.getDrawable(downloadButton.context, it) }
-
             } else {
                 // We need to make sure we restore the correct progress
                 // when we refresh data in the adapter.
-                downloadButton.resetView()
-                val drawable = downloadButton.getDrawableFromStatus(status)?.let {
-                    ContextCompat.getDrawable(downloadButton.context, it)
-                }
-                downloadButton.statusView.setImageDrawable(drawable)
                 downloadButton.progressBar.progressDrawable =
                     ContextCompat.getDrawable(
                         downloadButton.context,
@@ -218,30 +203,8 @@ class DownloadQueueAdapter(val fragment: Fragment) : BaseAdapter<DownloadAdapter
                 text = context.getNameFull(name, episode, season)
                 isSelected = true // Needed for text repeating
             }
-
-            downloadChildEpisodeHolder.setOnClickListener {
-//                onItemClickEvent.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, data))
-            }
-
-//            downloadChildEpisodeHolder.apply {
-//                when {
-//                    setOnClickListener {
-//                        onItemClickEvent.invoke(
-//                            DownloadClickEvent(
-//                                DOWNLOAD_ACTION_PLAY_FILE,
-//                                data
-//                            )
-//                        )
-//                    }
-//                }
-//
-//            }
-
         }
-
-
     }
-
 }
 
 
@@ -256,9 +219,15 @@ private class DragAndDropTouchHelperCallback(private val adapter: DownloadQueueA
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
     ): Int {
-        val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN // Allow drag up/down
-        val swipeFlags = 0 // Disable swipe functionality (set swipe flags if you need it)
+        val item = adapter.getItem(viewHolder.absoluteAdapterPosition)
+        val isDownloading = item.item?.isCurrentlyDownloading() == true
+        val dragFlags = if (item.isSeparator || isDownloading) {
+            0
+        } else {
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN // Allow drag up/down
+        }
 
+        val swipeFlags = 0 // Disable swipe functionality
         return makeMovementFlags(dragFlags, swipeFlags)
     }
 
@@ -267,13 +236,24 @@ private class DragAndDropTouchHelperCallback(private val adapter: DownloadQueueA
         source: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder
     ): Boolean {
-        if (source.itemView.tag == DOWNLOAD_SEPARATOR_TAG) {
-            println("TODO moved download separator.")
-        }
-
         val fromPosition = source.absoluteAdapterPosition
         val toPosition = target.absoluteAdapterPosition
-        adapter.notifyItemMoved(fromPosition, toPosition)
+        val separatorPosition = adapter.currentDownloads
+
+        val toPositionNoSeparator =
+            if (separatorPosition < toPosition) toPosition - separatorPosition else toPosition
+
+        if (source.itemView.tag == DOWNLOAD_SEPARATOR_TAG) {
+            return false
+        } else {
+            adapter.getItem(fromPosition).item?.let { downloadQueueInfo ->
+                DownloadQueueManager.reorderItem(
+                    downloadQueueInfo,
+                    toPositionNoSeparator - 1
+                )
+            }
+        }
+
         return true
     }
 

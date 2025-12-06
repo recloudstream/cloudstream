@@ -74,6 +74,7 @@ import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPres
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.disableBackPressedCallback
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.enableBackPressedCallback
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.openBatteryOptimizationSettings
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
@@ -726,9 +727,17 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                             .setTitle(R.string.download_all)
                             .setMessage(rangeMessage)
                             .setPositiveButton(R.string.yes) { _, _ ->
-                                episodes.value.forEach { episode ->
-                                    // TODO fix already downloaded episodes + make sure it works. Also fix click to cancel
-                                    viewModel.handleAction(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, episode))
+                                ioSafe {
+                                    episodes.value.forEach { episode ->
+                                        viewModel.handleAction(
+                                            EpisodeClickEvent(
+                                                ACTION_DOWNLOAD_EPISODE,
+                                                episode
+                                            )
+                                        )
+                                            // Join to make the episodes ordered
+                                            .join()
+                                    }
                                 }
                             }
                             .setNegativeButton(R.string.cancel) { _, _ ->

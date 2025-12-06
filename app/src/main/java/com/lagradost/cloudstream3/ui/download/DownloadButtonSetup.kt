@@ -112,6 +112,10 @@ object DownloadButtonSetup {
                 }
             }
 
+            DOWNLOAD_ACTION_CANCEL_PENDING -> {
+                DownloadQueueManager.removeFromQueue(click.data.id)
+            }
+
             DOWNLOAD_ACTION_PLAY_FILE -> {
                 activity?.let { act ->
                     val parent = getKey<DownloadObjects.DownloadHeaderCached>(

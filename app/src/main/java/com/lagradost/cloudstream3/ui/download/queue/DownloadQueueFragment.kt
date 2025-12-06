@@ -1,9 +1,7 @@
 package com.lagradost.cloudstream3.ui.download.queue
 
-import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.activityViewModels
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentDownloadQueueBinding
@@ -16,6 +14,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.setAppBarNoScrollFlagsOnTV
+import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import com.lagradost.cloudstream3.utils.txt
 
 
@@ -27,7 +26,7 @@ class DownloadQueueFragment :
         val adapter = DownloadQueueAdapter(this@DownloadQueueFragment)
 
         observe(queueViewModel.childCards) { cards ->
-            adapter.submitList(cards)
+            adapter.submitQueue(cards)
         }
 
         binding.apply {
@@ -40,6 +39,18 @@ class DownloadQueueFragment :
                     }
                 }
                 setAppBarNoScrollFlagsOnTV()
+                menu?.findItem(R.id.cancel_all)?.setOnMenuItemClickListener {
+                        AlertDialog.Builder(context, R.style.AlertDialogCustom)
+                            .setTitle(R.string.cancel_all)
+                            .setMessage(R.string.cancel_queue_message)
+                            .setPositiveButton(R.string.yes) { _, _ ->
+                                DownloadQueueManager.removeAllFromQueue()
+                            }
+                            .setNegativeButton(R.string.no) { _, _ ->
+                            }.show()
+
+                    true
+                }
             }
 
             downloadChildList.adapter = adapter
