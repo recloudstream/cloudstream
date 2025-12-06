@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.setup
 import android.view.View
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
+import androidx.core.content.edit
 import androidx.core.util.forEach
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
@@ -53,9 +54,9 @@ class SetupFragmentMedia : BaseFragment<FragmentSetupMediaBinding>(
                             val itemVal = TvType.valueOf(item)
                             itemVal.ordinal.toString()
                         }.toSet()
-                        settingsManager.edit()
-                            .putStringSet(getString(R.string.prefer_media_type_key), prefValues)
-                            .apply()
+                        settingsManager.edit {
+                            putStringSet(getString(R.string.prefer_media_type_key), prefValues)
+                        }
 
                         // Regenerate set homepage
                         DataStoreHelper.currentHomePage = null

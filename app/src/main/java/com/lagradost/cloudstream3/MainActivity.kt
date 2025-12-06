@@ -32,6 +32,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.edit
 import androidx.core.view.children
 import androidx.core.view.get
 import androidx.core.view.isGone
@@ -680,7 +681,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             .setNegativeButton(R.string.no) { _, _ -> /*NO-OP*/ }
             .setPositiveButton(R.string.yes) { _, _ ->
                 if (dontShowAgainCheck.isChecked) {
-                    settingsManager.edit().putInt(getString(R.string.confirm_exit_key), 1).commit()
+                    settingsManager.edit(commit = true) {
+                        putInt(getString(R.string.confirm_exit_key), 1)
+                    }
                 }
                 // finish() causes a bug on some TVs where player
                 // may keep playing after closing the app.

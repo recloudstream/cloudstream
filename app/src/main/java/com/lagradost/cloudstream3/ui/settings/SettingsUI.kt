@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.settings
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import androidx.preference.SeekBarPreference
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getActivity
@@ -81,12 +82,13 @@ class SettingsUI : BasePreferenceFragmentCompat() {
                 prefNames.toList(),
                 prefValues,
                 getString(R.string.poster_ui_settings),
-                {}) { list ->
-                val edit = settingsManager.edit()
-                for ((i, key) in keys.withIndex()) {
-                    edit.putBoolean(key, list.contains(i))
+                {}
+            ) { list ->
+                settingsManager.edit {
+                    for ((i, key) in keys.withIndex()) {
+                        putBoolean(key, list.contains(i))
+                    }
                 }
-                edit.apply()
                 SearchResultBuilder.updateCache(it.context)
             }
 
@@ -108,9 +110,9 @@ class SettingsUI : BasePreferenceFragmentCompat() {
                 dismissCallback = {},
                 callback = {
                     try {
-                        settingsManager.edit()
-                            .putInt(getString(R.string.app_layout_key), prefValues[it])
-                            .apply()
+                        settingsManager.edit {
+                            putInt(getString(R.string.app_layout_key), prefValues[it])
+                        }
                         context?.updateTv()
                         activity?.recreate()
                     } catch (e: Exception) {
@@ -150,11 +152,12 @@ class SettingsUI : BasePreferenceFragmentCompat() {
                 prefValues.indexOf(currentLayout),
                 getString(R.string.app_theme_settings),
                 true,
-                {}) {
+                {}
+            ) {
                 try {
-                    settingsManager.edit()
-                        .putString(getString(R.string.app_theme_key), prefValues[it])
-                        .apply()
+                    settingsManager.edit {
+                        putString(getString(R.string.app_theme_key), prefValues[it])
+                    }
                     activity?.recreate()
                 } catch (e: Exception) {
                     logError(e)
@@ -187,11 +190,12 @@ class SettingsUI : BasePreferenceFragmentCompat() {
                 prefValues.indexOf(currentLayout),
                 getString(R.string.primary_color_settings),
                 true,
-                {}) {
+                {}
+            ) {
                 try {
-                    settingsManager.edit()
-                        .putString(getString(R.string.primary_color_key), prefValues[it])
-                        .apply()
+                    settingsManager.edit {
+                        putString(getString(R.string.primary_color_key), prefValues[it])
+                    }
                     activity?.recreate()
                 } catch (e: Exception) {
                     logError(e)
@@ -213,11 +217,14 @@ class SettingsUI : BasePreferenceFragmentCompat() {
                 names,
                 currentList,
                 getString(R.string.pref_filter_search_quality),
-                {}) { selectedList ->
-                settingsManager.edit().putStringSet(
-                    this.getString(R.string.pref_filter_search_quality_key),
-                    selectedList.map { it.toString() }.toMutableSet()
-                ).apply()
+                {}
+            ) { selectedList ->
+                settingsManager.edit {
+                    putStringSet(
+                        getString(R.string.pref_filter_search_quality_key),
+                        selectedList.map { it.toString() }.toMutableSet()
+                    )
+                }
             }
 
             return@setOnPreferenceClickListener true
@@ -235,9 +242,9 @@ class SettingsUI : BasePreferenceFragmentCompat() {
                 showApply = true,
                 dismissCallback = {},
                 callback = { selectedOption ->
-                    settingsManager.edit()
-                        .putInt(getString(R.string.confirm_exit_key), prefValues[selectedOption])
-                        .apply()
+                    settingsManager.edit {
+                        putInt(getString(R.string.confirm_exit_key), prefValues[selectedOption])
+                    }
                 }
             )
             return@setOnPreferenceClickListener true
