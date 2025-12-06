@@ -229,7 +229,7 @@ class DownloadFragment : BaseFragment<FragmentDownloadsBinding>(
             }
 
             downloadQueueButton.setOnClickListener {
-                findNavController().navigate(R.id.action_navigation_global_to_navigation_download_queue)
+                activity?.navigate(R.id.action_navigation_global_to_navigation_download_queue)
             }
 
             downloadStreamButtonTv.isFocusableInTouchMode = isLayout(TV)
