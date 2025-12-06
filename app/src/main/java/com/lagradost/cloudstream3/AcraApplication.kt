@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3
 import android.content.Context
 import com.lagradost.api.setContext
 import com.lagradost.cloudstream3.utils.DataStore.getKey
+import com.lagradost.cloudstream3.utils.DataStore.removeKeys
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import java.lang.ref.WeakReference
 
@@ -11,8 +12,7 @@ import java.lang.ref.WeakReference
  * Use CloudStreamApp instead.
  */
 // Deprecate after next stable
-/*
-@Deprecated(
+/*@Deprecated(
     message = "AcraApplication is deprecated, use CloudStreamApp instead",
     replaceWith = ReplaceWith("com.lagradost.cloudstream3.CloudStreamApp"),
     level = DeprecationLevel.WARNING
@@ -36,6 +36,15 @@ class AcraApplication {
 			_context = WeakReference(value)
 			setContext(WeakReference(value))
 		}
+
+		/*@Deprecated(
+		    message = "AcraApplication is deprecated, use CloudStreamApp instead",
+		    replaceWith = ReplaceWith("com.lagradost.cloudstream3.CloudStreamApp.removeKeys(folder)"),
+		    level = DeprecationLevel.WARNING
+		)*/
+		fun removeKeys(folder: String): Int? {
+            return context?.removeKeys(folder)
+        }
 
 		/*@Deprecated(
 		    message = "AcraApplication is deprecated, use CloudStreamApp instead",
