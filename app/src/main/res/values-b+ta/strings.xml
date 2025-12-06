@@ -676,4 +676,7 @@
     <string name="overscan_settings">ஓவர்ச்கான்</string>
     <string name="poster_size_settings_des">சுவரொட்டிகளின் அளவை மாற்றுகிறது</string>
     <string name="poster_size_settings">சுவரொட்டி அளவு</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$d மணி %2$d நிமிடம் %3$d விநாடி</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$d நிமிடம் %2$d விநாடி</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$d விநாடி</string>
 </resources>
