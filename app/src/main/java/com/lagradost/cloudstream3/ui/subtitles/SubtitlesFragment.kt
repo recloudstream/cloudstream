@@ -18,6 +18,7 @@ import android.widget.Toast
 import androidx.annotation.FontRes
 import androidx.annotation.OptIn
 import androidx.annotation.Px
+import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.media3.common.text.Cue
 import androidx.media3.common.util.UnstableApi
@@ -636,10 +637,9 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
 
             subtitlesFilterSubLang.setOnCheckedChangeListener { _, b ->
                 context?.let { ctx ->
-                    PreferenceManager.getDefaultSharedPreferences(ctx)
-                        .edit()
-                        .putBoolean(getString(R.string.filter_sub_lang_key), b)
-                        .apply()
+                    PreferenceManager.getDefaultSharedPreferences(ctx).edit {
+                        putBoolean(getString(R.string.filter_sub_lang_key), b)
+                    }
                 }
             }
 
