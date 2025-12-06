@@ -4,23 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.services.DownloadQueueService.Companion.downloadInstances
-import com.lagradost.cloudstream3.ui.download.VisualDownloadCached
-import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
-import com.lagradost.cloudstream3.utils.DataStore.getKey
-import com.lagradost.cloudstream3.utils.DataStore.getKeys
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
-import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager.queue
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDownloadFileInfo
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 data class DownloadAdapterQueue(
     val currentDownloads: List<DownloadObjects.DownloadQueueWrapper>,

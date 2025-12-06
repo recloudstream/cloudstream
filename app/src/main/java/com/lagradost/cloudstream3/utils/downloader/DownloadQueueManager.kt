@@ -3,11 +3,11 @@ package com.lagradost.cloudstream3.utils.downloader
 import android.content.Context
 import android.util.Log
 import androidx.core.content.ContextCompat
-import com.lagradost.cloudstream3.AcraApplication
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CloudStreamApp
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKeys
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKeys
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.services.DownloadQueueService
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.DownloadQueueWrapper
@@ -195,7 +195,7 @@ object DownloadQueueManager {
     /** Add a new object to the queue. Will not queue completed downloads or current downloads. */
     fun addToQueue(downloadQueueWrapper: DownloadQueueWrapper) {
         ioSafe {
-            val context = AcraApplication.context ?: return@ioSafe
+            val context = CloudStreamApp.context ?: return@ioSafe
             val fileInfo = getDownloadFileInfo(context, downloadQueueWrapper.id)
             val isComplete = fileInfo != null &&
                     // Assure no division by 0

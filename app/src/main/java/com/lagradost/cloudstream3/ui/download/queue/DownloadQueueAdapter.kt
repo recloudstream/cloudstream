@@ -1,17 +1,14 @@
 package com.lagradost.cloudstream3.ui.download.queue
 
 
-import android.text.format.Formatter.formatShortFileSize
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
-import androidx.core.view.isVisible
-import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.DownloadQueueItemBinding
 import com.lagradost.cloudstream3.ui.BaseAdapter

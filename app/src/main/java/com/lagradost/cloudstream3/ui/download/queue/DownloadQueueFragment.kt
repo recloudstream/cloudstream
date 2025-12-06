@@ -35,7 +35,7 @@ class DownloadQueueFragment :
                 if (isLayout(PHONE or EMULATOR)) {
                     setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
                     setNavigationOnClickListener {
-                        activity?.onBackPressedDispatcher?.onBackPressed()
+                        dispatchBackPressed()
                     }
                 }
                 setAppBarNoScrollFlagsOnTV()
