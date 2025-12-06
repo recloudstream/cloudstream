@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.actions.temp
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import androidx.core.net.toUri
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.actions.OpenInAppAction
@@ -44,7 +43,7 @@ open class MpvPackage(appName: String = "MPV", packageName: String = "is.xyz.mpv
             putExtra("title", video.name)
 
             if (index != null) {
-                setDataAndType(Uri.parse(result.links.getOrNull(index)?.url ?: return), "video/*")
+                setDataAndType((result.links.getOrNull(index)?.url ?: return).toUri(), "video/*")
             } else {
                 makeTempM3U8Intent(context, this, result)
             }

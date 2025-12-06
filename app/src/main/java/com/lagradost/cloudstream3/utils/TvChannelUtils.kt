@@ -4,8 +4,8 @@ import android.content.ComponentName
 import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.tvprovider.media.tv.Channel
 import androidx.tvprovider.media.tv.PreviewProgram
 import androidx.tvprovider.media.tv.TvContractCompat
@@ -84,12 +84,12 @@ object TvChannelUtils {
                     }
                     .setContentId(item.url)
                     .setType(TvContractCompat.PreviewPrograms.TYPE_MOVIE)
-                    .setIntentUri(Uri.parse(csshareUri))
+                    .setIntentUri(csshareUri.toUri())
                     .setPosterArtAspectRatio(TvContractCompat.PreviewPrograms.ASPECT_RATIO_2_3)
 
                 // Validate poster URL before setting
                 if (!poster.isNullOrBlank() && poster.startsWith("http")) {
-                    builder.setPosterArtUri(Uri.parse(poster))
+                    builder.setPosterArtUri(poster.toUri())
 
                 }
                 val program = builder.build()
@@ -135,14 +135,14 @@ object TvChannelUtils {
 
     fun createTvChannel(context: Context) {
         val componentName = ComponentName(context, MainActivity::class.java)
-        val iconUri = Uri.parse("android.resource://${context.packageName}/mipmap/ic_launcher")
+        val iconUri = "android.resource://${context.packageName}/mipmap/ic_launcher".toUri()
         val inputId = TvContractCompat.buildInputId(componentName)
         val channel = Channel.Builder()
             .setType(TvContractCompat.Channels.TYPE_PREVIEW)
             .setAppLinkIconUri(iconUri)
             .setDisplayName(context.getString(R.string.app_name))
             .setAppLinkIntent(Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse("cloudstreamapp://open")
+                data = "cloudstreamapp://open".toUri()
             })
             .setInputId(inputId)
             .build()
