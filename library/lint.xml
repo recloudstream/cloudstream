@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="SuspiciousIndentation" severity="error" />
+    <issue id="TrulyRandom" severity="ignore" />
+</lint>
