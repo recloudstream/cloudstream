@@ -171,6 +171,7 @@ class DownloadAdapter(
             }
         }
 
+        downloadButton.resetView()
         val status = downloadButton.getStatus(card.child.id, card.currentBytes, card.totalBytes)
         if (status == DownloadStatusTell.IsDone) {
             // We do this here instead if we are finished downloading
@@ -188,7 +189,6 @@ class DownloadAdapter(
         } else {
             // We need to make sure we restore the correct progress
             // when we refresh data in the adapter.
-            downloadButton.resetView()
             val drawable = downloadButton.getDrawableFromStatus(status)?.let {
                 ContextCompat.getDrawable(downloadButton.context, it)
             }
@@ -278,6 +278,7 @@ class DownloadAdapter(
                 }
             }
 
+            downloadButton.resetView()
             val status = downloadButton.getStatus(data.id, card.currentBytes, card.totalBytes)
             if (status == DownloadStatusTell.IsDone) {
                 // We do this here instead if we are finished downloading
@@ -296,7 +297,6 @@ class DownloadAdapter(
             } else {
                 // We need to make sure we restore the correct progress
                 // when we refresh data in the adapter.
-                downloadButton.resetView()
                 val drawable = downloadButton.getDrawableFromStatus(status)?.let {
                     ContextCompat.getDrawable(downloadButton.context, it)
                 }

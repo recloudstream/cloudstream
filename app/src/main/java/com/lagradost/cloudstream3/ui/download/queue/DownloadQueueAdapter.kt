@@ -113,7 +113,12 @@ class DownloadQueueAdapter(val fragment: Fragment) : BaseAdapter<DownloadAdapter
             separatorHolder.isGone = true
             downloadChildEpisodeHolder.isGone = false
 
-            downloadChildEpisodeTextExtra.text = queueWrapper.downloadItem?.resultName ?: queueWrapper.resumePackage?.item?.ep?.mainName
+            // Only set the child-text if child and parent are not the same
+            // This prevents setting movie titles twice
+            if (queueWrapper.id != queueWrapper.parentId) {
+                val mainName = queueWrapper.downloadItem?.resultName ?: queueWrapper.resumePackage?.item?.ep?.mainName
+                downloadChildEpisodeTextExtra.text = mainName
+            }
 
             val status = VideoDownloadManager.downloadStatus[queueWrapper.id]
 

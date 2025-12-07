@@ -136,6 +136,7 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
 
             progressBar.progressDrawable = ContextCompat.getDrawable(context, progressDrawable)
 
+            setStatusInternal(null)
             recycle()
         }
         // resetView()

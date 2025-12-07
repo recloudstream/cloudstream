@@ -18,6 +18,7 @@ class DownloadButton(context: Context, attributeSet: AttributeSet) :
         super.onAttachedToWindow()
         progressText = findViewById(R.id.result_movie_download_text_precentage)
         mainText = findViewById(R.id.result_movie_download_text)
+        setStatus(null)
     }
 
     override fun setStatus(status: DownloadStatusTell?) {

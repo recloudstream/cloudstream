@@ -199,12 +199,10 @@ class EpisodeAdapter(
                             }
                         }
                     }
-                    // TODO FIX THIS
-                    // We need to make sure we restore the correct progress
-                    // when we refresh data in the adapter.
+
                     val status = VideoDownloadManager.downloadStatus[item.id]
-                    downloadButton.setPersistentId(item.id)
                     downloadButton.resetView()
+                    downloadButton.setPersistentId(item.id)
                     downloadButton.setStatus(status)
 
                     val name =
@@ -423,14 +421,10 @@ class EpisodeAdapter(
                         }
                     }
 
-                    // TODO FIX THIS
-                    // We need to make sure we restore the correct progress
-                    // when we refresh data in the adapter.
                     val status = VideoDownloadManager.downloadStatus[item.id]
-                    downloadButton.setPersistentId(item.id)
                     downloadButton.resetView()
+                    downloadButton.setPersistentId(item.id)
                     downloadButton.setStatus(status)
-
 
                     val name =
                         if (item.name == null) "${episodeText.context.getString(R.string.episode)} ${item.episode}" else "${item.episode}. ${item.name}"
