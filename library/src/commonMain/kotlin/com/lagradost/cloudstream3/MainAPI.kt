@@ -557,6 +557,12 @@ abstract class MainAPI {
      * */
     open val loadTimeoutMs: Long? = null
 
+    /**
+     * The minimum media duration in milliseconds. If the duration is smaller
+     * than this value, it will result in to short playback errors.
+     */
+    @Prerelease
+    open val minimumDurationMs: Long? = null
 
     /**
      * A set of which ids the provider can open with getLoadUrl()
