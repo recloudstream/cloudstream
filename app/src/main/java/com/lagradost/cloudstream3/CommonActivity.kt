@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
+import androidx.core.view.isNotEmpty
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.CastSession
 import com.google.android.material.chip.ChipGroup
@@ -421,8 +422,7 @@ object CommonActivity {
 
     private fun View.hasContent(): Boolean {
         return isShown && when (this) {
-            //is RecyclerView -> this.childCount > 0
-            is ViewGroup -> this.childCount > 0
+            is ViewGroup -> this.isNotEmpty()
             else -> true
         }
     }
@@ -452,7 +452,7 @@ object CommonActivity {
         // if cant focus but visible then break and let android decide
         // the exception if is the view is a parent and has children that wants focus
         val hasChildrenThatWantsFocus = (next as? ViewGroup)?.let { parent ->
-            parent.descendantFocusability == ViewGroup.FOCUS_AFTER_DESCENDANTS && parent.childCount > 0
+            parent.descendantFocusability == ViewGroup.FOCUS_AFTER_DESCENDANTS && parent.isNotEmpty()
         } ?: false
         if (!next.isFocusable && shown && !hasChildrenThatWantsFocus) return null
 
