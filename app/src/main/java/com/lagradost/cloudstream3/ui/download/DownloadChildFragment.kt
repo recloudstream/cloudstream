@@ -1,16 +1,16 @@
 package com.lagradost.cloudstream3.ui.download
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.format.Formatter.formatShortFileSize
 import android.view.View
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentChildDownloadsBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
@@ -55,22 +55,6 @@ class DownloadChildFragment : BaseFragment<FragmentChildDownloadsBinding>(
     }
 
     override fun onBindingCreated(binding: FragmentChildDownloadsBinding) {
-        /**
-         * We never want to retain multi-delete state
-         * when navigating to downloads. Setting this state
-         * immediately can sometimes result in the observer
-         * not being notified in time to update the UI.
-         *
-         * By posting to the main looper, we ensure that this
-         * operation is executed after the view has been fully created
-         * and all initializations are completed, allowing the
-         * observer to properly receive and handle the state change.
-         */
-        Handler(Looper.getMainLooper()).post {
-            downloadViewModel.setIsMultiDeleteState(false)
-        }
-
-
         val folder = arguments?.getString("folder")
         val name = arguments?.getString("name")
         if (folder == null) {
@@ -101,30 +85,56 @@ class DownloadChildFragment : BaseFragment<FragmentChildDownloadsBinding>(
                     }
                     (binding.downloadChildList.adapter as? DownloadAdapter)?.submitList(cards.value)
                 }
+
                 else -> {
                     (binding.downloadChildList.adapter as? DownloadAdapter)?.submitList(null)
                 }
             }
         }
-        observe(downloadViewModel.isMultiDeleteState) { isMultiDeleteState ->
-            val adapter = binding.downloadChildList.adapter as? DownloadAdapter
-            adapter?.setIsMultiDeleteState(isMultiDeleteState)
-            binding.downloadDeleteAppbar.isVisible = isMultiDeleteState
-            if (!isMultiDeleteState) {
-                activity?.detachBackPressedCallback("Downloads")
-                downloadViewModel.clearSelectedItems()
-                binding.downloadChildToolbar.isVisible = true
-            }
-        }
+
         observe(downloadViewModel.selectedBytes) {
             updateDeleteButton(downloadViewModel.selectedItemIds.value?.count() ?: 0, it)
         }
-        observe(downloadViewModel.selectedItemIds) {
-            handleSelectedChange(it)
-            updateDeleteButton(it.count(), downloadViewModel.selectedBytes.value ?: 0L)
 
-            binding.btnDelete.isVisible = it.isNotEmpty()
-            binding.selectItemsText.isVisible = it.isEmpty()
+
+        binding.apply {
+            btnDelete.setOnClickListener { view ->
+                downloadViewModel.handleMultiDelete(view.context ?: return@setOnClickListener)
+            }
+
+            btnCancel.setOnClickListener {
+                downloadViewModel.cancelSelection()
+            }
+
+            btnToggleAll.setOnClickListener {
+                val allSelected = downloadViewModel.isAllChildrenSelected()
+                if (allSelected) {
+                    downloadViewModel.clearSelectedItems()
+                } else {
+                    downloadViewModel.selectAllChildren()
+                }
+            }
+        }
+
+        observeNullable(downloadViewModel.selectedItemIds) { selection ->
+            val isMultiDeleteState = selection != null
+            val adapter = binding.downloadChildList.adapter as? DownloadAdapter
+            adapter?.setIsMultiDeleteState(isMultiDeleteState)
+            binding.downloadDeleteAppbar.isVisible = isMultiDeleteState
+            binding.downloadChildToolbar.isGone = isMultiDeleteState
+
+            if (selection == null) {
+                activity?.detachBackPressedCallback("Downloads")
+                return@observeNullable
+            }
+            activity?.attachBackPressedCallback("Downloads") {
+                downloadViewModel.cancelSelection()
+            }
+
+            updateDeleteButton(selection.count(), downloadViewModel.selectedBytes.value ?: 0L)
+
+            binding.btnDelete.isVisible = selection.isNotEmpty()
+            binding.selectItemsText.isVisible = selection.isEmpty()
 
             val allSelected = downloadViewModel.isAllChildrenSelected()
             if (allSelected) {
@@ -157,37 +167,6 @@ class DownloadChildFragment : BaseFragment<FragmentChildDownloadsBinding>(
                 nextRight = FOCUS_SELF,
                 nextDown = FOCUS_SELF,
             )
-        }
-    }
-
-    private fun handleSelectedChange(selected: Set<Int>) {
-        if (selected.isNotEmpty()) {
-            binding?.downloadDeleteAppbar?.isVisible = true
-            binding?.downloadChildToolbar?.isVisible = false
-            activity?.attachBackPressedCallback("Downloads") {
-                downloadViewModel.setIsMultiDeleteState(false)
-            }
-
-            binding?.btnDelete?.setOnClickListener {
-                context?.let { ctx ->
-                    downloadViewModel.handleMultiDelete(ctx)
-                }
-            }
-
-            binding?.btnCancel?.setOnClickListener {
-                downloadViewModel.setIsMultiDeleteState(false)
-            }
-
-            binding?.btnToggleAll?.setOnClickListener {
-                val allSelected = downloadViewModel.isAllChildrenSelected()
-                if (allSelected) {
-                    downloadViewModel.clearSelectedItems()
-                } else {
-                    downloadViewModel.selectAllChildren()
-                }
-            }
-
-            downloadViewModel.setIsMultiDeleteState(true)
         }
     }
 

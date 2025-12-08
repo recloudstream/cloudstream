@@ -1628,7 +1628,7 @@ object VideoDownloadManager {
      * Turns a string to an UniFile. Used for stored string paths such as settings.
      * Should only be used to get a download path.
      * */
-    private fun basePathToFile(context: Context, path: String?): SafeFile? {
+    fun basePathToFile(context: Context, path: String?): SafeFile? {
         return when {
             path.isNullOrBlank() -> getDefaultDir(context)
             path.startsWith("content://") -> SafeFile.fromUri(context, path.toUri())
