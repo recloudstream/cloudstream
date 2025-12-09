@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.gson.JsonParser
+import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.base64DecodeArray
@@ -14,11 +15,13 @@ import javax.crypto.Cipher
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
+@Prerelease
 class Bysezejataos  : ByseSX() {
     override var name = "Bysezejataos"
     override var mainUrl = "https://bysezejataos.com"
 }
 
+@Prerelease
 open class ByseSX : ExtractorApi() {
     override var name = "Byse"
     override var mainUrl = "https://byse.sx"
