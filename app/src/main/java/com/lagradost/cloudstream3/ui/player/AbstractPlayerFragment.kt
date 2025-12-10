@@ -221,11 +221,16 @@ abstract class AbstractPlayerFragment(
                         )
                     }
                 }
+
                 val filter = IntentFilter()
                 filter.addAction(ACTION_MEDIA_CONTROL)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     activity?.registerReceiver(pipReceiver, filter, Context.RECEIVER_EXPORTED)
-                } else activity?.registerReceiver(pipReceiver, filter)
+                } else {
+                    @SuppressLint("UnspecifiedRegisterReceiverFlag")
+                    activity?.registerReceiver(pipReceiver, filter)
+                }
+
                 val isPlaying = player.getIsPlaying()
                 val isPlayingValue =
                     if (isPlaying) CSPlayerLoading.IsPlaying else CSPlayerLoading.IsPaused
