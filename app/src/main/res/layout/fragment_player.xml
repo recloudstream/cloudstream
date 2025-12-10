@@ -26,7 +26,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:show_timeout="0" />
+        app:show_timeout="0"
+        app:surface_type="texture_view" />
 
     <FrameLayout
         android:id="@+id/player_loading_overlay"
