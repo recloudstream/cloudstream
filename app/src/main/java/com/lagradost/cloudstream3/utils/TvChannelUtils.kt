@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
+import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.ContentUris
 import android.content.Context
@@ -66,6 +67,7 @@ object TvChannelUtils {
     }
 
     /** Insert programs into a channel */
+    @SuppressLint("RestrictedApi")
     fun addPrograms(context: Context, channelId: Long, items: List<SearchResponse>) {
         for (item in items) {
             try {
