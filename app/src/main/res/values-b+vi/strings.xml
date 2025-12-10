@@ -72,7 +72,6 @@
     <string name="popup_play_file">Xem Tệp</string>
     <string name="popup_resume_download">Tiếp tục tải</string>
     <string name="popup_pause_download">Tạm dừng tải</string>
-    <string name="pref_disable_acra">Tắt tự động gửi dữ liệu khi xảy ra lỗi</string>
     <string name="home_more_info">Thông tin thêm</string>
     <string name="home_expanded_hide">Ẩn</string>
     <string name="home_play">Xem ngay</string>
@@ -152,8 +151,6 @@
     <string name="settings_info">Thông tin</string>
     <string name="advanced_search">Tìm kiếm nâng cao</string>
     <string name="advanced_search_des">Cho phép tìm kiếm theo bộ lọc từng nhà cung cấp</string>
-    <string name="bug_report_settings_off">Chỉ gửi dữ liệu khi xảy ra lỗi đến nhà phát triển</string>
-    <string name="bug_report_settings_on">Không gửi dữ liệu</string>
     <string name="show_fillers_settings">Hiển thị tập phụ cho anime</string>
     <string name="show_trailers_settings">Hiển thị trailer</string>
     <string name="kitsu_settings">Hiển thị poster từ Kitsu</string>
@@ -175,7 +172,6 @@
     <string name="copy_link_toast">Đã sao chép liên kết vào bộ nhớ tạm</string>
     <string name="play_episode_toast">Xem Phim</string>
     <string name="subs_default_reset_toast">Thiết lập lại giá trị mặc định</string>
-    <string name="acra_report_toast">Rất tiếc! Ứng dụng đã xảy ra lỗi. Một báo cáo lỗi ẩn danh sẽ được gửi đến nhà phát triển</string>
     <string name="season">Mùa</string>
     <string name="no_season">Không có mùa nào</string>
     <string name="episode">Tập</string>
@@ -395,7 +391,6 @@
     <string name="previous">Trước đó</string>
     <string name="skip_setup">Bỏ qua cài đặt setup</string>
     <string name="app_layout_subtext">Chọn giao diện phù hợp với thiết bị của bạn</string>
-    <string name="crash_reporting_title">Báo cáo sự cố</string>
     <string name="preferred_media_subtext">Bạn muốn xem gì</string>
     <string name="setup_done">Hoàn tất</string>
     <string name="extensions">Tiện ích mở rộng</string>

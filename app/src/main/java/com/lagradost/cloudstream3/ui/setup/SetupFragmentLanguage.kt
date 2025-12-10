@@ -4,10 +4,11 @@ import android.view.View
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.BuildConfig
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.databinding.FragmentSetupLanguageBinding
 import com.lagradost.cloudstream3.mvvm.safe
@@ -62,8 +63,9 @@ class SetupFragmentLanguage : BaseFragment<FragmentSetupLanguageBinding>(
                 listview1.setOnItemClickListener { _, _, selectedLangIndex, _ ->
                     val langTagIETF = languageTagsIETF[selectedLangIndex]
                     CommonActivity.setLocale(activity, langTagIETF)
-                    settingsManager.edit().putString(getString(R.string.locale_key), langTagIETF)
-                        .apply()
+                    settingsManager.edit {
+                        putString(getString(R.string.locale_key), langTagIETF)
+                    }
                 }
 
                 nextBtt.setOnClickListener {

@@ -40,7 +40,6 @@
     <string name="offline_file">Available para mapanood offline</string>
     <string name="select_all">Piliin Lahat</string>
     <string name="deselect_all">Alisin sa pagkakapili ang Lahat</string>
-    <string name="pref_disable_acra">Huwag paganahin ang awtomatikong pag-uulat ng bug</string>
     <string name="vpn_might_be_needed">Maaaring kailanganin ng VPN para gumana ang provider na ito</string>
     <string name="vpn_torrent">Ang provider na ito ay isang torrent, inirerekomendang gumamit ng VPN</string>
     <string name="provider_info_meta">Ang metadata ay hindi ibinigay ng site, hindi gagana ang video kung wala ito sa site.</string>
@@ -51,8 +50,6 @@
     <string name="episode_sync_settings_des">Awtomatikong i-sync ang iyong kasalukuyang episode</string>
     <string name="backup_failed">Nawawala ang mga pahintulot sa storage. Pakisubukang muli.</string>
     <string name="advanced_search_des">Binibigyan ka ng mga resulta ng paghahanap na pinaghihiwalay ng provider</string>
-    <string name="bug_report_settings_off">Nagpapadala lamang ng data sa mga pag-crash</string>
-    <string name="bug_report_settings_on">Hindi nagpapadala ng data</string>
     <string name="pref_filter_search_quality">Itago ang napiling quality ng video sa mga resulta ng paghahanap</string>
     <string name="automatic_plugin_download_mode_title">Pumili ng mode upang i-filter ang pag-download ng mga plugin</string>
     <string name="automatic_plugin_download_summary">Awtomatikong i-install ang lahat ng hindi pa naka-install na plugin mula sa mga idinagdag na repository.</string>
