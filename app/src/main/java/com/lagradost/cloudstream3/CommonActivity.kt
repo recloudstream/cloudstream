@@ -51,7 +51,7 @@ import com.lagradost.cloudstream3.ui.settings.extensions.PluginAdapter
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRtl
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Event
-import com.lagradost.cloudstream3.utils.UIHelper
+import com.lagradost.cloudstream3.utils.UIHelper.showInputMethod
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.UiText
 import java.lang.ref.WeakReference
@@ -648,6 +648,7 @@ object CommonActivity {
 
                 else -> null
             }
+
             // println("NEXT FOCUS : $nextView")
             if (nextView != null) {
                 nextView.requestFocus()
@@ -655,10 +656,8 @@ object CommonActivity {
                 return true
             }
 
-            if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER &&
-                (act.currentFocus is SearchView || act.currentFocus is SearchView.SearchAutoComplete)
-            ) {
-                UIHelper.showInputMethod(act.currentFocus?.findFocus())
+            if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER && currentFocus is SearchView) {
+                showInputMethod(currentFocus.findFocus())
             }
 
             //println("Keycode: $keyCode")
@@ -667,7 +666,6 @@ object CommonActivity {
             //    "Got Keycode $keyCode | ${KeyEvent.keyCodeToString(keyCode)} \n ${event?.action}",
             //    Toast.LENGTH_LONG
             //)
-
         }
 
         // if someone else want to override the focus then don't handle the event as it is already
