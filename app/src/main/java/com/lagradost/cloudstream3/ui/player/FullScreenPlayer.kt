@@ -103,6 +103,7 @@ const val DOUBLE_TAB_PAUSE_PERCENTAGE = 0.15        // in both directions
 private const val SUBTITLE_DELAY_BUNDLE_KEY = "subtitle_delay"
 
 // All the UI Logic for the player
+@OptIn(UnstableApi::class)
 open class FullScreenPlayer : AbstractPlayerFragment() {
     private var isVerticalOrientation: Boolean = false
     protected open var lockRotation = true
@@ -274,7 +275,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     private fun animateLayoutChangesForSubtitles() =
         // Post here as bottomPlayerBar is gone the first frame => bottomPlayerBar.height = 0
         playerBinding?.bottomPlayerBar?.post {
-            @OptIn(UnstableApi::class)
             val sView = subView ?: return@post
             val sStyle = CustomDecoder.style
             val binding = playerBinding ?: return@post
@@ -378,7 +378,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
     }
 
-    @OptIn(UnstableApi::class)
     override fun subtitlesChanged() {
         val tracks = player.getVideoTracks()
         val isBuiltinSubtitles = tracks.currentTextTracks.all { track ->
@@ -1526,7 +1525,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     private var loudnessEnhancer: LoudnessEnhancer? = null
 
-    @OptIn(UnstableApi::class)
     private fun handleVolumeAdjustment(
         delta: Float,
         fromButton: Boolean,
