@@ -37,8 +37,7 @@ class DownloadQueueViewModel : ViewModel() {
         }
     }
 
-    fun updateChildList(downloads: DownloadAdapterQueue) =
-        viewModelScope.launchSafe {
-            _childCards.postValue(downloads)
-        }
+    fun updateChildList(downloads: DownloadAdapterQueue) {
+        _childCards.postValue(downloads)
+    }
 }

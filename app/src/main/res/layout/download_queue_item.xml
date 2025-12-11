@@ -51,10 +51,8 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
-                    android:ellipsize="marquee"
+                    android:ellipsize="end"
                     android:gravity="center_vertical"
-                    android:marqueeRepeatLimit="marquee_forever"
-                    android:scrollHorizontally="true"
                     android:singleLine="true"
                     android:textColor="?attr/textColor"
                     tools:text="Episode 1 Episode 1 Episode 1 Episode 1 Episode 1 Episode 1 Episode 1" />

@@ -1461,22 +1461,20 @@ class ResultViewModel2 : ViewModel() {
                     LOADTYPE_INAPP_DOWNLOAD,
                     txt(R.string.episode_action_download_mirror)
                 ) { (result, index) ->
-                    ioSafe {
-                        DownloadQueueManager.addToQueue(
-                            DownloadObjects.DownloadQueueItem(
-                                click.data,
-                                response.isMovie(),
-                                response.name,
-                                response.type,
-                                response.posterUrl,
-                                response.apiName,
-                                response.getId(),
-                                response.url,
-                                listOf(result.links[index]),
-                                result.subs,
-                            ).toWrapper()
-                        )
-                    }
+                    DownloadQueueManager.addToQueue(
+                        DownloadObjects.DownloadQueueItem(
+                            click.data,
+                            response.isMovie(),
+                            response.name,
+                            response.type,
+                            response.posterUrl,
+                            response.apiName,
+                            response.getId(),
+                            response.url,
+                            listOf(result.links[index]),
+                            result.subs,
+                        ).toWrapper()
+                    )
                     showToast(
                         R.string.download_started,
                         Toast.LENGTH_SHORT

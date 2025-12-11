@@ -122,36 +122,36 @@ class DownloadQueueService : Service() {
                 .takeWhile { (instances, queue) -> isRunning && (instances.isNotEmpty() || queue.isNotEmpty()) }
                 .collect { (_, queue, currentDownloads) ->
                     // Remove completed or failed
-                    val instances = _downloadInstances.updateAndGet { currentInstances ->
-                        val newInstances = currentInstances.filterNot { it.isCompleted || it.isFailed }
+                    val newInstances = _downloadInstances.updateAndGet { currentInstances ->
+                        currentInstances.filterNot { it.isCompleted || it.isFailed }
+                    }
 
-                        val maxDownloads = VideoDownloadManager.maxConcurrentDownloads(context)
-                        val currentInstanceCount = newInstances.size
+                    val maxDownloads = VideoDownloadManager.maxConcurrentDownloads(context)
+                    val currentInstanceCount = newInstances.size
 
-                        val newDownloads = minOf(
-                            // Cannot exceed the max downloads
-                            maxOf(0, maxDownloads - currentInstanceCount),
-                            // Cannot start more downloads than the queue size
-                            queue.size
-                        )
+                    val newDownloads = minOf(
+                        // Cannot exceed the max downloads
+                        maxOf(0, maxDownloads - currentInstanceCount),
+                        // Cannot start more downloads than the queue size
+                        queue.size
+                    )
 
-                        // Cant start multiple downloads at once. If this is rerun it may start too many downloads.
-                        if (newDownloads > 0) {
+                    // Cant start multiple downloads at once. If this is rerun it may start too many downloads.
+                    if (newDownloads > 0) {
+                        _downloadInstances.update { instances ->
                             val downloadInstance = DownloadQueueManager.popQueue(context)
                             if (downloadInstance != null) {
                                 downloadInstance.startDownload()
-                                newInstances + downloadInstance
+                                instances + downloadInstance
                             } else {
-                                newInstances
+                                instances
                             }
-                        } else {
-                            newInstances
                         }
                     }
 
                     // The downloads actually displayed to the user with a notification
                     val currentVisualDownloads =
-                        currentDownloads.size + instances.count {
+                        currentDownloads.size + newInstances.count {
                             currentDownloads.contains(it.downloadQueueWrapper.id)
                                 .not()
                         }

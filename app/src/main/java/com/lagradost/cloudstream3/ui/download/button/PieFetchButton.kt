@@ -136,11 +136,18 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
 
             progressBar.progressDrawable = ContextCompat.getDrawable(context, progressDrawable)
 
-            setStatusInternal(null)
             recycle()
         }
         // resetView()
         onInflate()
+    }
+
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        // Re-run all animations when the view gets visible.
+        // Otherwise views may run without animations after recycled
+        setStatusInternal(currentStatus)
     }
 
     private var currentStatus: DownloadStatusTell? = null

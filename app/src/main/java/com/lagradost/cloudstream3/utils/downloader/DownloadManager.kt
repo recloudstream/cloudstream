@@ -1899,6 +1899,9 @@ object VideoDownloadManager {
                         Toast.LENGTH_SHORT
                     )
                 }
+                // We need to explicitly update the queue if the link loading fails.
+                // Otherwise the queue it may get stuck.
+                DownloadQueueManager.forceRefreshQueue()
                 isFailed = true
                 return
             } else {

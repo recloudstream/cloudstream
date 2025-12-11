@@ -20,7 +20,6 @@ import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_PAUSE_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_RESUME_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.download.DownloadClickEvent
-import com.lagradost.cloudstream3.ui.download.button.DownloadStatusTell
 import com.lagradost.cloudstream3.ui.download.queue.DownloadQueueAdapter.Companion.DOWNLOAD_SEPARATOR_TAG
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
@@ -107,9 +106,6 @@ class DownloadQueueAdapter(val fragment: Fragment) : BaseAdapter<DownloadAdapter
         queueWrapper: DownloadQueueWrapper,
     ) {
         val context = binding.root.context
-        val downloadInfo = getDownloadFileInfo(context, queueWrapper.id)
-
-
 
         binding.apply {
             separatorHolder.isGone = true
@@ -120,6 +116,8 @@ class DownloadQueueAdapter(val fragment: Fragment) : BaseAdapter<DownloadAdapter
             if (queueWrapper.id != queueWrapper.parentId) {
                 val mainName = queueWrapper.downloadItem?.resultName ?: queueWrapper.resumePackage?.item?.ep?.mainName
                 downloadChildEpisodeTextExtra.text = mainName
+            } else {
+                downloadChildEpisodeTextExtra.text = null
             }
 
             val status = VideoDownloadManager.downloadStatus[queueWrapper.id]
@@ -131,7 +129,10 @@ class DownloadQueueAdapter(val fragment: Fragment) : BaseAdapter<DownloadAdapter
                         getFolderName(queueWrapper.parentId.toString(), queueWrapper.id.toString())
                     )
 
-                val downloadInfo = context.getKey<DownloadObjects.DownloadedFileInfo>(KEY_DOWNLOAD_INFO, queueWrapper.id.toString())
+                val downloadInfo = context.getKey<DownloadObjects.DownloadedFileInfo>(
+                    KEY_DOWNLOAD_INFO,
+                    queueWrapper.id.toString()
+                )
 
                 val isCurrentlyDownloading = queueWrapper.isCurrentlyDownloading()
                 if (isCurrentlyDownloading && episodeCached != null) {
@@ -145,11 +146,23 @@ class DownloadQueueAdapter(val fragment: Fragment) : BaseAdapter<DownloadAdapter
 
                     when (currentStatus) {
                         VideoDownloadManager.DownloadType.IsDownloading -> {
-                           list.add(Pair(DOWNLOAD_ACTION_PAUSE_DOWNLOAD, R.string.popup_pause_download))
+                            list.add(
+                                Pair(
+                                    DOWNLOAD_ACTION_PAUSE_DOWNLOAD,
+                                    R.string.popup_pause_download
+                                )
+                            )
                         }
+
                         VideoDownloadManager.DownloadType.IsPaused -> {
-                           list.add(Pair(DOWNLOAD_ACTION_RESUME_DOWNLOAD, R.string.popup_resume_download))
+                            list.add(
+                                Pair(
+                                    DOWNLOAD_ACTION_RESUME_DOWNLOAD,
+                                    R.string.popup_resume_download
+                                )
+                            )
                         }
+
                         else -> {}
                     }
 
@@ -178,24 +191,6 @@ class DownloadQueueAdapter(val fragment: Fragment) : BaseAdapter<DownloadAdapter
             downloadButton.resetView()
             downloadButton.setStatus(status)
             downloadButton.setPersistentId(queueWrapper.id)
-
-            if (status == DownloadStatusTell.IsDone) {
-                // We do this here instead if we are finished downloading
-                // so that we can use the value from the view model
-                // rather than extra unneeded disk operations and to prevent a
-                // delay in updating download icon state.
-                if (downloadInfo != null) {
-                    downloadButton.setProgress(downloadInfo.fileLength, downloadInfo.totalBytes)
-                    downloadButton.applyMetaData(
-                        queueWrapper.id,
-                        downloadInfo.fileLength,
-                        downloadInfo.totalBytes
-                    )
-                }
-
-                downloadButton.doSetProgress = false
-            }
-
 
             downloadChildEpisodeText.apply {
                 val name = queueWrapper.downloadItem?.episode?.name
@@ -275,4 +270,3 @@ private class DragAndDropTouchHelperCallback(private val adapter: DownloadQueueA
         return false // Disable swipe by default
     }
 }
-

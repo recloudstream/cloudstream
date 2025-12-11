@@ -91,6 +91,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import com.lagradost.cloudstream3.utils.UIHelper.setListViewHeightBasedOnItems
 import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
@@ -778,6 +779,9 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         )
                         return@setOnLongClickListener true
                     }
+
+                    val status = VideoDownloadManager.downloadStatus[ep.id]
+                    downloadButton.setStatus(status)
                     downloadButton.setDefaultClickListener(
                         DownloadObjects.DownloadEpisodeCached(
                             name = ep.name,
