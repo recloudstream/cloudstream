@@ -73,6 +73,8 @@ import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.SubtitleHelper
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
@@ -139,6 +141,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
     override fun onDestroyView() {
         hideKeyboard()
         bottomSheetDialog?.ownHide()
+        activity?.detachBackPressedCallback("SearchFragment")
         super.onDestroyView()
     }
 
@@ -447,55 +450,16 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
                     }
                 }
                 binding.apply {
-                    searchHistoryHolder.isVisible = showHistory
+                    searchHistoryRecycler.isVisible = showHistory
                     searchMasterRecycler.isVisible = !showHistory && isAdvancedSearch
                     searchAutofitResults.isVisible = !showHistory && !isAdvancedSearch
                     // Hide suggestions when showing history or showing search results
-                    searchSuggestionsHolder.isVisible = !showHistory && isSearchSuggestionsEnabled
+                    searchSuggestionsRecycler.isVisible = !showHistory && isSearchSuggestionsEnabled
                 }
 
                 return true
             }
         })
-
-        // Clear suggestions button (for TV)
-        binding.clearSuggestionsButton.setOnClickListener {
-            searchViewModel.clearSuggestions()
-        }
-
-        binding.searchClearCallHistory.setOnClickListener {
-            activity?.let { ctx ->
-                val builder: AlertDialog.Builder = AlertDialog.Builder(ctx)
-                val dialogClickListener =
-                    DialogInterface.OnClickListener { _, which ->
-                        when (which) {
-                            DialogInterface.BUTTON_POSITIVE -> {
-                                removeKeys("$currentAccount/$SEARCH_HISTORY_KEY")
-                                searchViewModel.updateHistory()
-                            }
-
-                            DialogInterface.BUTTON_NEGATIVE -> {
-                            }
-                        }
-                    }
-
-                try {
-                    builder.setTitle(R.string.clear_history).setMessage(
-                        ctx.getString(R.string.delete_message).format(
-                            ctx.getString(R.string.history)
-                        )
-                    )
-                        .setPositiveButton(R.string.sort_clear, dialogClickListener)
-                        .setNegativeButton(R.string.cancel, dialogClickListener)
-                        .show().setDefaultFocus()
-                } catch (e: Exception) {
-                    logError(e)
-                    // ye you somehow fucked up formatting did you?
-                }
-            }
-
-
-        }
 
         observe(searchViewModel.searchResponse) {
             when (it) {
@@ -586,6 +550,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
             val searchItem = click.item
             when (click.clickAction) {
                 SEARCH_HISTORY_OPEN -> {
+                    if (searchItem == null) return@SearchHistoryAdaptor
                     searchViewModel.clearSearch()
                     if (searchItem.type.isNotEmpty())
                         updateChips(
@@ -596,8 +561,41 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
                 }
 
                 SEARCH_HISTORY_REMOVE -> {
+                    if (searchItem == null) return@SearchHistoryAdaptor
                     removeKey("$currentAccount/$SEARCH_HISTORY_KEY", searchItem.key)
                     searchViewModel.updateHistory()
+                }
+                
+                SEARCH_HISTORY_CLEAR -> {
+                    // Show confirmation dialog (from footer button)
+                    activity?.let { ctx ->
+                        val builder: AlertDialog.Builder = AlertDialog.Builder(ctx)
+                        val dialogClickListener =
+                            DialogInterface.OnClickListener { _, which ->
+                                when (which) {
+                                    DialogInterface.BUTTON_POSITIVE -> {
+                                        removeKeys("$currentAccount/$SEARCH_HISTORY_KEY")
+                                        searchViewModel.updateHistory()
+                                    }
+
+                                    DialogInterface.BUTTON_NEGATIVE -> {
+                                    }
+                                }
+                            }
+
+                        try {
+                            builder.setTitle(R.string.clear_history).setMessage(
+                                ctx.getString(R.string.delete_message).format(
+                                    ctx.getString(R.string.history)
+                                )
+                            )
+                                .setPositiveButton(R.string.sort_clear, dialogClickListener)
+                                .setNegativeButton(R.string.cancel, dialogClickListener)
+                                .show().setDefaultFocus()
+                        } catch (e: Exception) {
+                            logError(e)
+                        }
+                    }
                 }
 
                 else -> {
@@ -616,6 +614,10 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
                 SEARCH_SUGGESTION_FILL -> {
                     // Fill the search box without searching
                     binding.mainSearch.setQuery(callback.suggestion, false)
+                }
+                SEARCH_SUGGESTION_CLEAR -> {
+                    // Clear suggestions (from footer button)
+                    searchViewModel.clearSuggestions()
                 }
             }
         }
@@ -653,24 +655,28 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
         }
 
         observe(searchViewModel.currentHistory) { list ->
-            binding.searchClearCallHistory.isVisible = list.isNotEmpty()
             (binding.searchHistoryRecycler.adapter as? SearchHistoryAdaptor?)?.submitList(list)
         }
 
         // Observe search suggestions
         observe(searchViewModel.searchSuggestions) { suggestions ->
             val hasSuggestions = suggestions.isNotEmpty()
-            binding.searchSuggestionsHolder.isVisible = hasSuggestions
+            binding.searchSuggestionsRecycler.isVisible = hasSuggestions
             (binding.searchSuggestionsRecycler.adapter as? SearchSuggestionAdapter?)?.submitList(suggestions)
             
-            // On non-phone layouts, show clear button and redirect focus
+            // On non-phone layouts, redirect focus and handle back button
             if (!isLayout(PHONE)) {
-                binding.clearSuggestionsButton.isVisible = hasSuggestions
                 if (hasSuggestions) {
                     binding.tvtypesChipsScroll.tvtypesChips.root.nextFocusDownId = R.id.search_suggestions_recycler
+                    // Attach back button callback to clear suggestions
+                    activity?.attachBackPressedCallback("SearchFragment") {
+                        searchViewModel.clearSuggestions()
+                    }
                 } else {
                     // Reset to default focus target (history)
                     binding.tvtypesChipsScroll.tvtypesChips.root.nextFocusDownId = R.id.search_history_recycler
+                    // Detach back button callback when no suggestions
+                    activity?.detachBackPressedCallback("SearchFragment")
                 }
             }
         }
