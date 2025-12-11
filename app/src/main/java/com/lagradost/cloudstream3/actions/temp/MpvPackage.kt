@@ -17,6 +17,9 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkType
 // https://github.com/mpv-android/mpv-android/blob/0eb3cdc6f1632636b9c30d52ec50e4b017661980/app/src/main/java/is/xyz/mpv/MPVActivity.kt#L904
 // https://mpv-android.github.io/mpv-android/intent.html
 
+//https://github.com/marlboro-advance/mpvEx
+class MpvExPackage: MpvPackage("mpvEx","app.marlboroadvance.mpvex","app.marlboroadvance.mpvex.ui.player.PlayerActivity")
+
 class MpvYTDLPackage : MpvPackage("MPV YTDL", "is.xyz.mpv.ytdl") {
     override val sourceTypes = setOf(
         ExtractorLinkType.VIDEO,
@@ -25,10 +28,10 @@ class MpvYTDLPackage : MpvPackage("MPV YTDL", "is.xyz.mpv.ytdl") {
     )
 }
 
-open class MpvPackage(appName: String = "MPV", packageName: String = "is.xyz.mpv"): OpenInAppAction(
+open class MpvPackage(appName: String = "MPV", packageName: String = "is.xyz.mpv",intentClass:String = "is.xyz.mpv.MPVActivity"): OpenInAppAction(
     txt(appName),
     packageName,
-    "is.xyz.mpv.MPVActivity"
+    intentClass
 ) {
     override val oneSource = true // mpv has poor playlist support on TV
     override suspend fun putExtra(
