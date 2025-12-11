@@ -132,7 +132,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-@UnstableApi
+@OptIn(UnstableApi::class)
 class GeneratorPlayer : FullScreenPlayer() {
     companion object {
         const val NOTIFICATION_ID = 2326
@@ -266,12 +266,8 @@ class GeneratorPlayer : FullScreenPlayer() {
         return PendingIntent.getBroadcast(context, instanceId, intent, pendingFlags)
     }
 
-    @OptIn(UnstableApi::class)
-    @UnstableApi
     private var cachedPlayerNotificationManager: PlayerNotificationManager? = null
 
-    @OptIn(UnstableApi::class)
-    @UnstableApi
     private fun getMediaNotification(context: Context): PlayerNotificationManager {
         val cache = cachedPlayerNotificationManager
         if (cache != null) return cache
@@ -876,7 +872,6 @@ class GeneratorPlayer : FullScreenPlayer() {
         //dialog.subtitles_search_year?.setText(currentTempMeta.year)
     }
 
-    @OptIn(UnstableApi::class)
     private fun openSubPicker() {
         try {
             subsPathPicker.launch(
