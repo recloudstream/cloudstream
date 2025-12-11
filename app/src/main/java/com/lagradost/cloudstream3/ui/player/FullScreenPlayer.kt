@@ -1875,7 +1875,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
 
         playerBinding?.apply {
-
             if (isLayout(TV or EMULATOR)) {
                 mapOf(
                     playerGoBack to playerGoBackText,
@@ -1990,8 +1989,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 return@setOnTouchListener handleMotionEvent(callView, event)
             }
 
-            playerControlsScroll.setOnScrollChangeListener { _, _, _, _, _ ->
-                autoHide()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                playerControlsScroll.setOnScrollChangeListener { _, _, _, _, _ ->
+                    autoHide()
+                }
             }
 
             exoProgress.setOnTouchListener { _, event ->
