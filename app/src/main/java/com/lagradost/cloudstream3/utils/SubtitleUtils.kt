@@ -2,7 +2,8 @@ package com.lagradost.cloudstream3.utils
 
 import android.content.Context
 import com.lagradost.api.Log
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.basePathToFile
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.basePathToFile
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 
 object SubtitleUtils {
 
