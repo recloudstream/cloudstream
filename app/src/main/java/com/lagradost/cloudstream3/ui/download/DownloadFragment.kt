@@ -18,7 +18,6 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentDownloadsBinding
@@ -30,6 +29,7 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
+import com.lagradost.cloudstream3.ui.download.queue.DownloadQueueViewModel
 import com.lagradost.cloudstream3.ui.player.BasicLink
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.LinkGenerator
@@ -59,6 +59,7 @@ class DownloadFragment : BaseFragment<FragmentDownloadsBinding>(
 ) {
 
     private val downloadViewModel: DownloadViewModel by activityViewModels()
+    private val downloadQueueViewModel: DownloadQueueViewModel by activityViewModels()
 
     private fun View.setLayoutWidth(weight: Long) {
         val param = LinearLayout.LayoutParams(
@@ -143,6 +144,17 @@ class DownloadFragment : BaseFragment<FragmentDownloadsBinding>(
                 binding.downloadApp
             )
         }
+        observe(downloadQueueViewModel.childCards) { cards ->
+            val size = cards.currentDownloads.size + cards.queue.size
+            val context = binding.root.context
+            val baseText = context.getString(R.string.download_queue)
+            binding.downloadQueueText.text =  if (size > 0) {
+                "$baseText (${cards.currentDownloads.size}/$size)"
+            } else {
+                baseText
+            }
+        }
+
         observe(downloadViewModel.selectedBytes) {
             updateDeleteButton(downloadViewModel.selectedItemIds.value?.count() ?: 0, it)
         }

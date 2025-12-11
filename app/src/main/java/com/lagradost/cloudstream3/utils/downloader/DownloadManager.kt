@@ -1314,50 +1314,45 @@ object VideoDownloadManager {
                             return@launch
                         }
 
-                        try {
-                            fileMutex.lock()
-                            // user pause
-                            while (metadata.type == DownloadType.IsPaused) delay(100)
-                            // if stopped then break to delete
-                            if (metadata.type == DownloadType.IsStopped || metadata.type == DownloadType.IsFailed || !isActive) return@launch
-
-                            val segmentLength = bytes.size.toLong()
-                            // send notification, no matter the actual write order
-                            metadata.addSegment(segmentLength)
-
-                            // directly write the bytes if you are first
-                            if (metadata.hlsWrittenProgress == index) {
-                                fileStream.write(bytes)
-
-                                metadata.addBytesWritten(segmentLength)
-                                metadata.setWrittenSegment(index)
-                            } else {
-                                // no need to clone as there will be no modification of this bytearray
-                                pendingData[index] = bytes
-                            }
-
-                            // write the cached bytes submitted by other threads
-                            while (true) {
-                                val cache = pendingData.remove(metadata.hlsWrittenProgress) ?: break
-                                val cacheLength = cache.size.toLong()
-
-                                fileStream.write(cache)
-
-                                metadata.addBytesWritten(cacheLength)
-                                metadata.setWrittenSegment(metadata.hlsWrittenProgress)
-                            }
-                        } catch (t: Throwable) {
-                            // this is in case of write fail
-                            logError(t)
-                            if (metadata.type != DownloadType.IsStopped) {
-                                metadata.type = DownloadType.IsFailed
-                            }
-                        } finally {
+                        fileMutex.withLock {
                             try {
-                                // may cause java.lang.IllegalStateException: Mutex is not locked because of cancelling
-                                fileMutex.unlock()
+                                // user pause
+                                while (metadata.type == DownloadType.IsPaused) delay(100)
+                                // if stopped then break to delete
+                                if (metadata.type == DownloadType.IsStopped || metadata.type == DownloadType.IsFailed || !isActive) return@launch
+
+                                val segmentLength = bytes.size.toLong()
+                                // send notification, no matter the actual write order
+                                metadata.addSegment(segmentLength)
+
+                                // directly write the bytes if you are first
+                                if (metadata.hlsWrittenProgress == index) {
+                                    fileStream.write(bytes)
+
+                                    metadata.addBytesWritten(segmentLength)
+                                    metadata.setWrittenSegment(index)
+                                } else {
+                                    // no need to clone as there will be no modification of this bytearray
+                                    pendingData[index] = bytes
+                                }
+
+                                // write the cached bytes submitted by other threads
+                                while (true) {
+                                    val cache =
+                                        pendingData.remove(metadata.hlsWrittenProgress) ?: break
+                                    val cacheLength = cache.size.toLong()
+
+                                    fileStream.write(cache)
+
+                                    metadata.addBytesWritten(cacheLength)
+                                    metadata.setWrittenSegment(metadata.hlsWrittenProgress)
+                                }
                             } catch (t: Throwable) {
+                                // this is in case of write fail
                                 logError(t)
+                                if (metadata.type != DownloadType.IsStopped) {
+                                    metadata.type = DownloadType.IsFailed
+                                }
                             }
                         }
                     }
@@ -1504,7 +1499,6 @@ object VideoDownloadManager {
 
             // only delete the key if the file is not found
             if (file == null || file.exists() == false) {
-                //if (removeKeys) context.removeKey(KEY_DOWNLOAD_INFO, id.toString()) // TODO READD
                 return null
             }
 
@@ -1560,13 +1554,15 @@ object VideoDownloadManager {
             context.getKey<DownloadedFileInfo>(KEY_DOWNLOAD_INFO, id.toString()) ?: return false
         val file = info.toFile(context)
 
-        downloadEvent.invoke(id to DownloadActionType.Stop)
-        downloadProgressEvent.invoke(Triple(id, 0, 0))
-        downloadStatusEvent.invoke(id to DownloadType.IsStopped)
-        downloadDeleteEvent.invoke(id)
-
         val isFileDeleted = file?.delete() == true || file?.exists() == false
-        if (isFileDeleted) deleteMatchingSubtitles(context, info)
+
+        if (isFileDeleted) {
+            deleteMatchingSubtitles(context, info)
+            downloadEvent.invoke(id to DownloadActionType.Stop)
+            downloadProgressEvent.invoke(Triple(id, 0, 0))
+            downloadStatusEvent.invoke(id to DownloadType.IsStopped)
+            downloadDeleteEvent.invoke(id)
+        }
 
         return isFileDeleted
     }
@@ -1602,7 +1598,7 @@ object VideoDownloadManager {
 
     class EpisodeDownloadInstance(
         val context: Context,
-        val downloadQueueWrapper: DownloadObjects.DownloadQueueWrapper
+        val downloadQueueWrapper: DownloadQueueWrapper
     ) {
         private val TAG = "EpisodeDownloadInstance"
         private var subtitleDownloadJob: Job? = null

@@ -15,9 +15,11 @@ import kotlin.reflect.KProperty
 import androidx.core.content.edit
 
 const val DOWNLOAD_HEADER_CACHE = "download_header_cache"
+const val DOWNLOAD_HEADER_CACHE_BACKUP = "download_header_cache_backup"
 
 //const val WATCH_HEADER_CACHE = "watch_header_cache"
 const val DOWNLOAD_EPISODE_CACHE = "download_episode_cache"
+const val DOWNLOAD_EPISODE_CACHE_BACKUP = "download_episode_cache_backup"
 const val VIDEO_PLAYER_BRIGHTNESS = "video_player_alpha_key"
 const val USER_SELECTED_HOMEPAGE_API = "home_api_used"
 const val USER_PROVIDER_API = "user_custom_sites"

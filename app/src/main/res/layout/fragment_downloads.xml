@@ -327,10 +327,11 @@
                 android:src="@drawable/round_keyboard_arrow_up_24" />
 
             <TextView
+                android:id="@+id/download_queue_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Download queue"
+                android:text="@string/download_queue"
                 android:textColor="?attr/textColor" />
 
         </LinearLayout>

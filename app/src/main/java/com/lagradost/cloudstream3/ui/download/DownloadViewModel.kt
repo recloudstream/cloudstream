@@ -8,27 +8,38 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lagradost.api.Log
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.isEpisodeBased
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.services.DownloadQueueService
+import com.lagradost.cloudstream3.services.DownloadQueueService.Companion.downloadInstances
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.ConsistentLiveData
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
+import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE_BACKUP
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
+import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE_BACKUP
 import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
 import com.lagradost.cloudstream3.utils.ResourceLiveData
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
+import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.deleteFilesAndUpdateSettings
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDownloadFileInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class DownloadViewModel : ViewModel() {
+    companion object {
+        const val TAG = "DownloadViewModel"
+    }
     private val _headerCards =
         ResourceLiveData<List<VisualDownloadCached.Header>>(Resource.Loading())
     val headerCards: LiveData<Resource<List<VisualDownloadCached.Header>>> = _headerCards
@@ -171,7 +182,27 @@ class DownloadViewModel : ViewModel() {
         val totalDownloads = mutableMapOf<Int, Int>()
 
         children.forEach { child ->
-            val childFile = getDownloadFileInfo(context, child.id) ?: return@forEach
+            val childFile = getDownloadFileInfo(context, child.id)
+
+            if (childFile == null) {
+                // If nothing is downloading at all, then prune unused keys.
+                // We cannot do this when there are current downloads because then episode cache can exist, but no downloadInfo
+                if (!DownloadQueueService.isRunning && downloadInstances.value.isEmpty() && DownloadQueueManager.queue.value.isEmpty()) {
+                    Log.i(TAG, "Removing download episode key: ${child.parentId}/${child.id}")
+                    // Cowardly future backup solution in case the key removal fails in some edge case.
+                    // This and all backup keys may be removed in a future update if the key removal is proven to be robust.
+                    setKey(
+                        getFolderName(DOWNLOAD_EPISODE_CACHE_BACKUP, child.parentId.toString()),
+                        child.id.toString(),
+                        child
+                    )
+                    removeKey(
+                        getFolderName(DOWNLOAD_EPISODE_CACHE, child.parentId.toString()),
+                        child.id.toString()
+                    )
+                }
+                return@forEach
+            }
             if (childFile.fileLength <= 1) return@forEach
 
             val len = childFile.totalBytes
@@ -195,7 +226,23 @@ class DownloadViewModel : ViewModel() {
             val downloads = totalDownloads[it.id] ?: 0
             val bytes = totalBytesUsedByChild[it.id] ?: 0
             val currentBytes = currentBytesUsedByChild[it.id] ?: 0
-            if (bytes <= 0 || downloads <= 0) return@mapNotNull null
+
+            if (bytes <= 0 || downloads <= 0) {
+                // If nothing is downloading at all, then prune unused keys.
+                // We cannot do this when there are current downloads because then header cache can exist, but no downloadInfo
+                if (!DownloadQueueService.isRunning && downloadInstances.value.isEmpty() && DownloadQueueManager.queue.value.isEmpty()) {
+                    Log.i(TAG, "Removing download header key: ${it.id}")
+                    // Cowardly future backup solution in case the key removal fails in some edge case.
+                    // This and all backup keys may be removed in a future update if the key removal is proven to be robust.
+                    setKey(
+                        DOWNLOAD_HEADER_CACHE_BACKUP,
+                        it.id.toString(),
+                        it
+                    )
+                    removeKey(DOWNLOAD_HEADER_CACHE, it.id.toString())
+                }
+                return@mapNotNull null
+            }
 
             val isSelected = selectedItemIds.value?.contains(it.id) ?: false
             val movieEpisode = if (it.type.isEpisodeBased()) null else context.getKey<DownloadObjects.DownloadEpisodeCached>(

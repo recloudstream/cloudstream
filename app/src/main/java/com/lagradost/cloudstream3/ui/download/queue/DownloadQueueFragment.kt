@@ -31,7 +31,7 @@ class DownloadQueueFragment :
 
         binding.apply {
             downloadQueueToolbar.apply {
-                title = txt(R.string.title_queue).asString(context)
+                title = txt(R.string.download_queue).asString(context)
                 if (isLayout(PHONE or EMULATOR)) {
                     setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
                     setNavigationOnClickListener {

@@ -25,11 +25,13 @@ import com.lagradost.cloudstream3.ui.download.queue.DownloadQueueAdapter.Compani
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.DataStore.getFolderName
+import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.DownloadQueueWrapper
 import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.KEY_DOWNLOAD_INFO
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDownloadFileInfo
 
 /** An item in the adapter can either be a separator or a real item.
@@ -128,18 +130,28 @@ class DownloadQueueAdapter(val fragment: Fragment) : BaseAdapter<DownloadAdapter
                         DOWNLOAD_EPISODE_CACHE,
                         getFolderName(queueWrapper.parentId.toString(), queueWrapper.id.toString())
                     )
+
+                val downloadInfo = context.getKey<DownloadObjects.DownloadedFileInfo>(KEY_DOWNLOAD_INFO, queueWrapper.id.toString())
+
                 val isCurrentlyDownloading = queueWrapper.isCurrentlyDownloading()
                 if (isCurrentlyDownloading && episodeCached != null) {
-                    val list = arrayListOf(
-                        Pair(DOWNLOAD_ACTION_DELETE_FILE, R.string.popup_delete_file),
-                    )
+                    val list = arrayListOf<Pair<Int, Int>>()
+                    // KEY_DOWNLOAD_INFO is used in the file deletion, and is required to exist to delete anything
+                    if (downloadInfo != null) {
+                        list.add(Pair(DOWNLOAD_ACTION_DELETE_FILE, R.string.popup_delete_file))
+                    }
+
                     val currentStatus = VideoDownloadManager.downloadStatus[queueWrapper.id]
 
-                    list.add(
-                        if (currentStatus == VideoDownloadManager.DownloadType.IsDownloading)
-                            Pair(DOWNLOAD_ACTION_PAUSE_DOWNLOAD, R.string.popup_pause_download)
-                        else Pair(DOWNLOAD_ACTION_RESUME_DOWNLOAD, R.string.popup_resume_download)
-                    )
+                    when (currentStatus) {
+                        VideoDownloadManager.DownloadType.IsDownloading -> {
+                           list.add(Pair(DOWNLOAD_ACTION_PAUSE_DOWNLOAD, R.string.popup_pause_download))
+                        }
+                        VideoDownloadManager.DownloadType.IsPaused -> {
+                           list.add(Pair(DOWNLOAD_ACTION_RESUME_DOWNLOAD, R.string.popup_resume_download))
+                        }
+                        else -> {}
+                    }
 
                     view.popupMenuNoIcons(
                         list
@@ -182,14 +194,6 @@ class DownloadQueueAdapter(val fragment: Fragment) : BaseAdapter<DownloadAdapter
                 }
 
                 downloadButton.doSetProgress = false
-            } else {
-                // We need to make sure we restore the correct progress
-                // when we refresh data in the adapter.
-                downloadButton.progressBar.progressDrawable =
-                    ContextCompat.getDrawable(
-                        downloadButton.context,
-                        downloadButton.progressDrawable
-                    )
             }
 
 

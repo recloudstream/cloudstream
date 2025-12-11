@@ -159,7 +159,6 @@ object DownloadQueueManager {
             return
         }
         // Do not restart the download queue service
-        // TODO Prevent issues where the service is closed right as a user starts a new download
         if (DownloadQueueService.isRunning) {
             return
         }

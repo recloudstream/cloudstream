@@ -554,7 +554,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
              * highlight the wrong one in UI.
              */
             when (destination.id) {
-                in listOf(R.id.navigation_downloads, R.id.navigation_download_child) -> {
+                in listOf(R.id.navigation_downloads, R.id.navigation_download_child, R.id.navigation_download_queue) -> {
                     navRailView.menu.findItem(R.id.navigation_downloads).isChecked = true
                     navView.menu.findItem(R.id.navigation_downloads).isChecked = true
                 }
