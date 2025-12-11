@@ -35,8 +35,8 @@ import java.nio.charset.Charset
 /**
  * @param fallbackFormat used to create a decoder based on mimetype if the subtitle string is not
  * enough to identify the subtitle format.
- **/
-@UnstableApi
+ */
+@OptIn(UnstableApi::class)
 class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
     companion object {
         fun updateForcedEncoding(context: Context) {
@@ -392,7 +392,7 @@ class CustomSubtitleDecoderFactory : SubtitleDecoderFactory {
     /**
      * Decoders created here persists across reset()
      * Do not save state in the decoder which you want to reset (e.g subtitle offset)
-     **/
+     */
     override fun createDecoder(format: Format): SubtitleDecoder {
         val parser = CustomDecoder(format)
         // Allow garbage collection if player releases the decoder
@@ -404,8 +404,8 @@ class CustomSubtitleDecoderFactory : SubtitleDecoderFactory {
     }
 }
 
-@OptIn(UnstableApi::class)
 /** We need to convert the newer SubtitleParser to an older SubtitleDecoder */
+@OptIn(UnstableApi::class)
 class DelegatingSubtitleDecoder(name: String, private val parser: SubtitleParser) :
     SimpleSubtitleDecoder(name) {
 

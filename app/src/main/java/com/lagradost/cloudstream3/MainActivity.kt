@@ -9,7 +9,6 @@ import android.content.SharedPreferences
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Rect
-import android.net.Uri
 import android.os.Bundle
 import android.util.AttributeSet
 import android.util.Log
@@ -33,6 +32,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.edit
+import androidx.core.net.toUri
 import androidx.core.view.children
 import androidx.core.view.get
 import androidx.core.view.isGone
@@ -159,7 +159,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.accounts
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
-import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
+import com.lagradost.cloudstream3.utils.InAppUpdater.runAutoUpdate
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SnackbarHelper.showSnackbar
 import com.lagradost.cloudstream3.utils.UIHelper.changeStatusBarState
@@ -344,7 +344,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         activity?.findViewById<NavigationRailView>(R.id.nav_rail_view)?.selectedItemId =
                             R.id.navigation_search
                     } else if (safeURI(str)?.scheme == APP_STRING_PLAYER) {
-                        val uri = Uri.parse(str)
+                        val uri = str.toUri()
                         val name = uri.getQueryParameter("name")
                         val url = URLDecoder.decode(uri.authority, "UTF-8")
 
@@ -1924,7 +1924,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
          fun buildMediaQueueItem(video: String): MediaQueueItem {
            // val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_PHOTO)
             //movieMetadata.putString(MediaMetadata.KEY_TITLE, "CloudStream")
-            val mediaInfo = MediaInfo.Builder(Uri.parse(video).toString())
+            val mediaInfo = MediaInfo.Builder(video.toUri().toString())
                 .setStreamType(MediaInfo.STREAM_TYPE_NONE)
                 .setContentType(MimeTypes.IMAGE_JPEG)
                // .setMetadata(movieMetadata).build()
