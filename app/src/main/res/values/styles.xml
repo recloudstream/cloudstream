@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. Material3 -->
     <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>
@@ -174,7 +174,7 @@
         <item name="black">@color/white</item>
         <item name="colorOnPrimary">@color/blackText</item>
         <item name="isLightTheme">true</item>
-        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
     </style>
 
     <style name="DraculaMode">
@@ -200,7 +200,7 @@
         <item name="black">@color/LavenderPrimaryGrayBackground</item>
         <item name="colorOnPrimary">@color/LavenderTextColor</item>
         <item name="isLightTheme">true</item>
-        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
     </style>
 
     <style name="MonetMode">
@@ -574,7 +574,7 @@
         <item name="android:windowIsFloating">false</item>
         <item name="android:navigationBarColor">?attr/primaryBlackBackground</item>
         <item name="android:statusBarColor">?attr/primaryBlackBackground</item>
-        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">?attr/isLightTheme</item>
     </style>
 
     <style name="DialogHalfFullscreen" parent="AlertDialogCustom">
