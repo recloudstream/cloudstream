@@ -1,11 +1,11 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.google.gson.JsonParser
 import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.base64DecodeArray
+import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
@@ -82,13 +82,17 @@ open class ByseSX : ExtractorApi() {
         cipher.init(Cipher.DECRYPT_MODE, secretKey, spec)
 
         val plainBytes = cipher.doFinal(cipherBytes)
-        val jsonStr = String(plainBytes, StandardCharsets.UTF_8)
+        var jsonStr = String(plainBytes, StandardCharsets.UTF_8)
 
-        val json = JsonParser.parseString(jsonStr).asJsonObject
-        val sources = json.getAsJsonArray("sources") ?: return null
-        if (sources.size() == 0) return null
+        if (jsonStr.startsWith("\uFEFF")) jsonStr = jsonStr.substring(1)
 
-        return sources[0].asJsonObject.get("url")?.asString
+        val root = try {
+            tryParseJson<PlaybackDecrypt>((jsonStr))
+        } catch (_: Exception) {
+            return null
+        }
+
+        return root?.sources?.firstOrNull()?.url
     }
 
 
@@ -153,4 +157,19 @@ data class DecryptKeys(
     val edge2: String,
     @JsonProperty("legacy_fallback")
     val legacyFallback: String,
+)
+
+data class PlaybackDecrypt(
+    val sources: List<PlaybackDecryptSource>,
+)
+
+data class PlaybackDecryptSource(
+    val quality: String,
+    val label: String,
+    @JsonProperty("mime_type")
+    val mimeType: String,
+    val url: String,
+    @JsonProperty("bitrate_kbps")
+    val bitrateKbps: Long,
+    val height: Any?,
 )
