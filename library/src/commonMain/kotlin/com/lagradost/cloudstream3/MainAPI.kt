@@ -1152,31 +1152,21 @@ suspend fun newSubtitleFile(
 @Prerelease
 @ConsistentCopyVisibility
 data class AudioFile internal constructor(
-    var lang: String,
     var url: String,
-    var label: String? = null,
     var headers: Map<String, String>? = null
-) {
-    /** Language code to properly filter auto select audio tracks */
-    val langTag: String?
-        get() = fromCodeToLangTagIETF(lang) ?: fromLanguageToTagIETF(lang, true)
-}
+)
 
 /** Creates an AudioFile with optional initializer for setting additional properties.
- * @param lang Audio track language.
  * @param url Audio file url.
- * @param label Optional label to display.
  * @param initializer Lambda to configure additional properties like headers.
  * @return Configured AudioFile instance.
  * */
 @Prerelease
 suspend fun newAudioFile(
-    lang: String,
     url: String,
-    label: String? = null,
     initializer: suspend AudioFile.() -> Unit = { }
 ): AudioFile {
-    val builder = AudioFile(lang, url, label)
+    val builder = AudioFile(url)
     builder.initializer()
     return builder
 }
