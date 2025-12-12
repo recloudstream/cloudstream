@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.lagradost.cloudstream3.databinding.SearchSuggestionFooterBinding
 import com.lagradost.cloudstream3.databinding.SearchSuggestionItemBinding
-import com.lagradost.cloudstream3.ui.BaseAdapter
 import com.lagradost.cloudstream3.ui.BaseDiffCallback
+import com.lagradost.cloudstream3.ui.NoStateAdapter
 import com.lagradost.cloudstream3.ui.ViewHolderState
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -22,10 +22,18 @@ data class SearchSuggestionCallback(
 
 class SearchSuggestionAdapter(
     private val clickCallback: (SearchSuggestionCallback) -> Unit,
-) : BaseAdapter<String, Any>(diffCallback = BaseDiffCallback(itemSame = { a, b -> a == b })) {
+) : NoStateAdapter<String>(diffCallback = BaseDiffCallback(itemSame = { a, b -> a == b })) {
     
-    // Add footer for TV and EMULATOR layouts only
-    override val footers = if (isLayout(TV or EMULATOR)) 1 else 0
+    // Add footer for all layouts
+    override val footers = 1
+    
+    override fun submitList(list: Collection<String>?, commitCallback: Runnable?) {
+        super.submitList(list, commitCallback)
+        // Notify footer to rebind when list changes to update visibility
+        if (footers > 0) {
+            notifyItemChanged(itemCount - 1)
+        }
+    }
     
     override fun onCreateContent(parent: ViewGroup): ViewHolderState<Any> {
         return ViewHolderState(
@@ -63,6 +71,7 @@ class SearchSuggestionAdapter(
     override fun onBindFooter(holder: ViewHolderState<Any>) {
         val binding = holder.view as? SearchSuggestionFooterBinding ?: return
         binding.clearSuggestionsButton.apply {
+            isGone = immutableCurrentList.isEmpty()
             if (isLayout(TV or EMULATOR)) {
                 isFocusable = true
                 isFocusableInTouchMode = true
