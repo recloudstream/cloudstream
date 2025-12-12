@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.search
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import com.lagradost.cloudstream3.databinding.SearchSuggestionFooterBinding
 import com.lagradost.cloudstream3.databinding.SearchSuggestionItemBinding
 import com.lagradost.cloudstream3.ui.BaseDiffCallback
