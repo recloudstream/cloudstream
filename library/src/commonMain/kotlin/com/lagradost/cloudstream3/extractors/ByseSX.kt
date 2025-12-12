@@ -98,12 +98,12 @@ open class ByseSX : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        mainUrl = getBaseUrl(url)
+        val refererUrl = getBaseUrl(url)
         val playbackRoot = getPlayback(url) ?: return
         val streamUrl  = decryptPlayback(playbackRoot.playback) ?: return
 
 
-        val headers = mapOf("Referer" to mainUrl)
+        val headers = mapOf("Referer" to refererUrl)
         M3u8Helper.generateM3u8(
             name,
             streamUrl,
