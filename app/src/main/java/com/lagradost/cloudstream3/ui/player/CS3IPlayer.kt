@@ -1717,7 +1717,7 @@ class CS3IPlayer : IPlayer {
                 
                 DefaultMediaSourceFactory(factory).createMediaSource(mediaItem)
             } catch (e: Exception) {
-                Log.e(TAG, "Failed to create audio source for ${audio.lang}: ${e.message}")
+                Log.e(TAG, "Failed to create audio source for ${audio.url}: ${e.message}")
                 null
             }
         }
