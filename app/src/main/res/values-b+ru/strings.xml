@@ -720,4 +720,5 @@
     <string name="top_left">Вверху слева</string>
     <string name="top_center">Вверху центр</string>
     <string name="top_right">Вверху правый</string>
+    <string name="play_full_series_button">Смотреть полностью</string>
 </resources>

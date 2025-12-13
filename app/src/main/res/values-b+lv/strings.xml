@@ -48,12 +48,12 @@
     <string name="download_canceled">Ielādēšana atcelta</string>
     <string name="download_done">Pabeidza ieladēt</string>
     <string name="update_started">Atjauninājums sakās</string>
-    <string name="stream">Skaties</string>
+    <string name="stream">Tīkla plūsma</string>
     <string name="error_loading_links_toast">Kļūda padejot linkus</string>
     <string name="download_storage_text">Iekšējā atmiņa</string>
     <string name="app_dubbed_text">Dub</string>
-    <string name="popup_delete_file">Dzēst failu</string>
-    <string name="popup_play_file">Palaist failu</string>
+    <string name="popup_delete_file">Dzēst datni</string>
+    <string name="popup_play_file">Atskaņot datni</string>
     <string name="popup_resume_download">Atsākt ielādi</string>
     <string name="popup_pause_download">Pauzēt ielādi</string>
     <string name="home_more_info">Vairāk informācijas</string>
@@ -64,7 +64,7 @@
     <string name="error_bookmarks_text">Bookmarks</string>
     <string name="action_remove_from_bookmarks">Noņemt</string>
     <string name="action_add_to_bookmarks">Ieliec skatīšanās statusu</string>
-    <string name="sort_apply">Izmantot</string>
+    <string name="sort_apply">Apstiprināt</string>
     <string name="sort_copy">Kopēt</string>
     <string name="sort_save">Saglabāt</string>
     <string name="player_speed">Atskaņošanas ātrums</string>
@@ -112,7 +112,7 @@
     <string name="torrent_plot">Apraksts</string>
     <string name="normal_no_plot">Nav apraksts atrasts</string>
     <string name="torrent_no_plot">Apraksts nav atrasts</string>
-    <string name="show_log_cat">Radīt Logcat 🐈</string>
+    <string name="show_log_cat">Rādīt Logcat 🐈</string>
     <string name="test_log">Log</string>
     <string name="picture_in_picture">Bilde bildē</string>
     <string name="picture_in_picture_des">Turpina spēlēt mazā lodziņā virs aplikācijām</string>
@@ -122,7 +122,7 @@
     <string name="player_subtitles_settings_des">Players subtitru iestādijumi</string>
     <string name="chromecast_subtitles_settings">Chromecast subtitri</string>
     <string name="chromecast_subtitles_settings_des">Chromecast subtitru iestāfijumi</string>
-    <string name="eigengraumode_settings">Eigengravy Mode</string>
+    <string name="eigengraumode_settings">Atskaņošanas ātrums</string>
     <string name="swipe_to_seek_settings">Novelc lai paradītu</string>
     <string name="swipe_to_seek_settings_des">Novelc no māla lidz malai lai pozicionētu video</string>
     <string name="swipe_to_change_settings">Novēlu lai mainītu iestādījums</string>
@@ -140,30 +140,30 @@
     <string name="episode_sync_settings_des">Automātiski sync savu pašreizējo epizodes progresu</string>
     <string name="restore_settings">Atgūt datus no backupa</string>
     <string name="backup_settings">Saglabāt datus</string>
-    <string name="restore_success">Ieladētie atgūtie faili</string>
-    <string name="restore_failed_format" formatted="true">Neizdevās restaurēt datus no faila %s</string>
+    <string name="restore_success">Atjaunots no dublējuma</string>
+    <string name="restore_failed_format" formatted="true">Neizdevās atjaunot datus no %s datnes</string>
     <string name="backup_success">Dati saglabāti</string>
     <string name="backup_failed">Krātuves atļaujas nav. Lūdzu mēģiniet vēlreiz.</string>
     <string name="backup_failed_error_format">Kļūda meiģinot saglabāt %s</string>
     <string name="search">Meklēt</string>
     <string name="library">Library</string>
-    <string name="category_account">Konts</string>
-    <string name="category_updates">Atjaunināt un saglabāt</string>
+    <string name="category_account">Konti un drošība</string>
+    <string name="category_updates">Atjauninājumi un dublēšana</string>
     <string name="settings_info">Informācija</string>
     <string name="advanced_search">Advancēta meklēšana</string>
     <string name="advanced_search_des">Dod tev meklēšanas rezultātus citus no devēja</string>
-    <string name="show_fillers_settings">Radīt fillera epizodi priekš animē</string>
-    <string name="show_trailers_settings">Radīt feel</string>
-    <string name="kitsu_settings">Radīt plakātu no kitsu</string>
+    <string name="show_fillers_settings">Rādīt anime papilda epizodi</string>
+    <string name="show_trailers_settings">Rādīt reklāmkadrus</string>
+    <string name="kitsu_settings">Rādīt Kitsu vietnes plakātus</string>
     <string name="pref_filter_search_quality">Slēpt izvēlētos video kvalitāti meklēšanas rezultātus</string>
-    <string name="automatic_plugin_updates">Automātiski papildinājumu atjauninājumi</string>
-    <string name="automatic_plugin_download">Automātiski ielādēt papildinājumus</string>
-    <string name="automatic_plugin_download_summary">Automātiski instalēt visus neinstalētos papildinājumus no glabātavas.</string>
-    <string name="updates_settings">Radīt aplikācijas atjauninājumus</string>
+    <string name="automatic_plugin_updates">Automātiska papildinājumu atjaunināšana</string>
+    <string name="automatic_plugin_download">Automātiski lejupielādēt papildinājumus</string>
+    <string name="automatic_plugin_download_summary">Automātiski uzstāda visus vēl neuzstādītos papildinājumus no pievienotajiem repozitorijiem.</string>
+    <string name="updates_settings">Rādīt lietotņu atjauninājumus</string>
     <string name="updates_settings_des">Automātiski meklēt jaunus atjauninājumus kad palaiž aplikāciju.</string>
     <string name="redo_setup_process">Atsākt uzstādīšanas procesu</string>
     <string name="uprereleases_settings">Atjaunināt uz priekšizlaišanu</string>
-    <string name="apk_installer_settings_des">Dažu telefoni nepieņem jauno aplikāciju instaletāju. Meiģiniet veco opciju ja nevar stjaunināt.</string>
+    <string name="apk_installer_settings_des">Dažas ierīces neatbalsta jauno pakotnes uzstādītāju. Izmantojiet legacy (veco) uzstādītāju, ja atjauninājumus nevar uzstādīt.</string>
     <string name="lightnovel">Noveles aplikācija no šiem izstrādātājiem</string>
     <string name="anim">Anime aplikāciju no tiem pašiem izstradatājiem</string>
     <string name="discord">Ienāc discordā</string>
@@ -184,7 +184,7 @@
     <string name="season_short">S</string>
     <string name="episode_short">E</string>
     <string name="no_episodes_found">Epizodes netika atrastas</string>
-    <string name="delete_file">Dzēsti faili</string>
+    <string name="delete_file">Dzēst datni</string>
     <string name="delete">Dzēst</string>
     <string name="cancel">Atcelt</string>
     <string name="pause">Pauzēt</string>
@@ -242,7 +242,7 @@
     <string name="episode_action_download_mirror">Ielādēt spoguli</string>
     <string name="episode_action_reload_links">Pārlādēt saites</string>
     <string name="episode_action_download_subtitle">Ielādēt subtitrus</string>
-    <string name="show_hd">Kvalitāte</string>
+    <string name="show_hd">Kvalitātes zīme</string>
     <string name="show_dub">Dub lable</string>
     <string name="show_sub">Subtirti</string>
     <string name="show_title">Nosaukums</string>
@@ -266,8 +266,8 @@
     <string name="android_tv_interface_off_seek_settings">Atskaņotājs paslēpts — meklēšanas summa</string>
     <string name="video_ram_description">Izraisa avārijas, ja ierīcēs ar mazu atmiņu ir iestatīta pārāk augsta vērtība, piemēram, Android TV.</string>
     <string name="dns_pref_summary">Izdevīgs lai izlaistu ISO aizturi</string>
-    <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
-    <string name="jsdelivr_proxy_summary">Apiet GitHub bloķēšanu, izmantojot jsdelivr. Tādēļ atjauninājumi var aizkavēties par dažām dienām.</string>
+    <string name="jsdelivr_proxy">GitHub starpniekserveris</string>
+    <string name="jsdelivr_proxy_summary">Apiet tiešo GitHub URL saišu piekļuves ierobežojumus, izmantojot jsDelivr. Tādēļ atjauninājumi var aizkavēties vairākas dienas.</string>
     <string name="add_site_pref">Klonēt saiti</string>
     <string name="remove_site_pref">Noņemt saiti</string>
     <string name="add_site_summary">Pievienojiet esošas vietnes klonu ar citu URL</string>
@@ -293,11 +293,11 @@
     <string name="pref_category_ui_features">Funkcijas</string>
     <string name="category_general">Ģenerāls</string>
     <string name="random_button_settings">Randomā poga</string>
-    <string name="random_button_settings_desc">Rādīt izlases pogu mājaslapā</string>
-    <string name="provider_lang_settings">Devēja valodas</string>
+    <string name="random_button_settings_desc">Rādīt izlases pogu Sākums un Bibliotēka sadaļās</string>
+    <string name="provider_lang_settings">Papildinājuma valodas</string>
     <string name="app_layout">Aplikācijas izskats</string>
     <string name="preferred_media_settings">Izvēlētā media</string>
-    <string name="enable_nsfw_on_providers">Iespējojiet NSFW atbalstītajiem pakalpojumu sniedzējiem</string>
+    <string name="enable_nsfw_on_providers">Iespējot nepiedienīgu, izaicinošu saturu (NSFW) atbalstītajos papildinājumos</string>
     <string name="subtitles_encoding">Subtitru kodējums</string>
     <string name="category_providers">Devēji</string>
     <string name="category_provider_test">Devēju tests</string>
@@ -308,11 +308,11 @@
     <string name="emulator_layout">Emulators izskats</string>
     <string name="bottom_title_settings">Plakāta virsraksta lokācija</string>
     <string name="example_password">Parole123</string>
-    <string name="example_username">MansStilīgaisNosaukums</string>
+    <string name="example_username">Lietotājvārds</string>
     <string name="example_email">Sveiki@pasaule.com</string>
     <string name="example_ip">127.0.0.1</string>
-    <string name="example_site_name">ManaForšāSaite</string>
-    <string name="example_site_url">Piemērs.com</string>
+    <string name="example_site_name">JaunāsVietnesNosaukums</string>
+    <string name="example_site_url">https://piemērs.com</string>
     <string name="example_lang_name">Valodas kods (lv)</string>
     <string name="account">Konts</string>
     <string name="logout">Iziet</string>
@@ -345,10 +345,10 @@
     <string name="subtitle_offset_extra_hint_none_format">Nav subtitru kavēšanās</string>
     <string name="subtitles_example_text">Ātrā brūnā lapsa lec pāri slinkajam sunim</string>
     <string name="player_loaded_subtitles" formatted="true">Ielādeja %s</string>
-    <string name="player_load_subtitles">Lādēt no faila</string>
+    <string name="player_load_subtitles">Ielādēt no datnes</string>
     <string name="app_theme_settings">Aplikācijas theme</string>
     <string name="player_load_subtitles_online">Ielādēt no interneta</string>
-    <string name="downloaded_file">Ieladētie faili</string>
+    <string name="downloaded_file">Lejupielādēta datne</string>
     <string name="actor_main">Galvenais</string>
     <string name="actor_supporting">Atbalsta</string>
     <string name="actor_background">Aizmugure</string>
@@ -379,7 +379,7 @@
     <string name="subtitles_filter_lang">Filtrējiet pēc vēlamās multivides valodas</string>
     <string name="extras">Ekstras</string>
     <string name="trailer">Treileris</string>
-    <string name="network_adress_example">Links uz tstresmu</string>
+    <string name="network_adress_example">https://piemērs.com/piemērs.mp4</string>
     <string name="referer">Referents</string>
     <string name="next">Nākamais</string>
     <string name="provider_languages_tip">Skatieties videoklipus šajās valodās</string>
@@ -390,44 +390,44 @@
     <string name="setup_done">Pabeigts</string>
     <string name="extensions">Papildinājumi</string>
     <string name="add_repository">Pievienot repozitoriju</string>
-    <string name="repository_url_hint">Repository URL</string>
-    <string name="plugin_loaded">Plugin ieladēti</string>
-    <string name="plugin_deleted">Plugins dzēsts</string>
+    <string name="repository_url_hint">Repozitorija URL vai īsskods</string>
+    <string name="plugin_loaded">Papildinājums ielādēts</string>
+    <string name="plugin_deleted">Papildinājums dzēsts</string>
     <string name="plugin_load_fail" formatted="true">Nevarēja ielādēt %s</string>
     <string name="is_adult">18+</string>
     <string name="batch_download_start_format" formatted="true">Sākta %1$d %2$s lejupielāde…</string>
     <string name="batch_download_finish_format" formatted="true">Lejuplādēts %1$d %2$s</string>
     <string name="batch_download">Pakešu lejupielāde</string>
-    <string name="plugin_singular">Plugins</string>
-    <string name="plugin">Plugins</string>
-    <string name="delete_repository_plugins">Tādējādi tiks izdzēsti arī visi repozitorija pluginus</string>
+    <string name="plugin_singular">papildinājums</string>
+    <string name="plugin">papildinājumi</string>
+    <string name="delete_repository_plugins">Tiks izdzēsti arī visi repozitorija papildinājumi</string>
     <string name="delete_repository">Dzēst repozitoriju</string>
-    <string name="plugins_downloaded" formatted="true">Lejupielādēt: %d</string>
+    <string name="plugins_downloaded" formatted="true">Lejupielādēts: %d</string>
     <string name="plugins_disabled" formatted="true">Atspējots: %d</string>
-    <string name="plugins_not_downloaded" formatted="true">Nav lejupielādēts: %d</string>
-    <string name="plugins_updated" formatted="true">Atjaunināti %d spraudņi</string>
-    <string name="view_public_repositories_button">Skatīt kopienas krātuves</string>
-    <string name="view_public_repositories_button_short">Publisks saraksts</string>
+    <string name="plugins_not_downloaded" formatted="true">Nelejupielādēts: %d</string>
+    <string name="plugins_updated" formatted="true">Atjaunināti %d papildinājumi</string>
+    <string name="view_public_repositories_button">Skatīt kopienas repozitorijus</string>
+    <string name="view_public_repositories_button_short">Publiskais saraksts</string>
     <string name="uppercase_all_subtitles">Visi subtitri ar lielajiem burtiem</string>
-    <string name="download_all_plugins_from_repo">Vai lejupielādēt visus spraudņus no šīs krātuves?</string>
+    <string name="download_all_plugins_from_repo">Uzmanību: CloudStream 3 neuzņemas nekādu atbildību par trešo pušu papildinājumu izmantošanu un nesniedz nekādu tā atbalstu!</string>
     <string name="single_plugin_disabled" formatted="true">%s (atspējots)</string>
     <string name="tracks">Tracks</string>
     <string name="audio_tracks">Audio dziesmas</string>
     <string name="video_tracks">Video tracks</string>
-    <string name="apply_on_restart">Likt uz restartēšanu</string>
+    <string name="apply_on_restart">Palaist pa jaunu lietotni, lai redzētu izmaiņas.</string>
     <string name="restart">Restartēt</string>
     <string name="stop">Pārtraukt</string>
     <string name="safe_mode_title">Drošais režīms ieslēgts</string>
-    <string name="safe_mode_description">Visi paplašinājumi tika izslēgti avārijas dēļ, lai palīdzētu jums atrast to, kas rada problēmas.</string>
+    <string name="safe_mode_description">Visi papildinājumi tika izslēgti avārijas dēļ, lai palīdzētu jums atrast to, kurš rada problēmas.</string>
     <string name="safe_mode_crash_info">Skatīt avārijas informāciju</string>
-    <string name="extension_rating" formatted="true">Rating: %s</string>
+    <string name="extension_rating" formatted="true">Vērtējums: %s</string>
     <string name="extension_description">Apraksts</string>
     <string name="extension_version">Versija</string>
-    <string name="extension_status">Status</string>
+    <string name="extension_status">Statuss</string>
     <string name="extension_size">Izmērs</string>
-    <string name="extension_authors">Autors</string>
+    <string name="extension_authors">Autori</string>
     <string name="extension_types">Atbalstīts</string>
-    <string name="extension_language">Valodas</string>
+    <string name="extension_language">Valoda</string>
     <string name="hls_playlist">HLS atskaņošanas saraksts</string>
     <string name="player_pref">Vēlamais video atskaņotājs</string>
     <string name="player_settings_play_in_app">Iekšējais atskaņotājs</string>
@@ -493,16 +493,12 @@
     <string name="quality_webrip">Web</string>
     <string name="quality_sdr">SDR</string>
     <string name="resolution">Rezulūcija</string>
-    <string name="blank_repo_message">CloudStream pēc noklusējuma nav instalēta neviena vietne. Vietnes jāinstalē no krātuvēm.
-\n
-\nSky UK Limited bezsmadzeņu DMCA noņemšanas dēļ mēs nevaram saistīt ar repozitorija vietni lietotnē.
-\n
-\nPievienojieties mūsu Discord vai meklējiet tiešsaistē.</string>
+    <string name="blank_repo_message">CloudStream pēc noklusējuma nesatur, nav uzstādīts neviens repozitorijs. Lai izmantotu lietotni, obligāti jāpievieno vismaz viens repozitorijs, kas satur vismaz vienu papildinājumu. Repozitorijus var uzstādīt zem Iestatījumi. Tas viss pateicoties Sky UK Limited 🤮 bezsmadzeņu DMCA noņemšanas rīkojumam, kas liedz iekļaut repozitorijus lietotnē.\n\nPievienojieties mūsu Discord serverim vai meklējiet tiešsaistē.</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Viss %s jau ir lejupielādēts</string>
-    <string name="repository_name_hint">Repozitorija nosaukums</string>
-    <string name="plugin_downloaded">Plugin ielādēti</string>
+    <string name="repository_name_hint">Repozitorija nosaukums (pēc izvēles, neobligāti)</string>
+    <string name="plugin_downloaded">Papildinājums lejupielādēts</string>
     <string name="setup_extensions_subtext">Lejupielādējiet to vietņu sarakstu, kuras vēlaties izmantot</string>
-    <string name="extension_install_first">Vispirms instalējiet paplašinājumu</string>
+    <string name="extension_install_first">Vispirms uzstādīt papildinājumu</string>
     <string name="skip_type_op">Atvēršana</string>
     <string name="skip_type_intro">Sākums</string>
     <string name="skip_type_format" formatted="true">Izlaist %s</string>
@@ -510,8 +506,7 @@
     <string name="action_mark_as_watched">Atzīmēt kā skatītu</string>
     <string name="confirm_exit_dialog">Vai tiešām vēlaties iziet?</string>
     <string name="empty_library_logged_in_message">Šķiet, ka šis saraksts ir tukšs, mēģiniet pārslēgties uz citu.</string>
-    <string name="safe_mode_file">Atrasts drošā režīma fails!
-\n Paplašinājumi netiek ielādēti startēšanas laikā, kamēr fails nav noņemts.</string>
+    <string name="safe_mode_file">Atrasta drošā režīma datne!\nPalaišanas laikā neviens papildinājums netiek ielādēts, kamēr datne nav izdzēsta.</string>
     <string name="sort_rating_asc">Vērtējums (no zema līdz augstam)</string>
     <string name="subscription_in_progress_notification">Abonēto šovu atjaunināšana</string>
     <string name="subscription_list_name">Abonēts</string>
@@ -528,4 +523,73 @@
     <string name="downloads_delete_select">Atlasiet dzēšamos vienumus</string>
     <string name="downloads_empty">Pašlaik nav lejupielāžu.</string>
     <string name="offline_file">Pieejams skatīšanai bezsaistē</string>
+    <string name="wifi">Bezvadu (Wi-Fi)</string>
+    <string name="use">Izmantot</string>
+    <string name="edit">Rediģēt</string>
+    <string name="profiles">Profili</string>
+    <string name="help">Palīdzība</string>
+    <string name="qualities">Kvalitāte</string>
+    <string name="disable">Atspējot</string>
+    <string name="favorites_list_name">Iecienītākie</string>
+    <string name="action_subscribe">Abonēt</string>
+    <string name="action_unsubscribe">Pārtraukt abonēt</string>
+    <string name="duplicate_add">Pievienot</string>
+    <string name="duplicate_replace">Aizstāt</string>
+    <string name="pin">PIN kods</string>
+    <string name="rotate_video">Pagriezt</string>
+    <string name="unfavorite">Noņemt no iecienītajiem</string>
+    <string name="favorite">Pievienot iecienītajiem</string>
+    <string name="toast_copied">nokopēts!</string>
+    <string name="ok">Labi</string>
+    <string name="music_singlar">Mūzika</string>
+    <string name="reset_btn">Atiestatīt</string>
+    <string name="pref_category_security">Drošība</string>
+    <string name="pref_category_accounts">Konti</string>
+    <string name="test_warning">Brīdinājums</string>
+    <string name="show">Rādīt</string>
+    <string name="audio_singluar">Audio</string>
+    <string name="podcast_singluar">Raidieraksts</string>
+    <string name="subtitles_from_embedded">Iegultais</string>
+    <string name="subtitles_from_online">Tiešsaistes</string>
+    <string name="name">Nosaukums</string>
+    <string name="profile_number">Profils %d</string>
+    <string name="mobile_data">Mobilie dati</string>
+    <string name="profile_background_des">Profila fons</string>
+    <string name="backup_frequency">Rezerves kopijas izveides biežums</string>
+    <string name="duplicate_replace_all">Aizstāt visus</string>
+    <string name="enter_pin">Ievadiet PIN kodu</string>
+    <string name="enter_pin_with_name" formatted="true">Ievadiet %s PIN kodu</string>
+    <string name="enter_current_pin">Ievadiet pašreizējo PIN kodu</string>
+    <string name="lock_profile">Aizslēgt profilu</string>
+    <string name="pin_error_incorrect">Nepareizs PIN kods. Lūdzu, ievadiet to no jauna.</string>
+    <string name="pin_error_length">PIN kods satur 4 rakstzīmes</string>
+    <string name="select_an_account">Atlasiet kontu</string>
+    <string name="no_account">Nav konta</string>
+    <string name="manage_accounts">Pārvaldīt kontus</string>
+    <string name="edit_account">Rediģēt kontu</string>
+    <string name="repo_copy_label">Repozitorija nosaukums un URL</string>
+    <string name="no_plugins_found_error">Repozitorijā nav atrasts neviens papildinājums</string>
+    <string name="no_repository_found_error">Repozitorijs nav atrasts, pārbaudiet URL un izmēģiniet ar ieslēgtu VPN</string>
+    <string name="open_downloaded_repo">Atvērt repozitoriju</string>
+    <string name="unable_to_inflate">Lietotāja saskarni nevarēja izveidot pareizi, tā ir NOPIETNA KĻŪDA, un par to jāziņo nekavējoties %s</string>
+    <string name="automatic_plugin_download_mode_title">Atlasiet režīmu pēc kā filtrēt papildinājumu lejupielādi</string>
+    <string name="delete_plugin">Dzēst papildinājumu</string>
+    <string name="update_plugins">Atjaunināt papildinājumus</string>
+    <string name="update_plugins_manually">Atjaunināt papildinājumus manuāli</string>
+    <string name="starting_plugin_update_manually">Sāk papildinājuma atjaunināšanas procesu!</string>
+    <string name="plugins_updated_manually">Veiksmīgi atjaunināts(-i) %d papildinājums(-i)!</string>
+    <string name="no_plugins_updated_manually">Neviens papildinājums netika atjaunināts.</string>
+    <string name="result_search_tooltip">Meklēt citos papildinājumos</string>
+    <string name="test_extensions">Pārbaudīt visus papildinājumus</string>
+    <string name="test_extensions_summary">Šis tests ir paredzēts tikai izstrādātājiem, un tas neapstiprina vai nenoliedz papildinājumu funkcionalitāti.</string>
+    <string name="battery_dialog_message">Lai nodrošinātu nepārtrauktu abonēto TV pārraižu (seriālu un raidījumu) lejupielādi un paziņojumu saņemšanu, CloudStream nepieciešama darboties fonā atļauja. Noklikšķinot uz 𝙇𝙖𝙗𝙞, tiks parādīts vaicājumlogs. Lūdzu, noklikšķiniet uz \'Atļaut\'.\n\nLūdzu, nesatraucieties, ka piešķirot šo atļauja, CloudStream 3 sāks veikt pastāvīgu akumulatora izlādi. Tas tiks palaists fonā tikai nepieciešamības gadījumā, piemēram, saņemot paziņojumus vai lejupielādējot video no oficiālajiem papildinājumiem.</string>
+    <string name="delete_files">Dzēst datnes</string>
+    <string name="quality_profile_help">Šeit jūs varat mainīt avotu atlases secību. Ja video ir augstāka prioritāte, tad tas tiks parādīts augstāk avotu atlases sarakstā. Avota prioritātes un kvalitātes prioritātes summa ir video prioritāte.\n\nAvots A: 3\nKvalitāte B: 7\nRezultātā kopējā video prioritātes summa ir 10.\n\nPIEZĪME: Ja kopējā summa ir vienāda ar 10 vai vairāk, atskaņotājs automātiski izlaidīs atskaņot, lejupielādēt video, kad šī saite ir ielādēta!</string>
+    <string name="software_decoding_desc">Programmatūras (procesora) dekodēšana ļauj atskaņot video datnes, kuras jūsu ierīce neatbalsta. Taču var izraisīt aizkavētu vai nestabilu atskaņošanu video ar augstu izšķirtspēju, ja procesora veiktspēja ir neadekvāta.</string>
+    <string name="edit_profile_image_title">Nomainīt profila attēlu</string>
+    <string name="edit_profile_image_hint">Ievadiet profila attēla URL</string>
+    <string name="edit_profile_image_error_empty">URL nav norādīts vai atrodams</string>
+    <string name="edit_profile_image_error_invalid">Nepareizs URL vai nederīgs attēls</string>
+    <string name="edit_profile_image_success">Profila attēls veiksmīgi nomainīts</string>
+    <string name="recommendations_tooltip">Rādīt ieteikumus</string>
 </resources>

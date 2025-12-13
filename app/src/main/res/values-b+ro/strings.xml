@@ -653,4 +653,9 @@
     <string name="delete_format" formatted="true">Șterge (%1$d | %2$s)</string>
     <string name="delete_message_series_episodes" formatted="true">Sunteți sigur că vreți să ștergeți permanent următoarele epsioade în %1$s?\n\n%2$s</string>
     <string name="pref_category_security">Securitate</string>
+    <string name="pref_category_accounts">Conturi</string>
+    <string name="auth_locally">Autentificare locală</string>
+    <string name="player_load_one_subtitle_online">Încărcați prima disponibilă</string>
+    <string name="delete_plugin">Șterge pluginul</string>
+    <string name="dismiss">Închide</string>
 </resources>

@@ -484,7 +484,7 @@
     <string name="subscription_episode_released">Episódio %d lançado!</string>
     <string name="set_default">Selecionar padrão</string>
     <string name="subscription_deleted">Inscrição cancelada de %s</string>
-    <string name="apk_installer_settings_des">Alguns aparelhos não permitem instalação automática. Tente a opção legada (manual) se a atualização falhar.</string>
+    <string name="apk_installer_settings_des">Alguns dispositivos não são compatíveis com o novo instalador de pacotes. Se as atualizações não forem instaladas, tente a opção legada.</string>
     <string name="mobile_data">Dados móveis</string>
     <string name="profile_number">Perfil %d</string>
     <string name="subscription_in_progress_notification">Atualizando shows inscritos</string>
@@ -678,7 +678,7 @@
     <string name="audio_singluar">Áudio</string>
     <string name="podcast_singluar">Podcast</string>
     <string name="software_decoding">Decodificação de software</string>
-    <string name="software_decoding_desc">A decodificação de software permite que o player reproduza arquivos de vídeo não compatíveis com o telefone, mas pode causar lentidão ou instabilidade na reprodução em alta resolução</string>
+    <string name="software_decoding_desc">A decodificação por software permite que o reprodutor reproduza arquivos de vídeo não suportados pelo seu dispositivo, mas pode causar lentidão ou instabilidade na reprodução em alta resolução</string>
     <string name="torrent_preferred_media">Habilitar torrent em Configurações/Provedores/Mídia preferida</string>
     <string name="torrent_not_accepted">Reinicie o aplicativo e aceite o pop-up do Stream Torrent para continuar.</string>
     <string name="sort_episodes_number_asc">Episódio (Ascendente)</string>
@@ -745,4 +745,6 @@
     <string name="top_left">Superior esquerdo</string>
     <string name="top_center">Superior centralizado</string>
     <string name="top_right">Superior direito</string>
+    <string name="play_full_series_button">Assistir à série completa</string>
+    <string name="resolution_and_name">Resolução e nome</string>
 </resources>
