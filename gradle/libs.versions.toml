@@ -2,7 +2,7 @@
 # https://docs.gradle.org/current/userguide/dependency_versions.html#sec:strict-version
 [versions]
 activityKtx = "1.11.0"
-androidGradlePlugin = "8.13.1"
+androidGradlePlugin = "8.13.2"
 appcompat = "1.7.1"
 biometric = "1.4.0-alpha04"
 buildkonfigGradlePlugin = "0.17.1"
