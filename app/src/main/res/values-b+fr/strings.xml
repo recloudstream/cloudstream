@@ -428,7 +428,7 @@
     <string name="skip_type_mixed_op">Introduction mitigée</string>
     <string name="update_notification_installing">Installation de la mise a jour de l\'application…</string>
     <string name="update_notification_failed">Impossible d\'installer la nouvelle version de l\'application</string>
-    <string name="apk_installer_settings_des">Certains téléphones ne supporte pas le nouvel installateur d\'application. Essayez l\'option de l\'ancien installateur si les mises-à-jour ne s\'installe pas.</string>
+    <string name="apk_installer_settings_des">Certains appareils ne supportent pas le nouvel installateur d\'application. Essayez l\'option de l\'ancien installateur si les mises-à-jour ne s\'installe pas.</string>
     <string name="previous">Précédent</string>
     <string name="skip_setup">Ignorer la configuration</string>
     <string name="repository_name_hint">Nom de dépôt (optionnel)</string>
@@ -652,7 +652,7 @@
     <string name="confirm_before_exiting_title">Confirmer avant de quitter</string>
     <string name="unsupported_error">Erreur non supportée</string>
     <string name="encoding_error">Erreur d\'encodage</string>
-    <string name="software_decoding_desc">Le décodage logiciel permet au lecteur de lire des fichiers vidéo non pris en charge par votre téléphone, mais peut entraîner une lecture lente ou instable en haute résolution</string>
+    <string name="software_decoding_desc">Le décodage logiciel permet au lecteur de lire des fichiers vidéo non pris en charge par votre appareil, mais peut entraîner une lecture lente ou instable en haute résolution.</string>
     <string name="software_decoding">Décodage logiciel</string>
     <string name="torrent_preferred_media">Activer les torrents dans Paramètres/Sources/Média préféré</string>
     <string name="torrent_not_accepted">Redémarrez l\'application et acceptez la fenêtre contextuelle Stream Torrent pour continuer.</string>
@@ -714,4 +714,15 @@
     <string name="resolution_and_name">Solution et nom</string>
     <string name="name">Nom</string>
     <string name="episode_action_play_mirror">Mise en miroir</string>"
-    </resources>
+    <string name="subs_subtitle_alignment">Alignement des Sous-titres</string>
+    <string name="bottom_left">En bas à gauche</string>
+    <string name="bottom_center">En bas au centre</string>
+    <string name="bottom_right">En bas à droite</string>
+    <string name="middle_left">Au milieu à gauche</string>
+    <string name="middle_center">Au milieu au centre</string>
+    <string name="middle_right">Au milieu à droite</string>
+    <string name="top_left">En haut à gauche</string>
+    <string name="top_center">En haut au centre</string>
+    <string name="top_right">En haut à droite</string>
+    <string name="play_full_series_button">Jouer la série complète</string>
+</resources>
