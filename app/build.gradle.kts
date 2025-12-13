@@ -232,16 +232,7 @@ dependencies {
     implementation(libs.work.runtime.ktx)
     implementation(libs.nicehttp) // HTTP Lib
 
-    implementation(project(":library") {
-        // There does not seem to be a good way of getting the android flavor.
-        val isDebug = gradle.startParameter.taskRequests.any { task ->
-            task.args.any { arg ->
-                arg.contains("debug", true)
-            }
-        }
-
-        this.extra.set("isDebug", isDebug)
-    })
+    implementation(project(":library"))
 }
 
 tasks.register<Jar>("androidSourcesJar") {
@@ -278,8 +269,11 @@ tasks.withType<KotlinJvmCompile> {
     compilerOptions {
         jvmTarget.set(javaTarget)
         jvmDefault.set(JvmDefaultMode.ENABLE)
-        optIn.add("com.lagradost.cloudstream3.Prerelease")
         freeCompilerArgs.add("-Xannotation-default-target=param-property")
+        optIn.addAll(
+            "com.lagradost.cloudstream3.InternalAPI",
+            "com.lagradost.cloudstream3.Prerelease",
+        )
     }
 }
 
