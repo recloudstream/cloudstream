@@ -59,8 +59,6 @@ buildkonfig {
     exposeObjectWithName = "BuildConfig"
 
     defaultConfigs {
-        logger.quiet("Compiling library")
-
         // Reads local.properties
         val localProperties = gradleLocalProperties(rootDir, project.providers)
 
