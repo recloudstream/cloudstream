@@ -218,7 +218,6 @@
     <string name="automatic_plugin_updates">স্বয়ংক্ৰিয় প্লাগইন আপডেট</string>
     <string name="updates_settings">এপ্‌ আপডেট দেখুৱাওক</string>
     <string name="redo_setup_process">পুনৰ চেটআপ প্ৰক্ৰিয়া কৰক</string>
-    <string name="uprereleases_settings">প্ৰাকমুক্তিৰ বাবে আপডেট কৰক</string>
     <string name="apk_installer_settings">APK ইনষ্টলাৰ</string>
     <string name="apk_installer_settings_des">কিছুমান ফোনে নতুন পেকেজ ইনষ্টলাৰ সমৰ্থন নকৰে। আপডেটসমূহ ইনষ্টল নকৰিলে লিগেচি বিকল্প পৰীক্ষা কৰক।</string>
     <string name="github">Github</string>
@@ -588,7 +587,6 @@
     <string name="biometric_warning">আপোনাৰ CloudStream ডেটা এতিয়া সংৰক্ষণ কৰা হৈছে। এইৰ সম্ভাৱনা অত্যন্ত কম, কিন্তু সকলো ডিভাইচৰ ব্যৱহাৰ ভিন্ন হ\'ব পাৰে। যদি এপ্লিকেচনটোত প্রবেশ কৰিব নোৱাৰা অৱস্থাত পৰাৰ কম সম্ভাৱনাৰ ঘটনা ঘটে, তেন্তে সম্পূৰ্ণভাবে এপ্প ডেটা মচি দিয়ক আৰু সংৰক্ষণৰ পৰা পুনৰুদ্ধাৰ কৰক। কোনো অশান্তিৰ বাবে আমাৰ দুখিত হওক।</string>
     <string name="download">ডাউনলোড</string>
     <string name="updates_settings_des">এপ্‌ আৰম্ভণিৰ পিছত নতুন আপডেটৰ সন্ধান কৰক।</string>
-    <string name="uprereleases_settings_des">কেৱল সম্পূৰ্ণ মুক্তিৰ সলনি প্ৰাকমুক্তিৰ আপডেটৰ সন্ধান কৰক</string>
     <string name="anim">একেই ডেভেলপাৰৰ দ্বাৰা এনিম এপ্‌</string>
     <string name="new_update_format" formatted="true">নতুন আপডেট পোৱা গ’ল!
 \n%1$s -&gt; %2$s</string>

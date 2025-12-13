@@ -103,8 +103,6 @@
     <string name="show_fillers_settings">Прикажи епизода за полнење за аниме</string>
     <string name="updates_settings">Прикажи ажурирања на апликации</string>
     <string name="updates_settings_des">Автоматски пребарувај нови ажурирања откако ќе ја стартуваш апликацијата.</string>
-    <string name="uprereleases_settings">Ажурирање на пред официјални верзии</string>
-    <string name="uprereleases_settings_des">Побарај дали има нови неофицијални верзии наместо само ажурирања на официјални верзии</string>
     <string name="github">Github</string>
     <string name="lightnovel">Едноставна апликација за новели од истите развивачи</string>
     <string name="anim">Апликација за аниме од истите развивачи</string>

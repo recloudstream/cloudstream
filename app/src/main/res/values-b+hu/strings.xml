@@ -194,8 +194,6 @@
     <string name="automatic_plugin_download_summary">Automatikusan telepíti az összes még nem telepített bővítményt a hozzáadott tárolókból.</string>
     <string name="updates_settings">Alkalmazás frissítések megjelenítése</string>
     <string name="updates_settings_des">Automatikusan keressen új frissítéseket indításkor.</string>
-    <string name="uprereleases_settings">Frissítés az előzetes kiadásokhoz (prerelease)</string>
-    <string name="uprereleases_settings_des">Csak előzetesen kiadott frissítések (prerelease) keresése a teljes kiadások helyett</string>
     <string name="github">Github</string>
     <string name="discord">Csatlakozz a Discordhoz</string>
     <string name="benene">Adj Banánt a fejlesztőknek</string>

@@ -154,8 +154,6 @@
     <string name="automatic_plugin_updates">Автоматични актуализации на плъгини</string>
     <string name="updates_settings">Показвай актуализации на приложението</string>
     <string name="updates_settings_des">Автоматично търси нови актуализации при стартиране на приложението.</string>
-    <string name="uprereleases_settings">Актуализация до експериментални версии</string>
-    <string name="uprereleases_settings_des">Търсете експериментални актуализации вместо само пълни версии</string>
     <string name="github">Github</string>
     <string name="lightnovel">Light novel - приложение от същите разработчици</string>
     <string name="anim">Приложение за аниме от същите разработчици</string>

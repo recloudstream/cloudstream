@@ -499,8 +499,6 @@
     <string name="updates_settings">Tunjukkan kemas kini aplikasi</string>
     <string name="updates_settings_des">Secara automatik cari kemas kini baru selepas memulakan aplikasi.</string>
     <string name="redo_setup_process">Redo Proses Persediaan</string>
-    <string name="uprereleases_settings">Kemas kini kepada Prereleases</string>
-    <string name="uprereleases_settings_des">Cari kemas kini prerelease bukan sahaja siaran penuh</string>
     <string name="apk_installer_settings">Pemasang APK</string>
     <string name="apk_installer_settings_des">Sesetengah telefon tidak menyokong pemasang pakej baru. Cuba pilihan Legacy jika kemas kini tidak dipasang.</string>
     <string name="benene">Berikan benen kepada devs</string>

@@ -161,8 +161,6 @@
     <string name="automatic_plugin_updates">Automatische Plugin-Updates</string>
     <string name="updates_settings">App-Updates anzeigen</string>
     <string name="updates_settings_des">Automatisches Suchen nach neuen Updates nach dem Start.</string>
-    <string name="uprereleases_settings">Auf Vorabversionen updaten</string>
-    <string name="uprereleases_settings_des">Suche nach Vorabversionen statt nur nach Vollversionen</string>
     <string name="github">Github</string>
     <string name="lightnovel">Light Novel App von denselben Entwicklern</string>
     <string name="anim">Anime App von denselben Entwicklern</string>

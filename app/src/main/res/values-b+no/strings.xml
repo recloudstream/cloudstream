@@ -112,8 +112,6 @@
     <string name="show_fillers_settings">Vis filler-episode til anime</string>
     <string name="updates_settings">Vis appoppdateringer</string>
     <string name="updates_settings_des">Søk automatisk etter nye oppdateringer etter at appen har startet.</string>
-    <string name="uprereleases_settings">Oppdatering til forhåndsutgivelser</string>
-    <string name="uprereleases_settings_des">Søk etter oppdateringer før utgivelse i stedet for fullstendige utgivelser</string>
     <string name="github">Github</string>
     <string name="lightnovel">Light novel app av samme devs</string>
     <string name="anim">Anime app av samme devs</string>

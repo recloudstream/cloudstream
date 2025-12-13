@@ -154,8 +154,6 @@
     <string name="kitsu_settings">Toon posters van Kitsu</string>
     <string name="updates_settings">App-updates tonen</string>
     <string name="updates_settings_des">Automatisch zoeken naar nieuwe updates na het starten van de app.</string>
-    <string name="uprereleases_settings">Update naar pre-releases</string>
-    <string name="uprereleases_settings_des">Zoeken naar pre-release updates in plaats van alleen volledige releases</string>
     <string name="github">Github</string>
     <string name="lightnovel">Light novel app van dezelfde ontwikkelaars</string>
     <string name="anim">Anime app by the same devs</string>

@@ -128,8 +128,6 @@
     <string name="automatic_plugin_updates">خودکار پلگ ان اپ ڈیٹس</string>
     <string name="updates_settings">ایپ کی تازہ کاریاں نمایش کریں</string>
     <string name="redo_setup_process">سیٹ اپ کا عمل دوبارہ کریں</string>
-    <string name="uprereleases_settings">پری ریلیز کے لیے اپ ڈیٹ کریں</string>
-    <string name="uprereleases_settings_des">صرف مکمل جاریات کی بجائے پیش رلیز اپ ڈیٹس کی تلاش کریں</string>
     <string name="apk_installer_settings">APK انسٹالر</string>
     <string name="github">Github</string>
     <string name="lightnovel">یہ لائٹ ناول ایپ وہی ڈویلپرز نے تیار کی ہے جو اس ایپ کو ڈویلپ کیا ہے</string>

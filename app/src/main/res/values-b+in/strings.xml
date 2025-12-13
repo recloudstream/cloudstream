@@ -143,8 +143,6 @@
     <string name="show_fillers_settings">Tampilkan episode filler untuk anime</string>
     <string name="updates_settings">Tampilkan update aplikasi</string>
     <string name="updates_settings_des">Secara otomatis mencari update terbaru setelah aplikasi dibuka.</string>
-    <string name="uprereleases_settings">Update ke prarilis</string>
-    <string name="uprereleases_settings_des">Hanya mencari update prarilis daripada rilis penuh</string>
     <string name="github">Github</string>
     <string name="lightnovel">Aplikasi novel ringan dari developer yang sama</string>
     <string name="anim">Aplikasi anime dari developer yang sama</string>

@@ -171,8 +171,6 @@
     <string name="automatic_plugin_updates">Otomatik eklenti güncellemeleri</string>
     <string name="updates_settings">Uygulama güncellemelerini göster</string>
     <string name="updates_settings_des">Uygulama başlatıldıktan sonra güncellemeleri ara.</string>
-    <string name="uprereleases_settings">Deneysel sürümlere güncelle</string>
-    <string name="uprereleases_settings_des">Tam sürümler yerine yalnızca deneysel güncellemeleri ara</string>
     <string name="github">GitHub</string>
     <string name="lightnovel">Aynı geliştiricilerin Lightnovel Crawler uygulaması</string>
     <string name="anim">Aynı geliştiricilerin anime uygulaması</string>

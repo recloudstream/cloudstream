@@ -154,8 +154,6 @@
     <string name="automatic_plugin_updates">Atualização automática de plugins</string>
     <string name="updates_settings">Mostrar atualizações do app</string>
     <string name="updates_settings_des">Automaticamente procurar por novas atualizações ao abrir.</string>
-    <string name="uprereleases_settings">Permitir versões em pré-lançamento</string>
-    <string name="uprereleases_settings_des">Permitir a instação de versões em pré-lançamento ao invés de somente versões estáveis</string>
     <string name="github">GitHub</string>
     <string name="lightnovel">App de Light novel criado pelos mesmos desenvolvedores</string>
     <string name="anim">App de Anime criado pelos mesmos desenvolvedores</string>

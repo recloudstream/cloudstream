@@ -167,8 +167,6 @@
     <string name="automatic_plugin_updates">Automatsko ažuriranje dodataka</string>
     <string name="updates_settings">Prikaži ažuriranja aplikacije</string>
     <string name="updates_settings_des">Automatski traži nova ažuriranja nakon pokretanja aplikacije.</string>
-    <string name="uprereleases_settings">Ažuriranje na predizdanja</string>
-    <string name="uprereleases_settings_des">Tražite ažuriranja predizdanja umjesto samo potpunih izdanja</string>
     <string name="github">Github</string>
     <string name="lightnovel">Aplikacija za romane od istih programera</string>
     <string name="anim">Anime aplikacija od istih programera</string>

@@ -225,8 +225,6 @@
     <string name="advanced_search_des">Mostrar los resultados de la búsqueda por proveedor</string>
     <string name="show_trailers_settings">Mostrar avances</string>
     <string name="kitsu_settings">Mostrar pósters de Kitsu</string>
-    <string name="uprereleases_settings">Actualizar a las versiones preliminares</string>
-    <string name="uprereleases_settings_des">Buscar actualizaciones preliminares (beta) en lugar de solo versiones completas (stable releases)</string>
     <string name="github">Github</string>
     <string name="lightnovel">App de novela ligera de los mismos desarrolladores</string>
     <string name="anim">App de Anime de los mismos desarrolladores</string>

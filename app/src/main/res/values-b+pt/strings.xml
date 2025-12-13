@@ -153,8 +153,6 @@
     <string name="automatic_plugin_updates">Atualizações de plugin automáticas</string>
     <string name="updates_settings">Mostrar atualizações da app</string>
     <string name="updates_settings_des">Procurar automaticamente por novas atualizações depois de iniciar o app.</string>
-    <string name="uprereleases_settings">Atualizar para pré-lançamentos</string>
-    <string name="uprereleases_settings_des">Procura atualizações de pré-lançamento em vez de só lançamentos oficiais</string>
     <string name="github">Github</string>
     <string name="lightnovel">App light novel pelos mesmos devs</string>
     <string name="discord">Junte-se ao Discord</string>

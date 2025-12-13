@@ -95,8 +95,6 @@
     <string name="advanced_search_des">Presenterar sökresultaten i flera olika rader baserat på leverantören</string>
     <string name="updates_settings">Visa appuppdateringar</string>
     <string name="updates_settings_des">Sök automatiskt efter nya uppdateringar vid start.</string>
-    <string name="uprereleases_settings">Uppdatera till beta-version</string>
-    <string name="uprereleases_settings_des">Sök efter beta-version istället för fullständiga utgåvor av appen</string>
     <string name="github">Github</string>
     <string name="lightnovel">Lightnovel app av samma utvecklare</string>
     <string name="anim">Anime app av samma utvecklare</string>

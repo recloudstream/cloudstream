@@ -12,7 +12,6 @@
     <string name="subs_hold_to_reset_to_default">ضلّ كابس لترجع السَتِنگز كيف كانة أول ما نزلتو الآپ</string>
     <string name="season_format">%1$s%2$d%3$s</string>
     <string name="subs_default_reset_toast">رجِعت السَتِنگز ل كيف كانت أساسًا</string>
-    <string name="uprereleases_settings_des">نبش على تجديدات بال نسخة التجريبية كمان</string>
     <string name="subs_outline_color">لون حدود الكتيبة</string>
     <string name="search_poster_img_des">پوستر</string>
     <string name="backup_frequency">كلّ قديش بيعمل الآپ نسخة إحتياطية</string>
@@ -112,7 +111,6 @@
     <string name="result_open_in_browser">فتحو بمتصفح الوَب</string>
     <string name="use_system_brightness_settings">عوز ضوّ السيستام</string>
     <string name="double_tap_to_pause_settings_des">كبوس مرتين بال نُصّ حتى توقف الڤيديو</string>
-    <string name="uprereleases_settings">جدد الآب وعوز النسخة التجريبية</string>
     <string name="no_data">مافي بيانات</string>
     <string name="player_subtitles_settings">الترجمة</string>
     <string name="subs_font">الخط</string>
