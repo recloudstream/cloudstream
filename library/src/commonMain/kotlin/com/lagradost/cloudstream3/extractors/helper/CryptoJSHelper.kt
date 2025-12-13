@@ -1,7 +1,8 @@
 package com.lagradost.cloudstream3.extractors.helper
 
+import com.lagradost.cloudstream3.base64DecodeArray
+import com.lagradost.cloudstream3.base64Encode
 import java.util.Arrays
-import java.util.Base64
 import java.security.MessageDigest
 import java.security.SecureRandom
 import javax.crypto.Cipher
@@ -51,8 +52,7 @@ object CryptoJS {
         System.arraycopy(saltBytes, 0, b, sBytes.size, saltBytes.size)
         System.arraycopy(cipherText, 0, b, sBytes.size + saltBytes.size, cipherText.size)
 
-        val bEncode = Base64.getEncoder().encode(b)
-        return String(bEncode)
+        return base64Encode(b)
     }
 
     /**
@@ -62,7 +62,7 @@ object CryptoJS {
      * @param cipherText encrypted string
      */
     fun decrypt(password: String, cipherText: String): String {
-        val ctBytes         = Base64.getDecoder().decode(cipherText.toByteArray())
+        val ctBytes         = base64DecodeArray(cipherText)
         val saltBytes       = Arrays.copyOfRange(ctBytes, 8, 16)
         val cipherTextBytes = Arrays.copyOfRange(ctBytes, 16, ctBytes.size)
 
