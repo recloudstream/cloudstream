@@ -127,5 +127,4 @@
     <string name="player_subtitles_settings_des">प्लेयरको उपशीर्षकको सेटिङ</string>
     <string name="repo_copy_label">रिपोजिटरी को नाम र यूआरएल</string>
     <string name="toast_copied">कपी गरियो!</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>

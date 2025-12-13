@@ -608,7 +608,6 @@
     <string name="next_season_episode_format" formatted="true">Temporada %1$d Episódio %2$d será lançado em</string>
     <string name="player_settings_select_cast_device">Escolha o dispositivo</string>
     <string name="episode_action_cast_mirror">Transmitir</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="open_local_video">Abrir vídeo local</string>
     <string name="device_pin_error_message">Não é possível receber o PIN do dispositivo, tentando autenticação local</string>
     <string name="preview_seekbar">Pré-visualização na barra de progresso</string>

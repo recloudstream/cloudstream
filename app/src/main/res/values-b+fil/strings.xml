@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="pin_error_incorrect">Maling PIN. Pakisubukang muli.</string>
     <string name="action_remove_mark_watched_up_to_this_episode">Alisin ang napanood hanggang sa episode na ito</string>
     <string name="no_internet_connection">Walang koneksyon sa internet.\n\nKumonekta sa internet at subukang muli, o panoorin ang iyong mga na-download habang ikaw ay offline.</string>
