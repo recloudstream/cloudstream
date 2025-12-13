@@ -716,6 +716,8 @@ class ResultViewModel2 : ViewModel() {
             currentHeaderName: String,
             currentType: TvType,
             currentPoster: String?,
+            currentPlot: String?,
+            currentScore: Score?,
             apiName: String,
             parentId: Int,
             url: String,
@@ -749,6 +751,8 @@ class ResultViewModel2 : ViewModel() {
                         type = currentType,
                         name = currentHeaderName,
                         poster = currentPoster,
+                        plot = currentPlot,
+                        score = currentScore,
                         id = parentId,
                         cacheTime = System.currentTimeMillis(),
                     )
@@ -808,13 +812,15 @@ class ResultViewModel2 : ViewModel() {
             }
         }
 
-        suspend fun downloadEpisode(
+        private suspend fun downloadEpisode(
             activity: Activity?,
             episode: ResultEpisode,
             currentIsMovie: Boolean,
             currentHeaderName: String,
             currentType: TvType,
             currentPoster: String?,
+            currentPlot: String?,
+            currentScore: Score?,
             apiName: String,
             parentId: Int,
             url: String,
@@ -859,6 +865,8 @@ class ResultViewModel2 : ViewModel() {
                     currentHeaderName,
                     currentType,
                     currentPoster,
+                    currentPlot,
+                    currentScore,
                     apiName,
                     parentId,
                     url,
@@ -1617,9 +1625,11 @@ class ResultViewModel2 : ViewModel() {
                     response.name,
                     response.type,
                     response.posterUrl,
+                    response.plot,
+                    response.score,
                     response.apiName,
                     response.getId(),
-                    response.url
+                    response.url,
                 )
             }
 
@@ -1638,6 +1648,8 @@ class ResultViewModel2 : ViewModel() {
                             response.name,
                             response.type,
                             response.posterUrl,
+                            response.plot,
+                            response.score,
                             response.apiName,
                             response.getId(),
                             response.url,
@@ -2813,6 +2825,8 @@ class ResultViewModel2 : ViewModel() {
                             type = loadResponse.type,
                             name = loadResponse.name,
                             poster = loadResponse.posterUrl,
+                            plot = loadResponse.plot,
+                            score = loadResponse.score,
                             id = mainId,
                             cacheTime = System.currentTimeMillis(),
                         )
