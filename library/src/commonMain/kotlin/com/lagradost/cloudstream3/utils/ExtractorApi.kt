@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.lagradost.cloudstream3.AudioFile
 import com.lagradost.cloudstream3.IDownloadableMinimum
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.USER_AGENT
@@ -338,6 +339,7 @@ data class ExtractorLinkPlayList(
     /** Used for getExtractorVerifierJob() */
     override var extractorData: String? = null,
     override var type: ExtractorLinkType,
+    override var audioTracks: List<AudioFile> = emptyList(),
 ) : ExtractorLink(
     source = source,
     name = name,
@@ -346,7 +348,8 @@ data class ExtractorLinkPlayList(
     quality = quality,
     headers = headers,
     extractorData = extractorData,
-    type = type
+    type = type,
+    audioTracks = audioTracks
 ) {
     constructor(
         source: String,
@@ -519,8 +522,9 @@ open class DrmExtractorLink private constructor(
     open var kty: String? = null,
     open var keyRequestParameters: HashMap<String, String>,
     open var licenseUrl: String? = null,
+    override var audioTracks: List<AudioFile> = emptyList(),
 ) : ExtractorLink(
-    source, name, url, referer, quality, headers, extractorData, type
+    source, name, url, referer, quality, headers, extractorData, type, audioTracks
 ) {
     @Deprecated("Use newDrmExtractorLink", level = DeprecationLevel.ERROR)
     constructor(
@@ -602,6 +606,7 @@ open class DrmExtractorLink private constructor(
  * @property headers Headers <String, String> map that will be used by network request.
  * @property extractorData Used for getExtractorVerifierJob()
  * @property type Extracted link type (Video, M3u8, Dash, Torrent or Magnet)
+ * @property audioTracks List of separate audio tracks that can be used with this video
  * @see newExtractorLink
  * */
 open class ExtractorLink
@@ -616,6 +621,8 @@ constructor(
     /** Used for getExtractorVerifierJob() */
     open var extractorData: String? = null,
     open var type: ExtractorLinkType,
+    /** List of separate audio tracks that can be merged with this video */
+    open var audioTracks: List<AudioFile> = emptyList(),
 ) : IDownloadableMinimum {
     val isM3u8: Boolean get() = type == ExtractorLinkType.M3U8
     val isDash: Boolean get() = type == ExtractorLinkType.DASH
