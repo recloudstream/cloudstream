@@ -75,15 +75,12 @@ object InAppUpdater {
 
     private suspend fun Activity.getAppUpdate(): Update {
         return try {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-            if (
-                settingsManager.getBoolean(
-                    getString(R.string.prerelease_update_key),
-                    resources.getBoolean(R.bool.is_prerelease)
-                )
-            ) {
-                getPreReleaseUpdate()
-            } else getReleaseUpdate()
+            when {
+                // No updates on debug version
+                BuildConfig.DEBUG -> Update(false, null, null, null, null)
+                BuildConfig.FLAVOR == "prerelease" -> getPreReleaseUpdate()
+                else -> getReleaseUpdate()
+            }
         } catch (e: Exception) {
             Log.e(LOG_TAG, Log.getStackTraceString(e))
             Update(false, null, null, null, null)

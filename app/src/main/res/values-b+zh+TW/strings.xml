@@ -171,8 +171,6 @@
     <string name="automatic_plugin_updates">自動更新外掛程式</string>
     <string name="updates_settings">顯示應用程式更新</string>
     <string name="updates_settings_des">啟動應用程式後自動搜尋更新。</string>
-    <string name="uprereleases_settings">更新至預覽版</string>
-    <string name="uprereleases_settings_des">搜尋預覽版更新而不是僅搜尋正式版</string>
     <string name="github">Github</string>
     <string name="lightnovel">由相同開發者開發的輕小說應用程式</string>
     <string name="anim">由相同開發者開發的動漫應用程式</string>

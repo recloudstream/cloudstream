@@ -287,8 +287,6 @@
     <string name="automatic_plugin_updates">Mises à jour automatiques des plugins</string>
     <string name="updates_settings">Afficher les mises à jour de l\'application</string>
     <string name="updates_settings_des">Recherche automatique de nouvelles mises à jour au démarrage.</string>
-    <string name="uprereleases_settings">Mettre à jour vers une version bêta</string>
-    <string name="uprereleases_settings_des">Recherche pour une mise à jour vers une version bêta au lieu des version complètes seulement</string>
     <string name="github">Github</string>
     <string name="lightnovel">Application Light Novel par les mêmes devs</string>
     <string name="anim">Anime app by the same devs</string>
