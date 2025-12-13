@@ -656,6 +656,10 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
 
         observe(searchViewModel.currentHistory) { list ->
             (binding.searchHistoryRecycler.adapter as? SearchHistoryAdaptor?)?.submitList(list)
+             // Scroll to top to show newest items (list is sorted by newest first)
+            if (list.isNotEmpty()) {
+                binding.searchHistoryRecycler.scrollToPosition(0)
+            }
         }
 
         // Observe search suggestions
