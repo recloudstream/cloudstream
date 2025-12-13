@@ -29,7 +29,10 @@ kotlin {
 
     sourceSets {
         all {
-            languageSettings.optIn("com.lagradost.cloudstream3.Prerelease")
+            languageSettings {
+                optIn("com.lagradost.cloudstream3.InternalAPI")
+                optIn("com.lagradost.cloudstream3.Prerelease")
+            }
         }
 
         commonMain.dependencies {
@@ -56,20 +59,15 @@ buildkonfig {
     exposeObjectWithName = "BuildConfig"
 
     defaultConfigs {
-        val isDebug = kotlin.runCatching { extra.get("isDebug") }.getOrNull() == true
-        if (isDebug) {
-            logger.quiet("Compiling library with debug flag")
-        } else {
-            logger.quiet("Compiling library with release flag")
-        }
-        buildConfigField(FieldSpec.Type.BOOLEAN, "DEBUG", isDebug.toString())
+        logger.quiet("Compiling library")
 
         // Reads local.properties
         val localProperties = gradleLocalProperties(rootDir, project.providers)
 
         buildConfigField(
             FieldSpec.Type.STRING,
-            "MDL_API_KEY", (System.getenv("MDL_API_KEY") ?: localProperties["mdl.key"]).toString()
+            "MDL_API_KEY",
+            (System.getenv("MDL_API_KEY") ?: localProperties["mdl.key"]).toString()
         )
     }
 }
