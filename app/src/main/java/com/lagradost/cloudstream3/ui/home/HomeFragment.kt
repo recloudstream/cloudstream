@@ -671,6 +671,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 homeViewModel.queryTextSubmit("")
             }
 
+            homeMasterRecycler.setHasFixedSize(true)
             homeMasterRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if (isLayout(PHONE)) {
