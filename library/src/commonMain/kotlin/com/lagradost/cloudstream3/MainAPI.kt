@@ -559,7 +559,7 @@ abstract class MainAPI {
 
     /**
      * The minimum media duration in milliseconds. If the duration is smaller
-     * than this value, it will result in to short playback errors.
+     * than this value, it will result in too short playback errors.
      */
     @Prerelease
     open val minimumDurationMs: Long? = null
