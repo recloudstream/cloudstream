@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Dialog
 import android.text.Spanned
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
@@ -22,6 +23,7 @@ import com.lagradost.cloudstream3.databinding.BottomSelectionDialogBinding
 import com.lagradost.cloudstream3.databinding.BottomTextDialogBinding
 import com.lagradost.cloudstream3.databinding.OptionsPopupTvBinding
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
@@ -115,7 +117,35 @@ object SingleSelectionHelper {
         val cancelButton = binding.cancelBtt
         val applyHolder = binding.applyBttHolder
 
-        listView.isNestedScrollingEnabled = true
+        if (isLayout(PHONE or EMULATOR) && (dialog is BottomSheetDialog)) {
+            binding.dragHandle.isVisible = true
+            listView.setOnTouchListener { view, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        /**
+                         * When the user touches the ListView, tell the parent not to intercept touch events.
+                         * This ensures the ListView handles vertical scroll gestures smoothly without
+                         * accidentally collapsing the BottomSheet.
+                         */
+                        // Only disallow intercept touch for parent if ListView is scrollable.
+                        val canScrollVertically = view.canScrollVertically(-1) || view.canScrollVertically(1)
+                        view.parent.requestDisallowInterceptTouchEvent(canScrollVertically)
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        /**
+                         * When the user lifts their finger, allow the parent to intercept touch events again.
+                         * This is important for restoring normal gesture handling outside of active ListView scrolling,
+                         * like dragging the BottomSheet from the top once the scroll ends.
+                         */
+                        view.parent.requestDisallowInterceptTouchEvent(false)
+                    }
+                }
+
+                // Let the ListView handle the touch event normally.
+                view.onTouchEvent(event)
+                true
+            }
+        }
 
         applyHolder.isVisible = realShowApply
         if (!realShowApply) {
