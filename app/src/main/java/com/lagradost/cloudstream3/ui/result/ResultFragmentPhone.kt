@@ -70,8 +70,6 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.openBrowser
 import com.lagradost.cloudstream3.utils.AppContextUtils.updateHasTrailers
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
-import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.disableBackPressedCallback
-import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.enableBackPressedCallback
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.openBatteryOptimizationSettings
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
@@ -476,12 +474,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
             activity?.attachBackPressedCallback(this@ResultFragmentPhone.toString()) {
                 if (resultOverlappingPanels.getSelectedPanel().ordinal == 1) {
-                    // If we don't disable we end up in a loop with default behavior calling
-                    // this callback as well, so we disable it, run default behavior,
-                    // then re-enable this callback so it can be used for next back press.
-                    activity?.disableBackPressedCallback(this@ResultFragmentPhone.toString())
-                    activity?.onBackPressedDispatcher?.onBackPressed()
-                    activity?.enableBackPressedCallback(this@ResultFragmentPhone.toString())
+                    runDefault()
                 } else resultOverlappingPanels.closePanels()
             }
 

@@ -2,23 +2,46 @@ package com.lagradost.cloudstream3.utils
 
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
+import java.lang.ref.WeakReference
 import java.util.WeakHashMap
 
 object BackPressedCallbackHelper {
-    private val backPressedCallbacks = WeakHashMap<ComponentActivity, MutableMap<String, OnBackPressedCallback>>()
 
-    fun ComponentActivity.attachBackPressedCallback(id: String, callback: () -> Unit) {
-        val callbackMap = backPressedCallbacks.getOrPut(this) { mutableMapOf() }
+    private val backPressedCallbacks =
+        WeakHashMap<ComponentActivity, MutableMap<String, OnBackPressedCallback>>()
 
-        if (callbackMap.containsKey(id)) return
-
-        val newCallback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                callback.invoke()
+    class CallbackHelper(
+        private val activityRef: WeakReference<ComponentActivity>,
+        private val callback: OnBackPressedCallback
+    ) {
+        fun runDefault() {
+            val activity = activityRef.get() ?: return
+            val wasEnabled = callback.isEnabled
+            callback.isEnabled = false
+            try {
+                activity.onBackPressedDispatcher.onBackPressed()
+            } finally {
+                callback.isEnabled = wasEnabled
             }
         }
-        callbackMap[id] = newCallback
+    }
 
+    fun ComponentActivity.attachBackPressedCallback(
+        id: String,
+        callback: CallbackHelper.() -> Unit
+    ) {
+        val callbackMap = backPressedCallbacks.getOrPut(this) { mutableMapOf() }
+        if (callbackMap.containsKey(id)) return
+
+        // We use WeakReference to protect against potential leaks.
+        val activityRef = WeakReference(this)
+        val newCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                CallbackHelper(activityRef, this).callback()
+            }
+        }
+
+        callbackMap[id] = newCallback
         onBackPressedDispatcher.addCallback(this, newCallback)
     }
 
@@ -32,7 +55,6 @@ object BackPressedCallbackHelper {
 
     fun ComponentActivity.detachBackPressedCallback(id: String) {
         val callbackMap = backPressedCallbacks[this] ?: return
-
         callbackMap[id]?.let { callback ->
             callback.isEnabled = false
             callbackMap.remove(id)
