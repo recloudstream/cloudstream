@@ -143,6 +143,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
     }
 
     var currentTrailers: List<ExtractorLink> = emptyList()
+    var ogTrailerLinks =emptyList<String>()
     var currentTrailerIndex = 0
 
     override fun nextMirror() {
@@ -575,8 +576,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
         playerBinding?.apply {
             playerOpenSource.setOnClickListener {
-                currentTrailers.getOrNull(currentTrailerIndex)?.let {
-                    context?.openBrowser(it.url)
+                ogTrailerLinks.getOrNull(currentTrailerIndex)?.let {
+                    context?.openBrowser(it)
                 }
             }
         }
@@ -689,6 +690,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
         observe(viewModel.trailers) { trailers ->
             setTrailers(trailers.flatMap { it.mirros }) // I dont care about subtitles yet!
+            ogTrailerLinks = trailers.flatMap { it.ogTrailerLinks }
         }
 
         observeNullable(viewModel.episodes) { episodes ->
