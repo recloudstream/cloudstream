@@ -2,16 +2,20 @@ package com.lagradost.cloudstream3.utils
 
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
+import java.lang.ref.WeakReference
 import java.util.WeakHashMap
 
 object BackPressedCallbackHelper {
-    private val backPressedCallbacks = WeakHashMap<ComponentActivity, MutableMap<String, OnBackPressedCallback>>()
+
+    private val backPressedCallbacks =
+        WeakHashMap<ComponentActivity, MutableMap<String, OnBackPressedCallback>>()
 
     class CallbackHelper(
-        private val activity: ComponentActivity,
+        private val activityRef: WeakReference<ComponentActivity>,
         private val callback: OnBackPressedCallback
     ) {
         fun runDefault() {
+            val activity = activityRef.get() ?: return
             val wasEnabled = callback.isEnabled
             callback.isEnabled = false
             try {
@@ -29,9 +33,11 @@ object BackPressedCallbackHelper {
         val callbackMap = backPressedCallbacks.getOrPut(this) { mutableMapOf() }
         if (callbackMap.containsKey(id)) return
 
+        // We use WeakReference to protect against potential leaks.
+        val activityRef = WeakReference(this)
         val newCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                CallbackHelper(this@attachBackPressedCallback, this).callback()
+                CallbackHelper(activityRef, this).callback()
             }
         }
 
