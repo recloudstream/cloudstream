@@ -7,12 +7,12 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
+import androidx.core.content.withStyledAttributes
 import com.google.android.gms.cast.framework.media.widget.MiniControllerFragment
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.UIHelper.adjustAlpha
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
-import java.lang.ref.WeakReference
 
 
 class MyMiniControllerFragment : MiniControllerFragment() {
@@ -25,26 +25,15 @@ class MyMiniControllerFragment : MiniControllerFragment() {
 
     // I KNOW, KINDA SPAGHETTI SOLUTION, BUT IT WORKS
     override fun onInflate(context: Context, attributeSet: AttributeSet, bundle: Bundle?) {
-        super.onInflate(context, attributeSet, bundle)
-
-        // somehow this leaks and I really dont know why, it seams like if you go back to a fragment with this, it leaks????
         if (currentColor == 0) {
-            WeakReference(
-                context.obtainStyledAttributes(
-                    attributeSet,
-                    R.styleable.CustomCast
-                )
-            ).apply {
-                if (get()
-                        ?.hasValue(R.styleable.CustomCast_customCastBackgroundColor) == true
-                ) {
-                    currentColor =
-                        get()
-                            ?.getColor(R.styleable.CustomCast_customCastBackgroundColor, 0) ?: 0
+            context.withStyledAttributes(attributeSet, R.styleable.CustomCast, 0, 0) {
+                if (hasValue(R.styleable.CustomCast_customCastBackgroundColor)) {
+                    currentColor = getColor(R.styleable.CustomCast_customCastBackgroundColor, 0)
                 }
-                get()?.recycle()
-            }.clear()
+            }
         }
+
+        super.onInflate(context, attributeSet, bundle)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
