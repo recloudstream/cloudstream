@@ -113,8 +113,9 @@ object SingleSelectionHelper {
         val textView = binding.text1
         val applyButton = binding.applyBtt
         val cancelButton = binding.cancelBtt
-        val applyHolder =
-            binding.applyBttHolder
+        val applyHolder = binding.applyBttHolder
+
+        listView.isNestedScrollingEnabled = true
 
         applyHolder.isVisible = realShowApply
         if (!realShowApply) {
