@@ -18,6 +18,7 @@ import android.widget.Toast
 import androidx.annotation.FontRes
 import androidx.annotation.OptIn
 import androidx.annotation.Px
+import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.media3.common.text.Cue
 import androidx.media3.common.util.UnstableApi
@@ -59,10 +60,11 @@ const val SUBTITLE_KEY = "subtitle_settings"
 const val SUBTITLE_AUTO_SELECT_KEY = "subs_auto_select"
 const val SUBTITLE_DOWNLOAD_KEY = "subs_auto_download"
 
-data class SaveCaptionStyle @OptIn(UnstableApi::class) constructor(
+data class SaveCaptionStyle(
     @JsonProperty("foregroundColor") var foregroundColor: Int,
     @JsonProperty("backgroundColor") var backgroundColor: Int,
     @JsonProperty("windowColor") var windowColor: Int,
+    @OptIn(UnstableApi::class)
     @JsonProperty("edgeType") var edgeType: @CaptionStyleCompat.EdgeType Int,
     @JsonProperty("edgeColor") var edgeColor: Int,
     @FontRes
@@ -90,7 +92,7 @@ data class SaveCaptionStyle @OptIn(UnstableApi::class) constructor(
 
 const val DEF_SUBS_ELEVATION = 20
 
-@OptIn(androidx.media3.common.util.UnstableApi::class)
+@OptIn(UnstableApi::class)
 class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
     BaseFragment.BindingCreator.Inflate(SubtitleSettingsBinding::inflate)
 ) {
@@ -636,10 +638,9 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
 
             subtitlesFilterSubLang.setOnCheckedChangeListener { _, b ->
                 context?.let { ctx ->
-                    PreferenceManager.getDefaultSharedPreferences(ctx)
-                        .edit()
-                        .putBoolean(getString(R.string.filter_sub_lang_key), b)
-                        .apply()
+                    PreferenceManager.getDefaultSharedPreferences(ctx).edit {
+                        putBoolean(getString(R.string.filter_sub_lang_key), b)
+                    }
                 }
             }
 

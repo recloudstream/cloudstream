@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.actions.temp.BiglyBTPackage
 import com.lagradost.cloudstream3.actions.temp.CopyClipboardAction
 import com.lagradost.cloudstream3.actions.temp.JustPlayerPackage
 import com.lagradost.cloudstream3.actions.temp.LibreTorrentPackage
+import com.lagradost.cloudstream3.actions.temp.MpvExPackage
 import com.lagradost.cloudstream3.actions.temp.MpvKtPackage
 import com.lagradost.cloudstream3.actions.temp.MpvKtPreviewPackage
 import com.lagradost.cloudstream3.actions.temp.MpvPackage
@@ -51,6 +52,7 @@ object VideoClickActionHolder {
         // main support external apps
         VlcPackage(),
         MpvPackage(),
+        MpvExPackage(),
         NextPlayerPackage(),
         JustPlayerPackage(),
         FcastAction(),

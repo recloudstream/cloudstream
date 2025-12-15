@@ -266,68 +266,62 @@
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/download_list"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:paddingBottom="100dp"
-        android:clipToPadding="false"
         android:layout_height="match_parent"
         android:background="?attr/primaryBlackBackground"
-        android:descendantFocusability="afterDescendants"
-        android:nextFocusUp="@id/download_appbar"
-        android:nextFocusLeft="@id/navigation_downloads"
-        android:tag="@string/tv_no_focus_tag"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:listitem="@layout/download_header_episode" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <TextView
-        android:id="@+id/text_no_downloads"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="30dp"
-        android:text="@string/downloads_empty"
-        android:gravity="center"
-        android:visibility="gone"
-        tools:visibility="visible" />
-
-    <!--
-    <ProgressBar
-        android:visibility="visible"
-        tools:visibility="gone"
-        android:id="@+id/download_loading"
-        android:layout_gravity="center"
-        android:layout_width="50dp" android:layout_height="50dp">
-    </ProgressBar>-->
-
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/download_loading"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:orientation="vertical"
-        android:paddingTop="120dp"
-        app:shimmer_auto_start="true"
-        app:shimmer_base_alpha="0.2"
-        app:shimmer_duration="@integer/loading_time"
-        app:shimmer_highlight_alpha="0.3"
-        tools:visibility="gone">
-
-        <LinearLayout
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/download_loading"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/loading_margin"
-            android:layout_marginEnd="@dimen/loading_margin"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:paddingTop="20dp"
+            app:shimmer_auto_start="true"
+            app:shimmer_base_alpha="0.2"
+            app:shimmer_duration="@integer/loading_time"
+            app:shimmer_highlight_alpha="0.3"
+            tools:visibility="gone">
 
-            <include layout="@layout/loading_downloads" />
-            <include layout="@layout/loading_downloads" />
-            <include layout="@layout/loading_downloads" />
-            <include layout="@layout/loading_downloads" />
-            <include layout="@layout/loading_downloads" />
-            <include layout="@layout/loading_downloads" />
-        </LinearLayout>
-    </com.facebook.shimmer.ShimmerFrameLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/loading_margin"
+                android:layout_marginEnd="@dimen/loading_margin"
+                android:orientation="vertical">
+
+                <include layout="@layout/loading_downloads" />
+                <include layout="@layout/loading_downloads" />
+                <include layout="@layout/loading_downloads" />
+                <include layout="@layout/loading_downloads" />
+                <include layout="@layout/loading_downloads" />
+                <include layout="@layout/loading_downloads" />
+            </LinearLayout>
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/download_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="100dp"
+            android:clipToPadding="false"
+            android:descendantFocusability="afterDescendants"
+            android:nextFocusUp="@id/download_appbar"
+            android:nextFocusLeft="@id/navigation_downloads"
+            android:tag="@string/tv_no_focus_tag"
+            tools:listitem="@layout/download_header_episode" />
+ 
+        <TextView
+            android:id="@+id/text_no_downloads"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="30dp"
+            android:text="@string/downloads_empty"
+            android:gravity="center"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
