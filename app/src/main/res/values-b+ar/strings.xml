@@ -699,7 +699,7 @@
     <string name="player_load_one_subtitle_online">تحميل أول ترجمة متاحة</string>
     <string name="torrent_preferred_media">تفعيل التورنت من خلال الاعدادات/المصادر/المحتوى المفضل</string>
     <string name="torrent_not_accepted">قم بإعادة تشغيل التطبيق و قبول التنبيه الخاص بالتورنت للمتابعة.</string>
-    <string name="software_decoding_desc">يمكّن فك تشفير البرمجي المشغل من تشغيل ملفات الفيديو التي لا يدعمها جهازك، ولكنه قد يتسبب في بطء أو عدم استقرار التشغيل على الدقة العالية</string>
+    <string name="software_decoding_desc">يمكّن فك تشفير البرمجي المشغل من تشغيل ملفات الفيديو التي لا يدعمها جهازك، ولكنه قد يتسبب في بطء أو عدم استقرار التشغيل على الدقة العالية.</string>
     <string name="software_decoding">فك الترميز البرمجي</string>
     <string name="sort_episodes_rating_high_low">تقييم (الأعلى)</string>
     <string name="sort_episodes_rating_low_high">تقييم (الأقل)</string>
@@ -766,4 +766,5 @@
     <string name="top_left">اعلى يسار</string>
     <string name="top_center">اعلى وسط</string>
     <string name="top_right">اعلى يمين</string>
+    <string name="play_full_series_button">شاهد المسلسل كاملاً</string>
 </resources>

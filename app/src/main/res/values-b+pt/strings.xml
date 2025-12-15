@@ -732,4 +732,5 @@
     <string name="top_left">Esquerda encima</string>
     <string name="top_center">Centro em cima</string>
     <string name="top_right">Direita em cima</string>
+    <string name="play_full_series_button">Reproduzir Série Inteira</string>
 </resources>
