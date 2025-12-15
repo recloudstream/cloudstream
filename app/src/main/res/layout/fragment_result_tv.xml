@@ -747,7 +747,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
         <LinearLayout
             android:id="@+id/episode_holder_tv"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="end"
             android:orientation="horizontal"
             android:paddingStart="@dimen/result_padding"
