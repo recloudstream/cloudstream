@@ -558,13 +558,6 @@ abstract class MainAPI {
     open val loadTimeoutMs: Long? = null
 
     /**
-     * The minimum media duration in milliseconds. If the duration is smaller
-     * than this value, it will result in too short playback errors.
-     */
-    @Prerelease
-    open val minimumDurationMs: Long? = null
-
-    /**
      * A set of which ids the provider can open with getLoadUrl()
      * If the set contains SyncIdName.Imdb then getLoadUrl() can be started with
      * an Imdb class which inherits from SyncId.
