@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.Dialog
 import android.text.Spanned
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
@@ -117,34 +116,9 @@ object SingleSelectionHelper {
         val cancelButton = binding.cancelBtt
         val applyHolder = binding.applyBttHolder
 
-        if (isLayout(PHONE or EMULATOR) && (dialog is BottomSheetDialog)) {
+        if (isLayout(PHONE or EMULATOR) && dialog is BottomSheetDialog) {
             binding.dragHandle.isVisible = true
-            listView.setOnTouchListener { view, event ->
-                when (event.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        /**
-                         * When the user touches the ListView, tell the parent not to intercept touch events.
-                         * This ensures the ListView handles vertical scroll gestures smoothly without
-                         * accidentally collapsing the BottomSheet.
-                         */
-                        // Only disallow intercept touch for parent if ListView is scrollable.
-                        val canScrollVertically = view.canScrollVertically(-1) || view.canScrollVertically(1)
-                        view.parent.requestDisallowInterceptTouchEvent(canScrollVertically)
-                    }
-                    MotionEvent.ACTION_UP -> {
-                        /**
-                         * When the user lifts their finger, allow the parent to intercept touch events again.
-                         * This is important for restoring normal gesture handling outside of active ListView scrolling,
-                         * like dragging the BottomSheet from the top once the scroll ends.
-                         */
-                        view.parent.requestDisallowInterceptTouchEvent(false)
-                    }
-                }
-
-                // Let the ListView handle the touch event normally.
-                view.onTouchEvent(event)
-                true
-            }
+            listView.isNestedScrollingEnabled = true
         }
 
         applyHolder.isVisible = realShowApply

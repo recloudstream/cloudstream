@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp">
+
         <com.google.android.material.bottomsheet.BottomSheetDragHandleView
             android:id="@+id/drag_handle"
             android:layout_width="match_parent"
@@ -33,7 +34,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginBottom="60dp"
         android:paddingTop="10dp"
         android:dividerHeight="1dp"
         android:requiresFadingEdge="vertical"
@@ -45,9 +45,7 @@
         android:id="@+id/apply_btt_holder"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_marginTop="-60dp"
-        android:layout_gravity="bottom"
-        android:gravity="bottom|end"
+        android:gravity="center_vertical|end"
         android:orientation="horizontal">
 
         <com.google.android.material.button.MaterialButton
