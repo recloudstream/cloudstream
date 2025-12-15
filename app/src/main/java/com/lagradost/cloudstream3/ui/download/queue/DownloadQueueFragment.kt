@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.download.queue
 
 import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isGone
 import androidx.fragment.app.activityViewModels
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentDownloadQueueBinding
@@ -26,6 +27,11 @@ class DownloadQueueFragment :
         val adapter = DownloadQueueAdapter(this@DownloadQueueFragment)
 
         observe(queueViewModel.childCards) { cards ->
+            val size = cards.queue.size + cards.currentDownloads.size
+            val isEmptyQueue = size == 0
+            binding.downloadQueueList.isGone = isEmptyQueue
+            binding.textNoQueue.isGone = !isEmptyQueue
+
             adapter.submitQueue(cards)
         }
 
@@ -53,11 +59,11 @@ class DownloadQueueFragment :
                 }
             }
 
-            downloadChildList.adapter = adapter
+            downloadQueueList.adapter = adapter
 
             // Drag and drop
             val helper = DragAndDropTouchHelper(adapter)
-            helper.attachToRecyclerView(downloadChildList)
+            helper.attachToRecyclerView(downloadQueueList)
         }
     }
     

@@ -25,7 +25,7 @@ object DownloadObjects {
             }
         }
 
-        /** Loop through the current download instances to see if it is currently downloading*/
+        /** Loop through the current download instances to see if it is currently downloading. Also includes link loading. */
         fun isCurrentlyDownloading(): Boolean {
             return DownloadQueueService.downloadInstances.value.any { it.downloadQueueWrapper.id == this.id }
         }
@@ -133,7 +133,7 @@ object DownloadObjects {
         @JsonProperty("relativePath") val relativePath: String,
         @JsonProperty("displayName") val displayName: String,
         @JsonProperty("extraInfo") val extraInfo: String? = null,
-        @JsonProperty("basePath") val basePath: String? = null // null is for legacy downloads. See getDefaultPath()
+        @JsonProperty("basePath") val basePath: String? = null // null is for legacy downloads. See getBasePath()
     )
 
     data class DownloadedFileInfoResult(

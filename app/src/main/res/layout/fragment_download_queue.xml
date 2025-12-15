@@ -6,8 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/primaryGrayBackground"
-    android:orientation="vertical"
-    tools:context=".ui.download.DownloadChildFragment">
+    android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -20,22 +19,42 @@
             android:layout_height="wrap_content"
             android:background="?attr/primaryGrayBackground"
             android:paddingTop="@dimen/navbar_height"
-            app:menu="@menu/download_queue"
             app:layout_scrollFlags="scroll|enterAlways"
+            app:menu="@menu/download_queue"
             app:navigationIconTint="?attr/iconColor"
             app:titleTextColor="?attr/textColor"
             tools:title="Overlord" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/download_child_list"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/primaryBlackBackground"
-        android:nextFocusLeft="@id/navigation_downloads"
-        android:nextFocusUp="@id/download_child_toolbar"
-        android:padding="10dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:listitem="@layout/download_child_episode" />
+        android:background="?attr/primaryBlackBackground">
+
+        <TextView
+            android:id="@+id/text_no_queue"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginBottom="110dp"
+            android:text="@string/queue_empty_message"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/download_queue_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:nextFocusLeft="@id/navigation_downloads"
+            android:nextFocusUp="@id/download_queue_toolbar"
+            android:padding="10dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/download_queue_item" />
+
+    </LinearLayout>
+
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

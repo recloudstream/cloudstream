@@ -30,6 +30,10 @@ import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.setupStream
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
+import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager.QUEUE_KEY
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.KEY_DOWNLOAD_INFO
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.KEY_RESUME_IN_QUEUE
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.KEY_RESUME_PACKAGES
 import com.lagradost.safefile.MediaFileContentType
 import com.lagradost.safefile.SafeFile
 import okhttp3.internal.closeQuietly
@@ -76,6 +80,24 @@ object BackupUtils {
         "open_subtitles_user",
         "subdl_user",
         "simkl_token",
+
+
+        // Downloads can not be restored from backups.
+        // The download path URI can not be transferred.
+        // In the future we may potentially write metadata to files in the download directory
+        // and make it possible to restore download folders using that metadata.
+        DOWNLOAD_HEADER_CACHE_BACKUP,
+        DOWNLOAD_HEADER_CACHE,
+        DOWNLOAD_EPISODE_CACHE_BACKUP,
+        DOWNLOAD_EPISODE_CACHE,
+
+        // This may overwrite valid local data with invalid data
+        KEY_DOWNLOAD_INFO,
+
+        // Prevent backups from automatically starting downloads
+        KEY_RESUME_IN_QUEUE,
+        KEY_RESUME_PACKAGES,
+        QUEUE_KEY
     )
 
     /** false if key should not be contained in backup */

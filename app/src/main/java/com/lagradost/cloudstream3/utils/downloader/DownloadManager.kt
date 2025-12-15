@@ -31,6 +31,7 @@ import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.services.VideoDownloadService
 import com.lagradost.cloudstream3.sortUrls
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
@@ -98,7 +99,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import org.schabi.newpipe.extractor.timeago.patterns.fi
 import java.io.Closeable
 import java.io.IOException
 import java.io.OutputStream
@@ -379,7 +379,7 @@ object VideoDownloadManager {
                 builder.setContentText(txt)
             }
 
-            if ((state == DownloadType.IsDownloading || state == DownloadType.IsPaused) && SDK_INT >= Build.VERSION_CODES.O) {
+            if ((state == DownloadType.IsDownloading || state == DownloadType.IsPaused || state == DownloadType.IsPending) && SDK_INT >= Build.VERSION_CODES.O) {
                 val actionTypes: MutableList<DownloadActionType> = ArrayList()
                 // INIT
                 if (state == DownloadType.IsDownloading) {
@@ -389,6 +389,9 @@ object VideoDownloadManager {
 
                 if (state == DownloadType.IsPaused) {
                     actionTypes.add(DownloadActionType.Resume)
+                    actionTypes.add(DownloadActionType.Stop)
+                }
+                if (state == DownloadType.IsPending) {
                     actionTypes.add(DownloadActionType.Stop)
                 }
 
@@ -563,9 +566,6 @@ object VideoDownloadManager {
 
                     DownloadActionType.Stop -> {
                         type = DownloadType.IsStopped
-                        removeKey(KEY_RESUME_PACKAGES, event.first.toString())
-                        removeKey(KEY_RESUME_IN_QUEUE, event.first.toString())
-                        DownloadQueueManager.removeFromQueue(event.first)
                         stopListener?.invoke()
                         stopListener = null
                     }
@@ -1603,26 +1603,63 @@ object VideoDownloadManager {
         private val TAG = "EpisodeDownloadInstance"
         private var subtitleDownloadJob: Job? = null
         private var downloadJob: Job? = null
+        private var linkLoadingJob: Job? = null
+
+        /** isCompleted just means the download should not be retried.
+         * It includes stopped by user AND completion of file download.
+         * */
         var isCompleted = false
             set(value) {
                 field = value
                 if (value) {
                     removeKey(KEY_RESUME_IN_QUEUE, downloadQueueWrapper.id.toString())
+                    // Do not emit events when completed as it may also trigger on cancellation.
+
+
+                    // Force refresh the queue when completed.
+                    // May lead to some redundant calls, but ensures that the queue is always up to date.
+                    DownloadQueueManager.forceRefreshQueue()
                 }
             }
 
+        /** Cancels all active jobs and sets instance to failed. */
+        fun cancelDownload() {
+            val cause = "Cancel call from cancelDownload"
+            this.subtitleDownloadJob?.cancel(cause)
+            this.linkLoadingJob?.cancel(cause)
+
+            // Should not cancel the download job, it may need to clean up itself.
+            // Better to send a status event using isFailed and let it cancel itself.
+
+            isFailed = true
+        }
+
+
+        /** This failure can be both downloader and user initiated.
+         * Do not automatically retry in case of failure. */
         var isFailed = false
             set(value) {
                 field = value
                 // Clean up failed work
                 if (value) {
                     removeKey(KEY_RESUME_IN_QUEUE, downloadQueueWrapper.id.toString())
+                    val status = DownloadType.IsFailed
+                    val id = downloadQueueWrapper.id
+
+                    downloadStatusEvent.invoke(Pair(id, status))
+                    downloadStatus[id] = status
+
+                    // Force refresh the queue when failed.
+                    // May lead to some redundant calls, but ensures that the queue is always up to date.
+                    DownloadQueueManager.forceRefreshQueue()
                 }
             }
 
         companion object {
             private fun displayNotification(context: Context, id: Int, notification: Notification) {
-                NotificationManagerCompat.from(context).notify(id, notification)
+                safe {
+                    NotificationManagerCompat.from(context).notify(id, notification)
+                }
             }
         }
 
@@ -1679,13 +1716,11 @@ object VideoDownloadManager {
                         isCompleted = true
                         break
                     } else if (!connectionResult.tryNext || index >= item.links.lastIndex) {
-                        downloadStatusEvent.invoke(Pair(id, DownloadType.IsFailed))
                         isFailed = true
                         break
                     }
                 }
             } catch (e: Exception) {
-                downloadStatusEvent.invoke(Pair(id, DownloadType.IsFailed))
                 isFailed = true
                 logError(e)
             } finally {
@@ -1817,24 +1852,38 @@ object VideoDownloadManager {
                 // 2. Makes it into the download format
                 // 3. Downloads it as a .vtt file
                 this.subtitleDownloadJob = ioSafe {
-                    val downloadList = SubtitlesFragment.getDownloadSubsLanguageTagIETF()
+                    try {
+                        val downloadList = SubtitlesFragment.getDownloadSubsLanguageTagIETF()
 
-                    subs?.filter { subtitle ->
-                        downloadList.any { langTagIETF ->
-                            subtitle.languageCode == langTagIETF ||
-                                    subtitle.originalName.contains(
-                                        fromTagToEnglishLanguageName(
-                                            langTagIETF
-                                        ) ?: langTagIETF
-                                    )
+                        subs?.filter { subtitle ->
+                            downloadList.any { langTagIETF ->
+                                subtitle.languageCode == langTagIETF ||
+                                        subtitle.originalName.contains(
+                                            fromTagToEnglishLanguageName(
+                                                langTagIETF
+                                            ) ?: langTagIETF
+                                        )
+                            }
                         }
+                            ?.map { ExtractorSubtitleLink(it.name, it.url, "", it.headers) }
+                            ?.take(3) // max subtitles download hardcoded (?_?)
+                            ?.forEach { link ->
+                                val fileName = getFileName(context, meta)
+                                downloadSubtitle(context, link, fileName, folder)
+                            }
+
+                    } catch (_: CancellationException) {
+                        val fileName = getFileName(context, meta)
+
+                        val info = DownloadedFileInfo(
+                            totalBytes = 0,
+                            relativePath = folder,
+                            displayName = fileName,
+                            basePath = context.getBasePath().second
+                        )
+
+                        deleteMatchingSubtitles(context, info)
                     }
-                        ?.map { ExtractorSubtitleLink(it.name, it.url, "", it.headers) }
-                        ?.take(3) // max subtitles download hardcoded (?_?)
-                        ?.forEach { link ->
-                            val fileName = getFileName(context, meta)
-                            downloadSubtitle(context, link, fileName, folder)
-                        }
                 }
             } catch (e: Exception) {
                 // The work is only failed if the job did not get started
@@ -1877,31 +1926,38 @@ object VideoDownloadManager {
                 displayNotification(context, downloadItem.episode.id, linkLoadingNotification)
             }
 
-            generator.generateLinks(
-                clearCache = false,
-                sourceTypes = LOADTYPE_INAPP_DOWNLOAD,
-                callback = {
-                    it.first?.let { link ->
-                        currentLinks.add(link)
-                    }
-                },
-                subtitleCallback = { sub ->
-                    currentSubs.add(sub)
-                })
+            linkLoadingJob = ioSafe {
+                generator.generateLinks(
+                    clearCache = false,
+                    sourceTypes = LOADTYPE_INAPP_DOWNLOAD,
+                    callback = {
+                        it.first?.let { link ->
+                            currentLinks.add(link)
+                        }
+                    },
+                    subtitleCallback = { sub ->
+                        currentSubs.add(sub)
+                    })
+            }
+
+            // Wait for link loading completion
+            linkLoadingJob?.join()
 
             // Remove link loading notification
             NotificationManagerCompat.from(context).cancel(downloadItem.episode.id)
 
-            if (currentLinks.isEmpty()) {
+            if (linkLoadingJob?.isCancelled == true) {
+                // Same as if no links, but no toast.
+                // Cancelled link loading is presumed to be user initiated
+                isFailed = true
+                return
+            } else if (currentLinks.isEmpty()) {
                 main {
                     showToast(
                         R.string.no_links_found_toast,
                         Toast.LENGTH_SHORT
                     )
                 }
-                // We need to explicitly update the queue if the link loading fails.
-                // Otherwise the queue it may get stuck.
-                DownloadQueueManager.forceRefreshQueue()
                 isFailed = true
                 return
             } else {

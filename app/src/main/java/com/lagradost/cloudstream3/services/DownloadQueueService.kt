@@ -10,13 +10,18 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.PendingIntentCompat
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.utils.AppContextUtils.createNotificationChannel
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.KEY_RESUME_IN_QUEUE
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.KEY_RESUME_PACKAGES
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.downloadEvent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,6 +48,11 @@ class DownloadQueueService : Service() {
 
         private val _downloadInstances: MutableStateFlow<List<VideoDownloadManager.EpisodeDownloadInstance>> =
             MutableStateFlow(emptyList())
+
+        /** Flow of all active downloads, not queued. May temporarily contain completed or failed EpisodeDownloadInstances.
+         * Completed or failed instances are automatically removed by the download queue service.
+         *
+         */
         val downloadInstances: StateFlow<List<VideoDownloadManager.EpisodeDownloadInstance>> =
             _downloadInstances
 
@@ -92,8 +102,24 @@ class DownloadQueueService : Service() {
             .setSubText(activeQueue)
             .build()
 
-        NotificationManagerCompat.from(context)
-            .notify(DOWNLOAD_QUEUE_NOTIFICATION_ID, newNotification)
+        safe {
+            NotificationManagerCompat.from(context)
+                .notify(DOWNLOAD_QUEUE_NOTIFICATION_ID, newNotification)
+        }
+    }
+
+    // We always need to listen to events, even before the download is launched.
+    // Stopping link loading is an event which can trigger before downloading.
+    val downloadEventListener = { event: Pair<Int, VideoDownloadManager.DownloadActionType> ->
+        when (event.second) {
+            VideoDownloadManager.DownloadActionType.Stop -> {
+                removeKey(KEY_RESUME_PACKAGES, event.first.toString())
+                removeKey(KEY_RESUME_IN_QUEUE, event.first.toString())
+                DownloadQueueManager.cancelDownload(event.first)
+            }
+
+            else -> {}
+        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
@@ -116,6 +142,8 @@ class DownloadQueueService : Service() {
         } else {
             startForeground(DOWNLOAD_QUEUE_NOTIFICATION_ID, baseNotification.build())
         }
+
+        downloadEvent += downloadEventListener
 
         ioSafe {
             totalDownloadFlow
@@ -167,6 +195,7 @@ class DownloadQueueService : Service() {
 
     override fun onDestroy() {
         Log.d(TAG, "Download queue service stopped.")
+        downloadEvent -= downloadEventListener
         isRunning = false
         super.onDestroy()
     }

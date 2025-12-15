@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.ui.download.queue
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -31,7 +30,6 @@ import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.DownloadQueue
 import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.KEY_DOWNLOAD_INFO
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDownloadFileInfo
 
 /** An item in the adapter can either be a separator or a real item.
  * isCurrentlyDownloading is used to fully update items as opposed to just moving them. */
@@ -120,6 +118,8 @@ class DownloadQueueAdapter(val fragment: Fragment) : BaseAdapter<DownloadAdapter
                 downloadChildEpisodeTextExtra.text = null
             }
 
+            downloadChildEpisodeTextExtra.isGone = downloadChildEpisodeTextExtra.text.isNullOrBlank()
+
             val status = VideoDownloadManager.downloadStatus[queueWrapper.id]
 
             downloadButton.setOnClickListener { view ->
@@ -135,18 +135,22 @@ class DownloadQueueAdapter(val fragment: Fragment) : BaseAdapter<DownloadAdapter
                 )
 
                 val isCurrentlyDownloading = queueWrapper.isCurrentlyDownloading()
+
+                val actionList = arrayListOf<Pair<Int,Int>>()
+
                 if (isCurrentlyDownloading && episodeCached != null) {
-                    val list = arrayListOf<Pair<Int, Int>>()
                     // KEY_DOWNLOAD_INFO is used in the file deletion, and is required to exist to delete anything
                     if (downloadInfo != null) {
-                        list.add(Pair(DOWNLOAD_ACTION_DELETE_FILE, R.string.popup_delete_file))
+                        actionList.add(Pair(DOWNLOAD_ACTION_DELETE_FILE, R.string.popup_delete_file))
+                    } else {
+                        actionList.add(Pair(DOWNLOAD_ACTION_CANCEL_PENDING, R.string.cancel))
                     }
 
                     val currentStatus = VideoDownloadManager.downloadStatus[queueWrapper.id]
 
                     when (currentStatus) {
                         VideoDownloadManager.DownloadType.IsDownloading -> {
-                            list.add(
+                            actionList.add(
                                 Pair(
                                     DOWNLOAD_ACTION_PAUSE_DOWNLOAD,
                                     R.string.popup_pause_download
@@ -155,7 +159,7 @@ class DownloadQueueAdapter(val fragment: Fragment) : BaseAdapter<DownloadAdapter
                         }
 
                         VideoDownloadManager.DownloadType.IsPaused -> {
-                            list.add(
+                            actionList.add(
                                 Pair(
                                     DOWNLOAD_ACTION_RESUME_DOWNLOAD,
                                     R.string.popup_resume_download
@@ -167,21 +171,19 @@ class DownloadQueueAdapter(val fragment: Fragment) : BaseAdapter<DownloadAdapter
                     }
 
                     view.popupMenuNoIcons(
-                        list
+                        actionList
                     ) {
                         handleDownloadClick(DownloadClickEvent(itemId, episodeCached))
                     }
-                } else if (!isCurrentlyDownloading) {
-                    val list = arrayListOf(
-                        Pair(DOWNLOAD_ACTION_CANCEL_PENDING, R.string.cancel),
-                    )
+                } else {
+                    actionList.add(Pair(DOWNLOAD_ACTION_CANCEL_PENDING, R.string.cancel))
 
                     view.popupMenuNoIcons(
-                        list
+                        actionList
                     ) {
                         when (itemId) {
                             DOWNLOAD_ACTION_CANCEL_PENDING -> {
-                                DownloadQueueManager.removeFromQueue(queueWrapper.id)
+                                DownloadQueueManager.cancelDownload(queueWrapper.id)
                             }
                         }
                     }

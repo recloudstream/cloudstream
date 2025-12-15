@@ -14,7 +14,6 @@ import com.lagradost.cloudstream3.ui.player.ExtractorUri
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
-import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.utils.SnackbarHelper.showSnackbar
@@ -113,7 +112,7 @@ object DownloadButtonSetup {
             }
 
             DOWNLOAD_ACTION_CANCEL_PENDING -> {
-                DownloadQueueManager.removeFromQueue(click.data.id)
+                DownloadQueueManager.cancelDownload(id)
             }
 
             DOWNLOAD_ACTION_PLAY_FILE -> {

@@ -8,8 +8,11 @@ import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKeys
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKeys
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
+import com.lagradost.cloudstream3.MainActivity.Companion.lastError
 import com.lagradost.cloudstream3.mvvm.safe
+import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.services.DownloadQueueService
+import com.lagradost.cloudstream3.services.DownloadQueueService.Companion.downloadInstances
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects.DownloadQueueWrapper
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.KEY_RESUME_IN_QUEUE
@@ -29,8 +32,13 @@ import kotlinx.coroutines.flow.updateAndGet
 // 3. The service starts work manager jobs to handle the downloads?
 object DownloadQueueManager {
     private const val TAG = "DownloadQueueManager"
-    private const val QUEUE_KEY = "download_queue_key"
+    const val QUEUE_KEY = "download_queue_key"
 
+    /** Flow of all active queued download, no active downloads.
+     * This flow may see many changes, do not place expensive observers.
+     * downloadInstances is the flow keeping track of active downloads.
+     * @see com.lagradost.cloudstream3.services.DownloadQueueService.Companion.downloadInstances
+     */
     private val _queue: MutableStateFlow<Array<DownloadQueueWrapper>> by lazy {
         /** Persistent queue */
         val currentValue = getKey<Array<DownloadQueueWrapper>>(QUEUE_KEY) ?: emptyArray()
@@ -49,7 +57,12 @@ object DownloadQueueManager {
             }
         }
 
-        ioSafe {
+        ioSafe startQueue@{
+            // Do not automatically start the queue if safe mode is activated.
+            if (PluginManager.checkSafeModeFile() || lastError != null) {
+                return@startQueue
+            }
+
             val resumeQueue =
                 getPreResumeIds().filterNot {
                     VideoDownloadManager.currentDownloads.value.contains(it)
@@ -71,6 +84,7 @@ object DownloadQueueManager {
             newQueue.forEach { obj ->
                 setQueueStatus(obj.id, VideoDownloadManager.DownloadType.IsPending)
             }
+
             if (newQueue.any()) {
                 startQueueService(context)
             }
@@ -166,6 +180,19 @@ object DownloadQueueManager {
         ioSafe {
             val intent = DownloadQueueService.getIntent(context)
             ContextCompat.startForegroundService(context, intent)
+        }
+    }
+
+    /** Cancels an active download or removes it from queue depending on where it is. */
+    fun cancelDownload(id: Int) {
+        Log.d(TAG, "Cancelling download: $id")
+
+        val currentInstance = downloadInstances.value.find { it.downloadQueueWrapper.id == id }
+
+        if (currentInstance != null) {
+            currentInstance.cancelDownload()
+        } else {
+            removeFromQueue(id)
         }
     }
 
