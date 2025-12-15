@@ -248,6 +248,7 @@ object InAppUpdater {
 
     /**
      * @param checkAutoUpdate if the update check was launched automatically
+     * @param installPrerelease if we want to install the pre-release version
      */
     suspend fun Activity.runAutoUpdate(
         checkAutoUpdate: Boolean = true,
