@@ -389,8 +389,7 @@ fun SelectPopup.getOptions(context: Context): List<String> {
 }
 
 data class ExtractedTrailerData(
-    val ogTrailerLinks: List<String>, //original trailer links from provider
-    var mirros: List<ExtractorLink>,
+    var mirros: List<Pair<ExtractorLink,String>>,//Pair of extracted trailer link and original trailer link
     var subtitles: List<SubtitleFile> = emptyList(),
 )
 
@@ -2591,19 +2590,19 @@ class ResultViewModel2 : ViewModel() {
         coroutineScope {
             val returnlist = ArrayList<ExtractedTrailerData>()
             loadResponse.trailers.windowed(limit, limit, true).takeWhile { list ->
-                val ogTrailerLinks = arrayListOf<String>()
                 list.amap { trailerData ->
                     try {
-                        val links = arrayListOf<ExtractorLink>()
+                        val links = arrayListOf<Pair<ExtractorLink,String>>()
                         val subs = arrayListOf<SubtitleFile>()
                         if (!loadExtractor(
                                 trailerData.extractorUrl,
                                 trailerData.referer,
                                 { subs.add(it) },
-                                { links.add(it).also{ogTrailerLinks.add(trailerData.extractorUrl)}}) && trailerData.raw
+                                { links.add(Pair(it,trailerData.extractorUrl))}) && trailerData.raw
                         ) {
                             arrayListOf(
-                                newExtractorLink(
+                                Pair(
+                                    newExtractorLink(
                                     "",
                                     "Trailer",
                                     trailerData.extractorUrl,
@@ -2612,7 +2611,7 @@ class ResultViewModel2 : ViewModel() {
                                     this.referer = trailerData.referer ?: ""
                                     this.quality = Qualities.Unknown.value
                                     this.headers = trailerData.headers
-                                }.also {ogTrailerLinks.add(trailerData.extractorUrl)}
+                                },trailerData.extractorUrl)
                             ) to arrayListOf()
                         } else {
                             links to subs
@@ -2621,7 +2620,7 @@ class ResultViewModel2 : ViewModel() {
                         logError(e)
                         null
                     }
-                }.filterNotNull().map { (links, subs) -> ExtractedTrailerData(ogTrailerLinks,links, subs) }.let {
+                }.filterNotNull().map { (links, subs) -> ExtractedTrailerData(links, subs) }.let {
                     returnlist.addAll(it)
                 }
 
