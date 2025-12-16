@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.utils
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager.NameNotFoundException
 import android.net.Uri
 import android.text.TextUtils
 import android.util.Log
@@ -37,6 +38,7 @@ object InAppUpdater {
     private const val GITHUB_USER_NAME = "recloudstream"
     private const val GITHUB_REPO = "cloudstream"
 
+    private const val PRERELEASE_PACKAGE_NAME = "com.lagradost.cloudstream3.prerelease"
     private const val LOG_TAG = "InAppUpdater"
 
     private data class GithubAsset(
@@ -73,17 +75,14 @@ object InAppUpdater {
         @JsonProperty("updateNodeId") val updateNodeId: String?,
     )
 
-    private suspend fun Activity.getAppUpdate(): Update {
+    private suspend fun Activity.getAppUpdate(installPrerelease: Boolean): Update {
         return try {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-            if (
-                settingsManager.getBoolean(
-                    getString(R.string.prerelease_update_key),
-                    resources.getBoolean(R.bool.is_prerelease)
-                )
-            ) {
-                getPreReleaseUpdate()
-            } else getReleaseUpdate()
+            when {
+                // No updates on debug version
+                BuildConfig.DEBUG -> Update(false, null, null, null, null)
+                BuildConfig.FLAVOR == "prerelease" || installPrerelease -> getPreReleaseUpdate()
+                else -> getReleaseUpdate()
+            }
         } catch (e: Exception) {
             Log.e(LOG_TAG, Log.getStackTraceString(e))
             Update(false, null, null, null, null)
@@ -226,17 +225,42 @@ object InAppUpdater {
         }
     }
 
+    fun Activity.installPreReleaseIfNeeded() {
+        ioSafe {
+            val isInstalled = try {
+                packageManager.getPackageInfo(PRERELEASE_PACKAGE_NAME, 0)
+                true
+            } catch (_: NameNotFoundException) {
+                false
+            }
+
+            if (isInstalled) {
+                runOnUiThread {
+                    showToast(R.string.prerelease_already_installed)
+                }
+            } else if (runAutoUpdate(false, true) == false) {
+                runOnUiThread {
+                    showToast(R.string.prerelease_install_failed)
+                }
+            }
+        }
+    }
+
     /**
      * @param checkAutoUpdate if the update check was launched automatically
+     * @param installPrerelease if we want to install the pre-release version
      */
-    suspend fun Activity.runAutoUpdate(checkAutoUpdate: Boolean = true): Boolean {
+    suspend fun Activity.runAutoUpdate(
+        checkAutoUpdate: Boolean = true,
+        installPrerelease: Boolean = false
+    ): Boolean {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
         if (!checkAutoUpdate || settingsManager.getBoolean(
                 getString(R.string.auto_update_key),
                 true
             )
         ) {
-            val update = getAppUpdate()
+            val update = getAppUpdate(installPrerelease)
             if (update.shouldUpdate && update.updateURL != null) {
                 // Check if update should be skipped
                 val updateNodeId = settingsManager.getString(

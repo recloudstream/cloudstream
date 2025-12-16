@@ -150,8 +150,6 @@
     <string name="automatic_plugin_download">تنزيل الإضافات تلقائيًا</string>
     <string name="updates_settings">التحديث التلقائي</string>
     <string name="updates_settings_des">ابحث تلقائيا عن التحديثات الجديدة بعد بدء التطبيق.</string>
-    <string name="uprereleases_settings">التحديث إلى الاصدارات التجريبية (بيتا)</string>
-    <string name="uprereleases_settings_des">البحث عن التحديثات التجريبية بدلاً من الإصدارات الكاملة فقط</string>
     <string name="github">غيت هاب</string>
     <string name="lightnovel">تطبيق روايات خفيف من نفس المطورين</string>
     <string name="anim">تطبيق أنمي من نفس المطورين</string>

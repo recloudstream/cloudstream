@@ -275,8 +275,6 @@
     <string name="pref_category_player_layout">အပြင်အဆင်</string>
     <string name="pref_category_ui_features">လုပ်ဆောင်ချက်များ</string>
     <string name="random_button_settings">ကျပန်းခလုတ်</string>
-    <string name="uprereleases_settings">ရှေ့ပြေးအပ်ဒိတ်များကိုထည့်သွင်းပါ</string>
-    <string name="uprereleases_settings_des">ပုံမှန်အပ်ဒိတ်များအစား ရှေ့ပြေးအက်ဒိတ်များကိုရှာပါ</string>
     <string name="lightnovel">တူညီသောအက်ပ်ရေးသားသူများ၏ ဝတ္ထုရှည်များဖတ်နိုင်သည့် အက်ပ်</string>
     <string name="anim">တူညီသောအက်ပ်ရေးသားသူများ၏ Anime အက်ပ်</string>
     <string name="discord">Discord ကိုဝင်ရန်</string>
