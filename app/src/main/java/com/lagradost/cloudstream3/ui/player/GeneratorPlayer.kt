@@ -1354,12 +1354,9 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
 
                 binding.applyBtt.setOnClickListener {
-                    var init = false
-                    if (sourceIndex != startSource) {
-                        init = true
-                    }
+                    var init = sourceIndex != startSource
                     if (subtitleGroupIndex != subtitleGroupIndexStart || subtitleOptionIndex != subtitleOptionIndexStart) {
-                        init = init || if (subtitleGroupIndex <= 0) {
+                        init = init or if (subtitleGroupIndex <= 0) {
                             noSubtitles()
                         } else {
                             subtitlesGroupedList.getOrNull(subtitleGroupIndex - 1)?.value?.getOrNull(
