@@ -1578,20 +1578,6 @@ class CS3IPlayer : IPlayer {
         }
         Log.i(TAG, "Rendered first frame")
         hasUsedFirstRender = true
-        val invalid = exoPlayer?.duration?.let { duration ->
-            // Only errors short playback when not playing downloaded files
-            duration < 20_000L && currentDownloadedFile == null
-                    // Concatenated sources (non 1 periodCount) bypasses the invalid check as exoPlayer.duration gives only the current period
-                    // If you can get the total time that'd be better, but this is already niche.
-                    && exoPlayer?.currentTimeline?.periodCount == 1
-                    && exoPlayer?.isCurrentMediaItemLive != true
-        } ?: false
-
-        if (invalid) {
-            releasePlayer(saveTime = false)
-            event(ErrorEvent(InvalidFileException("Too short playback")))
-            return
-        }
 
         setPreferredSubtitles(currentSubtitles)
         val format = exoPlayer?.videoFormat
