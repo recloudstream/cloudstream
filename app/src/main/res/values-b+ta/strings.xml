@@ -384,7 +384,6 @@
     <string name="updates_settings">பயன்பாட்டு புதுப்பிப்புகளைக் காட்டு</string>
     <string name="updates_settings_des">பயன்பாட்டைத் தொடங்கிய பின் புதிய புதுப்பிப்புகளைத் தானாகவே தேடுங்கள்.</string>
     <string name="redo_setup_process">அமைவு செயல்முறை மீண்டும்</string>
-    <string name="uprereleases_settings">முன்நிபந்தனைகளுக்கு புதுப்பிக்கவும்</string>
     <string name="lightnovel">அதே தேவ்சின் ஒளி நாவல் பயன்பாடு</string>
     <string name="benene">தேவ்சுக்கு ஒரு பெனீன் கொடுங்கள்</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
@@ -409,7 +408,6 @@
     <string name="preview_background_img_des">முன்னோட்டம் பின்னணி</string>
     <string name="show_fillers_settings">அனிமேசுக்கு நிரப்பு அத்தியாயத்தைக் காட்டு</string>
     <string name="automatic_plugin_download_summary">கூடுதல் களஞ்சியங்களிலிருந்து இன்னும் நிறுவப்படாத அனைத்து செருகுநிரல்களையும் தானாக நிறுவவும்.</string>
-    <string name="uprereleases_settings_des">முழு வெளியீடுகளுக்கு பதிலாக மட்டுமே புதுப்பிப்புகளைத் தேடுங்கள்</string>
     <string name="anim">அதே தேவ்சின் அனிம் பயன்பாடு</string>
     <string name="episodes">அத்தியாயங்கள்</string>
     <string name="status_completed">முடிந்தது</string>

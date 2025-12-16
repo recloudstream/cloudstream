@@ -132,8 +132,6 @@
     <string name="updates_settings_des">חפש אוטומטית עדכונים חדשים לאחר פתיחת האפליקציה.</string>
     <string name="updates_settings">הצג עדכונים לאפליקציה</string>
     <string name="redo_setup_process">בצע מחדש את תהליך ההגדרה</string>
-    <string name="uprereleases_settings">עדכן למהדורות מוקדמות</string>
-    <string name="uprereleases_settings_des">חפש עדכוני מהדרות מוקדמות במקום מהדורות מלאות בלבד</string>
     <string name="episodes">פרקים</string>
     <string name="episodes_range">%1$d-%2$d</string>
     <string name="episode">פרק</string>

@@ -102,8 +102,6 @@
     <string name="advanced_search_des">Δίνει τα αποτελέσματα αναζήτησης ταξινομημένα ανά πάροχο</string>
     <string name="updates_settings">Εμφάνιση ενημερώσεων</string>
     <string name="updates_settings_des">Αυτόματη αναζήτηση νέων ενημερώσεων κατά την εκκίνηση της εφαρμογής.</string>
-    <string name="uprereleases_settings">Ενημέρωση σε προ-εκδόσεις (beta)</string>
-    <string name="uprereleases_settings_des">Αναζητήστε ενημερώσεις προ-εκδόσεων (beta) αντί για σταθερές εκδόσεις (stable)</string>
     <string name="github">GitHub</string>
     <string name="lightnovel">Εφαρμογή βιβλίων από τους ίδιους προγραμματιστές</string>
     <string name="anim">Εφαρμογή άνιμε από τους ίδιους προγραμματιστές</string>

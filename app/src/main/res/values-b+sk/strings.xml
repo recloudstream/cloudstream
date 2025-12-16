@@ -175,8 +175,6 @@
     <string name="backup_failed_error_format">Chyba pri zálohovaní %s</string>
     <string name="advanced_search_des">Poskytne vám výsledky vyhľadávania rozdelené podľa poskytovateľa</string>
     <string name="updates_settings">Zobraziť aktualizácie aplikácie</string>
-    <string name="uprereleases_settings">Aktualizácia na predbežné vydania</string>
-    <string name="uprereleases_settings_des">Vyhľadať aktualizácie predbežných vydaní namiesto plných vydaní</string>
     <string name="subs_default_reset_toast">Obnoviť predvolenú hodnotu</string>
     <string name="season">Sezóna</string>
     <string name="synopsis">Synopsa</string>

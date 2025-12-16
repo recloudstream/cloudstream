@@ -146,8 +146,6 @@
     <string name="show_fillers_settings">Zobrazit výplňové epizody u anime</string>
     <string name="updates_settings">Zobrazit aktualizace aplikace</string>
     <string name="updates_settings_des">Při spuštění aplikace automaticky zkontrolovat nové aktualizace.</string>
-    <string name="uprereleases_settings">Aktualizovat na předběžná vydání</string>
-    <string name="uprereleases_settings_des">Kontrolovat aktualizace předběžných vydání, místo normálních plných vydání</string>
     <string name="github">GitHub</string>
     <string name="lightnovel">Nenáročná aplikace pro romány od stejných vývojářů</string>
     <string name="anim">Anime aplikace od stejných vývojářů</string>
