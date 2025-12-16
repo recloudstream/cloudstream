@@ -142,8 +142,6 @@
     <string name="automatic_plugin_download_summary">추가된 저장소에서 아직 설치되지 않은 모든 플러그인을 자동으로 설치합니다.</string>
     <string name="updates_settings">앱 업데이트 표시</string>
     <string name="updates_settings_des">앱을 시작한 후 새 업데이트를 자동으로 검색합니다.</string>
-    <string name="uprereleases_settings">미리보기로 업데이트</string>
-    <string name="uprereleases_settings_des">정식 릴리즈 대신 미리보기 업데이트만 검색합니다</string>
     <string name="apk_installer_settings_des">일부 휴대폰은 새 패키지 설치 프로그램을 지원하지 않습니다. 업데이트가 설치되지 않으면 레거시 옵션을 사용해 보세요.</string>
     <string name="lightnovel">같은 개발자가 만든 라이트 노벨 앱</string>
     <string name="anim">같은 개발자가 만든 애니메이션 앱</string>
