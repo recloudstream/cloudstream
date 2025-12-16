@@ -23,7 +23,6 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.IdRes
 import androidx.annotation.MainThread
@@ -107,6 +106,7 @@ import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
+import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.ui.home.HomeViewModel
 import com.lagradost.cloudstream3.ui.library.LibraryViewModel
 import com.lagradost.cloudstream3.ui.player.BasicLink
@@ -162,6 +162,7 @@ import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.InAppUpdater.runAutoUpdate
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SnackbarHelper.showSnackbar
+import com.lagradost.cloudstream3.utils.TvChannelUtils
 import com.lagradost.cloudstream3.utils.UIHelper.changeStatusBarState
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -194,9 +195,6 @@ import androidx.tvprovider.media.tv.Channel
 import androidx.tvprovider.media.tv.TvContractCompat
 import android.content.ComponentName
 import android.content.ContentUris
-
-import com.lagradost.cloudstream3.ui.home.HomeFragment
-import com.lagradost.cloudstream3.utils.TvChannelUtils
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
     companion object {
@@ -708,6 +706,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         broadcastIntent.setClass(this, VideoDownloadRestartReceiver::class.java)
         this.sendBroadcast(broadcastIntent)
         afterPluginsLoadedEvent -= ::onAllPluginsLoaded
+        detachBackPressedCallback("MainActivityDefault")
         super.onDestroy()
     }
 
@@ -1202,6 +1201,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             val lastAppAutoBackup: String = getKey("VERSION_NAME") ?: ""
             if (appVer != lastAppAutoBackup) {
                 setKey("VERSION_NAME", BuildConfig.VERSION_NAME)
+                if (lastAppAutoBackup.isEmpty()) return@safe
+
                 safe {
                     backup(this)
                 }
@@ -1663,8 +1664,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             if (navDestination.matchDestination(R.id.navigation_home)) {
                 attachBackPressedCallback("MainActivity") {
                     showConfirmExitDialog(settingsManager)
-                    setNavigationBarColorCompat(R.attr.primaryGrayBackground)
-                    updateLocale()
                 }
             } else detachBackPressedCallback("MainActivity")
         }
@@ -2028,24 +2027,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 //            }
 //        }
 
-        onBackPressedDispatcher.addCallback(
-            this,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    setNavigationBarColorCompat(R.attr.primaryGrayBackground)
-                    updateLocale()
-
-                    // If we don't disable we end up in a loop with default behavior calling
-                    // this callback as well, so we disable it, run default behavior,
-                    // then re-enable this callback so it can be used for next back press.
-                    isEnabled = false
-                    onBackPressedDispatcher.onBackPressed()
-                    isEnabled = true
-                }
-            }
-        )
-
-
+        attachBackPressedCallback("MainActivityDefault") {
+            setNavigationBarColorCompat(R.attr.primaryGrayBackground)
+            updateLocale()
+            runDefault()
+        }
     }
 
     /** Biometric stuff **/

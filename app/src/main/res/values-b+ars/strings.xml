@@ -92,10 +92,8 @@
     <string name="pref_filter_search_quality">إخفاء جودة الفيديو المحددة في نتائج البحث</string>
     <string name="automatic_plugin_updates">تحديثات البرنامج المساعد التلقائي</string>
     <string name="updates_settings_des">البحث تلقائيًا عن التحديثات الجديدة بعد بدء تشغيل التطبيق.</string>
-    <string name="uprereleases_settings">التحديث إلى الإصداراالمسبق</string>
     <string name="automatic_plugin_download">تنزيل المكونات الإضافية تلقائيًا</string>
     <string name="redo_setup_process">إعادة عملية الإعداد</string>
-    <string name="uprereleases_settings_des">ابحث عن تحديثات الإصدار التجريبي بدلاً من الإصدارات الكاملة فقط</string>
     <string name="automatic_plugin_download_mode_title">حدد الوضع لتصفية تنزيل المكونات الإضافية</string>
     <string name="automatic_plugin_download_summary">قم تلقائيًا بتثبيت جميع المكونات الإضافية التي لم يتم تثبيتها بعد من المستودعات المضافة.</string>
     <string name="chromecast_subtitles_settings_des">إعدادات ترجمات كرومكاست</string>

@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.lagradost.cloudstream3.AudioFile
 import com.lagradost.cloudstream3.IDownloadableMinimum
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.USER_AGENT
@@ -17,6 +18,8 @@ import com.lagradost.cloudstream3.extractors.BigwarpArt
 import com.lagradost.cloudstream3.extractors.BigwarpIO
 import com.lagradost.cloudstream3.extractors.Blogger
 import com.lagradost.cloudstream3.extractors.BullStream
+import com.lagradost.cloudstream3.extractors.ByseSX
+import com.lagradost.cloudstream3.extractors.Bysezejataos
 import com.lagradost.cloudstream3.extractors.ByteShare
 import com.lagradost.cloudstream3.extractors.Cda
 import com.lagradost.cloudstream3.extractors.Cdnplayer
@@ -67,8 +70,11 @@ import com.lagradost.cloudstream3.extractors.FEnet
 import com.lagradost.cloudstream3.extractors.Fastream
 import com.lagradost.cloudstream3.extractors.FeHD
 import com.lagradost.cloudstream3.extractors.Fembed9hd
+import com.lagradost.cloudstream3.extractors.FileMoon
 import com.lagradost.cloudstream3.extractors.FileMoonIn
+import com.lagradost.cloudstream3.extractors.FileMoonSx
 import com.lagradost.cloudstream3.extractors.Filegram
+import com.lagradost.cloudstream3.extractors.FilemoonV2
 import com.lagradost.cloudstream3.extractors.Filesim
 import com.lagradost.cloudstream3.extractors.FlaswishCom
 import com.lagradost.cloudstream3.extractors.FourCX
@@ -98,6 +104,7 @@ import com.lagradost.cloudstream3.extractors.HDMomPlayer
 import com.lagradost.cloudstream3.extractors.HDPlayerSystem
 import com.lagradost.cloudstream3.extractors.HDStreamAble
 import com.lagradost.cloudstream3.extractors.Hotlinger
+import com.lagradost.cloudstream3.extractors.HubCloud
 import com.lagradost.cloudstream3.extractors.Hxfile
 import com.lagradost.cloudstream3.extractors.InternetArchive
 import com.lagradost.cloudstream3.extractors.JWPlayer
@@ -154,6 +161,7 @@ import com.lagradost.cloudstream3.extractors.PeaceMakerst
 import com.lagradost.cloudstream3.extractors.Peytonepre
 import com.lagradost.cloudstream3.extractors.Pichive
 import com.lagradost.cloudstream3.extractors.PixelDrain
+import com.lagradost.cloudstream3.extractors.PixelDrainDev
 import com.lagradost.cloudstream3.extractors.PlayLtXyz
 import com.lagradost.cloudstream3.extractors.PlayRu
 import com.lagradost.cloudstream3.extractors.PlayerVoxzer
@@ -218,6 +226,7 @@ import com.lagradost.cloudstream3.extractors.Swhoi
 import com.lagradost.cloudstream3.extractors.TRsTX
 import com.lagradost.cloudstream3.extractors.Tantifilm
 import com.lagradost.cloudstream3.extractors.TauVideo
+import com.lagradost.cloudstream3.extractors.Techinmind
 import com.lagradost.cloudstream3.extractors.Tomatomatela
 import com.lagradost.cloudstream3.extractors.TomatomatelalClub
 import com.lagradost.cloudstream3.extractors.Tubeless
@@ -267,6 +276,7 @@ import com.lagradost.cloudstream3.extractors.VizcloudLive
 import com.lagradost.cloudstream3.extractors.VizcloudOnline
 import com.lagradost.cloudstream3.extractors.VizcloudSite
 import com.lagradost.cloudstream3.extractors.VizcloudXyz
+import com.lagradost.cloudstream3.extractors.VkExtractor
 import com.lagradost.cloudstream3.extractors.Voe
 import com.lagradost.cloudstream3.extractors.Voe1
 import com.lagradost.cloudstream3.extractors.Vtbe
@@ -287,21 +297,10 @@ import com.lagradost.cloudstream3.extractors.Zorofile
 import com.lagradost.cloudstream3.extractors.Zplayer
 import com.lagradost.cloudstream3.extractors.ZplayerV2
 import com.lagradost.cloudstream3.extractors.Ztreamhub
-import com.lagradost.cloudstream3.extractors.FileMoon
-import com.lagradost.cloudstream3.extractors.FileMoonSx
-import com.lagradost.cloudstream3.extractors.FilemoonV2
-import com.lagradost.cloudstream3.extractors.HubCloud
-import com.lagradost.cloudstream3.extractors.PixelDrainDev
-import com.lagradost.cloudstream3.extractors.Techinmind
-import com.lagradost.cloudstream3.extractors.VkExtractor
 import com.lagradost.cloudstream3.mvvm.logError
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.jsoup.Jsoup
 import java.net.URI
@@ -340,6 +339,7 @@ data class ExtractorLinkPlayList(
     /** Used for getExtractorVerifierJob() */
     override var extractorData: String? = null,
     override var type: ExtractorLinkType,
+    override var audioTracks: List<AudioFile> = emptyList(),
 ) : ExtractorLink(
     source = source,
     name = name,
@@ -348,7 +348,8 @@ data class ExtractorLinkPlayList(
     quality = quality,
     headers = headers,
     extractorData = extractorData,
-    type = type
+    type = type,
+    audioTracks = audioTracks
 ) {
     constructor(
         source: String,
@@ -521,8 +522,9 @@ open class DrmExtractorLink private constructor(
     open var kty: String? = null,
     open var keyRequestParameters: HashMap<String, String>,
     open var licenseUrl: String? = null,
+    override var audioTracks: List<AudioFile> = emptyList(),
 ) : ExtractorLink(
-    source, name, url, referer, quality, headers, extractorData, type
+    source, name, url, referer, quality, headers, extractorData, type, audioTracks
 ) {
     @Deprecated("Use newDrmExtractorLink", level = DeprecationLevel.ERROR)
     constructor(
@@ -604,6 +606,7 @@ open class DrmExtractorLink private constructor(
  * @property headers Headers <String, String> map that will be used by network request.
  * @property extractorData Used for getExtractorVerifierJob()
  * @property type Extracted link type (Video, M3u8, Dash, Torrent or Magnet)
+ * @property audioTracks List of separate audio tracks that can be used with this video
  * @see newExtractorLink
  * */
 open class ExtractorLink
@@ -618,6 +621,8 @@ constructor(
     /** Used for getExtractorVerifierJob() */
     open var extractorData: String? = null,
     open var type: ExtractorLinkType,
+    /** List of separate audio tracks that can be merged with this video */
+    open var audioTracks: List<AudioFile> = emptyList(),
 ) : IDownloadableMinimum {
     val isM3u8: Boolean get() = type == ExtractorLinkType.M3U8
     val isDash: Boolean get() = type == ExtractorLinkType.DASH
@@ -1214,6 +1219,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     CloudMailRu(),
     HubCloud(),
     VkExtractor(),
+    Bysezejataos(),
+    ByseSX(),
 )
 
 
