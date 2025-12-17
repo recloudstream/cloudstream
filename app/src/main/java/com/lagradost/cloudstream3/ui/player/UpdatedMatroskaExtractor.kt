@@ -43,16 +43,16 @@ import androidx.media3.common.DrmInitData.SchemeData
 import androidx.media3.common.Format
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.ParserException
-import androidx.media3.common.util.Assertions
 import androidx.media3.common.util.Log
 import androidx.media3.common.util.ParsableByteArray
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.common.util.Util
+import androidx.media3.container.DolbyVisionConfig
 import androidx.media3.container.NalUnitUtil
 import androidx.media3.extractor.AacUtil
 import androidx.media3.extractor.AvcConfig
 import androidx.media3.extractor.ChunkIndex
-import androidx.media3.container.DolbyVisionConfig
+import androidx.media3.extractor.DtsUtil
 import androidx.media3.extractor.Extractor
 import androidx.media3.extractor.ExtractorInput
 import androidx.media3.extractor.ExtractorOutput
@@ -67,6 +67,9 @@ import androidx.media3.extractor.TrackOutput.CryptoData
 import androidx.media3.extractor.TrueHdSampleRechunker
 import androidx.media3.extractor.text.SubtitleParser
 import androidx.media3.extractor.text.SubtitleTranscodingExtractorOutput
+import com.google.common.base.Preconditions.checkArgument
+import com.google.common.base.Preconditions.checkNotNull
+import com.google.common.base.Preconditions.checkState
 import com.google.common.collect.ImmutableList
 import java.io.IOException
 import java.nio.ByteBuffer
@@ -119,6 +122,8 @@ class UpdatedMatroskaExtractor private constructor(
     private var timecodeScale = C.TIME_UNSET
     private var durationTimecode = C.TIME_UNSET
     private var durationUs = C.TIME_UNSET
+    private var isWebm: Boolean = false
+    private var pendingEndTracks: Boolean
 
     // The track corresponding to the current TrackEntry element, or null.
     private var currentTrack: Track? = null
@@ -233,6 +238,7 @@ class UpdatedMatroskaExtractor private constructor(
         encryptionSubsampleData = ParsableByteArray()
         supplementalData = ParsableByteArray()
         blockSampleSizes = IntArray(1)
+        pendingEndTracks = true
     }
 
     @Throws(IOException::class)
@@ -370,7 +376,10 @@ class UpdatedMatroskaExtractor private constructor(
 
             ID_CONTENT_ENCODING -> {}
             ID_CONTENT_ENCRYPTION -> getCurrentTrack(id).hasContentEncryption = true
-            ID_TRACK_ENTRY -> currentTrack = Track()
+            ID_TRACK_ENTRY -> {
+                currentTrack = Track()
+                currentTrack!!.isWebm = isWebm
+            }
             ID_MASTERING_METADATA -> getCurrentTrack(id).hasColorInfo = true
             else -> {}
         }
@@ -520,7 +529,7 @@ class UpdatedMatroskaExtractor private constructor(
             }
 
             ID_TRACK_ENTRY -> {
-                val currentTrack = Assertions.checkStateNotNull(this.currentTrack)
+                val currentTrack = checkNotNull(this.currentTrack)
                 if (currentTrack.codecId == null) {
                     throw ParserException.createForMalformedContainer(
                         "CodecId is missing in TrackEntry element",  /* cause= */null
@@ -543,7 +552,7 @@ class UpdatedMatroskaExtractor private constructor(
                         "No valid tracks were found",  /* cause= */null
                     )
                 }
-                extractorOutput!!.endTracks()
+                maybeEndTracks()
             }
 
             else -> {}
@@ -586,7 +595,16 @@ class UpdatedMatroskaExtractor private constructor(
             ID_TRACK_NUMBER -> getCurrentTrack(id).number = value.toInt()
             ID_FLAG_DEFAULT -> getCurrentTrack(id).flagDefault = value == 1L
             ID_FLAG_FORCED -> getCurrentTrack(id).flagForced = value == 1L
-            ID_TRACK_TYPE -> getCurrentTrack(id).type = value.toInt()
+            ID_TRACK_TYPE -> {
+                val matroskaTrackType = value.toInt()
+                getCurrentTrack(id).type = when (matroskaTrackType) {
+                    1 -> C.TRACK_TYPE_VIDEO // Matroska video
+                    2 -> C.TRACK_TYPE_AUDIO // Matroska audio
+                    17 -> C.TRACK_TYPE_TEXT // Matroska subtitle
+                    33 -> C.TRACK_TYPE_METADATA // Matroska metadata
+                    else -> C.TRACK_TYPE_UNKNOWN
+                }
+            }
             ID_DEFAULT_DURATION -> getCurrentTrack(id).defaultSampleDurationNs = value.toInt()
             ID_MAX_BLOCK_ADDITION_ID -> getCurrentTrack(id).maxBlockAdditionId = value.toInt()
             ID_BLOCK_ADD_ID_TYPE -> getCurrentTrack(id).blockAddIdType = value.toInt()
@@ -954,7 +972,7 @@ class UpdatedMatroskaExtractor private constructor(
                         (scratch.data[0].toInt() shl 8) or (scratch.data[1].toInt() and 0xFF)
                     blockTimeUs = clusterTimecodeUs + scaleTimecodeToUs(timecode.toLong())
                     val isKeyframe =
-                        track.type == TRACK_TYPE_AUDIO
+                        track.type == C.TRACK_TYPE_AUDIO
                                 || (id == ID_SIMPLE_BLOCK && (scratch.data[2].toInt() and 0x80) == 0x80)
                     blockFlags = if (isKeyframe) C.BUFFER_FLAG_KEY_FRAME else 0
                     blockState = BLOCK_STATE_DATA
@@ -1090,6 +1108,7 @@ class UpdatedMatroskaExtractor private constructor(
         } else {
             if (CODEC_ID_SUBRIP == track.codecId
                 || CODEC_ID_ASS == track.codecId
+                || CODEC_ID_SSA == track.codecId
                 || CODEC_ID_VTT == track.codecId
             ) {
                 if (blockSampleCount > 1) {
@@ -1179,12 +1198,26 @@ class UpdatedMatroskaExtractor private constructor(
         if (CODEC_ID_SUBRIP == track.codecId) {
             writeSubtitleSampleData(input, SUBRIP_PREFIX, size)
             return finishWriteSampleData()
-        } else if (CODEC_ID_ASS == track.codecId) {
+        } else if (CODEC_ID_ASS == track.codecId || CODEC_ID_SSA == track.codecId) {
             writeSubtitleSampleData(input, SSA_PREFIX, size)
             return finishWriteSampleData()
         } else if (CODEC_ID_VTT == track.codecId) {
             writeSubtitleSampleData(input, VTT_PREFIX, size)
             return finishWriteSampleData()
+        }
+
+        if (track.waitingForDtsAnalysis) {
+            checkNotNull(track.format)
+            if (DtsUtil.isSampleDtsHd(input, size)) {
+                track.format = track.format!!
+                    .buildUpon()
+                    .setSampleMimeType(MimeTypes.AUDIO_DTS_HD)
+                    .build()
+            }
+
+            track.output!!.format(track.format!!)
+            track.waitingForDtsAnalysis = false
+            maybeEndTracks()
         }
 
         val output = track.output
@@ -1353,7 +1386,7 @@ class UpdatedMatroskaExtractor private constructor(
             }
         } else {
             if (track.trueHdSampleRechunker != null) {
-                Assertions.checkState(sampleStrippedBytes.limit() == 0)
+                checkState(sampleStrippedBytes.limit() == 0)
                 track.trueHdSampleRechunker!!.startSample(input)
             }
             while (sampleBytesRead < size) {
@@ -1522,7 +1555,7 @@ class UpdatedMatroskaExtractor private constructor(
         // (until cues or end of segment). However this also means that we only need to seek
         // back to the top once, instead seeking back in a stack like manner.
         if (seekForSeekContent) {
-            Assertions.checkArgument(pendingSeekHeads.isNotEmpty(), "Illegal value of seekForSeekContent")
+            checkArgument(pendingSeekHeads.isNotEmpty(), "Illegal value of seekForSeekContent")
             // The exact order does not really matter, but it is easiest to just do stack (FILO)
             val next = pendingSeekHeads.removeAt(pendingSeekHeads.size - 1)
             seekPosition.position = next
@@ -1569,9 +1602,20 @@ class UpdatedMatroskaExtractor private constructor(
     }
 
     private fun assertInitialized() {
-        Assertions.checkStateNotNull<ExtractorOutput?>(
+        checkNotNull<ExtractorOutput?>(
             extractorOutput
         )
+    }
+
+    private fun maybeEndTracks() {
+        if (!pendingEndTracks) return
+
+        for (i in 0 until tracks.size()) {
+            if (tracks.valueAt(i).waitingForDtsAnalysis) return
+        }
+
+        checkNotNull(extractorOutput).endTracks()
+        pendingEndTracks = false
     }
 
     /** Passes events through to the outer [UpdatedMatroskaExtractor].  */
@@ -1618,10 +1662,11 @@ class UpdatedMatroskaExtractor private constructor(
     /** Holds data corresponding to a single track.  */
     protected class Track {
         // Common elements.
+        var isWebm: Boolean = false
         var name: String? = null
         var codecId: String? = null
         var number: Int = 0
-        var type: Int = 0
+        var type: @C.TrackType Int = 0
         var defaultSampleDurationNs: Int = 0
         var maxBlockAdditionId: Int = 0
         var blockAddIdType: Int = 0
@@ -1671,8 +1716,8 @@ class UpdatedMatroskaExtractor private constructor(
         var sampleRate: Int = 8000
         var codecDelayNs: Long = 0
         var seekPreRollNs: Long = 0
-        var trueHdSampleRechunker: TrueHdSampleRechunker? =
-            null
+        var trueHdSampleRechunker: TrueHdSampleRechunker? = null
+        var waitingForDtsAnalysis: Boolean = false
 
         // Text elements.
         var flagForced: Boolean = false
@@ -1681,6 +1726,7 @@ class UpdatedMatroskaExtractor private constructor(
 
         // Set when the output is initialized. nalUnitLengthFieldLength is only set for H264/H265.
         var output: TrackOutput? = null
+        var format: Format? = null
         var nalUnitLengthFieldLength: Int = 0
 
         /** Initializes the track with an output.  */
@@ -1695,8 +1741,20 @@ class UpdatedMatroskaExtractor private constructor(
             var codecs: String? = null
             when (codecId) {
                 CODEC_ID_VP8 -> mimeType = MimeTypes.VIDEO_VP8
-                CODEC_ID_VP9 -> mimeType = MimeTypes.VIDEO_VP9
-                CODEC_ID_AV1 -> mimeType = MimeTypes.VIDEO_AV1
+                CODEC_ID_VP9 -> {
+                    mimeType = MimeTypes.VIDEO_VP9
+                    initializationData =
+                        if (codecPrivate == null) null else ImmutableList.of(
+                            codecPrivate!!
+                        )
+                }
+                CODEC_ID_AV1 -> {
+                    mimeType = MimeTypes.VIDEO_AV1
+                    initializationData =
+                        if (codecPrivate == null) null else ImmutableList.of(
+                            codecPrivate!!
+                        )
+                }
                 CODEC_ID_MPEG2 -> mimeType = MimeTypes.VIDEO_MPEG2
                 CODEC_ID_MPEG4_SP, CODEC_ID_MPEG4_ASP, CODEC_ID_MPEG4_AP -> {
                     mimeType = MimeTypes.VIDEO_MP4V
@@ -1808,7 +1866,10 @@ class UpdatedMatroskaExtractor private constructor(
                     trueHdSampleRechunker = TrueHdSampleRechunker()
                 }
 
-                CODEC_ID_DTS, CODEC_ID_DTS_EXPRESS -> mimeType = MimeTypes.AUDIO_DTS
+                CODEC_ID_DTS, CODEC_ID_DTS_EXPRESS -> {
+                    mimeType = MimeTypes.AUDIO_DTS // temporary
+                    waitingForDtsAnalysis = true
+                }
                 CODEC_ID_DTS_LOSSLESS -> mimeType = MimeTypes.AUDIO_DTS_HD
                 CODEC_ID_FLAC -> {
                     mimeType = MimeTypes.AUDIO_FLAC
@@ -1907,7 +1968,7 @@ class UpdatedMatroskaExtractor private constructor(
                 }
 
                 CODEC_ID_SUBRIP -> mimeType = MimeTypes.APPLICATION_SUBRIP
-                CODEC_ID_ASS -> {
+                CODEC_ID_ASS, CODEC_ID_SSA -> {
                     mimeType = MimeTypes.TEXT_SSA
                     initializationData = ImmutableList.of(
                         SSA_DIALOGUE_FORMAT, getCodecPrivate(
@@ -2036,9 +2097,10 @@ class UpdatedMatroskaExtractor private constructor(
                 formatBuilder.setLabel(name)
             }
 
-            val format =
+            format =
                 formatBuilder
                     .setId(trackId)
+                    .setContainerMimeType(if (isWebm) MimeTypes.VIDEO_WEBM else MimeTypes.VIDEO_MATROSKA)
                     .setSampleMimeType(mimeType)
                     .setMaxInputSize(maxInputSize)
                     .setLanguage(language)
@@ -2049,7 +2111,9 @@ class UpdatedMatroskaExtractor private constructor(
                     .build()
 
             this.output = output.track(number, type)
-            this.output!!.format(format)
+            if (!waitingForDtsAnalysis) {
+                this.output!!.format(format!!);
+            }
         }
 
         /** Forces any pending sample metadata to be flushed to the output.  */
@@ -2133,7 +2197,7 @@ class UpdatedMatroskaExtractor private constructor(
          * fact at runtime.
          */
         fun assertOutputInitialized() {
-            Assertions.checkNotNull<TrackOutput?>(
+            checkNotNull<TrackOutput?>(
                 output
             )
         }
@@ -2379,6 +2443,7 @@ class UpdatedMatroskaExtractor private constructor(
         private const val CODEC_ID_PCM_FLOAT = "A_PCM/FLOAT/IEEE"
         private const val CODEC_ID_SUBRIP = "S_TEXT/UTF8"
         private const val CODEC_ID_ASS = "S_TEXT/ASS"
+        private const val CODEC_ID_SSA = "S_TEXT/SSA"
         private const val CODEC_ID_VTT = "S_TEXT/WEBVTT"
         private const val CODEC_ID_VOBSUB = "S_VOBSUB"
         private const val CODEC_ID_PGS = "S_HDMV/PGS"
@@ -2732,8 +2797,8 @@ class UpdatedMatroskaExtractor private constructor(
          * See documentation on [.SSA_DIALOGUE_FORMAT] and [.SUBRIP_PREFIX] for why we use
          * the duration as the end timecode.
          *
-         * @param codecId The subtitle codec; must be [.CODEC_ID_SUBRIP], [.CODEC_ID_ASS] or
-         * [.CODEC_ID_VTT].
+         * @param codecId The subtitle codec; must be [.CODEC_ID_SUBRIP], [.CODEC_ID_ASS],
+         * [.CODEC_ID_SSA] or [.CODEC_ID_VTT].
          * @param durationUs The duration of the sample, in microseconds.
          * @param subtitleData The subtitle sample in which to overwrite the end timecode (output
          * parameter).
@@ -2752,7 +2817,7 @@ class UpdatedMatroskaExtractor private constructor(
                     endTimecodeOffset = SUBRIP_PREFIX_END_TIMECODE_OFFSET
                 }
 
-                CODEC_ID_ASS -> {
+                CODEC_ID_ASS, CODEC_ID_SSA -> {
                     endTimecode =
                         formatSubtitleTimecode(
                             durationUs, SSA_TIMECODE_FORMAT, SSA_TIMECODE_LAST_VALUE_SCALING_FACTOR
@@ -2780,7 +2845,7 @@ class UpdatedMatroskaExtractor private constructor(
             timeUs: Long, timecodeFormat: String, lastTimecodeValueScalingFactor: Long
         ): ByteArray {
             var timeUs = timeUs
-            Assertions.checkArgument(timeUs != C.TIME_UNSET)
+            checkArgument(timeUs != C.TIME_UNSET)
             val timeCodeData: ByteArray
             val hours = (timeUs / (3600 * C.MICROS_PER_SECOND)).toInt()
             timeUs -= (hours * 3600L * C.MICROS_PER_SECOND)
@@ -2798,7 +2863,7 @@ class UpdatedMatroskaExtractor private constructor(
 
         private fun isCodecSupported(codecId: String): Boolean {
             return when (codecId) {
-                CODEC_ID_VP8, CODEC_ID_VP9, CODEC_ID_AV1, CODEC_ID_MPEG2, CODEC_ID_MPEG4_SP, CODEC_ID_MPEG4_ASP, CODEC_ID_MPEG4_AP, CODEC_ID_H264, CODEC_ID_H265, CODEC_ID_FOURCC, CODEC_ID_THEORA, CODEC_ID_OPUS, CODEC_ID_VORBIS, CODEC_ID_AAC, CODEC_ID_MP2, CODEC_ID_MP3, CODEC_ID_AC3, CODEC_ID_E_AC3, CODEC_ID_TRUEHD, CODEC_ID_DTS, CODEC_ID_DTS_EXPRESS, CODEC_ID_DTS_LOSSLESS, CODEC_ID_FLAC, CODEC_ID_ACM, CODEC_ID_PCM_INT_LIT, CODEC_ID_PCM_INT_BIG, CODEC_ID_PCM_FLOAT, CODEC_ID_SUBRIP, CODEC_ID_ASS, CODEC_ID_VTT, CODEC_ID_VOBSUB, CODEC_ID_PGS, CODEC_ID_DVBSUB -> true
+                CODEC_ID_VP8, CODEC_ID_VP9, CODEC_ID_AV1, CODEC_ID_MPEG2, CODEC_ID_MPEG4_SP, CODEC_ID_MPEG4_ASP, CODEC_ID_MPEG4_AP, CODEC_ID_H264, CODEC_ID_H265, CODEC_ID_FOURCC, CODEC_ID_THEORA, CODEC_ID_OPUS, CODEC_ID_VORBIS, CODEC_ID_AAC, CODEC_ID_MP2, CODEC_ID_MP3, CODEC_ID_AC3, CODEC_ID_E_AC3, CODEC_ID_TRUEHD, CODEC_ID_DTS, CODEC_ID_DTS_EXPRESS, CODEC_ID_DTS_LOSSLESS, CODEC_ID_FLAC, CODEC_ID_ACM, CODEC_ID_PCM_INT_LIT, CODEC_ID_PCM_INT_BIG, CODEC_ID_PCM_FLOAT, CODEC_ID_SUBRIP, CODEC_ID_ASS, CODEC_ID_SSA, CODEC_ID_VTT, CODEC_ID_VOBSUB, CODEC_ID_PGS, CODEC_ID_DVBSUB -> true
 
                 else -> false
             }
