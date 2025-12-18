@@ -1902,7 +1902,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
             playerPausePlay.setOnClickListener {
                 autoHide()
-                player.handleEvent(CSPlayerEvent.PlayPauseToggle)
+                if(currentPlayerStatus == CSPlayerLoading.IsEnded && isLayout(PHONE)){
+                    player.handleEvent(CSPlayerEvent.Restart)
+                }else{
+                    player.handleEvent(CSPlayerEvent.PlayPauseToggle)
+                }
             }
 
             exoDuration.setOnClickListener {

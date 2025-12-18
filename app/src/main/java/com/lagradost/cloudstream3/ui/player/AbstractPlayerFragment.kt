@@ -47,6 +47,8 @@ import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.AppContextUtils
@@ -90,6 +92,7 @@ abstract class AbstractPlayerFragment(
     var playerView: PlayerView? = null
     var piphide: FrameLayout? = null
     var subtitleHolder: FrameLayout? = null
+    var currentPlayerStatus = CSPlayerLoading.IsBuffering
 
     @LayoutRes
     protected open var layout: Int = R.layout.fragment_player
@@ -150,6 +153,7 @@ abstract class AbstractPlayerFragment(
     ) {
         val isPlayingRightNow = CSPlayerLoading.IsPlaying == isPlaying
         val isPausedRightNow = CSPlayerLoading.IsPaused == isPlaying
+        currentPlayerStatus = isPlaying
 
         keepScreenOn(!isPausedRightNow)
 
@@ -161,7 +165,9 @@ abstract class AbstractPlayerFragment(
             playerPausePlayHolderHolder?.isVisible = true
             playerBuffering?.isVisible = false
 
-            if (wasPlaying != isPlaying) {
+            if(isPlaying == CSPlayerLoading.IsEnded && isLayout(PHONE)){
+                playerPausePlay?.setImageResource(R.drawable.ic_baseline_replay_24)
+            } else if (wasPlaying != isPlaying) {
                 playerPausePlay?.setImageResource(if (isPlayingRightNow) R.drawable.play_to_pause else R.drawable.pause_to_play)
                 val drawable = playerPausePlay?.drawable
 
