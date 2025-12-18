@@ -1426,6 +1426,7 @@ class CS3IPlayer : IPlayer {
                                 wasPlaying = if (isPlaying) CSPlayerLoading.IsPlaying else CSPlayerLoading.IsPaused,
                                 isPlaying =
                                     when (playbackState) {
+                                        Player.STATE_ENDED -> CSPlayerLoading.IsEnded
                                         Player.STATE_BUFFERING -> CSPlayerLoading.IsBuffering
                                         else -> if (exo.isPlaying) CSPlayerLoading.IsPlaying else CSPlayerLoading.IsPaused
                                     }
