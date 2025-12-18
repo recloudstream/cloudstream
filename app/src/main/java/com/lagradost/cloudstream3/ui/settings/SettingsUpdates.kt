@@ -229,7 +229,7 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
         }
 
         getPref(R.string.manual_check_update_key)?.let { pref ->
-            pref.summary = BuildConfig.APP_VERSION
+            pref.summary = BuildConfig.VERSION_NAME
             pref.setOnPreferenceClickListener {
                 ioSafe {
                     if (activity?.runAutoUpdate(false) == false) {
