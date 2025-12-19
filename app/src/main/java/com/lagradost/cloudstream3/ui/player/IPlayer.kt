@@ -47,6 +47,7 @@ enum class CSPlayerLoading {
     IsPaused,
     IsPlaying,
     IsBuffering,
+    IsEnded,
 }
 
 enum class PlayerEventSource {
