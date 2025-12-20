@@ -81,6 +81,7 @@
     <string name="show_sub_key">show_sub_key</string>
     <string name="show_rating_key">show_rating_key</string>
     <string name="show_title_key">show_title_key</string>
+    <string name="show_episode_text_key">show_episode_text_key</string>
     <string name="hide_player_control_names_key">hide_player_control_names_key</string>
     <string name="preview_seekbar_key">preview_seekbar_key</string>
     <string name="backup_path_key">backup_path_key</string>
