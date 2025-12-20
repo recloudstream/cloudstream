@@ -22,6 +22,7 @@ import com.lagradost.cloudstream3.databinding.BottomSelectionDialogBinding
 import com.lagradost.cloudstream3.databinding.BottomTextDialogBinding
 import com.lagradost.cloudstream3.databinding.OptionsPopupTvBinding
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
@@ -113,8 +114,12 @@ object SingleSelectionHelper {
         val textView = binding.text1
         val applyButton = binding.applyBtt
         val cancelButton = binding.cancelBtt
-        val applyHolder =
-            binding.applyBttHolder
+        val applyHolder = binding.applyBttHolder
+
+        if (isLayout(PHONE or EMULATOR) && dialog is BottomSheetDialog) {
+            binding.dragHandle.isVisible = true
+            listView.isNestedScrollingEnabled = true
+        }
 
         applyHolder.isVisible = realShowApply
         if (!realShowApply) {

@@ -79,11 +79,6 @@ android {
         )
         buildConfigField(
             "String",
-            "APP_VERSION",
-            "\"$versionName\""
-        )
-        buildConfigField(
-            "String",
             "SIMKL_CLIENT_ID",
             "\"" + (System.getenv("SIMKL_CLIENT_ID") ?: localProperties["simkl.id"]) + "\""
         )
@@ -129,11 +124,6 @@ android {
                 logger.warn("No prerelease signing config!")
             }
             versionNameSuffix = "-PRE"
-            buildConfigField(
-                "String",
-                "APP_VERSION",
-                "\"${defaultConfig.versionName}$versionNameSuffix\""
-            )
             versionCode = (System.currentTimeMillis() / 60000).toInt()
         }
     }
