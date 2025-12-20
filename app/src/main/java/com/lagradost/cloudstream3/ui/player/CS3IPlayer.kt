@@ -61,6 +61,7 @@ import androidx.media3.exoplayer.text.TextOutput
 import androidx.media3.exoplayer.text.TextRenderer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.exoplayer.trackselection.TrackSelector
+import androidx.media3.extractor.mp4.FragmentedMp4Extractor
 import androidx.media3.ui.SubtitleView
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
@@ -1218,6 +1219,7 @@ class CS3IPlayer : IPlayer {
         // Because "Java rules" the media3 team hates to do open classes so we have to copy paste the entire thing to add a custom extractor
         // This includes the updated MKV extractor that enabled seeking in formats where the seek information is at the back of the file
         val extractorFactor = UpdatedDefaultExtractorsFactory()
+            .setFragmentedMp4ExtractorFlags(FragmentedMp4Extractor.FLAG_MERGE_FRAGMENTED_SIDX)
 
         val factory =
             if (cacheFactory == null) DefaultMediaSourceFactory(context, extractorFactor)

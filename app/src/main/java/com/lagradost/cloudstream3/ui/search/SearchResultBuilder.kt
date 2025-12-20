@@ -22,6 +22,7 @@ import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
+import com.lagradost.cloudstream3.utils.AppContextUtils.getShortSeasonText
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
@@ -66,6 +67,7 @@ object SearchResultBuilder {
 
         val bar: ProgressBar? = itemView.findViewById(R.id.watchProgress)
         val playImg: ImageView? = itemView.findViewById(R.id.search_item_download_play)
+        val episodeText: TextView? = itemView.findViewById(R.id.episode_text)
 
         // Do logic
 
@@ -75,10 +77,12 @@ object SearchResultBuilder {
         textIsSub?.isVisible = false
         textFlag?.isVisible = false
         rating?.isVisible = false
+        episodeText?.isVisible = false
 
         val showSub = showCache[textIsDub?.context?.getString(R.string.show_sub_key)] ?: false
         val showDub = showCache[textIsDub?.context?.getString(R.string.show_dub_key)] ?: false
         val showTitle = showCache[cardText?.context?.getString(R.string.show_title_key)] ?: false
+        val showEpisodeText = showCache[cardText?.context?.getString(R.string.show_episode_text_key)] ?: false
         val showHd = showCache[textQuality?.context?.getString(R.string.show_hd_key)] ?: false
         val showRatingView =
             showCache[textQuality?.context?.getString(R.string.show_rating_key)] ?: false
@@ -254,12 +258,12 @@ object SearchResultBuilder {
                     bar?.progress = (pos.position / 1000).toInt()
                     bar?.visibility = View.VISIBLE
                 }
-
                 playImg?.visibility = View.VISIBLE
-
-                if (card.type?.isMovieType() == false) {
-                    cardText?.text =
-                        cardText.context?.getNameFull(card.name, card.episode, card.season)
+                if (card.type?.isMovieType() == false && showEpisodeText) {
+                    episodeText?.context?.getShortSeasonText(card.episode, card.season)?.let {text->
+                        episodeText.text = text
+                        episodeText.isVisible = true
+                    }
                 }
             }
 
