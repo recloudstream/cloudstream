@@ -171,6 +171,7 @@
         <item>@string/show_sub</item>
         <item>@string/show_rating</item>
         <item>@string/show_title</item>
+        <item>@string/show_episode_text</item>
     </array>
 
     <array name="poster_ui_options_values">
@@ -179,8 +180,8 @@
         <item>@string/show_sub_key</item>
         <item>@string/show_rating_key</item>
         <item>@string/show_title_key</item>
+        <item>@string/show_episode_text_key</item>
     </array>
-
     <array name="app_layout">
         <item>@string/automatic</item>
         <item>@string/phone_layout</item>

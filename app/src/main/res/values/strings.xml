@@ -305,6 +305,7 @@
     <string name="show_sub">Sub label</string>
     <string name="show_rating">Rating Label</string>
     <string name="show_title">Title</string>
+    <string name="show_episode_text">Episode Text</string>
     <string name="poster_ui_settings">Toggle UI elements on poster</string>
     <string name="no_update_found">No Update Found</string>
     <string name="check_for_update">Check for Update</string>
