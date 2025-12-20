@@ -142,9 +142,9 @@ class UpdatedMatroskaExtractor private constructor(
     private var seekEntryPosition: Long = 0
 
     // Cue related elements.
-    private val perTrackCues: SparseArray<List<MatroskaSeekMap.CuePointData>>
+    private val perTrackCues: SparseArray<MutableList<MatroskaSeekMap.CuePointData>>
     private var inCuesElement = false
-    private var currentCueTimeUs: Long = C.TIME_UNSET.toLong()
+    private var currentCueTimeUs: Long = C.TIME_UNSET
     private var currentCueTrackNumber: Int = C.INDEX_UNSET
     private var currentCueClusterPosition: Long = C.INDEX_UNSET.toLong()
     private var currentCueRelativePosition: Long = C.INDEX_UNSET.toLong()
@@ -277,7 +277,12 @@ class UpdatedMatroskaExtractor private constructor(
         currentCueTrackNumber = C.INDEX_UNSET
         currentCueClusterPosition = C.INDEX_UNSET.toLong()
         currentCueRelativePosition = C.INDEX_UNSET.toLong()
-        perTrackCues.clear()
+        // To prevent creating duplicate cue points on a re-parse, clear any existing cue data if the
+        // seek map has not yet been sent. Once sent, the cue data is considered final, and subsequent
+        // Cues elements will be ignored by the parsing logic.
+        if (!sentSeekMap) {
+            perTrackCues.clear()
+        }
         for (i in 0..<tracks.size()) {
             tracks.valueAt(i).reset()
         }
@@ -364,19 +369,25 @@ class UpdatedMatroskaExtractor private constructor(
             }
 
             ID_CUES -> {
-                inCuesElement = true
+                if (!sentSeekMap) {
+                    inCuesElement = true
+                }
             }
 
             ID_CUE_POINT -> {
-                assertInCues(id)
-                currentCueTimeUs = C.TIME_UNSET
+                if (!sentSeekMap) {
+                    assertInCues(id)
+                    currentCueTimeUs = C.TIME_UNSET
+                }
             }
 
             ID_CUE_TRACK_POSITIONS -> {
-                assertInCues(id)
-                currentCueTrackNumber = C.INDEX_UNSET
-                currentCueClusterPosition = C.INDEX_UNSET.toLong()
-                currentCueRelativePosition = C.INDEX_UNSET.toLong()
+                if (!sentSeekMap) {
+                    assertInCues(id)
+                    currentCueTrackNumber = C.INDEX_UNSET
+                    currentCueClusterPosition = C.INDEX_UNSET.toLong()
+                    currentCueRelativePosition = C.INDEX_UNSET.toLong()
+                }
             }
 
             ID_CLUSTER -> if (!sentSeekMap) {
@@ -487,8 +498,7 @@ class UpdatedMatroskaExtractor private constructor(
                         extractorOutput!!.seekMap(SeekMap.Unseekable(durationUs))
                     } else {
                         for (i in 0 until perTrackCues.size()) {
-                            val sortedList = perTrackCues.valueAt(i).sorted()
-                            perTrackCues.put(perTrackCues.keyAt(i), sortedList)
+                            perTrackCues.valueAt(i).sort()
                         }
 
                         val seekMap = MatroskaSeekMap(
@@ -501,6 +511,7 @@ class UpdatedMatroskaExtractor private constructor(
                         extractorOutput!!.seekMap(seekMap)
                     }
                     sentSeekMap = true
+                    inCuesElement = false
                     for (i in 0 until tracks.size()) {
                         val track: Track = tracks.valueAt(i)
                         track.maybeAddThumbnailMetadata(perTrackCues, durationUs, segmentContentPosition, segmentContentSize)
@@ -511,28 +522,29 @@ class UpdatedMatroskaExtractor private constructor(
                     }
                     maybeEndTracks()
                 }
-                inCuesElement = false
             }
 
             ID_CUE_TRACK_POSITIONS -> {
-                assertInCues(id)
-                if (currentCueTimeUs != C.TIME_UNSET.toLong()
-                    && currentCueTrackNumber != C.INDEX_UNSET
-                    && currentCueClusterPosition != C.INDEX_UNSET.toLong()
-                ) {
-                    val trackCues: MutableList<MatroskaSeekMap.CuePointData> =
-                        (perTrackCues[currentCueTrackNumber] as? MutableList<MatroskaSeekMap.CuePointData>)
-                            ?: ArrayList<MatroskaSeekMap.CuePointData>().also {
-                                perTrackCues.put(currentCueTrackNumber, it)
-                            }
+                if (!sentSeekMap) {
+                    assertInCues(id)
+                    if (currentCueTimeUs != C.TIME_UNSET
+                        && currentCueTrackNumber != C.INDEX_UNSET
+                        && currentCueClusterPosition != C.INDEX_UNSET.toLong()
+                    ) {
+                        var trackCues = perTrackCues[currentCueTrackNumber]
+                        if (trackCues == null) {
+                            trackCues = ArrayList()
+                            perTrackCues.put(currentCueTrackNumber, trackCues)
+                        }
 
-                    trackCues.add(
-                        MatroskaSeekMap.CuePointData(
-                            currentCueTimeUs,
-                            /* clusterPosition= */ segmentContentPosition + currentCueClusterPosition,
-                            /* relativePosition= */ currentCueRelativePosition
+                        trackCues.add(
+                            MatroskaSeekMap.CuePointData(
+                                currentCueTimeUs,
+                                /* clusterPosition= */ segmentContentPosition + currentCueClusterPosition,
+                                /* relativePosition= */ currentCueRelativePosition
+                            )
                         )
-                    )
+                    }
                 }
             }
 
@@ -781,26 +793,34 @@ class UpdatedMatroskaExtractor private constructor(
                 }
 
             ID_CUE_TIME -> {
-                assertInCues(id)
-                currentCueTimeUs = scaleTimecodeToUs(value)
+                if (!sentSeekMap) {
+                    assertInCues(id)
+                    currentCueTimeUs = scaleTimecodeToUs(value)
+                }
             }
 
             ID_CUE_TRACK -> {
-                assertInCues(id)
-                currentCueTrackNumber = value.toInt()
+                if (!sentSeekMap) {
+                    assertInCues(id)
+                    currentCueTrackNumber = value.toInt()
+                }
             }
 
             ID_CUE_CLUSTER_POSITION -> {
-                assertInCues(id)
-                if (currentCueClusterPosition == C.INDEX_UNSET.toLong()) {
-                    currentCueClusterPosition = value
+                if (!sentSeekMap) {
+                    assertInCues(id)
+                    if (currentCueClusterPosition == C.INDEX_UNSET.toLong()) {
+                        currentCueClusterPosition = value
+                    }
                 }
             }
 
             ID_CUE_RELATIVE_POSITION -> {
-                assertInCues(id)
-                if (currentCueRelativePosition == C.INDEX_UNSET.toLong()) {
-                    currentCueRelativePosition = value
+                if (!sentSeekMap) {
+                    assertInCues(id)
+                    if (currentCueRelativePosition == C.INDEX_UNSET.toLong()) {
+                        currentCueRelativePosition = value
+                    }
                 }
             }
 
@@ -2270,7 +2290,7 @@ class UpdatedMatroskaExtractor private constructor(
          * [ThumbnailMetadata].
          */
         fun maybeAddThumbnailMetadata(
-            perTrackCues: SparseArray<List<MatroskaSeekMap.CuePointData>>,
+            perTrackCues: SparseArray<MutableList<MatroskaSeekMap.CuePointData>>,
             durationUs: Long,
             segmentContentPosition: Long,
             segmentContentSize: Long
@@ -2305,7 +2325,7 @@ class UpdatedMatroskaExtractor private constructor(
          * bitrate for each chunk and selects the timestamp of the chunk with the highest bitrate.
          */
         private fun findBestThumbnailPresentationTimeUs(
-            cuePoints: List<MatroskaSeekMap.CuePointData>,
+            cuePoints: MutableList<MatroskaSeekMap.CuePointData>,
             durationUs: Long,
             segmentContentPosition: Long,
             segmentContentSize: Long
@@ -3056,7 +3076,7 @@ class UpdatedMatroskaExtractor private constructor(
     }
 
     class MatroskaSeekMap(
-        private val perTrackCues: SparseArray<List<CuePointData>>,
+        private val perTrackCues: SparseArray<MutableList<CuePointData>>,
         private val durationUs: Long,
         private val primarySeekTrackNumber: Int,
         segmentContentPosition: Long,
@@ -3128,7 +3148,7 @@ class UpdatedMatroskaExtractor private constructor(
         private companion object {
 
             private fun buildChunkIndex(
-                perTrackCues: SparseArray<List<CuePointData>>,
+                perTrackCues: SparseArray<MutableList<CuePointData>>,
                 durationUs: Long,
                 primarySeekTrackNumber: Int,
                 segmentContentPosition: Long,
