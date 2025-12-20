@@ -260,9 +260,9 @@ object SearchResultBuilder {
                 }
                 playImg?.visibility = View.VISIBLE
                 if (card.type?.isMovieType() == false && showEpisodeText) {
-                    episodeText?.context?.getShortSeasonText(card.episode, card.season).let {text->
-                        episodeText?.text = text
-                        episodeText?.isVisible = true
+                    episodeText?.context?.getShortSeasonText(card.episode, card.season)?.let {text->
+                        episodeText.text = text
+                        episodeText.isVisible = true
                     }
                 }
             }
