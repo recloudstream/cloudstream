@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.api.Log
+import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
@@ -8,6 +9,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import com.lagradost.cloudstream3.utils.newExtractorLink
 
+@Prerelease
 class BuzzServer : ExtractorApi() {
     override val name = "BuzzServer"
     override val mainUrl = "https://buzzheavier.com"
