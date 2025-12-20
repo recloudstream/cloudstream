@@ -903,5 +903,5 @@
     <string name="top_left">Top left</string>
     <string name="top_center">Top center</string>
     <string name="top_right">Top right</string>
-    <string name="episode_text">S1E1</string>
+    <string name="episode_text" translatable="false">S1E1</string>
 </resources>

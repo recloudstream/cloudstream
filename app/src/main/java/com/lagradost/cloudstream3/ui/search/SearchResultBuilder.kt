@@ -258,12 +258,12 @@ object SearchResultBuilder {
                     bar?.progress = (pos.position / 1000).toInt()
                     bar?.visibility = View.VISIBLE
                 }
-
                 playImg?.visibility = View.VISIBLE
-                cardText?.text = card.name
                 if (card.type?.isMovieType() == false && showEpisodeText) {
-                    episodeText?.text = episodeText.context?.getShortSeasonText(card.episode, card.season)
-                    episodeText?.isVisible = true
+                    episodeText?.context?.getShortSeasonText(card.episode, card.season).let {text->
+                        episodeText?.text = text
+                        episodeText?.isVisible = true
+                    }
                 }
             }
 

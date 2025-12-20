@@ -687,7 +687,7 @@ object AppContextUtils {
         return ""
     }
 
-    fun Context.getShortSeasonText(episode: Int?, season: Int?): String {
+    fun Context.getShortSeasonText(episode: Int?, season: Int?): String? {
         val rEpisode = if (episode == 0) null else episode
         val rSeason = if (season == 0) null else season
         val seasonNameShort = getString(R.string.season_short)
@@ -696,7 +696,7 @@ object AppContextUtils {
             "$seasonNameShort${rSeason}:$episodeNameShort${rEpisode}"
         } else if (rEpisode != null) {
             "$episodeNameShort$rEpisode"
-        }else ""
+        }else null
     }
 
     fun Activity?.loadCache() {
