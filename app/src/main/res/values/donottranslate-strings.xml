@@ -108,6 +108,7 @@
     <string name="download_format" formatted="true">%1$s - %2$s</string>
     <string name="download_size_format" formatted="true">%1$s / %2$s</string>
     <string name="episode_name_format" formatted="true">%1$s %2$s</string>
+    <string name="episode_text">S1E1</string>
     <string name="ffw_text_format" formatted="true">+%d</string>
     <string name="rew_text_format" formatted="true">-%d</string>
     <string name="ffw_text_regular_format" formatted="true">%d</string>
