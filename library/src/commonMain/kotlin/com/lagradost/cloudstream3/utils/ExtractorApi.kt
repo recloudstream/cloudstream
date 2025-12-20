@@ -18,6 +18,7 @@ import com.lagradost.cloudstream3.extractors.BigwarpArt
 import com.lagradost.cloudstream3.extractors.BigwarpIO
 import com.lagradost.cloudstream3.extractors.Blogger
 import com.lagradost.cloudstream3.extractors.BullStream
+import com.lagradost.cloudstream3.extractors.BuzzServer
 import com.lagradost.cloudstream3.extractors.ByseSX
 import com.lagradost.cloudstream3.extractors.Bysezejataos
 import com.lagradost.cloudstream3.extractors.ByteShare
@@ -791,15 +792,26 @@ enum class Qualities(var value: Int, val defaultPriority: Int) {
     }
 }
 
-fun getQualityFromName(qualityName: String?): Int {
-    if (qualityName == null)
-        return Qualities.Unknown.value
+private val QUALITY_REGEX_MAP = listOf(
+    Regex("""\b(4k|2160p?|2160)\b""", RegexOption.IGNORE_CASE) to Qualities.P2160.value,
+    Regex("""\b1440p?|1440\b""", RegexOption.IGNORE_CASE)     to Qualities.P1440.value,
+    Regex("""\b1080p?|1080\b""", RegexOption.IGNORE_CASE)     to Qualities.P1080.value,
+    Regex("""\b720p?|720\b""", RegexOption.IGNORE_CASE)      to Qualities.P720.value,
+    Regex("""\b480p?|480\b""", RegexOption.IGNORE_CASE)      to Qualities.P480.value
+)
+private var lastResolvedQuality: Int = Qualities.Unknown.value
 
-    val match = qualityName.lowercase().replace("p", "").trim()
-    return when (match) {
-        "4k" -> Qualities.P2160
-        else -> null
-    }?.value ?: match.toIntOrNull() ?: Qualities.Unknown.value
+fun getQualityFromName(qualityName: String?): Int {
+    if (qualityName.isNullOrBlank())
+        return lastResolvedQuality
+
+    for ((regex, quality) in QUALITY_REGEX_MAP) {
+        if (regex.containsMatchIn(qualityName)) {
+            lastResolvedQuality = maxOf(lastResolvedQuality, quality)
+            return lastResolvedQuality
+        }
+    }
+    return lastResolvedQuality
 }
 
 private val packedRegex = Regex("""eval\(function\(p,a,c,k,e,.*\)\)""")
@@ -1077,6 +1089,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Fembed9hd(),
     StreamM4u(),
     Krakenfiles(),
+    BuzzServer(),
     Gofile(),
     Vicloud(),
     Uservideo(),
