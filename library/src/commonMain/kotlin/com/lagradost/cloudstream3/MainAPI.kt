@@ -2502,7 +2502,7 @@ constructor(
 
 fun Episode.addDate(date: String?, format: String = "yyyy-MM-dd") {
     try {
-        this.date = SimpleDateFormat(format).parse(date ?: return)?.time
+        this.date = SimpleDateFormat(format, Locale.getDefault()).parse(date ?: return)?.time
     } catch (e: Exception) {
         logError(e)
     }
