@@ -16,7 +16,9 @@ import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.net.toUri
 import androidx.core.view.isGone
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
@@ -64,7 +66,7 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.ownShow
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStoreHelper
-import com.lagradost.cloudstream3.utils.Event
+import com.lagradost.cloudstream3.utils.EmptyEvent
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.TvChannelUtils
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -73,17 +75,15 @@ import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
-import com.lagradost.cloudstream3.utils.txt
-import androidx.core.net.toUri
-import androidx.core.view.isInvisible
 
 private const val TAG = "HomeFragment"
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(
-    BaseFragment.BindingCreator.Bind(FragmentHomeBinding::bind)
+    BindingCreator.Bind(FragmentHomeBinding::bind)
 ) {
     companion object {
-        val configEvent = Event<Int>()
+        // Used for configuration changed events to fix any popups that are not attached to a fragment
+        val configEvent = EmptyEvent()
         var currentSpan = 1
         val listHomepageItems = mutableListOf<SearchResponse>()
 
@@ -114,6 +114,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         //}
 
         // returns a BottomSheetDialog that will be hidden with OwnHidden upon hide, and must be saved to be able call ownShow in onCreateView
+
         fun Activity.loadHomepageList(
             expand: HomeViewModel.ExpandableHomepageList,
             deleteCallback: (() -> Unit)? = null,
@@ -195,10 +196,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
 
             // Span settings
-            binding.homeExpandedRecycler.spanCount = currentSpan
+            binding.homeExpandedRecycler.spanCount = context.getSpanCount(item.isHorizontalImages)
             binding.homeExpandedRecycler.setRecycledViewPool(SearchAdapter.sharedPool)
             binding.homeExpandedRecycler.adapter =
-                SearchAdapter(binding.homeExpandedRecycler) { callback ->
+                SearchAdapter(binding.homeExpandedRecycler,item.isHorizontalImages) { callback ->
                     handleSearchClickCallback(callback)
                     if (callback.action == SEARCH_ACTION_LOAD || callback.action == SEARCH_ACTION_PLAY_FILE) {
                         bottomSheetDialogBuilder.ownHide() // we hide here because we want to resume it later
@@ -237,9 +238,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 }
             })
 
-            val spanListener = { span: Int ->
-                binding.homeExpandedRecycler.spanCount = span
-                //(recycle.adapter as SearchAdapter).notifyDataSetChanged()
+            val spanListener = Runnable {
+                binding.homeExpandedRecycler.spanCount = context.getSpanCount(item.isHorizontalImages)
+                // We want to rebind everything to update the UI, however we also want to avoid
+                // any animations ect, this is the easiest way to do this, and the most correct
+                @SuppressLint("NotifyDataSetChanged")
+                binding.homeExpandedRecycler.adapter?.notifyDataSetChanged()
             }
 
             configEvent += spanListener
@@ -617,8 +621,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         )
 
         // Fix grid
-        currentSpan = view.context.getSpanCount()
-        configEvent.invoke(currentSpan)
+        configEvent.invoke()
     }
 
     @SuppressLint("SetTextI18n")

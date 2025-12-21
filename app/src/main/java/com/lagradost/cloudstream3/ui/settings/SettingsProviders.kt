@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.settings
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.edit
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.NavOptions
 import androidx.preference.PreferenceManager
@@ -46,13 +47,15 @@ class SettingsProviders : BasePreferenceFragmentCompat() {
                     names,
                     currentList,
                     getString(R.string.display_subbed_dubbed_settings),
-                    {}) { selectedList ->
+                    {}
+                ) { selectedList ->
                     APIRepository.dubStatusActive = selectedList.map { dublist[it] }.toHashSet()
-
-                    settingsManager.edit().putStringSet(
-                        this.getString(R.string.display_sub_key),
-                        selectedList.map { names[it] }.toMutableSet()
-                    ).apply()
+                    settingsManager.edit {
+                        putStringSet(
+                            getString(R.string.display_sub_key),
+                            selectedList.map { names[it] }.toMutableSet()
+                        )
+                    }
                 }
             }
 
@@ -91,11 +94,14 @@ class SettingsProviders : BasePreferenceFragmentCompat() {
                 names,
                 currentList,
                 getString(R.string.preferred_media_settings),
-                {}) { selectedList ->
-                settingsManager.edit().putStringSet(
-                    this.getString(R.string.prefer_media_type_key),
-                    selectedList.map { it.toString() }.toMutableSet()
-                ).apply()
+                {}
+            ) { selectedList ->
+                settingsManager.edit {
+                    putStringSet(
+                        getString(R.string.prefer_media_type_key),
+                        selectedList.map { it.toString() }.toMutableSet()
+                    )
+                }
                 DataStoreHelper.currentHomePage = null
                 //(context ?: CloudStreamApp.context)?.let { ctx -> app.initClient(ctx) }
             }
@@ -119,12 +125,15 @@ class SettingsProviders : BasePreferenceFragmentCompat() {
                     languagesTagName.map { it.second },
                     currentIndexList,
                     getString(R.string.provider_lang_settings),
-                    {}) { selectedList ->
-                    settingsManager.edit().putStringSet(
-                        this.getString(R.string.provider_lang_key),
-                        selectedList.map { languagesTagName[it].first }.toSet()
-                    ).apply()
-                    //APIRepository.providersActive = it.context.getApiSettings()
+                    {}
+                ) { selectedList ->
+                    settingsManager.edit {
+                        putStringSet(
+                            getString(R.string.provider_lang_key),
+                            selectedList.map { languagesTagName[it].first }.toSet()
+                        )
+                    }
+                    // APIRepository.providersActive = it.context.getApiSettings()
                 }
             }
 

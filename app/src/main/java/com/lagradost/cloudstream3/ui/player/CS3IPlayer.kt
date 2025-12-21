@@ -55,11 +55,13 @@ import androidx.media3.exoplayer.source.ConcatenatingMediaSource
 import androidx.media3.exoplayer.source.ConcatenatingMediaSource2
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.source.MergingMediaSource
+import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.SingleSampleMediaSource
 import androidx.media3.exoplayer.text.TextOutput
 import androidx.media3.exoplayer.text.TextRenderer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.exoplayer.trackselection.TrackSelector
+import androidx.media3.extractor.mp4.FragmentedMp4Extractor
 import androidx.media3.ui.SubtitleView
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
@@ -71,6 +73,7 @@ import com.lagradost.cloudstream3.MainActivity.Companion.deleteFileOnExit
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.USER_AGENT
+import com.lagradost.cloudstream3.AudioFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.logError
@@ -1059,7 +1062,9 @@ class CS3IPlayer : IPlayer {
          * Sets the m3u8 preferred video quality, will not force stop anything with higher quality.
          * Does not work if trackSelector is defined.
          **/
-        maxVideoHeight: Int? = null
+        maxVideoHeight: Int? = null,
+        /** External audio tracks to merge with the video */
+        audioSources: List<MediaSource> = emptyList()
     ): ExoPlayer {
         val exoPlayerBuilder =
             ExoPlayer.Builder(context)
@@ -1214,6 +1219,7 @@ class CS3IPlayer : IPlayer {
         // Because "Java rules" the media3 team hates to do open classes so we have to copy paste the entire thing to add a custom extractor
         // This includes the updated MKV extractor that enabled seeking in formats where the seek information is at the back of the file
         val extractorFactor = UpdatedDefaultExtractorsFactory()
+            .setFragmentedMp4ExtractorFlags(FragmentedMp4Extractor.FLAG_MERGE_FRAGMENTED_SIDX)
 
         val factory =
             if (cacheFactory == null) DefaultMediaSourceFactory(context, extractorFactor)
@@ -1310,10 +1316,10 @@ class CS3IPlayer : IPlayer {
         return exoPlayerBuilder.build().apply {
             setPlayWhenReady(playWhenReady)
             seekTo(currentWindow, playbackPosition)
+            // Merge video, subtitles and external audio tracks
+            val allSources = listOf(videoMediaSource) + subSources + audioSources
             setMediaSource(
-                MergingMediaSource(
-                    videoMediaSource, *subSources.toTypedArray()
-                ),
+                MergingMediaSource(*allSources.filterNotNull().toTypedArray()),
                 playbackPosition
             )
             setHandleAudioBecomingNoisy(true)
@@ -1325,7 +1331,8 @@ class CS3IPlayer : IPlayer {
         context: Context,
         mediaSlices: List<MediaItemSlice>,
         subSources: List<SingleSampleMediaSource>,
-        cacheFactory: CacheDataSource.Factory? = null
+        cacheFactory: CacheDataSource.Factory? = null,
+        audioSources: List<MediaSource> = emptyList()
     ) {
         Log.i(TAG, "loadExo")
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
@@ -1351,7 +1358,8 @@ class CS3IPlayer : IPlayer {
                 playWhenReady = isPlaying, // this keep the current state of the player
                 cacheFactory = cacheFactory,
                 subtitleOffset = currentSubtitleOffset,
-                maxVideoHeight = maxVideoHeight
+                maxVideoHeight = maxVideoHeight,
+                audioSources = audioSources
             )
 
             event(PlayerAttachedEvent(exoPlayer))
@@ -1420,6 +1428,7 @@ class CS3IPlayer : IPlayer {
                                 wasPlaying = if (isPlaying) CSPlayerLoading.IsPlaying else CSPlayerLoading.IsPaused,
                                 isPlaying =
                                     when (playbackState) {
+                                        Player.STATE_ENDED -> CSPlayerLoading.IsEnded
                                         Player.STATE_BUFFERING -> CSPlayerLoading.IsBuffering
                                         else -> if (exo.isPlaying) CSPlayerLoading.IsPlaying else CSPlayerLoading.IsPaused
                                     }
@@ -1572,20 +1581,6 @@ class CS3IPlayer : IPlayer {
         }
         Log.i(TAG, "Rendered first frame")
         hasUsedFirstRender = true
-        val invalid = exoPlayer?.duration?.let { duration ->
-            // Only errors short playback when not playing downloaded files
-            duration < 20_000L && currentDownloadedFile == null
-                    // Concatenated sources (non 1 periodCount) bypasses the invalid check as exoPlayer.duration gives only the current period
-                    // If you can get the total time that'd be better, but this is already niche.
-                    && exoPlayer?.currentTimeline?.periodCount == 1
-                    && exoPlayer?.isCurrentMediaItemLive != true
-        } ?: false
-
-        if (invalid) {
-            releasePlayer(saveTime = false)
-            event(ErrorEvent(InvalidFileException("Too short playback")))
-            return
-        }
 
         setPreferredSubtitles(currentSubtitles)
         val format = exoPlayer?.videoFormat
@@ -1681,6 +1676,40 @@ class CS3IPlayer : IPlayer {
             }
         }
         return Pair(subSources, activeSubtitles)
+    }
+
+    /**
+     * Creates audio media sources from ExtractorLink's audioTracks
+     * @param audioTracks List of audio tracks from ExtractorLink
+     * @param onlineSourceFactory Factory for creating online data sources
+     * @return List of MediaSource for audio tracks
+     */
+    private fun getAudioSources(
+        audioTracks: List<AudioFile>,
+        onlineSourceFactory: HttpDataSource.Factory?
+    ): List<MediaSource> {
+        if (onlineSourceFactory == null || audioTracks.isEmpty()) return emptyList()
+        
+        return audioTracks.mapNotNull { audio ->
+            try {
+                val mediaItem = getMediaItem(MimeTypes.AUDIO_UNKNOWN, audio.url)
+                
+                // Create a factory with custom headers if provided
+                val headers = audio.headers
+                val factory = if (!headers.isNullOrEmpty()) {
+                    DefaultHttpDataSource.Factory()
+                        .setUserAgent(USER_AGENT)
+                        .setDefaultRequestProperties(headers)
+                } else {
+                    onlineSourceFactory
+                }
+                
+                DefaultMediaSourceFactory(factory).createMediaSource(mediaItem)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to create audio source for ${audio.url}: ${e.message}")
+                null
+            }
+        }
     }
 
     override fun isActive(): Boolean {
@@ -1858,6 +1887,12 @@ class CS3IPlayer : IPlayer {
                 subtitleHelper
             )
 
+            // Create audio sources from ExtractorLink's audioTracks
+            val audioSources = getAudioSources(
+                audioTracks = link.audioTracks,
+                onlineSourceFactory = onlineSourceFactory
+            )
+
             subtitleHelper.setActiveSubtitles(activeSubtitles.toSet())
 
             if (simpleCache == null)
@@ -1868,7 +1903,7 @@ class CS3IPlayer : IPlayer {
                 setUpstreamDataSourceFactory(onlineSourceFactory)
             }
 
-            loadExo(context, mediaItems, subSources, cacheFactory)
+            loadExo(context, mediaItems, subSources, cacheFactory, audioSources)
         } catch (t: Throwable) {
             Log.e(TAG, "loadOnlinePlayer error", t)
             event(ErrorEvent(t))

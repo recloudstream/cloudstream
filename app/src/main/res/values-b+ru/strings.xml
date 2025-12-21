@@ -157,7 +157,6 @@
     <string name="automatic_plugin_download">Автозагрузка дополнений</string>
     <string name="updates_settings">Показать обновления приложения</string>
     <string name="updates_settings_des">Автоматически проверять обновления при старте приложения.</string>
-    <string name="uprereleases_settings">Обновится до предвыпуска</string>
     <string name="apk_installer_settings">APK установщик</string>
     <string name="github">Github</string>
     <string name="app_language">Язык приложения</string>
@@ -272,7 +271,6 @@
     <string name="episode_sync_settings">Обновлять прогресс просмотра</string>
     <string name="backup_success">Данные сохранены</string>
     <string name="advanced_search_des">Показывает результаты поиска, разделенные по поставщикам</string>
-    <string name="uprereleases_settings_des">Поиск предварительных обновлений вместо полных выпусков</string>
     <string name="redo_setup_process">Повторить процесс настройки</string>
     <string name="no_chromecast_support_toast">Этот поставщик не поддерживает Chromecast</string>
     <string name="season_format">%1$s %2$d%3$s</string>
@@ -720,4 +718,5 @@
     <string name="top_left">Вверху слева</string>
     <string name="top_center">Вверху центр</string>
     <string name="top_right">Вверху правый</string>
+    <string name="play_full_series_button">Смотреть полностью</string>
 </resources>

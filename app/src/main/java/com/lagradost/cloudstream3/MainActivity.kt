@@ -9,7 +9,6 @@ import android.content.SharedPreferences
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Rect
-import android.net.Uri
 import android.os.Bundle
 import android.util.AttributeSet
 import android.util.Log
@@ -24,7 +23,6 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.IdRes
 import androidx.annotation.MainThread
@@ -32,6 +30,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.edit
+import androidx.core.net.toUri
 import androidx.core.view.children
 import androidx.core.view.get
 import androidx.core.view.isGone
@@ -106,6 +106,7 @@ import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
+import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.ui.home.HomeViewModel
 import com.lagradost.cloudstream3.ui.library.LibraryViewModel
 import com.lagradost.cloudstream3.ui.player.BasicLink
@@ -158,9 +159,10 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.accounts
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
-import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
+import com.lagradost.cloudstream3.utils.InAppUpdater.runAutoUpdate
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SnackbarHelper.showSnackbar
+import com.lagradost.cloudstream3.utils.TvChannelUtils
 import com.lagradost.cloudstream3.utils.UIHelper.changeStatusBarState
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -193,9 +195,6 @@ import androidx.tvprovider.media.tv.Channel
 import androidx.tvprovider.media.tv.TvContractCompat
 import android.content.ComponentName
 import android.content.ContentUris
-
-import com.lagradost.cloudstream3.ui.home.HomeFragment
-import com.lagradost.cloudstream3.utils.TvChannelUtils
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
     companion object {
@@ -343,7 +342,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         activity?.findViewById<NavigationRailView>(R.id.nav_rail_view)?.selectedItemId =
                             R.id.navigation_search
                     } else if (safeURI(str)?.scheme == APP_STRING_PLAYER) {
-                        val uri = Uri.parse(str)
+                        val uri = str.toUri()
                         val name = uri.getQueryParameter("name")
                         val url = URLDecoder.decode(uri.authority, "UTF-8")
 
@@ -680,7 +679,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             .setNegativeButton(R.string.no) { _, _ -> /*NO-OP*/ }
             .setPositiveButton(R.string.yes) { _, _ ->
                 if (dontShowAgainCheck.isChecked) {
-                    settingsManager.edit().putInt(getString(R.string.confirm_exit_key), 1).commit()
+                    settingsManager.edit(commit = true) {
+                        putInt(getString(R.string.confirm_exit_key), 1)
+                    }
                 }
                 // finish() causes a bug on some TVs where player
                 // may keep playing after closing the app.
@@ -705,6 +706,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         broadcastIntent.setClass(this, VideoDownloadRestartReceiver::class.java)
         this.sendBroadcast(broadcastIntent)
         afterPluginsLoadedEvent -= ::onAllPluginsLoaded
+        detachBackPressedCallback("MainActivityDefault")
         super.onDestroy()
     }
 
@@ -1199,6 +1201,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             val lastAppAutoBackup: String = getKey("VERSION_NAME") ?: ""
             if (appVer != lastAppAutoBackup) {
                 setKey("VERSION_NAME", BuildConfig.VERSION_NAME)
+                if (lastAppAutoBackup.isEmpty()) return@safe
+
                 safe {
                     backup(this)
                 }
@@ -1660,8 +1664,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             if (navDestination.matchDestination(R.id.navigation_home)) {
                 attachBackPressedCallback("MainActivity") {
                     showConfirmExitDialog(settingsManager)
-                    setNavigationBarColorCompat(R.attr.primaryGrayBackground)
-                    updateLocale()
                 }
             } else detachBackPressedCallback("MainActivity")
         }
@@ -1921,7 +1923,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
          fun buildMediaQueueItem(video: String): MediaQueueItem {
            // val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_PHOTO)
             //movieMetadata.putString(MediaMetadata.KEY_TITLE, "CloudStream")
-            val mediaInfo = MediaInfo.Builder(Uri.parse(video).toString())
+            val mediaInfo = MediaInfo.Builder(video.toUri().toString())
                 .setStreamType(MediaInfo.STREAM_TYPE_NONE)
                 .setContentType(MimeTypes.IMAGE_JPEG)
                // .setMetadata(movieMetadata).build()
@@ -2025,24 +2027,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 //            }
 //        }
 
-        onBackPressedDispatcher.addCallback(
-            this,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    setNavigationBarColorCompat(R.attr.primaryGrayBackground)
-                    updateLocale()
-
-                    // If we don't disable we end up in a loop with default behavior calling
-                    // this callback as well, so we disable it, run default behavior,
-                    // then re-enable this callback so it can be used for next back press.
-                    isEnabled = false
-                    onBackPressedDispatcher.onBackPressed()
-                    isEnabled = true
-                }
-            }
-        )
-
-
+        attachBackPressedCallback("MainActivityDefault") {
+            setNavigationBarColorCompat(R.attr.primaryGrayBackground)
+            updateLocale()
+            runDefault()
+        }
     }
 
     /** Biometric stuff **/

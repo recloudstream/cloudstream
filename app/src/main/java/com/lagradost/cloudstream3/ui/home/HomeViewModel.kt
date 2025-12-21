@@ -501,6 +501,9 @@ class HomeViewModel : ViewModel() {
                 return@ioSafe
             }
 
+            HomeChildItemAdapter.sharedPool.clear()
+            ParentItemAdapter.sharedPool.clear()
+
             val api = getApiFromNameNull(preferredApiName)
             if (preferredApiName == noneApi.name) {
                 // just set to random

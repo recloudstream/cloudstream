@@ -65,9 +65,7 @@ android {
         versionCode = 67
         versionName = "4.6.1"
 
-        resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
         resValue("string", "commit_hash", getGitCommitHash())
-        resValue("bool", "is_prerelease", "false")
 
         manifestPlaceholders["target_sdk_version"] = libs.versions.targetSdk.get()
 
@@ -116,12 +114,9 @@ android {
     productFlavors {
         create("stable") {
             dimension = "state"
-            resValue("bool", "is_prerelease", "false")
         }
         create("prerelease") {
             dimension = "state"
-            resValue("bool", "is_prerelease", "true")
-            buildConfigField("boolean", "BETA", "true")
             applicationIdSuffix = ".prerelease"
             if (signingConfigs.names.contains("prerelease")) {
                 signingConfig = signingConfigs.getByName("prerelease")
@@ -173,6 +168,7 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.activity.ktx)
     implementation(libs.appcompat)
+    implementation(libs.fragment.ktx)
     implementation(libs.bundles.lifecycle)
     implementation(libs.bundles.navigation)
 
@@ -180,7 +176,6 @@ dependencies {
     implementation(libs.preference.ktx)
     implementation(libs.material)
     implementation(libs.constraintlayout)
-    implementation(libs.swiperefreshlayout)
 
     // Coil Image Loading
     implementation(libs.bundles.coil)
