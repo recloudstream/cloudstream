@@ -68,7 +68,6 @@
     <string name="popup_play_file">Reproduzir Ficheiro</string>
     <string name="popup_resume_download">Retomar Transferência</string>
     <string name="popup_pause_download">Pausar Transferência</string>
-    <string name="pref_disable_acra">Desativar relatório automático de erros</string>
     <string name="home_more_info">Mais info</string>
     <string name="home_expanded_hide">Esconder</string>
     <string name="home_play">Reproduzir</string>
@@ -147,8 +146,6 @@
     <string name="settings_info">Info</string>
     <string name="advanced_search">Procura Avançada</string>
     <string name="advanced_search_des">Mostra resultados separados por fornecedor</string>
-    <string name="bug_report_settings_off">Só envia dados sobre falhas</string>
-    <string name="bug_report_settings_on">Não envia nenhum dado</string>
     <string name="show_fillers_settings">Mostrar episódios de enchimento para anime</string>
     <string name="show_trailers_settings">Mostrar trailers</string>
     <string name="kitsu_settings">Mostrar posters do kitsu</string>
@@ -156,8 +153,6 @@
     <string name="automatic_plugin_updates">Atualizações de plugin automáticas</string>
     <string name="updates_settings">Mostrar atualizações da app</string>
     <string name="updates_settings_des">Procurar automaticamente por novas atualizações depois de iniciar o app.</string>
-    <string name="uprereleases_settings">Atualizar para pré-lançamentos</string>
-    <string name="uprereleases_settings_des">Procura atualizações de pré-lançamento em vez de só lançamentos oficiais</string>
     <string name="github">Github</string>
     <string name="lightnovel">App light novel pelos mesmos devs</string>
     <string name="discord">Junte-se ao Discord</string>
@@ -169,7 +164,6 @@
     <string name="copy_link_toast">Link copiado para a área de transferência</string>
     <string name="play_episode_toast">Reproduzir episódio</string>
     <string name="subs_default_reset_toast">Restaurar para o padrão</string>
-    <string name="acra_report_toast">Desculpe, a aplicação falhou. Um relatório de erro anónimo será enviado para os desenvolvedores</string>
     <string name="season">Temporada</string>
     <string name="no_season">Nenhuma Temporada</string>
     <string name="episode">Episódio</string>
@@ -349,7 +343,6 @@
     <string name="previous">Anterior</string>
     <string name="skip_setup">Saltar setup</string>
     <string name="app_layout_subtext">Change the look of the app to suit your device</string>
-    <string name="crash_reporting_title">Crash reporting</string>
     <string name="preferred_media_subtext">What do you want to see</string>
     <string name="setup_done">Feito</string>
     <string name="extensions">Extensões</string>
@@ -724,4 +717,18 @@
     <string name="action_remove_mark_watched_up_to_this_episode">Removar marcação de assistido até esse episódio</string>
     <string name="action_reload">Recarregado</string>
     <string name="reload_provider">Provedor de Recarregamento</string>
+    <string name="episode_action_play_mirror">Reproduzir do servidor alternativo</string>"
+    <string name="name">Nome</string>
+    <string name="resolution_and_name">Resolução e nome</string>
+    <string name="subs_subtitle_alignment">Alinhamento da Legenda</string>
+    <string name="bottom_left">Esquerda embaixo</string>
+    <string name="bottom_center">Centro embaixo</string>
+    <string name="bottom_right">Direita embaixo</string>
+    <string name="middle_left">Esquerda no centro</string>
+    <string name="middle_center">Centro</string>
+    <string name="middle_right">Direita no centro</string>
+    <string name="top_left">Esquerda encima</string>
+    <string name="top_center">Centro em cima</string>
+    <string name="top_right">Direita em cima</string>
+    <string name="play_full_series_button">Reproduzir Série Inteira</string>
 </resources>

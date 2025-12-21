@@ -45,10 +45,10 @@ import androidx.media3.ui.PlayerNotificationManager.MediaDescriptionAdapter
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.lagradost.cloudstream3.AcraApplication
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
+import com.lagradost.cloudstream3.CloudStreamApp
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.databinding.DialogOnlineSubtitlesBinding
 import com.lagradost.cloudstream3.databinding.FragmentPlayerBinding
@@ -132,7 +132,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-@UnstableApi
+@OptIn(UnstableApi::class)
 class GeneratorPlayer : FullScreenPlayer() {
     companion object {
         const val NOTIFICATION_ID = 2326
@@ -266,12 +266,8 @@ class GeneratorPlayer : FullScreenPlayer() {
         return PendingIntent.getBroadcast(context, instanceId, intent, pendingFlags)
     }
 
-    @OptIn(UnstableApi::class)
-    @UnstableApi
     private var cachedPlayerNotificationManager: PlayerNotificationManager? = null
 
-    @OptIn(UnstableApi::class)
-    @UnstableApi
     private fun getMediaNotification(context: Context): PlayerNotificationManager {
         val cache = cachedPlayerNotificationManager
         if (cache != null) return cache
@@ -876,7 +872,6 @@ class GeneratorPlayer : FullScreenPlayer() {
         //dialog.subtitles_search_year?.setText(currentTempMeta.year)
     }
 
-    @OptIn(UnstableApi::class)
     private fun openSubPicker() {
         try {
             subsPathPicker.launch(
@@ -931,7 +926,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             safe {
                 // It lies, it can be null if file manager quits.
                 if (uri == null) return@safe
-                val ctx = context ?: AcraApplication.context ?: return@safe
+                val ctx = context ?: CloudStreamApp.context ?: return@safe
                 // RW perms for the path
                 ctx.contentResolver.takePersistableUriPermission(
                     uri,
@@ -1359,12 +1354,9 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
 
                 binding.applyBtt.setOnClickListener {
-                    var init = false
-                    if (sourceIndex != startSource) {
-                        init = true
-                    }
+                    var init = sourceIndex != startSource
                     if (subtitleGroupIndex != subtitleGroupIndexStart || subtitleOptionIndex != subtitleOptionIndexStart) {
-                        init = init || if (subtitleGroupIndex <= 0) {
+                        init = init or if (subtitleGroupIndex <= 0) {
                             noSubtitles()
                         } else {
                             subtitlesGroupedList.getOrNull(subtitleGroupIndex - 1)?.value?.getOrNull(
@@ -1667,28 +1659,25 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+    private fun SubtitleData.matchesLanguage(langCode: String): Boolean {
+        val langName = fromTagToEnglishLanguageName(langCode) ?: return false
+        val cleanedName = originalName.replace(Regex("[^\\p{L}\\p{Mn}\\p{Mc}\\p{Me} ]"), "").trim()
+        return languageCode == langCode || cleanedName == langName || cleanedName.contains(langName) || cleanedName == langCode
+    }
+
     private fun getAutoSelectSubtitle(
         subtitles: Set<SubtitleData>, settings: Boolean, downloads: Boolean
     ): SubtitleData? {
         val langCode = preferredAutoSelectSubtitles ?: return null
-        val langName = fromTagToEnglishLanguageName(langCode) ?: return null
         if (downloads) {
-            return subtitles.firstOrNull { sub ->
-                sub.origin == SubtitleOrigin.DOWNLOADED_FILE &&
-                        sub.originalName == context?.getString(R.string.default_subtitles)
-            }
+            return sortSubs(subtitles).firstOrNull { it.origin == SubtitleOrigin.DOWNLOADED_FILE && it.matchesLanguage(langCode) }
         }
 
         if (!settings) return null
 
-        return sortSubs(subtitles).firstOrNull { sub ->
-            // rely first on sub.languageCode
-            val t = sub.originalName.replace(Regex("[^\\p{L}\\p{Mn}\\p{Mc}\\p{Me} ]"), "")
-                .trim() // keep letters from any language
-            sub.languageCode == langCode || t == langName || t.contains(langName) || t == langCode
-        }
+        return sortSubs(subtitles).firstOrNull { it.matchesLanguage(langCode) }
     }
-
+    
     private fun autoSelectFromSettings(): Boolean {
         // auto select subtitle based on settings
         val langCode = preferredAutoSelectSubtitles

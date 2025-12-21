@@ -80,6 +80,7 @@
             android:id="@+id/login_server_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:autofillHints="no"
             android:hint="@string/example_ip"
             android:inputType="textUri"
             android:nextFocusLeft="@id/apply_btt"
@@ -96,7 +97,7 @@
             android:layout_height="wrap_content"
             android:autofillHints="password"
             android:hint="@string/example_password"
-            android:inputType="textVisiblePassword"
+            android:inputType="textPassword"
             android:nextFocusLeft="@id/apply_btt"
 
             android:nextFocusRight="@id/cancel_btt"

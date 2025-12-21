@@ -24,7 +24,7 @@ open class PlayLtXyz: ExtractorApi() {
         val doc = app.get(url, referer = referer).document
         //Log.i(this.name, "Result => (url, script) $url / ${doc.select("script")}")
         bodyText = doc.select("script").firstOrNull {
-            val text = it?.toString() ?: ""
+            val text = it.toString()
             text.contains("var idUser")
         }?.toString() ?: ""
         //Log.i(this.name, "Result => (bodyText) $bodyText")

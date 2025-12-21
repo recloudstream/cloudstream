@@ -69,7 +69,7 @@ class PageAdapter(
             binding.imageView.layoutParams = params
         }
 
-        val showProgress = item.episodesCompleted != null && item.episodesTotal != null
+        val showProgress = item.episodesCompleted?.let{ it>0 } ?: false && item.episodesTotal != null
         binding.watchProgress.isVisible = showProgress
         if (showProgress) {
             binding.watchProgress.max = item.episodesTotal

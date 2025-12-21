@@ -47,7 +47,6 @@
     <string name="app_subbed_text">Суб.</string>
     <string name="popup_delete_file">Видалити файл</string>
     <string name="popup_resume_download">Відновити завантаження</string>
-    <string name="pref_disable_acra">Вимкнути автонадсилання звітів про помилки</string>
     <string name="home_expanded_hide">Приховати</string>
     <string name="home_play">Переглянути</string>
     <string name="home_info">Подробиці</string>
@@ -144,15 +143,12 @@
     <string name="settings_info">Подробиці</string>
     <string name="advanced_search">Розширений пошук</string>
     <string name="advanced_search_des">Показувати результати пошуку, розділені за постачальниками</string>
-    <string name="bug_report_settings_off">Надсилати лише дані про збої</string>
-    <string name="bug_report_settings_on">Не надсилати дані</string>
     <string name="show_fillers_settings">Показувати наповнювачі для аніме</string>
     <string name="show_trailers_settings">Показувати трейлери</string>
     <string name="pref_filter_search_quality">Приховати вибрану якість відео у результатах пошуку</string>
     <string name="automatic_plugin_download">Автозавантаження розширень</string>
     <string name="updates_settings">Показувати оновлення застосунку</string>
     <string name="redo_setup_process">Налаштувати повторно</string>
-    <string name="uprereleases_settings_des">Шукати лише попередні оновлення замість повних випусків</string>
     <string name="apk_installer_settings">Установлювач APK</string>
     <string name="github">Github</string>
     <string name="lightnovel">Застосунок для ранобе від тих самих розробників</string>
@@ -226,14 +222,12 @@
     <string name="automatic_plugin_updates">Автооновлення розширень</string>
     <string name="automatic_plugin_download_summary">Автоматично встановлювати всі розширення, які ще не встановлено, з доданих репозиторіїв.</string>
     <string name="updates_settings_des">Автоматично перевіряти нові оновлення після запуску застосунку.</string>
-    <string name="uprereleases_settings">Оновлюватися до бета-версій</string>
     <string name="copy_link_toast">Покликання скопійовано до буфера обміну</string>
-    <string name="apk_installer_settings_des">Деякі телефони не підтримують новий установлювач пакунків. Спробуйте стару версію, якщо оновлення не встановлюються.</string>
+    <string name="apk_installer_settings_des">Деякі пристрої не підтримують новий інсталятор пакетів. Спробуйте старий варіант, якщо оновлення не встановлюються.</string>
     <string name="discord">Приєднуйтеся до Discord</string>
     <string name="benene_des">Дано бананів</string>
     <string name="year">Рік</string>
     <string name="go_forward_30">+30</string>
-    <string name="acra_report_toast">Вибачте, у застосунку стався збій. Буде відправлено анонімне повідомлення про помилку розробникам</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="episode">Епізод</string>
     <string name="episodes_range">%1$d-%2$d</string>
@@ -398,7 +392,6 @@
     <string name="next">Далі</string>
     <string name="provider_languages_tip">Переглядайте відео на цих мовах</string>
     <string name="skip_setup">Пропустити налаштування</string>
-    <string name="crash_reporting_title">Звітування про збої</string>
     <string name="preferred_media_subtext">Що ви хочете побачити</string>
     <string name="setup_done">Готово</string>
     <string name="extensions">Розширення</string>
@@ -645,7 +638,7 @@
     <string name="torrent_preferred_media">Увімкніть торент у Налаштування/Постачальники/Бажані медіа</string>
     <string name="torrent_not_accepted">Перезапустіть застосунок та прийміть спливне вікно Stream Torrent, щоби продовжити.</string>
     <string name="software_decoding">Програмне декодування</string>
-    <string name="software_decoding_desc">Програмне декодування дозволяє програвачу відтворювати відеофайли, не підтримувані вашим телефоном. Однак, це може призвести до затримок або нестабільного відтворення у високій роздільній здатності</string>
+    <string name="software_decoding_desc">Програмне декодування дозволяє плеєру відтворювати відеофайли, які не підтримуються вашим пристроєм, але може спричинити затримки або нестабільне відтворення у високій роздільній здатності.</string>
     <string name="sort_episodes_date_newest">Датою виходу (найновіша)</string>
     <string name="sort_episodes_number_asc">Епізодом (за зростанням)</string>
     <string name="sort_episodes_rating_low_high">Рейтингом (найнижчий)</string>
@@ -701,4 +694,18 @@
     <string name="episode_action_play_mirror">Грати в дзеркало</string>"
     <string name="name">Ім\'я</string>
     <string name="resolution_and_name">Роздільна здатність та назва</string>
+    <string name="subs_subtitle_alignment">Вирівнювання субтитрів</string>
+    <string name="bottom_left">Внизу ліворуч</string>
+    <string name="bottom_center">Внизу по центру</string>
+    <string name="bottom_right">Внизу праворуч</string>
+    <string name="middle_left">Середній лівий</string>
+    <string name="middle_center">Середній центр</string>
+    <string name="middle_right">Середній правий</string>
+    <string name="top_left">Угорі ліворуч</string>
+    <string name="top_center">Верхній центр</string>
+    <string name="top_right">Угорі праворуч</string>
+    <string name="play_full_series_button">Відтворити повну серію</string>
+    <string name="install_prerelease">Встановити передрелізну версію</string>
+    <string name="prerelease_already_installed">Попередня версія вже встановлена.</string>
+    <string name="prerelease_install_failed">Не вдалося встановити попередню версію.</string>
 </resources>

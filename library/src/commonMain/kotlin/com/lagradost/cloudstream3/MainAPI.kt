@@ -1142,6 +1142,35 @@ suspend fun newSubtitleFile(
     return builder
 }
 
+/** Data class for the Audio file/track info.
+ * @property lang Audio track language.
+ * @property url Audio file url to download/load the file.
+ * @property label Optional label to display (e.g., "English 5.1", "Japanese Stereo").
+ * @property headers Optional headers for the audio file request.
+ * @see newAudioFile
+ * */
+@Prerelease
+@ConsistentCopyVisibility
+data class AudioFile internal constructor(
+    var url: String,
+    var headers: Map<String, String>? = null
+)
+
+/** Creates an AudioFile with optional initializer for setting additional properties.
+ * @param url Audio file url.
+ * @param initializer Lambda to configure additional properties like headers.
+ * @return Configured AudioFile instance.
+ * */
+@Prerelease
+suspend fun newAudioFile(
+    url: String,
+    initializer: suspend AudioFile.() -> Unit = { }
+): AudioFile {
+    val builder = AudioFile(url)
+    builder.initializer()
+    return builder
+}
+
 /** Data class for the Homepage response info.
  * @property items List of [HomePageList] items.
  * @property hasNext if there is a next page or not.
@@ -1949,24 +1978,6 @@ interface LoadResponse {
             this.addSimklId(SimklSyncServices.Imdb, id)
         }
 
-        @Deprecated(
-            "Outdated API due to misspelling",
-            replaceWith = ReplaceWith("addTraktId(id)"),
-            level = DeprecationLevel.ERROR
-        )
-        fun LoadResponse.addTrackId(id: String?) {
-            this.addTraktId(id)
-        }
-
-        @Deprecated(
-            "Outdated API due to missing capitalization",
-            replaceWith = ReplaceWith("addKitsuId(id)"),
-            level = DeprecationLevel.ERROR
-        )
-        fun LoadResponse.addkitsuId(id: String?) {
-            this.addKitsuId(id)
-        }
-
         @Suppress("UNUSED_PARAMETER")
         fun LoadResponse.addTraktId(id: String?) {
             // TODO add Trakt sync
@@ -2491,7 +2502,7 @@ constructor(
 
 fun Episode.addDate(date: String?, format: String = "yyyy-MM-dd") {
     try {
-        this.date = SimpleDateFormat(format).parse(date ?: return)?.time
+        this.date = SimpleDateFormat(format, Locale.getDefault()).parse(date ?: return)?.time
     } catch (e: Exception) {
         logError(e)
     }

@@ -78,7 +78,6 @@
     <string name="popup_play_file">Datei abspielen</string>
     <string name="popup_resume_download">Download fortsetzen</string>
     <string name="popup_pause_download">Download pausieren</string>
-    <string name="pref_disable_acra">Automatische Fehlerberichtserstattung deaktivieren</string>
     <string name="home_more_info">Mehr Infos</string>
     <string name="home_expanded_hide">Verstecken</string>
     <string name="home_play">Abspielen</string>
@@ -155,8 +154,6 @@
     <string name="settings_info">Info</string>
     <string name="advanced_search">Erweiterte Suche</string>
     <string name="advanced_search_des">Liefert die Suchergebnisse getrennt nach Anbietern</string>
-    <string name="bug_report_settings_off">Sendet Daten nur bei Abstürzen</string>
-    <string name="bug_report_settings_on">Sendet keine Daten</string>
     <string name="show_fillers_settings">Füller-Episoden für Animes anzeigen</string>
     <string name="show_trailers_settings">Trailer anzeigen</string>
     <string name="kitsu_settings">Vorschaubilder von Kitsu anzeigen</string>
@@ -164,8 +161,6 @@
     <string name="automatic_plugin_updates">Automatische Plugin-Updates</string>
     <string name="updates_settings">App-Updates anzeigen</string>
     <string name="updates_settings_des">Automatisches Suchen nach neuen Updates nach dem Start.</string>
-    <string name="uprereleases_settings">Auf Vorabversionen updaten</string>
-    <string name="uprereleases_settings_des">Suche nach Vorabversionen statt nur nach Vollversionen</string>
     <string name="github">Github</string>
     <string name="lightnovel">Light Novel App von denselben Entwicklern</string>
     <string name="anim">Anime App von denselben Entwicklern</string>
@@ -177,7 +172,6 @@
     <string name="copy_link_toast">Link in die Zwischenablage kopiert</string>
     <string name="play_episode_toast">Episode abspielen</string>
     <string name="subs_default_reset_toast">Auf Standardwert zurücksetzen</string>
-    <string name="acra_report_toast">Sorry, die Anwendung ist abgestürzt. Ein anonymer Fehlerbericht wird an die Entwickler gesendet</string>
     <string name="season">Staffel</string>
     <string name="no_season">Keine Staffel</string>
     <string name="episode">Episode</string>
@@ -385,7 +379,6 @@
     <string name="previous">Vorherige</string>
     <string name="skip_setup">Einrichtung überspringen</string>
     <string name="app_layout_subtext">Aussehen der App passend zu dem des Geräts ändern</string>
-    <string name="crash_reporting_title">Absturzmeldung</string>
     <string name="preferred_media_subtext">Was möchten Sie sehen</string>
     <string name="setup_done">Fertig</string>
     <string name="extensions">Erweiterungen</string>
@@ -450,7 +443,7 @@
     <string name="automatic_plugin_download_summary">Automatische Installation aller noch nicht installierten Plugins aus hinzugefügten Repositories.</string>
     <string name="redo_setup_process">Einrichtungsvorgang wiederholen</string>
     <string name="apk_installer_settings">APK-Installer</string>
-    <string name="apk_installer_settings_des">Einige Smartphones unterstützen den neuen Package-Installer nicht. Benutze die Legacy-Option, wenn sich die Updates nicht installieren lassen.</string>
+    <string name="apk_installer_settings_des">Einige Geräte unterstützen den neuen Package-Installer nicht. Benutze die Legacy-Option, wenn sich die Updates nicht installieren lassen.</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="pref_category_links">Links</string>
     <string name="pref_category_app_updates">App-Updates</string>
@@ -672,7 +665,7 @@
     <string name="sort_episodes_date_oldest">Ausstrahlungsdatum (Erstes)</string>
     <string name="sort_button_date">Datum %s</string>
     <string name="torrent_preferred_media">Torrent in Eintellungen/Anbieter/Bevorzugte Medien aktivieren</string>
-    <string name="software_decoding_desc">Softwaredekodierung erlaubt es dem Player, Videodateien abzuspielen, die von deinem Gerät nicht unterstützt werden, könnte jedoch bei hoher Auflösung zu ruckelnder oder instabiler Wiedergabe führen</string>
+    <string name="software_decoding_desc">Softwaredekodierung ermöglicht es dem Player, Videodateien abzuspielen, die von deinem Gerät nicht unterstützt werden, könnte jedoch bei hoher Auflösung zu ruckelnder oder instabiler Wiedergabe führen.</string>
     <string name="torrent_not_accepted">App neu starten und Stream Torrent Pop-Up akzeptieren, um fortzufahren.</string>
     <string name="update_plugins">Plugins aktualisieren</string>
     <string name="plugins_updated_manually">%d Plugin(s) erfolgreich aktualisiert!</string>
@@ -723,4 +716,18 @@
     <string name="action_mark_watched_up_to_this_episode">Označi kao gledano do ove epizode</string>
     <string name="action_remove_mark_watched_up_to_this_episode">Ukloni epizodu koju sam gledao do sada</string>
     <string name="action_reload">Ponovo učitano</string>
+    <string name="name">Name</string>
+    <string name="resolution_and_name">Auflösung und Name</string>
+    <string name="reload_provider">Anbieter erneut laden</string>
+    <string name="subs_subtitle_alignment">Untertitelausrichtung</string>
+    <string name="bottom_left">Unten links</string>
+    <string name="bottom_center">Unten Mitte</string>
+    <string name="bottom_right">Unten rechts</string>
+    <string name="middle_left">Mitte links</string>
+    <string name="middle_center">Mitte</string>
+    <string name="middle_right">Mitte rechts</string>
+    <string name="top_left">Oben links</string>
+    <string name="top_center">Oben mitte</string>
+    <string name="top_right">Oben rechts</string>
+    <string name="play_full_series_button">Gesamte Serie abspielen</string>
 </resources>

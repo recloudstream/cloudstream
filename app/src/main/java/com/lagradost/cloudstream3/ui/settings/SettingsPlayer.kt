@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.settings
 import android.os.Bundle
 import android.text.format.Formatter.formatShortFileSize
 import android.view.View
+import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.actions.VideoClickActionHolder
@@ -63,10 +64,11 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
                 prefValues.indexOf(currentPrefSize),
                 getString(R.string.video_buffer_length_settings),
                 true,
-                {}) {
-                settingsManager.edit()
-                    .putInt(getString(R.string.video_buffer_length_key), prefValues[it])
-                    .apply()
+                {}
+            ) {
+                settingsManager.edit {
+                    putInt(getString(R.string.video_buffer_length_key), prefValues[it])
+                }
             }
             return@setOnPreferenceClickListener true
         }
@@ -81,10 +83,11 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
                 prefValues.indexOf(current),
                 getString(R.string.limit_title),
                 true,
-                {}) {
-                settingsManager.edit()
-                    .putInt(getString(R.string.prefer_limit_title_key), prefValues[it])
-                    .apply()
+                {}
+            ) {
+                settingsManager.edit {
+                    putInt(getString(R.string.prefer_limit_title_key), prefValues[it])
+                }
             }
             return@setOnPreferenceClickListener true
         }
@@ -99,10 +102,11 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
                 prefValues.indexOf(current),
                 getString(R.string.software_decoding),
                 true,
-                {}) {
-                settingsManager.edit()
-                    .putInt(getString(R.string.software_decoding_key), prefValues[it])
-                    .apply()
+                {}
+            ) {
+                settingsManager.edit {
+                    putInt(getString(R.string.software_decoding_key), prefValues[it])
+                }
             }
             return@setOnPreferenceClickListener true
         }
@@ -117,10 +121,11 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
                 prefValues.indexOf(current),
                 getString(R.string.limit_title_rez),
                 true,
-                {}) {
-                settingsManager.edit()
-                    .putInt(getString(R.string.prefer_limit_title_rez_key), prefValues[it])
-                    .apply()
+                {}
+            ) {
+                settingsManager.edit {
+                    putInt(getString(R.string.prefer_limit_title_rez_key), prefValues[it])
+                }
             }
             return@setOnPreferenceClickListener true
         }
@@ -144,9 +149,11 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
                 prefValues.indexOf(currentQuality),
                 getString(R.string.watch_quality_pref),
                 true,
-                {}) {
-                settingsManager.edit().putInt(getString(R.string.quality_pref_key), prefValues[it])
-                    .apply()
+                {}
+            ) {
+                settingsManager.edit {
+                    putInt(getString(R.string.quality_pref_key), prefValues[it])
+                }
             }
             return@setOnPreferenceClickListener true
         }
@@ -168,9 +175,11 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
                 prefValues.indexOf(currentQuality),
                 getString(R.string.watch_quality_pref_data),
                 true,
-                {}) {
-                settingsManager.edit().putInt(getString(R.string.quality_pref_mobile_data_key), prefValues[it])
-                    .apply()
+                {}
+            ) {
+                settingsManager.edit {
+                    putInt(getString(R.string.quality_pref_mobile_data_key), prefValues[it])
+                }
             }
             return@setOnPreferenceClickListener true
         }
@@ -192,8 +201,11 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
                 prefValues.indexOf(current),
                 getString(R.string.player_pref),
                 true,
-                {}) {
-                settingsManager.edit().putString(getString(R.string.player_default_key), prefValues[it]).apply()
+                {}
+            ) {
+                settingsManager.edit {
+                    putString(getString(R.string.player_default_key), prefValues[it])
+                }
             }
             return@setOnPreferenceClickListener true
         }
@@ -220,10 +232,11 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
                 prefValues.indexOf(currentPrefSize),
                 getString(R.string.video_buffer_disk_settings),
                 true,
-                {}) {
-                settingsManager.edit()
-                    .putInt(getString(R.string.video_buffer_disk_key), prefValues[it])
-                    .apply()
+                {}
+            ) {
+                settingsManager.edit {
+                    putInt(getString(R.string.video_buffer_disk_key), prefValues[it])
+                }
             }
             return@setOnPreferenceClickListener true
         }
@@ -239,10 +252,11 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
                 prefValues.indexOf(currentPrefSize),
                 getString(R.string.video_buffer_size_settings),
                 true,
-                {}) {
-                settingsManager.edit()
-                    .putInt(getString(R.string.video_buffer_size_key), prefValues[it])
-                    .apply()
+                {}
+            ) {
+                settingsManager.edit {
+                    putInt(getString(R.string.video_buffer_size_key), prefValues[it])
+                }
             }
             return@setOnPreferenceClickListener true
         }

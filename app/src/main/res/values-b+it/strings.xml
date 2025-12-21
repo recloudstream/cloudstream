@@ -70,7 +70,6 @@
     <string name="popup_play_file">Riproduci file</string>
     <string name="popup_resume_download">Riprendi download</string>
     <string name="popup_pause_download">Ferma download</string>
-    <string name="pref_disable_acra">Disabilita segnalazione automatica di bug</string>
     <string name="home_more_info">Più info</string>
     <string name="home_expanded_hide">Nascondi</string>
     <string name="home_play">Riproduci</string>
@@ -151,8 +150,6 @@
     <string name="settings_info">Info</string>
     <string name="advanced_search">Ricerca avanzata</string>
     <string name="advanced_search_des">Dividi i risultati della ricerca per provider</string>
-    <string name="bug_report_settings_off">Invia i dati solo in caso di crash</string>
-    <string name="bug_report_settings_on">Non inviare alcun dato</string>
     <string name="show_fillers_settings">Mostra tag [filler] per anime</string>
     <string name="show_trailers_settings">Mostra trailer</string>
     <string name="kitsu_settings">Mostra poster da Kitsu</string>
@@ -160,8 +157,6 @@
     <string name="automatic_plugin_updates">Aggiorna automaticamente i plugin</string>
     <string name="updates_settings">Mostra gli aggiornamenti dell\'app</string>
     <string name="updates_settings_des">Cerca automaticamente nuovi aggiornamenti dopo aver avviato l\'app.</string>
-    <string name="uprereleases_settings">Aggiorna alle prerelease</string>
-    <string name="uprereleases_settings_des">Cerca per aggiornamenti alle prerelease invice di cercare solo le release complete</string>
     <string name="github">GitHub</string>
     <string name="lightnovel">App per Light Novel degli stessi sviluppatori</string>
     <string name="anim">App per Anime degli stessi sviluppatori</string>
@@ -174,7 +169,6 @@
     <string name="copy_link_toast">Link copiato negli appunti</string>
     <string name="play_episode_toast">Riproduci episodio</string>
     <string name="subs_default_reset_toast">Ripristina il valore predefinito</string>
-    <string name="acra_report_toast">Spiacente, l\'applicazione è andata in crash. Una segnalazione anonima di bug sarà inviata agli sviluppatori</string>
     <string name="season">Stagione</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Nessuna stagione</string>
@@ -395,7 +389,6 @@
     <string name="previous">Precedente</string>
     <string name="skip_setup">Salta configurazione</string>
     <string name="app_layout_subtext">Cambia l\'aspetto dell\'app per adattarla al proprio dispositivo</string>
-    <string name="crash_reporting_title">Segnala crash</string>
     <string name="preferred_media_subtext">Cosa vuoi vedere</string>
     <string name="setup_done">Fatto</string>
     <string name="extensions">Estensioni</string>
@@ -479,7 +472,7 @@
     <string name="update_notification_downloading">Download aggiornamento dell\'app…</string>
     <string name="automatic_plugin_download_summary">Installa automaticamente tutti i plugin non ancora installati dai repository aggiunti.</string>
     <string name="apk_installer_package_installer">ProgrammaInstallazionePacchetti</string>
-    <string name="apk_installer_settings_des">Alcuni telefoni non supportano il nuovo programma di installazione dei pacchetti. Prova l\'opzione legacy se gli aggiornamenti non vengono installati.</string>
+    <string name="apk_installer_settings_des">Alcuni dispositivi non supportano il nuovo programma di installazione dei pacchetti. Se gli aggiornamenti non vengono installati, prova l\'opzione legacy.</string>
     <string name="apk_installer_settings">Installer APK</string>
     <string name="apk_installer_legacy">Legacy</string>
     <string name="play_trailer_button">Riproduci trailer</string>
@@ -693,7 +686,7 @@
     <string name="torrent_not_accepted">Riavvia l\'app e accetta il pop-up Stream Torrent per procedere.</string>
     <string name="torrent_preferred_media">Abilita torrent in Impostazioni/Provider/Media preferiti</string>
     <string name="software_decoding">Decodifica software</string>
-    <string name="software_decoding_desc">La decodifica software consente al lettore di riprodurre file video non supportati dal telefono, ma potrebbe causare una riproduzione lenta o instabile ad alta risoluzione</string>
+    <string name="software_decoding_desc">La decodifica software consente al lettore di riprodurre file video non supportati dal dispositivo, ma potrebbe causare una riproduzione lenta o instabile ad alta risoluzione.</string>
     <string name="sort_episodes_rating_high_low">Valutazione (più alta)</string>
     <string name="sort_episodes_rating_low_high">Valutazione (più bassa)</string>
     <string name="sort_episodes_date_newest">Data di messa in onda (più recente)</string>
@@ -746,4 +739,21 @@
     <string name="action_mark_watched_up_to_this_episode">Contrassegna come visto fino a questo episodio</string>
     <string name="action_reload">Ricaricato</string>
     <string name="reload_provider">Ricarica provider</string>
+    <string name="name">Nome</string>
+    <string name="resolution_and_name">Risoluzione e nome</string>
+    <string name="subs_subtitle_alignment">Allineamento sottotitoli</string>
+    <string name="bottom_left">In basso a sinistra</string>
+    <string name="episode_action_play_mirror">Riproduci mirror</string>"
+    <string name="bottom_center">In basso al centro</string>
+    <string name="bottom_right">In basso a destra</string>
+    <string name="middle_center">In centro</string>
+    <string name="middle_right">In centro a destra</string>
+    <string name="top_left">In alto a sinistra</string>
+    <string name="top_center">In alto al centro</string>
+    <string name="top_right">In alto a destra</string>
+    <string name="middle_left">In centro a sinistra</string>
+    <string name="play_full_series_button">Riproduci serie completa</string>
+    <string name="install_prerelease">Installa la versione pre-release</string>
+    <string name="prerelease_already_installed">La versione pre-release è già installata.</string>
+    <string name="prerelease_install_failed">Impossibile installare la versione pre-release.</string>
 </resources>

@@ -6,18 +6,35 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
-    kotlin("multiplatform")
-    id("maven-publish")
-    id("com.android.library")
-    id("com.codingfeline.buildkonfig")
-    id("org.jetbrains.dokka")
+    id("maven-publish") // Gradle core plugin
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.lint)
+    alias(libs.plugins.android.multiplatform.library)
+    alias(libs.plugins.buildkonfig)
+    alias(libs.plugins.dokka)
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
 
 kotlin {
     version = "1.0.1"
-    androidTarget()
+
+    android {
+        // If this is the same com.lagradost.cloudstream3.R stops working
+        namespace = "com.lagradost.api"
+
+        compileSdk = libs.versions.compileSdk.get().toInt()
+        minSdk = libs.versions.minSdk.get().toInt()
+
+        compilerOptions {
+            jvmTarget.set(javaTarget)
+        }
+
+        lint {
+            targetSdk = libs.versions.targetSdk.get().toInt()
+        }
+    }
+
     jvm()
 
     compilerOptions {
@@ -37,6 +54,7 @@ kotlin {
             implementation(libs.jackson.module.kotlin) // JSON Parser
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.fuzzywuzzy) // Match Extractors
+            implementation(libs.jsoup) // HTML Parser
             implementation(libs.rhino) // Run JavaScript
             implementation(libs.newpipeextractor)
             implementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
@@ -65,37 +83,11 @@ buildkonfig {
 
         // Reads local.properties
         val localProperties = gradleLocalProperties(rootDir, project.providers)
-
         buildConfigField(
             FieldSpec.Type.STRING,
-            "MDL_API_KEY", (System.getenv("MDL_API_KEY") ?: localProperties["mdl.key"]).toString()
+            "MDL_API_KEY",
+            (System.getenv("MDL_API_KEY") ?: localProperties["mdl.key"]).toString()
         )
-    }
-}
-
-android {
-    compileSdk = libs.versions.compileSdk.get().toInt()
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-
-    defaultConfig {
-        minSdk = libs.versions.minSdk.get().toInt()
-    }
-
-    // If this is the same com.lagradost.cloudstream3.R stops working
-    namespace = "com.lagradost.api"
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.toVersion(javaTarget.target)
-        targetCompatibility = JavaVersion.toVersion(javaTarget.target)
-    }
-
-    @Suppress("UnstableApiUsage")
-    testOptions {
-        targetSdk = libs.versions.targetSdk.get().toInt()
-    }
-
-    lint {
-        targetSdk = libs.versions.targetSdk.get().toInt()
     }
 }
 

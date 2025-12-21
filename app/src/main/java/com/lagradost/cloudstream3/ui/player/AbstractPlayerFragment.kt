@@ -20,11 +20,13 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.annotation.LayoutRes
+import androidx.annotation.OptIn
 import androidx.annotation.StringRes
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.media3.common.PlaybackException
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.ui.AspectRatioFrameLayout
@@ -36,7 +38,6 @@ import androidx.preference.PreferenceManager
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.github.rubensousa.previewseekbar.PreviewBar
 import com.github.rubensousa.previewseekbar.media3.PreviewTimeBar
-import com.lagradost.cloudstream3.CommonActivity.canEnterPipMode
 import com.lagradost.cloudstream3.CommonActivity.isInPIPMode
 import com.lagradost.cloudstream3.CommonActivity.keyEventListener
 import com.lagradost.cloudstream3.CommonActivity.playerEventListener
@@ -46,6 +47,8 @@ import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.AppContextUtils
@@ -55,7 +58,6 @@ import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
-import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
 import java.net.SocketTimeoutException
 
 enum class PlayerResize(@StringRes val nameRes: Int) {
@@ -76,12 +78,12 @@ const val NEXT_WATCH_EPISODE_PERCENTAGE = 90
 // when the player should sync the progress of "watched", TODO MAKE SETTING
 const val UPDATE_SYNC_PROGRESS_PERCENTAGE = 80
 
+@OptIn(UnstableApi::class)
 abstract class AbstractPlayerFragment(
     var player: IPlayer = CS3IPlayer()
 ) : Fragment() {
     var resizeMode: Int = 0
     var subView: SubtitleView? = null
-    var isBuffering = true
     protected open var hasPipModeSupport = true
 
     var playerPausePlayHolderHolder: FrameLayout? = null
@@ -90,6 +92,7 @@ abstract class AbstractPlayerFragment(
     var playerView: PlayerView? = null
     var piphide: FrameLayout? = null
     var subtitleHolder: FrameLayout? = null
+    var currentPlayerStatus = CSPlayerLoading.IsBuffering
 
     @LayoutRes
     protected open var layout: Int = R.layout.fragment_player
@@ -150,10 +153,11 @@ abstract class AbstractPlayerFragment(
     ) {
         val isPlayingRightNow = CSPlayerLoading.IsPlaying == isPlaying
         val isPausedRightNow = CSPlayerLoading.IsPaused == isPlaying
+        currentPlayerStatus = isPlaying
 
         keepScreenOn(!isPausedRightNow)
 
-        isBuffering = CSPlayerLoading.IsBuffering == isPlaying
+        val isBuffering = CSPlayerLoading.IsBuffering == isPlaying
         if (isBuffering) {
             playerPausePlayHolderHolder?.isVisible = false
             playerBuffering?.isVisible = true
@@ -161,7 +165,9 @@ abstract class AbstractPlayerFragment(
             playerPausePlayHolderHolder?.isVisible = true
             playerBuffering?.isVisible = false
 
-            if (wasPlaying != isPlaying) {
+            if(isPlaying == CSPlayerLoading.IsEnded && isLayout(PHONE)){
+                playerPausePlay?.setImageResource(R.drawable.ic_baseline_replay_24)
+            } else if (wasPlaying != isPlaying) {
                 playerPausePlay?.setImageResource(if (isPlayingRightNow) R.drawable.play_to_pause else R.drawable.pause_to_play)
                 val drawable = playerPausePlay?.drawable
 
@@ -192,16 +198,12 @@ abstract class AbstractPlayerFragment(
             }
         }
 
-        canEnterPipMode = isPlayingRightNow && hasPipModeSupport
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            activity?.let { act ->
-                PlayerPipHelper.updatePIPModeActions(
-                    act,
-                    act.shouldShowPIPMode(canEnterPipMode),
-                    player.getAspectRatio()
-                )
-            }
-        }
+        PlayerPipHelper.updatePIPModeActions(
+            activity,
+            isPlaying,
+            hasPipModeSupport,
+            player.getAspectRatio()
+        )
     }
 
     private var pipReceiver: BroadcastReceiver? = null
@@ -228,11 +230,16 @@ abstract class AbstractPlayerFragment(
                         )
                     }
                 }
+
                 val filter = IntentFilter()
                 filter.addAction(ACTION_MEDIA_CONTROL)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     activity?.registerReceiver(pipReceiver, filter, Context.RECEIVER_EXPORTED)
-                } else activity?.registerReceiver(pipReceiver, filter)
+                } else {
+                    @SuppressLint("UnspecifiedRegisterReceiverFlag")
+                    activity?.registerReceiver(pipReceiver, filter)
+                }
+
                 val isPlaying = player.getIsPlaying()
                 val isPlayingValue =
                     if (isPlaying) CSPlayerLoading.IsPlaying else CSPlayerLoading.IsPaused
@@ -293,9 +300,10 @@ abstract class AbstractPlayerFragment(
                 val errorName = exception.errorCodeName
                 when (val code = exception.errorCode) {
                     PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND,
-                    PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED,
                     PlaybackException.ERROR_CODE_IO_NO_PERMISSION,
-                    PlaybackException.ERROR_CODE_IO_UNSPECIFIED -> {
+                    PlaybackException.ERROR_CODE_IO_READ_POSITION_OUT_OF_RANGE,
+                    PlaybackException.ERROR_CODE_IO_UNSPECIFIED,
+                    PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED -> {
                         showToast(
                             "${ctx.getString(R.string.source_error)}\n$errorName ($code)\n$msg",
                             gotoNext = true
@@ -682,7 +690,9 @@ abstract class AbstractPlayerFragment(
 
         playerEventListener = null
         keyEventListener = null
-        canEnterPipMode = false
+
+        PlayerPipHelper.updatePIPModeActions(activity, CSPlayerLoading.IsPaused, false, null)
+
         mMediaSession?.release()
         mMediaSession = null
         playerView?.player = null

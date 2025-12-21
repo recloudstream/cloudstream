@@ -32,9 +32,9 @@ import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
-import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.BuildConfig
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.IDownloadableMinimum
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
@@ -388,7 +388,7 @@ object VideoDownloadManager {
                 val mbFormat = "%.1f MB"
 
                 if (hlsProgress != null && hlsTotal != null) {
-                    progressPercentage = hlsProgress.toLong() * 100 / hlsTotal
+                    progressPercentage = hlsProgress * 100 / hlsTotal
                     progressMbString = hlsProgress.toString()
                     totalMbString = hlsTotal.toString()
                     suffix = " - $mbFormat".format(progress / 1000000f)
@@ -1628,7 +1628,7 @@ object VideoDownloadManager {
      * Turns a string to an UniFile. Used for stored string paths such as settings.
      * Should only be used to get a download path.
      * */
-    private fun basePathToFile(context: Context, path: String?): SafeFile? {
+    fun basePathToFile(context: Context, path: String?): SafeFile? {
         return when {
             path.isNullOrBlank() -> getDefaultDir(context)
             path.startsWith("content://") -> SafeFile.fromUri(context, path.toUri())

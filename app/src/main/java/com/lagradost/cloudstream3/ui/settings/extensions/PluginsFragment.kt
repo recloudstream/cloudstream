@@ -66,7 +66,7 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
         val downloadAllButton = binding.settingsToolbar.menu?.findItem(R.id.download_all)
 
         if (url == null || name == null) {
-            activity?.onBackPressedDispatcher?.onBackPressed()
+            dispatchBackPressed()
             return
         }
 
@@ -126,7 +126,7 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
                 if (searchView?.isIconified == false) {
                     searchView.isIconified = true
                 } else {
-                    activity?.onBackPressedDispatcher?.onBackPressed()
+                    dispatchBackPressed()
                 }
             }
             searchView?.setOnQueryTextFocusChangeListener { _, hasFocus ->

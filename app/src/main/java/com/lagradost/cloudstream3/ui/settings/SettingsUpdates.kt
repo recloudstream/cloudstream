@@ -5,11 +5,13 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.edit
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.AutoDownloadMode
+import com.lagradost.cloudstream3.BuildConfig
+import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
@@ -31,7 +33,8 @@ import com.lagradost.cloudstream3.ui.settings.utils.getChooseFolderLauncher
 import com.lagradost.cloudstream3.utils.BackupUtils
 import com.lagradost.cloudstream3.utils.BackupUtils.restorePrompt
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
-import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
+import com.lagradost.cloudstream3.utils.InAppUpdater.installPreReleaseIfNeeded
+import com.lagradost.cloudstream3.utils.InAppUpdater.runAutoUpdate
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
@@ -56,12 +59,12 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
     }
 
     private val pathPicker = getChooseFolderLauncher { uri, path ->
-        val context = context ?: AcraApplication.context ?: return@getChooseFolderLauncher
+        val context = context ?: CloudStreamApp.context ?: return@getChooseFolderLauncher
         (path ?: uri.toString()).let {
-            PreferenceManager.getDefaultSharedPreferences(context).edit()
-                .putString(getString(R.string.backup_path_key), uri.toString())
-                .putString(getString(R.string.backup_dir_key), it)
-                .apply()
+            PreferenceManager.getDefaultSharedPreferences(context).edit {
+                putString(getString(R.string.backup_path_key), uri.toString())
+                putString(getString(R.string.backup_dir_key), it)
+            }
         }
     }
 
@@ -86,11 +89,13 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
                 prefValues.indexOf(current),
                 getString(R.string.backup_frequency),
                 true,
-                {}) { index ->
-                settingsManager.edit()
-                    .putInt(getString(R.string.automatic_backup_key), prefValues[index]).apply()
+                {}
+            ) { index ->
+                settingsManager.edit {
+                    putInt(getString(R.string.automatic_backup_key), prefValues[index])
+                }
                 BackupWorkManager.enqueuePeriodicWork(
-                    context ?: AcraApplication.context,
+                    context ?: CloudStreamApp.context,
                     prefValues[index].toLong()
                 )
             }
@@ -117,7 +122,8 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
                 dirs.indexOf(currentDir),
                 getString(R.string.backup_path_title),
                 true,
-                {}) {
+                {}
+            ) {
                 // Last = custom
                 if (it == dirs.size) {
                     try {
@@ -129,10 +135,10 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
                     // Sets both visual and actual paths.
                     // path = used uri
                     // dir = dir path
-                    settingsManager.edit()
-                        .putString(getString(R.string.backup_path_key), dirs[it])
-                        .putString(getString(R.string.backup_dir_key), dirs[it])
-                        .apply()
+                    settingsManager.edit {
+                        putString(getString(R.string.backup_path_key), dirs[it])
+                        putString(getString(R.string.backup_dir_key), dirs[it])
+                    }
                 }
             }
             return@setOnPreferenceClickListener true
@@ -209,11 +215,12 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
                 prefValues.indexOf(currentInstaller),
                 getString(R.string.apk_installer_settings),
                 true,
-                {}) { num ->
+                {}
+            ) { num ->
                 try {
-                    settingsManager.edit()
-                        .putInt(getString(R.string.apk_installer_key), prefValues[num])
-                        .apply()
+                    settingsManager.edit {
+                        putInt(getString(R.string.apk_installer_key), prefValues[num])
+                    }
                 } catch (e: Exception) {
                     logError(e)
                 }
@@ -221,18 +228,29 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
-        getPref(R.string.manual_check_update_key)?.setOnPreferenceClickListener {
-            ioSafe {
-                if (activity?.runAutoUpdate(false) == false) {
-                    activity?.runOnUiThread {
-                        showToast(
-                            R.string.no_update_found,
-                            Toast.LENGTH_SHORT
-                        )
+        getPref(R.string.manual_check_update_key)?.let { pref ->
+            pref.summary = BuildConfig.VERSION_NAME
+            pref.setOnPreferenceClickListener {
+                ioSafe {
+                    if (activity?.runAutoUpdate(false) == false) {
+                        activity?.runOnUiThread {
+                            showToast(
+                                R.string.no_update_found,
+                                Toast.LENGTH_SHORT
+                            )
+                        }
                     }
                 }
+                return@setOnPreferenceClickListener true
             }
-            return@setOnPreferenceClickListener true
+        }
+        
+        getPref(R.string.install_prerelease_key)?.let { pref ->
+            pref.isVisible = BuildConfig.FLAVOR == "stable"
+            pref.setOnPreferenceClickListener {
+                activity?.installPreReleaseIfNeeded()
+                return@setOnPreferenceClickListener true
+            }
         }
 
         getPref(R.string.auto_download_plugins_key)?.setOnPreferenceClickListener {
@@ -247,10 +265,12 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
                 prefValues.indexOf(current),
                 getString(R.string.automatic_plugin_download_mode_title),
                 true,
-                {}) { num ->
-                settingsManager.edit()
-                    .putInt(getString(R.string.auto_download_plugins_key), prefValues[num]).apply()
-                (context ?: AcraApplication.context)?.let { ctx -> app.initClient(ctx) }
+                {}
+            ) { num ->
+                settingsManager.edit {
+                    putInt(getString(R.string.auto_download_plugins_key), prefValues[num])
+                }
+                (context ?: CloudStreamApp.context)?.let { ctx -> app.initClient(ctx) }
             }
             return@setOnPreferenceClickListener true
         }

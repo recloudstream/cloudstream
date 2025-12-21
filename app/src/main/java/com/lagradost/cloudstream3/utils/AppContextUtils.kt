@@ -18,7 +18,6 @@ import android.media.tv.TvContract.Channels.COLUMN_INTERNAL_PROVIDER_ID
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
-import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -33,6 +32,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AlertDialog
+import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import androidx.core.text.toSpanned
 import androidx.core.widget.ContentLoadingProgressBar
@@ -55,8 +55,8 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.wrappers.Wrappers
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.APIHolder.apis
-import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.AllLanguagesName
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getActivity
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.DubStatus
@@ -170,10 +170,10 @@ object AppContextUtils {
             )
             .setWatchNextType(TvContractCompat.WatchNextPrograms.WATCH_NEXT_TYPE_CONTINUE)
             .setTitle(title)
-            .setPosterArtUri(Uri.parse(card.posterUrl))
-            .setIntentUri(Uri.parse(card.id?.let {
+            .setPosterArtUri(card.posterUrl?.toUri())
+            .setIntentUri((card.id?.let {
                 "$APP_STRING_RESUME_WATCHING://$it"
-            } ?: card.url))
+            } ?: card.url).toUri())
             .setInternalProviderId(card.url)
             .setLastEngagementTimeUtcMillis(
                 resumeWatching?.updateTime ?: System.currentTimeMillis()
@@ -603,7 +603,7 @@ object AppContextUtils {
     ) = (this.getActivity() ?: activity)?.runOnUiThread {
         try {
             val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(url)
+            intent.data = url.toUri()
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
             // activityResultRegistry is used to fall back to webview if a browser is missing
@@ -685,6 +685,18 @@ object AppContextUtils {
             }
         }
         return ""
+    }
+
+    fun Context.getShortSeasonText(episode: Int?, season: Int?): String? {
+        val rEpisode = if (episode == 0) null else episode
+        val rSeason = if (season == 0) null else season
+        val seasonNameShort = getString(R.string.season_short)
+        val episodeNameShort = getString(R.string.episode_short)
+        return if (rEpisode != null && rSeason != null) {
+            "$seasonNameShort${rSeason}:$episodeNameShort${rEpisode}"
+        } else if (rEpisode != null) {
+            "$episodeNameShort$rEpisode"
+        }else null
     }
 
     fun Activity?.loadCache() {

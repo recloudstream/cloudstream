@@ -6,15 +6,12 @@
     <string name="title_downloads">التنزيلات</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$sالحلقة %2$d</string>
     <string name="delete_file">محي الملف</string>
-    <string name="acra_report_toast">سوري، الآپ تعطل. رح ينبعت تقرير عن المشكلة للمطورين</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
-    <string name="bug_report_settings_off">بس بعات البيانات وقت ما يتعطل الآپ</string>
     <string name="preview_background_img_des">شوف الخلفية</string>
     <string name="play_movie_button">مشّي الفيلم</string>
     <string name="subs_hold_to_reset_to_default">ضلّ كابس لترجع السَتِنگز كيف كانة أول ما نزلتو الآپ</string>
     <string name="season_format">%1$s%2$d%3$s</string>
     <string name="subs_default_reset_toast">رجِعت السَتِنگز ل كيف كانت أساسًا</string>
-    <string name="uprereleases_settings_des">نبش على تجديدات بال نسخة التجريبية كمان</string>
     <string name="subs_outline_color">لون حدود الكتيبة</string>
     <string name="search_poster_img_des">پوستر</string>
     <string name="backup_frequency">كلّ قديش بيعمل الآپ نسخة إحتياطية</string>
@@ -63,7 +60,6 @@
     <string name="subs_subtitle_languages">لغة الترجمة</string>
     <string name="subs_background_color">لون الخلفية</string>
     <string name="episode_sync_settings_des">بتسيّڤ تاريخ المشاهدة و لوين وصلت بال ڤيديو</string>
-    <string name="bug_report_settings_on">م بتبعت بيانات</string>
     <string name="search_hint">نبّش…</string>
     <string name="provider_info_meta">هيدا المصدر مش عاطي \"ميتا داتا\". إزا مش موجودة بال مصدر، م رح يمشي الڤيديو.</string>
     <string name="no_season">مافي أجزاء</string>
@@ -115,7 +111,6 @@
     <string name="result_open_in_browser">فتحو بمتصفح الوَب</string>
     <string name="use_system_brightness_settings">عوز ضوّ السيستام</string>
     <string name="double_tap_to_pause_settings_des">كبوس مرتين بال نُصّ حتى توقف الڤيديو</string>
-    <string name="uprereleases_settings">جدد الآب وعوز النسخة التجريبية</string>
     <string name="no_data">مافي بيانات</string>
     <string name="player_subtitles_settings">الترجمة</string>
     <string name="subs_font">الخط</string>
@@ -281,7 +276,6 @@
     <string name="error_bookmarks_text">إشارات المرجعية</string>
     <string name="download_started">التنزيل بَلَش</string>
     <string name="logged_account" formatted="true">فتّو على الأكونت \"%s\"</string>
-    <string name="pref_disable_acra">وقِف الإعلان الأتوماتيكي عن المشاكل يللي بال آپ</string>
     <string name="bottom_title_settings">محل عنوان الپوستر</string>
     <string name="category_ui">الشكل</string>
     <string name="next_episode_time_hour_format" formatted="true">%1$d ساعة %2$d ديقة</string>
@@ -462,7 +456,6 @@
     <string name="skip_type_op">الإفتتاح</string>
     <string name="resolution_and_title">الجودة وال عنوان</string>
     <string name="action_unsubscribe">شيل الإشتراك</string>
-    <string name="crash_reporting_title">بَلِغ عن الأعطال</string>
     <string name="tracks">جودة وصوت</string>
     <string name="duplicate_replace">ستبدل</string>
     <string name="sync_total_episodes_none">/؟؟</string>

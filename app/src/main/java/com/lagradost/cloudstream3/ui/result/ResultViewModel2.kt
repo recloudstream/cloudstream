@@ -11,14 +11,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.AcraApplication.Companion.context
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.actions.AlwaysAskAction
 import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.context
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.getCastSession
 import com.lagradost.cloudstream3.CommonActivity.showToast
@@ -389,7 +389,7 @@ fun SelectPopup.getOptions(context: Context): List<String> {
 }
 
 data class ExtractedTrailerData(
-    var mirros: List<ExtractorLink>,
+    var mirros: List<Pair<ExtractorLink,String>>,//Pair of extracted trailer link and original trailer link
     var subtitles: List<SubtitleFile> = emptyList(),
 )
 
@@ -1368,7 +1368,7 @@ class ResultViewModel2 : ViewModel() {
         // TODO Add skip loading here
         loadLinks(result, isVisible = true, sourceTypes, isCasting = isCasting) { links ->
             // Could not find a better way to do this
-            //val context = AcraApplication.context
+            //val context = CloudStreamApp.context
             postPopup(
                 text,
                 links.links.map { txt("${it.name} ${Qualities.getStringByInt(it.quality)}") }
@@ -2057,6 +2057,7 @@ class ResultViewModel2 : ViewModel() {
         val text = txt(
             when (response.type) {
                 TvType.Torrent -> R.string.play_torrent_button
+                TvType.TvSeries -> R.string.play_full_series_button
                 else -> {
                     if (response.type.isLiveStream())
                         R.string.play_livestream_button
@@ -2591,16 +2592,17 @@ class ResultViewModel2 : ViewModel() {
             loadResponse.trailers.windowed(limit, limit, true).takeWhile { list ->
                 list.amap { trailerData ->
                     try {
-                        val links = arrayListOf<ExtractorLink>()
+                        val links = arrayListOf<Pair<ExtractorLink,String>>()
                         val subs = arrayListOf<SubtitleFile>()
                         if (!loadExtractor(
                                 trailerData.extractorUrl,
                                 trailerData.referer,
                                 { subs.add(it) },
-                                { links.add(it) }) && trailerData.raw
+                                { links.add(Pair(it,trailerData.extractorUrl))}) && trailerData.raw
                         ) {
                             arrayListOf(
-                                newExtractorLink(
+                                Pair(
+                                    newExtractorLink(
                                     "",
                                     "Trailer",
                                     trailerData.extractorUrl,
@@ -2609,7 +2611,7 @@ class ResultViewModel2 : ViewModel() {
                                     this.referer = trailerData.referer ?: ""
                                     this.quality = Qualities.Unknown.value
                                     this.headers = trailerData.headers
-                                }
+                                },trailerData.extractorUrl)
                             ) to arrayListOf()
                         } else {
                             links to subs

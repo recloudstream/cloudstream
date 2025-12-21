@@ -47,7 +47,6 @@
     <string name="popup_play_file">Lire le fichier</string>
     <string name="popup_resume_download">Reprendre le téléchargement</string>
     <string name="popup_pause_download">Mettre en pause le téléchargement</string>
-    <string name="pref_disable_acra">Désactiver le rapport de bug automatique</string>
     <string name="home_more_info">Plus d\'information</string>
     <string name="home_expanded_hide">Cacher</string>
     <string name="home_main_poster_img_des">Affiche principale</string>
@@ -69,7 +68,6 @@
     <string name="copy_link_toast">Lien copié dans le presse-papier</string>
     <string name="play_episode_toast">Lecture de l\'episode</string>
     <string name="subs_default_reset_toast">Réinitialiser aux valeurs par défault</string>
-    <string name="acra_report_toast">Désolé, l\'application à crashé. Un rapport de bug anonyme va être envoyé aux développeurs</string>
     <string name="season">Saison</string>
     <string name="no_season">Pas de Saison</string>
     <string name="episode">Épisode</string>
@@ -282,8 +280,6 @@
     <string name="settings_info">Info</string>
     <string name="advanced_search">Recherche avancée</string>
     <string name="advanced_search_des">Vous donne les résultats de la recherche séparés par fournisseur</string>
-    <string name="bug_report_settings_off">Envoi de données uniquement en cas d\'accident</string>
-    <string name="bug_report_settings_on">N\'envoie aucune donnée</string>
     <string name="show_fillers_settings">Afficher les épisodes spéciaux pour les animés</string>
     <string name="show_trailers_settings">Montrer les bandes-annonces</string>
     <string name="kitsu_settings">Montrer les affiches provenant de Kitsu</string>
@@ -291,8 +287,6 @@
     <string name="automatic_plugin_updates">Mises à jour automatiques des plugins</string>
     <string name="updates_settings">Afficher les mises à jour de l\'application</string>
     <string name="updates_settings_des">Recherche automatique de nouvelles mises à jour au démarrage.</string>
-    <string name="uprereleases_settings">Mettre à jour vers une version bêta</string>
-    <string name="uprereleases_settings_des">Recherche pour une mise à jour vers une version bêta au lieu des version complètes seulement</string>
     <string name="github">Github</string>
     <string name="lightnovel">Application Light Novel par les mêmes devs</string>
     <string name="anim">Anime app by the same devs</string>
@@ -432,10 +426,9 @@
     <string name="skip_type_mixed_op">Introduction mitigée</string>
     <string name="update_notification_installing">Installation de la mise a jour de l\'application…</string>
     <string name="update_notification_failed">Impossible d\'installer la nouvelle version de l\'application</string>
-    <string name="apk_installer_settings_des">Certains téléphones ne supporte pas le nouvel installateur d\'application. Essayez l\'option de l\'ancien installateur si les mises-à-jour ne s\'installe pas.</string>
+    <string name="apk_installer_settings_des">Certains appareils ne supportent pas le nouvel installateur d\'application. Essayez l\'option de l\'ancien installateur si les mises-à-jour ne s\'installe pas.</string>
     <string name="previous">Précédent</string>
     <string name="skip_setup">Ignorer la configuration</string>
-    <string name="crash_reporting_title">Rapport de crash</string>
     <string name="repository_name_hint">Nom de dépôt (optionnel)</string>
     <string name="plugin_singular">plugin</string>
     <string name="delete_repository">Supprimer le repository</string>
@@ -657,7 +650,7 @@
     <string name="confirm_before_exiting_title">Confirmer avant de quitter</string>
     <string name="unsupported_error">Erreur non supportée</string>
     <string name="encoding_error">Erreur d\'encodage</string>
-    <string name="software_decoding_desc">Le décodage logiciel permet au lecteur de lire des fichiers vidéo non pris en charge par votre téléphone, mais peut entraîner une lecture lente ou instable en haute résolution</string>
+    <string name="software_decoding_desc">Le décodage logiciel permet au lecteur de lire des fichiers vidéo non pris en charge par votre appareil, mais peut entraîner une lecture lente ou instable en haute résolution.</string>
     <string name="software_decoding">Décodage logiciel</string>
     <string name="torrent_preferred_media">Activer les torrents dans Paramètres/Sources/Média préféré</string>
     <string name="torrent_not_accepted">Redémarrez l\'application et acceptez la fenêtre contextuelle Stream Torrent pour continuer.</string>
@@ -716,4 +709,18 @@
     <string name="action_remove_mark_watched_up_to_this_episode">Supprimer l\'historique de visionnage jusqu\'à cet épisode</string>
     <string name="action_reload">Rechargé</string>
     <string name="reload_provider">Recharger le fournisseur</string>
+    <string name="resolution_and_name">Solution et nom</string>
+    <string name="name">Nom</string>
+    <string name="episode_action_play_mirror">Mise en miroir</string>"
+    <string name="subs_subtitle_alignment">Alignement des Sous-titres</string>
+    <string name="bottom_left">En bas à gauche</string>
+    <string name="bottom_center">En bas au centre</string>
+    <string name="bottom_right">En bas à droite</string>
+    <string name="middle_left">Au milieu à gauche</string>
+    <string name="middle_center">Au milieu au centre</string>
+    <string name="middle_right">Au milieu à droite</string>
+    <string name="top_left">En haut à gauche</string>
+    <string name="top_center">En haut au centre</string>
+    <string name="top_right">En haut à droite</string>
+    <string name="play_full_series_button">Jouer la série complète</string>
 </resources>

@@ -126,6 +126,33 @@ abstract class BaseFragment<T : ViewBinding>(
 ) : Fragment(), BaseFragmentHelper<T> {
     override var _binding: T? = null
 
+    /** Safer activity?.onBackPressedDispatcher?.onBackPressed() with fallback behavior instead of app crash */
+    fun dispatchBackPressed() {
+        try {
+            activity?.onBackPressedDispatcher?.onBackPressed()
+        } catch (_: IllegalStateException) {
+            // FragmentManager is already executing transactions, so try again
+            delayedDispatchBackPressed(5)
+        } catch (t: Throwable) {
+            logError(t)
+        }
+    }
+
+    /** Recursive back press when available */
+    private fun delayedDispatchBackPressed(remaining: Int) {
+        if (remaining <= 0) return
+        binding?.root?.postDelayed({
+            try {
+                activity?.onBackPressedDispatcher?.onBackPressed()
+            } catch (_: IllegalStateException) {
+                // FragmentManager is already executing transactions, so try again
+                delayedDispatchBackPressed(remaining - 1)
+            } catch (t: Throwable) {
+                logError(t)
+            }
+        }, 200)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -238,7 +265,7 @@ abstract class BaseBottomSheetDialogFragment<T : ViewBinding>(
     }
 }
 
-abstract class BasePreferenceFragmentCompat(): PreferenceFragmentCompat() {
+abstract class BasePreferenceFragmentCompat() : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setSystemBarsPadding()

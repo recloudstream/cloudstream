@@ -4,10 +4,10 @@ import android.util.Base64
 import androidx.annotation.WorkerThread
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder.unixTime
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.ActorData
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.openBrowser
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.LoadResponse
@@ -247,15 +247,15 @@ abstract class AuthAPI {
     open suspend fun invalidateToken(token: AuthToken): Nothing = throw NotImplementedError()
 
     @Throws
-    @Deprecated("Please the the new api for AuthAPI", level = DeprecationLevel.WARNING)
+    @Deprecated("Please use the new API for AuthAPI", level = DeprecationLevel.ERROR)
     fun toRepo(): AuthRepo = when (this) {
         is SubtitleAPI -> SubtitleRepo(this)
         is SyncAPI -> SyncRepo(this)
         else -> throw NotImplementedError("Unknown inheritance from AuthAPI")
     }
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Please the the new api for AuthAPI", level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated("Please use the new API for AuthAPI", level = DeprecationLevel.ERROR)
     fun loginInfo(): LoginInfo? {
         return this.toRepo().authUser()?.let { user ->
             LoginInfo(
@@ -266,20 +266,16 @@ abstract class AuthAPI {
         }
     }
 
-    @Deprecated("Please the the new api for AuthAPI", level = DeprecationLevel.WARNING)
+    @Deprecated("Please use the new API for AuthAPI", level = DeprecationLevel.ERROR)
     suspend fun getPersonalLibrary(): SyncAPI.LibraryMetadata? {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         return (this.toRepo() as? SyncRepo)?.library()?.getOrThrow()
     }
 
-    @Deprecated("Please the the new api for AuthAPI", level = DeprecationLevel.WARNING)
+    @Deprecated("Please use the new API for AuthAPI", level = DeprecationLevel.ERROR)
     class LoginInfo(
         val profilePicture: String? = null,
         val name: String?,
         val accountIndex: Int,
     )
 }
-
-
-
-

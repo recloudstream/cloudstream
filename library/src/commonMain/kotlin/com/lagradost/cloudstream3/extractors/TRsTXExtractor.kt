@@ -29,7 +29,7 @@ open class TRsTX : ExtractorApi() {
             )
         }
 
-		val vidLinks = mutableSetOf<String>()
+        val vidLinks = mutableSetOf<String>()
         val vidMap   = mutableListOf<Map<String, String>>()
         for (item in postJson) {
             if (item.file == null || item.title == null) continue
@@ -37,8 +37,8 @@ open class TRsTX : ExtractorApi() {
             val fileUrl   = "${mainUrl}/playlist/" + item.file.substring(1) + ".txt"
             val videoData = app.post(fileUrl, referer=extRef).text
 
-			if (videoData in vidLinks) { continue }
- 			vidLinks.add(videoData)
+            if (videoData in vidLinks) { continue }
+            vidLinks.add(videoData)
 
             vidMap.add(mapOf(
                 "title"     to item.title,
@@ -46,12 +46,11 @@ open class TRsTX : ExtractorApi() {
             ))
         }
 
-
         for (mapEntry in vidMap) {
             val title    = mapEntry["title"] ?: continue
             val m3uLink = mapEntry["videoData"] ?: continue
 
-	        callback.invoke(
+            callback.invoke(
                 newExtractorLink(
                     source  = this.name,
                     name    = "${this.name} - ${title}",

@@ -65,7 +65,6 @@
     <string name="popup_play_file">Přehrát soubor</string>
     <string name="popup_resume_download">Pokračovat ve stahování</string>
     <string name="popup_pause_download">Pozastavit stahování</string>
-    <string name="pref_disable_acra">Zakázat automatické nahlašování chyb</string>
     <string name="home_more_info">Více informací</string>
     <string name="home_expanded_hide">Skrýt</string>
     <string name="home_play">Přehrát</string>
@@ -144,13 +143,9 @@
     <string name="settings_info">Informace</string>
     <string name="advanced_search">Pokročilé hledání</string>
     <string name="advanced_search_des">Zobrazí vám výsledky hledání oddělené poskytovatelem</string>
-    <string name="bug_report_settings_off">Odešle data pouze při pádech</string>
-    <string name="bug_report_settings_on">Nebude odesílat žádná data</string>
     <string name="show_fillers_settings">Zobrazit výplňové epizody u anime</string>
     <string name="updates_settings">Zobrazit aktualizace aplikace</string>
     <string name="updates_settings_des">Při spuštění aplikace automaticky zkontrolovat nové aktualizace.</string>
-    <string name="uprereleases_settings">Aktualizovat na předběžná vydání</string>
-    <string name="uprereleases_settings_des">Kontrolovat aktualizace předběžných vydání, místo normálních plných vydání</string>
     <string name="github">GitHub</string>
     <string name="lightnovel">Nenáročná aplikace pro romány od stejných vývojářů</string>
     <string name="anim">Anime aplikace od stejných vývojářů</string>
@@ -163,7 +158,6 @@
     <string name="copy_link_toast">Odkaz zkopírován do schránky</string>
     <string name="play_episode_toast">Přehrát epizodu</string>
     <string name="subs_default_reset_toast">Obnovit na výchozí hodnoty</string>
-    <string name="acra_report_toast">Omlouváme se, aplikace spadla. Vývojářům bude odesláno anonymní hlášení o pádu</string>
     <string name="season">Sezóna</string>
     <string name="no_season">Žádná sezóna</string>
     <string name="episode">Epizoda</string>
@@ -412,7 +406,7 @@
     <string name="redo_setup_process">Znovu provést proces nastavení</string>
     <string name="apk_installer_settings">Instalátor APK</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
-    <string name="apk_installer_settings_des">Některé telefony nepodporují nový instalátor balíčků. Pokud se aktualizace nenainstalují, zkuste použít starší možnost.</string>
+    <string name="apk_installer_settings_des">Některá zařízení nepodporují nový instalátor balíčků. Pokud se aktualizace nenainstalují, zkuste použít starší možnost.</string>
     <string name="pref_category_cache">Mezipaměť</string>
     <string name="next_episode_format" formatted="true">Epizoda %d bude vydána za</string>
     <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
@@ -425,7 +419,6 @@
     <string name="example_site_name">NovýNázevWebu</string>
     <string name="enable_nsfw_on_providers">Povolit NSFW u podporovaných rozšíření</string>
     <string name="category_providers">Poskytovatelé</string>
-    <string name="crash_reporting_title">Hlášení pádů</string>
     <string name="previous">Předchozí</string>
     <string name="app_layout_subtext">Změnit vzhled aplikace tak, aby vám vyhovoval</string>
     <string name="preferred_media_subtext">Co chcete vidět</string>
@@ -697,7 +690,7 @@
     <string name="torrent_not_accepted">Pro pokračování restartujte aplikaci a potvrďte dialog o streamování torrentu.</string>
     <string name="torrent_preferred_media">Povolte torrent v Nastavení/Poskytovatelé/Preferovaná média</string>
     <string name="software_decoding">Softwarové dekódování</string>
-    <string name="software_decoding_desc">Softwarové dekódování umožňuje přehrávači přehrávat video soubory, které telefon nepodporuje, ale může způsobit zpoždění nebo nestabilní přehrávání ve vysokém rozlišení</string>
+    <string name="software_decoding_desc">Softwarové dekódování umožňuje přehrávači přehrávat video soubory, které vaše zařízení nepodporuje, ale může způsobit zpoždění nebo nestabilní přehrávání ve vysokém rozlišení.</string>
     <string name="sort_episodes_rating_high_low">Hodnocení (nejvyšší)</string>
     <string name="sort_episodes_date_newest">Datum vysílání (nejnovější)</string>
     <string name="sort_episodes_date_oldest">Datum vysílání (nejstarší)</string>
@@ -753,4 +746,19 @@
     <string name="episode_action_play_mirror">Přehrát ze zrcadla</string>"
     <string name="name">Název</string>
     <string name="resolution_and_name">Rozlišení a název</string>
+    <string name="subs_subtitle_alignment">Zarovnání titulků</string>
+    <string name="bottom_left">Vlevo dole</string>
+    <string name="bottom_center">Uprostřed dole</string>
+    <string name="bottom_right">Vpravo dole</string>
+    <string name="middle_left">Vlevo uprostřed</string>
+    <string name="middle_center">Uprostřed</string>
+    <string name="middle_right">Vpravo uprostřed</string>
+    <string name="top_left">Vlevo nahoře</string>
+    <string name="top_center">Uprostřed nahoře</string>
+    <string name="top_right">Vpravo nahoře</string>
+    <string name="play_full_series_button">Přehrát celý seriál</string>
+    <string name="install_prerelease">Nainstalovat předběžnou verzi</string>
+    <string name="prerelease_already_installed">Předběžné vydání je již nainstalováno.</string>
+    <string name="prerelease_install_failed">Nepodařilo se nainstalovat předběžné vydání.</string>
+    <string name="show_episode_text">Text epizody</string>
 </resources>

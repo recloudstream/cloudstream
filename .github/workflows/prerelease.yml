@@ -8,7 +8,7 @@ on:
       - '*.json'
       - '**/wcokey.txt'
 
-concurrency: 
+concurrency:
   group: "pre-release"
   cancel-in-progress: true
 
@@ -24,16 +24,17 @@ jobs:
         private_key: ${{ secrets.GH_APP_KEY }}
         repository: "recloudstream/secrets"
 
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
+
     - name: Set up JDK 17
       uses: actions/setup-java@v5
       with:
-        java-version: '17'
-        distribution: 'adopt'
-        cache: gradle
+        distribution: temurin
+        java-version: 17
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+
     - name: Fetch keystore
       id: fetch_keystore
       run: |
@@ -45,10 +46,13 @@ jobs:
         echo "::add-mask::${KEY_PWD}"
         echo "key_pwd=$KEY_PWD" >> $GITHUB_OUTPUT
 
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v5
+      with:
+        cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+
     - name: Run Gradle
-      run: |
-        ./gradlew assemblePrerelease build androidSourcesJar
-        ./gradlew makeJar # for classes.jar, has to be done after assemblePrerelease
+      run: ./gradlew assemblePrerelease build androidSourcesJar makeJar
       env:
         SIGNING_KEY_ALIAS: "key0"
         SIGNING_KEY_PASSWORD: ${{ steps.fetch_keystore.outputs.key_pwd }}
@@ -58,7 +62,7 @@ jobs:
         MDL_API_KEY: ${{ secrets.MDL_API_KEY }}
 
     - name: Create pre-release
-      uses: "marvinpinto/action-automatic-releases@latest"
+      uses: marvinpinto/action-automatic-releases@latest
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "pre-release"

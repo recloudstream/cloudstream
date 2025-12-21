@@ -69,7 +69,6 @@
     <string name="popup_play_file">Reproduzir arquivo</string>
     <string name="popup_resume_download">Continuar download</string>
     <string name="popup_pause_download">Pausar download</string>
-    <string name="pref_disable_acra">Desative o relatório automático de erros</string>
     <string name="home_more_info">Mais informações</string>
     <string name="home_expanded_hide">Ocultar</string>
     <string name="home_play">Reproduzir</string>
@@ -148,8 +147,6 @@
     <string name="settings_info">Info</string>
     <string name="advanced_search">Pesquisa avançada</string>
     <string name="advanced_search_des">Mostrar resultados separados por fornecedor</string>
-    <string name="bug_report_settings_off">Enviar apenas dados de falhas</string>
-    <string name="bug_report_settings_on">Não enviar nenhum dado</string>
     <string name="show_fillers_settings">Mostrar episódios extras de animes</string>
     <string name="show_trailers_settings">Mostrar trailers</string>
     <string name="kitsu_settings">Mostrar posters do Kitsu</string>
@@ -157,8 +154,6 @@
     <string name="automatic_plugin_updates">Atualização automática de plugins</string>
     <string name="updates_settings">Mostrar atualizações do app</string>
     <string name="updates_settings_des">Automaticamente procurar por novas atualizações ao abrir.</string>
-    <string name="uprereleases_settings">Permitir versões em pré-lançamento</string>
-    <string name="uprereleases_settings_des">Permitir a instação de versões em pré-lançamento ao invés de somente versões estáveis</string>
     <string name="github">GitHub</string>
     <string name="lightnovel">App de Light novel criado pelos mesmos desenvolvedores</string>
     <string name="anim">App de Anime criado pelos mesmos desenvolvedores</string>
@@ -171,7 +166,6 @@
     <string name="copy_link_toast">Link copiado para área de transferência</string>
     <string name="play_episode_toast">Assistir episódio</string>
     <string name="subs_default_reset_toast">Restaurar para o padrão</string>
-    <string name="acra_report_toast">Desculpe :/, o aplicativo travou. Um relatório de erro anônimo será enviado aos desenvolvedores</string>
     <string name="season">Temporada</string>
     <string name="no_season">Nenhuma temporada</string>
     <string name="episode">Episódio</string>
@@ -390,7 +384,6 @@
     <string name="previous">Anterior</string>
     <string name="skip_setup">Saltar setup</string>
     <string name="app_layout_subtext">Change the look of the app to suit your device</string>
-    <string name="crash_reporting_title">Crash reporting</string>
     <string name="preferred_media_subtext">What do you want to see</string>
     <string name="setup_done">Feito</string>
     <string name="extensions">Extensões</string>
@@ -489,7 +482,7 @@
     <string name="subscription_episode_released">Episódio %d lançado!</string>
     <string name="set_default">Selecionar padrão</string>
     <string name="subscription_deleted">Inscrição cancelada de %s</string>
-    <string name="apk_installer_settings_des">Alguns aparelhos não permitem instalação automática. Tente a opção legada (manual) se a atualização falhar.</string>
+    <string name="apk_installer_settings_des">Alguns dispositivos não são compatíveis com o novo instalador de pacotes. Se as atualizações não forem instaladas, tente a opção legada.</string>
     <string name="mobile_data">Dados móveis</string>
     <string name="profile_number">Perfil %d</string>
     <string name="subscription_in_progress_notification">Atualizando shows inscritos</string>
@@ -683,7 +676,7 @@
     <string name="audio_singluar">Áudio</string>
     <string name="podcast_singluar">Podcast</string>
     <string name="software_decoding">Decodificação de software</string>
-    <string name="software_decoding_desc">A decodificação de software permite que o player reproduza arquivos de vídeo não compatíveis com o telefone, mas pode causar lentidão ou instabilidade na reprodução em alta resolução</string>
+    <string name="software_decoding_desc">A decodificação por software permite que o reprodutor reproduza arquivos de vídeo não suportados pelo seu dispositivo, mas pode causar lentidão ou instabilidade na reprodução em alta resolução.</string>
     <string name="torrent_preferred_media">Habilitar torrent em Configurações/Provedores/Mídia preferida</string>
     <string name="torrent_not_accepted">Reinicie o aplicativo e aceite o pop-up do Stream Torrent para continuar.</string>
     <string name="sort_episodes_number_asc">Episódio (Ascendente)</string>
@@ -730,4 +723,26 @@
     <string name="speedup_summary">Segure para duplicar a velocidade</string>
     <string name="no_account">Sem conta</string>
     <string name="episode_action_play_mirror">Espelhar vídeo</string>"
-    </resources>
+    <string name="edit_profile_image_title">Editar Foto de Perfil</string>
+    <string name="edit_profile_image_hint">Inserir URL de Foto de Perfil</string>
+    <string name="edit_profile_image_error_empty">Nenhum URL Encontrado</string>
+    <string name="edit_profile_image_error_invalid">URL ou Imagem inválidos</string>
+    <string name="edit_profile_image_success">Imagem Atualizada com Sucesso</string>
+    <string name="action_mark_watched_up_to_this_episode">Marcar como assistido até este episódio</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">Remover \"assistido até este episódio\"</string>
+    <string name="action_reload">Recarregado</string>
+    <string name="reload_provider">Recarregar Fonte</string>
+    <string name="name">Nome</string>
+    <string name="subs_subtitle_alignment">Posição das Legendas</string>
+    <string name="bottom_left">Inferior esquerdo</string>
+    <string name="bottom_center">Inferior centralizado</string>
+    <string name="bottom_right">Inferior direito</string>
+    <string name="middle_left">Centro esquerdo</string>
+    <string name="middle_center">Centralizado</string>
+    <string name="middle_right">Centro direito</string>
+    <string name="top_left">Superior esquerdo</string>
+    <string name="top_center">Superior centralizado</string>
+    <string name="top_right">Superior direito</string>
+    <string name="play_full_series_button">Assistir à série completa</string>
+    <string name="resolution_and_name">Resolução e nome</string>
+</resources>

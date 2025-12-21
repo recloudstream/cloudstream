@@ -68,6 +68,8 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppContextUtils.openBrowser
 import com.lagradost.cloudstream3.utils.AppContextUtils.updateHasTrailers
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.openBatteryOptimizationSettings
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
@@ -116,16 +118,13 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel =
-            ViewModelProvider(this)[ResultViewModel2::class.java]
-        syncModel =
-            ViewModelProvider(this)[SyncViewModel::class.java]
+        viewModel = ViewModelProvider(this)[ResultViewModel2::class.java]
+        syncModel = ViewModelProvider(this)[SyncViewModel::class.java]
         updateUIEvent += ::updateUI
 
         val root = super.onCreateView(inflater, container, savedInstanceState) ?: return null
         FragmentResultSwipeBinding.bind(root).let { bind ->
-            resultBinding =
-                bind.fragmentResult//FragmentResultBinding.bind(binding.root.findViewById(R.id.fragment_result))
+            resultBinding = bind.fragmentResult
             recommendationBinding = bind.resultRecommendations
             syncBinding = bind.resultSync
             binding = bind
@@ -136,13 +135,12 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         PanelsChildGestureRegionObserver.Provider.get().apply {
             resultBinding?.resultCastItems?.let { register(it) }
         }
     }
 
-    var currentTrailers: List<ExtractorLink> = emptyList()
+    var currentTrailers: List<Pair<ExtractorLink,String>> = emptyList()
     var currentTrailerIndex = 0
 
     override fun nextMirror() {
@@ -164,13 +162,13 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
     private fun loadTrailer(index: Int? = null) {
         val isSuccess =
-            currentTrailers.getOrNull(index ?: currentTrailerIndex)?.let { trailer ->
+            currentTrailers.getOrNull(index ?: currentTrailerIndex)?.let { (extractedTrailerLink,_) ->
                 context?.let { ctx ->
                     player.onPause()
                     player.loadPlayer(
                         ctx,
                         false,
-                        trailer,
+                        extractedTrailerLink,
                         null,
                         startPosition = 0L,
                         subtitles = emptySet(),
@@ -226,10 +224,10 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         //}
     }
 
-    private fun setTrailers(trailers: List<ExtractorLink>?) {
+    private fun setTrailers(trailers: List<Pair<ExtractorLink,String>>?) {
         context?.updateHasTrailers()
         if (!LoadResponse.isTrailersEnabled) return
-        currentTrailers = trailers?.sortedBy { -it.quality } ?: emptyList()
+        currentTrailers = trailers?.sortedBy { -it.first.quality } ?: emptyList()
         loadTrailer()
     }
 
@@ -248,6 +246,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         resultBinding = null
         syncBinding = null
         recommendationBinding = null
+        activity?.detachBackPressedCallback(this@ResultFragmentPhone.toString())
         super.onDestroyView()
     }
 
@@ -473,16 +472,20 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 activity?.popCurrentPage()
             }
 
+            activity?.attachBackPressedCallback(this@ResultFragmentPhone.toString()) {
+                if (resultOverlappingPanels.getSelectedPanel().ordinal == 1) {
+                    runDefault()
+                } else resultOverlappingPanels.closePanels()
+            }
+
             resultMiniSync.setRecycledViewPool(ImageAdapter.sharedPool)
             resultMiniSync.adapter = ImageAdapter(
                 nextFocusDown = R.id.result_sync_set_score,
                 clickCallback = { action ->
                     if (action == IMAGE_CLICK || action == IMAGE_LONG_CLICK) {
-                        if (binding?.resultOverlappingPanels?.getSelectedPanel()?.ordinal == 1) {
-                            binding?.resultOverlappingPanels?.openStartPanel()
-                        } else {
-                            binding?.resultOverlappingPanels?.closePanels()
-                        }
+                        if (resultOverlappingPanels.getSelectedPanel().ordinal == 1) {
+                            resultOverlappingPanels.openStartPanel()
+                        } else resultOverlappingPanels.closePanels()
                     }
                 })
             resultSubscribe.setOnClickListener {
@@ -565,8 +568,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
         playerBinding?.apply {
             playerOpenSource.setOnClickListener {
-                currentTrailers.getOrNull(currentTrailerIndex)?.let {
-                    context?.openBrowser(it.url)
+                currentTrailers.getOrNull(currentTrailerIndex)?.let {(_,ogTrailerLink)->
+                    context?.openBrowser(ogTrailerLink)
                 }
             }
         }
