@@ -753,4 +753,7 @@
     <string name="top_right">In alto a destra</string>
     <string name="middle_left">In centro a sinistra</string>
     <string name="play_full_series_button">Riproduci serie completa</string>
+    <string name="install_prerelease">Installa la versione pre-release</string>
+    <string name="prerelease_already_installed">La versione pre-release è già installata.</string>
+    <string name="prerelease_install_failed">Impossibile installare la versione pre-release.</string>
 </resources>
