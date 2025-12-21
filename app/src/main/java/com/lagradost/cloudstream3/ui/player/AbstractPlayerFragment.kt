@@ -20,11 +20,13 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.annotation.LayoutRes
+import androidx.annotation.OptIn
 import androidx.annotation.StringRes
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.media3.common.PlaybackException
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.ui.AspectRatioFrameLayout
@@ -45,6 +47,8 @@ import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.AppContextUtils
@@ -74,6 +78,7 @@ const val NEXT_WATCH_EPISODE_PERCENTAGE = 90
 // when the player should sync the progress of "watched", TODO MAKE SETTING
 const val UPDATE_SYNC_PROGRESS_PERCENTAGE = 80
 
+@OptIn(UnstableApi::class)
 abstract class AbstractPlayerFragment(
     var player: IPlayer = CS3IPlayer()
 ) : Fragment() {
@@ -87,6 +92,7 @@ abstract class AbstractPlayerFragment(
     var playerView: PlayerView? = null
     var piphide: FrameLayout? = null
     var subtitleHolder: FrameLayout? = null
+    var currentPlayerStatus = CSPlayerLoading.IsBuffering
 
     @LayoutRes
     protected open var layout: Int = R.layout.fragment_player
@@ -147,6 +153,7 @@ abstract class AbstractPlayerFragment(
     ) {
         val isPlayingRightNow = CSPlayerLoading.IsPlaying == isPlaying
         val isPausedRightNow = CSPlayerLoading.IsPaused == isPlaying
+        currentPlayerStatus = isPlaying
 
         keepScreenOn(!isPausedRightNow)
 
@@ -158,7 +165,9 @@ abstract class AbstractPlayerFragment(
             playerPausePlayHolderHolder?.isVisible = true
             playerBuffering?.isVisible = false
 
-            if (wasPlaying != isPlaying) {
+            if(isPlaying == CSPlayerLoading.IsEnded && isLayout(PHONE)){
+                playerPausePlay?.setImageResource(R.drawable.ic_baseline_replay_24)
+            } else if (wasPlaying != isPlaying) {
                 playerPausePlay?.setImageResource(if (isPlayingRightNow) R.drawable.play_to_pause else R.drawable.pause_to_play)
                 val drawable = playerPausePlay?.drawable
 
@@ -221,11 +230,16 @@ abstract class AbstractPlayerFragment(
                         )
                     }
                 }
+
                 val filter = IntentFilter()
                 filter.addAction(ACTION_MEDIA_CONTROL)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     activity?.registerReceiver(pipReceiver, filter, Context.RECEIVER_EXPORTED)
-                } else activity?.registerReceiver(pipReceiver, filter)
+                } else {
+                    @SuppressLint("UnspecifiedRegisterReceiverFlag")
+                    activity?.registerReceiver(pipReceiver, filter)
+                }
+
                 val isPlaying = player.getIsPlaying()
                 val isPlayingValue =
                     if (isPlaying) CSPlayerLoading.IsPlaying else CSPlayerLoading.IsPaused

@@ -545,15 +545,15 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         observe(viewModel.trailers) { trailersLinks ->
             context?.updateHasTrailers()
             if (!LoadResponse.isTrailersEnabled) return@observe
-            val trailers = trailersLinks.flatMap { it.mirros }
+            val extractedTrailerLinks = trailersLinks.flatMap{ it.mirros }.map{ (extractedTrailerLink,_) -> extractedTrailerLink }
             binding.apply {
-                resultPlayTrailer.isGone = trailers.isEmpty()
+                resultPlayTrailer.isGone = extractedTrailerLinks.isEmpty()
                 resultPlayTrailerButton.setOnClickListener {
-                    if (trailers.isEmpty()) return@setOnClickListener
+                    if (extractedTrailerLinks.isEmpty()) return@setOnClickListener
                     activity.navigate(
                         R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
                             ExtractorLinkGenerator(
-                                trailers,
+                                extractedTrailerLinks,
                                 emptyList()
                             )
                         )

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. Material3 -->
     <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>
@@ -144,6 +144,9 @@
     <style name="SubButton" parent="@style/SearchBox">
         <item name="android:text">@string/app_subbed_text</item>
     </style>
+    <style name="EpisodeTextButton" parent="@style/SearchBox">
+        <item name="android:text">@string/episode_text</item>
+    </style>
 
     <!--<style name="RatingButton" parent="@style/SearchBox">
         <item name="android:background">@drawable/rating_bg_color</item>
@@ -174,7 +177,7 @@
         <item name="black">@color/white</item>
         <item name="colorOnPrimary">@color/blackText</item>
         <item name="isLightTheme">true</item>
-        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
     </style>
 
     <style name="DraculaMode">
@@ -200,7 +203,7 @@
         <item name="black">@color/LavenderPrimaryGrayBackground</item>
         <item name="colorOnPrimary">@color/LavenderTextColor</item>
         <item name="isLightTheme">true</item>
-        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
     </style>
 
     <style name="MonetMode">
@@ -574,7 +577,7 @@
         <item name="android:windowIsFloating">false</item>
         <item name="android:navigationBarColor">?attr/primaryBlackBackground</item>
         <item name="android:statusBarColor">?attr/primaryBlackBackground</item>
-        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">?attr/isLightTheme</item>
     </style>
 
     <style name="DialogHalfFullscreen" parent="AlertDialogCustom">
@@ -1053,6 +1056,7 @@
         <item name="android:layout_gravity">center</item>
         <item name="indicatorColor">@color/white</item>
         <item name="indicatorTrackGapSize">0dp</item>
+        <item name="trackColor">@color/white_attr_20</item>
     </style>
 
     <style name="HomePlayUnderlayProgress" parent="PlayUnderlayProgress">

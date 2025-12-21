@@ -1,6 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
-import android.net.Uri
+import androidx.core.net.toUri
 import androidx.media3.common.MimeTypes
 import com.google.android.gms.cast.*
 import com.google.android.gms.cast.framework.CastSession
@@ -41,7 +41,7 @@ object CastHelper {
 
         val srcPoster = epData.poster ?: holder.poster
         if (srcPoster != null) {
-            movieMetadata.addImage(WebImage(Uri.parse(srcPoster)))
+            movieMetadata.addImage(WebImage(srcPoster.toUri()))
         }
 
         var subIndex = 0

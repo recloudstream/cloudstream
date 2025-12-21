@@ -389,7 +389,7 @@ fun SelectPopup.getOptions(context: Context): List<String> {
 }
 
 data class ExtractedTrailerData(
-    var mirros: List<ExtractorLink>,
+    var mirros: List<Pair<ExtractorLink,String>>,//Pair of extracted trailer link and original trailer link
     var subtitles: List<SubtitleFile> = emptyList(),
 )
 
@@ -2592,16 +2592,17 @@ class ResultViewModel2 : ViewModel() {
             loadResponse.trailers.windowed(limit, limit, true).takeWhile { list ->
                 list.amap { trailerData ->
                     try {
-                        val links = arrayListOf<ExtractorLink>()
+                        val links = arrayListOf<Pair<ExtractorLink,String>>()
                         val subs = arrayListOf<SubtitleFile>()
                         if (!loadExtractor(
                                 trailerData.extractorUrl,
                                 trailerData.referer,
                                 { subs.add(it) },
-                                { links.add(it) }) && trailerData.raw
+                                { links.add(Pair(it,trailerData.extractorUrl))}) && trailerData.raw
                         ) {
                             arrayListOf(
-                                newExtractorLink(
+                                Pair(
+                                    newExtractorLink(
                                     "",
                                     "Trailer",
                                     trailerData.extractorUrl,
@@ -2610,7 +2611,7 @@ class ResultViewModel2 : ViewModel() {
                                     this.referer = trailerData.referer ?: ""
                                     this.quality = Qualities.Unknown.value
                                     this.headers = trailerData.headers
-                                }
+                                },trailerData.extractorUrl)
                             ) to arrayListOf()
                         } else {
                             links to subs

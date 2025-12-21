@@ -29,7 +29,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class DownloadViewModel : ViewModel() {
-    private val _headerCards = ResourceLiveData<List<VisualDownloadCached.Header>>(Resource.Loading())
+    private val _headerCards =
+        ResourceLiveData<List<VisualDownloadCached.Header>>(Resource.Loading())
     val headerCards: LiveData<Resource<List<VisualDownloadCached.Header>>> = _headerCards
 
     private val _childCards = ResourceLiveData<List<VisualDownloadCached.Child>>(Resource.Loading())
@@ -47,22 +48,20 @@ class DownloadViewModel : ViewModel() {
     private val _selectedBytes = ConsistentLiveData<Long>(0)
     val selectedBytes: LiveData<Long> = _selectedBytes
 
-    private val _isMultiDeleteState = ConsistentLiveData(false)
-    val isMultiDeleteState: LiveData<Boolean> = _isMultiDeleteState
+    private val _selectedItemIds = ConsistentLiveData<Set<Int>?>(null)
+    val selectedItemIds: LiveData<Set<Int>?> = _selectedItemIds
 
-    private val _selectedItemIds = ConsistentLiveData<Set<Int>>(mutableSetOf())
-    val selectedItemIds: LiveData<Set<Int>> = _selectedItemIds
 
-    fun setIsMultiDeleteState(value: Boolean) {
-        _isMultiDeleteState.postValue(value)
+    fun cancelSelection() {
+        updateSelectedItems { null }
     }
 
     fun addSelected(itemId: Int) {
-        updateSelectedItems { it + itemId }
+        updateSelectedItems { it?.plus(itemId) ?: setOf(itemId) }
     }
 
     fun removeSelected(itemId: Int) {
-        updateSelectedItems { it - itemId }
+        updateSelectedItems { it?.minus(itemId) ?: emptySet() }
     }
 
     fun selectAllHeaders() {
@@ -97,8 +96,8 @@ class DownloadViewModel : ViewModel() {
         return currentSelected.size == headers.size && headers.all { it.data.id in currentSelected }
     }
 
-    private fun updateSelectedItems(action: (Set<Int>) -> Set<Int>) {
-        val currentSelected = action(selectedItemIds.value ?: mutableSetOf())
+    private fun updateSelectedItems(action: (Set<Int>?) -> Set<Int>?) {
+        val currentSelected = action(selectedItemIds.value)
         _selectedItemIds.postValue(currentSelected)
         postHeaders()
         postChildren()
@@ -115,7 +114,6 @@ class DownloadViewModel : ViewModel() {
     fun updateHeaderList(context: Context) = viewModelScope.launchSafe {
         // Do not push loading as it interrupts the UI
         //_headerCards.postValue(Resource.Loading())
-        clearSelectedItems()
 
         val visual = withContext(Dispatchers.IO) {
             val children = context.getKeys(DOWNLOAD_EPISODE_CACHE)
@@ -232,7 +230,6 @@ class DownloadViewModel : ViewModel() {
 
     fun updateChildList(context: Context, folder: String) = viewModelScope.launchSafe {
         _childCards.postValue(Resource.Loading()) // always push loading
-        clearSelectedItems()
 
         val visual = withContext(Dispatchers.IO) {
             context.getKeys(folder).mapNotNull { key ->
@@ -260,6 +257,7 @@ class DownloadViewModel : ViewModel() {
     }
 
     private fun removeItems(idsToRemove: Set<Int>) = viewModelScope.launchSafe {
+        _selectedItemIds.postValue(null)
         postHeaders(_headerCards.success?.filter { it.data.id !in idsToRemove })
         postChildren(_childCards.success?.filter { it.data.id !in idsToRemove })
     }
@@ -368,14 +366,14 @@ class DownloadViewModel : ViewModel() {
             .joinToString(separator = "\n") { "• $it" }
 
         return when {
+            data.seriesNames.isNotEmpty() && data.names.isEmpty() -> {
+                context.getString(R.string.delete_message_series_only).format(formattedSeriesNames)
+            }
+
             data.ids.count() == 1 -> {
                 context.getString(R.string.delete_message).format(
                     data.names.firstOrNull()
                 )
-            }
-
-            data.seriesNames.isNotEmpty() && data.names.isEmpty() -> {
-                context.getString(R.string.delete_message_series_only).format(formattedSeriesNames)
             }
 
             data.parentName != null && data.names.isNotEmpty() -> {
@@ -406,7 +404,6 @@ class DownloadViewModel : ViewModel() {
                 when (which) {
                     DialogInterface.BUTTON_POSITIVE -> {
                         viewModelScope.launchSafe {
-                            setIsMultiDeleteState(false)
                             deleteFilesAndUpdateSettings(context, ids, this) { successfulIds ->
                                 // We always remove parent because if we are deleting from here
                                 // and we have it as non-empty, it was triggered on

@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.PictureInPictureParams
 import android.content.Context
@@ -24,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
+import androidx.core.view.isNotEmpty
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.CastSession
 import com.google.android.material.chip.ChipGroup
@@ -51,7 +53,7 @@ import com.lagradost.cloudstream3.ui.settings.extensions.PluginAdapter
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRtl
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Event
-import com.lagradost.cloudstream3.utils.UIHelper
+import com.lagradost.cloudstream3.utils.UIHelper.showInputMethod
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.UiText
 import java.lang.ref.WeakReference
@@ -421,8 +423,7 @@ object CommonActivity {
 
     private fun View.hasContent(): Boolean {
         return isShown && when (this) {
-            //is RecyclerView -> this.childCount > 0
-            is ViewGroup -> this.childCount > 0
+            is ViewGroup -> this.isNotEmpty()
             else -> true
         }
     }
@@ -452,7 +453,7 @@ object CommonActivity {
         // if cant focus but visible then break and let android decide
         // the exception if is the view is a parent and has children that wants focus
         val hasChildrenThatWantsFocus = (next as? ViewGroup)?.let { parent ->
-            parent.descendantFocusability == ViewGroup.FOCUS_AFTER_DESCENDANTS && parent.childCount > 0
+            parent.descendantFocusability == ViewGroup.FOCUS_AFTER_DESCENDANTS && parent.isNotEmpty()
         } ?: false
         if (!next.isFocusable && shown && !hasChildrenThatWantsFocus) return null
 
@@ -648,6 +649,7 @@ object CommonActivity {
 
                 else -> null
             }
+
             // println("NEXT FOCUS : $nextView")
             if (nextView != null) {
                 nextView.requestFocus()
@@ -655,10 +657,13 @@ object CommonActivity {
                 return true
             }
 
+            // TODO: Figure out why removing the check for SearchAutoComplete seems
+            // to break focus on TV as it shouldn't need to be used.
+            @SuppressLint("RestrictedApi")
             if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER &&
                 (act.currentFocus is SearchView || act.currentFocus is SearchView.SearchAutoComplete)
             ) {
-                UIHelper.showInputMethod(act.currentFocus?.findFocus())
+                showInputMethod(act.currentFocus?.findFocus())
             }
 
             //println("Keycode: $keyCode")
@@ -667,7 +672,6 @@ object CommonActivity {
             //    "Got Keycode $keyCode | ${KeyEvent.keyCodeToString(keyCode)} \n ${event?.action}",
             //    Toast.LENGTH_LONG
             //)
-
         }
 
         // if someone else want to override the focus then don't handle the event as it is already
