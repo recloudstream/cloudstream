@@ -31,8 +31,7 @@ open class Krakenfiles : ExtractorApi() {
         val link = doc.selectFirst("source")?.attr("src") ?: return
         val quality = getQualityFromName(title)
 
-
-        callback(
+        callback.invoke(
             newExtractorLink(
                 name,
                 name,
