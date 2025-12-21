@@ -705,4 +705,7 @@
     <string name="top_center">Верхній центр</string>
     <string name="top_right">Угорі праворуч</string>
     <string name="play_full_series_button">Відтворити повну серію</string>
+    <string name="install_prerelease">Встановити передрелізну версію</string>
+    <string name="prerelease_already_installed">Попередня версія вже встановлена.</string>
+    <string name="prerelease_install_failed">Не вдалося встановити попередню версію.</string>
 </resources>

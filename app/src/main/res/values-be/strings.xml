@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s серыя %2$d</string>
+    <string name="cast_format" formatted="true">Склад: %s</string>
+    <string name="next_episode_format" formatted="true">Серыя %d будзе выпушчана праз</string>
+    <string name="next_season_episode_format" formatted="true">Серыя %2$d сезона %1$d будзе выпушчана праз</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$d д %2$d гадз %3$d хв</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$d гадз %2$d хв</string>
+    <string name="next_episode_time_min_format" formatted="true">%d м</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$d гадз %2$d хв %3$d с</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$d хв %2$d с</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$d с</string>
+    <string name="result_poster_img_des">Плакат</string>
+    <string name="search_poster_img_des">Плакат</string>
+    <string name="episode_poster_img_des">Плакат эпізода</string>
+    <string name="home_main_poster_img_des">Асноўны плакат</string>
+    <string name="home_next_random_img_des">Наступны выпадковы</string>
+    <string name="go_back_img_des">Назад</string>
+    <string name="play_from_beginning_img_des">Прайграць з пачатку</string>
+    <string name="home_change_provider_img_des">Змяніць пастаўшчыка</string>
+    <string name="preview_background_img_des">Перадпрагляд фону</string>
+    <string name="player_speed_text_format" formatted="true">Хуткасць (%.2fx)</string>
+    <string name="rated_format" formatted="true">Ацэнка: %.1f</string>
+    <string name="new_update_format" formatted="true">Знойдзена новае абнаўленне!\n%1$s -&gt; %2$s</string>
+    <string name="filler" formatted="true">Запаўняльнік</string>
+    <string name="duration_format" formatted="true">%d хвіл</string>
+    <string name="app_name">CloudStream</string>
+    <string name="play_with_app_name">Прайграць праз CloudStream</string>
+    <string name="title_home">Дамашняя</string>
+    <string name="title_search">Пошук</string>
+    <string name="title_downloads">Спампоўкі</string>
+    <string name="title_settings">Налады</string>
+    <string name="search_hint">Шукаць…</string>
+    <string name="search_hint_site" formatted="true">Шукаць па %s…</string>
+    <string name="speech_recognition_unavailable">Распазнаванне маўлення недаступна</string>
+    <string name="begin_speaking">Пачніце размаўляць…</string>
+    <string name="no_data">Няма даных</string>
+    <string name="episode_more_options_des">Больш параметраў</string>
+    <string name="next_episode">Наступная серыя</string>
+    <string name="result_tags">Жанры</string>
+    <string name="result_share">Абагуліць</string>
+    <string name="result_open_in_browser">Адкрыць у браўзеры</string>
+    <string name="browser">Браўзер</string>
+    <string name="skip_loading">Прапусціць загрузку</string>
+    <string name="loading">Загрузка…</string>
+    <string name="type_watching">Гляджу</string>
+    <string name="type_on_hold">На ўтрыманні</string>
+    <string name="type_completed">Завершана</string>
+    <string name="type_dropped">Пакінута</string>
+    <string name="type_plan_to_watch">Планірую глядзець</string>
+    <string name="type_re_watching">Пераглядваю</string>
+    <string name="play_movie_button">Прайграць фільм</string>
+    <string name="play_trailer_button">Прайграць трэйлер</string>
+    <string name="play_livestream_button">Прайграць трансляцыю</string>
+</resources>
