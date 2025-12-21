@@ -734,4 +734,8 @@
     <string name="top_center">Górne środkowe</string>
     <string name="top_right">Górne prawe</string>
     <string name="play_full_series_button">Odtwórz całą serię</string>
+    <string name="install_prerelease">Zainstaluj wersję przedpremierową</string>
+    <string name="prerelease_already_installed">Wersja przedpremierowa jest już zainstalowana.</string>
+    <string name="prerelease_install_failed">Nie udało się zainstalować wersji przedpremierowej.</string>
+    <string name="show_episode_text">Tekst odcinka</string>
 </resources>

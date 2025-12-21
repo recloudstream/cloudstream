@@ -719,4 +719,7 @@
     <string name="top_center">Вверху центр</string>
     <string name="top_right">Вверху правый</string>
     <string name="play_full_series_button">Смотреть полностью</string>
+    <string name="install_prerelease">Установить предварительный выпуск</string>
+    <string name="prerelease_already_installed">Предварительный выпуск уже установлен.</string>
+    <string name="prerelease_install_failed">Не удалось установить предварительный выпуск.</string>
 </resources>

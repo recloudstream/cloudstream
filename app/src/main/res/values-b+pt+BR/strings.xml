@@ -676,7 +676,7 @@
     <string name="audio_singluar">Áudio</string>
     <string name="podcast_singluar">Podcast</string>
     <string name="software_decoding">Decodificação de software</string>
-    <string name="software_decoding_desc">A decodificação por software permite que o reprodutor reproduza arquivos de vídeo não suportados pelo seu dispositivo, mas pode causar lentidão ou instabilidade na reprodução em alta resolução</string>
+    <string name="software_decoding_desc">A decodificação por software permite que o reprodutor reproduza arquivos de vídeo não suportados pelo seu dispositivo, mas pode causar lentidão ou instabilidade na reprodução em alta resolução.</string>
     <string name="torrent_preferred_media">Habilitar torrent em Configurações/Provedores/Mídia preferida</string>
     <string name="torrent_not_accepted">Reinicie o aplicativo e aceite o pop-up do Stream Torrent para continuar.</string>
     <string name="sort_episodes_number_asc">Episódio (Ascendente)</string>

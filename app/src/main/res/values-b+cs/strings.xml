@@ -757,4 +757,8 @@
     <string name="top_center">Uprostřed nahoře</string>
     <string name="top_right">Vpravo nahoře</string>
     <string name="play_full_series_button">Přehrát celý seriál</string>
+    <string name="install_prerelease">Nainstalovat předběžnou verzi</string>
+    <string name="prerelease_already_installed">Předběžné vydání je již nainstalováno.</string>
+    <string name="prerelease_install_failed">Nepodařilo se nainstalovat předběžné vydání.</string>
+    <string name="show_episode_text">Text epizody</string>
 </resources>

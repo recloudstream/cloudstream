@@ -665,7 +665,7 @@
     <string name="sort_episodes_date_oldest">Ausstrahlungsdatum (Erstes)</string>
     <string name="sort_button_date">Datum %s</string>
     <string name="torrent_preferred_media">Torrent in Eintellungen/Anbieter/Bevorzugte Medien aktivieren</string>
-    <string name="software_decoding_desc">Softwaredekodierung erlaubt es dem Player, Videodateien abzuspielen, die von deinem Gerät nicht unterstützt werden, könnte jedoch bei hoher Auflösung zu ruckelnder oder instabiler Wiedergabe führen</string>
+    <string name="software_decoding_desc">Softwaredekodierung ermöglicht es dem Player, Videodateien abzuspielen, die von deinem Gerät nicht unterstützt werden, könnte jedoch bei hoher Auflösung zu ruckelnder oder instabiler Wiedergabe führen.</string>
     <string name="torrent_not_accepted">App neu starten und Stream Torrent Pop-Up akzeptieren, um fortzufahren.</string>
     <string name="update_plugins">Plugins aktualisieren</string>
     <string name="plugins_updated_manually">%d Plugin(s) erfolgreich aktualisiert!</string>
@@ -729,4 +729,5 @@
     <string name="top_left">Oben links</string>
     <string name="top_center">Oben mitte</string>
     <string name="top_right">Oben rechts</string>
+    <string name="play_full_series_button">Gesamte Serie abspielen</string>
 </resources>

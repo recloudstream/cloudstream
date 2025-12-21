@@ -777,4 +777,7 @@
     <string name="top_center">顶部居中</string>
     <string name="top_right">右上</string>
     <string name="play_full_series_button">播放全剧</string>
+    <string name="install_prerelease">安装预发行版</string>
+    <string name="prerelease_already_installed">已安装预发行版。</string>
+    <string name="prerelease_install_failed">安装预发行版失败。</string>
 </resources>
