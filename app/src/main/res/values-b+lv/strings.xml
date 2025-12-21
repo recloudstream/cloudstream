@@ -68,7 +68,7 @@
     <string name="sort_copy">Kopēt</string>
     <string name="sort_save">Saglabāt</string>
     <string name="player_speed">Atskaņošanas ātrums</string>
-    <string name="subtitles_settings">Subtitru iestādijumi</string>
+    <string name="subtitles_settings">Subtitru iestatījumi</string>
     <string name="subs_outline_color">Apkārt krāsa</string>
     <string name="subs_background_color">Backgrounds krāsa</string>
     <string name="subs_window_color">Līga krāsa</string>
@@ -91,7 +91,7 @@
     <string name="sort_close">Aizvērt</string>
     <string name="app_subbed_text">Sub</string>
     <string name="benene_count_text_none">Nav banāni iedoti</string>
-    <string name="subs_subtitle_elevation">Subtitru augstums</string>
+    <string name="subs_subtitle_elevation">Subtitru paaugstinājums</string>
     <string name="sort_clear">Iztīrīt</string>
     <string name="subs_text_color">Teksta krāsa</string>
     <string name="subs_auto_select_language">Automātiski-iestādīt valodu</string>
@@ -119,9 +119,9 @@
     <string name="player_size_settings">Players izmēra poga</string>
     <string name="player_size_settings_des">Noņemt melnās malas</string>
     <string name="player_subtitles_settings">Subtitri</string>
-    <string name="player_subtitles_settings_des">Players subtitru iestādijumi</string>
+    <string name="player_subtitles_settings_des">Atskaņotāja subtitru iestatījumi</string>
     <string name="chromecast_subtitles_settings">Chromecast subtitri</string>
-    <string name="chromecast_subtitles_settings_des">Chromecast subtitru iestāfijumi</string>
+    <string name="chromecast_subtitles_settings_des">Chromecast subtitru iestatījumi</string>
     <string name="eigengraumode_settings">Atskaņošanas ātrums</string>
     <string name="swipe_to_seek_settings">Novelc lai paradītu</string>
     <string name="swipe_to_seek_settings_des">Novelc no māla lidz malai lai pozicionētu video</string>
@@ -240,7 +240,7 @@
     <string name="episode_action_auto_download">Automātiski ielādēt</string>
     <string name="episode_action_download_mirror">Ielādēt spoguli</string>
     <string name="episode_action_reload_links">Pārlādēt saites</string>
-    <string name="episode_action_download_subtitle">Ielādēt subtitrus</string>
+    <string name="episode_action_download_subtitle">Lejupielādēt subtitrus</string>
     <string name="show_hd">Kvalitātes zīme</string>
     <string name="show_dub">Dub lable</string>
     <string name="show_sub">Subtirti</string>
@@ -333,20 +333,20 @@
     <string name="all">Viss</string>
     <string name="max">Maksimālais</string>
     <string name="min">Minimālais</string>
-    <string name="subtitles_outline">Apkartlinija</string>
-    <string name="subtitles_depressed">Depresija</string>
+    <string name="subtitles_outline">Kontūrs</string>
+    <string name="subtitles_depressed">Iespiests</string>
     <string name="subtitles_shadow">Ēna</string>
-    <string name="subtitles_raised">Paugstināts</string>
-    <string name="subtitle_offset">Sync subs</string>
+    <string name="subtitles_raised">Izvirzīts</string>
+    <string name="subtitle_offset">Subtitru sinhronizācija</string>
     <string name="subtitle_offset_hint">1000 ms</string>
-    <string name="subtitle_offset_title">Subtitru pslēninājums</string>
-    <string name="subtitle_offset_extra_hint_later_format">Izmantojiet šo, ja subtitri tiek rādīti %d ms pārāk agri</string>
-    <string name="subtitle_offset_extra_hint_none_format">Nav subtitru kavēšanās</string>
-    <string name="subtitles_example_text">Ātrā brūnā lapsa lec pāri slinkajam sunim</string>
-    <string name="player_loaded_subtitles" formatted="true">Ielādeja %s</string>
+    <string name="subtitle_offset_title">Subtitru nobīde</string>
+    <string name="subtitle_offset_extra_hint_later_format">Ja subtitri steidzas pa %d ms</string>
+    <string name="subtitle_offset_extra_hint_none_format">Nav subtitru nobīdes - kavēšanās vai apsteigšana</string>
+    <string name="subtitles_example_text">Fogts čuhņā mīļi lenc - ģērbj, žvadz, pūkšķ</string>
+    <string name="player_loaded_subtitles" formatted="true">Ielādēti %s</string>
     <string name="player_load_subtitles">Ielādēt no datnes</string>
     <string name="app_theme_settings">Aplikācijas theme</string>
-    <string name="player_load_subtitles_online">Ielādēt no interneta</string>
+    <string name="player_load_subtitles_online">Lejupielādēt no interneta</string>
     <string name="downloaded_file">Lejupielādēta datne</string>
     <string name="actor_main">Galvenais</string>
     <string name="actor_supporting">Atbalsta</string>
@@ -373,9 +373,9 @@
     <string name="error_invalid_data">Nederīgi dati</string>
     <string name="error_invalid_url">Nederīgs URL</string>
     <string name="error">Kļūda</string>
-    <string name="subtitles_remove_captions">Noņemiet slēgtos parakstus no subtitriem</string>
-    <string name="subtitles_remove_bloat">Noņemiet uzpūšanos no subtitriem</string>
-    <string name="subtitles_filter_lang">Filtrējiet pēc vēlamās multivides valodas</string>
+    <string name="subtitles_remove_captions">Noņemt slēgtos parakstus no subtitriem</string>
+    <string name="subtitles_remove_bloat">Noņemt lieko no subtitriem (piemēram, reklāmu)</string>
+    <string name="subtitles_filter_lang">Filtrēt pēc vēlamās multivides valodas</string>
     <string name="extras">Ekstras</string>
     <string name="trailer">Treileris</string>
     <string name="network_adress_example">https://piemērs.com/piemērs.mp4</string>
@@ -483,7 +483,7 @@
     <string name="primary_color_settings">Galvenā krāsa</string>
     <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="bottom_title_settings_des">Likt nosaukumu zem plakāta</string>
-    <string name="subtitle_offset_extra_hint_before_format">Izmantojiet šo, ja subtitri tiek rādīti %d ms pārāk vēlu</string>
+    <string name="subtitle_offset_extra_hint_before_format">Ja subtitri kavējas pa %d ms</string>
     <string name="recommended">Rekomendācijas</string>
     <string name="coming_soon">Drīzumā…</string>
     <string name="quality_cam_hd">Kamera</string>
@@ -547,8 +547,8 @@
     <string name="show">Rādīt</string>
     <string name="audio_singluar">Audio</string>
     <string name="podcast_singluar">Raidieraksts</string>
-    <string name="subtitles_from_embedded">Iegultais</string>
-    <string name="subtitles_from_online">Tiešsaistes</string>
+    <string name="subtitles_from_embedded">Iegultie</string>
+    <string name="subtitles_from_online">No interneta</string>
     <string name="name">Nosaukums</string>
     <string name="profile_number">Profils %d</string>
     <string name="mobile_data">Mobilie dati</string>
@@ -590,4 +590,9 @@
     <string name="edit_profile_image_error_invalid">Nepareizs URL vai nederīgs attēls</string>
     <string name="edit_profile_image_success">Profila attēls veiksmīgi nomainīts</string>
     <string name="recommendations_tooltip">Rādīt ieteikumus</string>
+    <string name="resolution_and_name">Izšķirtspēja un nosaukums</string>
+    <string name="player_load_one_subtitle_online">Lejupielādēt pirmo pieejamo</string>
+    <string name="no_subtitles_loaded">Neviens subtitrs vēl nav ielādēts</string>
+    <string name="all_subtitles_bold">Padarīt visus subtitrus treknrakstā</string>
+    <string name="all_subtitles_italic">Padarīt visus subtitrus slīprakstā</string>
 </resources>

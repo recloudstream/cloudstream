@@ -26,7 +26,7 @@ juniversalchardet = "2.5.0"
 kotlinGradlePlugin = "2.2.21"
 kotlinxCoroutinesCore = "1.10.2"
 lifecycleKtx = "2.9.4"
-material = "1.14.0-alpha07"
+material = "1.14.0-alpha08"
 media3 = "1.8.0"
 navigationKtx = "2.9.6"
 newpipeextractor = "v0.24.8"
@@ -112,7 +112,8 @@ work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "w
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
-android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
+android-lint = { id = "com.android.lint", version.ref = "androidGradlePlugin" }
+android-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "androidGradlePlugin" }
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfigGradlePlugin" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokkaGradlePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinGradlePlugin" }

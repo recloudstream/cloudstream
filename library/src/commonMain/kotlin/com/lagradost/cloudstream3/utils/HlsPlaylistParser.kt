@@ -222,7 +222,7 @@ object HlsPlaylistParser {
             if (codecs.isNullOrEmpty()) {
                 return arrayOf()
             }
-            return split(codecs.trim { it <= ' ' }, "(\\s*,\\s*)")
+            return split(codecs.trim(), "(\\s*,\\s*)")
         }
 
         fun getCodecsOfType(
@@ -928,7 +928,7 @@ object HlsPlaylistParser {
 
         fun getMediaMimeType(codecOrNull: String?): String? {
             var codec = codecOrNull ?: return null
-            codec = codec.trim { it <= ' ' }.lowercase()
+            codec = codec.trim().lowercase()
             if (codec.startsWith("avc1") || codec.startsWith("avc3")) {
                 return MimeTypes.VIDEO_H264
             } else if (codec.startsWith("hev1") || codec.startsWith("hvc1")) {
