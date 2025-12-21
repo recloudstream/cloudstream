@@ -152,7 +152,6 @@
     <string name="action_remove_watching">Ka saar</string>
     <string name="action_open_watching">Xog dheeri ah</string>
     <string name="kitsu_settings">Tusi Boodhka Kitsu</string>
-    <string name="uprereleases_settings_des">Waxa laa raadinayaa haddii ay wax jiraan baahin-horaad ah, halkii la sugi lahaa baahin buuxda</string>
     <string name="automatic_plugin_updates">Si iskii ah u cusbooneysii sidkanaha</string>
     <string name="automatic_plugin_download_summary">Si iskii ah usoo deji dhamaan sidkanayaasha aan weli lasoo dejin ee ku jira kaydka aad keentay.</string>
     <string name="updates_settings_des">Marka ugu horreysa ee aad appka furto ayaad arkaysaa haddii wax cusub yihiin</string>
@@ -160,7 +159,6 @@
     <string name="updates_settings">Tus wixii appka ku cusub</string>
     <string name="redo_setup_process">Dib uso bilow fadhiisinta appka</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
-    <string name="uprereleases_settings">Ku cusbooneysii baahinta ugu horreysa</string>
     <string name="apk_installer_settings">Rakibaha APKga</string>
     <string name="status_ongoing">Socda</string>
     <string name="github">Github</string>

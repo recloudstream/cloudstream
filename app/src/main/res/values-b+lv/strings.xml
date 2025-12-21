@@ -162,7 +162,6 @@
     <string name="updates_settings">Rādīt lietotņu atjauninājumus</string>
     <string name="updates_settings_des">Automātiski meklēt jaunus atjauninājumus kad palaiž aplikāciju.</string>
     <string name="redo_setup_process">Atsākt uzstādīšanas procesu</string>
-    <string name="uprereleases_settings">Atjaunināt uz priekšizlaišanu</string>
     <string name="apk_installer_settings_des">Dažas ierīces neatbalsta jauno pakotnes uzstādītāju. Izmantojiet legacy (veco) uzstādītāju, ja atjauninājumus nevar uzstādīt.</string>
     <string name="lightnovel">Noveles aplikācija no šiem izstrādātājiem</string>
     <string name="anim">Anime aplikāciju no tiem pašiem izstradatājiem</string>
@@ -464,7 +463,6 @@
     <string name="revert">Atgriest</string>
     <string name="subscription_deleted">Anulēts %s abonements</string>
     <string name="subscription_episode_released">%d sērija izlaista!</string>
-    <string name="uprereleases_settings_des">Meklēt pirmsizlaišanas atjauninājumus nevis tikai pilnos atjauninājumus</string>
     <string name="apk_installer_settings">Apk insteletājs</string>
     <string name="github">Github</string>
     <string name="no_subtitles">Nav subtitru</string>

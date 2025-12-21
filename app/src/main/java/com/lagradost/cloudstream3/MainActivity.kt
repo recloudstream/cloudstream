@@ -1201,6 +1201,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             val lastAppAutoBackup: String = getKey("VERSION_NAME") ?: ""
             if (appVer != lastAppAutoBackup) {
                 setKey("VERSION_NAME", BuildConfig.VERSION_NAME)
+                if (lastAppAutoBackup.isEmpty()) return@safe
+
                 safe {
                     backup(this)
                 }

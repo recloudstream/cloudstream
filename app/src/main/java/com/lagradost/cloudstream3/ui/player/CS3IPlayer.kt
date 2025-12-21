@@ -61,6 +61,7 @@ import androidx.media3.exoplayer.text.TextOutput
 import androidx.media3.exoplayer.text.TextRenderer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.exoplayer.trackselection.TrackSelector
+import androidx.media3.extractor.mp4.FragmentedMp4Extractor
 import androidx.media3.ui.SubtitleView
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
@@ -1218,6 +1219,7 @@ class CS3IPlayer : IPlayer {
         // Because "Java rules" the media3 team hates to do open classes so we have to copy paste the entire thing to add a custom extractor
         // This includes the updated MKV extractor that enabled seeking in formats where the seek information is at the back of the file
         val extractorFactor = UpdatedDefaultExtractorsFactory()
+            .setFragmentedMp4ExtractorFlags(FragmentedMp4Extractor.FLAG_MERGE_FRAGMENTED_SIDX)
 
         val factory =
             if (cacheFactory == null) DefaultMediaSourceFactory(context, extractorFactor)
@@ -1426,6 +1428,7 @@ class CS3IPlayer : IPlayer {
                                 wasPlaying = if (isPlaying) CSPlayerLoading.IsPlaying else CSPlayerLoading.IsPaused,
                                 isPlaying =
                                     when (playbackState) {
+                                        Player.STATE_ENDED -> CSPlayerLoading.IsEnded
                                         Player.STATE_BUFFERING -> CSPlayerLoading.IsBuffering
                                         else -> if (exo.isPlaying) CSPlayerLoading.IsPlaying else CSPlayerLoading.IsPaused
                                     }
@@ -1578,20 +1581,6 @@ class CS3IPlayer : IPlayer {
         }
         Log.i(TAG, "Rendered first frame")
         hasUsedFirstRender = true
-        val invalid = exoPlayer?.duration?.let { duration ->
-            // Only errors short playback when not playing downloaded files
-            duration < 20_000L && currentDownloadedFile == null
-                    // Concatenated sources (non 1 periodCount) bypasses the invalid check as exoPlayer.duration gives only the current period
-                    // If you can get the total time that'd be better, but this is already niche.
-                    && exoPlayer?.currentTimeline?.periodCount == 1
-                    && exoPlayer?.isCurrentMediaItemLive != true
-        } ?: false
-
-        if (invalid) {
-            releasePlayer(saveTime = false)
-            event(ErrorEvent(InvalidFileException("Too short playback")))
-            return
-        }
 
         setPreferredSubtitles(currentSubtitles)
         val format = exoPlayer?.videoFormat

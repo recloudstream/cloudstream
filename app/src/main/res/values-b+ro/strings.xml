@@ -151,8 +151,6 @@
     <string name="kitsu_settings">Arată afișele de la Kitsu</string>
     <string name="updates_settings">Afișați actualizările aplicației</string>
     <string name="updates_settings_des">Căutați automat noi actualizări după pornirea aplicației.</string>
-    <string name="uprereleases_settings">Actualizați la prerelease</string>
-    <string name="uprereleases_settings_des">Căutați actualizări ale versiunilor preliminare în loc să căutați doar versiunile complete</string>
     <string name="github">GitHub</string>
     <string name="lightnovel">&gt;Aplicație Light Novel realizată de aceiași dezvoltator</string>
     <string name="anim">Aplicație Anime realizată de aceiași dezvoltatorilor</string>

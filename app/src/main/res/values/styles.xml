@@ -144,6 +144,9 @@
     <style name="SubButton" parent="@style/SearchBox">
         <item name="android:text">@string/app_subbed_text</item>
     </style>
+    <style name="EpisodeTextButton" parent="@style/SearchBox">
+        <item name="android:text">@string/episode_text</item>
+    </style>
 
     <!--<style name="RatingButton" parent="@style/SearchBox">
         <item name="android:background">@drawable/rating_bg_color</item>
@@ -1053,6 +1056,7 @@
         <item name="android:layout_gravity">center</item>
         <item name="indicatorColor">@color/white</item>
         <item name="indicatorTrackGapSize">0dp</item>
+        <item name="trackColor">@color/white_attr_20</item>
     </style>
 
     <style name="HomePlayUnderlayProgress" parent="PlayUnderlayProgress">

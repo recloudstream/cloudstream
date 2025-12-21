@@ -8,7 +8,7 @@
     <string name="auto_update_plugins_key" translatable="false">auto_update_plugins</string>
     <string name="auto_download_plugins_key" translatable="false">auto_download_plugins_key2</string>
     <string name="skip_update_key" translatable="false">skip_update_key</string>
-    <string name="prerelease_update_key" translatable="false">prerelease_update</string>
+    <string name="install_prerelease_key" translatable="false">install_prerelease_key</string>
     <string name="manual_check_update_key" translatable="false">manual_check_update</string>
     <string name="fast_forward_button_time_key" translatable="false">fast_forward_button_time</string>
     <string name="benene_count" translatable="false">benene_count</string>
@@ -283,8 +283,9 @@
     <string name="updates_settings">Show app updates</string>
     <string name="updates_settings_des">Automatically search for new updates after starting the app.</string>
     <string name="redo_setup_process">Redo setup process</string>
-    <string name="uprereleases_settings">Update to prereleases</string>
-    <string name="uprereleases_settings_des">Search for prerelease updates instead of full releases only</string>
+	<string name="install_prerelease">Install pre-release version</string>
+	<string name="prerelease_already_installed">Pre-release is already installed.</string>
+	<string name="prerelease_install_failed">Failed to install pre-release.</string>
     <string name="apk_installer_settings">APK Installer</string>
     <string name="apk_installer_settings_des">Some devices do not support the new package installer. Try the legacy option if updates do not install.</string>
     <string name="github">Github</string>
@@ -401,11 +402,13 @@
     <string name="show_sub">Sub label</string>
     <string name="show_rating">Rating Label</string>
     <string name="show_title">Title</string>
+    <string name="show_episode_text">Episode Text</string>
     <string name="show_hd_key" translatable="false">show_hd_key</string>
     <string name="show_dub_key" translatable="false">show_dub_key</string>
     <string name="show_sub_key" translatable="false">show_sub_key</string>
     <string name="show_rating_key" translatable="false">show_rating_key</string>
     <string name="show_title_key" translatable="false">show_title_key</string>
+    <string name="show_episode_text_key" translatable="false">show_episode_text_key</string>
     <string name="poster_ui_settings">Toggle UI elements on poster</string>
     <string name="no_update_found">No Update Found</string>
     <string name="check_for_update">Check for Update</string>
@@ -900,4 +903,5 @@
     <string name="top_left">Top left</string>
     <string name="top_center">Top center</string>
     <string name="top_right">Top right</string>
+    <string name="episode_text" translatable="false">S1E1</string>
 </resources>

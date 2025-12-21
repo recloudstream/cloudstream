@@ -72,7 +72,6 @@
     <string name="settings_info">जानकारी</string>
     <string name="advanced_search_des">खोज नतीजों को प्रोवाइडरों के हिसाब से अलग-अलग आपको दिखाता है</string>
     <string name="updates_settings_des">हर बार एप खुलने पर स्वचालित रूप से नए अपडेट खोजें।</string>
-    <string name="uprereleases_settings_des">केवल पूर्ण रिलीज़ के बजाय प्रीरिलीज़ अपडेट खोजें</string>
     <string name="lightnovel">उन्हीं डेवलपर्स द्वारा Light novel ऐप</string>
     <string name="anim">उन्हीं डेवलपर्स द्वारा Anime ऐप</string>
     <string name="discord">Discord से जुड़िये</string>
@@ -329,7 +328,6 @@
     <string name="automatic_plugin_download_mode_title">प्लगइन डाउनलोड को फ़िल्टर करने के लिए मोड चुने</string>
     <string name="updates_settings">ऐप अपडेट दिखाएं</string>
     <string name="redo_setup_process">सेटअप प्रक्रिया दोबारा करें</string>
-    <string name="uprereleases_settings">प्री-रिलीज़ पर अपडेट करें</string>
     <string name="apk_installer_settings">APK इंस्टॉलर</string>
     <string name="apk_installer_settings_des">कुछ डिवाइस नए पैकेज इंस्टॉलर को सपोर्ट नहीं करते हैं। यदि अपडेट इंस्टॉल नहीं होते हैं, तो पुराने विकल्प को आज़माएं।</string>
     <string name="subs_default_reset_toast">डिफ़ॉल्ट मान पर रीसेट करें</string>
