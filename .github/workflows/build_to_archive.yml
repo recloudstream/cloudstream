@@ -40,7 +40,6 @@ jobs:
       with:
         distribution: temurin
         java-version: 17
-        cache: gradle
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
@@ -55,6 +54,11 @@ jobs:
         KEY_PWD="$(cat keystore_password.txt)"
         echo "::add-mask::${KEY_PWD}"
         echo "key_pwd=$KEY_PWD" >> $GITHUB_OUTPUT
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v5
+      with:
+        cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
     - name: Run Gradle
       run: ./gradlew assemblePrerelease

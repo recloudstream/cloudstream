@@ -13,10 +13,15 @@ jobs:
       with:
         distribution: temurin
         java-version: 17
-        cache: gradle
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v5
+      with:
+        cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+        cache-read-only: false
 
     - name: Run Gradle
       run: ./gradlew assemblePrereleaseDebug
