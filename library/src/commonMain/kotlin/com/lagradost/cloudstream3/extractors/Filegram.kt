@@ -32,32 +32,29 @@ open class Filegram : ExtractorApi() {
             "Sec-Fetch-Site" to "same-site",
             "user-agent" to USER_AGENT,
         )
-        
+
         val doc = app.get(getEmbedUrl(url), referer = referer).document
         val unpackedJs = unpackJs(doc).toString()
-		    val videoUrl = Regex("""file:\s*"([^"]+\.m3u8[^"]*)"""").find(unpackedJs)?.groupValues?.get(1)
+        val videoUrl = Regex("""file:\s*"([^"]+\.m3u8[^"]*)"""").find(unpackedJs)?.groupValues?.get(1)
         if (videoUrl != null) {
             M3u8Helper.generateM3u8(
-		this.name,
-		fixUrl(videoUrl),
-		"$mainUrl/",
-		headers = header
-	   ).forEach(callback)
+                this.name,
+                fixUrl(videoUrl),
+                "$mainUrl/",
+                headers = header
+            ).forEach(callback)
         }
     }
 
-  private fun unpackJs(script: Element): String? {
-      return script.select("script").find { it.data().contains("eval(function(p,a,c,k,e,d)") }
-          ?.data()?.let { getAndUnpack(it) }
-  }
-	
-  private fun getEmbedUrl(url: String): String {
-     return if (!url.contains("/embed-")) {
-	   val videoId = url.substringAfter("$mainUrl/")
-	   "$mainUrl/embed-$videoId"
-     } else {
-	   url
-	}
-     }
+    private fun unpackJs(script: Element): String? {
+        return script.select("script").find { it.data().contains("eval(function(p,a,c,k,e,d)") }
+            ?.data()?.let { getAndUnpack(it) }
+    }
 
+    private fun getEmbedUrl(url: String): String {
+        return if (!url.contains("/embed-")) {
+            val videoId = url.substringAfter("$mainUrl/")
+            "$mainUrl/embed-$videoId"
+        } else url
+    }
 }
