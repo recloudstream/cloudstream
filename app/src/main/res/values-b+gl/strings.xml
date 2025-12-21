@@ -171,7 +171,6 @@
     <string name="anim">Aplicativo de Anime dos mesmos desenvolvedores</string>
     <string name="discord">Únete o Discord</string>
     <string name="speed_setting_summary">Engade unha opción de velocidade no reproductor</string>
-    <string name="uprereleases_settings">Actualizar as versións preliminares</string>
     <string name="lightnovel">Aplicativo de novela lixeira dos mesmos desenvolvedores</string>
     <string name="no_episodes_found">Non se atoparon capítulos</string>
     <string name="delete">Borrar</string>
@@ -268,7 +267,6 @@
     <string name="resume_remaining" formatted="true">%s\nrestante</string>
     <string name="nsfw_singular">NSFW</string>
     <string name="episode_action_play_in_format">Reproducir en %s</string>
-    <string name="uprereleases_settings_des">Buscar actualizacións preliminares no lugar de só versións completas</string>
     <string name="github">Github</string>
     <string name="benene">Dalle unha banana ós desenvolvedores</string>
     <string name="no_chromecast_support_toast">Este provedor non ten soporte para Chromecast</string>

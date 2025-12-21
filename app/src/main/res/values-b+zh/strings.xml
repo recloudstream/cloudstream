@@ -172,8 +172,6 @@
     <string name="automatic_plugin_download">自动下载插件</string>
     <string name="updates_settings">显示应用更新</string>
     <string name="updates_settings_des">启动应用后自动搜索更新。</string>
-    <string name="uprereleases_settings">更新至预览版</string>
-    <string name="uprereleases_settings_des">搜索预览版更新替代仅搜索完整版本</string>
     <string name="github">Github</string>
     <string name="lightnovel">由相同开发者开发的轻小说应用</string>
     <string name="anim">由相同开发者开发的动漫应用</string>
@@ -779,4 +777,7 @@
     <string name="top_center">顶部居中</string>
     <string name="top_right">右上</string>
     <string name="play_full_series_button">播放全剧</string>
+    <string name="install_prerelease">安装预发行版</string>
+    <string name="prerelease_already_installed">已安装预发行版。</string>
+    <string name="prerelease_install_failed">安装预发行版失败。</string>
 </resources>

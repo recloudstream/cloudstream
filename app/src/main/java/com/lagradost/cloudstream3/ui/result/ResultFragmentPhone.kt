@@ -70,8 +70,6 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.openBrowser
 import com.lagradost.cloudstream3.utils.AppContextUtils.updateHasTrailers
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
-import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.disableBackPressedCallback
-import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.enableBackPressedCallback
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.openBatteryOptimizationSettings
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
@@ -142,7 +140,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         }
     }
 
-    var currentTrailers: List<ExtractorLink> = emptyList()
+    var currentTrailers: List<Pair<ExtractorLink,String>> = emptyList()
     var currentTrailerIndex = 0
 
     override fun nextMirror() {
@@ -164,13 +162,13 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
     private fun loadTrailer(index: Int? = null) {
         val isSuccess =
-            currentTrailers.getOrNull(index ?: currentTrailerIndex)?.let { trailer ->
+            currentTrailers.getOrNull(index ?: currentTrailerIndex)?.let { (extractedTrailerLink,_) ->
                 context?.let { ctx ->
                     player.onPause()
                     player.loadPlayer(
                         ctx,
                         false,
-                        trailer,
+                        extractedTrailerLink,
                         null,
                         startPosition = 0L,
                         subtitles = emptySet(),
@@ -226,10 +224,10 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         //}
     }
 
-    private fun setTrailers(trailers: List<ExtractorLink>?) {
+    private fun setTrailers(trailers: List<Pair<ExtractorLink,String>>?) {
         context?.updateHasTrailers()
         if (!LoadResponse.isTrailersEnabled) return
-        currentTrailers = trailers?.sortedBy { -it.quality } ?: emptyList()
+        currentTrailers = trailers?.sortedBy { -it.first.quality } ?: emptyList()
         loadTrailer()
     }
 
@@ -476,12 +474,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
             activity?.attachBackPressedCallback(this@ResultFragmentPhone.toString()) {
                 if (resultOverlappingPanels.getSelectedPanel().ordinal == 1) {
-                    // If we don't disable we end up in a loop with default behavior calling
-                    // this callback as well, so we disable it, run default behavior,
-                    // then re-enable this callback so it can be used for next back press.
-                    activity?.disableBackPressedCallback(this@ResultFragmentPhone.toString())
-                    activity?.onBackPressedDispatcher?.onBackPressed()
-                    activity?.enableBackPressedCallback(this@ResultFragmentPhone.toString())
+                    runDefault()
                 } else resultOverlappingPanels.closePanels()
             }
 
@@ -575,8 +568,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
         playerBinding?.apply {
             playerOpenSource.setOnClickListener {
-                currentTrailers.getOrNull(currentTrailerIndex)?.let {
-                    context?.openBrowser(it.url)
+                currentTrailers.getOrNull(currentTrailerIndex)?.let {(_,ogTrailerLink)->
+                    context?.openBrowser(ogTrailerLink)
                 }
             }
         }

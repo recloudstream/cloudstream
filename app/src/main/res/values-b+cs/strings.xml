@@ -146,8 +146,6 @@
     <string name="show_fillers_settings">Zobrazit výplňové epizody u anime</string>
     <string name="updates_settings">Zobrazit aktualizace aplikace</string>
     <string name="updates_settings_des">Při spuštění aplikace automaticky zkontrolovat nové aktualizace.</string>
-    <string name="uprereleases_settings">Aktualizovat na předběžná vydání</string>
-    <string name="uprereleases_settings_des">Kontrolovat aktualizace předběžných vydání, místo normálních plných vydání</string>
     <string name="github">GitHub</string>
     <string name="lightnovel">Nenáročná aplikace pro romány od stejných vývojářů</string>
     <string name="anim">Anime aplikace od stejných vývojářů</string>
@@ -759,4 +757,8 @@
     <string name="top_center">Uprostřed nahoře</string>
     <string name="top_right">Vpravo nahoře</string>
     <string name="play_full_series_button">Přehrát celý seriál</string>
+    <string name="install_prerelease">Nainstalovat předběžnou verzi</string>
+    <string name="prerelease_already_installed">Předběžné vydání je již nainstalováno.</string>
+    <string name="prerelease_install_failed">Nepodařilo se nainstalovat předběžné vydání.</string>
+    <string name="show_episode_text">Text epizody</string>
 </resources>

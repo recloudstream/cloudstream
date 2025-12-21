@@ -149,7 +149,6 @@
     <string name="automatic_plugin_download">Автозавантаження розширень</string>
     <string name="updates_settings">Показувати оновлення застосунку</string>
     <string name="redo_setup_process">Налаштувати повторно</string>
-    <string name="uprereleases_settings_des">Шукати лише попередні оновлення замість повних випусків</string>
     <string name="apk_installer_settings">Установлювач APK</string>
     <string name="github">Github</string>
     <string name="lightnovel">Застосунок для ранобе від тих самих розробників</string>
@@ -223,7 +222,6 @@
     <string name="automatic_plugin_updates">Автооновлення розширень</string>
     <string name="automatic_plugin_download_summary">Автоматично встановлювати всі розширення, які ще не встановлено, з доданих репозиторіїв.</string>
     <string name="updates_settings_des">Автоматично перевіряти нові оновлення після запуску застосунку.</string>
-    <string name="uprereleases_settings">Оновлюватися до бета-версій</string>
     <string name="copy_link_toast">Покликання скопійовано до буфера обміну</string>
     <string name="apk_installer_settings_des">Деякі пристрої не підтримують новий інсталятор пакетів. Спробуйте старий варіант, якщо оновлення не встановлюються.</string>
     <string name="discord">Приєднуйтеся до Discord</string>
@@ -707,4 +705,7 @@
     <string name="top_center">Верхній центр</string>
     <string name="top_right">Угорі праворуч</string>
     <string name="play_full_series_button">Відтворити повну серію</string>
+    <string name="install_prerelease">Встановити передрелізну версію</string>
+    <string name="prerelease_already_installed">Попередня версія вже встановлена.</string>
+    <string name="prerelease_install_failed">Не вдалося встановити попередню версію.</string>
 </resources>

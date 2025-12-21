@@ -225,8 +225,6 @@
     <string name="advanced_search_des">Mostrar los resultados de la búsqueda por proveedor</string>
     <string name="show_trailers_settings">Mostrar avances</string>
     <string name="kitsu_settings">Mostrar pósters de Kitsu</string>
-    <string name="uprereleases_settings">Actualizar a las versiones preliminares</string>
-    <string name="uprereleases_settings_des">Buscar actualizaciones preliminares (beta) en lugar de solo versiones completas (stable releases)</string>
     <string name="github">Github</string>
     <string name="lightnovel">App de novela ligera de los mismos desarrolladores</string>
     <string name="anim">App de Anime de los mismos desarrolladores</string>
@@ -665,7 +663,7 @@
     <string name="torrent_preferred_media">Habilitación torrent en Opciones/Proveedores/Medio preferido</string>
     <string name="torrent_not_accepted">Reiniciar app y aceptar aparición de Stream Torrent para proceder.</string>
     <string name="software_decoding">Software de decodificado</string>
-    <string name="software_decoding_desc">El software de decodificado permite que el reproductor reproduzca archivos de video no soportados por su teléfono, lo cual podría causar una reproducción lenta o inestable en alta resolución</string>
+    <string name="software_decoding_desc">El software de decodificado permite que el reproductor reproduzca archivos de video no soportados por su dispositivo, lo cual podría causar una reproducción lenta o inestable en alta resolución</string>
     <string name="player_notification_channel_description">La notificación del reproductor para controlar la reproducción en segundo plano</string>
     <string name="sort_episodes_rating_high_low">Puntuación (Más alta)</string>
     <string name="sort_episodes_number_desc">Episodio (Descendente)</string>

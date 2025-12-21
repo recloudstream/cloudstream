@@ -149,7 +149,6 @@
     <string name="double_tap_to_seek_settings_des">সামনে বা পিছনের দিকে যেতে ডান বা বাম দিকে দুবার আলতো চাপুন</string>
     <string name="delete_file">ফাইল ডিলিট</string>
     <string name="subs_default_reset_toast">মান ডিফল্ট এ রিসেট করুন</string>
-    <string name="uprereleases_settings_des">ফুল রিলিজের পরিবর্তে শুধুমাত্র প্রি-রিলিজ আপডেটের জন্য অনুসন্ধান করুন</string>
     <string name="updates_settings_des">স্টার্টআপে নতুন আপডেটের জন্য স্বয়ংক্রিয়ভাবে অনুসন্ধান করুন</string>
     <string name="movies_singular">সিনেমা</string>
     <string name="show_fillers_settings">এনিমে এর ফিলার পর্ব দেখায়</string>
@@ -200,7 +199,6 @@
     <string name="advanced_search_des">প্রোভাইডার অনুযায়ী আপনাকে পৃথক অনুসন্ধান ফলাফল দেয়</string>
     <string name="tv_series_singular">সিরিজ</string>
     <string name="rating">রেটিং</string>
-    <string name="uprereleases_settings">প্রি-রিলিজে আপডেট করুন</string>
     <string name="redo_setup_process">সেটআপ প্রক্রিয়া পুনরায় করুন</string>
     <string name="benene">ভাই এক কাপ চা খাওয়াও ☕</string>
     <string name="restore_settings">ব্যাকআপ থেকে ডেটা পুনরুদ্ধার করুন</string>

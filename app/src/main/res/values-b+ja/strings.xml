@@ -311,7 +311,6 @@
     <string name="nginx_url_pref">NGINXサーバーのURL</string>
     <string name="restore_settings">バックアップからデータを復元</string>
     <string name="updates_settings_des">アプリ起動後に自動的に更新を探します。</string>
-    <string name="uprereleases_settings">プレリリースにアップデート</string>
     <string name="subs_default_reset_toast">初期値にリセット</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="no_episodes_found">エピソードが見つかりません</string>
@@ -416,7 +415,6 @@
     <string name="subtitles_from_embedded">埋め込み</string>
     <string name="subtitles_from_online">オンライン</string>
     <string name="lightnovel">同じ開発者によるライトノベルアプリ</string>
-    <string name="uprereleases_settings_des">完全リリースだけでなくプレリリースのアップデートも検索</string>
     <string name="add_site_pref">サイトをクローン</string>
     <string name="actor_main">メイン</string>
     <string name="subtitles_remove_bloat">字幕から不要なものを削除</string>
@@ -707,4 +705,8 @@
     <string name="top_center">上中央</string>
     <string name="top_right">右上</string>
     <string name="play_full_series_button">全シリーズを再生</string>
+    <string name="install_prerelease">プレリリース版をインストール</string>
+    <string name="prerelease_already_installed">プレリリース版は既にインストールされています。</string>
+    <string name="prerelease_install_failed">プレリリース版のインストールに失敗しました。</string>
+    <string name="show_episode_text">エピソードのテキスト</string>
 </resources>

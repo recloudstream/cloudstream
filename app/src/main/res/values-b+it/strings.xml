@@ -157,8 +157,6 @@
     <string name="automatic_plugin_updates">Aggiorna automaticamente i plugin</string>
     <string name="updates_settings">Mostra gli aggiornamenti dell\'app</string>
     <string name="updates_settings_des">Cerca automaticamente nuovi aggiornamenti dopo aver avviato l\'app.</string>
-    <string name="uprereleases_settings">Aggiorna alle prerelease</string>
-    <string name="uprereleases_settings_des">Cerca per aggiornamenti alle prerelease invice di cercare solo le release complete</string>
     <string name="github">GitHub</string>
     <string name="lightnovel">App per Light Novel degli stessi sviluppatori</string>
     <string name="anim">App per Anime degli stessi sviluppatori</string>
@@ -755,4 +753,7 @@
     <string name="top_right">In alto a destra</string>
     <string name="middle_left">In centro a sinistra</string>
     <string name="play_full_series_button">Riproduci serie completa</string>
+    <string name="install_prerelease">Installa la versione pre-release</string>
+    <string name="prerelease_already_installed">La versione pre-release è già installata.</string>
+    <string name="prerelease_install_failed">Impossibile installare la versione pre-release.</string>
 </resources>

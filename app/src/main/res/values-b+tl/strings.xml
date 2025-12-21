@@ -115,8 +115,6 @@
     <string name="show_fillers_settings">Ipakita ang filler episode sa anime</string>
     <string name="updates_settings">Ipakita kung may bagong update</string>
     <string name="updates_settings_des">Awtomatikong mag-check ng bagong update pagbukas ng app</string>
-    <string name="uprereleases_settings">Update to prereleases</string>
-    <string name="uprereleases_settings_des">Search for prerelease updates instead of full releases only</string>
     <string name="github">Github</string>
     <string name="lightnovel">Light novel app ng parehong devs</string>
     <string name="anim">Anime app ng parehong devs</string>

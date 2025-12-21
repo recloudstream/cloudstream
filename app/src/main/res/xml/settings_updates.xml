@@ -8,19 +8,18 @@
             android:title="@string/check_for_update"
             app:icon="@drawable/ic_baseline_system_update_24"
             app:key="@string/manual_check_update_key" />
-        <SwitchPreference
+
+        <Preference
             android:icon="@drawable/ic_baseline_developer_mode_24"
-            android:summary="@string/uprereleases_settings_des"
-            android:title="@string/uprereleases_settings"
-            app:defaultValue="@bool/is_prerelease"
-            app:key="@string/prerelease_update_key" />
+            android:title="@string/install_prerelease"
+            app:key="@string/install_prerelease_key" />
 
         <Preference
             android:icon="@drawable/netflix_download"
             android:key="@string/apk_installer_key"
             android:title="@string/apk_installer_settings"
-            android:summary="@string/apk_installer_settings_des"
-            />
+            android:summary="@string/apk_installer_settings_des" />
+
         <SwitchPreference
             android:icon="@drawable/ic_baseline_notifications_active_24"
             android:summary="@string/updates_settings_des"
