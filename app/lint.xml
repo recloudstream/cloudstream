@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- ByteOrderMark has errors in values-b+ja/strings.xml, but it's handled by weblate so we don't really care. -->
+    <issue id="ByteOrderMark" severity="ignore" />
+
+    <!-- We don't care about MissingTranslation since it's handled by weblate. -->
+    <issue id="MissingTranslation" severity="ignore" />
+</lint>
