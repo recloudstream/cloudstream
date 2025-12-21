@@ -144,6 +144,9 @@
     <style name="SubButton" parent="@style/SearchBox">
         <item name="android:text">@string/app_subbed_text</item>
     </style>
+    <style name="EpisodeTextButton" parent="@style/SearchBox">
+        <item name="android:text">@string/episode_text</item>
+    </style>
 
     <!--<style name="RatingButton" parent="@style/SearchBox">
         <item name="android:background">@drawable/rating_bg_color</item>

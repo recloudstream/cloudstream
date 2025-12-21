@@ -402,11 +402,13 @@
     <string name="show_sub">Sub label</string>
     <string name="show_rating">Rating Label</string>
     <string name="show_title">Title</string>
+    <string name="show_episode_text">Episode Text</string>
     <string name="show_hd_key" translatable="false">show_hd_key</string>
     <string name="show_dub_key" translatable="false">show_dub_key</string>
     <string name="show_sub_key" translatable="false">show_sub_key</string>
     <string name="show_rating_key" translatable="false">show_rating_key</string>
     <string name="show_title_key" translatable="false">show_title_key</string>
+    <string name="show_episode_text_key" translatable="false">show_episode_text_key</string>
     <string name="poster_ui_settings">Toggle UI elements on poster</string>
     <string name="no_update_found">No Update Found</string>
     <string name="check_for_update">Check for Update</string>
@@ -901,4 +903,5 @@
     <string name="top_left">Top left</string>
     <string name="top_center">Top center</string>
     <string name="top_right">Top right</string>
+    <string name="episode_text" translatable="false">S1E1</string>
 </resources>
