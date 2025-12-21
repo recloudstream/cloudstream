@@ -811,7 +811,12 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         }
                     }
 
-                    populateChips(resultTag, d.tags, expandable = true)
+                    populateChips(
+                        view = resultTag,
+                        tags = d.tags,
+                        expandable = true,
+                        initialVisibleLimit = 10
+                    )
 
                     resultComingSoon.isVisible = d.comingSoon
                     resultDataHolder.isGone = d.comingSoon
