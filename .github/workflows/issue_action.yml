@@ -9,17 +9,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Generate access token
-        id: generate_token
-        uses: tibdex/github-app-token@v2
+        id: app-token
+        uses: actions/create-github-app-token@v2
         with:
-          app_id: ${{ secrets.GH_APP_ID }}
-          private_key: ${{ secrets.GH_APP_KEY }}
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_KEY }}
 
       - name: Similarity analysis
         id: similarity
         uses: actions-cool/issues-similarity-analysis@v1
         with:
-          token: ${{ steps.generate_token.outputs.token }}
+          token: ${{ steps.app-token.outputs.token }}
           filter-threshold: 0.60
           title-excludes: ''
           comment-title: |
@@ -31,7 +31,7 @@ jobs:
         if: steps.similarity.outputs.similar-issues-found =='true'
         uses: actions/github-script@v8
         with:
-          github-token: ${{ steps.generate_token.outputs.token }}
+          github-token: ${{ steps.app-token.outputs.token }}
           script: |
             github.rest.issues.addLabels({
               issue_number: context.issue.number,
@@ -45,7 +45,7 @@ jobs:
       - name: Automatically close issues that dont follow the issue template
         uses: lucasbento/auto-close-issues@v1.0.2
         with:
-          github-token: ${{ steps.generate_token.outputs.token }}
+          github-token: ${{ steps.app-token.outputs.token }}
           issue-close-message: |
             @${issue.user.login}: hello! :wave:
             This issue is being automatically closed because it does not follow the issue template." 
@@ -66,7 +66,7 @@ jobs:
         uses: actions-cool/issues-helper@v3
         with:
           actions: 'create-comment'
-          token: ${{ steps.generate_token.outputs.token }}
+          token: ${{ steps.app-token.outputs.token }}
           body: |
             Hello ${{ github.event.issue.user.login }}. 
             Please do not report any provider bugs here. This repository does not contain any providers. Please find the appropriate repository and report your issue there or join the [discord](https://discord.gg/5Hus6fM).
@@ -77,7 +77,7 @@ jobs:
         if: steps.provider_check.outputs.name != 'none'
         uses: actions/github-script@v8
         with:
-          github-token: ${{ steps.generate_token.outputs.token }}
+          github-token: ${{ steps.app-token.outputs.token }}
           script: |
             github.rest.issues.addLabels({
               issue_number: context.issue.number,
@@ -90,5 +90,5 @@ jobs:
         uses: actions-cool/emoji-helper@v1.0.0
         with:
           type: 'issue'
-          token: ${{ steps.generate_token.outputs.token }}
+          token: ${{ steps.app-token.outputs.token }}
           emoji: 'eyes'
