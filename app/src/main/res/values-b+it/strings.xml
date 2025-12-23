@@ -756,4 +756,5 @@
     <string name="install_prerelease">Installa la versione pre-release</string>
     <string name="prerelease_already_installed">La versione pre-release è già installata.</string>
     <string name="prerelease_install_failed">Impossibile installare la versione pre-release.</string>
+    <string name="show_episode_text">Testo dell\'episodio</string>
 </resources>
