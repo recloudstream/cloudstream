@@ -731,4 +731,8 @@
     <string name="top_center">Centro em cima</string>
     <string name="top_right">Direita em cima</string>
     <string name="play_full_series_button">Reproduzir Série Inteira</string>
+    <string name="install_prerelease">Instalar versão de pré-lançamento</string>
+    <string name="prerelease_already_installed">Versão de pré-lançamento já instalada.</string>
+    <string name="prerelease_install_failed">Falha ao instalar pré-lançamento.</string>
+    <string name="show_episode_text">Texto do Episódio</string>
 </resources>

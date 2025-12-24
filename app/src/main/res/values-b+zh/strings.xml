@@ -780,4 +780,5 @@
     <string name="install_prerelease">安装预发行版</string>
     <string name="prerelease_already_installed">已安装预发行版。</string>
     <string name="prerelease_install_failed">安装预发行版失败。</string>
+    <string name="show_episode_text">剧集文本</string>
 </resources>

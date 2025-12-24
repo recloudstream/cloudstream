@@ -708,4 +708,5 @@
     <string name="install_prerelease">Встановити передрелізну версію</string>
     <string name="prerelease_already_installed">Попередня версія вже встановлена.</string>
     <string name="prerelease_install_failed">Не вдалося встановити попередню версію.</string>
+    <string name="show_episode_text">Текст епізоду</string>
 </resources>
