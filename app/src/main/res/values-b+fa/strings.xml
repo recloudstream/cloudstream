@@ -190,7 +190,6 @@
     <string name="action_default">پیش‌فرض</string>
     <string name="cartoons_singular">کارتون</string>
     <string name="torrent_singular">تورنت</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="vpn_torrent">این ارائه‌دهنده تورنتی است، استفاده از VPN توصیه می‌شود</string>
     <string name="restore_success">بارگزاری پرونده پشتیبانی‌</string>
     <string name="subs_subtitle_elevation">ارتفاع زیرنویس</string>

@@ -235,10 +235,6 @@
     <string name="show_dub">ملصق مدبلج</string>
     <string name="show_sub">ملصق مترجم</string>
     <string name="show_title">العنوان</string>
-    <string name="show_hd_key" translatable="false">show_hd_key</string>
-    <string name="show_dub_key" translatable="false">show_dub_key</string>
-    <string name="show_sub_key" translatable="false">show_sub_key</string>
-    <string name="show_title_key" translatable="false">show_title_key</string>
     <string name="poster_ui_settings">التحكم في عناصر الواجهة على الملصق</string>
     <string name="no_update_found">لم يتم العثور على تحديثات</string>
     <string name="check_for_update">تحقق من التحديثات</string>
@@ -270,8 +266,6 @@
     <string name="resize_fill">امتداد</string>
     <string name="resize_zoom">تكبير</string>
     <string name="legal_notice">إخلاء مسؤولية</string>
-    <string name="legal_notice_key" translatable="false">legal_notice_key</string>
-    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">عام</string>
     <string name="random_button_settings">زر العشوائي</string>
     <string name="random_button_settings_desc">إظهار زر عشوائي على الصفحة الرئيسية والمكتبة</string>
@@ -291,10 +285,6 @@
     <string name="bottom_title_settings">مكان عنوان الملصق</string>
     <string name="bottom_title_settings_des">وضع العنوان تحت الملصق</string>
     <!-- account stuff -->
-    <string name="anilist_key" translatable="false">anilist_key</string>
-    <string name="mal_key" translatable="false">mal_key</string>
-    <string name="opensubtitles_key" translatable="false">opensubtitles_key</string>
-    <string name="nginx_key" translatable="false">nginx_key</string>
     <string name="example_password">كلمة المرور</string>
     <string name="example_username">إسم المستخدم</string>
     <string name="example_email">البريد الإلكتروني</string>
@@ -302,14 +292,6 @@
     <string name="example_site_name">إسم الموقع الجديد</string>
     <string name="example_site_url">رابط الموقع مثلا : https://example.com</string>
     <string name="example_lang_name">اللغة (الإنجليزية)</string>
-    <!--
-    <string name="mal_account_settings" translatable="false">MAL</string>
-    <string name="anilist_account_settings" translatable="false">AniList</string>
-    <string name="tmdb_account_settings" translatable="false">TMDB</string>
-    <string name="imdb_account_settings" translatable="false">IMDB</string>
-    <string name="kitsu_account_settings" translatable="false">Kitsu</string>
-    <string name="trakt_account_settings" translatable="false">Trakt</string>
-    -->
     <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">حساب</string>
     <string name="logout">تسجيل الخروج</string>
@@ -332,7 +314,6 @@
     <string name="all">الكل</string>
     <string name="max">الحد الاقصي</string>
     <string name="min">الحد الأدنى</string>
-    <string name="subtitles_none" translatable="false">@string/none</string>
     <string name="subtitles_outline">الخطوط المحيطة</string>
     <string name="subtitles_depressed">النمط المنخفض</string>
     <string name="subtitles_shadow">ظل</string>
@@ -602,8 +583,6 @@
     <string name="edit_account">تعديل الحساب</string>
     <string name="links_reloaded_toast">تم إعادة تحميل الروابط</string>
     <string name="rotate_video_desc">عرض زر تبديل لاتجاه الشاشة</string>
-    <string name="rotate_video_key">تدوير الفيديو</string>
-    <string name="auto_rotate_video_key">مفتاح تدوير الفيديو التلقائي</string>
     <string name="auto_rotate_video">الدوران التلقائي</string>
     <string name="rotate_video">تدوير</string>
     <string name="auto_rotate_video_desc">تمكين التبديل التلقائي لاتجاه الشاشة بناءً على اتجاه الفيديو</string>
@@ -652,7 +631,6 @@
     <string name="device_pin_url_message">قم بزيارة <b>%s</b> على هاتفك الذكي أو جهاز الكمبيوتر وأدخل الرمز أعلاه</string>
     <string name="device_pin_error_message">لا يمكن الحصول على رمز PIN للجهاز، حاول المصادقة المحلية</string>
     <string name="device_pin_counter_text">تنتهي صلاحية الرمز خلال %1$dm %2$ds</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="play_from_beginning_img_des">تشغيل من البداية</string>
     <string name="open_local_video">فتح فيديو محلي</string>
     <string name="test_warning">تحذير</string>

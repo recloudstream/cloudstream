@@ -292,14 +292,6 @@
     <string name="example_site_name">MyCoolSite</string>
     <string name="example_site_url">voorbeeld.com</string>
     <string name="example_lang_name">Taalcode (nl)</string>
-    <!--
-    <string name="mal_account_settings" translatable="false">MAL</string>
-    <string name="anilist_account_settings" translatable="false">AniList</string>
-    <string name="tmdb_account_settings" translatable="false">TMDB</string>
-    <string name="imdb_account_settings" translatable="false">IMDB</string>
-    <string name="kitsu_account_settings" translatable="false">Kitsu</string>
-    <string name="trakt_account_settings" translatable="false">Trakt</string>
-    -->
     <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">account</string>
     <string name="logout">Log uit</string>
@@ -594,7 +586,6 @@
     <string name="links_reloaded_toast">Link opnieuw geladen</string>
     <string name="auto_rotate_video">Autoroteer</string>
     <string name="rotate_video">Roteer</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="downloads_empty">Er zijn momenteel geen downloads beschikbaar.</string>
     <string name="toast_copied">Gekopieerd!</string>
     <string name="dont_show">Verbergen</string>

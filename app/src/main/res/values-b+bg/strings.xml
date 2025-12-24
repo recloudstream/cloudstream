@@ -296,8 +296,6 @@
     <string name="example_site_name">НовоИмеНаСайт</string>
     <string name="example_site_url">example.com</string>
     <string name="example_lang_name">Езиков код (en)</string>
-    <!--
-    -->
     <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">Акаунт</string>
     <string name="logout">Излизане</string>
@@ -588,7 +586,6 @@
     <string name="recommendations_tooltip">Покажи предложения</string>
     <string name="speed_setting_summary">Добавя опция за промяна на скоростта в плеъра</string>
     <string name="test_extensions_summary">Този тест е направен за програмисти и не проверява работата на никакви добавки.</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="episode_upcoming_format" formatted="true">Предстоящо в %s</string>
     <string name="repo_copy_label">Име на хранилището и URL адрес</string>
     <string name="toast_copied">копирани!</string>
