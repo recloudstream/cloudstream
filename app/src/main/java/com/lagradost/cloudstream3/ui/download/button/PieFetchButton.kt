@@ -15,6 +15,8 @@ import androidx.core.view.isVisible
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.services.DownloadQueueService.Companion.downloadInstances
+import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_CANCEL_PENDING
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DELETE_FILE
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_LONG_CLICK
@@ -23,9 +25,10 @@ import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_PLAY_FILE
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_RESUME_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DownloadClickEvent
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
-import com.lagradost.cloudstream3.utils.VideoDownloadManager
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.KEY_RESUME_PACKAGES
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
+import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager.queue
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.KEY_RESUME_PACKAGES
 
 open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
     BaseFetchButton(context, attributeSet) {
@@ -138,8 +141,16 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
 
             recycle()
         }
-        resetView()
+        // resetView()
         onInflate()
+    }
+
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        // Re-run all animations when the view gets visible.
+        // Otherwise views may run without animations after recycled
+        setStatusInternal(currentStatus)
     }
 
     private var currentStatus: DownloadStatusTell? = null
@@ -162,16 +173,31 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
     }*/
 
     protected fun setDefaultClickListener(
-        view: View, textView: TextView?, card: VideoDownloadHelper.DownloadEpisodeCached,
+        view: View, textView: TextView?, card: DownloadObjects.DownloadEpisodeCached,
         callback: (DownloadClickEvent) -> Unit
     ) {
         this.progressText = textView
         this.setPersistentId(card.id)
         view.setOnClickListener {
             if (isZeroBytes) {
-                removeKey(KEY_RESUME_PACKAGES, card.id.toString())
-                callback(DownloadClickEvent(DOWNLOAD_ACTION_DOWNLOAD, card))
-                // callback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_DOWNLOAD, data))
+                val localQueue = queue.value
+                val localInstances = downloadInstances.value
+                val id = card.id
+
+                // If the download is already in queue or active downloads, provide an option to cancel it
+                if (localQueue.any { q -> q.id == id } || localInstances.any { i -> i.downloadQueueWrapper.id == id }) {
+                    it.popupMenuNoIcons(
+                        arrayListOf(
+                            Pair(DOWNLOAD_ACTION_CANCEL_PENDING, R.string.cancel),
+                        )
+                    ) {
+                        callback(DownloadClickEvent(itemId, card))
+                    }
+                } else {
+                    // Otherwise just start a download instantly
+                    removeKey(KEY_RESUME_PACKAGES, card.id.toString())
+                    callback(DownloadClickEvent(DOWNLOAD_ACTION_DOWNLOAD, card))
+                }
             } else {
                 val list = arrayListOf(
                     Pair(DOWNLOAD_ACTION_PLAY_FILE, R.string.popup_play_file),
@@ -212,7 +238,7 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
     }
 
     open fun setDefaultClickListener(
-        card: VideoDownloadHelper.DownloadEpisodeCached,
+        card: DownloadObjects.DownloadEpisodeCached,
         textView: TextView?,
         callback: (DownloadClickEvent) -> Unit
     ) {

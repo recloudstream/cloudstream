@@ -11,7 +11,7 @@ import androidx.core.widget.ContentLoadingProgressBar
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.mainWork
-import com.lagradost.cloudstream3.utils.VideoDownloadManager
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
 
 typealias DownloadStatusTell = VideoDownloadManager.DownloadType
 
@@ -78,7 +78,7 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
         if (!doSetProgress) return
 
         ioSafe {
-            val savedData = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, id)
+            val savedData = VideoDownloadManager.getDownloadFileInfo(context, id)
 
             mainWork {
                 if (savedData != null) {
@@ -87,7 +87,7 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
 
                     setProgress(downloadedBytes, totalBytes)
                     applyMetaData(id, downloadedBytes, totalBytes)
-                } else run { resetView() }
+                }
             }
         }
     }
