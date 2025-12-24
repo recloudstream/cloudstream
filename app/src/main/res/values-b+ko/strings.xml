@@ -620,7 +620,6 @@
     <string name="enter_pin_with_name" formatted="true">%s의 PIN 입력</string>
     <string name="action_remove_from_favorites">즐겨찾기에서 제거</string>
     <string name="episode_action_cast_mirror">캐스트미러</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="delete_plugin">플러그인 삭제</string>
     <string name="test_warning">경고</string>
     <string name="preview_seekbar">탐색바 미리보기</string>

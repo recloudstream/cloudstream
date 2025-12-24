@@ -555,12 +555,10 @@
     <string name="action_add_to_favorites">Добавить в любимое</string>
     <string name="auto_rotate_video_desc">Включить автоматическую смену ориентации экрана на основе ориентации видео</string>
     <string name="auto_rotate_video">Автоповорот</string>
-    <string name="rotate_video_key">rotate_video_key</string>
     <string name="use_default_account">Использовать учётную запись по умолчанию</string>
     <string name="action_unsubscribe">Отписаться</string>
     <string name="duplicate_replace">Заменить</string>
     <string name="enter_current_pin">Введите текущий ПИН-код</string>
-    <string name="auto_rotate_video_key">auto_rotate_video_key</string>
     <string name="favorites_list_name">Любимые</string>
     <string name="favorite_added">%s добавлено в любимые</string>
     <string name="enter_pin_with_name" formatted="true">Введите ПИН-код от %s</string>
@@ -600,7 +598,6 @@
     <string name="next_season_episode_format" formatted="true">Сезон %1$d серия %2$d выйдет</string>
     <string name="episode_upcoming_format" formatted="true">Выйдет %s</string>
     <string name="player_settings_select_cast_device">Выберите устройство для трансляции</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="downloads_empty">В данный момент скачиваний нет.</string>
     <string name="play_from_beginning_img_des">Играть с самого начала</string>
     <string name="open_local_video">Открыть локальное видео</string>

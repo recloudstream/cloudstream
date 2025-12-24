@@ -550,10 +550,8 @@
     <string name="manage_accounts">Керувати обліковими записами</string>
     <string name="edit_account">Редагувати обліковий запис</string>
     <string name="rotate_video_desc">Показувати кнопку перемикання орієнтації екрана</string>
-    <string name="rotate_video_key">rotate_video_key</string>
     <string name="rotate_video">Обернути</string>
     <string name="links_reloaded_toast">Покликання перезавантажено</string>
-    <string name="auto_rotate_video_key">auto_rotate_video_key</string>
     <string name="auto_rotate_video">Автообертання</string>
     <string name="auto_rotate_video_desc">Увімкнути автоматичну зміну орієнтації екрана відповідно до відео</string>
     <string name="speed_setting_summary">Додати налаштування швидкості до програвача</string>
@@ -600,7 +598,6 @@
     <string name="device_pin_counter_text">Термін дії коду закінчується через %1$dхв %2$dс</string>
     <string name="auth_locally">Локальна автентифікація</string>
     <string name="dismiss">Відхилити</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="play_from_beginning_img_des">Відтворити з початку</string>
     <string name="test_warning">Попередження</string>
     <string name="delete_plugin">Видалити розширення</string>
@@ -708,4 +705,5 @@
     <string name="install_prerelease">Встановити передрелізну версію</string>
     <string name="prerelease_already_installed">Попередня версія вже встановлена.</string>
     <string name="prerelease_install_failed">Не вдалося встановити попередню версію.</string>
+    <string name="show_episode_text">Текст епізоду</string>
 </resources>

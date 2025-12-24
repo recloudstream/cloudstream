@@ -567,8 +567,6 @@
     <string name="edit_account">Editar la cuenta</string>
     <string name="links_reloaded_toast">Enlaces recargados</string>
     <string name="rotate_video_desc">Mostrar un botón para cambiar la orientación de la pantalla</string>
-    <string name="rotate_video_key">rotate_video_key</string>
-    <string name="auto_rotate_video_key">auto_rotate_video_key</string>
     <string name="auto_rotate_video">Giro automático</string>
     <string name="rotate_video">Girar</string>
     <string name="auto_rotate_video_desc">Activar el cambio automático de la orientación de la pantalla en función de la orientación del vídeo</string>
@@ -617,7 +615,6 @@
     <string name="device_pin_expired_message">¡El código PIN ya ha caducado!</string>
     <string name="device_pin_counter_text">El código caduca en %1$d mín y %2$d s</string>
     <string name="device_pin_error_message">No puedo obtener el código PIN del dispositivo; intente con la autenticación local</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="play_from_beginning_img_des">Reproducir desde el principio</string>
     <string name="open_local_video">Abrir vídeo de forma local</string>
     <string name="test_warning">Advertencia</string>

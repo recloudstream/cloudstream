@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
-    <string name="extra_info_format" formatted="true" translatable="false">%d %s | %s</string>
-    <string name="storage_size_format" formatted="true" translatable="false">%s • %s</string>
-    <string name="download_size_format" formatted="true" translatable="false">%s / %s</string>
-    <string name="episode_name_format" formatted="true" translatable="false">%s %s</string>
-    <string name="ffw_text_format" formatted="true" translatable="false">+%d</string>
-    <string name="rew_text_format" formatted="true" translatable="false">-%d</string>
-    <string name="ffw_text_regular_format" formatted="true" translatable="false">%d</string>
-    <string name="rew_text_regular_format" formatted="true" translatable="false">%d</string>
-    <string name="year_format" formatted="true" translatable="false">%d</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s epizoda %2$d</string>
     <string name="cast_format" formatted="true">Glumačka postava: %s</string>
     <string name="next_episode_format" formatted="true">Epizoda %d će izaći za</string>
@@ -285,7 +276,6 @@
     <string name="resize_fill">Rastegni</string>
     <string name="resize_zoom">Zoom</string>
     <string name="legal_notice">Pravna obavijest</string>
-    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">Općenito</string>
     <string name="random_button_settings">Gumb za slučajni odabir</string>
     <string name="random_button_settings_desc">Prikaži gumb za slučajni odabir na početnoj stranici i biblioteci</string>
@@ -597,8 +587,6 @@
     <string name="rotate_video_desc">Prikaži gumb za prebacivanje orijentacije zaslona</string>
     <string name="auto_rotate_video_desc">Omogućuje automatsko mijenjanje orijentacije zaslona na temelju orijentacije videa</string>
     <string name="auto_rotate_video">Automatsko rotiranje</string>
-    <string name="rotate_video_key">rotiraj_video_tipka</string>
-    <string name="auto_rotate_video_key">automatski_rotiraj_video_tipka</string>
     <string name="subscribe_tooltip">Obavijest za novu epizodu</string>
     <string name="result_search_tooltip">Traži u drugim proširenjima</string>
     <string name="speed_setting_summary">Dodaje opciju za brzinu u playeru</string>
@@ -636,7 +624,6 @@
     <string name="cs3wiki">CloudStream Wiki</string>
     <string name="pref_category_accounts">Računi</string>
     <string name="pref_category_security">Sigurnost</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="auth_locally">Lokalna autentifikacija</string>
     <string name="open_local_video">Otvori lokalni video</string>
     <string name="device_pin_url_message">Posjeti <b>%s</b> na svom mobitelu ili računalu i unesi gore navedeni kod</string>

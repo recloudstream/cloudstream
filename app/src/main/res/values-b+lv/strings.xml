@@ -85,7 +85,7 @@
     <string name="title_settings">Settingi</string>
     <string name="result_tags">Žanrs</string>
     <string name="result_share">Dalities</string>
-    <string name="result_open_in_browser">Atvērt internetā</string>
+    <string name="result_open_in_browser">Atvērt pārlūkā</string>
     <string name="downloaded">Ieladēts</string>
     <string name="downloading">Lādējas</string>
     <string name="sort_close">Aizvērt</string>
@@ -509,7 +509,6 @@
     <string name="subscription_in_progress_notification">Abonēto šovu atjaunināšana</string>
     <string name="subscription_list_name">Abonēts</string>
     <string name="subscription_new">Abonēts %s</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="next_season_episode_format" formatted="true">%1$d. sezona un %2$d. sērija tiks izlaista pēc</string>
     <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dh %2$dm %3$ds</string>
     <string name="download_time_left_min_sec_format" formatted="true">%1$dm %2$ds</string>

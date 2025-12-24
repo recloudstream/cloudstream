@@ -250,7 +250,6 @@
     <string name="resize_fill">Regang</string>
     <string name="resize_zoom">Zoom</string>
     <string name="legal_notice">Disclaimer</string>
-    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">Umum</string>
     <string name="random_button_settings">Tombol Acak</string>
     <string name="random_button_settings_desc">Tampilkan tombol acak di Beranda dan Pustaka</string>
@@ -267,14 +266,6 @@
     <string name="bottom_title_settings">Lokasi judul poster</string>
     <string name="bottom_title_settings_des">Meletakkan judul di bawah poster</string>
     <!-- account stuff -->
-    <!--
-    <string name="mal_account_settings" translatable="false">MAL</string>
-    <string name="anilist_account_settings" translatable="false">AniList</string>
-    <string name="tmdb_account_settings" translatable="false">TMDB</string>
-    <string name="imdb_account_settings" translatable="false">IMDB</string>
-    <string name="kitsu_account_settings" translatable="false">Kitsu</string>
-    <string name="trakt_account_settings" translatable="false">Trakt</string>
-    -->
     <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">akun</string>
     <string name="logout">Keluar</string>
@@ -632,7 +623,6 @@
     <string name="cs3wiki">CloudStream Wiki</string>
     <string name="pref_category_security">Keamanan</string>
     <string name="pref_category_accounts">Akun</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="test_warning">Hati hati</string>
     <string name="device_pin_expired_message">Kode PIN kini telah kedaluwarsa!</string>
     <string name="qr_image">Gambar Kode QR</string>

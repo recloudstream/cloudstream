@@ -621,7 +621,6 @@
     <string name="dismiss">Odrzuć</string>
     <string name="open_downloaded_repo">Otwórz repozytorium</string>
     <string name="device_pin_url_message">Odwiedź <b>%s</b> na swoim smartfonie lub komputerze i wprowadź powyższy kod</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="play_from_beginning_img_des">Odtwarzaj od początku</string>
     <string name="delete_plugin">Usuń wtyczkę</string>
     <string name="test_warning">Uwaga</string>
