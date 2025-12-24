@@ -155,6 +155,16 @@ android {
     namespace = "com.lagradost.cloudstream3"
 }
 
+androidComponents {
+    // Make sure lint runs when running debug builds
+    onVariants(selector().withBuildType("debug")) { variant ->
+        val variantName = variant.name.replaceFirstChar { it.uppercase() }
+        tasks.matching { it.name == "assemble$variantName" }.configureEach {
+            dependsOn("lint", ":library:lint")
+        }
+    }
+}
+
 dependencies {
     // Testing
     testImplementation(libs.junit)
