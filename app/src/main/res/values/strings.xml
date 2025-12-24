@@ -181,6 +181,9 @@
     <string name="settings_info">Info</string>
     <string name="advanced_search">Advanced Search</string>
     <string name="advanced_search_des">Gives you the search results separated by provider</string>
+    <string name="search_suggestions">Search Suggestions</string>
+    <string name="search_suggestions_des">Show search suggestions while typing</string>
+    <string name="clear_suggestions">Clear Suggestions</string>
     <string name="show_fillers_settings">Show filler episode for anime</string>
     <string name="show_trailers_settings">Show trailers</string>
     <string name="kitsu_settings">Show posters from Kitsu</string>
