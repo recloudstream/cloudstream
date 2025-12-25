@@ -146,19 +146,31 @@
                         android:gravity="center"
                         android:textColor="@color/white"
                         tools:text="1920x1080" />
-
-                    <TextView
-                        android:maxLines="2"
-                        android:id="@+id/player_video_title"
+                    <LinearLayout
+                        android:id="@+id/player_video_title_holder"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textColor="@color/white"
-                        android:textStyle="bold"
-                        android:visibility="visible"
-                        tools:text="Hello world" />
-
-
+                        android:gravity="center">
+                        <TextView
+                            android:maxLines="2"
+                            android:id="@+id/player_video_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textColor="@color/white"
+                            android:textStyle="bold"
+                            android:visibility="visible"
+                            tools:text="Hello world " />
+                        <ImageView
+                            android:id="@+id/offline_pin"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_marginStart="2dp"
+                            android:src="@drawable/ic_offline_pin_24"
+                            android:visibility="gone"
+                            tools:visibility="visible"
+                            android:layout_gravity="center"/>
+                    </LinearLayout>
                 </LinearLayout>
 
                 <!-- Removed as it has no use anymore-->
