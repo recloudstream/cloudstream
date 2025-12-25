@@ -304,7 +304,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
 
         val titleMove = if (isShowing) 0f else -50.toPx.toFloat()
-        playerBinding?.playerVideoTitle?.let {
+        playerBinding?.playerVideoTitleHolder?.let {
             ObjectAnimator.ofFloat(it, "translationY", titleMove).apply {
                 duration = 200
                 start()
@@ -839,7 +839,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         val fadeTo = if (isLocked) 0f else 1f
         playerBinding?.apply {
-            val fadeAnimation = AlphaAnimation(playerVideoTitle.alpha, fadeTo).apply {
+            val fadeAnimation = AlphaAnimation(playerVideoTitleHolder.alpha, fadeTo).apply {
                 duration = 100
                 fillAfter = true
             }
@@ -860,7 +860,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             //TITLE
             playerVideoTitleRez.startAnimation(fadeAnimation)
             playerEpisodeFiller.startAnimation(fadeAnimation)
-            playerVideoTitle.startAnimation(fadeAnimation)
+            playerVideoTitleHolder.startAnimation(fadeAnimation)
             playerTopHolder.startAnimation(fadeAnimation)
             // BOTTOM
             playerLockHolder.startAnimation(fadeAnimation)
@@ -893,7 +893,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             val showPlayerEpisodes = !isGone && isThereEpisodes()
             playerEpisodesButtonRoot.isVisible = showPlayerEpisodes
             playerEpisodesButton.isVisible = showPlayerEpisodes
-            playerVideoTitle.isGone = togglePlayerTitleGone
+            playerVideoTitleHolder.isGone = togglePlayerTitleGone
 //        player_video_title_rez?.isGone = isGone
             playerEpisodeFiller.isGone = isGone
             playerCenterMenu.isGone = isGone
