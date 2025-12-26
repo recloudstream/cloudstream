@@ -420,7 +420,7 @@
     <string name="view_public_repositories_button">查看社区仓库</string>
     <string name="view_public_repositories_button_short">公开列表</string>
     <string name="uppercase_all_subtitles">字幕全大写</string>
-    <string name="download_all_plugins_from_repo">警告： CloudStream 3 对使用第三方插件不承担任何责任和提供任何支持！</string>
+    <string name="download_all_plugins_from_repo">警告： CloudStream 对使用第三方插件不承担任何责任，不提供任何支持！</string>
     <string name="single_plugin_disabled" formatted="true">%s（禁用）</string>
     <string name="tracks">轨道</string>
     <string name="audio_tracks">音频轨道</string>
