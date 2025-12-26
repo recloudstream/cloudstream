@@ -42,10 +42,9 @@
 
     <color name="adultColor">#FF6F63</color> <!-- same as sub color -->
 
-    <color name="video_ripple">#80FFFFFF</color>
-    <color name="video_button_ripple">#32FFFFFF</color>
-
+    <color name="video_ripple">#80FFFFFF</color><color name="video_button_ripple">#32FFFFFF</color>
     <color name="black_overlay">#66000000</color>
+    <color name="black_overlay2">#80000000</color>
     <color name="darkBarTransparent">#C0121212</color>
     <color name="skipOpTransparent">#4D121212</color>
     <color name="darkBar">#121212</color>
