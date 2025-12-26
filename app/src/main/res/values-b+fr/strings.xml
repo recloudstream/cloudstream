@@ -435,7 +435,7 @@
     <string name="plugins_disabled" formatted="true">Désactivé : %d</string>
     <string name="plugins_not_downloaded" formatted="true">Non téléchargé : %d</string>
     <string name="plugins_updated" formatted="true">%d plugins mis-à-jour</string>
-    <string name="download_all_plugins_from_repo">Avertissement : CloudStream 3 décline toute responsabilité concernant l’utilisation d’extensions tierces et ne fournit aucun support pour celles-ci !</string>
+    <string name="download_all_plugins_from_repo">Avertissement : CloudStream 3 décline toute responsabilité concernant l’utilisation d’extensions tierces et ne fournit aucun support pour celles-ci !</string>
     <string name="single_plugin_disabled" formatted="true">%s (Désactivé)</string>
     <string name="tracks">Pistes</string>
     <string name="audio_tracks">Pistes audio</string>
@@ -722,4 +722,8 @@
     <string name="top_center">En haut au centre</string>
     <string name="top_right">En haut à droite</string>
     <string name="play_full_series_button">Jouer la série complète</string>
+    <string name="install_prerelease">Installer la version préliminaire</string>
+    <string name="prerelease_already_installed">La version préliminaire est déjà installée.</string>
+    <string name="prerelease_install_failed">L\'installation de la version préliminaire a échouée.</string>
+    <string name="show_episode_text">Texte de l\'épisode</string>
 </resources>
