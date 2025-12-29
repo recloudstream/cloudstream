@@ -20,19 +20,20 @@ jobs:
         with:
           app-id: ${{ vars.GH_APP_ID }}
           private-key: ${{ secrets.GH_APP_KEY }}
+          owner: ${{ github.repository_owner }}
           repositories: dokka
 
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          path: "src"
+          path: src
 
       - name: Checkout dokka
         uses: actions/checkout@v6
         with:
-          repository: "recloudstream/dokka"
+          repository: recloudstream/dokka
           token: ${{ steps.app-token.outputs.token }}
-          path: "dokka"
+          path: dokka
           persist-credentials: false
 
       - name: Clean old builds

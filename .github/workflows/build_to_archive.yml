@@ -23,6 +23,7 @@ jobs:
       with:
         app-id: ${{ vars.GH_APP_ID }}
         private-key: ${{ secrets.GH_APP_KEY }}
+        owner: ${{ github.repository_owner }}
         repositories: |
           cloudstream-archive
           secrets
@@ -65,9 +66,9 @@ jobs:
 
     - uses: actions/checkout@v6
       with:
-        repository: "recloudstream/cloudstream-archive"
+        repository: recloudstream/cloudstream-archive
         token: ${{ steps.app-token.outputs.token }}
-        path: "archive"
+        path: archive
         persist-credentials: false
 
     - name: Move build
