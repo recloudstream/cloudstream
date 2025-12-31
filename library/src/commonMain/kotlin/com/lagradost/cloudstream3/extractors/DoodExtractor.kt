@@ -73,6 +73,10 @@ class Ds2video : DoodLaExtractor() {
     override var mainUrl = "https://ds2video.com"
 }
 
+class MyVidPlay : DoodLaExtractor() {
+    override var mainUrl = "https://myvidplay.com"
+}
+
 open class DoodLaExtractor : ExtractorApi() {
     override var name = "DoodStream"
     override var mainUrl = "https://dood.la"
