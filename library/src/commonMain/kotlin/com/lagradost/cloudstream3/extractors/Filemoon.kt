@@ -25,6 +25,11 @@ class FileMoonSx : FilemoonV2() {
     override var name = "FileMoonSx"
 }
 
+class Byse : FilemoonV2() {
+    override var mainUrl = "https://bysebuho.com"
+    override var name = "Byse"
+}
+
 
 open class FilemoonV2 : ExtractorApi() {
     override var name = "Filemoon"
