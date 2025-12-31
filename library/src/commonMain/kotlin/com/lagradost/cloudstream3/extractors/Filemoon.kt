@@ -25,9 +25,14 @@ class FileMoonSx : FilemoonV2() {
     override var name = "FileMoonSx"
 }
 
-class Byse : FilemoonV2() {
+class ByseBuho : FilemoonV2() {
     override var mainUrl = "https://bysebuho.com"
-    override var name = "Byse"
+    override var name = "ByseBuho"
+}
+
+class ByseVepoin : FilemoonV2() {
+    override var mainUrl = "https://bysevepoin.com"
+    override var name = "ByseVepoin"
 }
 
 
