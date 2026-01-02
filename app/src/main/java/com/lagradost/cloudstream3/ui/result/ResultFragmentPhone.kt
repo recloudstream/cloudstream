@@ -800,6 +800,17 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         }
                     }
 
+                    if (!d.logourl.isNullOrBlank()) {
+                        backgroundPosterWatermarkBadge.isVisible = true
+                        resultTitle.isVisible = false
+
+                        backgroundPosterWatermarkBadge.loadImage(d.logourl)
+                    } else {
+                        // No logo URL → show title
+                        backgroundPosterWatermarkBadge.isVisible = false
+                        resultTitle.isVisible = true
+                    }
+
                     var isExpanded = false
                     resultDescription.apply {
                         setTextHtml(d.plotText)

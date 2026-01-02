@@ -293,6 +293,16 @@
                             android:layout_height="match_parent"
                             android:scaleType="centerCrop" />
 
+                        <ImageView
+                            android:id="@+id/background_poster_watermark_badge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="56dp"
+                            android:layout_gravity="bottom|start"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginBottom="10dp"
+                            android:adjustViewBounds="true"
+                            android:scaleType="fitCenter" />
+
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="60dp"
