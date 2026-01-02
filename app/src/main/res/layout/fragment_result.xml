@@ -295,13 +295,14 @@
 
                         <ImageView
                             android:id="@+id/background_poster_watermark_badge"
-                            android:layout_width="wrap_content"
+                            android:layout_width="160dp"
                             android:layout_height="56dp"
                             android:layout_gravity="bottom|start"
                             android:layout_marginStart="18dp"
-                            android:layout_marginBottom="10dp"
+                            android:layout_marginBottom="15dp"
                             android:adjustViewBounds="true"
-                            android:scaleType="fitCenter" />
+                            android:scaleType="fitStart"
+                            android:foregroundGravity="bottom|left" />
 
                         <View
                             android:layout_width="match_parent"
