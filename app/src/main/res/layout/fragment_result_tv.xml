@@ -42,7 +42,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
             android:layout_width="wrap_content"
             android:layout_height="56dp"
             android:layout_gravity="bottom|start"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="18dp"
             android:layout_marginBottom="45dp"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter" />

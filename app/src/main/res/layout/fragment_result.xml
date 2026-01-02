@@ -298,7 +298,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="56dp"
                             android:layout_gravity="bottom|start"
-                            android:layout_marginStart="5dp"
+                            android:layout_marginStart="18dp"
                             android:layout_marginBottom="10dp"
                             android:adjustViewBounds="true"
                             android:scaleType="fitCenter" />
