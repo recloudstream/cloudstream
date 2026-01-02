@@ -266,7 +266,6 @@
     <string name="resize_fill">Esticar</string>
     <string name="resize_zoom">Zoom</string>
     <string name="legal_notice">Aviso Legal</string>
-    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">Geral</string>
     <string name="random_button_settings">Botão Aleatório</string>
     <string name="random_button_settings_desc">Mostrar botão aleatório na página inicial e na biblioteca</string>
@@ -291,14 +290,6 @@
     <string name="example_site_name">NovoNomedoSite</string>
     <string name="example_site_url">https://example.com</string>
     <string name="example_lang_name">Codigo da Língua (bp)</string>
-    <!--
-    <string name="mal_account_settings" translatable="false">MAL</string>
-    <string name="anilist_account_settings" translatable="false">AniList</string>
-    <string name="tmdb_account_settings" translatable="false">TMDB</string>
-    <string name="imdb_account_settings" translatable="false">IMDB</string>
-    <string name="kitsu_account_settings" translatable="false">Kitsu</string>
-    <string name="trakt_account_settings" translatable="false">Trakt</string>
-    -->
     <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">Conta</string>
     <string name="logout">Sair</string>
@@ -640,7 +631,6 @@
     <string name="device_pin_error_message">Não é possível obter o código PIN do dispositivo, tente a autenticação local</string>
     <string name="device_pin_expired_message">O código PIN expirou!</string>
     <string name="device_pin_counter_text">O código expira em %1$dm %2$ds</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="play_from_beginning_img_des">Reproduzir do começo</string>
     <string name="test_warning">Reprovou alguns testes</string>
     <string name="delete_plugin">Excluir plugin</string>
@@ -745,4 +735,8 @@
     <string name="top_right">Superior direito</string>
     <string name="play_full_series_button">Assistir à série completa</string>
     <string name="resolution_and_name">Resolução e nome</string>
+    <string name="prerelease_install_failed">Falha ao instalar a versão antecipada.</string>
+    <string name="prerelease_already_installed">Versão antecipada instalada.</string>
+    <string name="install_prerelease">Instalar versão antecipada</string>
+    <string name="show_episode_text">Episódio Text</string>
 </resources>

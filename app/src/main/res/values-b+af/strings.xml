@@ -105,7 +105,6 @@
     <string name="subs_import_text" formatted="true">Voer lettertipes in deur dit in %s te plaas</string>
     <string name="cast_format" formatted="true">Rolverdeling: %s</string>
     <string name="subscribe_tooltip">Nuwe episode notifikasie</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="free_storage">Gratis</string>
     <string name="use">Gebruik</string>
     <string name="delete">Wis Uit</string>

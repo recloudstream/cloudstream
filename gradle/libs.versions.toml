@@ -37,7 +37,7 @@ paletteKtx = "1.0.0"
 preferenceKtx = "1.2.1"
 previewseekbarMedia3 = "1.1.1.0"
 qrcodeKotlin = "4.5.0"
-rhino = "1.8.1"
+rhino = { strictly = "1.8.1" } # Requires minSdk 26 or later beginning at version 1.9.0
 safefile = "0.0.8"
 shimmer = "0.5.0"
 tmdbJava = "2.13.0"
@@ -45,6 +45,7 @@ torrentserver = "7861970e038b35cd8c6918384e49caf26903e09e"
 tvprovider = "1.1.0"
 video = "1.0.0"
 workRuntimeKtx = "2.10.5"
+zipline = "1.24.0"
 
 jvmTarget = "1.8"
 jdkToolchain = "17"
@@ -100,7 +101,6 @@ palette-ktx = { module = "androidx.palette:palette-ktx", version.ref = "paletteK
 preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
 previewseekbar-media3 = { module = "com.github.rubensousa:previewseekbar-media3", version.ref = "previewseekbarMedia3" }
 qrcode-kotlin = { module = "io.github.g0dkar:qrcode-kotlin", version.ref = "qrcodeKotlin" }
-quickjs = { module = "app.cash.quickjs:quickjs-android", version = "0.9.2" }
 rhino = { module = "org.mozilla:rhino", version.ref = "rhino" }
 safefile = { module = "com.github.LagradOst:SafeFile", version.ref = "safefile" }
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
@@ -109,6 +109,7 @@ torrentserver = { module = "com.github.recloudstream:torrentserver", version.ref
 tvprovider = { module = "androidx.tvprovider:tvprovider", version.ref = "tvprovider" }
 video = { module = "com.google.android.mediahome:video", version.ref = "video" }
 work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
+zipline = { module = "app.cash.zipline:zipline-android", version.ref = "zipline" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

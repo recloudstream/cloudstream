@@ -202,7 +202,6 @@
     <string name="subs_outline_color">रूपरेखा रंग</string>
     <string name="subs_subtitle_elevation">उपशीर्षक ऊंचाई</string>
     <string name="subs_font">मुद्रलिपि</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="downloads_empty">वर्तमान में कोई डाउनलोड नहीं है।</string>
     <string name="play_from_beginning_img_des">आरम्भ से शुरू करें</string>
     <string name="downloads_delete_select">मिटाने के लिए वस्तु चुनें</string>
@@ -312,10 +311,6 @@
     <string name="library">लाइब्रेरी</string>
     <string name="custom_media_singluar">मीडिया</string>
     <string name="pref_filter_search_quality">खोज परिणामों में चयनित वीडियो गुणवत्ता छुपाएं</string>
-    <plurals name="episodes" translatable="false">
-        <item quantity="one">प्रकरण</item>
-        <item quantity="other"/>
-    </plurals>
     <string name="episodes_range">%1$d-%2$d</string>
     <string name="action_open_play">@string/home_play</string>
     <string name="double_tap_to_seek_amount_settings">प्लेयर में आगे पीछे जाने का समय (सेकंड्स)</string>

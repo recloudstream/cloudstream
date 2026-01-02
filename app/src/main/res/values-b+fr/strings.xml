@@ -606,7 +606,6 @@
     <string name="biometric_setting">Verrouillage biométrique</string>
     <string name="player_settings_select_cast_device">Sélectionnez un appareil de diffusion</string>
     <string name="next_season_episode_format" formatted="true">Saison %1$d Episode %2$d sera publié dans</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="play_from_beginning_img_des">Regarder depuis le début</string>
     <string name="open_local_video">Ouvrir une vidéo locale</string>
     <string name="test_warning">Attention</string>

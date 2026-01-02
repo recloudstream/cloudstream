@@ -253,7 +253,6 @@
     <string name="resize_fill">Roztáhnout</string>
     <string name="resize_zoom">Přiblížit</string>
     <string name="legal_notice">Odmítnutí odpovědnosti</string>
-    <string name="legal_notice_text" translatable="false">Jakékoli právní otázky týkající se obsahu této aplikace je třeba řešit se samotnými hostiteli a poskytovateli souborů, protože s nimi nejsme nijak spojeni. V případě porušení autorských práv se obraťte přímo na odpovědné strany nebo na webové stránky, na kterých se streamování odehrává. Aplikace je určena výhradně pro vzdělávací a osobní účely. CloudStream 3 v aplikaci nehostuje žádný obsah a nemá žádnou kontrolu nad tím, jaká média jsou v aplikaci umístěna nebo odstraněna. CloudStream 3 funguje jako jakýkoli jiný vyhledávač, například Google. Služba CloudStream 3 nehostuje, nenahrává ani nespravuje žádná videa, filmy ani obsah. Pouze vyhledává, agreguje a zobrazuje odkazy v pohodlném, uživatelsky přívětivém rozhraní. Pouze shromažďuje webové stránky třetích stran, které jsou veřejně přístupné prostřednictvím jakéhokoli běžného webového prohlížeče. Je odpovědností uživatele, aby se vyvaroval jakýchkoli akcí, které by mohly porušovat zákony platné v jeho lokalitě. Použijte CloudStream 3 na vlastní nebezpečí.</string>
     <string name="category_general">Obecné</string>
     <string name="random_button_settings">Náhodné tlačítko</string>
     <string name="random_button_settings_desc">Zobrazit na domovské stránce a v knihovně náhodné tlačítko</string>
@@ -275,14 +274,6 @@
     <string name="example_username">Uživatelské jméno</string>
     <string name="example_email">ahoj@svete.cz</string>
     <string name="example_ip">127.0.0.1</string>
-    <!--
-    <string name="mal_account_settings" translatable="false">MAL</string>
-    <string name="anilist_account_settings" translatable="false">AniList</string>
-    <string name="tmdb_account_settings" translatable="false">TMDB</string>
-    <string name="imdb_account_settings" translatable="false">IMDB</string>
-    <string name="kitsu_account_settings" translatable="false">Kitsu</string>
-    <string name="trakt_account_settings" translatable="false">Trakt</string>
-    -->
     <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">účet</string>
     <string name="logout">Odhlásit se</string>
@@ -594,8 +585,6 @@
     <string name="edit_account">Upravit účet</string>
     <string name="links_reloaded_toast">Odkazy znovu načteny</string>
     <string name="rotate_video_desc">Zobrazit tlačítko pro přepnutí otočení obrazovky</string>
-    <string name="rotate_video_key">rotate_video_key</string>
-    <string name="auto_rotate_video_key">auto_rotate_video_key</string>
     <string name="auto_rotate_video">Automatické otáčení</string>
     <string name="rotate_video">Otočení</string>
     <string name="auto_rotate_video_desc">Zapnout automatické otáčení obrazovky v závislosti na orientaci videa</string>
@@ -644,7 +633,6 @@
     <string name="pref_category_accounts">Účty</string>
     <string name="auth_locally">Lokální ověření</string>
     <string name="device_pin_expired_message">PIN kód vypršel!</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="play_from_beginning_img_des">Přehrát od začátku</string>
     <string name="downloads_empty">Aktuálně neprobíhají žádná stahování.</string>
     <string name="open_local_video">Otevřít místní video</string>

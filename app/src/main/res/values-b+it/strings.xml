@@ -640,7 +640,6 @@
     <string name="device_pin_error_message">Impossibile ottenere il codice PIN del dispositivo, prova l\'autenticazione locale</string>
     <string name="device_pin_expired_message">Il codice PIN è scaduto!</string>
     <string name="device_pin_counter_text">Il codice scadrà tra %1$dm %2$ds</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="open_local_video">Apri il video locale</string>
     <string name="downloads_empty">Al momento non ci sono download.</string>
     <string name="play_from_beginning_img_des">Riproduci dall\'inizio</string>
@@ -756,4 +755,5 @@
     <string name="install_prerelease">Installa la versione pre-release</string>
     <string name="prerelease_already_installed">La versione pre-release è già installata.</string>
     <string name="prerelease_install_failed">Impossibile installare la versione pre-release.</string>
+    <string name="show_episode_text">Testo dell\'episodio</string>
 </resources>

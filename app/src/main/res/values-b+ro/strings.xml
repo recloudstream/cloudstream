@@ -261,7 +261,6 @@
     <string name="resize_fill">Întindere</string>
     <string name="resize_zoom">Mărire</string>
     <string name="legal_notice">Aviz juridic (declinarea responsabilității și drepturi de autor)</string>
-    <string name="legal_notice_text">Orice probleme legale privind conținutul acestei aplicații ar trebui să fie rezolvate cu furnizorii și gazdele actuale de fișiere, întrucât noi nu suntem afiliați cu aceștia. În caz de încălcare a drepturilor de autor, vă rugăm să contactați direct părțile responsabile sau site-urile de streaming. Aplicația este destinată exclusiv utilizării educaționale și personale. CloudStream 3 nu găzduiește niciun fel de conținut în aplicație și nu are niciun control asupra conținutului media care este pus sau retras. CloudStream 3 funcționează ca orice alt motor de căutare, cum ar fi Google. CloudStream 3 nu găzduiește, nu încarcă și nu gestionează niciun videoclip, film sau conținut. Pur și simplu navighează, adună și afișează linkuri într-o interfață convenabilă și ușor de utilizat. Pur și simplu, acesta extrage paginile web ale unor terțe părți care sunt accesibile publicului prin intermediul oricărui browser web obișnuit. Este responsabilitatea utilizatorului de a evita orice acțiune care ar putea încălca legile care guvernează locația sa. Utilizați CloudStream 3 pe propria răspundere.</string>
     <string name="category_general">General</string>
     <string name="random_button_settings">Aleatoriu</string>
     <string name="random_button_settings_desc">Afișează butonul pentru aleatoriu pe Pagina Principală și în Bibliotecă</string>
@@ -627,7 +626,6 @@
     <string name="next_season_episode_format" formatted="true">Sezonul %1$d Episod %2$d va fi lansat în</string>
     <string name="player_settings_select_cast_device">Selectați divece-ul pe care doriți să faceți cast</string>
     <string name="episode_action_cast_mirror">Cast mirror</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="play_from_beginning_img_des">Redă de la început</string>
     <string name="downloads_empty">Nu există descărcări.</string>
     <string name="downloads_delete_select">Selectionati elementele de sters</string>

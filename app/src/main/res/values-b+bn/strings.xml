@@ -238,7 +238,6 @@
     <string name="video_disk_description">অ্যান্ড্রয়েড টিভির মতো, কম মেমরির ডিভাইসে খুব বেশি সেট করা হলে সমস্যা করবে।</string>
     <string name="add_site_pref">ক্লোন সাইট</string>
     <string name="pref_category_player_features">প্লেয়ারের ফিচার</string>
-    <string name="login_format" formatted="true"><string name="mal_account_settings" translatable="false">MAL</string> <string name="anilist_account_settings" translatable="false">AniList</string> <string name="tmdb_account_settings" translatable="false">TMDB</string> <string name="imdb_account_settings" translatable="false">IMDB</string> <string name="kitsu_account_settings" translatable="false">Kitsu</string> <string name="trakt_account_settings" translatable="false">Trakt</string> %1$s%2$s</string>
     <string name="app_theme_settings">অ্যাপ থিম</string>
     <string name="recommendations_tooltip">রিকমেন্ডেশনগুলো দেখাও</string>
     <string name="speed_setting_summary">প্লেয়ারে গতির বিকল্প যোগ কর</string>
@@ -351,5 +350,4 @@
     <string name="account">অ্যাকাউন্ট</string>
     <string name="logout">প্রস্থান</string>
     <string name="episode_format" formatted="true">%1$d%2$s</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
