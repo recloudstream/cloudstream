@@ -161,6 +161,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
     }
 
     private fun loadTrailer(index: Int? = null) {
+
         val isSuccess =
             currentTrailers.getOrNull(index ?: currentTrailerIndex)?.let { (extractedTrailerLink,_) ->
                 context?.let { ctx ->
@@ -189,6 +190,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         // result_trailer_loading?.isVisible = isSuccess
         val turnVis = !isSuccess && !isFullScreenPlayer
         resultBinding?.apply {
+            resultTitle.isVisible = isSuccess
             resultSmallscreenHolder.isVisible = turnVis
             resultPosterBackgroundHolder.apply {
                 val fadeIn: Animation = AlphaAnimation(alpha, if (turnVis) 1.0f else 0.0f).apply {
