@@ -1774,6 +1774,7 @@ interface LoadResponse {
     var syncData: MutableMap<String, String>
     var posterHeaders: Map<String, String>?
     var backgroundPosterUrl: String?
+    var logourl: String?
     var contentRating: String?
 
     var uniqueUrl: String
@@ -2217,6 +2218,7 @@ constructor(
     override var syncData: MutableMap<String, String> = mutableMapOf(),
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
+    override var logourl: String? = null,
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
 ) : LoadResponse
@@ -2277,6 +2279,7 @@ constructor(
     override var nextAiring: NextAiring? = null,
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
+    override var logourl: String? = null,
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
 ) : LoadResponse, EpisodeResponse {
@@ -2362,6 +2365,7 @@ constructor(
     override var syncData: MutableMap<String, String> = mutableMapOf(),
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
+    override var logourl: String? = null,
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
 ) : LoadResponse
@@ -2410,6 +2414,7 @@ constructor(
     override var syncData: MutableMap<String, String> = mutableMapOf(),
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
+    override var logourl: String? = null,
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
 ) : LoadResponse
@@ -2589,6 +2594,7 @@ constructor(
     override var nextAiring: NextAiring? = null,
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
+    override var logourl: String? = null,
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
 ) : LoadResponse, EpisodeResponse {

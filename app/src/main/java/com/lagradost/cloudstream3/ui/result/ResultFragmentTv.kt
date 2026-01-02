@@ -909,6 +909,17 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         backgroundPoster.loadImage(d.posterBackgroundImage) {
                             error { getImageFromDrawable(context ?: return@error null, error) }
                         }
+
+                        if (!d.logourl.isNullOrBlank()) {
+                            backgroundPosterWatermarkBadgeHolder.isVisible = true
+                            resultTitle.isVisible = false
+
+                            backgroundPosterWatermarkBadgeHolder.loadImage(d.logourl)
+                        } else {
+                            // No logo URL → show title
+                            backgroundPosterWatermarkBadgeHolder.isVisible = false
+                            resultTitle.isVisible = true
+                        }
                         comingSoon = d.comingSoon
                         resultTvComingSoon.isVisible = d.comingSoon
 
