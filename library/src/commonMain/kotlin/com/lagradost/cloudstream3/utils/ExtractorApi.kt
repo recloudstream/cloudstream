@@ -20,6 +20,8 @@ import com.lagradost.cloudstream3.extractors.Blogger
 import com.lagradost.cloudstream3.extractors.BullStream
 import com.lagradost.cloudstream3.extractors.ByseSX
 import com.lagradost.cloudstream3.extractors.Bysezejataos
+import com.lagradost.cloudstream3.extractors.ByseBuho
+import com.lagradost.cloudstream3.extractors.ByseVepoin
 import com.lagradost.cloudstream3.extractors.ByteShare
 import com.lagradost.cloudstream3.extractors.Cda
 import com.lagradost.cloudstream3.extractors.Cdnplayer
