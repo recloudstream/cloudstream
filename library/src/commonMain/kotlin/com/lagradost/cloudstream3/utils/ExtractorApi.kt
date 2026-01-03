@@ -84,6 +84,7 @@ import com.lagradost.cloudstream3.extractors.Fplayer
 import com.lagradost.cloudstream3.extractors.FsstOnline
 import com.lagradost.cloudstream3.extractors.GDMirrorbot
 import com.lagradost.cloudstream3.extractors.GMPlayer
+import com.lagradost.cloudstream3.extractors.GUpload
 import com.lagradost.cloudstream3.extractors.GamoVideo
 import com.lagradost.cloudstream3.extractors.Gdriveplayer
 import com.lagradost.cloudstream3.extractors.Gdriveplayerapi
@@ -1226,7 +1227,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Bysezejataos(),
     ByseSX(),
     Up4Stream(),
-    Up4FunTop()
+    Up4FunTop(),
+    GUpload(),
 )
 
 
