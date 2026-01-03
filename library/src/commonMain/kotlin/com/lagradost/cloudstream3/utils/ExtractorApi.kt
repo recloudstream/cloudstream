@@ -230,6 +230,8 @@ import com.lagradost.cloudstream3.extractors.Techinmind
 import com.lagradost.cloudstream3.extractors.Tomatomatela
 import com.lagradost.cloudstream3.extractors.TomatomatelalClub
 import com.lagradost.cloudstream3.extractors.Tubeless
+import com.lagradost.cloudstream3.extractors.Up4FunTop
+import com.lagradost.cloudstream3.extractors.Up4Stream
 import com.lagradost.cloudstream3.extractors.Upstream
 import com.lagradost.cloudstream3.extractors.UpstreamExtractor
 import com.lagradost.cloudstream3.extractors.Uqload
@@ -1221,6 +1223,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     VkExtractor(),
     Bysezejataos(),
     ByseSX(),
+    Up4Stream(),
+    Up4FunTop()
 )
 
 
