@@ -22,6 +22,18 @@ class Bysezejataos  : ByseSX() {
 }
 
 @Prerelease
+class ByseBuho : ByseSX() {
+    override var mainUrl = "https://bysebuho.com"
+    override var name = "ByseBuho"
+}
+
+@Prerelease
+class ByseVepoin : ByseSX() {
+    override var mainUrl = "https://bysevepoin.com"
+    override var name = "ByseVepoin"
+}
+
+@Prerelease
 open class ByseSX : ExtractorApi() {
     override var name = "Byse"
     override var mainUrl = "https://byse.sx"
