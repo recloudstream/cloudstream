@@ -86,6 +86,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.setListViewHeightBasedOnItems
 import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
+import com.lagradost.cloudstream3.utils.UiImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
@@ -802,16 +803,32 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         }
                     }
 
-                    if (!d.logourl.isNullOrBlank()) {
+                    if (!d.logoUrl.isNullOrBlank()) {
+
                         backgroundPosterWatermarkBadge.isVisible = true
                         resultTitle.isVisible = false
 
-                        backgroundPosterWatermarkBadge.loadImage(d.logourl)
+                        backgroundPosterWatermarkBadge.loadImage(
+                            imageData = UiImage.Image(d.logoUrl),
+                            builder = {
+                                listener(
+                                    onSuccess = { _, _ ->
+                                        backgroundPosterWatermarkBadge.isVisible = true
+                                        resultTitle.isVisible = false
+                                    },
+                                    onError = { _, _ ->
+                                        backgroundPosterWatermarkBadge.isVisible = false
+                                        resultTitle.isVisible = true
+                                    }
+                                )
+                            }
+                        )
+
                     } else {
-                        // No logo URL → show title
                         backgroundPosterWatermarkBadge.isVisible = false
                         resultTitle.isVisible = true
                     }
+
 
                     var isExpanded = false
                     resultDescription.apply {

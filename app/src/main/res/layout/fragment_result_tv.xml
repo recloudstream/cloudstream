@@ -39,13 +39,14 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
 
         <ImageView
             android:id="@+id/background_poster_watermark_badge_holder"
-            android:layout_width="160dp"
-            android:layout_height="56dp"
+            android:layout_width="220dp"
+            android:layout_height="72dp"
             android:layout_gravity="bottom|start"
-            android:layout_marginStart="18dp"
-            android:layout_marginBottom="45dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginBottom="56dp"
             android:adjustViewBounds="true"
-            android:scaleType="fitStart" />
+            android:scaleType="fitStart"
+            android:contentDescription="@null" />
 
         <ImageView
             android:layout_marginBottom="-1dp"
