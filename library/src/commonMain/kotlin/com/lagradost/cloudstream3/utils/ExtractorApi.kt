@@ -263,6 +263,7 @@ import com.lagradost.cloudstream3.extractors.Vidguardto3
 import com.lagradost.cloudstream3.extractors.VidhideExtractor
 import com.lagradost.cloudstream3.extractors.Vidmoly
 import com.lagradost.cloudstream3.extractors.Vidmolyme
+import com.lagradost.cloudstream3.extractors.Vidnest
 import com.lagradost.cloudstream3.extractors.Vido
 import com.lagradost.cloudstream3.extractors.Vidstreamz
 import com.lagradost.cloudstream3.extractors.VinovoSi
@@ -1169,6 +1170,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     FlaswishCom(),
     SfastwishCom(),
     Playerwish(),
+    Vidnest(),
     EmturbovidExtractor(),
     Vtbe(),
     EPlayExtractor(),
