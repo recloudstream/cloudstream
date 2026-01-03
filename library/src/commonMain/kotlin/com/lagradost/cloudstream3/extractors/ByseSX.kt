@@ -23,14 +23,14 @@ class Bysezejataos  : ByseSX() {
 
 @Prerelease
 class ByseBuho : ByseSX() {
-    override var mainUrl = "https://bysebuho.com"
     override var name = "ByseBuho"
+    override var mainUrl = "https://bysebuho.com"
 }
 
 @Prerelease
 class ByseVepoin : ByseSX() {
-    override var mainUrl = "https://bysevepoin.com"
     override var name = "ByseVepoin"
+    override var mainUrl = "https://bysevepoin.com"
 }
 
 @Prerelease
