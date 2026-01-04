@@ -191,6 +191,7 @@ import com.lagradost.cloudstream3.extractors.Smoothpre
 import com.lagradost.cloudstream3.extractors.Sobreatsesuyp
 import com.lagradost.cloudstream3.extractors.Solidfiles
 import com.lagradost.cloudstream3.extractors.Ssbstream
+import com.lagradost.cloudstream3.extractors.StreamEmbed
 import com.lagradost.cloudstream3.extractors.StreamM4u
 import com.lagradost.cloudstream3.extractors.StreamSB
 import com.lagradost.cloudstream3.extractors.StreamSB1
@@ -1173,6 +1174,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     SfastwishCom(),
     Playerwish(),
     Vidnest(),
+    StreamEmbed(),
     EmturbovidExtractor(),
     Vtbe(),
     EPlayExtractor(),
