@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--  android:layout_width="114dp"
+        android:layout_height="180dp"-->
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:foreground="@drawable/outline_drawable"
+        android:layout_margin="2dp"
+        android:layout_width="148dp"
+        android:layout_height="234dp"
+        android:layout_marginBottom="2dp"
+        android:elevation="10dp"
+        app:cardCornerRadius="@dimen/rounded_image_radius"
+        android:id="@+id/background_card"
+        app:cardBackgroundColor="?attr/primaryGrayBackground">
+
+    <ImageView
+            android:duplicateParentState="true"
+            android:id="@+id/imageView"
+            tools:src="@drawable/example_poster"
+            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/search_poster_img_des" />
+
+    <TextView
+            style="@style/TypeButton" />
+    <!--
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_gravity="end"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <TextView
+                android:text="@string/app_dubbed_text"
+                android:id="@+id/text_is_dub"
+                android:textColor="?attr/textColor"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                android:paddingTop="4dp"
+                android:layout_marginBottom="5dp"
+                android:layout_gravity="end"
+                android:paddingBottom="4dp"
+                android:minWidth="50dp"
+                android:gravity="center"
+                android:background="@drawable/dub_bg_color"
+                android:layout_width="wrap_content" android:layout_height="wrap_content">
+        </TextView>
+        <TextView
+                android:id="@+id/text_is_sub"
+                android:text="@string/app_subbed_text"
+                android:layout_gravity="end"
+                android:textColor="?attr/textColor"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:minWidth="50dp"
+                android:gravity="center"
+                android:background="@drawable/sub_bg_color"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+        />
+
+    </LinearLayout>
+     -->
+</androidx.cardview.widget.CardView>

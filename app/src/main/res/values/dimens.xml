@@ -1,0 +1,35 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="rounded_image_radius">10dp</dimen>
+    <dimen name="rounded_button_radius">4dp</dimen>
+
+    <dimen name="navbar_height">0dp</dimen>
+    <dimen name="card_corner_radius">2dp</dimen>
+    <dimen name="result_padding">15dp</dimen>
+
+    <dimen name="loading_line_height">15dp</dimen>
+    <dimen name="loading_radius">3dp</dimen>
+    <dimen name="loading_margin">15dp</dimen>
+
+    <integer name="loading_time">2000</integer>
+
+    <dimen name="storage_radius">3dp</dimen>
+    <dimen name="navbar_width">0dp</dimen>
+
+    <dimen name="nav_view_height">70dp</dimen>
+    <dimen name="nav_rail_view_width">62dp</dimen>
+
+    <dimen name="download_size">50dp</dimen>
+    <dimen name="video_frame_width">1dp</dimen>
+
+    <dimen name="account_select_linear_item_size">100dp</dimen>
+    <dimen name="dialog_buttons_inset">5dp</dimen>
+
+    <dimen name="home_poster_progress_size">50dp</dimen>
+    <dimen name="episode_progress_size">40dp</dimen>
+    <dimen name="continue_watching_progress_size">25dp</dimen>
+    <dimen name="circular_progress_thickness">2dp</dimen>
+    <dimen name="download_header_progress_size">35dp</dimen>
+</resources>

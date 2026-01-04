@@ -1,0 +1,257 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
+        style="@style/AlertDialogCustom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <FrameLayout
+            android:id="@+id/result_top_bar"
+            android:background="?attr/primaryGrayBackground"
+            android:paddingStart="@dimen/result_padding"
+            android:paddingEnd="@dimen/result_padding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <LinearLayout
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            <ImageView
+                    android:nextFocusRight="@id/result_share"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+
+                    android:id="@+id/result_back"
+                    android:clickable="true"
+                    android:focusable="true"
+
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical|start"
+                    android:src="@drawable/ic_baseline_arrow_back_24"
+                    android:contentDescription="@string/go_back"
+                    app:tint="?attr/white" />
+            <androidx.recyclerview.widget.RecyclerView
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:id="@+id/result_mini_sync"
+                    android:layout_width="match_parent"
+                    android:descendantFocusability="afterDescendants"
+                    android:layout_height="wrap_content"
+                    android:fadingEdge="horizontal"
+                    android:focusableInTouchMode="false"
+                    android:focusable="false"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:requiresFadingEdge="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/result_mini_image" />
+        </LinearLayout>
+
+        <LinearLayout
+                android:gravity="end"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/media_route_button_holder"
+                android:animateLayoutChanges="true"
+                android:layout_gravity="center_vertical|end">
+
+            <androidx.mediarouter.app.MediaRouteButton
+                    android:layout_gravity="end|center_vertical"
+                    android:id="@+id/media_route_button"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:mediaRouteTypes="user"
+                    android:visibility="gone"
+                    app:mediaRouteButtonTint="?attr/textColor" />
+
+            <ImageView
+                    android:visibility="gone"
+                    android:nextFocusUp="@id/result_back"
+                    android:nextFocusDown="@id/result_description"
+                    android:nextFocusLeft="@id/result_add_sync"
+                    android:nextFocusRight="@id/result_favorite"
+
+                    tools:visibility="visible"
+
+                    android:id="@+id/result_subscribe"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_margin="5dp"
+                    android:elevation="10dp"
+                    android:tooltipText="@string/subscribe_tooltip"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/baseline_notifications_none_24"
+                    android:layout_gravity="end|center_vertical"
+                    app:tint="?attr/textColor" />
+
+            <ImageView
+                android:nextFocusUp="@id/result_back"
+                android:nextFocusDown="@id/result_description"
+                android:nextFocusLeft="@id/result_subscribe"
+                android:nextFocusRight="@id/result_share"
+
+                android:id="@+id/result_favorite"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_margin="5dp"
+                android:elevation="10dp"
+                android:tooltipText="@string/action_add_to_favorites"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_baseline_favorite_border_24"
+                android:layout_gravity="end|center_vertical"
+                app:tint="?attr/textColor" />
+
+            <ImageView
+                    android:nextFocusUp="@id/result_back"
+                    android:nextFocusDown="@id/result_description"
+                    android:nextFocusLeft="@id/result_favorite"
+                    android:nextFocusRight="@id/result_open_in_browser"
+
+                    android:id="@+id/result_share"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_margin="5dp"
+                    android:elevation="10dp"
+                    android:tooltipText="@string/result_share"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_outline_share_24"
+                    android:layout_gravity="end|center_vertical"
+                    android:contentDescription="@string/result_share"
+                    app:tint="?attr/textColor" />
+
+            <ImageView
+                    android:nextFocusUp="@id/result_back"
+                    android:nextFocusDown="@id/result_description"
+                    android:nextFocusLeft="@id/result_share"
+                    android:nextFocusRight="@id/result_search"
+
+                    android:id="@+id/result_open_in_browser"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_margin="5dp"
+                    android:elevation="10dp"
+                    android:tooltipText="@string/result_open_in_browser"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_baseline_public_24"
+                    android:layout_gravity="end|center_vertical"
+                    android:contentDescription="@string/result_open_in_browser"
+                    app:tint="?attr/textColor" />
+
+            <ImageView
+                    android:nextFocusUp="@id/result_back"
+                    android:nextFocusDown="@id/result_description"
+                    android:nextFocusLeft="@id/result_open_in_browser"
+                    android:nextFocusRight="@id/result_recommendations_btt"
+
+                    android:id="@+id/result_search"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="5dp"
+                    android:elevation="10dp"
+                    android:tooltipText="@string/result_search_tooltip"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/search_icon"
+                    android:layout_gravity="end|center_vertical"
+                    android:contentDescription="@string/result_open_in_browser"
+                    app:tint="?attr/textColor" />
+            <ImageView
+                    tools:visibility="visible"
+                    android:visibility="gone"
+                    android:nextFocusUp="@id/result_back"
+                    android:nextFocusDown="@id/result_description"
+                    android:nextFocusLeft="@id/result_search"
+
+                    android:id="@+id/result_recommendations_btt"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_margin="5dp"
+                    android:elevation="10dp"
+                    android:tooltipText="@string/recommendations_tooltip"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/baseline_list_alt_24"
+                    android:layout_gravity="end|center_vertical"
+                    android:contentDescription="@string/result_open_in_browser"
+                    app:tint="?attr/textColor" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <FrameLayout
+            android:visibility="gone"
+            android:id="@+id/result_fullscreen_holder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+    </FrameLayout>
+
+    <FrameLayout
+            android:id="@+id/result_main_holder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <com.discord.panels.OverlappingPanelsLayout
+                android:id="@+id/result_overlapping_panels"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <!-- Set layout_gravity on the start panel to "start" -->
+            <FrameLayout
+                    android:visibility="gone"
+                    android:id="@+id/start_panel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="start">
+
+                <include layout="@layout/result_sync" android:id="@+id/result_sync"/>
+            </FrameLayout>
+
+            <FrameLayout
+                    android:id="@+id/center_panel"
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                <include layout="@layout/fragment_result" android:id="@+id/fragment_result" />
+
+            </FrameLayout>
+
+            <!-- Set layout_gravity on the end panel to "end" -->
+            <FrameLayout
+                    android:id="@+id/end_panel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end">
+
+                <include layout="@layout/result_recommendations" android:id="@+id/result_recommendations" />
+            </FrameLayout>
+        </com.discord.panels.OverlappingPanelsLayout>
+
+        <LinearLayout
+                android:layout_gravity="bottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    android:id="@+id/result_bookmark_fab"
+                    app:icon="@drawable/ic_baseline_bookmark_24"
+                    style="@style/ExtendedFloatingActionButton"
+                    tools:ignore="ContentDescription" />
+
+            <fragment
+                    app:customCastBackgroundColor="?attr/primaryBlackBackground"
+                    app:castControlButtons="@array/cast_mini_controller_control_buttons"
+                    android:id="@+id/cast_mini_controller"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    class="com.lagradost.cloudstream3.ui.MyMiniControllerFragment"
+                    tools:ignore="FragmentTagUsage" />
+        </LinearLayout>
+    </FrameLayout>
+</LinearLayout>

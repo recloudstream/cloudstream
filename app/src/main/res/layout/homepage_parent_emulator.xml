@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/home_child_more_info"
+        style="@style/WatchHeaderText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/navbar_width"
+        android:layout_marginEnd="0dp"
+        android:padding="12dp"
+        tools:text="@string/continue_watching"
+        app:drawableRightCompat="@drawable/ic_baseline_arrow_forward_24"
+        app:drawableTint="?attr/white"
+        android:background="?android:attr/selectableItemBackground"
+        android:contentDescription="@string/home_more_info"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/home_child_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:descendantFocusability="afterDescendants"
+        android:nextFocusUp="@id/home_child_more_info"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="5dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/home_result_grid" />
+</LinearLayout>

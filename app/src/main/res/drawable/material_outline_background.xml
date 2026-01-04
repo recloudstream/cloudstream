@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="?attr/primaryBlackBackground"/>
+    <stroke android:width="@dimen/mtrl_btn_stroke_size" android:color="@color/mtrl_btn_stroke_color_selector"/>
+</shape>

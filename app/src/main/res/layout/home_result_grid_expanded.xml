@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--  android:layout_width="114dp"
+        android:layout_height="180dp"-->
+
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="2dp"
+    android:backgroundTint="@color/transparent"
+    android:foreground="@drawable/outline_drawable"
+    app:cardCornerRadius="@dimen/rounded_image_radius"
+    app:cardElevation="0dp">
+
+    <!-- Needed for layout tests -->
+    <ImageView
+        android:id="@+id/title_shadow"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        tools:ignore="ContentDescription" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/background_card"
+            android:layout_width="114dp"
+            android:layout_height="180dp"
+            android:elevation="10dp"
+            app:cardBackgroundColor="?attr/primaryGrayBackground"
+            app:cardCornerRadius="@dimen/rounded_image_radius">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/search_poster_img_des"
+                android:duplicateParentState="true"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/example_poster" />
+
+
+            <FrameLayout
+                android:id="@+id/watch_progress_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/search_item_download_play"
+                    style="@style/HomePlayUnderlayProgress"
+                    />
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/watchProgress"
+                    style="@style/HomeCircularProgress"
+                    tools:progress="50" />
+
+            </FrameLayout>
+<!--            <FrameLayout-->
+<!--                android:id="@+id/small_watch_progress_container"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="bottom|end"-->
+<!--                android:visibility="gone"-->
+<!--                tools:visibility="visible"-->
+<!--                >-->
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/small_episode_play_icon"-->
+<!--                    android:layout_width="30dp"-->
+<!--                    android:layout_height="30dp"-->
+<!--                    android:src="@drawable/play_button"-->
+<!--                    android:layout_gravity="center" />-->
+
+<!--                <com.google.android.material.progressindicator.CircularProgressIndicator-->
+<!--                    android:id="@+id/small_episode_progress"-->
+<!--                    android:layout_width="30dp"-->
+<!--                    android:layout_height="30dp"-->
+<!--                    app:indicatorSize="28.75dp"-->
+<!--                    app:trackThickness="2.5dp"-->
+<!--                    android:progressBackgroundTint="?attr/colorPrimary"-->
+<!--                    android:progressTint="?attr/colorPrimary"-->
+<!--                    tools:progress="50" />-->
+<!--            </FrameLayout>-->
+<!--            <FrameLayout-->
+<!--                android:id="@+id/playProgressContainer"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="bottom|end">-->
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/search_item_download_play"-->
+<!--                    android:layout_width="50dp"-->
+<!--                    android:layout_height="50dp"-->
+<!--                    android:src="@drawable/play_button"-->
+<!--                    android:layout_gravity="center" />-->
+
+<!--                <com.google.android.material.progressindicator.CircularProgressIndicator-->
+<!--                    android:id="@+id/watchProgress"-->
+<!--                    android:layout_width="25dp"-->
+<!--                    android:layout_height="25dp"-->
+<!--                    app:indicatorSize="23.75dp"-->
+<!--                    app:trackThickness="2.5dp"-->
+<!--                    android:progressBackgroundTint="?attr/colorPrimary"-->
+<!--                    android:progressTint="?attr/colorPrimary"-->
+<!--                    tools:progress="50" />-->
+<!--            </FrameLayout>-->
+
+            <!--<View
+                    android:id="@+id/search_result_lang"
+                    android:layout_gravity="bottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp"
+                    android:alpha="0.9">
+
+            </View>-->
+            <!--<ImageView
+                    android:src="@drawable/ic_baseline_bookmark_24"
+                    android:id="@+id/search_result_lang"
+                    android:layout_gravity="right"
+                    android:layout_marginTop="-5dp"
+                    android:layout_marginRight="-6.5dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp">
+            </ImageView>-->
+            <TextView
+                android:id="@+id/text_quality"
+                style="@style/TypeButton" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_is_dub"
+                    style="@style/DubButton"
+                    android:layout_gravity="end" />
+
+                <TextView
+                    android:id="@+id/text_is_sub"
+                    style="@style/SubButton"
+                    android:layout_gravity="end" />
+
+                <TextView
+                    android:id="@+id/text_rating"
+                    style="@style/RatingButton"
+                    android:layout_gravity="end"
+                    tools:text="7.7" />
+
+                <TextView
+                    android:id="@+id/text_flag"
+                    style="@style/SearchBox"
+                    android:layout_gravity="end"
+                    android:background="@color/transparent"
+                    android:textSize="20sp"
+                    android:visibility="gone"
+                    tools:text="🇸🇪"
+                    tools:visibility="visible" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:orientation="vertical"
+                android:paddingBottom="3dp">
+                <TextView
+                    android:id="@+id/episode_text"
+                    android:layout_width="wrap_content"
+                    style="@style/EpisodeTextButton"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/imageText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="2"
+            android:minLines="2"
+            android:paddingStart="5dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="5dp"
+            android:paddingBottom="5dp"
+            android:textColor="?attr/textColor"
+            android:textSize="13sp"
+            tools:text="The Perfect Run\nThe Perfect Run\nhello" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

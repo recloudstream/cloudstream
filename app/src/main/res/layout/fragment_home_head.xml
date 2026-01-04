@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_header"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/primaryBlackBackground"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/home_none_padding"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
+    <FrameLayout
+        android:id="@+id/home_preview_viewpager_text"
+        android:layout_width="match_parent"
+        android:layout_height="500dp">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/home_preview_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+        </androidx.viewpager2.widget.ViewPager2>
+
+        <LinearLayout
+            android:id="@+id/home_padding"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="0dp">
+
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/home_search"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:editTextColor="@color/white"
+                android:gravity="center_vertical"
+                android:iconifiedByDefault="true"
+                android:nextFocusRight="@id/home_head_profile_padding"
+                android:padding="0dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                app:closeIcon="@drawable/ic_baseline_close_24"
+                app:iconifiedByDefault="true"
+                app:queryBackground="@color/transparent"
+                app:queryHint="@string/search_hint"
+                app:searchIcon="@drawable/search_icon"
+                tools:ignore="RtlSymmetry" />
+
+            <LinearLayout
+                android:id="@+id/home_head_profile_padding"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="@drawable/rounded_select_ripple"
+                android:nextFocusLeft="@id/home_search">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/home_head_profile_card"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:background="@color/transparent"
+                    app:cardCornerRadius="20dp"
+                    android:foreground="@drawable/outline_drawable_round_20"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/home_head_profile_pic"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:contentDescription="@string/account"
+                        android:foreground="@drawable/rounded_outline"
+                        tools:src="@drawable/profile_bg_orange" />
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!--
+                        <TextView
+                            android:visibility="gone"
+                            android:id="@+id/test_search"
+                            android:background="?android:attr/selectableItemBackgroundBorderless"
+                            android:layout_gravity="start"
+                            android:gravity="center"
+
+                            android:textSize="20dp"
+                            android:layout_margin="20dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/search"
+                            android:textColor="@color/white"
+                            app:drawableLeftCompat="@drawable/search_icon"
+                            app:tint="@color/white" />
+        -->
+
+        <LinearLayout
+            android:id="@+id/home_preview_title_holder"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_gravity="bottom"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/home_preview_bookmark"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:gravity="center"
+                    android:text="@string/none"
+                    android:textColor="?attr/white"
+                    app:drawableTint="?attr/white"
+                    app:drawableTopCompat="@drawable/ic_baseline_add_24"
+                    app:tint="?attr/white" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/home_preview_play"
+                    style="@style/WhiteButton"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/home_play"
+                    app:icon="@drawable/ic_baseline_play_arrow_24" />
+
+                <TextView
+                    android:id="@+id/home_preview_info"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:gravity="center"
+                    android:text="@string/home_info"
+                    android:textColor="?attr/white"
+                    app:drawableTint="?attr/white"
+                    app:drawableTopCompat="@drawable/ic_outline_info_24"
+                    app:tint="?attr/white" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/alternative_account_padding"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:paddingHorizontal="0dp">
+
+        <LinearLayout
+            android:id="@+id/alternate_home_head_profile_padding"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="@drawable/rounded_select_ripple"
+            android:nextFocusLeft="@id/home_search">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/alternate_home_head_profile_card"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:background="@color/transparent"
+                android:focusable="true"
+                android:foreground="@drawable/outline_drawable_round_20"
+                app:cardCornerRadius="20dp">
+
+                <ImageView
+                    android:id="@+id/alternate_home_head_profile_pic"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@string/account"
+                    android:foreground="@drawable/rounded_outline"
+                    tools:src="@drawable/profile_bg_orange" />
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/home_watch_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <TextView
+            android:id="@+id/home_watch_parent_item_title"
+            style="@style/WatchHeaderText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="0dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="@string/home_more_info"
+            android:padding="12dp"
+            android:text="@string/continue_watching"
+            app:drawableRightCompat="@drawable/ic_baseline_arrow_forward_24"
+            app:drawableTint="?attr/white" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/home_watch_child_recyclerview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:descendantFocusability="afterDescendants"
+            android:orientation="horizontal"
+            android:paddingHorizontal="5dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/home_result_grid" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/home_bookmarked_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <FrameLayout
+            android:id="@+id/home_bookmark_parent_item_title"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground">
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="50dp"
+                android:fadingEdge="horizontal"
+
+                android:nextFocusLeft="@id/nav_rail_view"
+                android:nextFocusUp="@id/home_watch_child_recyclerview"
+                android:nextFocusForward="@id/home_bookmarked_child_recyclerview"
+                android:paddingStart="12dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="12dp"
+
+                android:paddingBottom="5dp"
+                android:requiresFadingEdge="horizontal">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/home_type_watching_btt"
+                        style="@style/ChipFilled"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:nextFocusLeft="@id/nav_rail_view"
+                        android:nextFocusRight="@id/home_plan_to_watch_btt"
+                        android:text="@string/type_watching" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/home_plan_to_watch_btt"
+                        style="@style/ChipFilled"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:nextFocusLeft="@id/home_type_watching_btt"
+                        android:nextFocusRight="@id/home_type_on_hold_btt"
+                        android:text="@string/type_plan_to_watch" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/home_type_on_hold_btt"
+                        style="@style/ChipFilled"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:nextFocusLeft="@id/home_plan_to_watch_btt"
+                        android:nextFocusRight="@id/home_type_dropped_btt"
+                        android:text="@string/type_on_hold" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/home_type_dropped_btt"
+                        style="@style/ChipFilled"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:nextFocusLeft="@id/home_type_on_hold_btt"
+                        android:nextFocusRight="@id/home_type_completed_btt"
+                        android:text="@string/type_dropped" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/home_type_completed_btt"
+                        style="@style/ChipFilled"
+                        android:layout_width="wrap_content"
+
+                        android:layout_height="wrap_content"
+                        android:nextFocusLeft="@id/home_type_dropped_btt"
+                        android:text="@string/type_completed" />
+                </com.google.android.material.chip.ChipGroup>
+
+            </HorizontalScrollView>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:layout_marginEnd="12dp"
+                android:contentDescription="@string/home_more_info"
+                android:src="@drawable/ic_baseline_arrow_forward_24"
+                app:drawableTint="?attr/white" />
+        </FrameLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/home_bookmarked_child_recyclerview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:descendantFocusability="afterDescendants"
+            android:orientation="horizontal"
+            android:paddingHorizontal="5dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/home_result_grid" />
+    </LinearLayout>
+</LinearLayout>

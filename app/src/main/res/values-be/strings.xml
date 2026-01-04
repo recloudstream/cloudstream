@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s серыя %2$d</string>
+    <string name="cast_format" formatted="true">Склад: %s</string>
+    <string name="next_episode_format" formatted="true">Серыя %d будзе выпушчана праз</string>
+    <string name="next_season_episode_format" formatted="true">Серыя %2$d сезона %1$d будзе выпушчана праз</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$d д %2$d гадз %3$d хв</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$d гадз %2$d хв</string>
+    <string name="next_episode_time_min_format" formatted="true">%d м</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$d гадз %2$d хв %3$d с</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$d хв %2$d с</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$d с</string>
+    <string name="result_poster_img_des">Плакат</string>
+    <string name="search_poster_img_des">Плакат</string>
+    <string name="episode_poster_img_des">Плакат эпізода</string>
+    <string name="home_main_poster_img_des">Асноўны плакат</string>
+    <string name="home_next_random_img_des">Наступны выпадковы</string>
+    <string name="go_back_img_des">Назад</string>
+    <string name="play_from_beginning_img_des">Прайграць з пачатку</string>
+    <string name="home_change_provider_img_des">Змяніць пастаўшчыка</string>
+    <string name="preview_background_img_des">Перадпрагляд фону</string>
+    <string name="player_speed_text_format" formatted="true">Хуткасць (%.2fx)</string>
+    <string name="rated_format" formatted="true">Ацэнка: %.1f</string>
+    <string name="new_update_format" formatted="true">Знойдзена новае абнаўленне!\n%1$s -&gt; %2$s</string>
+    <string name="filler" formatted="true">Запаўняльнік</string>
+    <string name="duration_format" formatted="true">%d хвіл</string>
+    <string name="app_name">CloudStream</string>
+    <string name="play_with_app_name">Прайграць праз CloudStream</string>
+    <string name="title_home">Дамашняя</string>
+    <string name="title_search">Пошук</string>
+    <string name="title_downloads">Спампоўкі</string>
+    <string name="title_settings">Налады</string>
+    <string name="search_hint">Шукаць…</string>
+    <string name="search_hint_site" formatted="true">Шукаць па %s…</string>
+    <string name="speech_recognition_unavailable">Распазнаванне маўлення недаступна</string>
+    <string name="begin_speaking">Пачніце размаўляць…</string>
+    <string name="no_data">Няма даных</string>
+    <string name="episode_more_options_des">Больш параметраў</string>
+    <string name="next_episode">Наступная серыя</string>
+    <string name="result_tags">Жанры</string>
+    <string name="result_share">Абагуліць</string>
+    <string name="result_open_in_browser">Адкрыць у браўзеры</string>
+    <string name="browser">Браўзер</string>
+    <string name="skip_loading">Прапусціць загрузку</string>
+    <string name="loading">Загрузка…</string>
+    <string name="type_watching">Гляджу</string>
+    <string name="type_on_hold">На ўтрыманні</string>
+    <string name="type_completed">Завершана</string>
+    <string name="type_dropped">Пакінута</string>
+    <string name="type_plan_to_watch">Планірую глядзець</string>
+    <string name="type_re_watching">Пераглядваю</string>
+    <string name="play_movie_button">Прайграць фільм</string>
+    <string name="play_trailer_button">Прайграць трэйлер</string>
+    <string name="play_livestream_button">Прайграць трансляцыю</string>
+    <string name="play_torrent_button">Трансліраваць Torrent</string>
+    <string name="play_full_series_button">Прайграць серыял поўнасцю</string>
+    <string name="torrent_info">Гэта відэа — Torrent, гэта значыць, што ваша актыўнасць можа быць адсочана.\nУпэўніцеся, што вы ведаеце, як працуюць Torrent-файлы, перад працягам.</string>
+    <string name="pick_source">Крыніцы</string>
+    <string name="pick_subtitle">Субцітры</string>
+    <string name="reload_error">Паспрабаваць перападлучыцца…</string>
+    <string name="go_back">Назад</string>
+    <string name="play_episode">Прайграць серыю</string>
+    <string name="download">Спампаваць</string>
+    <string name="downloaded">Спампавана</string>
+    <string name="downloading">Ідзе спампоўванне</string>
+    <string name="download_paused">Спампоўванне прыпынена</string>
+    <string name="download_started">Спампоўванне пачалося</string>
+    <string name="download_failed">Не ўдалося спампаваць</string>
+    <string name="download_canceled">Спампоўванне скасавана</string>
+    <string name="download_done">Спампоўванне завершана</string>
+    <string name="downloads_delete_select">Выберыце элементы для выдалення</string>
+    <string name="downloads_empty">Спамповак пакуль што няма.</string>
+    <string name="offline_file">Даступна для прагляду па-за сеткай</string>
+    <string name="select_all">Выбраць ўсё</string>
+    <string name="deselect_all">Зняць выбар</string>
+    <string name="update_started">Пачалося абнаўленне</string>
+    <string name="stream">Сеткавая трансляцыя</string>
+    <string name="open_local_video">Адкрыць лакальнае відэа</string>
+    <string name="error_loading_links_toast">Памылка пры загрузцы спасылак</string>
+    <string name="links_reloaded_toast">Спасылкі перазагружаны</string>
+    <string name="download_storage_text">Унутранае сховішча</string>
+    <string name="app_dubbed_text">Дуб</string>
+    <string name="app_subbed_text">Суб</string>
+    <string name="popup_delete_file">Выдаліць файл</string>
+    <string name="popup_play_file">Прайграць файл</string>
+    <string name="popup_resume_download">Узнавіць спампоўванне</string>
+    <string name="popup_pause_download">Прыпыніць спампоўванне</string>
+    <string name="home_more_info">Дадатковыя звесткі</string>
+    <string name="home_expanded_hide">Схаваць</string>
+    <string name="home_play">Прайграць</string>
+    <string name="home_info">Звесткі</string>
+    <string name="filter_bookmarks">Фільтр закладак</string>
+    <string name="error_bookmarks_text">Закладкі</string>
+    <string name="action_remove_from_bookmarks">Выдаліць</string>
+    <string name="action_add_to_bookmarks">Задаць статус прагляду</string>
+    <string name="sort_apply">Прымяніць</string>
+    <string name="sort_copy">Скапіраваць</string>
+    <string name="sort_close">Закрыць</string>
+    <string name="sort_clear">Ачысціць</string>
+    <string name="sort_save">Захаваць</string>
+    <string name="repo_copy_label">Назва рэпазіторыя і спасылка</string>
+    <string name="toast_copied">скапіравана!</string>
+    <string name="subscribe_tooltip">Паведамленне аб новай серыі</string>
+    <string name="result_search_tooltip">Пошук у іншых пашырэннях</string>
+    <string name="recommendations_tooltip">Паказваць рэкамендацыі</string>
+    <string name="player_speed">Хуткасць прайгравальніка</string>
+    <string name="subtitles_settings">Налады субцітраў</string>
+    <string name="subs_text_color">Колер тэксту</string>
+    <string name="subs_outline_color">Колер контуру</string>
+    <string name="subs_background_color">Колер фону</string>
+    <string name="subs_window_color">Колер акна</string>
+    <string name="subs_edge_type">Тып контуру</string>
+    <string name="subs_subtitle_elevation">Уздым субцітраў</string>
+    <string name="subs_font">Шрыфт</string>
+    <string name="subs_font_size">Памер шрыфту</string>
+    <string name="search_provider_text_providers">Пошук праз пастаўшчыкоў</string>
+    <string name="search_provider_text_types">Пошук праз тыпы</string>
+    <string name="benene_count_text">%d бенена(ў) дадзена распрацоўшчыкам</string>
+    <string name="benene_count_text_none">Бененаў не дадзена</string>
+    <string name="subs_auto_select_language">Выбраць мову аўтаматычна</string>
+    <string name="subs_download_languages">Спампаваць мовы</string>
+    <string name="subs_subtitle_languages">Мова субцітраў</string>
+    <string name="subs_hold_to_reset_to_default">Утрымайце, каб скінуць</string>
+    <string name="subs_import_text" formatted="true">Усталёўвайце шрыфты, перацягваючы іх да %s</string>
+    <string name="continue_watching">Працягнуць прагляд</string>
+    <string name="action_remove_watching">Выдаліць</string>
+    <string name="action_open_watching">Больш інфармацыі</string>
+    <string name="action_open_play">\@string/home_play</string>
+    <string name="vpn_might_be_needed">Для карэктнай працы гэтага пастаўшчыка можа спатрэбіцца VPN</string>
+    <string name="vpn_torrent">Гэты пастаўшчык — Torrent, рэкамендуецца VPN</string>
+    <string name="provider_info_meta">Сайт не пастаўляе метаданых, загрузіць відэа не ўдасца, калі на сайце яго няма.</string>
+    <string name="torrent_plot">Апісанне</string>
+    <string name="normal_no_plot">Сюжэту не знойдзена</string>
+    <string name="torrent_no_plot">Апісання не знойдзена</string>
+    <string name="show_log_cat">Паказаць Logcat 🐈</string>
+    <string name="test_log">Журнал</string>
+    <string name="picture_in_picture">Відарыс у відарысе</string>
+    <string name="picture_in_picture_des">Працягвае прайграванне ў мініяцюры зверху іншых праграм</string>
+    <string name="player_size_settings">Кнопка змены памеру прайгравальніка</string>
+    <string name="player_size_settings_des">Прыбраць чорныя межы</string>
+    <string name="player_subtitles_settings">Субцітры</string>
+    <string name="player_subtitles_settings_des">Налады субцітраў прайгравальніка</string>
+    <string name="chromecast_subtitles_settings">Субцітры Chromecast</string>
+    <string name="chromecast_subtitles_settings_des">Налады субцітраў Chromecast</string>
+    <string name="eigengraumode_settings">Хуткасць прайгравання</string>
+    <string name="speed_setting_summary">Дадаць параметр хуткасці да прайгравальніка</string>
+    <string name="swipe_to_seek_settings">Чырканне для перамоткі</string>
+    <string name="swipe_to_seek_settings_des">Правядзіце пальцам з боку ў бок, каб кіраваць пазіцыяй у відэа</string>
+    <string name="swipe_to_change_settings">Чырканне для змены налад</string>
+    <string name="swipe_to_change_settings_des">Правядзіце пальцам уверх або ўніз злева ці справа, каб змяніць яркасць або гучнасць</string>
+    <string name="autoplay_next_settings">Аўтаматычнае прайграванне наступнай серыі</string>
+    <string name="autoplay_next_settings_des">Прайграць наступную серыю пасля сканчэння бягучай</string>
+    <string name="double_tap_to_seek_settings">Падвойнае націсканне для перамоткі</string>
+    <string name="double_tap_to_pause_settings">Падвойнае націсканне для прыпынення</string>
+    <string name="double_tap_to_seek_amount_settings">Крок перамоткі (у секундах)</string>
+    <string name="double_tap_to_seek_settings_des">Двойчы націсніце справа ці злева, каб перайсці наперад ці назад</string>
+    <string name="double_tap_to_pause_settings_des">Двойчы націсніце пасярэдзіне, каб прыпыніць прайграванне</string>
+    <string name="use_system_brightness_settings">Выкарыстоўваць сістэмную яркасць</string>
+</resources>

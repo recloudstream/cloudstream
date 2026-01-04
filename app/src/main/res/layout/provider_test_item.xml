@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:nextFocusRight="@id/action_button"
+    android:orientation="horizontal"
+    android:padding="12dp">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/main_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/textColor"
+            android:textSize="16sp"
+            tools:text="Test repository" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/lang_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="5dp"
+                tools:text="🇷🇼"
+                android:textColor="?attr/grayTextColor"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/passed_failed_marker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Failed"
+                tools:visibility="visible" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/fail_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/grayTextColor"
+            tools:text="Unable to load videos"
+            tools:visibility="visible" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/action_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginStart="10dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="12dp"
+        android:src="@drawable/baseline_text_snippet_24"
+        app:tint="?attr/white" />
+</LinearLayout>

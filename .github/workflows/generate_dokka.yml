@@ -1,0 +1,74 @@
+name: Dokka
+
+on:
+  push:
+    branches: [ master ]
+    paths-ignore:
+      - '*.md'
+
+concurrency:
+  group: "dokka"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate access token
+        id: generate_token
+        uses: tibdex/github-app-token@v2
+        with:
+          app_id: ${{ secrets.GH_APP_ID }}
+          private_key: ${{ secrets.GH_APP_KEY }}
+          repository: "recloudstream/dokka"
+
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          path: "src"
+
+      - name: Checkout dokka
+        uses: actions/checkout@v6
+        with:
+          repository: "recloudstream/dokka"
+          path: "dokka"
+          token: ${{ steps.generate_token.outputs.token }}
+
+      - name: Clean old builds
+        run: |
+          cd $GITHUB_WORKSPACE/dokka/
+          rm -rf "./app"
+          rm -rf "./library"
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Generate Dokka
+        run: |
+          cd $GITHUB_WORKSPACE/src/
+          chmod +x gradlew
+          ./gradlew docs:dokkaGeneratePublicationHtml
+
+      - name: Copy Dokka
+        run: cp -r $GITHUB_WORKSPACE/src/docs/build/dokka/html/* $GITHUB_WORKSPACE/dokka/
+
+      - name: Push builds
+        run: |
+          cd $GITHUB_WORKSPACE/dokka
+          touch .nojekyll
+          git config --local user.email "111277985+recloudstream[bot]@users.noreply.github.com"
+          git config --local user.name "recloudstream[bot]"
+          git add .
+          git commit --amend -m "Generate dokka for recloudstream/cloudstream@${GITHUB_SHA}" || exit 0   # do not error if nothing to commit
+          git push --force

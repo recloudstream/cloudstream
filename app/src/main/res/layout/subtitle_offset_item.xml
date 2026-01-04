@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:background="?attr/selectableItemBackground"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/subtitle_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:ellipsize="end"
+        android:lineSpacingMultiplier="1.1"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="6dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:text="Long testing subtitle line 1\nSubtitle line 2" />
+
+
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/subtitle_progress"
+        style="@android:style/Widget.Material.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_gravity="bottom"
+        android:max="1000"
+        android:progressBackgroundTint="?attr/white"
+        android:progressTint="?attr/white"
+        android:visibility="gone"
+        tools:progress="50"
+        tools:visibility="visible" />
+
+</LinearLayout>
+

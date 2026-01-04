@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    android:layout_width="110dp"
+    android:layout_height="110dp"
+    android:animateLayoutChanges="true"
+    android:backgroundTint="?attr/primaryGrayBackground"
+    android:foreground="?attr/selectableItemBackground"
+    android:layout_margin="10dp"
+    android:focusable="true"
+    app:cardCornerRadius="@dimen/rounded_image_radius"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintDimensionRatio="1"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHeight_percent="0.4"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <ImageView
+        android:layout_gravity="center"
+        android:src="@drawable/ic_baseline_add_24"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/add_account" />
+
+</androidx.cardview.widget.CardView>

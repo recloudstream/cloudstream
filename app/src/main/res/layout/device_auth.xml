@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/device_pin_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+            android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            tools:text="YJTSKL" />
+
+        <TextView
+            android:id="@+id/device_auth_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+            android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+            android:textColor="?attr/textColor"
+            android:textSize="17sp"
+            tools:text="Visit simkl.com/pin on your smartphone or computer and enter the above code" />
+
+        <ImageView
+            android:id="@+id/device_auth_qrcode"
+            android:layout_marginTop="20dp"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center_horizontal"
+            android:visibility="visible"
+            android:background="?attr/primaryGrayBackground"
+            android:contentDescription="@string/qr_image"
+            tools:visibility="visible"
+            tools:src="@drawable/example_qr" />
+
+        <TextView
+            android:id="@+id/device_auth_validation_counter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+            android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+            android:textColor="?attr/textColor"
+            android:textSize="17sp"
+            tools:text="Code expires in 13m 2s" />
+
+</LinearLayout>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/search_button"
+        android:icon="@drawable/search_icon"
+        android:title="@string/title_search"
+        app:searchHintIcon="@drawable/search_icon"
+        app:showAsAction="collapseActionView|ifRoom"
+        app:actionViewClass="com.lagradost.cloudstream3.ui.library.MenuSearchView" />
+    <item
+        android:id="@+id/sort_button"
+        android:icon="@drawable/ic_baseline_sort_24"
+        android:title="Sort"
+        app:showAsAction="collapseActionView|ifRoom" />
+
+</menu>

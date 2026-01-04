@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?><!--style="@style/SelectableButton"-->
+
+<com.google.android.material.button.MaterialButton xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/SelectableButtonTV"
+    android:layout_gravity="start"
+    android:layout_margin="2dp"
+    android:minWidth="115dp"
+    android:singleLine="true"
+    tools:text="1000-1000" />

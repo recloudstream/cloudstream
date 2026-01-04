@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/extensions_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?attr/primaryGrayBackground">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/primaryGrayBackground">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/settings_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/primaryGrayBackground"
+            android:paddingTop="@dimen/navbar_height"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:menu="@menu/repository"
+            app:navigationIconTint="?attr/iconColor"
+            app:titleTextColor="?attr/textColor"
+            tools:title="Overlord" />
+
+        <include
+            android:id="@+id/tvtypes_chips_scroll"
+            layout="@layout/tvtypes_chips_scroll" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/plugin_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:nextFocusLeft="@id/nav_rail_view"
+        android:nextFocusUp="@id/tvtypes_chips"
+
+        android:clipToPadding="false"
+        android:background="?attr/primaryBlackBackground"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:listitem="@layout/repository_item" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+

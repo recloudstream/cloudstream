@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/home_loading_shimmer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:orientation="vertical"
+        app:shimmer_auto_start="true"
+        app:shimmer_base_alpha="0.2"
+        app:shimmer_duration="@integer/loading_time"
+        app:shimmer_highlight_alpha="0.3">
+
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include layout="@layout/loading_line_short" />
+
+            <include layout="@layout/loading_line" />
+
+            <include layout="@layout/loading_line" />
+
+            <include layout="@layout/loading_line" />
+        </LinearLayout>
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/overlay_loading_skip_button"
+        style="@style/BlackButton"
+        android:layout_width="match_parent"
+        android:backgroundTint="@color/transparent"
+        android:text="@string/skip_loading"
+        android:visibility="invisible"
+        tools:visibility="visible">
+
+        <requestFocus />
+    </com.google.android.material.button.MaterialButton>
+
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/progressBar"
+        style="@android:style/Widget.Material.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="-6.5dp"
+        android:indeterminate="true"
+        android:indeterminateTint="?attr/colorPrimary"
+        android:progressTint="?attr/colorPrimary"
+        android:visibility="gone" />
+</LinearLayout>

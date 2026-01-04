@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/episode_holder"
+
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_marginBottom="5dp"
+
+    android:nextFocusRight="@id/download_button"
+    app:cardBackgroundColor="@color/transparent"
+    app:cardCornerRadius="@dimen/rounded_image_radius"
+    app:cardElevation="0dp"
+    android:foreground="@drawable/outline_drawable"
+    >
+    <!--
+        android:nextFocusLeft="@id/result_episode_download"
+        -->
+
+    <!-- IDK BUT THIS DOES NOT SEAM LIKE A GOOD WAY OF DOING IT -->
+    <!--<LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal">
+        <View
+                android:layout_weight="0.5"
+                android:id="@+id/episode_view_procentage"
+                android:alpha="0.2"
+                android:background="?attr/colorPrimary"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+        </View>
+        <View
+                android:id="@+id/episode_view_procentage_off"
+                android:layout_weight="0.10"
+                android:alpha="0"
+                android:background="@color/transparent"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+        </View>
+    </LinearLayout>-->
+<!--    <androidx.core.widget.ContentLoadingProgressBar-->
+<!--        android:id="@+id/episode_progress"-->
+<!--        style="@android:style/Widget.Material.ProgressBar.Horizontal"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="5dp"-->
+<!--        android:layout_gravity="bottom"-->
+<!--        android:layout_marginBottom="-1.5dp"-->
+<!--        android:progressBackgroundTint="?attr/colorPrimary"-->
+<!--        android:progressTint="?attr/colorPrimary"-->
+<!--        tools:progress="50" />-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/watch_progress_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:id="@+id/episode_play_icon"
+                style="@style/ContinueWatchingPlayUnderlayProgress"
+                android:layout_margin="4dp"/>
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/episode_progress"
+                style="@style/ContinueWatchingCircularProgress" />
+        </FrameLayout>
+        <!--marquee_forever-->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/episode_filler"
+            style="@style/SmallWhiteButton"
+            android:layout_gravity="center"
+            android:text="@string/filler" />
+
+        <TextView
+            android:id="@+id/episode_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="50dp"
+            android:ellipsize="marquee"
+
+            android:gravity="center_vertical"
+            android:marqueeRepeatLimit="0"
+
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+
+            android:textColor="?attr/textColor"
+            tools:text="Episode 1" />
+
+        <com.lagradost.cloudstream3.ui.download.button.PieFetchButton
+            android:id="@+id/download_button"
+            android:layout_width="@dimen/download_size"
+            android:layout_height="@dimen/download_size"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginStart="-60dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:padding="10dp" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

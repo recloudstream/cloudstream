@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/account_list"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:background="?attr/primaryBlackBackground"
+        tools:listitem="@layout/account_single"
+        android:layout_width="match_parent"
+        android:layout_rowWeight="1"
+        android:layout_height="wrap_content"
+        android:focusable="true"/>
+
+    <TextView
+        android:id="@+id/account_none"
+        android:text="@string/no_account"
+        style="@style/SettingsItem"
+        android:focusable="true">
+    </TextView>
+
+    <TextView
+        android:id="@+id/account_add"
+        android:text="@string/add_account"
+        style="@style/SettingsItem"
+        android:focusable="true">
+
+        <requestFocus />
+    </TextView>
+</LinearLayout>

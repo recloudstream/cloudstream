@@ -1,0 +1,50 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="15dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/priority_text"
+        style="@style/NoCheckLabel"
+        android:layout_width="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/subtract_button"
+        tools:text="hello" />
+
+    <ImageView
+        android:id="@+id/subtract_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@id/priority_number"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="10dp"
+        android:focusable="true"
+        android:src="@drawable/baseline_remove_24" />
+
+    <TextView
+        android:id="@+id/priority_number"
+        style="@style/NoCheckLabel"
+        android:layout_width="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@id/add_button"
+        android:gravity="center"
+        android:minWidth="50dp"
+        android:textColor="?attr/textColor"
+        tools:text="1" />
+
+    <ImageView
+        android:id="@+id/add_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="10dp"
+        android:focusable="true"
+        android:src="@drawable/ic_baseline_add_24" />
+
+</RelativeLayout>

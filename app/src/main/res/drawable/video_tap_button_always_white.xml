@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+        android:color="@color/video_ripple">
+    <item android:id="@android:id/mask"  android:gravity="center">
+        <shape android:shape="oval">
+            <solid android:color="@color/video_ripple"/>
+        </shape>
+        <color android:color="@color/video_ripple"/>
+    </item>
+</ripple>

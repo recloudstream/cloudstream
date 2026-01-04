@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/download_movie_button"
+        style="@style/BlackButton"
+        android:layout_width="match_parent"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:visibility="visible" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <include
+            layout="@layout/download_button_view"
+            android:layout_width="30dp"
+            android:layout_height="30dp" />
+
+        <TextView
+            android:id="@+id/result_movie_download_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:gravity="center"
+            android:letterSpacing="0.09"
+            android:textAllCaps="false"
+            android:textColor="?attr/textColor"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="Downloading" />
+
+        <TextView
+            android:id="@+id/result_movie_download_text_precentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:letterSpacing="0.09"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:textAllCaps="false"
+            android:textColor="?attr/textColor"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:text="68%"
+            tools:visibility="visible" />
+    </LinearLayout>
+
+</FrameLayout>

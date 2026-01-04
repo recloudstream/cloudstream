@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="10dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <androidx.cardview.widget.CardView
+                android:id="@+id/account_main_profile_picture_holder"
+                app:cardCornerRadius="100dp"
+                android:layout_gravity="center_vertical"
+                android:layout_width="35dp"
+                android:layout_height="35dp">
+
+            <ImageView
+                    android:id="@+id/account_main_profile_picture"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:ignore="ContentDescription" />
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <TextView
+                    android:id="@+id/account_name"
+
+                    android:textStyle="bold"
+                    tools:text="MAL HelloWorld"
+                    android:textSize="20sp"
+                    android:textColor="?attr/textColor"
+                    android:layout_width="match_parent"
+                    android:layout_rowWeight="1"
+                    android:layout_height="wrap_content" />
+
+            <TextView
+                    android:id="@+id/account_site"
+                    android:layout_gravity="center_vertical"
+                    tools:text="MyAnimeList"
+                    android:textSize="15sp"
+                    android:textColor="?attr/grayTextColor"
+                    android:layout_width="match_parent"
+                    android:layout_rowWeight="1"
+                    android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/account_switch_account"
+        android:text="@string/switch_account"
+        style="@style/SettingsItem"
+        android:focusable="true"/>
+
+    <TextView
+        android:id="@+id/account_logout"
+        android:text="@string/logout"
+        style="@style/SettingsItem"
+        android:focusable="true">
+
+        <requestFocus />
+    </TextView>
+</LinearLayout>

@@ -1,0 +1,31 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+    android:orientation="horizontal"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:focusable="true">
+
+    <androidx.cardview.widget.CardView
+            android:id="@+id/account_profile_picture_holder"
+            android:layout_marginStart="10dp"
+            app:cardCornerRadius="100dp"
+            android:layout_gravity="center_vertical"
+            android:layout_width="30dp"
+            android:layout_height="30dp">
+
+        <ImageView
+            android:id="@+id/account_profile_picture"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:ignore="ContentDescription" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:foreground="@null"
+        android:id="@+id/account_name"
+        tools:text="Account 1"
+        style="@style/SettingsItem" />
+</LinearLayout>
+

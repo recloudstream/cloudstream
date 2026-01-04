@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="@android:color/holo_blue_light">
+
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/progress_downloaded"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="0"
+
+        tools:progress="60"
+        android:progressDrawable="@drawable/circular_progress_bar_top_to_bottom"
+        android:visibility="visible" />
+
+    <View
+        android:id="@+id/progress_downloaded_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/circle_shape_dotted" />
+
+    <ImageView
+        android:scaleX="?attr/download_icon_scale"
+        android:scaleY="?attr/download_icon_scale"
+        tools:visibility="visible"
+        android:id="@+id/image_download_status"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_baseline_play_arrow_24"
+        android:visibility="visible"
+        app:tint="?attr/download_icon_color" />
+</FrameLayout>

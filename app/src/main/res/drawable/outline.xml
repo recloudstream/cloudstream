@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" >
+    <stroke android:width="2dp"
+            android:color="?attr/white"/>
+    <corners
+            android:bottomLeftRadius="@dimen/rounded_image_radius"
+            android:bottomRightRadius="@dimen/rounded_image_radius"
+            android:topLeftRadius="@dimen/rounded_image_radius"
+            android:topRightRadius="@dimen/rounded_image_radius" />
+</shape>

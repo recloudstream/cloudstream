@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/profile_text_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:layout_marginTop="10dp"
+            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+            android:paddingTop="10dp"
+            android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+            android:paddingBottom="10dp"
+            android:text="@string/profiles"
+            android:textColor="?attr/textColor"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/currently_selected_profile_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:layout_marginTop="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:textColor="?attr/textColor"
+            android:textSize="15sp"
+            tools:text="Profile 1" />
+    </LinearLayout>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/profiles_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/profile_button_bar"
+        android:layout_below="@+id/profile_text_bar"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="4"
+        tools:listitem="@layout/player_quality_profile_item" />
+
+    <LinearLayout
+        android:id="@+id/profile_button_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
+        android:animateLayoutChanges="true"
+        android:gravity="end|bottom"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/selected_item_holder"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:alpha="0.5">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/edit_btt"
+                style="@style/WhiteButton"
+                android:layout_width="wrap_content"
+                android:text="@string/edit" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/set_default_btt"
+                style="@style/WhiteButton"
+                android:layout_width="wrap_content"
+                android:text="@string/set_default" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/use_btt"
+                    style="@style/WhiteButton"
+                    android:layout_width="wrap_content"
+                    android:text="@string/use" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cancel_btt"
+            style="@style/BlackButton"
+            android:layout_width="wrap_content"
+            android:text="@string/sort_cancel" />
+    </LinearLayout>
+
+
+</RelativeLayout>

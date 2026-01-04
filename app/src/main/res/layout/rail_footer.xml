@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_footer_root"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom|center_horizontal"
+    android:layout_marginBottom="10dp"
+    android:padding="1dp"
+    android:visibility="gone"
+    tools:visibility="visible">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/nav_footer_profile_card"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="@color/transparent"
+        android:focusable="true"
+        android:foreground="@drawable/outline_drawable_round_20"
+        android:nextFocusUp="@id/navigation_settings"
+        android:nextFocusDown="@id/nav_footer_profile_card"
+        app:cardCornerRadius="18dp">
+
+        <ImageView
+            android:foreground="@drawable/outline_big_20_gray"
+            android:id="@+id/nav_footer_profile_pic"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/account"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/profile_bg_orange" />
+
+    </androidx.cardview.widget.CardView>
+</LinearLayout>

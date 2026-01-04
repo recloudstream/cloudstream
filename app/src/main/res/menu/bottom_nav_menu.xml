@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+        <item
+            android:id="@+id/navigation_home"
+            android:icon="@drawable/home_icon_selector"
+            android:title="@string/title_home" />
+        <item
+            android:id="@+id/navigation_search"
+            android:icon="@drawable/search_icon"
+            android:title="@string/title_search" />
+        <item
+            android:id="@+id/navigation_library"
+            android:icon="@drawable/library_icon_selector"
+            android:title="@string/library" />
+        <item
+            android:id="@+id/navigation_downloads"
+            android:icon="@drawable/netflix_download"
+            android:title="@string/title_downloads" />
+        <item
+            android:id="@+id/navigation_settings"
+            android:icon="@drawable/settings_icon_selector"
+            android:title="@string/title_settings" />
+</menu>

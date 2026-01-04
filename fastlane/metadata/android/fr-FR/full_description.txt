@@ -1,0 +1,10 @@
+CloudStream-3 vous permet de regarder et de télécharger des Films, des Séries TV et des Animes.
+
+L'application n'a aucune publicité, aucun traçage et
+la prise en charge de différentes bandes-annonces & sites, et plus, par exemple
+
+Signets
+
+Téléchargement des sous-titres
+
+Prise en charge de Chromecast

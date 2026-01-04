@@ -1,0 +1,10 @@
+CloudStream-3 omogućuje gledanje i preuzimanje filmova, TV serija i animea.
+
+Aplikacija ne koristi oglase i analitike te
+podržava stranice s trailerima, filmovima i više, npr.
+
+Oznake
+
+Preuzimanja titlova
+
+Chromecast podrška

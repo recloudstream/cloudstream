@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:id="@+id/episode_holder_large"
+    android:layout_width="wrap_content"
+
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:foreground="@drawable/outline_drawable"
+    android:nextFocusRight="@id/download_button"
+    app:cardBackgroundColor="?attr/boxItemBackground"
+
+    app:cardCornerRadius="@dimen/rounded_image_radius">
+
+    <LinearLayout
+        android:id="@+id/episode_holder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:id="@+id/episode_lin_holder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <!--app:cardCornerRadius="@dimen/roundedImageRadius"-->
+            <androidx.cardview.widget.CardView
+                android:layout_width="126dp"
+                android:layout_height="72dp"
+                android:foreground="@drawable/outline_drawable">
+
+                <ImageView
+                    android:id="@+id/episode_poster"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/episode_poster_img_des"
+
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    android:nextFocusRight="@id/download_button"
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/example_poster"
+                    tools:visibility="invisible" />
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/episode_play_icon"-->
+<!--                    android:layout_width="36dp"-->
+<!--                    android:layout_height="36dp"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:contentDescription="@string/play_episode"-->
+<!--                    android:src="@drawable/play_button"-->
+<!--                    tools:visibility="invisible" />-->
+
+                <ImageView
+                    android:id="@+id/episode_upcoming_icon"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/hourglass_24"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <FrameLayout
+                    android:id="@+id/watch_progress_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/episode_play_icon"
+                        style="@style/EpisodePlayUnderlayProgress"
+                        />
+                    <com.google.android.material.progressindicator.CircularProgressIndicator
+                        android:id="@+id/episode_progress"
+                        style="@style/EpisodeCircularProgress"
+                        tools:progress="100" />
+                </FrameLayout>
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="50dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/episode_filler"
+                        style="@style/SmallWhiteButton"
+                        android:layout_gravity="start"
+                        android:layout_marginEnd="10dp"
+                        android:text="@string/filler" />
+
+                    <TextView
+                        android:id="@+id/episode_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="?attr/textColor"
+                        android:textStyle="bold"
+                        tools:text="1. Jobless" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/episode_rating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:textColor="?attr/grayTextColor"
+                        tools:text="Rated: 8.8" />
+
+                    <TextView
+                        android:id="@+id/episode_runtime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:textColor="?attr/grayTextColor"
+                        tools:text="80min" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/episode_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/grayTextColor"
+                    tools:text="15 Apr 2024" />
+
+            </LinearLayout>
+
+            <com.lagradost.cloudstream3.ui.download.button.PieFetchButton
+                android:id="@+id/download_button"
+                android:layout_width="@dimen/download_size"
+                android:layout_height="@dimen/download_size"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginStart="-50dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:padding="10dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/episode_descript"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="4"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:textColor="?attr/grayTextColor"
+            tools:text="Jon and Daenerys arrive in Winterfell and are met with skepticism. Sam learns about the fate of his family. Cersei gives Euron the reward he aims for. Theon follows his heart. Jon and Daenerys arrive in Winterfell and are met with skepticism. Sam learns about the fate of his family. Cersei gives Euron the reward he aims for. Theon follows his heart." />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

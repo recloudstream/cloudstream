@@ -1,0 +1,5 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <corners android:radius="20dp" />
+    <solid android:color="?attr/primaryBlackBackground"/>
+    <!--<stroke android:width="0.5dp" android:color="@color/searchColorTransparent" />-->
+</shape>

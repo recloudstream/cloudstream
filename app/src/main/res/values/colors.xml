@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3d50fa</color>
+    <color name="colorPrimarySecond">@color/colorPrimary</color>
+    <color name="colorSearch">#303135</color> <!--#3444D1 @color/itemBackground-->
+    <color name="colorOngoing">#F53B66</color> <!--FF8181-->
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#3b65f5</color> <!-- 818fff-->
+
+    <color name="primaryGrayBackground">#2B2C30</color> <!--0f0f10 0E0E10 303135 2B2C30-->
+    <color name="primaryBlackBackground">#111111</color> <!--1C1C20 191a1f 19181E 202125 1C1C20-->
+    <color name="iconGrayBackground">#1C1C20</color> <!--141419 202125-->
+    <color name="boxItemBackground">#161616</color> <!-- 17171B 1B1B20-->
+
+    <color name="textColor">#e9eaee</color> <!--FFF-->
+    <color name="grayTextColor">#9ba0a4</color> <!-- 5e5f62-->
+    <color name="grayShimmer">#DCDCDC</color> <!-- 5e5f62-->
+
+    <color name="searchColorTransparent">#1AFFFFFF</color> <!--DADADA-->
+    <color name="transparent">#00000000</color>
+
+    <color name="white">#FFF</color>
+    <color name="black">#000</color>
+
+    <color name="whiteText">#FFF</color>
+    <color name="blackText">#000</color>
+
+    <color name="progressBackgroundColor">#1AFFFFFF</color>
+
+    <color name="dubColorText">#121950</color> <!--3b65f5 f18c82 8294F1-->
+    <color name="amoledModeLight">#121213</color>
+
+    <color name="dubColorBg">#3B65F5</color>
+    <color name="subColorText">#571711</color> <!--F53B66 FA3D79-->
+    <color name="subColorBg">#F53B66</color>
+    <color name="typeColorText">#BEC8FF</color>
+    <color name="typeColorBg">#3700B3</color>
+    <!--
+    <color name="ratingColor">#4C3115</color>
+    <color name="ratingColorBg">#FFA662</color>
+    -->
+
+    <color name="adultColor">#FF6F63</color> <!-- same as sub color -->
+
+    <color name="video_ripple">#80FFFFFF</color>
+    <color name="video_button_ripple">#32FFFFFF</color>
+
+    <color name="black_overlay">#66000000</color>
+    <color name="darkBarTransparent">#C0121212</color>
+    <color name="skipOpTransparent">#4D121212</color>
+    <color name="darkBar">#121212</color>
+    <color name="videoProgress">#66B5B5B5</color> <!--66B5B5B5-->
+    <!--<color name="videoCache">#663D50FA</color>--> <!--66B5B5B5-->
+
+    <color name="iconColor">#9ba0a6</color>
+
+    <!-- <color name="usedStorageColor">?attr/white</color>#fff-->
+    <!-- <color name="freeStorageColor">?attr/grayTextColor</color> #676767-->
+
+    <!--Light Mode -->
+    <color name="lightPrimaryGrayBackground">#f1f1f1</color>
+    <color name="lightBitDarkerGrayBackground">#fff</color>
+    <color name="lightGrayBackground">#eeeeee</color>
+    <color name="lightItemBackground">#eeeeee</color>
+    <color name="lightTextColor">#202125</color>
+    <color name="lightGrayTextColor">#5f6267</color>
+    <color name="lightIconColor">#5f6267</color>
+
+    <!--Dracula Theme-->
+    <color name="DraculaPrimaryGrayBackground">#414450</color>
+    <color name="DraculaBitDarkerGrayBackground">#282a36</color>
+    <color name="DraculaGrayBackground">#44475A</color>
+    <color name="DraculaItemBackground">#373844</color>
+    <color name="DraculaTextColor">#F8F8F2</color>
+    <color name="DraculaGrayTextColor">#6272A4</color>
+    <color name="DraculaIconColor">#6272A4</color>
+
+    <!-- Lavender Dreams Theme -->
+    <color name="LavenderPrimaryGrayBackground">#f7eefc</color>
+    <color name="LavenderBitDarkerGrayBackground">#fdf0fb</color>
+    <color name="LavenderGrayBackground">#b794f6</color>
+    <color name="LavenderItemBackground">#f8f5ff</color>
+    <color name="LavenderTextColor">#2d1b47</color>
+    <color name="LavenderGrayTextColor">#9ab3ff</color>
+    <color name="LavenderIconColor">#7c3aed</color>
+
+    <!--Other Colors -->
+    <color name="colorPrimaryBlue">#5664B7</color>
+    <color name="colorPrimaryRed">#D50000</color>
+    <color name="colorPrimaryPurple">#6200EA</color> <!-- Burple-->
+    <color name="colorPrimaryGreen">#00BFA5</color>
+    <color name="colorPrimaryGreenApple">#48E484</color>
+    <color name="colorPrimaryBanana">#E4D448</color>
+    <color name="colorPrimaryParty">#ea596e</color>
+    <color name="colorPrimaryPink">#ff1493</color>
+
+    <color name="colorPrimaryCarnationPink">#BD5DA5</color>
+    <color name="colorPrimaryDarkGreen">#004500</color>
+    <color name="colorPrimaryMaroon">#451010</color>
+    <color name="colorPrimaryNavyBlue">#000080</color>
+    <color name="colorPrimaryGrey">#515151</color>
+    <color name="colorPrimaryWhite">#FFFFFF</color>
+    <color name="colorPrimaryBrown">#622C00</color>
+    <color name="colorPrimaryOrange">#CE8500</color>
+    <color name="colorPrimaryDandelionYellow">#F5BB00</color>
+    <color name="colorPrimaryCoolBlue">#408cac</color>
+    <color name="colorPrimaryLavender">#6F55AF</color>
+
+    <color name="colorTestPass">#48E484</color>
+    <color name="colorTestFail">#ea596e</color>
+    <color name="colorTestWarning">#FF9800</color>
+    <color name="playIconBackground">#B3000000</color>
+</resources>

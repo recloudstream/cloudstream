@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_root"
+    android:layout_width="match_parent"
+
+    android:layout_height="match_parent"
+    tools:context=".ui.home.HomeFragment">
+
+
+    <FrameLayout
+        android:id="@+id/home_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/navbar_width"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ProgressBar
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            tools:visibility="gone" />
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/home_loading_shimmer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:orientation="vertical"
+            android:paddingTop="40dp"
+            app:shimmer_auto_start="true"
+            app:shimmer_base_alpha="0.2"
+            app:shimmer_duration="@integer/loading_time"
+            app:shimmer_highlight_alpha="0.3">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="125dp"
+                        android:layout_height="200dp"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/loading_margin"
+                        android:background="@color/grayShimmer"
+                        android:translationX="-164dp"
+                        app:cardCornerRadius="@dimen/loading_radius" />
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="148dp"
+                        android:layout_height="234dp"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/loading_margin"
+                        android:background="@color/grayShimmer"
+                        app:cardCornerRadius="@dimen/loading_radius" />
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="125dp"
+                        android:layout_height="200dp"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/loading_margin"
+                        android:background="@color/grayShimmer"
+                        android:translationX="164dp"
+                        app:cardCornerRadius="@dimen/loading_radius" />
+                </FrameLayout>
+
+                <include layout="@layout/loading_line_short_center" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/result_padding"
+                    android:layout_marginTop="@dimen/result_padding"
+
+                    android:layout_marginEnd="@dimen/result_padding"
+                    android:orientation="vertical">
+
+                    <include layout="@layout/loading_list" />
+
+                    <include layout="@layout/loading_list" />
+
+                    <include layout="@layout/loading_list" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.facebook.shimmer.ShimmerFrameLayout>
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/home_loading_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="@dimen/navbar_width"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="gone">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/home_reload_connectionerror"
+            style="@style/WhiteButton"
+
+            android:layout_width="wrap_content"
+
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:minWidth="200dp"
+            android:text="@string/reload_error"
+            app:icon="@drawable/ic_baseline_autorenew_24" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/home_reload_connection_open_in_browser"
+            style="@style/BlackButton"
+
+            android:layout_width="wrap_content"
+
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:minWidth="200dp"
+            android:text="@string/result_open_in_browser"
+            app:icon="@drawable/ic_baseline_public_24" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/home_reload_connection_go_to_downloads"
+            style="@style/BlackButton"
+
+            android:layout_width="wrap_content"
+
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:minWidth="200dp"
+            android:text="@string/go_to_downloads"
+            app:icon="@drawable/netflix_download" />
+
+        <TextView
+            android:id="@+id/result_error_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:textColor="?attr/textColor" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/home_master_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:descendantFocusability="afterDescendants"
+        android:nextFocusLeft="@id/navigation_home"
+        android:nextFocusUp="@id/home_bookmarked_child_recyclerview"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/homepage_parent_tv"
+        tools:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/home_api_holder"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_gravity="end"
+        android:layout_margin="10dp"
+        android:background="@drawable/player_button_tv_attr"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/home_change_api"
+            style="@style/RegularButtonTV"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:background="@drawable/player_button_tv_attr_no_bg"
+            android:gravity="center"
+            android:nextFocusLeft="@id/navigation_home"
+            tools:text="Hello!"
+            android:nextFocusRight="@id/home_preview_reload_provider"
+            android:nextFocusDown="@id/home_preview_info_btt" >
+            <requestFocus />
+        </com.google.android.material.button.MaterialButton>
+
+        <ImageView
+            android:id="@+id/home_preview_reload_provider"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:background="@drawable/player_button_tv_attr_no_bg"
+            android:contentDescription="@string/reload_provider"
+            android:focusable="true"
+            android:nextFocusLeft="@id/home_change_api"
+            android:nextFocusRight="@id/home_preview_search_button"
+            android:nextFocusUp="@id/home_preview_reload_provider"
+            android:nextFocusDown="@id/home_preview_info_btt"
+            android:padding="10dp"
+            tools:visibility="visible"
+            android:src="@drawable/ic_refresh"
+            android:tag="@string/tv_no_focus_tag"
+            android:visibility="gone"
+            app:tint="@color/player_on_button_tv_attr" />
+
+        <ImageView
+            android:id="@+id/home_preview_search_button"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:background="@drawable/player_button_tv_attr_no_bg"
+            android:clickable="true"
+            android:contentDescription="@string/search"
+            android:focusable="true"
+            android:nextFocusLeft="@id/home_preview_reload_provider"
+            android:nextFocusRight="@id/home_switch_account"
+            android:nextFocusDown="@id/home_preview_info_btt"
+            android:padding="10dp"
+            android:src="@drawable/search_icon"
+            android:tag="@string/tv_no_focus_tag"
+            app:tint="@color/player_on_button_tv_attr" />
+
+        <ImageView
+            android:visibility="gone"
+            android:id="@+id/home_switch_account"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:background="@drawable/player_button_tv_attr_no_bg"
+            android:contentDescription="@string/account"
+            android:focusable="true"
+            android:nextFocusLeft="@id/home_preview_search_button"
+            android:nextFocusRight="@id/home_switch_account"
+            android:nextFocusDown="@id/home_change_api"
+
+            android:padding="10dp"
+            android:src="@drawable/ic_outline_account_circle_24"
+            android:tag="@string/tv_no_focus_tag"
+            app:tint="@color/player_on_button_tv_attr" />
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/home_api_fab"
+        style="@style/ExtendedFloatingActionButton"
+        android:visibility="gone"
+        app:icon="@drawable/ic_baseline_filter_list_24"
+        tools:ignore="ContentDescription"
+        tools:visibility="visible" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/home_random"
+        style="@style/ExtendedFloatingActionButton"
+        android:layout_gravity="bottom|start"
+        android:text="@string/home_random"
+        android:textColor="?attr/textColor"
+        android:visibility="gone"
+        app:icon="@drawable/ic_baseline_play_arrow_24"
+        tools:ignore="ContentDescription"
+        tools:visibility="visible" />
+</FrameLayout>

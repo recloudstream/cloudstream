@@ -1,0 +1,33 @@
+name: Artifact Build
+
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v5
+      with:
+        distribution: temurin
+        java-version: 17
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v5
+      with:
+        cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+        cache-read-only: false
+
+    - name: Run Gradle
+      run: ./gradlew assemblePrereleaseDebug
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v6
+      with:
+        name: pull-request-build
+        path: "app/build/outputs/apk/prerelease/debug/*.apk"

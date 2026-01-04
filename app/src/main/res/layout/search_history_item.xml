@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_history_tab"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/outline_drawable_less"
+    android:focusable="true"
+    android:nextFocusRight="@id/home_history_remove"
+    android:orientation="horizontal">
+    <!-- android:foreground="?android:attr/selectableItemBackgroundBorderless"
+      -->
+    <TextView
+        android:id="@+id/home_history_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textColor="?attr/textColor"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/home_history_remove"
+        tools:text="Hello World" />
+
+    <ImageView
+        android:id="@+id/home_history_remove"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical|end"
+
+        android:background="@drawable/outline_drawable_less"
+        android:focusable="true"
+        android:nextFocusLeft="@id/home_history_tab"
+        android:padding="10dp"
+        android:src="@drawable/ic_baseline_close_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="?attr/white"
+        tools:ignore="ContentDescription" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="FlowLayout_Layout">
+        <attr name="itemSpacing" format="dimension" />
+    </declare-styleable>
+    <declare-styleable name="FlowLayout_Layout_layout_space" />
+
+    <declare-styleable name="CustomCast">
+        <attr name="customCastBackgroundColor" format="color" />
+    </declare-styleable>
+
+    <style name="customCastDefColor">
+        <item name="customCastBackgroundColor">?attr/colorPrimary</item>
+    </style>
+
+    <declare-styleable name="Focus">
+        <attr name="focusBackground" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="TestView">
+        <attr name="header_text" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="PieFetchButton">
+        <attr name="download_layout" format="reference" />
+        <attr name="download_background_progress" format="reference" />
+        <attr name="download_outline_active" format="reference" />
+        <attr name="download_outline_non_active" format="reference" />
+        <attr name="download_waiting_animation" format="reference" />
+        <attr name="download_progress_drawable" format="reference" />
+        <attr name="download_animate_waiting" format="boolean" />
+        <attr name="download_fill_color" format="color" />
+        <attr name="download_outline_color" format="color" />
+        <attr name="download_icon_color" format="color" />
+        <attr name="download_icon_scale" format="float" />
+
+        <attr name="download_fill" format="enum">
+            <enum name="clockwise" value="0" />
+            <enum name="counter_clockwise" value="1" />
+            <enum name="small_to_large" value="2" />
+            <!--<enum name="top_to_bottom" value="3" />-->
+        </attr>
+
+        <attr name="download_fill_override" format="reference" />
+
+        <attr name="download_hide_when_icon" format="boolean" />
+
+        <attr name="download_icon_init" format="reference" />
+        <attr name="download_icon_error" format="reference" />
+        <attr name="download_icon_complete" format="reference" />
+        <attr name="download_icon_active" format="reference" />
+        <attr name="download_icon_waiting" format="reference" />
+        <attr name="download_icon_removed" format="reference" />
+        <attr name="download_icon_paused" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="MainColors">
+        <attr name="colorPrimary" format="color" />
+        <attr name="colorSearch" format="color" />
+        <attr name="colorOngoing" format="color" />
+        <attr name="colorPrimaryDark" format="color" />
+
+        <attr name="primaryGrayBackground" format="color" />
+        <attr name="primaryBlackBackground" format="color" />
+        <attr name="iconGrayBackground" format="color" />
+        <attr name="boxItemBackground" format="color" />
+
+        <attr name="textColor" format="color" />
+        <attr name="grayTextColor" format="color" />
+        <attr name="iconColor" format="color" />
+        <attr name="white" format="color" />
+        <attr name="black" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="PercentageCropImageView">
+        <attr name="cropYCenterOffsetPct" format="float" />
+        <attr name="cropXCenterOffsetPct" format="float" />
+    </declare-styleable>
+</resources>

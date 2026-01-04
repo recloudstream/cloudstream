@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:focusable="false">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:animateLayoutChanges="true"
+        android:backgroundTint="@color/primaryGrayBackground"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        app:cardCornerRadius="@dimen/rounded_image_radius"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/profile_image_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.4"
+            android:contentDescription="@string/profile_background_des"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/profile_bg_teal" />
+
+        <View
+            android:id="@+id/outline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/outline_card"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/profile_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="10dp"
+            android:textColor="@color/textColor"
+            android:textSize="16sp"
+            tools:text="@string/mobile_data" />
+
+        <TextView
+            android:id="@+id/text_is_wifi"
+            style="@style/DubButton"
+            android:layout_gravity="end"
+            android:text="@string/wifi"
+            android:textColor="@color/textColor" />
+
+        <TextView
+            android:id="@+id/text_is_mobile_data"
+            style="@style/DubButton"
+            android:layout_gravity="end"
+            android:text="@string/mobile_data"
+            android:textColor="@color/textColor" />
+
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

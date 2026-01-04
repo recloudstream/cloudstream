@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/setup_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="@string/preferred_media_settings"
+        android:textSize="18sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/preferred_media_subtext" />
+
+    <ListView
+        android:id="@+id/listview1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_rowWeight="1"
+        android:layout_marginBottom="60dp"
+        android:nextFocusLeft="@id/apply_btt"
+        android:nextFocusRight="@id/cancel_btt"
+        android:paddingTop="10dp"
+        android:requiresFadingEdge="vertical"
+        tools:listitem="@layout/sort_bottom_single_choice" />
+
+    <LinearLayout
+        android:id="@+id/apply_btt_holder"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="-60dp"
+        android:gravity="bottom|end"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/next_btt"
+            style="@style/WhiteButton"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:text="@string/next" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/prev_btt"
+            style="@style/BlackButton"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:text="@string/previous" />
+    </LinearLayout>
+
+
+</LinearLayout>

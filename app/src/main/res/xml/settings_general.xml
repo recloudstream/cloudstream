@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <Preference
+        android:icon="@drawable/ic_baseline_language_24"
+        android:key="@string/locale_key"
+        android:title="@string/app_language" />
+
+    <Preference
+        android:icon="@drawable/ic_baseline_warning_24"
+        android:key="@string/legal_notice_key"
+        android:title="@string/legal_notice" />
+
+    <Preference
+        android:icon="@drawable/benene"
+        android:key="@string/benene_count"
+        android:title="@string/benene"
+        app:summary="@string/benene_des" />
+
+    <PreferenceCategory android:title="@string/title_downloads">
+
+        <Preference
+            android:icon="@drawable/netflix_download"
+            android:key="@string/download_path_key"
+            android:title="@string/download_path_pref" />
+
+        <SeekBarPreference
+            android:defaultValue="3"
+            android:icon="@drawable/arrow_or_edge_24px"
+            android:key="@string/download_parallel_key"
+            android:max="10"
+            android:summary="@string/download_parallel_settings_des"
+            android:title="@string/parallel_downloads"
+            app:adjustable="true"
+            app:min="1"
+            app:seekBarIncrement="1"
+            app:showSeekBarValue="true" />
+
+        <SeekBarPreference
+            android:defaultValue="3"
+            android:icon="@drawable/arrow_and_edge_24px"
+            android:key="@string/download_concurrent_key"
+            android:max="10"
+            android:summary="@string/concurrent_connections_settings_des"
+            android:title="@string/concurrent_connections"
+            app:adjustable="true"
+            app:min="1"
+            app:seekBarIncrement="1"
+            app:showSeekBarValue="true" />
+
+        <Preference
+            android:icon="@drawable/ic_battery"
+            android:key="@string/battery_optimisation_key"
+            android:title="@string/battery_dialog_title" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_category_bypass">
+
+        <Preference
+            android:icon="@drawable/ic_baseline_add_24"
+            android:key="@string/override_site_key"
+            android:summary="@string/add_site_summary"
+            android:title="@string/add_site_pref" />
+
+        <Preference
+            android:icon="@drawable/ic_baseline_dns_24"
+            android:key="@string/dns_key"
+            android:summary="@string/dns_pref_summary"
+            android:title="@string/dns_pref" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_github_logo"
+            android:key="@string/jsdelivr_proxy_key"
+            android:summary="@string/jsdelivr_proxy_summary"
+            android:title="@string/jsdelivr_proxy" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_category_links">
+
+        <Preference
+            android:icon="@drawable/ic_github_logo"
+            android:title="@string/github"
+            app:summary="https://github.com/recloudstream/cloudstream">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/recloudstream/cloudstream" />
+        </Preference>
+
+        <Preference
+            android:icon="@drawable/quick_novel_icon"
+            android:title="@string/lightnovel"
+            app:summary="https://github.com/LagradOst/QuickNovel">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/LagradOst/QuickNovel" />
+        </Preference>
+        <Preference
+            android:icon="@drawable/ic_baseline_discord_24"
+            android:title="@string/discord"
+            app:summary="https://discord.gg/5Hus6fM">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://discord.gg/5Hus6fM" />
+        </Preference>
+        <Preference
+            android:icon="@drawable/baseline_description_24"
+            android:title="@string/cs3wiki"
+            app:summary="https://cloudstream.miraheze.org/">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://cloudstream.miraheze.org/" />
+        </Preference>
+
+    </PreferenceCategory>
+</PreferenceScreen>

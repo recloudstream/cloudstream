@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/logcat_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="60dp"
+        tools:listitem="@layout/item_logcat" />
+
+    <HorizontalScrollView
+        android:id="@+id/apply_btt_holder"
+        android:scrollbars="none"
+        android:gravity="bottom|end"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="-60dp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/save_btt"
+                android:text="@string/sort_save"
+                android:layout_gravity="center_vertical|end"
+                android:layout_width="wrap_content"
+                android:nextFocusRight="@id/copy_btt"
+                style="@style/WhiteButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/copy_btt"
+                android:text="@string/sort_copy"
+                android:layout_gravity="center_vertical|end"
+                android:layout_width="wrap_content"
+                android:nextFocusLeft="@id/save_btt"
+                android:nextFocusRight="@id/clear_btt"
+                style="@style/BlackButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/clear_btt"
+                android:text="@string/sort_clear"
+                android:layout_gravity="center_vertical|end"
+                android:layout_width="wrap_content"
+                android:nextFocusRight="@id/close_btt"
+                android:nextFocusLeft="@id/copy_btt"
+                style="@style/BlackButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/close_btt"
+                android:text="@string/sort_close"
+                android:layout_gravity="center_vertical|end"
+                android:layout_width="wrap_content"
+                android:nextFocusLeft="@id/clear_btt"
+                style="@style/BlackButton" />
+        </LinearLayout>
+    </HorizontalScrollView>
+</LinearLayout>

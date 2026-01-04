@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/search_result_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="@drawable/outline_drawable"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/background_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:layout_marginBottom="2dp"
+            android:elevation="10dp"
+            app:cardBackgroundColor="?attr/primaryGrayBackground"
+            app:cardCornerRadius="@dimen/rounded_image_radius"
+            app:layout_constraintDimensionRatio="1:1.5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/search_poster_img_des"
+                android:duplicateParentState="true"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/example_poster" />
+
+            <TextView
+                android:id="@+id/text_quality"
+                style="@style/TypeButton" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_is_dub"
+                    style="@style/DubButton"
+                    android:layout_gravity="end" />
+
+                <TextView
+                    android:id="@+id/text_is_sub"
+                    style="@style/SubButton"
+                    android:layout_gravity="end" />
+
+
+                <TextView
+                    android:id="@+id/text_rating"
+                    style="@style/RatingButton"
+                    android:layout_gravity="end"
+                    tools:text="7.7" />
+
+                <TextView
+                    android:id="@+id/text_flag"
+                    style="@style/SearchBox"
+                    android:layout_gravity="end"
+                    android:background="@color/transparent"
+                    android:textSize="20sp"
+                    android:visibility="gone"
+                    tools:text="🇸🇪"
+                    tools:visibility="visible" />
+            </LinearLayout>
+
+            <ImageView
+                android:focusable="false"
+                android:visibility="gone"
+                android:clickable="false"
+                android:focusableInTouchMode="false"
+                android:id="@+id/title_shadow"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                tools:ignore="ContentDescription" />
+
+            <androidx.core.widget.ContentLoadingProgressBar
+                android:id="@+id/watchProgress"
+                style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="-1.5dp"
+                android:progressBackgroundTint="?attr/white"
+                android:progressTint="?attr/white"
+                android:visibility="gone"
+                tools:progress="50"
+                tools:visibility="visible" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:orientation="vertical"
+                android:paddingBottom="7dp">
+                <TextView
+                    android:id="@+id/episode_text"
+                    android:layout_width="wrap_content"
+                    style="@style/EpisodeTextButton"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/imageText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="2"
+        android:minLines="2"
+        android:paddingStart="5dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="5dp"
+        android:textColor="?attr/textColor"
+        android:textSize="13sp"
+        tools:text="The Perfect Run\nThe Perfect Run" />
+
+</LinearLayout>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:title="@string/pref_category_app_updates">
+        <Preference
+            android:title="@string/check_for_update"
+            app:icon="@drawable/ic_baseline_system_update_24"
+            app:key="@string/manual_check_update_key" />
+
+        <Preference
+            android:icon="@drawable/ic_baseline_developer_mode_24"
+            android:title="@string/install_prerelease"
+            app:key="@string/install_prerelease_key" />
+
+        <Preference
+            android:icon="@drawable/netflix_download"
+            android:key="@string/apk_installer_key"
+            android:title="@string/apk_installer_settings"
+            android:summary="@string/apk_installer_settings_des" />
+
+        <SwitchPreference
+            android:icon="@drawable/ic_baseline_notifications_active_24"
+            android:summary="@string/updates_settings_des"
+            android:title="@string/updates_settings"
+            app:defaultValue="true"
+            app:key="@string/auto_update_key" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_category_backup">
+        <Preference
+            android:icon="@drawable/baseline_save_as_24"
+            android:key="@string/backup_key"
+            android:title="@string/backup_settings" />
+
+        <Preference
+            android:icon="@drawable/baseline_save_as_24"
+            android:key="@string/automatic_backup_key"
+            android:title="@string/backup_frequency" />
+
+        <Preference
+            android:icon="@drawable/baseline_restore_page_24"
+            android:key="@string/restore_key"
+            android:title="@string/restore_settings" />
+
+        <Preference
+            android:icon="@drawable/ic_baseline_folder_open_24"
+            android:key="@string/backup_path_key"
+            android:title="@string/backup_path_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_category_extensions">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:icon="@drawable/ic_baseline_extension_24"
+            android:key="@string/auto_update_plugins_key"
+            android:title="@string/automatic_plugin_updates" />
+
+        <Preference
+            android:icon="@drawable/ic_baseline_extension_24"
+            android:key="@string/auto_download_plugins_key"
+            android:title="@string/automatic_plugin_download"
+            android:summary="@string/automatic_plugin_download_summary" />
+
+        <Preference
+            android:icon="@drawable/ic_baseline_extension_24"
+            android:key="@string/manual_update_plugins_key"
+            android:title="@string/update_plugins"
+            android:summary="@string/update_plugins_manually"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_category_actions">
+        <Preference
+            android:icon="@drawable/baseline_description_24"
+            android:key="@string/show_logcat_key"
+            android:title="@string/show_log_cat" />
+        <Preference
+            android:icon="@drawable/ic_baseline_construction_24"
+            android:title="@string/redo_setup_process"
+            app:key="@string/redo_setup_key" />
+    </PreferenceCategory>
+</PreferenceScreen>

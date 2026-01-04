@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:id="@+id/episode_holder"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:foreground="@drawable/outline_drawable"
+    app:cardBackgroundColor="@color/transparent"
+    android:focusable="true"
+    app:cardCornerRadius="@dimen/rounded_image_radius"
+    app:cardElevation="0dp">
+
+    <LinearLayout
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="5dp">
+        <!--app:cardCornerRadius="@dimen/roundedImageRadius"-->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:foreground="@drawable/outline_drawable"
+                app:cardCornerRadius="35dp">
+
+                <ImageView
+
+                    android:id="@+id/actor_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/episode_poster_img_des"
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/example_poster" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/voice_actor_image_holder"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="end|bottom"
+                android:foreground="@drawable/outline_drawable"
+                app:cardCornerRadius="20dp">
+
+                <ImageView
+                    android:id="@+id/voice_actor_image"
+                    android:layout_width="match_parent"
+
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/episode_poster_img_des"
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/example_poster" />
+            </androidx.cardview.widget.CardView>
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp">
+
+            <TextView
+                android:id="@+id/actor_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textColor="?attr/textColor"
+                android:textStyle="bold"
+                tools:text="Ackerman, Mikasa" />
+
+            <TextView
+                android:id="@+id/voice_actor_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textColor="?attr/grayTextColor"
+                tools:text="voiceactor" />
+
+            <TextView
+                android:id="@+id/actor_extra"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textColor="?attr/grayTextColor"
+                tools:text="Main" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
