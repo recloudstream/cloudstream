@@ -31,6 +31,7 @@ open class YoutubeExtractor : ExtractorApi() {
     override val mainUrl = "https://www.youtube.com"
     override val requiresReferer = false
     override val name = "YouTube"
+    private val youtubeUrl = "https://www.youtube.com"
 
     companion object {
         private val USER_AGENT =
@@ -97,7 +98,7 @@ open class YoutubeExtractor : ExtractorApi() {
         val clientVersion = config["clientVersion"]
         val visitorData = config["visitorData"]
 
-        val apiUrl = "$mainUrl/youtubei/v1/player?key=$apiKey"
+        val apiUrl = "$youtubeUrl/youtubei/v1/player?key=$apiKey"
 
         val jsonBody = """
         {
