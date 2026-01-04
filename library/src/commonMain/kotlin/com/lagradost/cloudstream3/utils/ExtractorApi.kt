@@ -233,6 +233,8 @@ import com.lagradost.cloudstream3.extractors.Techinmind
 import com.lagradost.cloudstream3.extractors.Tomatomatela
 import com.lagradost.cloudstream3.extractors.TomatomatelalClub
 import com.lagradost.cloudstream3.extractors.Tubeless
+import com.lagradost.cloudstream3.extractors.Up4FunTop
+import com.lagradost.cloudstream3.extractors.Up4Stream
 import com.lagradost.cloudstream3.extractors.Upstream
 import com.lagradost.cloudstream3.extractors.UpstreamExtractor
 import com.lagradost.cloudstream3.extractors.Uqload
@@ -266,6 +268,7 @@ import com.lagradost.cloudstream3.extractors.Vidguardto3
 import com.lagradost.cloudstream3.extractors.VidhideExtractor
 import com.lagradost.cloudstream3.extractors.Vidmoly
 import com.lagradost.cloudstream3.extractors.Vidmolyme
+import com.lagradost.cloudstream3.extractors.Vidnest
 import com.lagradost.cloudstream3.extractors.Vido
 import com.lagradost.cloudstream3.extractors.Vidstreamz
 import com.lagradost.cloudstream3.extractors.VinovoSi
@@ -1172,6 +1175,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     FlaswishCom(),
     SfastwishCom(),
     Playerwish(),
+    Vidnest(),
     EmturbovidExtractor(),
     Vtbe(),
     EPlayExtractor(),
@@ -1227,6 +1231,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     ByseVepoin(),
     ByseBuho(),
     MyVidPlay(),
+    Up4Stream(),
+    Up4FunTop()
 )
 
 

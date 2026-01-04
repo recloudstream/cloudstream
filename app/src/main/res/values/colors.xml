@@ -84,6 +84,15 @@
     <color name="LavenderGrayTextColor">#9ab3ff</color>
     <color name="LavenderIconColor">#7c3aed</color>
 
+    <!--Silent Blue Theme-->
+    <color name="SilentBluePrimaryGrayBackground">#282f49</color>
+    <color name="SilentBlueBitDarkerGrayBackground">#151a30</color>
+    <color name="SilentBlueGrayBackground">#3A446A</color>
+    <color name="SilentBlueItemBackground">#3A446A</color>
+    <color name="SilentBlueTextColor">#E0E1F3</color>
+    <color name="SilentBlueGrayTextColor">#7B83B0</color>
+    <color name="SilentBlueIconColor">#7B83B0</color>
+
     <!--Other Colors -->
     <color name="colorPrimaryBlue">#5664B7</color>
     <color name="colorPrimaryRed">#D50000</color>
