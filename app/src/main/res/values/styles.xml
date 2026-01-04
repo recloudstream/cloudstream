@@ -193,6 +193,19 @@
         <item name="colorOnPrimary">@color/DraculaTextColor</item>
     </style>
 
+
+    <style name="SilentBlueMode">
+        <item name="primaryGrayBackground">@color/SilentBluePrimaryGrayBackground</item>
+        <item name="primaryBlackBackground">@color/SilentBlueBitDarkerGrayBackground</item>
+        <item name="iconGrayBackground">@color/SilentBlueGrayBackground</item>
+        <item name="boxItemBackground">@color/SilentBlueItemBackground</item>
+        <item name="textColor">@color/SilentBlueTextColor</item>
+        <item name="iconColor">@color/SilentBlueIconColor</item>
+        <item name="white">@color/SilentBlueTextColor</item>
+        <item name="black">@color/SilentBluePrimaryGrayBackground</item>
+        <item name="colorOnPrimary">@color/SilentBlueTextColor</item>
+    </style>
+
     <style name="LavenderMode">
         <item name="primaryGrayBackground">@color/LavenderPrimaryGrayBackground</item>
         <item name="primaryBlackBackground">@color/LavenderBitDarkerGrayBackground</item>

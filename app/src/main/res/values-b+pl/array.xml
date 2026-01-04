@@ -242,6 +242,7 @@
         <item>Material You</item>
         <item>Dracula</item>
         <item>Lawendowe Marzenia</item>
+        <item>Cichy Błękit</item>
     </string-array>
     <string-array name="themes_names_values">
         <item>AmoledLight</item>
@@ -252,6 +253,7 @@
         <item>Monet</item>
         <item>Dracula</item>
         <item>Lavender</item>
+        <item>SilentBlue</item>
     </string-array>
 
     <!--https://github.com/videolan/vlc-android/blob/72ccfb93db027b49855760001d1a930fa657c5a8/application/resources/src/main/res/values/arrays.xml#L266-->
