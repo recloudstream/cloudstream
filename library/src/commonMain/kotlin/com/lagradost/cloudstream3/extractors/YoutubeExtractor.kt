@@ -13,6 +13,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import java.net.URLDecoder
 
 class YoutubeShortLinkExtractor : YoutubeExtractor() {
     override val mainUrl = "https://youtu.be"
@@ -81,16 +82,44 @@ open class YoutubeExtractor : ExtractorApi() {
             return@withContext null
         }
 
+    fun extractYouTubeId(url: String): String {
+        return when {
+            url.contains("oembed") && url.contains("url=") -> {
+                val encodedUrl = url.substringAfter("url=").substringBefore("&")
+                val decodedUrl = URLDecoder.decode(encodedUrl, "UTF-8")
+                extractYouTubeId(decodedUrl)
+            }
+
+            url.contains("attribution_link") && url.contains("u=") -> {
+                val encodedUrl = url.substringAfter("u=").substringBefore("&")
+                val decodedUrl = URLDecoder.decode(encodedUrl, "UTF-8")
+                extractYouTubeId(decodedUrl)
+            }
+
+            url.contains("watch?v=") -> url.substringAfter("watch?v=").substringBefore("&").substringBefore("#")
+            url.contains("&v=") -> url.substringAfter("&v=").substringBefore("&").substringBefore("#")
+            url.contains("youtu.be/") -> url.substringAfter("youtu.be/").substringBefore("?").substringBefore("#").substringBefore("&")
+            url.contains("/embed/") -> url.substringAfter("/embed/").substringBefore("?").substringBefore("#")
+            url.contains("/v/") -> url.substringAfter("/v/").substringBefore("?").substringBefore("#")
+            url.contains("/e/") -> url.substringAfter("/e/").substringBefore("?").substringBefore("#")
+            url.contains("/shorts/") -> url.substringAfter("/shorts/").substringBefore("?").substringBefore("#")
+            url.contains("/live/") -> url.substringAfter("/live/").substringBefore("?").substringBefore("#")
+            url.contains("/watch/") -> url.substringAfter("/watch/").substringBefore("?").substringBefore("#")
+            url.contains("watch%3Fv%3D") -> url.substringAfter("watch%3Fv%3D").substringBefore("%26").substringBefore("#")
+            url.contains("v%3D") -> url.substringAfter("v%3D").substringBefore("%26").substringBefore("#")
+            url.contains("watch%3Fv%3D") -> url.substringAfter("watch%3Fv%3D").substringBefore("%26").substringBefore("#")
+            url.contains("v%3D") -> url.substringAfter("v%3D").substringBefore("%26").substringBefore("#")
+            else -> error("No Id Found")
+        }
+    }
+
     override suspend fun getUrl(
         url: String,
         referer: String?,
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        val videoId =
-            Regex("v=([a-zA-Z0-9_-]{11})").find(url)?.groupValues?.get(1) ?: url.substringAfterLast(
-                "/"
-            )
+        val videoId = extractYouTubeId(url)
 
         val config = getPageConfig(videoId) ?: return
 
