@@ -1,12 +1,10 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.SubtitleFile
+import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.extractors.helper.JwPlayerHelper
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.utils.INFER_TYPE
-import com.lagradost.cloudstream3.utils.Qualities
-import com.lagradost.cloudstream3.utils.newExtractorLink
 
 class Lulustream1 : LuluStream() {
     override val name = "Lulustream"
@@ -42,18 +40,7 @@ open class LuluStream : ExtractorApi() {
         ).document
         post.selectFirst("script:containsData(vplayer)")?.data()
             ?.let { script ->
-                Regex("file:\"(.*)\"").find(script)?.groupValues?.get(1)?.let { link ->
-                    callback(
-                        newExtractorLink(
-                            name,
-                            name,
-                            link,
-                        ) {
-                            this.referer = mainUrl
-                            this.quality = Qualities.P1080.value
-                        }
-                    )
-                }
+                JwPlayerHelper.extractStreamLinks(script, name, mainUrl, callback, subtitleCallback)
             }
     }
 }

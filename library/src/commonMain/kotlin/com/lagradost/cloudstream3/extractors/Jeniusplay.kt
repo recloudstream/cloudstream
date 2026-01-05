@@ -3,9 +3,12 @@ package com.lagradost.cloudstream3.extractors
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.newSubtitleFile
-import com.lagradost.cloudstream3.utils.*
-import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
+import com.lagradost.cloudstream3.extractors.helper.JwPlayerHelper
+import com.lagradost.cloudstream3.utils.ExtractorApi
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.M3u8Helper
+import com.lagradost.cloudstream3.utils.getAndUnpack
+import com.lagradost.cloudstream3.utils.getPacked
 
 open class Jeniusplay : ExtractorApi() {
     override val name = "Jeniusplay"
@@ -34,28 +37,11 @@ open class Jeniusplay : ExtractorApi() {
             url,
         ).forEach(callback)
 
-
         document.select("script").map { script ->
-            if (script.data().contains("eval(function(p,a,c,k,e,d)")) {
-                val subData =
-                    getAndUnpack(script.data()).substringAfter("\"tracks\":[").substringBefore("],")
-                tryParseJson<List<Tracks>>("[$subData]")?.map { subtitle ->
-                    subtitleCallback.invoke(
-                        newSubtitleFile(
-                            getLanguage(subtitle.label ?: ""),
-                            subtitle.file
-                        )
-                    )
-                }
+            if (getPacked(script.data()) != null) {
+                val unpacked = getAndUnpack(script.data())
+                JwPlayerHelper.extractStreamLinks(unpacked, name, mainUrl, callback, subtitleCallback)
             }
-        }
-    }
-
-    private fun getLanguage(str: String): String {
-        return when {
-            str.contains("indonesia", true) || str
-                .contains("bahasa", true) -> "Indonesian"
-            else -> str
         }
     }
 
@@ -63,11 +49,5 @@ open class Jeniusplay : ExtractorApi() {
         @JsonProperty("hls") val hls: Boolean,
         @JsonProperty("videoSource") val videoSource: String,
         @JsonProperty("securedLink") val securedLink: String?,
-    )
-
-    data class Tracks(
-        @JsonProperty("kind") val kind: String?,
-        @JsonProperty("file") val file: String,
-        @JsonProperty("label") val label: String?,
     )
 }
