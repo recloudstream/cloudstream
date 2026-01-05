@@ -6,7 +6,9 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.M3u8Helper2
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
@@ -14,6 +16,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.net.URLDecoder
+
 
 class YoutubeShortLinkExtractor : YoutubeExtractor() {
     override val mainUrl = "https://youtu.be"
@@ -96,19 +99,76 @@ open class YoutubeExtractor : ExtractorApi() {
                 extractYouTubeId(decodedUrl)
             }
 
-            url.contains("watch?v=") -> url.substringAfter("watch?v=").substringBefore("&").substringBefore("#")
-            url.contains("&v=") -> url.substringAfter("&v=").substringBefore("&").substringBefore("#")
-            url.contains("youtu.be/") -> url.substringAfter("youtu.be/").substringBefore("?").substringBefore("#").substringBefore("&")
-            url.contains("/embed/") -> url.substringAfter("/embed/").substringBefore("?").substringBefore("#")
-            url.contains("/v/") -> url.substringAfter("/v/").substringBefore("?").substringBefore("#")
-            url.contains("/e/") -> url.substringAfter("/e/").substringBefore("?").substringBefore("#")
-            url.contains("/shorts/") -> url.substringAfter("/shorts/").substringBefore("?").substringBefore("#")
-            url.contains("/live/") -> url.substringAfter("/live/").substringBefore("?").substringBefore("#")
-            url.contains("/watch/") -> url.substringAfter("/watch/").substringBefore("?").substringBefore("#")
-            url.contains("watch%3Fv%3D") -> url.substringAfter("watch%3Fv%3D").substringBefore("%26").substringBefore("#")
-            url.contains("v%3D") -> url.substringAfter("v%3D").substringBefore("%26").substringBefore("#")
+            url.contains("watch?v=") -> url.substringAfter("watch?v=").substringBefore("&")
+                .substringBefore("#")
+
+            url.contains("&v=") -> url.substringAfter("&v=").substringBefore("&")
+                .substringBefore("#")
+
+            url.contains("youtu.be/") -> url.substringAfter("youtu.be/").substringBefore("?")
+                .substringBefore("#").substringBefore("&")
+
+            url.contains("/embed/") -> url.substringAfter("/embed/").substringBefore("?")
+                .substringBefore("#")
+
+            url.contains("/v/") -> url.substringAfter("/v/").substringBefore("?")
+                .substringBefore("#")
+
+            url.contains("/e/") -> url.substringAfter("/e/").substringBefore("?")
+                .substringBefore("#")
+
+            url.contains("/shorts/") -> url.substringAfter("/shorts/").substringBefore("?")
+                .substringBefore("#")
+
+            url.contains("/live/") -> url.substringAfter("/live/").substringBefore("?")
+                .substringBefore("#")
+
+            url.contains("/watch/") -> url.substringAfter("/watch/").substringBefore("?")
+                .substringBefore("#")
+
+            url.contains("watch%3Fv%3D") -> url.substringAfter("watch%3Fv%3D")
+                .substringBefore("%26").substringBefore("#")
+
+            url.contains("v%3D") -> url.substringAfter("v%3D").substringBefore("%26")
+                .substringBefore("#")
 
             else -> error("No Id Found")
+        }
+    }
+
+    fun findLanguage(lang: String): String {
+        return when {
+            lang.contains("en") -> "English"
+            lang.contains("ar") -> "Arabic"
+            lang.contains("bn") -> "Bengali"
+            lang.contains("de") -> "German"
+            lang.contains("es") -> "Spanish"
+            lang.contains("es") -> "Spanish"
+            lang.contains("fr") -> "French"
+            lang.contains("hi") -> "Hindu"
+            lang.contains("id") -> "Indonesian"
+            lang.contains("it") -> "Italian"
+            lang.contains("ja") -> "Japanese"
+            lang.contains("ko") -> "Korean"
+            lang.contains("ml") -> "Malayalam"
+            lang.contains("mr") -> "Marathi"
+            lang.contains("pa") -> "Punjabi"
+            lang.contains("pl") -> "Polish"
+            lang.contains("pt") -> "Portuguese"
+            lang.contains("ru") -> "Russian"
+            lang.contains("ta") -> "Tamil"
+            lang.contains("te") -> "Telugu"
+            lang.contains("th") -> "Thai"
+            lang.contains("tr") -> "Turkish"
+            lang.contains("vi") -> "Vietnamese"
+            lang.contains("zh") -> "Chinese"
+            else -> {
+                if (lang.isNotEmpty()) {
+                    "Unknown"
+                } else {
+                    "Original"
+                }
+            }
         }
     }
 
@@ -158,7 +218,6 @@ open class YoutubeExtractor : ExtractorApi() {
             val jsonResponse = JSONObject(response.text)
 
             /*
-
             Subtitles Not Working Help Wanted
 
              val subtitles = mapper.readValue<Captions>(response.text)
@@ -176,11 +235,52 @@ open class YoutubeExtractor : ExtractorApi() {
               */
 
             val streamingData = jsonResponse.optJSONObject("streamingData")
+            // M3u8Helper2.generateM3u8("Youtube", hlsUrl, mainUrl).forEach(callback)
 
             if (streamingData != null) {
                 val hlsUrl = streamingData.optString("hlsManifestUrl")
+                val getHls = app.get(hlsUrl, HEADERS).text
+                val multiLang = getHls.contains("AUDIO-CONTENT-ID")
 
-                M3u8Helper2.generateM3u8("Youtube", hlsUrl, mainUrl).forEach(callback)
+                val lines = getHls.lines()
+
+                for (i in 0 until lines.size - 1) {
+                    val line = lines[i].trim()
+
+                    if (line.startsWith("#EXT-X-STREAM-INF")) {
+                        val rawRes = line.substringAfter("RESOLUTION=").substringBefore(",")
+
+                        val res = if (rawRes.contains("x")) {
+                            rawRes.substringAfter("x").trim()
+                        } else {
+                            ""
+                        }
+
+                        val url = lines[i + 1].trim()
+                        if (url.isNotEmpty() && url.startsWith("http")) {
+
+                            val langString = if (multiLang && line.contains("AUDIO-CONTENT-ID")) {
+                                val lang =
+                                    line.substringAfter("AUDIO-CONTENT-ID=\"").substringBefore("\"")
+                                        .substringBefore(".")
+                                findLanguage(lang)
+                            } else {
+                                ""
+                            }
+
+                            callback.invoke(
+                                newExtractorLink(
+                                    source = "Youtube $langString",
+                                    name = "Youtube $langString",
+                                    url = url,
+                                    type = ExtractorLinkType.M3U8
+                                ) {
+                                    this.referer = "${mainUrl}/"
+                                    this.quality = getQualityFromName(res)
+                                })
+                        }
+                    }
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
