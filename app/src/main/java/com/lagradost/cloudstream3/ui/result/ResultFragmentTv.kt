@@ -918,7 +918,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                             resultTitle.isVisible = false
 
                             backgroundPosterWatermarkBadgeHolder.loadImage(
-                                imageData = UiImage.Image(d.logoUrl),
+                                imageData = UiImage.Image(d.logoUrl,headers = d.posterHeaders),
                                 builder = {
                                     listener(
                                         onSuccess = { _, _ ->

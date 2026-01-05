@@ -38,22 +38,25 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
             tools:src="@drawable/profile_bg_dark_blue" />
 
         <ImageView
-            android:id="@+id/background_poster_watermark_badge_holder"
-            android:layout_width="220dp"
-            android:layout_height="72dp"
-            android:layout_gravity="bottom|start"
-            android:layout_marginStart="32dp"
-            android:layout_marginBottom="56dp"
-            android:adjustViewBounds="true"
-            android:scaleType="fitStart"
-            android:contentDescription="@null" />
-
-        <ImageView
             android:layout_marginBottom="-1dp"
             android:layout_width="match_parent"
             android:layout_height="120dp"
             android:layout_gravity="bottom"
             android:src="@drawable/background_shadow" />
+
+        <ImageView
+            android:id="@+id/background_poster_watermark_badge_holder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="220dp"
+            android:maxHeight="72dp"
+            android:layout_gravity="bottom|start"
+            android:layout_marginStart="@dimen/result_padding"
+            android:layout_marginBottom="56dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitStart"
+            android:contentDescription="@null" />
+
     </FrameLayout>
 
     <com.facebook.shimmer.ShimmerFrameLayout

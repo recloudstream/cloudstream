@@ -804,12 +804,11 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     }
 
                     if (!d.logoUrl.isNullOrBlank()) {
-
                         backgroundPosterWatermarkBadge.isVisible = true
                         resultTitle.isVisible = false
 
                         backgroundPosterWatermarkBadge.loadImage(
-                            imageData = UiImage.Image(d.logoUrl),
+                            imageData = UiImage.Image(d.logoUrl,headers = d.posterHeaders),
                             builder = {
                                 listener(
                                     onSuccess = { _, _ ->
