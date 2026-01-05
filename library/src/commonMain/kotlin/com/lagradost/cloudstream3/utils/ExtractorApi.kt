@@ -1229,7 +1229,6 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     ByseSX(),
     ByseVepoin(),
     ByseBuho(),
-    MyVidPlay(),
     Up4Stream(),
     Up4FunTop()
 )
