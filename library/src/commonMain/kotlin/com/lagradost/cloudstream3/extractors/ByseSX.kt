@@ -116,18 +116,20 @@ open class ByseSX : ExtractorApi() {
     ) {
         val refererUrl = getBaseUrl(url)
         val playbackRoot = getPlayback(url) ?: return
-        val streamUrl  = decryptPlayback(playbackRoot.playback) ?: return
+        val streamUrl = decryptPlayback(playbackRoot.playback) ?: return
 
-
-        val headers = mapOf("Referer" to refererUrl)
-        M3u8Helper.generateM3u8(
-            name,
-            streamUrl,
-            mainUrl,
-            headers = headers
-        ).forEach(callback)
+        callback.invoke(
+            newExtractorLink(
+                source = this.name,
+                name = this.name,
+                url = streamUrl,
+                type = ExtractorLinkType.M3U8
+            ) {
+                this.referer = url
+                this.quality = Qualities.Unknown.value
+            }
+        )
     }
-}
 
 data class DetailsRoot(
     val id: Long,
