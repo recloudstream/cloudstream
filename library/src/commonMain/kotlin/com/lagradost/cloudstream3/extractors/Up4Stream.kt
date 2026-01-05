@@ -1,13 +1,13 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.api.Log
+import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.extractors.helper.JwPlayerHelper
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.JsUnpacker
-import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.fixUrl
-import com.lagradost.cloudstream3.utils.newExtractorLink
 import kotlinx.coroutines.delay
 
 class Up4FunTop : Up4Stream() {
@@ -19,12 +19,17 @@ open class Up4Stream : ExtractorApi() {
     override var mainUrl = "https://up4stream.com"
     override val requiresReferer = true
 
-    override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
+    override suspend fun getUrl(
+        url: String,
+        referer: String?,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
+    ) {
         val movieId = url.substringAfterLast("/").substringBefore(".html")
 
         // redirect from "wait 5 seconds" page to actual movie page
         val redirectResponse = app.get(url, cookies = mapOf("id" to movieId))
-        val redirectForm = redirectResponse.document.selectFirst("form[method=POST]") ?: return null
+        val redirectForm = redirectResponse.document.selectFirst("form[method=POST]") ?: return
         val redirectUrl = fixUrl(redirectForm.attr("action"))
         val redirectParams = redirectForm.select("input[type=hidden]").associate { input ->
             input.attr("name") to input.attr("value")
@@ -42,19 +47,7 @@ open class Up4Stream : ExtractorApi() {
         }
 
         JsUnpacker(extractedpack).unpack()?.let { unPacked ->
-            Regex("sources:\\[\\{file:\"(.*?)\"").find(unPacked)?.groupValues?.get(1)?.let { link ->
-                return listOf(
-                    newExtractorLink(
-                        this.name,
-                        this.name,
-                        link,
-                    ) {
-                        this.referer = referer.orEmpty()
-                        this.quality = Qualities.Unknown.value
-                    }
-                )
-            }
+            JwPlayerHelper.extractStreamLinks(unPacked, name, mainUrl, callback, subtitleCallback)
         }
-        return null
     }
 }
