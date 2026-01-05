@@ -107,8 +107,7 @@ open class YoutubeExtractor : ExtractorApi() {
             url.contains("/watch/") -> url.substringAfter("/watch/").substringBefore("?").substringBefore("#")
             url.contains("watch%3Fv%3D") -> url.substringAfter("watch%3Fv%3D").substringBefore("%26").substringBefore("#")
             url.contains("v%3D") -> url.substringAfter("v%3D").substringBefore("%26").substringBefore("#")
-            url.contains("watch%3Fv%3D") -> url.substringAfter("watch%3Fv%3D").substringBefore("%26").substringBefore("#")
-            url.contains("v%3D") -> url.substringAfter("v%3D").substringBefore("%26").substringBefore("#")
+
             else -> error("No Id Found")
         }
     }
