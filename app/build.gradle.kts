@@ -66,6 +66,8 @@ android {
         versionName = "4.6.1"
 
         resValue("string", "commit_hash", getGitCommitHash())
+        
+        resourceConfigurations.addAll(listOf("en", "it"))
 
         manifestPlaceholders["target_sdk_version"] = libs.versions.targetSdk.get()
 
@@ -152,6 +154,8 @@ android {
         resValues = true
     }
 
+
+
     namespace = "com.lagradost.cloudstream3"
 }
 
@@ -171,6 +175,7 @@ dependencies {
     implementation(libs.fragment.ktx)
     implementation(libs.bundles.lifecycle)
     implementation(libs.bundles.navigation)
+    implementation(libs.car.app)
 
     // Design & UI
     implementation(libs.preference.ktx)

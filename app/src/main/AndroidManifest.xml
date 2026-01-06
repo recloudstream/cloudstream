@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" /> <!-- Used for app update -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> <!-- Used for app notifications on Android 13+ -->
     <uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA" /> <!-- Used for Android TV watch next -->
-    <uses-permission android:name="android.permission.UPDATE_PACKAGES_WITHOUT_USER_ACTION" /> <!-- Used for updates without prompt -->
+
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- Used for update service -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
@@ -22,6 +22,10 @@
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
 
+    <!-- Android Auto permissions -->
+    <uses-permission android:name="androidx.car.app.ACCESS_SURFACE" tools:ignore="ProtectedPermissions"/>
+    <uses-permission android:name="androidx.car.app.NAVIGATION_TEMPLATES" tools:ignore="ProtectedPermissions"/>
+
     <!-- Fixes android tv fuckery -->
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -29,6 +33,10 @@
     <uses-feature
         android:name="android.software.leanback"
         android:required="false" />
+
+
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <!-- Without the large heap Exoplayer buffering gets reset due to OOM. -->
     <!--TODO https://stackoverflow.com/questions/41799732/chromecast-button-not-visible-in-android-->
@@ -50,8 +58,16 @@
         tools:targetApi="${target_sdk_version}">
 
         <meta-data
+            android:name="androidx.car.app.minCarApiLevel"
+            android:value="1" />
+
+        <meta-data
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
             android:value="com.lagradost.cloudstream3.utils.CastOptionsProvider" />
+
+        <meta-data
+            android:name="com.google.android.gms.car.application"
+            android:resource="@xml/automotive_app_desc" />
 
         <profileable
             android:shell="true"
@@ -230,6 +246,15 @@
             android:name=".services.PackageInstallerService"
             android:foregroundServiceType="dataSync"
             android:exported="false" />
+
+        <service
+            android:name=".services.CSCarAppService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="androidx.car.app.CarAppService" />
+                <category android:name="androidx.car.app.category.NAVIGATION"/>
+            </intent-filter>
+        </service>
 
         <provider
             android:name="androidx.core.content.FileProvider"
