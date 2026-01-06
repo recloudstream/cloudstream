@@ -71,15 +71,17 @@ class HomeScrollAdapter(
                 val logoUrl = item.logoUrl?.takeIf { it.isNotBlank() }
                 if (logoUrl != null) {
                     binding.homePreviewLogo.loadImage(
-                        imageData = UiImage.Image(logoUrl),
+                        imageData = UiImage.Image(logoUrl,item.posterHeaders),
                         builder = {
                             listener(
                                 onSuccess = { _, _ ->
                                     // logo really loaded
+                                    binding.homePreviewLogo.isVisible = true
                                     binding.homeScrollPreviewTitle.isVisible = false
                                 },
                                 onError = { _, _ ->
                                     // logo failed → show title
+                                    binding.homePreviewLogo.isVisible = false
                                     binding.homeScrollPreviewTitle.isVisible = true
                                 }
                             )
