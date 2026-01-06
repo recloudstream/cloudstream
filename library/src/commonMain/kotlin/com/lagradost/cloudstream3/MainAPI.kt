@@ -1748,6 +1748,7 @@ data class TrailerData(
  * @property syncData Online sync services compatible with the media.
  * @property posterHeaders headers map used by network request to get the poster.
  * @property backgroundPosterUrl Url of the media background poster.
+ * @property logoUrl Image URL used as a visual title replacement.If the logo loads successfully, it is shown instead of the text title. If the logo is null or fails to load, the text title is displayed.
  * @property contentRating content rating of the media, appears on result page.
  * @property uniqueUrl The key used for storing the persistent data about an entry.
  * On older versions `url` was used instead, but this was added to support JSON that can change as the url parameter.
