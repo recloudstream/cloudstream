@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import com.lagradost.cloudstream3.utils.newExtractorLink
 import kotlinx.coroutines.Dispatchers
@@ -136,41 +137,6 @@ open class YoutubeExtractor : ExtractorApi() {
         }
     }
 
-    fun findLanguage(lang: String): String {
-        return when {
-            lang.contains("en") -> "English"
-            lang.contains("ar") -> "Arabic"
-            lang.contains("bn") -> "Bengali"
-            lang.contains("de") -> "German"
-            lang.contains("es") -> "Spanish"
-            lang.contains("es") -> "Spanish"
-            lang.contains("fr") -> "French"
-            lang.contains("hi") -> "Hindu"
-            lang.contains("id") -> "Indonesian"
-            lang.contains("it") -> "Italian"
-            lang.contains("ja") -> "Japanese"
-            lang.contains("ko") -> "Korean"
-            lang.contains("ml") -> "Malayalam"
-            lang.contains("mr") -> "Marathi"
-            lang.contains("pa") -> "Punjabi"
-            lang.contains("pl") -> "Polish"
-            lang.contains("pt") -> "Portuguese"
-            lang.contains("ru") -> "Russian"
-            lang.contains("ta") -> "Tamil"
-            lang.contains("te") -> "Telugu"
-            lang.contains("th") -> "Thai"
-            lang.contains("tr") -> "Turkish"
-            lang.contains("vi") -> "Vietnamese"
-            lang.contains("zh") -> "Chinese"
-            else -> {
-                if (lang.isNotEmpty()) {
-                    "Unknown"
-                } else {
-                    "Original"
-                }
-            }
-        }
-    }
 
     override suspend fun getUrl(
         url: String,
@@ -263,7 +229,7 @@ open class YoutubeExtractor : ExtractorApi() {
                                 val lang =
                                     line.substringAfter("AUDIO-CONTENT-ID=\"").substringBefore("\"")
                                         .substringBefore(".")
-                                findLanguage(lang)
+                                SubtitleHelper.fromTagToEnglishLanguageName(lang)
                             } else {
                                 ""
                             }
