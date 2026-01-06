@@ -354,7 +354,7 @@ class HomeParentItemAdapterPreview(
 
                 val logoUrl = item.logoUrl?.takeIf { it.isNotBlank() }
 
-                homeBackgroundPosterWatermarkBadgeHolder.visibility = View.VISIBLE
+                homeBackgroundPosterWatermarkBadgeHolder.isVisible = false
                 homeBackgroundPosterWatermarkBadgeHolder.alpha = 0f
                 homePreviewText.isVisible = false
 
@@ -368,22 +368,24 @@ class HomeParentItemAdapterPreview(
                             listener(
                                 onSuccess = { _, _ ->
                                     // logo loaded → show logo only
+                                    homeBackgroundPosterWatermarkBadgeHolder.isVisible = true
                                     homeBackgroundPosterWatermarkBadgeHolder.alpha = 1f
                                     homePreviewText.isVisible = false
                                 },
                                 onError = { _, _ ->
                                     // logo failed → show title
-                                    homeBackgroundPosterWatermarkBadgeHolder.alpha = 0f
+                                    homeBackgroundPosterWatermarkBadgeHolder.isVisible = false
                                     homePreviewText.isVisible = true
                                 }
                             )
                         }
                     )
                 } else {
-                    // no logo at all → show title immediately
-                    homeBackgroundPosterWatermarkBadgeHolder.alpha = 0f
+                    // no logo → show title immediately
+                    homeBackgroundPosterWatermarkBadgeHolder.isVisible = false
                     homePreviewText.isVisible = true
                 }
+
 
                 homePreviewTags.isGone =
                     item.tags.isNullOrEmpty()

@@ -68,6 +68,10 @@ class HomeScrollAdapter(
                     maxLines = 2
                 }
                 binding.homeScrollPreviewTitle.text = item.name
+
+                binding.homePreviewLogo.isVisible = false
+                binding.homeScrollPreviewTitle.isVisible = false
+
                 val logoUrl = item.logoUrl?.takeIf { it.isNotBlank() }
                 if (logoUrl != null) {
                     binding.homePreviewLogo.loadImage(
