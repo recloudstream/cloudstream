@@ -7,8 +7,8 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import com.lagradost.cloudstream3.utils.HlsPlaylistParser
 import com.lagradost.cloudstream3.utils.SubtitleHelper
-import com.lagradost.cloudstream3.utils.getQualityFromName
 import com.lagradost.cloudstream3.utils.newExtractorLink
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -201,49 +201,56 @@ open class YoutubeExtractor : ExtractorApi() {
               */
 
             val streamingData = jsonResponse.optJSONObject("streamingData")
-            // M3u8Helper2.generateM3u8("Youtube", hlsUrl, mainUrl).forEach(callback)
 
             if (streamingData != null) {
                 val hlsUrl = streamingData.optString("hlsManifestUrl")
                 val getHls = app.get(hlsUrl, HEADERS).text
-                val multiLang = getHls.contains("AUDIO-CONTENT-ID")
 
-                val lines = getHls.lines()
+                val playlist = HlsPlaylistParser.parse(hlsUrl, getHls)
 
-                for (i in 0 until lines.size - 1) {
-                    val line = lines[i].trim()
+                playlist?.let { playL ->
+                    var variantIndex = 0
 
-                    if (line.startsWith("#EXT-X-STREAM-INF")) {
-                        val rawRes = line.substringAfter("RESOLUTION=").substringBefore(",")
+                    playL.tags.forEach { tag ->
+                        val trimmedTag = tag.trim()
 
-                        val res = if (rawRes.contains("x")) {
-                            rawRes.substringAfter("x").trim()
-                        } else {
-                            ""
-                        }
+                        if (trimmedTag.startsWith("#EXT-X-STREAM-INF")) {
 
-                        val url = lines[i + 1].trim()
-                        if (url.isNotEmpty() && url.startsWith("http")) {
+                            if (variantIndex < playL.variants.size) {
+                                val variant = playL.variants[variantIndex]
 
-                            val langString = if (multiLang && line.contains("AUDIO-CONTENT-ID")) {
-                                val lang =
-                                    line.substringAfter("AUDIO-CONTENT-ID=\"").substringBefore("\"")
-                                        .substringBefore(".")
-                                SubtitleHelper.fromTagToEnglishLanguageName(lang)
-                            } else {
-                                ""
+                                val audioId = trimmedTag.split(",")
+                                    .find { it.trim().startsWith("YT-EXT-AUDIO-CONTENT-ID=") }
+                                    ?.split("=")
+                                    ?.get(1)
+                                    ?.trim('"')
+
+                                val langString = if (!audioId.isNullOrEmpty()) {
+                                    val lang = audioId.substringBefore(".")
+                                    SubtitleHelper.fromTagToEnglishLanguageName(lang)
+                                } else {
+                                    ""
+                                }
+
+                                val height = variant.format.height
+
+                                val url = variant.url.toString()
+
+                                if (url.isNotEmpty()) {
+                                    callback.invoke(
+                                        newExtractorLink(
+                                            source = "Youtube $langString",
+                                            name = "Youtube $langString",
+                                            url = url,
+                                            type = ExtractorLinkType.M3U8
+                                        ) {
+                                            this.referer = "${mainUrl}/"
+                                            this.quality = height
+                                        }
+                                    )
+                                }
                             }
-
-                            callback.invoke(
-                                newExtractorLink(
-                                    source = "Youtube $langString",
-                                    name = "Youtube $langString",
-                                    url = url,
-                                    type = ExtractorLinkType.M3U8
-                                ) {
-                                    this.referer = "${mainUrl}/"
-                                    this.quality = getQualityFromName(res)
-                                })
+                            variantIndex++
                         }
                     }
                 }
@@ -255,7 +262,6 @@ open class YoutubeExtractor : ExtractorApi() {
 }
 
 /*
-
 Subtitle Data Class
 
 data class Captions(
@@ -279,5 +285,4 @@ data class CaptionTrack(
 data class LanguageName(
     val simpleText: String?
 )
-
 */
