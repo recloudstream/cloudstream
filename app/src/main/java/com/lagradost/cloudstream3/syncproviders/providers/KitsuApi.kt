@@ -1,8 +1,225 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
+
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.syncproviders.AuthData
+import com.lagradost.cloudstream3.syncproviders.AuthLoginRequirement
+import com.lagradost.cloudstream3.syncproviders.AuthLoginResponse
+import com.lagradost.cloudstream3.syncproviders.AuthToken
+import com.lagradost.cloudstream3.syncproviders.AuthUser
+import com.lagradost.cloudstream3.syncproviders.SyncAPI
+import com.lagradost.cloudstream3.syncproviders.SyncIdName
+import com.lagradost.cloudstream3.ui.SyncWatchType
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+
+class KitsuApi: SyncAPI() {
+    override var name = "Kitsu"
+    override val idPrefix = "kitsu"
+
+    private val apiUrl = "https://kitsu.io/api/edge"
+    override val hasInApp = true
+    override val mainUrl = "https://kitsu.app"
+    override val icon = R.drawable.kitsu_icon // Pending icon
+    override val syncIdName = SyncIdName.Kitsu
+    override val createAccountUrl = mainUrl
+
+    override val supportedWatchTypes = setOf(
+        SyncWatchType.WATCHING,
+        SyncWatchType.COMPLETED,
+        SyncWatchType.PLANTOWATCH,
+        SyncWatchType.DROPPED,
+        SyncWatchType.ONHOLD,
+        SyncWatchType.NONE
+    )
+
+    override val inAppLoginRequirement = AuthLoginRequirement(
+        password = true,
+        username = true,
+    )
+
+    override suspend fun login(form: AuthLoginResponse): AuthToken? {
+        val username = form.username ?: return null
+        val password = form.password ?: return null
+
+        val grantType = "password"
+
+        val token = app.post(
+            "$mainUrl/api/oauth/token",
+            data = mapOf(
+                "grant_type" to grantType,
+                "username" to username,
+                "password" to password
+            )
+        ).parsed<ResponseToken>()
+        return AuthToken(
+            accessTokenLifetime = unixTime + token.expiresIn.toLong(),
+            refreshToken = token.refreshToken,
+            accessToken = token.accessToken
+        )
+    }
+
+    override suspend fun user(token: AuthToken?): AuthUser? {
+        val user = app.get(
+            "$apiUrl/users?filter[self]=true",
+            headers = mapOf(
+                "Authorization" to "Bearer ${token?.accessToken ?: return null}"
+            ), cacheTime = 0
+        ).parsed<KitsuUser>()
+        return AuthUser(
+            id = user.data.id,
+            name = user.data.attributes.name,
+            profilePicture = user.data.attributes.avatar?.original
+        )
+    }
+
+    override suspend fun search(auth: AuthData?, query: String): List<SyncAPI.SyncSearchResult>? {
+        val auth = auth?.token?.accessToken ?: return null
+        val url = "$apiUrl/anime?filter[text]=$query&page[limit]=$KITSU_MAX_SEARCH_LIMIT"
+        val res = app.get(
+            url, headers = mapOf(
+                "Authorization" to "Bearer $auth",
+            ), cacheTime = 0
+        ).parsed<KitsuSearch>()
+        return res.data.map {
+            val attributes = it.attributes
+
+            val title = attributes.canonicalTitle ?: attributes.titles.enJp ?: attributes.titles.jaJp ?: "No title"
+
+            SyncAPI.SyncSearchResult(
+                title,
+                this.name,
+                it.id.toString(),
+                "$mainUrl/anime/${it.id}/",
+                attributes.posterImage?.large ?: attributes.posterImage?.medium
+            )
+        }
+    }
+
+    override fun urlToId(url: String): String? =
+        Regex("""/anime/((.*)/|(.*))""").find(url)!!.groupValues.first()
+
+//    override suspend fun updateStatus(
+//        auth: AuthData?,
+//        id: String,
+//        newStatus: SyncAPI.AbstractSyncStatus
+//    ): Boolean {
+//        return setScoreRequest(
+//            auth?.token ?: return false,
+//            id.toIntOrNull() ?: return false,
+//            fromIntToAnimeStatus(newStatus.status),
+//            newStatus.score?.toInt(10),
+//            newStatus.watchedEpisodes
+//        )
+//    }
+
+
+    data class ResponseToken(
+        @JsonProperty("token_type") val tokenType: String,
+        @JsonProperty("expires_in") val expiresIn: Int,
+        @JsonProperty("access_token") val accessToken: String,
+        @JsonProperty("refresh_token") val refreshToken: String,
+    )
+
+//    data class MalDatum(
+//        @JsonProperty("node") val node: MalNode,
+//        @JsonProperty("list_status") val listStatus: MalStatus,
+//    )
+
+    data class KitsuNode(
+        @JsonProperty("id") val id: Int,
+        @JsonProperty("attributes") val attributes: KitsuNodeAttributes
+        /*
+        also, but not used
+        main_picture ->
+            public string medium;
+			public string large;
+         */
+    )
+
+    data class KitsuNodeAttributes(
+        @JsonProperty("titles") val titles: KitsuTitles,
+        @JsonProperty("canonicalTitle") val canonicalTitle: String?,
+        @JsonProperty("posterImage") val posterImage: KitsuPosterImage?
+    )
+
+    data class KitsuPosterImage(
+        @JsonProperty("large") val large: String?,
+        @JsonProperty("medium") val medium: String?,
+
+    )
+
+    data class KitsuTitles(
+        @JsonProperty("en_jp") val enJp: String?,
+        @JsonProperty("ja_jp") val jaJp: String?
+    )
+
+    data class MalStatus(
+        @JsonProperty("status") val status: String,
+        @JsonProperty("score") val score: Int,
+        @JsonProperty("num_episodes_watched") val numEpisodesWatched: Int,
+        @JsonProperty("is_rewatching") val isRewatching: Boolean,
+        @JsonProperty("updated_at") val updatedAt: String,
+    )
+
+    data class KitsuUser(
+        @JsonProperty("data") val data: KitsuUserData
+    )
+
+    data class KitsuUserData(
+        @JsonProperty("attributes") val attributes: KitsuUserAttributes,
+        @JsonProperty("id") val id: Int
+    )
+
+    data class KitsuUserAttributes(
+        @JsonProperty("name") val name: String,
+        @JsonProperty("location") val location: String,
+        @JsonProperty("createdAt") val createdAt: String,
+        @JsonProperty("avatar") val avatar: KitsuUserAvatar?
+    )
+
+    data class KitsuUserAvatar(
+        @JsonProperty("original") val original: String?
+    )
+
+    data class MalMainPicture(
+        @JsonProperty("large") val large: String?,
+        @JsonProperty("medium") val medium: String?,
+    )
+
+    // Used for getDataAboutId()
+    data class SmallMalAnime(
+        @JsonProperty("id") val id: Int,
+        @JsonProperty("title") val title: String?,
+        @JsonProperty("num_episodes") val numEpisodes: Int,
+        @JsonProperty("my_list_status") val myListStatus: MalStatus?,
+        @JsonProperty("main_picture") val mainPicture: MalMainPicture?,
+    )
+
+//    data class MalSearchNode(
+//        @JsonProperty("node") val node: Node,
+//    )
+
+    data class KitsuSearchLinks(
+        @JsonProperty("first") val first: String,
+        @JsonProperty("next") val next: String?,
+        @JsonProperty("last") val last: String
+    )
+
+    data class KitsuSearch(
+        @JsonProperty("links") val links: KitsuSearchLinks,
+        @JsonProperty("data") val data: List<KitsuNode>
+        //paging
+    )
+
+    data class MalTitleHolder(
+        val status: MalStatus,
+        val id: Int,
+        val name: String,
+    )
+}
 
 // modified code from from https://github.com/saikou-app/saikou/blob/main/app/src/main/java/ani/saikou/others/Kitsu.kt
 // GNU General Public License v3.0 https://github.com/saikou-app/saikou/blob/main/LICENSE.md

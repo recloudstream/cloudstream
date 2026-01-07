@@ -27,8 +27,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
-/** max 100 via https://myanimelist.net/apiconfig/references/api/v2#tag/anime */
-const val MAL_MAX_SEARCH_LIMIT = 25
+const val KITSU_MAX_SEARCH_LIMIT = 20
 
 class MALApi : SyncAPI() {
     override var name = "MAL"
@@ -100,7 +99,7 @@ class MALApi : SyncAPI() {
 
     override suspend fun search(auth : AuthData?, query: String): List<SyncAPI.SyncSearchResult>? {
         val auth = auth?.token?.accessToken ?: return null
-        val url = "$apiUrl/v2/anime?q=$name&limit=$MAL_MAX_SEARCH_LIMIT"
+        val url = "$apiUrl/v2/anime?q=$name&limit=$KITSU_MAX_SEARCH_LIMIT"
         val res = app.get(
             url, headers = mapOf(
                 "Authorization" to "Bearer $auth",

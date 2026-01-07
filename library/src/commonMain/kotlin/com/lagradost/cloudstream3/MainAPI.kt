@@ -1793,6 +1793,8 @@ interface LoadResponse {
 
     companion object {
         var malIdPrefix = "" //malApi.idPrefix
+
+        var kitsuIdPrefix = "" //kitsuApi.idPrefix
         var aniListIdPrefix = "" //aniListApi.idPrefix
         var simklIdPrefix = "" //simklApi.idPrefix
         var isTrailersEnabled = true
