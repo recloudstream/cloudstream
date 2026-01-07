@@ -13,16 +13,16 @@ import com.lagradost.cloudstream3.syncproviders.AuthUser
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.SyncWatchType
-import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 
 class KitsuApi: SyncAPI() {
     override var name = "Kitsu"
     override val idPrefix = "kitsu"
 
     private val apiUrl = "https://kitsu.io/api/edge"
+    private val oauthUrl = "https://kitsu.io/api/oauth"
     override val hasInApp = true
     override val mainUrl = "https://kitsu.app"
-    override val icon = R.drawable.kitsu_icon // Pending icon
+    override val icon = R.drawable.kitsu_icon
     override val syncIdName = SyncIdName.Kitsu
     override val createAccountUrl = mainUrl
 
@@ -37,17 +37,17 @@ class KitsuApi: SyncAPI() {
 
     override val inAppLoginRequirement = AuthLoginRequirement(
         password = true,
-        username = true,
+        email = true
     )
 
     override suspend fun login(form: AuthLoginResponse): AuthToken? {
-        val username = form.username ?: return null
+        val username = form.email ?: return null
         val password = form.password ?: return null
 
         val grantType = "password"
 
         val token = app.post(
-            "$mainUrl/api/oauth/token",
+            "$oauthUrl/token",
             data = mapOf(
                 "grant_type" to grantType,
                 "username" to username,
@@ -57,7 +57,23 @@ class KitsuApi: SyncAPI() {
         return AuthToken(
             accessTokenLifetime = unixTime + token.expiresIn.toLong(),
             refreshToken = token.refreshToken,
-            accessToken = token.accessToken
+            accessToken = token.accessToken,
+        )
+    }
+
+    override suspend fun refreshToken(token: AuthToken): AuthToken {
+        val res = app.post(
+            "$oauthUrl/token",
+            data = mapOf(
+                "grant_type" to "refresh_token",
+                "refresh_token" to token.refreshToken!!
+            )
+        ).parsed<ResponseToken>()
+
+        return AuthToken(
+            accessToken = res.accessToken,
+            refreshToken = res.refreshToken,
+            accessTokenLifetime = unixTime + res.expiresIn.toLong()
         )
     }
 
@@ -67,11 +83,16 @@ class KitsuApi: SyncAPI() {
             headers = mapOf(
                 "Authorization" to "Bearer ${token?.accessToken ?: return null}"
             ), cacheTime = 0
-        ).parsed<KitsuUser>()
+        ).parsed<KitsuResponse>()
+
+        if (user.data.isEmpty()) {
+           return null
+        }
+
         return AuthUser(
-            id = user.data.id,
-            name = user.data.attributes.name,
-            profilePicture = user.data.attributes.avatar?.original
+            id = user.data[0].id.toInt(),
+            name = user.data[0].attributes.name,
+            profilePicture = user.data[0].attributes.avatar?.original
         )
     }
 
@@ -82,11 +103,11 @@ class KitsuApi: SyncAPI() {
             url, headers = mapOf(
                 "Authorization" to "Bearer $auth",
             ), cacheTime = 0
-        ).parsed<KitsuSearch>()
+        ).parsed<KitsuResponse>()
         return res.data.map {
             val attributes = it.attributes
 
-            val title = attributes.canonicalTitle ?: attributes.titles.enJp ?: attributes.titles.jaJp ?: "No title"
+            val title = attributes.canonicalTitle ?: attributes.titles?.enJp ?: attributes.titles?.jaJp ?: "No title"
 
             SyncAPI.SyncSearchResult(
                 title,
@@ -129,7 +150,7 @@ class KitsuApi: SyncAPI() {
 //    )
 
     data class KitsuNode(
-        @JsonProperty("id") val id: Int,
+        @JsonProperty("id") val id: String,
         @JsonProperty("attributes") val attributes: KitsuNodeAttributes
         /*
         also, but not used
@@ -140,9 +161,14 @@ class KitsuApi: SyncAPI() {
     )
 
     data class KitsuNodeAttributes(
-        @JsonProperty("titles") val titles: KitsuTitles,
+        @JsonProperty("titles") val titles: KitsuTitles?,
         @JsonProperty("canonicalTitle") val canonicalTitle: String?,
-        @JsonProperty("posterImage") val posterImage: KitsuPosterImage?
+        @JsonProperty("posterImage") val posterImage: KitsuPosterImage?,
+        /* User attributes */
+        @JsonProperty("name") val name: String?,
+        @JsonProperty("location") val location: String?,
+        @JsonProperty("createdAt") val createdAt: String?,
+        @JsonProperty("avatar") val avatar: KitsuUserAvatar?
     )
 
     data class KitsuPosterImage(
@@ -156,29 +182,13 @@ class KitsuApi: SyncAPI() {
         @JsonProperty("ja_jp") val jaJp: String?
     )
 
-    data class MalStatus(
-        @JsonProperty("status") val status: String,
-        @JsonProperty("score") val score: Int,
-        @JsonProperty("num_episodes_watched") val numEpisodesWatched: Int,
-        @JsonProperty("is_rewatching") val isRewatching: Boolean,
-        @JsonProperty("updated_at") val updatedAt: String,
-    )
-
-    data class KitsuUser(
-        @JsonProperty("data") val data: KitsuUserData
-    )
-
-    data class KitsuUserData(
-        @JsonProperty("attributes") val attributes: KitsuUserAttributes,
-        @JsonProperty("id") val id: Int
-    )
-
-    data class KitsuUserAttributes(
-        @JsonProperty("name") val name: String,
-        @JsonProperty("location") val location: String,
-        @JsonProperty("createdAt") val createdAt: String,
-        @JsonProperty("avatar") val avatar: KitsuUserAvatar?
-    )
+//    data class MalStatus(
+//        @JsonProperty("status") val status: String,
+//        @JsonProperty("score") val score: Int,
+//        @JsonProperty("num_episodes_watched") val numEpisodesWatched: Int,
+//        @JsonProperty("is_rewatching") val isRewatching: Boolean,
+//        @JsonProperty("updated_at") val updatedAt: String,
+//    )
 
     data class KitsuUserAvatar(
         @JsonProperty("original") val original: String?
@@ -190,35 +200,35 @@ class KitsuApi: SyncAPI() {
     )
 
     // Used for getDataAboutId()
-    data class SmallMalAnime(
-        @JsonProperty("id") val id: Int,
-        @JsonProperty("title") val title: String?,
-        @JsonProperty("num_episodes") val numEpisodes: Int,
-        @JsonProperty("my_list_status") val myListStatus: MalStatus?,
-        @JsonProperty("main_picture") val mainPicture: MalMainPicture?,
-    )
+//    data class SmallMalAnime(
+//        @JsonProperty("id") val id: Int,
+//        @JsonProperty("title") val title: String?,
+//        @JsonProperty("num_episodes") val numEpisodes: Int,
+//        @JsonProperty("my_list_status") val myListStatus: MalStatus?,
+//        @JsonProperty("main_picture") val mainPicture: MalMainPicture?,
+//    )
 
 //    data class MalSearchNode(
 //        @JsonProperty("node") val node: Node,
 //    )
 
     data class KitsuSearchLinks(
-        @JsonProperty("first") val first: String,
+        @JsonProperty("first") val first: String?,
         @JsonProperty("next") val next: String?,
-        @JsonProperty("last") val last: String
+        @JsonProperty("last") val last: String?
     )
 
-    data class KitsuSearch(
-        @JsonProperty("links") val links: KitsuSearchLinks,
+    data class KitsuResponse(
+        @JsonProperty("links") val links: KitsuSearchLinks?,
         @JsonProperty("data") val data: List<KitsuNode>
         //paging
     )
 
-    data class MalTitleHolder(
-        val status: MalStatus,
-        val id: Int,
-        val name: String,
-    )
+//    data class MalTitleHolder(
+//        val status: MalStatus,
+//        val id: Int,
+//        val name: String,
+//    )
 }
 
 // modified code from from https://github.com/saikou-app/saikou/blob/main/app/src/main/java/ani/saikou/others/Kitsu.kt
