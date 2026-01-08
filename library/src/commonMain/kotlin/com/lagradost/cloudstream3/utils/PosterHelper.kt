@@ -32,11 +32,11 @@ fun posterHelper(
 ): String {
     // Check the documentation on the official website.
     val domain    = "https://placehold.co"
-    val txtWidth  = width ?: 2400
-    val txtHeight = height ?: 400
+    val imgWidth  = width ?: 2400
+    val imgHeight = height ?: 400
     val bgColor   = backgroundColor?.removePrefix("#") ?: "EEE"
     val txtColor  = textColor?.removePrefix("#") ?: "31343C"
     val txtFont   = font?.lowercase()?.replace(" ","-") ?: "lato"
 
-    return "$domain/${txtWidth}x${txtHeight}/$bgColor/$txtColor.png?text=$title&font=$txtFont"
+    return "$domain/${imgWidth}x${imgHeight}/$bgColor/$txtColor.png?text=$title&font=$txtFont"
 }
