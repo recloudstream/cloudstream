@@ -4,19 +4,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.databinding.HomeScrollViewBinding
 import com.lagradost.cloudstream3.databinding.HomeScrollViewTvBinding
 import com.lagradost.cloudstream3.ui.BaseDiffCallback
 import com.lagradost.cloudstream3.ui.NoStateAdapter
 import com.lagradost.cloudstream3.ui.ViewHolderState
+import com.lagradost.cloudstream3.ui.result.ResultFragment.bindLogo
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
-import com.lagradost.cloudstream3.utils.UiImage
 
 class HomeScrollAdapter(
     val callback: ((View, Int, LoadResponse) -> Unit)
@@ -67,32 +67,14 @@ class HomeScrollAdapter(
                     isGone = item.tags.isNullOrEmpty()
                     maxLines = 2
                 }
-                binding.homeScrollPreviewTitle.text = item.name
+                binding.homeScrollPreviewTitle.text = item.name.html()
 
-                binding.homePreviewLogo.isVisible = false
-                binding.homeScrollPreviewTitle.isVisible = false
-
-                val logoUrl = item.logoUrl?.takeIf { it.isNotBlank() }
-                if (logoUrl != null) {
-                    binding.homePreviewLogo.loadImage(
-                        imageData = UiImage.Image(logoUrl,item.posterHeaders),
-                        builder = {
-                            listener(
-                                onSuccess = { _, _ ->
-                                    // logo really loaded
-                                    binding.homePreviewLogo.isVisible = true
-                                    binding.homeScrollPreviewTitle.isVisible = false
-                                },
-                                onError = { _, _ ->
-                                    // logo failed → show title
-                                    binding.homePreviewLogo.isVisible = false
-                                    binding.homeScrollPreviewTitle.isVisible = true
-                                }
-                            )
-                        }
-                    )
-                }
-
+                bindLogo(
+                    url = item.logoUrl,
+                    headers = item.posterHeaders,
+                    titleView = binding.homeScrollPreviewTitle,
+                    logoView = binding.homePreviewLogo
+                )
             }
 
             is HomeScrollViewTvBinding -> {
