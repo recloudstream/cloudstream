@@ -196,6 +196,7 @@ import com.lagradost.cloudstream3.extractors.Sobreatsesuyp
 import com.lagradost.cloudstream3.extractors.Solidfiles
 import com.lagradost.cloudstream3.extractors.Ssbstream
 import com.lagradost.cloudstream3.extractors.StreamEmbed
+import com.lagradost.cloudstream3.extractors.StreamHLS
 import com.lagradost.cloudstream3.extractors.StreamM4u
 import com.lagradost.cloudstream3.extractors.StreamSB
 import com.lagradost.cloudstream3.extractors.StreamSB1
@@ -1169,6 +1170,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Lulustream1(),
     Lulustream2(),
     StreamWishExtractor(),
+    StreamHLS(),
     BigwarpIO(),
     BigwarpArt(),
     BgwpCC(),
