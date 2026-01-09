@@ -19,13 +19,21 @@ import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MalStatusType
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
-import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
 import com.lagradost.cloudstream3.utils.txt
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
+
+const val KITSU_MAX_SEARCH_LIMIT = 20
 
 class KitsuApi: SyncAPI() {
     override var name = "Kitsu"
@@ -38,7 +46,6 @@ class KitsuApi: SyncAPI() {
     override val icon = R.drawable.kitsu_icon
     override val syncIdName = SyncIdName.Kitsu
     override val createAccountUrl = mainUrl
-    val KITSU_CACHED_LIST: String = "kitsu_cached_list"
 
     override val supportedWatchTypes = setOf(
         SyncWatchType.WATCHING,
@@ -133,14 +140,14 @@ class KitsuApi: SyncAPI() {
         }
     }
 
-    override fun urlToId(url: String): String? =
+    override fun urlToId(url: String): String =
         Regex("""/anime/((.*)/|(.*))""").find(url)!!.groupValues.first()
 
     override suspend fun library(auth : AuthData?): LibraryMetadata? {
         val list = getKitsuAnimeListSmart(auth ?: return null)?.groupBy {
             convertToStatus(it.attributes.status ?: "").stringRes
         }?.mapValues { group ->
-            group.value.map { it.toLibraryItem(auth.token) }
+            group.value.map { it.toLibraryItem() }
         } ?: emptyMap()
 
         // To fill empty lists when MAL does not return them
@@ -166,7 +173,7 @@ class KitsuApi: SyncAPI() {
 
     private suspend fun getKitsuAnimeListSmart(auth : AuthData): Array<KitsuNode>? {
         return if (requireLibraryRefresh) {
-            val list = getKitsuAnimeList(auth.token) ?: return null
+            val list = getKitsuAnimeList(auth.token, auth.user.id)
             setKey(KITSU_CACHED_LIST, auth.user.id.toString(), list)
             list
         } else {
@@ -174,29 +181,46 @@ class KitsuApi: SyncAPI() {
         }
     }
 
-    private suspend fun getKitsuAnimeList(token: AuthToken): Array<KitsuNode>? {
-        var offset = 0
+    private suspend fun getKitsuAnimeList(token: AuthToken, userId: Int): Array<KitsuNode> {
+        val urlChannel = Channel<String>(1) // Capacity 1 to not block thread on first send
+        val initUrl = "$apiUrl/library-entries?filter[userId]=$userId&filter[kind]=anime&page[limit]=100&page[offset]=0"
+        urlChannel.send(initUrl)
         val fullList = mutableListOf<KitsuNode>()
-        val offsetRegex = Regex("""offset=(\d+)""")
-        val userId = user(token)?.id ?: return null
-        while (true) {
-            val data: KitsuResponse = getKitsuAnimeListSlice(token, userId, offset) ?: break
-            fullList.addAll(data.data)
-            offset =
-                data.links?.next?.let { offsetRegex.find(it)?.groupValues?.get(1)?.toInt() }
-                    ?: break
+        val listMutex = Mutex(false)
+        coroutineScope {
+            for (url in urlChannel) {
+
+                this.launch {
+                    val data: KitsuResponse = getKitsuAnimeListSlice(token, url)
+
+                    val url = data.links?.next
+
+                    if (url == null) {
+                        urlChannel.close()
+                    } else {
+                        urlChannel.send(url)
+                    }
+
+                    data.data.asFlow().onEach {
+                        it.anime = it.getAnimeItem(token)
+                    }.collect()
+
+                    listMutex.lock()
+                    fullList.addAll(data.data)
+                    listMutex.unlock()
+                }
+
+            }
         }
+
         return fullList.toTypedArray()
     }
 
-    private suspend fun getKitsuAnimeListSlice(token: AuthToken, userId: Int, offset: Int = 0): KitsuResponse? {
-
-        val url =
-            "$apiUrl/library-entries?filter[userId]=$userId&filter[kind]=anime&page[limit]=100&page[offset]=$offset"
+    private suspend fun getKitsuAnimeListSlice(token: AuthToken, url: String): KitsuResponse {
         val res = app.get(
             url, headers = mapOf(
                 "Authorization" to "Bearer ${token.accessToken}",
-            ), cacheTime = 0
+            ), cacheTime = 1 // 1 Minute
         ).parsed<KitsuResponse>()
         return res
     }
@@ -227,10 +251,12 @@ class KitsuApi: SyncAPI() {
         @JsonProperty("attributes") val attributes: KitsuNodeAttributes,
         /* User list anime node */
         @JsonProperty("relationships") val relationships: KitsuRelationships?,
-    ) {
-        suspend fun toLibraryItem(token: AuthToken): LibraryItem {
 
-            val animeItem = getAnimeItem(token)
+        var anime: KitsuApi.KitsuAnimeData?
+    ) {
+        fun toLibraryItem(): LibraryItem {
+
+            val animeItem = this.anime
 
             val numEpisodes = animeItem?.attributes?.episodeCount
 
@@ -248,7 +274,7 @@ class KitsuApi: SyncAPI() {
             return LibraryItem(
                 canonicalTitle ?: titles?.enJp ?: titles?.jaJp.orEmpty(),
                 "https://kitsu.app/anime/${animeId}/",
-                this.id,
+                animeId ?: "0",
                 this.attributes.progress,
                 numEpisodes,
                 Score.from5(this.attributes.rating),
@@ -272,18 +298,37 @@ class KitsuApi: SyncAPI() {
             )
         }
 
-        private suspend fun getAnimeItem(token: AuthToken): KitsuNode? {
+        suspend fun getAnimeItem(token: AuthToken): KitsuAnimeData? {
 
             val url = this.relationships?.anime?.links?.related ?: return null
 
             val res = app.get(
                 url, headers = mapOf(
                     "Authorization" to "Bearer ${token.accessToken}",
-                ), cacheTime = 0).parsed<KitsuResponseUnique>()
+                ), cacheTime = 60 // 1 Hour
+                ).parsed<KitsuAnime>()
 
             return res.data
         }
     }
+
+    data class KitsuAnimeAttributes(
+        @JsonProperty("titles") val titles: KitsuTitles?,
+        @JsonProperty("canonicalTitle") val canonicalTitle: String?,
+        @JsonProperty("posterImage") val posterImage: KitsuPosterImage?,
+        @JsonProperty("synopsis") val synopsis: String?,
+        @JsonProperty("startDate") val startDate: String?,
+        @JsonProperty("episodeCount") val episodeCount: Int?,
+    )
+
+    data class KitsuAnimeData(
+        @JsonProperty("id") val id: String,
+        @JsonProperty("attributes") val attributes: KitsuAnimeAttributes,
+    )
+
+    data class KitsuAnime(
+        @JsonProperty("data") val data: KitsuAnimeData
+    )
 
     data class KitsuNodeAttributes(
         /* General attributes */
@@ -292,7 +337,7 @@ class KitsuApi: SyncAPI() {
         @JsonProperty("posterImage") val posterImage: KitsuPosterImage?,
         @JsonProperty("synopsis") val synopsis: String?,
         @JsonProperty("startDate") val startDate: String?,
-        @JsonProperty("episodeCount") val episodeCount: Int,
+        @JsonProperty("episodeCount") val episodeCount: Int?,
         /* User attributes */
         @JsonProperty("name") val name: String?,
         @JsonProperty("location") val location: String?,
@@ -346,6 +391,8 @@ class KitsuApi: SyncAPI() {
     )
 
     companion object {
+
+        const val KITSU_CACHED_LIST: String = "kitsu_cached_list"
         private fun parseDateLong(string: String?): Long? {
             return try {
                 SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault()).parse(
