@@ -46,6 +46,15 @@ import kotlin.math.roundToInt
 )
 annotation class Prerelease
 
+@Retention(AnnotationRetention.BINARY) // This is only an IDE hint, and will not be used in the runtime
+@RequiresOptIn(
+    message = "This API is marked as internal and should not be used by extensions. " +
+              "Using it could cause catastrophic build or runtime errors and may " +
+              "be changed or removed at any time.",
+    level = RequiresOptIn.Level.ERROR
+)
+annotation class InternalAPI
+
 /**
  * Defines the constant for the all languages preference, if this is set then it is
  * the equivalent of all languages being set
