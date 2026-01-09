@@ -160,7 +160,7 @@ open class YoutubeExtractor : ExtractorApi() {
                 subtitleCallback.invoke(
                     newSubtitleFile(
                         lang =caption.name.simpleText,
-                        url  ="${caption.baseUrl}&fmt=ttml"
+                        url  ="${caption.baseUrl}&fmt=ttml" // The default format is not supported
                     ) { headers = HEADERS })
             }
         }
