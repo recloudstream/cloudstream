@@ -1,12 +1,11 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.newSubtitleFile
-import com.lagradost.cloudstream3.utils.*
-import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
+import com.lagradost.cloudstream3.extractors.helper.JwPlayerHelper
+import com.lagradost.cloudstream3.utils.ExtractorApi
+import com.lagradost.cloudstream3.utils.ExtractorLink
 import kotlinx.coroutines.delay
 
 class Vidmolyme : Vidmoly() {
@@ -48,39 +47,7 @@ open class Vidmoly : ExtractorApi() {
             if(script.isNullOrEmpty())
                 delay(500)
         }
-        val videoData = script?.substringAfter("sources: [")
-            ?.substringBefore("],")?.addMarks("file")
-        val subData = script?.substringAfter("tracks: [")?.substringBefore("]")?.addMarks("file")
-            ?.addMarks("label")?.addMarks("kind")
 
-        tryParseJson<Source>(videoData)?.file?.let { m3uLink ->
-            M3u8Helper.generateM3u8(
-                name,
-                m3uLink,
-                "$mainUrl/"
-            ).forEach(callback)
-        }
-
-        tryParseJson<List<SubSource>>("[${subData}]")
-            ?.filter { it.kind == "captions" }?.map {
-                subtitleCallback.invoke(
-                    newSubtitleFile(
-                        it.label.toString(),
-                        fixUrl(it.file.toString())
-                    )
-                )
-            }
-
+        JwPlayerHelper.extractStreamLinks(script.orEmpty(), name, mainUrl, callback, subtitleCallback)
     }
-
-    private data class Source(
-        @JsonProperty("file") val file: String? = null,
-    )
-
-    private data class SubSource(
-        @JsonProperty("file") val file: String? = null,
-        @JsonProperty("label") val label: String? = null,
-        @JsonProperty("kind") val kind: String? = null,
-    )
-
 }
