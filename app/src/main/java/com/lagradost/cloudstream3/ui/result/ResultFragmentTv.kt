@@ -36,6 +36,7 @@ import com.lagradost.cloudstream3.ui.player.ExtractorLinkGenerator
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.NEXT_WATCH_EPISODE_PERCENTAGE
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
+import com.lagradost.cloudstream3.ui.result.ResultFragment.bindLogo
 import com.lagradost.cloudstream3.ui.result.ResultFragment.getStoredData
 import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_FOCUSED
@@ -547,7 +548,8 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         observe(viewModel.trailers) { trailersLinks ->
             context?.updateHasTrailers()
             if (!LoadResponse.isTrailersEnabled) return@observe
-            val extractedTrailerLinks = trailersLinks.flatMap{ it.mirros }.map{ (extractedTrailerLink,_) -> extractedTrailerLink }
+            val extractedTrailerLinks = trailersLinks.flatMap { it.mirros }
+                .map { (extractedTrailerLink, _) -> extractedTrailerLink }
             binding.apply {
                 resultPlayTrailer.isGone = extractedTrailerLinks.isEmpty()
                 resultPlayTrailerButton.setOnClickListener {
@@ -912,33 +914,12 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                             error { getImageFromDrawable(context ?: return@error null, error) }
                         }
 
-                        if (!d.logoUrl.isNullOrBlank()) {
-
-                            backgroundPosterWatermarkBadgeHolder.isVisible = true
-                            resultTitle.isVisible = false
-
-                            backgroundPosterWatermarkBadgeHolder.loadImage(
-                                imageData = UiImage.Image(d.logoUrl,headers = d.posterHeaders),
-                                builder = {
-                                    listener(
-                                        onSuccess = { _, _ ->
-                                            backgroundPosterWatermarkBadgeHolder.isVisible = true
-                                            resultTitle.isVisible = false
-                                        },
-                                        onError = { _, _ ->
-                                            backgroundPosterWatermarkBadgeHolder.isVisible = false
-                                            resultTitle.isVisible = true
-                                        }
-                                    )
-                                }
-                            )
-
-                        } else {
-                            backgroundPosterWatermarkBadgeHolder.isVisible = false
-                            resultTitle.isVisible = true
-                        }
-
-
+                        bindLogo(
+                            url = d.logoUrl,
+                            headers = d.posterHeaders,
+                            titleView = resultTitle,
+                            logoView = backgroundPosterWatermarkBadgeHolder
+                        )
 
                         comingSoon = d.comingSoon
                         resultTvComingSoon.isVisible = d.comingSoon

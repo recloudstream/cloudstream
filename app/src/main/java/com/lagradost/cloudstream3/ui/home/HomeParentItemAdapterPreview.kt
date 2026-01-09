@@ -39,6 +39,7 @@ import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountEditDialog
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
 import com.lagradost.cloudstream3.ui.account.AccountViewModel
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
+import com.lagradost.cloudstream3.ui.result.ResultFragment.bindLogo
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.result.getId
@@ -58,7 +59,6 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectSt
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarMargin
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarView
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
-import com.lagradost.cloudstream3.utils.UiImage
 
 class HomeParentItemAdapterPreview(
     val fragment: LifecycleOwner,
@@ -352,40 +352,12 @@ class HomeParentItemAdapterPreview(
                 )
 
 
-                val logoUrl = item.logoUrl?.takeIf { it.isNotBlank() }
-
-                homeBackgroundPosterWatermarkBadgeHolder.isVisible = false
-                homeBackgroundPosterWatermarkBadgeHolder.alpha = 0f
-                homePreviewText.isVisible = false
-
-                if (logoUrl != null) {
-                    homeBackgroundPosterWatermarkBadgeHolder.loadImage(
-                        imageData = UiImage.Image(
-                            logoUrl,
-                            headers = item.posterHeaders
-                        ),
-                        builder = {
-                            listener(
-                                onSuccess = { _, _ ->
-                                    // logo loaded → show logo only
-                                    homeBackgroundPosterWatermarkBadgeHolder.isVisible = true
-                                    homeBackgroundPosterWatermarkBadgeHolder.alpha = 1f
-                                    homePreviewText.isVisible = false
-                                },
-                                onError = { _, _ ->
-                                    // logo failed → show title
-                                    homeBackgroundPosterWatermarkBadgeHolder.isVisible = false
-                                    homePreviewText.isVisible = true
-                                }
-                            )
-                        }
-                    )
-                } else {
-                    // no logo → show title immediately
-                    homeBackgroundPosterWatermarkBadgeHolder.isVisible = false
-                    homePreviewText.isVisible = true
-                }
-
+                bindLogo(
+                    url = item.logoUrl,
+                    headers = item.posterHeaders,
+                    titleView = homePreviewText,
+                    logoView = homeBackgroundPosterWatermarkBadgeHolder
+                )
 
                 homePreviewTags.isGone =
                     item.tags.isNullOrEmpty()
