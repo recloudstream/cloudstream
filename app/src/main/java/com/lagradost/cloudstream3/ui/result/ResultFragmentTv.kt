@@ -60,12 +60,14 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
+import com.lagradost.cloudstream3.utils.UiImage
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
+import com.lagradost.cloudstream3.utils.txt
 
 class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
-    BaseFragment.BindingCreator.Inflate(FragmentResultTvBinding::inflate)
+    BindingCreator.Inflate(FragmentResultTvBinding::inflate)
 ) {
 
     private lateinit var viewModel: ResultViewModel2
@@ -160,7 +162,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                 // very dirty selection
                 resultRecommendationsFilterSelection.isVisible = apiNames.size > 1
                 resultRecommendationsFilterSelection.update(apiNames.map {
-                    com.lagradost.cloudstream3.utils.txt(
+                    txt(
                         it
                     ) to it
                 })
@@ -605,10 +607,10 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         } else R.string.favorite_removed
 
                         val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                            ?: com.lagradost.cloudstream3.utils.txt(R.string.no_data)
+                            ?: txt(R.string.no_data)
                                 .asStringNull(context) ?: ""
                         CommonActivity.showToast(
-                            com.lagradost.cloudstream3.utils.txt(
+                            txt(
                                 message,
                                 name
                             ), Toast.LENGTH_SHORT
@@ -646,10 +648,10 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         } else R.string.subscription_deleted
 
                         val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                            ?: com.lagradost.cloudstream3.utils.txt(R.string.no_data)
+                            ?: txt(R.string.no_data)
                                 .asStringNull(context) ?: ""
                         CommonActivity.showToast(
-                            com.lagradost.cloudstream3.utils.txt(
+                            txt(
                                 message,
                                 name
                             ), Toast.LENGTH_SHORT
@@ -909,6 +911,35 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         backgroundPoster.loadImage(d.posterBackgroundImage) {
                             error { getImageFromDrawable(context ?: return@error null, error) }
                         }
+
+                        if (!d.logoUrl.isNullOrBlank()) {
+
+                            backgroundPosterWatermarkBadgeHolder.isVisible = true
+                            resultTitle.isVisible = false
+
+                            backgroundPosterWatermarkBadgeHolder.loadImage(
+                                imageData = UiImage.Image(d.logoUrl,headers = d.posterHeaders),
+                                builder = {
+                                    listener(
+                                        onSuccess = { _, _ ->
+                                            backgroundPosterWatermarkBadgeHolder.isVisible = true
+                                            resultTitle.isVisible = false
+                                        },
+                                        onError = { _, _ ->
+                                            backgroundPosterWatermarkBadgeHolder.isVisible = false
+                                            resultTitle.isVisible = true
+                                        }
+                                    )
+                                }
+                            )
+
+                        } else {
+                            backgroundPosterWatermarkBadgeHolder.isVisible = false
+                            resultTitle.isVisible = true
+                        }
+
+
+
                         comingSoon = d.comingSoon
                         resultTvComingSoon.isVisible = d.comingSoon
 

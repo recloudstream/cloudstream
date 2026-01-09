@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.databinding.HomeScrollViewBinding
 import com.lagradost.cloudstream3.databinding.HomeScrollViewTvBinding
@@ -15,6 +16,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
+import com.lagradost.cloudstream3.utils.UiImage
 
 class HomeScrollAdapter(
     val callback: ((View, Int, LoadResponse) -> Unit)
@@ -66,6 +68,31 @@ class HomeScrollAdapter(
                     maxLines = 2
                 }
                 binding.homeScrollPreviewTitle.text = item.name
+
+                binding.homePreviewLogo.isVisible = false
+                binding.homeScrollPreviewTitle.isVisible = false
+
+                val logoUrl = item.logoUrl?.takeIf { it.isNotBlank() }
+                if (logoUrl != null) {
+                    binding.homePreviewLogo.loadImage(
+                        imageData = UiImage.Image(logoUrl,item.posterHeaders),
+                        builder = {
+                            listener(
+                                onSuccess = { _, _ ->
+                                    // logo really loaded
+                                    binding.homePreviewLogo.isVisible = true
+                                    binding.homeScrollPreviewTitle.isVisible = false
+                                },
+                                onError = { _, _ ->
+                                    // logo failed → show title
+                                    binding.homePreviewLogo.isVisible = false
+                                    binding.homeScrollPreviewTitle.isVisible = true
+                                }
+                            )
+                        }
+                    )
+                }
+
             }
 
             is HomeScrollViewTvBinding -> {

@@ -86,6 +86,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.setListViewHeightBasedOnItems
 import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
+import com.lagradost.cloudstream3.utils.UiImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
@@ -161,6 +162,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
     }
 
     private fun loadTrailer(index: Int? = null) {
+
         val isSuccess =
             currentTrailers.getOrNull(index ?: currentTrailerIndex)?.let { (extractedTrailerLink,_) ->
                 context?.let { ctx ->
@@ -189,6 +191,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         // result_trailer_loading?.isVisible = isSuccess
         val turnVis = !isSuccess && !isFullScreenPlayer
         resultBinding?.apply {
+            resultTitle.isVisible = isSuccess
             resultSmallscreenHolder.isVisible = turnVis
             resultPosterBackgroundHolder.apply {
                 val fadeIn: Animation = AlphaAnimation(alpha, if (turnVis) 1.0f else 0.0f).apply {
@@ -799,6 +802,32 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                             )
                         }
                     }
+
+                    if (!d.logoUrl.isNullOrBlank()) {
+                        backgroundPosterWatermarkBadge.isVisible = true
+                        resultTitle.isVisible = false
+
+                        backgroundPosterWatermarkBadge.loadImage(
+                            imageData = UiImage.Image(d.logoUrl,headers = d.posterHeaders),
+                            builder = {
+                                listener(
+                                    onSuccess = { _, _ ->
+                                        backgroundPosterWatermarkBadge.isVisible = true
+                                        resultTitle.isVisible = false
+                                    },
+                                    onError = { _, _ ->
+                                        backgroundPosterWatermarkBadge.isVisible = false
+                                        resultTitle.isVisible = true
+                                    }
+                                )
+                            }
+                        )
+
+                    } else {
+                        backgroundPosterWatermarkBadge.isVisible = false
+                        resultTitle.isVisible = true
+                    }
+
 
                     var isExpanded = false
                     resultDescription.apply {
