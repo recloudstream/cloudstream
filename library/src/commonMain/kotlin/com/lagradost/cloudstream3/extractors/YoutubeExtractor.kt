@@ -1,21 +1,19 @@
 // Made For cs-kraptor By @trup40, @kraptor123, @ByAyzen
 package com.lagradost.cloudstream3.extractors
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.newSubtitleFile
+import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.HlsPlaylistParser
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.newExtractorLink
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONObject
 import java.net.URLDecoder
 
 
@@ -31,7 +29,6 @@ class YoutubeNoCookieExtractor : YoutubeExtractor() {
     override val mainUrl = "https://www.youtube-nocookie.com"
 }
 
-
 open class YoutubeExtractor : ExtractorApi() {
     override val mainUrl = "https://www.youtube.com"
     override val requiresReferer = false
@@ -39,7 +36,7 @@ open class YoutubeExtractor : ExtractorApi() {
     private val youtubeUrl = "https://www.youtube.com"
 
     companion object {
-        private val USER_AGENT =
+        private const val USER_AGENT =
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15"
         private val HEADERS = mapOf(
             "User-Agent" to USER_AGENT,
@@ -48,43 +45,23 @@ open class YoutubeExtractor : ExtractorApi() {
     }
 
 
-    private fun extractYtCfg(html: String): JSONObject? {
-        try {
-            val regex = Regex("""ytcfg\.set\(\s*(\{.*?\})\s*\)\s*;""")
-            val match = regex.find(html)
-            if (match != null) {
-                return JSONObject(match.groupValues[1])
-            }
-        } catch (e: Exception) {
-            logError(e)
-        }
-        return null
+    private fun extractYtCfg(html: String): String? {
+        val regex = Regex("""ytcfg\.set\(\s*(\{.*?\})\s*\)\s*;""")
+        val match = regex.find(html)
+        return match?.groupValues?.getOrNull(1)
     }
 
-    private suspend fun getPageConfig(videoId: String? = null): Map<String, String>? =
-        withContext(Dispatchers.IO) {
-            try {
-                val url = if (videoId != null) "$mainUrl/watch?v=$videoId" else mainUrl
-                val response = app.get(url, headers = HEADERS)
-                val html = response.text
-                val ytCfg = extractYtCfg(html) ?: return@withContext null
+    data class PageConfig(
+        @JsonProperty("INNERTUBE_API_KEY")
+        val apiKey: String,
+        @JsonProperty("INNERTUBE_CLIENT_VERSION")
+        val clientVersion: String = "2.20240725.01.00",
+        @JsonProperty("VISITOR_DATA")
+        val visitorData: String = ""
+    )
 
-                val apiKey = ytCfg.optString("INNERTUBE_API_KEY")
-                val clientVersion = ytCfg.optString("INNERTUBE_CLIENT_VERSION", "2.20240725.01.00")
-                val visitorData = ytCfg.optString("VISITOR_DATA", "")
-
-                if (apiKey.isNotEmpty()) {
-                    return@withContext mapOf(
-                        "apiKey" to apiKey,
-                        "clientVersion" to clientVersion,
-                        "visitorData" to visitorData
-                    )
-                }
-            } catch (e: Exception) {
-                logError(e)
-            }
-            return@withContext null
-        }
+    private suspend fun getPageConfig(videoId: String): PageConfig? =
+        tryParseJson(extractYtCfg(app.get("$mainUrl/watch?v=$videoId", headers = HEADERS).text))
 
     fun extractYouTubeId(url: String): String {
         return when {
@@ -145,14 +122,7 @@ open class YoutubeExtractor : ExtractorApi() {
         callback: (ExtractorLink) -> Unit
     ) {
         val videoId = extractYouTubeId(url)
-
         val config = getPageConfig(videoId) ?: return
-
-        val apiKey = config["apiKey"]
-        val clientVersion = config["clientVersion"]
-        val visitorData = config["visitorData"]
-
-        val apiUrl = "$youtubeUrl/youtubei/v1/player?key=$apiKey"
 
         val jsonBody = """
         {
@@ -161,8 +131,8 @@ open class YoutubeExtractor : ExtractorApi() {
                     "hl": "en",
                     "gl": "US",
                     "clientName": "WEB",
-                    "clientVersion": "$clientVersion",
-                    "visitorData": "$visitorData",
+                    "clientVersion": "${config.clientVersion}",
+                    "visitorData": "${config.visitorData}",
                     "platform": "DESKTOP",
                     "userAgent": "$USER_AGENT"
                 }
@@ -174,115 +144,136 @@ open class YoutubeExtractor : ExtractorApi() {
                 }
             }
         }
-        """
+        """.toRequestBody("application/json; charset=utf-8".toMediaType())
 
-        try {
-            val mediaType = "application/json; charset=utf-8".toMediaType()
-            val requestBody = jsonBody.toRequestBody(mediaType)
+        val response =
+            app.post(
+                "$youtubeUrl/youtubei/v1/player?key=${config.apiKey}",
+                headers = HEADERS,
+                requestBody = jsonBody
+            ).parsed<Root>()
 
-            val response = app.post(apiUrl, headers = HEADERS, requestBody = requestBody)
-            val jsonResponse = JSONObject(response.text)
+        for (caption in response.captions.playerCaptionsTracklistRenderer.captionTracks) {
+            subtitleCallback.invoke(
+                newSubtitleFile(
+                    caption.name.simpleText,
+                    "${caption.baseUrl}&fmt=ttml" // The default format is not supported
+                ) { headers = HEADERS })
+        }
 
-            /*
-            Subtitles Not Working Help Wanted
+        val hlsUrl = response.streamingData.hlsManifestUrl
+        val getHls = app.get(hlsUrl, headers = HEADERS).text
+        val playlist = HlsPlaylistParser.parse(hlsUrl, getHls) ?: return
 
-             val subtitles = mapper.readValue<Captions>(response.text)
-
-              subtitles.captions.playerCaptionsTracklistRenderer.captionTracks?.forEach { subtitle ->
-                  val url = subtitle.baseUrl ?: ""
-                  val lang = subtitle.name?.simpleText ?: ""
-                  subtitleCallback.invoke(newSubtitleFile(
-                      lang = lang, url = url
-                  ) {
-                  this.headers = HEADERS
-                  })
-              }
-
-              */
-
-            val streamingData = jsonResponse.optJSONObject("streamingData")
-
-            if (streamingData != null) {
-                val hlsUrl = streamingData.optString("hlsManifestUrl")
-                val getHls = app.get(hlsUrl, HEADERS).text
-
-                val playlist = HlsPlaylistParser.parse(hlsUrl, getHls)
-
-                playlist?.let { playL ->
-                    var variantIndex = 0
-
-                    playL.tags.forEach { tag ->
-                        val trimmedTag = tag.trim()
-
-                        if (trimmedTag.startsWith("#EXT-X-STREAM-INF")) {
-
-                            if (variantIndex < playL.variants.size) {
-                                val variant = playL.variants[variantIndex]
-
-                                val audioId = trimmedTag.split(",")
-                                    .find { it.trim().startsWith("YT-EXT-AUDIO-CONTENT-ID=") }
-                                    ?.split("=")
-                                    ?.get(1)
-                                    ?.trim('"')
-
-                                val langString = if (!audioId.isNullOrEmpty()) {
-                                    val lang = audioId.substringBefore(".")
-                                    SubtitleHelper.fromTagToEnglishLanguageName(lang)
-                                } else {
-                                    ""
-                                }
-
-                                val height = variant.format.height
-
-                                val url = variant.url.toString()
-
-                                if (url.isNotEmpty()) {
-                                    callback.invoke(
-                                        newExtractorLink(
-                                            source = "Youtube $langString",
-                                            name = "Youtube $langString",
-                                            url = url,
-                                            type = ExtractorLinkType.M3U8
-                                        ) {
-                                            this.referer = "${mainUrl}/"
-                                            this.quality = height
-                                        }
-                                    )
-                                }
-                            }
-                            variantIndex++
-                        }
-                    }
-                }
+        var variantIndex = 0
+        for (tag in playlist.tags) {
+            val trimmedTag = tag.trim()
+            if (!trimmedTag.startsWith("#EXT-X-STREAM-INF")) {
+                continue
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
+            val variant = playlist.variants.getOrNull(variantIndex++) ?: continue
+
+            val audioId = trimmedTag.split(",")
+                .find { it.trim().startsWith("YT-EXT-AUDIO-CONTENT-ID=") }
+                ?.split("=")
+                ?.get(1)
+                ?.trim('"') ?: ""
+
+            val langString =
+                SubtitleHelper.fromTagToEnglishLanguageName(
+                    audioId.substringBefore(".")
+                ) ?: SubtitleHelper.fromTagToEnglishLanguageName(
+                    audioId.substringBefore("-")
+                ) ?: audioId
+
+            val url = variant.url.toString()
+
+            if (url.isBlank()) {
+                continue
+            }
+
+            callback.invoke(
+                newExtractorLink(
+                    source = this.name,
+                    name = "Youtube${if (langString.isNotBlank()) " $langString" else ""}",
+                    url = url,
+                    type = ExtractorLinkType.M3U8
+                ) {
+                    this.referer = "${mainUrl}/"
+                    this.quality = variant.format.height
+                }
+            )
         }
     }
+
+
+    private data class Root(
+        // val responseContext: ResponseContext,
+        // val playabilityStatus: PlayabilityStatus,
+        @JsonProperty("streamingData")
+        val streamingData: StreamingData,
+        // val playbackTracking: PlaybackTracking,
+        @JsonProperty("captions")
+        val captions: Captions,
+        // val videoDetails: VideoDetails,
+        // val annotations: List<Annotation>,
+        // val playerConfig: PlayerConfig,
+        // val storyboards: Storyboards,
+        // val microformat: Microformat,
+        // val cards: Cards,
+        // val trackingParams: String,
+        // val endscreen: Endscreen,
+        // val paidContentOverlay: PaidContentOverlay,
+        // val adPlacements: List<AdPlacement>,
+        // val adBreakHeartbeatParams: String,
+        // val frameworkUpdates: FrameworkUpdates,
+    )
+
+    private data class StreamingData(
+        //val expiresInSeconds: String,
+        //val formats: List<Format>,
+        //val adaptiveFormats: List<AdaptiveFormat>,
+        @JsonProperty("hlsManifestUrl")
+        val hlsManifestUrl: String,
+        //val serverAbrStreamingUrl: String,
+    )
+
+    private data class Captions(
+        @JsonProperty("playerCaptionsTracklistRenderer")
+        val playerCaptionsTracklistRenderer: PlayerCaptionsTracklistRenderer,
+    )
+
+    private data class PlayerCaptionsTracklistRenderer(
+        @JsonProperty("captionTracks")
+        val captionTracks: List<CaptionTrack>,
+        //val audioTracks: List<AudioTrack>,
+        //val translationLanguages: List<TranslationLanguage>,
+        //@JsonProperty("defaultAudioTrackIndex")
+        //val defaultAudioTrackIndex: Long,
+    )
+
+    private data class CaptionTrack(
+        @JsonProperty("baseUrl")
+        val baseUrl: String,
+        @JsonProperty("name")
+        val name: Name,
+        //val vssId: String,
+        //val languageCode: String,
+        //val kind: String?,
+        //val isTranslatable: Boolean,
+        //val trackName: String,
+    )
+
+    private data class Name(
+        @JsonProperty("simpleText")
+        val simpleText: String,
+    )
+
+// data class AudioTrack(
+//     val captionTrackIndices: List<Long>,
+//     val defaultCaptionTrackIndex: Long,
+//     val hasDefaultTrack: Boolean,
+//     val audioTrackId: String,
+//     val captionsInitialState: String,
+// )
 }
-
-/*
-Subtitle Data Class
-
-data class Captions(
-    val captions: PlayerCaptions
-)
-
-data class PlayerCaptions(
-    val playerCaptionsTracklistRenderer: CaptionsTracklistRenderer
-)
-
-data class CaptionsTracklistRenderer(
-    val captionTracks: List<CaptionTrack>?
-)
-
-data class CaptionTrack(
-    val baseUrl: String?,
-    val name: LanguageName?,
-    val languageCode: String?
-)
-
-data class LanguageName(
-    val simpleText: String?
-)
-*/
