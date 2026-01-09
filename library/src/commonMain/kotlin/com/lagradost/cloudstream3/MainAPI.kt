@@ -1774,9 +1774,9 @@ interface LoadResponse {
     var comingSoon: Boolean
     var syncData: MutableMap<String, String>
     var posterHeaders: Map<String, String>?
+    var backgroundPosterUrl: String?
 
     @Prerelease
-    var backgroundPosterUrl: String?
     var logoUrl: String?
     var contentRating: String?
 
