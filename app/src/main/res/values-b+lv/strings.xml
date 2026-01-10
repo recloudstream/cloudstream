@@ -408,7 +408,7 @@
     <string name="view_public_repositories_button">Skatīt kopienas repozitorijus</string>
     <string name="view_public_repositories_button_short">Publiskais saraksts</string>
     <string name="uppercase_all_subtitles">Visi subtitri ar lielajiem burtiem</string>
-    <string name="download_all_plugins_from_repo">Uzmanību: CloudStream 3 neuzņemas nekādu atbildību par trešo pušu papildinājumu izmantošanu un nesniedz nekādu tā atbalstu!</string>
+    <string name="download_all_plugins_from_repo">Uzmanību: CloudStream neuzņemas nekādu atbildību par trešo pušu papildinājumu izmantošanu un nesniedz nekādu tā atbalstu!</string>
     <string name="single_plugin_disabled" formatted="true">%s (atspējots)</string>
     <string name="tracks">Tracks</string>
     <string name="audio_tracks">Audio dziesmas</string>
@@ -594,4 +594,6 @@
     <string name="no_subtitles_loaded">Neviens subtitrs vēl nav ielādēts</string>
     <string name="all_subtitles_bold">Padarīt visus subtitrus treknrakstā</string>
     <string name="all_subtitles_italic">Padarīt visus subtitrus slīprakstā</string>
+    <string name="speed_setting_summary">Pievieno atskaņošanas ātruma izvēli atskaņotājā</string>
+    <string name="delete_format" formatted="true">Dzēst (%1$d | %2$s)</string>
 </resources>

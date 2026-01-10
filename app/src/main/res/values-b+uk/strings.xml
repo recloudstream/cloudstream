@@ -458,7 +458,7 @@
     <string name="plugin_deleted">Розширення видалено</string>
     <string name="is_adult">18+</string>
     <string name="audio_tracks">Аудіодоріжки</string>
-    <string name="download_all_plugins_from_repo">Застереження: CloudStream 3 не несе жодної відповідальності за використання сторонніх розширень і не надає жодного підтримування для них!</string>
+    <string name="download_all_plugins_from_repo">Увага: CloudStream не несе жодної відповідальності за використання сторонніх розширень і не надає жодної підтримки для них!</string>
     <string name="player_pref">Бажаний відеопрогравач</string>
     <string name="safe_mode_title">Увімкнено безпечний режим</string>
     <string name="extension_authors">Автори</string>
