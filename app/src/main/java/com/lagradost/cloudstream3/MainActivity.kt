@@ -1667,7 +1667,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
         navController.addOnDestinationChangedListener { _: NavController, navDestination: NavDestination, bundle: Bundle? ->
             if (FirestoreSyncManager.isEnabled(this@MainActivity)) {
-                FirestoreSyncManager.pushAllLocalData(this@MainActivity)
+                FirestoreSyncManager.syncNow(this@MainActivity)
             }
             // Intercept search and add a query
             updateNavBar(navDestination)
