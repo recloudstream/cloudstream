@@ -658,12 +658,12 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
                  // If Deletion is NEWER than Alive Update -> KILL
                  if (delTime >= alive.updateTime) {
                      log("CRDT: Killing Zombie ResumeWatching $id")
-                     com.lagradost.cloudstream3.CloudStreamApp.removeKey("${DataStoreHelper.currentAccount}/$com.lagradost.cloudstream3.utils.DataStoreHelper.RESULT_RESUME_WATCHING", id)
+                     com.lagradost.cloudstream3.CloudStreamApp.removeKey("${DataStoreHelper.currentAccount}/$RESULT_RESUME_WATCHING", id)
                      // Ensure tombstone is up to date
                      DataStoreHelper.setLastWatchedDeletionTime(id.toIntOrNull(), delTime) 
                  } else {
                      // Alive is newer. Re-vivified. Un-delete locally if deleted record exists.
-                     com.lagradost.cloudstream3.CloudStreamApp.removeKey("${DataStoreHelper.currentAccount}/$com.lagradost.cloudstream3.utils.DataStoreHelper.RESULT_RESUME_WATCHING_DELETED", id)
+                     com.lagradost.cloudstream3.CloudStreamApp.removeKey("${DataStoreHelper.currentAccount}/$RESULT_RESUME_WATCHING_DELETED", id)
                  }
              } else {
                  // Ensure tombstone is present locally
