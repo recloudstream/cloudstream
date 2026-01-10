@@ -38,10 +38,10 @@ class SyncSettingsFragment : BaseFragment<FragmentSyncSettingsBinding>(
         }
 
         binding?.syncNowBtn?.setOnClickListener {
-            showToast("Sync started...")
-            FirestoreSyncManager.pushAllLocalData(requireContext())
+            showToast("Syncing...")
+            FirestoreSyncManager.pushAllLocalData(requireContext(), immediate = true)
             // Brief delay to allow sync to happen then update UI
-            view?.postDelayed({ updateStatusUI() }, 2000)
+            view?.postDelayed({ updateStatusUI() }, 1000)
         }
 
         binding.syncCopyLogsBtn.setOnClickListener {
@@ -83,9 +83,9 @@ class SyncSettingsFragment : BaseFragment<FragmentSyncSettingsBinding>(
         )
         
         FirestoreSyncManager.initialize(requireContext(), config)
-        showToast("Connecting to Firebase...")
-        // Delay update to allow initialization to start
-        view?.postDelayed({ updateStatusUI() }, 3000)
+        showToast("Initial sync started...")
+        // Faster update since initial sync is now immediate
+        view?.postDelayed({ updateStatusUI() }, 1500)
     }
 
     private fun updateStatusUI() {

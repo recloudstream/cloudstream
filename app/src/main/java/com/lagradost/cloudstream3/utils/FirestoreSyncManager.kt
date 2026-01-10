@@ -201,7 +201,7 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
                 context.setKey(FIREBASE_ENABLED, true)
 
                 // Start initial sync
-                handleInitialSync(context)
+                handleInitialSync(context, isFullReload = true)
                 // Start listening for changes (Mirroring)
                 setupRealtimeListener(context)
                 
@@ -219,24 +219,24 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
         }
     }
 
-    private fun handleInitialSync(context: Context) {
+    private fun handleInitialSync(context: Context, isFullReload: Boolean) {
         val currentUserId = userId
         val currentDb = db
         if (currentUserId == null || currentDb == null) {
             log("Cannot handle initial sync: userId or db is null")
             return
         }
-        log("Starting initial sync for user: $currentUserId")
+        log("Starting initial sync for user: $currentUserId (FullReload=$isFullReload)")
         
         val userDoc = currentDb.collection(SYNC_COLLECTION).document(currentUserId)
         
         userDoc.get().addOnSuccessListener { document ->
             if (document.exists()) {
                 log("Remote data exists. Applying to local.")
-                applyRemoteData(context, document)
+                applyRemoteData(context, document, isFullReload = isFullReload)
             } else {
                 log("Remote database is empty. Uploading local data as baseline.")
-                pushAllLocalData(context)
+                pushAllLocalData(context, immediate = true)
             }
         }.addOnFailureListener { e ->
             log("Initial sync FAILED: ${e.message}")
@@ -272,7 +272,7 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
             if (snapshot != null && snapshot.exists()) {
                 Log.d(TAG, "Current data: ${snapshot.data}")
                 scope.launch {
-                    applyRemoteData(context, snapshot)
+                    applyRemoteData(context, snapshot, isFullReload = false)
                 }
             }
         }
@@ -311,16 +311,20 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
 
     private var debounceJob: Job? = null
 
-    fun pushAllLocalData(context: Context) {
+    fun pushAllLocalData(context: Context, immediate: Boolean = false) {
         if (isInitializing.get()) {
             log("Sync is initializing, skipping immediate push.")
             return
         }
 
         debounceJob?.cancel()
-        debounceJob = scope.launch {
-            delay(5000) // Debounce for 5 seconds
-            performPushAllLocalData(context)
+        if (immediate) {
+             scope.launch { performPushAllLocalData(context) }
+        } else {
+            debounceJob = scope.launch {
+                delay(5000) // Debounce for 5 seconds
+                performPushAllLocalData(context)
+            }
         }
     }
 
@@ -331,8 +335,8 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
         if (!isEnabled(context) || !isConnected) return
         
         scope.launch {
-            // 1. Immediate Pull
-            handleInitialSync(context)
+            // 1. Immediate Pull (Differential, no full reload)
+            handleInitialSync(context, isFullReload = false)
             // 2. Immediate Push
             performPushAllLocalData(context)
         }
@@ -429,7 +433,7 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
         return data
     }
 
-    private fun applyRemoteData(context: Context, snapshot: DocumentSnapshot) {
+    private fun applyRemoteData(context: Context, snapshot: DocumentSnapshot, isFullReload: Boolean) {
         val remoteData = snapshot.data ?: return
         val lastSyncTime = getLastSyncTime(context) ?: 0L
 
@@ -442,11 +446,17 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
         applyResumeWatching(context, remoteData)
         applyIndividualKeys(context, remoteData)
         
-        // Use bookmarksUpdatedEvent as a general "data refreshed" signal for the UI
-        // HomeViewModel listens to this and reloads both Continue Watching and Bookmarks.
+        // Multi-event update for full data alignment (only on initial sync or manual setup)
+        if (isFullReload) {
+            MainActivity.reloadHomeEvent(true)
+            MainActivity.reloadLibraryEvent(true)
+            MainActivity.reloadAccountEvent(true)
+        }
+        
+        // Always signal bookmarks/resume updates for targeted UI refreshes
         MainActivity.bookmarksUpdatedEvent(true)
         
-        log("Remote data alignment finished successfully.")
+        log("Remote data alignment finished successfully (FullReload=$isFullReload).")
     }
 
     private fun applyIndividualKeys(context: Context, remoteData: Map<String, Any?>) {
@@ -473,8 +483,10 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
                     editor.putString(key, value)
                     hasChanges = true
                     
-                    // Specific check for homepage/provider related changes
-                    if (key.contains("home") || key.contains("pinned_providers")) {
+                    // Specific check for homepage provider change (Mirroring)
+                    // We ONLY reload the full home if the selected provider for the CURRENT account changes.
+                    val activeHomeKey = "${DataStoreHelper.currentAccount}/$USER_SELECTED_HOMEPAGE_API"
+                    if (key == activeHomeKey) {
                         providerChanged = true
                     }
                     
