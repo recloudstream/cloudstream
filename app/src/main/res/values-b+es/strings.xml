@@ -719,4 +719,11 @@
     <string name="bottom_left">Inferior izquierda</string>
     <string name="bottom_center">Inferior central</string>
     <string name="bottom_right">Inferior derecho</string>
+    <string name="top_center">Arriba centrado</string>
+    <string name="top_right">Arriba derecha</string>
+    <string name="play_full_series_button">Reproducir toda la serie</string>
+    <string name="install_prerelease">Instalar version pre-lanzamiento</string>
+    <string name="prerelease_already_installed">Pre-lanzamiento ya está instalada.</string>
+    <string name="prerelease_install_failed">La instalación pre-lanzamiento ha fallado.</string>
+    <string name="show_episode_text">Texto del episodio</string>
 </resources>

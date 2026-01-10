@@ -742,4 +742,8 @@
     <string name="top_right">Sağ üst</string>
     <string name="subs_subtitle_alignment">Altyazı Hizalama</string>
     <string name="play_full_series_button">Tüm Seriyi Oynat</string>
+    <string name="install_prerelease">Ön sürümünü yükleyin</string>
+    <string name="prerelease_already_installed">Ön sürüm zaten indirilmiş.</string>
+    <string name="prerelease_install_failed">Ön sürüm indirmesi başarısız oldu.</string>
+    <string name="show_episode_text">Bölüm Başlığı</string>
 </resources>
