@@ -120,6 +120,7 @@ data class ResultData(
 
     val posterImage: String?,
     val posterBackgroundImage: String?,
+    val logoUrl: String?,
     val plotText: UiText,
     val apiName: UiText,
     val ratingText: UiText?,
@@ -245,6 +246,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
                 plot!!
             ),
         backgroundPosterUrl = backgroundPosterUrl,
+        logoUrl = logoUrl,
         title = name,
         typeText = txt(
             when (type) {
@@ -1895,6 +1897,7 @@ class ResultViewModel2 : ViewModel() {
                     // set posters, might fuck up due to headers idk
                     posterUrl = posterUrl ?: res?.image
                     backgroundPosterUrl = backgroundPosterUrl ?: res?.cover
+                    logoUrl = logoUrl
                 },
                 {
                     if (meta == null) return@runAllAsync
@@ -2695,6 +2698,7 @@ class ResultViewModel2 : ViewModel() {
         override var syncData: MutableMap<String, String> = mutableMapOf(),
         override var posterHeaders: Map<String, String>? = null,
         override var backgroundPosterUrl: String? = null,
+        override var logoUrl: String? = null,
         override var contentRating: String? = null,
         override var uniqueUrl: String = url,
         val id: Int?,

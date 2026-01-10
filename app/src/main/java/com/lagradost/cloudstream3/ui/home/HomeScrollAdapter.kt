@@ -10,10 +10,12 @@ import com.lagradost.cloudstream3.databinding.HomeScrollViewTvBinding
 import com.lagradost.cloudstream3.ui.BaseDiffCallback
 import com.lagradost.cloudstream3.ui.NoStateAdapter
 import com.lagradost.cloudstream3.ui.ViewHolderState
+import com.lagradost.cloudstream3.ui.result.ResultFragment.bindLogo
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 
 class HomeScrollAdapter(
@@ -65,7 +67,14 @@ class HomeScrollAdapter(
                     isGone = item.tags.isNullOrEmpty()
                     maxLines = 2
                 }
-                binding.homeScrollPreviewTitle.text = item.name
+                binding.homeScrollPreviewTitle.text = item.name.html()
+
+                bindLogo(
+                    url = item.logoUrl,
+                    headers = item.posterHeaders,
+                    titleView = binding.homeScrollPreviewTitle,
+                    logoView = binding.homePreviewLogo
+                )
             }
 
             is HomeScrollViewTvBinding -> {

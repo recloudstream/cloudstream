@@ -39,6 +39,7 @@ import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountEditDialog
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
 import com.lagradost.cloudstream3.ui.account.AccountViewModel
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
+import com.lagradost.cloudstream3.ui.result.ResultFragment.bindLogo
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.result.getId
@@ -348,6 +349,14 @@ class HomeParentItemAdapterPreview(
                     homePreviewTags,
                     item.tags?.take(6) ?: emptyList(),
                     R.style.ChipFilledSemiTransparent
+                )
+
+
+                bindLogo(
+                    url = item.logoUrl,
+                    headers = item.posterHeaders,
+                    titleView = homePreviewText,
+                    logoView = homeBackgroundPosterWatermarkBadgeHolder
                 )
 
                 homePreviewTags.isGone =
