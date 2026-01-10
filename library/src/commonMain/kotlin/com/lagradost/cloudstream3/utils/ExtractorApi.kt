@@ -18,6 +18,7 @@ import com.lagradost.cloudstream3.extractors.BigwarpArt
 import com.lagradost.cloudstream3.extractors.BigwarpIO
 import com.lagradost.cloudstream3.extractors.Blogger
 import com.lagradost.cloudstream3.extractors.BullStream
+import com.lagradost.cloudstream3.extractors.BuzzServer
 import com.lagradost.cloudstream3.extractors.ByseSX
 import com.lagradost.cloudstream3.extractors.Bysezejataos
 import com.lagradost.cloudstream3.extractors.ByseBuho
@@ -800,14 +801,15 @@ enum class Qualities(var value: Int, val defaultPriority: Int) {
 }
 
 fun getQualityFromName(qualityName: String?): Int {
-    if (qualityName == null)
-        return Qualities.Unknown.value
-
-    val match = qualityName.lowercase().replace("p", "").trim()
-    return when (match) {
-        "4k" -> Qualities.P2160
-        else -> null
-    }?.value ?: match.toIntOrNull() ?: Qualities.Unknown.value
+    return when (qualityName?.lowercase()) {
+        "4k", "2160", "2160p" -> Qualities.P2160.value
+        "1440", "1440p" -> Qualities.P1440.value
+        "1080", "1080p" -> Qualities.P1080.value
+        "720", "720p" -> Qualities.P720.value
+        "480", "480p" -> Qualities.P480.value
+        "360", "360p" -> Qualities.P360.value
+        else -> Qualities.Unknown.value
+    }
 }
 
 private val packedRegex = Regex("""eval\(function\(p,a,c,k,e,.*\)\)""")
@@ -1085,6 +1087,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Fembed9hd(),
     StreamM4u(),
     Krakenfiles(),
+    BuzzServer(),
     Gofile(),
     Vicloud(),
     Uservideo(),
