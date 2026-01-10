@@ -411,8 +411,20 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
 
     private fun applyRemoteData(context: Context, snapshot: DocumentSnapshot) {
         val remoteData = snapshot.data ?: return
+        val lastSyncTime = getLastSyncTime(context) ?: 0L
+
+        applySettings(context, remoteData)
+        applyDataStoreDump(context, remoteData)
+        applyRepositories(context, remoteData)
+        applyAccounts(context, remoteData)
+        applyHomeSettings(context, remoteData)
+        applyPlugins(context, remoteData, lastSyncTime)
+        applyResumeWatching(context, remoteData)
         
-        // 1. Apply Settings
+        log("Remote data alignment finished successfully.")
+    }
+
+    private fun applySettings(context: Context, remoteData: Map<String, Any?>) {
         (remoteData[SETTINGS_SYNC_KEY] as? String)?.let { json ->
             try {
                 val settingsMap = parseJson<Map<String, Any?>>(json)
@@ -441,8 +453,9 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
                 }
             } catch (e: Exception) { log("Failed to apply settings: ${e.message}") }
         }
+    }
 
-        // 2. Apply Generic DataStore Keys (Resume Watching, etc.)
+    private fun applyDataStoreDump(context: Context, remoteData: Map<String, Any?>) {
         (remoteData[DATA_STORE_DUMP_KEY] as? String)?.let { json ->
             try {
                 val dataStoreMap = parseJson<Map<String, Any?>>(json)
@@ -465,8 +478,9 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
                 }
             } catch (e: Exception) { log("Failed to apply DataStore dump: ${e.message}") }
         }
+    }
 
-        // 3. Apply Repositories
+    private fun applyRepositories(context: Context, remoteData: Map<String, Any?>) {
         (remoteData[REPOSITORIES_KEY] as? String)?.let { json ->
             try {
                 val current = context.getSharedPrefs().getString(REPOSITORIES_KEY, null)
@@ -478,8 +492,9 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
                 }
             } catch (e: Exception) { log("Failed to apply repos: ${e.message}") }
         }
+    }
 
-        // 4. Apply Accounts
+    private fun applyAccounts(context: Context, remoteData: Map<String, Any?>) {
         (remoteData[ACCOUNTS_KEY] as? String)?.let { json ->
             try {
                 val current = context.getSharedPrefs().getString(ACCOUNTS_KEY, null)
@@ -493,8 +508,9 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
                 }
             } catch (e: Exception) { log("Failed to apply accounts: ${e.message}") }
         }
+    }
 
-        // 5. Apply Home Settings
+    private fun applyHomeSettings(context: Context, remoteData: Map<String, Any?>) {
         (remoteData["home_settings"] as? String)?.let { json ->
             try {
                 val homeMap = parseJson<Map<String, Any?>>(json)
@@ -523,8 +539,9 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
                 }
             } catch (e: Exception) { log("Failed to apply home settings: ${e.message}") }
         }
+    }
 
-        // 6. Apply Plugins with CRDT Strategy
+    private fun applyPlugins(context: Context, remoteData: Map<String, Any?>, lastSyncTime: Long) {
         (remoteData["plugins_online"] as? String)?.let { json ->
             try {
                 // Parse lists
@@ -536,8 +553,6 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
                 val remoteMap = remoteList.associateBy { it.internalName }
                 val localMap = localList.associateBy { it.internalName }
                 val allKeys = (remoteMap.keys + localMap.keys).toSet()
-
-                val lastSyncTime = getLastSyncTime(context) ?: 0L
 
                 val mergedList = allKeys.mapNotNull { key ->
                     val remote = remoteMap[key]
@@ -602,7 +617,9 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
                 }
             } catch (e: Exception) { log("Failed to apply plugins: ${e.message}") }
         }
-        // 7. Apply Resume Watching (CRDT)
+    }
+
+    private fun applyResumeWatching(context: Context, remoteData: Map<String, Any?>) {
         val remoteResumeJson = remoteData["resume_watching"] as? String
         val remoteDeletedJson = remoteData["resume_watching_deleted"] as? String
         
@@ -667,7 +684,5 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
                  
              } catch(e: Exception) { log("Failed to apply resume watching: ${e.message}") }
         }
-        
-        log("Remote data alignment finished successfully.")
     }
 }
