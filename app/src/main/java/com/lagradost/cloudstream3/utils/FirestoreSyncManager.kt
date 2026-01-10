@@ -640,49 +640,63 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
                      maxOf(remoteDeleted[key] ?: 0L, localDeletedMap[key] ?: 0L)
                  }
 
-                 // 2. Identify Zombies (Local Alive but Merged Deleted is newer)
-                 mergedDeleted.forEach { (id, delTime) ->
-                     val alive = localAliveMap[id]
-                     if (alive != null) {
-                         // If Deletion is NEWER than Alive Update -> KILL
-                         if (delTime >= alive.updateTime) {
-                             log("CRDT: Killing Zombie ResumeWatching $id")
-                             com.lagradost.cloudstream3.CloudStreamApp.removeKey("${DataStoreHelper.currentAccount}/$RESULT_RESUME_WATCHING", id)
-                             // Ensure tombstone is up to date
-                             DataStoreHelper.setLastWatchedDeletionTime(id.toIntOrNull(), delTime) 
-                         } else {
-                             // Alive is newer. Re-vivified. Un-delete locally if deleted record exists.
-                             com.lagradost.cloudstream3.CloudStreamApp.removeKey("${DataStoreHelper.currentAccount}/$RESULT_RESUME_WATCHING_DELETED", id)
-                         }
-                     } else {
-                         // Ensure tombstone is present locally
-                         DataStoreHelper.setLastWatchedDeletionTime(id.toIntOrNull(), delTime)
-                     }
-                 }
-
-                 // 3. Process Remote Alive
-                 remoteAlive.forEach { remoteItem ->
-                     val id = remoteItem.parentId.toString()
-                     val delTime = mergedDeleted[id] ?: 0L
-                     
-                     // If Remote Alive is OLDER than Deletion -> Ignore (it's dead)
-                     if (remoteItem.updateTime <= delTime) return@forEach
-
-                     val localItem = localAliveMap[id]
-                     if (localItem == null) {
-                         // New Item!
-                         log("CRDT: Adding ResumeWatching $id")
-                         DataStoreHelper.setLastWatched(remoteItem.parentId, remoteItem.episodeId, remoteItem.episode, remoteItem.season, remoteItem.isFromDownload, remoteItem.updateTime)
-                     } else {
-                         // Conflict: LWW (Timestamp)
-                         if (remoteItem.updateTime > localItem.updateTime) {
-                             log("CRDT: Updating ResumeWatching $id (Remote Newer)")
-                             DataStoreHelper.setLastWatched(remoteItem.parentId, remoteItem.episodeId, remoteItem.episode, remoteItem.season, remoteItem.isFromDownload, remoteItem.updateTime)
-                         }
-                     }
-                 }
+                 handleResumeZombies(mergedDeleted, localAliveMap)
+                 handleResumeAlive(remoteAlive, mergedDeleted, localAliveMap)
                  
              } catch(e: Exception) { log("Failed to apply resume watching: ${e.message}") }
         }
+    }
+
+    private fun handleResumeZombies(
+        mergedDeleted: Map<String, Long>, 
+        localAliveMap: Map<String, VideoDownloadHelper.ResumeWatching>
+    ) {
+         // 2. Identify Zombies (Local Alive but Merged Deleted is newer)
+         mergedDeleted.forEach { (id, delTime) ->
+             val alive = localAliveMap[id]
+             if (alive != null) {
+                 // If Deletion is NEWER than Alive Update -> KILL
+                 if (delTime >= alive.updateTime) {
+                     log("CRDT: Killing Zombie ResumeWatching $id")
+                     com.lagradost.cloudstream3.CloudStreamApp.removeKey("${DataStoreHelper.currentAccount}/$com.lagradost.cloudstream3.utils.DataStoreHelper.RESULT_RESUME_WATCHING", id)
+                     // Ensure tombstone is up to date
+                     DataStoreHelper.setLastWatchedDeletionTime(id.toIntOrNull(), delTime) 
+                 } else {
+                     // Alive is newer. Re-vivified. Un-delete locally if deleted record exists.
+                     com.lagradost.cloudstream3.CloudStreamApp.removeKey("${DataStoreHelper.currentAccount}/$com.lagradost.cloudstream3.utils.DataStoreHelper.RESULT_RESUME_WATCHING_DELETED", id)
+                 }
+             } else {
+                 // Ensure tombstone is present locally
+                 DataStoreHelper.setLastWatchedDeletionTime(id.toIntOrNull(), delTime)
+             }
+         }
+    }
+
+    private fun handleResumeAlive(
+        remoteAlive: List<VideoDownloadHelper.ResumeWatching>,
+        mergedDeleted: Map<String, Long>,
+        localAliveMap: Map<String, VideoDownloadHelper.ResumeWatching>
+    ) {
+         // 3. Process Remote Alive
+         remoteAlive.forEach { remoteItem ->
+             val id = remoteItem.parentId.toString()
+             val delTime = mergedDeleted[id] ?: 0L
+             
+             // If Remote Alive is OLDER than Deletion -> Ignore (it's dead)
+             if (remoteItem.updateTime <= delTime) return@forEach
+
+             val localItem = localAliveMap[id]
+             if (localItem == null) {
+                 // New Item!
+                 log("CRDT: Adding ResumeWatching $id")
+                 DataStoreHelper.setLastWatched(remoteItem.parentId, remoteItem.episodeId, remoteItem.episode, remoteItem.season, remoteItem.isFromDownload, remoteItem.updateTime)
+             } else {
+                 // Conflict: LWW (Timestamp)
+                 if (remoteItem.updateTime > localItem.updateTime) {
+                     log("CRDT: Updating ResumeWatching $id (Remote Newer)")
+                     DataStoreHelper.setLastWatched(remoteItem.parentId, remoteItem.episodeId, remoteItem.episode, remoteItem.season, remoteItem.isFromDownload, remoteItem.updateTime)
+                 }
+             }
+         }
     }
 }
