@@ -475,8 +475,10 @@ object DataStoreHelper {
     }
 
     fun deleteAllResumeStateIds() {
-        val folder = "$currentAccount/$RESULT_RESUME_WATCHING"
-        removeKeys(folder)
+        val ids = getAllResumeStateIds()
+        ids?.forEach { id ->
+            removeLastWatched(id)
+        }
     }
 
     fun deleteBookmarkedData(id: Int?) {

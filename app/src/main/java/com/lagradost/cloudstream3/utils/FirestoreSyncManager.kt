@@ -324,6 +324,20 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
         }
     }
 
+    /**
+     * Forces an immediate push and pull of all data without debouncing.
+     */
+    fun syncNow(context: Context) {
+        if (!isEnabled(context) || !isConnected) return
+        
+        scope.launch {
+            // 1. Immediate Pull
+            handleInitialSync(context)
+            // 2. Immediate Push
+            performPushAllLocalData(context)
+        }
+    }
+
     private suspend fun performPushAllLocalData(context: Context) {
         log("Pushing all local data (background)...")
         val currentUserId = userId
@@ -376,7 +390,7 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
         // 3. Accounts (DataStore rebuild_preference)
         data[ACCOUNTS_KEY] = context.getSharedPrefs().getString(ACCOUNTS_KEY, null)
 
-        // 4. Generic DataStore Keys (Resume Watching, Watch State, etc.)
+        // 4. Generic DataStore Keys (Watch State, etc.)
         // This captures everything in the DataStore preferences that we haven't explicitly handled
         val dataStoreMap = context.getSharedPrefs().all.filter { (key, value) ->
             !sensitiveKeys.contains(key) && 
@@ -385,14 +399,20 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
             key != PLUGINS_KEY &&
             !key.contains(RESULT_RESUME_WATCHING) &&
             !key.contains(RESULT_RESUME_WATCHING_DELETED) &&
+            !key.contains("home") && // Exclude home settings from dump
+            !key.contains("pinned_providers") && // Exclude pinned providers
             value is String // DataStore saves as JSON Strings
         }
         data[DATA_STORE_DUMP_KEY] = dataStoreMap.toJson()
 
-        // 5. Home Settings (Search for home related keys in DataStore)
-        val homeKeys = context.getKeys("home")
-        val homeData = homeKeys.associateWith { context.getSharedPrefs().all[it] }
-        data["home_settings"] = homeData.toJson()
+        // 5. Explicit Individual Keys (Homepage, Pinned, etc.)
+        // We push these to the root for better visibility and to avoid blob conflicts
+        val rootIndividualKeys = context.getSharedPrefs().all.filter { (key, _) ->
+            key.contains("home") || key.contains("pinned_providers")
+        }
+        rootIndividualKeys.forEach { (key, value) ->
+            data[key] = value
+        }
 
         // 6. Plugins (Online ones)
         data["plugins_online"] = context.getSharedPrefs().getString(PLUGINS_KEY, null)
@@ -417,11 +437,58 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
         applyDataStoreDump(context, remoteData)
         applyRepositories(context, remoteData)
         applyAccounts(context, remoteData)
-        applyHomeSettings(context, remoteData)
+        // applyHomeSettings(context, remoteData) // Deprecated: replaced by individual key sync
         applyPlugins(context, remoteData, lastSyncTime)
         applyResumeWatching(context, remoteData)
+        applyIndividualKeys(context, remoteData)
+        
+        // Use bookmarksUpdatedEvent as a general "data refreshed" signal for the UI
+        // HomeViewModel listens to this and reloads both Continue Watching and Bookmarks.
+        MainActivity.bookmarksUpdatedEvent(true)
         
         log("Remote data alignment finished successfully.")
+    }
+
+    private fun applyIndividualKeys(context: Context, remoteData: Map<String, Any?>) {
+        val reservedKeys = setOf(
+            SETTINGS_SYNC_KEY, DATA_STORE_DUMP_KEY, ACCOUNTS_KEY, REPOSITORIES_KEY, 
+            "home_settings", "plugins_online", "resume_watching", "resume_watching_deleted", 
+            "last_sync", FIREBASE_API_KEY, FIREBASE_PROJECT_ID, FIREBASE_APP_ID, FIREBASE_ENABLED, FIREBASE_LAST_SYNC
+        )
+
+        val prefs = context.getSharedPrefs()
+        val editor = prefs.edit()
+        var hasChanges = false
+        var providerChanged = false
+
+        remoteData.forEach { (key, value) ->
+            // Skip reserved keys and timestamp keys
+            if (reservedKeys.contains(key) || key.endsWith("_updated")) return@forEach
+            
+            // Only process String values (DataStore convention)
+            if (value is String) {
+                // Check if local value is different
+                val localValue = prefs.getString(key, null)
+                if (localValue != value) {
+                    editor.putString(key, value)
+                    hasChanges = true
+                    
+                    // Specific check for homepage/provider related changes
+                    if (key.contains("home") || key.contains("pinned_providers")) {
+                        providerChanged = true
+                    }
+                    
+                    log("Applied individual key: $key")
+                }
+            }
+        }
+        
+        if (hasChanges) {
+            editor.apply()
+            if (providerChanged) {
+                MainActivity.reloadHomeEvent(true) 
+            }
+        }
     }
 
     private fun applySettings(context: Context, remoteData: Map<String, Any?>) {
@@ -449,7 +516,9 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
                 if (hasChanges) {
                     editor.apply()
                     log("Settings applied (changed).")
-                    MainActivity.reloadHomeEvent(true)
+                    // Full reload only if plugin settings might have changed 
+                    // (keeping it for safety here but user said only plugin change)
+                    // MainActivity.reloadHomeEvent(true) 
                 }
             } catch (e: Exception) { log("Failed to apply settings: ${e.message}") }
         }
@@ -510,36 +579,13 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
         }
     }
 
+    // Deprecated: Homepage settings are now synced as individual root keys
+    // to avoid conflicts with blobs and ensure real-time updates.
+    /*
     private fun applyHomeSettings(context: Context, remoteData: Map<String, Any?>) {
-        (remoteData["home_settings"] as? String)?.let { json ->
-            try {
-                val homeMap = parseJson<Map<String, Any?>>(json)
-                val prefs = context.getSharedPrefs()
-                val editor = prefs.edit()
-                var hasChanges = false
-
-                homeMap.forEach { (key, value) ->
-                    val currentVal = prefs.all[key]
-                    if (currentVal != value) {
-                        hasChanges = true
-                        when (value) {
-                            is Boolean -> editor.putBoolean(key, value)
-                            is Int -> editor.putInt(key, value)
-                            is String -> editor.putString(key, value)
-                            is Float -> editor.putFloat(key, value)
-                            is Long -> editor.putLong(key, value)
-                        }
-                    }
-                }
-                
-                if (hasChanges) {
-                    editor.apply()
-                    log("Home settings applied (changed).")
-                    MainActivity.reloadHomeEvent(true)
-                }
-            } catch (e: Exception) { log("Failed to apply home settings: ${e.message}") }
-        }
+        ...
     }
+    */
 
     private fun applyPlugins(context: Context, remoteData: Map<String, Any?>, lastSyncTime: Long) {
         (remoteData["plugins_online"] as? String)?.let { json ->
