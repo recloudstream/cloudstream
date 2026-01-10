@@ -63,6 +63,7 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogTe
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
+import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.txt
 import qrcode.QRCode
@@ -485,6 +486,11 @@ class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
                     return@setOnPreferenceClickListener true
                 }
             }
+        }
+
+        getPref(R.string.firebase_sync_key)?.setOnPreferenceClickListener {
+            activity?.navigate(R.id.global_to_navigation_sync_settings)
+            true
         }
     }
 }

@@ -29,6 +29,11 @@
             android:icon="@drawable/subdl_logo_big"
             android:key="@string/subdl_key" />
 
+        <Preference
+            android:icon="@drawable/ic_baseline_cloud_queue_24"
+            android:key="@string/firebase_sync_key"
+            android:title="@string/firebase_sync" />
+
         <SwitchPreference
             android:defaultValue="false"
             android:icon="@drawable/ic_outline_account_circle_24"

@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.plugins.PluginManager.unloadPlugin
 import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
+import com.lagradost.cloudstream3.utils.FirestoreSyncManager
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.BufferedInputStream
@@ -169,7 +170,8 @@ object RepositoryManager {
         repoLock.withLock {
             val currentRepos = getRepositories()
             // No duplicates
-            setKey(REPOSITORIES_KEY, (currentRepos + repository).distinctBy { it.url })
+            val newRepos = (currentRepos + repository).distinctBy { it.url }.toTypedArray()
+            setKey(REPOSITORIES_KEY, newRepos)
         }
     }
 
@@ -182,7 +184,7 @@ object RepositoryManager {
         repoLock.withLock {
             val currentRepos = getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
             // No duplicates
-            val newRepos = currentRepos.filter { it.url != repository.url }
+            val newRepos = currentRepos.filter { it.url != repository.url }.toTypedArray()
             setKey(REPOSITORIES_KEY, newRepos)
         }
 
