@@ -21,6 +21,8 @@
 
     <color name="white">#FFF</color>
     <color name="black">#000</color>
+    <color name="gray_200">#EEEEEE</color>
+    <color name="gray_400">#BDBDBD</color>
 
     <color name="whiteText">#FFF</color>
     <color name="blackText">#000</color>
@@ -35,6 +37,7 @@
     <color name="subColorBg">#F53B66</color>
     <color name="typeColorText">#BEC8FF</color>
     <color name="typeColorBg">#3700B3</color>
+
     <!--
     <color name="ratingColor">#4C3115</color>
     <color name="ratingColorBg">#FFA662</color>

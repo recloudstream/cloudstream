@@ -15,9 +15,11 @@
         tools:src="@drawable/example_poster" />
 
     <View
-        android:id="@+id/title_shadow"
+        android:id="@+id/home_preview_dimmer"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_gravity="bottom"
-        android:background="@drawable/background_shadow" />
+        android:layout_height="match_parent"
+        android:background="#000000"
+        android:alpha="0.6" />
+
+
 </FrameLayout>
