@@ -25,6 +25,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import java.text.SimpleDateFormat
@@ -182,11 +183,18 @@ class KitsuApi: SyncAPI() {
     }
 
     private suspend fun getKitsuAnimeList(token: AuthToken, userId: Int): Array<KitsuNode> {
+
+        val animeSelectedFields = arrayOf("titles","canonicalTitle","posterImage","synopsis","startDate","episodeCount")
+        val libraryEntriesSelectedFields = arrayOf("progress","rating","updatedAt", "status")
+        val limit = 500
+        val initUrl = "$apiUrl/library-entries?filter[userId]=$userId&filter[kind]=anime&include=anime&page[limit]=$limit&page[offset]=0&fields[anime]=${animeSelectedFields.joinToString(",")}&fields[libraryEntries]=${libraryEntriesSelectedFields.joinToString(",")}"
+
         val urlChannel = Channel<String>(1) // Capacity 1 to not block thread on first send
-        val initUrl = "$apiUrl/library-entries?filter[userId]=$userId&filter[kind]=anime&page[limit]=100&page[offset]=0"
         urlChannel.send(initUrl)
+
         val fullList = mutableListOf<KitsuNode>()
         val listMutex = Mutex(false)
+
         coroutineScope {
             for (url in urlChannel) {
 
@@ -201,8 +209,8 @@ class KitsuApi: SyncAPI() {
                         urlChannel.send(url)
                     }
 
-                    data.data.asFlow().onEach {
-                        it.anime = it.getAnimeItem(token)
+                    data.data.asFlow().withIndex().onEach {
+                        it.value.anime = data.included?.get(it.index)
                     }.collect()
 
                     listMutex.lock()
@@ -251,7 +259,6 @@ class KitsuApi: SyncAPI() {
         @JsonProperty("attributes") val attributes: KitsuNodeAttributes,
         /* User list anime node */
         @JsonProperty("relationships") val relationships: KitsuRelationships?,
-
         var anime: KitsuApi.KitsuAnimeData?
     ) {
         fun toLibraryItem(): LibraryItem {
@@ -298,18 +305,6 @@ class KitsuApi: SyncAPI() {
             )
         }
 
-        suspend fun getAnimeItem(token: AuthToken): KitsuAnimeData? {
-
-            val url = this.relationships?.anime?.links?.related ?: return null
-
-            val res = app.get(
-                url, headers = mapOf(
-                    "Authorization" to "Bearer ${token.accessToken}",
-                ), cacheTime = 60 // 1 Hour
-                ).parsed<KitsuAnime>()
-
-            return res.data
-        }
     }
 
     data class KitsuAnimeAttributes(
@@ -326,9 +321,6 @@ class KitsuApi: SyncAPI() {
         @JsonProperty("attributes") val attributes: KitsuAnimeAttributes,
     )
 
-    data class KitsuAnime(
-        @JsonProperty("data") val data: KitsuAnimeData
-    )
 
     data class KitsuNodeAttributes(
         /* General attributes */
@@ -383,12 +375,11 @@ class KitsuApi: SyncAPI() {
 
     data class KitsuResponse(
         @JsonProperty("links") val links: KitsuLinks?,
-        @JsonProperty("data") val data: List<KitsuNode>
+        @JsonProperty("data") val data: List<KitsuNode>,
+        /* When requesting related info (User library entry -> anime) */
+        @JsonProperty("included") val included: List<KitsuAnimeData>?,
     )
 
-    data class KitsuResponseUnique(
-        @JsonProperty("data") val data: KitsuNode
-    )
 
     companion object {
 
