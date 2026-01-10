@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
@@ -159,6 +160,22 @@ object DataStore {
 
     fun <T> Context.setKey(path: String, value: T) {
         try {
+            val json = mapper.writeValueAsString(value)
+            val current = getSharedPrefs().getString(path, null)
+            if (current == json) return
+
+            getSharedPrefs().edit {
+                putString(path, json)
+            }
+            // Always push as JSON string for consistency in mirror sync
+            FirestoreSyncManager.pushData(path, json)
+        } catch (e: Exception) {
+            logError(e)
+        }
+    }
+
+    fun <T> Context.setKeyLocal(path: String, value: T) {
+        try {
             getSharedPrefs().edit {
                 putString(path, mapper.writeValueAsString(value))
             }
@@ -167,11 +184,17 @@ object DataStore {
         }
     }
 
+    fun <T> Context.setKeyLocal(folder: String, path: String, value: T) {
+        setKeyLocal(getFolderName(folder, path), value)
+    }
+
     fun <T> Context.getKey(path: String, valueType: Class<T>): T? {
         try {
             val json: String = getSharedPrefs().getString(path, null) ?: return null
+            Log.d("DataStore", "getKey(Class) $path raw: '$json'")
             return json.toKotlinObject(valueType)
         } catch (e: Exception) {
+            Log.e("DataStore", "getKey(Class) $path error: ${e.message}")
             return null
         }
     }
@@ -192,9 +215,40 @@ object DataStore {
     inline fun <reified T : Any> Context.getKey(path: String, defVal: T?): T? {
         try {
             val json: String = getSharedPrefs().getString(path, null) ?: return defVal
-            return json.toKotlinObject()
+            Log.d("DataStore", "getKey(Reified) $path raw: '$json' target: ${T::class.java.simpleName}")
+            return try {
+                val res = json.toKotlinObject<T>()
+                Log.d("DataStore", "getKey(Reified) $path parsed: '$res'")
+                res
+            } catch (e: Exception) {
+                Log.w("DataStore", "getKey(Reified) $path parse fail: ${e.message}, trying fallback")
+                // FALLBACK: If JSON parsing fails, try manual conversion for common types
+                val fallback: T? = when {
+                    T::class.java == String::class.java -> {
+                        // If it's a string, try removing literal double quotes if they exist at start/end
+                        if (json.startsWith("\"") && json.endsWith("\"") && json.length >= 2) {
+                            json.substring(1, json.length - 1) as T
+                        } else {
+                            json as T
+                        }
+                    }
+                    T::class.java == Boolean::class.java || T::class.java == java.lang.Boolean::class.java -> {
+                        (json.lowercase() == "true" || json == "1") as T
+                    }
+                    T::class.java == Long::class.java || T::class.java == java.lang.Long::class.java -> {
+                        json.toLongOrNull() as? T ?: defVal
+                    }
+                    T::class.java == Int::class.java || T::class.java == java.lang.Integer::class.java -> {
+                        json.toIntOrNull() as? T ?: defVal
+                    }
+                    else -> defVal
+                }
+                Log.d("DataStore", "getKey(Reified) $path fallback: '$fallback'")
+                fallback
+            }
         } catch (e: Exception) {
-            return null
+            Log.e("DataStore", "getKey(Reified) $path total fail: ${e.message}")
+            return defVal
         }
     }
 
