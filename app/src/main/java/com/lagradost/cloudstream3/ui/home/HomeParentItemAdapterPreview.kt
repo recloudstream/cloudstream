@@ -344,6 +344,32 @@ class HomeParentItemAdapterPreview(
                 homePreviewDescription.text =
                     item.plot?.html() ?: ""
 
+                homePreviewDescription.text =
+                    item.plot?.html() ?: ""
+
+                homePreviewScore.text = if (item.score != null) "IMDb ${item.score}" else ""
+                homePreviewScore.isGone = item.score == null
+
+                homePreviewYear.text = item.year?.toString() ?: ""
+                homePreviewYear.isGone = item.year == null
+
+                val durationText = item.duration?.let { min ->
+                    val hours = min / 60
+                    val minutes = min % 60
+                    if (hours > 0) "${hours}h ${minutes}m" else "${minutes}m"
+                }
+
+                homePreviewDuration.text = durationText ?: ""
+                homePreviewDuration.isGone = durationText == null
+
+                val castText = item.actors?.take(3)?.mapNotNull { it.actor.name }?.joinToString(", ")
+                if (!castText.isNullOrBlank()) {
+                    homePreviewCast.text = "Cast: $castText"
+                    homePreviewCast.isVisible = true
+                } else {
+                    homePreviewCast.isVisible = false
+                }
+
                 homePreviewText.text = item.name.html()
                 populateChips(
                     homePreviewTags,
@@ -645,6 +671,12 @@ class HomeParentItemAdapterPreview(
                     alternativeAccountPadding?.isVisible = false
                     (binding as? FragmentHomeHeadTvBinding)?.apply {
                         homePreviewInfoBtt.isVisible = true
+                    }
+                    // Explicitly bind the current item to ensure instant loading
+                    val currentPos = previewViewpager.currentItem
+                    val item = preview.value.second.getOrNull(currentPos)
+                    if (item != null) {
+                        onSelect(item, currentPos)
                     }
                 }
 
