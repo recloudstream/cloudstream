@@ -88,10 +88,18 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
 
         menuListBuilder.addItem(
             Row.Builder()
-                .setTitle("Libreria")
-                .addText("Preferiti, Cronologia")
-                .setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, android.R.drawable.ic_menu_gallery)).build())
-                .setOnClickListener { screenManager.push(LibraryCarScreen(carContext)) }
+                .setTitle("Preferiti")
+                .setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_baseline_favorite_24)).build())
+                .setOnClickListener { screenManager.push(BookmarksScreen(carContext)) }
+                .setBrowsable(true)
+                .build()
+        )
+
+        menuListBuilder.addItem(
+            Row.Builder()
+                .setTitle("Cronologia")
+                .setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, android.R.drawable.ic_menu_recent_history)).build())
+                .setOnClickListener { screenManager.push(HistoryScreen(carContext)) }
                 .setBrowsable(true)
                 .build()
         )

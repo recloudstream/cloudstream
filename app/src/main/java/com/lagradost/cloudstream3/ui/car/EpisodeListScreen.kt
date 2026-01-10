@@ -15,7 +15,8 @@ import com.lagradost.cloudstream3.R
 
 class EpisodeListScreen(
     carContext: CarContext,
-    private val details: TvSeriesLoadResponse
+    private val details: TvSeriesLoadResponse,
+    private val isExpressMode: Boolean = false
 ) : Screen(carContext) {
 
     private val availableSeasons: List<Int> = details.episodes.mapNotNull { it.season }.distinct().sorted()
@@ -39,16 +40,26 @@ class EpisodeListScreen(
             val title = "${episode.episode}. ${episode.name ?: "Episodio ${episode.episode}"}"
             val rowBuilder = Row.Builder()
                 .setTitle(title)
-                .setTitle(title)
                 .setOnClickListener {
-                     screenManager.push(
-                        EpisodeDetailScreen(
-                            carContext = carContext,
-                            seriesDetails = details,
-                            episode = episode,
-                            playlist = seasonEpisodes
+                     if (isExpressMode) {
+                         screenManager.push(
+                            PlayerCarScreen(
+                                carContext = carContext,
+                                loadResponse = details,
+                                selectedEpisode = episode,
+                                playlist = seasonEpisodes
+                            )
                         )
-                    )
+                     } else {
+                         screenManager.push(
+                            EpisodeDetailScreen(
+                                carContext = carContext,
+                                seriesDetails = details,
+                                episode = episode,
+                                playlist = seasonEpisodes
+                            )
+                        )
+                     }
                 }
             
             episode.description?.let { 

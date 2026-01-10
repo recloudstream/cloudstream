@@ -14,6 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import com.lagradost.cloudstream3.TvType
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import coil3.SingletonImageLoader
 import coil3.request.ImageRequest
 import coil3.asDrawable
@@ -43,18 +44,47 @@ class BookmarksScreen(carContext: CarContext) : Screen(carContext) {
                          .setOnClickListener {
                              val type = item.type
                              if (type == TvType.TvSeries || type == TvType.Anime || type == TvType.OVA) {
-                                 screenManager.push(TvSeriesDetailScreen(carContext, item))
+                                 androidx.car.app.CarToast.makeText(carContext, "Caricamento episodi...", androidx.car.app.CarToast.LENGTH_SHORT).show()
+                                 CoroutineScope(Dispatchers.IO).launch {
+                                     val api = com.lagradost.cloudstream3.APIHolder.getApiFromNameNull(item.apiName)
+                                     if (api != null) {
+                                         val repo = com.lagradost.cloudstream3.ui.APIRepository(api)
+                                         when (val result = repo.load(item.url)) {
+                                             is com.lagradost.cloudstream3.mvvm.Resource.Success -> {
+                                                 val data = result.value
+                                                 kotlinx.coroutines.withContext(Dispatchers.Main) {
+                                                     if (data is com.lagradost.cloudstream3.TvSeriesLoadResponse) {
+                                                         screenManager.push(EpisodeListScreen(carContext, data, isExpressMode = true))
+                                                     } else {
+                                                         screenManager.push(DetailsScreen(carContext, item))
+                                                     }
+                                                 }
+                                             }
+                                             is com.lagradost.cloudstream3.mvvm.Resource.Failure -> {
+                                                  kotlinx.coroutines.withContext(Dispatchers.Main) {
+                                                      androidx.car.app.CarToast.makeText(carContext, "Errore: ${result.errorString}", androidx.car.app.CarToast.LENGTH_LONG).show()
+                                                  }
+                                             }
+                                             else -> {}
+                                         }
+                                     } else {
+                                         kotlinx.coroutines.withContext(Dispatchers.Main) {
+                                             androidx.car.app.CarToast.makeText(carContext, "Provider non trovato", androidx.car.app.CarToast.LENGTH_SHORT).show()
+                                         }
+                                     }
+                                 }
                              } else {
                                  screenManager.push(DetailsScreen(carContext, item))
                              }
                          }
-                         // .setImage(...) Removed as per user request
                          .build()
                  )
             }
-            itemList = builder.build()
-            
-            invalidate()
+            val builtList = builder.build()
+            withContext(Dispatchers.Main) {
+                itemList = builtList
+                invalidate()
+            }
             // Async image loading removed
         }
     }

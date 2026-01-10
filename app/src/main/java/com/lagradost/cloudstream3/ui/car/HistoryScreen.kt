@@ -83,8 +83,11 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                  }
             }
 
-            itemList = builder.build()
-            invalidate()
+             val builtList = builder.build()
+             withContext(Dispatchers.Main) {
+                 itemList = builtList
+                 invalidate()
+             }
         }
     }
     
@@ -102,46 +105,46 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                  else -> null
             } ?: return@launch
 
-            val startTime = getViewPos(resume.episodeId)?.position ?: 0L
-            
-            // Prepare SearchResponse item for PlayerCarScreen
-            val item: SearchResponse = if (cachedData.type.isMovieType()) {
-                 api.newMovieSearchResponse(
-                    name = cachedData.name,
-                    url = cachedData.url,
-                    type = cachedData.type,
-                ) {
-                    this.posterUrl = cachedData.poster
+            if (loadResult is TvSeriesLoadResponse) {
+                withContext(Dispatchers.Main) {
+                     screenManager.push(EpisodeListScreen(carContext, loadResult, isExpressMode = true))
                 }
             } else {
-                 api.newTvSeriesSearchResponse(
-                    name = cachedData.name,
-                    url = cachedData.url,
-                    type = cachedData.type,
-                ) {
-                    this.posterUrl = cachedData.poster
+                val startTime = getViewPos(resume.episodeId)?.position ?: 0L
+                
+                // Prepare SearchResponse item for PlayerCarScreen
+                val item: SearchResponse = if (cachedData.type.isMovieType()) {
+                     api.newMovieSearchResponse(
+                        name = cachedData.name,
+                        url = cachedData.url,
+                        type = cachedData.type,
+                    ) {
+                        this.posterUrl = cachedData.poster
+                    }
+                } else {
+                     api.newTvSeriesSearchResponse(
+                        name = cachedData.name,
+                        url = cachedData.url,
+                        type = cachedData.type,
+                    ) {
+                        this.posterUrl = cachedData.poster
+                    }
                 }
-            }
 
-            // Resolve Episode for TV Series
-            var selectedEpisode: com.lagradost.cloudstream3.Episode? = null
-            
-            if (loadResult is TvSeriesLoadResponse) {
-                selectedEpisode = loadResult.episodes.firstOrNull { 
-                    it.episode == resume.episode && it.season == resume.season 
-                }
-            }
-
-            withContext(Dispatchers.Main) {
-                 screenManager.push(
-                     PlayerCarScreen(
-                         carContext = carContext,
-                         item = item,
-                         loadResponse = loadResult,
-                         selectedEpisode = selectedEpisode,
-                         startTime = startTime
+                // Resolve Episode for TV Series (Not needed if we skip player for series here, but kept for non-TvSeriesLoadResponse logic if any?)
+                // Actually, if it's NOT TvSeriesLoadResponse, selectedEpisode is likely null or irrelevant for Movie
+                
+                withContext(Dispatchers.Main) {
+                     screenManager.push(
+                         PlayerCarScreen(
+                             carContext = carContext,
+                             item = item,
+                             loadResponse = loadResult,
+                             selectedEpisode = null, // movies don't have episodes usually or logic differs
+                             startTime = startTime
+                         )
                      )
-                 )
+                }
             }
         }
     }
