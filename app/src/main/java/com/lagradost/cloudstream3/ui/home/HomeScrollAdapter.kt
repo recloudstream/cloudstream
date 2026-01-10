@@ -55,9 +55,7 @@ class HomeScrollAdapter(
     ) {
         val binding = holder.view
 
-        val posterUrl =
-            if (isLandscape()) item.backgroundPosterUrl ?: item.posterUrl else item.posterUrl
-                ?: item.backgroundPosterUrl
+        val posterUrl = item.backgroundPosterUrl ?: item.posterUrl
 
         when (binding) {
             is HomeScrollViewBinding -> {
