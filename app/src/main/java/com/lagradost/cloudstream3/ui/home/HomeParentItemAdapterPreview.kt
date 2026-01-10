@@ -495,6 +495,7 @@ class HomeParentItemAdapterPreview(
 
         init {
             previewViewpager.setPageTransformer(HomeScrollTransformer())
+            previewViewpager.offscreenPageLimit = 3
 
             previewViewpager.adapter = previewAdapter
             resumeRecyclerView.adapter = resumeAdapter
