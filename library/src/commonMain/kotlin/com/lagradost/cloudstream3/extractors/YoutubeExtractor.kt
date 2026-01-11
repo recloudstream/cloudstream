@@ -153,12 +153,16 @@ open class YoutubeExtractor : ExtractorApi() {
                 requestBody = jsonBody
             ).parsed<Root>()
 
-        for (caption in response.captions.playerCaptionsTracklistRenderer.captionTracks) {
-            subtitleCallback.invoke(
-                newSubtitleFile(
-                    caption.name.simpleText,
-                    "${caption.baseUrl}&fmt=ttml" // The default format is not supported
-                ) { headers = HEADERS })
+        val captionTracks = response.captions?.playerCaptionsTracklistRenderer?.captionTracks
+
+        if (captionTracks != null) {
+            for (caption in captionTracks) {
+                subtitleCallback.invoke(
+                    newSubtitleFile(
+                        lang =caption.name.simpleText,
+                        url  ="${caption.baseUrl}&fmt=ttml" // The default format is not supported
+                    ) { headers = HEADERS })
+            }
         }
 
         val hlsUrl = response.streamingData.hlsManifestUrl
@@ -214,7 +218,7 @@ open class YoutubeExtractor : ExtractorApi() {
         val streamingData: StreamingData,
         // val playbackTracking: PlaybackTracking,
         @JsonProperty("captions")
-        val captions: Captions,
+        val captions: Captions?,
         // val videoDetails: VideoDetails,
         // val annotations: List<Annotation>,
         // val playerConfig: PlayerConfig,
@@ -240,12 +244,12 @@ open class YoutubeExtractor : ExtractorApi() {
 
     private data class Captions(
         @JsonProperty("playerCaptionsTracklistRenderer")
-        val playerCaptionsTracklistRenderer: PlayerCaptionsTracklistRenderer,
+        val playerCaptionsTracklistRenderer: PlayerCaptionsTracklistRenderer?,
     )
 
     private data class PlayerCaptionsTracklistRenderer(
         @JsonProperty("captionTracks")
-        val captionTracks: List<CaptionTrack>,
+        val captionTracks: List<CaptionTrack>?,
         //val audioTracks: List<AudioTrack>,
         //val translationLanguages: List<TranslationLanguage>,
         //@JsonProperty("defaultAudioTrackIndex")
