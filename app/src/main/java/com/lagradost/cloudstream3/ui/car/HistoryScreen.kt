@@ -27,6 +27,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.delay
 
 class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecycleObserver {
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -40,54 +41,75 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
         loadHistory()
     }
 
-    private fun loadHistory() {
+    private fun loadHistory(retryCount: Int = 0) {
         scope.launch {
-            // Strict logic copied from HomeViewModel.getResumeWatching()
-            val resumeWatchingResult = withContext(Dispatchers.IO) {
-                getAllResumeStateIds()?.mapNotNull { id ->
-                    getLastWatched(id)
-                }?.sortedBy { -it.updateTime }?.mapNotNull { resume ->
-                   val data = getKey<VideoDownloadHelper.DownloadHeaderCached>(
-                        DOWNLOAD_HEADER_CACHE,
-                        resume.parentId.toString()
-                    ) ?: return@mapNotNull null
-
-                   // Mapping to a local helper or using the result directly
-                   // We need the resume object for the episodeId/parentId/pos
-                   Pair(resume, data) 
+            withContext(Dispatchers.Main) {
+                itemList = null
+                invalidate()
+            }
+            try {
+                // Strict logic copied from HomeViewModel.getResumeWatching()
+                val resumeWatchingResult = withContext(Dispatchers.IO) {
+                    getAllResumeStateIds()?.mapNotNull { id ->
+                        getLastWatched(id)
+                    }?.sortedBy { -it.updateTime }?.mapNotNull { resume ->
+                       val data = getKey<VideoDownloadHelper.DownloadHeaderCached>(
+                            DOWNLOAD_HEADER_CACHE,
+                            resume.parentId.toString()
+                        ) ?: return@mapNotNull null
+    
+                       Pair(resume, data) 
+                    }
+                }
+    
+                val builder = ItemList.Builder()
+                
+                if (resumeWatchingResult.isNullOrEmpty()) {
+                    builder.setNoItemsMessage("Nessun elemento 'Continua a guardare' trovato")
+                } else {
+                     resumeWatchingResult.forEach { (resume, cachedData) ->
+                         val title = cachedData.name
+                         val subtitle = if (resume.episode != null && resume.season != null) {
+                            "S${resume.season}:E${resume.episode}" 
+                         } else {
+                            cachedData.apiName
+                         }
+    
+                         builder.addItem(
+                             Row.Builder()
+                                 .setTitle(title)
+                                 .addText(subtitle)
+                                 .setOnClickListener { 
+                                     playResumeItem(resume, cachedData)
+                                 }
+                                 .build()
+                         )
+                     }
+                }
+    
+                 val builtList = builder.build()
+                 withContext(Dispatchers.Main) {
+                     itemList = builtList
+                     invalidate()
+                 }
+            } catch (e: Exception) {
+                if (retryCount < 3) {
+                    delay(3000)
+                    loadHistory(retryCount + 1)
+                } else {
+                    withContext(Dispatchers.Main) {
+                        itemList = ItemList.Builder()
+                            .addItem(
+                                Row.Builder()
+                                    .setTitle("Errore: ${e.message}")
+                                    .setOnClickListener { loadHistory() }
+                                    .build()
+                            )
+                            .build()
+                        invalidate()
+                    }
                 }
             }
-
-            val builder = ItemList.Builder()
-            
-            if (resumeWatchingResult.isNullOrEmpty()) {
-                builder.setNoItemsMessage("Nessun elemento 'Continua a guardare' trovato")
-            } else {
-                 resumeWatchingResult.forEach { (resume, cachedData) ->
-                     val title = cachedData.name
-                     val subtitle = if (resume.episode != null && resume.season != null) {
-                        "S${resume.season}:E${resume.episode}" 
-                     } else {
-                        cachedData.apiName
-                     }
-
-                     builder.addItem(
-                         Row.Builder()
-                             .setTitle(title)
-                             .addText(subtitle)
-                             .setOnClickListener { 
-                                 playResumeItem(resume, cachedData)
-                             }
-                             .build()
-                     )
-                 }
-            }
-
-             val builtList = builder.build()
-             withContext(Dispatchers.Main) {
-                 itemList = builtList
-                 invalidate()
-             }
         }
     }
     
