@@ -9,6 +9,7 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.databinding.FragmentSyncSettingsBinding
 import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.utils.DataStore.getKey
+import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.FirestoreSyncManager
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.txt
@@ -72,6 +73,10 @@ class SyncSettingsFragment : BaseFragment<FragmentSyncSettingsBinding>(
             syncProjectId.doAfterTextChanged { checkBtn() }
             syncAppId.doAfterTextChanged { checkBtn() }
             checkBtn()
+
+            syncHomepageSwitch.setOnCheckedChangeListener { _, isChecked ->
+                requireContext().setKey(FirestoreSyncManager.FIREBASE_SYNC_HOMEPAGE_PROVIDER, isChecked)
+            }
         }
     }
 
@@ -106,8 +111,12 @@ class SyncSettingsFragment : BaseFragment<FragmentSyncSettingsBinding>(
             } else {
                 binding?.syncLastTime?.text = "Never"
             }
+            
+            binding?.syncSettingsCard?.isVisible = true
+            binding?.syncHomepageSwitch?.isChecked = requireContext().getKey(FirestoreSyncManager.FIREBASE_SYNC_HOMEPAGE_PROVIDER, true) ?: true
         } else {
             binding?.syncConnectBtn?.text = "Connect & Sync"
+            binding?.syncSettingsCard?.isVisible = false
         }
     }
 }
