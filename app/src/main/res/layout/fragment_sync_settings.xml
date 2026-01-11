@@ -108,14 +108,14 @@
             </com.google.android.material.card.MaterialCardView>
 
             
-            <!-- Sync Settings Card -->
+            <!-- App Settings Category -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/sync_settings_card"
+                android:id="@+id/sync_app_settings_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="2dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="12dp"
                 app:cardBackgroundColor="?attr/primaryGrayBackground"
                 android:visibility="gone"
                 tools:visibility="visible">
@@ -129,39 +129,178 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Sync Settings"
+                        android:text="App Configuration"
                         android:textColor="?attr/textColor"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        android:layout_marginBottom="16dp"/>
+                        android:layout_marginBottom="12dp"/>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Sync Homepage Provider"
-                            android:textColor="?attr/textColor"
-                            android:textSize="16sp"/>
-                        <com.google.android.material.switchmaterial.SwitchMaterial
-                            android:id="@+id/sync_homepage_switch"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:checked="true"/>
-                    </LinearLayout>
-                    
+                    <!-- Appearance -->
+                    <include
+                        android:id="@+id/sync_appearance_layout"
+                        layout="@layout/sync_item_row"
+                        tools:title="Appearance"
+                        tools:desc="Sync theme, colors, and layout preferences."/>
+
+                    <!-- Player -->
+                    <include
+                        android:id="@+id/sync_player_layout"
+                        layout="@layout/sync_item_row"
+                        tools:title="Player Settings"
+                        tools:desc="Sync subtitle styles, brightness, and gestures."/>
+
+                    <!-- Downloads -->
+                    <include
+                        android:id="@+id/sync_downloads_layout"
+                        layout="@layout/sync_item_row"
+                        tools:title="Downloads"
+                        tools:desc="Sync download paths and parallel limits."/>
+
+                    <!-- General -->
+                    <include
+                        android:id="@+id/sync_general_layout"
+                        layout="@layout/sync_item_row"
+                        tools:title="General Settings"
+                        tools:desc="Sync miscellaneous app preferences."/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Library & Data Category -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/sync_library_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="?attr/primaryGrayBackground"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="If disabled, homepage changes on this device won't sync to others, and vice versa."
+                        android:text="My Library &amp; Data"
                         android:textColor="?attr/textColor"
-                        android:textSize="12sp"
-                        android:alpha="0.7"
-                        android:layout_marginTop="4dp"/>
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp"/>
+
+                    <!-- Accounts -->
+                    <include
+                        android:id="@+id/sync_accounts_layout"
+                        layout="@layout/sync_item_row"
+                        tools:title="User Accounts"
+                        tools:desc="Sync profile metadata and linked accounts."/>
+
+                    <!-- Bookmarks -->
+                    <include
+                        android:id="@+id/sync_bookmarks_layout"
+                        layout="@layout/sync_item_row"
+                        tools:title="Bookmarks"
+                        tools:desc="Sync your watchlist and favorite items."/>
+
+                    <!-- Resume Watching -->
+                    <include
+                        android:id="@+id/sync_resume_watching_layout"
+                        layout="@layout/sync_item_row"
+                        tools:title="Watch Progress"
+                        tools:desc="Sync your exact position in movies/episodes."/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Extensions Category -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/sync_extensions_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="?attr/primaryGrayBackground"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Extensions"
+                        android:textColor="?attr/textColor"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp"/>
+
+                    <!-- Repositories -->
+                    <include
+                        android:id="@+id/sync_repositories_layout"
+                        layout="@layout/sync_item_row"
+                        tools:title="Source Repositories"
+                        tools:desc="Sync your list of plugin repository URLs."/>
+
+                    <!-- Plugins -->
+                    <include
+                        android:id="@+id/sync_plugins_layout"
+                        layout="@layout/sync_item_row"
+                        tools:title="Installed Plugins"
+                        tools:desc="Sync which online plugins are installed."/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Interface Category -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/sync_interface_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="?attr/primaryGrayBackground"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Interface Personalization"
+                        android:textColor="?attr/textColor"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp"/>
+
+                    <!-- Homepage API -->
+                    <include
+                        android:id="@+id/sync_homepage_layout"
+                        layout="@layout/sync_item_row"
+                        tools:title="Home Provider"
+                        tools:desc="Sync which homepage source is currently active."/>
+
+                    <!-- Pinned Providers -->
+                    <include
+                        android:id="@+id/sync_pinned_layout"
+                        layout="@layout/sync_item_row"
+                        tools:title="Pinned Providers"
+                        tools:desc="Sync your pinned home screen extensions."/>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
