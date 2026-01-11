@@ -81,6 +81,27 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
     private const val ACCOUNTS_KEY = "data_store_helper/account"
     private const val SETTINGS_SYNC_KEY = "settings"
     private const val DATA_STORE_DUMP_KEY = "data_store_dump"
+
+    // Ultra-granular sync control keys
+    const val SYNC_SETTING_APPEARANCE = "sync_setting_appearance"
+    const val SYNC_SETTING_PLAYER = "sync_setting_player"
+    const val SYNC_SETTING_DOWNLOADS = "sync_setting_downloads"
+    const val SYNC_SETTING_GENERAL = "sync_setting_general"
+    const val SYNC_SETTING_ACCOUNTS = "sync_setting_accounts"
+    const val SYNC_SETTING_BOOKMARKS = "sync_setting_bookmarks"
+    const val SYNC_SETTING_RESUME_WATCHING = "sync_setting_resume_watching"
+    const val SYNC_SETTING_REPOSITORIES = "sync_setting_repositories"
+    const val SYNC_SETTING_PLUGINS = "sync_setting_plugins"
+    const val SYNC_SETTING_HOMEPAGE_API = "sync_setting_homepage_api"
+    const val SYNC_SETTING_PINNED_PROVIDERS = "sync_setting_pinned_providers"
+
+    private fun isSyncControlKey(key: String): Boolean {
+        return key.startsWith("sync_setting_")
+    }
+
+    private fun shouldSync(context: Context, controlKey: String): Boolean {
+        return context.getKey(controlKey, true) ?: true
+    }
     
     private fun isHomepageKey(key: String): Boolean {
         // Matches "0/home_api_used", "1/home_api_used", etc.
@@ -88,7 +109,7 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
     }
 
     private fun shouldSyncHomepage(context: Context): Boolean {
-        return context.getKey(FIREBASE_SYNC_HOMEPAGE_PROVIDER, true) ?: true
+        return shouldSync(context, SYNC_SETTING_HOMEPAGE_API)
     }
 
     data class SyncConfig(
@@ -319,10 +340,26 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
         }
     }
 
-    // Overload for Context-aware push that respects homepage sync setting
+    // Overload for Context-aware push that respects granular sync settings
     fun pushData(context: Context, key: String, data: Any?) {
-        if (isHomepageKey(key) && !shouldSyncHomepage(context)) {
-            log("Skipping push of homepage key $key (Sync disabled)")
+        if (isSyncControlKey(key)) {
+            pushData(key, data)
+            return
+        }
+
+        val shouldSync = when {
+            key == ACCOUNTS_KEY -> shouldSync(context, SYNC_SETTING_ACCOUNTS)
+            key == REPOSITORIES_KEY -> shouldSync(context, SYNC_SETTING_REPOSITORIES)
+            key == PLUGINS_KEY || key == "plugins_online" -> shouldSync(context, SYNC_SETTING_PLUGINS)
+            key == "resume_watching" || key == "resume_watching_deleted" -> shouldSync(context, SYNC_SETTING_RESUME_WATCHING)
+            key.contains("home") || key.contains(USER_SELECTED_HOMEPAGE_API) -> shouldSync(context, SYNC_SETTING_HOMEPAGE_API)
+            key.contains("pinned_providers") -> shouldSync(context, SYNC_SETTING_PINNED_PROVIDERS)
+            key == SETTINGS_SYNC_KEY || key == DATA_STORE_DUMP_KEY -> true // These are filtered inside extraction
+            else -> true
+        }
+
+        if (!shouldSync) {
+            log("Skipping push of key $key (Sync disabled by granular setting)")
             return
         }
         pushData(key, data)
@@ -401,53 +438,82 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
             "firebase_sync_enabled" // Just in case of legacy names
         )
         
+        // Always include sync control settings
+        val syncControlKeys = context.getSharedPrefs().all.filter { (key, _) -> isSyncControlKey(key) }
+        syncControlKeys.forEach { (key, value) -> data[key] = value }
+
         // 1. Settings (PreferenceManager's default prefs)
+        val syncAppearance = shouldSync(context, SYNC_SETTING_APPEARANCE)
+        val syncPlayer = shouldSync(context, SYNC_SETTING_PLAYER)
+        val syncDownloads = shouldSync(context, SYNC_SETTING_DOWNLOADS)
+        val syncGeneral = shouldSync(context, SYNC_SETTING_GENERAL)
+
         val settingsMap = context.getDefaultSharedPrefs().all.filter { entry ->
-            !sensitiveKeys.contains(entry.key)
+            if (sensitiveKeys.contains(entry.key)) return@filter false
+            
+            val key = entry.key
+            when {
+                key.contains("theme") || key.contains("color") || key.contains("layout") -> syncAppearance
+                key.contains("player") || key.contains("subtitle") || key.contains("gesture") -> syncPlayer
+                key.contains("download") -> syncDownloads
+                else -> syncGeneral
+            }
         }
         data[SETTINGS_SYNC_KEY] = settingsMap.toJson()
 
         // 2. Repositories
-        data[REPOSITORIES_KEY] = context.getSharedPrefs().getString(REPOSITORIES_KEY, null)
+        if (shouldSync(context, SYNC_SETTING_REPOSITORIES)) {
+            data[REPOSITORIES_KEY] = context.getSharedPrefs().getString(REPOSITORIES_KEY, null)
+        }
 
         // 3. Accounts (DataStore rebuild_preference)
-        data[ACCOUNTS_KEY] = context.getSharedPrefs().getString(ACCOUNTS_KEY, null)
+        if (shouldSync(context, SYNC_SETTING_ACCOUNTS)) {
+            data[ACCOUNTS_KEY] = context.getSharedPrefs().getString(ACCOUNTS_KEY, null)
+        }
 
-        // 4. Generic DataStore Keys (Watch State, etc.)
-        // This captures everything in the DataStore preferences that we haven't explicitly handled
+        // 4. Generic DataStore Keys (Bookmarks, etc.)
+        val syncBookmarks = shouldSync(context, SYNC_SETTING_BOOKMARKS)
         val dataStoreMap = context.getSharedPrefs().all.filter { (key, value) ->
-            !sensitiveKeys.contains(key) && 
-            key != REPOSITORIES_KEY &&
-            key != ACCOUNTS_KEY &&
-            key != PLUGINS_KEY &&
-            !key.contains(RESULT_RESUME_WATCHING) &&
-            !key.contains(RESULT_RESUME_WATCHING_DELETED) &&
-            !key.contains("home") && // Exclude home settings from dump
-            !key.contains("pinned_providers") && // Exclude pinned providers
-            value is String // DataStore saves as JSON Strings
+            if (sensitiveKeys.contains(key) || isSyncControlKey(key)) return@filter false
+            
+            val isIgnored = key == REPOSITORIES_KEY ||
+                    key == ACCOUNTS_KEY ||
+                    key == PLUGINS_KEY ||
+                    key.contains(RESULT_RESUME_WATCHING) ||
+                    key.contains(RESULT_RESUME_WATCHING_DELETED) ||
+                    key.contains("home") || 
+                    key.contains("pinned_providers")
+            
+            (!isIgnored && syncBookmarks && value is String)
         }
         data[DATA_STORE_DUMP_KEY] = dataStoreMap.toJson()
 
-        // We push these to the root for better visibility and to avoid blob conflicts
+        // 5. Interface & Pinned
+        val syncHome = shouldSync(context, SYNC_SETTING_HOMEPAGE_API)
+        val syncPinned = shouldSync(context, SYNC_SETTING_PINNED_PROVIDERS)
+        
         val rootIndividualKeys = context.getSharedPrefs().all.filter { (key, _) ->
-            (key.contains("home") || key.contains("pinned_providers")) && 
-            (!isHomepageKey(key) || shouldSyncHomepage(context))
+            (key.contains("home") && syncHome) || (key.contains("pinned_providers") && syncPinned)
         }
         rootIndividualKeys.forEach { (key, value) ->
             data[key] = value
         }
 
         // 6. Plugins (Online ones)
-        data["plugins_online"] = context.getSharedPrefs().getString(PLUGINS_KEY, null)
+        if (shouldSync(context, SYNC_SETTING_PLUGINS)) {
+            data["plugins_online"] = context.getSharedPrefs().getString(PLUGINS_KEY, null)
+        }
 
         // 7. Resume Watching (CRDT)
-        val resumeIds = DataStoreHelper.getAllResumeStateIds() ?: emptyList()
-        val resumeData = resumeIds.mapNotNull { DataStoreHelper.getLastWatched(it) }
-        data["resume_watching"] = resumeData.toJson()
+        if (shouldSync(context, SYNC_SETTING_RESUME_WATCHING)) {
+            val resumeIds = DataStoreHelper.getAllResumeStateIds() ?: emptyList()
+            val resumeData = resumeIds.mapNotNull { DataStoreHelper.getLastWatched(it) }
+            data["resume_watching"] = resumeData.toJson()
 
-        val deletedResumeIds = DataStoreHelper.getAllResumeStateDeletionIds() ?: emptyList()
-        val deletedResumeData = deletedResumeIds.associateWith { DataStoreHelper.getLastWatchedDeletionTime(it) ?: 0L }
-        data["resume_watching_deleted"] = deletedResumeData.toJson()
+            val deletedResumeIds = DataStoreHelper.getAllResumeStateDeletionIds() ?: emptyList()
+            val deletedResumeData = deletedResumeIds.associateWith { DataStoreHelper.getLastWatchedDeletionTime(it) ?: 0L }
+            data["resume_watching_deleted"] = deletedResumeData.toJson()
+        }
 
         return data
     }
@@ -456,14 +522,36 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
         val remoteData = snapshot.data ?: return
         val lastSyncTime = getLastSyncTime(context) ?: 0L
 
-        applySettings(context, remoteData)
-        applyDataStoreDump(context, remoteData)
-        applyRepositories(context, remoteData)
-        applyAccounts(context, remoteData)
-        // applyHomeSettings(context, remoteData) // Deprecated: replaced by individual key sync
-        applyPlugins(context, remoteData, lastSyncTime)
-        applyResumeWatching(context, remoteData)
-        applyIndividualKeys(context, remoteData)
+        // Priority 1: Apply sync control settings first
+        applySyncControlSettings(context, remoteData)
+
+        // Priority 2: Conditionally apply other data
+        if (shouldSync(context, SYNC_SETTING_APPEARANCE) || 
+            shouldSync(context, SYNC_SETTING_PLAYER) || 
+            shouldSync(context, SYNC_SETTING_DOWNLOADS) || 
+            shouldSync(context, SYNC_SETTING_GENERAL)) {
+            applySettings(context, remoteData)
+        }
+
+        applyDataStoreDump(context, remoteData) // This now filters based on local SYNC_SETTING_BOOKMARKS
+        
+        if (shouldSync(context, SYNC_SETTING_REPOSITORIES)) {
+            applyRepositories(context, remoteData)
+        }
+        
+        if (shouldSync(context, SYNC_SETTING_ACCOUNTS)) {
+            applyAccounts(context, remoteData)
+        }
+
+        if (shouldSync(context, SYNC_SETTING_PLUGINS)) {
+            applyPlugins(context, remoteData, lastSyncTime)
+        }
+        
+        if (shouldSync(context, SYNC_SETTING_RESUME_WATCHING)) {
+            applyResumeWatching(context, remoteData)
+        }
+        
+        applyIndividualKeys(context, remoteData) // Internal logic handles SYNC_SETTING_HOMEPAGE_API/PINNED
         
         // Multi-event update for full data alignment (only on initial sync or manual setup)
         if (isFullReload) {
@@ -476,6 +564,22 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
         MainActivity.bookmarksUpdatedEvent(true)
         
         log("Remote data alignment finished successfully (FullReload=$isFullReload).")
+    }
+
+    private fun applySyncControlSettings(context: Context, remoteData: Map<String, Any?>) {
+        val prefs = context.getSharedPrefs()
+        val editor = prefs.edit()
+        var changed = false
+        remoteData.forEach { (key, value) ->
+            if (isSyncControlKey(key) && value is Boolean) {
+                val current = prefs.getBoolean(key, true)
+                if (current != value) {
+                    editor.putBoolean(key, value)
+                    changed = true
+                }
+            }
+        }
+        if (changed) editor.apply()
     }
 
     private fun applyIndividualKeys(context: Context, remoteData: Map<String, Any?>) {
@@ -502,6 +606,11 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
                     // Skip homepage key if sync is disabled
                     if (isHomepageKey(key) && !shouldSyncHomepage(context)) {
                         log("Skipping apply of remote homepage key $key (Sync disabled)")
+                        return@forEach
+                    }
+                    
+                    if (key.contains("pinned_providers") && !shouldSync(context, SYNC_SETTING_PINNED_PROVIDERS)) {
+                        log("Skipping apply of remote pinned provider key $key (Sync disabled)")
                         return@forEach
                     }
 
@@ -541,7 +650,20 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
                     if (currentVal != value) {
                         hasChanges = true
                         when (value) {
-                            is Boolean -> editor.putBoolean(key, value)
+                            is Boolean -> {
+                                val syncAppearance = shouldSync(context, SYNC_SETTING_APPEARANCE)
+                                val syncPlayer = shouldSync(context, SYNC_SETTING_PLAYER)
+                                val syncDownloads = shouldSync(context, SYNC_SETTING_DOWNLOADS)
+                                val syncGeneral = shouldSync(context, SYNC_SETTING_GENERAL)
+                                
+                                val shouldApply = when {
+                                    key.contains("theme") || key.contains("color") || key.contains("layout") -> syncAppearance
+                                    key.contains("player") || key.contains("subtitle") || key.contains("gesture") -> syncPlayer
+                                    key.contains("download") -> syncDownloads
+                                    else -> syncGeneral
+                                }
+                                if (shouldApply) editor.putBoolean(key, value)
+                            }
                             is Int -> editor.putInt(key, value)
                             is String -> editor.putString(key, value)
                             is Float -> editor.putFloat(key, value)
@@ -573,8 +695,10 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
                     if (value is String) {
                         val currentVal = prefs.getString(key, null)
                         if (currentVal != value) {
-                            editor.putString(key, value)
-                            hasChanges = true
+                            if (shouldSync(context, SYNC_SETTING_BOOKMARKS)) {
+                                editor.putString(key, value)
+                                hasChanges = true
+                            }
                         }
                     }
                 }

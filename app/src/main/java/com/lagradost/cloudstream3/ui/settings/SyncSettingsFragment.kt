@@ -74,9 +74,32 @@ class SyncSettingsFragment : BaseFragment<FragmentSyncSettingsBinding>(
             syncAppId.doAfterTextChanged { checkBtn() }
             checkBtn()
 
-            syncHomepageSwitch.setOnCheckedChangeListener { _, isChecked ->
-                requireContext().setKey(FirestoreSyncManager.FIREBASE_SYNC_HOMEPAGE_PROVIDER, isChecked)
-            }
+            // Bind granular toggles
+            setupGranularToggle(syncAppearanceLayout, FirestoreSyncManager.SYNC_SETTING_APPEARANCE, "Appearance", "Sync theme, colors, and layout preferences.")
+            setupGranularToggle(syncPlayerLayout, FirestoreSyncManager.SYNC_SETTING_PLAYER, "Player Settings", "Sync subtitle styles, player gestures, and video quality.")
+            setupGranularToggle(syncDownloadsLayout, FirestoreSyncManager.SYNC_SETTING_DOWNLOADS, "Downloads", "Sync download paths and parallel download limits.")
+            setupGranularToggle(syncGeneralLayout, FirestoreSyncManager.SYNC_SETTING_GENERAL, "General Settings", "Sync miscellaneous app-wide preferences.")
+            
+            setupGranularToggle(syncAccountsLayout, FirestoreSyncManager.SYNC_SETTING_ACCOUNTS, "User Profiles", "Sync profile names, avatars, and linked accounts.")
+            setupGranularToggle(syncBookmarksLayout, FirestoreSyncManager.SYNC_SETTING_BOOKMARKS, "Bookmarks", "Sync your watchlist and favorite items.")
+            setupGranularToggle(syncResumeWatchingLayout, FirestoreSyncManager.SYNC_SETTING_RESUME_WATCHING, "Watch Progress", "Sync where you left off on every movie/episode.")
+            
+            setupGranularToggle(syncRepositoriesLayout, FirestoreSyncManager.SYNC_SETTING_REPOSITORIES, "Source Repositories", "Sync the list of added plugin repositories.")
+            setupGranularToggle(syncPluginsLayout, FirestoreSyncManager.SYNC_SETTING_PLUGINS, "Installed Plugins", "Sync which online plugins are installed.")
+            
+            setupGranularToggle(syncHomepageLayout, FirestoreSyncManager.SYNC_SETTING_HOMEPAGE_API, "Home Provider", "Sync which homepage source is currently active.")
+            setupGranularToggle(syncPinnedLayout, FirestoreSyncManager.SYNC_SETTING_PINNED_PROVIDERS, "Pinned Providers", "Sync your pinned providers on the home screen.")
+        }
+    }
+
+    private fun setupGranularToggle(row: com.lagradost.cloudstream3.databinding.SyncItemRowBinding, key: String, title: String, desc: String) {
+        row.syncItemTitle.text = title
+        row.syncItemDesc.text = desc
+        val current = requireContext().getKey(key, true) ?: true
+        row.syncItemSwitch.isChecked = current
+        
+        row.syncItemSwitch.setOnCheckedChangeListener { _, isChecked ->
+            requireContext().setKey(key, isChecked)
         }
     }
 
@@ -89,7 +112,6 @@ class SyncSettingsFragment : BaseFragment<FragmentSyncSettingsBinding>(
         
         FirestoreSyncManager.initialize(requireContext(), config)
         showToast("Initial sync started...")
-        // Faster update since initial sync is now immediate
         view?.postDelayed({ updateStatusUI() }, 1500)
     }
 
@@ -112,11 +134,34 @@ class SyncSettingsFragment : BaseFragment<FragmentSyncSettingsBinding>(
                 binding?.syncLastTime?.text = "Never"
             }
             
-            binding?.syncSettingsCard?.isVisible = true
-            binding?.syncHomepageSwitch?.isChecked = requireContext().getKey(FirestoreSyncManager.FIREBASE_SYNC_HOMEPAGE_PROVIDER, true) ?: true
+            binding?.syncAppSettingsCard?.isVisible = true
+            binding?.syncLibraryCard?.isVisible = true
+            binding?.syncExtensionsCard?.isVisible = true
+            binding?.syncInterfaceCard?.isVisible = true
+            
+            // Re-sync switch states visually
+            binding?.apply {
+                syncAppearanceLayout.syncItemSwitch.isChecked = requireContext().getKey(FirestoreSyncManager.SYNC_SETTING_APPEARANCE, true) ?: true
+                syncPlayerLayout.syncItemSwitch.isChecked = requireContext().getKey(FirestoreSyncManager.SYNC_SETTING_PLAYER, true) ?: true
+                syncDownloadsLayout.syncItemSwitch.isChecked = requireContext().getKey(FirestoreSyncManager.SYNC_SETTING_DOWNLOADS, true) ?: true
+                syncGeneralLayout.syncItemSwitch.isChecked = requireContext().getKey(FirestoreSyncManager.SYNC_SETTING_GENERAL, true) ?: true
+                
+                syncAccountsLayout.syncItemSwitch.isChecked = requireContext().getKey(FirestoreSyncManager.SYNC_SETTING_ACCOUNTS, true) ?: true
+                syncBookmarksLayout.syncItemSwitch.isChecked = requireContext().getKey(FirestoreSyncManager.SYNC_SETTING_BOOKMARKS, true) ?: true
+                syncResumeWatchingLayout.syncItemSwitch.isChecked = requireContext().getKey(FirestoreSyncManager.SYNC_SETTING_RESUME_WATCHING, true) ?: true
+                
+                syncRepositoriesLayout.syncItemSwitch.isChecked = requireContext().getKey(FirestoreSyncManager.SYNC_SETTING_REPOSITORIES, true) ?: true
+                syncPluginsLayout.syncItemSwitch.isChecked = requireContext().getKey(FirestoreSyncManager.SYNC_SETTING_PLUGINS, true) ?: true
+                
+                syncHomepageLayout.syncItemSwitch.isChecked = requireContext().getKey(FirestoreSyncManager.SYNC_SETTING_HOMEPAGE_API, true) ?: true
+                syncPinnedLayout.syncItemSwitch.isChecked = requireContext().getKey(FirestoreSyncManager.SYNC_SETTING_PINNED_PROVIDERS, true) ?: true
+            }
         } else {
             binding?.syncConnectBtn?.text = "Connect & Sync"
-            binding?.syncSettingsCard?.isVisible = false
+            binding?.syncAppSettingsCard?.isVisible = false
+            binding?.syncLibraryCard?.isVisible = false
+            binding?.syncExtensionsCard?.isVisible = false
+            binding?.syncInterfaceCard?.isVisible = false
         }
     }
 }
