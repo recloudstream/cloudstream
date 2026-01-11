@@ -106,6 +106,15 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
 
         menuListBuilder.addItem(
             Row.Builder()
+                .setTitle("Download")
+                .setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, android.R.drawable.stat_sys_download)).build())
+                .setOnClickListener { screenManager.push(DownloadsScreen(carContext)) }
+                .setBrowsable(true)
+                .build()
+        )
+
+        menuListBuilder.addItem(
+            Row.Builder()
                 .setTitle("Provider")
                 .addText("Attuale: $currentApiName")
                 .setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, android.R.drawable.ic_menu_manage)).build())

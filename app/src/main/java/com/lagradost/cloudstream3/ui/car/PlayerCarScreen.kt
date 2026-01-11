@@ -55,7 +55,10 @@ class PlayerCarScreen(
     val loadResponse: LoadResponse? = null,
     val selectedEpisode: Episode? = null,
     val playlist: List<Episode>? = null,
-    val startTime: Long = 0L
+    val startTime: Long = 0L,
+    val fileUri: String? = null,
+    val videoId: Int? = null,
+    val parentId: Int? = null
 ) : Screen(carContext), SurfaceCallback {
 
     private val scope = CoroutineScope(Dispatchers.IO + Job())
@@ -95,6 +98,14 @@ class PlayerCarScreen(
                 }
             }
         })
+
+        if (fileUri != null) {
+            currentEpisodeId = videoId
+            currentParentId = parentId
+            scope.launch { startPlayback(fileUri) }
+        } else {
+            loadMedia(item?.url)
+        }
     }
 
     override fun onSurfaceAvailable(surfaceContainer: SurfaceContainer) {
@@ -454,7 +465,5 @@ class PlayerCarScreen(
          }
     }
     
-    init {
-        loadMedia(item?.url)
-    }
+
 }
