@@ -76,10 +76,20 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
     const val FIREBASE_APP_ID = "firebase_app_id"
     const val FIREBASE_ENABLED = "firebase_sync_enabled"
     const val FIREBASE_LAST_SYNC = "firebase_last_sync"
+    const val FIREBASE_SYNC_HOMEPAGE_PROVIDER = "firebase_sync_homepage_provider"
     const val DEFAULT_USER_ID = "mirror_account" // Hardcoded for 100% mirror sync
     private const val ACCOUNTS_KEY = "data_store_helper/account"
     private const val SETTINGS_SYNC_KEY = "settings"
     private const val DATA_STORE_DUMP_KEY = "data_store_dump"
+    
+    private fun isHomepageKey(key: String): Boolean {
+        // Matches "0/home_api_used", "1/home_api_used", etc.
+        return key.endsWith("/$USER_SELECTED_HOMEPAGE_API")
+    }
+
+    private fun shouldSyncHomepage(context: Context): Boolean {
+        return context.getKey(FIREBASE_SYNC_HOMEPAGE_PROVIDER, true) ?: true
+    }
 
     data class SyncConfig(
         val apiKey: String,
@@ -309,6 +319,15 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
         }
     }
 
+    // Overload for Context-aware push that respects homepage sync setting
+    fun pushData(context: Context, key: String, data: Any?) {
+        if (isHomepageKey(key) && !shouldSyncHomepage(context)) {
+            log("Skipping push of homepage key $key (Sync disabled)")
+            return
+        }
+        pushData(key, data)
+    }
+
     private var debounceJob: Job? = null
 
     fun pushAllLocalData(context: Context, immediate: Boolean = false) {
@@ -409,10 +428,10 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
         }
         data[DATA_STORE_DUMP_KEY] = dataStoreMap.toJson()
 
-        // 5. Explicit Individual Keys (Homepage, Pinned, etc.)
         // We push these to the root for better visibility and to avoid blob conflicts
         val rootIndividualKeys = context.getSharedPrefs().all.filter { (key, _) ->
-            key.contains("home") || key.contains("pinned_providers")
+            (key.contains("home") || key.contains("pinned_providers")) && 
+            (!isHomepageKey(key) || shouldSyncHomepage(context))
         }
         rootIndividualKeys.forEach { (key, value) ->
             data[key] = value
@@ -480,6 +499,12 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
                 // Check if local value is different
                 val localValue = prefs.getString(key, null)
                 if (localValue != value) {
+                    // Skip homepage key if sync is disabled
+                    if (isHomepageKey(key) && !shouldSyncHomepage(context)) {
+                        log("Skipping apply of remote homepage key $key (Sync disabled)")
+                        return@forEach
+                    }
+
                     editor.putString(key, value)
                     hasChanges = true
                     

@@ -168,7 +168,7 @@ object DataStore {
                 putString(path, json)
             }
             // Always push as JSON string for consistency in mirror sync
-            FirestoreSyncManager.pushData(path, json)
+            FirestoreSyncManager.pushData(this, path, json)
         } catch (e: Exception) {
             logError(e)
         }
