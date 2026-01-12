@@ -1748,6 +1748,7 @@ data class TrailerData(
  * @property syncData Online sync services compatible with the media.
  * @property posterHeaders headers map used by network request to get the poster.
  * @property backgroundPosterUrl Url of the media background poster.
+ * @property logoUrl Image URL used as a visual title replacement.If the logo loads successfully, it is shown instead of the text title. If the logo is null or fails to load, the text title is displayed.
  * @property contentRating content rating of the media, appears on result page.
  * @property uniqueUrl The key used for storing the persistent data about an entry.
  * On older versions `url` was used instead, but this was added to support JSON that can change as the url parameter.
@@ -1774,6 +1775,9 @@ interface LoadResponse {
     var syncData: MutableMap<String, String>
     var posterHeaders: Map<String, String>?
     var backgroundPosterUrl: String?
+
+    @Prerelease
+    var logoUrl: String?
     var contentRating: String?
 
     var uniqueUrl: String
@@ -2217,6 +2221,7 @@ constructor(
     override var syncData: MutableMap<String, String> = mutableMapOf(),
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
+    override var logoUrl: String? = null,
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
 ) : LoadResponse
@@ -2277,6 +2282,7 @@ constructor(
     override var nextAiring: NextAiring? = null,
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
+    override var logoUrl: String? = null,
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
 ) : LoadResponse, EpisodeResponse {
@@ -2362,6 +2368,7 @@ constructor(
     override var syncData: MutableMap<String, String> = mutableMapOf(),
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
+    override var logoUrl: String? = null,
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
 ) : LoadResponse
@@ -2410,6 +2417,7 @@ constructor(
     override var syncData: MutableMap<String, String> = mutableMapOf(),
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
+    override var logoUrl: String? = null,
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
 ) : LoadResponse
@@ -2589,6 +2597,7 @@ constructor(
     override var nextAiring: NextAiring? = null,
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
+    override var logoUrl: String? = null,
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
 ) : LoadResponse, EpisodeResponse {
