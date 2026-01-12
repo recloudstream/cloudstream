@@ -63,6 +63,8 @@ import com.lagradost.cloudstream3.databinding.SpeedDialogBinding
 import com.lagradost.cloudstream3.databinding.SubtitleOffsetBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer.Companion.subsProvidersIsActive
+import com.lagradost.cloudstream3.ui.player.gpuv.gpuv.src.main.java.com.daasuu.gpuv.egl.filter.GlBrightnessFilter
+import com.lagradost.cloudstream3.ui.player.gpuv.gpuv.src.main.java.com.daasuu.gpuv.player.GPUPlayerView
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
@@ -110,6 +112,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected open var lockRotation = true
     protected open var isFullScreenPlayer = true
     protected var playerBinding: PlayerCustomLayoutBinding? = null
+    var gpuPlayerView: GPUPlayerView? = null
+    var gpuBrightnessFilter: GlBrightnessFilter? = null
 
     private var durationMode: Boolean by UserPreferenceDelegate("duration_mode", false)
 
@@ -200,12 +204,63 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     ): View? {
         val root = super.onCreateView(inflater, container, savedInstanceState) ?: return null
         playerBinding = PlayerCustomLayoutBinding.bind(root.findViewById(R.id.player_holder))
+
+        // Create GPUPlayerView dynamically and attach it to the PlayerView's content frame
+        try {
+            val pv = root.findViewById<androidx.media3.ui.PlayerView>(R.id.player_view)
+            val contentId = resources.getIdentifier("exo_content_frame", "id", requireContext().packageName)
+            val contentFrame = pv?.findViewById<android.view.ViewGroup>(contentId)
+            if (contentFrame != null) {
+                val gpu = com.lagradost.cloudstream3.ui.player.gpuv.gpuv.src.main.java.com.daasuu.gpuv.player.GPUPlayerView(requireContext())
+                val lp = android.widget.FrameLayout.LayoutParams(
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT
+                )
+                // Insert as first child so it sits behind any controls inside content frame
+                contentFrame.addView(gpu, 0, lp)
+                gpuPlayerView = gpu
+            }
+        } catch (e: Exception) {
+            // Ignore if gpu lib not present or view not found
+        }
         return root
     }
 
+
+    fun setGpuExtraBrightness(extra: Float) {
+        gpuBrightnessFilter?.setBrightness(extra)
+    }
+
+    @SuppressLint("UnsafeOptInUsageError")
+    override fun playerUpdated(player: Any?) {
+        super.playerUpdated(player)
+        if (player is ExoPlayer) {
+            // attach GL renderer filter if available
+            gpuPlayerView?.setExoPlayer(player)
+            if (gpuBrightnessFilter == null) {
+                gpuBrightnessFilter = GlBrightnessFilter()
+                gpuPlayerView?.setGlFilter(gpuBrightnessFilter)
+            }
+        }
+    }
+
     override fun onDestroyView() {
+        // Clean up dynamic GPUPlayerView if created
+        try {
+            gpuPlayerView?.onPause()
+            val parent = gpuPlayerView?.parent as? android.view.ViewGroup
+            parent?.removeView(gpuPlayerView)
+        } catch (e: Exception) {
+            // ignore
+        }
+        gpuPlayerView = null
         playerBinding = null
         super.onDestroyView()
+    }
+
+    override fun resize(resize: PlayerResize, showToast: Boolean) {
+        super.resize(resize, showToast)
+        gpuPlayerView?.setPlayerScaleType(resize)
     }
 
     open fun showMirrorsDialogue() {
@@ -1426,6 +1481,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                     level2ProgressBar.progress =
                                         (currentExtraBrightness * 100_000f).toInt().coerceIn(2_000, 100_000)
                                     level2ProgressBar.isVisible = currentRequestedBrightness > 1.0f
+
+                                    setGpuExtraBrightness(currentExtraBrightness)
 
                                     Log.i("Brightness", "current: $currentRequestedBrightness, ce: $currentExtraBrightness L1: ${level1ProgressBar.progress}, L2: ${level2ProgressBar.progress}")
                                     playerProgressbarRightIcon.setImageResource(
