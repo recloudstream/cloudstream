@@ -1806,6 +1806,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         playerBinding?.playerEpisodeFillerHolder?.isVisible = isFiller ?: false
         playerBinding?.playerVideoTitle?.text = playerVideoTitle
+        playerBinding?.offlinePin?.isVisible = lastUsedGenerator is DownloadFileGenerator
     }
 
     @SuppressLint("SetTextI18n")
