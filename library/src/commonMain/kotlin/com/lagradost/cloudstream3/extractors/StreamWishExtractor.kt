@@ -137,6 +137,11 @@ class Playerwish : StreamWishExtractor() {
     override val mainUrl = "https://playerwish.com"
 }
 
+class HlsWish : StreamWishExtractor() {
+    override val name = "HlsWish"
+    override val mainUrl = "https://hlswish.com"
+}
+
 open class StreamWishExtractor : ExtractorApi() {
     override val name = "Streamwish"
     override val mainUrl = "https://streamwish.to"
