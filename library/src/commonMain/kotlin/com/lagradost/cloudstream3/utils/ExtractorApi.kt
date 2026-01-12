@@ -109,6 +109,7 @@ import com.lagradost.cloudstream3.extractors.HDStreamAble
 import com.lagradost.cloudstream3.extractors.Hotlinger
 import com.lagradost.cloudstream3.extractors.HubCloud
 import com.lagradost.cloudstream3.extractors.Hxfile
+import com.lagradost.cloudstream3.extractors.HlsWish
 import com.lagradost.cloudstream3.extractors.InternetArchive
 import com.lagradost.cloudstream3.extractors.JWPlayer
 import com.lagradost.cloudstream3.extractors.Jawcloud
@@ -1237,6 +1238,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Up4Stream(),
     Up4FunTop(),
     GUpload(),
+    HlsWish(),
 )
 
 
