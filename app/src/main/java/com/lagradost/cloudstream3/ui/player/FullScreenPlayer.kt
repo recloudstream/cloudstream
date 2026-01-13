@@ -63,8 +63,9 @@ import com.lagradost.cloudstream3.databinding.SpeedDialogBinding
 import com.lagradost.cloudstream3.databinding.SubtitleOffsetBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer.Companion.subsProvidersIsActive
-import com.lagradost.cloudstream3.ui.player.gpuv.gpuv.src.main.java.com.daasuu.gpuv.egl.filter.GlBrightnessFilter
-import com.lagradost.cloudstream3.ui.player.gpuv.gpuv.src.main.java.com.daasuu.gpuv.player.GPUPlayerView
+import com.daasuu.gpuv.egl.filter.GlBrightnessFilter
+import com.daasuu.gpuv.player.GPUPlayerView
+import com.daasuu.gpuv.player.PlayerScaleType
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
@@ -211,7 +212,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             val contentId = resources.getIdentifier("exo_content_frame", "id", requireContext().packageName)
             val contentFrame = pv?.findViewById<android.view.ViewGroup>(contentId)
             if (contentFrame != null) {
-                val gpu = com.lagradost.cloudstream3.ui.player.gpuv.gpuv.src.main.java.com.daasuu.gpuv.player.GPUPlayerView(requireContext())
+                val gpu = GPUPlayerView(requireContext())
                 val lp = android.widget.FrameLayout.LayoutParams(
                     android.view.ViewGroup.LayoutParams.MATCH_PARENT,
                     android.view.ViewGroup.LayoutParams.MATCH_PARENT
@@ -260,7 +261,16 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     override fun resize(resize: PlayerResize, showToast: Boolean) {
         super.resize(resize, showToast)
-        gpuPlayerView?.setPlayerScaleType(resize)
+        try {
+            val gpuScale = when (resize) {
+                PlayerResize.Fit -> PlayerScaleType.RESIZE_FIT
+                PlayerResize.Fill -> PlayerScaleType.RESIZE_FILL
+                PlayerResize.Zoom -> PlayerScaleType.RESIZE_ZOOM
+            }
+            gpuPlayerView?.setPlayerScaleType(gpuScale)
+        } catch (e: Exception) {
+            // ignore if gpu lib not present or method signature differs
+        }
     }
 
     open fun showMirrorsDialogue() {
