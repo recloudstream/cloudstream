@@ -1143,7 +1143,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                 Settings.System.putInt(
                     context?.contentResolver,
-                    Settings.System.SCREEN_BRIGHTNESS, (brightness.coerceIn(0.0f, 1.0f) * 255).toInt()
+                    Settings.System.SCREEN_BRIGHTNESS, min(1, (brightness.coerceIn(0.0f, 1.0f) * 255).toInt())
                 )
             } catch (e: Exception) {
                 useTrueSystemBrightness = false
@@ -1152,7 +1152,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         } else {
             try {
                 val lp = activity?.window?.attributes
-                lp?.screenBrightness = brightness.coerceIn(0.0f, 1.0f)
+                // use 0.004f instead of 0, because on some devices setting too small value
+                // causes system to override it and in turn system makes the screen apply system brightness level instead
+                // which can be too bright, and it is very hard to fine tune very low brightness, because of it.
+                // Without this clamp, it can jump from almost 0% to 100% brightness when this threshold is crossed.
+                lp?.screenBrightness = brightness.coerceIn(0.004f, 1.0f)
+                // Log.i("Brightness", "clamped brightness: ${lp?.screenBrightness}")
                 activity?.window?.attributes = lp
             } catch (e: Exception) {
                 logError(e)
