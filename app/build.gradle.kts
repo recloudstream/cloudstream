@@ -63,7 +63,7 @@ android {
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 67
-        versionName = "4.6.4"
+        versionName = "4.6.5"
 
         resValue("string", "commit_hash", getGitCommitHash())
         

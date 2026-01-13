@@ -130,13 +130,18 @@ class DownloadsScreen(carContext: CarContext) : Screen(carContext) {
                  return@launch
              }
 
+             // Get saved resume position
+             val savedPos = DataStoreHelper.getViewPos(episodeIdToPlay)
+             val startTime = savedPos?.position ?: 0L
+
              withContext(Dispatchers.Main) {
                  screenManager.push(
                      PlayerCarScreen(
                          carContext = carContext,
                          fileUri = fileInfo.path.toString(),
                          videoId = episodeIdToPlay,
-                         parentId = header.id
+                         parentId = header.id,
+                         startTime = startTime
                      )
                  )
              }
