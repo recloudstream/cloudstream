@@ -391,7 +391,6 @@ class PlayerCarScreen(
 
             actionStripBuilder.addAction(backToMenuAction)
                 .addAction(seekBackAction)
-                .addAction(playPauseAction)
                 .addAction(seekForwardAction)
                 
         } else {
