@@ -69,11 +69,11 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                 } else {
                      resumeWatchingResult.forEach { (resume, cachedData) ->
                          val title = cachedData.name
-                         val subtitle = if (resume.episode != null && resume.season != null) {
-                            "S${resume.season}:E${resume.episode}" 
-                         } else {
-                            cachedData.apiName
-                         }
+                     val subtitle = if (resume.episode != null && resume.season != null) {
+                        "S${resume.season}E${resume.episode} (${cachedData.apiName})"
+                     } else {
+                        cachedData.apiName
+                     }
     
                          builder.addItem(
                              Row.Builder()
@@ -128,8 +128,37 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
             } ?: return@launch
 
             if (loadResult is TvSeriesLoadResponse) {
-                withContext(Dispatchers.Main) {
-                     screenManager.push(EpisodeListScreen(carContext, loadResult, isExpressMode = true))
+                // Find the specific episode to resume
+                // resume.episodeId should match episode.data.hashCode() used by PlayerCarScreen
+                val episodeToResume = loadResult.episodes.find { episode ->
+                    // Promiscuous check: try multiple ways to match the episode
+                    // Note: Episode class does not have an 'id' field, so we skip direct ID check
+                    val urlHashMatch = episode.data.hashCode() == resume.episodeId
+                    val numberMatch = (episode.episode == resume.episode && episode.season == resume.season)
+                    
+                    urlHashMatch || numberMatch
+                }
+                
+                if (episodeToResume != null) {
+                    val startTime = getViewPos(resume.episodeId)?.position ?: 0L
+                    val seasonEpisodes = loadResult.episodes.filter { it.season == episodeToResume.season }
+                    
+                    withContext(Dispatchers.Main) {
+                        screenManager.push(
+                            PlayerCarScreen(
+                                carContext = carContext,
+                                loadResponse = loadResult,
+                                selectedEpisode = episodeToResume,
+                                playlist = seasonEpisodes,
+                                startTime = startTime
+                            )
+                        )
+                    }
+                } else {
+                    // Fallback to episode list if episode not found
+                    withContext(Dispatchers.Main) {
+                        screenManager.push(EpisodeListScreen(carContext, loadResult, isExpressMode = true))
+                    }
                 }
             } else {
                 val startTime = getViewPos(resume.episodeId)?.position ?: 0L
@@ -152,9 +181,6 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                         this.posterUrl = cachedData.poster
                     }
                 }
-
-                // Resolve Episode for TV Series (Not needed if we skip player for series here, but kept for non-TvSeriesLoadResponse logic if any?)
-                // Actually, if it's NOT TvSeriesLoadResponse, selectedEpisode is likely null or irrelevant for Movie
                 
                 withContext(Dispatchers.Main) {
                      screenManager.push(
@@ -162,7 +188,7 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                              carContext = carContext,
                              item = item,
                              loadResponse = loadResult,
-                             selectedEpisode = null, // movies don't have episodes usually or logic differs
+                             selectedEpisode = null,
                              startTime = startTime
                          )
                      )

@@ -52,36 +52,13 @@ class BookmarksScreen(carContext: CarContext) : Screen(carContext), androidx.lif
                                  .setTitle(item.name)
                                  .setOnClickListener {
                                      val type = item.type
-                                     if (type == TvType.TvSeries || type == TvType.Anime || type == TvType.OVA) {
-                                         androidx.car.app.CarToast.makeText(carContext, "Caricamento episodi...", androidx.car.app.CarToast.LENGTH_SHORT).show()
-                                         CoroutineScope(Dispatchers.IO).launch {
-                                             val api = com.lagradost.cloudstream3.APIHolder.getApiFromNameNull(item.apiName)
-                                             if (api != null) {
-                                                 val repo = com.lagradost.cloudstream3.ui.APIRepository(api)
-                                                 when (val result = repo.load(item.url)) {
-                                                     is com.lagradost.cloudstream3.mvvm.Resource.Success -> {
-                                                         val data = result.value
-                                                         withContext(Dispatchers.Main) {
-                                                             if (data is com.lagradost.cloudstream3.TvSeriesLoadResponse) {
-                                                                 screenManager.push(EpisodeListScreen(carContext, data, isExpressMode = true))
-                                                             } else {
-                                                                 screenManager.push(DetailsScreen(carContext, item))
-                                                             }
-                                                         }
-                                                     }
-                                                     is com.lagradost.cloudstream3.mvvm.Resource.Failure -> {
-                                                          withContext(Dispatchers.Main) {
-                                                              androidx.car.app.CarToast.makeText(carContext, "Errore: ${result.errorString}", androidx.car.app.CarToast.LENGTH_LONG).show()
-                                                          }
-                                                     }
-                                                     else -> {}
-                                                 }
-                                             } else {
-                                                 withContext(Dispatchers.Main) {
-                                                     androidx.car.app.CarToast.makeText(carContext, "Provider non trovato", androidx.car.app.CarToast.LENGTH_SHORT).show()
-                                                 }
-                                             }
-                                         }
+                                     if (type == TvType.TvSeries || 
+                                         type == TvType.Anime || 
+                                         type == TvType.Cartoon || 
+                                         type == TvType.OVA || 
+                                         type == TvType.AsianDrama || 
+                                         type == TvType.Documentary) {
+                                         screenManager.push(TvSeriesDetailScreen(carContext, item))
                                      } else {
                                          screenManager.push(DetailsScreen(carContext, item))
                                      }

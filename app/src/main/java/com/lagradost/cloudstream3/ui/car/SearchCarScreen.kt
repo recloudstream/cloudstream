@@ -58,7 +58,19 @@ class SearchCarScreen(carContext: CarContext) : Screen(carContext) {
                          builder.addItem(
                              Row.Builder()
                                  .setTitle(item.name)
-                                 .setOnClickListener { screenManager.push(DetailsScreen(carContext, item)) }
+                                 .setOnClickListener {
+                                     val type = item.type
+                                     if (type == com.lagradost.cloudstream3.TvType.TvSeries || 
+                                         type == com.lagradost.cloudstream3.TvType.Anime || 
+                                         type == com.lagradost.cloudstream3.TvType.Cartoon || 
+                                         type == com.lagradost.cloudstream3.TvType.OVA || 
+                                         type == com.lagradost.cloudstream3.TvType.AsianDrama || 
+                                         type == com.lagradost.cloudstream3.TvType.Documentary) {
+                                         screenManager.push(TvSeriesDetailScreen(carContext, item))
+                                     } else {
+                                         screenManager.push(DetailsScreen(carContext, item))
+                                     }
+                                 }
                                  .build()
                          )
                      }

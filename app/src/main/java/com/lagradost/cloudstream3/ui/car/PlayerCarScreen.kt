@@ -38,9 +38,13 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import android.util.Log
+import com.lagradost.cloudstream3.utils.DataStore
+import com.lagradost.cloudstream3.utils.DataStore.getKey
+import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
+import com.lagradost.cloudstream3.Episode
 
 import com.lagradost.cloudstream3.LoadResponse
-import com.lagradost.cloudstream3.Episode
 import com.lagradost.cloudstream3.TvSeriesLoadResponse
 import com.lagradost.cloudstream3.AnimeLoadResponse
 import com.lagradost.cloudstream3.MovieLoadResponse
@@ -61,6 +65,7 @@ class PlayerCarScreen(
     val parentId: Int? = null
 ) : Screen(carContext), SurfaceCallback {
 
+    private var activeEpisode: Episode? = selectedEpisode
     private val scope = CoroutineScope(Dispatchers.IO + Job())
     private var player: ExoPlayer? = null
     private var surface: Surface? = null
@@ -102,7 +107,37 @@ class PlayerCarScreen(
         if (fileUri != null) {
             currentEpisodeId = videoId
             currentParentId = parentId
-            scope.launch { startPlayback(fileUri) }
+            
+            // Fix: Populate selectedEpisode metadata for Downloads so saveProgress works correctly
+            if (this.activeEpisode == null) {
+                scope.launch(Dispatchers.IO) {
+                   try {
+                       val cachedEp = carContext.getKey<VideoDownloadHelper.DownloadEpisodeCached>(
+                           DOWNLOAD_EPISODE_CACHE,
+                           videoId.toString()
+                       )
+                       if (cachedEp != null) {
+                           @Suppress("DEPRECATION_ERROR")
+                           val ep = Episode(
+                               data = "", // URL not available in cache, but ID is used from videoId so acceptable
+                               name = cachedEp.name,
+                               season = cachedEp.season,
+                               episode = cachedEp.episode,
+                               posterUrl = cachedEp.poster
+                           )
+                           this@PlayerCarScreen.activeEpisode = ep
+                           Log.d("PlayerCarScreen", "Populated activeEpisode from Download: S${cachedEp.season} E${cachedEp.episode}")
+                       }
+                   } catch (e: Exception) {
+                       Log.e("PlayerCarScreen", "Error loading download metadata", e)
+                   }
+                   withContext(Dispatchers.Main) {
+                       startPlayback(fileUri)
+                   }
+                }
+            } else {
+                 scope.launch { startPlayback(fileUri) }
+            }
         } else {
             loadMedia(item?.url)
         }
@@ -151,7 +186,7 @@ class PlayerCarScreen(
              val links = mutableListOf<ExtractorLink>()
              try {
                  val urlToLoad = when {
-                     selectedEpisode != null -> selectedEpisode.data
+                     activeEpisode != null -> activeEpisode!!.data
                      data is com.lagradost.cloudstream3.TvSeriesLoadResponse -> {
                          // Auto-select first episode if none selected
                          data.episodes.firstOrNull()?.data
@@ -197,15 +232,15 @@ class PlayerCarScreen(
              //           2. Data URL Hashcode (using strict cleaning logic)
              currentParentId = item?.id ?: idFromUrl
 
-             if (data is TvSeriesLoadResponse && selectedEpisode != null) {
+             if (data is TvSeriesLoadResponse && activeEpisode != null) {
                  // Episode doesn't have an ID property, so we use the data (url) hashcode
                  // Note: Episodes might not use the mainUrl cleanup in the same way, but usually depend on their own data string.
                  // In PlayerGeneratorViewModel/RepoLinkGenerator, episodes use 'current.id' which comes from ResultEpisode.
                  // ResultEpisode is built using 'id' from LoadResponse.
                  // So we should apply the same cleaning to episode data if it's a URL.
-                 // However, selectedEpisode.data is usually the direct link. 
+                 // However, activeEpisode.data is usually the direct link. 
                  // Let's stick to .hashCode() of the data string for episodes as a reasonable unique key if explicit ID is known to be missing.
-                 currentEpisodeId = selectedEpisode.data.hashCode()
+                 currentEpisodeId = activeEpisode!!.data.hashCode()
              } else {
                  // For movies, we use the parent ID
                  currentEpisodeId = currentParentId
@@ -245,8 +280,8 @@ class PlayerCarScreen(
                  Log.d("PlayerCarScreen", "Removed Last Watched (Finished)")
              } else {
                  // Update resume state
-                 val epNum = selectedEpisode?.episode
-                 val seasonNum = selectedEpisode?.season
+                 val epNum = activeEpisode?.episode
+                 val seasonNum = activeEpisode?.season
                  
                  DataStoreHelper.setLastWatched(
                      parentId = currentParentId,

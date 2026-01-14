@@ -17,6 +17,7 @@ import coil3.SingletonImageLoader
 import com.lagradost.cloudstream3.Episode
 import com.lagradost.cloudstream3.TvSeriesLoadResponse
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -96,12 +97,15 @@ class EpisodeDetailScreen(
             .setIcon(CarIcon.Builder(playIcon).build())
             .setBackgroundColor(CarColor.createCustom(android.graphics.Color.WHITE, android.graphics.Color.WHITE))
             .setOnClickListener {
+                // Get saved position for resume
+                val startTime = getViewPos(episode.data.hashCode())?.position ?: 0L
                 screenManager.push(
                     PlayerCarScreen(
                         carContext = carContext,
                         loadResponse = seriesDetails,
                         selectedEpisode = episode,
-                        playlist = playlist
+                        playlist = playlist,
+                        startTime = startTime
                     )
                 )
             }

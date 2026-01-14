@@ -21,15 +21,65 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.lagradost.cloudstream3.isEpisodeBased
 
-class DownloadsScreen(carContext: CarContext) : Screen(carContext) {
+class DownloadsScreen(
+    carContext: CarContext,
+    private val parentId: Int? = null,
+    private val headerName: String? = null
+) : Screen(carContext) {
     private val scope = CoroutineScope(Dispatchers.IO)
     private var itemList: ItemList? = null
 
     init {
-        loadDownloads()
+        loadContent()
     }
 
-     private fun loadDownloads() {
+     private fun loadContent() {
+        if (parentId != null) {
+            loadEpisodes(parentId)
+        } else {
+            loadHeaders()
+        }
+    }
+
+    private fun loadEpisodes(id: Int) {
+        scope.launch {
+            val context = carContext
+            val children = context.getKeys(DOWNLOAD_EPISODE_CACHE)
+                 .mapNotNull { context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(it) }
+                 .filter { it.parentId == id }
+                 .filter { 
+                     val info = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, it.id)
+                     (info?.fileLength ?: 0L) > 0
+                 }
+                 .sortedWith(compareBy({ it.season }, { it.episode }))
+
+            val builder = ItemList.Builder()
+            
+            if (children.isEmpty()) {
+                builder.setNoItemsMessage("Nessun episodio trovato")
+            } else {
+                children.forEach { episode ->
+                    val name = "S${episode.season}:E${episode.episode} - ${episode.name ?: "Episodio"}"
+                    builder.addItem(
+                        Row.Builder()
+                            .setTitle(name)
+                            .setOnClickListener {
+                                playEpisode(episode.id, id)
+                            }
+                            .build()
+                    )
+                }
+            }
+
+            val builtList = builder.build()
+            withContext(Dispatchers.Main) {
+                itemList = builtList
+                invalidate()
+            }
+        }
+    }
+
+    private fun loadHeaders() {
         scope.launch {
             val headers = carContext.getKeys(DOWNLOAD_HEADER_CACHE)
                 .mapNotNull { carContext.getKey<VideoDownloadHelper.DownloadHeaderCached>(it) }
@@ -58,14 +108,24 @@ class DownloadsScreen(carContext: CarContext) : Screen(carContext) {
                 builder.setNoItemsMessage("Nessun download completato trovato")
             } else {
                 validHeaders.forEach { header ->
-                   builder.addItem(
-                       Row.Builder()
-                           .setTitle(header.name)
-                           .setOnClickListener {
-                               playDownload(header)
-                           }
-                           .build()
-                   )
+                   val lastWatched = DataStoreHelper.getLastWatched(header.id)
+                   val subtitle = if (lastWatched != null && lastWatched.season != null && lastWatched.episode != null) {
+                       "S${lastWatched.season}E${lastWatched.episode}"
+                   } else {
+                       null
+                   }
+
+                   val rowBuilder = Row.Builder()
+                       .setTitle(header.name)
+                       .setOnClickListener {
+                           onHeaderClick(header)
+                       }
+                   
+                   if (subtitle != null) {
+                       rowBuilder.addText(subtitle)
+                   }
+                   
+                   builder.addItem(rowBuilder.build())
                 }
             }
 
@@ -77,17 +137,44 @@ class DownloadsScreen(carContext: CarContext) : Screen(carContext) {
         }
     }
 
-    private fun playDownload(header: VideoDownloadHelper.DownloadHeaderCached) {
+    private fun playEpisode(episodeId: Int, parentId: Int) {
+         scope.launch {
+             val context = carContext
+             val fileInfo = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, episodeId)
+             if (fileInfo?.path == null) {
+                 withContext(Dispatchers.Main) {
+                     androidx.car.app.CarToast.makeText(carContext, "File non trovato", androidx.car.app.CarToast.LENGTH_SHORT).show()
+                 }
+                 return@launch
+             }
+
+             // Get saved resume position
+             val savedPos = DataStoreHelper.getViewPos(episodeId)
+             val startTime = savedPos?.position ?: 0L
+
+             withContext(Dispatchers.Main) {
+                 screenManager.push(
+                     PlayerCarScreen(
+                         carContext = carContext,
+                         fileUri = fileInfo.path.toString(),
+                         videoId = episodeId,
+                         parentId = parentId,
+                         startTime = startTime
+                     )
+                 )
+             }
+         }
+    }
+
+    private fun onHeaderClick(header: VideoDownloadHelper.DownloadHeaderCached) {
         scope.launch {
              val context = carContext
              val id = header.id
              
-             // Logic to find THE BEST item to play (Resume or First)
-             
+             // Get children
              val children = context.getKeys(DOWNLOAD_EPISODE_CACHE)
                  .mapNotNull { context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(it) }
                  .filter { it.parentId == id }
-                 // Only consider valid downloads
                  .filter { 
                      val info = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, it.id)
                      (info?.fileLength ?: 0L) > 0
@@ -100,59 +187,26 @@ class DownloadsScreen(carContext: CarContext) : Screen(carContext) {
                   return@launch
              }
 
-             var episodeIdToPlay: Int? = null
-             
              if (header.type.isEpisodeBased()) {
-                 // Series: Check Resume
-                 val lastWatched = DataStoreHelper.getLastWatched(id)
-                 val lastEpisodeId = lastWatched?.episodeId
-                 
-                 // If last watched episode exists and is valid (downloaded), pick it
-                 if (lastEpisodeId != null && children.any { it.id == lastEpisodeId }) {
-                     episodeIdToPlay = lastEpisodeId
-                 } else {
-                     // Otherwise pick first sorted by season/episode
-                     episodeIdToPlay = children.sortedWith(compareBy({ it.season }, { it.episode })).firstOrNull()?.id
+                 // Series: Always go to episode list
+                 withContext(Dispatchers.Main) {
+                     screenManager.push(DownloadsScreen(carContext, id, header.name))
                  }
              } else {
-                 // Movie: Just pick the first (and likely only) one
-                 episodeIdToPlay = children.firstOrNull()?.id
-             }
-
-             if (episodeIdToPlay == null) return@launch
-
-             // Get file info
-             val fileInfo = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, episodeIdToPlay)
-             if (fileInfo?.path == null) {
-                 withContext(Dispatchers.Main) {
-                     androidx.car.app.CarToast.makeText(carContext, "File non trovato", androidx.car.app.CarToast.LENGTH_SHORT).show()
+                 // Movie: Just pick the first/only one
+                 val episodeId = children.firstOrNull()?.id
+                 if (episodeId != null) {
+                    playEpisode(episodeId, id)
                  }
-                 return@launch
-             }
-
-             // Get saved resume position
-             val savedPos = DataStoreHelper.getViewPos(episodeIdToPlay)
-             val startTime = savedPos?.position ?: 0L
-
-             withContext(Dispatchers.Main) {
-                 screenManager.push(
-                     PlayerCarScreen(
-                         carContext = carContext,
-                         fileUri = fileInfo.path.toString(),
-                         videoId = episodeIdToPlay,
-                         parentId = header.id,
-                         startTime = startTime
-                     )
-                 )
              }
         }
     }
 
     override fun onGetTemplate(): Template {
         return ListTemplate.Builder()
-            .setTitle("Download")
+            .setTitle(headerName ?: "Download")
             .setHeaderAction(Action.BACK)
-            .setSingleList(itemList ?: ItemList.Builder().setNoItemsMessage("Caricamento...").build())
+            .setSingleList(itemList ?: ItemList.Builder().setNoItemsMessage(if (headerName == null) "Caricamento download..." else "Caricamento episodi...").build())
             .build()
     }
 }

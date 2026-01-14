@@ -9,9 +9,13 @@ import androidx.car.app.model.PaneTemplate
 import androidx.car.app.model.Row
 import androidx.car.app.model.Template
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.TvSeriesLoadResponse
+import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.newTvSeriesSearchResponse
 import com.lagradost.cloudstream3.ui.player.DownloadedPlayerActivity
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.text.SpannableString
 import android.text.Spanned
 import androidx.car.app.model.CarIcon
@@ -77,6 +81,36 @@ class DetailsScreen(
                     when (val result = repo.load(item.url)) {
                         is Resource.Success -> {
                             fullDetails = result.value
+                            
+                            // Redirect if Type Mismatch (e.g. Provider reported Movie, but it's a Series)
+                            // We check if the response is structurally a Series (has episodes etc)
+                            // This fixes providers that return "Movie" type but provide series data.
+                            if (result.value is TvSeriesLoadResponse) {
+                                val detectedType = result.value.type
+                                // If the provider says "Movie" but sends TvSeriesLoadResponse, force TvSeries type
+                                val isTv = detectedType == TvType.TvSeries || 
+                                           detectedType == TvType.Anime || 
+                                           detectedType == TvType.Cartoon || 
+                                           detectedType == TvType.OVA || 
+                                           detectedType == TvType.AsianDrama || 
+                                           detectedType == TvType.Documentary
+                                           
+                                val finalType = if (isTv) detectedType else TvType.TvSeries
+                                
+                                val correctItem = api.newTvSeriesSearchResponse(
+                                    name = result.value.name,
+                                    url = result.value.url,
+                                    type = finalType,
+                                ) {
+                                    this.posterUrl = result.value.posterUrl ?: item.posterUrl
+                                }
+                                withContext(Dispatchers.Main) {
+                                    screenManager.pop()
+                                    screenManager.push(TvSeriesDetailScreen(carContext, correctItem))
+                                }
+                                return@launch
+                            }
+
                             // Check ID logic matches standard
                             val id = result.value.url.replace(api.mainUrl, "").replace("/", "").hashCode()
                             isFavorite = DataStoreHelper.getFavoritesData(id) != null

@@ -12,6 +12,7 @@ import androidx.car.app.model.Template
 import androidx.core.graphics.drawable.IconCompat
 import com.lagradost.cloudstream3.TvSeriesLoadResponse
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 
 class EpisodeListScreen(
     carContext: CarContext,
@@ -42,12 +43,15 @@ class EpisodeListScreen(
                 .setTitle(title)
                 .setOnClickListener {
                      if (isExpressMode) {
+                         // Get saved position for resume
+                         val startTime = getViewPos(episode.data.hashCode())?.position ?: 0L
                          screenManager.push(
                             PlayerCarScreen(
                                 carContext = carContext,
                                 loadResponse = details,
                                 selectedEpisode = episode,
-                                playlist = seasonEpisodes
+                                playlist = seasonEpisodes,
+                                startTime = startTime
                             )
                         )
                      } else {
