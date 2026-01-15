@@ -184,6 +184,24 @@ class PlayerCarScreen(
              val apiName = data.apiName
              val api = getApiFromNameNull(apiName) ?: return@launch
 
+             // Resolve IDs for syncing BEFORE starting playback
+             // This ensures IDs are available for saveProgress() calls during playback
+             val mainUrl = api.mainUrl
+             val idFromUrl = data.url.replace(mainUrl, "").replace("/", "").hashCode()
+             
+             // Priority: 1. Item ID (if available from Home/Search and valid)
+             //           2. Data URL Hashcode (using strict cleaning logic)
+             currentParentId = item?.id ?: idFromUrl
+
+             if (data is TvSeriesLoadResponse && activeEpisode != null) {
+                 currentEpisodeId = activeEpisode!!.data.hashCode()
+             } else {
+                 // For movies, we use the parent ID
+                 currentEpisodeId = currentParentId
+             }
+             
+             Log.d("PlayerCarScreen", "Resolved IDs (STRICT) - Name: ${data.name} | Parent: $currentParentId | Episode: $currentEpisodeId | Type: ${data.javaClass.simpleName} | ItemID: ${item?.id} | IdFromUrl: $idFromUrl")
+
              val links = mutableListOf<ExtractorLink>()
              try {
                  val urlToLoad = when {
@@ -227,32 +245,6 @@ class PlayerCarScreen(
                  showToast("Errore caricamento link: ${e.message}")
                  e.printStackTrace()
              }
-
-             // Resolve IDs for syncing (Exact match to Main App's ResultViewModel2.getLoadResponseIdFromUrl)
-             // Logic: url.replace(mainUrl, "").replace("/", "").hashCode()
-             
-             val mainUrl = api.mainUrl
-             val idFromUrl = data.url.replace(mainUrl, "").replace("/", "").hashCode()
-             
-             // Priority: 1. Item ID (if available from Home/Search and valid)
-             //           2. Data URL Hashcode (using strict cleaning logic)
-             currentParentId = item?.id ?: idFromUrl
-
-             if (data is TvSeriesLoadResponse && activeEpisode != null) {
-                 // Episode doesn't have an ID property, so we use the data (url) hashcode
-                 // Note: Episodes might not use the mainUrl cleanup in the same way, but usually depend on their own data string.
-                 // In PlayerGeneratorViewModel/RepoLinkGenerator, episodes use 'current.id' which comes from ResultEpisode.
-                 // ResultEpisode is built using 'id' from LoadResponse.
-                 // So we should apply the same cleaning to episode data if it's a URL.
-                 // However, activeEpisode.data is usually the direct link. 
-                 // Let's stick to .hashCode() of the data string for episodes as a reasonable unique key if explicit ID is known to be missing.
-                 currentEpisodeId = activeEpisode!!.data.hashCode()
-             } else {
-                 // For movies, we use the parent ID
-                 currentEpisodeId = currentParentId
-             }
-             
-             Log.d("PlayerCarScreen", "Resolved IDs (STRICT) - Name: ${data.name} | Parent: $currentParentId | Episode: $currentEpisodeId | Type: ${data.javaClass.simpleName} | ItemID: ${item?.id} | IdFromUrl: $idFromUrl")
         }
     }
 
