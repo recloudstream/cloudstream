@@ -344,6 +344,41 @@ class HomeParentItemAdapterPreview(
                 homePreviewDescription.text =
                     item.plot?.html() ?: ""
 
+                homePreviewDescription.text =
+                    item.plot?.html() ?: ""
+
+                homePreviewScore.text = item.score?.let { score ->
+                    homePreviewScore.context.getString(R.string.extension_rating, score.toString())
+                } ?: ""
+                
+                item.score?.toString()?.toDoubleOrNull()?.let { rating ->
+                    val color = when {
+                        rating < 5.0 -> android.graphics.Color.parseColor("#eb2f2f") // Red
+                        rating < 8.0 -> android.graphics.Color.parseColor("#eda009") // Yellow
+                        else -> android.graphics.Color.parseColor("#3bb33b") // Green
+                    }
+                    homePreviewScore.backgroundTintList = android.content.res.ColorStateList.valueOf(color)
+                    homePreviewScore.setTextColor(android.graphics.Color.WHITE)
+                }
+                
+                homePreviewScore.isGone = item.score == null
+
+                homePreviewYear.text = item.year?.toString() ?: ""
+                homePreviewYear.isGone = item.year == null
+
+                homePreviewDuration.text = item.duration?.let { min ->
+                     homePreviewDuration.context.getString(R.string.duration_format, min)
+                } ?: ""
+                homePreviewDuration.isGone = item.duration == null
+
+                val castText = item.actors?.take(3)?.mapNotNull { it.actor.name }?.joinToString(", ")
+                if (!castText.isNullOrBlank()) {
+                    homePreviewCast.text = homePreviewCast.context.getString(R.string.cast_format, castText)
+                    homePreviewCast.isVisible = true
+                } else {
+                    homePreviewCast.isVisible = false
+                }
+
                 homePreviewText.text = item.name.html()
                 populateChips(
                     homePreviewTags,
@@ -645,6 +680,12 @@ class HomeParentItemAdapterPreview(
                     alternativeAccountPadding?.isVisible = false
                     (binding as? FragmentHomeHeadTvBinding)?.apply {
                         homePreviewInfoBtt.isVisible = true
+                    }
+                    // Explicitly bind the current item to ensure instant loading
+                    val currentPos = previewViewpager.currentItem
+                    val item = preview.value.second.getOrNull(currentPos)
+                    if (item != null) {
+                        onSelect(item, currentPos)
                     }
                 }
 
