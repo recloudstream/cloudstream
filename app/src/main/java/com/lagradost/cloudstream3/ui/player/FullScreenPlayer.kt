@@ -116,6 +116,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected var playerBinding: PlayerCustomLayoutBinding? = null
     private var gpuPlayerView: GPUPlayerView? = null
     private var gpuBrightnessFilter: GlBrightnessFilter? = null
+    private var hasBrightnessBoostError: Boolean = false
 
     private var durationMode: Boolean by UserPreferenceDelegate("duration_mode", false)
 
@@ -210,10 +211,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         // Create GPUPlayerView dynamically and attach it to the PlayerView's content frame
         safe {
             val pv = root.findViewById<androidx.media3.ui.PlayerView>(R.id.player_view)
-            val contentId = resources.getIdentifier("exo_content_frame", "id", requireContext().packageName)
+            val packageName = context?.packageName ?: return@safe
+            val contentId = resources.getIdentifier("exo_content_frame", "id", packageName)
             val contentFrame = pv?.findViewById<android.view.ViewGroup>(contentId)
             if (contentFrame != null) {
-                val gpu = GPUPlayerView(requireContext())
+                val gpu = GPUPlayerView(context)
                 val lp = android.widget.FrameLayout.LayoutParams(
                     android.view.ViewGroup.LayoutParams.MATCH_PARENT,
                     android.view.ViewGroup.LayoutParams.MATCH_PARENT
@@ -237,10 +239,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         if (player is ExoPlayer) {
             // attach GL renderer filter if available
             gpuPlayerView?.setExoPlayer(player)
-            if (gpuBrightnessFilter == null) {
-                gpuBrightnessFilter = GlBrightnessFilter()
-                gpuPlayerView?.setGlFilter(gpuBrightnessFilter)
-            }
         }
     }
 
@@ -248,6 +246,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         // Clean up dynamic GPUPlayerView if created
         safe {
             gpuPlayerView?.onPause()
+            gpuPlayerView?.setGlFilter(null)
+            gpuBrightnessFilter = null
             val parent = gpuPlayerView?.parent as? android.view.ViewGroup
             parent?.removeView(gpuPlayerView)
         }
@@ -1491,7 +1491,53 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                             (currentExtraBrightness * 100_000f).toInt().coerceIn(2_000, 100_000)
                                         level2ProgressBar.isVisible = currentRequestedBrightness > 1.0f
 
-                                        setGpuExtraBrightness(currentExtraBrightness)
+                                        // Only create/remove the GL filter when crossing the 1.0 threshold
+                                        val wasExtra = lastRequested > 1.0f
+                                        val willExtra = currentRequestedBrightness > 1.0f
+
+                                        if (willExtra && !wasExtra) {
+                                            // crossed from <=1.0 to >1.0: initialize filter
+                                            try {
+                                                if (gpuBrightnessFilter == null) {
+                                                    gpuBrightnessFilter = GlBrightnessFilter()
+                                                    gpuPlayerView?.setGlFilter(gpuBrightnessFilter)
+                                                }
+                                                setGpuExtraBrightness(currentExtraBrightness)
+                                                hasBrightnessBoostError = false
+                                            } catch (t: Throwable) {
+                                                logError(t)
+                                                hasBrightnessBoostError = true
+                                            }
+                                        } else if (willExtra && wasExtra) {
+                                            // still >1.0: only update brightness
+                                            try {
+                                                setGpuExtraBrightness(currentExtraBrightness)
+                                            } catch (t: Throwable) {
+                                                logError(t)
+                                                hasBrightnessBoostError = true
+                                            }
+                                        } else if (!willExtra && wasExtra) {
+                                            // crossed from >1.0 to <=1.0: remove filter
+                                            try {
+                                                gpuPlayerView?.setGlFilter(null)
+                                                gpuBrightnessFilter = null
+                                            } catch (t: Throwable) {
+                                                logError(t)
+                                                hasBrightnessBoostError = true
+                                            }
+                                        }
+
+                                        if (willExtra) {
+                                            level2ProgressBar.progressTintList = ColorStateList.valueOf(
+                                                ContextCompat.getColor(
+                                                    level2ProgressBar.context, if (hasBrightnessBoostError) {
+                                                        R.color.colorPrimaryRed
+                                                    } else {
+                                                        R.color.colorPrimaryOrange
+                                                    }
+                                                )
+                                            )
+                                        }
                                     }
 
                                     Log.i("Brightness", "current: $currentRequestedBrightness, ce: $currentExtraBrightness L1: ${level1ProgressBar.progress}, L2: ${level2ProgressBar.progress}")
