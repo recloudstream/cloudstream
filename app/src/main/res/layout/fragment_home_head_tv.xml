@@ -79,6 +79,7 @@
 
 
                     <TextView
+                        android:textColor="@color/textColor"
                         android:id="@+id/home_preview_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -136,6 +137,7 @@
                         android:maxLines="3"
                         android:paddingBottom="5dp"
                         android:textSize="15sp"
+                        android:textColor="@color/textColor"
                         tools:text="very nice tv series" />
 
                     <TextView

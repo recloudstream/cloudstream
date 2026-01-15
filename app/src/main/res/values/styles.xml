@@ -113,8 +113,10 @@
 
     <style name="ChipFilledSemiTransparent" parent="@style/ChipFilled">
         <item name="chipBackgroundColor">@color/transparent</item>
-        <item name="chipSurfaceColor">@color/white_attr_20</item>
+        <item name="chipSurfaceColor">#33FFFFFF</item>
         <item name="backgroundColor">@color/transparent</item>
+        <item name="android:textColor">@color/textColor</item>
+        <item name="textColor">@color/textColor</item>
     </style>
 
     <style name="ChipParent">

@@ -103,7 +103,8 @@ object UIHelper {
     fun populateChips(
         view: ChipGroup?,
         tags: List<String>,
-        @StyleRes style: Int = R.style.ChipFilled
+        @StyleRes style: Int = R.style.ChipFilled,
+        @AttrRes textColor: Int? = R.attr.white,
     ) {
         if (view == null) return
         view.removeAllViews()
@@ -124,7 +125,9 @@ object UIHelper {
             chip.isCheckable = false
             chip.isFocusable = false
             chip.isClickable = false
-            chip.setTextColor(context.colorFromAttribute(R.attr.white))
+            textColor?.let {
+                chip.setTextColor(context.colorFromAttribute(it))
+            }
             view.addView(chip)
         }
     }
