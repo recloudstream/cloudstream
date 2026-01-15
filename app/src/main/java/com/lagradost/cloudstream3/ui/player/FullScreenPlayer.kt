@@ -49,6 +49,9 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.daasuu.gpuv.egl.filter.GlBrightnessFilter
+import com.daasuu.gpuv.player.GPUPlayerView
+import com.daasuu.gpuv.player.PlayerScaleType
 import com.google.android.material.button.MaterialButton
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.CommonActivity.keyEventListener
@@ -62,10 +65,8 @@ import com.lagradost.cloudstream3.databinding.PlayerCustomLayoutBinding
 import com.lagradost.cloudstream3.databinding.SpeedDialogBinding
 import com.lagradost.cloudstream3.databinding.SubtitleOffsetBinding
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer.Companion.subsProvidersIsActive
-import com.daasuu.gpuv.egl.filter.GlBrightnessFilter
-import com.daasuu.gpuv.player.GPUPlayerView
-import com.daasuu.gpuv.player.PlayerScaleType
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
@@ -113,8 +114,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected open var lockRotation = true
     protected open var isFullScreenPlayer = true
     protected var playerBinding: PlayerCustomLayoutBinding? = null
-    var gpuPlayerView: GPUPlayerView? = null
-    var gpuBrightnessFilter: GlBrightnessFilter? = null
+    private var gpuPlayerView: GPUPlayerView? = null
+    private var gpuBrightnessFilter: GlBrightnessFilter? = null
 
     private var durationMode: Boolean by UserPreferenceDelegate("duration_mode", false)
 
@@ -207,7 +208,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         playerBinding = PlayerCustomLayoutBinding.bind(root.findViewById(R.id.player_holder))
 
         // Create GPUPlayerView dynamically and attach it to the PlayerView's content frame
-        try {
+        safe {
             val pv = root.findViewById<androidx.media3.ui.PlayerView>(R.id.player_view)
             val contentId = resources.getIdentifier("exo_content_frame", "id", requireContext().packageName)
             val contentFrame = pv?.findViewById<android.view.ViewGroup>(contentId)
@@ -221,8 +222,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 contentFrame.addView(gpu, 0, lp)
                 gpuPlayerView = gpu
             }
-        } catch (e: Exception) {
-            // Ignore if gpu lib not present or view not found
         }
         return root
     }
@@ -247,13 +246,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     override fun onDestroyView() {
         // Clean up dynamic GPUPlayerView if created
-        try {
+        safe {
             gpuPlayerView?.onPause()
             val parent = gpuPlayerView?.parent as? android.view.ViewGroup
             parent?.removeView(gpuPlayerView)
-        } catch (e: Exception) {
-            // ignore
         }
+
         gpuPlayerView = null
         playerBinding = null
         super.onDestroyView()
@@ -261,15 +259,14 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     override fun resize(resize: PlayerResize, showToast: Boolean) {
         super.resize(resize, showToast)
-        try {
-            val gpuScale = when (resize) {
-                PlayerResize.Fit -> PlayerScaleType.RESIZE_FIT
-                PlayerResize.Fill -> PlayerScaleType.RESIZE_FILL
-                PlayerResize.Zoom -> PlayerScaleType.RESIZE_ZOOM
-            }
-            gpuPlayerView?.setPlayerScaleType(gpuScale)
-        } catch (e: Exception) {
-            // ignore if gpu lib not present or method signature differs
+        safe {
+            gpuPlayerView?.setPlayerScaleType(
+                when (resize) {
+                    PlayerResize.Fit -> PlayerScaleType.RESIZE_FIT
+                    PlayerResize.Fill -> PlayerScaleType.RESIZE_FILL
+                    PlayerResize.Zoom -> PlayerScaleType.RESIZE_ZOOM
+                }
+            )
         }
     }
 
@@ -1465,18 +1462,14 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                     }
 
                                     val lastRequested = currentRequestedBrightness
-                                    val nextBrightness =
-                                        (currentRequestedBrightness + verticalAddition).coerceIn(0.0f, if (isBrightnessLocked) 1.0f else 2.0f)
+                                    val nextBrightness = currentRequestedBrightness + verticalAddition
+                                    //
                                     // Log.e("Brightness", "Current: $currentRequestedBrightness, Next: $nextBrightness")
                                     // show toast
-                                    if (nextBrightness == 1.0f && isBrightnessLocked && !hasShownBrightnessToast) {
+                                    if (nextBrightness > 1.0f && isBrightnessLocked && !hasShownBrightnessToast) {
                                         showToast(R.string.slide_up_again_to_exceed_brightness_100)
                                         hasShownBrightnessToast = true
-                                    } else if (currentRequestedBrightness == 1.0f && nextBrightness > 1.0f && !hasShownBrightnessToast) {
-                                        showToast(R.string.brightness_exceeded_100)
-                                        hasShownBrightnessToast = true
                                     }
-
                                     currentRequestedBrightness = nextBrightness
 
                                     // this is to not spam request it, just in case it fucks over someone
@@ -1491,13 +1484,15 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                     level1ProgressBar.progress =
                                         max(2_000, (min(1.0f, currentRequestedBrightness) * 100_000f).toInt())
 
-                                    currentExtraBrightness = if (currentRequestedBrightness > 1.0f) currentRequestedBrightness - 1.0f else 0.0f
-                                    level2ProgressBar.max = 100_000
-                                    level2ProgressBar.progress =
-                                        (currentExtraBrightness * 100_000f).toInt().coerceIn(2_000, 100_000)
-                                    level2ProgressBar.isVisible = currentRequestedBrightness > 1.0f
+                                    if (!isBrightnessLocked) {
+                                        currentExtraBrightness = if (currentRequestedBrightness > 1.0f) min(2.0f, currentRequestedBrightness) - 1.0f else 0.0f
+                                        level2ProgressBar.max = 100_000
+                                        level2ProgressBar.progress =
+                                            (currentExtraBrightness * 100_000f).toInt().coerceIn(2_000, 100_000)
+                                        level2ProgressBar.isVisible = currentRequestedBrightness > 1.0f
 
-                                    setGpuExtraBrightness(currentExtraBrightness)
+                                        setGpuExtraBrightness(currentExtraBrightness)
+                                    }
 
                                     Log.i("Brightness", "current: $currentRequestedBrightness, ce: $currentExtraBrightness L1: ${level1ProgressBar.progress}, L2: ${level2ProgressBar.progress}")
                                     playerProgressbarRightIcon.setImageResource(
