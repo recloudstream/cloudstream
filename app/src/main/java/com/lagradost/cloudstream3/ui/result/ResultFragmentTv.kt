@@ -924,7 +924,13 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         comingSoon = d.comingSoon
                         resultTvComingSoon.isVisible = d.comingSoon
 
-                        populateChips(resultTag, d.tags)
+                        populateChips(
+                            view = resultTag,
+                            tags = d.tags,
+                            expandable = isLayout(EMULATOR),
+                            initialVisibleLimit = 15
+                        )
+
                         resultCastItems.isGone = d.actors.isNullOrEmpty()
                         (resultCastItems.adapter as? ActorAdaptor)?.submitList(
                             d.actors

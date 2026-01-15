@@ -101,31 +101,37 @@ object UIHelper {
     }
 
     fun populateChips(
-        view: ChipGroup?,
+        view: ChipGroup,
         tags: List<String>,
+        expandable: Boolean,
+        initialVisibleLimit: Int,
         @StyleRes style: Int = R.style.ChipFilled
     ) {
-        if (view == null) return
-        view.removeAllViews()
-        val context = view.context ?: return
-        val maxTags = tags.take(10) // Limited because they are too much
+        var expanded = false
+        fun render() {
+            view.removeAllViews()
+            val visibleTags = if (expanded) tags else tags.take(initialVisibleLimit)
 
-        maxTags.forEach { tag ->
-            val chip = Chip(context)
-            val chipDrawable = ChipDrawable.createFromAttributes(
-                context,
-                null,
-                0,
-                style
-            )
-            chip.setChipDrawable(chipDrawable)
-            chip.text = tag
-            chip.isChecked = false
-            chip.isCheckable = false
-            chip.isFocusable = false
-            chip.isClickable = false
-            chip.setTextColor(context.colorFromAttribute(R.attr.white))
-            view.addView(chip)
+            visibleTags.forEach { tag ->
+                val chip = Chip(view.context).apply {
+                    setChipDrawable(ChipDrawable.createFromAttributes(view.context, null, 0, style))
+                    text = tag
+                    isChecked = false
+                    isCheckable = false
+                    isFocusable = false
+                    isClickable = false
+                    setTextColor(view.context.colorFromAttribute(R.attr.white))
+                }
+                view.addView(chip)
+            }
+        }
+
+        render()
+        if (expandable && tags.size > initialVisibleLimit) {
+            view.setOnClickListener {
+                expanded = !expanded
+                render()
+            }
         }
     }
 
