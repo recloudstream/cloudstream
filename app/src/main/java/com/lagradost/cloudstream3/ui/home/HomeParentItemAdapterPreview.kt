@@ -59,6 +59,7 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectSt
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarMargin
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarView
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
+import androidx.core.graphics.toColorInt
 
 class HomeParentItemAdapterPreview(
     val fragment: LifecycleOwner,
@@ -339,41 +340,44 @@ class HomeParentItemAdapterPreview(
 
         fun onSelect(item: LoadResponse, position: Int) {
             (binding as? FragmentHomeHeadTvBinding)?.apply {
-                homePreviewDescription.isGone =
-                    item.plot.isNullOrBlank()
-                homePreviewDescription.text =
-                    item.plot?.html() ?: ""
+                homePreviewDescription.isGone = item.plot.isNullOrBlank()
+                homePreviewDescription.text = item.plot?.html() ?: ""
 
-                homePreviewDescription.text =
-                    item.plot?.html() ?: ""
+                val scoreText = item.score?.toStringNull(0.1, 10, 1, false)
 
-                homePreviewScore.text = item.score?.let { score ->
-                    homePreviewScore.context.getString(R.string.extension_rating, score.toString())
-                } ?: ""
-                
-                item.score?.toString()?.toDoubleOrNull()?.let { rating ->
+                scoreText?.let { score ->
+                    homePreviewScore.text =
+                        homePreviewScore.context.getString(R.string.extension_rating, score)
+
+                    // while it should never fail, we do this just in case
+                    val rating = score.toDoubleOrNull() ?: item.score?.toDouble() ?: 0.0
+
                     val color = when {
-                        rating < 5.0 -> android.graphics.Color.parseColor("#eb2f2f") // Red
-                        rating < 8.0 -> android.graphics.Color.parseColor("#eda009") // Yellow
-                        else -> android.graphics.Color.parseColor("#3bb33b") // Green
+                        rating < 5.0 -> "#eb2f2f".toColorInt() // Red
+                        rating < 8.0 -> "#eda009".toColorInt() // Yellow
+                        else -> "#3bb33b".toColorInt() // Green
                     }
-                    homePreviewScore.backgroundTintList = android.content.res.ColorStateList.valueOf(color)
-                    homePreviewScore.setTextColor(android.graphics.Color.WHITE)
+                    homePreviewScore.backgroundTintList =
+                        android.content.res.ColorStateList.valueOf(color)
                 }
-                
-                homePreviewScore.isGone = item.score == null
+                homePreviewScore.isGone = scoreText == null
 
-                homePreviewYear.text = item.year?.toString() ?: ""
+                item.year?.let { year ->
+                    homePreviewYear.text = year.toString()
+                }
                 homePreviewYear.isGone = item.year == null
 
-                homePreviewDuration.text = item.duration?.let { min ->
-                     homePreviewDuration.context.getString(R.string.duration_format, min)
-                } ?: ""
-                homePreviewDuration.isGone = item.duration == null
+                val duration = item.duration
+                duration?.let { min ->
+                    homePreviewDuration.text =
+                        homePreviewDuration.context.getString(R.string.duration_format, min)
+                }
+                homePreviewDuration.isGone = duration == null || duration <= 0
 
-                val castText = item.actors?.take(3)?.mapNotNull { it.actor.name }?.joinToString(", ")
+                val castText = item.actors?.take(3)?.joinToString(", ") { it.actor.name }
                 if (!castText.isNullOrBlank()) {
-                    homePreviewCast.text = homePreviewCast.context.getString(R.string.cast_format, castText)
+                    homePreviewCast.text =
+                        homePreviewCast.context.getString(R.string.cast_format, castText)
                     homePreviewCast.isVisible = true
                 } else {
                     homePreviewCast.isVisible = false
