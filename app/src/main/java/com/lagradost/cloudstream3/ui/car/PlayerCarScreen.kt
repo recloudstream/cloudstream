@@ -62,7 +62,8 @@ class PlayerCarScreen(
     val startTime: Long = 0L,
     val fileUri: String? = null,
     val videoId: Int? = null,
-    val parentId: Int? = null
+    val parentId: Int? = null,
+    val preSelectedSource: ExtractorLink? = null
 ) : Screen(carContext), SurfaceCallback {
 
     private var activeEpisode: Episode? = selectedEpisode
@@ -206,16 +207,21 @@ class PlayerCarScreen(
                      return@launch
                  }
 
-                 // Load links using the API
-                 val success = api.loadLinks(urlToLoad, false, {}, { link ->
-                     links.add(link)
-                 })
-                 
-                 if(links.isNotEmpty()) {
-                     val bestLink = links.sortedByDescending { it.quality }.first()
-                     startPlayback(bestLink)
+                 // Use pre-selected source if provided, otherwise load and auto-select best
+                 if (preSelectedSource != null) {
+                     startPlayback(preSelectedSource)
                  } else {
-                     showToast("Nessun link trovato")
+                     // Load links using the API
+                     val success = api.loadLinks(urlToLoad, false, {}, { link ->
+                         links.add(link)
+                     })
+                     
+                     if(links.isNotEmpty()) {
+                         val bestLink = links.sortedByDescending { it.quality }.first()
+                         startPlayback(bestLink)
+                     } else {
+                         showToast("Nessun link trovato")
+                     }
                  }
              } catch (e: Exception) {
                  showToast("Errore caricamento link: ${e.message}")

@@ -18,6 +18,7 @@ import com.lagradost.cloudstream3.Episode
 import com.lagradost.cloudstream3.TvSeriesLoadResponse
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+import com.lagradost.cloudstream3.utils.ExtractorLink
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -33,6 +34,9 @@ class EpisodeDetailScreen(
     private val scope = CoroutineScope(Dispatchers.IO + Job())
     private var posterBitmap: android.graphics.Bitmap? = null
     private var isLoadingImage = true
+    
+    // Selected source for playback
+    private var selectedSource: ExtractorLink? = null
 
     init {
         loadImage()
@@ -89,7 +93,7 @@ class EpisodeDetailScreen(
             )
         }
 
-        // Play Button actions
+        // Play Button action
         val playIcon = IconCompat.createWithResource(carContext, android.R.drawable.ic_media_play)
             .setTint(android.graphics.Color.BLACK)
 
@@ -105,13 +109,43 @@ class EpisodeDetailScreen(
                         loadResponse = seriesDetails,
                         selectedEpisode = episode,
                         playlist = playlist,
-                        startTime = startTime
+                        startTime = startTime,
+                        preSelectedSource = selectedSource
+                    )
+                )
+            }
+            .build()
+        
+        // Source Selection Button
+        val sourceIcon = IconCompat.createWithResource(carContext, R.drawable.ic_baseline_source_24)
+        
+        val sourceActionTitle = if (selectedSource != null) {
+            selectedSource!!.name
+        } else {
+            "Sorgente"
+        }
+        
+        val sourceAction = Action.Builder()
+            .setIcon(CarIcon.Builder(sourceIcon).build())
+            .setTitle(sourceActionTitle)
+            .setOnClickListener {
+                screenManager.push(
+                    SourceSelectionScreen(
+                        carContext = carContext,
+                        apiName = seriesDetails.apiName,
+                        dataUrl = episode.data,
+                        currentSourceUrl = selectedSource?.url,
+                        onSourceSelected = { source ->
+                            selectedSource = source
+                            invalidate()
+                        }
                     )
                 )
             }
             .build()
         
         paneBuilder.addAction(playAction)
+        paneBuilder.addAction(sourceAction)
 
         return PaneTemplate.Builder(paneBuilder.build())
             .setTitle(seriesDetails.name) // Header Title is Series Name

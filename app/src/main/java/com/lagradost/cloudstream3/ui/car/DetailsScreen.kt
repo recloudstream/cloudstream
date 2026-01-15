@@ -38,6 +38,8 @@ import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.utils.DataStoreHelper.FavoritesData
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.MovieLoadResponse
 
 class DetailsScreen(
     carContext: CarContext,
@@ -51,6 +53,9 @@ class DetailsScreen(
     private var posterBitmap: android.graphics.Bitmap? = null
     private var isFavorite: Boolean = false
     private val scope = CoroutineScope(Dispatchers.IO + Job())
+    
+    // Selected source for playback
+    private var selectedSource: ExtractorLink? = null
 
     init {
         loadData()
@@ -222,36 +227,59 @@ class DetailsScreen(
             }
         }
 
-        // Play Button: White background (simulated/requested) with Black Icon
+        // Play Button: White background with Black Icon
         val playIcon = IconCompat.createWithResource(carContext, android.R.drawable.ic_media_play)
             .setTint(android.graphics.Color.BLACK)
 
         val playAction = Action.Builder()
             .setIcon(CarIcon.Builder(playIcon).build())
-            //.setTitle("Play") // No title as requested
             .setBackgroundColor(CarColor.createCustom(android.graphics.Color.WHITE, android.graphics.Color.WHITE)) 
             .setOnClickListener {
-                screenManager.push(PlayerCarScreen(carContext, item)) 
+                screenManager.push(PlayerCarScreen(
+                    carContext = carContext,
+                    item = item,
+                    preSelectedSource = selectedSource
+                )) 
             }
             .build()
-            
-        val favoriteIconRes = if (isFavorite) R.drawable.ic_baseline_favorite_24 else R.drawable.ic_baseline_favorite_border_24
-        val favoriteIcon = IconCompat.createWithResource(carContext, favoriteIconRes)
-        if (isFavorite) {
-            favoriteIcon.setTint(0xFFFF0000.toInt()) // Red
+        
+        // Source Selection Button
+        val sourceIcon = IconCompat.createWithResource(carContext, R.drawable.ic_baseline_source_24)
+        
+        val sourceActionTitle = if (selectedSource != null) {
+            selectedSource!!.name
         } else {
-            favoriteIcon.setTint(android.graphics.Color.WHITE) // White
+            "Sorgente"
         }
-
-        val favoriteAction = Action.Builder()
-            .setIcon(CarIcon.Builder(favoriteIcon).build())
+        
+        val sourceAction = Action.Builder()
+            .setIcon(CarIcon.Builder(sourceIcon).build())
+            .setTitle(sourceActionTitle)
             .setOnClickListener {
-                toggleFavorite()
+                val details = fullDetails
+                val dataUrl = when (details) {
+                    is MovieLoadResponse -> details.dataUrl
+                    else -> details?.url
+                }
+                if (dataUrl != null && details != null) {
+                    screenManager.push(
+                        SourceSelectionScreen(
+                            carContext = carContext,
+                            apiName = details.apiName,
+                            dataUrl = dataUrl,
+                            currentSourceUrl = selectedSource?.url,
+                            onSourceSelected = { source ->
+                                selectedSource = source
+                                invalidate()
+                            }
+                        )
+                    )
+                }
             }
             .build()
             
         paneBuilder.addAction(playAction)
-        paneBuilder.addAction(favoriteAction)
+        paneBuilder.addAction(sourceAction)
 
         return PaneTemplate.Builder(paneBuilder.build())
             .setTitle(fullDetails?.name ?: item.name)
