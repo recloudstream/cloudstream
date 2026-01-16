@@ -59,7 +59,7 @@ class CategoryScreen(
                     } ?: CarIcon.Builder(IconCompat.createWithResource(carContext, R.mipmap.ic_launcher)).build()
 
                     Row.Builder()
-                        .setTitle(item.name)
+                        .setTitle(if (item.name.isNullOrEmpty()) "Untitled" else item.name)
                         .setImage(image, Row.IMAGE_TYPE_LARGE)
                         .setOnClickListener {
                             val type = item.type
@@ -70,6 +70,8 @@ class CategoryScreen(
                                 type == com.lagradost.cloudstream3.TvType.AsianDrama || 
                                 type == com.lagradost.cloudstream3.TvType.Documentary) {
                                 screenManager.push(TvSeriesDetailScreen(carContext, item))
+                            } else if (type == com.lagradost.cloudstream3.TvType.Live) {
+                                screenManager.push(PlayerCarScreen(carContext, item = item))
                             } else {
                                 screenManager.push(DetailsScreen(carContext, item))
                             }

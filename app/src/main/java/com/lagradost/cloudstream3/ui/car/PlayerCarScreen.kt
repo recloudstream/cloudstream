@@ -168,15 +168,27 @@ class PlayerCarScreen(
                  val apiName = item.apiName
                  val api = getApiFromNameNull(apiName) ?: return@launch
                  val repo = APIRepository(api)
-                 when(val result = repo.load(item.url)) {
-                     is Resource.Success -> result.value
-                     else -> null
+                 try {
+                     when(val result = repo.load(item.url)) {
+                         is Resource.Success -> result.value
+                         else -> null
+                     }
+                 } catch (e: Exception) {
+                     Log.e("PlayerCarScreen", "Error loading details for ${item.url}", e)
+                     null
                  }
              } else {
                  null
              }
 
              if (data == null) {
+                 if (item?.type == TvType.Live) {
+                     Log.d("PlayerCarScreen", "Details load failed, attempting direct playback for Live content")
+                     withContext(Dispatchers.Main) {
+                         startPlayback(item!!.url)
+                     }
+                     return@launch
+                 }
                  showToast(CarStrings.get(R.string.car_unable_to_load_details))
                  return@launch
              }
@@ -254,6 +266,11 @@ class PlayerCarScreen(
         val dur = p.duration
         
         Log.d("PlayerCarScreen", "saveProgress - Pos: $pos, Dur: $dur, IsPlaying: $isPlaying")
+
+        if (item?.type == TvType.Live) {
+            Log.d("PlayerCarScreen", "Skipping saveProgress for Live content")
+            return
+        }
 
         if (dur <= 0) return
 
