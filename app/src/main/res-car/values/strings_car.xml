@@ -15,6 +15,7 @@
     <string name="car_home_content">Home Content</string>
     <string name="car_no_content_from_provider">No content from provider</string>
     <string name="car_provider_not_found">Provider not found</string>
+    <string name="car_about_me">About me</string>
 
     <!-- Details -->
     <string name="car_source">Source</string>

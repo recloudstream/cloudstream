@@ -123,6 +123,15 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                 .build()
         )
 
+        menuListBuilder.addItem(
+            Row.Builder()
+                .setTitle(CarStrings.get(R.string.car_about_me))
+                .setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, android.R.drawable.ic_menu_info_details)).build())
+                .setOnClickListener { screenManager.push(AboutMeScreen(carContext)) }
+                .setBrowsable(true)
+                .build()
+        )
+
 
 
         // 2. Content Section Builder
