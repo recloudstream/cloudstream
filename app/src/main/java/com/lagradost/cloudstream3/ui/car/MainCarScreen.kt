@@ -56,7 +56,7 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                 }
 
                 if (api == null) {
-                    errorMessage = "Provider not found: $currentApiName"
+                    errorMessage = "${CarStrings.get(R.string.car_provider_not_found)}: $currentApiName"
                     isLoading = false
                     invalidate()
                     return@launch
@@ -69,7 +69,7 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                         isLoading = false
                     }
                     is Resource.Failure -> {
-                        errorMessage = result.errorString ?: "Error loading content"
+                        errorMessage = result.errorString ?: CarStrings.get(R.string.car_loading_content)
                         isLoading = false
                     }
                     is Resource.Loading -> {}
@@ -88,7 +88,7 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
 
         menuListBuilder.addItem(
             Row.Builder()
-                .setTitle("Preferiti")
+                .setTitle(CarStrings.get(R.string.car_favorites))
                 .setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_baseline_favorite_24)).build())
                 .setOnClickListener { screenManager.push(BookmarksScreen(carContext)) }
                 .setBrowsable(true)
@@ -97,7 +97,7 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
 
         menuListBuilder.addItem(
             Row.Builder()
-                .setTitle("Cronologia")
+                .setTitle(CarStrings.get(R.string.car_history))
                 .setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, android.R.drawable.ic_menu_recent_history)).build())
                 .setOnClickListener { screenManager.push(HistoryScreen(carContext)) }
                 .setBrowsable(true)
@@ -106,7 +106,7 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
 
         menuListBuilder.addItem(
             Row.Builder()
-                .setTitle("Download")
+                .setTitle(CarStrings.get(R.string.car_downloads))
                 .setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, android.R.drawable.stat_sys_download)).build())
                 .setOnClickListener { screenManager.push(DownloadsScreen(carContext)) }
                 .setBrowsable(true)
@@ -115,8 +115,8 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
 
         menuListBuilder.addItem(
             Row.Builder()
-                .setTitle("Provider")
-                .addText("Attuale: $currentApiName")
+                .setTitle(CarStrings.get(R.string.car_provider))
+                .addText("${CarStrings.get(R.string.car_current)}: $currentApiName")
                 .setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, android.R.drawable.ic_menu_manage)).build())
                 .setOnClickListener { screenManager.push(ProviderCarScreen(carContext)) }
                 .setBrowsable(true)
@@ -129,11 +129,11 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
         val contentListBuilder = ItemList.Builder()
 
         if (isLoading) {
-            contentListBuilder.addItem(Row.Builder().setTitle("Caricamento contenuti...").setBrowsable(false).build())
+            contentListBuilder.addItem(Row.Builder().setTitle(CarStrings.get(R.string.car_loading)).setBrowsable(false).build())
         } else if (errorMessage != null) {
-             contentListBuilder.addItem(Row.Builder().setTitle("Errore: $errorMessage").setBrowsable(false).build())
+             contentListBuilder.addItem(Row.Builder().setTitle("${CarStrings.get(R.string.car_error)}: $errorMessage").setBrowsable(false).build())
         } else if (homePageLists.isEmpty()) {
-             contentListBuilder.addItem(Row.Builder().setTitle("Nessun contenuto dal provider").setBrowsable(false).build())
+             contentListBuilder.addItem(Row.Builder().setTitle(CarStrings.get(R.string.car_no_content_from_provider)).setBrowsable(false).build())
         } else {
             homePageLists.forEach { homePageList ->
                 contentListBuilder.addItem(
@@ -155,13 +155,13 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
             .addSectionedList(
                 SectionedItemList.create(
                     menuListBuilder.build(),
-                    "Menu"
+                    CarStrings.get(R.string.car_menu)
                 )
             )
             .addSectionedList(
                 SectionedItemList.create(
                     contentListBuilder.build(),
-                    "Contenuti Home"
+                    CarStrings.get(R.string.car_home_content)
                 )
             )
             .setActionStrip(

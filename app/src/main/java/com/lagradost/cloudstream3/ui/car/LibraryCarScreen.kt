@@ -7,6 +7,7 @@ import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
 import androidx.car.app.model.Row
 import androidx.car.app.model.Template
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
@@ -22,21 +23,21 @@ class LibraryCarScreen(carContext: CarContext) : Screen(carContext) {
                 ItemList.Builder()
                     .addItem(
                         Row.Builder()
-                            .setTitle("Bookmarks")
+                            .setTitle(CarStrings.get(R.string.car_bookmarks))
                             .setOnClickListener { screenManager.push(BookmarksScreen(carContext)) }
                             .setBrowsable(true)
                             .build()
                     )
                     .addItem(
                         Row.Builder()
-                            .setTitle("History")
+                            .setTitle(CarStrings.get(R.string.car_history))
                             .setOnClickListener { screenManager.push(HistoryScreen(carContext)) }
                             .setBrowsable(true)
                             .build()
                     )
                     .build()
             )
-            .setTitle("Library")
+            .setTitle(CarStrings.get(R.string.car_library))
             .setHeaderAction(Action.BACK)
             .build()
     }

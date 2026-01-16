@@ -50,7 +50,7 @@ class SearchCarScreen(carContext: CarContext) : Screen(carContext) {
                      val builder = ItemList.Builder()
                      val items = result.value.items
                      if (items.isEmpty()) {
-                         builder.setNoItemsMessage("Nessun risultato trovato")
+                         builder.setNoItemsMessage(CarStrings.get(R.string.car_no_results_found))
                      }
                      
                      // Text-only results
@@ -88,7 +88,7 @@ class SearchCarScreen(carContext: CarContext) : Screen(carContext) {
 
     override fun onGetTemplate(): Template {
         return SearchTemplate.Builder(searchCallback)
-            .setSearchHint("Cerca film e serie TV...")
+            .setSearchHint("${CarStrings.get(R.string.car_search)}...")
             .setHeaderAction(Action.BACK)
             .setShowKeyboardByDefault(true)
             .setItemList(itemList ?: ItemList.Builder().build())

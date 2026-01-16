@@ -52,7 +52,7 @@ class SourceSelectionScreen(
             try {
                 val api = getApiFromNameNull(apiName)
                 if (api == null) {
-                    errorMessage = "Provider non trovato"
+                    errorMessage = CarStrings.get(R.string.car_provider_not_found)
                     isLoading = false
                     invalidate()
                     return@launch
@@ -65,7 +65,7 @@ class SourceSelectionScreen(
 
                 withContext(Dispatchers.Main) {
                     if (links.isEmpty()) {
-                        errorMessage = "Nessuna sorgente trovata"
+                        errorMessage = CarStrings.get(R.string.car_no_source_found)
                     } else {
                         // Sort by quality (highest first)
                         sources = links.sortedByDescending { it.quality }
@@ -75,7 +75,7 @@ class SourceSelectionScreen(
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    errorMessage = "Errore: ${e.message}"
+                    errorMessage = "${CarStrings.get(R.string.car_error)}: ${e.message}"
                     isLoading = false
                     invalidate()
                 }
@@ -85,7 +85,7 @@ class SourceSelectionScreen(
 
     override fun onGetTemplate(): Template {
         val templateBuilder = ListTemplate.Builder()
-            .setTitle("Sorgenti")
+            .setTitle(CarStrings.get(R.string.car_sources))
             .setHeaderAction(Action.BACK)
 
         if (isLoading) {
@@ -98,7 +98,7 @@ class SourceSelectionScreen(
             if (errorMessage != null) {
                 listBuilder.setNoItemsMessage(errorMessage!!)
             } else if (sources.isEmpty()) {
-                listBuilder.setNoItemsMessage("Nessuna sorgente disponibile")
+                listBuilder.setNoItemsMessage(CarStrings.get(R.string.car_no_source_available))
             } else {
                 // Add each source as a row
                 for (source in sources) {
@@ -114,7 +114,7 @@ class SourceSelectionScreen(
                         .addText(source.source)
                         .setOnClickListener {
                             onSourceSelected(source)
-                            CarToast.makeText(carContext, "Sorgente selezionata: ${source.name}", CarToast.LENGTH_SHORT).show()
+                            CarToast.makeText(carContext, "${CarStrings.get(R.string.car_source_selected)}: ${source.name}", CarToast.LENGTH_SHORT).show()
                             screenManager.pop()
                         }
 

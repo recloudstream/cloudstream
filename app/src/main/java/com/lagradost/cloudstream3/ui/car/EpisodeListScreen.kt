@@ -28,7 +28,7 @@ class EpisodeListScreen(
              return ListTemplate.Builder()
                 .setTitle(details.name)
                 .setHeaderAction(Action.BACK)
-                .setSingleList(ItemList.Builder().addItem(Row.Builder().setTitle("Nessun episodio trovato").build()).build())
+                .setSingleList(ItemList.Builder().addItem(Row.Builder().setTitle(CarStrings.get(R.string.car_no_episodes_found)).build()).build())
                 .build()
         }
 
@@ -38,7 +38,7 @@ class EpisodeListScreen(
         val listBuilder = ItemList.Builder()
         
         seasonEpisodes.forEach { episode ->
-            val title = "${episode.episode}. ${episode.name ?: "Episodio ${episode.episode}"}"
+            val title = "${episode.episode}. ${episode.name ?: "${CarStrings.get(R.string.car_episode)} ${episode.episode}"}"
             val rowBuilder = Row.Builder()
                 .setTitle(title)
                 .setOnClickListener {
@@ -76,7 +76,7 @@ class EpisodeListScreen(
         }
 
         val seasonAction = Action.Builder()
-            .setTitle("Stagione $currentSeason")
+            .setTitle("${CarStrings.get(R.string.car_season)} $currentSeason")
             .setOnClickListener {
                 // Cycle through seasons
                 currentSeasonIndex = (currentSeasonIndex + 1) % availableSeasons.size
@@ -85,7 +85,7 @@ class EpisodeListScreen(
             .build()
 
         return ListTemplate.Builder()
-            .setTitle("${details.name} - Stagione $currentSeason")
+            .setTitle("${details.name} - ${CarStrings.get(R.string.car_season)} $currentSeason")
             .setHeaderAction(Action.BACK)
             .setSingleList(listBuilder.build())
             .setActionStrip(

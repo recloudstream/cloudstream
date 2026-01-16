@@ -44,7 +44,7 @@ class BookmarksScreen(carContext: CarContext) : Screen(carContext), androidx.lif
                 
                 val builder = ItemList.Builder()
                 if (favorites.isEmpty()) {
-                    builder.setNoItemsMessage("Nessun preferito trovato")
+                    builder.setNoItemsMessage(CarStrings.get(R.string.car_no_favorites_found))
                 } else {
                     favorites.forEach { item ->
                          builder.addItem(
@@ -82,7 +82,7 @@ class BookmarksScreen(carContext: CarContext) : Screen(carContext), androidx.lif
                         itemList = ItemList.Builder()
                             .addItem(
                                 Row.Builder()
-                                    .setTitle("Errore: ${e.message}")
+                                    .setTitle("${CarStrings.get(R.string.car_error)}: ${e.message}")
                                     .setOnClickListener { loadBookmarks() }
                                     .build()
                             )
@@ -96,8 +96,8 @@ class BookmarksScreen(carContext: CarContext) : Screen(carContext), androidx.lif
 
     override fun onGetTemplate(): Template {
         return ListTemplate.Builder()
-            .setSingleList(itemList ?: ItemList.Builder().setNoItemsMessage("Caricamento preferiti...").build())
-            .setTitle("Preferiti")
+            .setSingleList(itemList ?: ItemList.Builder().setNoItemsMessage(CarStrings.get(R.string.car_loading)).build())
+            .setTitle(CarStrings.get(R.string.car_favorites))
             .setHeaderAction(Action.BACK)
             .build()
     }

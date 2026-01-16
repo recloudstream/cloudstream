@@ -10,6 +10,7 @@ import androidx.car.app.model.Row
 import androidx.car.app.model.Template
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvSeriesLoadResponse
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.newTvSeriesSearchResponse
 import com.lagradost.cloudstream3.ui.player.DownloadedPlayerActivity
@@ -32,7 +33,6 @@ import coil3.request.ImageRequest
 import coil3.SingletonImageLoader
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.LoadResponse
-import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.utils.DataStoreHelper
@@ -128,7 +128,7 @@ class DetailsScreen(
                         is Resource.Loading -> {}
                     }
                 } else {
-                    errorMessage = "Provider non trovato"
+                    errorMessage = CarStrings.get(R.string.car_provider_not_found)
                     isLoading = false
                 }
             } catch (e: Exception) {
@@ -196,7 +196,7 @@ class DetailsScreen(
                 if (!details.plot.isNullOrEmpty()) {
                     paneBuilder.addRow(
                         Row.Builder()
-                            .setTitle("Trama")
+                            .setTitle(CarStrings.get(R.string.car_plot))
                             .addText(details.plot!!)
                             .build()
                     )
@@ -216,14 +216,14 @@ class DetailsScreen(
                         
                         paneBuilder.addRow(
                             Row.Builder()
-                                .setTitle("Cast")
+                                .setTitle(CarStrings.get(R.string.car_cast))
                                 .addText(s)
                                 .build()
                         )
                     }
                 }
             } else if (errorMessage != null) {
-                 paneBuilder.addRow(Row.Builder().setTitle("Errore dettagli: $errorMessage").build())
+                 paneBuilder.addRow(Row.Builder().setTitle("${CarStrings.get(R.string.car_error)}: $errorMessage").build())
             }
         }
 
@@ -249,7 +249,7 @@ class DetailsScreen(
         val sourceActionTitle = if (selectedSource != null) {
             selectedSource!!.name
         } else {
-            "Sorgente"
+            CarStrings.get(R.string.car_source)
         }
         
         val sourceAction = Action.Builder()
@@ -295,7 +295,7 @@ class DetailsScreen(
         if (isFavorite) {
             DataStoreHelper.removeFavoritesData(id)
             isFavorite = false
-            androidx.car.app.CarToast.makeText(carContext, "Rimosso dai preferiti", androidx.car.app.CarToast.LENGTH_SHORT).show()
+            androidx.car.app.CarToast.makeText(carContext, CarStrings.get(R.string.car_removed_from_favorites), androidx.car.app.CarToast.LENGTH_SHORT).show()
         } else {
             val favoritesData = FavoritesData(
                 favoritesTime = System.currentTimeMillis(),
@@ -315,7 +315,7 @@ class DetailsScreen(
             )
             DataStoreHelper.setFavoritesData(id, favoritesData)
             isFavorite = true
-            androidx.car.app.CarToast.makeText(carContext, "Aggiunto ai preferiti", androidx.car.app.CarToast.LENGTH_SHORT).show()
+            androidx.car.app.CarToast.makeText(carContext, CarStrings.get(R.string.car_added_to_favorites), androidx.car.app.CarToast.LENGTH_SHORT).show()
         }
         invalidate()
     }

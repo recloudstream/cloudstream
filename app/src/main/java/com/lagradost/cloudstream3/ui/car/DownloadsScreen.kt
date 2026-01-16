@@ -9,6 +9,7 @@ import androidx.car.app.model.Row
 import androidx.car.app.model.Template
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
 import com.lagradost.cloudstream3.utils.DataStoreHelper
@@ -56,10 +57,10 @@ class DownloadsScreen(
             val builder = ItemList.Builder()
             
             if (children.isEmpty()) {
-                builder.setNoItemsMessage("Nessun episodio trovato")
+                builder.setNoItemsMessage(CarStrings.get(R.string.car_no_episodes_found))
             } else {
                 children.forEach { episode ->
-                    val name = "S${episode.season}:E${episode.episode} - ${episode.name ?: "Episodio"}"
+                    val name = "S${episode.season}:E${episode.episode} - ${episode.name ?: CarStrings.get(R.string.car_episode)}"
                     builder.addItem(
                         Row.Builder()
                             .setTitle(name)
@@ -105,7 +106,7 @@ class DownloadsScreen(
             }
 
             if (validHeaders.isEmpty()) {
-                builder.setNoItemsMessage("Nessun download completato trovato")
+                builder.setNoItemsMessage(CarStrings.get(R.string.car_no_downloads_found))
             } else {
                 validHeaders.forEach { header ->
                    val lastWatched = DataStoreHelper.getLastWatched(header.id)
@@ -143,7 +144,7 @@ class DownloadsScreen(
              val fileInfo = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, episodeId)
              if (fileInfo?.path == null) {
                  withContext(Dispatchers.Main) {
-                     androidx.car.app.CarToast.makeText(carContext, "File non trovato", androidx.car.app.CarToast.LENGTH_SHORT).show()
+                     androidx.car.app.CarToast.makeText(carContext, CarStrings.get(R.string.car_file_not_found), androidx.car.app.CarToast.LENGTH_SHORT).show()
                  }
                  return@launch
              }
@@ -182,7 +183,7 @@ class DownloadsScreen(
 
              if (children.isEmpty()) {
                   withContext(Dispatchers.Main) {
-                     androidx.car.app.CarToast.makeText(carContext, "Nessun episodio valido trovato", androidx.car.app.CarToast.LENGTH_SHORT).show()
+                     androidx.car.app.CarToast.makeText(carContext, CarStrings.get(R.string.car_no_valid_episode), androidx.car.app.CarToast.LENGTH_SHORT).show()
                   }
                   return@launch
              }
@@ -204,9 +205,9 @@ class DownloadsScreen(
 
     override fun onGetTemplate(): Template {
         return ListTemplate.Builder()
-            .setTitle(headerName ?: "Download")
+            .setTitle(headerName ?: CarStrings.get(R.string.car_downloads))
             .setHeaderAction(Action.BACK)
-            .setSingleList(itemList ?: ItemList.Builder().setNoItemsMessage(if (headerName == null) "Caricamento download..." else "Caricamento episodi...").build())
+            .setSingleList(itemList ?: ItemList.Builder().setNoItemsMessage(CarStrings.get(R.string.car_loading)).build())
             .build()
     }
 }

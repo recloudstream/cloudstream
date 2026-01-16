@@ -67,11 +67,11 @@ class EpisodeDetailScreen(
         val paneBuilder = Pane.Builder()
 
         // Title Row
-        val title = "${episode.episode}. ${episode.name ?: "Episodio ${episode.episode}"}"
+        val title = "${episode.episode}. ${episode.name ?: "${CarStrings.get(R.string.car_episode)} ${episode.episode}"}"
         paneBuilder.addRow(
             Row.Builder()
                 .setTitle(title)
-                .addText("Stagione ${episode.season ?: "?"}")
+                .addText("${CarStrings.get(R.string.car_season)} ${episode.season ?: "?"}")
                 .build()
         )
 
@@ -87,7 +87,7 @@ class EpisodeDetailScreen(
         if (!episode.description.isNullOrEmpty()) {
             paneBuilder.addRow(
                 Row.Builder()
-                    .setTitle("Trama")
+                    .setTitle(CarStrings.get(R.string.car_plot))
                     .addText(episode.description!!)
                     .build()
             )
@@ -122,7 +122,7 @@ class EpisodeDetailScreen(
         val sourceActionTitle = if (selectedSource != null) {
             selectedSource!!.name
         } else {
-            "Sorgente"
+            CarStrings.get(R.string.car_source)
         }
         
         val sourceAction = Action.Builder()

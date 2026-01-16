@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.TvSeriesLoadResponse
@@ -65,7 +66,7 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                 val builder = ItemList.Builder()
                 
                 if (resumeWatchingResult.isNullOrEmpty()) {
-                    builder.setNoItemsMessage("Nessun elemento 'Continua a guardare' trovato")
+                    builder.setNoItemsMessage(CarStrings.get(R.string.car_no_continue_watching))
                 } else {
                      resumeWatchingResult.forEach { (resume, cachedData) ->
                          val title = cachedData.name
@@ -116,7 +117,7 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
     private fun playResumeItem(resume: VideoDownloadHelper.ResumeWatching, cachedData: VideoDownloadHelper.DownloadHeaderCached) {
         scope.launch {
             withContext(Dispatchers.Main) {
-                androidx.car.app.CarToast.makeText(carContext, "Riprendo ${cachedData.name}...", androidx.car.app.CarToast.LENGTH_LONG).show()
+                androidx.car.app.CarToast.makeText(carContext, CarStrings.get(R.string.car_resuming, cachedData.name), androidx.car.app.CarToast.LENGTH_LONG).show()
             }
             
             val api = getApiFromNameNull(cachedData.apiName) ?: return@launch
@@ -198,10 +199,10 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
     }
 
     override fun onGetTemplate(): Template {
-        val list = itemList ?: ItemList.Builder().setNoItemsMessage("Caricamento cronologia...").build()
+        val list = itemList ?: ItemList.Builder().setNoItemsMessage(CarStrings.get(R.string.car_loading)).build()
         
         return ListTemplate.Builder()
-            .setTitle("Cronologia")
+            .setTitle(CarStrings.get(R.string.car_history))
             .setHeaderAction(Action.BACK)
             .setSingleList(list)
             .build()

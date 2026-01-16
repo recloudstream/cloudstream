@@ -158,7 +158,7 @@ class PlayerCarScreen(
     }
 
     private fun loadMedia(url: String?) {
-        updateStatus("Caricamento...")
+        updateStatus(CarStrings.get(R.string.car_loading))
         scope.launch {
              // If we already have the LoadResponse (passed from Details), use it.
              // Otherwise, fetch it using item.url
@@ -177,7 +177,7 @@ class PlayerCarScreen(
              }
 
              if (data == null) {
-                 showToast("Impossibile caricare i dettagli")
+                 showToast(CarStrings.get(R.string.car_unable_to_load_details))
                  return@launch
              }
 
@@ -221,7 +221,7 @@ class PlayerCarScreen(
                  }
 
                  if (urlToLoad == null) {
-                     showToast("Nessun contenuto riproducibile trovato")
+                     showToast(CarStrings.get(R.string.car_no_playable_content))
                      return@launch
                  }
 
@@ -238,11 +238,11 @@ class PlayerCarScreen(
                          val bestLink = links.sortedByDescending { it.quality }.first()
                          startPlayback(bestLink)
                      } else {
-                         showToast("Nessun link trovato")
+                         showToast(CarStrings.get(R.string.car_no_link_found))
                      }
                  }
              } catch (e: Exception) {
-                 showToast("Errore caricamento link: ${e.message}")
+                 showToast("${CarStrings.get(R.string.car_error_loading_links)}: ${e.message}")
                  e.printStackTrace()
              }
         }
@@ -304,7 +304,7 @@ class PlayerCarScreen(
         }
 
         withContext(Dispatchers.Main) {
-            updateStatus("Avvio riproduzione...")
+            updateStatus(CarStrings.get(R.string.car_starting_playback))
             if (player == null) {
                 player = ExoPlayer.Builder(carContext).build().apply {
                      val audioAttributes = AudioAttributes.Builder()
@@ -350,7 +350,7 @@ class PlayerCarScreen(
                      p.seekTo(startTime)
                  }
                  p.play()
-                 updateStatus("In riproduzione")
+                 updateStatus(CarStrings.get(R.string.car_playing))
  
                  // Start periodic save loop
                  // startSaveLoop()
@@ -443,7 +443,7 @@ class PlayerCarScreen(
                         VIDEO_SCALING_MODE_SCALE_TO_FIT
                     }
                     player?.videoScalingMode = resizeMode
-                    showToast(if (resizeMode == VIDEO_SCALING_MODE_SCALE_TO_FIT) "Adatta allo schermo" else "Riempi schermo")
+                    showToast(if (resizeMode == VIDEO_SCALING_MODE_SCALE_TO_FIT) CarStrings.get(R.string.car_fit_to_screen) else CarStrings.get(R.string.car_fill_screen))
                 }
                 .build()
                 

@@ -127,7 +127,7 @@
         -->
         <activity
             android:name=".MainActivity"
-            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation|uiMode"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation|uiMode|locale|layoutDirection"
             android:exported="true"
             android:launchMode="singleTask"
             android:resizeableActivity="true"
@@ -204,7 +204,7 @@
 
         <activity
             android:name=".ui.account.AccountSelectActivity"
-            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|locale|layoutDirection"
             android:exported="true">
             <intent-filter android:exported="true">
                 <action android:name="android.intent.action.MAIN" />

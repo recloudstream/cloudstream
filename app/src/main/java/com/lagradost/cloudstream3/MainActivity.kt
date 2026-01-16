@@ -197,6 +197,10 @@ import android.content.ComponentName
 import android.content.ContentUris
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(CloudStreamApp.updateBaseContextLocale(base))
+    }
+
     companion object {
         var activityResultLauncher: ActivityResultLauncher<Intent>? = null
 
