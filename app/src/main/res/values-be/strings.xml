@@ -156,4 +156,31 @@
     <string name="double_tap_to_seek_settings_des">Двойчы націсніце справа ці злева, каб перайсці наперад ці назад</string>
     <string name="double_tap_to_pause_settings_des">Двойчы націсніце пасярэдзіне, каб прыпыніць прайграванне</string>
     <string name="use_system_brightness_settings">Выкарыстоўваць сістэмную яркасць</string>
+    <string name="use_system_brightness_settings_des">Выкарыстоўваць сістэмную яркасць у прайгравальніку замест цёмнага накладання</string>
+    <string name="episode_sync_settings">Абнаўляць працэс прагляду</string>
+    <string name="episode_sync_settings_des">Аўтаматычна сінхранізаваць прагрэс бягучай серыі</string>
+    <string name="restore_settings">Аднавіць даныя з рэзервовай копіі</string>
+    <string name="backup_settings">Рэзервовае капіраванне даных</string>
+    <string name="backup_frequency">Частата рэзервовага капіравання</string>
+    <string name="restore_success">Загружаны файл рэзервовай копіі</string>
+    <string name="restore_failed_format" formatted="true">Не ўдалося аднавіць даныя з файла %s</string>
+    <string name="backup_success">Даныя захаваны</string>
+    <string name="backup_failed">Няма дазволу да сховішча. Паспрабуйце ізноў.</string>
+    <string name="backup_failed_error_format">Памылка пры рэзервовым капіраванні %s</string>
+    <string name="search">Пошук</string>
+    <string name="library">Бібліятэка</string>
+    <string name="category_account">Уліковыя запісы і бяспека</string>
+    <string name="category_updates">Абнаўленні і рэзервовае капіраванне</string>
+    <string name="settings_info">Звесткі</string>
+    <string name="advanced_search">Пашыраны пошук</string>
+    <string name="advanced_search_des">Паказвае пошукавыя вынікі, падзеленыя па пастаўшчыкам</string>
+    <string name="show_fillers_settings">Паказваць серыі-запаўнялнікі для анімэ</string>
+    <string name="show_trailers_settings">Паказваць трэйлеры</string>
+    <string name="kitsu_settings">Паказваць плакаты з Kitsu</string>
+    <string name="pref_filter_search_quality">Схаваць выбраную якасць відэа з вынікаў пошуку</string>
+    <string name="automatic_plugin_updates">Аўтаматычнае абнаўленне пашырэнняў</string>
+    <string name="automatic_plugin_download">Аўтаматычная спампоўка ўбудоваў</string>
+    <string name="apk_installer_settings_des">Некаторыя прылады не падтрымліваюць новы ўсталёўшчык пакетаў. Калі абнаўленні не ўсталёўваюцца, паспрабуйце ранейшую версію.</string>
+    <string name="github">Github</string>
+    <string name="automatic_plugin_download_mode_title">Выберыце рэжым фільтравання спампоўвання убудоваў</string>
 </resources>

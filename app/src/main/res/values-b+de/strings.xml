@@ -407,7 +407,7 @@
     <string name="view_public_repositories_button">Community-Repositories anzeigen</string>
     <string name="view_public_repositories_button_short">Öffentliche Liste</string>
     <string name="uppercase_all_subtitles">Alle Untertitel in Großbuchstaben</string>
-    <string name="download_all_plugins_from_repo">Warnung: CloudStream 3 übernimmt keine Verantwortung für das nutzen von Dritt-Anbieter-Erweiterungen und leistet für sie keine Unterstützung!</string>
+    <string name="download_all_plugins_from_repo">Warnung: CloudStream übernimmt keine Verantwortung für das nutzen von Dritt-Anbieter-Erweiterungen und leistet für sie keine Unterstützung!</string>
     <string name="single_plugin_disabled" formatted="true">%s (Deaktiviert)</string>
     <string name="tracks">Spuren</string>
     <string name="audio_tracks">Audiospuren</string>
@@ -729,4 +729,9 @@
     <string name="top_center">Oben mitte</string>
     <string name="top_right">Oben rechts</string>
     <string name="play_full_series_button">Gesamte Serie abspielen</string>
+    <string name="install_prerelease">Vorabversion installieren</string>
+    <string name="prerelease_already_installed">Vorabversion ist bereits installiert.</string>
+    <string name="prerelease_install_failed">Die Installation der Vorabversion ist fehlgeschlagen.</string>
+    <string name="episode_action_play_mirror">Spiel Mirror ab</string>"
+    <string name="show_episode_text">Episodentext</string>
 </resources>

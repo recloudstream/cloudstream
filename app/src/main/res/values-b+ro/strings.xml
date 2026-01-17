@@ -654,4 +654,11 @@
     <string name="player_load_one_subtitle_online">Încărcați prima disponibilă</string>
     <string name="delete_plugin">Șterge pluginul</string>
     <string name="dismiss">Închide</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$do %2$dm %3$ds</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dm %2$ds</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$ds</string>
+    <string name="play_full_series_button">Redă întregul serial</string>
+    <string name="install_prerelease">Instalează versiunea preliminară</string>
+    <string name="prerelease_already_installed">Versiunea preliminară este deja instalată.</string>
+    <string name="prerelease_install_failed">Instalarea versiunii preliminare a eșuat.</string>
 </resources>

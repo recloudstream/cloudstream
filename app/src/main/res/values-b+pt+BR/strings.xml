@@ -402,7 +402,7 @@
     <string name="view_public_repositories_button">Ver repositórios da comunidade</string>
     <string name="view_public_repositories_button_short">Lista pública</string>
     <string name="uppercase_all_subtitles">Todas as legendas em maiúsculas</string>
-    <string name="download_all_plugins_from_repo">Atenção: CloudStream 3 não assume nenhuma responsabilidade pelo uso de extensões de terceiros e não fornece nenhum suporte para elas!</string>
+    <string name="download_all_plugins_from_repo">Aviso: CloudStream não assume nenhuma responsabilidade pelo uso de extensões de terceiros e não fornece nenhum suporte para elas!</string>
     <string name="single_plugin_disabled" formatted="true">%s (Desativado)</string>
     <string name="autoplay_next_settings">Reproduzir automaticamente próximo episódio</string>
     <string name="autoplay_next_settings_des">Começa o próximo episódio quando o atual termina</string>
