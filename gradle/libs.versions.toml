@@ -50,7 +50,7 @@ gpuv = "3a107f995b"
 
 jvmTarget = "1.8"
 jdkToolchain = "17"
-minSdk = "21"
+minSdk = "23"
 compileSdk = "36"
 targetSdk = "36"
 
