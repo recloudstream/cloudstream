@@ -705,6 +705,7 @@
     <string name="software_decoding_desc">Software decoding enables the player to play video files not supported by your device, but may cause laggy or unstable playback on high resolution.</string>
     <string name="volume_exceeded_100">Volume has exceeded 100%</string>
     <string name="slide_up_again_to_exceed_100">Slide up again to go beyond 100%</string>
+    <string name="slide_up_again_to_exceed_brightness_100">Slide up again to go beyond 100%</string>
     <string name="update_plugins">Update Plugins</string>
     <!--Manual Update Button-->
     <string name="update_plugins_manually">Update plugins manually</string>
