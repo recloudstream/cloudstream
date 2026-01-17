@@ -12,8 +12,6 @@ plugins {
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
-val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
-val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
 
 fun getGitCommitHash(): String {
     return try {
@@ -46,9 +44,14 @@ android {
     }
 
     signingConfigs {
-        if (prereleaseStoreFile != null) {
+        // We just use SIGNING_KEY_ALIAS here since it won't change
+        // so won't kill the configuration cache.
+        if (System.getenv("SIGNING_KEY_ALIAS") != null) {
             create("prerelease") {
-                storeFile = file(prereleaseStoreFile)
+                val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
+                val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
+
+                storeFile = prereleaseStoreFile?.let { file(it) }
                 storePassword = System.getenv("SIGNING_STORE_PASSWORD")
                 keyAlias = System.getenv("SIGNING_KEY_ALIAS")
                 keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
