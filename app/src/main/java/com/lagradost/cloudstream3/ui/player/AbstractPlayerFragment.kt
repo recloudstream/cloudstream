@@ -712,7 +712,7 @@ abstract class AbstractPlayerFragment(
     }
 
     @SuppressLint("UnsafeOptInUsageError")
-    fun resize(resize: PlayerResize, showToast: Boolean) {
+    open fun resize(resize: PlayerResize, showToast: Boolean) {
         DataStoreHelper.resizeMode = resize.ordinal
         val type = when (resize) {
             PlayerResize.Fill -> AspectRatioFrameLayout.RESIZE_MODE_FILL

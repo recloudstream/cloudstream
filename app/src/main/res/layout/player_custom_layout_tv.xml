@@ -146,7 +146,7 @@
                 </ImageView>
 
                 <ProgressBar
-                    android:id="@+id/player_progressbar_right"
+                    android:id="@+id/player_progressbar_right_level1"
                     style="@android:style/Widget.Material.ProgressBar.Horizontal"
                     android:layout_width="5dp"
                     android:layout_height="150dp"
@@ -156,7 +156,24 @@
                     android:indeterminate="false"
                     android:max="100"
                     android:progress="100"
-                    android:progressDrawable="@drawable/progress_drawable_vertical" />
+                    android:progressDrawable="@drawable/progress_drawable_vertical"
+                    android:progressTint="@color/white"
+                    android:progressTintMode="src_in" />
+
+                <ProgressBar
+                    android:id="@+id/player_progressbar_right_level2"
+                    style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                    android:layout_width="5dp"
+                    android:layout_height="150dp"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="40dp"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/progress_drawable_vertical"
+                    android:progressTint="@color/colorPrimaryOrange"
+                    android:progressTintMode="src_in" />
             </RelativeLayout>
         </LinearLayout>
 
