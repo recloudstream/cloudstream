@@ -559,12 +559,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                             CastContext.getSharedInstance(act.applicationContext) {
                                 it.run()
                             }.addOnCompleteListener {
-                                isGone = if (it.isSuccessful) {
-                                    it.result.castState == CastState.NO_DEVICES_AVAILABLE
-                                } else {
-                                    true
-                                }
-
+                                isGone = !it.isSuccessful
                             }
                             // this shit leaks for some reason
                             //castContext.addCastStateListener { state ->
