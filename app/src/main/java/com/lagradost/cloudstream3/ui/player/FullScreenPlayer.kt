@@ -1467,7 +1467,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                     // Log.e("Brightness", "Current: $currentRequestedBrightness, Next: $nextBrightness")
                                     // show toast
                                     if (nextBrightness > 1.0f && isBrightnessLocked && !hasShownBrightnessToast) {
-                                        showToast(R.string.slide_up_again_to_exceed_brightness_100)
+                                        showToast(R.string.slide_up_again_to_exceed_100)
                                         hasShownBrightnessToast = true
                                     }
                                     currentRequestedBrightness = nextBrightness
@@ -1508,7 +1508,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                                 logError(t)
                                                 hasBrightnessBoostError = true
                                             }
-                                        } else if (willExtra && wasExtra) {
+                                        } else if (willExtra) {
                                             // still >1.0: only update brightness
                                             try {
                                                 setGpuExtraBrightness(currentExtraBrightness)
@@ -1516,7 +1516,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                                 logError(t)
                                                 hasBrightnessBoostError = true
                                             }
-                                        } else if (!willExtra && wasExtra) {
+                                        } else if (wasExtra) {
                                             // crossed from >1.0 to <=1.0: remove filter
                                             try {
                                                 gpuPlayerView?.setGlFilter(null)
@@ -1540,7 +1540,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                         }
                                     }
 
-                                    Log.i("Brightness", "current: $currentRequestedBrightness, ce: $currentExtraBrightness L1: ${level1ProgressBar.progress}, L2: ${level2ProgressBar.progress}")
+                                    // Log.i("Brightness", "current: $currentRequestedBrightness, ce: $currentExtraBrightness L1: ${level1ProgressBar.progress}, L2: ${level2ProgressBar.progress}")
                                     playerProgressbarRightIcon.setImageResource(
                                         brightnessIcons[min( // clamp the value just in case
                                             brightnessIcons.size - 1,
