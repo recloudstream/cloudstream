@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.withStyledAttributes
 import androidx.core.view.children
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -154,10 +155,9 @@ class AutofitRecyclerView @JvmOverloads constructor(context: Context, attrs: Att
 
     init {
         if (attrs != null) {
-            val attrsArray = intArrayOf(android.R.attr.columnWidth)
-            val array = context.obtainStyledAttributes(attrs, attrsArray)
-            columnWidth = array.getDimensionPixelSize(0, -1)
-            array.recycle()
+            context.withStyledAttributes(attrs, intArrayOf(android.R.attr.columnWidth)) {
+                columnWidth = getDimensionPixelSize(0, -1)
+            }
         }
 
         layoutManager = manager
