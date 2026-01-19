@@ -157,7 +157,7 @@
     <string name="home_info">Info</string>
     <string name="filter_bookmarks">Filtrar Marcadores</string>
     <string name="error_bookmarks_text">Marcadores</string>
-    <string name="action_remove_from_bookmarks">Remover</string>
+    <string name="action_remove_from_bookmarks">Eliminar</string>
     <string name="action_add_to_bookmarks">Seleccionar estado de visualización</string>
     <string name="sort_copy">Copiar</string>
     <string name="sort_close">Cerrar</string>
@@ -660,7 +660,7 @@
     <string name="torrent_preferred_media">Habilitación torrent en Opciones/Proveedores/Medio preferido</string>
     <string name="torrent_not_accepted">Reiniciar app y aceptar aparición de Stream Torrent para proceder.</string>
     <string name="software_decoding">Software de decodificado</string>
-    <string name="software_decoding_desc">El software de decodificado permite que el reproductor reproduzca archivos de video no soportados por su dispositivo, lo cual podría causar una reproducción lenta o inestable en alta resolución</string>
+    <string name="software_decoding_desc">El software de decodificado permite que el reproductor reproduzca archivos de video no soportados por su dispositivo, lo cual podría causar una reproducción lenta o inestable en alta resolución.</string>
     <string name="player_notification_channel_description">La notificación del reproductor para controlar la reproducción en segundo plano</string>
     <string name="sort_episodes_rating_high_low">Puntuación (Más alta)</string>
     <string name="sort_episodes_number_desc">Episodio (Descendente)</string>
@@ -719,4 +719,16 @@
     <string name="bottom_left">Inferior izquierda</string>
     <string name="bottom_center">Inferior central</string>
     <string name="bottom_right">Inferior derecho</string>
+    <string name="top_center">Arriba centrado</string>
+    <string name="top_right">Arriba derecha</string>
+    <string name="play_full_series_button">Reproducir toda la serie</string>
+    <string name="install_prerelease">Instalar version pre-lanzamiento</string>
+    <string name="prerelease_already_installed">Pre-lanzamiento ya está instalada.</string>
+    <string name="prerelease_install_failed">La instalación pre-lanzamiento ha fallado.</string>
+    <string name="show_episode_text">Texto del episodio</string>
+    <string name="speedup_title">Alternar velocidad de pulsación larga</string>
+    <string name="middle_left">Medio izquierda</string>
+    <string name="middle_center">Medio centro</string>
+    <string name="middle_right">Medio derecha</string>
+    <string name="top_left">Arriba a la izquierda</string>
 </resources>

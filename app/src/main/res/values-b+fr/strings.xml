@@ -710,7 +710,7 @@
     <string name="reload_provider">Recharger le fournisseur</string>
     <string name="resolution_and_name">Solution et nom</string>
     <string name="name">Nom</string>
-    <string name="episode_action_play_mirror">Mise en miroir</string>"
+    <string name="episode_action_play_mirror">Lancer le miroir</string>"
     <string name="subs_subtitle_alignment">Alignement des Sous-titres</string>
     <string name="bottom_left">En bas à gauche</string>
     <string name="bottom_center">En bas au centre</string>
@@ -722,4 +722,8 @@
     <string name="top_center">En haut au centre</string>
     <string name="top_right">En haut à droite</string>
     <string name="play_full_series_button">Jouer la série complète</string>
+    <string name="install_prerelease">Installer la version préliminaire</string>
+    <string name="prerelease_already_installed">La version préliminaire est déjà installée.</string>
+    <string name="prerelease_install_failed">L\'installation de la version préliminaire a échouée.</string>
+    <string name="show_episode_text">Texte de l\'épisode</string>
 </resources>

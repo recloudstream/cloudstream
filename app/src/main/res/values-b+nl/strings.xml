@@ -144,7 +144,7 @@
     <string name="backup_failed">Opslagrechten ontbreken. Probeer het opnieuw.</string>
     <string name="backup_failed_error_format">Fout bij het maken van een back-up %s</string>
     <string name="search">Zoeken</string>
-    <string name="category_account">Accounts</string>
+    <string name="category_account">Accounts en Beveiliging</string>
     <string name="category_updates">Updates en back-up</string>
     <string name="settings_info">Info</string>
     <string name="advanced_search">Geavanceerd zoeken</string>
@@ -270,7 +270,7 @@
     <string name="legal_notice">Disclaimer</string>
     <string name="category_general">Algemeen</string>
     <string name="random_button_settings">Willekeurige knop</string>
-    <string name="random_button_settings_desc">Toon willekeurige knop op Homepage</string>
+    <string name="random_button_settings_desc">Toon willekeurige knop op Homepage en Bibliotheek</string>
     <string name="provider_lang_settings">Extensietalen</string>
     <string name="app_layout">App Layout</string>
     <string name="preferred_media_settings">Preferred media</string>
@@ -290,7 +290,7 @@
     <string name="example_email">hello@Wereld.com</string>
     <string name="example_ip">127.0.0.1</string>
     <string name="example_site_name">MyCoolSite</string>
-    <string name="example_site_url">voorbeeld.com</string>
+    <string name="example_site_url">https://voorbeeld.com</string>
     <string name="example_lang_name">Taalcode (nl)</string>
     <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">account</string>
@@ -371,8 +371,8 @@
     <string name="subtitles_remove_bloat">Opgeblazen ondertitels verwijderen</string>
     <string name="extras">Extra\'s</string>
     <string name="trailer">Trailer</string>
-    <string name="network_adress_example">Link naar stream</string>
-    <string name="referer">Referer</string>
+    <string name="network_adress_example">https://voorbeeld.com/voorbeeld.mp4</string>
+    <string name="referer">Verwijzer (optioneel)</string>
     <string name="next">Volgende</string>
     <string name="provider_languages_tip">Bekijk video\'s in deze talen</string>
     <string name="previous">Vorige</string>
@@ -402,7 +402,7 @@
     <string name="add_repository">Repository toevoegen</string>
     <string name="extension_version">Versie</string>
     <string name="is_adult">18+</string>
-    <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
+    <string name="jsdelivr_proxy">GitHub Proxy</string>
     <string name="pref_category_bypass">ISP Omleidingen</string>
     <string name="pref_category_defaults">Standaardinstellingen</string>
     <string name="app_not_found_error">App niet gevonden</string>
@@ -429,11 +429,11 @@
     <string name="watch_quality_pref_data">Voorkeurskwaliteit voor kijken (Mobiele Data)</string>
     <string name="android_tv_interface_on_seek_settings">Speler Weergegeven - Zoekhoeveelheid</string>
     <string name="pref_category_actions">Acties</string>
-    <string name="repository_name_hint">Repository naam</string>
+    <string name="repository_name_hint">Repository naam (Optioneel)</string>
     <string name="plugin_downloaded">Plugin Gedownload</string>
     <string name="test_failed">Mislukt</string>
     <string name="jsdelivr_proxy_summary">Omzeilt de blokkering van GitHub met behulp van jsDelivr, waardoor updates enkele dagen vertraging kunnen oplopen.</string>
-    <string name="repository_url_hint">Repository URL</string>
+    <string name="repository_url_hint">Repository URL of Shortcode</string>
     <string name="batch_download_finish_format" formatted="true">Download %1$d %2$s voltooid</string>
     <string name="hls_playlist">HLS Afspeellijst</string>
     <string name="pref_category_player_features">Speler eigenschappen</string>
@@ -445,11 +445,11 @@
     <string name="batch_download_start_format" formatted="true">Gestart met downloaden van %1$d %2$s…</string>
     <string name="player_pref">Gewenste videospeler</string>
     <string name="pref_category_looks">Lijkt</string>
-    <string name="enable_nsfw_on_providers">NSFW inschakelen op ondersteunde aanbieders</string>
+    <string name="enable_nsfw_on_providers">NSFW inschakelen op ondersteunde extensies</string>
     <string name="others">Andere</string>
     <string name="redo_setup_process">Herhaal installatieproces</string>
     <string name="automatic_plugin_updates">Automatisch bijwerken plugin</string>
-    <string name="apk_installer_settings_des">Sommige telefoons ondersteunen het nieuwe installatieprogramma niet. Probeer de oude optie als de updates niet worden geïnstalleerd.</string>
+    <string name="apk_installer_settings_des">Sommige apparaten ondersteunen het nieuwe installatieprogramma niet. Probeer de oude optie als de updates niet worden geïnstalleerd.</string>
     <string name="player_settings_play_in_app">Interne speler</string>
     <string name="skip_type_mixed_ed">Gemengd einde</string>
     <string name="skip_type_recap">Herhaling</string>
@@ -505,7 +505,7 @@
     <string name="skip_type_mixed_op">Gemengde opening</string>
     <string name="open_with">Open met</string>
     <string name="single_plugin_disabled" formatted="true">%s ( Uitgeschakeld)</string>
-    <string name="apply_on_restart">Toepassen bij Herstart</string>
+    <string name="apply_on_restart">Herstart de app om veranderingen te zien.</string>
     <string name="plugins_downloaded" formatted="true">Gedownload: %d</string>
     <string name="safe_mode_file">Veilige mode bestand gevonden!
 \nGeen extensies laden bij het opstarten totdat het bestand is verwijderd.</string>
@@ -625,4 +625,37 @@
     <string name="unsupported_error">Fout: wordt niet ondersteund</string>
     <string name="pref_category_security">Beveiliging</string>
     <string name="pref_category_accounts">Accounts</string>
+    <string name="play_full_series_button">Speel Gehele Serie</string>
+    <string name="result_search_tooltip">Zoek in andere extensies</string>
+    <string name="test_extensions">Test alle Extensies</string>
+    <string name="player_load_one_subtitle_online">Laad eerst beschikbare</string>
+    <string name="qr_image">QR-code Afbeelding</string>
+    <string name="delete_plugin">Verwijder plug-in</string>
+    <string name="player_settings_always_ask">Vraag altijd</string>
+    <string name="ok">OKÉ</string>
+    <string name="open_downloaded_repo">Open repository</string>
+    <string name="battery_dialog_title">Batterij-optimalisatie uitschakelen</string>
+    <string name="app_unrestricted_toast">Batterijgebruik van app is reeds ingesteld als onbegrensd</string>
+    <string name="app_info_intent_error">Niet in staat Cloudstreams App-info te openen.</string>
+    <string name="sort_episodes_number_asc">Aflevering (Oplopend)</string>
+    <string name="sort_episodes_number_desc">Aflevering (Aflopend)</string>
+    <string name="sort_episodes_rating_high_low">Beoordeling (Hoogste)</string>
+    <string name="sort_episodes_rating_low_high">Beoordeling (Laagste)</string>
+    <string name="sort_episodes_date_newest">Uitzenddatum (Nieuwste)</string>
+    <string name="sort_episodes_date_oldest">Uitzenddatum (Oudste)</string>
+    <string name="sort_button_episode">Afl %s</string>
+    <string name="sort_button_rating">Beoordeling %s</string>
+    <string name="sort_button_date">Datum %s</string>
+    <string name="no_account">Geen account</string>
+    <string name="rotate_video_desc">Toon een schakelknop voor schermoriëntatie</string>
+    <string name="auto_rotate_video_desc">Activeer automatisch wisselen van schermoriëntatie gebaseerd op video oriëntatie</string>
+    <string name="favorite">Favoriet</string>
+    <string name="unfavorite">Verwijder favoriet</string>
+    <string name="password_pin_authentication_title">Wachtwoord/PIN-authenticatie</string>
+    <string name="biometric_unsupported">Biometrische authenticatie is niet ondersteund op dit apparaat</string>
+    <string name="biometric_prompt_description">Na enige mislukte pogingen zal de prompt sluiten. Herstart de app om het opnieuw te proberen.</string>
+    <string name="cs3wiki">CloudStream Wiki</string>
+    <string name="device_pin_url_message">Ga naar <b>%s</b> op je smartphone of computer en voeren de bovenstaande code in</string>
+    <string name="device_pin_expired_message">PIN-code is nu verlopen!</string>
+    <string name="device_pin_counter_text">Code verloopt in %1$dm %2$ds</string>
 </resources>
