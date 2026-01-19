@@ -137,6 +137,16 @@ class Playerwish : StreamWishExtractor() {
     override val mainUrl = "https://playerwish.com"
 }
 
+class StreamHLS : StreamWishExtractor() {
+    override val name = "StreamHLS"
+    override val mainUrl = "https://streamhls.to"
+}
+
+class HlsWish : StreamWishExtractor() {
+    override val name = "HlsWish"
+    override val mainUrl = "https://hlswish.com"
+}
+
 open class StreamWishExtractor : ExtractorApi() {
     override val name = "Streamwish"
     override val mainUrl = "https://streamwish.to"
@@ -211,6 +221,9 @@ open class StreamWishExtractor : ExtractorApi() {
     private fun resolveEmbedUrl(inputUrl: String): String {
         return if (inputUrl.contains("/f/")) {
             val videoId = inputUrl.substringAfter("/f/")
+            "$mainUrl/$videoId"
+        } else if (inputUrl.contains("/e/")) {
+            val videoId = inputUrl.substringAfter("/e/")
             "$mainUrl/$videoId"
         } else {
             inputUrl

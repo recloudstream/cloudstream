@@ -49,7 +49,11 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.daasuu.gpuv.egl.filter.GlBrightnessFilter
+import com.daasuu.gpuv.player.GPUPlayerView
+import com.daasuu.gpuv.player.PlayerScaleType
 import com.google.android.material.button.MaterialButton
+import com.lagradost.api.Log
 import com.lagradost.cloudstream3.CommonActivity.keyEventListener
 import com.lagradost.cloudstream3.CommonActivity.playerEventListener
 import com.lagradost.cloudstream3.CommonActivity.screenHeightWithOrientation
@@ -61,6 +65,7 @@ import com.lagradost.cloudstream3.databinding.PlayerCustomLayoutBinding
 import com.lagradost.cloudstream3.databinding.SpeedDialogBinding
 import com.lagradost.cloudstream3.databinding.SubtitleOffsetBinding
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer.Companion.subsProvidersIsActive
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
@@ -109,6 +114,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected open var lockRotation = true
     protected open var isFullScreenPlayer = true
     protected var playerBinding: PlayerCustomLayoutBinding? = null
+    private var gpuPlayerView: GPUPlayerView? = null
+    private var gpuBrightnessFilter: GlBrightnessFilter? = null
+    private var hasBrightnessBoostError: Boolean = false
 
     private var durationMode: Boolean by UserPreferenceDelegate("duration_mode", false)
 
@@ -119,7 +127,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     protected var hasEpisodes = false
         private set
-    //protected val hasEpisodes
+    // protected val hasEpisodes
     //    get() = episodes.isNotEmpty()
 
     // options for player
@@ -160,9 +168,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             0L
         }
 
-    //private var useSystemBrightness = false
+    // private var useSystemBrightness = false
     protected var useTrueSystemBrightness = true
-    private val fullscreenNotch = true //TODO SETTING
+    private val fullscreenNotch = true // TODO SETTING
 
     private var statusBarHeight: Int? = null
     private var navigationBarHeight: Int? = null
@@ -174,7 +182,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         R.drawable.sun_4,
         R.drawable.sun_5,
         R.drawable.sun_6,
-        //R.drawable.sun_7,
+        // R.drawable.sun_7,
         // R.drawable.ic_baseline_brightness_1_24,
         // R.drawable.ic_baseline_brightness_2_24,
         // R.drawable.ic_baseline_brightness_3_24,
@@ -199,12 +207,67 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     ): View? {
         val root = super.onCreateView(inflater, container, savedInstanceState) ?: return null
         playerBinding = PlayerCustomLayoutBinding.bind(root.findViewById(R.id.player_holder))
+
+        // Create GPUPlayerView dynamically and attach it to the PlayerView's content frame
+        safe {
+            val pv = root.findViewById<androidx.media3.ui.PlayerView>(R.id.player_view)
+            val packageName = context?.packageName ?: return@safe
+            val contentId = resources.getIdentifier("exo_content_frame", "id", packageName)
+            val contentFrame = pv?.findViewById<android.view.ViewGroup>(contentId)
+            if (contentFrame != null) {
+                val gpu = GPUPlayerView(context)
+                val lp = android.widget.FrameLayout.LayoutParams(
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT
+                )
+                // Insert as first child so it sits behind any controls inside content frame
+                contentFrame.addView(gpu, 0, lp)
+                gpuPlayerView = gpu
+            }
+        }
         return root
     }
 
+
+    fun setGpuExtraBrightness(extra: Float) {
+        gpuBrightnessFilter?.setBrightness(extra)
+    }
+
+    @SuppressLint("UnsafeOptInUsageError")
+    override fun playerUpdated(player: Any?) {
+        super.playerUpdated(player)
+        if (player is ExoPlayer) {
+            // attach GL renderer filter if available
+            gpuPlayerView?.setExoPlayer(player)
+        }
+    }
+
     override fun onDestroyView() {
+        // Clean up dynamic GPUPlayerView if created
+        safe {
+            gpuPlayerView?.onPause()
+            gpuPlayerView?.setGlFilter(null)
+            gpuBrightnessFilter = null
+            val parent = gpuPlayerView?.parent as? android.view.ViewGroup
+            parent?.removeView(gpuPlayerView)
+        }
+
+        gpuPlayerView = null
         playerBinding = null
         super.onDestroyView()
+    }
+
+    override fun resize(resize: PlayerResize, showToast: Boolean) {
+        super.resize(resize, showToast)
+        safe {
+            gpuPlayerView?.setPlayerScaleType(
+                when (resize) {
+                    PlayerResize.Fit -> PlayerScaleType.RESIZE_FIT
+                    PlayerResize.Fill -> PlayerScaleType.RESIZE_FILL
+                    PlayerResize.Zoom -> PlayerScaleType.RESIZE_ZOOM
+                }
+            )
+        }
     }
 
     open fun showMirrorsDialogue() {
@@ -304,7 +367,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
 
         val titleMove = if (isShowing) 0f else -50.toPx.toFloat()
-        playerBinding?.playerVideoTitle?.let {
+        playerBinding?.playerVideoTitleHolder?.let {
             ObjectAnimator.ofFloat(it, "translationY", titleMove).apply {
                 duration = 200
                 start()
@@ -369,7 +432,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                         player_pause_play_holder?.startAnimation(fadeAnimation)
                         player_pause_play?.startAnimation(fadeAnimation)
                     }*/
-                //player_buffering?.startAnimation(fadeAnimation)
+                // player_buffering?.startAnimation(fadeAnimation)
             }
 
             bottomPlayerBar.startAnimation(fadeAnimation)
@@ -474,7 +537,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     protected fun exitFullscreen() {
-        //if (lockRotation)
+        // if (lockRotation)
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
 
         // simply resets brightness and notch settings that might have been overridden
@@ -717,7 +780,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             }
         }
 
-        //if (isLayout(PHONE)) {
+        // if (isLayout(PHONE)) {
         //    val builder =
         //        BottomSheetDialog(act, R.style.AlertDialogCustom)
         //    builder.setContentView(binding.root)
@@ -839,14 +902,14 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         val fadeTo = if (isLocked) 0f else 1f
         playerBinding?.apply {
-            val fadeAnimation = AlphaAnimation(playerVideoTitle.alpha, fadeTo).apply {
+            val fadeAnimation = AlphaAnimation(playerVideoTitleHolder.alpha, fadeTo).apply {
                 duration = 100
                 fillAfter = true
             }
 
             updateUIVisibility()
             // MENUS
-            //centerMenu.startAnimation(fadeAnimation)
+            // centerMenu.startAnimation(fadeAnimation)
             playerPausePlay.startAnimation(fadeAnimation)
             playerFfwdHolder.startAnimation(fadeAnimation)
             playerRewHolder.startAnimation(fadeAnimation)
@@ -854,17 +917,17 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
             if (hasEpisodes)
                 playerEpisodesButton.startAnimation(fadeAnimation)
-            //player_media_route_button?.startAnimation(fadeAnimation)
-            //video_bar.startAnimation(fadeAnimation)
+            // player_media_route_button?.startAnimation(fadeAnimation)
+            // video_bar.startAnimation(fadeAnimation)
 
-            //TITLE
+            // TITLE
             playerVideoTitleRez.startAnimation(fadeAnimation)
             playerEpisodeFiller.startAnimation(fadeAnimation)
-            playerVideoTitle.startAnimation(fadeAnimation)
+            playerVideoTitleHolder.startAnimation(fadeAnimation)
             playerTopHolder.startAnimation(fadeAnimation)
             // BOTTOM
             playerLockHolder.startAnimation(fadeAnimation)
-            //player_go_back_holder?.startAnimation(fadeAnimation)
+            // player_go_back_holder?.startAnimation(fadeAnimation)
 
             shadowOverlay.isVisible = true
             shadowOverlay.startAnimation(fadeAnimation)
@@ -888,17 +951,17 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             playerVideoBar.isGone = isGone
 
             playerPausePlay.isGone = isGone
-            //player_buffering?.isGone = isGone
+            // player_buffering?.isGone = isGone
             playerTopHolder.isGone = isGone
             val showPlayerEpisodes = !isGone && isThereEpisodes()
             playerEpisodesButtonRoot.isVisible = showPlayerEpisodes
             playerEpisodesButton.isVisible = showPlayerEpisodes
-            playerVideoTitle.isGone = togglePlayerTitleGone
+            playerVideoTitleHolder.isGone = togglePlayerTitleGone
 //        player_video_title_rez?.isGone = isGone
             playerEpisodeFiller.isGone = isGone
             playerCenterMenu.isGone = isGone
             playerLock.isGone = !isShowing
-            //player_media_route_button?.isClickable = !isGone
+            // player_media_route_button?.isClickable = !isGone
             playerGoBackHolder.isGone = isGone
             playerSourcesBtt.isGone = isGone
             playerSkipEpisode.isClickable = !isGone
@@ -980,7 +1043,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     // this value is within the range [0,2] where 1+ is loudness
     private var currentRequestedVolume: Float = 0.0f
 
-    // this value is within the range [0,1]
+    // from [0.0f, 1.0f] where 1.0f is max extra brightness, used only to track extra brightness
+    private var currentExtraBrightness: Float = 0.0f
+
+    // this value is within the range [0,2] where 1+ is extra brightness
     private var currentRequestedBrightness: Float = 1.0f
 
     enum class TouchAction {
@@ -1004,7 +1070,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             val min = ceil((sec - rsec) / 60.0).toInt()
             val rmin = min % 60L
             val h = ceil((min - rmin) / 60.0).toLong()
-            //int rh = h;// h % 24;
+            // int rh = h;// h % 24;
             return (if (h > 0) forceLetters(h) + ":" else "") + (if (rmin >= 0 || h >= 0) forceLetters(
                 rmin
             ) + ":" else "") + forceLetters(
@@ -1030,6 +1096,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         )
     }
 
+    /**
+     * Returns screen brightness in <0.0f, 1.0f> range
+     */
     private fun getBrightness(): Float? {
         return if (useTrueSystemBrightness) {
             try {
@@ -1054,6 +1123,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
     }
 
+    /**
+     * Sets the screen brightness in the range <0.0f, 1.0f>. Values outside this range
+     * will be clamped to the minimum (0.0f) or maximum (1.0f).
+     *
+     * @param brightness desired brightness (values outside the range will be clamped)
+     */
     private fun setBrightness(brightness: Float) {
         if (useTrueSystemBrightness) {
             try {
@@ -1065,7 +1140,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                 Settings.System.putInt(
                     context?.contentResolver,
-                    Settings.System.SCREEN_BRIGHTNESS, (brightness * 255).toInt()
+                    Settings.System.SCREEN_BRIGHTNESS, min(1, (brightness.coerceIn(0.0f, 1.0f) * 255).toInt())
                 )
             } catch (e: Exception) {
                 useTrueSystemBrightness = false
@@ -1074,7 +1149,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         } else {
             try {
                 val lp = activity?.window?.attributes
-                lp?.screenBrightness = brightness
+                // use 0.004f instead of 0, because on some devices setting too small value
+                // causes system to override it and in turn system makes the screen apply system brightness level instead
+                // which can be too bright, and it is very hard to fine tune very low brightness, because of it.
+                // Without this clamp, it can jump from almost 0% to 100% brightness when this threshold is crossed.
+                lp?.screenBrightness = brightness.coerceIn(0.004f, 1.0f)
+                // Log.i("Brightness", "clamped brightness: ${lp?.screenBrightness}")
                 activity?.window?.attributes = lp
             } catch (e: Exception) {
                 logError(e)
@@ -1084,6 +1164,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     private var isVolumeLocked: Boolean = false
     private var hasShownVolumeToast: Boolean = false
+
+    private var isBrightnessLocked: Boolean = false
+    private var hasShownBrightnessToast: Boolean = false
 
     private var progressBarLeftHideRunnable: Runnable? = null
     private var progressBarRightHideRunnable: Runnable? = null
@@ -1163,13 +1246,18 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                             hasShownVolumeToast = false
                         }
 
+                        isBrightnessLocked = currentRequestedBrightness < 1.0f
+                        if (currentRequestedBrightness <= 1.0f) {
+                            hasShownBrightnessToast = false
+                        }
+
                         currentTouchStartTime = System.currentTimeMillis()
                         currentTouchStart = currentTouch
                         currentTouchLast = currentTouch
                         currentTouchStartPlayerTime = player.getPosition()
 
                         getBrightness()?.let {
-                            currentRequestedBrightness = it
+                            currentRequestedBrightness = it + currentExtraBrightness
                         }
                         verifyVolume()
                     }
@@ -1247,7 +1335,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                             if (!hasTriggeredSpeedUp) {
                                 toggleShowDelayed()
                             }
-                            //onClickChange()
+                            // onClickChange()
                         }
                     } else {
                         currentClickCount = 0
@@ -1374,27 +1462,91 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                     }
 
                                     val lastRequested = currentRequestedBrightness
-                                    currentRequestedBrightness =
-                                        min(
-                                            1.0f,
-                                            max(currentRequestedBrightness + verticalAddition, 0.0f)
-                                        )
+                                    val nextBrightness = currentRequestedBrightness + verticalAddition
+                                    //
+                                    // Log.e("Brightness", "Current: $currentRequestedBrightness, Next: $nextBrightness")
+                                    // show toast
+                                    if (nextBrightness > 1.0f && isBrightnessLocked && !hasShownBrightnessToast) {
+                                        showToast(R.string.slide_up_again_to_exceed_100)
+                                        hasShownBrightnessToast = true
+                                    }
+                                    currentRequestedBrightness = nextBrightness
 
                                     // this is to not spam request it, just in case it fucks over someone
                                     if (lastRequested != currentRequestedBrightness)
                                         setBrightness(currentRequestedBrightness)
 
-                                    // max is set high to make it smooth
-                                    playerProgressbarRight.max = 100_000
-                                    playerProgressbarRight.progress =
-                                        max(2_000, (currentRequestedBrightness * 100_000f).toInt())
+                                    val level1ProgressBar = playerProgressbarRightLevel1
+                                    val level2ProgressBar = playerProgressbarRightLevel2
 
+                                    // max is set high to make it smooth
+                                    level1ProgressBar.max = 100_000
+                                    level1ProgressBar.progress =
+                                        max(2_000, (min(1.0f, currentRequestedBrightness) * 100_000f).toInt())
+
+                                    if (!isBrightnessLocked) {
+                                        currentExtraBrightness = if (currentRequestedBrightness > 1.0f) min(2.0f, currentRequestedBrightness) - 1.0f else 0.0f
+                                        level2ProgressBar.max = 100_000
+                                        level2ProgressBar.progress =
+                                            (currentExtraBrightness * 100_000f).toInt().coerceIn(2_000, 100_000)
+                                        level2ProgressBar.isVisible = currentRequestedBrightness > 1.0f
+
+                                        // Only create/remove the GL filter when crossing the 1.0 threshold
+                                        val wasExtra = lastRequested > 1.0f
+                                        val willExtra = currentRequestedBrightness > 1.0f
+
+                                        if (willExtra && !wasExtra) {
+                                            // crossed from <=1.0 to >1.0: initialize filter
+                                            try {
+                                                if (gpuBrightnessFilter == null) {
+                                                    gpuBrightnessFilter = GlBrightnessFilter()
+                                                    gpuPlayerView?.setGlFilter(gpuBrightnessFilter)
+                                                }
+                                                setGpuExtraBrightness(currentExtraBrightness)
+                                                hasBrightnessBoostError = false
+                                            } catch (t: Throwable) {
+                                                logError(t)
+                                                hasBrightnessBoostError = true
+                                            }
+                                        } else if (willExtra) {
+                                            // still >1.0: only update brightness
+                                            try {
+                                                setGpuExtraBrightness(currentExtraBrightness)
+                                            } catch (t: Throwable) {
+                                                logError(t)
+                                                hasBrightnessBoostError = true
+                                            }
+                                        } else if (wasExtra) {
+                                            // crossed from >1.0 to <=1.0: remove filter
+                                            try {
+                                                gpuPlayerView?.setGlFilter(null)
+                                                gpuBrightnessFilter = null
+                                            } catch (t: Throwable) {
+                                                logError(t)
+                                                hasBrightnessBoostError = true
+                                            }
+                                        }
+
+                                        if (willExtra) {
+                                            level2ProgressBar.progressTintList = ColorStateList.valueOf(
+                                                ContextCompat.getColor(
+                                                    level2ProgressBar.context, if (hasBrightnessBoostError) {
+                                                        R.color.colorPrimaryRed
+                                                    } else {
+                                                        R.color.colorPrimaryOrange
+                                                    }
+                                                )
+                                            )
+                                        }
+                                    }
+
+                                    // Log.i("Brightness", "current: $currentRequestedBrightness, ce: $currentExtraBrightness L1: ${level1ProgressBar.progress}, L2: ${level2ProgressBar.progress}")
                                     playerProgressbarRightIcon.setImageResource(
                                         brightnessIcons[min( // clamp the value just in case
                                             brightnessIcons.size - 1,
                                             max(
                                                 0,
-                                                round(currentRequestedBrightness * (brightnessIcons.size - 1)).toInt()
+                                                round(max(currentRequestedBrightness, 1.0f) * (brightnessIcons.size - 1)).toInt()
                                             )
                                         )]
                                     )
@@ -1902,9 +2054,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
             playerPausePlay.setOnClickListener {
                 autoHide()
-                if(currentPlayerStatus == CSPlayerLoading.IsEnded && isLayout(PHONE)){
+                if (currentPlayerStatus == CSPlayerLoading.IsEnded && isLayout(PHONE)) {
                     player.handleEvent(CSPlayerEvent.Restart)
-                }else{
+                } else {
                     player.handleEvent(CSPlayerEvent.PlayPauseToggle)
                 }
             }
@@ -2100,7 +2252,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             isShowingEpisodeOverlay = true
             animateEpisodesOverlay(true)
         } else if (isShowingEpisodeOverlay) {
-            if(previousPlayStatus) player.handleEvent(CSPlayerEvent.Play)
+            if (previousPlayStatus) player.handleEvent(CSPlayerEvent.Play)
             isShowingEpisodeOverlay = false
             animateEpisodesOverlay(false)
         }

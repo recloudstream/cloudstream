@@ -20,6 +20,8 @@ import com.lagradost.cloudstream3.extractors.Blogger
 import com.lagradost.cloudstream3.extractors.BullStream
 import com.lagradost.cloudstream3.extractors.ByseSX
 import com.lagradost.cloudstream3.extractors.Bysezejataos
+import com.lagradost.cloudstream3.extractors.ByseBuho
+import com.lagradost.cloudstream3.extractors.ByseVepoin
 import com.lagradost.cloudstream3.extractors.ByteShare
 import com.lagradost.cloudstream3.extractors.Cda
 import com.lagradost.cloudstream3.extractors.Cdnplayer
@@ -84,6 +86,7 @@ import com.lagradost.cloudstream3.extractors.Fplayer
 import com.lagradost.cloudstream3.extractors.FsstOnline
 import com.lagradost.cloudstream3.extractors.GDMirrorbot
 import com.lagradost.cloudstream3.extractors.GMPlayer
+import com.lagradost.cloudstream3.extractors.GUpload
 import com.lagradost.cloudstream3.extractors.GamoVideo
 import com.lagradost.cloudstream3.extractors.Gdriveplayer
 import com.lagradost.cloudstream3.extractors.Gdriveplayerapi
@@ -106,6 +109,7 @@ import com.lagradost.cloudstream3.extractors.HDStreamAble
 import com.lagradost.cloudstream3.extractors.Hotlinger
 import com.lagradost.cloudstream3.extractors.HubCloud
 import com.lagradost.cloudstream3.extractors.Hxfile
+import com.lagradost.cloudstream3.extractors.HlsWish
 import com.lagradost.cloudstream3.extractors.InternetArchive
 import com.lagradost.cloudstream3.extractors.JWPlayer
 import com.lagradost.cloudstream3.extractors.Jawcloud
@@ -143,6 +147,7 @@ import com.lagradost.cloudstream3.extractors.Moviesm4u
 import com.lagradost.cloudstream3.extractors.Mp4Upload
 import com.lagradost.cloudstream3.extractors.Multimovies
 import com.lagradost.cloudstream3.extractors.Mvidoo
+import com.lagradost.cloudstream3.extractors.MyVidPlay
 import com.lagradost.cloudstream3.extractors.Mwish
 import com.lagradost.cloudstream3.extractors.MwvnVizcloudInfo
 import com.lagradost.cloudstream3.extractors.NathanFromSubject
@@ -191,6 +196,8 @@ import com.lagradost.cloudstream3.extractors.Smoothpre
 import com.lagradost.cloudstream3.extractors.Sobreatsesuyp
 import com.lagradost.cloudstream3.extractors.Solidfiles
 import com.lagradost.cloudstream3.extractors.Ssbstream
+import com.lagradost.cloudstream3.extractors.StreamEmbed
+import com.lagradost.cloudstream3.extractors.StreamHLS
 import com.lagradost.cloudstream3.extractors.StreamM4u
 import com.lagradost.cloudstream3.extractors.StreamSB
 import com.lagradost.cloudstream3.extractors.StreamSB1
@@ -230,6 +237,8 @@ import com.lagradost.cloudstream3.extractors.Techinmind
 import com.lagradost.cloudstream3.extractors.Tomatomatela
 import com.lagradost.cloudstream3.extractors.TomatomatelalClub
 import com.lagradost.cloudstream3.extractors.Tubeless
+import com.lagradost.cloudstream3.extractors.Up4FunTop
+import com.lagradost.cloudstream3.extractors.Up4Stream
 import com.lagradost.cloudstream3.extractors.Upstream
 import com.lagradost.cloudstream3.extractors.UpstreamExtractor
 import com.lagradost.cloudstream3.extractors.Uqload
@@ -263,6 +272,7 @@ import com.lagradost.cloudstream3.extractors.Vidguardto3
 import com.lagradost.cloudstream3.extractors.VidhideExtractor
 import com.lagradost.cloudstream3.extractors.Vidmoly
 import com.lagradost.cloudstream3.extractors.Vidmolyme
+import com.lagradost.cloudstream3.extractors.Vidnest
 import com.lagradost.cloudstream3.extractors.Vido
 import com.lagradost.cloudstream3.extractors.Vidstreamz
 import com.lagradost.cloudstream3.extractors.VinovoSi
@@ -1161,6 +1171,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Lulustream1(),
     Lulustream2(),
     StreamWishExtractor(),
+    StreamHLS(),
     BigwarpIO(),
     BigwarpArt(),
     BgwpCC(),
@@ -1169,6 +1180,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     FlaswishCom(),
     SfastwishCom(),
     Playerwish(),
+    Vidnest(),
+    StreamEmbed(),
     EmturbovidExtractor(),
     Vtbe(),
     EPlayExtractor(),
@@ -1221,6 +1234,13 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     VkExtractor(),
     Bysezejataos(),
     ByseSX(),
+    ByseVepoin(),
+    ByseBuho(),
+    MyVidPlay(),
+    Up4Stream(),
+    Up4FunTop(),
+    GUpload(),
+    HlsWish(),
 )
 
 

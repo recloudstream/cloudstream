@@ -248,6 +248,8 @@ dependencies {
 
         this.extra.set("isDebug", isDebug)
     })
+    // Extra brightness video filters
+    implementation(libs.gpuv)
 }
 
 tasks.register<Jar>("androidSourcesJar") {
