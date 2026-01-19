@@ -847,6 +847,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 return@observeNullable
             }
 
+            // Fix: Prevent WindowLeaked crash if activity is not in a valid state (e.g. when using Android Auto)
+            if (activity?.isFinishing == true || activity?.isDestroyed == true || !lifecycle.currentState.isAtLeast(androidx.lifecycle.Lifecycle.State.RESUMED)) {
+                return@observeNullable
+            }
+
             // don't recreate
             if (bottomSheetDialog != null) {
                 return@observeNullable

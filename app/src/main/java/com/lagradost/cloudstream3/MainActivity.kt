@@ -86,7 +86,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
-import com.lagradost.cloudstream3.network.initClient
+
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins
 import com.lagradost.cloudstream3.plugins.PluginManager.loadSinglePlugin
@@ -197,6 +197,10 @@ import android.content.ComponentName
 import android.content.ContentUris
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(CloudStreamApp.updateBaseContextLocale(base))
+    }
+
     companion object {
         var activityResultLauncher: ActivityResultLauncher<Intent>? = null
 
@@ -1161,7 +1165,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
     @Suppress("DEPRECATION_ERROR")
     override fun onCreate(savedInstanceState: Bundle?) {
-        app.initClient(this)
+
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
         val errorFile = filesDir.resolve("last_error")

@@ -36,7 +36,14 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.openActivity
 import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
 
+import android.content.Context
+import com.lagradost.cloudstream3.CloudStreamApp
+
 class AccountSelectActivity : FragmentActivity(), BiometricCallback {
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(CloudStreamApp.updateBaseContextLocale(base))
+    }
 
     val accountViewModel: AccountViewModel by viewModels()
 
