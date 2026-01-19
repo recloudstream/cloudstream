@@ -17,7 +17,7 @@ espressoCore = "3.7.0"
 fragmentKtx = "1.8.9"
 fuzzywuzzy = "1.4.0"
 jacksonModuleKotlin = { strictly = "2.13.1" } # Later versions don't support minSdk <26 (Crashes on Android TV's and FireSticks)
-json = "20250517"
+json = "20251224"
 jsoup = "1.21.2"
 junit = "4.13.2"
 junitKtx = "1.3.0"
