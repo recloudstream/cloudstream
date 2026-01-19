@@ -467,7 +467,7 @@
     <string name="add_site_summary">Přidat klon existujícího webu s jinou adresou URL</string>
     <string name="example_site_url">https://example.com</string>
     <string name="example_lang_name">Kód jazyka (cs)</string>
-    <string name="download_all_plugins_from_repo">Varování: CloudStream 3 nenese žádnou zodpovědnost za používání rozšíření třetích stran a neposkytuje pro ně žádnou podporu!</string>
+    <string name="download_all_plugins_from_repo">Varování: CloudStream nenese žádnou zodpovědnost za používání rozšíření třetích stran a neposkytuje pro ně žádnou podporu!</string>
     <string name="single_plugin_disabled" formatted="true">%s (zakázáno)</string>
     <string name="tracks">Stopy</string>
     <string name="nsfw">NSFW</string>
