@@ -642,11 +642,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 activity?.showAccountSelectLinear()
             }
 
-            homeRandom.setOnClickListener {
-                if (listHomepageItems.isNotEmpty()) {
-                    activity.loadSearchResult(listHomepageItems.random())
+            val randomClickListener = View.OnClickListener {
+                val items = listHomepageItems.toList()
+                if (items.isNotEmpty()) {
+                    activity.loadSearchResult(items.random())
                 }
             }
+            homeRandom.setOnClickListener(randomClickListener)
+            homeRandomButtonTv?.setOnClickListener(randomClickListener)
             homeMasterAdapter = HomeParentItemAdapterPreview(
                 fragment = this@HomeFragment,
                 homeViewModel, accountViewModel
@@ -725,8 +728,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 settingsManager.getBoolean(
                     getString(R.string.random_button_key),
                     false
-                ) && isLayout(PHONE)
+                )
             binding.homeRandom.visibility = View.GONE
+            binding.homeRandomButtonTv?.visibility = View.GONE
         }
 
         observe(homeViewModel.apiName) { apiName ->
@@ -766,9 +770,29 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                             }
                             listHomepageItems.addAll(mutableListOfResponse.distinctBy { it.url })
 
-                            homeRandom.isVisible = listHomepageItems.isNotEmpty()
+                            val hasItems = listHomepageItems.isNotEmpty()
+                            if (isLayout(PHONE)) {
+                                homeRandom.isVisible = hasItems
+                            } else {
+                                homeRandomButtonTv.isVisible = hasItems
+                                homeRandom.isGone = true
+                                // Update focus chain when random button is visible
+                                if (hasItems) {
+                                    homePreviewSearchButton.nextFocusRightId = R.id.home_random_button_tv
+                                    homeSwitchAccount.nextFocusLeftId = R.id.home_random_button_tv
+                                } else {
+                                    homePreviewSearchButton.nextFocusRightId = R.id.home_switch_account
+                                    homeSwitchAccount.nextFocusLeftId = R.id.home_preview_search_button
+                                }
+                            }
                         } else {
                             homeRandom.isGone = true
+                            homeRandomButtonTv.isGone = true
+                            // Reset focus chain when random button is hidden
+                            if (!isLayout(PHONE)) {
+                                homePreviewSearchButton.nextFocusRightId = R.id.home_switch_account
+                                homeSwitchAccount.nextFocusLeftId = R.id.home_preview_search_button
+                            }
                         }
                     }
 

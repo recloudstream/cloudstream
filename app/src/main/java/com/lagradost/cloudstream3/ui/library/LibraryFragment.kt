@@ -110,8 +110,27 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(
         if (toggleRandomButton) {
             listLibraryItems.clear()
             listLibraryItems.addAll(pages[position].items)
-            binding.libraryRandom.isVisible = listLibraryItems.isNotEmpty()
-        } else binding.libraryRandom.isGone = true
+            val hasItems = listLibraryItems.isNotEmpty()
+            if (isLayout(PHONE)) {
+                binding.libraryRandom.isVisible = hasItems
+            } else {
+                binding.libraryRandomButtonTv.isVisible = hasItems
+                binding.libraryRandom.isGone = true
+                // Update focus chain: random button is after search field
+                binding.mainSearch.nextFocusRightId = if (hasItems) {
+                    R.id.library_random_button_tv
+                } else {
+                    View.NO_ID
+                }
+            }
+        } else {
+            binding.libraryRandom.isGone = true
+            binding.libraryRandomButtonTv.isGone = true
+            // Reset focus chain when random button is hidden
+            if (!isLayout(PHONE)) {
+                binding.mainSearch.nextFocusRightId = View.NO_ID
+            }
+        }
     }
 
     override fun fixLayout(view: View) {
@@ -194,18 +213,22 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(
                 settingsManager.getBoolean(
                     getString(R.string.random_button_key),
                     false
-                ) && isLayout(PHONE)
+                )
             binding.libraryRandom.visibility = View.GONE
+            binding.libraryRandomButtonTv?.visibility = View.GONE
         }
 
-        binding.libraryRandom.setOnClickListener {
-            if (listLibraryItems.isNotEmpty()) {
-                val listLibraryItem = listLibraryItems.random()
+        val randomClickListener = View.OnClickListener {
+            val items = listLibraryItems.toList()
+            if (items.isNotEmpty()) {
+                val listLibraryItem = items.random()
                 libraryViewModel.currentSyncApi?.syncIdName?.let {
                     loadLibraryItem(it, listLibraryItem.syncId, listLibraryItem)
                 }
             }
         }
+        binding.libraryRandom.setOnClickListener(randomClickListener)
+        binding.libraryRandomButtonTv?.setOnClickListener(randomClickListener)
 
         /**
          * Shows a plugin selection dialogue and saves the response

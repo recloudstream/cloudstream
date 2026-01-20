@@ -225,6 +225,24 @@
             app:tint="@color/player_on_button_tv_attr" />
 
         <ImageView
+            android:id="@+id/home_random_button_tv"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:background="@drawable/player_button_tv_attr_no_bg"
+            android:clickable="true"
+            android:contentDescription="@string/home_random"
+            android:focusable="true"
+            android:nextFocusLeft="@id/home_preview_search_button"
+            android:nextFocusRight="@id/home_switch_account"
+            android:nextFocusDown="@id/home_preview_info_btt"
+            android:padding="10dp"
+            android:src="@drawable/ic_baseline_play_arrow_24"
+            android:tag="@string/tv_no_focus_tag"
+            android:visibility="gone"
+            app:tint="@color/player_on_button_tv_attr" />
+
+        <ImageView
             android:visibility="gone"
             android:id="@+id/home_switch_account"
             android:layout_width="wrap_content"

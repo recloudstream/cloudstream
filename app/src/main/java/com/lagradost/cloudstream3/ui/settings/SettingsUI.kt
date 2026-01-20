@@ -44,7 +44,7 @@ class SettingsUI : BasePreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.settings_ui, rootKey)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
-        getPref(R.string.random_button_key)?.hideOn(EMULATOR or TV)
+        getPref(R.string.random_button_key)?.hideOn(EMULATOR)
 
         (getPref(R.string.overscan_key)?.hideOn(PHONE or EMULATOR) as? SeekBarPreference)?.setOnPreferenceChangeListener { pref, newValue ->
             val padding = (newValue as? Int)?.toPx ?: return@setOnPreferenceChangeListener true
