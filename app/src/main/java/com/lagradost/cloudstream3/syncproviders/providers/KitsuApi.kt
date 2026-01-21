@@ -20,6 +20,7 @@ import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
+import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.txt
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
@@ -29,6 +30,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.format.DateTimeFormatter
@@ -234,10 +237,6 @@ class KitsuApi: SyncAPI() {
         newStatus: AbstractSyncStatus
     ): Boolean {
 
-        println("Updated Status Id: $id")
-
-        return true
-
         return setScoreRequest(
             auth ?: return false,
             id.toIntOrNull() ?: return false,
@@ -254,62 +253,70 @@ class KitsuApi: SyncAPI() {
         score: Int? = null,
         numWatchedEpisodes: Int? = null,
     ): Boolean {
-        val (code, res) = setScoreRequest(
-            auth,
-            id,
-            if (status == null) null else kitsuStatusAsString[maxOf(0, status.value)],
-            score,
-            numWatchedEpisodes
-        )
 
-        return when (code) {
-            404, 400 -> {
-                false // Need to create the relation first
-            }
-            200 -> {
-//                val malStatus = parseJson<MalStatus>(res)
-//                if (allTitles.containsKey(id)) {
-//                    val currentTitle = allTitles[id]!!
-//                    allTitles[id] = MalTitleHolder(malStatus, id, currentTitle.name)
-//                } else {
-//                    allTitles[id] = MalTitleHolder(malStatus, id, "")
-//                }
-                true
-            }
-            else -> {
-                false // Not found in any way
-            }
+        val libraryEntryId = getAnimeLibraryEntryId(auth, id)
+
+        if (libraryEntryId != null) {
+
+            return setScoreRequest(
+                auth,
+                libraryEntryId,
+                if (status == null) null else kitsuStatusAsString[maxOf(0, status.value)],
+                score,
+                numWatchedEpisodes
+            )
+
         }
+
+        return false
     }
 
+    @Suppress("UNCHECKED_CAST")
     private suspend fun setScoreRequest(
         auth : AuthData,
         id: Int,
         status: String? = null,
         score: Int? = null,
         numWatchedEpisodes: Int? = null,
-    ): Pair<Int, String> {
+    ):  Boolean {
         val data = mapOf(
             "data" to mapOf(
                 "type" to "libraryEntries",
                 "id" to id.toString(),
                 "attributes" to mapOf(
-                    "ratingTwenty" to score?.toString(),
-                    "progress" to numWatchedEpisodes?.toString(),
+                    "ratingTwenty" to score,
+                    "progress" to numWatchedEpisodes,
                     "status" to status
                 )
             )
-        ) as Map<String, String>
+        )
 
         val res = app.patch(
             "$apiUrl/library-entries/$id",
             headers = mapOf(
+                "content-type" to "application/vnd.api+json",
                 "Authorization" to "Bearer ${auth.token.accessToken}"
             ),
-            data = data
+            requestBody = data.toJson().toRequestBody()
         )
 
-        return Pair(res.code, res.text)
+        return res.isSuccessful
+
+    }
+
+    private suspend fun getAnimeLibraryEntryId(auth: AuthData, id: Int): Int? {
+
+        val userId = auth.user.id
+
+        val res = app.get(
+            "$apiUrl/library-entries?filter[userId]=$userId&filter[animeId]=$id",
+            headers = mapOf(
+                "Authorization" to "Bearer ${auth.token.accessToken}"
+            ),
+        ).parsed<KitsuResponse>().data.firstOrNull() ?: return null
+
+        return res.id.toInt()
+
     }
 
     override suspend fun library(auth : AuthData?): LibraryMetadata? {
