@@ -141,6 +141,7 @@ class EpisodeAdapter(
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindContent(holder: ViewHolderState<Any>, item: ResultEpisode, position: Int) {
         val itemView = holder.itemView
         when (val binding = holder.view) {
@@ -199,8 +200,9 @@ class EpisodeAdapter(
                         }
                     }
 
-                    val name =
-                        if (item.name == null) "${episodeText.context.getString(R.string.episode)} ${item.episode}" else "${item.episode}. ${item.name}"
+                    val name = item.name?.takeIf { it.isNotBlank() }
+                        ?: episodeText.context.getString(R.string.episode).let { "$it ${item.episode}" }
+
                     episodeFiller.isVisible = item.isFiller == true
                     episodeText.text =
                         name//if(card.isFiller == true) episodeText.context.getString(R.string.filler).format(name) else name
@@ -254,6 +256,13 @@ class EpisodeAdapter(
                     }
                     episodePoster.isVisible = posterVisible
 
+                    val seasonNumber = item.season ?: 1
+
+                    episodeSeasonEp.text = "S${seasonNumber}E${item.episode}"
+
+                    episodeSeasonEp.isVisible = episodeSeasonEp.text.isNotBlank()
+
+                    episodeSeasonEp.isVisible = episodeSeasonEp. text.isNotBlank()
                     val rating10p = item.score?.toFloat(10)
                     if (rating10p != null && rating10p > 0.1) {
                         episodeRating.text = episodeRating.context?.getString(R.string.rated_format)

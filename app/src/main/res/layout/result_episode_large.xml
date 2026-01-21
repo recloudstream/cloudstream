@@ -33,18 +33,36 @@
                 android:layout_height="72dp"
                 android:foreground="@drawable/outline_drawable">
 
-                <ImageView
-                    android:id="@+id/episode_poster"
-
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:contentDescription="@string/episode_poster_img_des"
+                    android:clipChildren="true"
+                    android:clipToPadding="true">
 
-                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:nextFocusRight="@id/download_button"
-                    android:scaleType="centerCrop"
-                    tools:src="@drawable/example_poster"
-                    tools:visibility="invisible" />
+                    <ImageView
+                        android:id="@+id/episode_poster"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        tools:src="@drawable/example_poster" />
+
+                    <TextView
+                        android:id="@+id/episode_season_ep"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|end"
+                        android:layout_marginEnd="3dp"
+                        android:layout_marginBottom="3dp"
+                        android:paddingHorizontal="4dp"
+                        android:paddingVertical="2dp"
+                        android:text="S01E01"
+                        android:textSize="11sp"
+                        android:letterSpacing="0.05"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white"
+                        android:background="@drawable/episode_badge_black" />
+
+                </FrameLayout>
 
 <!--                <ImageView-->
 <!--                    android:id="@+id/episode_play_icon"-->
@@ -66,12 +84,14 @@
 
                 <FrameLayout
                     android:id="@+id/watch_progress_container"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center">
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="bottom|start"
+                    tools:ignore="RtlSymmetry">
 
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/episode_play_icon"
+                        android:scaleType="centerInside"
                         style="@style/EpisodePlayUnderlayProgress"
                         />
                     <com.google.android.material.progressindicator.CircularProgressIndicator
@@ -129,6 +149,7 @@
                         android:id="@+id/episode_runtime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/ic_clock_16"
                         android:layout_marginEnd="10dp"
                         android:textColor="?attr/grayTextColor"
                         tools:text="80min" />
