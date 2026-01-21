@@ -268,7 +268,42 @@ class KitsuApi: SyncAPI() {
 
         }
 
-        return false
+        val data = mapOf(
+            "data" to mapOf(
+                "type" to "libraryEntries",
+                "attributes" to mapOf(
+                    "ratingTwenty" to score,
+                    "progress" to numWatchedEpisodes,
+                    "status" to if (status == null) null else kitsuStatusAsString[maxOf(0, status.value)],
+                ),
+                "relationships" to mapOf(
+                    "anime" to mapOf(
+                        "data" to mapOf(
+                            "type" to "anime",
+                            "id" to id.toString()
+                        )
+                    ),
+                    "user" to mapOf(
+                        "data" to mapOf(
+                            "type" to "users",
+                            "id" to auth.user.id
+                        )
+                    )
+                )
+            )
+        )
+
+        val res = app.post(
+            "$apiUrl/library-entries",
+            headers = mapOf(
+                "content-type" to "application/vnd.api+json",
+                "Authorization" to "Bearer ${auth.token.accessToken}"
+            ),
+            requestBody = data.toJson().toRequestBody()
+        )
+
+        return res.isSuccessful
+
     }
 
     @Suppress("UNCHECKED_CAST")
