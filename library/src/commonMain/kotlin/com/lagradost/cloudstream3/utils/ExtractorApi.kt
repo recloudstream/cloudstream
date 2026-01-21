@@ -12,6 +12,7 @@ import com.lagradost.cloudstream3.extractors.Ahvsh
 import com.lagradost.cloudstream3.extractors.Aico
 import com.lagradost.cloudstream3.extractors.AsianLoad
 import com.lagradost.cloudstream3.extractors.Asnwish
+import com.lagradost.cloudstream3.extractors.Auvexiug
 import com.lagradost.cloudstream3.extractors.Awish
 import com.lagradost.cloudstream3.extractors.BgwpCC
 import com.lagradost.cloudstream3.extractors.BigwarpArt
@@ -23,6 +24,7 @@ import com.lagradost.cloudstream3.extractors.Bysezejataos
 import com.lagradost.cloudstream3.extractors.ByseBuho
 import com.lagradost.cloudstream3.extractors.ByseVepoin
 import com.lagradost.cloudstream3.extractors.ByteShare
+import com.lagradost.cloudstream3.extractors.Cavanhabg
 import com.lagradost.cloudstream3.extractors.Cda
 import com.lagradost.cloudstream3.extractors.Cdnplayer
 import com.lagradost.cloudstream3.extractors.CdnwishCom
@@ -60,6 +62,7 @@ import com.lagradost.cloudstream3.extractors.Dooood
 import com.lagradost.cloudstream3.extractors.Ds2play
 import com.lagradost.cloudstream3.extractors.Ds2video
 import com.lagradost.cloudstream3.extractors.DsstOnline
+import com.lagradost.cloudstream3.extractors.Dumbalag
 import com.lagradost.cloudstream3.extractors.Dwish
 import com.lagradost.cloudstream3.extractors.EPlayExtractor
 import com.lagradost.cloudstream3.extractors.Embedgram
@@ -103,9 +106,14 @@ import com.lagradost.cloudstream3.extractors.Gofile
 import com.lagradost.cloudstream3.extractors.GoodstreamExtractor
 import com.lagradost.cloudstream3.extractors.GuardareStream
 import com.lagradost.cloudstream3.extractors.Guccihide
+import com.lagradost.cloudstream3.extractors.Guxhag
 import com.lagradost.cloudstream3.extractors.HDMomPlayer
 import com.lagradost.cloudstream3.extractors.HDPlayerSystem
 import com.lagradost.cloudstream3.extractors.HDStreamAble
+import com.lagradost.cloudstream3.extractors.Habetar
+import com.lagradost.cloudstream3.extractors.Haxloppd
+import com.lagradost.cloudstream3.extractors.HglinkTo
+import com.lagradost.cloudstream3.extractors.HgplayCDN
 import com.lagradost.cloudstream3.extractors.Hotlinger
 import com.lagradost.cloudstream3.extractors.HubCloud
 import com.lagradost.cloudstream3.extractors.Hxfile
@@ -237,6 +245,7 @@ import com.lagradost.cloudstream3.extractors.Techinmind
 import com.lagradost.cloudstream3.extractors.Tomatomatela
 import com.lagradost.cloudstream3.extractors.TomatomatelalClub
 import com.lagradost.cloudstream3.extractors.Tubeless
+import com.lagradost.cloudstream3.extractors.Uasopt
 import com.lagradost.cloudstream3.extractors.Up4FunTop
 import com.lagradost.cloudstream3.extractors.Up4Stream
 import com.lagradost.cloudstream3.extractors.Upstream
@@ -298,6 +307,7 @@ import com.lagradost.cloudstream3.extractors.WishembedPro
 import com.lagradost.cloudstream3.extractors.Wishfast
 import com.lagradost.cloudstream3.extractors.Wishonly
 import com.lagradost.cloudstream3.extractors.XStreamCdn
+import com.lagradost.cloudstream3.extractors.Xenolyzb
 import com.lagradost.cloudstream3.extractors.Yipsu
 import com.lagradost.cloudstream3.extractors.YourUpload
 import com.lagradost.cloudstream3.extractors.YoutubeExtractor
@@ -305,6 +315,7 @@ import com.lagradost.cloudstream3.extractors.YoutubeMobileExtractor
 import com.lagradost.cloudstream3.extractors.YoutubeNoCookieExtractor
 import com.lagradost.cloudstream3.extractors.YoutubeShortLinkExtractor
 import com.lagradost.cloudstream3.extractors.Yufiles
+import com.lagradost.cloudstream3.extractors.Yuguaab
 import com.lagradost.cloudstream3.extractors.Zorofile
 import com.lagradost.cloudstream3.extractors.Zplayer
 import com.lagradost.cloudstream3.extractors.ZplayerV2
@@ -1166,7 +1177,23 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     VidHidePro5(),
     VidHidePro6(),
     Dhtpre(),
+
+    // CineMM Redirects
     Dhcplay(),
+    HglinkTo(),
+
+    // CineMM mirrors
+    HgplayCDN(),
+    Habetar(),
+    Yuguaab(),
+    Guxhag(),
+    Auvexiug(),
+    Xenolyzb(),
+    Haxloppd(),
+    Cavanhabg(),
+    Dumbalag(),
+    Uasopt(),
+
     Smoothpre(),
     Peytonepre(),
     LuluStream(),
