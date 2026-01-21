@@ -10,11 +10,6 @@ class VidHidePro1 : VidHidePro() {
     override var mainUrl = "https://filelions.live"
 }
 
-class Dhcplay: VidHidePro() {
-    override var name = "DHC Play"
-    override var mainUrl = "https://dhcplay.com"
-}
-
 class VidHidePro2 : VidHidePro() {
     override var mainUrl = "https://filelions.online"
 }

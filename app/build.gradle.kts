@@ -228,11 +228,13 @@ dependencies {
 
         this.extra.set("isDebug", isDebug)
     })
+    // Extra brightness video filters
+    implementation(libs.gpuv)
 }
 
 tasks.register<Jar>("androidSourcesJar") {
     archiveClassifier.set("sources")
-    from(android.sourceSets.getByName("main").java.srcDirs) // Full Sources
+    from(android.sourceSets.getByName("main").java.directories) // Full Sources
 }
 
 tasks.register<Copy>("copyJar") {

@@ -1,8 +1,12 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.os.Bundle
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
+import coil3.dispose
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.Score
@@ -15,6 +19,8 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.Event
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
+import com.lagradost.cloudstream3.utils.UiImage
 
 const val START_ACTION_RESUME_LATEST = 1
 const val START_ACTION_LOAD_EP = 2
@@ -232,6 +238,44 @@ object ResultFragment {
         val playerAction: Int,
         val restart: Boolean,
     )
+
+    fun bindLogo(
+        url: String?,
+        headers: Map<String, String>?,
+        logoView: ImageView,
+        titleView: TextView
+    ) {
+        // Cancel it, as we want to remove the listener onSuccess race condition
+        logoView.dispose()
+
+        if (url.isNullOrBlank()) {
+            logoView.isVisible = false
+            titleView.isVisible = true
+            return
+        }
+
+        logoView.isVisible = true
+        titleView.isVisible = false
+
+        logoView.loadImage(
+            imageData = UiImage.Image(url, headers = headers),
+            builder = {
+                listener(
+                    onSuccess = { _, _ ->
+                        logoView.isVisible = true
+                        titleView.isVisible = false
+                    },
+                    onError = { _, _ ->
+                        logoView.isVisible = false
+                        titleView.isVisible = true
+                    },
+                    onCancel = {
+                        // If we manually cancel, then it should not do anything
+                    }
+                )
+            }
+        )
+    }
 
     fun Fragment.getStoredData(): StoredData? {
         val context = this.context ?: this.activity ?: return null

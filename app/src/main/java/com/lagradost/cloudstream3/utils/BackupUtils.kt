@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.utils
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.widget.Toast
@@ -41,6 +40,7 @@ import java.io.PrintWriter
 import java.lang.System.currentTimeMillis
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 object BackupUtils {
 
@@ -166,7 +166,6 @@ object BackupUtils {
         }
     }
 
-    @SuppressLint("SimpleDateFormat")
     fun backup(context: Context?) = ioSafe {
         if (context == null) return@ioSafe
 
@@ -179,7 +178,7 @@ object BackupUtils {
                 return@ioSafe
             }
 
-            val date = SimpleDateFormat("yyyy_MM_dd_HH_mm").format(Date(currentTimeMillis()))
+            val date = SimpleDateFormat("yyyy_MM_dd_HH_mm", Locale.getDefault()).format(Date(currentTimeMillis()))
             val displayName = "CS3_Backup_${date}"
             val backupFile = getBackup(context)
             val stream = setupBackupStream(context, displayName)

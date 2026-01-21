@@ -391,7 +391,7 @@
     <string name="view_public_repositories_button">Zobacz repozytoria społeczności</string>
     <string name="view_public_repositories_button_short">Publiczna lista</string>
     <string name="uppercase_all_subtitles">Wszystkie napisy wielką literą</string>
-    <string name="download_all_plugins_from_repo">Uwaga: CloudStream 3 nie ponosi żadnej odpowiedzialności za korzystanie z rozszerzeń innych dostawców i nie zapewnia dla nich żadnego wsparcia!</string>
+    <string name="download_all_plugins_from_repo">Uwaga: CloudStream nie ponosi żadnej odpowiedzialności za korzystanie z rozszerzeń innych dostawców i nie zapewnia dla nich żadnego wsparcia!</string>
     <string name="single_plugin_disabled" formatted="true">%s (Wyłączone)</string>
     <string name="tracks">Ścieżki</string>
     <string name="audio_tracks">Ścieżki audio</string>
