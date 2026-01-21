@@ -263,6 +263,7 @@ import com.lagradost.cloudstream3.extractors.VidStack
 import com.lagradost.cloudstream3.extractors.VideoSeyred
 import com.lagradost.cloudstream3.extractors.VideoVard
 import com.lagradost.cloudstream3.extractors.VideovardSX
+import com.lagradost.cloudstream3.extractors.Videzz
 import com.lagradost.cloudstream3.extractors.Vidgomunime
 import com.lagradost.cloudstream3.extractors.Vidgomunimesb
 import com.lagradost.cloudstream3.extractors.Vidguardto
@@ -274,6 +275,7 @@ import com.lagradost.cloudstream3.extractors.Vidmoly
 import com.lagradost.cloudstream3.extractors.Vidmolyme
 import com.lagradost.cloudstream3.extractors.Vidnest
 import com.lagradost.cloudstream3.extractors.Vido
+import com.lagradost.cloudstream3.extractors.Vidoza
 import com.lagradost.cloudstream3.extractors.Vidstreamz
 import com.lagradost.cloudstream3.extractors.VinovoSi
 import com.lagradost.cloudstream3.extractors.VinovoTo
@@ -1229,6 +1231,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Server1uns(),
     VinovoSi(),
     VinovoTo(),
+    Vidoza(),
+    Videzz(),
     CloudMailRu(),
     HubCloud(),
     VkExtractor(),
