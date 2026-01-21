@@ -1,12 +1,14 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
 
+import androidx.annotation.StringRes
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.Score
+import com.lagradost.cloudstream3.ShowStatus
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AuthData
@@ -16,7 +18,6 @@ import com.lagradost.cloudstream3.syncproviders.AuthToken
 import com.lagradost.cloudstream3.syncproviders.AuthUser
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
-import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MalStatusType
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.utils.txt
@@ -33,6 +34,7 @@ import java.time.Instant
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
+import kotlin.collections.set
 
 const val KITSU_MAX_SEARCH_LIMIT = 20
 
@@ -120,7 +122,8 @@ class KitsuApi: SyncAPI() {
 
     override suspend fun search(auth: AuthData?, query: String): List<SyncSearchResult>? {
         val auth = auth?.token?.accessToken ?: return null
-        val url = "$apiUrl/anime?filter[text]=$query&page[limit]=$KITSU_MAX_SEARCH_LIMIT"
+        val animeSelectedFields = arrayOf("titles","canonicalTitle","posterImage","episodeCount")
+        val url = "$apiUrl/anime?filter[text]=$query&page[limit]=$KITSU_MAX_SEARCH_LIMIT&fields[anime]=${animeSelectedFields.joinToString(",")}"
         val res = app.get(
             url, headers = mapOf(
                 "Authorization" to "Bearer $auth",
@@ -141,8 +144,173 @@ class KitsuApi: SyncAPI() {
         }
     }
 
-    override fun urlToId(url: String): String =
-        Regex("""/anime/((.*)/|(.*))""").find(url)!!.groupValues.first()
+    override suspend fun load(auth : AuthData?, id: String): SyncResult? {
+        val auth = auth?.token?.accessToken ?: return null
+        id.toIntOrNull() ?: return null
+
+        data class KitsuResponse(
+            @field:JsonProperty(value = "data")
+            val data: KitsuNode,
+        )
+
+        val url =
+            "$apiUrl/anime/$id"
+
+        val anime = app.get(
+            url, headers = mapOf(
+                "Authorization" to "Bearer $auth"
+            )
+        ).parsed<KitsuResponse>().data.attributes
+
+        return SyncResult(
+            id = id,
+            totalEpisodes = anime?.episodeCount,
+            title = anime?.canonicalTitle ?: anime?.titles?.enJp ?: anime?.titles?.jaJp.orEmpty(),
+            publicScore =  Score.from(anime?.ratingTwenty.toString(), 20),
+            duration = null,
+            synopsis = anime?.synopsis,
+            airStatus = anime?.status as ShowStatus?,
+            nextAiring = null,
+            studio = null,
+            genres = null,
+            trailers = null,
+            startDate = anime?.startDate as Long?,
+            endDate = null,
+            recommendations = null,
+            nextSeason =null,
+            prevSeason = null,
+            actors = null,
+        )
+
+    }
+
+    override suspend fun status(auth : AuthData?, id: String): AbstractSyncStatus? {
+        val accessToken = auth?.token?.accessToken ?: return null
+        val userId = auth.user.id
+
+        val selectedFields = arrayOf("status","ratingTwenty", "progress")
+
+        val url =
+            "$apiUrl/library-entries?filter[userId]=$userId&filter[animeId]=$id&fields[libraryEntries]=${selectedFields.joinToString(",")}"
+
+        val anime = app.get(
+            url, headers = mapOf(
+                "Authorization" to "Bearer $accessToken"
+            )
+        ).parsed<KitsuResponse>().data.firstOrNull()?.attributes
+
+        if (anime == null) {
+            return SyncStatus(
+                score = null,
+                status = SyncWatchType.NONE,
+                isFavorite = null,
+                watchedEpisodes = null
+            )
+        }
+
+        return SyncStatus(
+            score = Score.from(anime.ratingTwenty.toString(), 20),
+            status = SyncWatchType.fromInternalId(kitsuStatusAsString.indexOf(anime.status)),
+            isFavorite = null,
+            watchedEpisodes = anime.progress,
+        )
+    }
+    suspend fun getAnimeIdByTitle(title: String): String? {
+
+        val animeSelectedFields = arrayOf("titles","canonicalTitle")
+        val url = "$apiUrl/anime?filter[text]=$title&page[limit]=$KITSU_MAX_SEARCH_LIMIT&fields[anime]=${animeSelectedFields.joinToString(",")}"
+        val res = app.get(url).parsed<KitsuResponse>()
+
+        return res.data.firstOrNull()?.id
+
+    }
+
+    override fun urlToId(url: String): String? =
+        Regex("""/anime/((.*)/|(.*))""").find(url)?.groupValues?.first()
+
+    override suspend fun updateStatus(
+        auth : AuthData?,
+        id: String,
+        newStatus: AbstractSyncStatus
+    ): Boolean {
+
+        println("Updated Status Id: $id")
+
+        return true
+
+        return setScoreRequest(
+            auth ?: return false,
+            id.toIntOrNull() ?: return false,
+            fromIntToAnimeStatus(newStatus.status),
+            newStatus.score?.toInt(20),
+            newStatus.watchedEpisodes
+        )
+    }
+
+    private suspend fun setScoreRequest(
+        auth : AuthData,
+        id: Int,
+        status: KitsuStatusType? = null,
+        score: Int? = null,
+        numWatchedEpisodes: Int? = null,
+    ): Boolean {
+        val (code, res) = setScoreRequest(
+            auth,
+            id,
+            if (status == null) null else kitsuStatusAsString[maxOf(0, status.value)],
+            score,
+            numWatchedEpisodes
+        )
+
+        return when (code) {
+            404, 400 -> {
+                false // Need to create the relation first
+            }
+            200 -> {
+//                val malStatus = parseJson<MalStatus>(res)
+//                if (allTitles.containsKey(id)) {
+//                    val currentTitle = allTitles[id]!!
+//                    allTitles[id] = MalTitleHolder(malStatus, id, currentTitle.name)
+//                } else {
+//                    allTitles[id] = MalTitleHolder(malStatus, id, "")
+//                }
+                true
+            }
+            else -> {
+                false // Not found in any way
+            }
+        }
+    }
+
+    private suspend fun setScoreRequest(
+        auth : AuthData,
+        id: Int,
+        status: String? = null,
+        score: Int? = null,
+        numWatchedEpisodes: Int? = null,
+    ): Pair<Int, String> {
+        val data = mapOf(
+            "data" to mapOf(
+                "type" to "libraryEntries",
+                "id" to id.toString(),
+                "attributes" to mapOf(
+                    "ratingTwenty" to score?.toString(),
+                    "progress" to numWatchedEpisodes?.toString(),
+                    "status" to status
+                )
+            )
+        ) as Map<String, String>
+
+        val res = app.patch(
+            "$apiUrl/library-entries/$id",
+            headers = mapOf(
+                "Authorization" to "Bearer ${auth.token.accessToken}"
+            ),
+            data = data
+        )
+
+        return Pair(res.code, res.text)
+    }
 
     override suspend fun library(auth : AuthData?): LibraryMetadata? {
         val list = getKitsuAnimeListSmart(auth ?: return null)?.groupBy {
@@ -151,9 +319,9 @@ class KitsuApi: SyncAPI() {
             group.value.map { it.toLibraryItem() }
         } ?: emptyMap()
 
-        // To fill empty lists when MAL does not return them
+        // To fill empty lists when Kitsu does not return them
         val baseMap =
-            MalStatusType.entries.filter { it.value >= 0 }.associate {
+            KitsuStatusType.entries.filter { it.value >= 0 }.associate {
                 it.stringRes to emptyList<LibraryItem>()
             }
 
@@ -232,19 +400,6 @@ class KitsuApi: SyncAPI() {
         ).parsed<KitsuResponse>()
         return res
     }
-//    override suspend fun updateStatus(
-//        auth: AuthData?,
-//        id: String,
-//        newStatus: SyncAPI.AbstractSyncStatus
-//    ): Boolean {
-//        return setScoreRequest(
-//            auth?.token ?: return false,
-//            id.toIntOrNull() ?: return false,
-//            fromIntToAnimeStatus(newStatus.status),
-//            newStatus.score?.toInt(10),
-//            newStatus.watchedEpisodes
-//        )
-//    }
 
 
     data class ResponseToken(
@@ -259,7 +414,7 @@ class KitsuApi: SyncAPI() {
         @JsonProperty("attributes") val attributes: KitsuNodeAttributes,
         /* User list anime node */
         @JsonProperty("relationships") val relationships: KitsuRelationships?,
-        var anime: KitsuApi.KitsuAnimeData?
+        var anime: KitsuAnimeData?
     ) {
         fun toLibraryItem(): LibraryItem {
 
@@ -281,10 +436,10 @@ class KitsuApi: SyncAPI() {
             return LibraryItem(
                 canonicalTitle ?: titles?.enJp ?: titles?.jaJp.orEmpty(),
                 "https://kitsu.app/anime/${animeId}/",
-                animeId ?: "0",
+                this.id,
                 this.attributes.progress,
                 numEpisodes,
-                Score.from5(this.attributes.rating),
+                Score.from(this.attributes.ratingTwenty.toString(), 20),
                 parseDateLong(this.attributes.updatedAt),
                 "Kitsu",
                 TvType.Anime,
@@ -337,7 +492,7 @@ class KitsuApi: SyncAPI() {
         @JsonProperty("avatar") val avatar: KitsuUserAvatar?,
         /* User list anime attributes */
         @JsonProperty("progress") val progress: Int?,
-        @JsonProperty("rating") val rating: String?,
+        @JsonProperty("ratingTwenty") val ratingTwenty: Float?,
         @JsonProperty("updatedAt") val updatedAt: String?,
         @JsonProperty("status") val status: String?,
     )
@@ -394,14 +549,37 @@ class KitsuApi: SyncAPI() {
             }
         }
 
-        private fun convertToStatus(string: String): MalStatusType {
+        private val kitsuStatusAsString =
+            arrayOf("current", "completed", "on_hold", "dropped", "planned")
+        private fun fromIntToAnimeStatus(inp: SyncWatchType): KitsuStatusType {
+            return when (inp) {
+                SyncWatchType.NONE ->  KitsuStatusType.None
+                SyncWatchType.WATCHING ->  KitsuStatusType.Watching
+                SyncWatchType.COMPLETED ->  KitsuStatusType.Completed
+                SyncWatchType.ONHOLD ->  KitsuStatusType.OnHold
+                SyncWatchType.DROPPED ->  KitsuStatusType.Dropped
+                SyncWatchType.PLANTOWATCH ->  KitsuStatusType.PlanToWatch
+                SyncWatchType.REWATCHING ->  KitsuStatusType.Watching
+            }
+        }
+
+        enum class KitsuStatusType(var value: Int, @StringRes val stringRes: Int) {
+            Watching(0, R.string.type_watching),
+            Completed(1, R.string.type_completed),
+            OnHold(2, R.string.type_on_hold),
+            Dropped(3, R.string.type_dropped),
+            PlanToWatch(4, R.string.type_plan_to_watch),
+            None(-1, R.string.type_none)
+        }
+
+        private fun convertToStatus(string: String): KitsuStatusType {
             return when (string) {
-                "current" -> MalStatusType.Watching
-                "completed" -> MalStatusType.Completed
-                "on_hold" -> MalStatusType.OnHold
-                "dropped" -> MalStatusType.Dropped
-                "planned" -> MalStatusType.PlanToWatch
-                else -> MalStatusType.None
+                "current" ->  KitsuStatusType.Watching
+                "completed" ->  KitsuStatusType.Completed
+                "on_hold" ->  KitsuStatusType.OnHold
+                "dropped" ->  KitsuStatusType.Dropped
+                "planned" ->  KitsuStatusType.PlanToWatch
+                else ->  KitsuStatusType.None
             }
         }
     }

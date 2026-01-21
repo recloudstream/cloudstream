@@ -232,6 +232,7 @@ object APIHolder {
 
             Tracker(
                 res.idMal,
+                null,
                 res.id.toString(),
                 res.coverImage?.extraLarge ?: res.coverImage?.large,
                 res.bannerImage
@@ -287,6 +288,26 @@ object APIHolder {
             .parsedSafe()
     }
 }
+
+//private suspend fun searchKitsu(title: String): List<SyncSearchResult>? {
+//    val apiUrl = "https://kitsu.io/api/edge"
+//    val animeSelectedFields = arrayOf("titles","canonicalTitle","posterImage","episodeCount")
+//    val url = "$apiUrl/anime?filter[anime.canonicalTitle]=$title&fields[anime]=${animeSelectedFields.joinToString(",")}"
+//    val res = app.get(url).parsed<KitsuResponse>()
+//    return res.data.map {
+//        val attributes = it.attributes
+//
+//        val title = attributes.canonicalTitle ?: attributes.titles?.enJp ?: attributes.titles?.jaJp ?: "No title"
+//
+//        SyncSearchResult(
+//            title,
+//            this.name,
+//            it.id,
+//            "$mainUrl/anime/${it.id}/",
+//            attributes.posterImage?.large ?: attributes.posterImage?.medium
+//        )
+//    }
+//}
 
 /*
 // THIS IS WORK IN PROGRESS API
@@ -1855,6 +1876,9 @@ interface LoadResponse {
             return this.syncData[malIdPrefix]
         }
 
+        fun LoadResponse.getKitsuId(): String? {
+            return this.syncData[kitsuIdPrefix]
+        }
         fun LoadResponse.getAniListId(): String? {
             return this.syncData[aniListIdPrefix]
         }
@@ -1874,6 +1898,10 @@ interface LoadResponse {
         fun LoadResponse.addMalId(id: Int?) {
             this.syncData[malIdPrefix] = (id ?: return).toString()
             this.addSimklId(SimklSyncServices.Mal, id.toString())
+        }
+
+        fun LoadResponse.addKitsuId(id: Int?) {
+            this.syncData[kitsuIdPrefix] = (id ?: return).toString()
         }
 
         fun LoadResponse.addAniListId(id: Int?) {
@@ -2655,6 +2683,7 @@ fun String?.toRatingInt(): Int? =
 
 data class Tracker(
     val malId: Int? = null,
+    val kitsuId: String? = null,
     val aniId: String? = null,
     val image: String? = null,
     val cover: String? = null,
