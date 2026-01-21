@@ -88,7 +88,6 @@
             android:layout_marginEnd="32dp"
             android:orientation="vertical">
 
-
             <LinearLayout
                 android:id="@+id/player_video_title_holder"
                 android:layout_width="match_parent"
@@ -97,7 +96,7 @@
                 <TextView
                     android:maxLines="2"
                     android:id="@+id/player_video_title"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="end"
                     android:textColor="@color/white"
