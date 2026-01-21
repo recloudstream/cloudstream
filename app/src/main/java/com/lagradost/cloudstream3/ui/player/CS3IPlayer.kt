@@ -109,6 +109,7 @@ import javax.net.ssl.SSLSession
 import kotlin.collections.HashSet
 import kotlin.text.StringBuilder
 import androidx.core.net.toUri
+import okhttp3.Interceptor
 
 const val TAG = "CS3ExoPlayer"
 const val PREFERRED_AUDIO_LANGUAGE_KEY = "preferred_audio_language"
@@ -182,7 +183,6 @@ class CS3IPlayer : IPlayer {
         val kty: String? = null,
         val licenseUrl: String? = null,
         val keyRequestParameters: HashMap<String, String>,
-        val headers: Map<String, String> = emptyMap(),
     )
 
     override fun getDuration(): Long? = exoPlayer?.duration
@@ -740,10 +740,14 @@ class CS3IPlayer : IPlayer {
             }
 
         private var simpleCache: SimpleCache? = null
-        private fun createOnlineSource(headers: Map<String, String>): HttpDataSource.Factory {
+
+        /// Create a small factory for small things, no cache, no cronet
+        private fun createOnlineSource(headers: Map<String, String>?): HttpDataSource.Factory {
             val source = OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
             return source.apply {
-                setDefaultRequestProperties(headers)
+                if (!headers.isNullOrEmpty()) {
+                    setDefaultRequestProperties(headers)
+                }
             }
         }
 
@@ -781,26 +785,24 @@ class CS3IPlayer : IPlayer {
             }
         }
 
-        private fun createOnlineSource(
+        private fun createVideoSource(
             link: ExtractorLink,
             engine: CronetEngine?
         ): HttpDataSource.Factory {
             val provider = getApiFromNameNull(link.source)
-            val interceptor = provider?.getVideoInterceptor(link)
+            val interceptor: Interceptor? = provider?.getVideoInterceptor(link)
             val userAgent = link.headers.entries.find {
                 it.key.equals("User-Agent", ignoreCase = true)
-            }?.value
+            }?.value ?: USER_AGENT
 
             val source = if (interceptor == null) {
                 if (engine == null) {
                     Log.d(TAG, "Using DefaultHttpDataSource for $link")
-                    DefaultHttpDataSource.Factory() //TODO USE app.baseClient
-                        .setUserAgent(userAgent ?: USER_AGENT)
-                        .setAllowCrossProtocolRedirects(true) // https://stackoverflow.com/questions/69040127/error-code-io-bad-http-status-exoplayer-android
+                    OkHttpDataSource.Factory(app.baseClient).setUserAgent(userAgent)
                 } else {
                     Log.d(TAG, "Using CronetDataSource for $link")
                     CronetDataSource.Factory(engine, Executors.newSingleThreadExecutor())
-                        .setUserAgent(userAgent ?: USER_AGENT)
+                        .setUserAgent(userAgent)
                         .setConnectionTimeoutMs(CRONET_TIMEOUT_MS)
                         .setReadTimeoutMs(CRONET_TIMEOUT_MS)
                         .setResetTimeoutOnRedirects(true)
@@ -811,12 +813,15 @@ class CS3IPlayer : IPlayer {
                 val client = app.baseClient.newBuilder()
                     .addInterceptor(interceptor)
                     .build()
-                OkHttpDataSource.Factory(client).setUserAgent(userAgent ?: USER_AGENT)
+                OkHttpDataSource.Factory(client).setUserAgent(userAgent)
             }
 
             // Do no include empty referer, if the provider wants those they can use the header map.
             val refererMap =
                 if (link.referer.isBlank()) emptyMap() else mapOf("referer" to link.referer)
+
+            // These are extra headers the browser like to insert, not sure if we want to include them
+            // for WIDEVINE/drm as well? Do that if someone gets 404 and creates an issue.
             val headers = mapOf(
                 "accept" to "*/*",
                 "sec-ch-ua" to "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\"",
@@ -1055,8 +1060,8 @@ class CS3IPlayer : IPlayer {
         subtitleOffset: Long,
         cacheSize: Long,
         videoBufferMs: Long,
+        onlineSource: HttpDataSource.Factory? = null,
         playWhenReady: Boolean = true,
-        cacheFactory: CacheDataSource.Factory? = null,
         trackSelector: TrackSelector? = null,
         /**
          * Sets the m3u8 preferred video quality, will not force stop anything with higher quality.
@@ -1221,9 +1226,25 @@ class CS3IPlayer : IPlayer {
         val extractorFactor = UpdatedDefaultExtractorsFactory()
             .setFragmentedMp4ExtractorFlags(FragmentedMp4Extractor.FLAG_MERGE_FRAGMENTED_SIDX)
 
-        val factory =
-            if (cacheFactory == null) DefaultMediaSourceFactory(context, extractorFactor)
-            else DefaultMediaSourceFactory(cacheFactory, extractorFactor)
+        // Create an online connection with cache for all online sources
+        val dataSourceFactory = if (onlineSource == null) {
+            null
+        } else {
+            if (simpleCache == null)
+                simpleCache = getCache(context, simpleCacheSize)
+
+            val cacheFactory = CacheDataSource.Factory().apply {
+                simpleCache?.let { setCache(it) }
+                setUpstreamDataSourceFactory(onlineSource)
+            }
+            cacheFactory
+        }
+
+        val defaultMediaSourceFactory = if (dataSourceFactory != null) {
+            DefaultMediaSourceFactory(dataSourceFactory, extractorFactor)
+        } else {
+            DefaultMediaSourceFactory(context, extractorFactor)
+        }
 
         // If there is only one item then treat it as normal, if multiple: concatenate the items.
         val videoMediaSource = if (mediaItemSlices.size == 1) {
@@ -1233,7 +1254,8 @@ class CS3IPlayer : IPlayer {
                 when (drm.uuid) {
                     CLEARKEY_UUID -> {
                         // Use headers from DrmMetadata for media requests
-                        val client = createOnlineSource(drm.headers)
+                        val client = dataSourceFactory
+                            ?: throw IllegalArgumentException("Must supply onlineSource")
                         val drmCallback =
                             LocalMediaDrmCallback("{\"keys\":[{\"kty\":\"${drm.kty}\",\"k\":\"${drm.key}\",\"kid\":\"${drm.kid}\"}],\"type\":\"temporary\"}".toByteArray())
                         val manager = DefaultDrmSessionManager.Builder()
@@ -1254,7 +1276,8 @@ class CS3IPlayer : IPlayer {
                     WIDEVINE_UUID,
                     PLAYREADY_UUID -> {
                         // Use headers from DrmMetadata for media requests
-                        val client = createOnlineSource(drm.headers)
+                        val client = dataSourceFactory
+                            ?: throw IllegalArgumentException("Must supply onlineSource")
                         val drmCallback = HttpMediaDrmCallback(drm.licenseUrl, client)
                         val manager = DefaultDrmSessionManager.Builder()
                             .setPlayClearSamplesWithoutKeys(true)
@@ -1280,7 +1303,7 @@ class CS3IPlayer : IPlayer {
                     }
                 }
             } ?: run {
-                factory.createMediaSource(item.mediaItem)
+                defaultMediaSourceFactory.createMediaSource(item.mediaItem)
             }
         } else {
             try {
@@ -1289,7 +1312,7 @@ class CS3IPlayer : IPlayer {
                     source.add(
                         // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
                         ClippingMediaSource(
-                            factory.createMediaSource(item.mediaItem),
+                            defaultMediaSourceFactory.createMediaSource(item.mediaItem),
                             item.durationUs
                         )
                     )
@@ -1303,7 +1326,7 @@ class CS3IPlayer : IPlayer {
                     source.addMediaSource(
                         // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
                         ClippingMediaSource(
-                            factory.createMediaSource(item.mediaItem),
+                            defaultMediaSourceFactory.createMediaSource(item.mediaItem),
                             item.durationUs
                         )
                     )
@@ -1311,15 +1334,13 @@ class CS3IPlayer : IPlayer {
                 source
             }
         }
-
-        //println("PLAYBACK POS $playbackPosition")
         return exoPlayerBuilder.build().apply {
             setPlayWhenReady(playWhenReady)
             seekTo(currentWindow, playbackPosition)
             // Merge video, subtitles and external audio tracks
             val allSources = listOf(videoMediaSource) + subSources + audioSources
             setMediaSource(
-                MergingMediaSource(*allSources.filterNotNull().toTypedArray()),
+                MergingMediaSource(*allSources.toTypedArray()),
                 playbackPosition
             )
             setHandleAudioBecomingNoisy(true)
@@ -1331,8 +1352,8 @@ class CS3IPlayer : IPlayer {
         context: Context,
         mediaSlices: List<MediaItemSlice>,
         subSources: List<SingleSampleMediaSource>,
-        cacheFactory: CacheDataSource.Factory? = null,
-        audioSources: List<MediaSource> = emptyList()
+        audioSources: List<MediaSource> = emptyList(),
+        onlineSource: HttpDataSource.Factory? = null,
     ) {
         Log.i(TAG, "loadExo")
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
@@ -1356,10 +1377,10 @@ class CS3IPlayer : IPlayer {
                 cacheSize = cacheSize,
                 videoBufferMs = videoBufferMs,
                 playWhenReady = isPlaying, // this keep the current state of the player
-                cacheFactory = cacheFactory,
                 subtitleOffset = currentSubtitleOffset,
                 maxVideoHeight = maxVideoHeight,
-                audioSources = audioSources
+                audioSources = audioSources,
+                onlineSource = onlineSource,
             )
 
             event(PlayerAttachedEvent(exoPlayer))
@@ -1611,10 +1632,8 @@ class CS3IPlayer : IPlayer {
 
             val mediaItem = getMediaItem(MimeTypes.VIDEO_MP4, data.uri)
             val offlineSourceFactory = context.createOfflineSource()
-            val onlineSourceFactory = createOnlineSource(emptyMap())
 
             val (subSources, activeSubtitles) = getSubSources(
-                onlineSourceFactory = onlineSourceFactory,
                 offlineSourceFactory = offlineSourceFactory,
                 subtitleHelper,
             )
@@ -1628,7 +1647,6 @@ class CS3IPlayer : IPlayer {
     }
 
     private fun getSubSources(
-        onlineSourceFactory: HttpDataSource.Factory?,
         offlineSourceFactory: DataSource.Factory?,
         subHelper: PlayerSubtitleHelper,
     ): Pair<List<SingleSampleMediaSource>, List<SubtitleData>> {
@@ -1641,7 +1659,7 @@ class CS3IPlayer : IPlayer {
                 .setSelectionFlags(0)
                 .build()
             when (sub.origin) {
-                SubtitleOrigin.DOWNLOADED_FILE -> {
+                SubtitleOrigin.DOWNLOADED_FILE, SubtitleOrigin.EMBEDDED_IN_VIDEO -> {
                     if (offlineSourceFactory != null) {
                         activeSubtitles.add(sub)
                         SingleSampleMediaSource.Factory(offlineSourceFactory)
@@ -1652,26 +1670,9 @@ class CS3IPlayer : IPlayer {
                 }
 
                 SubtitleOrigin.URL -> {
-                    if (onlineSourceFactory != null) {
-                        activeSubtitles.add(sub)
-                        SingleSampleMediaSource.Factory(onlineSourceFactory.apply {
-                            if (sub.headers.isNotEmpty())
-                                this.setDefaultRequestProperties(sub.headers)
-                        })
-                            .createMediaSource(subConfig, TIME_UNSET)
-                    } else {
-                        null
-                    }
-                }
-
-                SubtitleOrigin.EMBEDDED_IN_VIDEO -> {
-                    if (offlineSourceFactory != null) {
-                        activeSubtitles.add(sub)
-                        SingleSampleMediaSource.Factory(offlineSourceFactory)
-                            .createMediaSource(subConfig, TIME_UNSET)
-                    } else {
-                        null
-                    }
+                    activeSubtitles.add(sub)
+                    SingleSampleMediaSource.Factory(createOnlineSource(sub.headers))
+                        .createMediaSource(subConfig, TIME_UNSET)
                 }
             }
         }
@@ -1681,30 +1682,18 @@ class CS3IPlayer : IPlayer {
     /**
      * Creates audio media sources from ExtractorLink's audioTracks
      * @param audioTracks List of audio tracks from ExtractorLink
-     * @param onlineSourceFactory Factory for creating online data sources
      * @return List of MediaSource for audio tracks
      */
     private fun getAudioSources(
         audioTracks: List<AudioFile>,
-        onlineSourceFactory: HttpDataSource.Factory?
     ): List<MediaSource> {
-        if (onlineSourceFactory == null || audioTracks.isEmpty()) return emptyList()
-        
+        if (audioTracks.isEmpty()) return emptyList()
         return audioTracks.mapNotNull { audio ->
             try {
                 val mediaItem = getMediaItem(MimeTypes.AUDIO_UNKNOWN, audio.url)
-                
-                // Create a factory with custom headers if provided
-                val headers = audio.headers
-                val factory = if (!headers.isNullOrEmpty()) {
-                    DefaultHttpDataSource.Factory()
-                        .setUserAgent(USER_AGENT)
-                        .setDefaultRequestProperties(headers)
-                } else {
-                    onlineSourceFactory
-                }
-                
-                DefaultMediaSourceFactory(factory).createMediaSource(mediaItem)
+                DefaultMediaSourceFactory(createOnlineSource(audio.headers)).createMediaSource(
+                    mediaItem
+                )
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to create audio source for ${audio.url}: ${e.message}")
                 null
@@ -1786,7 +1775,7 @@ class CS3IPlayer : IPlayer {
                         // this causes a *bug* that restarts all torrents from 0
                         // but I would call this a feature
                         releasePlayer()
-                        loadExo(context, listOf(), listOf(), null)
+                        loadExo(context, listOf(), listOf())
                     }
                     event(
                         StatusEvent(
@@ -1865,7 +1854,6 @@ class CS3IPlayer : IPlayer {
                                 kty = link.kty,
                                 licenseUrl = link.licenseUrl,
                                 keyRequestParameters = link.keyRequestParameters,
-                                headers = link.getAllHeaders()
                             )
                         )
                     )
@@ -1878,11 +1866,11 @@ class CS3IPlayer : IPlayer {
             }
 
             val onlineSourceFactory =
-                createOnlineSource(link, tryCreateEngine(context, simpleCacheSize))
+                createVideoSource(link, tryCreateEngine(context, simpleCacheSize))
+
             val offlineSourceFactory = context.createOfflineSource()
 
             val (subSources, activeSubtitles) = getSubSources(
-                onlineSourceFactory = onlineSourceFactory,
                 offlineSourceFactory = offlineSourceFactory,
                 subtitleHelper
             )
@@ -1890,20 +1878,17 @@ class CS3IPlayer : IPlayer {
             // Create audio sources from ExtractorLink's audioTracks
             val audioSources = getAudioSources(
                 audioTracks = link.audioTracks,
-                onlineSourceFactory = onlineSourceFactory
             )
 
             subtitleHelper.setActiveSubtitles(activeSubtitles.toSet())
 
-            if (simpleCache == null)
-                simpleCache = getCache(context, simpleCacheSize)
-
-            val cacheFactory = CacheDataSource.Factory().apply {
-                simpleCache?.let { setCache(it) }
-                setUpstreamDataSourceFactory(onlineSourceFactory)
-            }
-
-            loadExo(context, mediaItems, subSources, cacheFactory, audioSources)
+            loadExo(
+                context = context,
+                mediaSlices = mediaItems,
+                subSources = subSources,
+                audioSources = audioSources,
+                onlineSource = onlineSourceFactory
+            )
         } catch (t: Throwable) {
             Log.e(TAG, "loadOnlinePlayer error", t)
             event(ErrorEvent(t))
