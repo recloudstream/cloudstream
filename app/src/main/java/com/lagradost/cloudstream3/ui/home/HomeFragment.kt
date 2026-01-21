@@ -85,7 +85,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         // Used for configuration changed events to fix any popups that are not attached to a fragment
         val configEvent = EmptyEvent()
         var currentSpan = 1
-        val listHomepageItems = mutableListOf<SearchResponse>()
 
         private val errorProfilePics = listOf(
             R.drawable.monke_benene,
@@ -587,6 +586,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     private var currentApiName: String? = null
     private var toggleRandomButton = false
 
+    // Track suggested items for no-repeat random feature
+    private val suggestedUrls = mutableSetOf<String>()
+    private var lastDistinctUrls: Set<String>? = null
+
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var homeMasterAdapter: HomeParentItemAdapterPreview? = null
 
@@ -642,14 +645,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 activity?.showAccountSelectLinear()
             }
 
-            val randomClickListener = View.OnClickListener {
-                val items = listHomepageItems.toList()
-                if (items.isNotEmpty()) {
-                    activity.loadSearchResult(items.random())
-                }
-            }
-            homeRandom.setOnClickListener(randomClickListener)
-            homeRandomButtonTv?.setOnClickListener(randomClickListener)
             homeMasterAdapter = HomeParentItemAdapterPreview(
                 fragment = this@HomeFragment,
                 homeViewModel, accountViewModel
@@ -730,7 +725,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                     false
                 )
             binding.homeRandom.visibility = View.GONE
-            binding.homeRandomButtonTv?.visibility = View.GONE
+            binding.homeRandomButtonTv.visibility = View.GONE
         }
 
         observe(homeViewModel.apiName) { apiName ->
@@ -756,7 +751,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
                         saveHomepageToTV(d)
 
-                        listHomepageItems.clear()
                         homeLoading.isVisible = false
                         homeLoadingError.isVisible = false
                         homeMasterRecycler.isVisible = true
@@ -768,31 +762,40 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                             d.values.forEach { dlist ->
                                 mutableListOfResponse.addAll(dlist.list.list)
                             }
-                            listHomepageItems.addAll(mutableListOfResponse.distinctBy { it.url })
+                            val distinct = mutableListOfResponse.distinctBy { it.url }
 
-                            val hasItems = listHomepageItems.isNotEmpty()
-                            if (isLayout(PHONE)) {
-                                homeRandom.isVisible = hasItems
-                            } else {
-                                homeRandomButtonTv.isVisible = hasItems
-                                homeRandom.isGone = true
-                                // Update focus chain when random button is visible
-                                if (hasItems) {
-                                    homePreviewSearchButton.nextFocusRightId = R.id.home_random_button_tv
-                                    homeSwitchAccount.nextFocusLeftId = R.id.home_random_button_tv
-                                } else {
-                                    homePreviewSearchButton.nextFocusRightId = R.id.home_switch_account
-                                    homeSwitchAccount.nextFocusLeftId = R.id.home_preview_search_button
+                            // Reset suggested items if content changed
+                            val currentUrls = distinct.map { it.url }.toSet()
+                            if (currentUrls != lastDistinctUrls) {
+                                suggestedUrls.clear()
+                                lastDistinctUrls = currentUrls
+                            }
+
+                            val randomClickListener = View.OnClickListener {
+                                // Filter out already suggested items
+                                val unseen = distinct.filter { it.url !in suggestedUrls }
+                                // If all seen, reset and use full list
+                                val candidates = unseen.ifEmpty {
+                                    suggestedUrls.clear()
+                                    distinct
                                 }
+                                candidates.randomOrNull()?.let { item ->
+                                    suggestedUrls.add(item.url)
+                                    activity.loadSearchResult(item)
+                                }
+                            }
+
+                            if (isLayout(PHONE)) {
+                                homeRandom.isVisible = distinct.isNotEmpty()
+                                homeRandom.setOnClickListener(randomClickListener)
+                            } else {
+                                homeRandomButtonTv.isVisible = distinct.isNotEmpty()
+                                homeRandom.isGone = true
+                                homeRandomButtonTv.setOnClickListener(randomClickListener)
                             }
                         } else {
                             homeRandom.isGone = true
                             homeRandomButtonTv.isGone = true
-                            // Reset focus chain when random button is hidden
-                            if (!isLayout(PHONE)) {
-                                homePreviewSearchButton.nextFocusRightId = R.id.home_switch_account
-                                homeSwitchAccount.nextFocusLeftId = R.id.home_preview_search_button
-                            }
                         }
                     }
 

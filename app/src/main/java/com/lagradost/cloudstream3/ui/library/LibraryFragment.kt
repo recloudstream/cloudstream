@@ -80,8 +80,6 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(
     BaseFragment.BindingCreator.Bind(FragmentLibraryBinding::bind)
 ) {
     companion object {
-
-        val listLibraryItems = mutableListOf<SyncAPI.LibraryItem>()
         fun newInstance() = LibraryFragment()
 
         /**
@@ -93,6 +91,10 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(
     private val libraryViewModel: LibraryViewModel by activityViewModels()
 
     private var toggleRandomButton = false
+
+    // Track suggested items per tab for no-repeat random feature
+    private val suggestedSyncIds = mutableMapOf<Int, MutableSet<String>>()
+    private val lastDistinctSyncIds = mutableMapOf<Int, Set<String>>()
 
     override fun pickLayout(): Int? =
         if (isLayout(PHONE)) R.layout.fragment_library else R.layout.fragment_library_tv
@@ -108,28 +110,48 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(
         val position = libraryViewModel.currentPage.value ?: 0
         val pages = (libraryViewModel.pages.value as? Resource.Success)?.value ?: return
         if (toggleRandomButton) {
-            listLibraryItems.clear()
-            listLibraryItems.addAll(pages[position].items)
-            val hasItems = listLibraryItems.isNotEmpty()
+            val distinct = pages[position].items.distinctBy { it.syncId }
+            val hasItems = distinct.isNotEmpty()
+
+            // Reset suggested items for this tab if content changed
+            val currentIds = distinct.map { it.syncId }.toSet()
+            if (currentIds != lastDistinctSyncIds[position]) {
+                suggestedSyncIds[position]?.clear()
+                lastDistinctSyncIds[position] = currentIds
+            }
+
             if (isLayout(PHONE)) {
                 binding.libraryRandom.isVisible = hasItems
             } else {
                 binding.libraryRandomButtonTv.isVisible = hasItems
                 binding.libraryRandom.isGone = true
-                // Update focus chain: random button is after search field
-                binding.mainSearch.nextFocusRightId = if (hasItems) {
-                    R.id.library_random_button_tv
-                } else {
-                    View.NO_ID
+            }
+
+            val randomClickListener = View.OnClickListener {
+                val syncIdName = libraryViewModel.currentSyncApi?.syncIdName
+                if (syncIdName == null) {
+                    return@OnClickListener
+                }
+
+                val suggested = suggestedSyncIds.getOrPut(position) { mutableSetOf() }
+                // Filter out already suggested items
+                val unseen = distinct.filter { it.syncId !in suggested }
+                // If all seen, reset and use full list
+                val candidates = unseen.ifEmpty {
+                    suggested.clear()
+                    distinct
+                }
+                candidates.randomOrNull()?.let { item ->
+                    // Only mark as seen after confirming we can load
+                    suggested.add(item.syncId)
+                    loadLibraryItem(syncIdName, item.syncId, item)
                 }
             }
+            binding.libraryRandom.setOnClickListener(randomClickListener)
+            binding.libraryRandomButtonTv.setOnClickListener(randomClickListener)
         } else {
             binding.libraryRandom.isGone = true
             binding.libraryRandomButtonTv.isGone = true
-            // Reset focus chain when random button is hidden
-            if (!isLayout(PHONE)) {
-                binding.mainSearch.nextFocusRightId = View.NO_ID
-            }
         }
     }
 
@@ -215,20 +237,8 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(
                     false
                 )
             binding.libraryRandom.visibility = View.GONE
-            binding.libraryRandomButtonTv?.visibility = View.GONE
+            binding.libraryRandomButtonTv.visibility = View.GONE
         }
-
-        val randomClickListener = View.OnClickListener {
-            val items = listLibraryItems.toList()
-            if (items.isNotEmpty()) {
-                val listLibraryItem = items.random()
-                libraryViewModel.currentSyncApi?.syncIdName?.let {
-                    loadLibraryItem(it, listLibraryItem.syncId, listLibraryItem)
-                }
-            }
-        }
-        binding.libraryRandom.setOnClickListener(randomClickListener)
-        binding.libraryRandomButtonTv?.setOnClickListener(randomClickListener)
 
         /**
          * Shows a plugin selection dialogue and saves the response
