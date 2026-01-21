@@ -5,10 +5,12 @@ import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
@@ -75,6 +77,10 @@ import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import androidx.appcompat.widget.SearchView
+import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountEditDialog
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
+import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarMargin
 
 private const val TAG = "HomeFragment"
 
@@ -628,6 +634,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     override fun onBindingCreated(binding: FragmentHomeBinding) {
         context?.let { HomeChildItemAdapter.updatePosterSize(it) }
         binding.apply {
+            fixPaddingStatusbarMargin(homePadding)
+            val orientation = resources.configuration.orientation
+            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                topbarBg.layoutParams = topbarBg.layoutParams.apply {
+                    if (this is MarginLayoutParams) {
+                        setMargins(0,0,0,0)
+                    }
+                }
+            }
+            fixPaddingStatusbarMargin(topbarBg)
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
             homeApiFab.setOnClickListener(apiChangeClickListener)
@@ -649,7 +665,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             }
             homeMasterAdapter = HomeParentItemAdapterPreview(
                 fragment = this@HomeFragment,
-                homeViewModel, accountViewModel
+                homeViewModel
             )
             homeMasterRecycler.setRecycledViewPool(ParentItemAdapter.sharedPool)
             homeMasterRecycler.adapter = homeMasterAdapter
@@ -671,9 +687,47 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 homeViewModel.queryTextSubmit("")
             }
 
+            homeHeadProfileCard.isGone = isLayout(TV or EMULATOR)
+
+            homeViewModel.currentAccount.observe(viewLifecycleOwner) { currentAccount ->
+                homeHeadProfilePic.loadImage(currentAccount?.image)
+            }
+
+            homeHeadProfilePadding.setOnClickListener {
+                activity?.showAccountSelectLinear()
+            }
+
+            fun showAccountEditBox(context: Context): Boolean {
+                val currentAccount = DataStoreHelper.getCurrentAccount()
+                return if (currentAccount != null) {
+                    showAccountEditDialog(
+                        context = context,
+                        account = currentAccount,
+                        isNewAccount = false,
+                        accountEditCallback = { accountViewModel.handleAccountUpdate(it, context) },
+                        accountDeleteCallback = {
+                            accountViewModel.handleAccountDelete(
+                                it,
+                                context
+                            )
+                        }
+                    )
+                    true
+                } else false
+            }
+
+            homeHeadProfilePadding.setOnLongClickListener {
+                showAccountEditBox(it.context)
+            }
+
+            val topBarTotalScrollRange = 500
             homeMasterRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if (isLayout(PHONE)) {
+                        //topbar_bg movement
+                        val offset = recyclerView.computeVerticalScrollOffset()
+                        val fraction = (offset.toFloat()/topBarTotalScrollRange).coerceIn(0f,1f)
+                        topbarBg.scaleY =fraction
                         // Fab is only relevant to Phone
                         if (dy > 0) { //check for scroll down
                             homeApiFab.shrink() // hide
@@ -715,7 +769,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                     super.onScrolled(recyclerView, dx, dy)
                 }
             })
-
         }
 
         //Load value for toggling Random button. Hide at startup
@@ -736,6 +789,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 homeChangeApi.text = apiName
                 homePreviewReloadProvider.isGone = (apiName == noneApi.name)
                 homePreviewSearchButton.isGone = (apiName == noneApi.name)
+                homeSearch.isVisible = false
             }
         }
 
@@ -743,6 +797,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             binding.apply {
                 when (data) {
                     is Resource.Success -> {
+                        homeLoadingShimmer.stopShimmer()
+                        homeSearch.isVisible = homeViewModel.apiName.value != noneApi.name
+                        homeSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                            override fun onQueryTextSubmit(query: String): Boolean {
+                                homeViewModel.queryTextSubmit(query)
+                                return true
+                            }
+
+                            override fun onQueryTextChange(newText: String): Boolean {
+                                homeViewModel.queryTextChange(newText)
+                                return true
+                            }
+                        })
                         val d = data.value
                         (homeMasterRecycler.adapter as? ParentItemAdapter)?.submitList(d.values.map {
                             it.copy(
@@ -773,6 +840,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                     }
 
                     is Resource.Failure -> {
+                        homeSearch.isVisible = false
                         homeLoadingShimmer.stopShimmer()
                         homeReloadConnectionerror.setOnClickListener(apiChangeClickListener)
                         homeReloadConnectionOpenInBrowser.setOnClickListener { view ->
@@ -797,6 +865,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                         homeLoading.isVisible = false
                         homeLoadingError.isVisible = true
                         homeMasterRecycler.isInvisible = true
+                        homeSearch.isVisible = false
 
                         // Based on https://github.com/recloudstream/cloudstream/pull/1438
                         val hasNoNetworkConnection = context?.isNetworkAvailable() == false
