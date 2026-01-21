@@ -128,7 +128,7 @@
                         android:layout_gravity="center_vertical"
                         android:textColor="?attr/textColor"
                         android:textStyle="bold"
-                        tools:text="1. Jobless" />
+                        tools:text="Jobless" />
                 </LinearLayout>
 
                 <LinearLayout
