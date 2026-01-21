@@ -8,7 +8,6 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil3.dispose
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
@@ -254,15 +253,17 @@ class EpisodeAdapter(
                         // Clear the image
                         episodePoster.dispose()
                     }
+
                     episodePoster.isVisible = posterVisible
 
-                    val seasonNumber = item.season ?: 1
-
-                    episodeSeasonEp.text = "S${seasonNumber}E${item.episode}"
+                    episodeSeasonEp.text = if (item.season != null) {
+                            "S${item.season}E${item.episode}"
+                        } else {
+                            "E${item.episode}"
+                        }
 
                     episodeSeasonEp.isVisible = episodeSeasonEp.text.isNotBlank()
 
-                    episodeSeasonEp.isVisible = episodeSeasonEp. text.isNotBlank()
                     val rating10p = item.score?.toFloat(10)
                     if (rating10p != null && rating10p > 0.1) {
                         episodeRating.text = episodeRating.context?.getString(R.string.rated_format)
