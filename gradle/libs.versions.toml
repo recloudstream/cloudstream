@@ -17,13 +17,13 @@ espressoCore = "3.7.0"
 fragmentKtx = "1.8.9"
 fuzzywuzzy = "1.4.0"
 jacksonModuleKotlin = { strictly = "2.13.1" } # Later versions don't support minSdk <26 (Crashes on Android TV's and FireSticks)
-json = "20250517"
+json = "20251224"
 jsoup = "1.21.2"
 junit = "4.13.2"
 junitKtx = "1.3.0"
 junitVersion = "1.3.0"
 juniversalchardet = "2.5.0"
-kotlinGradlePlugin = "2.2.21"
+kotlinGradlePlugin = "2.3.0"
 kotlinxCoroutinesCore = "1.10.2"
 lifecycleKtx = "2.9.4"
 material = "1.14.0-alpha08"
@@ -46,6 +46,7 @@ tvprovider = "1.1.0"
 video = "1.0.0"
 workRuntimeKtx = "2.10.5"
 zipline = "1.24.0"
+gpuv = "3a107f995b"
 
 jvmTarget = "1.8"
 jdkToolchain = "17"
@@ -110,6 +111,7 @@ tvprovider = { module = "androidx.tvprovider:tvprovider", version.ref = "tvprovi
 video = { module = "com.google.android.mediahome:video", version.ref = "video" }
 work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 zipline = { module = "app.cash.zipline:zipline-android", version.ref = "zipline" }
+gpuv = { module = "com.github.recloudstream:GPUVideo-android", version.ref = "gpuv" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

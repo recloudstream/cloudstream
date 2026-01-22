@@ -440,7 +440,7 @@
     <string name="batch_download_nothing_to_download_format" formatted="true">Все %s уже скачаны</string>
     <string name="batch_download_start_format" formatted="true">Скачивание началась %1$d %2$s…</string>
     <string name="plugins_not_downloaded" formatted="true">Не скачано: %d</string>
-    <string name="download_all_plugins_from_repo">Внимание: CloudStream 3 не несёт ответственность за сторонние файлы и не поддерживает их!</string>
+    <string name="download_all_plugins_from_repo">Внимание: CloudStream не несёт ответственность за сторонние файлы и не поддерживает их!</string>
     <string name="safe_mode_title">Включен безопасный режим</string>
     <string name="plugins_downloaded" formatted="true">Скачано: %d</string>
     <string name="plugins_updated" formatted="true">Обновлено %d дополнений</string>
@@ -719,4 +719,5 @@
     <string name="install_prerelease">Установить предварительный выпуск</string>
     <string name="prerelease_already_installed">Предварительный выпуск уже установлен.</string>
     <string name="prerelease_install_failed">Не удалось установить предварительный выпуск.</string>
+    <string name="show_episode_text">Текст эпизода</string>
 </resources>

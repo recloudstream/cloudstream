@@ -36,6 +36,7 @@ import com.lagradost.cloudstream3.ui.player.ExtractorLinkGenerator
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.NEXT_WATCH_EPISODE_PERCENTAGE
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
+import com.lagradost.cloudstream3.ui.result.ResultFragment.bindLogo
 import com.lagradost.cloudstream3.ui.result.ResultFragment.getStoredData
 import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_FOCUSED
@@ -60,12 +61,14 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
+import com.lagradost.cloudstream3.utils.UiImage
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
+import com.lagradost.cloudstream3.utils.txt
 
 class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
-    BaseFragment.BindingCreator.Inflate(FragmentResultTvBinding::inflate)
+    BindingCreator.Inflate(FragmentResultTvBinding::inflate)
 ) {
 
     private lateinit var viewModel: ResultViewModel2
@@ -160,7 +163,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                 // very dirty selection
                 resultRecommendationsFilterSelection.isVisible = apiNames.size > 1
                 resultRecommendationsFilterSelection.update(apiNames.map {
-                    com.lagradost.cloudstream3.utils.txt(
+                    txt(
                         it
                     ) to it
                 })
@@ -545,7 +548,8 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         observe(viewModel.trailers) { trailersLinks ->
             context?.updateHasTrailers()
             if (!LoadResponse.isTrailersEnabled) return@observe
-            val extractedTrailerLinks = trailersLinks.flatMap{ it.mirros }.map{ (extractedTrailerLink,_) -> extractedTrailerLink }
+            val extractedTrailerLinks = trailersLinks.flatMap { it.mirros }
+                .map { (extractedTrailerLink, _) -> extractedTrailerLink }
             binding.apply {
                 resultPlayTrailer.isGone = extractedTrailerLinks.isEmpty()
                 resultPlayTrailerButton.setOnClickListener {
@@ -605,10 +609,10 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         } else R.string.favorite_removed
 
                         val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                            ?: com.lagradost.cloudstream3.utils.txt(R.string.no_data)
+                            ?: txt(R.string.no_data)
                                 .asStringNull(context) ?: ""
                         CommonActivity.showToast(
-                            com.lagradost.cloudstream3.utils.txt(
+                            txt(
                                 message,
                                 name
                             ), Toast.LENGTH_SHORT
@@ -646,10 +650,10 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         } else R.string.subscription_deleted
 
                         val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                            ?: com.lagradost.cloudstream3.utils.txt(R.string.no_data)
+                            ?: txt(R.string.no_data)
                                 .asStringNull(context) ?: ""
                         CommonActivity.showToast(
-                            com.lagradost.cloudstream3.utils.txt(
+                            txt(
                                 message,
                                 name
                             ), Toast.LENGTH_SHORT
@@ -909,6 +913,14 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         backgroundPoster.loadImage(d.posterBackgroundImage) {
                             error { getImageFromDrawable(context ?: return@error null, error) }
                         }
+
+                        bindLogo(
+                            url = d.logoUrl,
+                            headers = d.posterHeaders,
+                            titleView = resultTitle,
+                            logoView = backgroundPosterWatermarkBadgeHolder
+                        )
+
                         comingSoon = d.comingSoon
                         resultTvComingSoon.isVisible = d.comingSoon
 

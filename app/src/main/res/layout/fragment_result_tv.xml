@@ -26,6 +26,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
         android:layout_height="275dp"
         android:visibility="visible">
 
+
         <com.lagradost.cloudstream3.utils.PercentageCropImageView
             android:id="@+id/background_poster"
             android:layout_width="match_parent"
@@ -42,6 +43,20 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
             android:layout_height="120dp"
             android:layout_gravity="bottom"
             android:src="@drawable/background_shadow" />
+
+        <ImageView
+            android:id="@+id/background_poster_watermark_badge_holder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="220dp"
+            android:maxHeight="72dp"
+            android:layout_gravity="bottom|start"
+            android:layout_marginStart="@dimen/result_padding"
+            android:layout_marginBottom="56dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitStart"
+            android:contentDescription="@null" />
+
     </FrameLayout>
 
     <com.facebook.shimmer.ShimmerFrameLayout
@@ -896,6 +911,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                             android:layout_marginEnd="10dp"
                             android:visibility="gone"
                             app:cardCornerRadius="@dimen/rounded_image_radius">
+
 
                             <ImageView
                                 android:id="@+id/result_poster"

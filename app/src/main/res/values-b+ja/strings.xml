@@ -184,7 +184,7 @@
     <string name="network_adress_example">https://example.com/example.mp4</string>
     <string name="subtitle_offset_extra_hint_none_format">字幕遅延なし</string>
     <string name="delete_repository">リポジトリ削除</string>
-    <string name="download_all_plugins_from_repo">警告: CloudStream 3はサードパーティの拡張機能の使用について一切の責任を負わず、それらに対するサポートも提供しません！</string>
+    <string name="download_all_plugins_from_repo">警告: CloudStreamはサードパーティの拡張機能の使用について一切の責任を負わず、それらに対するサポートも提供しません！</string>
     <string name="action_add_to_bookmarks">視聴状態を設定</string>
     <string name="subtitle_offset">字幕を同期</string>
     <string name="add_repository">リポジトリを追加</string>
