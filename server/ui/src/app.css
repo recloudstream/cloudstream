@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+@import "tailwindcss";
+
+@plugin "daisyui" {
+  themes: forest, dracula, dim, sunset, autumn, synthwave, pastel, nord, coffee, night, lemonade;
+}
+
+@theme {
+  --font-display: "Work Sans", "Inter", sans-serif;
+  --font-body: "Inter", sans-serif;
+}
+
+@layer base {
+
+  body {
+    @apply bg-base-300 text-base-content font-sans antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-base-content/20 rounded-full hover:bg-base-content/40 transition-colors;
+}
