@@ -22,18 +22,14 @@ import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.txt
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.withIndex
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.text.SimpleDateFormat
 import java.time.Instant
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
@@ -149,7 +145,9 @@ class KitsuApi: SyncAPI() {
 
     override suspend fun load(auth : AuthData?, id: String): SyncResult? {
         val auth = auth?.token?.accessToken ?: return null
-        id.toIntOrNull() ?: return null
+        if (id.toIntOrNull() == null) {
+            return null
+        }
 
         data class KitsuResponse(
             @field:JsonProperty(value = "data")
@@ -167,18 +165,22 @@ class KitsuApi: SyncAPI() {
 
         return SyncResult(
             id = id,
-            totalEpisodes = anime?.episodeCount,
-            title = anime?.canonicalTitle ?: anime?.titles?.enJp ?: anime?.titles?.jaJp.orEmpty(),
-            publicScore =  Score.from(anime?.ratingTwenty.toString(), 20),
-            duration = null,
-            synopsis = anime?.synopsis,
-            airStatus = anime?.status as ShowStatus?,
+            totalEpisodes = anime.episodeCount,
+            title = anime.canonicalTitle ?: anime.titles?.enJp ?: anime.titles?.jaJp.orEmpty(),
+            publicScore =  Score.from(anime.ratingTwenty.toString(), 20),
+            duration = anime.episodeLength,
+            synopsis = anime.synopsis,
+            airStatus = when(anime.status) {
+                "finished" -> ShowStatus.Completed
+                "current" -> ShowStatus.Ongoing
+                else -> null
+            },
             nextAiring = null,
             studio = null,
             genres = null,
             trailers = null,
-            startDate = anime?.startDate as Long?,
-            endDate = null,
+            startDate = LocalDate.parse(anime.startDate).toEpochDay(),
+            endDate = LocalDate.parse(anime.endDate).toEpochDay(),
             recommendations = null,
             nextSeason =null,
             prevSeason = null,
@@ -256,12 +258,27 @@ class KitsuApi: SyncAPI() {
 
         val libraryEntryId = getAnimeLibraryEntryId(auth, id)
 
+        // Exists entry for anime in library
         if (libraryEntryId != null) {
+
+            // Delete anime from library
+            if (status == null || status == KitsuStatusType.None) {
+
+                val res = app.delete(
+                    "$apiUrl/library-entries/$libraryEntryId",
+                    headers = mapOf(
+                        "Authorization" to "Bearer ${auth.token.accessToken}"
+                    ),
+                )
+
+                return res.isSuccessful
+
+            }
 
             return setScoreRequest(
                 auth,
                 libraryEntryId,
-                if (status == null) null else kitsuStatusAsString[maxOf(0, status.value)],
+                kitsuStatusAsString[maxOf(0, status.value)],
                 score,
                 numWatchedEpisodes
             )
@@ -397,39 +414,23 @@ class KitsuApi: SyncAPI() {
         val animeSelectedFields = arrayOf("titles","canonicalTitle","posterImage","synopsis","startDate","episodeCount")
         val libraryEntriesSelectedFields = arrayOf("progress","rating","updatedAt", "status")
         val limit = 500
-        val initUrl = "$apiUrl/library-entries?filter[userId]=$userId&filter[kind]=anime&include=anime&page[limit]=$limit&page[offset]=0&fields[anime]=${animeSelectedFields.joinToString(",")}&fields[libraryEntries]=${libraryEntriesSelectedFields.joinToString(",")}"
-
-        val urlChannel = Channel<String>(1) // Capacity 1 to not block thread on first send
-        urlChannel.send(initUrl)
+        var url = "$apiUrl/library-entries?filter[userId]=$userId&filter[kind]=anime&include=anime&page[limit]=$limit&page[offset]=0&fields[anime]=${animeSelectedFields.joinToString(",")}&fields[libraryEntries]=${libraryEntriesSelectedFields.joinToString(",")}"
 
         val fullList = mutableListOf<KitsuNode>()
-        val listMutex = Mutex(false)
 
-        coroutineScope {
-            for (url in urlChannel) {
+        while (true) {
 
-                this.launch {
-                    val data: KitsuResponse = getKitsuAnimeListSlice(token, url)
+            val data: KitsuResponse = getKitsuAnimeListSlice(token, url)
 
-                    val url = data.links?.next
-
-                    if (url == null) {
-                        urlChannel.close()
-                    } else {
-                        urlChannel.send(url)
-                    }
-
-                    data.data.asFlow().withIndex().onEach {
-                        it.value.anime = data.included?.get(it.index)
-                    }.collect()
-
-                    listMutex.lock()
-                    fullList.addAll(data.data)
-                    listMutex.unlock()
-                }
-
+            data.data.forEachIndexed { index, value ->
+                value.anime = data.included?.get(index)
             }
+
+            fullList.addAll(data.data)
+
+            url = data.links?.next ?: break
         }
+
 
         return fullList.toTypedArray()
     }
@@ -438,7 +439,7 @@ class KitsuApi: SyncAPI() {
         val res = app.get(
             url, headers = mapOf(
                 "Authorization" to "Bearer ${token.accessToken}",
-            ), cacheTime = 1 // 1 Minute
+            )
         ).parsed<KitsuResponse>()
         return res
     }
@@ -473,7 +474,7 @@ class KitsuApi: SyncAPI() {
 
             val animeId = animeItem?.id
 
-            val synopsis: String? = animeItem?.attributes?.synopsis
+            val description: String? = animeItem?.attributes?.synopsis
 
             return LibraryItem(
                 canonicalTitle ?: titles?.enJp ?: titles?.jaJp.orEmpty(),
@@ -488,7 +489,7 @@ class KitsuApi: SyncAPI() {
                 posterImage?.large ?: posterImage?.medium,
                 null,
                 null,
-                plot = synopsis,
+                plot = description,
                 releaseDate = if (startDate == null) null else try {
                     Date.from(
                         Instant.from(
@@ -510,7 +511,9 @@ class KitsuApi: SyncAPI() {
         @JsonProperty("posterImage") val posterImage: KitsuPosterImage?,
         @JsonProperty("synopsis") val synopsis: String?,
         @JsonProperty("startDate") val startDate: String?,
+        @JsonProperty("endDate") val endDate: String?,
         @JsonProperty("episodeCount") val episodeCount: Int?,
+        @JsonProperty("episodeLength") val episodeLength: Int?,
     )
 
     data class KitsuAnimeData(
@@ -526,7 +529,9 @@ class KitsuApi: SyncAPI() {
         @JsonProperty("posterImage") val posterImage: KitsuPosterImage?,
         @JsonProperty("synopsis") val synopsis: String?,
         @JsonProperty("startDate") val startDate: String?,
+        @JsonProperty("endDate") val endDate: String?,
         @JsonProperty("episodeCount") val episodeCount: Int?,
+        @JsonProperty("episodeLength") val episodeLength: Int?,
         /* User attributes */
         @JsonProperty("name") val name: String?,
         @JsonProperty("location") val location: String?,
