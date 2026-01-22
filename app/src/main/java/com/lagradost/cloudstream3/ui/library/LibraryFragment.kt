@@ -111,13 +111,10 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(
         val position = libraryViewModel.currentPage.value ?: 0
         val pages = (libraryViewModel.pages.value as? Resource.Success)?.value ?: return
         val hasItems = pages[position].items.isNotEmpty()
+        val isPhone = isLayout(PHONE)
 
-        if (isLayout(PHONE)) {
-            binding.libraryRandom.isVisible = hasItems
-        } else {
-            binding.libraryRandomButtonTv.isVisible = hasItems
-            binding.libraryRandom.isGone = true
-        }
+        binding.libraryRandom.isVisible = isPhone && hasItems
+        binding.libraryRandomButtonTv.isVisible = !isPhone && hasItems
     }
 
     override fun fixLayout(view: View) {

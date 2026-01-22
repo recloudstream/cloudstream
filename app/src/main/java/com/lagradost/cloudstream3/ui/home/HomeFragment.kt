@@ -753,24 +753,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                         homeLoadingShimmer.stopShimmer()
                         //home_loaded?.isVisible = true
                         if (toggleRandomButton) {
-                            // Flatten and deduplicate the list
                             val distinct = d.values
                                 .flatMap { it.list.list }
                                 .distinctBy { it.url }
-                                .toList()
-
+                            val hasItems = distinct.isNotEmpty()
+                            val isPhone = isLayout(PHONE)
                             val randomClickListener = View.OnClickListener {
                                 distinct.randomOrNull()?.let { activity.loadSearchResult(it) }
                             }
 
-                            if (isLayout(PHONE)) {
-                                homeRandom.isVisible = distinct.isNotEmpty()
-                                homeRandom.setOnClickListener(randomClickListener)
-                            } else {
-                                homeRandomButtonTv.isVisible = distinct.isNotEmpty()
-                                homeRandom.isGone = true
-                                homeRandomButtonTv.setOnClickListener(randomClickListener)
-                            }
+                            homeRandom.isVisible = isPhone && hasItems
+                            homeRandom.setOnClickListener(randomClickListener)
+                            homeRandomButtonTv.isVisible = !isPhone && hasItems
+                            homeRandomButtonTv.setOnClickListener(randomClickListener)
                         } else {
                             homeRandom.isGone = true
                             homeRandomButtonTv.isGone = true
