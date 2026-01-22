@@ -92,10 +92,6 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(
 
     private var toggleRandomButton = false
 
-    // Track suggested items per tab for no-repeat random feature
-    private val suggestedSyncIds = mutableMapOf<Int, MutableSet<String>>()
-    private val lastDistinctSyncIds = mutableMapOf<Int, Set<String>>()
-
     override fun pickLayout(): Int? =
         if (isLayout(PHONE)) R.layout.fragment_library else R.layout.fragment_library_tv
 
@@ -106,52 +102,21 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(
         super.onSaveInstanceState(outState)
     }
 
-    private fun updateRandom(binding: FragmentLibraryBinding) {
-        val position = libraryViewModel.currentPage.value ?: 0
-        val pages = (libraryViewModel.pages.value as? Resource.Success)?.value ?: return
-        if (toggleRandomButton) {
-            val distinct = pages[position].items.distinctBy { it.syncId }
-            val hasItems = distinct.isNotEmpty()
-
-            // Reset suggested items for this tab if content changed
-            val currentIds = distinct.map { it.syncId }.toSet()
-            if (currentIds != lastDistinctSyncIds[position]) {
-                suggestedSyncIds[position]?.clear()
-                lastDistinctSyncIds[position] = currentIds
-            }
-
-            if (isLayout(PHONE)) {
-                binding.libraryRandom.isVisible = hasItems
-            } else {
-                binding.libraryRandomButtonTv.isVisible = hasItems
-                binding.libraryRandom.isGone = true
-            }
-
-            val randomClickListener = View.OnClickListener {
-                val syncIdName = libraryViewModel.currentSyncApi?.syncIdName
-                if (syncIdName == null) {
-                    return@OnClickListener
-                }
-
-                val suggested = suggestedSyncIds.getOrPut(position) { mutableSetOf() }
-                // Filter out already suggested items
-                val unseen = distinct.filter { it.syncId !in suggested }
-                // If all seen, reset and use full list
-                val candidates = unseen.ifEmpty {
-                    suggested.clear()
-                    distinct
-                }
-                candidates.randomOrNull()?.let { item ->
-                    // Only mark as seen after confirming we can load
-                    suggested.add(item.syncId)
-                    loadLibraryItem(syncIdName, item.syncId, item)
-                }
-            }
-            binding.libraryRandom.setOnClickListener(randomClickListener)
-            binding.libraryRandomButtonTv.setOnClickListener(randomClickListener)
-        } else {
+    private fun updateRandomVisibility(binding: FragmentLibraryBinding) {
+        if (!toggleRandomButton) {
             binding.libraryRandom.isGone = true
             binding.libraryRandomButtonTv.isGone = true
+            return
+        }
+        val position = libraryViewModel.currentPage.value ?: 0
+        val pages = (libraryViewModel.pages.value as? Resource.Success)?.value ?: return
+        val hasItems = pages[position].items.isNotEmpty()
+
+        if (isLayout(PHONE)) {
+            binding.libraryRandom.isVisible = hasItems
+        } else {
+            binding.libraryRandomButtonTv.isVisible = hasItems
+            binding.libraryRandom.isGone = true
         }
     }
 
@@ -420,7 +385,19 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(
                             binding.searchBar.setExpanded(true)
                         }
 
-                        updateRandom(binding)
+                        // Set up random button click listener
+                        if (toggleRandomButton) {
+                            val randomClickListener = View.OnClickListener {
+                                val position = libraryViewModel.currentPage.value ?: 0
+                                val syncIdName = libraryViewModel.currentSyncApi?.syncIdName ?: return@OnClickListener
+                                pages[position].items.randomOrNull()?.let { item ->
+                                    loadLibraryItem(syncIdName, item.syncId, item)
+                                }
+                            }
+                            libraryRandom.setOnClickListener(randomClickListener)
+                            libraryRandomButtonTv.setOnClickListener(randomClickListener)
+                        }
+                        updateRandomVisibility(binding)
 
                         // Only stop loading after 300ms to hide the fade effect the viewpager produces when updating
                         // Without this there would be a flashing effect:
@@ -499,7 +476,7 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(
         }
 
         observe(libraryViewModel.currentPage) { position ->
-            updateRandom(binding)
+            updateRandomVisibility(binding)
             val all = binding.viewpager.allViews.toList()
                 .filterIsInstance<AutofitRecyclerView>()
 

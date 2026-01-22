@@ -586,10 +586,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     private var currentApiName: String? = null
     private var toggleRandomButton = false
 
-    // Track suggested items for no-repeat random feature
-    private val suggestedUrls = mutableSetOf<String>()
-    private var lastDistinctUrls: Set<String>? = null
-
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var homeMasterAdapter: HomeParentItemAdapterPreview? = null
 
@@ -757,32 +753,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                         homeLoadingShimmer.stopShimmer()
                         //home_loaded?.isVisible = true
                         if (toggleRandomButton) {
-                            //Flatten list
-                            val mutableListOfResponse = mutableListOf<SearchResponse>()
-                            d.values.forEach { dlist ->
-                                mutableListOfResponse.addAll(dlist.list.list)
-                            }
-                            val distinct = mutableListOfResponse.distinctBy { it.url }
-
-                            // Reset suggested items if content changed
-                            val currentUrls = distinct.map { it.url }.toSet()
-                            if (currentUrls != lastDistinctUrls) {
-                                suggestedUrls.clear()
-                                lastDistinctUrls = currentUrls
-                            }
+                            // Flatten and deduplicate the list
+                            val distinct = d.values
+                                .flatMap { it.list.list }
+                                .distinctBy { it.url }
+                                .toList()
 
                             val randomClickListener = View.OnClickListener {
-                                // Filter out already suggested items
-                                val unseen = distinct.filter { it.url !in suggestedUrls }
-                                // If all seen, reset and use full list
-                                val candidates = unseen.ifEmpty {
-                                    suggestedUrls.clear()
-                                    distinct
-                                }
-                                candidates.randomOrNull()?.let { item ->
-                                    suggestedUrls.add(item.url)
-                                    activity.loadSearchResult(item)
-                                }
+                                distinct.randomOrNull()?.let { activity.loadSearchResult(it) }
                             }
 
                             if (isLayout(PHONE)) {
