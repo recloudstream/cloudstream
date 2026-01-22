@@ -23,8 +23,7 @@ class ProviderRegistry {
                 return null
             }
             val instance = clazz.getDeclaredConstructor().newInstance() as MainAPI
-            addProvider(instance)
-            instance
+            if (addProvider(instance)) instance else null
         }.getOrElse { error ->
             Log.e("Providers", "Failed to register $className: ${error.message}")
             null
@@ -44,13 +43,18 @@ class ProviderRegistry {
         return true
     }
 
-    private fun addProvider(api: MainAPI) {
+    fun registerCustomProvider(api: MainAPI): Boolean {
+        return addProvider(api)
+    }
+
+    private fun addProvider(api: MainAPI): Boolean {
         synchronized(APIHolder.allProviders) {
-            if (APIHolder.allProviders.any { it.name == api.name }) return
+            if (APIHolder.allProviders.any { it.name == api.name }) return false
             APIHolder.allProviders.add(api)
         }
         APIHolder.addPluginMapping(api)
         api.init()
+        return true
     }
 
     private fun isClassRegistered(className: String): Boolean =

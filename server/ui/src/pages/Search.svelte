@@ -1,8 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { push } from 'svelte-spa-router';
   import { activeProvider, providers, loadInitialData } from '../stores';
   import { api } from '../api';
   import PosterCard from '../components/shared/PosterCard.svelte';
+  import ProviderPicker from '../components/shared/ProviderPicker.svelte';
 
   let query = '';
   let searchResults: any[] = [];
@@ -53,6 +55,23 @@
       }
       if (query) handleSearch();
   }
+
+  function handleProviderChange(event: CustomEvent) {
+      const value = event.detail?.value;
+      if (value) activeProvider.set(value);
+  }
+
+  function openDetails(item: any) {
+      if (!$activeProvider || !item?.url) return;
+      const params = new URLSearchParams({
+          provider: $activeProvider,
+          url: item.url
+      });
+      if (item.name) params.set('name', item.name);
+      if (item.posterUrl) params.set('poster', item.posterUrl);
+      if (item.type) params.set('type', item.type);
+      push(`/details?${params.toString()}`);
+  }
 </script>
 
 <div class="p-6 md:p-12 max-w-7xl mx-auto space-y-8">
@@ -63,12 +82,15 @@
       <!-- Search Bar & Provider Select -->
       <div class="flex flex-col md:flex-row gap-4">
           <div class="join w-full">
-              <select class="select select-bordered join-item bg-base-200" bind:value={$activeProvider}>
-                  <option disabled selected value={null}>Provider</option>
-                  {#each $providers as provider}
-                      <option value={provider.name}>{provider.name}</option>
-                  {/each}
-              </select>
+              <ProviderPicker
+                  providers={$providers}
+                  selectedValue={$activeProvider}
+                  valueKey="name"
+                  title="Provider"
+                  description="Select which source to search."
+                  buttonClass="btn btn-outline join-item bg-base-200 justify-between"
+                  onchange={handleProviderChange}
+              />
               <div class="relative w-full">
                   <input 
                       type="text" 
@@ -117,7 +139,8 @@
                   <PosterCard 
                       title={item.name} 
                       image={item.posterUrl} 
-                      subtitle={item.type} 
+                      subtitle={item.type}
+                      onSelect={() => openDetails(item)}
                   />
               {/each}
           </div>

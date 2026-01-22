@@ -27,6 +27,7 @@ data class RepositoryData(
     val name: String? = null,
     val url: String,
     val iconUrl: String? = null,
+    val description: String? = null,
     val shortcode: String? = null,
     val enabled: Boolean = true,
 )
@@ -58,6 +59,7 @@ data class ServerConfig(
     val plugins: MutableList<PluginData> = mutableListOf(),
     val pluginSettings: MutableMap<String, MutableMap<String, MutableMap<String, Any?>>> = mutableMapOf(),
     val providerClasses: MutableList<String> = defaultProviderClasses(),
+    val providerOverrides: MutableList<ProviderOverride> = mutableListOf(),
 )
 
 const val PLUGIN_VERSION_NOT_SET = Int.MIN_VALUE
@@ -90,6 +92,8 @@ data class SitePlugin(
 data class ExtractorRequest(
     val url: String,
     val referer: String? = null,
+    val headers: Map<String, String>? = null,
+    val userAgent: String? = null,
 )
 
 data class LoadLinksRequest(
@@ -99,6 +103,20 @@ data class LoadLinksRequest(
 
 data class ProviderRegisterRequest(
     val className: String,
+)
+
+data class ProviderOverride(
+    val parentClassName: String,
+    val name: String,
+    val url: String,
+    val lang: String,
+)
+
+data class ProviderOverrideRequest(
+    val parentClassName: String? = null,
+    val name: String? = null,
+    val url: String? = null,
+    val lang: String? = null,
 )
 
 data class AccountUpsertRequest(
@@ -138,6 +156,8 @@ data class ProviderInfo(
     val supportedTypes: List<String>,
     val hasMainPage: Boolean,
     val hasQuickSearch: Boolean,
+    val className: String,
+    val canBeOverridden: Boolean,
     val sourcePlugin: String? = null,
 )
 
@@ -236,6 +256,8 @@ fun MainAPI.toInfo(): ProviderInfo = ProviderInfo(
     supportedTypes = supportedTypes.map { it.name },
     hasMainPage = hasMainPage,
     hasQuickSearch = hasQuickSearch,
+    className = this::class.qualifiedName ?: this::class.java.name,
+    canBeOverridden = canBeOverridden,
     sourcePlugin = sourcePlugin,
 )
 

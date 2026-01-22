@@ -1,15 +1,29 @@
 <script lang="ts">
+  import fallbackPoster from '../../assets/poster-fallback.svg';
+
   export let title: string;
   export let image: string;
   export let subtitle: string | undefined = undefined;
-  
+  export let onSelect: (() => void) | undefined = undefined;
+
+  const fallbackPosterSrc = fallbackPoster;
+
   // Fallback for missing images
   function handleImageError(e: Event) {
-      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300x450?text=No+Image';
+      const target = e.target as HTMLImageElement;
+      if (target.src !== fallbackPosterSrc) {
+          target.src = fallbackPosterSrc;
+      }
   }
 </script>
 
-<div class="card bg-base-100 shadow-xl hover:scale-105 transition-transform duration-200 cursor-pointer overflow-hidden group h-full">
+<div
+    class="card bg-base-100 shadow-xl hover:scale-105 transition-transform duration-200 cursor-pointer overflow-hidden group h-full"
+    role="button"
+    tabindex="0"
+    onclick={() => onSelect?.()}
+    onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && onSelect?.()}
+>
   <figure class="aspect-[2/3] relative">
       <img 
           src={image} 

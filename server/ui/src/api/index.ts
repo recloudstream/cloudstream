@@ -1,8 +1,11 @@
+const RAW_API_BASE = import.meta.env.VITE_API_BASE || 'http://127.0.0.1:8080';
+export const API_BASE_URL = RAW_API_BASE.replace(/\/+$/, '');
+
 export class CloudstreamAPI {
   private baseUrl: string;
 
-  constructor(baseUrl: string = '/api') {
-    this.baseUrl = baseUrl;
+  constructor(baseUrl: string = API_BASE_URL) {
+    this.baseUrl = baseUrl.replace(/\/+$/, '');
   }
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
@@ -75,11 +78,11 @@ export class CloudstreamAPI {
     });
   }
 
-  async removePlugin(internalName: string): Promise<any> {
+  async removePlugin(request: { filePath?: string; repositoryUrl?: string; internalName?: string }): Promise<any> {
     return this.request('/plugins', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ internalName }),
+      body: JSON.stringify(request),
     });
   }
 
@@ -97,8 +100,39 @@ export class CloudstreamAPI {
     return this.request('/providers');
   }
 
-  async getProviderMainPage(providerName: string): Promise<any> {
-    return this.request(`/providers/${providerName}/main-page`);
+  async getProviderOverrides(): Promise<any[]> {
+    return this.request('/providers/overrides');
+  }
+
+  async addProviderOverride(payload: {
+    parentClassName: string;
+    name: string;
+    url: string;
+    lang?: string;
+  }): Promise<any> {
+    return this.request('/providers/overrides', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+  }
+
+  async removeProviderOverride(name: string): Promise<any> {
+    return this.request(`/providers/overrides/${encodeURIComponent(name)}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async getProviderMainPages(providerName: string): Promise<any[]> {
+    return this.request(`/providers/${providerName}/main-pages`);
+  }
+
+  async getProviderMainPage(providerName: string, options: { data?: string; page?: number } = {}): Promise<any> {
+    const params = new URLSearchParams();
+    if (options.data) params.set('data', options.data);
+    if (options.page) params.set('page', String(options.page));
+    const query = params.toString();
+    return this.request(`/providers/${providerName}/main-page${query ? `?${query}` : ''}`);
   }
 
   async searchProvider(providerName: string, query: string): Promise<any> {
@@ -108,6 +142,14 @@ export class CloudstreamAPI {
 
   async loadMedia(providerName: string, url: string): Promise<any> {
     return this.request(`/providers/${providerName}/load?url=${encodeURIComponent(url)}`);
+  }
+
+  async getProviderLinks(providerName: string, data: string, isCasting: boolean = false): Promise<any> {
+    return this.request(`/providers/${providerName}/links`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ data, isCasting }),
+    });
   }
 }
 

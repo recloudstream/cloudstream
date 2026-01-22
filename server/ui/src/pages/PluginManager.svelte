@@ -1,17 +1,25 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { config as configStore, plugins, repositories, loadInitialData } from '../stores';
+  import { config as configStore, plugins, repositories, providers, loadInitialData } from '../stores';
   import { toast } from '../stores/toast';
   import { api } from '../api';
   import ConfirmModal from '../components/shared/ConfirmModal.svelte';
+  import ProviderPicker from '../components/shared/ProviderPicker.svelte';
 
   let activeTab = 'installed';
   let loading = false;
   let repoUrlInput = '';
   let repoNameInput = '';
+  let providerOverrides: any[] = [];
+  let overrideBaseClass = '';
+  let overrideName = '';
+  let overrideUrl = '';
+  let overrideLang = '';
+  let overridesLoading = false;
 
   onMount(async () => {
     if (!$configStore) await loadInitialData();
+    await loadOverrides();
   });
 
   async function addRepository() {
@@ -30,6 +38,13 @@
       }
   }
 
+  $: overrideableProviders = $providers.filter(
+      (provider) => provider.className && provider.canBeOverridden !== false
+  );
+  $: if (!overrideBaseClass && overrideableProviders.length > 0) {
+      overrideBaseClass = overrideableProviders[0].className;
+  }
+
   
   let confirmRepoDelete: ConfirmModal;
   async function removeRepository(id: string) {
@@ -43,6 +58,68 @@
           toast.error('Failed to remove repository');
       } finally {
           loading = false;
+      }
+  }
+
+  let confirmOverrideDelete: ConfirmModal;
+  async function loadOverrides() {
+      overridesLoading = true;
+      try {
+          providerOverrides = await api.getProviderOverrides();
+      } catch (e) {
+          console.error(e);
+          toast.error('Failed to load provider overrides');
+      } finally {
+          overridesLoading = false;
+      }
+  }
+
+  function resolveProviderLabel(parentClassName: string) {
+      const match = $providers.find((provider) => {
+          if (!provider.className) return false;
+          const simple = provider.className.split('.').pop();
+          return provider.className === parentClassName || simple === parentClassName;
+      });
+      return match ? match.name : parentClassName;
+  }
+
+  async function addOverride() {
+      if (!overrideBaseClass || !overrideName || !overrideUrl) return;
+      overridesLoading = true;
+      try {
+          await api.addProviderOverride({
+              parentClassName: overrideBaseClass,
+              name: overrideName.trim(),
+              url: overrideUrl.trim(),
+              lang: overrideLang.trim() || undefined,
+          });
+          overrideName = '';
+          overrideUrl = '';
+          overrideLang = '';
+          await loadOverrides();
+          await loadInitialData();
+          toast.success('Provider override added');
+      } catch (e) {
+          console.error(e);
+          toast.error('Failed to add provider override');
+      } finally {
+          overridesLoading = false;
+      }
+  }
+
+  async function removeOverride(overrideEntry: any) {
+      if (!await confirmOverrideDelete.show()) return;
+      overridesLoading = true;
+      try {
+          await api.removeProviderOverride(overrideEntry.name);
+          await loadOverrides();
+          await loadInitialData();
+          toast.success('Provider override removed');
+      } catch (e) {
+          console.error(e);
+          toast.error('Failed to remove provider override');
+      } finally {
+          overridesLoading = false;
       }
   }
 
@@ -175,6 +252,11 @@
   let confirmUninstall: ConfirmModal;
   let pluginToUninstall: any = null;
 
+  function handleIconError(e: Event) {
+      const target = e.currentTarget as HTMLImageElement;
+      target.classList.add('hidden');
+  }
+
   async function uninstallPlugin(plugin: any) {
       pluginToUninstall = plugin;
       if(!await confirmUninstall.show()) {
@@ -233,6 +315,11 @@
                   onclick={() => activeTab = 'repositories'}>
                   Repositories
               </button>
+              <button 
+                  class="join-item btn {activeTab === 'overrides' ? 'btn-primary' : 'btn-neutral'}" 
+                  onclick={() => activeTab = 'overrides'}>
+                  Overrides
+              </button>
           </div>
       {/if}
   </div>
@@ -255,11 +342,11 @@
            
            <!-- Multi-select TV Types Dropdown -->
            <div class="dropdown dropdown-end">
-                <div tabindex="0" role="button" class="btn btn-outline m-1">
-                    Filter Types {selectedTvTypes.length > 0 ? `(${selectedTvTypes.length})` : ''}
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                <div tabindex="0" role="button" class="select select-bordered w-full md:w-auto flex items-center justify-between px-3">
+                    <span>Filter Types {selectedTvTypes.length > 0 ? `(${selectedTvTypes.length})` : ''}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-60 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                 </div>
-                <ul tabindex="-1" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 max-h-96 overflow-y-auto flex-nowrap block">
+                <ul tabindex="-1" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box min-w-[13rem] w-52 max-h-96 overflow-y-auto flex-nowrap block">
                     {#each uniqueTvTypes as type}
                         <li>
                             <label class="label cursor-pointer justify-start">
@@ -288,19 +375,19 @@
                   <div class="card-body p-5 flex flex-col h-full">
                        <div class="flex items-start justify-between gap-3">
                           <div class="flex items-center gap-3 w-full overflow-hidden">
-                              {#if plugin.iconUrl}
-                                  <img 
-                                      src={plugin.iconUrl.replace('%size%', '64')} 
-                                      alt="" 
-                                      class="size-12 rounded-md object-contain bg-base-300 shrink-0" 
-                                      onerror={(e) => e.currentTarget.style.display = 'none'}
-                                  />
-                              {:else}
-                                   <div class="size-12 rounded-md bg-secondary/20 flex items-center justify-center text-secondary-content shrink-0">
-                                       <!-- Monochrome Puzzle Icon Fallback -->
-                                       <svg xmlns="http://www.w3.org/2000/svg" class="size-6 opacity-70 fill-current" viewBox="0 0 24 24"><path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/></svg>
-                                   </div>
-                              {/if}
+                              <div class="size-12 rounded-md bg-base-300 shrink-0 relative overflow-hidden flex items-center justify-center text-base-content/70">
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="size-6 opacity-70" viewBox="0 0 24 24" fill="currentColor">
+                                      <path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/>
+                                  </svg>
+                                  {#if plugin.iconUrl}
+                                      <img 
+                                          src={plugin.iconUrl.replace('%size%', '64')} 
+                                          alt="" 
+                                          class="absolute inset-0 w-full h-full object-contain bg-base-300" 
+                                          onerror={handleIconError}
+                                      />
+                                  {/if}
+                              </div>
                               <div class="min-w-0">
                                   <h3 class="font-bold truncate" title={plugin.name}>{plugin.name}</h3>
                                   <p class="text-xs opacity-60 truncate">by {plugin.authors?.join(', ') || 'Unknown'}</p>
@@ -395,20 +482,27 @@
                       <div class="card-body p-5">
                            <div class="flex items-start justify-between">
                               <div class="flex items-center gap-3">
-                                  {#if plugin.iconUrl}
-                                      <img src={plugin.iconUrl.replace('%size%', '64')} alt="" class="size-10 rounded-md object-contain bg-base-300" />
-                                  {:else}
-                                       <div class="size-10 rounded-md bg-primary flex items-center justify-center text-primary-content font-bold">
-                                          {plugin.name?.charAt(0) || '?'}
-                                       </div>
-                                  {/if}
+                                  <div class="size-10 rounded-md bg-base-300 shrink-0 relative overflow-hidden flex items-center justify-center text-base-content/70">
+                                      <svg xmlns="http://www.w3.org/2000/svg" class="size-5 opacity-70" viewBox="0 0 24 24" fill="currentColor">
+                                          <path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/>
+                                      </svg>
+                                      {#if plugin.iconUrl}
+                                          <img 
+                                              src={plugin.iconUrl.replace('%size%', '64')} 
+                                              alt="" 
+                                              class="absolute inset-0 w-full h-full object-contain bg-base-300" 
+                                              onerror={handleIconError}
+                                          />
+                                      {/if}
+                                  </div>
                                   <div>
                                       <h3 class="font-bold">{plugin.name || plugin.internalName}</h3>
                                       <p class="text-xs opacity-60">v{plugin.version} • {plugin.authors?.join(', ')}</p>
                                   </div>
                               </div>
-                              <div class="badge badge-sm {plugin.status === 1 ? 'badge-success' : 'badge-warning'}">
-                                  {plugin.status === 1 ? 'Working' : 'Issues'}
+                              <div class="flex items-center gap-2 text-xs opacity-70">
+                                  <span class="inline-block size-2 rounded-full {plugin.status === 1 ? 'bg-success' : 'bg-warning'}"></span>
+                                  <span>{plugin.status === 1 ? 'Working' : 'Issues'}</span>
                               </div>
                            </div>
                            
@@ -453,14 +547,25 @@
                {#each $repositories as repo}
                    <div class="alert bg-base-100 shadow-sm border border-base-content/5 flex items-center justify-between">
                         <div class="flex items-center gap-4">
-                             {#if repo.iconUrl}
-                                  <img src={repo.iconUrl} alt="" class="size-8 rounded object-contain" />
-                             {:else}
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6 opacity-50" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-                             {/if}
+                             <div class="size-8 rounded bg-base-300 shrink-0 relative overflow-hidden flex items-center justify-center text-base-content/70">
+                                 <svg xmlns="http://www.w3.org/2000/svg" class="size-4 opacity-70" viewBox="0 0 24 24" fill="currentColor">
+                                     <path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/>
+                                 </svg>
+                                 {#if repo.iconUrl}
+                                     <img 
+                                         src={repo.iconUrl} 
+                                         alt="" 
+                                         class="absolute inset-0 w-full h-full object-contain bg-base-300" 
+                                         onerror={handleIconError}
+                                     />
+                                 {/if}
+                             </div>
                              <div>
                                  <h3 class="font-bold">{repo.name}</h3>
                                  <div class="text-xs opacity-50 font-mono truncate max-w-md">{repo.url}</div>
+                                 {#if repo.description}
+                                     <div class="text-xs opacity-70 mt-1 line-clamp-2 max-w-md">{repo.description}</div>
+                                 {/if}
                              </div>
                         </div>
                         <div class="flex gap-2">
@@ -474,6 +579,102 @@
                    </div>
                {/each}
            </div>
+      </div>
+  {:else if activeTab === 'overrides'}
+      <div class="space-y-8">
+          <div class="card bg-base-200 border border-base-content/10">
+              <div class="card-body gap-4">
+                  <div>
+                      <h3 class="font-bold text-lg">Add Provider Override</h3>
+                      <p class="text-sm opacity-60">
+                          Create a custom provider by overriding the base URL, name, or language.
+                      </p>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div class="form-control">
+                          <label class="label"><span class="label-text">Base Provider</span></label>
+                          <ProviderPicker
+                              providers={overrideableProviders}
+                              selectedValue={overrideBaseClass}
+                              valueKey="className"
+                              title="Select Base Provider"
+                              description="Choose the provider to clone."
+                              buttonClass="btn btn-outline w-full justify-between"
+                              onchange={(event) => (overrideBaseClass = event.detail.value)}
+                          />
+                      </div>
+                      <div class="form-control">
+                          <label class="label"><span class="label-text">Override Name</span></label>
+                          <input
+                              type="text"
+                              bind:value={overrideName}
+                              placeholder="My Custom Provider"
+                              class="input input-bordered w-full"
+                          />
+                      </div>
+                      <div class="form-control md:col-span-2">
+                          <label class="label"><span class="label-text">Override URL</span></label>
+                          <input
+                              type="text"
+                              bind:value={overrideUrl}
+                              placeholder="https://example.com"
+                              class="input input-bordered w-full"
+                          />
+                      </div>
+                      <div class="form-control">
+                          <label class="label"><span class="label-text">Language</span></label>
+                          <input
+                              type="text"
+                              bind:value={overrideLang}
+                              placeholder="en"
+                              class="input input-bordered w-full"
+                          />
+                          <label class="label">
+                              <span class="label-text-alt opacity-60">Optional, defaults to base provider.</span>
+                          </label>
+                      </div>
+                  </div>
+                  <div class="flex justify-end">
+                      <button
+                          class="btn btn-primary"
+                          onclick={addOverride}
+                          disabled={!overrideBaseClass || !overrideName || !overrideUrl || overridesLoading}
+                      >
+                          {overridesLoading ? 'Saving...' : 'Add Override'}
+                      </button>
+                  </div>
+              </div>
+          </div>
+
+          <div class="space-y-4">
+              <h3 class="text-lg font-bold">Current Overrides</h3>
+              {#if providerOverrides.length === 0}
+                  <div class="py-12 text-center text-sm opacity-60">
+                      No overrides added yet.
+                  </div>
+              {:else}
+                  <div class="grid gap-3">
+                      {#each providerOverrides as overrideEntry}
+                          <div class="alert bg-base-100 shadow-sm border border-base-content/5 flex items-center justify-between">
+                              <div>
+                                  <h4 class="font-bold">{overrideEntry.name}</h4>
+                                  <div class="text-xs opacity-60">
+                                      Base: {resolveProviderLabel(overrideEntry.parentClassName)}
+                                  </div>
+                                  <div class="text-xs opacity-50 font-mono truncate max-w-md">{overrideEntry.url}</div>
+                                  <div class="text-xs opacity-50">Lang: {overrideEntry.lang}</div>
+                              </div>
+                              <button
+                                  class="btn btn-sm btn-ghost text-error"
+                                  onclick={() => removeOverride(overrideEntry)}
+                              >
+                                  Remove
+                              </button>
+                          </div>
+                      {/each}
+                  </div>
+              {/if}
+          </div>
       </div>
   {/if}
 
@@ -490,6 +691,14 @@
       title="Uninstall Plugin" 
       message={pluginToUninstall ? `Are you sure you want to uninstall ${pluginToUninstall.name}?` : 'Are you sure?'}
       confirmText="Uninstall"
+      type="error"
+  />
+
+  <ConfirmModal 
+      bind:this={confirmOverrideDelete} 
+      title="Remove Override" 
+      message="Are you sure you want to remove this override?"
+      confirmText="Remove"
       type="error"
   />
 </div>

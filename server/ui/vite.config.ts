@@ -8,6 +8,9 @@ export default defineConfig({
     svelte(),
     tailwindcss()
   ],
+  optimizeDeps: {
+    exclude: ['vidstack'],
+  },
   server: {
     proxy: {
       '/api': {

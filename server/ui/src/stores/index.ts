@@ -7,6 +7,15 @@ export const plugins = writable<any[]>([]);
 export const repositories = writable<any[]>([]);
 
 export const activeProvider = writable<string | null>(null);
+const ACTIVE_PROVIDER_KEY = 'cloudstream_active_provider';
+
+if (typeof localStorage !== 'undefined') {
+  activeProvider.subscribe((value) => {
+    if (value) {
+      localStorage.setItem(ACTIVE_PROVIDER_KEY, value);
+    }
+  });
+}
 
 export async function loadInitialData() {
   try {
@@ -23,8 +32,15 @@ export async function loadInitialData() {
     repositories.set(repos);
 
     if (provs.length > 0) {
-        // Set first provider as active if none selected (logic could be improved)
-        activeProvider.update(current => current || provs[0].name);
+        const stored = typeof localStorage !== 'undefined'
+          ? localStorage.getItem(ACTIVE_PROVIDER_KEY)
+          : null;
+        const storedValid = stored && provs.some(p => p.name === stored) ? stored : null;
+        activeProvider.update(current => {
+            if (current && provs.some(p => p.name === current)) return current;
+            if (storedValid) return storedValid;
+            return provs[0].name;
+        });
     }
   } catch (err) {
     console.error("Failed to load initial data", err);

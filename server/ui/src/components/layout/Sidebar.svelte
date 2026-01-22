@@ -1,5 +1,10 @@
 <script lang="ts">
+  import { onDestroy, onMount } from 'svelte';
   import { location, push } from 'svelte-spa-router';
+  import { API_BASE_URL } from '../../api';
+
+  let healthOk = false;
+  let healthTimer: number | undefined;
   const navItems = [
     { label: 'Home', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', path: '/' },
     { label: 'Search', icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z', path: '/search' },
@@ -11,13 +16,36 @@
       if (path === '/') return currentPath === '/';
       return currentPath.startsWith(path);
   }
+
+  async function checkHealth() {
+      try {
+          const res = await fetch(`${API_BASE_URL}/health`);
+          if (!res.ok) {
+              healthOk = false;
+              return;
+          }
+          const data = await res.json();
+          healthOk = data?.status === 'ok';
+      } catch {
+          healthOk = false;
+      }
+  }
+
+  onMount(() => {
+      checkHealth();
+      healthTimer = window.setInterval(checkHealth, 3000);
+  });
+
+  onDestroy(() => {
+      if (healthTimer) window.clearInterval(healthTimer);
+  });
 </script>
 
 <aside class="w-20 md:w-64 h-full bg-base-200 border-r border-base-100 flex flex-col transition-all duration-300">
   <!-- Logo Area -->
   <div class="h-16 flex items-center justify-center md:justify-start md:px-6 border-b border-base-100/50">
-      <div class="size-8 flex items-center justify-center shrink-0 text-primary">
-          <svg viewBox="0 0 108 108" class="size-full fill-current">
+      <div class="size-10 flex items-center justify-center shrink-0 text-primary">
+          <svg viewBox="0 0 108 108" class="size-full fill-current scale-150">
               <g transform="translate(29.16, 29.16) scale(0.1755477)">
                   <path d="M 245.05 148.63 C 242.249 148.627 239.463 149.052 236.79 149.89 C 235.151 141.364 230.698 133.63 224.147 127.931 C 217.597 122.233 209.321 118.893 200.65 118.45 C 195.913 105.431 186.788 94.458 174.851 87.427 C 162.914 80.396 148.893 77.735 135.21 79.905 C 121.527 82.074 109.017 88.941 99.84 99.32 C 89.871 95.945 79.051 96.024 69.133 99.545 C 59.215 103.065 50.765 109.826 45.155 118.73 C 39.545 127.634 37.094 138.174 38.2 148.64 L 37.94 148.64 C 30.615 148.64 23.582 151.553 18.403 156.733 C 13.223 161.912 10.31 168.945 10.31 176.27 C 10.31 183.595 13.223 190.628 18.403 195.807 C 23.582 200.987 30.615 203.9 37.94 203.9 L 245.05 203.9 C 252.375 203.9 259.408 200.987 264.587 195.807 C 269.767 190.628 272.68 183.595 272.68 176.27 C 272.68 168.945 269.767 161.912 264.587 156.733 C 259.408 151.553 252.375 148.64 245.05 148.64 Z" />
                   <path d="M 208.61 125 C 208.61 123.22 208.55 121.45 208.48 119.69 C 205.919 119.01 203.296 118.595 200.65 118.45 C 195.913 105.431 186.788 94.458 174.851 87.427 C 162.914 80.396 148.893 77.735 135.21 79.905 C 121.527 82.074 109.017 88.941 99.84 99.32 C 89.871 95.945 79.051 96.024 69.133 99.545 C 59.215 103.065 50.765 109.826 45.155 118.73 C 39.545 127.634 37.094 138.174 38.2 148.64 L 37.94 148.64 C 30.615 148.64 23.582 151.553 18.403 156.733 C 13.223 161.912 10.31 168.945 10.31 176.27 C 10.31 183.595 13.223 190.628 18.403 195.807 C 23.582 200.987 30.615 203.9 37.94 203.9 L 179 203.9 C 198.116 182.073 208.646 154.015 208.646 125 Z" />
@@ -25,7 +53,10 @@
               </g>
           </svg>
       </div>
-      <span class="ml-3 font-bold text-lg hidden md:block">CloudStream</span>
+      <span class="ml-3 font-bold text-lg hidden md:inline-flex items-center gap-2">
+          CloudStream
+          <span class="size-2 rounded-full {healthOk ? 'bg-success' : 'bg-base-content/30'}"></span>
+      </span>
   </div>
 
   <!-- Nav Items -->

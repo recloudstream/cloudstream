@@ -6,15 +6,16 @@ const DEFAULT_THEME = 'forest';
 export const themes = [
     'forest',
     'dracula', 
-    'dim', 
+    'black', 
     'sunset', 
     'autumn', 
     'synthwave', 
-    'pastel', 
+    'retro', 
     'nord',
     'coffee',
     'night',
-    'lemonade'
+    'lemonade',
+    'aqua'
 ];
 
 function createThemeStore() {

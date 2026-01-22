@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.kotlinModule
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.MainPageRequest
@@ -30,8 +31,10 @@ import io.ktor.server.request.receive
 import io.ktor.server.request.receiveMultipart
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondOutputStream
+import io.ktor.server.response.respondText
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
+import io.ktor.server.routing.head
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
@@ -43,9 +46,12 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
+import java.net.URI
+import java.net.URLEncoder
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.UUID
+import java.util.Base64
 import kotlin.io.DEFAULT_BUFFER_SIZE
 
 fun main() {
@@ -64,6 +70,8 @@ fun main() {
 
     normalizeRepositories(configStore)
     loadPluginsOnStartup(configStore)
+    cleanupTempPluginArchives(dataDir)
+    applyProviderOverrides(configStore, providerRegistry)
 
     embeddedServer(Netty, host = initialConfig.server.host, port = initialConfig.server.port) {
         install(CallLogging)
@@ -189,6 +197,7 @@ fun main() {
                         name = request.name ?: manifest?.name,
                         url = resolvedUrl,
                         iconUrl = manifest?.iconUrl,
+                        description = manifest?.description,
                         shortcode = request.shortcode,
                         enabled = request.enabled
                     )
@@ -349,16 +358,46 @@ fun main() {
             }
 
             route("/proxy") {
+                get {
+                    val url = call.request.queryParameters["url"]
+                        ?: return@get call.respond(HttpStatusCode.BadRequest, ErrorResponse("Missing url"))
+                    val referer = call.request.queryParameters["referer"]
+                    val userAgent = call.request.queryParameters["userAgent"]
+                    val headersEncoded = call.request.queryParameters["headers"]
+                    val headers = decodeHeadersParam(headersEncoded)
+                    val requestHeaders = buildDirectHeaders(call.request.headers, referer, headers, userAgent)
+                    proxyUrl(call, url, requestHeaders, HttpMethod.Get)
+                }
+                head {
+                    val url = call.request.queryParameters["url"]
+                        ?: return@head call.respond(HttpStatusCode.BadRequest, ErrorResponse("Missing url"))
+                    val referer = call.request.queryParameters["referer"]
+                    val userAgent = call.request.queryParameters["userAgent"]
+                    val headersEncoded = call.request.queryParameters["headers"]
+                    val headers = decodeHeadersParam(headersEncoded)
+                    val requestHeaders = buildDirectHeaders(call.request.headers, referer, headers, userAgent)
+                    proxyUrl(call, url, requestHeaders, HttpMethod.Head)
+                }
                 post {
                     val request = call.receive<ExtractorRequest>()
                     val index = call.request.queryParameters["index"]?.toIntOrNull()
+                    val direct = call.request.queryParameters["direct"]?.toBoolean() == true
+                    if (direct) {
+                        val requestHeaders = buildDirectHeaders(
+                            call.request.headers,
+                            request.referer,
+                            request.headers ?: emptyMap(),
+                            request.userAgent
+                        )
+                        proxyUrl(call, request.url, requestHeaders, HttpMethod.Get)
+                        return@post
+                    }
                     val (links, error) = collectExtractorLinks(request.url, request.referer)
                     val selected = selectProxyLink(links, index)
                     if (selected == null) {
                         val message = error ?: "No extractor links found"
                         return@post call.respond(HttpStatusCode.NotFound, ErrorResponse(message))
                     }
-                    call.response.headers.append(HttpHeaders.AccessControlAllowOrigin, "*")
                     proxyExtractorLink(call, selected)
                 }
             }
@@ -366,6 +405,84 @@ fun main() {
             route("/providers") {
                 get {
                     call.respond(providerRegistry.listProviders().map { it.toInfo() })
+                }
+                route("/overrides") {
+                    get {
+                        call.respond(configStore.load().providerOverrides)
+                    }
+                    post {
+                        val request = call.receive<ProviderOverrideRequest>()
+                        val parentClassName = request.parentClassName?.trim()
+                        val name = request.name?.trim()
+                        val url = request.url?.trim()
+                        if (parentClassName.isNullOrBlank() || name.isNullOrBlank() || url.isNullOrBlank()) {
+                            return@post call.respond(
+                                HttpStatusCode.BadRequest,
+                                ErrorResponse("Missing override fields")
+                            )
+                        }
+
+                        val base = findBaseProviderByClassName(parentClassName)
+                            ?: return@post call.respond(
+                                HttpStatusCode.NotFound,
+                                ErrorResponse("Base provider not found")
+                            )
+                        if (!base.canBeOverridden) {
+                            return@post call.respond(
+                                HttpStatusCode.BadRequest,
+                                ErrorResponse("Base provider cannot be overridden")
+                            )
+                        }
+
+                        val resolvedLang = request.lang?.trim().takeUnless { it.isNullOrBlank() } ?: base.lang
+                        val overrideEntry = ProviderOverride(
+                            parentClassName = base::class.java.name,
+                            name = name,
+                            url = url.trimEnd('/'),
+                            lang = resolvedLang
+                        )
+
+                        val config = configStore.load()
+                        if (config.providerOverrides.any { it.name.equals(name, ignoreCase = true) }) {
+                            return@post call.respond(
+                                HttpStatusCode.Conflict,
+                                ErrorResponse("Override name already exists")
+                            )
+                        }
+                        if (providerRegistry.listProviders().any { it.name.equals(name, ignoreCase = true) }) {
+                            return@post call.respond(
+                                HttpStatusCode.Conflict,
+                                ErrorResponse("Provider name already exists")
+                            )
+                        }
+
+                        val added = registerOverrideProvider(overrideEntry, providerRegistry)
+                            ?: return@post call.respond(
+                                HttpStatusCode.BadRequest,
+                                ErrorResponse("Failed to register override")
+                            )
+                        configStore.update { current ->
+                            current.providerOverrides.add(overrideEntry)
+                            current
+                        }
+                        call.respond(overrideEntry)
+                    }
+                    delete("/{name}") {
+                        val name = call.parameters["name"]
+                            ?: return@delete call.respond(HttpStatusCode.BadRequest, ErrorResponse("Missing name"))
+                        val overrideEntry = configStore.load().providerOverrides.firstOrNull {
+                            it.name.equals(name, ignoreCase = true)
+                        } ?: return@delete call.respond(
+                            HttpStatusCode.NotFound,
+                            ErrorResponse("Override not found")
+                        )
+                        configStore.update { current ->
+                            current.providerOverrides.removeIf { it.name.equals(name, ignoreCase = true) }
+                            current
+                        }
+                        providerRegistry.removeByName(overrideEntry.name)
+                        call.respond(overrideEntry)
+                    }
                 }
                 post("/register") {
                     val request = call.receive<ProviderRegisterRequest>()
@@ -499,9 +616,58 @@ private fun resolveProjectRoot(): Path {
     }
 }
 
+private fun cleanupTempPluginArchives(dataDir: Path) {
+    val cutoffMs = System.currentTimeMillis() - 24L * 60 * 60 * 1000
+    val dir = dataDir.toFile()
+    val candidates = dir.listFiles { file ->
+        file.isFile &&
+            file.name.endsWith(".cs3", ignoreCase = true) &&
+            (file.name.startsWith("plugin-download-") || file.name.startsWith("plugin-upload-"))
+    } ?: return
+    candidates.forEach { file ->
+        if (file.lastModified() <= cutoffMs) {
+            if (file.delete()) {
+                Log.i("Server", "Deleted stale plugin archive: ${file.absolutePath}")
+            }
+        }
+    }
+}
+
 private fun resolveProvider(name: String?): com.lagradost.cloudstream3.MainAPI? {
     if (name.isNullOrBlank()) return null
     return APIHolder.getApiFromNameNull(name)
+}
+
+private fun findBaseProviderByClassName(className: String): com.lagradost.cloudstream3.MainAPI? {
+    val key = className.trim()
+    if (key.isBlank()) return null
+    return synchronized(APIHolder.allProviders) {
+        APIHolder.allProviders.firstOrNull { api ->
+            if (!api.canBeOverridden) return@firstOrNull false
+            val qualified = api::class.qualifiedName ?: api::class.java.name
+            val simple = api::class.simpleName ?: api::class.java.simpleName
+            qualified == key || simple == key
+        }
+    }
+}
+
+private fun registerOverrideProvider(
+    overrideEntry: ProviderOverride,
+    providerRegistry: ProviderRegistry
+): com.lagradost.cloudstream3.MainAPI? {
+    val base = findBaseProviderByClassName(overrideEntry.parentClassName) ?: return null
+    if (!base.canBeOverridden) return null
+    val url = overrideEntry.url.trim().trimEnd('/')
+    if (url.isBlank()) return null
+    val lang = overrideEntry.lang.trim().ifBlank { base.lang }
+    val instance = base::class.java.getDeclaredConstructor().newInstance().apply {
+        name = overrideEntry.name.trim()
+        mainUrl = url
+        this.lang = lang
+        canBeOverridden = false
+        sourcePlugin = base.sourcePlugin
+    }
+    return if (providerRegistry.registerCustomProvider(instance)) instance else null
 }
 
 private fun normalizeRepositories(configStore: ConfigStore) {
@@ -530,6 +696,17 @@ private fun loadPluginsOnStartup(configStore: ConfigStore) {
             current.plugins.removeIf { existing -> updated.any { it.filePath == existing.filePath } }
             current.plugins.addAll(updated)
             current
+        }
+    }
+}
+
+private fun applyProviderOverrides(configStore: ConfigStore, providerRegistry: ProviderRegistry) {
+    val overrides = configStore.load().providerOverrides
+    if (overrides.isEmpty()) return
+    overrides.forEach { overrideEntry ->
+        val added = registerOverrideProvider(overrideEntry, providerRegistry)
+        if (added == null) {
+            Log.w("Providers", "Failed to apply provider override: ${overrideEntry.name}")
         }
     }
 }
@@ -710,29 +887,37 @@ private suspend fun autoUpdatePlugins(configStore: ConfigStore, dataDir: Path): 
 
 private suspend fun runExtractor(url: String, referer: String?): ExtractorResponse {
     return withContext(Dispatchers.IO) {
-        val links = mutableListOf<ExtractorLink>()
-        val subtitles = mutableListOf<SubtitleFile>()
+        val links = mutableListOf<ExtractorLink?>()
+        val subtitles = mutableListOf<SubtitleFile?>()
+        val subtitleCallback: (SubtitleFile?) -> Unit = { subtitle ->
+            if (subtitle != null) subtitles.add(subtitle)
+        }
+        val linkCallback: (ExtractorLink?) -> Unit = { link ->
+            if (link != null) links.add(link)
+        }
         val result = runCatching {
             loadExtractor(
                 url = url,
                 referer = referer,
-                subtitleCallback = { subtitles.add(it) },
-                callback = { links.add(it) }
+                subtitleCallback = subtitleCallback as (SubtitleFile) -> Unit,
+                callback = linkCallback as (ExtractorLink) -> Unit
             )
         }
+        val safeLinks = links.filterNotNull()
+        val safeSubtitles = subtitles.filterNotNull()
         if (result.isFailure) {
             val error = result.exceptionOrNull()
             return@withContext ExtractorResponse(
                 success = false,
-                links = links.map { it.toDto() },
-                subtitles = subtitles.map { it.toDto() },
+                links = safeLinks.map { it.toDto() },
+                subtitles = safeSubtitles.map { it.toDto() },
                 error = error?.message ?: "Extractor failed",
             )
         }
         ExtractorResponse(
             success = result.getOrNull() == true,
-            links = links.map { it.toDto() },
-            subtitles = subtitles.map { it.toDto() },
+            links = safeLinks.map { it.toDto() },
+            subtitles = safeSubtitles.map { it.toDto() },
         )
     }
 }
@@ -742,17 +927,20 @@ private suspend fun collectExtractorLinks(
     referer: String?
 ): Pair<List<ExtractorLink>, String?> {
     return withContext(Dispatchers.IO) {
-        val links = mutableListOf<ExtractorLink>()
+        val links = mutableListOf<ExtractorLink?>()
+        val linkCallback: (ExtractorLink?) -> Unit = { link ->
+            if (link != null) links.add(link)
+        }
         val result = runCatching {
             loadExtractor(
                 url = url,
                 referer = referer,
                 subtitleCallback = {},
-                callback = { links.add(it) }
+                callback = linkCallback as (ExtractorLink) -> Unit
             )
         }
         val error = result.exceptionOrNull()?.message
-        links to error
+        links.filterNotNull() to error
     }
 }
 
@@ -764,48 +952,7 @@ private fun selectProxyLink(links: List<ExtractorLink>, index: Int?): ExtractorL
 
 private suspend fun proxyExtractorLink(call: io.ktor.server.application.ApplicationCall, link: ExtractorLink) {
     val requestHeaders = buildProxyHeaders(link, call.request.headers)
-    val connection = withContext(Dispatchers.IO) {
-        (URL(link.url).openConnection() as HttpURLConnection).apply {
-            instanceFollowRedirects = true
-            requestMethod = "GET"
-            requestHeaders.forEach { (key, value) ->
-                setRequestProperty(key, value)
-            }
-            connect()
-        }
-    }
-    val statusCode = connection.responseCode
-    call.response.status(HttpStatusCode.fromValue(statusCode))
-    connection.contentType?.let { call.response.headers.append(HttpHeaders.ContentType, it) }
-    if (connection.contentLengthLong >= 0) {
-        call.response.headers.append(HttpHeaders.ContentLength, connection.contentLengthLong.toString())
-    }
-    connection.getHeaderField("Accept-Ranges")?.let {
-        call.response.headers.append(HttpHeaders.AcceptRanges, it)
-    }
-    connection.getHeaderField("Content-Range")?.let {
-        call.response.headers.append(HttpHeaders.ContentRange, it)
-    }
-    connection.getHeaderField("Content-Disposition")?.let {
-        call.response.headers.append(HttpHeaders.ContentDisposition, it)
-    }
-    connection.getHeaderField("Cache-Control")?.let {
-        call.response.headers.append(HttpHeaders.CacheControl, it)
-    }
-
-    call.respondOutputStream {
-        withContext(Dispatchers.IO) {
-            val input = if (statusCode >= 400) {
-                connection.errorStream ?: connection.inputStream
-            } else {
-                connection.inputStream
-            }
-            input.use { stream ->
-                stream.copyTo(this@respondOutputStream)
-            }
-        }
-    }
-    connection.disconnect()
+    proxyUrl(call, link.url, requestHeaders)
 }
 
 private fun buildProxyHeaders(
@@ -823,31 +970,257 @@ private fun buildProxyHeaders(
     return headers
 }
 
+private fun buildDirectHeaders(
+    requestHeaders: io.ktor.http.Headers,
+    referer: String?,
+    baseHeaders: Map<String, String>,
+    userAgent: String?
+): Map<String, String> {
+    var headers = baseHeaders
+    if (!referer.isNullOrBlank() && headers.keys.none { it.equals("Referer", ignoreCase = true) }) {
+        headers = headers + mapOf("Referer" to referer)
+    }
+    if (!userAgent.isNullOrBlank() && headers.keys.none { it.equals("User-Agent", ignoreCase = true) }) {
+        headers = headers + mapOf("User-Agent" to userAgent)
+    }
+    if (headers.keys.none { it.equals("User-Agent", ignoreCase = true) }) {
+        headers = headers + mapOf("User-Agent" to USER_AGENT)
+    }
+    val range = requestHeaders[HttpHeaders.Range]
+    if (range != null && headers.keys.none { it.equals(HttpHeaders.Range, ignoreCase = true) }) {
+        headers = headers + mapOf(HttpHeaders.Range to range)
+    }
+    return headers
+}
+
+private fun decodeHeadersParam(encoded: String?): Map<String, String> {
+    if (encoded.isNullOrBlank()) return emptyMap()
+    return runCatching {
+        val decoded = String(java.util.Base64.getDecoder().decode(encoded))
+        mapper.readValue<Map<String, String>>(decoded)
+    }.getOrElse { emptyMap() }
+}
+
+private suspend fun proxyUrl(
+    call: io.ktor.server.application.ApplicationCall,
+    url: String,
+    requestHeaders: Map<String, String>,
+    method: HttpMethod = HttpMethod.Get
+) {
+    val upstreamMethod = if (method == HttpMethod.Head) HttpMethod.Get else method
+    val connection = withContext(Dispatchers.IO) {
+        (URL(url).openConnection() as HttpURLConnection).apply {
+            instanceFollowRedirects = true
+            requestMethod = upstreamMethod.value
+            requestHeaders.forEach { (key, value) ->
+                setRequestProperty(key, value)
+            }
+            connect()
+        }
+    }
+    val statusCode = connection.responseCode
+    call.response.status(HttpStatusCode.fromValue(statusCode))
+    val contentType = connection.contentType
+    val isM3u8 = isM3u8Response(url, contentType)
+    contentType?.let { call.response.headers.append(HttpHeaders.ContentType, it) }
+    if (!isM3u8 && connection.contentLengthLong >= 0) {
+        if (call.response.headers[HttpHeaders.ContentLength] == null) {
+            call.response.headers.append(HttpHeaders.ContentLength, connection.contentLengthLong.toString())
+        }
+    }
+    connection.getHeaderField("Accept-Ranges")?.let {
+        call.response.headers.append(HttpHeaders.AcceptRanges, it)
+    }
+    connection.getHeaderField("Content-Range")?.let {
+        call.response.headers.append(HttpHeaders.ContentRange, it)
+    }
+    connection.getHeaderField("Content-Disposition")?.let {
+        call.response.headers.append(HttpHeaders.ContentDisposition, it)
+    }
+    connection.getHeaderField("Cache-Control")?.let {
+        call.response.headers.append(HttpHeaders.CacheControl, it)
+    }
+
+    if (method == HttpMethod.Head) {
+        runCatching { connection.inputStream.close() }
+        connection.disconnect()
+        return
+    }
+
+    val inputStream = if (statusCode >= 400) {
+        connection.errorStream ?: connection.inputStream
+    } else {
+        connection.inputStream
+    }
+
+    if (isM3u8) {
+        val playlist = withContext(Dispatchers.IO) {
+            inputStream.bufferedReader().use { it.readText() }
+        }
+        val baseUri = URI(url)
+        val proxyBase = buildProxyBase(call)
+        val referer = requestHeaders.entries.firstOrNull { it.key.equals("Referer", ignoreCase = true) }?.value
+            ?: baseUri.toString()
+        val userAgent = requestHeaders.entries.firstOrNull { it.key.equals("User-Agent", ignoreCase = true) }?.value
+        val rewritten = rewriteM3u8(
+            playlist,
+            baseUri,
+            proxyBase,
+            sanitizeProxyHeaders(requestHeaders),
+            referer,
+            userAgent
+        )
+        connection.disconnect()
+        call.respondText(
+            text = rewritten,
+            contentType = io.ktor.http.ContentType.parse(
+                contentType ?: "application/vnd.apple.mpegurl"
+            )
+        )
+        return
+    }
+
+    try {
+        call.respondOutputStream {
+            try {
+                withContext(Dispatchers.IO) {
+                    inputStream.use { stream ->
+                        stream.copyTo(this@respondOutputStream)
+                    }
+                }
+            } catch (e: io.ktor.util.cio.ChannelWriteException) {
+                Log.w("Proxy", "Client closed proxy connection early: ${e.message}")
+            }
+        }
+    } catch (e: io.ktor.util.cio.ChannelWriteException) {
+        Log.w("Proxy", "Client closed proxy connection early: ${e.message}")
+    } finally {
+        connection.disconnect()
+    }
+}
+
+private fun isM3u8Response(url: String, contentType: String?): Boolean {
+    val normalized = contentType?.lowercase().orEmpty()
+    if (normalized.contains("application/vnd.apple.mpegurl")) return true
+    if (normalized.contains("application/x-mpegurl")) return true
+    if (normalized.contains("audio/mpegurl")) return true
+    return url.lowercase().contains(".m3u8")
+}
+
+private fun buildProxyBase(call: io.ktor.server.application.ApplicationCall): String {
+    val headers = call.request.headers
+    val scheme = headers["X-Forwarded-Proto"]
+        ?: if (headers["X-Forwarded-Ssl"]?.equals("on", ignoreCase = true) == true) "https" else "http"
+    val host = headers["X-Forwarded-Host"]
+        ?: headers[HttpHeaders.Host]
+        ?: "127.0.0.1:8080"
+    return "$scheme://$host"
+}
+
+private fun sanitizeProxyHeaders(headers: Map<String, String>): Map<String, String> {
+    return headers.filterKeys { key ->
+        !key.equals("Host", ignoreCase = true) &&
+            !key.equals("Range", ignoreCase = true)
+    }
+}
+
+private fun encodeHeadersParam(headers: Map<String, String>): String? {
+    if (headers.isEmpty()) return null
+    val json = mapper.writeValueAsString(headers)
+    return Base64.getEncoder().encodeToString(json.toByteArray())
+}
+
+private fun buildProxyUrl(
+    proxyBase: String,
+    targetUrl: String,
+    referer: String?,
+    headers: Map<String, String>,
+    userAgent: String?
+): String {
+    val params = mutableListOf("url" to targetUrl)
+    if (!referer.isNullOrBlank()) params.add("referer" to referer)
+    if (!userAgent.isNullOrBlank()) params.add("userAgent" to userAgent)
+    encodeHeadersParam(headers)?.let { params.add("headers" to it) }
+    val encoded = params.joinToString("&") { (key, value) ->
+        "${URLEncoder.encode(key, Charsets.UTF_8)}=${URLEncoder.encode(value, Charsets.UTF_8)}"
+    }
+    return "$proxyBase/proxy?$encoded"
+}
+
+private fun rewriteM3u8(
+    playlist: String,
+    baseUri: URI,
+    proxyBase: String,
+    headers: Map<String, String>,
+    referer: String?,
+    userAgent: String?
+): String {
+    val uriRegex = Regex("""URI="([^"]+)"""")
+    return playlist.lineSequence().joinToString("\n") { line ->
+        val trimmed = line.trim()
+        if (trimmed.isEmpty()) {
+            line
+        } else if (trimmed.startsWith("#")) {
+            uriRegex.replace(line) { match ->
+                val raw = match.groupValues[1]
+                val proxied = proxifyM3u8Url(raw, baseUri, proxyBase, headers, referer, userAgent)
+                "URI=\"$proxied\""
+            }
+        } else {
+            proxifyM3u8Url(trimmed, baseUri, proxyBase, headers, referer, userAgent)
+        }
+    }
+}
+
+private fun proxifyM3u8Url(
+    rawUrl: String,
+    baseUri: URI,
+    proxyBase: String,
+    headers: Map<String, String>,
+    referer: String?,
+    userAgent: String?
+): String {
+    val absolute = if (rawUrl.startsWith("http://") || rawUrl.startsWith("https://")) {
+        rawUrl
+    } else {
+        baseUri.resolve(rawUrl).toString()
+    }
+    return buildProxyUrl(proxyBase, absolute, referer ?: baseUri.toString(), headers, userAgent)
+}
+
 private suspend fun runLoadLinks(api: com.lagradost.cloudstream3.MainAPI, request: LoadLinksRequest): ExtractorResponse {
     return withContext(Dispatchers.IO) {
-        val links = mutableListOf<ExtractorLink>()
-        val subtitles = mutableListOf<SubtitleFile>()
+        val links = mutableListOf<ExtractorLink?>()
+        val subtitles = mutableListOf<SubtitleFile?>()
+        val subtitleCallback: (SubtitleFile?) -> Unit = { subtitle ->
+            if (subtitle != null) subtitles.add(subtitle)
+        }
+        val linkCallback: (ExtractorLink?) -> Unit = { link ->
+            if (link != null) links.add(link)
+        }
         val result = runCatching {
             api.loadLinks(
                 data = request.data,
                 isCasting = request.isCasting,
-                subtitleCallback = { subtitles.add(it) },
-                callback = { links.add(it) }
+                subtitleCallback = subtitleCallback as (SubtitleFile) -> Unit,
+                callback = linkCallback as (ExtractorLink) -> Unit
             )
         }
+        val safeLinks = links.filterNotNull()
+        val safeSubtitles = subtitles.filterNotNull()
         if (result.isFailure) {
             val error = result.exceptionOrNull()
             return@withContext ExtractorResponse(
                 success = false,
-                links = links.map { it.toDto() },
-                subtitles = subtitles.map { it.toDto() },
+                links = safeLinks.map { it.toDto() },
+                subtitles = safeSubtitles.map { it.toDto() },
                 error = error?.message ?: "Load links failed",
             )
         }
         ExtractorResponse(
             success = result.getOrNull() == true,
-            links = links.map { it.toDto() },
-            subtitles = subtitles.map { it.toDto() },
+            links = safeLinks.map { it.toDto() },
+            subtitles = safeSubtitles.map { it.toDto() },
         )
     }
 }

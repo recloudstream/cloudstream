@@ -1,9 +1,9 @@
 @import "tailwindcss";
-
-@import "tailwindcss";
+@import "vidstack/styles/defaults.css";
+@import "vidstack/styles/community-skin/video.css";
 
 @plugin "daisyui" {
-  themes: forest, dracula, dim, sunset, autumn, synthwave, pastel, nord, coffee, night, lemonade;
+  themes: forest, dracula, black, sunset, autumn, synthwave, retro, nord, coffee, night, lemonade, aqua;
 }
 
 @theme {
@@ -17,6 +17,24 @@
     @apply bg-base-300 text-base-content font-sans antialiased;
     font-feature-settings: "cv11", "ss01";
   }
+}
+
+:global(media-player.app-player) {
+  --video-bg: hsl(var(--b1));
+  --video-border: 1px solid hsl(var(--bc) / 0.12);
+  --video-border-radius: 16px;
+  --video-brand: hsl(var(--p));
+  --video-controls-color: hsl(var(--bc));
+  --video-scrim-bg: hsl(var(--b1) / 0.2);
+  --video-font-family: var(--font-body);
+  --media-focus-ring: 0 0 0 3px hsl(var(--p) / 0.35);
+  --media-tooltip-bg-color: hsl(var(--b1));
+  --media-tooltip-color: hsl(var(--bc));
+  --media-time-color: hsl(var(--bc));
+  --media-slider-track-bg: hsl(var(--bc) / 0.2);
+  --media-menu-bg: hsl(var(--b1));
+  --media-menu-border: 1px solid hsl(var(--bc) / 0.1);
+  --media-menu-color: hsl(var(--bc));
 }
 
 /* Scrollbar Styling */

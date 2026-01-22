@@ -6,6 +6,8 @@
   import Search from './pages/Search.svelte';
   import Settings from './pages/Settings.svelte';
   import PluginManager from './pages/PluginManager.svelte';
+  import Details from './pages/Details.svelte';
+  import Play from './pages/Play.svelte';
   import { theme } from './stores/theme';
   import { onMount } from 'svelte';
 
@@ -14,6 +16,8 @@
     '/search': Search,
     '/settings': Settings,
     '/plugins': PluginManager,
+    '/details': Details,
+    '/play': Play,
   };
 
   onMount(() => {
