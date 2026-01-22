@@ -289,26 +289,6 @@ object APIHolder {
     }
 }
 
-//private suspend fun searchKitsu(title: String): List<SyncSearchResult>? {
-//    val apiUrl = "https://kitsu.io/api/edge"
-//    val animeSelectedFields = arrayOf("titles","canonicalTitle","posterImage","episodeCount")
-//    val url = "$apiUrl/anime?filter[anime.canonicalTitle]=$title&fields[anime]=${animeSelectedFields.joinToString(",")}"
-//    val res = app.get(url).parsed<KitsuResponse>()
-//    return res.data.map {
-//        val attributes = it.attributes
-//
-//        val title = attributes.canonicalTitle ?: attributes.titles?.enJp ?: attributes.titles?.jaJp ?: "No title"
-//
-//        SyncSearchResult(
-//            title,
-//            this.name,
-//            it.id,
-//            "$mainUrl/anime/${it.id}/",
-//            attributes.posterImage?.large ?: attributes.posterImage?.medium
-//        )
-//    }
-//}
-
 /*
 // THIS IS WORK IN PROGRESS API
 interface ITag {
@@ -1900,6 +1880,7 @@ interface LoadResponse {
             this.addSimklId(SimklSyncServices.Mal, id.toString())
         }
 
+        @Prerelease
         fun LoadResponse.addKitsuId(id: Int?) {
             this.syncData[kitsuIdPrefix] = (id ?: return).toString()
         }
