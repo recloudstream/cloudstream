@@ -236,14 +236,16 @@
 
     <array name="software_decoding_switch">
         <item>@string/automatic</item>
-        <item>@string/yes</item>
-        <item>@string/no</item>
+        <item>HW+SW</item>
+        <item>SW+HW</item>
+        <item>HW</item>
     </array>
 
     <array name="software_decoding_switch_values">
-        <item>-1</item>
-        <item>0</item>
-        <item>1</item>
+        <item>-1</item> <!-- Auto-->
+        <item>0</item>  <!-- HW+SW, aka on but prefer hw -->
+        <item>2</item>  <!-- SW+HW, aka on but prefer sw -->
+        <item>1</item>  <!-- HW, aka off -->
     </array>
 
     <array name="confirm_exit">
