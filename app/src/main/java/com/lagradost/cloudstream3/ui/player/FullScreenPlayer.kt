@@ -210,7 +210,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         playerBinding = PlayerCustomLayoutBinding.bind(root.findViewById(R.id.player_holder))
 
         // Create GPUPlayerView dynamically and attach it to the PlayerView's content frame
-        safe {
+        // !!! Removed due to HDR conflict !!!
+        /*safe {
             val pv = root.findViewById<androidx.media3.ui.PlayerView>(R.id.player_view)
             val packageName = context?.packageName ?: return@safe
             val contentId = resources.getIdentifier("exo_content_frame", "id", packageName)
@@ -225,7 +226,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 contentFrame.addView(gpu, 0, lp)
                 gpuPlayerView = gpu
             }
-        }
+        }*/
         return root
     }
 
@@ -1463,12 +1464,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                     }
 
                                     val lastRequested = currentRequestedBrightness
-                                    val nextBrightness = currentRequestedBrightness + verticalAddition
+                                    val nextBrightness = (currentRequestedBrightness + verticalAddition).coerceIn(0.0f, 1.0f) // !!! Removed due to HDR conflict !!!
                                     //
                                     // Log.e("Brightness", "Current: $currentRequestedBrightness, Next: $nextBrightness")
                                     // show toast
                                     if (nextBrightness > 1.0f && isBrightnessLocked && !hasShownBrightnessToast) {
-                                        showToast(R.string.slide_up_again_to_exceed_100)
+                                        //showToast(R.string.slide_up_again_to_exceed_100)
                                         hasShownBrightnessToast = true
                                     }
                                     currentRequestedBrightness = nextBrightness
@@ -1478,14 +1479,15 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                         setBrightness(currentRequestedBrightness)
 
                                     val level1ProgressBar = playerProgressbarRightLevel1
-                                    val level2ProgressBar = playerProgressbarRightLevel2
+                                    //val level2ProgressBar = playerProgressbarRightLevel2
 
                                     // max is set high to make it smooth
                                     level1ProgressBar.max = 100_000
                                     level1ProgressBar.progress =
                                         max(2_000, (min(1.0f, currentRequestedBrightness) * 100_000f).toInt())
 
-                                    if (!isBrightnessLocked) {
+                                    // !!! Removed due to HDR conflict !!!
+                                    /*if (!isBrightnessLocked) {
                                         currentExtraBrightness = if (currentRequestedBrightness > 1.0f) min(2.0f, currentRequestedBrightness) - 1.0f else 0.0f
                                         level2ProgressBar.max = 100_000
                                         level2ProgressBar.progress =
@@ -1539,7 +1541,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                                 )
                                             )
                                         }
-                                    }
+                                    }*/
 
                                     // Log.i("Brightness", "current: $currentRequestedBrightness, ce: $currentExtraBrightness L1: ${level1ProgressBar.progress}, L2: ${level2ProgressBar.progress}")
                                     playerProgressbarRightIcon.setImageResource(
