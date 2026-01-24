@@ -11,7 +11,10 @@ import androidx.media3.ui.SubtitleView
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.setSubtitleViewStyle
+import com.lagradost.cloudstream3.utils.SubtitleHelper
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToLangTagIETF
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import me.xdrop.fuzzywuzzy.FuzzySearch
 
 enum class SubtitleStatus {
     IS_ACTIVE,
@@ -45,6 +48,56 @@ data class SubtitleData(
     fun getId(): String {
         return if (origin == SubtitleOrigin.EMBEDDED_IN_VIDEO) url
         else "$url|$name"
+    }
+
+    /** Returns true if langCode is the same as the IETF tag */
+    fun matchesLanguage(langCode: String): Boolean {
+        return getIETF_tag() == langCode
+    }
+
+    /** Tries hard to figure out a valid IETF tag based on language code and name. Will return null if not found. */
+    fun getIETF_tag(): String? {
+        val tag = fromCodeToLangTagIETF(this.languageCode)
+        if (tag != null) {
+            return tag
+        }
+
+        // Remove any numbers to make matching better
+        val cleanedLanguage = originalName.replace(Regex("[0-9]"), "").trim()
+
+        // First go for exact matches
+        SubtitleHelper.languages.forEach { language ->
+            if (language.languageName.equals(cleanedLanguage, ignoreCase = true) ||
+                language.nativeName.equals(cleanedLanguage, ignoreCase = true) ||
+                // Also match exact IETF tags
+                language.IETF_tag.equals(cleanedLanguage, ignoreCase = true)
+            ) {
+                return language.IETF_tag
+            }
+        }
+
+        var closestMatch: Pair<String?, Int> = null to 0
+        // Then go for partial matches, however only use the best match
+        SubtitleHelper.languages.forEach { language ->
+            val lowerCleaned = cleanedLanguage.lowercase()
+            val score = maxOf(
+                FuzzySearch.ratio(lowerCleaned, language.languageName.lowercase()),
+                FuzzySearch.ratio(
+                    lowerCleaned, language.nativeName.lowercase()
+                )
+            )
+
+            // Arbitrary cutoff at 80.
+            if (cleanedLanguage.contains(language.languageName, ignoreCase = true) ||
+                cleanedLanguage.contains(language.nativeName, ignoreCase = true) || score > 80
+            ) {
+                if (score > closestMatch.second) {
+                    closestMatch = language.IETF_tag to score
+                }
+            }
+        }
+
+        return closestMatch.first
     }
 
     val name = "$originalName $nameSuffix"

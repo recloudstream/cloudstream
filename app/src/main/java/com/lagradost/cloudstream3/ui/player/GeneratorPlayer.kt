@@ -181,17 +181,17 @@ class GeneratorPlayer : FullScreenPlayer() {
         binding?.playerLoadingOverlay?.isVisible = true
     }
 
-    private fun setSubtitles(subtitle: SubtitleData?): Boolean {
-        // If subtitle is changed -> Save the language
-        if (subtitle != currentSelectedSubtitles) {
+    private fun setSubtitles(subtitle: SubtitleData?, userInitiated: Boolean): Boolean {
+        // If subtitle is changed and user initiated -> Save the language
+        if (subtitle != currentSelectedSubtitles && userInitiated) {
             val subtitleLanguageTagIETF = if (subtitle == null) {
                 "" // -> No Subtitles
             } else {
-                fromCodeToLangTagIETF(subtitle.languageCode)
-                    ?: fromLanguageToTagIETF(subtitle.languageCode, halfMatch = true)
+                subtitle.getIETF_tag()
             }
 
             if (subtitleLanguageTagIETF != null) {
+                Log.i(TAG, "Set SUBTITLE_AUTO_SELECT_KEY to '$subtitleLanguageTagIETF'")
                 setKey(SUBTITLE_AUTO_SELECT_KEY, subtitleLanguageTagIETF)
                 preferredAutoSelectSubtitles = subtitleLanguageTagIETF
             }
@@ -225,7 +225,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     private fun noSubtitles(): Boolean {
-        return setSubtitles(null)
+        return setSubtitles(null, true)
     }
 
     private fun getPos(): Long {
@@ -909,7 +909,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         player.saveData()
         player.reloadPlayer(ctx)
 
-        setSubtitles(selectedSubtitle)
+        setSubtitles(selectedSubtitle, false)
         viewModel.addSubtitles(subtitleData.toSet())
 
         selectSourceDialog?.dismissSafe()
@@ -1362,7 +1362,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                             subtitlesGroupedList.getOrNull(subtitleGroupIndex - 1)?.value?.getOrNull(
                                 subtitleOptionIndex
                             )?.let {
-                                setSubtitles(it)
+                                setSubtitles(it, true)
                             } ?: false
                         }
                     }
@@ -1659,12 +1659,6 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
-    private fun SubtitleData.matchesLanguage(langCode: String): Boolean {
-        val langName = fromTagToEnglishLanguageName(langCode) ?: return false
-        val cleanedName = originalName.replace(Regex("[^\\p{L}\\p{Mn}\\p{Mc}\\p{Me} ]"), "").trim()
-        return languageCode == langCode || cleanedName == langName || cleanedName.contains(langName) || cleanedName == langCode
-    }
-
     private fun getAutoSelectSubtitle(
         subtitles: Set<SubtitleData>, settings: Boolean, downloads: Boolean
     ): SubtitleData? {
@@ -1684,8 +1678,9 @@ class GeneratorPlayer : FullScreenPlayer() {
         val current = player.getCurrentPreferredSubtitle()
         Log.i(TAG, "autoSelectFromSettings = $current")
         context?.let { ctx ->
-            if (current != null) {
-                if (setSubtitles(current)) {
+            // Only use the player preferred subtitle if it matches the available language
+            if (current != null && (langCode == null || current.matchesLanguage(langCode))) {
+                if (setSubtitles(current, false)) {
                     player.saveData()
                     player.reloadPlayer(ctx)
                     player.handleEvent(CSPlayerEvent.Play)
@@ -1695,7 +1690,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 getAutoSelectSubtitle(
                     currentSubs, settings = true, downloads = false
                 )?.let { sub ->
-                    if (setSubtitles(sub)) {
+                    if (setSubtitles(sub, false)) {
                         player.saveData()
                         player.reloadPlayer(ctx)
                         player.handleEvent(CSPlayerEvent.Play)
@@ -1711,7 +1706,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         if (player.getCurrentPreferredSubtitle() == null) {
             getAutoSelectSubtitle(currentSubs, settings = false, downloads = true)?.let { sub ->
                 context?.let { ctx ->
-                    if (setSubtitles(sub)) {
+                    if (setSubtitles(sub, false)) {
                         player.saveData()
                         player.reloadPlayer(ctx)
                         player.handleEvent(CSPlayerEvent.Play)
