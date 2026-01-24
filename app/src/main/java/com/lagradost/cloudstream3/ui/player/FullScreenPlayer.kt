@@ -124,6 +124,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected var isShowing = false
     private var uiShowingBeforeGesture = false
     protected var isLocked = false
+    protected var timestampShowState = false
 
     protected var hasEpisodes = false
         private set
@@ -1583,7 +1584,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             when (keyCode) {
                 KeyEvent.KEYCODE_DPAD_CENTER -> {
                     if (!isShowing) {
-                        if (!isLocked) player.handleEvent(CSPlayerEvent.PlayPauseToggle)
+                        // If UI is not shown make click instantly skip to next chapter even if locked
+                        if (timestampShowState) {
+                            player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
+                        } else if (!isLocked) {
+                            player.handleEvent(CSPlayerEvent.PlayPauseToggle)
+                        }
                         onClickChange()
                         return true
                     }

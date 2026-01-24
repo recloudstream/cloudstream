@@ -1880,8 +1880,6 @@ class GeneratorPlayer : FullScreenPlayer() {
         super.onDestroyView()
     }
 
-    var timestampShowState = false
-
     var skipAnimator: ValueAnimator? = null
     var skipIndex = 0
 
