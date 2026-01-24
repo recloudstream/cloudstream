@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.player
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Rational
+import androidx.media3.common.Format
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -302,7 +303,13 @@ interface IPlayer {
     fun setMaxVideoSize(width: Int = Int.MAX_VALUE, height: Int = Int.MAX_VALUE, id: String? = null)
 
     /** If no trackLanguage is set it'll default to first track. Specifying the id allows for track overrides as the language can be identical. */
-    fun setPreferredAudioTrack(trackLanguage: String?, id: String? = null)
+    fun setPreferredAudioTrack(trackLanguage: String?, trackIndex: Int? = null)
+
+    // Gets a deterministic unique track number
+    fun getCurrentAudioTrackIndex(): Int?
+
+    // Gets a list of ExoPlayer Formats
+    fun getAudioFormats(): List<Format>?
 
     /** Get the current subtitle cues, for use with syncing */
     fun getSubtitleCues(): List<SubtitleCue>

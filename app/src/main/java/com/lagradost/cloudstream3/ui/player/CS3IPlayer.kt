@@ -15,7 +15,6 @@ import android.widget.FrameLayout
 import androidx.annotation.MainThread
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AlertDialog
-import androidx.core.net.toUri
 import androidx.media3.common.C.TIME_UNSET
 import androidx.media3.common.C.TRACK_TYPE_AUDIO
 import androidx.media3.common.C.TRACK_TYPE_TEXT
@@ -55,8 +54,8 @@ import androidx.media3.exoplayer.source.ClippingMediaSource
 import androidx.media3.exoplayer.source.ConcatenatingMediaSource
 import androidx.media3.exoplayer.source.ConcatenatingMediaSource2
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
-import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.MergingMediaSource
+import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.SingleSampleMediaSource
 import androidx.media3.exoplayer.text.TextOutput
 import androidx.media3.exoplayer.text.TextRenderer
@@ -66,7 +65,6 @@ import androidx.media3.extractor.mp4.FragmentedMp4Extractor
 import androidx.media3.ui.SubtitleView
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
-import com.lagradost.cloudstream3.AudioFile
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.activity
@@ -75,33 +73,32 @@ import com.lagradost.cloudstream3.MainActivity.Companion.deleteFileOnExit
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.USER_AGENT
+import com.lagradost.cloudstream3.AudioFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.fixSubtitleAlignment
-import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
-import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.applyStyle
 import com.lagradost.cloudstream3.utils.AppContextUtils.isUsingMobileData
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
-import com.lagradost.cloudstream3.utils.CLEARKEY_UUID
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.DrmExtractorLink
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.CLEARKEY_UUID
+import com.lagradost.cloudstream3.utils.WIDEVINE_UUID
+import com.lagradost.cloudstream3.utils.PLAYREADY_UUID
 import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
-import com.lagradost.cloudstream3.utils.PLAYREADY_UUID
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
-import com.lagradost.cloudstream3.utils.WIDEVINE_UUID
 import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
 import kotlinx.coroutines.delay
-import okhttp3.Interceptor
 import org.chromium.net.CronetEngine
 import java.io.File
 import java.util.UUID
@@ -109,6 +106,10 @@ import java.util.concurrent.Executors
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
+import kotlin.collections.HashSet
+import kotlin.text.StringBuilder
+import androidx.core.net.toUri
+import okhttp3.Interceptor
 
 const val TAG = "CS3ExoPlayer"
 const val PREFERRED_AUDIO_LANGUAGE_KEY = "preferred_audio_language"
@@ -127,6 +128,7 @@ const val toleranceAfterUs = 300_000L
 class CS3IPlayer : IPlayer {
     private var playerListener: Player.Listener? = null
     private var isPlaying = false
+    private var currentAudioTrackIndex: Int = -1
     private var exoPlayer: ExoPlayer? = null
         set(value) {
             // If the old value is not null then the player has not been properly released.
@@ -382,29 +384,43 @@ class CS3IPlayer : IPlayer {
             ?: return
     }
 
-    override fun setPreferredAudioTrack(trackLanguage: String?, id: String?) {
+    override fun setPreferredAudioTrack(trackLanguage: String?, trackIndex: Int?) {
         preferredAudioTrackLanguage = trackLanguage
 
-        if (id != null) {
-            val audioTrack =
-                exoPlayer?.currentTracks?.groups?.filter { it.type == TRACK_TYPE_AUDIO }
-                    ?.getTrack(id)
-
-            if (audioTrack != null) {
-                exoPlayer?.trackSelectionParameters = exoPlayer?.trackSelectionParameters
-                    ?.buildUpon()
-                    ?.setOverrideForType(
-                        TrackSelectionOverride(
-                            audioTrack.first,
-                            audioTrack.second
+        // Try to use the index directly if provided
+        if (trackIndex != null) {
+            // Get all audio tracks flattened in the same order as getVideoTracks()
+            val audioTracks = exoPlayer?.currentTracks?.groups
+                ?.filter { it.type == TRACK_TYPE_AUDIO }
+            
+            if (audioTracks != null) {
+                val allFormats = audioTracks.flatMapIndexed { groupIndex, group ->
+                    (0 until group.mediaTrackGroup.length).map { formatIndex ->
+                        Triple(group.mediaTrackGroup, formatIndex, groupIndex)
+                    }
+                }
+                
+                val targetTrack = allFormats.getOrNull(trackIndex)
+                
+                if (targetTrack != null) {
+                    val (trackGroup, formatIndex, _) = targetTrack
+                    
+                    // IMPORTANT: Store the selected index
+                    currentAudioTrackIndex = trackIndex
+                    
+                    exoPlayer?.trackSelectionParameters = exoPlayer?.trackSelectionParameters
+                        ?.buildUpon()
+                        ?.setOverrideForType(
+                            TrackSelectionOverride(trackGroup, formatIndex)
                         )
-                    )
-                    ?.build()
-                    ?: return
-                return
+                        ?.build()
+                        ?: return
+                    return
+                }
             }
         }
-
+        // Fallback to language-based selection (reset index as we don't know which one)
+        currentAudioTrackIndex = -1
         exoPlayer?.trackSelectionParameters = exoPlayer?.trackSelectionParameters
             ?.buildUpon()
             ?.setPreferredAudioLanguage(trackLanguage)
@@ -412,6 +428,41 @@ class CS3IPlayer : IPlayer {
             ?: return
     }
 
+    override fun getCurrentAudioTrackIndex(): Int? {
+        // If we have a stored index, use it
+        if (currentAudioTrackIndex >= 0) {
+            return currentAudioTrackIndex
+        }
+        
+        // Otherwise, try to get the current audio track from ExoPlayer
+        val audioTracks = exoPlayer?.currentTracks?.groups
+            ?.filter { it.type == TRACK_TYPE_AUDIO }
+        
+        if (audioTracks != null) {
+            var globalIndex = 0
+            for (group in audioTracks) {
+                for (i in 0 until group.mediaTrackGroup.length) {
+                    if (group.isTrackSelected(i)) {
+                        currentAudioTrackIndex = globalIndex
+                        return globalIndex
+                    }
+                    globalIndex++
+                }
+            }
+        }
+        
+        return null
+    }
+
+    override fun getAudioFormats(): List<Format>? {
+        return exoPlayer?.currentTracks?.groups
+            ?.filter { it.type == TRACK_TYPE_AUDIO }
+            ?.flatMap { group ->
+                (0 until group.mediaTrackGroup.length).map { formatIndex ->
+                    group.mediaTrackGroup.getFormat(formatIndex)
+                }
+            }
+    }
 
     /**
      * Gets all supported formats in a list
@@ -598,6 +649,10 @@ class CS3IPlayer : IPlayer {
     private fun releasePlayer(saveTime: Boolean = true) {
         Log.i(TAG, "releasePlayer")
         eventLooperIndex += 1
+
+        // Reset the audio track index
+        currentAudioTrackIndex = -1
+
         if (saveTime)
             updatedTime()
 
@@ -1078,27 +1133,22 @@ class CS3IPlayer : IPlayer {
                         context.getString(R.string.software_decoding_key),
                         -1
                     )
-                    val (isSoftwareDecodingEnabled, isSoftwareDecodingPreferred) = when (current) {
-                        0 -> true to false // HW+SW, aka on but prefer hw
-                        2 -> true to true // SW+HW, aka on but prefer sw
-                        1 -> false to false // HW, aka off
+                    val softwareDecoding = when (current) {
+                        0 -> true // yes
+                        1 -> false // no
                         // -1 = automatic
-                        // We do not want tv to have software decoding, because of crashes
-                        else -> isLayout(PHONE or EMULATOR) to false
+                        else -> {
+                            // we do not want tv to have software decoding, because of crashes
+                            !isLayout(TV)
+                        }
                     }
 
-                    val factory = if (isSoftwareDecodingEnabled) {
+                    val factory = if (softwareDecoding) {
                         NextRenderersFactory(context).apply {
                             setEnableDecoderFallback(true)
-                            setExtensionRendererMode(
-                                if (isSoftwareDecodingPreferred)
-                                    DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
-                                else
-                                    DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
-                            )
+                            setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON)
                         }
                     } else {
-                        // no nextlib = EXTENSION_RENDERER_MODE_OFF
                         DefaultRenderersFactory(context)
                     }
 
