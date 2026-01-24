@@ -94,6 +94,7 @@
     <string name="anilist_key">anilist_key</string>
     <string name="simkl_key">simkl_key</string>
     <string name="mal_key">mal_key</string>
+    <string name="kitsu_key">kitsu_key</string>
     <string name="opensubtitles_key">opensubtitles_key</string>
     <string name="subdl_key">subdl_key</string>
 

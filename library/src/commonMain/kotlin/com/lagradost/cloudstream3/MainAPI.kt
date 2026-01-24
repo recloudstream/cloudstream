@@ -232,6 +232,7 @@ object APIHolder {
 
             Tracker(
                 res.idMal,
+                null,
                 res.id.toString(),
                 res.coverImage?.extraLarge ?: res.coverImage?.large,
                 res.bannerImage
@@ -1797,6 +1798,8 @@ interface LoadResponse {
 
     companion object {
         var malIdPrefix = "" //malApi.idPrefix
+
+        var kitsuIdPrefix = "" //kitsuApi.idPrefix
         var aniListIdPrefix = "" //aniListApi.idPrefix
         var simklIdPrefix = "" //simklApi.idPrefix
         var isTrailersEnabled = true
@@ -1857,6 +1860,9 @@ interface LoadResponse {
             return this.syncData[malIdPrefix]
         }
 
+        fun LoadResponse.getKitsuId(): String? {
+            return this.syncData[kitsuIdPrefix]
+        }
         fun LoadResponse.getAniListId(): String? {
             return this.syncData[aniListIdPrefix]
         }
@@ -1876,6 +1882,11 @@ interface LoadResponse {
         fun LoadResponse.addMalId(id: Int?) {
             this.syncData[malIdPrefix] = (id ?: return).toString()
             this.addSimklId(SimklSyncServices.Mal, id.toString())
+        }
+
+        @Prerelease
+        fun LoadResponse.addKitsuId(id: Int?) {
+            this.syncData[kitsuIdPrefix] = (id ?: return).toString()
         }
 
         fun LoadResponse.addAniListId(id: Int?) {
@@ -2662,6 +2673,7 @@ fun String?.toRatingInt(): Int? =
 
 data class Tracker(
     val malId: Int? = null,
+    val kitsuId: String? = null,
     val aniId: String? = null,
     val image: String? = null,
     val cover: String? = null,

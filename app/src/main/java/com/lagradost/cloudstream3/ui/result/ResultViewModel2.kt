@@ -24,6 +24,7 @@ import com.lagradost.cloudstream3.CommonActivity.getCastSession
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
+import com.lagradost.cloudstream3.LoadResponse.Companion.getKitsuId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
 import com.lagradost.cloudstream3.LoadResponse.Companion.readIdFromString
@@ -1855,7 +1856,7 @@ class ResultViewModel2 : ViewModel() {
                 {
                     if (this !is AnimeLoadResponse) return@runAllAsync
                     // already exist, no need to run getTracker
-                    if (this.getAniListId() != null && this.getMalId() != null) return@runAllAsync
+                    if (this.getAniListId() != null && this.getKitsuId() != null && this.getMalId() != null) return@runAllAsync
 
                     val res = APIHolder.getTracker(
                         listOfNotNull(
@@ -1873,9 +1874,12 @@ class ResultViewModel2 : ViewModel() {
                         this.year
                     )
 
+                    val kitsuId = AccountManager.kitsuApi.getAnimeIdByTitle(this.name)
+
                     val ids = arrayOf(
                         AccountManager.malApi.idPrefix to res?.malId?.toString(),
-                        AccountManager.aniListApi.idPrefix to res?.aniId
+                        AccountManager.aniListApi.idPrefix to res?.aniId,
+                        AccountManager.kitsuApi.idPrefix to kitsuId
                     )
 
                     if (ids.any { (id, new) ->
