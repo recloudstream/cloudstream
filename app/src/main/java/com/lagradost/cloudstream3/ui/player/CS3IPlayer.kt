@@ -741,13 +741,23 @@ class CS3IPlayer : IPlayer {
         private var simpleCache: SimpleCache? = null
 
         /// Create a small factory for small things, no cache, no cronet
-        private fun createOnlineSource(headers: Map<String, String>?): HttpDataSource.Factory {
-            val source = OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
-            return source.apply {
-                if (!headers.isNullOrEmpty()) {
-                    setDefaultRequestProperties(headers)
-                }
+        private fun createOnlineSource(
+            headers: Map<String, String>?,
+            interceptor: Interceptor?
+        ): HttpDataSource.Factory {
+            val client = if (interceptor == null) {
+                app.baseClient
+            } else {
+                app.baseClient.newBuilder()
+                    .addInterceptor(interceptor)
+                    .build()
             }
+            val source = OkHttpDataSource.Factory(client).setUserAgent(USER_AGENT)
+
+            if (!headers.isNullOrEmpty()) {
+                source.setDefaultRequestProperties(headers)
+            }
+            return source
         }
 
         fun tryCreateEngine(context: Context, diskCacheSize: Long): CronetEngine? {
@@ -786,10 +796,9 @@ class CS3IPlayer : IPlayer {
 
         private fun createVideoSource(
             link: ExtractorLink,
-            engine: CronetEngine?
+            engine: CronetEngine?,
+            interceptor: Interceptor?,
         ): HttpDataSource.Factory {
-            val provider = getApiFromNameNull(link.source)
-            val interceptor: Interceptor? = provider?.getVideoInterceptor(link)
             val userAgent = link.headers.entries.find {
                 it.key.equals("User-Agent", ignoreCase = true)
             }?.value ?: USER_AGENT
@@ -1639,7 +1648,8 @@ class CS3IPlayer : IPlayer {
 
             val (subSources, activeSubtitles) = getSubSources(
                 offlineSourceFactory = offlineSourceFactory,
-                subtitleHelper,
+                subHelper = subtitleHelper,
+                interceptor = null,
             )
 
             subtitleHelper.setActiveSubtitles(activeSubtitles.toSet())
@@ -1653,6 +1663,7 @@ class CS3IPlayer : IPlayer {
     private fun getSubSources(
         offlineSourceFactory: DataSource.Factory?,
         subHelper: PlayerSubtitleHelper,
+        interceptor: Interceptor?,
     ): Pair<List<SingleSampleMediaSource>, List<SubtitleData>> {
         val activeSubtitles = ArrayList<SubtitleData>()
         val subSources = subHelper.getAllSubtitles().mapNotNull { sub ->
@@ -1674,8 +1685,9 @@ class CS3IPlayer : IPlayer {
                 }
 
                 SubtitleOrigin.URL -> {
+                    val dataSourceFactory = createOnlineSource(sub.headers, interceptor)
                     activeSubtitles.add(sub)
-                    SingleSampleMediaSource.Factory(createOnlineSource(sub.headers))
+                    SingleSampleMediaSource.Factory(dataSourceFactory)
                         .createMediaSource(subConfig, TIME_UNSET)
                 }
             }
@@ -1690,14 +1702,13 @@ class CS3IPlayer : IPlayer {
      */
     private fun getAudioSources(
         audioTracks: List<AudioFile>,
+        interceptor: Interceptor?,
     ): List<MediaSource> {
-        if (audioTracks.isEmpty()) return emptyList()
         return audioTracks.mapNotNull { audio ->
             try {
                 val mediaItem = getMediaItem(MimeTypes.AUDIO_UNKNOWN, audio.url)
-                DefaultMediaSourceFactory(createOnlineSource(audio.headers)).createMediaSource(
-                    mediaItem
-                )
+                val dataSourceFactory = createOnlineSource(audio.headers, interceptor)
+                DefaultMediaSourceFactory(dataSourceFactory).createMediaSource(mediaItem)
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to create audio source for ${audio.url}: ${e.message}")
                 null
@@ -1869,19 +1880,28 @@ class CS3IPlayer : IPlayer {
                 )
             }
 
+            val provider = getApiFromNameNull(link.source)
+            val interceptor: Interceptor? = provider?.getVideoInterceptor(link)
+
             val onlineSourceFactory =
-                createVideoSource(link, tryCreateEngine(context, simpleCacheSize))
+                createVideoSource(
+                    link = link,
+                    engine = tryCreateEngine(context, simpleCacheSize),
+                    interceptor = interceptor
+                )
 
             val offlineSourceFactory = context.createOfflineSource()
 
             val (subSources, activeSubtitles) = getSubSources(
                 offlineSourceFactory = offlineSourceFactory,
-                subtitleHelper
+                subHelper = subtitleHelper,
+                interceptor = interceptor, // Backwards compatibility, needs a new api to work properly
             )
 
             // Create audio sources from ExtractorLink's audioTracks
             val audioSources = getAudioSources(
                 audioTracks = link.audioTracks,
+                interceptor = interceptor, // Backwards compatibility, needs a new api to work properly
             )
 
             subtitleHelper.setActiveSubtitles(activeSubtitles.toSet())
