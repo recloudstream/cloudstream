@@ -111,6 +111,7 @@
                     android:layout_marginBottom="2.5dp"
                     android:textColor="@color/white"
                     android:textSize="10sp"
+                    android:visibility="gone"
                     tools:text="HDR10 • HEVC" />
                 <ImageView
                     android:id="@+id/offline_pin"
