@@ -297,17 +297,32 @@
                             tools:visibility="visible"
                             android:layout_gravity="start"/>
                     </LinearLayout>
-                    <TextView
-                        android:id="@+id/player_video_title_rez"
-                        android:layout_width="wrap_content"
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:gravity="end"
-                        android:maxWidth="600dp"
-                        android:textAlignment="viewEnd"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        tools:text="1920x1080" />
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/player_video_title_rez"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="2.5dp"
+                            android:gravity="center"
+                            android:textColor="@color/white"
+                            tools:text="1920×1080" />
+
+                        <TextView
+                            android:id="@+id/player_video_info"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:layout_marginBottom="2.5dp"
+                            android:textColor="@color/white"
+                            android:textSize="10sp"
+                            tools:text="HDR10 • HEVC" />
+                    </LinearLayout>
 
                     <FrameLayout
                         android:id="@+id/player_episode_filler_holder"

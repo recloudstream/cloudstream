@@ -190,12 +190,14 @@ data class VideoTrack(
     override val language: String?,
     val width: Int?,
     val height: Int?,
+    val sampleMimeType: String?,
 ) : Track
 
 data class AudioTrack(
     override val id: String?,
     override val label: String?,
     override val language: String?,
+    val sampleMimeType: String?,
 ) : Track
 
 data class TextTrack(

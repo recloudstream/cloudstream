@@ -434,7 +434,8 @@ class CS3IPlayer : IPlayer {
         return AudioTrack(
             this.id?.stripTrackId(),
             this.label,
-            this.language
+            this.language,
+            this.sampleMimeType
         )
     }
 
@@ -454,6 +455,7 @@ class CS3IPlayer : IPlayer {
             this.language,
             this.width,
             this.height,
+            this.sampleMimeType
         )
     }
 
