@@ -8,6 +8,11 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.newExtractorLink
 
+class Streamix(): Streamup() {
+    override val name: String = "Streamix"
+    override val mainUrl = "https://streamix.so"
+}
+
 open class Streamup() : ExtractorApi() {
     override val name: String = "Streamup"
     override val mainUrl: String = "https://strmup.to"
