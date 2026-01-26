@@ -61,13 +61,11 @@
             android:id="@+id/watch_progress_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
             android:layout_gravity="center">
 
             <ImageView
                 android:id="@+id/episode_play_icon"
-                style="@style/ContinueWatchingPlayUnderlayProgress"
-                android:layout_margin="4dp"/>
+                style="@style/ContinueWatchingPlayUnderlayProgress"/>
 
             <com.google.android.material.progressindicator.CircularProgressIndicator
                 android:id="@+id/episode_progress"
