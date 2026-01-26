@@ -610,12 +610,10 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             resultBinding?.apply {
                 if (resume == null) {
                     resultResumeParent.isVisible = false
-                    resultResumeProgressHolder.isVisible = false
                     return@observeNullable
                 }
                 resultResumeParent.isVisible = true
                 resume.progress?.let { progress ->
-                    resultNextSeriesButton.isVisible = false
                     resultResumeSeriesTitle.apply {
                         isVisible = !resume.isMovie
                         text =
@@ -625,11 +623,9 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                                 resume.result.season
                             )
                     }
-                    if (resume.isMovie) {
-                        resultPlayMovie.isGone = true
-                        resultResumeSeriesProgressText.isVisible = true
-                        resultResumeSeriesProgressText.setText(progress.progressLeft)
-                    }
+
+                    if (resume.isMovie) resultResumeSeriesProgressText.maxLines = 1
+                    resultResumeSeriesProgressText.setText(progress.progressLeft)
                     resultResumeSeriesProgress.apply {
                         isVisible = true
                         this.max = progress.maxProgress
@@ -638,24 +634,19 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultResumeProgressHolder.isVisible = true
                 } ?: run {
                     resultResumeProgressHolder.isVisible = false
-                    if (!resume.isMovie) {
-                        resultNextSeriesButton.isVisible = true
-                        resultNextSeriesButton.text = context?.getNameFull(
-                            resume.result.name,
-                            resume.result.episode,
-                            resume.result.season
-                        )
-                    }
                     resultResumeSeriesProgress.isVisible = false
                     resultResumeSeriesTitle.isVisible = false
                     resultResumeSeriesProgressText.isVisible = false
                 }
 
+                resultResumeSeriesButton.isVisible = !resume.isMovie
                 resultResumeSeriesButton.setOnClickListener {
-                    resumeAction(storedData, resume)
-                }
-                resultNextSeriesButton.setOnClickListener {
-                    resumeAction(storedData, resume)
+                    viewModel.handleAction(
+                        EpisodeClickEvent(
+                            storedData.playerAction, //?: ACTION_PLAY_EPISODE_IN_PLAYER,
+                            resume.result
+                        )
+                    )
                 }
             }
         }
@@ -1246,18 +1237,6 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 }
             }
         }
-    }
-
-    private fun resumeAction(
-        storedData: ResultFragment.StoredData,
-        resume: ResumeWatchingStatus
-    ) {
-        viewModel.handleAction(
-            EpisodeClickEvent(
-                storedData.playerAction, //?: ACTION_PLAY_EPISODE_IN_PLAYER,
-                resume.result
-            )
-        )
     }
 
     override fun onPause() {
