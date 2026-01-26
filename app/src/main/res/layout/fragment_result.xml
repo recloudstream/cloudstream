@@ -579,10 +579,65 @@
                             app:icon="@drawable/ic_baseline_add_24" />
 
                         <LinearLayout
+                            android:id="@+id/result_resume_parent"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="5dp"
+                            android:orientation="vertical"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/result_resume_series_button"
+                                style="@style/WhiteButton"
+                                android:layout_width="match_parent"
+
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginStart="0dp"
+                                android:layout_marginEnd="0dp"
+                                android:nextFocusUp="@id/result_bookmark_Button"
+                                android:nextFocusDown="@id/result_download_movie"
+                                android:text="@string/resume"
+                                app:icon="@drawable/ic_baseline_play_arrow_24"
+                                tools:visibility="visible"
+                                android:visibility="gone"
+                                android:ellipsize="end"
+                                android:maxLines="1"/>
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/result_next_series_button"
+                                style="@style/WhiteButton"
+                                android:layout_width="match_parent"
+
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginStart="0dp"
+                                android:layout_marginEnd="0dp"
+                                android:nextFocusUp="@id/result_bookmark_Button"
+                                android:nextFocusDown="@id/result_download_movie"
+                                android:text="@string/next_episode"
+                                app:icon="@drawable/cast_ic_mini_controller_skip_next"
+                                android:visibility="gone"
+                                tools:visibility="visible"
+                                android:ellipsize="end"
+                                android:maxLines="1"/>
+
+<!--                            <TextView-->
+<!--                                android:id="@+id/result_resume_series_title"-->
+<!--                                android:layout_width="match_parent"-->
+<!--                                android:layout_height="wrap_content"-->
+<!--                                android:textColor="?attr/textColor"-->
+<!--                                android:textSize="17sp"-->
+<!--                                android:textStyle="bold"-->
+<!--                                tools:text="S1E1 Episode 1"-->
+<!--                                android:visibility="gone"/>-->
+                        </LinearLayout>
+
+                        <LinearLayout
                             android:id="@+id/result_movie_parent"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
+                            android:layout_marginVertical="5dp"
                             android:orientation="vertical"
                             tools:visibility="visible">
 
@@ -655,63 +710,10 @@
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/result_resume_parent"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="10dp"
-                            android:orientation="vertical"
-                            android:visibility="gone"
-                            tools:visibility="visible">
-
-
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/result_resume_series_button"
-                                style="@style/WhiteButton"
-                                android:layout_width="match_parent"
-
-                                android:layout_gravity="center_vertical"
-                                android:layout_marginStart="0dp"
-                                android:layout_marginEnd="0dp"
-                                android:layout_marginBottom="10dp"
-                                android:nextFocusUp="@id/result_bookmark_Button"
-                                android:nextFocusDown="@id/result_download_movie"
-                                android:text="@string/resume"
-                                android:visibility="visible"
-                                app:icon="@drawable/ic_baseline_play_arrow_24"
-                                tools:visibility="visible" />
-
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/result_next_series_button"
-                                style="@style/WhiteButton"
-                                android:layout_width="match_parent"
-
-                                android:layout_gravity="center_vertical"
-                                android:layout_marginStart="0dp"
-                                android:layout_marginEnd="0dp"
-                                android:layout_marginBottom="10dp"
-                                android:nextFocusUp="@id/result_bookmark_Button"
-                                android:nextFocusDown="@id/result_download_movie"
-                                android:text="@string/next_episode"
-                                android:visibility="gone"
-                                app:icon="@drawable/cast_ic_mini_controller_skip_next" />
-
-                            <TextView
-                                android:id="@+id/result_resume_series_title"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textColor="?attr/textColor"
-                                android:textSize="17sp"
-                                android:textStyle="bold"
-                                tools:text="S1E1 Episode 1" />
-                        </LinearLayout>
-
-                        <LinearLayout
                             android:id="@+id/result_resume_progress_holder"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
-                            android:paddingTop="10dp"
                             android:visibility="gone"
                             tools:visibility="visible">
 

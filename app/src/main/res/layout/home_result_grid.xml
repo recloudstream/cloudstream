@@ -63,8 +63,8 @@
 
     <ImageView
         android:id="@+id/search_item_download_play"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_gravity="center"
         android:src="@drawable/play_button" />
 
