@@ -1365,7 +1365,7 @@ class CS3IPlayer : IPlayer {
             )
             setHandleAudioBecomingNoisy(true)
             setPlaybackSpeed(playBackSpeed)
-            exoPlayer?.addAnalyticsListener(tracksAnalyticsListener)
+            this.addAnalyticsListener(tracksAnalyticsListener)
         }
     }
 
