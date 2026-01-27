@@ -182,6 +182,7 @@ interface Track {
     val id: String?
     val label: String?
     val language: String?
+    val sampleMimeType : String?
 }
 
 data class VideoTrack(
@@ -190,12 +191,14 @@ data class VideoTrack(
     override val language: String?,
     val width: Int?,
     val height: Int?,
+    override val sampleMimeType: String?,
 ) : Track
 
 data class AudioTrack(
     override val id: String?,
     override val label: String?,
     override val language: String?,
+    override val sampleMimeType: String?,
 ) : Track
 
 data class TextTrack(
@@ -203,6 +206,7 @@ data class TextTrack(
     override val label: String?,
     override val language: String?,
     val mimeType: String?,
+    override val sampleMimeType: String?,
 ) : Track
 
 

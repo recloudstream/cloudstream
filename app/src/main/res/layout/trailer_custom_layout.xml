@@ -103,6 +103,16 @@
                     android:textSize="16sp"
                     android:textStyle="bold"
                     tools:text="Hello world" />
+                <TextView
+                    android:id="@+id/player_video_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginBottom="2.5dp"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    android:visibility="gone"
+                    tools:text="HDR10 • HEVC" />
                 <ImageView
                     android:id="@+id/offline_pin"
                     android:layout_width="16dp"

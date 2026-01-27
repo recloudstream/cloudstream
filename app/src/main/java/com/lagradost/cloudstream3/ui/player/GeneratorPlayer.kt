@@ -215,6 +215,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         if (tracks.allAudioTracks.any { it.language == preferredAudioTrackLanguage }) {
             player.setPreferredAudioTrack(preferredAudioTrackLanguage)
         }
+        updatePlayerInfo()
     }
 
     override fun playerStatusChanged() {
@@ -1494,7 +1495,6 @@ class GeneratorPlayer : FullScreenPlayer() {
                     if (width != NO_VALUE && height != NO_VALUE) {
                         player.setMaxVideoSize(width, height, currentVideo?.id)
                     }
-
                     trackDialog.dismissSafe(activity)
                 }
             }
@@ -1815,6 +1815,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         val source = currentSelectedLink?.first?.name ?: currentSelectedLink?.second?.name ?: "NULL"
         val headerName = getHeaderName().orEmpty()
 
+
         val title = when (titleRez) {
             0 -> ""
             1 -> extra
@@ -1841,6 +1842,26 @@ class GeneratorPlayer : FullScreenPlayer() {
         playerBinding?.playerVideoTitleRez?.apply {
             text = title
             isVisible = title.isNotBlank()
+        }
+    }
+    private fun updatePlayerInfo() {
+        val tracks = player.getVideoTracks()
+
+        val videoTrack = tracks.currentVideoTrack
+        val audioTrack = tracks.currentAudioTrack
+
+        val videoCodec = videoTrack?.sampleMimeType?.substringAfterLast('/')?.uppercase()
+        val audioCodec = audioTrack?.sampleMimeType?.substringAfterLast('/')?.uppercase()
+        val language = listOfNotNull(
+            audioTrack?.label,
+            fromTagToLanguageName(audioTrack?.language)?.let { "[$it]" }
+        ).joinToString(" ")
+
+        val stats = arrayOf(videoCodec, audioCodec, language).filterNotNull().joinToString(" • ")
+
+        playerBinding?.playerVideoInfo?.apply {
+            text = stats
+            isVisible = stats.isNotBlank()
         }
     }
 
@@ -2039,7 +2060,6 @@ class GeneratorPlayer : FullScreenPlayer() {
             titleRez = settingsManager.getInt(ctx.getString(R.string.prefer_limit_title_rez_key), 3)
             limitTitle = settingsManager.getInt(ctx.getString(R.string.prefer_limit_title_key), 0)
             updateForcedEncoding(ctx)
-
             filterSubByLang =
                 settingsManager.getBoolean(getString(R.string.filter_sub_lang_key), false)
             if (filterSubByLang) {
@@ -2164,6 +2184,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             }
         }
     }
+
 }
 
 @Suppress("DEPRECATION")

@@ -381,6 +381,13 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 start()
             }
         }
+        playerBinding?.playerVideoInfo?.let {
+            ObjectAnimator.ofFloat(it, "translationY", titleMove).apply {
+                duration = 200
+                start()
+            }
+        }
+
         val playerBarMove = if (isShowing) 0f else 50.toPx.toFloat()
         playerBinding?.bottomPlayerBar?.let {
             ObjectAnimator.ofFloat(it, "translationY", playerBarMove).apply {
@@ -924,6 +931,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
             // TITLE
             playerVideoTitleRez.startAnimation(fadeAnimation)
+            playerVideoInfo.startAnimation(fadeAnimation)
             playerEpisodeFiller.startAnimation(fadeAnimation)
             playerVideoTitleHolder.startAnimation(fadeAnimation)
             playerTopHolder.startAnimation(fadeAnimation)
