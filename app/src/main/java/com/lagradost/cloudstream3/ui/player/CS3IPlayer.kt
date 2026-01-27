@@ -632,7 +632,6 @@ class CS3IPlayer : IPlayer {
         //simpleCache?.release()
 
         exoPlayer = null
-        exoPlayer?.removeAnalyticsListener(tracksAnalyticsListener)
         event(PlayerAttachedEvent(null))
         //simpleCache = null
     }
@@ -1366,6 +1365,7 @@ class CS3IPlayer : IPlayer {
             )
             setHandleAudioBecomingNoisy(true)
             setPlaybackSpeed(playBackSpeed)
+            exoPlayer?.addAnalyticsListener(tracksAnalyticsListener)
         }
     }
 
@@ -1403,7 +1403,6 @@ class CS3IPlayer : IPlayer {
                 audioSources = audioSources,
                 onlineSource = onlineSource,
             )
-            exoPlayer?.addAnalyticsListener(tracksAnalyticsListener)
 
             event(PlayerAttachedEvent(exoPlayer))
             exoPlayer?.prepare()
