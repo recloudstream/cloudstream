@@ -1664,12 +1664,12 @@ class GeneratorPlayer : FullScreenPlayer() {
     ): SubtitleData? {
         val langCode = preferredAutoSelectSubtitles ?: return null
         if (downloads) {
-            return sortSubs(subtitles).firstOrNull { it.origin == SubtitleOrigin.DOWNLOADED_FILE && it.matchesLanguage(langCode) }
+            return sortSubs(subtitles).firstOrNull { it.origin == SubtitleOrigin.DOWNLOADED_FILE && it.matchesLanguageCode(langCode) }
         }
 
         if (!settings) return null
 
-        return sortSubs(subtitles).firstOrNull { it.matchesLanguage(langCode) }
+        return sortSubs(subtitles).firstOrNull { it.matchesLanguageCode(langCode) }
     }
     
     private fun autoSelectFromSettings(): Boolean {
@@ -1679,7 +1679,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         Log.i(TAG, "autoSelectFromSettings = $current")
         context?.let { ctx ->
             // Only use the player preferred subtitle if it matches the available language
-            if (current != null && (langCode == null || current.matchesLanguage(langCode))) {
+            if (current != null && (langCode == null || current.matchesLanguageCode(langCode))) {
                 if (setSubtitles(current, false)) {
                     player.saveData()
                     player.reloadPlayer(ctx)

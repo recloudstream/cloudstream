@@ -91,19 +91,28 @@ class SubtitleLanguageTagTest {
         )
         val subtitleSimplified3 = getQuickSubtitle(
             originalName = "Chinese simplified",
-            languageCode = "zh-"
+            languageCode = "zhh"
         )
         val subtitleSimplified4 = getQuickSubtitle(
             originalName = "Chinese (simplified)2",
             languageCode = "zh-hans"
         )
-
+        val subtitleSimplified5 = getQuickSubtitle(
+            originalName = "汉语",
+            languageCode = null
+        )
+        val subtitleSimplified6 = getQuickSubtitle(
+            originalName = "",
+            languageCode = "zh-hans"
+        )
         assertEquals("zh", subtitle1.getIETF_tag())
         assertEquals("zh", subtitle2.getIETF_tag())
         assertEquals("zh-hans", subtitleSimplified1.getIETF_tag())
         assertEquals("zh-hans", subtitleSimplified2.getIETF_tag())
         assertEquals("zh-hans", subtitleSimplified3.getIETF_tag())
         assertEquals("zh-hans", subtitleSimplified4.getIETF_tag())
+        assertEquals("zh-hans", subtitleSimplified5.getIETF_tag())
+        assertEquals("zh-hans", subtitleSimplified6.getIETF_tag())
     }
 
 
@@ -111,6 +120,17 @@ class SubtitleLanguageTagTest {
     fun `returns exact language matches`() {
         val subtitle = getQuickSubtitle(
             originalName = "en",
+            languageCode = null
+        )
+
+        assertEquals("en", subtitle.getIETF_tag())
+    }
+
+
+    @Test
+    fun `returns partial language matches`() {
+        val subtitle = getQuickSubtitle(
+            originalName = "Englis",
             languageCode = null
         )
 
