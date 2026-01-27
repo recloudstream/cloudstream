@@ -58,7 +58,6 @@ import com.daasuu.gpuv.player.GPUPlayerView
 import com.daasuu.gpuv.player.PlayerScaleType
 import com.google.android.material.button.MaterialButton
 import com.lagradost.api.BuildConfig
-import com.lagradost.api.Log
 import com.lagradost.cloudstream3.CommonActivity.keyEventListener
 import com.lagradost.cloudstream3.CommonActivity.playerEventListener
 import com.lagradost.cloudstream3.CommonActivity.screenHeightWithOrientation
@@ -1236,12 +1235,54 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        val matrix = zoomMatrix
+        val animation = matrixAnimation
+        if((animation == null || !animation.isRunning) && matrix != null) {
+            playerView?.post {
+                applyMatrix(matrix, true)
+            }
+        }
+    }
+
     private var scaleGestureDetector: ScaleGestureDetector? = null
     private var lastPanX = 0f
     private var lastPanY = 0f
 
-    private var matrix = Matrix()
-    private var desiredMatrix = Matrix()
+    fun getCurrentMatrix(): Matrix {
+        val current = zoomMatrix
+        if (current != null) {
+            return current
+        }
+
+        val playerView = playerView
+        val videoView = playerView?.videoSurfaceView
+
+        if (playerView == null || videoView == null || playerView.resizeMode != AspectRatioFrameLayout.RESIZE_MODE_ZOOM) {
+            return Matrix()
+        }
+
+        val videoWidth = videoView.width.toFloat()
+        val videoHeight = videoView.height.toFloat()
+        val playerWidth = screenWidthWithOrientation
+        val playerHeight = screenHeightWithOrientation
+
+        // Sanity check
+        if (videoWidth <= 1.0f || videoHeight <= 1.0f || playerWidth <= 1.0f || playerHeight <= 1.0f) {
+            return Matrix()
+        }
+
+        val initAspect =
+            (playerHeight * videoWidth) / (playerWidth * videoHeight)
+        val aspect = max(initAspect, 1.0f / initAspect)
+        val out = Matrix()
+        out.postScale(aspect, aspect)
+        return out
+    }
+
+    private var zoomMatrix: Matrix? = null
+    private var desiredMatrix: Matrix? = null
     private var matrixAnimation: ValueAnimator? = null
 
     @SuppressLint("UnsafeOptInUsageError")
@@ -1249,8 +1290,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         // Clear everything
         matrixAnimation?.cancel()
         matrixAnimation = null
-        matrix = Matrix()
-        desiredMatrix = Matrix()
+        zoomMatrix = null
+        desiredMatrix = null
         playerView?.videoSurfaceView?.apply {
             scaleX = 1.0f
             scaleY = 1.0f
@@ -1272,12 +1313,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     @OptIn(UnstableApi::class)
-    fun applyMatrix(animation: Boolean) {
+    fun applyMatrix(newMatrix: Matrix, animation: Boolean) {
         if (!animation) {
             matrixAnimation?.cancel()
             matrixAnimation = null
         }
-        val (translationX, translationY, scale) = matrixToTranslationAndScale(matrix)
+        val (translationX, translationY, scale) = matrixToTranslationAndScale(newMatrix)
 
         playerView?.let { player ->
             if (player.resizeMode == AspectRatioFrameLayout.RESIZE_MODE_FIT) {
@@ -1288,16 +1329,17 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
             val videoWidth = videoView.width.toFloat()
             val videoHeight = videoView.height.toFloat()
-            val playerWidth = player.width.toFloat()
-            val playerHeight = player.height.toFloat()
+            val playerWidth = screenWidthWithOrientation
+            val playerHeight = screenHeightWithOrientation
 
             // Sanity check
             if (videoWidth <= 1.0f || videoHeight <= 1.0f || playerWidth <= 1.0f || playerHeight <= 1.0f || scale <= 0.01f) {
                 return
             }
 
-            val aspect =
+            val initAspect =
                 (playerHeight * videoWidth) / (playerWidth * videoHeight)
+            val aspect = min(initAspect, 1.0f / initAspect)
 
             val maxTransX = (videoWidth * scale - videoWidth).absoluteValue * 0.5f
             val maxTransY = (videoHeight * scale - videoHeight).absoluteValue * 0.5f
@@ -1306,10 +1348,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             val expectedTranslationY = translationY.coerceIn(-maxTransY, maxTransY)
 
             // Set the transform to the correct x and y
-            matrix.postTranslate(
+            newMatrix.postTranslate(
                 expectedTranslationX - translationX,
                 expectedTranslationY - translationY
             )
+            zoomMatrix = newMatrix
 
             val scaledAspect = scale * aspect
             if (!animation) {
@@ -1319,9 +1362,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     val desired = Matrix()
                     desired.setScale(1.0f / aspect, 1.0f / aspect)
                     desiredMatrix = desired
+                } else if (scale < 1.0f) {
+                    playerBinding?.videoOutline?.isVisible = false
+                    desiredMatrix = Matrix()
                 } else {
                     playerBinding?.videoOutline?.isVisible = false
-                    desiredMatrix = matrix
+                    desiredMatrix = null
                 }
             }
 
@@ -1332,109 +1378,120 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
     }
 
+    fun createScaleGestureDetector(context: Context) {
+        scaleGestureDetector = ScaleGestureDetector(
+            context,
+            object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                override fun onScale(detector: ScaleGestureDetector): Boolean {
+                    val matrix = getCurrentMatrix()
+                    val (_, _, scaleFactor) = matrixToTranslationAndScale(matrix)
+                    // clamp scale, do it here as it is easier
+                    val newScale = (scaleFactor * detector.scaleFactor).coerceIn(
+                        0.95f,
+                        4.0f
+                    )
+                    val actualMul = newScale / scaleFactor
+                    playerView?.videoSurfaceView?.let { videoView ->
+                        val px = detector.focusX - screenWidthWithOrientation.toFloat() * 0.5f
+                        val py = detector.focusY - screenHeightWithOrientation.toFloat() * 0.5f
+                        matrix.postScale(
+                            actualMul,
+                            actualMul,
+                            px,
+                            py
+                        )
+                        applyMatrix(matrix, false)
+                    }
+                    return true
+                }
+            })
+    }
+
     @SuppressLint("SetTextI18n")
     private fun handleMotionEvent(view: View?, event: MotionEvent?): Boolean {
         if (event == null || view == null) return false
         val currentTouch = Vector2(event.x, event.y)
         val startTouch = currentTouchStart
 
-        playerBinding?.apply {
-            playerIntroPlay.isGone = true
+        playerBinding?.playerIntroPlay?.isGone = true
+
+        // Handle pan with two fingers
+        if (event.pointerCount == 2 && !isLocked && isFullScreenPlayer && !hasTriggeredSpeedUp && currentTouchAction == null) {
+            holdhandler.removeCallbacks(holdRunnable)
 
             // Gesture detectors for zoom & pan
             if (scaleGestureDetector == null) {
-                scaleGestureDetector = ScaleGestureDetector(
-                    view.context,
-                    object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-                        override fun onScale(detector: ScaleGestureDetector): Boolean {
-                            val (_, _, scaleFactor) = matrixToTranslationAndScale(matrix)
-                            // clamp scale, do it here as it is easier
-                            val newScale = (scaleFactor * detector.scaleFactor).coerceIn(
-                                1.0f, // this needs to be fixed on vertical videos
-                                4.0f
-                            )
-                            val actualMul = newScale / scaleFactor
-
-                            playerView?.videoSurfaceView?.let { videoView ->
-                                matrix.postScale(
-                                    actualMul,
-                                    actualMul,
-                                    detector.focusX - videoView.pivotX,
-                                    detector.focusY - videoView.pivotY
-                                )
-                                applyMatrix(false)
-                            }
-                            return true
-                        }
-                    })
+                createScaleGestureDetector(view.context)
             }
 
-            // Handle pan with two fingers
-            if (event.pointerCount == 2) {
-                isCurrentTouchValid = false
-                scaleGestureDetector?.onTouchEvent(event)
-                when (event.actionMasked) {
-                    MotionEvent.ACTION_POINTER_DOWN -> {
-                        if (isShowing) {
-                            onClickChange()
-                        }
-                        lastPanX = (event.getX(0) + event.getX(1)) / 2f
-                        lastPanY = (event.getY(0) + event.getY(1)) / 2f
+            isCurrentTouchValid = false
+            scaleGestureDetector?.onTouchEvent(event)
+            when (event.actionMasked) {
+                MotionEvent.ACTION_POINTER_DOWN -> {
+                    if (isShowing) {
+                        onClickChange()
                     }
+                    lastPanX = (event.getX(0) + event.getX(1)) / 2f
+                    lastPanY = (event.getY(0) + event.getY(1)) / 2f
+                }
 
-                    MotionEvent.ACTION_MOVE -> {
-                        val newX = (event.getX(0) + event.getX(1)) / 2f
-                        val newY = (event.getY(0) + event.getY(1)) / 2f
-                        val dx = newX - lastPanX
-                        val dy = newY - lastPanY
-                        lastPanX = newX
-                        lastPanY = newY
-                        matrix.postTranslate(dx, dy)
-                        applyMatrix(false)
-                    }
+                MotionEvent.ACTION_MOVE -> {
+                    val newX = (event.getX(0) + event.getX(1)) / 2f
+                    val newY = (event.getY(0) + event.getY(1)) / 2f
+                    val dx = newX - lastPanX
+                    val dy = newY - lastPanY
+                    lastPanX = newX
+                    lastPanY = newY
+                    val matrix = getCurrentMatrix()
+                    matrix.postTranslate(dx, dy)
+                    applyMatrix(matrix, false)
+                }
 
-                    MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_UP -> {
-                        lastPanX = 0f
-                        lastPanY = 0f
+                MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_UP -> {
+                    lastPanX = 0f
+                    lastPanY = 0f
 
-                        currentTouchStart = null
-                        currentLastTouchAction = null
-                        currentTouchAction = null
-                        currentTouchStartPlayerTime = null
-                        currentTouchLast = null
-                        currentTouchStartTime = null
+                    currentTouchStart = null
+                    currentLastTouchAction = null
+                    currentTouchAction = null
+                    currentTouchStartPlayerTime = null
+                    currentTouchLast = null
+                    currentTouchStartTime = null
 
-                        this@apply.videoOutline.isVisible = false
-                        matrixAnimation?.cancel()
-                        matrixAnimation = null
+                    playerBinding?.videoOutline?.isVisible = false
+                    matrixAnimation?.cancel()
+                    matrixAnimation = null
 
-                        // Very bad lerp
-                        matrixAnimation = ValueAnimator.ofFloat(0.0f, 1.0f).apply {
-                            startDelay = 0
-                            duration = 200
+                    // Very bad lerp
+                    matrixAnimation = ValueAnimator.ofFloat(0.0f, 1.0f).apply {
+                        startDelay = 0
+                        duration = 200
 
-                            val (startX, startY, startScale) = matrixToTranslationAndScale(matrix)
-                            val (endX, endY, endScale) = matrixToTranslationAndScale(desiredMatrix)
+                        val startMatrix = getCurrentMatrix()
+                        val endMatrix = desiredMatrix ?: return@apply
 
-                            addUpdateListener { animation ->
-                                val value = animation.animatedValue as Float
-                                val valueInv = 1.0f - value
-                                val x = startX * valueInv + endX * value
-                                val y = startY * valueInv + endY * value
-                                val s = startScale * valueInv + endScale * value
-                                val m = Matrix()
-                                m.setScale(s, s)
-                                m.postTranslate(x, y)
-                                matrix = m
-                                applyMatrix(true)
-                            }
-                            start()
+                        val (startX, startY, startScale) = matrixToTranslationAndScale(startMatrix)
+                        val (endX, endY, endScale) = matrixToTranslationAndScale(endMatrix)
+
+                        addUpdateListener { animation ->
+                            val value = animation.animatedValue as Float
+                            val valueInv = 1.0f - value
+                            val x = startX * valueInv + endX * value
+                            val y = startY * valueInv + endY * value
+                            val s = startScale * valueInv + endScale * value
+                            val m = Matrix()
+                            m.setScale(s, s)
+                            m.postTranslate(x, y)
+                            applyMatrix(m, true)
                         }
+                        start()
                     }
                 }
-                return true
             }
+            return true
+        }
 
+        playerBinding?.apply {
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     // validates if the touch is inside of the player area
