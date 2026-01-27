@@ -1857,7 +1857,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             fromTagToLanguageName(audioTrack?.language)?.let { "[$it]" }
         ).joinToString(" ")
 
-        val stats = arrayOf(videoCodec, audioCodec, language).filterNotNull().joinToString(" • ")
+        val stats = arrayOf(videoCodec, audioCodec, language).filter { !it.isNullOrBlank() }.joinToString(" • ")
 
         playerBinding?.playerVideoInfo?.apply {
             text = stats

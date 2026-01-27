@@ -205,7 +205,6 @@ data class TextTrack(
     override val id: String?,
     override val label: String?,
     override val language: String?,
-    val mimeType: String?,
     override val sampleMimeType: String?,
 ) : Track
 

@@ -449,7 +449,6 @@ class CS3IPlayer : IPlayer {
             this.label,
             this.language,
             this.sampleMimeType,
-            null
         )
     }
 
