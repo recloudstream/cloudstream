@@ -1850,17 +1850,9 @@ class GeneratorPlayer : FullScreenPlayer() {
         val videoTrack = tracks.currentVideoTrack
         val audioTrack = tracks.currentAudioTrack
 
-        if (videoTrack == null || audioTrack == null) {
-            // Retry after selection settles
-            playerBinding?.playerVideoInfo?.post {
-                updatePlayerInfo()
-            }
-            return
-        }
-
-        val videoCodec = videoTrack.sampleMimeType?.substringAfterLast('/')?.uppercase()
-        val audioCodec = audioTrack.sampleMimeType?.substringAfterLast('/')?.uppercase()
-        val language = fromTagToLanguageName(audioTrack.language)
+        val videoCodec = videoTrack?.sampleMimeType?.substringAfterLast('/')?.uppercase()
+        val audioCodec = audioTrack?.sampleMimeType?.substringAfterLast('/')?.uppercase()
+        val language = fromTagToLanguageName(audioTrack?.language)
 
         val stats = arrayOf(videoCodec, audioCodec, language).filterNotNull().joinToString(" • ")
 

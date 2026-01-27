@@ -40,12 +40,15 @@ import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
 import androidx.media3.datasource.cache.SimpleCache
 import androidx.media3.datasource.cronet.CronetDataSource
 import androidx.media3.datasource.okhttp.OkHttpDataSource
+import androidx.media3.exoplayer.DecoderCounters
+import androidx.media3.exoplayer.DecoderReuseEvaluation
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.Renderer.STATE_ENABLED
 import androidx.media3.exoplayer.Renderer.STATE_STARTED
 import androidx.media3.exoplayer.SeekParameters
+import androidx.media3.exoplayer.analytics.AnalyticsListener
 import androidx.media3.exoplayer.dash.DashMediaSource
 import androidx.media3.exoplayer.drm.DefaultDrmSessionManager
 import androidx.media3.exoplayer.drm.FrameworkMediaDrm
@@ -629,6 +632,7 @@ class CS3IPlayer : IPlayer {
         //simpleCache?.release()
 
         exoPlayer = null
+        exoPlayer?.removeAnalyticsListener(tracksAnalyticsListener)
         event(PlayerAttachedEvent(null))
         //simpleCache = null
     }
@@ -1399,6 +1403,7 @@ class CS3IPlayer : IPlayer {
                 audioSources = audioSources,
                 onlineSource = onlineSource,
             )
+            exoPlayer?.addAnalyticsListener(tracksAnalyticsListener)
 
             event(PlayerAttachedEvent(exoPlayer))
             exoPlayer?.prepare()
@@ -1933,4 +1938,39 @@ class CS3IPlayer : IPlayer {
             loadOfflinePlayer(context, it)
         }
     }
+
+    private val tracksAnalyticsListener = object : AnalyticsListener {
+
+        override fun onVideoInputFormatChanged(
+            eventTime: AnalyticsListener.EventTime,
+            format: Format,
+            decoderReuseEvaluation: DecoderReuseEvaluation?
+        ) {
+            event(TracksChangedEvent())
+        }
+
+        override fun onAudioInputFormatChanged(
+            eventTime: AnalyticsListener.EventTime,
+            format: Format,
+            decoderReuseEvaluation: DecoderReuseEvaluation?
+        ) {
+            event(TracksChangedEvent())
+        }
+
+        override fun onVideoDisabled(
+            eventTime: AnalyticsListener.EventTime,
+            decoderCounters: DecoderCounters
+        ) {
+            event(TracksChangedEvent())
+        }
+
+        override fun onAudioDisabled(
+            eventTime: AnalyticsListener.EventTime,
+            decoderCounters: DecoderCounters
+        ) {
+            event(TracksChangedEvent())
+        }
+    }
+
 }
+
