@@ -1862,17 +1862,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         val audioCodec = audioTrack.sampleMimeType?.substringAfterLast('/')?.uppercase()
         val language = fromTagToLanguageName(audioTrack.language)
 
-        val stats = buildString {
-            videoCodec?.let { append(it) }
-            audioCodec?.let {
-                if (isNotEmpty()) append(" • ")
-                append(it)
-            }
-            language?.let {
-                if (isNotEmpty()) append(" • ")
-                append(it)
-            }
-        }
+        val stats = arrayOf(videoCodec, audioCodec, language).filterNotNull().joinToString(" • ")
 
         playerBinding?.playerVideoInfo?.apply {
             text = stats
