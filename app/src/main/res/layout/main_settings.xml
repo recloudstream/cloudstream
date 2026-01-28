@@ -29,16 +29,16 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:foreground="@drawable/outline_big_25_gray"
                     app:cardCornerRadius="25dp">
 
                     <ImageView
                         android:id="@+id/settings_profile_pic"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:contentDescription="@string/account"
                         android:scaleType="centerCrop"
-                        android:foreground="@drawable/rounded_outline"
-                        tools:src="@drawable/profile_bg_orange"
-                        android:contentDescription="@string/account"/>
+                        tools:src="@drawable/profile_bg_orange" />
 
                 </androidx.cardview.widget.CardView>
 
@@ -150,7 +150,7 @@
                     android:layout_height="wrap_content"
                     android:padding="10dp"
                     android:textColor="?attr/textColor"
-                    tools:text="21/03/2024 09:02 pm"/>
+                    tools:text="21/03/2024 09:02 pm" />
             </LinearLayout>
 
         </LinearLayout>
