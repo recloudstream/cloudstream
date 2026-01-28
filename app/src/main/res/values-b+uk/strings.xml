@@ -706,4 +706,7 @@
     <string name="prerelease_already_installed">Попередня версія вже встановлена.</string>
     <string name="prerelease_install_failed">Не вдалося встановити попередню версію.</string>
     <string name="show_episode_text">Текст епізоду</string>
+    <string name="search_suggestions">Пропозиції пошуку</string>
+    <string name="search_suggestions_des">Показувати підказки пошуку під час введення тексту</string>
+    <string name="clear_suggestions">Очистити пропозиції</string>
 </resources>

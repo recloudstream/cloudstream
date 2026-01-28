@@ -748,4 +748,7 @@
     <string name="prerelease_already_installed">已安装预发行版。</string>
     <string name="prerelease_install_failed">安装预发行版失败。</string>
     <string name="show_episode_text">剧集文本</string>
+    <string name="search_suggestions">搜索建议</string>
+    <string name="search_suggestions_des">输入时显示搜索建议</string>
+    <string name="clear_suggestions">清除建议</string>
 </resources>

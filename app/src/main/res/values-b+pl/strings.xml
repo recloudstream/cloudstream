@@ -737,4 +737,7 @@
     <string name="prerelease_already_installed">Wersja przedpremierowa jest już zainstalowana.</string>
     <string name="prerelease_install_failed">Nie udało się zainstalować wersji przedpremierowej.</string>
     <string name="show_episode_text">Tekst odcinka</string>
+    <string name="search_suggestions">Sugestie wyszukiwania</string>
+    <string name="search_suggestions_des">Pokaż sugestie wyszukiwania podczas pisania</string>
+    <string name="clear_suggestions">Wyczyść sugestie</string>
 </resources>
