@@ -17,6 +17,7 @@ import android.view.animation.Animation
 import android.view.animation.DecelerateInterpolator
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
@@ -619,57 +620,58 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         }*/
 
         observeNullable(viewModel.resumeWatching) { resume ->
+            if (resume == null) {
+                resultBinding?.resultResumeParent?.isVisible = false
+                return@observeNullable
+            }
+
             resultBinding?.apply {
-                if (resume == null) {
-                    resultResumeParent.isVisible = false
-                    resultPlayParent.isVisible = true
-                    resultResumeProgressHolder.isVisible = false
-                    return@observeNullable
-                }
                 resultResumeParent.isVisible = true
+
+                val setEpisodeText: (Button) -> Unit = { button ->
+                    button.text = context?.getNameFull(
+                        resume.result.name,
+                        resume.result.episode,
+                        resume.result.season
+                    )
+                }
+
                 resume.progress?.let { progress ->
                     resultNextSeriesButton.isVisible = false
-                    resultResumeSeriesTitle.apply {
-                        isVisible = !resume.isMovie
-                        text =
-                            if (resume.isMovie) null else context?.getNameFull(
-                                resume.result.name,
-                                resume.result.episode,
-                                resume.result.season
-                            )
-                    }
-                    if (resume.isMovie) {
-                        resultPlayParent.isGone = true
-                        resultResumeSeriesProgressText.isVisible = true
-                        resultResumeSeriesProgressText.setText(progress.progressLeft)
-                    }
+                    resultResumeSeriesProgressText.setText(progress.progressLeft)
+
                     resultResumeSeriesProgress.apply {
                         isVisible = true
-                        this.max = progress.maxProgress
+                        max = progress.maxProgress
                         this.progress = progress.progress
                     }
-                    resultResumeProgressHolder.isVisible = true
-                } ?: run {
-                    resultResumeProgressHolder.isVisible = false
+
                     if (!resume.isMovie) {
-                        resultNextSeriesButton.isVisible = true
-                        resultNextSeriesButton.text = context?.getNameFull(
-                            resume.result.name,
-                            resume.result.episode,
-                            resume.result.season
-                        )
+                        setEpisodeText(resultResumeSeriesButton)
+                        resultMovieParent.isGone = true
                     }
+
+                    resultResumeSeriesButton.isVisible = true
+                    resultPlayMovie.isGone = true
+                    resultResumeProgressHolder.isVisible = true
+
+                } ?: run {
+                    if (!resume.isMovie) {
+                        resultResumeSeriesButton.isVisible = false
+                        setEpisodeText(resultNextSeriesButton)
+                        resultNextSeriesButton.isVisible = true
+                        resultMovieParent.isGone = true
+                    } else {
+                        resultResumeParent.isGone = true
+                    }
+
+                    resultResumeProgressHolder.isVisible = false
                     resultResumeSeriesProgress.isVisible = false
-                    resultResumeSeriesTitle.isVisible = false
                     resultResumeSeriesProgressText.isVisible = false
                 }
 
-                resultResumeSeriesButton.setOnClickListener {
-                    resumeAction(storedData, resume)
-                }
-                resultNextSeriesButton.setOnClickListener {
-                    resumeAction(storedData, resume)
-                }
+                resultResumeSeriesButton.setOnClickListener { resumeAction(storedData, resume) }
+                resultNextSeriesButton.setOnClickListener { resumeAction(storedData, resume) }
             }
         }
 
