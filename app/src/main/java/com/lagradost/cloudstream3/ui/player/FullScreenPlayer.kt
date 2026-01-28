@@ -101,6 +101,14 @@ import kotlin.math.min
 import kotlin.math.round
 import kotlin.math.roundToInt
 
+// You can zoom out more than 100%, but it will zoom back into 100%
+const val MINIMUM_ZOOM = 0.95f
+
+// How sensitive the auto zoom is to center at the min zoom
+const val ZOOM_SNAP_SENSITIVITY = 0.07f
+
+// Maximum zoom to avoid getting lost
+const val MAXIMUM_ZOOM = 4.0f
 
 const val MINIMUM_SEEK_TIME = 7000L         // when swipe seeking
 const val MINIMUM_VERTICAL_SWIPE = 2.0f     // in percentage
@@ -1052,16 +1060,24 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     companion object {
         /**
-         * Transform a matrix into a translationXY + scale
+         * Gets the translationXY + scale form a matrix with no rotation.
+         *
+         * @return (translationX, translationY, scale)
          * */
         fun matrixToTranslationAndScale(matrix: Matrix): Triple<Float, Float, Float> {
             val points = floatArrayOf(0.0f, 0.0f, 1.0f, 1.0f)
             matrix.mapPoints(points)
+
+            // A linear matrix will map (0,0) to the translation
             val translationX = points[0]
             val translationY = points[1]
+
+            // The unit vectors (1,0) and (0,1) will map to the scale if you remove the translation
+            // As this assumes a uniform scaling, only a single vector is needed
             val scaleX = points[2] - translationX
             val scaleY = points[3] - translationY
 
+            // The matrix should have the same scaleX and scaleY
             if (BuildConfig.DEBUG) {
                 assert((scaleX - scaleY).absoluteValue < 0.1f) {
                     "$scaleY != $scaleX"
@@ -1237,22 +1253,33 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
+
+        // If we rotate the device we need to recalculate the zoom
         val matrix = zoomMatrix
         val animation = matrixAnimation
-        if((animation == null || !animation.isRunning) && matrix != null) {
+        if ((animation == null || !animation.isRunning) && matrix != null) {
+            // Ignore if we have no zoom or mid animation
             playerView?.post {
-                applyMatrix(matrix, true)
+                applyZoomMatrix(matrix, true)
             }
         }
     }
 
     private var scaleGestureDetector: ScaleGestureDetector? = null
-    private var lastPanX = 0f
-    private var lastPanY = 0f
+    private var lastPan: Vector2? = null
 
-    fun getCurrentMatrix(): Matrix {
+    /**
+     * Gets the non-null zoom matrix,
+     * this is different from `zoomMatrix ?: Matrix()`
+     * because it allows used to start zooming at different resizeModes.
+     *
+     * The main issue is that RESIZE_MODE_FIT = 100% zoom, but if you are in RESIZE_MODE_ZOOM
+     * 100% will make the zoom snap to less zoomed in then you already are.
+     * */
+    fun currentZoomMatrix(): Matrix {
         val current = zoomMatrix
         if (current != null) {
+            // Already assigned
             return current
         }
 
@@ -1260,6 +1287,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         val videoView = playerView?.videoSurfaceView
 
         if (playerView == null || videoView == null || playerView.resizeMode != AspectRatioFrameLayout.RESIZE_MODE_ZOOM) {
+            // This is a fit or fill resize mode so start at 100% zoom
             return Matrix()
         }
 
@@ -1270,24 +1298,31 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         // Sanity check
         if (videoWidth <= 1.0f || videoHeight <= 1.0f || playerWidth <= 1.0f || playerHeight <= 1.0f) {
+            // Something is wrong with the video, return the default 100% zoom
             return Matrix()
         }
 
         val initAspect =
             (playerHeight * videoWidth) / (playerWidth * videoHeight)
         val aspect = max(initAspect, 1.0f / initAspect)
-        val out = Matrix()
-        out.postScale(aspect, aspect)
-        return out
+
+        // Return the matrix with the correct zoom, as it is already zoomed in
+        return Matrix().apply { postScale(aspect, aspect) }
     }
 
+    /** A Matrix encoding the translation and scale of the current zoom */
     private var zoomMatrix: Matrix? = null
+
+    /** A Matrix encoding the translation and scale of the desired zoom,
+     * aka after you release the zoom */
     private var desiredMatrix: Matrix? = null
+
+    /** The animation of zooming to the desiredMatrix */
     private var matrixAnimation: ValueAnimator? = null
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun resize(resize: PlayerResize, showToast: Boolean) {
-        // Clear everything
+        // Clear all zoom stuff if we resize
         matrixAnimation?.cancel()
         matrixAnimation = null
         zoomMatrix = null
@@ -1312,8 +1347,15 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         super.resize(resize, showToast)
     }
 
+    /**
+     * Applies a new zoom matrix to the screen. Matrix should only contain a scale + translation.
+     *
+     * @param newMatrix The new zoom matrix
+     * @param animation If this zoom is part of an animation,
+     * as then it will not auto zoom after we are done
+     */
     @OptIn(UnstableApi::class)
-    fun applyMatrix(newMatrix: Matrix, animation: Boolean) {
+    fun applyZoomMatrix(newMatrix: Matrix, animation: Boolean) {
         if (!animation) {
             matrixAnimation?.cancel()
             matrixAnimation = null
@@ -1337,13 +1379,18 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 return
             }
 
+            // Calculate the scaled aspect ratio as the view height is not real, check the debugger
+            // and you will see videoView.height > screen.heigh
             val initAspect =
                 (playerHeight * videoWidth) / (playerWidth * videoHeight)
             val aspect = min(initAspect, 1.0f / initAspect)
+            val scaledAspect = scale * aspect
 
-            val maxTransX = (videoWidth * scale - videoWidth).absoluteValue * 0.5f
-            val maxTransY = (videoHeight * scale - videoHeight).absoluteValue * 0.5f
+            // Calculate clamp, this is very weird because we need to use aspect here as videoHeight > playerHeight
+            val maxTransX = max(0.0f, videoWidth * scaledAspect - playerWidth) * 0.5f
+            val maxTransY = max(0.0f, videoHeight * scaledAspect - playerHeight) * 0.5f
 
+            // Correct the translation to clamp within the viewing area
             val expectedTranslationX = translationX.coerceIn(-maxTransX, maxTransX)
             val expectedTranslationY = translationY.coerceIn(-maxTransY, maxTransY)
 
@@ -1354,23 +1401,26 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             )
             zoomMatrix = newMatrix
 
-            val scaledAspect = scale * aspect
             if (!animation) {
-                if ((scaledAspect - 1.0f).absoluteValue < 0.07f) {
+                // If we are not in an animation, set up the values for the animation
+                if ((scaledAspect - 1.0f).absoluteValue < ZOOM_SNAP_SENSITIVITY) {
                     // We are within the correct scaling, so center and fit it
                     playerBinding?.videoOutline?.isVisible = true
                     val desired = Matrix()
                     desired.setScale(1.0f / aspect, 1.0f / aspect)
                     desiredMatrix = desired
                 } else if (scale < 1.0f) {
+                    // We have zoomed too far, zoom to 100%
                     playerBinding?.videoOutline?.isVisible = false
                     desiredMatrix = Matrix()
                 } else {
+                    // Keep the same scaling after zoom
                     playerBinding?.videoOutline?.isVisible = false
                     desiredMatrix = null
                 }
             }
 
+            // Finally set the actual scale + translation
             videoView.scaleX = scaledAspect
             videoView.scaleY = scaledAspect
             videoView.translationX = expectedTranslationX
@@ -1383,25 +1433,26 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             context,
             object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
                 override fun onScale(detector: ScaleGestureDetector): Boolean {
-                    val matrix = getCurrentMatrix()
-                    val (_, _, scaleFactor) = matrixToTranslationAndScale(matrix)
-                    // clamp scale, do it here as it is easier
-                    val newScale = (scaleFactor * detector.scaleFactor).coerceIn(
-                        0.95f,
-                        4.0f
+                    val matrix = currentZoomMatrix()
+                    val (_, _, scale) = matrixToTranslationAndScale(matrix)
+                    // Clamp scale of the zoom, do it here as it is easier then doing it within applyZoomMatrix
+                    val newScale = (scale * detector.scaleFactor).coerceIn(
+                        MINIMUM_ZOOM,
+                        MAXIMUM_ZOOM
                     )
-                    val actualMul = newScale / scaleFactor
-                    playerView?.videoSurfaceView?.let { videoView ->
-                        val px = detector.focusX - screenWidthWithOrientation.toFloat() * 0.5f
-                        val py = detector.focusY - screenHeightWithOrientation.toFloat() * 0.5f
-                        matrix.postScale(
-                            actualMul,
-                            actualMul,
-                            px,
-                            py
-                        )
-                        applyMatrix(matrix, false)
-                    }
+                    // How much we should scale it with to prevent inf scaling
+                    val actualScaleFactor = newScale / scale
+
+                    // Scale around the focus point, this is more natural than just zoom
+                    val pivotX = detector.focusX - screenWidthWithOrientation.toFloat() * 0.5f
+                    val pivotY = detector.focusY - screenHeightWithOrientation.toFloat() * 0.5f
+                    matrix.postScale(
+                        actualScaleFactor,
+                        actualScaleFactor,
+                        pivotX,
+                        pivotY
+                    )
+                    applyZoomMatrix(matrix, false)
                     return true
                 }
             })
@@ -1417,40 +1468,42 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         // Handle pan with two fingers
         if (event.pointerCount == 2 && !isLocked && isFullScreenPlayer && !hasTriggeredSpeedUp && currentTouchAction == null) {
-            holdhandler.removeCallbacks(holdRunnable)
+            holdhandler.removeCallbacks(holdRunnable) // remove 2x speed
 
             // Gesture detectors for zoom & pan
             if (scaleGestureDetector == null) {
                 createScaleGestureDetector(view.context)
             }
 
-            isCurrentTouchValid = false
+            isCurrentTouchValid = false // Prevent other touches
             scaleGestureDetector?.onTouchEvent(event)
+
             when (event.actionMasked) {
                 MotionEvent.ACTION_POINTER_DOWN -> {
+                    // Hide UI
                     if (isShowing) {
                         onClickChange()
                     }
-                    lastPanX = (event.getX(0) + event.getX(1)) / 2f
-                    lastPanY = (event.getY(0) + event.getY(1)) / 2f
                 }
 
                 MotionEvent.ACTION_MOVE -> {
-                    val newX = (event.getX(0) + event.getX(1)) / 2f
-                    val newY = (event.getY(0) + event.getY(1)) / 2f
-                    val dx = newX - lastPanX
-                    val dy = newY - lastPanY
-                    lastPanX = newX
-                    lastPanY = newY
-                    val matrix = getCurrentMatrix()
-                    matrix.postTranslate(dx, dy)
-                    applyMatrix(matrix, false)
+                    val newPan = Vector2(
+                        (event.getX(0) + event.getX(1)) / 2f,
+                        (event.getY(0) + event.getY(1)) / 2f
+                    )
+                    val oldPan = lastPan
+                    if (oldPan != null) {
+                        val matrix = currentZoomMatrix()
+                        // Delta move
+                        matrix.postTranslate(newPan.x - oldPan.x, newPan.y - oldPan.y)
+                        applyZoomMatrix(matrix, false)
+                    }
+                    lastPan = newPan
                 }
 
                 MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_UP -> {
-                    lastPanX = 0f
-                    lastPanY = 0f
-
+                    // Reset touch
+                    lastPan = null
                     currentTouchStart = null
                     currentLastTouchAction = null
                     currentTouchAction = null
@@ -1458,23 +1511,26 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     currentTouchLast = null
                     currentTouchStartTime = null
 
+                    // Reset views
                     playerBinding?.videoOutline?.isVisible = false
                     matrixAnimation?.cancel()
                     matrixAnimation = null
 
-                    // Very bad lerp
+                    // After we have zoomed in, snap to
                     matrixAnimation = ValueAnimator.ofFloat(0.0f, 1.0f).apply {
                         startDelay = 0
                         duration = 200
 
-                        val startMatrix = getCurrentMatrix()
+                        val startMatrix = currentZoomMatrix()
                         val endMatrix = desiredMatrix ?: return@apply
 
                         val (startX, startY, startScale) = matrixToTranslationAndScale(startMatrix)
                         val (endX, endY, endScale) = matrixToTranslationAndScale(endMatrix)
 
                         addUpdateListener { animation ->
-                            val value = animation.animatedValue as Float
+                            val value = animation.animatedValue as Float // ValueAnimator.ofFloat
+
+                            // Linear interpolation of scale and translation between startMatrix and endMatrix
                             val valueInv = 1.0f - value
                             val x = startX * valueInv + endX * value
                             val y = startY * valueInv + endY * value
@@ -1482,7 +1538,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                             val m = Matrix()
                             m.setScale(s, s)
                             m.postTranslate(x, y)
-                            applyMatrix(m, true)
+                            applyZoomMatrix(m, true)
                         }
                         start()
                     }
