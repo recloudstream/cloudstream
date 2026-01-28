@@ -10,6 +10,75 @@
 
 
     <FrameLayout
+        android:id="@+id/player_metadata_scrim"
+        android:layout_width="640dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_player_metadata_scrim_netflix"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:id="@+id/player_metadata_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="64dp"
+            android:paddingEnd="32dp"
+            android:paddingBottom="32dp"
+            android:layout_gravity="center_vertical">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="84dp">
+
+                <ImageView
+                    android:id="@+id/player_movie_logo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitStart"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/player_movie_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@android:color/white"
+                    android:textSize="34sp"
+                    android:textStyle="bold"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    tools:text="Zootopia 2" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/player_movie_meta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColor="#D9FFFFFF"
+                android:textSize="15sp"
+                android:maxLines="2"
+                tools:text="Animation • Action • Adventure • 2025 • ⭐ 7.6" />
+
+            <TextView
+                android:id="@+id/player_movie_overview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:textColor="#E6FFFFFF"
+                android:textSize="14sp"
+                android:lineSpacingExtra="6dp"
+                android:maxLines="4"
+                tools:text="Brave rabbit cop Judy Hopps and her friend, the fox Nick Wilde, team up again to crack a new case." />
+
+        </LinearLayout>
+    </FrameLayout>
+
+    <FrameLayout
         android:id="@+id/piphide"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

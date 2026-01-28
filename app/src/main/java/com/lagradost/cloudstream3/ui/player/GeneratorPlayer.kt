@@ -1541,6 +1541,58 @@ class GeneratorPlayer : FullScreenPlayer() {
             return
         }
         loadLink(links.first(), false)
+        showPlayerMetadata()
+    }
+
+    private fun showPlayerMetadata() {
+        val root = binding?.root ?: return
+        val overlay = root.findViewById<View>(R.id.player_metadata_scrim) ?: return
+
+        val titleView = overlay.findViewById<TextView>(R.id.player_movie_title)
+        val logoView = overlay.findViewById<ImageView>(R.id.player_movie_logo)
+        val metaView = overlay.findViewById<TextView>(R.id.player_movie_meta)
+        val descView = overlay.findViewById<TextView>(R.id.player_movie_overview)
+
+        val load = viewModel.getLoadResponse() ?: return
+        val episode = currentMeta as? ResultEpisode
+
+        val logoUrl = load.logoUrl
+
+        if (!logoUrl.isNullOrBlank()) {
+            logoView.isVisible = true
+            titleView.isVisible = false
+            CloudStreamApp.context?.getImageBitmapFromUrl(logoUrl)?.let {
+                logoView.setImageBitmap(it)
+            }
+        } else {
+            logoView.isVisible = false
+            titleView.isVisible = true
+            titleView.text = load.name
+        }
+
+        val meta = arrayOf(
+            load.tags?.takeIf { it.isNotEmpty() }?.joinToString(", "),
+            load.year?.toString(),
+            if (!load.type.isMovieType())
+                episode?.let { "S${it.season} • E${it.episode}" }
+            else null,
+            load.score?.let { "⭐ $it" }
+        ).filterNotNull()
+            .joinToString(" • ")
+
+        metaView.text = meta
+        metaView.isVisible = meta.isNotBlank()
+
+
+        val description = load.plot
+
+        if (!description.isNullOrBlank()) {
+            descView.isVisible = true
+            descView.text = description
+        } else {
+            descView.isVisible = false
+
+        }
     }
 
     override fun nextEpisode() {
