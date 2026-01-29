@@ -1841,6 +1841,10 @@ class GeneratorPlayer : FullScreenPlayer() {
         val videoTrack = tracks.currentVideoTrack
         val audioTrack = tracks.currentAudioTrack
 
+        val ctx = context ?: return
+        val prefs = PreferenceManager.getDefaultSharedPreferences(ctx)
+        showMediaInfo = prefs.getBoolean("limit_show_media_info", false)
+
         val videoCodec = videoTrack?.sampleMimeType?.substringAfterLast('/')?.uppercase()
         val audioCodec = audioTrack?.sampleMimeType?.substringAfterLast('/')?.uppercase()
         val language = listOfNotNull(
