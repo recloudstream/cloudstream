@@ -1831,7 +1831,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     " - "
                 }
             }$extra"
-
+            6 -> "$headerName - $extra"
             else -> ""
         }
         playerBinding?.playerVideoTitleRez?.apply {
@@ -1856,7 +1856,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         playerBinding?.playerVideoInfo?.apply {
             text = stats
-            isVisible = stats.isNotBlank()
+            isVisible = stats.isNotBlank() && titleRez == 6
         }
     }
 

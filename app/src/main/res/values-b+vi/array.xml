@@ -21,10 +21,12 @@
         <item>@string/resolution_and_title</item>
         <item>@string/title</item>
         <item>@string/resolution</item>
+        <item>@string/resolution_name_and_videoinfo</item>
         <item>@string/none</item>
     </array>
 
     <array name="limit_title_rez_pref_values">
+        <item>6</item>
         <item>5</item>
         <item>4</item>
         <item>3</item>

@@ -469,6 +469,7 @@
     <string name="resolution_and_title">Resolution and title</string>
     <string name="title">Title</string>
     <string name="resolution">Resolution</string>
+    <string name="resolution_name_and_videoinfo">Resolution, Title and Media Info</string>
     <string name="error_invalid_id">Invalid ID</string>
     <string name="error_invalid_data">Invalid data</string>
     <string name="error_invalid_url">Invalid URL</string>
