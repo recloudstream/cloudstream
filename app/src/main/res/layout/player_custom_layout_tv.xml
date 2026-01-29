@@ -75,6 +75,15 @@
                 tools:text="Brave rabbit cop Judy Hopps and her friend, the fox Nick Wilde, team up again to crack a new case." />
 
         </LinearLayout>
+
+        <ImageView
+            android:visibility="gone"
+            android:id="@+id/video_outline"
+            android:src="@drawable/video_outline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </ImageView>
+
     </FrameLayout>
 
     <FrameLayout
