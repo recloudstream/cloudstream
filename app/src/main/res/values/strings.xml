@@ -187,6 +187,7 @@
     <string name="show_fillers_settings">Show filler episode for anime</string>
     <string name="show_trailers_settings">Show trailers</string>
     <string name="kitsu_settings">Show posters from Kitsu</string>
+    <string name="show_cast_in_details">Show cast panel</string>
     <string name="pref_filter_search_quality">Hide selected video quality in search results</string>
     <string name="automatic_plugin_updates">Automatic plugin updates</string>
     <string name="automatic_plugin_download">Automatically download plugins</string>
