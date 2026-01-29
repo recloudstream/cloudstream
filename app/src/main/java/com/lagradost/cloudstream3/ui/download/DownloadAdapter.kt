@@ -19,7 +19,7 @@ import com.lagradost.cloudstream3.ui.download.button.DownloadStatusTell
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 
 const val DOWNLOAD_ACTION_PLAY_FILE = 0
 const val DOWNLOAD_ACTION_DELETE_FILE = 1
@@ -27,6 +27,7 @@ const val DOWNLOAD_ACTION_RESUME_DOWNLOAD = 2
 const val DOWNLOAD_ACTION_PAUSE_DOWNLOAD = 3
 const val DOWNLOAD_ACTION_DOWNLOAD = 4
 const val DOWNLOAD_ACTION_LONG_CLICK = 5
+const val DOWNLOAD_ACTION_CANCEL_PENDING = 6
 
 const val DOWNLOAD_ACTION_GO_TO_CHILD = 0
 const val DOWNLOAD_ACTION_LOAD_RESULT = 1
@@ -34,22 +35,22 @@ const val DOWNLOAD_ACTION_LOAD_RESULT = 1
 sealed class VisualDownloadCached {
     abstract val currentBytes: Long
     abstract val totalBytes: Long
-    abstract val data: VideoDownloadHelper.DownloadCached
+    abstract val data: DownloadObjects.DownloadCached
     abstract var isSelected: Boolean
 
     data class Child(
         override val currentBytes: Long,
         override val totalBytes: Long,
-        override val data: VideoDownloadHelper.DownloadEpisodeCached,
+        override val data: DownloadObjects.DownloadEpisodeCached,
         override var isSelected: Boolean,
     ) : VisualDownloadCached()
 
     data class Header(
         override val currentBytes: Long,
         override val totalBytes: Long,
-        override val data: VideoDownloadHelper.DownloadHeaderCached,
+        override val data: DownloadObjects.DownloadHeaderCached,
         override var isSelected: Boolean,
-        val child: VideoDownloadHelper.DownloadEpisodeCached?,
+        val child: DownloadObjects.DownloadEpisodeCached?,
         val currentOngoingDownloads: Int,
         val totalDownloads: Int,
     ) : VisualDownloadCached()
@@ -57,12 +58,12 @@ sealed class VisualDownloadCached {
 
 data class DownloadClickEvent(
     val action: Int,
-    val data: VideoDownloadHelper.DownloadEpisodeCached
+    val data: DownloadObjects.DownloadEpisodeCached
 )
 
 data class DownloadHeaderClickEvent(
     val action: Int,
-    val data: VideoDownloadHelper.DownloadHeaderCached
+    val data: DownloadObjects.DownloadHeaderCached
 )
 
 class DownloadAdapter(
@@ -170,6 +171,7 @@ class DownloadAdapter(
             }
         }
 
+        downloadButton.resetView()
         val status = downloadButton.getStatus(card.child.id, card.currentBytes, card.totalBytes)
         if (status == DownloadStatusTell.IsDone) {
             // We do this here instead if we are finished downloading
@@ -187,7 +189,6 @@ class DownloadAdapter(
         } else {
             // We need to make sure we restore the correct progress
             // when we refresh data in the adapter.
-            downloadButton.resetView()
             val drawable = downloadButton.getDrawableFromStatus(status)?.let {
                 ContextCompat.getDrawable(downloadButton.context, it)
             }
@@ -277,6 +278,7 @@ class DownloadAdapter(
                 }
             }
 
+            downloadButton.resetView()
             val status = downloadButton.getStatus(data.id, card.currentBytes, card.totalBytes)
             if (status == DownloadStatusTell.IsDone) {
                 // We do this here instead if we are finished downloading
@@ -295,7 +297,6 @@ class DownloadAdapter(
             } else {
                 // We need to make sure we restore the correct progress
                 // when we refresh data in the adapter.
-                downloadButton.resetView()
                 val drawable = downloadButton.getDrawableFromStatus(status)?.let {
                     ContextCompat.getDrawable(downloadButton.context, it)
                 }
