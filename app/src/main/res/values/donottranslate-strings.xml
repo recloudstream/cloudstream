@@ -39,6 +39,7 @@
     <string name="autoplay_next_key">autoplay_next_key</string>
     <string name="display_sub_key">display_sub_key</string>
     <string name="show_fillers_key">show_fillers_key</string>
+    <string name="show_player_metadata_key">show_player_metadata_key</string>
     <string name="show_trailers_key">show_trailers_key</string>
     <string name="show_kitsu_posters_key">show_kitsu_posters_key</string>
     <string name="random_button_key">random_button_key</string>

@@ -101,6 +101,8 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
 import kotlin.math.roundToInt
+import com.lagradost.cloudstream3.utils.AppContextUtils.shouldShowPlayerMetadata
+
 
 // You can zoom out more than 100%, but it will zoom back into 100%
 const val MINIMUM_ZOOM = 0.95f
@@ -247,6 +249,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     private fun scheduleMetadataVisibility() {
         val metadataScrim = playerBinding?.playerMetadataScrim ?: return
+
+        if (!requireContext().shouldShowPlayerMetadata()) {
+            metadataScrim.isVisible = false
+            return
+        }
 
         if (isLayout(PHONE)) {
             metadataScrim.isVisible = false
