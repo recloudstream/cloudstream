@@ -410,14 +410,12 @@ class CS3IPlayer : IPlayer {
                 return  // everything went fine
             }
         
-        // Fallback to language selection
         exoPlayer?.trackSelectionParameters = exoPlayer?.trackSelectionParameters
             ?.buildUpon()
             ?.setPreferredAudioLanguage(trackLanguage)
             ?.build()
             ?: return
     }
-
 
     /**
      * Gets all supported formats in a list
@@ -468,8 +466,8 @@ class CS3IPlayer : IPlayer {
     }
 
     override fun getVideoTracks(): CurrentTracks {
-        val allTracks = exoPlayer?.currentTracks?.groups ?: emptyList()
-        val videoTracks = allTracks.filter { it.type == TRACK_TYPE_VIDEO }
+        val allTrackGroups = exoPlayer?.currentTracks?.groups ?: emptyList()
+        val videoTracks = allTrackGroups.filter { it.type == TRACK_TYPE_VIDEO }
             .getFormats()
             .map { it.first.toVideoTrack() }
         var currentAudioTrack: AudioTrack? = null
@@ -486,7 +484,8 @@ class CS3IPlayer : IPlayer {
                 }
             }
         
-        val textTracks = allTracks.filter { it.type == TRACK_TYPE_TEXT }.getFormats()
+        val textTracks = allTrackGroups.filter { it.type == TRACK_TYPE_TEXT }
+            .getFormats()
             .map { it.first.toSubtitleTrack() }
 
         val currentTextTracks = textTracks.filter { track ->
