@@ -478,7 +478,7 @@ class CS3IPlayer : IPlayer {
                     if (group.isTrackSelected(formatIndex)) {
                         currentAudioTrack = audioTrack
                     }
-                    audioTrack  // Retornar el AudioTrack para la lista
+                    audioTrack
                 }
             }
         
