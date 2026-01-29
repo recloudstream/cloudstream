@@ -386,35 +386,33 @@ class CS3IPlayer : IPlayer {
             ?: return
     }
 
-    override fun setPreferredAudioTrack(trackLanguage: String?, id: String?) {
+    override fun setPreferredAudioTrack(trackLanguage: String?, id: String?, formatIndex: Int?) {
         preferredAudioTrackLanguage = trackLanguage
-        
-        val formatId = id?.substringBeforeLast(":")
-        val trackFormatIndex = id?.substringAfterLast(":")?.toIntOrNull() ?: -1
-        
-        exoPlayer?.currentTracks?.groups
-            ?.filter { it.type == TRACK_TYPE_AUDIO }
-            ?.find { group ->
-                (0 until group.mediaTrackGroup.length).any { index ->
-                    group.mediaTrackGroup.getFormat(index).id == formatId
+        id?.let { trackId ->
+            val trackFormatIndex = formatIndex ?: 0  // Default to first format if not specified
+            exoPlayer?.currentTracks?.groups
+                ?.filter { it.type == TRACK_TYPE_AUDIO }
+                ?.find { group ->
+                    (0 until group.mediaTrackGroup.length).any { index ->
+                        group.mediaTrackGroup.getFormat(index).id == trackId
+                    }
                 }
-            }
-            ?.let { group ->
-                exoPlayer?.trackSelectionParameters
-                    ?.buildUpon()
-                    ?.setOverrideForType(TrackSelectionOverride(group.mediaTrackGroup, trackFormatIndex))
-                    ?.build()
-            }
-            ?.let { newParams ->
-                exoPlayer?.trackSelectionParameters = newParams
-                return  // everything went fine
-            }
-        
+                ?.let { group ->
+                    exoPlayer?.trackSelectionParameters
+                        ?.buildUpon()
+                        ?.setOverrideForType(TrackSelectionOverride(group.mediaTrackGroup, trackFormatIndex))
+                        ?.build()
+                }
+                ?.let { newParams ->
+                    exoPlayer?.trackSelectionParameters = newParams
+                    return  // everything went fine
+                }
+        }
+        // Fallback to language-based selection
         exoPlayer?.trackSelectionParameters = exoPlayer?.trackSelectionParameters
             ?.buildUpon()
             ?.setPreferredAudioLanguage(trackLanguage)
-            ?.build()
-            ?: return
+            ?.build() ?: return
     }
 
     /**

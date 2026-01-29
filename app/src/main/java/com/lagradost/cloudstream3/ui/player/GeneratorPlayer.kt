@@ -1506,7 +1506,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                     val currentTrack = currentAudioTracks.getOrNull(audioIndexStart)
                     player.setPreferredAudioTrack(
                         currentTrack?.language, 
-                        "${currentTrack?.id}:${currentTrack?.formatIndex}"
+                        currentTrack?.id,
+                        currentTrack?.formatIndex,
                     )
 
                     val currentVideo = currentVideoTracks.getOrNull(videoIndex)
