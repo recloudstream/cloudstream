@@ -21,6 +21,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -42,6 +43,11 @@ class SearchViewModel : ViewModel() {
 
     private val _currentHistory: MutableLiveData<List<SearchHistoryItem>> = MutableLiveData()
     val currentHistory: LiveData<List<SearchHistoryItem>> get() = _currentHistory
+
+    private val _searchSuggestions: MutableLiveData<List<String>> = MutableLiveData()
+    val searchSuggestions: LiveData<List<String>> get() = _searchSuggestions
+
+    private var suggestionJob: Job? = null
 
     private var repos = synchronized(apis) { apis.map { APIRepository(it) } }
 
@@ -81,6 +87,35 @@ class SearchViewModel : ViewModel() {
             getKey<SearchHistoryItem>(it)
         }?.sortedByDescending { it.searchedAt } ?: emptyList()
         _currentHistory.postValue(items)
+    }
+
+    /**
+     * Fetches search suggestions with debouncing.
+     * Waits 300ms before making the API call to avoid too many requests.
+     * 
+     * @param query The search query to get suggestions for
+     */
+    fun fetchSuggestions(query: String) {
+        suggestionJob?.cancel()
+        
+        if (query.isBlank() || query.length < 2) {
+            _searchSuggestions.postValue(emptyList())
+            return
+        }
+        
+        suggestionJob = ioSafe {
+            delay(300) // Debounce
+            val suggestions = SearchSuggestionApi.getSuggestions(query)
+            _searchSuggestions.postValue(suggestions)
+        }
+    }
+
+    /**
+     * Clears the current search suggestions.
+     */
+    fun clearSuggestions() {
+        suggestionJob?.cancel()
+        _searchSuggestions.postValue(emptyList())
     }
 
     private val lock: MutableSet<String> = mutableSetOf()

@@ -8,6 +8,14 @@
     android:tag="television"
     tools:orientation="vertical">
 
+    <ImageView
+        android:visibility="gone"
+        android:id="@+id/video_outline"
+        android:src="@drawable/video_outline"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </ImageView>
+
 
     <FrameLayout
         android:id="@+id/piphide"
@@ -269,6 +277,7 @@
                     android:layout_marginTop="20dp"
                     android:layout_marginEnd="32dp"
                     android:orientation="vertical">
+
                     <LinearLayout
                         android:id="@+id/player_video_title_holder"
                         android:layout_width="wrap_content"
@@ -297,6 +306,7 @@
                             tools:visibility="visible"
                             android:layout_gravity="start"/>
                     </LinearLayout>
+
                     <TextView
                         android:id="@+id/player_video_title_rez"
                         android:layout_width="wrap_content"
@@ -308,6 +318,19 @@
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         tools:text="1920x1080" />
+
+                    <TextView
+                        android:id="@+id/player_video_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginBottom="2.5dp"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:visibility="gone"
+                        android:layout_gravity="end"
+                        tools:text="HDR10 • HEVC" />
+
 
                     <FrameLayout
                         android:id="@+id/player_episode_filler_holder"

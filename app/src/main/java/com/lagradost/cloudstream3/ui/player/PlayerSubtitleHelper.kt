@@ -11,6 +11,7 @@ import androidx.media3.ui.SubtitleView
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.setSubtitleViewStyle
+import com.lagradost.cloudstream3.utils.SubtitleHelper.fromLanguageToTagIETF
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 
 enum class SubtitleStatus {
@@ -45,6 +46,16 @@ data class SubtitleData(
     fun getId(): String {
         return if (origin == SubtitleOrigin.EMBEDDED_IN_VIDEO) url
         else "$url|$name"
+    }
+
+    /** Returns true if langCode is the same as the IETF tag */
+    fun matchesLanguageCode(langCode: String): Boolean {
+        return getIETF_tag() == langCode
+    }
+
+    /** Tries hard to figure out a valid IETF tag based on language code and name. Will return null if not found. */
+    fun getIETF_tag(): String? {
+        return fromLanguageToTagIETF(this.languageCode) ?: fromLanguageToTagIETF(this.originalName, halfMatch = true)
     }
 
     val name = "$originalName $nameSuffix"
