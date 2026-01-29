@@ -29,13 +29,22 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
 import com.lagradost.cloudstream3.LoadResponse.Companion.readIdFromString
 import com.lagradost.cloudstream3.metaproviders.SyncRedirector
-import com.lagradost.cloudstream3.mvvm.*
+import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.debugAssert
+import com.lagradost.cloudstream3.mvvm.debugException
+import com.lagradost.cloudstream3.mvvm.launchSafe
+import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.safe
+import com.lagradost.cloudstream3.mvvm.safeApiCall
+import com.lagradost.cloudstream3.runAllAsync
+import com.lagradost.cloudstream3.sortUrls
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.secondsToReadable
-import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
+import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.APIRepository
-import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
+import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.IGenerator
 import com.lagradost.cloudstream3.ui.player.LOADTYPE_ALL
@@ -45,9 +54,6 @@ import com.lagradost.cloudstream3.ui.player.LOADTYPE_INAPP_DOWNLOAD
 import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.result.EpisodeAdapter.Companion.getPlayerAction
-import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
-import com.lagradost.cloudstream3.ui.WatchType
-import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppContextUtils.isConnectedToChromecast
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
@@ -57,9 +63,12 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.Coroutines.ioWorkSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
+import com.lagradost.cloudstream3.utils.DataStore
 import com.lagradost.cloudstream3.utils.DataStore.editor
 import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllBookmarkedData
@@ -86,10 +95,31 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setSubscribedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.updateSubscribedData
-import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToEnglishLanguageName
+import com.lagradost.cloudstream3.utils.Editor
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import com.lagradost.cloudstream3.utils.FillerEpisodeCheck
+import com.lagradost.cloudstream3.utils.INFER_TYPE
+import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
+import com.lagradost.cloudstream3.utils.UiText
+import com.lagradost.cloudstream3.utils.VIDEO_WATCH_STATE
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.sanitizeFilename
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDownloadEpisodeMetadata
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
+import com.lagradost.cloudstream3.utils.downloader.DownloadUtils.downloadSubtitle
+import com.lagradost.cloudstream3.utils.loadExtractor
+import com.lagradost.cloudstream3.utils.newExtractorLink
+import com.lagradost.cloudstream3.utils.txt
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.*
 
 /** This starts at 1 */
 data class EpisodeRange(
@@ -668,228 +698,6 @@ class ResultViewModel2 : ViewModel() {
                 index to list
             }.toMap()
         }
-
-        private fun downloadSubtitle(
-            context: Context?,
-            link: ExtractorSubtitleLink,
-            fileName: String,
-            folder: String
-        ) {
-            ioSafe {
-                VideoDownloadManager.downloadThing(
-                    context ?: return@ioSafe,
-                    link,
-                    "$fileName ${link.name}",
-                    folder,
-                    if (link.url.contains(".srt")) "srt" else "vtt",
-                    false,
-                    null, createNotificationCallback = {}
-                )
-            }
-        }
-
-        private fun getFolder(currentType: TvType, titleName: String): String {
-            return if (currentType.isEpisodeBased()) {
-                val sanitizedFileName = VideoDownloadManager.sanitizeFilename(titleName)
-                "${currentType.getFolderPrefix()}/$sanitizedFileName"
-            } else currentType.getFolderPrefix()
-        }
-
-        private fun downloadSubtitle(
-            context: Context?,
-            link: SubtitleData,
-            meta: VideoDownloadManager.DownloadEpisodeMetadata,
-        ) {
-            context?.let { ctx ->
-                val fileName = VideoDownloadManager.getFileName(ctx, meta)
-                val folder = getFolder(meta.type ?: return, meta.mainName)
-                downloadSubtitle(
-                    ctx,
-                    ExtractorSubtitleLink(link.name, link.url, "", link.headers),
-                    fileName,
-                    folder
-                )
-            }
-        }
-
-        fun startDownload(
-            context: Context?,
-            episode: ResultEpisode,
-            currentIsMovie: Boolean,
-            currentHeaderName: String,
-            currentType: TvType,
-            currentPoster: String?,
-            apiName: String,
-            parentId: Int,
-            url: String,
-            links: List<ExtractorLink>,
-            subs: List<SubtitleData>?
-        ) {
-            try {
-                if (context == null) return
-
-                val meta =
-                    getMeta(
-                        episode,
-                        currentHeaderName,
-                        apiName,
-                        currentPoster,
-                        currentIsMovie,
-                        currentType
-                    )
-
-                val folder = getFolder(currentType, currentHeaderName)
-
-                val src = "$DOWNLOAD_NAVIGATE_TO/$parentId" // url ?: return@let
-
-                // SET VISUAL KEYS
-                setKey(
-                    DOWNLOAD_HEADER_CACHE,
-                    parentId.toString(),
-                    VideoDownloadHelper.DownloadHeaderCached(
-                        apiName = apiName,
-                        url = url,
-                        type = currentType,
-                        name = currentHeaderName,
-                        poster = currentPoster,
-                        id = parentId,
-                        cacheTime = System.currentTimeMillis(),
-                    )
-                )
-
-                setKey(
-                    DataStore.getFolderName(
-                        DOWNLOAD_EPISODE_CACHE,
-                        parentId.toString()
-                    ), // 3 deep folder for faster acess
-                    episode.id.toString(),
-                    VideoDownloadHelper.DownloadEpisodeCached(
-                        name = episode.name,
-                        poster = episode.poster,
-                        episode = episode.episode,
-                        season = episode.season,
-                        id = episode.id,
-                        parentId = parentId,
-                        score = episode.score,
-                        description = episode.description,
-                        cacheTime = System.currentTimeMillis(),
-                    )
-                )
-
-                // DOWNLOAD VIDEO
-                VideoDownloadManager.downloadEpisodeUsingWorker(
-                    context,
-                    src,//url ?: return,
-                    folder,
-                    meta,
-                    links
-                )
-
-                // 1. Checks if the lang should be downloaded
-                // 2. Makes it into the download format
-                // 3. Downloads it as a .vtt file
-                val downloadList = SubtitlesFragment.getDownloadSubsLanguageTagIETF()
-
-                subs?.filter { subtitle ->
-                    downloadList.any { langTagIETF ->
-                        subtitle.languageCode == langTagIETF ||
-                                subtitle.originalName.contains(
-                                    fromTagToEnglishLanguageName(
-                                        langTagIETF
-                                    ) ?: langTagIETF
-                                )
-                    }
-                }
-                    ?.map { ExtractorSubtitleLink(it.name, it.url, "", it.headers) }
-                    ?.take(3) // max subtitles download hardcoded (?_?)
-                    ?.forEach { link ->
-                        val fileName = VideoDownloadManager.getFileName(context, meta)
-                        downloadSubtitle(context, link, fileName, folder)
-                    }
-            } catch (e: Exception) {
-                logError(e)
-            }
-        }
-
-        suspend fun downloadEpisode(
-            activity: Activity?,
-            episode: ResultEpisode,
-            currentIsMovie: Boolean,
-            currentHeaderName: String,
-            currentType: TvType,
-            currentPoster: String?,
-            apiName: String,
-            parentId: Int,
-            url: String,
-        ) {
-            ioSafe {
-                val generator = RepoLinkGenerator(listOf(episode))
-                val currentLinks = mutableSetOf<ExtractorLink>()
-                val currentSubs = mutableSetOf<SubtitleData>()
-                generator.generateLinks(
-                    clearCache = false,
-                    sourceTypes = LOADTYPE_INAPP_DOWNLOAD,
-                    callback = {
-                        it.first?.let { link ->
-                            currentLinks.add(link)
-                        }
-                    },
-                    subtitleCallback = { sub ->
-                        currentSubs.add(sub)
-                    })
-
-                if (currentLinks.isEmpty()) {
-                    main {
-                        showToast(
-                            R.string.no_links_found_toast,
-                            Toast.LENGTH_SHORT
-                        )
-                    }
-                    return@ioSafe
-                } else {
-                    main {
-                        showToast(
-                            R.string.download_started,
-                            Toast.LENGTH_SHORT
-                        )
-                    }
-                }
-
-                startDownload(
-                    activity,
-                    episode,
-                    currentIsMovie,
-                    currentHeaderName,
-                    currentType,
-                    currentPoster,
-                    apiName,
-                    parentId,
-                    url,
-                    sortUrls(currentLinks),
-                    sortSubs(currentSubs),
-                )
-            }
-        }
-
-        private fun getMeta(
-            episode: ResultEpisode,
-            titleName: String,
-            apiName: String,
-            currentPoster: String?,
-            currentIsMovie: Boolean,
-            tvType: TvType,
-        ): VideoDownloadManager.DownloadEpisodeMetadata {
-            return VideoDownloadManager.DownloadEpisodeMetadata(
-                episode.id,
-                VideoDownloadManager.sanitizeFilename(titleName),
-                apiName,
-                episode.poster ?: currentPoster,
-                episode.name,
-                if (currentIsMovie) null else episode.season,
-                if (currentIsMovie) null else episode.episode,
-                tvType,
-            )
-        }
     }
 
     private val _watchStatus: MutableLiveData<WatchType> = MutableLiveData(WatchType.NONE)
@@ -1067,6 +875,28 @@ class ResultViewModel2 : ViewModel() {
             }
         }
     }
+
+    private fun getMeta(
+        episode: ResultEpisode,
+        titleName: String,
+        apiName: String,
+        currentPoster: String?,
+        currentIsMovie: Boolean,
+        tvType: TvType,
+    ): DownloadObjects.DownloadEpisodeMetadata {
+        return DownloadObjects.DownloadEpisodeMetadata(
+            episode.id,
+            episode.parentId,
+            sanitizeFilename(titleName),
+            apiName,
+            episode.poster ?: currentPoster,
+            episode.name,
+            if (currentIsMovie) null else episode.season,
+            if (currentIsMovie) null else episode.episode,
+            tvType,
+        )
+    }
+
 
     /**
      * Toggles the favorite status of an item.
@@ -1613,16 +1443,17 @@ class ResultViewModel2 : ViewModel() {
 
             ACTION_DOWNLOAD_EPISODE -> {
                 val response = currentResponse ?: return
-                downloadEpisode(
-                    activity,
-                    click.data,
-                    response.isMovie(),
-                    response.name,
-                    response.type,
-                    response.posterUrl,
-                    response.apiName,
-                    response.getId(),
-                    response.url
+                DownloadQueueManager.addToQueue(
+                    DownloadObjects.DownloadQueueItem(
+                        click.data,
+                        response.isMovie(),
+                        response.name,
+                        response.type,
+                        response.posterUrl,
+                        response.apiName,
+                        response.getId(),
+                        response.url,
+                    ).toWrapper()
                 )
             }
 
@@ -1633,9 +1464,8 @@ class ResultViewModel2 : ViewModel() {
                     LOADTYPE_INAPP_DOWNLOAD,
                     txt(R.string.episode_action_download_mirror)
                 ) { (result, index) ->
-                    ioSafe {
-                        startDownload(
-                            activity,
+                    DownloadQueueManager.addToQueue(
+                        DownloadObjects.DownloadQueueItem(
                             click.data,
                             response.isMovie(),
                             response.name,
@@ -1646,8 +1476,8 @@ class ResultViewModel2 : ViewModel() {
                             response.url,
                             listOf(result.links[index]),
                             result.subs,
-                        )
-                    }
+                        ).toWrapper()
+                    )
                     showToast(
                         R.string.download_started,
                         Toast.LENGTH_SHORT
@@ -2816,7 +2646,7 @@ class ResultViewModel2 : ViewModel() {
                     setKey(
                         DOWNLOAD_HEADER_CACHE,
                         mainId.toString(),
-                        VideoDownloadHelper.DownloadHeaderCached(
+                        DownloadObjects.DownloadHeaderCached(
                             apiName = apiName,
                             url = validUrl,
                             type = loadResponse.type,

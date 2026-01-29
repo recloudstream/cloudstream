@@ -191,6 +191,7 @@ import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.system.exitProcess
 import androidx.core.net.toUri
+import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import androidx.tvprovider.media.tv.Channel
 import androidx.tvprovider.media.tv.TvContractCompat
 import android.content.ComponentName
@@ -494,6 +495,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             R.id.navigation_downloads,
             R.id.navigation_settings,
             R.id.navigation_download_child,
+            R.id.navigation_download_queue,
             R.id.navigation_subtitles,
             R.id.navigation_chrome_subtitles,
             R.id.navigation_settings_player,
@@ -557,7 +559,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
              * highlight the wrong one in UI.
              */
             when (destination.id) {
-                in listOf(R.id.navigation_downloads, R.id.navigation_download_child) -> {
+                in listOf(R.id.navigation_downloads, R.id.navigation_download_child, R.id.navigation_download_queue) -> {
                     navRailView.menu.findItem(R.id.navigation_downloads).isChecked = true
                     navView.menu.findItem(R.id.navigation_downloads).isChecked = true
                 }
@@ -2032,6 +2034,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             updateLocale()
             runDefault()
         }
+        
+        // Start the download queue
+        DownloadQueueManager.init(this)
     }
 
     /** Biometric stuff **/
