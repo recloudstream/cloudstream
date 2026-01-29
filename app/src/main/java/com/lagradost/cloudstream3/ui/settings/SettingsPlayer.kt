@@ -24,6 +24,7 @@ import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 
 class SettingsPlayer : BasePreferenceFragmentCompat() {
@@ -113,21 +114,28 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
 
         getPref(R.string.prefer_limit_title_rez_key)?.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.limit_title_rez_pref_names)
-            val prefValues = resources.getIntArray(R.array.limit_title_rez_pref_values)
-            val current = settingsManager.getInt(getString(R.string.prefer_limit_title_rez_key), 3)
+            val keys = resources.getStringArray(R.array.limit_title_rez_pref_values)
 
-            activity?.showBottomDialog(
+            val selectedIndices = keys.map {
+                settingsManager.getBoolean(it, true)
+            }.mapIndexedNotNull { index, enabled ->
+                if (enabled) index else null
+            }
+
+            activity?.showMultiDialog(
                 prefNames.toList(),
-                prefValues.indexOf(current),
+                selectedIndices,
                 getString(R.string.limit_title_rez),
-                true,
                 {}
-            ) {
+            ) { selected ->
                 settingsManager.edit {
-                    putInt(getString(R.string.prefer_limit_title_rez_key), prefValues[it])
+                    for ((index, key) in keys.withIndex()) {
+                        putBoolean(key, selected.contains(index))
+                    }
                 }
             }
-            return@setOnPreferenceClickListener true
+
+            true
         }
 
         getPref(R.string.hide_player_control_names_key)?.hideOn(TV)

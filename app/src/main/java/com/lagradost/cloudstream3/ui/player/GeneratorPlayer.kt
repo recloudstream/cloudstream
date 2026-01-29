@@ -154,8 +154,11 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
 
-    private var titleRez = 3
     private var limitTitle = 0
+    private var showTitle = false
+    private var showName = false
+    private var showResolution = false
+    private var showMediaInfo = false
 
     private lateinit var viewModel: PlayerGeneratorViewModel //by activityViewModels()
     private lateinit var sync: SyncViewModel
@@ -1804,41 +1807,34 @@ class GeneratorPlayer : FullScreenPlayer() {
         playerBinding?.offlinePin?.isVisible = lastUsedGenerator is DownloadFileGenerator
     }
 
+    private enum class TitlePart {
+        TITLE,
+        NAME,
+        RESOLUTION,
+    }
+
     @SuppressLint("SetTextI18n")
     fun setPlayerDimen(widthHeight: Pair<Int, Int>?) {
-        val extra = widthHeight?.let { (w, h) -> "${w}x${h}" } ?: ""
-        val source = currentSelectedLink?.first?.name ?: currentSelectedLink?.second?.name ?: "NULL"
-        val headerName = getHeaderName().orEmpty()
+        val resolution = widthHeight?.let { "${it.first}x${it.second}" }
+        val name = currentSelectedLink?.first?.name ?: currentSelectedLink?.second?.name
+        val title = getHeaderName()
 
+        val parts = arrayOf(
+            TitlePart.TITLE to (if (showTitle) title else null),
+            TitlePart.NAME to (if (showName) name else null),
+            TitlePart.RESOLUTION to (if (showResolution) resolution else null),
+        )
 
-        val title = when (titleRez) {
-            0 -> ""
-            1 -> extra
-            2 -> source
-            3 -> "$source${
-                if (source.isBlank()) {
-                    ""
-                } else {
-                    " - "
-                }
-            }$extra"
+        val result = parts
+            .mapNotNull { it.second?.takeIf { v -> v.isNotBlank() } }
+            .joinToString(" - ")
 
-            4 -> headerName
-            5 -> "$headerName${
-                if (headerName.isBlank()) {
-                    ""
-                } else {
-                    " - "
-                }
-            }$extra"
-            6 -> "$headerName - $extra"
-            else -> ""
-        }
         playerBinding?.playerVideoTitleRez?.apply {
-            text = title
-            isVisible = title.isNotBlank()
+            text = result
+            isVisible = result.isNotBlank()
         }
     }
+
     private fun updatePlayerInfo() {
         val tracks = player.getVideoTracks()
 
@@ -1856,7 +1852,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         playerBinding?.playerVideoInfo?.apply {
             text = stats
-            isVisible = stats.isNotBlank() && titleRez == 6
+            isVisible = showMediaInfo && stats.isNotBlank()
         }
     }
 
@@ -2052,7 +2048,10 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         context?.let { ctx ->
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
-            titleRez = settingsManager.getInt(ctx.getString(R.string.prefer_limit_title_rez_key), 3)
+            showTitle = settingsManager.getBoolean("limit_show_title", true)
+            showName = settingsManager.getBoolean("limit_show_name", true)
+            showResolution = settingsManager.getBoolean("limit_show_resolution", true)
+            showMediaInfo = settingsManager.getBoolean("limit_show_media_info", true)
             limitTitle = settingsManager.getInt(ctx.getString(R.string.prefer_limit_title_key), 0)
             updateForcedEncoding(ctx)
             filterSubByLang =
