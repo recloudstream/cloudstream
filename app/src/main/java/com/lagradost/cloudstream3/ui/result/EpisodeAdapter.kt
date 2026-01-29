@@ -8,7 +8,6 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil3.dispose
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
@@ -141,6 +140,7 @@ class EpisodeAdapter(
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindContent(holder: ViewHolderState<Any>, item: ResultEpisode, position: Int) {
         val itemView = holder.itemView
         when (val binding = holder.view) {
@@ -199,8 +199,9 @@ class EpisodeAdapter(
                         }
                     }
 
-                    val name =
-                        if (item.name == null) "${episodeText.context.getString(R.string.episode)} ${item.episode}" else "${item.episode}. ${item.name}"
+                    val name = item.name?.takeIf { it.isNotBlank() }
+                        ?: episodeText.context.getString(R.string.episode).let { "$it ${item.episode}" }
+
                     episodeFiller.isVisible = item.isFiller == true
                     episodeText.text =
                         name//if(card.isFiller == true) episodeText.context.getString(R.string.filler).format(name) else name
@@ -252,7 +253,16 @@ class EpisodeAdapter(
                         // Clear the image
                         episodePoster.dispose()
                     }
+
                     episodePoster.isVisible = posterVisible
+
+                    episodeSeasonEp.text = if (item.season != null) {
+                            "S${item.season}E${item.episode}"
+                        } else {
+                            "E${item.episode}"
+                        }
+
+                    episodeSeasonEp.isVisible = episodeSeasonEp.text.isNotBlank()
 
                     val rating10p = item.score?.toFloat(10)
                     if (rating10p != null && rating10p > 0.1) {
