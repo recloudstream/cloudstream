@@ -1472,7 +1472,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                             mimeType.contains("mp3") || mimeType.contains("mpeg") -> "mp3"
                             mimeType.contains("flac") -> "flac"
                             mimeType.contains("dts") -> "dts"
-                            else -> mimeType
+                            else -> mimeType.substringAfter("/")
                         }
                     } ?: "codec?"
                     
