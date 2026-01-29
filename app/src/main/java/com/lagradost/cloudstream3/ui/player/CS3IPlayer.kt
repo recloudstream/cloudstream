@@ -388,27 +388,29 @@ class CS3IPlayer : IPlayer {
 
     override fun setPreferredAudioTrack(trackLanguage: String?, id: String?) {
         preferredAudioTrackLanguage = trackLanguage
-
-        if (id != null) {
-            val audioTrack =
-                exoPlayer?.currentTracks?.groups?.filter { it.type == TRACK_TYPE_AUDIO }
-                    ?.getTrack(id)
-
-            if (audioTrack != null) {
-                exoPlayer?.trackSelectionParameters = exoPlayer?.trackSelectionParameters
-                    ?.buildUpon()
-                    ?.setOverrideForType(
-                        TrackSelectionOverride(
-                            audioTrack.first,
-                            audioTrack.second
-                        )
-                    )
-                    ?.build()
-                    ?: return
-                return
+        
+        val formatId = id?.substringBeforeLast(":")
+        val trackFormatIndex = id?.substringAfterLast(":")?.toIntOrNull() ?: -1
+        
+        exoPlayer?.currentTracks?.groups
+            ?.filter { it.type == TRACK_TYPE_AUDIO }
+            ?.find { group ->
+                (0 until group.mediaTrackGroup.length).any { index ->
+                    group.mediaTrackGroup.getFormat(index).id == formatId
+                }
             }
-        }
-
+            ?.let { group ->
+                exoPlayer?.trackSelectionParameters
+                    ?.buildUpon()
+                    ?.setOverrideForType(TrackSelectionOverride(group.mediaTrackGroup, trackFormatIndex))
+                    ?.build()
+            }
+            ?.let { newParams ->
+                exoPlayer?.trackSelectionParameters = newParams
+                return  // everything went fine
+            }
+        
+        // Fallback to language selection
         exoPlayer?.trackSelectionParameters = exoPlayer?.trackSelectionParameters
             ?.buildUpon()
             ?.setPreferredAudioLanguage(trackLanguage)
@@ -434,12 +436,14 @@ class CS3IPlayer : IPlayer {
         }
     }
 
-    private fun Format.toAudioTrack(): AudioTrack {
+    private fun Format.toAudioTrack(formatIndex: Int?): AudioTrack {
         return AudioTrack(
-            this.id?.stripTrackId(),
+            this.id,
             this.label,
             this.language,
-            this.sampleMimeType
+            this.sampleMimeType,
+            this.channelCount,
+            formatIndex ?: 0,
         )
     }
 
@@ -468,9 +472,20 @@ class CS3IPlayer : IPlayer {
         val videoTracks = allTracks.filter { it.type == TRACK_TYPE_VIDEO }
             .getFormats()
             .map { it.first.toVideoTrack() }
-        val audioTracks = allTracks.filter { it.type == TRACK_TYPE_AUDIO }.getFormats()
-            .map { it.first.toAudioTrack() }
-
+        var currentAudioTrack: AudioTrack? = null
+        val audioTracks = allTrackGroups.filter { it.type == TRACK_TYPE_AUDIO }
+            .flatMap { group ->
+                (0 until group.mediaTrackGroup.length).map { formatIndex ->
+                    val format = group.mediaTrackGroup.getFormat(formatIndex)
+                    val audioTrack = format.toAudioTrack(formatIndex)
+                    
+                    if (group.isTrackSelected(formatIndex)) {
+                        currentAudioTrack = audioTrack
+                    }
+                    audioTrack  // Retornar el AudioTrack para la lista
+                }
+            }
+        
         val textTracks = allTracks.filter { it.type == TRACK_TYPE_TEXT }.getFormats()
             .map { it.first.toSubtitleTrack() }
 
@@ -480,7 +495,7 @@ class CS3IPlayer : IPlayer {
 
         return CurrentTracks(
             exoPlayer?.videoFormat?.toVideoTrack(),
-            exoPlayer?.audioFormat?.toAudioTrack(),
+            currentAudioTrack,
             currentTextTracks,
             videoTracks,
             audioTracks,
