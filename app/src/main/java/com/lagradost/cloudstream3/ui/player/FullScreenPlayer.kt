@@ -32,6 +32,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.view.animation.DecelerateInterpolator
 import android.widget.LinearLayout
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AlertDialog
@@ -232,8 +233,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
 
     private fun scheduleMetadataVisibility() {
-        val metadataScrim =
-            playerBinding?.root?.findViewById<View>(R.id.player_metadata_scrim) ?: return
+        val metadataScrim = playerBinding?.playerMetadataScrim ?: return
 
         val isPaused = currentPlayerStatus == CSPlayerLoading.IsPaused
 
@@ -243,21 +243,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             metadataScrim.postDelayed({
                 metadataScrim.apply {
                     isVisible = true
-                    alpha = 0f
-                    animate()
-                        .alpha(1f)
-                        .setDuration(300L)
-                        .start()
                 }
             }, 8000L)
         } else {
-            metadataScrim.animate()
-                .alpha(0f)
-                .setDuration(200L)
-                .withEndAction {
-                    metadataScrim.isVisible = false
-                }
-                .start()
+             metadataScrim.isVisible = false
         }
     }
 
@@ -418,6 +407,13 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 start()
             }
         }
+        playerBinding?.playerMetadataScrim?.let {
+            ObjectAnimator.ofFloat(it, "translationY", 1f).apply {
+                duration = 200
+                start()
+            }
+        }
+
         val playerBarMove = if (isShowing) 0f else 50.toPx.toFloat()
         playerBinding?.bottomPlayerBar?.let {
             ObjectAnimator.ofFloat(it, "translationY", playerBarMove).apply {
@@ -593,7 +589,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     override fun onResume() {
         enterFullscreen()
         verifyVolume()
-        playerBinding?.root?.findViewById<View>(R.id.player_metadata_scrim)?.isVisible = false
         activity?.attachBackPressedCallback("FullScreenPlayer") {
             if (isShowingEpisodeOverlay) {
                 // isShowingEpisodeOverlay pauses, so this makes it easier to unpause

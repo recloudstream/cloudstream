@@ -85,6 +85,7 @@ import com.lagradost.cloudstream3.ui.result.EpisodeAdapter
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.ResultFragment
+import com.lagradost.cloudstream3.ui.result.ResultFragment.bindLogo
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.result.SyncViewModel
@@ -96,6 +97,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.subtitles.SUBTITLE_AUTO_SELECT_KEY
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAutoSelectLanguageTagIETF
+import com.lagradost.cloudstream3.utils.AppContextUtils.getShortSeasonText
 import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.AppContextUtils.sortSubs
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -1545,8 +1547,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     private fun showPlayerMetadata() {
-        val root = binding?.root ?: return
-        val overlay = root.findViewById<View>(R.id.player_metadata_scrim) ?: return
+        val overlay = playerBinding?.playerMetadataScrim ?: return
 
         val titleView = overlay.findViewById<TextView>(R.id.player_movie_title)
         val logoView = overlay.findViewById<ImageView>(R.id.player_movie_logo)
@@ -1555,26 +1556,23 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         val load = viewModel.getLoadResponse() ?: return
         val episode = currentMeta as? ResultEpisode
+        titleView.text = load.name
 
-        val logoUrl = load.logoUrl
-
-        if (!logoUrl.isNullOrBlank()) {
-            logoView.isVisible = true
-            titleView.isVisible = false
-            CloudStreamApp.context?.getImageBitmapFromUrl(logoUrl)?.let {
-                logoView.setImageBitmap(it)
-            }
-        } else {
-            logoView.isVisible = false
-            titleView.isVisible = true
-            titleView.text = load.name
-        }
+        bindLogo(
+            url = load.logoUrl,
+            headers = load.posterHeaders,
+            titleView = titleView,
+            logoView = logoView
+        )
 
         val meta = arrayOf(
             load.tags?.takeIf { it.isNotEmpty() }?.joinToString(", "),
             load.year?.toString(),
             if (!load.type.isMovieType())
-                episode?.let { "S${it.season} • E${it.episode}" }
+                context?.getShortSeasonText(
+                    episode = episode?.episode,
+                    season = episode?.season
+                )
             else null,
             load.score?.let { "⭐ $it" }
         ).filterNotNull()
