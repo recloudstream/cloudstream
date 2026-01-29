@@ -217,6 +217,7 @@ class EpisodeAdapter(
                         // the duration and position is 0
                         episodeProgress.max = 1
                         episodeProgress.progress = 1
+                        episodeProgress.isVisible = true
                     } else {
                         val displayPos = item.getDisplayPosition()
                         episodeProgress.max = (item.duration / 1000).toInt()
