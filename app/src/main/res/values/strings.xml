@@ -185,6 +185,7 @@
     <string name="search_suggestions_des">Show search suggestions while typing</string>
     <string name="clear_suggestions">Clear Suggestions</string>
     <string name="show_fillers_settings">Show filler episode for anime</string>
+    <string name="show_player_metadata_overlay">Show Player Metadata Overlay</string>
     <string name="show_trailers_settings">Show trailers</string>
     <string name="kitsu_settings">Show posters from Kitsu</string>
     <string name="pref_filter_search_quality">Hide selected video quality in search results</string>
