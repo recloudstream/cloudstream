@@ -1465,6 +1465,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     when {
                             mimeType.contains("mp4a") || mimeType.contains("aac") -> "aac"
                             mimeType.contains("ac-3") || mimeType.contains("ac3") -> "ac3"
+                            mimeType.contains("eac3-joc") -> "Dolby Atmos"
                             mimeType.contains("eac3") -> "eac3"
                             mimeType.contains("opus") -> "opus"
                             mimeType.contains("vorbis") -> "vorbis"
