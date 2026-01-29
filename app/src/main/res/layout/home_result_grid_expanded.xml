@@ -124,7 +124,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:orientation="vertical"
-                android:paddingBottom="3dp">
+                android:paddingBottom="5dp">
                 <TextView
                     android:id="@+id/episode_text"
                     android:layout_width="wrap_content"
