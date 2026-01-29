@@ -248,6 +248,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     private fun scheduleMetadataVisibility() {
         val metadataScrim = playerBinding?.playerMetadataScrim ?: return
 
+        if (isLayout(PHONE)) {
+            metadataScrim.isVisible = false
+            return
+        }
+
         val isPaused = currentPlayerStatus == CSPlayerLoading.IsPaused
 
         metadataScrim.animate().cancel()
