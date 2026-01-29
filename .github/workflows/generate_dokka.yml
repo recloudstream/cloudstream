@@ -15,24 +15,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Generate access token
-        id: generate_token
-        uses: tibdex/github-app-token@v2
+        id: app-token
+        uses: actions/create-github-app-token@v2
         with:
-          app_id: ${{ secrets.GH_APP_ID }}
-          private_key: ${{ secrets.GH_APP_KEY }}
-          repository: "recloudstream/dokka"
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: dokka
 
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          path: "src"
+          path: src
 
       - name: Checkout dokka
         uses: actions/checkout@v6
         with:
-          repository: "recloudstream/dokka"
-          path: "dokka"
-          token: ${{ steps.generate_token.outputs.token }}
+          repository: recloudstream/dokka
+          token: ${{ steps.app-token.outputs.token }}
+          path: dokka
+          persist-credentials: false
 
       - name: Clean old builds
         run: |

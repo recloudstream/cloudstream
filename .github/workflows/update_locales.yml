@@ -16,16 +16,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Generate access token
-      id: generate_token
-      uses: tibdex/github-app-token@v2
+      id: app-token
+      uses: actions/create-github-app-token@v2
       with:
-        app_id: ${{ secrets.GH_APP_ID }}
-        private_key: ${{ secrets.GH_APP_KEY }}
-        repository: "recloudstream/cloudstream"
+        app-id: ${{ vars.GH_APP_ID }}
+        private-key: ${{ secrets.GH_APP_KEY }}
 
     - uses: actions/checkout@v6
       with:
-        token: ${{ steps.generate_token.outputs.token }}
+        token: ${{ steps.app-token.outputs.token }}
+        persist-credentials: false
 
     - name: Install dependencies
       run: pip3 install lxml requests
