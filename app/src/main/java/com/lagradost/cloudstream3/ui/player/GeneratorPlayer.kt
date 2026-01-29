@@ -1807,27 +1807,17 @@ class GeneratorPlayer : FullScreenPlayer() {
         playerBinding?.offlinePin?.isVisible = lastUsedGenerator is DownloadFileGenerator
     }
 
-    private enum class TitlePart {
-        TITLE,
-        NAME,
-        RESOLUTION,
-    }
-
     @SuppressLint("SetTextI18n")
     fun setPlayerDimen(widthHeight: Pair<Int, Int>?) {
         val resolution = widthHeight?.let { "${it.first}x${it.second}" }
         val name = currentSelectedLink?.first?.name ?: currentSelectedLink?.second?.name
         val title = getHeaderName()
 
-        val parts = arrayOf(
-            TitlePart.TITLE to (if (showTitle) title else null),
-            TitlePart.NAME to (if (showName) name else null),
-            TitlePart.RESOLUTION to (if (showResolution) resolution else null),
-        )
-
-        val result = parts
-            .mapNotNull { it.second?.takeIf { v -> v.isNotBlank() } }
-            .joinToString(" - ")
+        val result = listOfNotNull(
+            title?.takeIf { showTitle && it.isNotBlank() },
+            name?.takeIf { showName && it.isNotBlank() },
+            resolution?.takeIf { showResolution && it.isNotBlank() },
+        ).joinToString(" - ")
 
         playerBinding?.playerVideoTitleRez?.apply {
             text = result
