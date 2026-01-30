@@ -773,6 +773,8 @@ class ResultViewModel2 : ViewModel() {
                         score = episode.score,
                         description = episode.description,
                         cacheTime = System.currentTimeMillis(),
+                        runtime = episode.runTime,
+                        airDate = episode.airDate
                     )
                 )
 

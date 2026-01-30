@@ -742,6 +742,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                             score = ep.score,
                             description = ep.description,
                             cacheTime = System.currentTimeMillis(),
+                            runtime = ep.runTime,
+                            airDate = ep.airDate
                         ),
                         null
                     ) { click ->
