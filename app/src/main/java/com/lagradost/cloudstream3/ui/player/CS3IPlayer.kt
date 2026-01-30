@@ -386,15 +386,15 @@ class CS3IPlayer : IPlayer {
             ?: return
     }
 
-    override fun setPreferredAudioTrack(trackLanguage: String?, id: String?, trackIndex: Int?) {
+    override fun setPreferredAudioTrack(trackLanguage: String?, id: String?, formatIndex: Int?) {
         preferredAudioTrackLanguage = trackLanguage
         id?.let { trackId ->
-            val trackFormatIndex = trackIndex ?: 0  // Default to first format if not specified
+            val trackFormatIndex = formatIndex ?: 0
             exoPlayer?.currentTracks?.groups
                 ?.filter { it.type == TRACK_TYPE_AUDIO }
                 ?.find { group ->
-                    (0 until group.mediaTrackGroup.length).any { index ->
-                        group.mediaTrackGroup.getFormat(index).id == trackId
+                    group.getFormats().any { (format, _) ->
+                        format.id == trackId
                     }
                 }
                 ?.let { group ->
@@ -405,7 +405,7 @@ class CS3IPlayer : IPlayer {
                 }
                 ?.let { newParams ->
                     exoPlayer?.trackSelectionParameters = newParams
-                    return  // everything went fine
+                    return
                 }
         }
         // Fallback to language-based selection
@@ -474,22 +474,18 @@ class CS3IPlayer : IPlayer {
                 (0 until group.mediaTrackGroup.length).map { formatIndex ->
                     val format = group.mediaTrackGroup.getFormat(formatIndex)
                     val audioTrack = format.toAudioTrack(formatIndex)
-                    
                     if (group.isTrackSelected(formatIndex)) {
                         currentAudioTrack = audioTrack
                     }
                     audioTrack
                 }
             }
-        
         val textTracks = allTrackGroups.filter { it.type == TRACK_TYPE_TEXT }
             .getFormats()
             .map { it.first.toSubtitleTrack() }
-
         val currentTextTracks = textTracks.filter { track ->
             playerSelectedSubtitleTracks.any { it.second && it.first == track.id }
         }
-
         return CurrentTracks(
             exoPlayer?.videoFormat?.toVideoTrack(),
             currentAudioTrack,
@@ -506,60 +502,41 @@ class CS3IPlayer : IPlayer {
     override fun setPreferredSubtitles(subtitle: SubtitleData?): Boolean {
         Log.i(TAG, "setPreferredSubtitles init $subtitle")
         currentSubtitles = subtitle
-
-        fun getTextTrack(id: String) =
-            exoPlayer?.currentTracks?.groups?.filter { it.type == TRACK_TYPE_TEXT }
-                ?.getTrack(id)
-
-        return (exoPlayer?.trackSelector as? DefaultTrackSelector?)?.let { trackSelector ->
-            if (subtitle == null) {
-                trackSelector.setParameters(
-                    trackSelector.buildUponParameters()
-                        .setTrackTypeDisabled(TRACK_TYPE_TEXT, true)
-                        .clearOverridesOfType(TRACK_TYPE_TEXT)
-                )
-            } else {
-                when (subtitleHelper.subtitleStatus(subtitle)) {
-                    SubtitleStatus.REQUIRES_RELOAD -> {
-                        Log.i(TAG, "setPreferredSubtitles REQUIRES_RELOAD")
-                        return@let true
-                    }
-
-                    SubtitleStatus.IS_ACTIVE -> {
-                        Log.i(TAG, "setPreferredSubtitles IS_ACTIVE")
-
+        val trackSelector = exoPlayer?.trackSelector as? DefaultTrackSelector ?: return false
+        // Disable subtitles if null
+        if (subtitle == null) {
+            trackSelector.setParameters(
+                trackSelector.buildUponParameters()
+                    .setTrackTypeDisabled(TRACK_TYPE_TEXT, true)
+                    .clearOverridesOfType(TRACK_TYPE_TEXT)
+            )
+            return false
+        }
+        // Handle subtitle based on status
+        return when (subtitleHelper.subtitleStatus(subtitle)) {
+            SubtitleStatus.REQUIRES_RELOAD -> {
+                Log.i(TAG, "setPreferredSubtitles REQUIRES_RELOAD")
+                true
+            }
+            SubtitleStatus.NOT_FOUND -> {
+                Log.i(TAG, "setPreferredSubtitles NOT_FOUND")
+                true
+            }
+            SubtitleStatus.IS_ACTIVE -> {
+                Log.i(TAG, "setPreferredSubtitles IS_ACTIVE")
+                exoPlayer?.currentTracks?.groups
+                    ?.filter { it.type == TRACK_TYPE_TEXT }
+                    ?.getTrack(subtitle.getId())
+                    ?.let { (trackGroup, trackIndex) ->
                         trackSelector.setParameters(
                             trackSelector.buildUponParameters()
-                                .apply {
-                                    val track = getTextTrack(subtitle.getId())
-                                    if (track != null) {
-                                        setTrackTypeDisabled(TRACK_TYPE_TEXT, false)
-                                        setOverrideForType(
-                                            TrackSelectionOverride(
-                                                track.first,
-                                                track.second
-                                            )
-                                        )
-                                    }
-                                }
+                                .setTrackTypeDisabled(TRACK_TYPE_TEXT, false)
+                                .setOverrideForType(TrackSelectionOverride(trackGroup, trackIndex))
                         )
-
-                        // ugliest code I have written, it seeks 1ms to *update* the subtitles
-                        //exoPlayer?.applicationLooper?.let {
-                        //    Handler(it).postDelayed({
-                        //        seekTime(1L)
-                        //    }, 1)
-                        //}
                     }
-
-                    SubtitleStatus.NOT_FOUND -> {
-                        Log.i(TAG, "setPreferredSubtitles NOT_FOUND")
-                        return@let true
-                    }
-                }
+                false
             }
-            return false
-        } ?: false
+        }
     }
 
     private var currentSubtitleOffset: Long = 0
