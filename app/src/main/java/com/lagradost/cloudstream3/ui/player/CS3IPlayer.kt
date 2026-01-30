@@ -471,8 +471,7 @@ class CS3IPlayer : IPlayer {
         var currentAudioTrack: AudioTrack? = null
         val audioTracks = allTrackGroups.filter { it.type == TRACK_TYPE_AUDIO }
             .flatMap { group ->
-                (0 until group.mediaTrackGroup.length).map { formatIndex ->
-                    val format = group.mediaTrackGroup.getFormat(formatIndex)
+                group.getFormats().map { (format, formatIndex) ->
                     val audioTrack = format.toAudioTrack(formatIndex)
                     if (group.isTrackSelected(formatIndex)) {
                         currentAudioTrack = audioTrack
