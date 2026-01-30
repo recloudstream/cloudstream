@@ -513,14 +513,14 @@ class CS3IPlayer : IPlayer {
             return false
         }
         // Handle subtitle based on status
-        return when (subtitleHelper.subtitleStatus(subtitle)) {
+        when (subtitleHelper.subtitleStatus(subtitle)) {
             SubtitleStatus.REQUIRES_RELOAD -> {
                 Log.i(TAG, "setPreferredSubtitles REQUIRES_RELOAD")
-                true
+                return true
             }
             SubtitleStatus.NOT_FOUND -> {
                 Log.i(TAG, "setPreferredSubtitles NOT_FOUND")
-                true
+                return true
             }
             SubtitleStatus.IS_ACTIVE -> {
                 Log.i(TAG, "setPreferredSubtitles IS_ACTIVE")
@@ -534,7 +534,7 @@ class CS3IPlayer : IPlayer {
                                 .setOverrideForType(TrackSelectionOverride(trackGroup, trackIndex))
                         )
                     }
-                false
+                return false
             }
         }
     }
