@@ -749,4 +749,7 @@
     <string name="prerelease_already_installed">Předběžné vydání je již nainstalováno.</string>
     <string name="prerelease_install_failed">Nepodařilo se nainstalovat předběžné vydání.</string>
     <string name="show_episode_text">Text epizody</string>
+    <string name="search_suggestions">Návrhy vyhledávání</string>
+    <string name="search_suggestions_des">Zobrazit návrhy vyhledávání během psaní</string>
+    <string name="clear_suggestions">Vymazat návrhy</string>
 </resources>
