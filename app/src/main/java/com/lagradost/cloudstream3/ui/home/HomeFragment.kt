@@ -75,7 +75,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
-
 import androidx.activity.ComponentActivity
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
@@ -574,7 +573,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         (activity as? ComponentActivity)?.detachBackPressedCallback("HomeFragment_BackPress")
         bottomSheetDialog?.ownHide()
         super.onDestroyView()
-    }   
+    }
 
     private val apiChangeClickListener = View.OnClickListener { view ->
         view.context.selectHomepage(currentApiName) { api ->
@@ -632,7 +631,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     @SuppressLint("SetTextI18n")
     override fun onBindingCreated(binding: FragmentHomeBinding) {
         context?.let { HomeChildItemAdapter.updatePosterSize(it) }
-        // NUEVO: Registrar callback para botón Back en TV
         (activity as? ComponentActivity)?.attachBackPressedCallback("HomeFragment_BackPress") {
             handleTvBackPress(this)
         }
@@ -896,59 +894,37 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     }
 
     private fun handleTvBackPress(helper: BackPressedCallbackHelper.CallbackHelper) {
-        // Solo actuar en interfaz TV
+        // Only apply custom behavior on TV interface
         if (!isLayout(TV)) {
             helper.runDefault()
             return
         }
-        
-        val currentFocus = activity?.currentFocus
-        
-        // Si no hay enfoque, comportamiento normal
-        if (currentFocus == null) {
+        val currentFocus = activity?.currentFocus ?: run {
             helper.runDefault()
             return
         }
-        
-        // Verificar si el enfoque está en algún elemento del contenido (RecyclerView)
+        // sInsideRecycle is true when focus is inside home_master_recycler
         var parent = currentFocus.parent
-        var isInHomeContent = false
-        
-        // Recorremos los padres del view con enfoque
+        var isInsideRecycler = false
         while (parent != null) {
             if (parent is View && parent.id == R.id.home_master_recycler) {
-                isInHomeContent = true
+                isInsideRecycler = true
                 break
             }
             parent = parent.parent
         }
-        
-        // Si está en el contenido, mover foco al selector de extensión
-        if (isInHomeContent) {
-            binding?.homeChangeApi?.let { changeApiButton ->
-                if (changeApiButton.isFocusable) {
-                    // Hacer scroll al top primero
-                    binding?.homeMasterRecycler?.smoothScrollToPosition(0)
-                    // Enfocar el selector de extensión
-                    changeApiButton.requestFocus()
-                    return // Consumimos el evento Back
-                }
+        when {
+            // Case 1: Focus is within plugin content -> Move to plugin selector
+            isInsideRecycler -> {
+                binding?.homeMasterRecycler?.smoothScrollToPosition(0)
+                binding?.homeChangeApi?.requestFocus()
             }
-        }
-        
-        // Verificar si el enfoque está en el botón selector de extensión
-        if (currentFocus.id == R.id.home_change_api) {
-            // Mover enfoque al icono de home en la navegación
-            activity?.findViewById<View>(R.id.navigation_home)?.let { homeNav ->
-                if (homeNav.isFocusable) {
-                    homeNav.requestFocus()
-                    return // Consumimos el evento Back
-                }
+            // Case 2: Focus is on plugin selector -> Move to home navigation
+            currentFocus.id == R.id.home_change_api -> {
+                activity?.findViewById<View>(R.id.navigation_home)?.requestFocus()
             }
+            // Case 3: Any other location -> Use default back behavior
+            else -> helper.runDefault()
         }
-        
-        // En cualquier otro caso, comportamiento normal
-        helper.runDefault()
     }
-
 }
