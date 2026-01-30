@@ -9,10 +9,14 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.viewbinding.ViewBinding
+import com.lagradost.api.Log
+import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.DownloadChildEpisodeBinding
 import com.lagradost.cloudstream3.databinding.DownloadHeaderEpisodeBinding
+import com.lagradost.cloudstream3.databinding.DownloadChildEpisodeLargeBinding
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.secondsToReadable
 import com.lagradost.cloudstream3.ui.NoStateAdapter
 import com.lagradost.cloudstream3.ui.ViewHolderState
 import com.lagradost.cloudstream3.ui.download.button.DownloadStatusTell
@@ -20,6 +24,13 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.utils.setText
+import com.lagradost.cloudstream3.utils.txt
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
 
 const val DOWNLOAD_ACTION_PLAY_FILE = 0
 const val DOWNLOAD_ACTION_DELETE_FILE = 1
@@ -76,6 +87,7 @@ class DownloadAdapter(
     companion object {
         private const val VIEW_TYPE_HEADER = 0
         private const val VIEW_TYPE_CHILD = 1
+        private const val VIEW_TYPE_CHILD_LARGE = 2
     }
 
 
@@ -366,11 +378,131 @@ class DownloadAdapter(
         }
     }
 
+    private fun bindChildLarge(
+        binding: DownloadChildEpisodeLargeBinding,
+        card: VisualDownloadCached.Child?
+    ) {
+        if (card == null) return
+        val data = card.data
+
+        binding.apply {
+            episodePoster.loadImage(data.poster)
+            episodeText.text = root.context.getNameFull(data.name, data.episode, data.season)
+
+            val ratingText = data.score?.toString()
+
+            episodeRating.isVisible = !ratingText.isNullOrBlank()
+            episodeRating.text = ratingText?.let { "Rated: $it" }
+
+            episodeRuntime.isVisible = data.runtime != null && data.runtime > 0
+            episodeRuntime.text = data.runtime?.let { "$it min" }
+
+            episodeDescript.isVisible = !data.description.isNullOrBlank()
+            episodeDescript.text = data.description.orEmpty()
+
+            episodeDate.isVisible = data.airDate != null
+
+            data.airDate?.let { airDate ->
+                val formattedAirDate = SimpleDateFormat.getDateInstance(
+                    DateFormat.LONG,
+                    Locale.getDefault()
+                ).format(Date(airDate))
+                episodeDate.setText(txt(formattedAirDate))
+            }
+
+            Log.d("Phisher",data.airDate.toString())
+
+            episodeMetaRow?.isVisible = episodeDate.isVisible || episodeRating.isVisible || episodeRuntime.isVisible
+
+            val posDur = getViewPos(data.id)
+            episodeProgress.isVisible = posDur != null
+
+            posDur?.let {
+                val max = (it.duration / 1000).toInt()
+                val progress = (it.position / 1000).toInt()
+
+                if (max > 0 && progress >= (0.95 * max).toInt()) {
+                    episodePlayIcon.setImageResource(R.drawable.ic_baseline_check_24)
+                    episodeProgress.isVisible = false
+                } else {
+                    episodePlayIcon.setImageResource(R.drawable.netflix_play)
+                    episodeProgress.max = max
+                    episodeProgress.progress = progress
+                    episodeProgress.isVisible = true
+                }
+            }
+
+            // Download button
+            val status = downloadButton.getStatus(
+                data.id,
+                card.currentBytes,
+                card.totalBytes
+            )
+
+            if (status == DownloadStatusTell.IsDone) {
+                downloadButton.setProgress(card.currentBytes, card.totalBytes)
+                downloadButton.applyMetaData(data.id, card.currentBytes, card.totalBytes)
+                downloadButton.doSetProgress = false
+            } else {
+                downloadButton.resetView()
+            }
+
+            downloadButton.setDefaultClickListener(
+                data,
+                downloadSize,
+                onItemClickEvent
+            )
+
+            downloadButton.isVisible = !isMultiDeleteState
+
+            // Selection / multi-delete parity
+            downloadChildEpisodeLargeHolder.apply {
+                when {
+                    isMultiDeleteState -> {
+                        setOnClickListener {
+                            toggleIsChecked(deleteCheckbox, data.id)
+                        }
+                        setOnLongClickListener {
+                            toggleIsChecked(deleteCheckbox, data.id)
+                            true
+                        }
+                    }
+                    else -> {
+                        setOnClickListener {
+                            onItemClickEvent.invoke(
+                                DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, data)
+                            )
+                        }
+                        setOnLongClickListener {
+                            onItemSelectionChanged.invoke(data.id, true)
+                            true
+                        }
+                    }
+                }
+            }
+
+            if (isMultiDeleteState) {
+                deleteCheckbox?.setOnCheckedChangeListener { _, isChecked ->
+                    onItemSelectionChanged.invoke(data.id, isChecked)
+                }
+            } else {
+                deleteCheckbox?.setOnCheckedChangeListener(null)
+            }
+
+            deleteCheckbox.apply {
+                this?.isVisible = isMultiDeleteState
+                this?.isChecked = card.isSelected
+            }
+        }
+    }
+
+
     override fun onCreateCustomContent(parent: ViewGroup, viewType: Int): ViewHolderState<Any> {
         val inflater = LayoutInflater.from(parent.context)
         val binding = when (viewType) {
             VIEW_TYPE_HEADER -> DownloadHeaderEpisodeBinding.inflate(inflater, parent, false)
             VIEW_TYPE_CHILD -> DownloadChildEpisodeBinding.inflate(inflater, parent, false)
+            VIEW_TYPE_CHILD_LARGE -> DownloadChildEpisodeLargeBinding.inflate(inflater, parent, false)
             else -> throw IllegalArgumentException("Invalid view type")
         }
         return ViewHolderState(binding)
@@ -382,24 +514,31 @@ class DownloadAdapter(
         position: Int
     ) {
         when (val binding = holder.view) {
-            is DownloadHeaderEpisodeBinding -> bindHeader(
-                binding,
-                item as? VisualDownloadCached.Header
-            )
+            is DownloadHeaderEpisodeBinding ->
+                bindHeader(binding, item as? VisualDownloadCached.Header)
 
-            is DownloadChildEpisodeBinding -> bindChild(
-                binding,
-                item as? VisualDownloadCached.Child
-            )
+            is DownloadChildEpisodeBinding ->
+                bindChild(binding, item as? VisualDownloadCached.Child)
+
+            is DownloadChildEpisodeLargeBinding ->
+                bindChildLarge(binding, item as? VisualDownloadCached.Child)
         }
     }
 
     override fun customContentViewType(item: VisualDownloadCached): Int {
         return when (item) {
-            is VisualDownloadCached.Child -> VIEW_TYPE_CHILD
             is VisualDownloadCached.Header -> VIEW_TYPE_HEADER
+            is VisualDownloadCached.Child -> {
+                val poster = item.data.poster
+                if (poster.isNullOrBlank()) {
+                    VIEW_TYPE_CHILD
+                } else {
+                    VIEW_TYPE_CHILD_LARGE
+                }
+            }
         }
     }
+
 
     @SuppressLint("NotifyDataSetChanged")
     fun setIsMultiDeleteState(value: Boolean) {
@@ -408,11 +547,13 @@ class DownloadAdapter(
         notifyDataSetChanged() // This is shit, but what can you do?
     }
 
-    private fun toggleIsChecked(checkbox: CheckBox, itemId: Int) {
+    private fun toggleIsChecked(checkbox: CheckBox?, itemId: Int) {
+        if (checkbox == null) return
         val isChecked = !checkbox.isChecked
         checkbox.isChecked = isChecked
         onItemSelectionChanged.invoke(itemId, isChecked)
     }
+
 
     class DiffCallback : DiffUtil.ItemCallback<VisualDownloadCached>() {
         override fun areItemsTheSame(

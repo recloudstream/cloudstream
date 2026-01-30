@@ -17,6 +17,8 @@ object VideoDownloadHelper {
         @JsonProperty("score") var score: Score? = null,
         @JsonProperty("description") val description: String?,
         @JsonProperty("cacheTime") val cacheTime: Long,
+        @JsonProperty("airDate") val airDate: Long? = null,
+        @JsonProperty("runtime") val runtime: Int? = null,
         override val id: Int,
     ): DownloadCached(id) {
         @JsonProperty("rating", access = JsonProperty.Access.WRITE_ONLY)

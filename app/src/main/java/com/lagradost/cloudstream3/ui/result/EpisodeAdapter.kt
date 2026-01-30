@@ -11,6 +11,7 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil3.dispose
+import com.lagradost.api.Log
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
@@ -170,6 +171,8 @@ class EpisodeAdapter(
                             score = item.score,
                             description = item.description,
                             cacheTime = System.currentTimeMillis(),
+                            runtime = item.runTime,
+                            airDate = item.airDate
                         ), null
                     ) {
                         when (it.action) {
@@ -386,6 +389,8 @@ class EpisodeAdapter(
                             score = item.score,
                             description = item.description,
                             cacheTime = System.currentTimeMillis(),
+                            runtime = item.runTime,
+                            airDate = item.airDate
                         ), null
                     ) {
                         when (it.action) {
