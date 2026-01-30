@@ -1450,7 +1450,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 var audioIndexStart = currentAudioTracks.indexOfFirst { track ->
                     track.id == tracks.currentAudioTrack?.id && 
                     track.formatIndex == tracks.currentAudioTrack?.formatIndex
-                }.takeIf { it != -1 } ?: 0
+                }.coerceAtLeast(0)
 
                 val audioArrayAdapter =
                     ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
