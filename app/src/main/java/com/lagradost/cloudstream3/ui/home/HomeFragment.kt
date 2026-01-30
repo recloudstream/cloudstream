@@ -570,7 +570,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         super.onDestroyView()
     }
 
-    override fun onBackPressed(): Boolean {
+    fun onBackPressed(): Boolean {
         // Solo actuar en interfaz TV
         if (!isLayout(TV)) {
             return false  // Comportamiento normal en móvil
@@ -589,7 +589,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         
         // Recorremos los padres del view con enfoque
         while (parent != null) {
-            if (parent.id == R.id.home_master_recycler) {
+            if (parent is View && parent.id == R.id.home_master_recycler) {
                 isInHomeContent = true
                 break
             }
@@ -623,6 +623,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         // En cualquier otro caso, comportamiento normal
         return false
     }
+
 
     private val apiChangeClickListener = View.OnClickListener { view ->
         view.context.selectHomepage(currentApiName) { api ->
