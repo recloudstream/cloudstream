@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.player
 
 import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
@@ -10,6 +11,7 @@ import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Color
+import android.graphics.Matrix
 import android.media.AudioManager
 import android.media.audiofx.LoudnessEnhancer
 import android.os.Build
@@ -22,6 +24,7 @@ import android.text.format.DateUtils
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
@@ -47,13 +50,14 @@ import androidx.core.widget.doOnTextChanged
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.daasuu.gpuv.egl.filter.GlBrightnessFilter
 import com.daasuu.gpuv.player.GPUPlayerView
 import com.daasuu.gpuv.player.PlayerScaleType
 import com.google.android.material.button.MaterialButton
-import com.lagradost.api.Log
+import com.lagradost.api.BuildConfig
 import com.lagradost.cloudstream3.CommonActivity.keyEventListener
 import com.lagradost.cloudstream3.CommonActivity.playerEventListener
 import com.lagradost.cloudstream3.CommonActivity.screenHeightWithOrientation
@@ -90,12 +94,21 @@ import com.lagradost.cloudstream3.utils.Vector2
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.txt
 import kotlin.math.abs
+import kotlin.math.absoluteValue
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
 import kotlin.math.roundToInt
 
+// You can zoom out more than 100%, but it will zoom back into 100%
+const val MINIMUM_ZOOM = 0.95f
+
+// How sensitive the auto zoom is to center at the min zoom
+const val ZOOM_SNAP_SENSITIVITY = 0.07f
+
+// Maximum zoom to avoid getting lost
+const val MAXIMUM_ZOOM = 4.0f
 
 const val MINIMUM_SEEK_TIME = 7000L         // when swipe seeking
 const val MINIMUM_VERTICAL_SWIPE = 2.0f     // in percentage
@@ -259,19 +272,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         super.onDestroyView()
     }
 
-    override fun resize(resize: PlayerResize, showToast: Boolean) {
-        super.resize(resize, showToast)
-        safe {
-            gpuPlayerView?.setPlayerScaleType(
-                when (resize) {
-                    PlayerResize.Fit -> PlayerScaleType.RESIZE_FIT
-                    PlayerResize.Fill -> PlayerScaleType.RESIZE_FILL
-                    PlayerResize.Zoom -> PlayerScaleType.RESIZE_ZOOM
-                }
-            )
-        }
-    }
-
     open fun showMirrorsDialogue() {
         throw NotImplementedError()
     }
@@ -381,6 +381,13 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 start()
             }
         }
+        playerBinding?.playerVideoInfo?.let {
+            ObjectAnimator.ofFloat(it, "translationY", titleMove).apply {
+                duration = 200
+                start()
+            }
+        }
+
         val playerBarMove = if (isShowing) 0f else 50.toPx.toFloat()
         playerBinding?.bottomPlayerBar?.let {
             ObjectAnimator.ofFloat(it, "translationY", playerBarMove).apply {
@@ -446,7 +453,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     override fun subtitlesChanged() {
         val tracks = player.getVideoTracks()
         val isBuiltinSubtitles = tracks.currentTextTracks.all { track ->
-            track.mimeType == MimeTypes.APPLICATION_MEDIA3_CUES
+            track.sampleMimeType == MimeTypes.APPLICATION_MEDIA3_CUES
         }
         // Subtitle offset is not possible on built-in media3 tracks
         playerBinding?.playerSubtitleOffsetBtt?.isGone =
@@ -618,7 +625,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
         dialog.show()
 
-        val isPortrait = ctx.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+        val isPortrait =
+            ctx.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
         fixSystemBarsPadding(binding.root, fixIme = isPortrait)
 
         var currentOffset = subtitleDelay
@@ -924,6 +932,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
             // TITLE
             playerVideoTitleRez.startAnimation(fadeAnimation)
+            playerVideoInfo.startAnimation(fadeAnimation)
             playerEpisodeFiller.startAnimation(fadeAnimation)
             playerVideoTitleHolder.startAnimation(fadeAnimation)
             playerTopHolder.startAnimation(fadeAnimation)
@@ -1058,6 +1067,34 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     companion object {
+        /**
+         * Gets the translationXY + scale form a matrix with no rotation.
+         *
+         * @return (translationX, translationY, scale)
+         * */
+        fun matrixToTranslationAndScale(matrix: Matrix): Triple<Float, Float, Float> {
+            val points = floatArrayOf(0.0f, 0.0f, 1.0f, 1.0f)
+            matrix.mapPoints(points)
+
+            // A linear matrix will map (0,0) to the translation
+            val translationX = points[0]
+            val translationY = points[1]
+
+            // The unit vectors (1,0) and (0,1) will map to the scale if you remove the translation
+            // As this assumes a uniform scaling, only a single vector is needed
+            val scaleX = points[2] - translationX
+            val scaleY = points[3] - translationY
+
+            // The matrix should have the same scaleX and scaleY
+            if (BuildConfig.DEBUG) {
+                assert((scaleX - scaleY).absoluteValue < 0.1f) {
+                    "$scaleY != $scaleX"
+                }
+            }
+
+            return Triple(translationX, translationY, scaleX)
+        }
+
         private fun forceLetters(inp: Long, letters: Int = 2): String {
             val added: Int = letters - inp.toString().length
             return if (added > 0) {
@@ -1142,7 +1179,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                 Settings.System.putInt(
                     context?.contentResolver,
-                    Settings.System.SCREEN_BRIGHTNESS, min(1, (brightness.coerceIn(0.0f, 1.0f) * 255).toInt())
+                    Settings.System.SCREEN_BRIGHTNESS,
+                    min(1, (brightness.coerceIn(0.0f, 1.0f) * 255).toInt())
                 )
             } catch (e: Exception) {
                 useTrueSystemBrightness = false
@@ -1221,15 +1259,303 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        // If we rotate the device we need to recalculate the zoom
+        val matrix = zoomMatrix
+        val animation = matrixAnimation
+        if ((animation == null || !animation.isRunning) && matrix != null) {
+            // Ignore if we have no zoom or mid animation
+            playerView?.post {
+                applyZoomMatrix(matrix, true)
+            }
+        }
+    }
+
+    private var scaleGestureDetector: ScaleGestureDetector? = null
+    private var lastPan: Vector2? = null
+
+    /**
+     * Gets the non-null zoom matrix,
+     * this is different from `zoomMatrix ?: Matrix()`
+     * because it allows used to start zooming at different resizeModes.
+     *
+     * The main issue is that RESIZE_MODE_FIT = 100% zoom, but if you are in RESIZE_MODE_ZOOM
+     * 100% will make the zoom snap to less zoomed in then you already are.
+     * */
+    fun currentZoomMatrix(): Matrix {
+        val current = zoomMatrix
+        if (current != null) {
+            // Already assigned
+            return current
+        }
+
+        val playerView = playerView
+        val videoView = playerView?.videoSurfaceView
+
+        if (playerView == null || videoView == null || playerView.resizeMode != AspectRatioFrameLayout.RESIZE_MODE_ZOOM) {
+            // This is a fit or fill resize mode so start at 100% zoom
+            return Matrix()
+        }
+
+        val videoWidth = videoView.width.toFloat()
+        val videoHeight = videoView.height.toFloat()
+        val playerWidth = screenWidthWithOrientation
+        val playerHeight = screenHeightWithOrientation
+
+        // Sanity check
+        if (videoWidth <= 1.0f || videoHeight <= 1.0f || playerWidth <= 1.0f || playerHeight <= 1.0f) {
+            // Something is wrong with the video, return the default 100% zoom
+            return Matrix()
+        }
+
+        val initAspect =
+            (playerHeight * videoWidth) / (playerWidth * videoHeight)
+        val aspect = max(initAspect, 1.0f / initAspect)
+
+        // Return the matrix with the correct zoom, as it is already zoomed in
+        return Matrix().apply { postScale(aspect, aspect) }
+    }
+
+    /** A Matrix encoding the translation and scale of the current zoom */
+    private var zoomMatrix: Matrix? = null
+
+    /** A Matrix encoding the translation and scale of the desired zoom,
+     * aka after you release the zoom */
+    private var desiredMatrix: Matrix? = null
+
+    /** The animation of zooming to the desiredMatrix */
+    private var matrixAnimation: ValueAnimator? = null
+
+    @SuppressLint("UnsafeOptInUsageError")
+    override fun resize(resize: PlayerResize, showToast: Boolean) {
+        // Clear all zoom stuff if we resize
+        matrixAnimation?.cancel()
+        matrixAnimation = null
+        zoomMatrix = null
+        desiredMatrix = null
+        playerView?.videoSurfaceView?.apply {
+            scaleX = 1.0f
+            scaleY = 1.0f
+            translationX = 0.0f
+            translationY = 0.0f
+        }
+
+        safe {
+            gpuPlayerView?.setPlayerScaleType(
+                when (resize) {
+                    PlayerResize.Fit -> PlayerScaleType.RESIZE_FIT
+                    PlayerResize.Fill -> PlayerScaleType.RESIZE_FILL
+                    PlayerResize.Zoom -> PlayerScaleType.RESIZE_ZOOM
+                }
+            )
+        }
+
+        super.resize(resize, showToast)
+    }
+
+    /**
+     * Applies a new zoom matrix to the screen. Matrix should only contain a scale + translation.
+     *
+     * @param newMatrix The new zoom matrix
+     * @param animation If this zoom is part of an animation,
+     * as then it will not auto zoom after we are done
+     */
+    @OptIn(UnstableApi::class)
+    fun applyZoomMatrix(newMatrix: Matrix, animation: Boolean) {
+        if (!animation) {
+            matrixAnimation?.cancel()
+            matrixAnimation = null
+        }
+        val (translationX, translationY, scale) = matrixToTranslationAndScale(newMatrix)
+
+        playerView?.let { player ->
+            if (player.resizeMode == AspectRatioFrameLayout.RESIZE_MODE_FIT) {
+                player.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+            }
+
+            val videoView = player.videoSurfaceView ?: return@let
+
+            val videoWidth = videoView.width.toFloat()
+            val videoHeight = videoView.height.toFloat()
+            val playerWidth = screenWidthWithOrientation
+            val playerHeight = screenHeightWithOrientation
+
+            // Sanity check
+            if (videoWidth <= 1.0f || videoHeight <= 1.0f || playerWidth <= 1.0f || playerHeight <= 1.0f || scale <= 0.01f) {
+                return
+            }
+
+            // Calculate the scaled aspect ratio as the view height is not real, check the debugger
+            // and you will see videoView.height > screen.heigh
+            val initAspect =
+                (playerHeight * videoWidth) / (playerWidth * videoHeight)
+            val aspect = min(initAspect, 1.0f / initAspect)
+            val scaledAspect = scale * aspect
+
+            // Calculate clamp, this is very weird because we need to use aspect here as videoHeight > playerHeight
+            val maxTransX = max(0.0f, videoWidth * scaledAspect - playerWidth) * 0.5f
+            val maxTransY = max(0.0f, videoHeight * scaledAspect - playerHeight) * 0.5f
+
+            // Correct the translation to clamp within the viewing area
+            val expectedTranslationX = translationX.coerceIn(-maxTransX, maxTransX)
+            val expectedTranslationY = translationY.coerceIn(-maxTransY, maxTransY)
+
+            // Set the transform to the correct x and y
+            newMatrix.postTranslate(
+                expectedTranslationX - translationX,
+                expectedTranslationY - translationY
+            )
+            zoomMatrix = newMatrix
+
+            if (!animation) {
+                // If we are not in an animation, set up the values for the animation
+                if ((scaledAspect - 1.0f).absoluteValue < ZOOM_SNAP_SENSITIVITY) {
+                    // We are within the correct scaling, so center and fit it
+                    playerBinding?.videoOutline?.isVisible = true
+                    val desired = Matrix()
+                    desired.setScale(1.0f / aspect, 1.0f / aspect)
+                    desiredMatrix = desired
+                } else if (scale < 1.0f) {
+                    // We have zoomed too far, zoom to 100%
+                    playerBinding?.videoOutline?.isVisible = false
+                    desiredMatrix = Matrix()
+                } else {
+                    // Keep the same scaling after zoom
+                    playerBinding?.videoOutline?.isVisible = false
+                    desiredMatrix = null
+                }
+            }
+
+            // Finally set the actual scale + translation
+            videoView.scaleX = scaledAspect
+            videoView.scaleY = scaledAspect
+            videoView.translationX = expectedTranslationX
+            videoView.translationY = expectedTranslationY
+        }
+    }
+
+    fun createScaleGestureDetector(context: Context) {
+        scaleGestureDetector = ScaleGestureDetector(
+            context,
+            object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                override fun onScale(detector: ScaleGestureDetector): Boolean {
+                    val matrix = currentZoomMatrix()
+                    val (_, _, scale) = matrixToTranslationAndScale(matrix)
+                    // Clamp scale of the zoom, do it here as it is easier then doing it within applyZoomMatrix
+                    val newScale = (scale * detector.scaleFactor).coerceIn(
+                        MINIMUM_ZOOM,
+                        MAXIMUM_ZOOM
+                    )
+                    // How much we should scale it with to prevent inf scaling
+                    val actualScaleFactor = newScale / scale
+
+                    // Scale around the focus point, this is more natural than just zoom
+                    val pivotX = detector.focusX - screenWidthWithOrientation.toFloat() * 0.5f
+                    val pivotY = detector.focusY - screenHeightWithOrientation.toFloat() * 0.5f
+                    matrix.postScale(
+                        actualScaleFactor,
+                        actualScaleFactor,
+                        pivotX,
+                        pivotY
+                    )
+                    applyZoomMatrix(matrix, false)
+                    return true
+                }
+            })
+    }
+
     @SuppressLint("SetTextI18n")
     private fun handleMotionEvent(view: View?, event: MotionEvent?): Boolean {
         if (event == null || view == null) return false
         val currentTouch = Vector2(event.x, event.y)
         val startTouch = currentTouchStart
 
-        playerBinding?.apply {
-            playerIntroPlay.isGone = true
+        playerBinding?.playerIntroPlay?.isGone = true
 
+        // Handle pan with two fingers
+        if (event.pointerCount == 2 && !isLocked && isFullScreenPlayer && !hasTriggeredSpeedUp && currentTouchAction == null) {
+            holdhandler.removeCallbacks(holdRunnable) // remove 2x speed
+
+            // Gesture detectors for zoom & pan
+            if (scaleGestureDetector == null) {
+                createScaleGestureDetector(view.context)
+            }
+
+            isCurrentTouchValid = false // Prevent other touches
+            scaleGestureDetector?.onTouchEvent(event)
+
+            when (event.actionMasked) {
+                MotionEvent.ACTION_POINTER_DOWN -> {
+                    // Hide UI
+                    if (isShowing) {
+                        onClickChange()
+                    }
+                }
+
+                MotionEvent.ACTION_MOVE -> {
+                    val newPan = Vector2(
+                        (event.getX(0) + event.getX(1)) / 2f,
+                        (event.getY(0) + event.getY(1)) / 2f
+                    )
+                    val oldPan = lastPan
+                    if (oldPan != null) {
+                        val matrix = currentZoomMatrix()
+                        // Delta move
+                        matrix.postTranslate(newPan.x - oldPan.x, newPan.y - oldPan.y)
+                        applyZoomMatrix(matrix, false)
+                    }
+                    lastPan = newPan
+                }
+
+                MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_UP -> {
+                    // Reset touch
+                    lastPan = null
+                    currentTouchStart = null
+                    currentLastTouchAction = null
+                    currentTouchAction = null
+                    currentTouchStartPlayerTime = null
+                    currentTouchLast = null
+                    currentTouchStartTime = null
+
+                    // Reset views
+                    playerBinding?.videoOutline?.isVisible = false
+                    matrixAnimation?.cancel()
+                    matrixAnimation = null
+
+                    // After we have zoomed in, snap to
+                    matrixAnimation = ValueAnimator.ofFloat(0.0f, 1.0f).apply {
+                        startDelay = 0
+                        duration = 200
+
+                        val startMatrix = currentZoomMatrix()
+                        val endMatrix = desiredMatrix ?: return@apply
+
+                        val (startX, startY, startScale) = matrixToTranslationAndScale(startMatrix)
+                        val (endX, endY, endScale) = matrixToTranslationAndScale(endMatrix)
+
+                        addUpdateListener { animation ->
+                            val value = animation.animatedValue as Float // ValueAnimator.ofFloat
+
+                            // Linear interpolation of scale and translation between startMatrix and endMatrix
+                            val valueInv = 1.0f - value
+                            val x = startX * valueInv + endX * value
+                            val y = startY * valueInv + endY * value
+                            val s = startScale * valueInv + endScale * value
+                            val m = Matrix()
+                            m.setScale(s, s)
+                            m.postTranslate(x, y)
+                            applyZoomMatrix(m, true)
+                        }
+                        start()
+                    }
+                }
+            }
+            return true
+        }
+
+        playerBinding?.apply {
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     // validates if the touch is inside of the player area
@@ -1464,7 +1790,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                     }
 
                                     val lastRequested = currentRequestedBrightness
-                                    val nextBrightness = (currentRequestedBrightness + verticalAddition).coerceIn(0.0f, 1.0f) // !!! Removed due to HDR conflict !!!
+                                    val nextBrightness =
+                                        (currentRequestedBrightness + verticalAddition).coerceIn(
+                                            0.0f,
+                                            1.0f
+                                        ) // !!! Removed due to HDR conflict !!!
                                     //
                                     // Log.e("Brightness", "Current: $currentRequestedBrightness, Next: $nextBrightness")
                                     // show toast
@@ -1484,7 +1814,13 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                     // max is set high to make it smooth
                                     level1ProgressBar.max = 100_000
                                     level1ProgressBar.progress =
-                                        max(2_000, (min(1.0f, currentRequestedBrightness) * 100_000f).toInt())
+                                        max(
+                                            2_000,
+                                            (min(
+                                                1.0f,
+                                                currentRequestedBrightness
+                                            ) * 100_000f).toInt()
+                                        )
 
                                     // !!! Removed due to HDR conflict !!!
                                     /*if (!isBrightnessLocked) {
@@ -1549,7 +1885,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                             brightnessIcons.size - 1,
                                             max(
                                                 0,
-                                                round(max(currentRequestedBrightness, 1.0f) * (brightnessIcons.size - 1)).toInt()
+                                                round(
+                                                    max(
+                                                        currentRequestedBrightness,
+                                                        1.0f
+                                                    ) * (brightnessIcons.size - 1)
+                                                ).toInt()
                                             )
                                         )]
                                     )

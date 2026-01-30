@@ -40,12 +40,15 @@ import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
 import androidx.media3.datasource.cache.SimpleCache
 import androidx.media3.datasource.cronet.CronetDataSource
 import androidx.media3.datasource.okhttp.OkHttpDataSource
+import androidx.media3.exoplayer.DecoderCounters
+import androidx.media3.exoplayer.DecoderReuseEvaluation
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.Renderer.STATE_ENABLED
 import androidx.media3.exoplayer.Renderer.STATE_STARTED
 import androidx.media3.exoplayer.SeekParameters
+import androidx.media3.exoplayer.analytics.AnalyticsListener
 import androidx.media3.exoplayer.dash.DashMediaSource
 import androidx.media3.exoplayer.drm.DefaultDrmSessionManager
 import androidx.media3.exoplayer.drm.FrameworkMediaDrm
@@ -104,6 +107,7 @@ import kotlinx.coroutines.delay
 import okhttp3.Interceptor
 import org.chromium.net.CronetEngine
 import java.io.File
+import java.security.SecureRandom
 import java.util.UUID
 import java.util.concurrent.Executors
 import javax.net.ssl.HttpsURLConnection
@@ -434,7 +438,8 @@ class CS3IPlayer : IPlayer {
         return AudioTrack(
             this.id?.stripTrackId(),
             this.label,
-            this.language
+            this.language,
+            this.sampleMimeType
         )
     }
 
@@ -443,7 +448,7 @@ class CS3IPlayer : IPlayer {
             this.id?.stripTrackId(),
             this.label,
             this.language,
-            this.sampleMimeType
+            this.sampleMimeType,
         )
     }
 
@@ -454,6 +459,7 @@ class CS3IPlayer : IPlayer {
             this.language,
             this.width,
             this.height,
+            this.sampleMimeType
         )
     }
 
@@ -1358,6 +1364,7 @@ class CS3IPlayer : IPlayer {
             )
             setHandleAudioBecomingNoisy(true)
             setPlaybackSpeed(playBackSpeed)
+            this.addAnalyticsListener(tracksAnalyticsListener)
         }
     }
 
@@ -1843,7 +1850,7 @@ class CS3IPlayer : IPlayer {
             if (ignoreSSL) {
                 // Disables ssl check
                 val sslContext: SSLContext = SSLContext.getInstance("TLS")
-                sslContext.init(null, arrayOf(SSLTrustManager()), java.security.SecureRandom())
+                sslContext.init(null, arrayOf(SSLTrustManager()), SecureRandom())
                 sslContext.createSSLEngine()
                 HttpsURLConnection.setDefaultHostnameVerifier { _: String, _: SSLSession ->
                     true
@@ -1929,4 +1936,39 @@ class CS3IPlayer : IPlayer {
             loadOfflinePlayer(context, it)
         }
     }
+
+    private val tracksAnalyticsListener = object : AnalyticsListener {
+
+        override fun onVideoInputFormatChanged(
+            eventTime: AnalyticsListener.EventTime,
+            format: Format,
+            decoderReuseEvaluation: DecoderReuseEvaluation?
+        ) {
+            event(TracksChangedEvent())
+        }
+
+        override fun onAudioInputFormatChanged(
+            eventTime: AnalyticsListener.EventTime,
+            format: Format,
+            decoderReuseEvaluation: DecoderReuseEvaluation?
+        ) {
+            event(TracksChangedEvent())
+        }
+
+        override fun onVideoDisabled(
+            eventTime: AnalyticsListener.EventTime,
+            decoderCounters: DecoderCounters
+        ) {
+            event(TracksChangedEvent())
+        }
+
+        override fun onAudioDisabled(
+            eventTime: AnalyticsListener.EventTime,
+            decoderCounters: DecoderCounters
+        ) {
+            event(TracksChangedEvent())
+        }
+    }
+
 }
+
