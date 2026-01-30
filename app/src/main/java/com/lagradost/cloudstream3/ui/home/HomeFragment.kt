@@ -903,7 +903,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             helper.runDefault()
             return
         }
-        // isInsideRecycle is true when focus is inside home_master_recycler
+        // Check if focus is inside home_master_recycler
         var parent = currentFocus.parent
         var isInsideRecycler = false
         while (parent != null) {
@@ -918,9 +918,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             isInsideRecycler -> {
                 binding?.homeMasterRecycler?.smoothScrollToPosition(0)
                 binding?.homeChangeApi?.requestFocus()
-            }
-            // Case 2: Focus is on plugin selector -> Move to home navigation
-            currentFocus.id == R.id.home_change_api -> {
+            }            
+            // Case 2: Focus is on plugin selector or nearby buttons -> Move to home navigation
+            currentFocus.id == R.id.home_change_api ||
+            currentFocus.id == R.id.home_preview_reload_provider ||
+            currentFocus.id == R.id.home_preview_search_button -> {
                 activity?.findViewById<View>(R.id.navigation_home)?.requestFocus()
             }
             // Case 3: Any other location -> Use default back behavior
