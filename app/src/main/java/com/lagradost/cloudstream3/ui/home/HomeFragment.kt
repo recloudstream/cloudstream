@@ -570,6 +570,60 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         super.onDestroyView()
     }
 
+    override fun onBackPressed(): Boolean {
+        // Solo actuar en interfaz TV
+        if (!isLayout(TV)) {
+            return false  // Comportamiento normal en móvil
+        }
+        
+        val currentFocus = activity?.currentFocus
+        
+        // Si no hay enfoque, comportamiento normal
+        if (currentFocus == null) {
+            return false
+        }
+        
+        // Verificar si el enfoque está en algún elemento del contenido (RecyclerView)
+        var parent = currentFocus.parent
+        var isInHomeContent = false
+        
+        // Recorremos los padres del view con enfoque
+        while (parent != null) {
+            if (parent.id == R.id.home_master_recycler) {
+                isInHomeContent = true
+                break
+            }
+            parent = parent.parent
+        }
+        
+        // Si está en el contenido, mover foco al selector de extensión
+        if (isInHomeContent) {
+            binding?.homeChangeApi?.let { changeApiButton ->
+                if (changeApiButton.isFocusable) {
+                    // Hacer scroll al top primero
+                    binding?.homeMasterRecycler?.smoothScrollToPosition(0)
+                    // Enfocar el selector de extensión
+                    changeApiButton.requestFocus()
+                    return true  // Consumimos el evento Back
+                }
+            }
+        }
+        
+        // Verificar si el enfoque está en el botón selector de extensión
+        if (currentFocus.id == R.id.home_change_api) {
+            // Mover enfoque al icono de home en la navegación
+            activity?.findViewById<View>(R.id.navigation_home)?.let { homeNav ->
+                if (homeNav.isFocusable) {
+                    homeNav.requestFocus()
+                    return true  // Consumimos el evento Back
+                }
+            }
+        }
+        
+        // En cualquier otro caso, comportamiento normal
+        return false
+    }
+
     private val apiChangeClickListener = View.OnClickListener { view ->
         view.context.selectHomepage(currentApiName) { api ->
             homeViewModel.loadAndCancel(api, forceReload = true, fromUI = true)
