@@ -955,7 +955,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
 
     private var selectSourceDialog: Dialog? = null
-//    var selectTracksDialog: AlertDialog? = null
+    // var selectTracksDialog: AlertDialog? = null
 
 
     /** Will toast both when an error is found and when a subtitle is selected,
@@ -1401,7 +1401,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 fixSystemBarsPadding(binding.root)
 
-//                selectTracksDialog = tracksDialog
+                // selectTracksDialog = tracksDialog
 
                 val videosList = binding.videoTracksList
                 val audioList = binding.autoTracksList
@@ -1444,28 +1444,48 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 trackDialog.setOnDismissListener {
                     dismiss()
-//                    selectTracksDialog = null
+                    // selectTracksDialog = null
                 }
 
-                var audioIndexStart = currentAudioTracks.indexOf(tracks.currentAudioTrack).takeIf {
-                    it != -1
-                } ?: currentVideoTracks.indexOfFirst {
-                    tracks.currentAudioTrack?.id == it.id
-                }
+                var audioIndexStart = currentAudioTracks.indexOfFirst { track ->
+                    track.id == tracks.currentAudioTrack?.id && 
+                    track.formatIndex == tracks.currentAudioTrack?.formatIndex
+                }.coerceAtLeast(0)
 
                 val audioArrayAdapter =
                     ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
 
-                audioArrayAdapter.addAll(currentAudioTracks.mapIndexed { index, format ->
-                    when {
-                        format.label != null && format.language != null ->
-                            "${format.label} - [${fromTagToLanguageName(format.language) ?: format.language}]"
 
-                        else -> format.label
-                            ?: format.language?.let { fromTagToLanguageName(it) }
-                            ?: format.language
-                            ?: index.toString()
+                audioArrayAdapter.addAll(currentAudioTracks.mapIndexed { index, track ->
+                    val language = track.language?.let { fromTagToLanguageName(it) ?: it } 
+                        ?: track.label 
+                        ?: "Audio"
+                    
+                    val codec = track.sampleMimeType?.let { mimeType ->
+                    when {
+                            mimeType.contains("mp4a") || mimeType.contains("aac") -> "aac"
+                            mimeType.contains("ac-3") || mimeType.contains("ac3") -> "ac3"
+                            mimeType.contains("eac3-joc") -> "Dolby Atmos"
+                            mimeType.contains("eac3") -> "eac3"
+                            mimeType.contains("opus") -> "opus"
+                            mimeType.contains("vorbis") -> "vorbis"
+                            mimeType.contains("mp3") || mimeType.contains("mpeg") -> "mp3"
+                            mimeType.contains("flac") -> "flac"
+                            mimeType.contains("dts") -> "dts"
+                            else -> mimeType.substringAfter("/")
+                        }
+                    } ?: "codec?"
+                    
+                    val channels: Int = track.channelCount ?: 0
+                    val channelConfig = when (channels) {
+                        1 -> "mono"
+                        2 -> "stereo"
+                        6 -> "5.1"
+                        8 -> "7.1"
+                        else -> "${channels}Ch"
                     }
+                    
+                    "[$index] $language $codec $channelConfig"
                 })
 
                 audioList.adapter = audioArrayAdapter
@@ -1486,7 +1506,9 @@ class GeneratorPlayer : FullScreenPlayer() {
                 binding.applyBtt.setOnClickListener {
                     val currentTrack = currentAudioTracks.getOrNull(audioIndexStart)
                     player.setPreferredAudioTrack(
-                        currentTrack?.language, currentTrack?.id
+                        currentTrack?.language, 
+                        currentTrack?.id,
+                        currentTrack?.formatIndex,
                     )
 
                     val currentVideo = currentVideoTracks.getOrNull(videoIndex)

@@ -199,6 +199,8 @@ data class AudioTrack(
     override val label: String?,
     override val language: String?,
     override val sampleMimeType: String?,
+    val channelCount: Int?,
+    val formatIndex: Int?,
 ) : Track
 
 data class TextTrack(
@@ -305,7 +307,7 @@ interface IPlayer {
     fun setMaxVideoSize(width: Int = Int.MAX_VALUE, height: Int = Int.MAX_VALUE, id: String? = null)
 
     /** If no trackLanguage is set it'll default to first track. Specifying the id allows for track overrides as the language can be identical. */
-    fun setPreferredAudioTrack(trackLanguage: String?, id: String? = null)
+    fun setPreferredAudioTrack(trackLanguage: String?, id: String? = null, trackIndex: Int? = null)
 
     /** Get the current subtitle cues, for use with syncing */
     fun getSubtitleCues(): List<SubtitleCue>
