@@ -9,8 +9,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.viewbinding.ViewBinding
-import com.lagradost.api.Log
-import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.DownloadChildEpisodeBinding
 import com.lagradost.cloudstream3.databinding.DownloadHeaderEpisodeBinding
@@ -409,8 +407,6 @@ class DownloadAdapter(
                 ).format(Date(airDate))
                 episodeDate.setText(txt(formattedAirDate))
             }
-
-            Log.d("Phisher",data.airDate.toString())
 
             episodeMetaRow?.isVisible = episodeDate.isVisible || episodeRating.isVisible || episodeRuntime.isVisible
 
