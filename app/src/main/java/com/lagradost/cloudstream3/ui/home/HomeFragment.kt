@@ -76,6 +76,11 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 
+import androidx.activity.ComponentActivity
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
+
 private const val TAG = "HomeFragment"
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(
@@ -566,64 +571,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     }
 
     override fun onDestroyView() {
+        (activity as? ComponentActivity)?.detachBackPressedCallback("HomeFragment_BackPress")
         bottomSheetDialog?.ownHide()
         super.onDestroyView()
-    }
-
-    fun onBackPressed(): Boolean {
-        // Solo actuar en interfaz TV
-        if (!isLayout(TV)) {
-            return false  // Comportamiento normal en móvil
-        }
-        
-        val currentFocus = activity?.currentFocus
-        
-        // Si no hay enfoque, comportamiento normal
-        if (currentFocus == null) {
-            return false
-        }
-        
-        // Verificar si el enfoque está en algún elemento del contenido (RecyclerView)
-        var parent = currentFocus.parent
-        var isInHomeContent = false
-        
-        // Recorremos los padres del view con enfoque
-        while (parent != null) {
-            if (parent is View && parent.id == R.id.home_master_recycler) {
-                isInHomeContent = true
-                break
-            }
-            parent = parent.parent
-        }
-        
-        // Si está en el contenido, mover foco al selector de extensión
-        if (isInHomeContent) {
-            binding?.homeChangeApi?.let { changeApiButton ->
-                if (changeApiButton.isFocusable) {
-                    // Hacer scroll al top primero
-                    binding?.homeMasterRecycler?.smoothScrollToPosition(0)
-                    // Enfocar el selector de extensión
-                    changeApiButton.requestFocus()
-                    return true  // Consumimos el evento Back
-                }
-            }
-        }
-        
-        // Verificar si el enfoque está en el botón selector de extensión
-        if (currentFocus.id == R.id.home_change_api) {
-            // Mover enfoque al icono de home en la navegación
-            activity?.findViewById<View>(R.id.navigation_home)?.let { homeNav ->
-                if (homeNav.isFocusable) {
-                    homeNav.requestFocus()
-                    return true  // Consumimos el evento Back
-                }
-            }
-        }
-        
-        // En cualquier otro caso, comportamiento normal
-        return false
-    }
-
+    }   
 
     private val apiChangeClickListener = View.OnClickListener { view ->
         view.context.selectHomepage(currentApiName) { api ->
@@ -681,6 +632,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     @SuppressLint("SetTextI18n")
     override fun onBindingCreated(binding: FragmentHomeBinding) {
         context?.let { HomeChildItemAdapter.updatePosterSize(it) }
+        // NUEVO: Registrar callback para botón Back en TV
+        (activity as? ComponentActivity)?.attachBackPressedCallback("HomeFragment_BackPress") {
+            handleTvBackPress(this)
+        }
         binding.apply {
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
@@ -939,4 +894,61 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             }
         }*/
     }
+
+    private fun handleTvBackPress(helper: BackPressedCallbackHelper.CallbackHelper) {
+        // Solo actuar en interfaz TV
+        if (!isLayout(TV)) {
+            helper.runDefault()
+            return
+        }
+        
+        val currentFocus = activity?.currentFocus
+        
+        // Si no hay enfoque, comportamiento normal
+        if (currentFocus == null) {
+            helper.runDefault()
+            return
+        }
+        
+        // Verificar si el enfoque está en algún elemento del contenido (RecyclerView)
+        var parent = currentFocus.parent
+        var isInHomeContent = false
+        
+        // Recorremos los padres del view con enfoque
+        while (parent != null) {
+            if (parent is View && parent.id == R.id.home_master_recycler) {
+                isInHomeContent = true
+                break
+            }
+            parent = parent.parent
+        }
+        
+        // Si está en el contenido, mover foco al selector de extensión
+        if (isInHomeContent) {
+            binding?.homeChangeApi?.let { changeApiButton ->
+                if (changeApiButton.isFocusable) {
+                    // Hacer scroll al top primero
+                    binding?.homeMasterRecycler?.smoothScrollToPosition(0)
+                    // Enfocar el selector de extensión
+                    changeApiButton.requestFocus()
+                    return // Consumimos el evento Back
+                }
+            }
+        }
+        
+        // Verificar si el enfoque está en el botón selector de extensión
+        if (currentFocus.id == R.id.home_change_api) {
+            // Mover enfoque al icono de home en la navegación
+            activity?.findViewById<View>(R.id.navigation_home)?.let { homeNav ->
+                if (homeNav.isFocusable) {
+                    homeNav.requestFocus()
+                    return // Consumimos el evento Back
+                }
+            }
+        }
+        
+        // En cualquier otro caso, comportamiento normal
+        helper.runDefault()
+    }
+
 }
