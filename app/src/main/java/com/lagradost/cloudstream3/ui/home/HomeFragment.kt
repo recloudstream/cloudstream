@@ -64,6 +64,9 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppContextUtils.ownHide
 import com.lagradost.cloudstream3.utils.AppContextUtils.ownShow
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.EmptyEvent
@@ -75,10 +78,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
-import androidx.activity.ComponentActivity
-import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper
-import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
-import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
 
 private const val TAG = "HomeFragment"
 
@@ -903,7 +902,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             helper.runDefault()
             return
         }
-        // sInsideRecycle is true when focus is inside home_master_recycler
+        // isInsideRecycle is true when focus is inside home_master_recycler
         var parent = currentFocus.parent
         var isInsideRecycler = false
         while (parent != null) {
