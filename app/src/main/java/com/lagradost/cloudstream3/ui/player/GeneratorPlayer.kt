@@ -154,8 +154,11 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
 
-    private var titleRez = 3
     private var limitTitle = 0
+    private var showTitle = false
+    private var showName = false
+    private var showResolution = false
+    private var showMediaInfo = false
 
     private lateinit var viewModel: PlayerGeneratorViewModel //by activityViewModels()
     private lateinit var sync: SyncViewModel
@@ -1456,16 +1459,41 @@ class GeneratorPlayer : FullScreenPlayer() {
                 val audioArrayAdapter =
                     ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
 
-                audioArrayAdapter.addAll(currentAudioTracks.mapIndexed { index, format ->
-                    when {
-                        format.label != null && format.language != null ->
-                            "${format.label} - [${fromTagToLanguageName(format.language) ?: format.language}]"
+                audioArrayAdapter.addAll(currentAudioTracks.mapIndexed { index, track ->
+                    val language = track.language?.let { fromTagToLanguageName(it) ?: it }
+                        ?: track.label
+                        ?: "Audio"
 
-                        else -> format.label
-                            ?: format.language?.let { fromTagToLanguageName(it) }
-                            ?: format.language
-                            ?: index.toString()
+                    val codec = track.sampleMimeType?.let { mimeType ->
+                        when {
+                            mimeType.contains("mp4a") || mimeType.contains("aac") -> "aac"
+                            mimeType.contains("ac-3") || mimeType.contains("ac3") -> "ac3"
+                            mimeType.contains("eac3-joc") -> "Dolby Atmos"
+                            mimeType.contains("eac3") -> "eac3"
+                            mimeType.contains("opus") -> "opus"
+                            mimeType.contains("vorbis") -> "vorbis"
+                            mimeType.contains("mp3") || mimeType.contains("mpeg") -> "mp3"
+                            mimeType.contains("flac") -> "flac"
+                            mimeType.contains("dts") -> "dts"
+                            else -> mimeType.substringAfter("/")
+                        }
+                    } ?: "codec?"
+
+                    val channels: Int = track.channelCount ?: 0
+                    val channelConfig = when (channels) {
+                        1 -> "mono"
+                        2 -> "stereo"
+                        6 -> "5.1"
+                        8 -> "7.1"
+                        else -> "${channels}Ch"
                     }
+
+                    listOfNotNull(
+                        "[$index]",
+                        language.replaceFirstChar { it.uppercaseChar() },
+                        codec.uppercase(),
+                        channelConfig.replaceFirstChar { it.uppercaseChar() }
+                    ).joinToString(" • ")
                 })
 
                 audioList.adapter = audioArrayAdapter
@@ -1806,44 +1834,31 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     @SuppressLint("SetTextI18n")
     fun setPlayerDimen(widthHeight: Pair<Int, Int>?) {
-        val extra = widthHeight?.let { (w, h) -> "${w}x${h}" } ?: ""
-        val source = currentSelectedLink?.first?.name ?: currentSelectedLink?.second?.name ?: "NULL"
-        val headerName = getHeaderName().orEmpty()
+        val resolution = widthHeight?.let { "${it.first}x${it.second}" }
+        val name = currentSelectedLink?.first?.name ?: currentSelectedLink?.second?.name
+        val title = getHeaderName()
 
+        val result = listOfNotNull(
+            title?.takeIf { showTitle && it.isNotBlank() },
+            name?.takeIf { showName && it.isNotBlank() },
+            resolution?.takeIf { showResolution && it.isNotBlank() },
+        ).joinToString(" - ")
 
-        val title = when (titleRez) {
-            0 -> ""
-            1 -> extra
-            2 -> source
-            3 -> "$source${
-                if (source.isBlank()) {
-                    ""
-                } else {
-                    " - "
-                }
-            }$extra"
-
-            4 -> headerName
-            5 -> "$headerName${
-                if (headerName.isBlank()) {
-                    ""
-                } else {
-                    " - "
-                }
-            }$extra"
-
-            else -> ""
-        }
         playerBinding?.playerVideoTitleRez?.apply {
-            text = title
-            isVisible = title.isNotBlank()
+            text = result
+            isVisible = result.isNotBlank()
         }
     }
+
     private fun updatePlayerInfo() {
         val tracks = player.getVideoTracks()
 
         val videoTrack = tracks.currentVideoTrack
         val audioTrack = tracks.currentAudioTrack
+
+        val ctx = context ?: return
+        val prefs = PreferenceManager.getDefaultSharedPreferences(ctx)
+        showMediaInfo = prefs.getBoolean("limit_show_media_info", false)
 
         val videoCodec = videoTrack?.sampleMimeType?.substringAfterLast('/')?.uppercase()
         val audioCodec = audioTrack?.sampleMimeType?.substringAfterLast('/')?.uppercase()
@@ -1856,7 +1871,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         playerBinding?.playerVideoInfo?.apply {
             text = stats
-            isVisible = stats.isNotBlank()
+            isVisible = showMediaInfo && stats.isNotBlank()
         }
     }
 
@@ -2052,7 +2067,10 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         context?.let { ctx ->
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
-            titleRez = settingsManager.getInt(ctx.getString(R.string.prefer_limit_title_rez_key), 3)
+            showTitle = settingsManager.getBoolean("limit_show_title", true)
+            showName = settingsManager.getBoolean("limit_show_name", true)
+            showResolution = settingsManager.getBoolean("limit_show_resolution", true)
+            showMediaInfo = settingsManager.getBoolean("limit_show_media_info", true)
             limitTitle = settingsManager.getInt(ctx.getString(R.string.prefer_limit_title_key), 0)
             updateForcedEncoding(ctx)
             filterSubByLang =
