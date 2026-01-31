@@ -1488,10 +1488,12 @@ class GeneratorPlayer : FullScreenPlayer() {
                         else -> "${channels}Ch"
                     }
 
-                    val displayLanguage = language.replaceFirstChar { it.uppercaseChar() }
-                    val displayCodec = codec.uppercase()
-
-                    "[$index] $displayLanguage $displayCodec $channelConfig"
+                    listOfNotNull(
+                        "[$index]",
+                        language.replaceFirstChar { it.uppercaseChar() },
+                        codec.uppercase(),
+                        channelConfig.replaceFirstChar { it.uppercaseChar() }
+                    ).joinToString(" • ")
                 })
 
                 audioList.adapter = audioArrayAdapter
