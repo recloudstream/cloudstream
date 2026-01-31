@@ -46,7 +46,6 @@ tvprovider = "1.1.0"
 video = "1.0.0"
 workRuntimeKtx = "2.10.5"
 zipline = "1.24.0"
-gpuv = "3a107f995b"
 
 jvmTarget = "1.8"
 jdkToolchain = "17"
@@ -111,7 +110,6 @@ tvprovider = { module = "androidx.tvprovider:tvprovider", version.ref = "tvprovi
 video = { module = "com.google.android.mediahome:video", version.ref = "video" }
 work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 zipline = { module = "app.cash.zipline:zipline-android", version.ref = "zipline" }
-gpuv = { module = "com.github.recloudstream:GPUVideo-android", version.ref = "gpuv" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
