@@ -164,6 +164,9 @@
     <string name="use_system_brightness_settings_des">Use system brightness in the app player instead of a dark
         overlay
     </string>
+    <string name="extra_brightness_settings">Extra brightness</string>
+    <string name="extra_brightness_settings_des">Enable brightness filter when 100% display brightness is exceeded (may cause stutter on low end devices and force HDR content to be SDR).</string>
+    <string name="extra_brightness_key">extra_brightness_enabled</string>
     <string name="episode_sync_settings">Update watch progress</string>
     <string name="episode_sync_settings_des">Automatically sync your current episode progress</string>
     <string name="restore_settings">Restore data from backup</string>

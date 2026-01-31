@@ -155,6 +155,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     //    protected var currentPrefQuality =
 //        Qualities.P2160.value // preferred maximum quality, used for ppl w bad internet or on cell
+    protected var extraBrightnessEnabled = false
     protected var fastForwardTime = 10000L
     protected var androidTVInterfaceOffSeekTime = 10000L
     protected var androidTVInterfaceOnSeekTime = 30000L
@@ -196,7 +197,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         R.drawable.sun_4,
         R.drawable.sun_5,
         R.drawable.sun_6,
-        // R.drawable.sun_7,
+        R.drawable.sun_7,
         // R.drawable.ic_baseline_brightness_1_24,
         // R.drawable.ic_baseline_brightness_2_24,
         // R.drawable.ic_baseline_brightness_3_24,
@@ -222,24 +223,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         val root = super.onCreateView(inflater, container, savedInstanceState) ?: return null
         playerBinding = PlayerCustomLayoutBinding.bind(root.findViewById(R.id.player_holder))
 
-        // Create GPUPlayerView dynamically and attach it to the PlayerView's content frame
-        // !!! Removed due to HDR conflict !!!
-        /*safe {
-            val pv = root.findViewById<androidx.media3.ui.PlayerView>(R.id.player_view)
-            val packageName = context?.packageName ?: return@safe
-            val contentId = resources.getIdentifier("exo_content_frame", "id", packageName)
-            val contentFrame = pv?.findViewById<android.view.ViewGroup>(contentId)
-            if (contentFrame != null) {
-                val gpu = GPUPlayerView(context)
-                val lp = android.widget.FrameLayout.LayoutParams(
-                    android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                    android.view.ViewGroup.LayoutParams.MATCH_PARENT
-                )
-                // Insert as first child so it sits behind any controls inside content frame
-                contentFrame.addView(gpu, 0, lp)
-                gpuPlayerView = gpu
-            }
-        }*/
         return root
     }
 
@@ -263,7 +246,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             gpuPlayerView?.onPause()
             gpuPlayerView?.setGlFilter(null)
             gpuBrightnessFilter = null
-            val parent = gpuPlayerView?.parent as? android.view.ViewGroup
+            val parent = gpuPlayerView?.parent as? ViewGroup
             parent?.removeView(gpuPlayerView)
         }
 
@@ -1790,16 +1773,18 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                     }
 
                                     val lastRequested = currentRequestedBrightness
-                                    val nextBrightness =
+                                    val nextBrightness = if (extraBrightnessEnabled) {
+                                        (currentRequestedBrightness + verticalAddition)
+                                    } else {
                                         (currentRequestedBrightness + verticalAddition).coerceIn(
                                             0.0f,
                                             1.0f
-                                        ) // !!! Removed due to HDR conflict !!!
-                                    //
+                                        )
+                                    }
                                     // Log.e("Brightness", "Current: $currentRequestedBrightness, Next: $nextBrightness")
                                     // show toast
-                                    if (nextBrightness > 1.0f && isBrightnessLocked && !hasShownBrightnessToast) {
-                                        //showToast(R.string.slide_up_again_to_exceed_100)
+                                    if (extraBrightnessEnabled && nextBrightness > 1.0f && isBrightnessLocked && !hasShownBrightnessToast) {
+                                        showToast(R.string.slide_up_again_to_exceed_100)
                                         hasShownBrightnessToast = true
                                     }
                                     currentRequestedBrightness = nextBrightness
@@ -1809,7 +1794,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                         setBrightness(currentRequestedBrightness)
 
                                     val level1ProgressBar = playerProgressbarRightLevel1
-                                    //val level2ProgressBar = playerProgressbarRightLevel2
 
                                     // max is set high to make it smooth
                                     level1ProgressBar.max = 100_000
@@ -1822,8 +1806,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                             ) * 100_000f).toInt()
                                         )
 
-                                    // !!! Removed due to HDR conflict !!!
-                                    /*if (!isBrightnessLocked) {
+                                    if (extraBrightnessEnabled && !isBrightnessLocked) {
+                                        val level2ProgressBar = playerProgressbarRightLevel2
+
                                         currentExtraBrightness = if (currentRequestedBrightness > 1.0f) min(2.0f, currentRequestedBrightness) - 1.0f else 0.0f
                                         level2ProgressBar.max = 100_000
                                         level2ProgressBar.progress =
@@ -1877,20 +1862,15 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                                 )
                                             )
                                         }
-                                    }*/
+                                    }
 
                                     // Log.i("Brightness", "current: $currentRequestedBrightness, ce: $currentExtraBrightness L1: ${level1ProgressBar.progress}, L2: ${level2ProgressBar.progress}")
                                     playerProgressbarRightIcon.setImageResource(
-                                        brightnessIcons[min( // clamp the value just in case
+                                        brightnessIcons[min( // clamp the value in case of extra brightness
                                             brightnessIcons.size - 1,
                                             max(
                                                 0,
-                                                round(
-                                                    max(
-                                                        currentRequestedBrightness,
-                                                        1.0f
-                                                    ) * (brightnessIcons.size - 1)
-                                                ).toInt()
+                                                round(currentRequestedBrightness * (brightnessIcons.size - 1)).toInt()
                                             )
                                         )]
                                     )
@@ -2344,6 +2324,32 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     ctx.getString(R.string.speedup_key),
                     false
                 )
+
+                extraBrightnessEnabled = settingsManager.getBoolean(
+                    ctx.getString(R.string.extra_brightness_key),
+                    false
+                )
+
+
+                // Create GPUPlayerView dynamically and attach it to the PlayerView's content frame
+                if (extraBrightnessEnabled) {
+                    safe {
+                        val pv = view.findViewById<androidx.media3.ui.PlayerView>(R.id.player_view)
+                        val packageName = context?.packageName ?: return@safe
+                        val contentId = resources.getIdentifier("exo_content_frame", "id", packageName)
+                        val contentFrame = pv?.findViewById<ViewGroup>(contentId)
+                        if (contentFrame != null) {
+                            val gpu = GPUPlayerView(context)
+                            val lp = android.widget.FrameLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT
+                            )
+                            // Insert as first child so it sits behind any controls inside content frame
+                            contentFrame.addView(gpu, 0, lp)
+                            gpuPlayerView = gpu
+                        }
+                    }
+                }
 
 
                 val profiles = QualityDataHelper.getProfiles()
