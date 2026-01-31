@@ -53,9 +53,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.SimpleItemAnimator
-import com.daasuu.gpuv.egl.filter.GlBrightnessFilter
-import com.daasuu.gpuv.player.GPUPlayerView
-import com.daasuu.gpuv.player.PlayerScaleType
 import com.google.android.material.button.MaterialButton
 import com.lagradost.api.BuildConfig
 import com.lagradost.cloudstream3.CommonActivity.keyEventListener
@@ -127,9 +124,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected open var lockRotation = true
     protected open var isFullScreenPlayer = true
     protected var playerBinding: PlayerCustomLayoutBinding? = null
-    private var gpuPlayerView: GPUPlayerView? = null
-    private var gpuBrightnessFilter: GlBrightnessFilter? = null
-    private var hasBrightnessBoostError: Boolean = false
+    protected var brightnessOverlay: View? = null
 
     private var durationMode: Boolean by UserPreferenceDelegate("duration_mode", false)
 
@@ -223,34 +218,41 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         val root = super.onCreateView(inflater, container, savedInstanceState) ?: return null
         playerBinding = PlayerCustomLayoutBinding.bind(root.findViewById(R.id.player_holder))
 
+        // Inject the overlay from a separate XML into the PlayerView content frame
+        safe {
+            val pv = root.findViewById<androidx.media3.ui.PlayerView>(R.id.player_view)
+            val packageName = context?.packageName ?: return@safe
+            val contentId = resources.getIdentifier("exo_content_frame", "id", packageName)
+            val contentFrame = pv?.findViewById<ViewGroup>(contentId)
+            if (contentFrame != null) {
+                brightnessOverlay = contentFrame.findViewById<View>(R.id.extra_brightness_overlay)
+                brightnessOverlay = LayoutInflater.from(context).inflate(
+                    R.layout.extra_brightness_overlay,
+                    contentFrame,
+                    false
+                )
+                contentFrame.addView(brightnessOverlay)
+            }
+        }
+
         return root
-    }
-
-
-    fun setGpuExtraBrightness(extra: Float) {
-        gpuBrightnessFilter?.setBrightness(extra)
     }
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun playerUpdated(player: Any?) {
         super.playerUpdated(player)
-        if (player is ExoPlayer) {
-            // attach GL renderer filter if available
-            gpuPlayerView?.setExoPlayer(player)
-        }
     }
 
     override fun onDestroyView() {
-        // Clean up dynamic GPUPlayerView if created
+        // Clean up brightness overlay if created
         safe {
-            gpuPlayerView?.onPause()
-            gpuPlayerView?.setGlFilter(null)
-            gpuBrightnessFilter = null
-            val parent = gpuPlayerView?.parent as? ViewGroup
-            parent?.removeView(gpuPlayerView)
+            // remove overlay if present
+            brightnessOverlay?.let { overlay ->
+                val oParent = overlay.parent as? ViewGroup
+                oParent?.removeView(overlay)
+            }
         }
-
-        gpuPlayerView = null
+        brightnessOverlay = null
         playerBinding = null
         super.onDestroyView()
     }
@@ -1325,16 +1327,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             translationY = 0.0f
         }
 
-        safe {
-            gpuPlayerView?.setPlayerScaleType(
-                when (resize) {
-                    PlayerResize.Fit -> PlayerScaleType.RESIZE_FIT
-                    PlayerResize.Fill -> PlayerScaleType.RESIZE_FILL
-                    PlayerResize.Zoom -> PlayerScaleType.RESIZE_ZOOM
-                }
-            )
-        }
-
         super.resize(resize, showToast)
     }
 
@@ -1814,53 +1806,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                         level2ProgressBar.progress =
                                             (currentExtraBrightness * 100_000f).toInt().coerceIn(2_000, 100_000)
                                         level2ProgressBar.isVisible = currentRequestedBrightness > 1.0f
-
-                                        // Only create/remove the GL filter when crossing the 1.0 threshold
-                                        val wasExtra = lastRequested > 1.0f
-                                        val willExtra = currentRequestedBrightness > 1.0f
-
-                                        if (willExtra && !wasExtra) {
-                                            // crossed from <=1.0 to >1.0: initialize filter
-                                            try {
-                                                if (gpuBrightnessFilter == null) {
-                                                    gpuBrightnessFilter = GlBrightnessFilter()
-                                                    gpuPlayerView?.setGlFilter(gpuBrightnessFilter)
-                                                }
-                                                setGpuExtraBrightness(currentExtraBrightness)
-                                                hasBrightnessBoostError = false
-                                            } catch (t: Throwable) {
-                                                logError(t)
-                                                hasBrightnessBoostError = true
-                                            }
-                                        } else if (willExtra) {
-                                            // still >1.0: only update brightness
-                                            try {
-                                                setGpuExtraBrightness(currentExtraBrightness)
-                                            } catch (t: Throwable) {
-                                                logError(t)
-                                                hasBrightnessBoostError = true
-                                            }
-                                        } else if (wasExtra) {
-                                            // crossed from >1.0 to <=1.0: remove filter
-                                            try {
-                                                gpuPlayerView?.setGlFilter(null)
-                                                gpuBrightnessFilter = null
-                                            } catch (t: Throwable) {
-                                                logError(t)
-                                                hasBrightnessBoostError = true
-                                            }
-                                        }
-
-                                        if (willExtra) {
-                                            level2ProgressBar.progressTintList = ColorStateList.valueOf(
-                                                ContextCompat.getColor(
-                                                    level2ProgressBar.context, if (hasBrightnessBoostError) {
-                                                        R.color.colorPrimaryRed
-                                                    } else {
-                                                        R.color.colorPrimaryOrange
-                                                    }
-                                                )
-                                            )
+                                        brightnessOverlay?.let {
+                                            it.alpha = currentExtraBrightness
                                         }
                                     }
 
@@ -2329,28 +2276,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     ctx.getString(R.string.extra_brightness_key),
                     false
                 )
-
-
-                // Create GPUPlayerView dynamically and attach it to the PlayerView's content frame
-                if (extraBrightnessEnabled) {
-                    safe {
-                        val pv = view.findViewById<androidx.media3.ui.PlayerView>(R.id.player_view)
-                        val packageName = context?.packageName ?: return@safe
-                        val contentId = resources.getIdentifier("exo_content_frame", "id", packageName)
-                        val contentFrame = pv?.findViewById<ViewGroup>(contentId)
-                        if (contentFrame != null) {
-                            val gpu = GPUPlayerView(context)
-                            val lp = android.widget.FrameLayout.LayoutParams(
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.MATCH_PARENT
-                            )
-                            // Insert as first child so it sits behind any controls inside content frame
-                            contentFrame.addView(gpu, 0, lp)
-                            gpuPlayerView = gpu
-                        }
-                    }
-                }
-
 
                 val profiles = QualityDataHelper.getProfiles()
                 val type = if (ctx.isUsingMobileData())
