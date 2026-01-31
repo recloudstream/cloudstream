@@ -232,6 +232,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     false
                 )
                 contentFrame.addView(brightnessOverlay)
+                requestUpdateBrightnessOverlayOnNextLayout()
             }
         }
 
@@ -255,6 +256,89 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         brightnessOverlay = null
         playerBinding = null
         super.onDestroyView()
+    }
+
+    /**
+     * Resize/position the brightness overlay to exactly match the visible video surface.
+     * This copies the video surface size, scale and translation so the overlay won't cover
+     * letterbox/pillarbox areas when zooming or panning.
+     */
+    private fun updateBrightnessOverlayBounds() {
+        val overlay = brightnessOverlay ?: return
+        val pv = playerView ?: return
+        val video = pv.videoSurfaceView ?: return
+
+        // Compute accurate transformed bounding box of the video view after scale+translation
+        val vw = video.width.toFloat()
+        val vh = video.height.toFloat()
+        val sx = video.scaleX
+        val sy = video.scaleY
+        if (vw > 0f && vh > 0f) {
+            // pivot defaults to center if not set
+            val pivotX = if (video.pivotX != 0f) video.pivotX else vw * 0.5f
+            val pivotY = if (video.pivotY != 0f) video.pivotY else vh * 0.5f
+            // Use view position (includes translation) as base; avoid double-counting translation
+            val tx = video.x
+            val ty = video.y
+
+            // transform function for a local point (lx,ly)
+            fun transform(lx: Float, ly: Float): Pair<Float, Float> {
+                val gx = tx + pivotX + (lx - pivotX) * sx
+                val gy = ty + pivotY + (ly - pivotY) * sy
+                return Pair(gx, gy)
+            }
+
+            val p0 = transform(0f, 0f)
+            val p1 = transform(vw, 0f)
+            val p2 = transform(0f, vh)
+            val p3 = transform(vw, vh)
+
+            val minX = min(min(p0.first, p1.first), min(p2.first, p3.first))
+            val maxX = max(max(p0.first, p1.first), max(p2.first, p3.first))
+            val minY = min(min(p0.second, p1.second), min(p2.second, p3.second))
+            val maxY = max(max(p0.second, p1.second), max(p2.second, p3.second))
+
+            val newW = ceil(maxX - minX).toInt().coerceAtLeast(0)
+            val newH = ceil(maxY - minY).toInt().coerceAtLeast(0)
+
+            val lp = overlay.layoutParams
+            if (lp == null) {
+                overlay.layoutParams = ViewGroup.LayoutParams(newW, newH)
+            } else {
+                if (lp.width != newW || lp.height != newH) {
+                    lp.width = newW
+                    lp.height = newH
+                    overlay.layoutParams = lp
+                }
+            }
+
+            overlay.scaleX = 1.0f
+            overlay.scaleY = 1.0f
+            overlay.x = minX
+            overlay.y = minY
+        }
+    }
+
+    /**
+     * Ensure the overlay is updated once the next layout pass completes.
+     * Adds a one-time global layout listener (PiP/resizing/rotation frames).
+     */
+    private fun requestUpdateBrightnessOverlayOnNextLayout() {
+        val pv = playerView ?: return
+        safe {
+            val obs = pv.viewTreeObserver
+            val listener = object : android.view.ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    safe {
+                        updateBrightnessOverlayBounds()
+                    }
+                    if (obs.isAlive) {
+                        obs.removeOnGlobalLayoutListener(this)
+                    }
+                }
+            }
+            if (obs.isAlive) obs.addOnGlobalLayoutListener(listener)
+        }
     }
 
     open fun showMirrorsDialogue() {
@@ -563,6 +647,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 activity?.popCurrentPage("FullScreenPlayer")
             }
         }
+        requestUpdateBrightnessOverlayOnNextLayout()
         super.onResume()
     }
 
@@ -1254,6 +1339,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             // Ignore if we have no zoom or mid animation
             playerView?.post {
                 applyZoomMatrix(matrix, true)
+                requestUpdateBrightnessOverlayOnNextLayout()
             }
         }
     }
@@ -1328,6 +1414,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
 
         super.resize(resize, showToast)
+        requestUpdateBrightnessOverlayOnNextLayout()
     }
 
     /**
@@ -1408,6 +1495,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             videoView.scaleY = scaledAspect
             videoView.translationX = expectedTranslationX
             videoView.translationY = expectedTranslationY
+            updateBrightnessOverlayBounds()
         }
     }
 
@@ -1480,6 +1568,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                         // Delta move
                         matrix.postTranslate(newPan.x - oldPan.x, newPan.y - oldPan.y)
                         applyZoomMatrix(matrix, false)
+                        updateBrightnessOverlayBounds()
                     }
                     lastPan = newPan
                 }
