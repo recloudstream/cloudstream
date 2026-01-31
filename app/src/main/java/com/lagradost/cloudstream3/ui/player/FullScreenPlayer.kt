@@ -1774,7 +1774,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                                     val lastRequested = currentRequestedBrightness
                                     val nextBrightness = if (extraBrightnessEnabled) {
-                                        (currentRequestedBrightness + verticalAddition)
+                                        currentRequestedBrightness + verticalAddition
                                     } else {
                                         (currentRequestedBrightness + verticalAddition).coerceIn(
                                             0.0f,
