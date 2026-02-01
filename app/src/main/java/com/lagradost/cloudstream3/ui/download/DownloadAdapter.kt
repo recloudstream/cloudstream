@@ -392,8 +392,8 @@ class DownloadAdapter(
             episodeRating.isVisible = !ratingText.isNullOrBlank()
             episodeRating.text = ratingText?.let { "Rated: $it" }
 
-            episodeRuntime.isVisible = data.runtime != null && data.runtime > 0
-            episodeRuntime.text = data.runtime?.let { "$it min" }
+            episodeRuntime.isVisible = (data.runtime ?: 0) > 0
+            episodeRuntime.text = secondsToReadable(data.runtime ?: 0, "")
 
             episodeDescript.isVisible = !data.description.isNullOrBlank()
             episodeDescript.text = data.description.orEmpty()
@@ -456,10 +456,14 @@ class DownloadAdapter(
                 when {
                     isMultiDeleteState -> {
                         setOnClickListener {
-                            toggleIsChecked(deleteCheckbox, data.id)
+                            deleteCheckbox?.let {
+                                toggleIsChecked(it, data.id)
+                            }
                         }
                         setOnLongClickListener {
-                            toggleIsChecked(deleteCheckbox, data.id)
+                            deleteCheckbox?.let {
+                                toggleIsChecked(it, data.id)
+                            }
                             true
                         }
                     }
@@ -543,13 +547,11 @@ class DownloadAdapter(
         notifyDataSetChanged() // This is shit, but what can you do?
     }
 
-    private fun toggleIsChecked(checkbox: CheckBox?, itemId: Int) {
-        if (checkbox == null) return
+    private fun toggleIsChecked(checkbox: CheckBox, itemId: Int) {
         val isChecked = !checkbox.isChecked
         checkbox.isChecked = isChecked
         onItemSelectionChanged.invoke(itemId, isChecked)
     }
-
 
     class DiffCallback : DiffUtil.ItemCallback<VisualDownloadCached>() {
         override fun areItemsTheSame(
