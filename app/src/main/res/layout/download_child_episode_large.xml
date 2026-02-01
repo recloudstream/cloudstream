@@ -103,6 +103,13 @@
                     android:textColor="?attr/grayTextColor"
                     tools:text="15 Apr 2024" />
 
+                <TextView
+                    android:id="@+id/download_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="?attr/grayTextColor"
+                    tools:text="420 MB / 1.2 GB" />
             </LinearLayout>
 
 
