@@ -512,7 +512,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
         //  setEpisodes(viewModel.getAllMeta() ?: emptyList())
         isActive = true
-        setPlayerDimen(null)
+        updatePlayerInfo(reset = true)
         setTitle()
         if (!sameEpisode)
             hasRequestedStamps = false
@@ -1698,7 +1698,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         return sortSubs(subtitles).firstOrNull { it.matchesLanguageCode(langCode) }
     }
-    
+
     private fun autoSelectFromSettings(): Boolean {
         // auto select subtitle based on settings
         val langCode = preferredAutoSelectSubtitles
@@ -1831,33 +1831,26 @@ class GeneratorPlayer : FullScreenPlayer() {
         playerBinding?.offlinePin?.isVisible = lastUsedGenerator is DownloadFileGenerator
     }
 
-    @SuppressLint("SetTextI18n")
-    fun setPlayerDimen(widthHeight: Pair<Int, Int>?) {
-        val resolution = widthHeight?.let { "${it.first}x${it.second}" }
-        val name = currentSelectedLink?.first?.name ?: currentSelectedLink?.second?.name
-        val title = getHeaderName()
-
-        val result = listOfNotNull(
-            title?.takeIf { showTitle && it.isNotBlank() },
-            name?.takeIf { showName && it.isNotBlank() },
-            resolution?.takeIf { showResolution && it.isNotBlank() },
-        ).joinToString(" - ")
-
-        playerBinding?.playerVideoTitleRez?.apply {
-            text = result
-            isVisible = result.isNotBlank()
+    /**
+     * Show the current playback information (e.g. resolution, codec) in the player info text view.
+     *
+     * If [reset] is set to `true`, the text view will be cleared instead.
+     */
+    private fun updatePlayerInfo(reset: Boolean = false) {
+        if (reset) {
+            playerBinding?.playerVideoInfo?.text = ""
+            playerBinding?.playerVideoInfo?.isGone = true
+            return
         }
-    }
 
-    private fun updatePlayerInfo() {
         val tracks = player.getVideoTracks()
 
         val videoTrack = tracks.currentVideoTrack
         val audioTrack = tracks.currentAudioTrack
 
-        val ctx = context ?: return
-        val prefs = PreferenceManager.getDefaultSharedPreferences(ctx)
-        showMediaInfo = prefs.getBoolean(ctx.getString(R.string.show_media_info_key), false)
+        val resolution = videoTrack?.let { "${it.width}x${it.height}" }
+        val source = currentSelectedLink?.first?.name ?: currentSelectedLink?.second?.name
+        val headerName = getHeaderName().orEmpty()
 
         val videoCodec = videoTrack?.sampleMimeType?.substringAfterLast('/')?.uppercase()
         val audioCodec = audioTrack?.sampleMimeType?.substringAfterLast('/')?.uppercase()
@@ -1866,17 +1859,22 @@ class GeneratorPlayer : FullScreenPlayer() {
             fromTagToLanguageName(audioTrack?.language)?.let { "[$it]" }
         ).joinToString(" ")
 
-        val stats = arrayOf(videoCodec, audioCodec, language).filter { !it.isNullOrBlank() }.joinToString(" • ")
+        val stats = listOfNotNull(
+            source.takeIf { showTitle },
+            headerName.takeIf { showName },
+            resolution.takeIf { showResolution }
+        ) + arrayOf(videoCodec, audioCodec, language)
+            .takeIf { showMediaInfo }.orEmpty()
 
         playerBinding?.playerVideoInfo?.apply {
-            text = stats
-            isVisible = showMediaInfo && stats.isNotBlank()
+            text = stats.filter { !it.isNullOrBlank() }.joinToString(" • ")
+            isVisible = text.isNotEmpty()
         }
     }
 
     override fun playerDimensionsLoaded(width: Int, height: Int) {
         super.playerDimensionsLoaded(width, height)
-        setPlayerDimen(width to height)
+        updatePlayerInfo()
     }
 
     private fun unwrapBundle(savedInstanceState: Bundle?) {
@@ -2066,6 +2064,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         context?.let { ctx ->
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+            showTitle = settingsManager.getBoolean(ctx.getString(R.string.show_title_key), true)
             showName        = settingsManager.getBoolean(ctx.getString(R.string.show_name_key), true)
             showResolution  = settingsManager.getBoolean(ctx.getString(R.string.show_resolution_key), true)
             showMediaInfo   = settingsManager.getBoolean(ctx.getString(R.string.show_media_info_key), false)

@@ -86,7 +86,7 @@
         android:id="@+id/player_top_holder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+       >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -95,6 +95,17 @@
             android:layout_marginTop="20dp"
             android:layout_marginEnd="32dp"
             android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/player_video_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginBottom="6dp"
+                android:textColor="@color/grayTextColor"
+                android:textSize="12sp"
+                android:ellipsize="end"
+                tools:text="1920x1080 • HDR10 • HEVC" />
 
             <LinearLayout
                 android:id="@+id/player_video_title_holder"
@@ -111,16 +122,7 @@
                     android:textSize="16sp"
                     android:textStyle="bold"
                     tools:text="Hello world" />
-                <TextView
-                    android:id="@+id/player_video_info"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginBottom="2.5dp"
-                    android:textColor="@color/white"
-                    android:textSize="10sp"
-                    android:visibility="gone"
-                    tools:text="HDR10 • HEVC" />
+
                 <ImageView
                     android:id="@+id/offline_pin"
                     android:layout_width="16dp"
@@ -131,14 +133,6 @@
                     tools:visibility="visible"
                     android:layout_gravity="center"/>
             </LinearLayout>
-            <TextView
-                android:id="@+id/player_video_title_rez"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                tools:text="1920x1080" />
 
             <FrameLayout
                 android:id="@+id/player_episode_filler_holder"
