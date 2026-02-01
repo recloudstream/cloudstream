@@ -1455,16 +1455,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     track.formatIndex == tracks.currentAudioTrack?.formatIndex
                 }.coerceAtLeast(0)
 
-                val audioArrayAdapter =
-                    ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
-
-                audioArrayAdapter.addAll(currentAudioTracks.mapIndexed { index, track ->
-                    val language = track.language?.let { fromTagToLanguageName(it) ?: it }
-                        ?: track.label
-                        ?: "Audio"
-
-                    val codec = track.sampleMimeType?.let { mimeType ->
-                        when {
+                val audioArrayAdapter = ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
 
                 audioArrayAdapter.addAll(currentAudioTracks.mapIndexed { index, track ->
                     val language = track.language?.let { fromTagToLanguageName(it) ?: it } 
