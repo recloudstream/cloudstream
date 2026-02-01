@@ -41,6 +41,7 @@
     <string name="show_fillers_key">show_fillers_key</string>
     <string name="show_trailers_key">show_trailers_key</string>
     <string name="show_kitsu_posters_key">show_kitsu_posters_key</string>
+    <string name="show_cast_in_details_key">show_cast_in_details_key</string>
     <string name="random_button_key">random_button_key</string>
     <string name="provider_lang_key">provider_lang_key</string>
     <string name="dns_key">dns_key</string>

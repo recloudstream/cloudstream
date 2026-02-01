@@ -75,6 +75,11 @@
             android:key="@string/show_kitsu_posters_key"
             android:title="@string/kitsu_settings" />
         <SwitchPreference
+            android:defaultValue="true"
+            android:icon="@drawable/ic_baseline_people_24"
+            android:key="@string/show_cast_in_details_key"
+            android:title="@string/show_cast_in_details" />    
+        <SwitchPreference
             android:defaultValue="false"
             android:icon="@drawable/ic_baseline_skip_next_24"
             android:key="@string/show_fillers_key"

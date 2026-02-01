@@ -7,6 +7,14 @@
     android:orientation="vertical"
     tools:orientation="vertical">
 
+    <ImageView
+        android:visibility="gone"
+        android:id="@+id/video_outline"
+        android:src="@drawable/video_outline"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </ImageView>
+
 
     <TextView
         android:id="@+id/player_time_text"
