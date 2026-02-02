@@ -45,11 +45,19 @@ import androidx.media3.ui.PlayerNotificationManager.MediaDescriptionAdapter
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.LoadResponse
+import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
+import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
+import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
+import com.lagradost.cloudstream3.LoadResponse.Companion.getTMDbId
+import com.lagradost.cloudstream3.MainActivity
+import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.databinding.DialogOnlineSubtitlesBinding
 import com.lagradost.cloudstream3.databinding.FragmentPlayerBinding
 import com.lagradost.cloudstream3.databinding.PlayerSelectSourceAndSubsBinding
@@ -58,22 +66,14 @@ import com.lagradost.cloudstream3.isAnimeOp
 import com.lagradost.cloudstream3.isEpisodeBased
 import com.lagradost.cloudstream3.isLiveStream
 import com.lagradost.cloudstream3.isMovieType
-import com.lagradost.cloudstream3.LoadResponse
-import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
-import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
-import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
-import com.lagradost.cloudstream3.LoadResponse.Companion.getTMDbId
-import com.lagradost.cloudstream3.MainActivity
+import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
-import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.safe
-import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities.SubtitleSearch
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.subtitleProviders
-import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.player.CS3IPlayer.Companion.preferredAudioTrackLanguage
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.updateForcedEncoding
@@ -86,13 +86,12 @@ import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
-import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.result.SyncViewModel
-import com.lagradost.cloudstream3.ui.result.VideoWatchState
+import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
-import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.subtitles.SUBTITLE_AUTO_SELECT_KEY
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAutoSelectLanguageTagIETF
@@ -102,19 +101,14 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
-import com.lagradost.cloudstream3.utils.DataStoreHelper.setVideoWatchState
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
-import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
-import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToLangTagIETF
-import com.lagradost.cloudstream3.utils.SubtitleHelper.fromLanguageToTagIETF
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToEnglishLanguageName
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
 import com.lagradost.cloudstream3.utils.SubtitleHelper.languages
-import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -123,14 +117,16 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getImageBitmapFromUrl
+import com.lagradost.cloudstream3.utils.setText
+import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.safefile.SafeFile
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import java.io.Serializable
 import java.util.Calendar
 import kotlin.math.abs
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 
 @OptIn(UnstableApi::class)
 class GeneratorPlayer : FullScreenPlayer() {
@@ -1861,7 +1857,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         val ctx = context ?: return
         val prefs = PreferenceManager.getDefaultSharedPreferences(ctx)
-        showMediaInfo = prefs.getBoolean("limit_show_media_info", false)
+        showMediaInfo = prefs.getBoolean(ctx.getString(R.string.show_media_info_key), false)
 
         val videoCodec = videoTrack?.sampleMimeType?.substringAfterLast('/')?.uppercase()
         val audioCodec = audioTrack?.sampleMimeType?.substringAfterLast('/')?.uppercase()
@@ -2070,11 +2066,10 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         context?.let { ctx ->
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
-            showTitle = settingsManager.getBoolean("limit_show_title", true)
-            showName = settingsManager.getBoolean("limit_show_name", true)
-            showResolution = settingsManager.getBoolean("limit_show_resolution", true)
-            showMediaInfo = settingsManager.getBoolean("limit_show_media_info", true)
-            limitTitle = settingsManager.getInt(ctx.getString(R.string.prefer_limit_title_key), 0)
+            showName        = settingsManager.getBoolean(ctx.getString(R.string.show_name_key), true)
+            showResolution  = settingsManager.getBoolean(ctx.getString(R.string.show_resolution_key), true)
+            showMediaInfo   = settingsManager.getBoolean(ctx.getString(R.string.show_media_info_key), true)
+            limitTitle      = settingsManager.getInt(ctx.getString(R.string.prefer_title_limit_key), 0)
             updateForcedEncoding(ctx)
             filterSubByLang =
                 settingsManager.getBoolean(getString(R.string.filter_sub_lang_key), false)

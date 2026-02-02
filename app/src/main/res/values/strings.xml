@@ -323,7 +323,7 @@
     <string name="watch_quality_pref">Preferred watch quality (WiFi)</string>
     <string name="watch_quality_pref_data">Preferred watch quality (Mobile Data)</string>
     <string name="limit_title">Video player title max chars</string>
-    <string name="limit_title_rez">Video player resolution</string>
+    <string name="limit_title_rez">Show player information</string>
     <string name="video_buffer_size_settings">Video buffer size</string>
     <string name="video_buffer_length_settings">Video buffer length</string>
     <string name="video_buffer_disk_settings">Video cache on disk</string>

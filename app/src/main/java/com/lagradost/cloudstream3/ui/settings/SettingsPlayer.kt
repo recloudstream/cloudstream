@@ -113,8 +113,8 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
         }
 
         getPref(R.string.prefer_limit_title_rez_key)?.setOnPreferenceClickListener {
-            val prefNames = resources.getStringArray(R.array.limit_title_rez_pref_names)
-            val keys = resources.getStringArray(R.array.limit_title_rez_pref_values)
+            val prefNames = resources.getStringArray(R.array.title_info_pref_names)
+            val keys = resources.getStringArray(R.array.title_info_pref_values)
 
             val selectedIndices = keys.map {
                 settingsManager.getBoolean(it, true)
