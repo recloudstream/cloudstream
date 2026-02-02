@@ -33,7 +33,7 @@
 
         <Preference
             android:icon="@drawable/ic_baseline_text_format_24"
-            android:key="@string/prefer_limit_title_rez_key"
+            android:key="@string/prefer_limit_show_player_info"
             android:title="@string/limit_title_rez" />
         <SwitchPreference
             android:defaultValue="false"

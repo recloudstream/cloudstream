@@ -172,6 +172,13 @@
             tools:ignore="ContentDescription"
             tools:visibility="visible" />
 
+        <!-- Placeholder for TV layout random button - always hidden on phone -->
+        <ImageView
+            android:id="@+id/library_random_button_tv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone" />
+
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/sort_fab"
             style="@style/ExtendedFloatingActionButton"

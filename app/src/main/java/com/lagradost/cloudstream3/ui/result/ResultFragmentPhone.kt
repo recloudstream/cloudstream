@@ -490,6 +490,13 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 } else resultOverlappingPanels.closePanels()
             }
 
+            resultMiniSync.setOnClickListener {
+                if (resultOverlappingPanels.getSelectedPanel().ordinal == 1) {
+                    resultOverlappingPanels.openStartPanel()
+                } else resultOverlappingPanels.closePanels()
+            }
+
+            /*
             resultMiniSync.setRecycledViewPool(ImageAdapter.sharedPool)
             resultMiniSync.adapter = ImageAdapter(
                 nextFocusDown = R.id.result_sync_set_score,
@@ -500,6 +507,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         } else resultOverlappingPanels.closePanels()
                     }
                 })
+            */
             resultSubscribe.setOnClickListener {
                 viewModel.toggleSubscriptionStatus(context) { newStatus: Boolean? ->
                     if (newStatus == null) return@toggleSubscriptionStatus
@@ -826,8 +834,11 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultComingSoon.isVisible = d.comingSoon
                     resultDataHolder.isGone = d.comingSoon
 
-                    resultCastItems.isGone = d.actors.isNullOrEmpty()
-                    (resultCastItems.adapter as? ActorAdaptor)?.submitList(d.actors)
+                    val prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(root.context)
+                    val showCast = prefs.getBoolean(root.context.getString(R.string.show_cast_in_details_key), true)
+
+                    resultCastItems.isGone = !showCast || d.actors.isNullOrEmpty()
+                    (resultCastItems.adapter as? ActorAdaptor)?.submitList(if (showCast) d.actors else emptyList())
 
                     if (d.contentRatingText == null) {
                         // If there is no rating to display, we don't want an empty gap
@@ -937,7 +948,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             val newList = list.filter { it.isSynced && it.hasAccount }
 
             binding?.resultMiniSync?.isVisible = newList.isNotEmpty()
-            (binding?.resultMiniSync?.adapter as? ImageAdapter)?.submitList(newList.mapNotNull { it.icon })
+            //(binding?.resultMiniSync?.adapter as? ImageAdapter)?.submitList(newList.mapNotNull { it.icon })
         }
 
 
