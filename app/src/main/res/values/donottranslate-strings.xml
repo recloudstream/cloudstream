@@ -19,7 +19,7 @@
     <string name="quality_pref_mobile_data_key">quality_pref_mobile_data_key</string>
     <string name="player_default_key">player_default_key</string>
     <string name="prefer_limit_title_key">prefer_limit_title_key</string>
-    <string name="prefer_limit_title_rez_key">prefer_limit_title_rez_key</string>
+    <string name="prefer_limit_show_player_info">prefer_limit_show_player_info</string>
     <string name="apk_installer_key">apk_installer_key</string>
     <string name="video_buffer_size_key">video_buffer_size_key</string>
     <string name="video_buffer_length_key">video_buffer_length_key</string>
@@ -129,6 +129,11 @@
     <string name="sort_cancel">@string/cancel</string>
     <string name="default_subtitles">@string/action_default</string>
     <string name="default_account">@string/action_default</string>
+
+    <string name="show_name_key">show_name</string>
+    <string name="show_resolution_key">show_resolution</string>
+    <string name="show_media_info_key">show_media_info</string>
+    <string name="prefer_title_limit_key">prefer_title_limit</string>
 
     <string name="legal_notice_text">Any legal issues regarding the content on this application
         should be taken up with the actual file hosts and providers themselves as we are not affiliated with them.
