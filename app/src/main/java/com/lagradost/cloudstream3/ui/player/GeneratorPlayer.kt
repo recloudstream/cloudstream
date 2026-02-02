@@ -229,7 +229,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     private fun getPos(): Long {
-        val durPos = DataStoreHelper.getViewPos(viewModel.getId()) ?: return 0L
+        val durPos = getViewPos(viewModel.getId()) ?: return 0L
         if (durPos.duration == 0L) return 0L
         if (durPos.position * 100L / durPos.duration > 95L) {
             return 0L
@@ -2068,7 +2068,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
             showName        = settingsManager.getBoolean(ctx.getString(R.string.show_name_key), true)
             showResolution  = settingsManager.getBoolean(ctx.getString(R.string.show_resolution_key), true)
-            showMediaInfo   = settingsManager.getBoolean(ctx.getString(R.string.show_media_info_key), true)
+            showMediaInfo   = settingsManager.getBoolean(ctx.getString(R.string.show_media_info_key), false)
             limitTitle      = settingsManager.getInt(ctx.getString(R.string.prefer_title_limit_key), 0)
             updateForcedEncoding(ctx)
             filterSubByLang =

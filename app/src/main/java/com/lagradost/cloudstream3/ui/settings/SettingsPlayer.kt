@@ -117,7 +117,7 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
             val keys = resources.getStringArray(R.array.title_info_pref_values)
 
             val selectedIndices = keys.map {
-                settingsManager.getBoolean(it, true)
+                settingsManager.getBoolean(it, false)
             }.mapIndexedNotNull { index, enabled ->
                 if (enabled) index else null
             }
