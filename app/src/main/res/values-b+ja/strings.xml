@@ -184,7 +184,7 @@
     <string name="network_adress_example">https://example.com/example.mp4</string>
     <string name="subtitle_offset_extra_hint_none_format">字幕遅延なし</string>
     <string name="delete_repository">リポジトリ削除</string>
-    <string name="download_all_plugins_from_repo">警告: CloudStream 3はサードパーティの拡張機能の使用について一切の責任を負わず、それらに対するサポートも提供しません！</string>
+    <string name="download_all_plugins_from_repo">警告: CloudStreamはサードパーティの拡張機能の使用について一切の責任を負わず、それらに対するサポートも提供しません！</string>
     <string name="action_add_to_bookmarks">視聴状態を設定</string>
     <string name="subtitle_offset">字幕を同期</string>
     <string name="add_repository">リポジトリを追加</string>
@@ -234,7 +234,6 @@
     <string name="autoplay_next_settings_des">現在のエピソードが終了したら次のエピソードを開始する</string>
     <string name="subs_hold_to_reset_to_default">長押しするとデフォルトにリセットされます</string>
     <string name="popup_resume_download">ダウンロードを再開</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="filter_bookmarks">ブックマークのフィルタ</string>
     <string name="normal_no_plot">プロットが見つかりません</string>
     <string name="double_tap_to_pause_settings">ダブルタップで一時停止</string>
@@ -705,4 +704,8 @@
     <string name="top_center">上中央</string>
     <string name="top_right">右上</string>
     <string name="play_full_series_button">全シリーズを再生</string>
+    <string name="install_prerelease">プレリリース版をインストール</string>
+    <string name="prerelease_already_installed">プレリリース版は既にインストールされています。</string>
+    <string name="prerelease_install_failed">プレリリース版のインストールに失敗しました。</string>
+    <string name="show_episode_text">エピソードのテキスト</string>
 </resources>

@@ -4,9 +4,12 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
-import com.lagradost.cloudstream3.utils.getQualityFromName
 import com.lagradost.cloudstream3.utils.newExtractorLink
-import java.net.URI
+
+class Vidnest : AsianLoad() {
+    override var name = "Vidnest"
+    override var mainUrl = "https://vidnest.io"
+}
 
 open class AsianLoad : ExtractorApi() {
     override var name = "AsianLoad"
@@ -20,7 +23,7 @@ open class AsianLoad : ExtractorApi() {
             sourceRegex.findAll(this.text).forEach { sourceMatch ->
                 val extractedUrl = sourceMatch.groupValues[1]
                 // Trusting this isn't mp4, may fuck up stuff
-                if (URI(extractedUrl).path.endsWith(".m3u8")) {
+                if (extractedUrl.contains(".m3u8")) {
                     M3u8Helper.generateM3u8(
                         name,
                         extractedUrl,
@@ -29,7 +32,7 @@ open class AsianLoad : ExtractorApi() {
                     ).forEach { link ->
                         extractedLinksList.add(link)
                     }
-                } else if (extractedUrl.endsWith(".mp4")) {
+                } else if (extractedUrl.contains(".mp4")) {
                     extractedLinksList.add(
                         newExtractorLink(
                             source = name,
@@ -37,7 +40,6 @@ open class AsianLoad : ExtractorApi() {
                             url = extractedUrl,
                         ) {
                             this.referer = url.replace(" ", "%20")
-                            this.quality = getQualityFromName(sourceMatch.groupValues[2])
                         }
                     )
                 }

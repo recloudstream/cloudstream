@@ -593,7 +593,6 @@
     <string name="clipboard_permission_error">Грешка при пристапот до таблата со исечоци, обиди се повторно.</string>
     <string name="clipboard_unknown_error">Грешка при копирање, молам копирај го логот и контактирај ја поддршката на апликацијата.</string>
     <string name="audio_book_singular">Аудио книга</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="pref_category_security">Безбедност</string>
     <string name="dismiss">Отфрли</string>
     <string name="open_downloaded_repo">Отвори извор</string>

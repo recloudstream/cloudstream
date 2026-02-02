@@ -24,6 +24,7 @@ import com.lagradost.cloudstream3.CommonActivity.getCastSession
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
+import com.lagradost.cloudstream3.LoadResponse.Companion.getKitsuId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
 import com.lagradost.cloudstream3.LoadResponse.Companion.readIdFromString
@@ -120,6 +121,7 @@ data class ResultData(
 
     val posterImage: String?,
     val posterBackgroundImage: String?,
+    val logoUrl: String?,
     val plotText: UiText,
     val apiName: UiText,
     val ratingText: UiText?,
@@ -245,6 +247,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
                 plot!!
             ),
         backgroundPosterUrl = backgroundPosterUrl,
+        logoUrl = logoUrl,
         title = name,
         typeText = txt(
             when (type) {
@@ -1853,7 +1856,7 @@ class ResultViewModel2 : ViewModel() {
                 {
                     if (this !is AnimeLoadResponse) return@runAllAsync
                     // already exist, no need to run getTracker
-                    if (this.getAniListId() != null && this.getMalId() != null) return@runAllAsync
+                    if (this.getAniListId() != null && this.getKitsuId() != null && this.getMalId() != null) return@runAllAsync
 
                     val res = APIHolder.getTracker(
                         listOfNotNull(
@@ -1871,9 +1874,12 @@ class ResultViewModel2 : ViewModel() {
                         this.year
                     )
 
+                    val kitsuId = AccountManager.kitsuApi.getAnimeIdByTitle(this.name)
+
                     val ids = arrayOf(
                         AccountManager.malApi.idPrefix to res?.malId?.toString(),
-                        AccountManager.aniListApi.idPrefix to res?.aniId
+                        AccountManager.aniListApi.idPrefix to res?.aniId,
+                        AccountManager.kitsuApi.idPrefix to kitsuId
                     )
 
                     if (ids.any { (id, new) ->
@@ -1895,6 +1901,7 @@ class ResultViewModel2 : ViewModel() {
                     // set posters, might fuck up due to headers idk
                     posterUrl = posterUrl ?: res?.image
                     backgroundPosterUrl = backgroundPosterUrl ?: res?.cover
+                    logoUrl = logoUrl
                 },
                 {
                     if (meta == null) return@runAllAsync
@@ -2695,6 +2702,7 @@ class ResultViewModel2 : ViewModel() {
         override var syncData: MutableMap<String, String> = mutableMapOf(),
         override var posterHeaders: Map<String, String>? = null,
         override var backgroundPosterUrl: String? = null,
+        override var logoUrl: String? = null,
         override var contentRating: String? = null,
         override var uniqueUrl: String = url,
         val id: Int?,

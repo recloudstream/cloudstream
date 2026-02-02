@@ -630,7 +630,6 @@
     <string name="device_pin_url_message">Truy cập <b>%s</b> trên điện thoại hoặc máy tính và nhập mã bên trên</string>
     <string name="device_pin_expired_message">Mã PIN đã hết hạn!</string>
     <string name="device_pin_counter_text">Mã sẽ hết hạn trong %1$dm %2$ds</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="device_pin_error_message">Không lấy được mã PIN, hãy thử xác thực cục bộ</string>
     <string name="downloads_empty">Hiện không có bản tải xuống nào.</string>
     <string name="auth_locally">Xác thực cục bộ</string>

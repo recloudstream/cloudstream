@@ -75,7 +75,7 @@
     <string name="automatic_plugin_download_summary">تلقائيًا نَزِل كل الإضافات من الريپويات يللي نزادِت.</string>
     <string name="delete">محي</string>
     <string name="start">بلش</string>
-    <string name="apk_installer_settings_des">فيه تِلِفونات م فيها تعوز الطريقة الجديدة لتجديد الآپات. جربو \"الطريقة القديمة\" إزا م عم تنزل التجديدات.</string>
+    <string name="apk_installer_settings_des">فيه أجهزة م فيها تعوز الطريقة الجديدة لتجديد الآپات. جربو \"الطريقة القديمة\" إزا م عم تنزل التجديدات.</string>
     <string name="picture_in_picture_des">بعد ما تسكر \"كلود ستريم\"، بكفي الڤيديو بشِباك زغير فوق غير آپ</string>
     <string name="no_chromecast_support_toast">هيدا المصدر م بيدعم \"كروم كاست\"</string>
     <string name="advanced_search">تنبيش منظّم</string>
@@ -573,8 +573,6 @@
     <string name="enter_current_pin">حطو الأرقام السرية الحالية</string>
     <string name="audio_tracks">صوت</string>
     <string name="rotate_video_desc">حط كبسة لبرم إتجاه الشاشة</string>
-    <string name="rotate_video_key">rotate_video_key</string>
-    <string name="auto_rotate_video_key">auto_rotate_video_key</string>
     <string name="auto_rotate_video">برم الشاشة أوتوماتيكيًا</string>
     <string name="rotate_video">برومو</string>
     <string name="auto_rotate_video_desc">غير إتجاه الشاشة أوتوماتيكيًا حسب شكل الڤيديو</string>
@@ -625,7 +623,6 @@
     <string name="dismiss">تجاهل</string>
     <string name="open_downloaded_repo">فتاح الريپو</string>
     <string name="device_pin_url_message">فتاح <b>%s</b> ع تلفونك أو كمپيوترك، وحط الكود اللي فوق</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="play_from_beginning_img_des">بلشه من الأول</string>
     <string name="test_warning">تحذير</string>
     <string name="open_local_video">فتاح الڤيديو اللي ع جهازك</string>
@@ -670,7 +667,7 @@
     <string name="player_load_one_subtitle_online">أفّي اللودينگ تلقائيًا</string>
     <string name="torrent_preferred_media">سماح ب إستعمال الـTorrent بال سَتِنگز/المصادر/المحتوى المفضل</string>
     <string name="torrent_not_accepted">سكر الآپ و رجاع فتحه، و قبال دعم التورنت ت تكفي.</string>
-    <string name="software_decoding_desc">السوفتوار ديكودينگ بخلي مشغل الڤيديو يمشّي أنواع فيلات ڤيديو م بيدعمها جهازك، بس هال شي معقول يخلي الڤيديو يعلق، خاصتًا إزا كانت الجودة عالية</string>
+    <string name="software_decoding_desc">السوفتوار ديكودينگ بخلي مشغل الڤيديو يمشّي أنواع فيلات ڤيديو م بيدعمها جهازك، بس هال شي معقول يخلي الڤيديو يعلق، خاصتًا إزا كانت الجودة عالية.</string>
     <string name="software_decoding">سوفتوار ديكودينگ</string>
     <string name="sort_episodes_rating_low_high">رايتينگ (أوطا)</string>
     <string name="sort_episodes_date_newest">نهار اللي نزل (أجدد)</string>
@@ -718,4 +715,28 @@
     <string name="edit_profile_image_title">عدّل صورة الملف</string>
     <string name="edit_profile_image_hint">ادخل لينك ( عنوان ال URL ) تبع صورة الملف</string>
     <string name="edit_profile_image_success">تم تعديل الصورة بنجاح</string>
+    <string name="play_full_series_button">بلّش كل المسلسل</string>
+    <string name="install_prerelease">نزل النسخة التجريبية من الآپ</string>
+    <string name="prerelease_already_installed">أصلًا عندك النسخة التجريبية.</string>
+    <string name="prerelease_install_failed">فشل تنزيل النسخة التجريبية.</string>
+    <string name="episode_action_play_mirror">ستعمل مصدر بديل</string>"
+    <string name="show_episode_text">كتيبة الحلقة</string>
+    <string name="edit_profile_image_error_empty">م لقينا الرابط</string>
+    <string name="edit_profile_image_error_invalid">الرابط أو الصورة مش صالحة</string>
+    <string name="action_mark_watched_up_to_this_episode">عتبر الحلقات محدورة لحد هون</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">وقف إعتبار الحلقات محدورة لحد هون</string>
+    <string name="action_reload">عملنا ري-لوود</string>
+    <string name="reload_provider">عمول ري-لوود للمصدر</string>
+    <string name="name">اسم</string>
+    <string name="resolution_and_name">الجودة وال اسم</string>
+    <string name="subs_subtitle_alignment">ميلة الترجمة</string>
+    <string name="bottom_left">تحت، عال شمال</string>
+    <string name="bottom_center">تحت، بال نُص</string>
+    <string name="bottom_right">تحت، عال يمين</string>
+    <string name="middle_left">نُص، شمال</string>
+    <string name="middle_center">نُص النُص</string>
+    <string name="middle_right">نُص، عال يمين</string>
+    <string name="top_left">فوق، عال شمال</string>
+    <string name="top_center">فوق، بال نُص</string>
+    <string name="top_right">فوق، عال يمين</string>
 </resources>
