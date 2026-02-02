@@ -113,11 +113,21 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
         }
 
         getPref(R.string.prefer_limit_show_player_info)?.setOnPreferenceClickListener {
+            val ctx = requireContext()
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+
             val prefNames = resources.getStringArray(R.array.title_info_pref_names)
             val keys = resources.getStringArray(R.array.title_info_pref_values)
 
-            val selectedIndices = keys.map {
-                settingsManager.getBoolean(it, false)
+            // Player defaults
+            val playerDefaults = mapOf(
+                ctx.getString(R.string.show_name_key)       to true,
+                ctx.getString(R.string.show_resolution_key) to true,
+                ctx.getString(R.string.show_media_info_key) to false
+            )
+
+            val selectedIndices = keys.map { key ->
+                settingsManager.getBoolean(key, playerDefaults[key] ?: false)
             }.mapIndexedNotNull { index, enabled ->
                 if (enabled) index else null
             }
