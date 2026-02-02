@@ -113,8 +113,7 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
         }
 
         getPref(R.string.prefer_limit_show_player_info)?.setOnPreferenceClickListener {
-            val ctx = requireContext()
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+            val ctx = context ?: return@setOnPreferenceClickListener false
 
             val prefNames = resources.getStringArray(R.array.title_info_pref_names)
             val keys = resources.getStringArray(R.array.title_info_pref_values)
