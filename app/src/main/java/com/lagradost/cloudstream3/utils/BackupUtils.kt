@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.utils
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.widget.Toast
@@ -21,6 +20,7 @@ import com.lagradost.cloudstream3.plugins.PLUGINS_KEY_LOCAL
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_CACHED_LIST
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_CACHED_LIST
+import com.lagradost.cloudstream3.syncproviders.providers.KitsuApi.Companion.KITSU_CACHED_LIST
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getDefaultSharedPrefs
@@ -40,6 +40,7 @@ import java.io.PrintWriter
 import java.lang.System.currentTimeMillis
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 object BackupUtils {
 
@@ -49,6 +50,7 @@ object BackupUtils {
     private val nonTransferableKeys = listOf(
         ANILIST_CACHED_LIST,
         MAL_CACHED_LIST,
+        KITSU_CACHED_LIST,
 
         // The plugins themselves are not backed up
         PLUGINS_KEY,
@@ -164,7 +166,6 @@ object BackupUtils {
         }
     }
 
-    @SuppressLint("SimpleDateFormat")
     fun backup(context: Context?) = ioSafe {
         if (context == null) return@ioSafe
 
@@ -177,7 +178,7 @@ object BackupUtils {
                 return@ioSafe
             }
 
-            val date = SimpleDateFormat("yyyy_MM_dd_HH_mm").format(Date(currentTimeMillis()))
+            val date = SimpleDateFormat("yyyy_MM_dd_HH_mm", Locale.getDefault()).format(Date(currentTimeMillis()))
             val displayName = "CS3_Backup_${date}"
             val backupFile = getBackup(context)
             val stream = setupBackupStream(context, displayName)

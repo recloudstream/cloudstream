@@ -579,7 +579,6 @@
     <string name="pin_error_length">A PIN 4 karakter hosszú kell legyen</string>
     <string name="auto_rotate_video">Auto elforgatás</string>
     <string name="auto_rotate_video_desc">Az automatikus videó orientáció alapján való képernyő elforgatás bekapcsolása</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="open_local_video">Helyi videó megnyitása</string>
     <string name="repo_copy_label">Tárhely név és URL</string>
     <string name="torrent_info">Ez a videó egy Torrent, ami azt jelenti, hogy a videótevékenységed nyomon követhető.\nGyőződj meg róla, hogy megérted a torrentezés működését, mielőtt folytatnád.</string>

@@ -239,7 +239,6 @@
     <string name="sort_save">oooooh uuaagh</string>
     <string name="action_open_play">@string/home_play</string>
     <string name="chromecast_subtitles_settings">oouuhhh ahhooo-ahah</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="restore_success">uuuugg aaaahh oogg</string>
     <string name="device_pin_counter_text">aagg uuuuggg og %1$dm %2$ds</string>
     <string name="pref_category_android_tv">aaaahhh ag</string>

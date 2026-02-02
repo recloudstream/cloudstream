@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
-    <string name="extra_info_format" formatted="true" translatable="false">%d %s | %s</string>
-    <string name="storage_size_format" formatted="true" translatable="false">%s • %s</string>
-    <string name="download_size_format" formatted="true" translatable="false">%s / %s</string>
-    <string name="episode_name_format" formatted="true" translatable="false">%s %s</string>
-    <string name="ffw_text_format" formatted="true" translatable="false">+%d</string>
-    <string name="rew_text_format" formatted="true" translatable="false">-%d</string>
-    <string name="ffw_text_regular_format" formatted="true" translatable="false">%d</string>
-    <string name="rew_text_regular_format" formatted="true" translatable="false">%d</string>
-    <string name="year_format" formatted="true" translatable="false">%d</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s 共 %2$d 集</string>
     <string name="cast_format" formatted="true">演員：%s</string>
     <string name="next_episode_format" formatted="true">第 %d 集即將發佈於</string>
@@ -22,9 +13,7 @@
     <string name="episode_poster_img_des">劇集封面</string>
     <string name="home_main_poster_img_des">主封面</string>
     <string name="home_next_random_img_des">隨機下一個</string>
-    <string name="episode_play_img_des" translatable="false">@string/play_episode</string>
     <string name="go_back_img_des">返回</string>
-    <string name="change_providers_img_des" translatable="false">@string/home_change_provider_img_des</string>
     <string name="home_change_provider_img_des">更改片源</string>
     <string name="preview_background_img_des">預覽背景</string>
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
@@ -45,7 +34,6 @@
     <string name="no_data">無資料</string>
     <string name="episode_more_options_des">更多選項</string>
     <string name="next_episode">下一集</string>
-    <string name="result_plot" translatable="false">@string/synopsis</string>
     <string name="result_tags">類型</string>
     <string name="result_share">分享</string>
     <string name="result_open_in_browser">在瀏覽器中打開</string>
@@ -74,7 +62,6 @@
     <string name="download_failed">下載失敗</string>
     <string name="download_canceled">下載取消</string>
     <string name="download_done">下載完畢</string>
-    <string name="download_format" translatable="false">%s - %s</string>
     <string name="stream">網路串流</string>
     <string name="error_loading_links_toast">載入連結錯誤</string>
     <string name="download_storage_text">內部儲存空間</string>
@@ -259,10 +246,6 @@
     <string name="show_dub">配音標籤</string>
     <string name="show_sub">字幕標籤</string>
     <string name="show_title">標題</string>
-    <string name="show_hd_key" translatable="false">show_hd_key</string>
-    <string name="show_dub_key" translatable="false">show_dub_key</string>
-    <string name="show_sub_key" translatable="false">show_sub_key</string>
-    <string name="show_title_key" translatable="false">show_title_key</string>
     <string name="poster_ui_settings">封面內容</string>
     <string name="no_update_found">未找到更新</string>
     <string name="check_for_update">檢查更新</string>
@@ -294,8 +277,6 @@
     <string name="resize_fill">拉伸</string>
     <string name="resize_zoom">縮放</string>
     <string name="legal_notice">免責聲明</string>
-    <string name="legal_notice_key" translatable="false">legal_notice_key</string>
-    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">通用</string>
     <string name="random_button_settings">隨機按鈕</string>
     <string name="random_button_settings_desc">在主畫面與媒體庫中顯示隨機按鈕</string>
@@ -315,10 +296,6 @@
     <string name="bottom_title_settings">封面標題位置</string>
     <string name="bottom_title_settings_des">將標題移到封面下方</string>
     <!-- account stuff -->
-    <string name="anilist_key" translatable="false">anilist_key</string>
-    <string name="mal_key" translatable="false">mal_key</string>
-    <string name="opensubtitles_key" translatable="false">opensubtitles_key</string>
-    <string name="nginx_key" translatable="false">nginx_key</string>
     <string name="example_password">密碼</string>
     <string name="example_username">使用者名稱</string>
     <string name="example_email">電子郵件</string>
@@ -326,14 +303,6 @@
     <string name="example_site_name">新網站名稱</string>
     <string name="example_site_url">https://example.com</string>
     <string name="example_lang_name">語言代號 (zh_TW)</string>
-    <!--
-    <string name="mal_account_settings" translatable="false">MAL</string>
-    <string name="anilist_account_settings" translatable="false">AniList</string>
-    <string name="tmdb_account_settings" translatable="false">TMDB</string>
-    <string name="imdb_account_settings" translatable="false">IMDB</string>
-    <string name="kitsu_account_settings" translatable="false">Kitsu</string>
-    <string name="trakt_account_settings" translatable="false">Trakt</string>
-    -->
     <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">帳號</string>
     <string name="logout">登出</string>
@@ -356,7 +325,6 @@
     <string name="all">全部</string>
     <string name="max">最大</string>
     <string name="min">最小</string>
-    <string name="subtitles_none" translatable="false">@string/none</string>
     <string name="subtitles_outline">輪廓</string>
     <string name="subtitles_depressed">凹陷</string>
     <string name="subtitles_shadow">陰影</string>
@@ -614,9 +582,7 @@
 \n注意：如果加總達到 10 或更高，則載入該連結時播放器將自動跳過載入！</string>
     <string name="enter_current_pin">輸入目前的 PIN 碼</string>
     <string name="rotate_video_desc">顯示切換畫面方向的按鈕</string>
-    <string name="rotate_video_key">rotate_video_key</string>
     <string name="automatic_plugin_download_mode_title">選擇篩選外掛程式下載的模式</string>
-    <string name="auto_rotate_video_key">auto_rotate_video_key</string>
     <string name="auto_rotate_video">自動旋轉</string>
     <string name="rotate_video">旋轉</string>
     <string name="auto_rotate_video_desc">根據影片方向自動切換畫面方向</string>
@@ -656,7 +622,6 @@
     <string name="battery_dialog_message">為了確保下載與通知已訂閱的電視節目的不間斷，CloudStream 需要取得在背景執行的權限。若點選「確定」，將移至「應用程式資訊」，請找到「應用程式電池使用」並將電池用量設置為「無限制」。請注意，取得此權限並不表示 CS3 會明顯增加電池用量，而是只在必要時在背景執行，例如取得通知或使用官方擴充功能下載影片時。若選擇「取消」，您可以稍後在「一般設定」中調整此設定。</string>
     <string name="cs3wiki">CloudStream Wiki</string>
     <string name="biometric_unsupported">此裝置不支援生物特徵認證</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="device_pin_error_message">無法取得裝置 PIN 碼，請嘗試本機驗證</string>
     <string name="delete_plugin">刪除外掛程式</string>
     <string name="open_downloaded_repo">開啟資源庫</string>

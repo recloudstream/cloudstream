@@ -54,7 +54,6 @@
     <string name="result_share">Kongsi</string>
     <string name="title_settings">Tetapan</string>
     <string name="sort_close">Tutup</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="preview_background_img_des">Pratonton</string>
     <string name="rated_format" formatted="true">Resensi:%.1f</string>
     <string name="new_update_format" formatted="true">Kemas kini baru dijumpai!
@@ -516,9 +515,6 @@
     <string name="backup_settings">Sandarkan data</string>
     <string name="restore_failed_format" formatted="true">Gagal pulihkan data dari fail %s</string>
     <string name="backup_failed_error_format">Ralat sandaran %s</string>
-    <plurals name="episodes" translatable="false">
-        <item quantity="other">Episode</item>
-    </plurals>
     <string name="episode_upcoming_format" formatted="true">Akan datang pada %s</string>
     <string name="delete_message" formatted="true">Ini akan memadamkan secara kekal %s\nAdakah anda pasti?</string>
     <string name="delete_message_multiple" formatted="true">Adakah anda pasti mahu memadamkan item berikut secara kekal?\n\n%s</string>

@@ -85,7 +85,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         // Used for configuration changed events to fix any popups that are not attached to a fragment
         val configEvent = EmptyEvent()
         var currentSpan = 1
-        val listHomepageItems = mutableListOf<SearchResponse>()
 
         private val errorProfilePics = listOf(
             R.drawable.monke_benene,
@@ -642,11 +641,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 activity?.showAccountSelectLinear()
             }
 
-            homeRandom.setOnClickListener {
-                if (listHomepageItems.isNotEmpty()) {
-                    activity.loadSearchResult(listHomepageItems.random())
-                }
-            }
             homeMasterAdapter = HomeParentItemAdapterPreview(
                 fragment = this@HomeFragment,
                 homeViewModel, accountViewModel
@@ -725,8 +719,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 settingsManager.getBoolean(
                     getString(R.string.random_button_key),
                     false
-                ) && isLayout(PHONE)
+                )
             binding.homeRandom.visibility = View.GONE
+            binding.homeRandomButtonTv.visibility = View.GONE
         }
 
         observe(homeViewModel.apiName) { apiName ->
@@ -752,23 +747,28 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
                         saveHomepageToTV(d)
 
-                        listHomepageItems.clear()
                         homeLoading.isVisible = false
                         homeLoadingError.isVisible = false
                         homeMasterRecycler.isVisible = true
                         homeLoadingShimmer.stopShimmer()
                         //home_loaded?.isVisible = true
                         if (toggleRandomButton) {
-                            //Flatten list
-                            val mutableListOfResponse = mutableListOf<SearchResponse>()
-                            d.values.forEach { dlist ->
-                                mutableListOfResponse.addAll(dlist.list.list)
+                            val distinct = d.values
+                                .flatMap { it.list.list }
+                                .distinctBy { it.url }
+                            val hasItems = distinct.isNotEmpty()
+                            val isPhone = isLayout(PHONE)
+                            val randomClickListener = View.OnClickListener {
+                                distinct.randomOrNull()?.let { activity.loadSearchResult(it) }
                             }
-                            listHomepageItems.addAll(mutableListOfResponse.distinctBy { it.url })
 
-                            homeRandom.isVisible = listHomepageItems.isNotEmpty()
+                            homeRandom.isVisible = isPhone && hasItems
+                            homeRandom.setOnClickListener(randomClickListener)
+                            homeRandomButtonTv.isVisible = !isPhone && hasItems
+                            homeRandomButtonTv.setOnClickListener(randomClickListener)
                         } else {
                             homeRandom.isGone = true
+                            homeRandomButtonTv.isGone = true
                         }
                     }
 

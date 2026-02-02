@@ -465,7 +465,6 @@
     <string name="edit_account">Redigera konto</string>
     <string name="logged_account" formatted="true">Loggat in som %s</string>
     <string name="skip_startup_account_select_pref">Hoppa över val av konto vid start</string>
-    <string name="auto_rotate_video_key">auto_rotera_video_nyckel</string>
     <string name="jsdelivr_proxy_summary">Gå förbi blockering av rå GitHub-URL:er med jsDelivr. Kan göra att uppdateringar försenas med några dagar.</string>
     <string name="pref_category_actions">Funktion</string>
     <string name="preferred_media_settings">Önskad media</string>
@@ -557,7 +556,6 @@
     <string name="favorite_removed">%s togs bort från favoriter</string>
     <string name="favorite_added">%s har lagts till i favoriter</string>
     <string name="use_default_account">Använd standard konto</string>
-    <string name="rotate_video_key">rotera_video_nyckel</string>
     <string name="pin">PIN-kod</string>
     <string name="android_tv_interface_off_seek_settings_summary">Sök mängden som används när spelaren är dold</string>
     <string name="duplicate_message_multiple" formatted="true">Det verkar som om ett potentiellt duplicerat objekt redan finns i ditt bibliotek:
@@ -612,7 +610,6 @@
     <string name="cs3wiki">CloudStream Wiki</string>
     <string name="pref_category_accounts">Konton</string>
     <string name="pref_category_security">Säkerhet</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="dismiss">Avfärda</string>
     <string name="open_downloaded_repo">Öppna databasen</string>
     <string name="device_pin_counter_text">Koden löper ut om %1$dm %2$ds</string>

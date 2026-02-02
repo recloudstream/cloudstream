@@ -369,7 +369,6 @@
     <string name="add_repository">Pridať repozitár</string>
     <string name="repository_name_hint">Názov repozitára</string>
     <string name="view_public_repositories_button">Zobraziť komunitné repozitáre</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="quality_hd">HD</string>
     <string name="category_player">Prehrávač</string>
     <string name="resolution_and_title">Rozlíšenie a titul</string>

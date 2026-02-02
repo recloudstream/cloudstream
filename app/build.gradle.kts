@@ -63,7 +63,7 @@ android {
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 67
-        versionName = "4.6.1"
+        versionName = "4.6.2"
 
         resValue("string", "commit_hash", getGitCommitHash())
 
@@ -203,12 +203,12 @@ dependencies {
     // Extensions & Other Libs
     implementation(libs.jsoup) // HTML Parser
     implementation(libs.rhino) // Run JavaScript
-    implementation(libs.quickjs)
     implementation(libs.fuzzywuzzy) // Library/Ext Searching with Levenshtein Distance
     implementation(libs.safefile) // To Prevent the URI File Fu*kery
     coreLibraryDesugaring(libs.desugar.jdk.libs.nio) // NIO Flavor Needed for NewPipeExtractor
     implementation(libs.conscrypt.android) // To Fix SSL Fu*kery on Android 9
     implementation(libs.jackson.module.kotlin) // JSON Parser
+    implementation(libs.zipline)
 
     // Torrent Support
     implementation(libs.torrentserver)
@@ -227,11 +227,13 @@ dependencies {
 
         this.extra.set("isDebug", isDebug)
     })
+    // Extra brightness video filters
+    implementation(libs.gpuv)
 }
 
 tasks.register<Jar>("androidSourcesJar") {
     archiveClassifier.set("sources")
-    from(android.sourceSets.getByName("main").java.srcDirs) // Full Sources
+    from(android.sourceSets.getByName("main").java.directories) // Full Sources
 }
 
 tasks.register<Copy>("copyJar") {
