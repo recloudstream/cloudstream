@@ -181,9 +181,13 @@
     <string name="settings_info">Info</string>
     <string name="advanced_search">Advanced Search</string>
     <string name="advanced_search_des">Gives you the search results separated by provider</string>
+    <string name="search_suggestions">Search Suggestions</string>
+    <string name="search_suggestions_des">Show search suggestions while typing</string>
+    <string name="clear_suggestions">Clear Suggestions</string>
     <string name="show_fillers_settings">Show filler episode for anime</string>
     <string name="show_trailers_settings">Show trailers</string>
     <string name="kitsu_settings">Show posters from Kitsu</string>
+    <string name="show_cast_in_details">Show cast panel</string>
     <string name="pref_filter_search_quality">Hide selected video quality in search results</string>
     <string name="automatic_plugin_updates">Automatic plugin updates</string>
     <string name="automatic_plugin_download">Automatically download plugins</string>
@@ -319,7 +323,7 @@
     <string name="watch_quality_pref">Preferred watch quality (WiFi)</string>
     <string name="watch_quality_pref_data">Preferred watch quality (Mobile Data)</string>
     <string name="limit_title">Video player title max chars</string>
-    <string name="limit_title_rez">Video player resolution</string>
+    <string name="limit_title_rez">Show player information</string>
     <string name="video_buffer_size_settings">Video buffer size</string>
     <string name="video_buffer_length_settings">Video buffer length</string>
     <string name="video_buffer_disk_settings">Video cache on disk</string>
@@ -466,6 +470,7 @@
     <string name="resolution_and_title">Resolution and title</string>
     <string name="title">Title</string>
     <string name="resolution">Resolution</string>
+    <string name="video_info">Media Info</string>
     <string name="error_invalid_id">Invalid ID</string>
     <string name="error_invalid_data">Invalid data</string>
     <string name="error_invalid_url">Invalid URL</string>
@@ -743,6 +748,7 @@
     <string name="action_reload">Reloaded</string>
     <string name="reload_provider">Reload Provider</string>
     <string name="name">Name</string>
+    <string name="source_name">Source Name</string>
     <string name="resolution_and_name">Resolution and name</string>
     <string name="subs_subtitle_alignment">Subtitle Alignment</string>
     <string name="bottom_left">Bottom left</string>

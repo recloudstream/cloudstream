@@ -234,7 +234,7 @@
     <string name="unexpected_error">Neočekivana pogreška playera</string>
     <string name="storage_error">Pogreška tijekom preuzimanja, provjeri dozvole za pohranu</string>
     <string name="episode_action_chromecast_episode">Chromecast epizoda</string>
-    <string name="episode_action_chromecast_mirror">Chromecast mirror</string>
+    <string name="episode_action_chromecast_mirror">Chromecast duplikat</string>
     <string name="episode_action_play_in_app">Pokreni u aplikaciji</string>
     <string name="episode_action_play_in_format">Pokreni u %s</string>
     <string name="episode_action_auto_download">Automatsko preuzimanje</string>
@@ -417,7 +417,7 @@
     <string name="view_public_repositories_button">Prikaži repozitorije zajednice</string>
     <string name="view_public_repositories_button_short">Javni popis</string>
     <string name="uppercase_all_subtitles">Koristi velika slova za sve titlove</string>
-    <string name="download_all_plugins_from_repo">Upozorenje: CloudStream 3 ne preuzima odgovornost za korištenje proširenja trećih strana i ne pruža podršku za njih!</string>
+    <string name="download_all_plugins_from_repo">Upozorenje: CloudStream ne preuzima odgovornost za korištenje proširenja trećih strana i ne pruža podršku za njih!</string>
     <string name="single_plugin_disabled" formatted="true">%s (onemogućeno)</string>
     <string name="tracks">Zapisi</string>
     <string name="audio_tracks">Audio zapis</string>
@@ -458,7 +458,7 @@
     <string name="pref_category_links">Poveznice</string>
     <string name="play_trailer_button">Pokreni trailer</string>
     <string name="redo_setup_process">Ponovi postupak postavljanja</string>
-    <string name="apk_installer_settings_des">Neki telefoni ne podržavaju novi program za instaliranje paketa. Pokušaj sa starijom opcijom ako se ažuriranja ne instaliraju.</string>
+    <string name="apk_installer_settings_des">Neki uređaji ne podržavaju novi program za instaliranje paketa. Pokušaj sa starijom opcijom ako se ažuriranja ne instaliraju.</string>
     <string name="apk_installer_settings">Instalator APK-a</string>
     <string name="pref_category_app_updates">Ažuriranja aplikacije</string>
     <string name="pref_category_backup">Sigurnosna kopija</string>
@@ -483,7 +483,7 @@
     <string name="apk_installer_package_installer">PackageInstaller</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="update_started">Aktualiziranje započeto</string>
-    <string name="delayed_update_notice">Aplikacija će se aktualizirati tijekom zatvaranja</string>
+    <string name="delayed_update_notice">Aplikacija će se ažurirati tijekom zatvaranja</string>
     <string name="plugin_downloaded">Dodatak preuzet</string>
     <string name="action_remove_from_watched">Ukloni iz pogledanog</string>
     <string name="browser">Preglednik</string>
@@ -492,8 +492,8 @@
     <string name="sort_by">Sortiraj prema</string>
     <string name="sort">Sortiraj</string>
     <string name="sort_rating_asc">Ocjena (Manja do veće)</string>
-    <string name="sort_updated_new">Ažurirano (Od novog do starog)</string>
-    <string name="sort_updated_old">Ažurirano (Od starog do novog)</string>
+    <string name="sort_updated_new">Ažurirano (od novog prema starom)</string>
+    <string name="sort_updated_old">Ažurirano (od starog prema novom)</string>
     <string name="sort_alphabetical_a">Abecedno (A do Ž)</string>
     <string name="sort_alphabetical_z">Abecedno (Ž do A)</string>
     <string name="select_library">Odaberite biblioteku</string>
@@ -619,7 +619,7 @@
     <string name="battery_dialog_message">Da biste osigurali neprekinuta preuzimanja i obavijesti za pretplaćene TV emisije, CloudStream treba dopuštenje za rad u pozadini. Pritiskom na \"U redu\" prikazat će vam se dijaloški okvir s zahtjevom. Molimo vas da pritisnete \"Dopusti\".  \n\nNapominjemo da ovo dopuštenje ne znači da će CS3 trošiti vašu bateriju. Aplikacija će raditi u pozadini samo kada je to potrebno, primjerice prilikom primanja obavijesti ili preuzimanja videozapisa iz službenih proširenja.</string>
     <string name="biometric_warning">Vaši CloudStream podaci su sada spremljeni u sigurnosnu kopiju. Iako je vjerojatnost mala, neki se uređaji mogu ponašati drugačije. Ako izgubite pristup aplikaciji, potpuno izbrišite podatke aplikacije i obnovite ih pomoću sigurnosne kopije. Ispričavamo se zbog mogućih neugodnosti.</string>
     <string name="next_season_episode_format" formatted="true">Sezona %1$d epizoda %2$d izlazi za</string>
-    <string name="episode_action_cast_mirror">Cast mirror</string>
+    <string name="episode_action_cast_mirror">Cast duplikat</string>
     <string name="player_settings_select_cast_device">Odaberi uređaj za emitiranje</string>
     <string name="cs3wiki">CloudStream Wiki</string>
     <string name="pref_category_accounts">Računi</string>
@@ -671,7 +671,7 @@
     <string name="encoding_error">Pogreška u kodiranju</string>
     <string name="unsupported_error">Nepodržana pogreška</string>
     <string name="software_decoding">Dekodiranje softvera</string>
-    <string name="software_decoding_desc">Softversko dekodiranje omogućuje playeru reprodukciju video datoteka koje tvoj mobitel ne podržava, ali može uzrokovati kašnjenja ili nestabilnu reprodukciju pri visokoj rezoluciji</string>
+    <string name="software_decoding_desc">Softversko dekodiranje omogućuje playeru reprodukciju video datoteka koje tvoj mobitel ne podržava, ali može uzrokovati kašnjenja ili nestabilnu reprodukciju pri visokoj rezoluciji.</string>
     <string name="torrent_info">Ovaj je video Torrent, što znači da se tvoja video aktivnost može pratiti.\nInformiraj se o korištenju Torrenta prije nego što nastaviš.</string>
     <string name="torrent_not_accepted">Ponovno pokrenite aplikaciju i prihvatite skočni prozor Stream Torrent za nastavak.</string>
     <string name="player_load_one_subtitle_online">Učitaj prvi dostupni</string>
@@ -692,7 +692,7 @@
     <string name="update_plugins_manually">Ažuriraj podatke ručno</string>
     <string name="starting_plugin_update_manually">Pokreće se postupak ažuriranja dodataka!</string>
     <string name="player_notification_channel_name">Obavijesti reproduktora</string>
-    <string name="plugins_updated_manually">Uspješno ažuriran(o) %d dodatak(a)!</string>
+    <string name="plugins_updated_manually">Uspješno ažuriranih dodataka: %d!</string>
     <string name="player_notification_channel_description">Obavijest reproduktora za upravljanje reprodukcijom iz pozadine</string>
     <string name="all_subtitles_italic">Ukosite sve titlove</string>
     <string name="all_subtitles_bold">Podebljajte sve titlove</string>
@@ -725,9 +725,27 @@
     <string name="edit_profile_image_hint">Unesite URL slike profila</string>
     <string name="edit_profile_image_error_empty">Nijedan URL nije pronađen</string>
     <string name="edit_profile_image_error_invalid">Nevaljan URL ili slika</string>
-    <string name="edit_profile_image_success">Slika uspješno aktualizirana</string>
+    <string name="edit_profile_image_success">Slika uspješno ažurirana</string>
     <string name="action_mark_watched_up_to_this_episode">Označi kao gledano do ove epizode</string>
     <string name="action_remove_mark_watched_up_to_this_episode">Ukloni gledano do ove epizode</string>
     <string name="action_reload">Ponovo učitano</string>
     <string name="reload_provider">Usluga ponovnog učitavanja</string>
+    <string name="play_full_series_button">Reproduciraj cijelu seriju</string>
+    <string name="install_prerelease">Instaliraj predizdanje</string>
+    <string name="prerelease_already_installed">Predizdanje je već instalirano.</string>
+    <string name="prerelease_install_failed">Instalacija predizdanja nije uspjela.</string>
+    <string name="episode_action_play_mirror">Pokreni duplikat</string>"
+    <string name="show_episode_text">Tekst epizode</string>
+    <string name="name">Ime</string>
+    <string name="resolution_and_name">Rezolucija i ime</string>
+    <string name="subs_subtitle_alignment">Poravnanje titlova</string>
+    <string name="bottom_left">Dolje lijevo</string>
+    <string name="bottom_center">Dolje centrirano</string>
+    <string name="bottom_right">Dolje desno</string>
+    <string name="middle_left">Sredina lijevo</string>
+    <string name="middle_center">Sredina centrirano</string>
+    <string name="middle_right">Sredina desno</string>
+    <string name="top_left">Gore lijevo</string>
+    <string name="top_center">Gore centrirano</string>
+    <string name="top_right">Gore desno</string>
 </resources>
