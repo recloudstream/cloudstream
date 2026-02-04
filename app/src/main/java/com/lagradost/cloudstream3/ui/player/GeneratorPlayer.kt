@@ -1453,47 +1453,49 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 val audioArrayAdapter = ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
 
-                audioArrayAdapter.addAll(currentAudioTracks.mapIndexed { index, track ->
-                    val language = track.language?.let { fromTagToLanguageName(it) ?: it } 
-                        ?: track.label 
-                        ?: "Audio"
+                audioArrayAdapter.addAll(
+                    currentAudioTracks.mapIndexed { index, track ->
 
-                    val codec = track.sampleMimeType
-                        ?.lowercase()
-                        ?.let { mime ->
-                            when {
-                                mime.contains("eac3-joc") -> "Dolby Atmos"
-                                mime.contains("mp4a") || mime.contains("aac") -> "aac"
-                                mime.contains("ac-3") || mime.contains("ac3") -> "ac3"
-                                mime.contains("eac3") -> "eac3"
-                                mime.contains("opus") -> "opus"
-                                mime.contains("vorbis") -> "vorbis"
-                                mime.contains("mp3") || mime.contains("mpeg") -> "mp3"
-                                mime.contains("flac") -> "flac"
-                                mime.contains("dts") -> "dts"
-                                "/" in mime -> mime.substringAfter("/")
-                            else -> mime
+                        val language = (
+                                track.language?.let { fromTagToLanguageName(it) ?: it }
+                                    ?: track.label
+                                    ?: "Audio"
+                                ).replaceFirstChar { it.uppercaseChar() }
+
+                        val codec = track.sampleMimeType
+                            ?.lowercase()
+                            ?.let { mime ->
+                                when {
+                                    mime.contains("eac3-joc") -> "Dolby Atmos"
+                                    mime.contains("eac3") -> "E-AC3"
+                                    mime.contains("ac-3") || mime.contains("ac3") -> "AC3"
+                                    mime.contains("mp4a") || mime.contains("aac") -> "AAC"
+                                    mime.contains("opus") -> "Opus"
+                                    mime.contains("vorbis") -> "Vorbis"
+                                    mime.contains("mp3") -> "MP3"
+                                    mime.contains("flac") -> "FLAC"
+                                    mime.contains("dts") -> "DTS"
+                                    else -> "Unknown"
+                                }
+                            } ?: "Unknown"
+
+                        val channels = when (track.channelCount ?: 0) {
+                            1 -> "Mono"
+                            2 -> "Stereo"
+                            6 -> "5.1"
+                            8 -> "7.1"
+                            else -> "${track.channelCount ?: "?"}ch"
                         }
-                    } ?: "codec?"
 
-                    val channels: Int = track.channelCount ?: 0
-                    val channelConfig = when (channels) {
-                        1 -> "mono"
-                        2 -> "stereo"
-                        6 -> "5.1"
-                        8 -> "7.1"
-                        else -> "${channels}Ch"
+                        listOfNotNull(
+                            "${index + 1}.",
+                            language.takeIf { it.isNotBlank() }?.replaceFirstChar { it.uppercaseChar() },
+                            channels.takeIf { it.isNotBlank() }?.replaceFirstChar { it.uppercaseChar() },
+                            codec.takeIf { it.isNotBlank() }?.uppercase()?.let { "($it)" }
+                        ).joinToString(" ")
+
                     }
-
-                    listOfNotNull(
-                        "[$index]",
-                        language.replaceFirstChar { it.uppercaseChar() },
-                        codec.uppercase(),
-                        channelConfig.replaceFirstChar { it.uppercaseChar() }
-                    ).joinToString(" • ")
-                    
-                    "[$index] $language $codec $channelConfig"
-                })
+                )
 
                 audioList.adapter = audioArrayAdapter
                 audioList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
@@ -1895,10 +1897,16 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         val videoCodec = videoCodecName(videoTrack?.sampleMimeType)
         val audioCodec = audioCodecName(audioTrack?.sampleMimeType)
-        val language = listOfNotNull(
-            audioTrack?.label,
-            fromTagToLanguageName(audioTrack?.language)?.let { "[$it]" }
-        ).joinToString(" ")
+        val languageName = fromTagToLanguageName(audioTrack?.language)
+        val label = audioTrack?.label
+
+        val language = when {
+            languageName.isNullOrBlank() && label.isNullOrBlank() -> null
+            languageName.isNullOrBlank() -> label
+            label.isNullOrBlank() -> languageName
+            label.equals(languageName, ignoreCase = true) -> languageName
+            else -> "$languageName ($label)"
+        }
 
         val stats = arrayOf(videoCodec, audioCodec, language).filter { !it.isNullOrBlank() }.joinToString(" • ")
 
