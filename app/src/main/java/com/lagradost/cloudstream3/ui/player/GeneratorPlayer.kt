@@ -1486,12 +1486,13 @@ class GeneratorPlayer : FullScreenPlayer() {
                     }
 
                     listOfNotNull(
+                        "[$index]",
                         language.replaceFirstChar { it.uppercaseChar() },
                         codec.uppercase(),
                         channelConfig.replaceFirstChar { it.uppercaseChar() }
                     ).joinToString(" • ")
                     
-                    "$language $codec $channelConfig"
+                    "[$index] $language $codec $channelConfig"
                 })
 
                 audioList.adapter = audioArrayAdapter
