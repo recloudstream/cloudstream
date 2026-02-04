@@ -164,6 +164,9 @@
     <string name="use_system_brightness_settings_des">Use system brightness in the app player instead of a dark
         overlay
     </string>
+    <string name="extra_brightness_settings">Extra brightness</string>
+    <string name="extra_brightness_settings_des">Enable brightness filter when 100% display brightness is exceeded</string>
+    <string name="extra_brightness_key">extra_brightness_enabled</string>
     <string name="episode_sync_settings">Update watch progress</string>
     <string name="episode_sync_settings_des">Automatically sync your current episode progress</string>
     <string name="restore_settings">Restore data from backup</string>
@@ -188,6 +191,7 @@
     <string name="show_player_metadata_overlay">Show Player Metadata Overlay</string>
     <string name="show_trailers_settings">Show trailers</string>
     <string name="kitsu_settings">Show posters from Kitsu</string>
+    <string name="show_cast_in_details">Show cast panel</string>
     <string name="pref_filter_search_quality">Hide selected video quality in search results</string>
     <string name="automatic_plugin_updates">Automatic plugin updates</string>
     <string name="automatic_plugin_download">Automatically download plugins</string>
@@ -323,7 +327,7 @@
     <string name="watch_quality_pref">Preferred watch quality (WiFi)</string>
     <string name="watch_quality_pref_data">Preferred watch quality (Mobile Data)</string>
     <string name="limit_title">Video player title max chars</string>
-    <string name="limit_title_rez">Video player resolution</string>
+    <string name="limit_title_rez">Show player information</string>
     <string name="video_buffer_size_settings">Video buffer size</string>
     <string name="video_buffer_length_settings">Video buffer length</string>
     <string name="video_buffer_disk_settings">Video cache on disk</string>
@@ -470,6 +474,7 @@
     <string name="resolution_and_title">Resolution and title</string>
     <string name="title">Title</string>
     <string name="resolution">Resolution</string>
+    <string name="video_info">Media Info</string>
     <string name="error_invalid_id">Invalid ID</string>
     <string name="error_invalid_data">Invalid data</string>
     <string name="error_invalid_url">Invalid URL</string>
@@ -747,6 +752,7 @@
     <string name="action_reload">Reloaded</string>
     <string name="reload_provider">Reload Provider</string>
     <string name="name">Name</string>
+    <string name="source_name">Source Name</string>
     <string name="resolution_and_name">Resolution and name</string>
     <string name="subs_subtitle_alignment">Subtitle Alignment</string>
     <string name="bottom_left">Bottom left</string>

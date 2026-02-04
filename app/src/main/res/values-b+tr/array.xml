@@ -37,23 +37,18 @@
         <item>8</item>
     </array>
 
-    <array name="limit_title_rez_pref_names">
-        <item>@string/resolution_and_name</item>
-        <item>@string/name</item>
-        <item>@string/resolution_and_title</item>
-        <item>@string/title</item>
+    <array name="title_info_pref_names">
+        <item>@string/source_name</item>
         <item>@string/resolution</item>
-        <item>@string/none</item>
+        <item>@string/video_info</item>
     </array>
 
-    <array name="limit_title_rez_pref_values">
-        <item>5</item>
-        <item>4</item>
-        <item>3</item>
-        <item>2</item>
-        <item>1</item>
-        <item>0</item>
+    <array name="title_info_pref_values">
+        <item>@string/show_name_key</item>
+        <item>@string/show_resolution_key</item>
+        <item>@string/show_media_info_key</item>
     </array>
+
 
     <array name="limit_title_pref_names">
         <item>@string/none</item>
