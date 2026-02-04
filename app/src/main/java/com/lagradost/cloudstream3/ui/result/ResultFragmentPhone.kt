@@ -67,6 +67,7 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
+import com.lagradost.cloudstream3.utils.AppContextUtils.getShortSeasonText
 import com.lagradost.cloudstream3.utils.AppContextUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppContextUtils.openBrowser
@@ -629,11 +630,12 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 resultResumeParent.isVisible = true
 
                 val setEpisodeText: (Button) -> Unit = { button ->
-                    button.text = context?.getNameFull(
-                        resume.result.name,
-                        resume.result.episode,
-                        resume.result.season
-                    )
+                    button.text =  context?.let {
+                        "${it.getString(R.string.resume)} ${it.getShortSeasonText(
+                            resume.result.episode,
+                            resume.result.season
+                        )}"
+                    }
                 }
 
                 resume.progress?.let { progress ->
