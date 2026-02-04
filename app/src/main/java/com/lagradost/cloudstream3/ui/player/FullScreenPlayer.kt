@@ -238,6 +238,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 requestUpdateBrightnessOverlayOnNextLayout()
             }
         }
+        return root
+    }
 
     private fun scheduleMetadataVisibility() {
         val metadataScrim = playerBinding?.playerMetadataScrim ?: return
@@ -265,12 +267,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         } else {
              metadataScrim.isVisible = false
         }
-    }
-
-
-    fun setGpuExtraBrightness(extra: Float) {
-        gpuBrightnessFilter?.setBrightness(extra)
-        return root
     }
 
     @SuppressLint("UnsafeOptInUsageError")
