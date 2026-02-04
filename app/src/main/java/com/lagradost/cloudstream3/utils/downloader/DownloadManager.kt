@@ -120,6 +120,7 @@ object VideoDownloadManager {
     val currentDownloads: StateFlow<Set<Int>> = _currentDownloads
 
     const val TAG = "VDM"
+    private const val DOWNLOAD_NOTIFICATION_TAG = "FROM_DOWNLOADER"
 
     private const val USER_AGENT =
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
@@ -210,6 +211,16 @@ object VideoDownloadManager {
             DOWNLOAD_CHANNEL_DESCRIPT
         )
     }
+
+    fun cancelAllDownloadNotifications(context: Context) {
+        val manager = NotificationManagerCompat.from(context)
+        manager.activeNotifications.forEach { notification ->
+            if (notification.tag == DOWNLOAD_NOTIFICATION_TAG) {
+                manager.cancel(DOWNLOAD_NOTIFICATION_TAG, notification.id)
+            }
+        }
+    }
+
 
     /**
      * @param hlsProgress will together with hlsTotal display another notification if used, to lessen the confusion about estimated size.
@@ -447,7 +458,7 @@ object VideoDownloadManager {
                 ) {
                     return null
                 }
-                notify(ep.id, notification)
+                notify(DOWNLOAD_NOTIFICATION_TAG, ep.id, notification)
             }
             return notification
         } catch (e: Exception) {
@@ -1658,7 +1669,7 @@ object VideoDownloadManager {
         companion object {
             private fun displayNotification(context: Context, id: Int, notification: Notification) {
                 safe {
-                    NotificationManagerCompat.from(context).notify(id, notification)
+                    NotificationManagerCompat.from(context).notify(DOWNLOAD_NOTIFICATION_TAG, id, notification)
                 }
             }
         }
@@ -1944,7 +1955,7 @@ object VideoDownloadManager {
             linkLoadingJob?.join()
 
             // Remove link loading notification
-            NotificationManagerCompat.from(context).cancel(downloadItem.episode.id)
+            NotificationManagerCompat.from(context).cancel(DOWNLOAD_NOTIFICATION_TAG, downloadItem.episode.id)
 
             if (linkLoadingJob?.isCancelled == true) {
                 // Same as if no links, but no toast.

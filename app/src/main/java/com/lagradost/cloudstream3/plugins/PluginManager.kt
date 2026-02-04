@@ -29,6 +29,7 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainAPI.Companion.settingsForProvider
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
+import com.lagradost.cloudstream3.MainActivity.Companion.lastError
 import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
 import com.lagradost.cloudstream3.PROVIDER_STATUS_OK
 import com.lagradost.cloudstream3.R
@@ -570,6 +571,11 @@ object PluginManager {
 
         loadedLocalPlugins = true
         afterPluginsLoadedEvent.invoke(forceReload)
+    }
+
+    /** @return true if safe mode is enabled in any possible way. */
+    fun isSafeMode(): Boolean {
+        return checkSafeModeFile() || lastError != null
     }
 
     /**

@@ -59,7 +59,9 @@ object DownloadQueueManager {
 
         ioSafe startQueue@{
             // Do not automatically start the queue if safe mode is activated.
-            if (PluginManager.checkSafeModeFile() || lastError != null) {
+            if (PluginManager.isSafeMode()) {
+                // Prevent misleading UI
+                VideoDownloadManager.cancelAllDownloadNotifications(context)
                 return@startQueue
             }
 

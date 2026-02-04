@@ -12,6 +12,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.PendingIntentCompat
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
 import com.lagradost.cloudstream3.MainActivity
+import com.lagradost.cloudstream3.MainActivity.Companion.lastError
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.utils.AppContextUtils.createNotificationChannel
@@ -147,7 +148,14 @@ class DownloadQueueService : Service() {
 
         ioSafe {
             totalDownloadFlow
-                .takeWhile { (instances, queue) -> isRunning && (instances.isNotEmpty() || queue.isNotEmpty()) }
+                .takeWhile { (instances, queue) ->
+                    // Stop if destroyed
+                    isRunning
+                            // Run as long as there is a queue to process
+                            && (instances.isNotEmpty() || queue.isNotEmpty())
+                            // Run as long as there are no app crashes
+                            && lastError == null
+                }
                 .collect { (_, queue, currentDownloads) ->
                     // Remove completed or failed
                     val newInstances = _downloadInstances.updateAndGet { currentInstances ->

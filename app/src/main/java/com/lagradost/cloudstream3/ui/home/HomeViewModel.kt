@@ -523,7 +523,7 @@ class HomeViewModel : ViewModel() {
             } else if (api == null) {
                 // API is not found aka not loaded or removed, post the loading
                 // progress if waiting for plugins, otherwise nothing
-                if (PluginManager.loadedOnlinePlugins || PluginManager.checkSafeModeFile() || lastError != null) {
+                if (PluginManager.loadedOnlinePlugins || PluginManager.isSafeMode()) {
                     loadAndCancel(noneApi)
                 } else {
                     _page.postValue(Resource.Loading())
