@@ -1851,6 +1851,38 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+
+    private fun videoCodecName(mime: String?): String? {
+        val m = mime?.lowercase() ?: return null
+        return when {
+            m.contains("avc") || m.contains("h264") -> "AVC"
+            m.contains("hevc") || m.contains("h265") -> "HEVC"
+            m.contains("av1") -> "AV1"
+            m.contains("vp9") -> "VP9"
+            m.contains("vp8") -> "VP8"
+            "/" in m -> m.substringAfter("/").uppercase()
+            else -> m.uppercase()
+        }
+    }
+
+    private fun audioCodecName(mime: String?): String? {
+        val m = mime?.lowercase() ?: return null
+        return when {
+            m.contains("eac3-joc") -> "Dolby Atmos"
+            m.contains("mp4a") || m.contains("aac") -> "AAC"
+            m.contains("ac-3") || m.contains("ac3") -> "AC3"
+            m.contains("eac3") -> "E-AC3"
+            m.contains("opus") -> "Opus"
+            m.contains("vorbis") -> "Vorbis"
+            m.contains("mp3") -> "MP3"
+            m.contains("flac") -> "FLAC"
+            m.contains("dts") -> "DTS"
+            "/" in m -> m.substringAfter("/").uppercase()
+            else -> m.uppercase()
+        }
+    }
+
+
     private fun updatePlayerInfo() {
         val tracks = player.getVideoTracks()
 
@@ -1861,8 +1893,8 @@ class GeneratorPlayer : FullScreenPlayer() {
         val prefs = PreferenceManager.getDefaultSharedPreferences(ctx)
         showMediaInfo = prefs.getBoolean(ctx.getString(R.string.show_media_info_key), false)
 
-        val videoCodec = videoTrack?.sampleMimeType?.substringAfterLast('/')?.uppercase()
-        val audioCodec = audioTrack?.sampleMimeType?.substringAfterLast('/')?.uppercase()
+        val videoCodec = videoCodecName(videoTrack?.sampleMimeType)
+        val audioCodec = audioCodecName(audioTrack?.sampleMimeType)
         val language = listOfNotNull(
             audioTrack?.label,
             fromTagToLanguageName(audioTrack?.language)?.let { "[$it]" }
