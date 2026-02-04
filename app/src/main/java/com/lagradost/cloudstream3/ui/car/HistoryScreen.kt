@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.car
 
 import androidx.car.app.CarContext
+import android.util.Log
 import androidx.car.app.Screen
 import androidx.car.app.model.Action
 import androidx.car.app.model.ItemList
@@ -51,13 +52,20 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
             try {
                 // Strict logic copied from HomeViewModel.getResumeWatching()
                 val resumeWatchingResult = withContext(Dispatchers.IO) {
-                    getAllResumeStateIds()?.mapNotNull { id ->
+                    val ids = getAllResumeStateIds()
+                    Log.d("HistoryDebug", "Loading history. IDs found: ${ids?.size ?: 0}")
+                    ids?.mapNotNull { id ->
                         getLastWatched(id)
                     }?.sortedBy { -it.updateTime }?.mapNotNull { resume ->
                        val data = getKey<VideoDownloadHelper.DownloadHeaderCached>(
                             DOWNLOAD_HEADER_CACHE,
                             resume.parentId.toString()
-                        ) ?: return@mapNotNull null
+                        )
+                        if (data == null) {
+                             Log.e("HistoryDebug", "MISSING HEADER for parentId: ${resume.parentId}")
+                             return@mapNotNull null
+                        }
+                        Log.d("HistoryDebug", "Found HEADER for parentId: ${resume.parentId} -> ${data.name}")
     
                        Pair(resume, data) 
                     }

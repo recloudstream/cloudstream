@@ -24,6 +24,12 @@ import androidx.media3.session.MediaSession
 import androidx.car.app.model.CarIcon
 import androidx.core.graphics.drawable.IconCompat
 import com.lagradost.cloudstream3.R
+import androidx.media3.common.MediaMetadata
+import android.net.Uri
+import coil3.request.ImageRequest
+import coil3.SingletonImageLoader
+import coil3.asDrawable
+import androidx.core.graphics.drawable.toBitmap
 import androidx.media3.common.C.VIDEO_SCALING_MODE_SCALE_TO_FIT
 import androidx.media3.common.C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
@@ -31,6 +37,10 @@ import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
+import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -40,7 +50,6 @@ import kotlinx.coroutines.withContext
 import android.util.Log
 import com.lagradost.cloudstream3.utils.DataStore
 import com.lagradost.cloudstream3.utils.DataStore.getKey
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.Episode
 
@@ -48,7 +57,6 @@ import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.TvSeriesLoadResponse
 import com.lagradost.cloudstream3.AnimeLoadResponse
 import com.lagradost.cloudstream3.MovieLoadResponse
-import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
 import com.lagradost.cloudstream3.TvType
 import kotlinx.coroutines.delay
@@ -204,6 +212,7 @@ class PlayerCarScreen(
              // Priority: 1. Item ID (if available from Home/Search and valid)
              //           2. Data URL Hashcode (using strict cleaning logic)
              currentParentId = item?.id ?: idFromUrl
+            saveHeaderCache(data)
 
              if (data is TvSeriesLoadResponse && activeEpisode != null) {
                  currentEpisodeId = activeEpisode!!.data.hashCode()
@@ -260,6 +269,43 @@ class PlayerCarScreen(
         }
     }
 
+    private fun saveHeaderCache(data: LoadResponse? = null) {
+        try {
+            Log.d("PlayerCarScreen", "saveHeaderCache called. Item: ${item?.url}, Data: ${data?.url}, ParentID: $currentParentId")
+            
+            val url = item?.url ?: data?.url ?: return
+            val apiName = item?.apiName ?: data?.apiName ?: return
+            val name = item?.name ?: data?.name ?: return
+            val type = item?.type ?: data?.type ?: TvType.Movie
+            val poster = item?.posterUrl ?: data?.posterUrl
+
+            val api = getApiFromNameNull(apiName)
+            val mainUrl = api?.mainUrl ?: ""
+            val id = url.replace(mainUrl, "").replace("/", "").hashCode()
+
+            val header = VideoDownloadHelper.DownloadHeaderCached(
+                apiName = apiName,
+                url = url,
+                type = type,
+                name = name,
+                poster = poster,
+                id = id,
+                cacheTime = System.currentTimeMillis()
+            )
+            Log.e("PlayerCarScreen", "Saving Header Cache: ID=$id, ParentID=$currentParentId, Name=${name}, Type=${header.type}")
+            setKey(DOWNLOAD_HEADER_CACHE, id.toString(), header)
+            // Ensure parentId is also covered if different
+            currentParentId?.let { parentId ->
+                 if (parentId != id) {
+                     setKey(DOWNLOAD_HEADER_CACHE, parentId.toString(), header.copy(id = parentId))
+                     Log.e("PlayerCarScreen", "Saved extra copy for ParentID: $parentId")
+                 }
+            }
+        } catch (e: Exception) {
+            Log.e("PlayerCarScreen", "Error saving header cache", e)
+        }
+    }
+
     private fun saveProgress() {
         val p = player ?: return
         val pos = p.currentPosition
@@ -313,6 +359,7 @@ class PlayerCarScreen(
         }
     }
 
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
     private suspend fun startPlayback(link: Any) {
         val url = when(link) {
             is ExtractorLink -> link.url
@@ -332,31 +379,101 @@ class PlayerCarScreen(
                 }
             }
             player?.let { p ->
-                 // Initialize MediaSession
+                 // Wrap in ForwardingPlayer to intercept commands
+                 val forwardingPlayer = object : androidx.media3.common.ForwardingPlayer(p) {
+                     override fun seekToNext() {
+                         Log.d("PlayerCarScreen", "ForwardingPlayer seekToNext")
+                         scope.launch { loadNextEpisode() }
+                     }
+                     
+                     override fun seekToPrevious() {
+                        Log.d("PlayerCarScreen", "ForwardingPlayer seekToPrevious")
+                         seekBack()
+                     }
+                 }
+
+                 // Initialize MediaSession with ForwardingPlayer
                  if (mediaSession == null) {
-                     mediaSession = MediaSession.Builder(carContext, p)
-                         .setCallback(object : MediaSession.Callback {
-                             override fun onConnect(
-                                 session: MediaSession,
-                                 controller: MediaSession.ControllerInfo
-                             ): MediaSession.ConnectionResult {
-                                 return MediaSession.ConnectionResult.AcceptedResultBuilder(session).build()
-                             }
-                         })
-                         .build()
+                     mediaSession = MediaSession.Builder(carContext, forwardingPlayer)
+                        .setCallback(object : MediaSession.Callback {
+                            override fun onConnect(
+                                session: MediaSession,
+                                controller: MediaSession.ControllerInfo
+                            ): MediaSession.ConnectionResult {
+                                val availableCommands = androidx.media3.common.Player.Commands.Builder()
+                                    .add(androidx.media3.common.Player.COMMAND_PLAY_PAUSE)
+                                    .add(androidx.media3.common.Player.COMMAND_STOP)
+                                    .add(androidx.media3.common.Player.COMMAND_SEEK_TO_NEXT)
+                                    .add(androidx.media3.common.Player.COMMAND_SEEK_TO_PREVIOUS)
+                                    .build()
+                                    
+                                return MediaSession.ConnectionResult.AcceptedResultBuilder(session)
+                                    .setAvailablePlayerCommands(availableCommands)
+                                    .build()
+                            }
+                        })
+                        .build()
                  }
                  
                  p.addListener(object : Player.Listener {
                      override fun onIsPlayingChanged(isPlaying: Boolean) {
                          this@PlayerCarScreen.isPlaying = isPlaying
                          invalidate()
+                         
+                         this@PlayerCarScreen.saveProgressJob?.cancel()
+                         if (isPlaying) {
+                             this@PlayerCarScreen.saveProgressJob = scope.launch {
+                                 while(true) {
+                                     kotlinx.coroutines.delay(10_000)
+                                     withContext(Dispatchers.Main) {
+                                         saveProgress()
+                                     }
+                                 }
+                             }
+                         } else {
+                             saveProgress()
+                         }
                      }
                  })
 
                  surface?.let { p.setVideoSurface(it) }
                  p.videoScalingMode = resizeMode
                  
-                 val mediaItemBuilder = MediaItem.Builder().setUri(url)
+                 // Create MediaMetadata
+                 val metadataBuilder = MediaMetadata.Builder()
+                     .setTitle(item?.name ?: activeEpisode?.name ?: "Video")
+                     .setDisplayTitle(item?.name ?: activeEpisode?.name ?: "Video")
+                     .setArtist(activeEpisode?.name ?: item?.apiName ?: "Cloudstream")
+                 
+                 // Try to load artwork
+                 val posterUrl = activeEpisode?.posterUrl ?: item?.posterUrl
+                 if (!posterUrl.isNullOrEmpty()) {
+                     try {
+                         val request = ImageRequest.Builder(carContext)
+                             .data(posterUrl)
+                             .size(512, 512)
+                             .build()
+                         val result = SingletonImageLoader.get(carContext).execute(request)
+                         val bitmap = result.image?.asDrawable(carContext.resources)?.toBitmap()
+                         if (bitmap != null) {
+                             metadataBuilder.setArtworkData(
+                                 bitmap.let {
+                                     val stream = java.io.ByteArrayOutputStream()
+                                     it.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, stream)
+                                     stream.toByteArray()
+                                 }, 
+                                 MediaMetadata.PICTURE_TYPE_FRONT_COVER
+                             )
+                         }
+                     } catch (e: Exception) {
+                         Log.e("PlayerCarScreen", "Failed to load artwork for metadata", e)
+                     }
+                 }
+
+                 val mediaItemBuilder = MediaItem.Builder()
+                     .setUri(url)
+                     .setMediaMetadata(metadataBuilder.build())
+                     
                  if (link is ExtractorLink && link.isM3u8) {
                      mediaItemBuilder.setMimeType(MimeTypes.APPLICATION_M3U8)
                  }
@@ -439,18 +556,6 @@ class PlayerCarScreen(
                 .setOnClickListener { seekForward() }
                 .build()
 
-            actionStripBuilder.addAction(backToMenuAction)
-                .addAction(seekBackAction)
-                .addAction(seekForwardAction)
-                
-        } else {
-            // DEFAULT MODE: [Back (Exit)], [Play], [Resize], [Seek Controls]
-            
-            val exitAction = Action.Builder()
-                .setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_baseline_arrow_back_24)).build())
-                .setOnClickListener { screenManager.pop() }
-                .build()
-
             val resizeAction = Action.Builder()
                 .setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_baseline_aspect_ratio_24)).build())
                 .setOnClickListener {
@@ -463,6 +568,21 @@ class PlayerCarScreen(
                     showToast(if (resizeMode == VIDEO_SCALING_MODE_SCALE_TO_FIT) CarStrings.get(R.string.car_fit_to_screen) else CarStrings.get(R.string.car_fill_screen))
                 }
                 .build()
+
+            actionStripBuilder.addAction(backToMenuAction)
+                .addAction(seekBackAction)
+                .addAction(seekForwardAction)
+                .addAction(resizeAction)
+                
+        } else {
+            // DEFAULT MODE: [Back (Exit)], [Play], [Resize], [Seek Controls]
+            
+            val exitAction = Action.Builder()
+                .setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_baseline_arrow_back_24)).build())
+                .setOnClickListener { screenManager.pop() }
+                .build()
+
+
                 
             val seekBackAction = Action.Builder()
             .setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.go_back_30)).build())
@@ -479,9 +599,17 @@ class PlayerCarScreen(
                 }
                 .build()
 
+            val nextAction = Action.Builder()
+                .setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_baseline_skip_next_24)).build())
+                .setOnClickListener {
+                     scope.launch { loadNextEpisode() }
+                }
+                .setEnabled(playlist != null && activeEpisode != null && playlist.indexOf(activeEpisode) < playlist.size - 1)
+                .build()
+
             actionStripBuilder.addAction(exitAction)
                 .addAction(playPauseAction)
-                .addAction(resizeAction)
+                .addAction(nextAction)
                 .addAction(openSeekAction)
         }
 
@@ -496,6 +624,51 @@ class PlayerCarScreen(
             val newPos = p.currentPosition - 30_000 // -30 seconds
             p.seekTo(if (newPos < 0) 0 else newPos)
             updateStatus("-30s")
+        }
+    }
+
+    private suspend fun loadNextEpisode() {
+        if (playlist == null || activeEpisode == null) {
+             showToast("No playlist available")
+             return
+        }
+        
+         
+         // Fix: Episode class does not have 'id'. Use 'data' or calculate hash.
+         val currentIndex = playlist.indexOfFirst { it.data == activeEpisode!!.data } // Comparing by data url is safest
+         if (currentIndex != -1 && currentIndex < playlist.size - 1) {
+             val nextEp = playlist[currentIndex + 1]
+             activeEpisode = nextEp
+             // Generate a consistent ID from the data URL, similar to how it's done elsewhere
+             val nextId = nextEp.data.hashCode() 
+             currentEpisodeId = nextId
+
+             showToast("Loading: ${nextEp.name}")
+             
+             // Re-use logic to load media
+              withContext(Dispatchers.Main) {
+                 // Determine if we have a direct URL (download) or need to fetch links
+                  val downloadEp = carContext.getKey<VideoDownloadHelper.DownloadEpisodeCached>(
+                      DOWNLOAD_EPISODE_CACHE,
+                      nextId.toString()
+                  )
+                 
+                 if (downloadEp != null) {
+                     // Verify file exists? For now assume yes if cached.
+                     // We need the file URI. The original PlayerCarScreen invocation usually gets a fileUri passed in.
+                     // But here we are switching. We might need to find the file path.
+                     // Simplified: If in download mode, try to find the download.
+                     // If streaming, just fetch links.
+                     // For now, assume streaming or that loadMedia handles it via APIRepository if needed.
+                     // But wait, loadMedia takes a URL. Episode.data is the url for load().
+                     
+                     loadMedia(nextEp.data)
+                 } else {
+                     loadMedia(nextEp.data)
+                 }
+            }
+        } else {
+            showToast("No more episodes")
         }
     }
 

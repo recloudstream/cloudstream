@@ -6,7 +6,7 @@ androidGradlePlugin = "8.13.2"
 appcompat = "1.7.1"
 biometric = "1.4.0-alpha04"
 buildkonfigGradlePlugin = "0.17.1"
-carApp = "1.7.0-rc01"
+carApp = "1.8.0-alpha03"
 coil = "3.3.0"
 colorpicker = "6b46b49bd5"
 conscryptAndroid = { strictly = "2.5.2" } # 2.5.3 crashes everything
@@ -51,7 +51,7 @@ gpuv = "3a107f995b"
 
 jvmTarget = "1.8"
 jdkToolchain = "17"
-minSdk = "21"
+minSdk = "23"
 compileSdk = "36"
 targetSdk = "36"
 

@@ -21,6 +21,11 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import androidx.car.app.CarToast
+import coil3.request.ImageRequest
+import coil3.SingletonImageLoader
+import coil3.asDrawable
+import androidx.core.graphics.drawable.toBitmap
+
 
 class SearchCarScreen(carContext: CarContext) : Screen(carContext) {
 
@@ -54,10 +59,27 @@ class SearchCarScreen(carContext: CarContext) : Screen(carContext) {
                      }
                      
                      // Text-only results
-                     items.forEach { item ->
+                     items.map { item ->
+                         val image = try {
+                             if (!item.posterUrl.isNullOrEmpty()) {
+                                 val request = ImageRequest.Builder(carContext)
+                                     .data(item.posterUrl)
+                                     .size(128, 128)
+                                     .build()
+                                 val result = SingletonImageLoader.get(carContext).execute(request)
+                                 val bitmap = result.image?.asDrawable(carContext.resources)?.toBitmap()
+                                 if (bitmap != null) {
+                                     CarIcon.Builder(IconCompat.createWithBitmap(bitmap)).build()
+                                 } else null
+                             } else null
+                         } catch (e: Exception) {
+                             null
+                         } ?: CarIcon.Builder(IconCompat.createWithResource(carContext, R.mipmap.ic_launcher)).build()
+
                          builder.addItem(
                              Row.Builder()
                                  .setTitle(item.name)
+                                 .setImage(image, Row.IMAGE_TYPE_LARGE)
                                  .setOnClickListener {
                                      val type = item.type
                                      if (type == com.lagradost.cloudstream3.TvType.TvSeries || 
