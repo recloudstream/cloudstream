@@ -1459,16 +1459,16 @@ class GeneratorPlayer : FullScreenPlayer() {
                         ?: "Audio"
                     
                     val codec = track.sampleMimeType?.let { mimeType ->
-                    when {
-                            mimeType.contains("mp4a") || mimeType.contains("aac") -> "aac"
-                            mimeType.contains("ac-3") || mimeType.contains("ac3") -> "ac3"
-                            mimeType.contains("eac3-joc") -> "Dolby Atmos"
-                            mimeType.contains("eac3") -> "eac3"
-                            mimeType.contains("opus") -> "opus"
-                            mimeType.contains("vorbis") -> "vorbis"
-                            mimeType.contains("mp3") || mimeType.contains("mpeg") -> "mp3"
-                            mimeType.contains("flac") -> "flac"
-                            mimeType.contains("dts") -> "dts"
+                        when {
+                            mimeType.contains("mp4a", ignoreCase = true) || mimeType.contains("aac", ignoreCase = true) -> "aac"
+                            mimeType.contains("ac-3", ignoreCase = true) || mimeType.contains("ac3", ignoreCase = true) -> "ac3"
+                            mimeType.contains("eac3-joc", ignoreCase = true) -> "Dolby Atmos"
+                            mimeType.contains("eac3", ignoreCase = true) -> "eac3"
+                            mimeType.contains("opus", ignoreCase = true) -> "opus"
+                            mimeType.contains("vorbis", ignoreCase = true) -> "vorbis"
+                            mimeType.contains("mp3", ignoreCase = true) || mimeType.contains("mpeg", ignoreCase = true) -> "mp3"
+                            mimeType.contains("flac", ignoreCase = true) -> "flac"
+                            mimeType.contains("dts", ignoreCase = true) -> "dts"
                             else -> mimeType.substringAfter("/")
                         }
                     } ?: "codec?"
