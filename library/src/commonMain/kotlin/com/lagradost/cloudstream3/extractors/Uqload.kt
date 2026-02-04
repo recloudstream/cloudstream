@@ -30,7 +30,7 @@ open class Uqload : ExtractorApi() {
     override var mainUrl: String = "https://www.uqload.com"
     override val requiresReferer = true
 
-    private val  srcRegex = Regex("""sources:.*"(.*?)".""")  // would be possible to use the parse and find src attribute
+    private val  srcRegex = Regex("""sources:.*"(.*?)".*""")  // would be possible to use the parse and find src attribute
 
     override suspend fun getUrl(
         url: String,
