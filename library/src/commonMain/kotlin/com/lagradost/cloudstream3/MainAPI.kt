@@ -232,6 +232,7 @@ object APIHolder {
 
             Tracker(
                 res.idMal,
+                null,
                 res.id.toString(),
                 res.coverImage?.extraLarge ?: res.coverImage?.large,
                 res.bannerImage
@@ -738,7 +739,7 @@ fun capitalizeStringNullable(str: String?): String? {
     if (str == null)
         return null
     return try {
-        str.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        str.replaceFirstChar(Char::titlecase)
     } catch (e: Exception) {
         str
     }
@@ -747,7 +748,7 @@ fun capitalizeStringNullable(str: String?): String? {
 fun fixTitle(str: String): String {
     return str.split(" ").joinToString(" ") {
         it.lowercase()
-            .replaceFirstChar { char -> if (char.isLowerCase()) char.titlecase(Locale.getDefault()) else it }
+            .replaceFirstChar(Char::titlecase)
     }
 }
 
@@ -1748,6 +1749,7 @@ data class TrailerData(
  * @property syncData Online sync services compatible with the media.
  * @property posterHeaders headers map used by network request to get the poster.
  * @property backgroundPosterUrl Url of the media background poster.
+ * @property logoUrl Image URL used as a visual title replacement.If the logo loads successfully, it is shown instead of the text title. If the logo is null or fails to load, the text title is displayed.
  * @property contentRating content rating of the media, appears on result page.
  * @property uniqueUrl The key used for storing the persistent data about an entry.
  * On older versions `url` was used instead, but this was added to support JSON that can change as the url parameter.
@@ -1774,6 +1776,9 @@ interface LoadResponse {
     var syncData: MutableMap<String, String>
     var posterHeaders: Map<String, String>?
     var backgroundPosterUrl: String?
+
+    @Prerelease
+    var logoUrl: String?
     var contentRating: String?
 
     var uniqueUrl: String
@@ -1793,6 +1798,8 @@ interface LoadResponse {
 
     companion object {
         var malIdPrefix = "" //malApi.idPrefix
+
+        var kitsuIdPrefix = "" //kitsuApi.idPrefix
         var aniListIdPrefix = "" //aniListApi.idPrefix
         var simklIdPrefix = "" //simklApi.idPrefix
         var isTrailersEnabled = true
@@ -1853,6 +1860,9 @@ interface LoadResponse {
             return this.syncData[malIdPrefix]
         }
 
+        fun LoadResponse.getKitsuId(): String? {
+            return this.syncData[kitsuIdPrefix]
+        }
         fun LoadResponse.getAniListId(): String? {
             return this.syncData[aniListIdPrefix]
         }
@@ -1872,6 +1882,11 @@ interface LoadResponse {
         fun LoadResponse.addMalId(id: Int?) {
             this.syncData[malIdPrefix] = (id ?: return).toString()
             this.addSimklId(SimklSyncServices.Mal, id.toString())
+        }
+
+        @Prerelease
+        fun LoadResponse.addKitsuId(id: Int?) {
+            this.syncData[kitsuIdPrefix] = (id ?: return).toString()
         }
 
         fun LoadResponse.addAniListId(id: Int?) {
@@ -2217,6 +2232,7 @@ constructor(
     override var syncData: MutableMap<String, String> = mutableMapOf(),
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
+    override var logoUrl: String? = null,
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
 ) : LoadResponse
@@ -2277,6 +2293,7 @@ constructor(
     override var nextAiring: NextAiring? = null,
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
+    override var logoUrl: String? = null,
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
 ) : LoadResponse, EpisodeResponse {
@@ -2362,6 +2379,7 @@ constructor(
     override var syncData: MutableMap<String, String> = mutableMapOf(),
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
+    override var logoUrl: String? = null,
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
 ) : LoadResponse
@@ -2410,6 +2428,7 @@ constructor(
     override var syncData: MutableMap<String, String> = mutableMapOf(),
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
+    override var logoUrl: String? = null,
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
 ) : LoadResponse
@@ -2502,7 +2521,7 @@ constructor(
 
 fun Episode.addDate(date: String?, format: String = "yyyy-MM-dd") {
     try {
-        this.date = SimpleDateFormat(format).parse(date ?: return)?.time
+        this.date = SimpleDateFormat(format, Locale.getDefault()).parse(date ?: return)?.time
     } catch (e: Exception) {
         logError(e)
     }
@@ -2589,6 +2608,7 @@ constructor(
     override var nextAiring: NextAiring? = null,
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
+    override var logoUrl: String? = null,
     override var contentRating: String? = null,
     override var uniqueUrl: String = url
 ) : LoadResponse, EpisodeResponse {
@@ -2653,6 +2673,7 @@ fun String?.toRatingInt(): Int? =
 
 data class Tracker(
     val malId: Int? = null,
+    val kitsuId: String? = null,
     val aniId: String? = null,
     val image: String? = null,
     val cover: String? = null,

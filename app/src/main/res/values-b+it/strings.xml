@@ -157,8 +157,6 @@
     <string name="automatic_plugin_updates">Aggiorna automaticamente i plugin</string>
     <string name="updates_settings">Mostra gli aggiornamenti dell\'app</string>
     <string name="updates_settings_des">Cerca automaticamente nuovi aggiornamenti dopo aver avviato l\'app.</string>
-    <string name="uprereleases_settings">Aggiorna alle prerelease</string>
-    <string name="uprereleases_settings_des">Cerca per aggiornamenti alle prerelease invice di cercare solo le release complete</string>
     <string name="github">GitHub</string>
     <string name="lightnovel">App per Light Novel degli stessi sviluppatori</string>
     <string name="anim">App per Anime degli stessi sviluppatori</string>
@@ -420,7 +418,7 @@
     <string name="view_public_repositories_button">Visualizza i repository della comunità</string>
     <string name="view_public_repositories_button_short">Lista pubblica</string>
     <string name="uppercase_all_subtitles">Tutti i sottotitoli in maiuscolo</string>
-    <string name="download_all_plugins_from_repo">Attenzione: CloudStream 3 non si assume alcuna responsabilità per l\'utilizzo di estensioni di terze parti e non fornisce alcun supporto per esse!</string>
+    <string name="download_all_plugins_from_repo">Attenzione: CloudStream non si assume alcuna responsabilità per l\'utilizzo di estensioni di terze parti e non fornisce alcun supporto per esse!</string>
     <string name="single_plugin_disabled" formatted="true">%s (Disabilitato)</string>
     <string name="tracks">Tracce</string>
     <string name="audio_tracks">Traccia audio</string>
@@ -642,7 +640,6 @@
     <string name="device_pin_error_message">Impossibile ottenere il codice PIN del dispositivo, prova l\'autenticazione locale</string>
     <string name="device_pin_expired_message">Il codice PIN è scaduto!</string>
     <string name="device_pin_counter_text">Il codice scadrà tra %1$dm %2$ds</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="open_local_video">Apri il video locale</string>
     <string name="downloads_empty">Al momento non ci sono download.</string>
     <string name="play_from_beginning_img_des">Riproduci dall\'inizio</string>
@@ -755,4 +752,8 @@
     <string name="top_right">In alto a destra</string>
     <string name="middle_left">In centro a sinistra</string>
     <string name="play_full_series_button">Riproduci serie completa</string>
+    <string name="install_prerelease">Installa la versione pre-release</string>
+    <string name="prerelease_already_installed">La versione pre-release è già installata.</string>
+    <string name="prerelease_install_failed">Impossibile installare la versione pre-release.</string>
+    <string name="show_episode_text">Testo dell\'episodio</string>
 </resources>

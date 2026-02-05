@@ -7,6 +7,14 @@
     android:orientation="vertical"
     tools:orientation="vertical">
 
+    <ImageView
+        android:visibility="gone"
+        android:id="@+id/video_outline"
+        android:src="@drawable/video_outline"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </ImageView>
+
 
     <!--
         <LinearLayout android:layout_width="match_parent"
@@ -147,18 +155,42 @@
                         android:textColor="@color/white"
                         tools:text="1920x1080" />
 
+
                     <TextView
-                        android:maxLines="2"
-                        android:id="@+id/player_video_title"
+                        android:id="@+id/player_video_info"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
+                        android:layout_marginBottom="2.5dp"
                         android:textColor="@color/white"
-                        android:textStyle="bold"
-                        android:visibility="visible"
-                        tools:text="Hello world" />
+                        android:visibility="gone"
+                        tools:text="HEVC" />
 
-
+                    <LinearLayout
+                        android:id="@+id/player_video_title_holder"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center">
+                        <TextView
+                            android:maxLines="2"
+                            android:id="@+id/player_video_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textColor="@color/white"
+                            android:textStyle="bold"
+                            android:visibility="visible"
+                            tools:text="Hello world " />
+                        <ImageView
+                            android:id="@+id/offline_pin"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_marginStart="2dp"
+                            android:src="@drawable/ic_offline_pin_24"
+                            android:visibility="gone"
+                            tools:visibility="visible"
+                            android:layout_gravity="center"/>
+                    </LinearLayout>
                 </LinearLayout>
 
                 <!-- Removed as it has no use anymore-->
@@ -915,7 +947,7 @@
                 </ImageView>
 
                 <ProgressBar
-                    android:id="@+id/player_progressbar_right"
+                    android:id="@+id/player_progressbar_right_level1"
                     style="@android:style/Widget.Material.ProgressBar.Horizontal"
                     android:layout_width="5dp"
                     android:layout_height="150dp"
@@ -925,7 +957,24 @@
                     android:indeterminate="false"
                     android:max="100"
                     android:progress="100"
-                    android:progressDrawable="@drawable/progress_drawable_vertical" />
+                    android:progressDrawable="@drawable/progress_drawable_vertical"
+                    android:progressTint="@color/white"
+                    android:progressTintMode="src_in" />
+
+                <ProgressBar
+                    android:id="@+id/player_progressbar_right_level2"
+                    style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                    android:layout_width="5dp"
+                    android:layout_height="150dp"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="40dp"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/progress_drawable_vertical"
+                    android:progressTint="@color/colorPrimaryOrange"
+                    android:progressTintMode="src_in" />
             </RelativeLayout>
         </LinearLayout>
 

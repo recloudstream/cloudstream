@@ -47,6 +47,7 @@ enum class CSPlayerLoading {
     IsPaused,
     IsPlaying,
     IsBuffering,
+    IsEnded,
 }
 
 enum class PlayerEventSource {
@@ -181,6 +182,7 @@ interface Track {
     val id: String?
     val label: String?
     val language: String?
+    val sampleMimeType : String?
 }
 
 data class VideoTrack(
@@ -189,19 +191,23 @@ data class VideoTrack(
     override val language: String?,
     val width: Int?,
     val height: Int?,
+    override val sampleMimeType: String?,
 ) : Track
 
 data class AudioTrack(
     override val id: String?,
     override val label: String?,
     override val language: String?,
+    override val sampleMimeType: String?,
+    val channelCount: Int?,
+    val formatIndex: Int?,
 ) : Track
 
 data class TextTrack(
     override val id: String?,
     override val label: String?,
     override val language: String?,
-    val mimeType: String?,
+    override val sampleMimeType: String?,
 ) : Track
 
 
@@ -301,7 +307,7 @@ interface IPlayer {
     fun setMaxVideoSize(width: Int = Int.MAX_VALUE, height: Int = Int.MAX_VALUE, id: String? = null)
 
     /** If no trackLanguage is set it'll default to first track. Specifying the id allows for track overrides as the language can be identical. */
-    fun setPreferredAudioTrack(trackLanguage: String?, id: String? = null)
+    fun setPreferredAudioTrack(trackLanguage: String?, id: String? = null, trackIndex: Int? = null)
 
     /** Get the current subtitle cues, for use with syncing */
     fun getSubtitleCues(): List<SubtitleCue>

@@ -92,8 +92,6 @@
     <string name="advanced_search_des">aauugghh ahahooo ouuhhhahh ooh oouuhahoooahhaaahhu ohaooh oouuhooo-ahah</string>
     <string name="updates_settings">haa oohaauugghhooh oh</string>
     <string name="updates_settings_des">aaaagggoooogg uuuugg aak aah aaaahhh ooogg uuuuuukh aah ooh</string>
-    <string name="uprereleases_settings">aaaghh ahhhahoooooo-ahah aaaghh</string>
-    <string name="uprereleases_settings_des">ahhh ooo-ahahahhahh ooooo aauugghh oooohhahhhahoooaoooohhouuhhh aaahhu</string>
     <string name="github">aauuhoha</string>
     <string name="lightnovel">ooo-ahahoh ohaaauugghh ahhh haaahooo</string>
     <string name="anim">ooooohaa ohaaaaaaahoooahoooaaaghh</string>
@@ -241,7 +239,6 @@
     <string name="sort_save">oooooh uuaagh</string>
     <string name="action_open_play">@string/home_play</string>
     <string name="chromecast_subtitles_settings">oouuhhh ahhooo-ahah</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="restore_success">uuuugg aaaahh oogg</string>
     <string name="device_pin_counter_text">aagg uuuuggg og %1$dm %2$ds</string>
     <string name="pref_category_android_tv">aaaahhh ag</string>

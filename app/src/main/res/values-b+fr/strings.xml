@@ -287,8 +287,6 @@
     <string name="automatic_plugin_updates">Mises à jour automatiques des plugins</string>
     <string name="updates_settings">Afficher les mises à jour de l\'application</string>
     <string name="updates_settings_des">Recherche automatique de nouvelles mises à jour au démarrage.</string>
-    <string name="uprereleases_settings">Mettre à jour vers une version bêta</string>
-    <string name="uprereleases_settings_des">Recherche pour une mise à jour vers une version bêta au lieu des version complètes seulement</string>
     <string name="github">Github</string>
     <string name="lightnovel">Application Light Novel par les mêmes devs</string>
     <string name="anim">Anime app by the same devs</string>
@@ -428,7 +426,7 @@
     <string name="skip_type_mixed_op">Introduction mitigée</string>
     <string name="update_notification_installing">Installation de la mise a jour de l\'application…</string>
     <string name="update_notification_failed">Impossible d\'installer la nouvelle version de l\'application</string>
-    <string name="apk_installer_settings_des">Certains téléphones ne supporte pas le nouvel installateur d\'application. Essayez l\'option de l\'ancien installateur si les mises-à-jour ne s\'installe pas.</string>
+    <string name="apk_installer_settings_des">Certains appareils ne supportent pas le nouvel installateur d\'application. Essayez l\'option de l\'ancien installateur si les mises-à-jour ne s\'installe pas.</string>
     <string name="previous">Précédent</string>
     <string name="skip_setup">Ignorer la configuration</string>
     <string name="repository_name_hint">Nom de dépôt (optionnel)</string>
@@ -608,7 +606,6 @@
     <string name="biometric_setting">Verrouillage biométrique</string>
     <string name="player_settings_select_cast_device">Sélectionnez un appareil de diffusion</string>
     <string name="next_season_episode_format" formatted="true">Saison %1$d Episode %2$d sera publié dans</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="play_from_beginning_img_des">Regarder depuis le début</string>
     <string name="open_local_video">Ouvrir une vidéo locale</string>
     <string name="test_warning">Attention</string>
@@ -652,7 +649,7 @@
     <string name="confirm_before_exiting_title">Confirmer avant de quitter</string>
     <string name="unsupported_error">Erreur non supportée</string>
     <string name="encoding_error">Erreur d\'encodage</string>
-    <string name="software_decoding_desc">Le décodage logiciel permet au lecteur de lire des fichiers vidéo non pris en charge par votre téléphone, mais peut entraîner une lecture lente ou instable en haute résolution</string>
+    <string name="software_decoding_desc">Le décodage logiciel permet au lecteur de lire des fichiers vidéo non pris en charge par votre appareil, mais peut entraîner une lecture lente ou instable en haute résolution.</string>
     <string name="software_decoding">Décodage logiciel</string>
     <string name="torrent_preferred_media">Activer les torrents dans Paramètres/Sources/Média préféré</string>
     <string name="torrent_not_accepted">Redémarrez l\'application et acceptez la fenêtre contextuelle Stream Torrent pour continuer.</string>
@@ -713,5 +710,20 @@
     <string name="reload_provider">Recharger le fournisseur</string>
     <string name="resolution_and_name">Solution et nom</string>
     <string name="name">Nom</string>
-    <string name="episode_action_play_mirror">Mise en miroir</string>"
-    </resources>
+    <string name="episode_action_play_mirror">Lancer le miroir</string>"
+    <string name="subs_subtitle_alignment">Alignement des Sous-titres</string>
+    <string name="bottom_left">En bas à gauche</string>
+    <string name="bottom_center">En bas au centre</string>
+    <string name="bottom_right">En bas à droite</string>
+    <string name="middle_left">Au milieu à gauche</string>
+    <string name="middle_center">Au milieu au centre</string>
+    <string name="middle_right">Au milieu à droite</string>
+    <string name="top_left">En haut à gauche</string>
+    <string name="top_center">En haut au centre</string>
+    <string name="top_right">En haut à droite</string>
+    <string name="play_full_series_button">Jouer la série complète</string>
+    <string name="install_prerelease">Installer la version préliminaire</string>
+    <string name="prerelease_already_installed">La version préliminaire est déjà installée.</string>
+    <string name="prerelease_install_failed">L\'installation de la version préliminaire a échouée.</string>
+    <string name="show_episode_text">Texte de l\'épisode</string>
+</resources>

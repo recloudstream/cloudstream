@@ -60,6 +60,7 @@ import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.player.FullScreenPlayer
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
+import com.lagradost.cloudstream3.ui.result.ResultFragment.bindLogo
 import com.lagradost.cloudstream3.ui.result.ResultFragment.getStoredData
 import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
@@ -142,7 +143,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         }
     }
 
-    var currentTrailers: List<ExtractorLink> = emptyList()
+    var currentTrailers: List<Pair<ExtractorLink, String>> = emptyList()
     var currentTrailerIndex = 0
 
     override fun nextMirror() {
@@ -163,26 +164,28 @@ open class ResultFragmentPhone : FullScreenPlayer() {
     }
 
     private fun loadTrailer(index: Int? = null) {
+
         val isSuccess =
-            currentTrailers.getOrNull(index ?: currentTrailerIndex)?.let { trailer ->
-                context?.let { ctx ->
-                    player.onPause()
-                    player.loadPlayer(
-                        ctx,
-                        false,
-                        trailer,
-                        null,
-                        startPosition = 0L,
-                        subtitles = emptySet(),
-                        subtitle = null,
-                        autoPlay = false,
-                        preview = false
-                    )
-                    true
+            currentTrailers.getOrNull(index ?: currentTrailerIndex)
+                ?.let { (extractedTrailerLink, _) ->
+                    context?.let { ctx ->
+                        player.onPause()
+                        player.loadPlayer(
+                            ctx,
+                            false,
+                            extractedTrailerLink,
+                            null,
+                            startPosition = 0L,
+                            subtitles = emptySet(),
+                            subtitle = null,
+                            autoPlay = false,
+                            preview = false
+                        )
+                        true
+                    } ?: run {
+                        false
+                    }
                 } ?: run {
-                    false
-                }
-            } ?: run {
                 false
             }
         //result_trailer_thumbnail?.setImageBitmap(result_poster_background?.drawable?.toBitmap())
@@ -191,6 +194,17 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         // result_trailer_loading?.isVisible = isSuccess
         val turnVis = !isSuccess && !isFullScreenPlayer
         resultBinding?.apply {
+            // If we load a trailer, then cancel the big logo and only show the small title
+            if (isSuccess) {
+                // This is still a bit of a race condition, but it should work if we have the
+                // trailers observe after the page observe!
+                bindLogo(
+                    url = null,
+                    headers = null,
+                    logoView = backgroundPosterWatermarkBadge,
+                    titleView = resultTitle
+                )
+            }
             resultSmallscreenHolder.isVisible = turnVis
             resultPosterBackgroundHolder.apply {
                 val fadeIn: Animation = AlphaAnimation(alpha, if (turnVis) 1.0f else 0.0f).apply {
@@ -226,10 +240,10 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         //}
     }
 
-    private fun setTrailers(trailers: List<ExtractorLink>?) {
+    private fun setTrailers(trailers: List<Pair<ExtractorLink, String>>?) {
         context?.updateHasTrailers()
         if (!LoadResponse.isTrailersEnabled) return
-        currentTrailers = trailers?.sortedBy { -it.quality } ?: emptyList()
+        currentTrailers = trailers?.sortedBy { -it.first.quality } ?: emptyList()
         loadTrailer()
     }
 
@@ -480,6 +494,13 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 } else resultOverlappingPanels.closePanels()
             }
 
+            resultMiniSync.setOnClickListener {
+                if (resultOverlappingPanels.getSelectedPanel().ordinal == 1) {
+                    resultOverlappingPanels.openStartPanel()
+                } else resultOverlappingPanels.closePanels()
+            }
+
+            /*
             resultMiniSync.setRecycledViewPool(ImageAdapter.sharedPool)
             resultMiniSync.adapter = ImageAdapter(
                 nextFocusDown = R.id.result_sync_set_score,
@@ -490,6 +511,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         } else resultOverlappingPanels.closePanels()
                     }
                 })
+            */
             resultSubscribe.setOnClickListener {
                 viewModel.toggleSubscriptionStatus(context) { newStatus: Boolean? ->
                     if (newStatus == null) return@toggleSubscriptionStatus
@@ -549,12 +571,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                             CastContext.getSharedInstance(act.applicationContext) {
                                 it.run()
                             }.addOnCompleteListener {
-                                isGone = if (it.isSuccessful) {
-                                    it.result.castState == CastState.NO_DEVICES_AVAILABLE
-                                } else {
-                                    true
-                                }
-
+                                isGone = !it.isSuccessful
                             }
                             // this shit leaks for some reason
                             //castContext.addCastStateListener { state ->
@@ -570,8 +587,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
         playerBinding?.apply {
             playerOpenSource.setOnClickListener {
-                currentTrailers.getOrNull(currentTrailerIndex)?.let {
-                    context?.openBrowser(it.url)
+                currentTrailers.getOrNull(currentTrailerIndex)?.let { (_, ogTrailerLink) ->
+                    context?.openBrowser(ogTrailerLink)
                 }
             }
         }
@@ -680,10 +697,6 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             }
 
             binding?.resultFavorite?.setImageResource(drawable)
-        }
-
-        observe(viewModel.trailers) { trailers ->
-            setTrailers(trailers.flatMap { it.mirros }) // I dont care about subtitles yet!
         }
 
         observeNullable(viewModel.episodes) { episodes ->
@@ -855,6 +868,13 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         }
                     }
 
+                    bindLogo(
+                        url = d.logoUrl,
+                        headers = d.posterHeaders,
+                        titleView = resultTitle,
+                        logoView = backgroundPosterWatermarkBadge
+                    )
+
                     var isExpanded = false
                     resultDescription.apply {
                         setTextHtml(d.plotText)
@@ -871,8 +891,11 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultComingSoon.isVisible = d.comingSoon
                     resultDataHolder.isGone = d.comingSoon
 
-                    resultCastItems.isGone = d.actors.isNullOrEmpty()
-                    (resultCastItems.adapter as? ActorAdaptor)?.submitList(d.actors)
+                    val prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(root.context)
+                    val showCast = prefs.getBoolean(root.context.getString(R.string.show_cast_in_details_key), true)
+
+                    resultCastItems.isGone = !showCast || d.actors.isNullOrEmpty()
+                    (resultCastItems.adapter as? ActorAdaptor)?.submitList(if (showCast) d.actors else emptyList())
 
                     if (d.contentRatingText == null) {
                         // If there is no rating to display, we don't want an empty gap
@@ -971,6 +994,10 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             }
         }
 
+        observe(viewModel.trailers) { trailers ->
+            setTrailers(trailers.flatMap { it.mirros }) // I dont care about subtitles yet!
+        }
+
         observe(syncModel.synced) { list ->
             syncBinding?.resultSyncNames?.text =
                 list.filter { it.isSynced && it.hasAccount }.joinToString { it.name }
@@ -978,7 +1005,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             val newList = list.filter { it.isSynced && it.hasAccount }
 
             binding?.resultMiniSync?.isVisible = newList.isNotEmpty()
-            (binding?.resultMiniSync?.adapter as? ImageAdapter)?.submitList(newList.mapNotNull { it.icon })
+            //(binding?.resultMiniSync?.adapter as? ImageAdapter)?.submitList(newList.mapNotNull { it.icon })
         }
 
 

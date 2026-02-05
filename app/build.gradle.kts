@@ -63,10 +63,9 @@ android {
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 67
-        versionName = "4.6.1"
+        versionName = "4.6.2"
 
         resValue("string", "commit_hash", getGitCommitHash())
-        resValue("bool", "is_prerelease", "false")
 
         manifestPlaceholders["target_sdk_version"] = libs.versions.targetSdk.get()
 
@@ -77,11 +76,6 @@ android {
             "long",
             "BUILD_DATE",
             "${System.currentTimeMillis()}"
-        )
-        buildConfigField(
-            "String",
-            "APP_VERSION",
-            "\"$versionName\""
         )
         buildConfigField(
             "String",
@@ -120,11 +114,9 @@ android {
     productFlavors {
         create("stable") {
             dimension = "state"
-            resValue("bool", "is_prerelease", "false")
         }
         create("prerelease") {
             dimension = "state"
-            resValue("bool", "is_prerelease", "true")
             applicationIdSuffix = ".prerelease"
             if (signingConfigs.names.contains("prerelease")) {
                 signingConfig = signingConfigs.getByName("prerelease")
@@ -132,11 +124,6 @@ android {
                 logger.warn("No prerelease signing config!")
             }
             versionNameSuffix = "-PRE"
-            buildConfigField(
-                "String",
-                "APP_VERSION",
-                "\"${defaultConfig.versionName}$versionNameSuffix\""
-            )
             versionCode = (System.currentTimeMillis() / 60000).toInt()
         }
     }
@@ -158,7 +145,6 @@ android {
     lint {
         abortOnError = false
         checkReleaseBuilds = false
-        disable.add("MissingTranslation")
     }
 
     buildFeatures {
@@ -218,12 +204,12 @@ dependencies {
     // Extensions & Other Libs
     implementation(libs.jsoup) // HTML Parser
     implementation(libs.rhino) // Run JavaScript
-    implementation(libs.quickjs)
     implementation(libs.fuzzywuzzy) // Library/Ext Searching with Levenshtein Distance
     implementation(libs.safefile) // To Prevent the URI File Fu*kery
     coreLibraryDesugaring(libs.desugar.jdk.libs.nio) // NIO Flavor Needed for NewPipeExtractor
     implementation(libs.conscrypt.android) // To Fix SSL Fu*kery on Android 9
     implementation(libs.jackson.module.kotlin) // JSON Parser
+    implementation(libs.zipline)
 
     // Torrent Support
     implementation(libs.torrentserver)
@@ -246,7 +232,7 @@ dependencies {
 
 tasks.register<Jar>("androidSourcesJar") {
     archiveClassifier.set("sources")
-    from(android.sourceSets.getByName("main").java.srcDirs) // Full Sources
+    from(android.sourceSets.getByName("main").java.directories) // Full Sources
 }
 
 tasks.register<Copy>("copyJar") {

@@ -155,7 +155,6 @@
     <string name="no_data">କୌଣସି ତଥ୍ୟ ନାହିଁ</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s ଅ %2$d</string>
     <string name="video_skip_op">ଆଦ୍ୟ ବାଦ୍ ଦିଅ</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="next_episode_format" formatted="true">ଏପିସୋଡ୍ %d ମୁକ୍ତିଲାଭ କରିବ</string>
     <string name="next_season_episode_format" formatted="true">ସିଜିନ୍ %1$d ଏପିସୋଡ୍ %2$d ମୁକ୍ତିଲାଭ କରିବ</string>
     <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dଘଣ୍ଟା %2$dମିନିଟ୍ %3$dସେକେଣ୍ଡ</string>

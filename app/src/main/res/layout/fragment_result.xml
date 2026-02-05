@@ -298,6 +298,21 @@
                             android:layout_height="60dp"
                             android:layout_gravity="bottom"
                             android:background="@drawable/background_shadow" />
+
+                        <ImageView
+                            android:id="@+id/background_poster_watermark_badge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:maxWidth="220dp"
+                            android:maxHeight="64dp"
+                            android:layout_gravity="bottom|start"
+                            android:layout_marginStart="@dimen/result_padding"
+                            android:layout_marginBottom="12dp"
+                            android:paddingBottom="4dp"
+                            android:adjustViewBounds="true"
+                            android:scaleType="fitStart"
+                            android:contentDescription="@null" />
+
                     </FrameLayout>
                 </FrameLayout>
 
