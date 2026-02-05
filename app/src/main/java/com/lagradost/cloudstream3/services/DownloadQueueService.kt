@@ -13,8 +13,13 @@ import androidx.core.app.PendingIntentCompat
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.MainActivity.Companion.lastError
+import com.lagradost.cloudstream3.MainActivity.Companion.setLastError
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.mvvm.debugAssert
+import com.lagradost.cloudstream3.mvvm.debugWarning
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
+import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.utils.AppContextUtils.createNotificationChannel
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
@@ -25,12 +30,17 @@ import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.KEY_RESU
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.downloadEvent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.updateAndGet
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.system.measureTimeMillis
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 class DownloadQueueService : Service() {
     companion object {
@@ -146,7 +156,28 @@ class DownloadQueueService : Service() {
 
         downloadEvent += downloadEventListener
 
-        ioSafe {
+        val queueJob = ioSafe {
+            // Ensure this is up to date to prevent race conditions with MainActivity launches
+            setLastError(context)
+            // Early return, to prevent waiting for plugins in safe mode
+            if (lastError != null) return@ioSafe
+
+            // Try to ensure all plugins are loaded before starting the downloader.
+            // To prevent infinite stalls we use a timeout of 15 seconds, it is judged as long enough
+            val timeout = 15.seconds
+            val timeTaken = withTimeoutOrNull(timeout) {
+                measureTimeMillis {
+                    while (!(PluginManager.loadedOnlinePlugins && PluginManager.loadedLocalPlugins)) {
+                        delay(100.milliseconds)
+                    }
+                }
+            }
+
+            debugWarning({ timeTaken == null || timeTaken > 3_000 }, {
+                "Abnormally long downloader startup time of: ${timeTaken ?: timeout.inWholeMilliseconds}ms"
+            })
+            debugAssert({ timeTaken != null }, { "Downloader startup should not time out" })
+
             totalDownloadFlow
                 .takeWhile { (instances, queue) ->
                     // Stop if destroyed
@@ -196,8 +227,16 @@ class DownloadQueueService : Service() {
 
                     updateNotification(context, currentVisualDownloads, currentVisualQueue)
                 }
+        }
 
-            stopSelf()
+        // Stop self regardless of job outcome
+        queueJob.invokeOnCompletion { throwable ->
+            if (throwable != null) {
+                logError(throwable)
+            }
+            safe {
+                stopSelf()
+            }
         }
     }
 

@@ -29,7 +29,6 @@ import androidx.annotation.MainThread
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.core.view.children
@@ -106,7 +105,6 @@ import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
-import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.ui.home.HomeViewModel
 import com.lagradost.cloudstream3.ui.library.LibraryViewModel
 import com.lagradost.cloudstream3.ui.player.BasicLink
@@ -190,12 +188,7 @@ import java.nio.charset.Charset
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.system.exitProcess
-import androidx.core.net.toUri
 import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
-import androidx.tvprovider.media.tv.Channel
-import androidx.tvprovider.media.tv.TvContractCompat
-import android.content.ComponentName
-import android.content.ContentUris
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
     companion object {
@@ -204,6 +197,21 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         const val TAG = "MAINACT"
         const val ANIMATED_OUTLINE: Boolean = false
         var lastError: String? = null
+
+        /** Update lastError variable based on error file, to check if app crashed.
+         * Can be called multiple times without changing the lastError variable changing.
+         **/
+        fun setLastError(context: Context) {
+            if (lastError != null) return
+
+            val errorFile = context.filesDir.resolve("last_error")
+            if (errorFile.exists() && errorFile.isFile) {
+                lastError = errorFile.readText(Charset.defaultCharset())
+                errorFile.delete()
+            } else {
+                lastError = null
+            }
+        }
 
         private const val FILE_DELETE_KEY = "FILES_TO_DELETE_KEY"
         const val API_NAME_EXTRA_KEY = "API_NAME_EXTRA_KEY"
@@ -1166,13 +1174,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         app.initClient(this)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
-        val errorFile = filesDir.resolve("last_error")
-        if (errorFile.exists() && errorFile.isFile) {
-            lastError = errorFile.readText(Charset.defaultCharset())
-            errorFile.delete()
-        } else {
-            lastError = null
-        }
+        setLastError(this)
 
         val settingsForProvider = SettingsJson()
         settingsForProvider.enableAdult =
