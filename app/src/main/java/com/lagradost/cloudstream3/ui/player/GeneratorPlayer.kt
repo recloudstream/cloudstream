@@ -1454,7 +1454,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 val audioArrayAdapter = ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
 
                 audioArrayAdapter.addAll(
-                    currentAudioTracks.mapIndexed { index, track ->
+                    currentAudioTracks.mapIndexed { _, track ->
 
                         val language = (
                                 track.language?.let { fromTagToLanguageName(it) ?: it }
