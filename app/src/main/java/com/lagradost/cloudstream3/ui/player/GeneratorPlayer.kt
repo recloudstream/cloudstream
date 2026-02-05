@@ -1457,7 +1457,11 @@ class GeneratorPlayer : FullScreenPlayer() {
                     currentAudioTracks.mapIndexed { _, track ->
 
                         val language = (
-                                track.language?.let { fromTagToLanguageName(it) ?: it }
+                                track.language?.trim()?.let { raw ->
+                                    fromTagToLanguageName(raw)
+                                        ?: fromTagToLanguageName(raw.replace('_','-').substringBefore('-').lowercase())
+                                        ?: raw
+                                }
                                     ?: track.label
                                     ?: "Audio"
                                 ).replaceFirstChar { it.uppercaseChar() }
@@ -1899,13 +1903,11 @@ class GeneratorPlayer : FullScreenPlayer() {
         val languageName = fromTagToLanguageName(audioTrack?.language)
         val label = audioTrack?.label
 
-        val language = when {
-            languageName.isNullOrBlank() && label.isNullOrBlank() -> null
-            languageName.isNullOrBlank() -> label
-            label.isNullOrBlank() -> languageName
-            label.equals(languageName, ignoreCase = true) -> languageName
-            else -> "$languageName ($label)"
-        }
+        val language = languageName?.takeIf { it.isNotBlank() }?.let { lang ->
+            label?.takeIf { it.isNotBlank() && !it.equals(lang, true) }
+                ?.let { "$lang ($it)" }
+                ?: lang
+        } ?: label?.takeIf { it.isNotBlank() }
 
         val stats = arrayOf(videoCodec, audioCodec, language).filter { !it.isNullOrBlank() }.joinToString(" • ")
 
