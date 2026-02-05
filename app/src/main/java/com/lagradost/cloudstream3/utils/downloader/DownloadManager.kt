@@ -1657,6 +1657,14 @@ object VideoDownloadManager {
                     val status = DownloadType.IsFailed
                     val id = downloadQueueWrapper.id
 
+                    // Delete subtitles on failure
+                    safe {
+                        val info = context.getKey<DownloadedFileInfo>(KEY_DOWNLOAD_INFO, id.toString())
+                        if (info != null) {
+                            deleteMatchingSubtitles(context, info)
+                        }
+                    }
+
                     downloadStatusEvent.invoke(Pair(id, status))
                     downloadStatus[id] = status
 
