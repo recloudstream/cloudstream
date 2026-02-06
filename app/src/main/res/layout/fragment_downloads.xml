@@ -308,10 +308,14 @@
             android:descendantFocusability="afterDescendants"
             android:nextFocusUp="@id/download_appbar"
             android:nextFocusLeft="@id/navigation_downloads"
+            android:nextFocusDown="@id/download_queue_button"
             android:tag="@string/tv_no_focus_tag"
             tools:listitem="@layout/download_header_episode" />
 
         <LinearLayout
+            android:focusable="true"
+            android:nextFocusUp="@id/download_list"
+            android:foreground="@drawable/outline_drawable"
             android:id="@+id/download_queue_button"
             android:layout_width="match_parent"
             android:layout_height="50dp"

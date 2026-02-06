@@ -226,7 +226,7 @@ class DownloadFragment : BaseFragment<FragmentDownloadsBinding>(
             setLinearListLayout(
                 isHorizontal = false,
                 nextRight = FOCUS_SELF,
-                nextDown = FOCUS_SELF,
+                nextDown = R.id.download_queue_button,
             )
         }
 
