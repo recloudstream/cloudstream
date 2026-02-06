@@ -190,7 +190,7 @@ class DownloadQueueService : Service() {
                 .collect { (_, queue, currentDownloads) ->
                     // Remove completed or failed
                     val newInstances = _downloadInstances.updateAndGet { currentInstances ->
-                        currentInstances.filterNot { it.isCompleted || it.isFailed }
+                        currentInstances.filterNot { it.isCompleted || it.isFailed || it.isCancelled }
                     }
 
                     val maxDownloads = VideoDownloadManager.maxConcurrentDownloads(context)

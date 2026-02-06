@@ -1640,44 +1640,62 @@ object VideoDownloadManager {
             this.linkLoadingJob?.cancel(cause)
 
             // Should not cancel the download job, it may need to clean up itself.
-            // Better to send a status event using isFailed and let it cancel itself.
-
-            isFailed = true
+            // Better to send a status event using isStopped and let it cancel itself.
+            isCancelled = true
         }
+
+        // Run to cancel ongoing work, delete partial work and refresh queue
+        private fun cleanup(status: DownloadType) {
+            removeKey(KEY_RESUME_IN_QUEUE, downloadQueueWrapper.id.toString())
+            val id = downloadQueueWrapper.id
+
+            // Delete subtitles on cancel
+            safe {
+                val info = context.getKey<DownloadedFileInfo>(KEY_DOWNLOAD_INFO, id.toString())
+                if (info != null) {
+                    deleteMatchingSubtitles(context, info)
+                }
+            }
+
+            downloadStatusEvent.invoke(Pair(id, status))
+            downloadStatus[id] = status
+            downloadEvent.invoke(Pair(id, DownloadActionType.Stop))
+
+            // Force refresh the queue when failed.
+            // May lead to some redundant calls, but ensures that the queue is always up to date.
+            DownloadQueueManager.forceRefreshQueue()
+        }
+
+        var isCancelled = false
+            set(value) {
+                val oldField = field
+                field = value
+
+                // Clean up cancelled work, but only once
+                if (value && !oldField) {
+                    cleanup(DownloadType.IsStopped)
+                }
+            }
 
 
         /** This failure can be both downloader and user initiated.
          * Do not automatically retry in case of failure. */
         var isFailed = false
             set(value) {
+                val oldField = field
                 field = value
-                // Clean up failed work
-                if (value) {
-                    removeKey(KEY_RESUME_IN_QUEUE, downloadQueueWrapper.id.toString())
-                    val status = DownloadType.IsFailed
-                    val id = downloadQueueWrapper.id
 
-                    // Delete subtitles on failure
-                    safe {
-                        val info = context.getKey<DownloadedFileInfo>(KEY_DOWNLOAD_INFO, id.toString())
-                        if (info != null) {
-                            deleteMatchingSubtitles(context, info)
-                        }
-                    }
-
-                    downloadStatusEvent.invoke(Pair(id, status))
-                    downloadStatus[id] = status
-
-                    // Force refresh the queue when failed.
-                    // May lead to some redundant calls, but ensures that the queue is always up to date.
-                    DownloadQueueManager.forceRefreshQueue()
+                // Clean up failed work, but only once
+                if (value && !oldField) {
+                    cleanup(DownloadType.IsFailed)
                 }
             }
 
         companion object {
             private fun displayNotification(context: Context, id: Int, notification: Notification) {
                 safe {
-                    NotificationManagerCompat.from(context).notify(DOWNLOAD_NOTIFICATION_TAG, id, notification)
+                    NotificationManagerCompat.from(context)
+                        .notify(DOWNLOAD_NOTIFICATION_TAG, id, notification)
                 }
             }
         }
@@ -1968,7 +1986,7 @@ object VideoDownloadManager {
             if (linkLoadingJob?.isCancelled == true) {
                 // Same as if no links, but no toast.
                 // Cancelled link loading is presumed to be user initiated
-                isFailed = true
+                isCancelled = true
                 return
             } else if (currentLinks.isEmpty()) {
                 main {
