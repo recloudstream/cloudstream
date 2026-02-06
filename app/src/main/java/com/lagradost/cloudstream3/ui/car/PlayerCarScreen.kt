@@ -168,27 +168,8 @@ class PlayerCarScreen(
     private fun loadMedia(url: String?) {
         updateStatus(CarStrings.get(R.string.car_loading))
         scope.launch {
-             // If we already have the LoadResponse (passed from Details), use it.
-             // Otherwise, fetch it using item.url
-             val data: LoadResponse? = if (loadResponse != null) {
-                 loadResponse
-             } else if (item != null) {
-                 val apiName = item.apiName
-                 val api = getApiFromNameNull(apiName) ?: return@launch
-                 val repo = APIRepository(api)
-                 try {
-                     when(val result = repo.load(item.url)) {
-                         is Resource.Success -> result.value
-                         else -> null
-                     }
-                 } catch (e: Exception) {
-                     Log.e("PlayerCarScreen", "Error loading details for ${item.url}", e)
-                     null
-                 }
-             } else {
-                 null
-             }
-
+             val data = getLoadResponse()
+             
              if (data == null) {
                  if (item?.type == TvType.Live) {
                      Log.d("PlayerCarScreen", "Details load failed, attempting direct playback for Live content")
@@ -201,72 +182,104 @@ class PlayerCarScreen(
                  return@launch
              }
 
-             val apiName = data.apiName
-             val api = getApiFromNameNull(apiName) ?: return@launch
-
-             // Resolve IDs for syncing BEFORE starting playback
-             // This ensures IDs are available for saveProgress() calls during playback
-             val mainUrl = api.mainUrl
-             val idFromUrl = data.url.replace(mainUrl, "").replace("/", "").hashCode()
-             
-             // Priority: 1. Item ID (if available from Home/Search and valid)
-             //           2. Data URL Hashcode (using strict cleaning logic)
-             currentParentId = item?.id ?: idFromUrl
-            saveHeaderCache(data)
-
-             if (data is TvSeriesLoadResponse && activeEpisode != null) {
-                 currentEpisodeId = activeEpisode!!.data.hashCode()
-             } else {
-                 // For movies, we use the parent ID
-                 currentEpisodeId = currentParentId
-             }
-             
-             Log.d("PlayerCarScreen", "Resolved IDs (STRICT) - Name: ${data.name} | Parent: $currentParentId | Episode: $currentEpisodeId | Type: ${data.javaClass.simpleName} | ItemID: ${item?.id} | IdFromUrl: $idFromUrl")
-
-             val links = mutableListOf<ExtractorLink>()
-             try {
-                 val urlToLoad = when {
-                     activeEpisode != null -> activeEpisode!!.data
-                     data is com.lagradost.cloudstream3.TvSeriesLoadResponse -> {
-                         // Auto-select first episode if none selected
-                         data.episodes.firstOrNull()?.data
-                     }
-                     data is com.lagradost.cloudstream3.AnimeLoadResponse -> {
-                         // Auto-select first episode from first available category
-                         data.episodes.values.flatten().firstOrNull()?.data
-                     }
-                     data is com.lagradost.cloudstream3.MovieLoadResponse -> {
-                         data.dataUrl
-                     }
-                     else -> data.url
-                 }
-
-                 if (urlToLoad == null) {
-                     showToast(CarStrings.get(R.string.car_no_playable_content))
-                     return@launch
-                 }
-
-                 // Use pre-selected source if provided, otherwise load and auto-select best
-                 if (preSelectedSource != null) {
-                     startPlayback(preSelectedSource)
-                 } else {
-                     // Load links using the API
-                     val success = api.loadLinks(urlToLoad, false, {}, { link ->
-                         links.add(link)
-                     })
-                     
-                     if(links.isNotEmpty()) {
-                         val bestLink = links.sortedByDescending { it.quality }.first()
-                         startPlayback(bestLink)
-                     } else {
-                         showToast(CarStrings.get(R.string.car_no_link_found))
-                     }
-                 }
-             } catch (e: Exception) {
-                 showToast("${CarStrings.get(R.string.car_error_loading_links)}: ${e.message}")
-                 e.printStackTrace()
-             }
+             resolveIds(data)
+             loadLinks(data)
         }
+    }
+
+    private suspend fun getLoadResponse(): LoadResponse? {
+        // If we already have the LoadResponse (passed from Details), use it.
+        // Otherwise, fetch it using item.url
+        return if (loadResponse != null) {
+            loadResponse
+        } else if (item != null) {
+            val apiName = item.apiName
+            val api = getApiFromNameNull(apiName) ?: return null
+            val repo = APIRepository(api)
+            try {
+                when(val result = repo.load(item.url)) {
+                    is Resource.Success -> result.value
+                    else -> null
+                }
+            } catch (e: Exception) {
+                Log.e("PlayerCarScreen", "Error loading details for ${item.url}", e)
+                null
+            }
+        } else {
+            null
+        }
+    }
+
+    private fun resolveIds(data: LoadResponse) {
+         val apiName = data.apiName
+         val api = getApiFromNameNull(apiName) ?: return
+
+         // Resolve IDs for syncing BEFORE starting playback
+         // This ensures IDs are available for saveProgress() calls during playback
+         val mainUrl = api.mainUrl
+         val idFromUrl = data.url.replace(mainUrl, "").replace("/", "").hashCode()
+         
+         // Priority: 1. Item ID (if available from Home/Search and valid)
+         //           2. Data URL Hashcode (using strict cleaning logic)
+         currentParentId = item?.id ?: idFromUrl
+         saveHeaderCache(data)
+
+         if (data is TvSeriesLoadResponse && activeEpisode != null) {
+             currentEpisodeId = activeEpisode!!.data.hashCode()
+         } else {
+             // For movies, we use the parent ID
+             currentEpisodeId = currentParentId
+         }
+         
+         Log.d("PlayerCarScreen", "Resolved IDs (STRICT) - Name: ${data.name} | Parent: $currentParentId | Episode: $currentEpisodeId | Type: ${data.javaClass.simpleName} | ItemID: ${item?.id} | IdFromUrl: $idFromUrl")
+    }
+
+    private suspend fun loadLinks(data: LoadResponse) {
+         val apiName = data.apiName
+         val api = getApiFromNameNull(apiName) ?: return
+         val links = mutableListOf<ExtractorLink>()
+         try {
+             val urlToLoad = when {
+                 activeEpisode != null -> activeEpisode!!.data
+                 data is com.lagradost.cloudstream3.TvSeriesLoadResponse -> {
+                     // Auto-select first episode if none selected
+                     data.episodes.firstOrNull()?.data
+                 }
+                 data is com.lagradost.cloudstream3.AnimeLoadResponse -> {
+                     // Auto-select first episode from first available category
+                     data.episodes.values.flatten().firstOrNull()?.data
+                 }
+                 data is com.lagradost.cloudstream3.MovieLoadResponse -> {
+                     data.dataUrl
+                 }
+                 else -> data.url
+             }
+
+             if (urlToLoad == null) {
+                 showToast(CarStrings.get(R.string.car_no_playable_content))
+                 return
+             }
+
+             // Use pre-selected source if provided, otherwise load and auto-select best
+             if (preSelectedSource != null) {
+                 startPlayback(preSelectedSource)
+             } else {
+                 // Load links using the API
+                 val success = api.loadLinks(urlToLoad, false, {}, { link ->
+                     links.add(link)
+                 })
+                 
+                 if(links.isNotEmpty()) {
+                     val bestLink = links.sortedByDescending { it.quality }.first()
+                     startPlayback(bestLink)
+                 } else {
+                     showToast(CarStrings.get(R.string.car_no_link_found))
+                 }
+             }
+         } catch (e: Exception) {
+             showToast("${CarStrings.get(R.string.car_error_loading_links)}: ${e.message}")
+             e.printStackTrace()
+         }
     }
 
     private fun saveHeaderCache(data: LoadResponse? = null) {

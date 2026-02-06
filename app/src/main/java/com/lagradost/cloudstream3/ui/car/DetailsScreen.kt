@@ -145,88 +145,67 @@ class DetailsScreen(
         if (isLoading) {
             paneBuilder.setLoading(true)
         } else {
-            val details = fullDetails
-            
-            // Header: Title
-// ... (Skipping context lines that are not changing to avoid huge chunks, focusing on modification)
-// Wait, I need to match TARGET content exactly. I will split this into two replacements if possible or include context.
-// Let's target the Play Action block specifically.
+            buildContent(paneBuilder)
+        }
+        
+        buildActions(paneBuilder)
 
-            paneBuilder.addRow(
-                Row.Builder()
-                    .setTitle(details?.name ?: item.name)
-                    .build()
-            )
+        return PaneTemplate.Builder(paneBuilder.build())
+            .setTitle(fullDetails?.name ?: item.name)
+            .setHeaderAction(Action.BACK)
+            .build()
+    }
 
-            // Set Hero Image on the Pane itself for maximum size
-            posterBitmap?.let {
-                paneBuilder.setImage(CarIcon.Builder(IconCompat.createWithBitmap(it)).build())
-            } ?: run {
-                 paneBuilder.setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.mipmap.ic_launcher)).build())
-            }
+    private fun buildContent(paneBuilder: Pane.Builder) {
+        val details = fullDetails
+        
+        // Header: Title
+        paneBuilder.addRow(
+            Row.Builder()
+                .setTitle(details?.name ?: item.name)
+                .build()
+        )
 
-            if (details != null) {
-                // Meta Row: Year • Rating • Duration
-                val metaStringBuilder = StringBuilder()
-                details.year?.let { metaStringBuilder.append("$it") }
-                
-                // Add Score if available
-                 val score = details.score
-                 if (score != null) {
-                     if (metaStringBuilder.isNotEmpty()) metaStringBuilder.append(" • ")
-                     metaStringBuilder.append(String.format("%.1f/10", score.toDouble(10)))
-                 } 
-                 // Note: 'score' is the new field but might be complex. Using what we strictly have or user requested.
-                 // User asked for "Rating". Let's check 'rating' which is Int (0-100 usually or 0-10) or 'score'
-                 
-                 details.duration?.let {
-                     if (metaStringBuilder.isNotEmpty()) metaStringBuilder.append(" • ")
-                     metaStringBuilder.append("${it}m")
-                 }
-
-                if (metaStringBuilder.isNotEmpty()) {
-                    paneBuilder.addRow(
-                        Row.Builder()
-                            .setTitle(metaStringBuilder.toString())
-                            .build()
-                    )
-                }
-
-                // Plot Row
-                if (!details.plot.isNullOrEmpty()) {
-                    paneBuilder.addRow(
-                        Row.Builder()
-                            .setTitle(CarStrings.get(R.string.car_plot))
-                            .addText(details.plot!!)
-                            .build()
-                    )
-                }
-
-                // Cast Row
-                if (!details.actors.isNullOrEmpty()) {
-                    val castList = details.actors!!.groupBy { it.roleString }.flatMap { it.value }.take(5).joinToString(", ") { it.actor.name }
-                    if (castList.isNotEmpty()) {
-                        val s = SpannableString(castList)
-                        s.setSpan(
-                            ForegroundCarColorSpan.create(CarColor.SECONDARY),
-                            0,
-                            s.length,
-                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
-                        
-                        paneBuilder.addRow(
-                            Row.Builder()
-                                .setTitle(CarStrings.get(R.string.car_cast))
-                                .addText(s)
-                                .build()
-                        )
-                    }
-                }
-            } else if (errorMessage != null) {
-                 paneBuilder.addRow(Row.Builder().setTitle("${CarStrings.get(R.string.car_error)}: $errorMessage").build())
-            }
+        // Set Hero Image on the Pane itself for maximum size
+        posterBitmap?.let {
+            paneBuilder.setImage(CarIcon.Builder(IconCompat.createWithBitmap(it)).build())
+        } ?: run {
+             paneBuilder.setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.mipmap.ic_launcher)).build())
         }
 
+        if (details != null) {
+            // Meta Row: Year • Rating • Duration
+            val metaStringBuilder = StringBuilder()
+            details.year?.let { metaStringBuilder.append("$it") }
+            
+            // Add Score if available
+             val score = details.score
+             if (score != null) {
+                 if (metaStringBuilder.isNotEmpty()) metaStringBuilder.append(" • ")
+                 metaStringBuilder.append(String.format("%.1f/10", score.toDouble(10)))
+             } 
+             
+             details.duration?.let {
+                 if (metaStringBuilder.isNotEmpty()) metaStringBuilder.append(" • ")
+                 metaStringBuilder.append("${it}m")
+             }
+
+            if (metaStringBuilder.isNotEmpty()) {
+                paneBuilder.addRow(
+                    Row.Builder()
+                        .setTitle(metaStringBuilder.toString())
+                        .build()
+                )
+            }
+
+            // Plot and Cast
+            CarHelper.addPlotAndCast(paneBuilder, details)
+        } else if (errorMessage != null) {
+             paneBuilder.addRow(Row.Builder().setTitle("${CarStrings.get(R.string.car_error)}: $errorMessage").build())
+        }
+    }
+
+    private fun buildActions(paneBuilder: Pane.Builder) {
         // Play Button: White background with Black Icon
         val playIcon = IconCompat.createWithResource(carContext, android.R.drawable.ic_media_play)
             .setTint(android.graphics.Color.BLACK)
@@ -280,43 +259,12 @@ class DetailsScreen(
             
         paneBuilder.addAction(playAction)
         paneBuilder.addAction(sourceAction)
-
-        return PaneTemplate.Builder(paneBuilder.build())
-            .setTitle(fullDetails?.name ?: item.name)
-            .setHeaderAction(Action.BACK)
-            .build()
     }
     
     private fun toggleFavorite() {
-        val details = fullDetails ?: return
-        val api = getApiFromNameNull(details.apiName) ?: return
-        val id = details.url.replace(api.mainUrl, "").replace("/", "").hashCode()
-        
-        if (isFavorite) {
-            DataStoreHelper.removeFavoritesData(id)
-            isFavorite = false
-            androidx.car.app.CarToast.makeText(carContext, CarStrings.get(R.string.car_removed_from_favorites), androidx.car.app.CarToast.LENGTH_SHORT).show()
-        } else {
-            val favoritesData = FavoritesData(
-                favoritesTime = System.currentTimeMillis(),
-                id = id,
-                latestUpdatedTime = System.currentTimeMillis(),
-                name = details.name,
-                url = details.url,
-                apiName = details.apiName,
-                type = details.type,
-                posterUrl = details.posterUrl,
-                year = details.year,
-                quality = null,
-                posterHeaders = details.posterHeaders,
-                plot = details.plot,
-                score = details.score,
-                tags = details.tags
-            )
-            DataStoreHelper.setFavoritesData(id, favoritesData)
-            isFavorite = true
-            androidx.car.app.CarToast.makeText(carContext, CarStrings.get(R.string.car_added_to_favorites), androidx.car.app.CarToast.LENGTH_SHORT).show()
+        CarHelper.toggleFavorite(carContext, fullDetails, isFavorite) { newStatus ->
+            isFavorite = newStatus
+            invalidate()
         }
-        invalidate()
     }
 }

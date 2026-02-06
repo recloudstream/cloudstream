@@ -143,7 +143,7 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                     // Promiscuous check: try multiple ways to match the episode
                     // Note: Episode class does not have an 'id' field, so we skip direct ID check
                     val urlHashMatch = episode.data.hashCode() == resume.episodeId
-                    val numberMatch = (episode.episode == resume.episode && episode.season == resume.season)
+                    val numberMatch = episode.episode == resume.episode && episode.season == resume.season
                     
                     urlHashMatch || numberMatch
                 }
