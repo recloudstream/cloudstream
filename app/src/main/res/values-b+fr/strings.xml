@@ -726,4 +726,7 @@
     <string name="prerelease_already_installed">La version préliminaire est déjà installée.</string>
     <string name="prerelease_install_failed">L\'installation de la version préliminaire a échouée.</string>
     <string name="show_episode_text">Texte de l\'épisode</string>
+    <string name="search_suggestions">Suggestions de recherche</string>
+    <string name="search_suggestions_des">Afficher des suggestions de recherche pendant la saisie</string>
+    <string name="clear_suggestions">Effacer les suggestions</string>
 </resources>
