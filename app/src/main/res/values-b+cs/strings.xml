@@ -237,7 +237,7 @@
     <string name="update">Aktualizovat</string>
     <string name="watch_quality_pref">Upřednostněná kvalita sledování (WiFi)</string>
     <string name="limit_title">Maximální počet znaků v názvu přehrávače</string>
-    <string name="limit_title_rez">Rozlišení přehrávače</string>
+    <string name="limit_title_rez">Zobrazit informace o přehrávači</string>
     <string name="video_buffer_size_settings">Velikost vyrovnávací paměti videa</string>
     <string name="video_buffer_length_settings">Délka vyrovnávací paměti videa</string>
     <string name="video_buffer_disk_settings">Mezipaměť videa na disku</string>
@@ -749,4 +749,13 @@
     <string name="prerelease_already_installed">Předběžné vydání je již nainstalováno.</string>
     <string name="prerelease_install_failed">Nepodařilo se nainstalovat předběžné vydání.</string>
     <string name="show_episode_text">Text epizody</string>
+    <string name="search_suggestions">Návrhy vyhledávání</string>
+    <string name="search_suggestions_des">Zobrazit návrhy vyhledávání během psaní</string>
+    <string name="clear_suggestions">Vymazat návrhy</string>
+    <string name="show_cast_in_details">Zobrazit panel vysílání</string>
+    <string name="extra_brightness_settings">Extra jas</string>
+    <string name="extra_brightness_settings_des">Povolit filtr jasu při překročení 100 % jasu obrazovky</string>
+    <string name="extra_brightness_key">extra_brightness_enabled</string>
+    <string name="video_info">Informace o médiu</string>
+    <string name="source_name">Název zdroje</string>
 </resources>
