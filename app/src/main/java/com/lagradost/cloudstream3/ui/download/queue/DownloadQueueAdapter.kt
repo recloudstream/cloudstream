@@ -42,7 +42,7 @@ class DownloadQueueAdapter(val fragment: Fragment) : BaseAdapter<DownloadAdapter
     diffCallback = BaseDiffCallback(
         itemSame = { a, b -> a.item?.id == b.item?.id },
         contentSame = { a, b ->
-            a.item?.id == b.item?.id
+            a.item == b.item
         })
 ) {
     var currentDownloads = 0

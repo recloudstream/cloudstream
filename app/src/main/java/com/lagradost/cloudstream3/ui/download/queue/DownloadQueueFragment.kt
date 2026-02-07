@@ -25,12 +25,14 @@ class DownloadQueueFragment :
 
     override fun onBindingCreated(binding: FragmentDownloadQueueBinding) {
         val adapter = DownloadQueueAdapter(this@DownloadQueueFragment)
+        val clearQueueItem = binding.downloadQueueToolbar.menu?.findItem(R.id.cancel_all)
 
         observe(queueViewModel.childCards) { cards ->
             val size = cards.queue.size + cards.currentDownloads.size
             val isEmptyQueue = size == 0
             binding.downloadQueueList.isGone = isEmptyQueue
             binding.textNoQueue.isGone = !isEmptyQueue
+            clearQueueItem?.isVisible = !isEmptyQueue
 
             adapter.submitQueue(cards)
         }
@@ -45,7 +47,7 @@ class DownloadQueueFragment :
                     }
                 }
                 setAppBarNoScrollFlagsOnTV()
-                menu?.findItem(R.id.cancel_all)?.setOnMenuItemClickListener {
+                clearQueueItem?.setOnMenuItemClickListener {
                         AlertDialog.Builder(context, R.style.AlertDialogCustom)
                             .setTitle(R.string.cancel_all)
                             .setMessage(R.string.cancel_queue_message)

@@ -49,6 +49,7 @@ class DownloadQueueService : Service() {
         const val DOWNLOAD_QUEUE_CHANNEL_NAME = "Download queue service"
         const val DOWNLOAD_QUEUE_CHANNEL_DESCRIPTION = "App download queue notification."
         const val DOWNLOAD_QUEUE_NOTIFICATION_ID = 917194232 // Random unique
+        @Volatile
         var isRunning = false
 
         fun getIntent(
@@ -176,7 +177,7 @@ class DownloadQueueService : Service() {
             debugWarning({ timeTaken == null || timeTaken > 3_000 }, {
                 "Abnormally long downloader startup time of: ${timeTaken ?: timeout.inWholeMilliseconds}ms"
             })
-            debugAssert({ timeTaken != null }, { "Downloader startup should not time out" })
+            debugAssert({ timeTaken == null }, { "Downloader startup should not time out" })
 
             totalDownloadFlow
                 .takeWhile { (instances, queue) ->

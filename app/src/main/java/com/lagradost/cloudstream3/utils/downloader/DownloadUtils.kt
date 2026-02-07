@@ -10,6 +10,7 @@ import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.result.ExtractorSubtitleLink
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -26,38 +27,33 @@ object DownloadUtils {
     internal fun Context.getImageBitmapFromUrl(
         url: String,
         headers: Map<String, String>? = null
-    ): Bitmap? {
-        try {
-            if (cachedBitmaps.containsKey(url)) {
-                return cachedBitmaps[url]
-            }
-
-            val imageLoader = SingletonImageLoader.get(this)
-
-            val request = ImageRequest.Builder(this)
-                .data(url)
-                .apply {
-                    headers?.forEach { (key, value) ->
-                        extras[Extras.Key<String>(key)] = value
-                    }
-                }
-                .build()
-
-            val bitmap = runBlocking {
-                val result = imageLoader.execute(request)
-                (result as? SuccessResult)?.image?.asDrawable(applicationContext.resources)
-                    ?.toBitmap()
-            }
-
-            bitmap?.let {
-                cachedBitmaps[url] = it
-            }
-
-            return bitmap
-        } catch (e: Exception) {
-            logError(e)
-            return null
+    ): Bitmap? = safe {
+        if (cachedBitmaps.containsKey(url)) {
+            return@safe cachedBitmaps[url]
         }
+
+        val imageLoader = SingletonImageLoader.get(this)
+
+        val request = ImageRequest.Builder(this)
+            .data(url)
+            .apply {
+                headers?.forEach { (key, value) ->
+                    extras[Extras.Key<String>(key)] = value
+                }
+            }
+            .build()
+
+        val bitmap = runBlocking {
+            val result = imageLoader.execute(request)
+            (result as? SuccessResult)?.image?.asDrawable(applicationContext.resources)
+                ?.toBitmap()
+        }
+
+        bitmap?.let {
+            cachedBitmaps[url] = it
+        }
+
+        return@safe bitmap
     }
 
     //calculate the time
