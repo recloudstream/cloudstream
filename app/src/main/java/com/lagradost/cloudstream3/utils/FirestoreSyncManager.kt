@@ -169,8 +169,11 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
 
     override fun onStop(owner: androidx.lifecycle.LifecycleOwner) {
         super.onStop(owner)
-        // Ensure pending writes are flushed
-        CommonActivity.activity?.let { pushAllLocalData(it) }
+        // Ensure pending writes are flushed immediately
+        // Do NOT call pushAllLocalData() as it refreshes timestamps for all keys, reviving deleted items (zombies)
+        scope.launch {
+            flushBatch()
+        }
     }
 
     fun isEnabled(context: Context): Boolean {
@@ -444,6 +447,13 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
                     // Remote is newer
                     applyPayload(context, key, v, d)
                     setLocalTimestamp(context, key, t)
+
+                    // Check for Continue Watching updates and trigger UI refresh
+                    if (key.contains("result_resume_watching")) {
+                         com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread {
+                             MainActivity.syncUpdatedEvent.invoke(true)
+                         }
+                    }
                 }
             } catch (e: Exception) {
                 log("Error parsing key $key: ${e.message}")
@@ -668,7 +678,12 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
                                 // But we can't call suspend from here easily if this isn't suspend.
                                 // Let's simplify: Just delete file and remove key.
                                 file.delete()
-                                context.removeKeyLocal(PLUGINS_KEY_LOCAL) // Force reload? No.
+                                file.delete()
+                                // Update local plugin list: Remove this specific plugin, do NOT nuke the whole list
+                                val updatedLocalPlugins = PluginManager.getPluginsLocal()
+                                    .filter { it.filePath != isLocal.filePath }
+                                    .toTypedArray()
+                                context.setKeyLocal(PLUGINS_KEY_LOCAL, updatedLocalPlugins)
                                 // We can't easily do full uninstall logic here without PluginManager.
                                 // Let's post a Toast/Notification "Plugin Uninstalled via Sync"?
                             }

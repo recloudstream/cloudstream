@@ -266,6 +266,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         val reloadAccountEvent = Event<Boolean>()
 
         /**
+         * Used to notify HomeViewModel that sync data (specifically Continue Watching) has been updated
+         */
+        val syncUpdatedEvent = Event<Boolean>()
+
+        /**
          * @return true if the str has launched an app task (be it successful or not)
          * @param isWebview does not handle providers and opening download page if true. Can still add repos and login.
          * */
