@@ -45,8 +45,8 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.services.VideoDownloadService
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
-import com.lagradost.cloudstream3.utils.DataStore.getKey
-import com.lagradost.cloudstream3.utils.DataStore.removeKey
+import com.lagradost.cloudstream3.utils.getKey
+import com.lagradost.cloudstream3.utils.removeKey
 import com.lagradost.cloudstream3.utils.SubtitleUtils.deleteMatchingSubtitles
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.safefile.MediaFileContentType

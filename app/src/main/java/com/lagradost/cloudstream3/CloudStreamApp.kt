@@ -21,11 +21,12 @@ import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.openBrowser
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
-import com.lagradost.cloudstream3.utils.DataStore.getKey
-import com.lagradost.cloudstream3.utils.DataStore.getKeys
-import com.lagradost.cloudstream3.utils.DataStore.removeKey
-import com.lagradost.cloudstream3.utils.DataStore.removeKeys
-import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.DataStore
+import com.lagradost.cloudstream3.utils.getKey
+import com.lagradost.cloudstream3.utils.getKeys
+import com.lagradost.cloudstream3.utils.removeKey
+import com.lagradost.cloudstream3.utils.removeKeys
+import com.lagradost.cloudstream3.utils.setKey
 import com.lagradost.cloudstream3.utils.ImageLoader.buildImageLoader
 import kotlinx.coroutines.runBlocking
 import java.io.File

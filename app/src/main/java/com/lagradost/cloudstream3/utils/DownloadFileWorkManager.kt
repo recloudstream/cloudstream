@@ -10,7 +10,7 @@ import androidx.work.WorkerParameters
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.Coroutines.main
-import com.lagradost.cloudstream3.utils.DataStore.getKey
+import com.lagradost.cloudstream3.utils.getKey
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.WORK_KEY_INFO
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.WORK_KEY_PACKAGE
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.downloadCheck

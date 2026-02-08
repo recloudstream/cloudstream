@@ -7,8 +7,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.dokka)
-    alias(libs.plugins.kotlin.android)
+    // alias(libs.plugins.dokka)
+
     // alias(libs.plugins.google.services) // We use manual Firebase initialization
 }
 
@@ -222,6 +222,7 @@ dependencies {
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.auth)
     implementation(libs.firebase.analytics)
 
     configurations.all {
@@ -282,6 +283,7 @@ tasks.withType<KotlinJvmCompile> {
     }
 }
 
+/*
 dokka {
     moduleName = "App"
     dokkaSourceSets {
@@ -300,3 +302,4 @@ dokka {
         }
     }
 }
+*/

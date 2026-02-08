@@ -53,6 +53,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import com.lagradost.cloudstream3.utils.extractorApis
+import com.lagradost.cloudstream3.utils.FirestoreSyncManager
 import com.lagradost.cloudstream3.utils.txt
 import dalvik.system.PathClassLoader
 import kotlinx.coroutines.sync.Mutex
@@ -798,7 +799,7 @@ object PluginManager {
             val data = PluginData(
                 internalName,
                 pluginUrl,
-                true,
+                false, // Mark as local so it updates PLUGINS_KEY_LOCAL immediately
                 newFile.absolutePath,
                 PLUGIN_VERSION_NOT_SET,
                 System.currentTimeMillis()
@@ -828,7 +829,10 @@ object PluginManager {
         return try {
             if (File(file.absolutePath).delete()) {
                 unloadPlugin(file.absolutePath)
-                list.forEach { deletePluginData(it) }
+                list.forEach { 
+                    deletePluginData(it) 
+                    FirestoreSyncManager.notifyPluginDeleted(it.internalName)
+                }
                 return true
             }
             false

@@ -51,7 +51,7 @@ zipline = "1.24.0"
 
 jvmTarget = "1.8"
 jdkToolchain = "17"
-minSdk = "21"
+minSdk = "23"
 compileSdk = "36"
 targetSdk = "36"
 
@@ -115,6 +115,7 @@ work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "w
 zipline = { module = "app.cash.zipline:zipline-android", version.ref = "zipline" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
+firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 
 [plugins]

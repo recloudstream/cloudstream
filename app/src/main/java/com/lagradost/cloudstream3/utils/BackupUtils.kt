@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
 import android.content.Context
+import com.lagradost.cloudstream3.utils.DataStore
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -23,9 +24,8 @@ import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_C
 import com.lagradost.cloudstream3.syncproviders.providers.KitsuApi.Companion.KITSU_CACHED_LIST
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
-import com.lagradost.cloudstream3.utils.DataStore.getDefaultSharedPrefs
-import com.lagradost.cloudstream3.utils.DataStore.getSharedPrefs
-import com.lagradost.cloudstream3.utils.DataStore.mapper
+import com.lagradost.cloudstream3.utils.getDefaultSharedPrefs
+import com.lagradost.cloudstream3.utils.getSharedPrefs
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.StreamData
@@ -185,7 +185,7 @@ object BackupUtils {
 
             fileStream = stream.openNew()
             printStream = PrintWriter(fileStream)
-            printStream.print(mapper.writeValueAsString(backupFile))
+            printStream.print(DataStore.mapper.writeValueAsString(backupFile))
 
             showToast(
                 R.string.backup_success,
@@ -231,7 +231,7 @@ object BackupUtils {
                                 ?: return@ioSafe
 
                             val restoredValue =
-                                mapper.readValue<BackupFile>(input)
+                                DataStore.mapper.readValue(input, BackupFile::class.java)
 
                             restore(
                                 activity,

@@ -1,7 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
 import android.content.Context
-import com.lagradost.cloudstream3.utils.DataStore.setKeyLocal
+import com.lagradost.cloudstream3.utils.setKeyLocal
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.context
