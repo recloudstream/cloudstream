@@ -51,6 +51,7 @@ class DetailsScreen(
     private var errorMessage: String? = null
 
     private var posterBitmap: android.graphics.Bitmap? = null
+    private var logoBitmap: android.graphics.Bitmap? = null
     private var isFavorite: Boolean = false
     private val scope = CoroutineScope(Dispatchers.IO + Job())
     
@@ -64,20 +65,7 @@ class DetailsScreen(
     private fun loadData() {
         scope.launch {
             try {
-                // Load Image
-                if (!item.posterUrl.isNullOrEmpty()) {
-                    try {
-                        val request = ImageRequest.Builder(carContext)
-                            .data(item.posterUrl)
-                            .data(item.posterUrl)
-                            .size(600, 900) // Higher resolution for hero image
-                            .build()
-                        val result = SingletonImageLoader.get(carContext).execute(request)
-                        posterBitmap = result.image?.asDrawable(carContext.resources)?.toBitmap()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }
+
 
                 // Load Details
                 val api = getApiFromNameNull(item.apiName)
@@ -119,6 +107,41 @@ class DetailsScreen(
                             // Check ID logic matches standard
                             val id = result.value.url.replace(api.mainUrl, "").replace("/", "").hashCode()
                             isFavorite = DataStoreHelper.getFavoritesData(id) != null
+
+                            // Load Main Image (Background/Landscape preferred, else Poster)
+                            val bgUrl = result.value.backgroundPosterUrl
+                            val posterUrl = result.value.posterUrl ?: item.posterUrl
+                            val targetUrl = bgUrl ?: posterUrl
+
+                            if (!targetUrl.isNullOrEmpty()) {
+                                try {
+                                    val request = ImageRequest.Builder(carContext)
+                                        .data(targetUrl)
+                                        .size(1200, 800) // Landscape optimized size if possible, or high res
+                                        .build()
+                                    val imgResult = SingletonImageLoader.get(carContext).execute(request)
+                                    posterBitmap = imgResult.image?.asDrawable(carContext.resources)?.toBitmap()?.let {
+                                        CarHelper.ensureSoftwareBitmap(it)
+                                    }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
+
+                            if (!result.value.logoUrl.isNullOrEmpty()) {
+                                try {
+                                    val request = ImageRequest.Builder(carContext)
+                                        .data(result.value.logoUrl)
+                                        .size(600, 200)
+                                        .build()
+                                    val imgResult = SingletonImageLoader.get(carContext).execute(request)
+                                    logoBitmap = imgResult.image?.asDrawable(carContext.resources)?.toBitmap()?.let {
+                                        CarHelper.ensureSoftwareBitmap(it)
+                                    }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
                             isLoading = false
                         }
                         is Resource.Failure -> {
@@ -159,15 +182,17 @@ class DetailsScreen(
     private fun buildContent(paneBuilder: Pane.Builder) {
         val details = fullDetails
         
-        // Header: Title
-        paneBuilder.addRow(
-            Row.Builder()
-                .setTitle(details?.name ?: item.name)
-                .build()
-        )
-
         // Set Hero Image on the Pane itself for maximum size
-        posterBitmap?.let {
+        // Set Hero Image on the Pane itself for maximum size
+        // Overlay Strategy: Gradient at bottom + Logo Bottom-Left
+        // Force Square construction even if logo is null, to ensure we control the aspect ratio
+        val finalBitmap = if (posterBitmap != null) {
+            CarHelper.generateSquareImageWithLogo(posterBitmap!!, logoBitmap)
+        } else {
+            posterBitmap
+        }
+
+        finalBitmap?.let {
             paneBuilder.setImage(CarIcon.Builder(IconCompat.createWithBitmap(it)).build())
         } ?: run {
              paneBuilder.setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.mipmap.ic_launcher)).build())

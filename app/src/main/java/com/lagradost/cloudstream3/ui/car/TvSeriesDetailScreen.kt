@@ -42,6 +42,7 @@ class TvSeriesDetailScreen(
     private var isLoading = true
     private var errorMessage: String? = null
     private var posterBitmap: android.graphics.Bitmap? = null
+    private var logoBitmap: android.graphics.Bitmap? = null
     private var isFavorite: Boolean = false
 
     init {
@@ -50,19 +51,7 @@ class TvSeriesDetailScreen(
 
     private fun loadDetails() {
         scope.launch {
-            // Load header image
-            if (!item.posterUrl.isNullOrEmpty()) {
-                try {
-                    val request = ImageRequest.Builder(carContext)
-                        .data(item.posterUrl)
-                        .size(600, 900)
-                        .build()
-                    val result = SingletonImageLoader.get(carContext).execute(request)
-                    posterBitmap = result.image?.asDrawable(carContext.resources)?.toBitmap()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
+
 
             // Load full details
             val api = getApiFromNameNull(item.apiName)
@@ -76,6 +65,41 @@ class TvSeriesDetailScreen(
                             // Check Favorite status
                             val id = data.url.replace(api.mainUrl, "").replace("/", "").hashCode()
                             isFavorite = DataStoreHelper.getFavoritesData(id) != null
+
+                            // Load Main Image (Background/Landscape preferred, else Poster)
+                            val bgUrl = data.backgroundPosterUrl
+                            val posterUrl = data.posterUrl ?: item.posterUrl
+                            val targetUrl = bgUrl ?: posterUrl
+
+                            if (!targetUrl.isNullOrEmpty()) {
+                                try {
+                                    val request = ImageRequest.Builder(carContext)
+                                        .data(targetUrl)
+                                        .size(1200, 800)
+                                        .build()
+                                    val imgResult = SingletonImageLoader.get(carContext).execute(request)
+                                    posterBitmap = imgResult.image?.asDrawable(carContext.resources)?.toBitmap()?.let {
+                                        CarHelper.ensureSoftwareBitmap(it)
+                                    }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
+
+                            if (!data.logoUrl.isNullOrEmpty()) {
+                                try {
+                                    val request = ImageRequest.Builder(carContext)
+                                        .data(data.logoUrl)
+                                        .size(600, 200)
+                                        .build()
+                                    val imgResult = SingletonImageLoader.get(carContext).execute(request)
+                                    logoBitmap = imgResult.image?.asDrawable(carContext.resources)?.toBitmap()?.let {
+                                        CarHelper.ensureSoftwareBitmap(it)
+                                    }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
                         } else {
                             errorMessage = CarStrings.get(R.string.car_not_tv_series)
                         }
@@ -110,15 +134,16 @@ class TvSeriesDetailScreen(
         } else {
             val details = fullDetails
             
-            // Header: Title
-            paneBuilder.addRow(
-                Row.Builder()
-                    .setTitle(details?.name ?: item.name)
-                    .build()
-            )
-
             // Include Hero Image if available
-            posterBitmap?.let {
+            // Overlay Strategy: Gradient at bottom + Logo Bottom-Left
+            // Force Square construction even if logo is null, to ensure we control the aspect ratio
+            val finalBitmap = if (posterBitmap != null) {
+                CarHelper.generateSquareImageWithLogo(posterBitmap!!, logoBitmap)
+            } else {
+                posterBitmap
+            }
+
+            finalBitmap?.let {
                 paneBuilder.setImage(CarIcon.Builder(IconCompat.createWithBitmap(it)).build())
             } ?: run {
                  paneBuilder.setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.mipmap.ic_launcher)).build())
