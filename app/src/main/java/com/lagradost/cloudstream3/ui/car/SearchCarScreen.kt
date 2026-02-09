@@ -20,6 +20,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import androidx.car.app.CarToast
 import coil3.request.ImageRequest
 import coil3.SingletonImageLoader
@@ -34,7 +35,16 @@ class SearchCarScreen(carContext: CarContext) : Screen(carContext) {
     
     private val searchCallback = object : SearchTemplate.SearchCallback {
         override fun onSearchTextChanged(searchText: String) {
-            // Optional: Implement autocomplete here
+            searchJob?.cancel()
+            if (searchText.isBlank()) {
+                itemList = null
+                invalidate()
+                return
+            }
+            searchJob = CoroutineScope(Dispatchers.Main).launch {
+                delay(400)
+                performSearch(searchText)
+            }
         }
 
         override fun onSearchSubmitted(searchText: String) {
