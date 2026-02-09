@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="search_poster_img_des">Плакат</string>
-    <string name="episode_poster_img_des">Плакат епізоду</string>
-    <string name="download_canceled">Завантаження скасовано</string>
-    <string name="home_change_provider_img_des">Змінити постачальника</string>
+    <string name="episode_poster_img_des">Постер Епізоду</string>
+    <string name="download_canceled">Завантаження Скасовано</string>
+    <string name="home_change_provider_img_des">Змінити Постачальника</string>
     <string name="go_back_img_des">Назад</string>
     <string name="rated_format" formatted="true">Рейтинг: %.1f</string>
     <string name="cast_format" formatted="true">Актори: %s</string>
@@ -13,9 +13,9 @@
     <string name="next_episode_time_day_format" formatted="true">%1$dд %2$dгод %3$dхв</string>
     <string name="next_episode_time_hour_format" formatted="true">%1$dгод %2$dхв</string>
     <string name="next_episode_time_min_format" formatted="true">%dхв</string>
-    <string name="home_main_poster_img_des">Головний плакат</string>
-    <string name="home_next_random_img_des">Наступний випадковий</string>
-    <string name="preview_background_img_des">Попередній перегляд тла</string>
+    <string name="home_main_poster_img_des">Головний Постер</string>
+    <string name="home_next_random_img_des">Наступний Випадковий</string>
+    <string name="preview_background_img_des">Попередній Перегляд Заднього Фону</string>
     <string name="player_speed_text_format" formatted="true">Швидкість (%.2fx)</string>
     <string name="new_update_format" formatted="true">Знайдено нове оновлення!\n%1$s –&gt; %2$s</string>
     <string name="title_search">Пошук</string>
@@ -24,25 +24,25 @@
     <string name="title_settings">Налаштування</string>
     <string name="search_hint">Пошук…</string>
     <string name="search_hint_site" formatted="true">Пошук на %s…</string>
-    <string name="no_data">Немає даних</string>
-    <string name="episode_more_options_des">Більше налаштувань</string>
+    <string name="no_data">Немає Даних</string>
+    <string name="episode_more_options_des">Більше Опцій</string>
     <string name="next_episode">Наступний епізод</string>
     <string name="result_tags">Жанри</string>
-    <string name="result_open_in_browser">Відкрити в браузері</string>
-    <string name="skip_loading">Пропустити завантаження</string>
+    <string name="result_open_in_browser">Відкрити в Браузері</string>
+    <string name="skip_loading">Пропустити Завантаження</string>
     <string name="loading">Завантаження…</string>
     <string name="type_completed">Завершено</string>
-    <string name="type_plan_to_watch">Заплановано</string>
-    <string name="type_dropped">Покинуто</string>
-    <string name="play_movie_button">Переглянути фільм</string>
-    <string name="play_trailer_button">Переглянути трейлер</string>
-    <string name="play_torrent_button">Переглянути торент</string>
+    <string name="type_plan_to_watch">Планую Дивитися</string>
+    <string name="type_dropped">Скинуто</string>
+    <string name="play_movie_button">Відтворити Фільм</string>
+    <string name="play_trailer_button">Відтворити Трейлер</string>
+    <string name="play_torrent_button">Транслювати Торрент</string>
     <string name="reload_error">Повторити з’єднання…</string>
     <string name="go_back">Назад</string>
-    <string name="play_episode">Переглянути епізод</string>
+    <string name="play_episode">Відтворити Епізод</string>
     <string name="downloaded">Завантажено</string>
     <string name="downloading">Завантаження</string>
-    <string name="download_done">Завантаження завершено</string>
+    <string name="download_done">Завантаження Завершено</string>
     <string name="app_dubbed_text">Дуб.</string>
     <string name="app_subbed_text">Суб.</string>
     <string name="popup_delete_file">Видалити файл</string>
@@ -89,23 +89,23 @@
     <string name="autoplay_next_settings_des">Відтворювати наступний епізод після закінчення поточного</string>
     <string name="title_home">Головна</string>
     <string name="app_name">CloudStream</string>
-    <string name="filler" formatted="true">Заповнювач</string>
+    <string name="filler" formatted="true">Філлер</string>
     <string name="play_with_app_name">Відтворити в CloudStream</string>
     <string name="stream">Мережева трансляція</string>
-    <string name="type_watching">Переглядаю</string>
+    <string name="type_watching">Переглядання</string>
     <string name="result_share">Поділитися</string>
     <string name="type_on_hold">Відкладено</string>
-    <string name="type_re_watching">Повторно переглядаю</string>
+    <string name="type_re_watching">Переглядаю Повторно</string>
     <string name="download">Завантажити</string>
-    <string name="play_livestream_button">Переглянути трансляцію</string>
+    <string name="play_livestream_button">Відтворити Трансляцію</string>
     <string name="pick_source">Джерела</string>
     <string name="pick_subtitle">Субтитри</string>
-    <string name="download_storage_text">Внутрішнє сховище</string>
-    <string name="download_paused">Завантаження призупинено</string>
-    <string name="download_started">Завантаження розпочато</string>
-    <string name="download_failed">Не вдалося завантажити</string>
-    <string name="update_started">Оновлення розпочато</string>
-    <string name="error_loading_links_toast">Помилка завантаження посилань</string>
+    <string name="download_storage_text">Внутрішнє Сховище</string>
+    <string name="download_paused">Завантаження Призупинено</string>
+    <string name="download_started">Завантаження Розпочато</string>
+    <string name="download_failed">Завантаження не Вдалося</string>
+    <string name="update_started">Оновлення Розпочато</string>
+    <string name="error_loading_links_toast">Помилка Завантаження Посилань</string>
     <string name="popup_pause_download">Призупинити завантаження</string>
     <string name="popup_play_file">Переглянути файл</string>
     <string name="home_more_info">Докладніше</string>
@@ -332,7 +332,7 @@
     <string name="remove_site_pref">Видалити сайт</string>
     <string name="nginx_url_pref">URL-адреса сервера NGINX</string>
     <string name="pref_category_links">Покликання</string>
-    <string name="limit_title_rez">Роздільність відеопрогравача</string>
+    <string name="limit_title_rez">Показувати інформацію про програвач</string>
     <string name="video_buffer_length_settings">Довжина буфера відео</string>
     <string name="video_buffer_clear_settings">Очистити кеш відео та зображень</string>
     <string name="video_ram_description">Спричиняє збої, якщо встановлено занадто високе значення на пристроях із малим об’ємом пам’яті, таких як Android TV.</string>
@@ -551,7 +551,7 @@
     <string name="edit_account">Редагувати обліковий запис</string>
     <string name="rotate_video_desc">Показувати кнопку перемикання орієнтації екрана</string>
     <string name="rotate_video">Обернути</string>
-    <string name="links_reloaded_toast">Покликання перезавантажено</string>
+    <string name="links_reloaded_toast">Посилання Перезавантажені</string>
     <string name="auto_rotate_video">Автообертання</string>
     <string name="auto_rotate_video_desc">Увімкнути автоматичну зміну орієнтації екрана відповідно до відео</string>
     <string name="speed_setting_summary">Додати налаштування швидкості до програвача</string>
@@ -584,7 +584,7 @@
     <string name="custom_media_singluar">Медіа</string>
     <string name="reset_btn">Скинути</string>
     <string name="episode_upcoming_format" formatted="true">Наступний через %s</string>
-    <string name="next_season_episode_format" formatted="true">Сезон %1$d епізод %2$d вийде через</string>
+    <string name="next_season_episode_format" formatted="true">Сезон %1$d Епізод %2$d вийде через</string>
     <string name="player_settings_select_cast_device">Оберіть пристрій для трансляції</string>
     <string name="episode_action_cast_mirror">Трансляція через дзеркало</string>
     <string name="cs3wiki">Довідник CloudStream</string>
@@ -598,7 +598,7 @@
     <string name="device_pin_counter_text">Термін дії коду закінчується через %1$dхв %2$dс</string>
     <string name="auth_locally">Локальна автентифікація</string>
     <string name="dismiss">Відхилити</string>
-    <string name="play_from_beginning_img_des">Відтворити з початку</string>
+    <string name="play_from_beginning_img_des">Відтворити з Початку</string>
     <string name="test_warning">Попередження</string>
     <string name="delete_plugin">Видалити розширення</string>
     <string name="downloads_empty">Наразі завантажень немає.</string>
@@ -606,13 +606,13 @@
     <string name="open_local_video">Відкрити локальне відео</string>
     <string name="sort_release_date_new">Датою випуску (від нових до старих)</string>
     <string name="sort_release_date_old">Датою випуску (від старих до нових)</string>
-    <string name="downloads_delete_select">Оберіть елементи для видалення</string>
-    <string name="select_all">Обрати все</string>
-    <string name="deselect_all">Зняти вибір</string>
+    <string name="downloads_delete_select">Оберіть Елементи для Видалення</string>
+    <string name="select_all">Обрати Все</string>
+    <string name="deselect_all">Зняти Вибір Всіх</string>
     <string name="delete_format" formatted="true">Видалити (%1$d | %2$s)</string>
     <string name="delete_message_series_episodes" formatted="true">Ви впевнені, що хочете назавжди видалити такі епізоди «%1$s»?\n\n%2$s</string>
     <string name="delete_message_series_section" formatted="true">Ви також назавжди видалите всі епізоди в такому серіалі:\n\n%s</string>
-    <string name="offline_file">Доступно для перегляду в автономному режимі</string>
+    <string name="offline_file">Доступно для перегляду в оффлайн режимі</string>
     <string name="delete_files">Видалити файли</string>
     <string name="delete_message_multiple" formatted="true">Ви впевнені, що хочете назавжди видалити такі елементи?\n\n%s</string>
     <string name="delete_message_series_only" formatted="true">Ви впевнені, що хочете назавжди видалити всі епізоди в такому серіалі?\n\n%s</string>
@@ -625,7 +625,7 @@
     <string name="dont_show">Не показувати</string>
     <string name="backup_path_title">Розташування теки для резервних копій</string>
     <string name="custom">Власний</string>
-    <string name="torrent_info">Це відео – торент, це означає, що ваша діяльність у відео може відстежуватися.\nПереконайтеся, що розумієте, що таке торент, перш ніж продовжити.</string>
+    <string name="torrent_info">Це відео – Торрент, це означає, що ваша відео діяльність може відстежуватися.\nПереконайтеся, що розумієте, що таке Торрент, перед тим як продовжити.</string>
     <string name="subs_edge_size">Розмір обведення</string>
     <string name="audio_singluar">Аудіо</string>
     <string name="podcast_singluar">Подкаст</string>
@@ -653,7 +653,7 @@
     <string name="player_notification_channel_description">Сповіщення програвача для керування відтворенням у фоновому режимі</string>
     <string name="player_notification_channel_name">Сповіщення програвача</string>
     <string name="speech_recognition_unavailable">Розпізнавання мовлення недоступне</string>
-    <string name="begin_speaking">Говоріть…</string>
+    <string name="begin_speaking">Почніть Говорити…</string>
     <string name="subtitles_from_embedded">Вбудовані</string>
     <string name="subtitles_from_online">Мережеві</string>
     <string name="background_radius">Радіус тла</string>
@@ -701,9 +701,18 @@
     <string name="top_left">Угорі ліворуч</string>
     <string name="top_center">Верхній центр</string>
     <string name="top_right">Угорі праворуч</string>
-    <string name="play_full_series_button">Відтворити повну серію</string>
+    <string name="play_full_series_button">Відтворити Повні Серії</string>
     <string name="install_prerelease">Встановити передрелізну версію</string>
     <string name="prerelease_already_installed">Попередня версія вже встановлена.</string>
     <string name="prerelease_install_failed">Не вдалося встановити попередню версію.</string>
     <string name="show_episode_text">Текст епізоду</string>
+    <string name="search_suggestions">Пропозиції пошуку</string>
+    <string name="search_suggestions_des">Показувати підказки пошуку під час введення тексту</string>
+    <string name="clear_suggestions">Очистити пропозиції</string>
+    <string name="extra_brightness_settings">Додаткова яскравість</string>
+    <string name="extra_brightness_settings_des">Увімкнути фільтр яскравості при перевищенні 100% яскравості дисплея</string>
+    <string name="extra_brightness_key">extra_brightness_enabled</string>
+    <string name="show_cast_in_details">Показати панель трансляції</string>
+    <string name="video_info">Інформація про медіа</string>
+    <string name="source_name">Назва джерела</string>
 </resources>

@@ -257,7 +257,7 @@
     <string name="update">Güncelle</string>
     <string name="watch_quality_pref">Tercih edilen görüntü kalitesi (WiFi)</string>
     <string name="limit_title">Video oynatıcı başlığı karakter üst sınırı</string>
-    <string name="limit_title_rez">Oynatıcı çözünürlüğü</string>
+    <string name="limit_title_rez">Oynatıcı bilgisini göster</string>
     <string name="video_buffer_size_settings">Video arabellek boyutu</string>
     <string name="video_buffer_length_settings">Video arabellek uzunluğu</string>
     <string name="video_buffer_disk_settings">Diskteki video önbelleği</string>
@@ -746,4 +746,13 @@
     <string name="prerelease_already_installed">Ön sürüm zaten indirilmiş.</string>
     <string name="prerelease_install_failed">Ön sürüm indirmesi başarısız oldu.</string>
     <string name="show_episode_text">Bölüm Başlığı</string>
+    <string name="search_suggestions">Arama Önerileri</string>
+    <string name="search_suggestions_des">Yazarken arama önerilerini göster</string>
+    <string name="clear_suggestions">Önerileri Temizle</string>
+    <string name="show_cast_in_details">Yayın panelini göster</string>
+    <string name="extra_brightness_settings">Ekstra parlaklık</string>
+    <string name="extra_brightness_settings_des">Görüntü parlaklığı %100\'ü geçerse parlaklık filtresini aktifleştir</string>
+    <string name="extra_brightness_key">Ekstra parlaklık aktifleştirildi</string>
+    <string name="video_info">Medya bilgisi</string>
+    <string name="source_name">Kaynağın adı</string>
 </resources>
