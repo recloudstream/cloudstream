@@ -67,7 +67,7 @@ class PlayerCarScreen(
     val loadResponse: LoadResponse? = null,
     val selectedEpisode: Episode? = null,
     val playlist: List<Episode>? = null,
-    val startTime: Long = 0L,
+    var startTime: Long = 0L,
     val fileUri: String? = null,
     val videoId: Int? = null,
     val parentId: Int? = null,
@@ -655,6 +655,8 @@ class PlayerCarScreen(
              // Generate a consistent ID from the data URL, similar to how it's done elsewhere
              val nextId = nextEp.data.hashCode() 
              currentEpisodeId = nextId
+             // Force start from beginning for next episode
+             startTime = 0L
 
              showToast("Loading: ${nextEp.name}")
              
