@@ -6,7 +6,6 @@ import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.newExtractorLink
-import org.schabi.newpipe.extractor.services.youtube.YoutubeService
 import org.schabi.newpipe.extractor.stream.StreamInfo
 
 class YoutubeShortLinkExtractor(
@@ -44,7 +43,7 @@ open class YoutubeExtractor(
         val videoId = extractYouTubeId(url)
         val watchUrl = "$mainUrl/watch?v=$videoId"
 
-        val streamInfo = StreamInfo.getInfo(YoutubeService(0), watchUrl)
+        val streamInfo = StreamInfo.getInfo(watchUrl)
 
         processStreams(streamInfo, subtitleCallback, callback)
     }
