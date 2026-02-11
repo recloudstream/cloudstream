@@ -1,5 +1,7 @@
 package com.lagradost.cloudstream3.ui.car
 
+import com.lagradost.cloudstream3.utils.CarHelper
+
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.Action
@@ -40,6 +42,9 @@ import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.utils.DataStoreHelper.FavoritesData
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.MovieLoadResponse
+import com.lagradost.cloudstream3.ui.result.getId
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getVideoWatchState
+import com.lagradost.cloudstream3.ui.result.VideoWatchState
 
 class DetailsScreen(
     carContext: CarContext,
@@ -173,8 +178,15 @@ class DetailsScreen(
         
         buildActions(paneBuilder)
 
+        val title = fullDetails?.let { data ->
+             val id = data.getId()
+             val watchState = getVideoWatchState(id)
+             val isWatched = watchState == VideoWatchState.Watched
+             if (isWatched) "✅ ${data.name}" else data.name
+        } ?: item.name
+
         return PaneTemplate.Builder(paneBuilder.build())
-            .setTitle(fullDetails?.name ?: item.name)
+            .setTitle(title)
             .setHeaderAction(Action.BACK)
             .build()
     }
@@ -223,6 +235,19 @@ class DetailsScreen(
                 )
             }
 
+            // Check watch state
+            val id = details.getId()
+            val watchState = getVideoWatchState(id)
+            val isWatched = watchState == VideoWatchState.Watched
+            
+            val title = if (isWatched) "✅ ${details.name}" else details.name
+
+            paneBuilder.addRow(
+                Row.Builder()
+                    .setTitle(title)
+                    .addText(details.plot ?: "")
+                    .build()
+            )
             // Plot and Cast
             CarHelper.addPlotAndCast(paneBuilder, details)
         } else if (errorMessage != null) {

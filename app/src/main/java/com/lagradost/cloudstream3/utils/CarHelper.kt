@@ -1,4 +1,6 @@
-package com.lagradost.cloudstream3.ui.car
+package com.lagradost.cloudstream3.utils
+
+import com.lagradost.cloudstream3.ui.car.CarStrings
 
 import androidx.car.app.CarContext
 import androidx.car.app.model.CarColor
@@ -12,6 +14,9 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.FavoritesData
+import com.lagradost.cloudstream3.Episode
+import com.lagradost.cloudstream3.TvSeriesLoadResponse
+import com.lagradost.cloudstream3.ui.result.getId
 
 object CarHelper {
     
@@ -167,5 +172,22 @@ object CarHelper {
             e.printStackTrace()
             poster // Fallback to original poster if combined generation fails
         }
+    }
+    
+    fun generateConsistentEpisodeId(episode: Episode, response: LoadResponse?): Int? {
+        val data = response ?: return episode.data.hashCode()
+        if (data !is TvSeriesLoadResponse) return data.getId()
+
+        val mainId = data.getId()
+        // We need to match the sorting logic from ResultViewModel2/EpisodeListScreen
+        // to ensure ID consistency
+        val allEpisodesSorted = data.episodes.sortedBy { (it.season?.times(10_000) ?: 0) + (it.episode ?: 0) }
+        val globalIndex = allEpisodesSorted.indexOfFirst { it.data == episode.data }
+
+        if (globalIndex == -1) return episode.data.hashCode()
+
+        val matchedEpisode = allEpisodesSorted[globalIndex]
+        val episodeIndex = matchedEpisode.episode ?: (globalIndex + 1)
+        return mainId + (matchedEpisode.season?.times(100_000) ?: 0) + episodeIndex + 1
     }
 }

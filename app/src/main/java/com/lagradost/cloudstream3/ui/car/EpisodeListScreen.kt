@@ -12,6 +12,9 @@ import androidx.car.app.model.Template
 import androidx.core.graphics.drawable.IconCompat
 import com.lagradost.cloudstream3.TvSeriesLoadResponse
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ui.result.getId
+import com.lagradost.cloudstream3.ui.result.VideoWatchState
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 
 class EpisodeListScreen(
@@ -35,10 +38,21 @@ class EpisodeListScreen(
         val currentSeason = availableSeasons[currentSeasonIndex]
         val seasonEpisodes = details.episodes.filter { it.season == currentSeason }.sortedBy { it.episode }
 
+        val mainId = details.getId()
+        val allEpisodesSorted = details.episodes.sortedBy { (it.season?.times(10_000) ?: 0) + (it.episode ?: 0) }
+
         val listBuilder = ItemList.Builder()
         
         seasonEpisodes.forEach { episode ->
-            val title = "${episode.episode}. ${episode.name ?: "${CarStrings.get(R.string.car_episode)} ${episode.episode}"}"
+            val globalIndex = allEpisodesSorted.indexOf(episode)
+            val episodeIndex = episode.episode ?: (globalIndex + 1)
+            val id = mainId + (episode.season?.times(100_000) ?: 0) + episodeIndex + 1
+            val watchState = getVideoWatchState(id)
+            val isWatched = watchState == VideoWatchState.Watched
+
+            val titleBase = "${episode.episode}. ${episode.name ?: "${CarStrings.get(R.string.car_episode)} ${episode.episode}"}"
+            val title = if (isWatched) "✅ $titleBase" else titleBase
+
             val rowBuilder = Row.Builder()
                 .setTitle(title)
                 .setOnClickListener {
