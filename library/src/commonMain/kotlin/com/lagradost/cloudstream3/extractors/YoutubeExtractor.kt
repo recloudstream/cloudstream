@@ -8,27 +8,19 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.newExtractorLink
 import org.schabi.newpipe.extractor.stream.StreamInfo
 
-class YoutubeShortLinkExtractor(
-    maxResolution: Int? = null
-) : YoutubeExtractor(maxResolution) {
+class YoutubeShortLinkExtractor() : YoutubeExtractor() {
     override val mainUrl = "https://youtu.be"
 }
 
-class YoutubeMobileExtractor(
-    maxResolution: Int? = null
-) : YoutubeExtractor(maxResolution) {
+class YoutubeMobileExtractor() : YoutubeExtractor() {
     override val mainUrl = "https://m.youtube.com"
 }
 
-class YoutubeNoCookieExtractor(
-    maxResolution: Int? = null
-) : YoutubeExtractor(maxResolution) {
+class YoutubeNoCookieExtractor() : YoutubeExtractor() {
     override val mainUrl = "https://www.youtube-nocookie.com"
 }
 
-open class YoutubeExtractor(
-    private val maxResolution: Int? = null
-) : ExtractorApi() {
+open class YoutubeExtractor() : ExtractorApi() {
 
     override val mainUrl = "https://www.youtube.com"
     override val name = "YouTube"
@@ -54,9 +46,7 @@ open class YoutubeExtractor(
         callback: (ExtractorLink) -> Unit
     ): Boolean {
 
-        val videoStreams = info.videoOnlyStreams
-            ?.filterByResolution(maxResolution)
-            ?: emptyList()
+        val videoStreams = info.videoOnlyStreams.orEmpty()
 
         if (videoStreams.isEmpty()) return false
 
@@ -100,10 +90,6 @@ open class YoutubeExtractor(
         return regex.find(url)?.groupValues?.get(1)
             ?: throw IllegalArgumentException("Invalid YouTube URL: $url")
     }
-
-    private fun List<org.schabi.newpipe.extractor.stream.VideoStream>.filterByResolution(
-        max: Int?
-    ) = if (max == null) this else filter { it.height <= max }
 
     private fun normalizeCodec(codec: String?): String {
         if (codec.isNullOrBlank()) return ""
