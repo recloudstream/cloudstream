@@ -8,19 +8,19 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.newExtractorLink
 import org.schabi.newpipe.extractor.stream.StreamInfo
 
-class YoutubeShortLinkExtractor() : YoutubeExtractor() {
+class YoutubeShortLinkExtractor : YoutubeExtractor() {
     override val mainUrl = "https://youtu.be"
 }
 
-class YoutubeMobileExtractor() : YoutubeExtractor() {
+class YoutubeMobileExtractor : YoutubeExtractor() {
     override val mainUrl = "https://m.youtube.com"
 }
 
-class YoutubeNoCookieExtractor() : YoutubeExtractor() {
+class YoutubeNoCookieExtractor : YoutubeExtractor() {
     override val mainUrl = "https://www.youtube-nocookie.com"
 }
 
-open class YoutubeExtractor() : ExtractorApi() {
+open class YoutubeExtractor : ExtractorApi() {
 
     override val mainUrl = "https://www.youtube.com"
     override val name = "YouTube"
