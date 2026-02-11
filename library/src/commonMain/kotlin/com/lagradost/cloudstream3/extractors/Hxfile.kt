@@ -1,9 +1,9 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.extractors.helper.JwPlayerHelper
 import com.lagradost.cloudstream3.utils.*
-import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 
 class Neonime7n : Hxfile() {
     override val name = "Neonime7n"
@@ -39,64 +39,22 @@ open class Hxfile : ExtractorApi() {
     override val requiresReferer = false
     open val redirect = true
 
-    override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
-        val sources = mutableListOf<ExtractorLink>()
+    override suspend fun getUrl(
+        url: String,
+        referer: String?,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
+    ) {
         val document = app.get(url, allowRedirects = redirect, referer = referer).document
         with(document) {
             this.select("script").map { script ->
-                if (script.data().contains("eval(function(p,a,c,k,e,d)")) {
-                    val data =
-                        getAndUnpack(script.data()).substringAfter("sources:[").substringBefore("]")
-                    tryParseJson<List<ResponseSource>>("[$data]")?.map {
-                        sources.add(
-                            newExtractorLink(
-                                name,
-                                name,
-                                it.file,
-                            ) {
-                                this.referer = mainUrl
-                                this.quality = when {
-                                    url.contains("hxfile.co") -> getQualityFromName(
-                                        Regex("\\d\\.(.*?).mp4").find(
-                                            document.select("title").text()
-                                        )?.groupValues?.get(1).toString()
-                                    )
-                                    else -> getQualityFromName(it.label)
-                                }
-                            }
-                        )
-                    }
-                } else if (script.data().contains("\"sources\":[")) {
-                    val data = script.data().substringAfter("\"sources\":[").substringBefore("]")
-                    tryParseJson<List<ResponseSource>>("[$data]")?.map {
-                        sources.add(
-                            newExtractorLink(
-                                name,
-                                name,
-                                it.file,
-                            ) {
-                                this.referer = mainUrl
-                                this.quality = when {
-                                    it.label?.contains("HD") == true -> Qualities.P720.value
-                                    it.label?.contains("SD") == true -> Qualities.P480.value
-                                    else -> getQualityFromName(it.label)
-                                }
-                            }
-                        )
-                    }
-                }
-                else {
-                    null
+                if (getPacked(script.data()) != null) {
+                    val data = getAndUnpack(script.data())
+                    JwPlayerHelper.extractStreamLinks(data, name, mainUrl, callback, subtitleCallback)
+                } else if (JwPlayerHelper.canParseJwScript(script.data())) {
+                    JwPlayerHelper.extractStreamLinks(script.data(), name, mainUrl, callback, subtitleCallback)
                 }
             }
         }
-        return sources
     }
-
-    private data class ResponseSource(
-        @JsonProperty("file") val file: String,
-        @JsonProperty("type") val type: String?,
-        @JsonProperty("label") val label: String?
-    )
-
 }
