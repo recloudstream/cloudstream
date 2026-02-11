@@ -64,7 +64,7 @@ class SetupFragmentMedia : BaseFragment<FragmentSetupMediaBinding>(
                 }
 
                 nextBtt.setOnClickListener {
-                    findNavController().navigate(R.id.navigation_setup_media_to_navigation_setup_layout)
+                    findNavController().navigate(R.id.action_navigation_setup_media_to_navigation_setup_sync)
                 }
 
                 prevBtt.setOnClickListener {

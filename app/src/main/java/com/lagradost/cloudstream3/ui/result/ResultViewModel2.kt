@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.app.Activity
+import com.lagradost.cloudstream3.utils.DataStore
 import android.content.*
 import android.util.Log
 import android.widget.Toast
@@ -57,9 +58,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.Coroutines.ioWorkSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
-import com.lagradost.cloudstream3.utils.DataStore.editor
-import com.lagradost.cloudstream3.utils.DataStore.getFolderName
-import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllBookmarkedData
@@ -1470,8 +1469,8 @@ class ResultViewModel2 : ViewModel() {
         val watchStateString = DataStore.mapper.writeValueAsString(watchState)
         episodeIds.forEach {
             if (getVideoWatchState(it.toInt()) != watchState) {
-                editor.setKeyRaw(
-                    getFolderName("$currentAccount/$VIDEO_WATCH_STATE", it),
+                editor.setKeyRaw<String>(
+                    DataStore.getFolderName("$currentAccount/$VIDEO_WATCH_STATE", it),
                     watchStateString
                 )
             }
@@ -1725,7 +1724,7 @@ class ResultViewModel2 : ViewModel() {
             }
 
             ACTION_MARK_WATCHED_UP_TO_THIS_EPISODE -> ioSafe {
-                val editor = context?.let { it1 -> editor(it1, false) }
+                val editor = context?.let { it1 -> DataStore.editor(it1, false) }
 
                 if (editor != null) {
                     val (clickSeason, clickEpisode) = click.data.let {

@@ -19,7 +19,7 @@ import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
-import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
+import com.lagradost.cloudstream3.utils.toKotlinObject
 import com.lagradost.cloudstream3.utils.txt
 import java.text.SimpleDateFormat
 import java.time.Instant

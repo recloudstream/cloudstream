@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/setup_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="Firebase Sync"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp">
+
+        <TextView
+            android:id="@+id/sync_description_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="With Firebase SYNC, you can sync all your settings with your other devices."
+            android:gravity="center"
+            android:textSize="18sp"
+            android:layout_marginBottom="32dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/sync_yes_btt"
+            style="@style/WhiteButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Yes, Setup Sync"
+            android:layout_marginBottom="16dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/apply_btt_holder"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="-60dp"
+        android:gravity="bottom|end"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/next_btt"
+            style="@style/BlackButton"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:text="Next" />
+    </LinearLayout>
+
+</LinearLayout>

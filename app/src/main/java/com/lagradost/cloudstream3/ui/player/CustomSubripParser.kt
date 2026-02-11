@@ -20,6 +20,7 @@
 */
 package com.lagradost.cloudstream3.ui.player
 
+import android.os.Build
 import android.text.Html
 import android.text.Spanned
 import android.text.TextUtils
@@ -115,7 +116,12 @@ class CustomSubripParser : SubtitleParser {
                 currentLine = parsableByteArray.readLine(charset)
             }
 
-            val text = Html.fromHtml(textBuilder.toString())
+            val text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                Html.fromHtml(textBuilder.toString(), Html.FROM_HTML_MODE_LEGACY)
+            } else {
+                @Suppress("DEPRECATION")
+                Html.fromHtml(textBuilder.toString())
+            }
 
             var alignmentTag: String? = null
             for (i in tags.indices) {
@@ -260,9 +266,9 @@ class CustomSubripParser : SubtitleParser {
             val hours = matcher.group(groupOffset + 1)
             var timestampMs = if (hours != null) hours.toLong() * 60 * 60 * 1000 else 0
             timestampMs +=
-                Assertions.checkNotNull<String?>(matcher.group(groupOffset + 2))
+                Assertions.checkNotNull<String>(matcher.group(groupOffset + 2))
                     .toLong() * 60 * 1000
-            timestampMs += Assertions.checkNotNull<String?>(matcher.group(groupOffset + 3))
+            timestampMs += Assertions.checkNotNull<String>(matcher.group(groupOffset + 3))
                 .toLong() * 1000
             val millis = matcher.group(groupOffset + 4)
             if (millis != null) {

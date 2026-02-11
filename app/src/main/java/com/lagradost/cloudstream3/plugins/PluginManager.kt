@@ -53,6 +53,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import com.lagradost.cloudstream3.utils.extractorApis
+import com.lagradost.cloudstream3.utils.FirestoreSyncManager
 import com.lagradost.cloudstream3.utils.txt
 import dalvik.system.PathClassLoader
 import kotlinx.coroutines.sync.Mutex
@@ -75,6 +76,8 @@ data class PluginData(
     @JsonProperty("isOnline") val isOnline: Boolean,
     @JsonProperty("filePath") val filePath: String,
     @JsonProperty("version") val version: Int,
+    @JsonProperty("addedDate") val addedDate: Long = 0,
+    @JsonProperty("isDeleted") val isDeleted: Boolean = false,
 ) {
     fun toSitePlugin(): SitePlugin {
         return SitePlugin(
@@ -112,11 +115,26 @@ object PluginManager {
     /**
      * Store data about the plugin for fetching later
      * */
+    fun getPluginsOnline(): Array<PluginData> {
+        return (getKey<Array<PluginData>>(PLUGINS_KEY) ?: emptyArray()).filter { !it.isDeleted }.toTypedArray()
+    }
+
+    // Helper for internal use to preserve tombstones
+    private fun getPluginsOnlineRaw(): Array<PluginData> {
+        return getKey<Array<PluginData>>(PLUGINS_KEY) ?: emptyArray()
+    }
+
+    /**
+     * Store data about the plugin for fetching later
+     * */
     private suspend fun setPluginData(data: PluginData) {
         lock.withLock {
             if (data.isOnline) {
-                val plugins = getPluginsOnline()
-                val newPlugins = plugins.filter { it.filePath != data.filePath } + data
+                val plugins = getPluginsOnlineRaw()
+                // Update or Add: filter out old entry (by filePath or internalName?)
+                // filePath is unique per install.
+                // We want to keep others, and replace THIS one.
+                val newPlugins = plugins.filter { it.filePath != data.filePath } + data.copy(isDeleted = false, addedDate = System.currentTimeMillis())
                 setKey(PLUGINS_KEY, newPlugins)
             } else {
                 val plugins = getPluginsLocal()
@@ -129,8 +147,12 @@ object PluginManager {
         if (data == null) return
         lock.withLock {
             if (data.isOnline) {
-                val plugins = getPluginsOnline().filter { it.url != data.url }
-                setKey(PLUGINS_KEY, plugins)
+                val plugins = getPluginsOnlineRaw()
+                // Mark as deleted (Tombstone)
+                val newPlugins = plugins.map { 
+                    if (it.filePath == data.filePath) it.copy(isDeleted = true, addedDate = System.currentTimeMillis()) else it
+                }
+                setKey(PLUGINS_KEY, newPlugins)
             } else {
                 val plugins = getPluginsLocal().filter { it.filePath != data.filePath }
                 setKey(PLUGINS_KEY_LOCAL, plugins)
@@ -140,14 +162,20 @@ object PluginManager {
 
     suspend fun deleteRepositoryData(repositoryPath: String) {
         lock.withLock {
-            val plugins = getPluginsOnline().filter {
-                !it.filePath.contains(repositoryPath)
+            val plugins = getPluginsOnlineRaw()
+            // Mark all plugins in this repo as deleted
+            val newPlugins = plugins.map {
+                 if (it.filePath.contains(repositoryPath)) it.copy(isDeleted = true, addedDate = System.currentTimeMillis()) else it
             }
-            val file = File(repositoryPath)
-            safe {
-                if (file.exists()) file.deleteRecursively()
-            }
-            setKey(PLUGINS_KEY, plugins)
+            // Logic to actually delete files handled by caller (removeRepository)?
+            // removeRepository calls: safe { file.deleteRecursively() }
+            // So files are gone. We just update the list.
+            // But removeRepository also calls unloadPlugin... 
+            
+            // Wait, removeRepository calls PluginManager.deleteRepositoryData(file.absolutePath)
+            // It also deletes the directory.
+            // So we just need to update the Key.
+            setKey(PLUGINS_KEY, newPlugins)
         }
     }
 
@@ -165,9 +193,7 @@ object PluginManager {
     }
 
 
-    fun getPluginsOnline(): Array<PluginData> {
-        return getKey(PLUGINS_KEY) ?: emptyArray()
-    }
+
 
     fun getPluginsLocal(): Array<PluginData> {
         return getKey(PLUGINS_KEY_LOCAL) ?: emptyArray()
@@ -360,14 +386,16 @@ object PluginManager {
         }.flatten().distinctBy { it.second.url }
 
         val providerLang = activity.getApiProviderLangSettings()
-        //Log.i(TAG, "providerLang => ${providerLang.toJson()}")
+        
+        // Get the list of plugins that SHOULD be installed (synced from cloud)
+        val targetPlugins = getPluginsOnline().map { it.internalName }.toSet()
 
         // Iterate online repos and returns not downloaded plugins
         val notDownloadedPlugins = onlinePlugins.mapNotNull { onlineData ->
             val sitePlugin = onlineData.second
             val tvtypes = sitePlugin.tvTypes ?: listOf()
 
-            //Don't include empty urls
+            // Don't include empty urls
             if (sitePlugin.url.isBlank()) {
                 return@mapNotNull null
             }
@@ -375,9 +403,14 @@ object PluginManager {
                 return@mapNotNull null
             }
 
-            //Omit already existing plugins
+            // Omit already existing plugins
             if (getPluginPath(activity, sitePlugin.internalName, onlineData.first).exists()) {
                 Log.i(TAG, "Skip > ${sitePlugin.internalName}")
+                return@mapNotNull null
+            }
+
+            // FILTER: Only download plugins that are in our synced list
+            if (!targetPlugins.contains(sitePlugin.internalName)) {
                 return@mapNotNull null
             }
 
@@ -766,9 +799,10 @@ object PluginManager {
             val data = PluginData(
                 internalName,
                 pluginUrl,
-                true,
+                false, // Mark as local so it updates PLUGINS_KEY_LOCAL immediately
                 newFile.absolutePath,
-                PLUGIN_VERSION_NOT_SET
+                PLUGIN_VERSION_NOT_SET,
+                System.currentTimeMillis()
             )
 
             return if (loadPlugin) {
@@ -795,7 +829,10 @@ object PluginManager {
         return try {
             if (File(file.absolutePath).delete()) {
                 unloadPlugin(file.absolutePath)
-                list.forEach { deletePluginData(it) }
+                list.forEach { 
+                    deletePluginData(it) 
+                    FirestoreSyncManager.notifyPluginDeleted(it.internalName)
+                }
                 return true
             }
             false

@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/primaryBlackBackground">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/sync_appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:liftOnScroll="true"
+        android:fitsSystemWindows="true">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/sync_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/primaryGrayBackground"
+            app:title="Firebase Sync"
+            app:navigationIcon="@drawable/ic_baseline_arrow_back_24" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sync_appbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Account Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/sync_account_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="?attr/primaryGrayBackground"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Account"
+                        android:textColor="?attr/textColor"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="16dp"/>
+
+                    <TextView
+                        android:id="@+id/sync_account_status"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Not Logged In"
+                        android:gravity="center"
+                        android:textColor="?attr/textColor"
+                        android:layout_marginBottom="12dp"/>
+
+                    <!-- Login/Register Inputs -->
+                    <LinearLayout
+                        android:id="@+id/sync_auth_input_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Email"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_marginBottom="8dp">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/sync_email_input"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textEmailAddress"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Password"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_marginBottom="8dp">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/sync_password_input"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textPassword"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/sync_login_register_btn"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Login / Register"/>
+
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/sync_logout_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Logout"
+                        android:visibility="gone"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        app:strokeColor="@color/red_400"
+                        android:textColor="@color/red_400"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Pending Plugins Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/sync_pending_plugins_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="?attr/primaryGrayBackground"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+                        <TextView
+                            android:id="@+id/sync_pending_title"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="New Plugins Detected"
+                            android:textColor="?attr/textColor"
+                            android:textSize="18sp"
+                            android:textStyle="bold"/>
+                        <TextView
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:text="WARN"
+                           android:textSize="10sp"
+                           android:background="@color/red_400"
+                           android:paddingHorizontal="4dp"
+                           android:paddingVertical="2dp"
+                           android:textColor="@android:color/white"/>
+                    </LinearLayout>
+
+                     <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="The following plugins were synced from another device. Install them?"
+                        android:textColor="?attr/textColor"
+                        android:alpha="0.7"
+                        android:layout_marginBottom="8dp"/>
+
+                    <LinearLayout
+                        android:id="@+id/sync_pending_plugins_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="12dp">
+                        <!-- Dynamic PLugin Items will go here -->
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                         <com.google.android.material.button.MaterialButton
+                            android:id="@+id/sync_install_plugins_btn"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Install All"
+                            android:layout_marginEnd="4dp"/>
+
+                         <com.google.android.material.button.MaterialButton
+                            android:id="@+id/sync_ignore_plugins_btn"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Ignore"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_marginStart="4dp"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Database Configuration Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="?attr/primaryGrayBackground">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                     <LinearLayout
+                        android:id="@+id/sync_config_header"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Database Configuration"
+                            android:textColor="?attr/textColor"
+                            android:textSize="18sp"
+                            android:textStyle="bold"/>
+                        <ImageView
+                             android:layout_width="24dp"
+                             android:layout_height="24dp"
+                             android:src="@drawable/ic_baseline_keyboard_arrow_down_24"
+                             app:tint="?attr/textColor"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/sync_config_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="16dp">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="API Key"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_marginBottom="8dp">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/sync_api_key"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textPassword"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Project ID"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_marginBottom="8dp">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/sync_project_id"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Application ID"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_marginBottom="8dp">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/sync_app_id"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/sync_connect_btn"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Connect Database"
+                            app:icon="@drawable/ic_baseline_cloud_queue_24"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+            
+            <!-- App Settings Category -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/sync_app_settings_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="?attr/primaryGrayBackground"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="App Configuration"
+                        android:textColor="?attr/textColor"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp"/>
+
+                    <!-- Appearance -->
+                    <include
+                        android:id="@+id/sync_appearance_layout"
+                        layout="@layout/sync_item_row"
+                        tools:title="Appearance"
+                        tools:desc="Sync theme, colors, and layout preferences."/>
+
+                    <!-- Player -->
+                    <include
+                        android:id="@+id/sync_player_layout"
+                        layout="@layout/sync_item_row"
+                        tools:title="Player Settings"
+                        tools:desc="Sync subtitle styles, brightness, and gestures."/>
+
+                    <!-- Downloads -->
+                    <include
+                        android:id="@+id/sync_downloads_layout"
+                        layout="@layout/sync_item_row"
+                        tools:title="Downloads"
+                        tools:desc="Sync download paths and parallel limits."/>
+
+                    <!-- General -->
+                    <include
+                        android:id="@+id/sync_general_layout"
+                        layout="@layout/sync_item_row"
+                        tools:title="General Settings"
+                        tools:desc="Sync miscellaneous app preferences."/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Library & Data Category -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/sync_library_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="?attr/primaryGrayBackground"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="My Library &amp; Data"
+                        android:textColor="?attr/textColor"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp"/>
+
+                    <!-- Accounts -->
+                    <include
+                        android:id="@+id/sync_accounts_layout"
+                        layout="@layout/sync_item_row"
+                        tools:title="User Accounts"
+                        tools:desc="Sync profile metadata and linked accounts."/>
+
+                    <!-- Bookmarks -->
+                    <include
+                        android:id="@+id/sync_bookmarks_layout"
+                        layout="@layout/sync_item_row"
+                        tools:title="Bookmarks"
+                        tools:desc="Sync your watchlist and favorite items."/>
+
+                    <!-- Resume Watching -->
+                    <include
+                        android:id="@+id/sync_resume_watching_layout"
+                        layout="@layout/sync_item_row"
+                        tools:title="Watch Progress"
+                        tools:desc="Sync your exact position in movies/episodes."/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Extensions Category -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/sync_extensions_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="?attr/primaryGrayBackground"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Extensions"
+                        android:textColor="?attr/textColor"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp"/>
+
+                    <!-- Repositories -->
+                    <include
+                        android:id="@+id/sync_repositories_layout"
+                        layout="@layout/sync_item_row"
+                        tools:title="Source Repositories"
+                        tools:desc="Sync your list of plugin repository URLs."/>
+
+                    <!-- Plugins -->
+                    <include
+                        android:id="@+id/sync_plugins_layout"
+                        layout="@layout/sync_item_row"
+                        tools:title="Installed Plugins"
+                        tools:desc="Sync which online plugins are installed."/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Interface Category -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/sync_interface_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="?attr/primaryGrayBackground"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Interface Personalization"
+                        android:textColor="?attr/textColor"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp"/>
+
+                    <!-- Homepage API -->
+                    <include
+                        android:id="@+id/sync_homepage_layout"
+                        layout="@layout/sync_item_row"
+                        tools:title="Home Provider"
+                        tools:desc="Sync which homepage source is currently active."/>
+
+                    <!-- Pinned Providers -->
+                    <include
+                        android:id="@+id/sync_pinned_layout"
+                        layout="@layout/sync_item_row"
+                        tools:title="Pinned Providers"
+                        tools:desc="Sync your pinned home screen extensions."/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Status Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/sync_status_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="?attr/primaryGrayBackground"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sync Status"
+                        android:textColor="?attr/textColor"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="16dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="8dp">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Status:"
+                            android:textColor="?attr/textColor"/>
+                        <TextView
+                            android:id="@+id/sync_status_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Connected"
+                            android:textColor="@android:color/holo_green_light"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="16dp">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Last Sync:"
+                            android:textColor="?attr/textColor"/>
+                        <TextView
+                            android:id="@+id/sync_last_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Never"
+                            android:textColor="?attr/textColor"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/sync_now_btn"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Sync Now"
+                            app:icon="@drawable/ic_baseline_sync_24"/>
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/sync_copy_logs_btn"
+                            style="@style/Widget.MaterialComponents.Button.TextButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Copy Logs"
+                            app:icon="@drawable/ic_baseline_content_copy_24"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

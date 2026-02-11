@@ -99,6 +99,7 @@
                 android:id="@+id/settings_credits"
                 style="@style/SettingsItem"
                 android:nextFocusUp="@id/settings_updates"
+                android:nextFocusDown="@id/settings_extensions"
                 android:text="@string/category_account" />
 
             <TextView

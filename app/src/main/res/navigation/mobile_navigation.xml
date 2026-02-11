@@ -413,6 +413,13 @@
         app:exitAnim="@anim/exit_anim"
         app:popEnterAnim="@anim/enter_anim"
         app:popExitAnim="@anim/exit_anim" />
+    <action
+        android:id="@+id/global_to_navigation_sync_settings"
+        app:destination="@id/navigation_settings_sync"
+        app:enterAnim="@anim/enter_anim"
+        app:exitAnim="@anim/exit_anim"
+        app:popEnterAnim="@anim/enter_anim"
+        app:popExitAnim="@anim/exit_anim" />
 
     <fragment
         android:id="@+id/navigation_subtitles"
@@ -652,8 +659,34 @@
         app:popExitAnim="@anim/exit_anim"
         tools:layout="@layout/fragment_setup_media">
         <action
-            android:id="@+id/navigation_setup_media_to_navigation_setup_layout"
+            android:id="@+id/action_navigation_setup_media_to_navigation_setup_sync"
+            app:destination="@id/navigation_setup_sync"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/navigation_setup_sync"
+        android:name="com.lagradost.cloudstream3.ui.setup.SetupFragmentSync"
+        android:layout_height="match_parent"
+        app:enterAnim="@anim/enter_anim"
+        app:exitAnim="@anim/exit_anim"
+        app:popEnterAnim="@anim/enter_anim"
+        app:popExitAnim="@anim/exit_anim"
+        tools:layout="@layout/fragment_setup_sync">
+        <action
+            android:id="@+id/action_navigation_setup_sync_to_navigation_setup_layout"
             app:destination="@id/navigation_setup_layout"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim" />
+        <action
+            android:id="@+id/action_navigation_setup_sync_to_navigation_settings_sync"
+            app:destination="@id/navigation_settings_sync"
             app:enterAnim="@anim/enter_anim"
             app:exitAnim="@anim/exit_anim"
             app:popEnterAnim="@anim/enter_anim"
@@ -681,4 +714,13 @@
         android:name="com.lagradost.cloudstream3.ui.EasterEggMonkeFragment"
         tools:layout="@layout/fragment_easter_egg_monke"
         android:label="EasterEggMonkeFragment" />
+    <fragment
+        android:id="@+id/navigation_settings_sync"
+        android:name="com.lagradost.cloudstream3.ui.settings.SyncSettingsFragment"
+        android:label="Firebase Sync"
+        app:enterAnim="@anim/enter_anim"
+        app:exitAnim="@anim/exit_anim"
+        app:popEnterAnim="@anim/enter_anim"
+        app:popExitAnim="@anim/exit_anim"
+        tools:layout="@layout/fragment_sync_settings" />
 </navigation>

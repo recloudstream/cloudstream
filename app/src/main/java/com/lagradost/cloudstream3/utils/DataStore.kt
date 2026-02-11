@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
@@ -22,8 +23,6 @@ const val VIDEO_PLAYER_BRIGHTNESS = "video_player_alpha_key"
 const val USER_SELECTED_HOMEPAGE_API = "home_api_used"
 const val USER_PROVIDER_API = "user_custom_sites"
 const val PREFERENCES_NAME = "rebuild_preference"
-
-// TODO degelgate by value for get & set
 
 class PreferenceDelegate<T : Any>(
     val key: String, val default: T //, private val klass: KClass<T>
@@ -88,14 +87,9 @@ object DataStore {
     val mapper: JsonMapper = JsonMapper.builder().addModule(kotlinModule())
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()
 
-    private fun getPreferences(context: Context): SharedPreferences {
+    fun getPreferences(context: Context): SharedPreferences {
         return context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
     }
-
-    fun Context.getSharedPrefs(): SharedPreferences {
-        return getPreferences(this)
-    }
-
 
     fun getFolderName(folder: String, path: String): String {
         return "${folder}/${path}"
@@ -107,106 +101,182 @@ object DataStore {
                 .edit() else context.getSharedPrefs().edit()
         return Editor(editor)
     }
+}
 
-    fun Context.getDefaultSharedPrefs(): SharedPreferences {
-        return PreferenceManager.getDefaultSharedPreferences(this)
-    }
+// Top-level extension functions
 
-    fun Context.getKeys(folder: String): List<String> {
-        return this.getSharedPrefs().all.keys.filter { it.startsWith(folder) }
-    }
+fun Context.getSharedPrefs(): SharedPreferences {
+    return DataStore.getPreferences(this)
+}
 
-    fun Context.removeKey(folder: String, path: String) {
-        removeKey(getFolderName(folder, path))
-    }
+fun Context.getDefaultSharedPrefs(): SharedPreferences {
+    return PreferenceManager.getDefaultSharedPreferences(this)
+}
 
-    fun Context.containsKey(folder: String, path: String): Boolean {
-        return containsKey(getFolderName(folder, path))
-    }
+fun Context.getKeys(folder: String): List<String> {
+    return this.getSharedPrefs().all.keys.filter { it.startsWith(folder) }
+}
 
-    fun Context.containsKey(path: String): Boolean {
+fun Context.removeKey(folder: String, path: String) {
+    removeKey(DataStore.getFolderName(folder, path))
+}
+
+fun Context.containsKey(folder: String, path: String): Boolean {
+    return containsKey(DataStore.getFolderName(folder, path))
+}
+
+fun Context.containsKey(path: String): Boolean {
+    val prefs = getSharedPrefs()
+    return prefs.contains(path)
+}
+
+fun Context.removeKey(path: String) {
+    try {
         val prefs = getSharedPrefs()
-        return prefs.contains(path)
+        if (prefs.contains(path)) {
+            prefs.edit {
+                remove(path)
+            }
+        }
+        // Hook for Sync: Delete
+        FirestoreSyncManager.pushDelete(path)
+    } catch (e: Exception) {
+        logError(e)
     }
+}
 
-    fun Context.removeKey(path: String) {
-        try {
-            val prefs = getSharedPrefs()
-            if (prefs.contains(path)) {
-                prefs.edit {
-                    remove(path)
+fun Context.removeKeys(folder: String): Int {
+    val keys = getKeys("$folder/")
+    try {
+        getSharedPrefs().edit {
+            keys.forEach { value ->
+                remove(value)
+            }
+        }
+        // Sync hook for bulk delete? Maybe difficult, ignoring for now or iterate
+        keys.forEach { FirestoreSyncManager.pushDelete(it) }
+        return keys.size
+    } catch (e: Exception) {
+        logError(e)
+        return 0
+    }
+}
+
+fun <T> Context.setKey(path: String, value: T) {
+    try {
+        val json = DataStore.mapper.writeValueAsString(value)
+        val current = getSharedPrefs().getString(path, null)
+        if (current == json) return
+
+        getSharedPrefs().edit {
+            putString(path, json)
+        }
+        // Hook for Sync: Write
+        FirestoreSyncManager.pushWrite(path, json)
+    } catch (e: Exception) {
+        logError(e)
+    }
+}
+
+// Internal local set without sync hook (used by sync manager to avoid loops)
+fun <T> Context.setKeyLocal(path: String, value: T) {
+    try {
+        // Handle generic value or raw string
+        val stringValue = if (value is String) value else DataStore.mapper.writeValueAsString(value)
+        getSharedPrefs().edit {
+            putString(path, stringValue)
+        }
+    } catch (e: Exception) {
+        logError(e)
+    }
+}
+
+fun <T> Context.setKeyLocal(folder: String, path: String, value: T) {
+    setKeyLocal(DataStore.getFolderName(folder, path), value)
+}
+
+fun Context.removeKeyLocal(path: String) {
+    try {
+        getSharedPrefs().edit {
+            remove(path)
+        }
+    } catch (e: Exception) {
+        logError(e)
+    }
+}
+
+fun <T> Context.getKey(path: String, valueType: Class<T>): T? {
+    try {
+        val json: String = getSharedPrefs().getString(path, null) ?: return null
+        Log.d("DataStore", "getKey(Class) $path raw: '$json'")
+        return json.toKotlinObject(valueType)
+    } catch (e: Exception) {
+        Log.e("DataStore", "getKey(Class) $path error: ${e.message}")
+        return null
+    }
+}
+
+fun <T> Context.setKey(folder: String, path: String, value: T) {
+    setKey(DataStore.getFolderName(folder, path), value)
+}
+
+inline fun <reified T : Any> String.toKotlinObject(): T {
+    return DataStore.mapper.readValue(this, T::class.java)
+}
+
+fun <T> String.toKotlinObject(valueType: Class<T>): T {
+    return DataStore.mapper.readValue(this, valueType)
+}
+
+// GET KEY GIVEN PATH AND DEFAULT VALUE, NULL IF ERROR
+inline fun <reified T : Any> Context.getKey(path: String, defVal: T?): T? {
+    try {
+        val json: String = getSharedPrefs().getString(path, null) ?: return defVal
+        // Log.d("DataStore", "getKey(Reified) $path raw: '$json' target: ${T::class.java.simpleName}")
+        return try {
+            val res = json.toKotlinObject<T>()
+            // Log.d("DataStore", "getKey(Reified) $path parsed: '$res'")
+            res
+        } catch (e: Exception) {
+            // Log.w("DataStore", "getKey(Reified) $path parse fail: ${e.message}, trying fallback")
+            // FALLBACK: If JSON parsing fails, try manual conversion for common types
+            val fallback: T? = when {
+                T::class == String::class -> {
+                    // If it's a string, try removing literal double quotes if they exist at start/end
+                    if (json.startsWith("\"") && json.endsWith("\"") && json.length >= 2) {
+                        json.substring(1, json.length - 1) as T
+                    } else {
+                        json as T
+                    }
                 }
-            }
-        } catch (e: Exception) {
-            logError(e)
-        }
-    }
-
-    fun Context.removeKeys(folder: String): Int {
-        val keys = getKeys("$folder/")
-        try {
-            getSharedPrefs().edit {
-                keys.forEach { value ->
-                    remove(value)
+                T::class == Boolean::class -> {
+                    (json.lowercase() == "true" || json == "1") as T
                 }
+                T::class == Long::class -> {
+                    json.toLongOrNull() as? T ?: defVal
+                }
+                T::class == Int::class -> {
+                    json.toIntOrNull() as? T ?: defVal
+                }
+                else -> defVal
             }
-            return keys.size
-        } catch (e: Exception) {
-            logError(e)
-            return 0
+            // Log.d("DataStore", "getKey(Reified) $path fallback: '$fallback'")
+            fallback
         }
+    } catch (e: Exception) {
+        Log.e("DataStore", "getKey(Reified) $path total fail: ${e.message}")
+        return defVal
     }
+}
 
-    fun <T> Context.setKey(path: String, value: T) {
-        try {
-            getSharedPrefs().edit {
-                putString(path, mapper.writeValueAsString(value))
-            }
-        } catch (e: Exception) {
-            logError(e)
-        }
-    }
+inline fun <reified T : Any> Context.getKey(path: String): T? {
+    return getKey(path, null)
+}
 
-    fun <T> Context.getKey(path: String, valueType: Class<T>): T? {
-        try {
-            val json: String = getSharedPrefs().getString(path, null) ?: return null
-            return json.toKotlinObject(valueType)
-        } catch (e: Exception) {
-            return null
-        }
-    }
+inline fun <reified T : Any> Context.getKey(folder: String, path: String): T? {
+    return getKey(DataStore.getFolderName(folder, path), null)
+}
 
-    fun <T> Context.setKey(folder: String, path: String, value: T) {
-        setKey(getFolderName(folder, path), value)
-    }
-
-    inline fun <reified T : Any> String.toKotlinObject(): T {
-        return mapper.readValue(this, T::class.java)
-    }
-
-    fun <T> String.toKotlinObject(valueType: Class<T>): T {
-        return mapper.readValue(this, valueType)
-    }
-
-    // GET KEY GIVEN PATH AND DEFAULT VALUE, NULL IF ERROR
-    inline fun <reified T : Any> Context.getKey(path: String, defVal: T?): T? {
-        try {
-            val json: String = getSharedPrefs().getString(path, null) ?: return defVal
-            return json.toKotlinObject()
-        } catch (e: Exception) {
-            return null
-        }
-    }
-
-    inline fun <reified T : Any> Context.getKey(path: String): T? {
-        return getKey(path, null)
-    }
-
-    inline fun <reified T : Any> Context.getKey(folder: String, path: String): T? {
-        return getKey(getFolderName(folder, path), null)
-    }
-
-    inline fun <reified T : Any> Context.getKey(folder: String, path: String, defVal: T?): T? {
-        return getKey(getFolderName(folder, path), defVal) ?: defVal
-    }
+inline fun <reified T : Any> Context.getKey(folder: String, path: String, defVal: T?): T? {
+    return getKey(DataStore.getFolderName(folder, path), defVal) ?: defVal
 }

@@ -2,9 +2,9 @@ package com.lagradost.cloudstream3
 
 import android.content.Context
 import com.lagradost.api.setContext
-import com.lagradost.cloudstream3.utils.DataStore.getKey
-import com.lagradost.cloudstream3.utils.DataStore.removeKeys
-import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.getKey
+import com.lagradost.cloudstream3.utils.removeKeys
+import com.lagradost.cloudstream3.utils.setKey
 import java.lang.ref.WeakReference
 
 /**

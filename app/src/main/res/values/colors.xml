@@ -11,6 +11,7 @@
     <color name="primaryBlackBackground">#111111</color> <!--1C1C20 191a1f 19181E 202125 1C1C20-->
     <color name="iconGrayBackground">#1C1C20</color> <!--141419 202125-->
     <color name="boxItemBackground">#161616</color> <!-- 17171B 1B1B20-->
+    <color name="red_400">#EF5350</color>
 
     <color name="textColor">#e9eaee</color> <!--FFF-->
     <color name="grayTextColor">#9ba0a4</color> <!-- 5e5f62-->

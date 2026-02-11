@@ -24,6 +24,8 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import androidx.annotation.IdRes
 import androidx.annotation.MainThread
 import androidx.appcompat.app.AlertDialog
@@ -40,6 +42,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.marginStart
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -138,6 +141,7 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadRepository
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadResult
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadSearchResult
+import com.lagradost.cloudstream3.utils.FirestoreSyncManager
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.AppContextUtils.updateHasTrailers
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
@@ -152,8 +156,8 @@ import com.lagradost.cloudstream3.utils.BiometricAuthenticator.promptInfo
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.startBiometricAuthentication
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
-import com.lagradost.cloudstream3.utils.DataStore.getKey
-import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.getKey
+import com.lagradost.cloudstream3.utils.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.accounts
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
@@ -260,6 +264,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
          * Used by DataStoreHelper to fully reload Navigation Rail header picture
          */
         val reloadAccountEvent = Event<Boolean>()
+
+        /**
+         * Used to notify HomeViewModel that sync data (specifically Continue Watching) has been updated
+         */
+        val syncUpdatedEvent = Event<Boolean>()
 
         /**
          * @return true if the str has launched an app task (be it successful or not)
@@ -620,6 +629,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
     override fun onResume() {
         super.onResume()
+        if (FirestoreSyncManager.isEnabled(this)) {
+            FirestoreSyncManager.pushAllLocalData(this)
+        }
         afterPluginsLoadedEvent += ::onAllPluginsLoaded
         setActivityInstance(this)
         try {
@@ -633,7 +645,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
     override fun onPause() {
         super.onPause()
-
+        if (FirestoreSyncManager.isEnabled(this)) {
+            FirestoreSyncManager.pushAllLocalData(this)
+        }
         // Start any delayed updates
         if (ApkInstaller.delayedInstaller?.startInstallation() == true) {
             Toast.makeText(this, R.string.update_started, Toast.LENGTH_LONG).show()
@@ -1191,6 +1205,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         } catch (t: Throwable) {
             logError(t)
         }
+        
+        lifecycleScope.launch(Dispatchers.IO) {
+            FirestoreSyncManager.initialize(this@MainActivity)
+        }
 
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
         updateTv()
@@ -1653,6 +1671,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         val navController = navHostFragment.navController
 
         navController.addOnDestinationChangedListener { _: NavController, navDestination: NavDestination, bundle: Bundle? ->
+            if (FirestoreSyncManager.isEnabled(this@MainActivity)) {
+                FirestoreSyncManager.syncNow(this@MainActivity)
+            }
             // Intercept search and add a query
             updateNavBar(navDestination)
             if (navDestination.matchDestination(R.id.navigation_search) && !nextSearchQuery.isNullOrBlank()) {

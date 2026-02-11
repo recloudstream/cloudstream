@@ -11,7 +11,7 @@ plugins {
     alias(libs.plugins.android.lint)
     alias(libs.plugins.android.multiplatform.library)
     alias(libs.plugins.buildkonfig)
-    alias(libs.plugins.dokka)
+    // alias(libs.plugins.dokka)
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
@@ -99,6 +99,7 @@ publishing {
     }
 }
 
+/*
 dokka {
     moduleName = "Library"
     dokkaSourceSets {
@@ -117,3 +118,4 @@ dokka {
         }
     }
 }
+*/

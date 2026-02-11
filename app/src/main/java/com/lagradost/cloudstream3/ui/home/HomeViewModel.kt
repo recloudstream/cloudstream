@@ -420,6 +420,10 @@ class HomeViewModel : ViewModel() {
         reloadStored()
     }
 
+    private fun onSyncUpdated(unused: Boolean) {
+        loadResumeWatching()
+    }
+
     private fun afterPluginsLoaded(forceReload: Boolean) {
         loadAndCancel(DataStoreHelper.currentHomePage, forceReload)
     }
@@ -440,6 +444,7 @@ class HomeViewModel : ViewModel() {
 
     init {
         MainActivity.bookmarksUpdatedEvent += ::bookmarksUpdated
+        MainActivity.syncUpdatedEvent += ::onSyncUpdated
         MainActivity.afterPluginsLoadedEvent += ::afterPluginsLoaded
         MainActivity.mainPluginsLoadedEvent += ::afterMainPluginsLoaded
         MainActivity.reloadHomeEvent += ::reloadHome
@@ -448,6 +453,7 @@ class HomeViewModel : ViewModel() {
 
     override fun onCleared() {
         MainActivity.bookmarksUpdatedEvent -= ::bookmarksUpdated
+        MainActivity.syncUpdatedEvent -= ::onSyncUpdated
         MainActivity.afterPluginsLoadedEvent -= ::afterPluginsLoaded
         MainActivity.mainPluginsLoadedEvent -= ::afterMainPluginsLoaded
         MainActivity.reloadHomeEvent -= ::reloadHome
