@@ -260,14 +260,15 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         if (isPaused) {
             metadataScrim.postDelayed({
-                metadataScrim.apply {
-                    isVisible = true
-                }
+                metadataScrim.isVisible = true
+                hidePlayerUI()
             }, 8000L)
+
         } else {
-             metadataScrim.isVisible = false
+            metadataScrim.isVisible = false
         }
     }
+
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun playerUpdated(player: Any?) {
