@@ -246,7 +246,7 @@
     <string name="update">Aktualizacja</string>
     <string name="watch_quality_pref">Domyślna jakość (WiFi)</string>
     <string name="limit_title">Maksymalna liczba znaków w tytule odtwarzacza</string>
-    <string name="limit_title_rez">Rozdzielczość odtwarzacza wideo</string>
+    <string name="limit_title_rez">Pokaż informacje o odtwarzaczu</string>
     <string name="video_buffer_size_settings">Rozmiar bufora wideo</string>
     <string name="video_buffer_length_settings">Długość bufora wideo</string>
     <string name="video_buffer_disk_settings">Pamięć podręczna wideo na dysku</string>
@@ -737,4 +737,13 @@
     <string name="prerelease_already_installed">Wersja przedpremierowa jest już zainstalowana.</string>
     <string name="prerelease_install_failed">Nie udało się zainstalować wersji przedpremierowej.</string>
     <string name="show_episode_text">Tekst odcinka</string>
+    <string name="search_suggestions">Sugestie wyszukiwania</string>
+    <string name="search_suggestions_des">Pokaż sugestie wyszukiwania podczas pisania</string>
+    <string name="clear_suggestions">Wyczyść sugestie</string>
+    <string name="show_cast_in_details">Pokaż panel obsady</string>
+    <string name="source_name">Nazwa źródła</string>
+    <string name="video_info">Informacje o multimediach</string>
+    <string name="extra_brightness_settings">Dodatkowa jasność</string>
+    <string name="extra_brightness_settings_des">Włącz filtr jasności, gdy jasność wyświetlacza przekroczy 100%</string>
+    <string name="extra_brightness_key">Włączono dodatkową jasność</string>
 </resources>

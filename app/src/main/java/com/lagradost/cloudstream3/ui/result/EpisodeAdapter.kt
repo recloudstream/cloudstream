@@ -33,7 +33,8 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.txt
 import java.text.DateFormat
@@ -161,7 +162,7 @@ class EpisodeAdapter(
 
                     downloadButton.isVisible = hasDownloadSupport
                     downloadButton.setDefaultClickListener(
-                        VideoDownloadHelper.DownloadEpisodeCached(
+                        DownloadObjects.DownloadEpisodeCached(
                             name = item.name,
                             poster = item.poster,
                             episode = item.episode,
@@ -201,6 +202,11 @@ class EpisodeAdapter(
                             }
                         }
                     }
+
+                    val status = VideoDownloadManager.downloadStatus[item.id]
+                    downloadButton.resetView()
+                    downloadButton.setPersistentId(item.id)
+                    downloadButton.setStatus(status)
 
                     val name =
                         if (item.name == null) "${episodeText.context.getString(R.string.episode)} ${item.episode}" else "${item.episode}. ${item.name}"
@@ -379,7 +385,7 @@ class EpisodeAdapter(
                 binding.apply {
                     downloadButton.isVisible = hasDownloadSupport
                     downloadButton.setDefaultClickListener(
-                        VideoDownloadHelper.DownloadEpisodeCached(
+                        DownloadObjects.DownloadEpisodeCached(
                             name = item.name,
                             poster = item.poster,
                             episode = item.episode,
@@ -419,6 +425,11 @@ class EpisodeAdapter(
                             }
                         }
                     }
+
+                    val status = VideoDownloadManager.downloadStatus[item.id]
+                    downloadButton.resetView()
+                    downloadButton.setPersistentId(item.id)
+                    downloadButton.setStatus(status)
 
                     val name =
                         if (item.name == null) "${episodeText.context.getString(R.string.episode)} ${item.episode}" else "${item.episode}. ${item.name}"

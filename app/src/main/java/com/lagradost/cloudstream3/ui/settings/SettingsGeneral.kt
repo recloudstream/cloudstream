@@ -44,8 +44,9 @@ import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
-import com.lagradost.cloudstream3.utils.VideoDownloadManager
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.getBasePath
+import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import java.util.Locale
 
 // Change local language settings in the app.
@@ -328,7 +329,7 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
         fun getDownloadDirs(): List<String> {
             return safe {
                 context?.let { ctx ->
-                    val defaultDir = VideoDownloadManager.getDefaultDir(ctx)?.filePath()
+                    val defaultDir = DownloadFileManagement.getDefaultDir(ctx)?.filePath()
 
                     val first = listOf(defaultDir)
                     (try {
@@ -350,12 +351,18 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
             return@setOnPreferenceChangeListener true
         }
 
+        getPref(R.string.download_parallel_key)?.setOnPreferenceChangeListener { _, _ ->
+            // Notify that the queue logic has been changed
+            DownloadQueueManager.forceRefreshQueue()
+            return@setOnPreferenceChangeListener true
+        }
+
         getPref(R.string.download_path_key)?.setOnPreferenceClickListener {
             val dirs = getDownloadDirs()
 
             val currentDir =
                 settingsManager.getString(getString(R.string.download_path_key_visual), null)
-                    ?: context?.let { ctx -> VideoDownloadManager.getDefaultDir(ctx)?.filePath() }
+                    ?: context?.let { ctx -> DownloadFileManagement.getDefaultDir(ctx)?.filePath() }
 
             activity?.showBottomDialog(
                 dirs + listOf(getString(R.string.custom)),

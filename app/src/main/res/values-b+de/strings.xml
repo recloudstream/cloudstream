@@ -734,4 +734,8 @@
     <string name="prerelease_install_failed">Die Installation der Vorabversion ist fehlgeschlagen.</string>
     <string name="episode_action_play_mirror">Spiel Mirror ab</string>"
     <string name="show_episode_text">Episodentext</string>
+    <string name="search_suggestions">Empfehlungen suchen</string>
+    <string name="search_suggestions_des">Beim Tippen Suchempfehlungen anzeigen</string>
+    <string name="clear_suggestions">Empfehlungen löschen</string>
+    <string name="extra_brightness_settings">Zusätzliche Helligkeit</string>
 </resources>

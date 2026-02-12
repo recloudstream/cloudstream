@@ -53,9 +53,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.SimpleItemAnimator
-import com.daasuu.gpuv.egl.filter.GlBrightnessFilter
-import com.daasuu.gpuv.player.GPUPlayerView
-import com.daasuu.gpuv.player.PlayerScaleType
 import com.google.android.material.button.MaterialButton
 import com.lagradost.api.BuildConfig
 import com.lagradost.cloudstream3.CommonActivity.keyEventListener
@@ -127,9 +124,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected open var lockRotation = true
     protected open var isFullScreenPlayer = true
     protected var playerBinding: PlayerCustomLayoutBinding? = null
-    private var gpuPlayerView: GPUPlayerView? = null
-    private var gpuBrightnessFilter: GlBrightnessFilter? = null
-    private var hasBrightnessBoostError: Boolean = false
+    protected var brightnessOverlay: View? = null
 
     private var durationMode: Boolean by UserPreferenceDelegate("duration_mode", false)
 
@@ -155,6 +150,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     //    protected var currentPrefQuality =
 //        Qualities.P2160.value // preferred maximum quality, used for ppl w bad internet or on cell
+    protected var extraBrightnessEnabled = false
     protected var fastForwardTime = 10000L
     protected var androidTVInterfaceOffSeekTime = 10000L
     protected var androidTVInterfaceOnSeekTime = 30000L
@@ -196,7 +192,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         R.drawable.sun_4,
         R.drawable.sun_5,
         R.drawable.sun_6,
-        // R.drawable.sun_7,
+        R.drawable.sun_7,
         // R.drawable.ic_baseline_brightness_1_24,
         // R.drawable.ic_baseline_brightness_2_24,
         // R.drawable.ic_baseline_brightness_3_24,
@@ -222,54 +218,127 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         val root = super.onCreateView(inflater, container, savedInstanceState) ?: return null
         playerBinding = PlayerCustomLayoutBinding.bind(root.findViewById(R.id.player_holder))
 
-        // Create GPUPlayerView dynamically and attach it to the PlayerView's content frame
-        // !!! Removed due to HDR conflict !!!
-        /*safe {
+        // Inject the overlay from a separate XML into the PlayerView content frame
+        safe {
             val pv = root.findViewById<androidx.media3.ui.PlayerView>(R.id.player_view)
             val packageName = context?.packageName ?: return@safe
             val contentId = resources.getIdentifier("exo_content_frame", "id", packageName)
-            val contentFrame = pv?.findViewById<android.view.ViewGroup>(contentId)
+            val contentFrame = pv?.findViewById<ViewGroup>(contentId)
             if (contentFrame != null) {
-                val gpu = GPUPlayerView(context)
-                val lp = android.widget.FrameLayout.LayoutParams(
-                    android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                    android.view.ViewGroup.LayoutParams.MATCH_PARENT
+                brightnessOverlay = contentFrame.findViewById<View>(R.id.extra_brightness_overlay)
+                brightnessOverlay = LayoutInflater.from(context).inflate(
+                    R.layout.extra_brightness_overlay,
+                    contentFrame,
+                    false
                 )
-                // Insert as first child so it sits behind any controls inside content frame
-                contentFrame.addView(gpu, 0, lp)
-                gpuPlayerView = gpu
+                contentFrame.addView(brightnessOverlay)
+                requestUpdateBrightnessOverlayOnNextLayout()
             }
-        }*/
+        }
+
         return root
-    }
-
-
-    fun setGpuExtraBrightness(extra: Float) {
-        gpuBrightnessFilter?.setBrightness(extra)
     }
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun playerUpdated(player: Any?) {
         super.playerUpdated(player)
-        if (player is ExoPlayer) {
-            // attach GL renderer filter if available
-            gpuPlayerView?.setExoPlayer(player)
-        }
     }
 
     override fun onDestroyView() {
-        // Clean up dynamic GPUPlayerView if created
+        // Clean up brightness overlay if created
         safe {
-            gpuPlayerView?.onPause()
-            gpuPlayerView?.setGlFilter(null)
-            gpuBrightnessFilter = null
-            val parent = gpuPlayerView?.parent as? android.view.ViewGroup
-            parent?.removeView(gpuPlayerView)
+            // remove overlay if present
+            brightnessOverlay?.let { overlay ->
+                val oParent = overlay.parent as? ViewGroup
+                oParent?.removeView(overlay)
+            }
         }
-
-        gpuPlayerView = null
+        brightnessOverlay = null
         playerBinding = null
         super.onDestroyView()
+    }
+
+    /**
+     * Resize/position the brightness overlay to exactly match the visible video surface.
+     * This copies the video surface size, scale and translation so the overlay won't cover
+     * letterbox/pillarbox areas when zooming or panning.
+     */
+    private fun updateBrightnessOverlayBounds() {
+        val overlay = brightnessOverlay ?: return
+        val pv = playerView ?: return
+        val video = pv.videoSurfaceView ?: return
+
+        // Compute accurate transformed bounding box of the video view after scale+translation
+        val vw = video.width.toFloat()
+        val vh = video.height.toFloat()
+        val sx = video.scaleX
+        val sy = video.scaleY
+        if (vw > 0f && vh > 0f) {
+            // pivot defaults to center if not set
+            val pivotX = if (video.pivotX != 0f) video.pivotX else vw * 0.5f
+            val pivotY = if (video.pivotY != 0f) video.pivotY else vh * 0.5f
+            // Use view position (includes translation) as base; avoid double-counting translation
+            val tx = video.x
+            val ty = video.y
+
+            // transform function for a local point (lx,ly)
+            fun transform(lx: Float, ly: Float): Pair<Float, Float> {
+                val gx = tx + pivotX + (lx - pivotX) * sx
+                val gy = ty + pivotY + (ly - pivotY) * sy
+                return Pair(gx, gy)
+            }
+
+            val p0 = transform(0f, 0f)
+            val p1 = transform(vw, 0f)
+            val p2 = transform(0f, vh)
+            val p3 = transform(vw, vh)
+
+            val minX = min(min(p0.first, p1.first), min(p2.first, p3.first))
+            val maxX = max(max(p0.first, p1.first), max(p2.first, p3.first))
+            val minY = min(min(p0.second, p1.second), min(p2.second, p3.second))
+            val maxY = max(max(p0.second, p1.second), max(p2.second, p3.second))
+
+            val newW = ceil(maxX - minX).toInt().coerceAtLeast(0)
+            val newH = ceil(maxY - minY).toInt().coerceAtLeast(0)
+
+            val lp = overlay.layoutParams
+            if (lp == null) {
+                overlay.layoutParams = ViewGroup.LayoutParams(newW, newH)
+            } else {
+                if (lp.width != newW || lp.height != newH) {
+                    lp.width = newW
+                    lp.height = newH
+                    overlay.layoutParams = lp
+                }
+            }
+
+            overlay.scaleX = 1.0f
+            overlay.scaleY = 1.0f
+            overlay.x = minX
+            overlay.y = minY
+        }
+    }
+
+    /**
+     * Ensure the overlay is updated once the next layout pass completes.
+     * Adds a one-time global layout listener (PiP/resizing/rotation frames).
+     */
+    private fun requestUpdateBrightnessOverlayOnNextLayout() {
+        val pv = playerView ?: return
+        safe {
+            val obs = pv.viewTreeObserver
+            val listener = object : android.view.ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    safe {
+                        updateBrightnessOverlayBounds()
+                    }
+                    if (obs.isAlive) {
+                        obs.removeOnGlobalLayoutListener(this)
+                    }
+                }
+            }
+            if (obs.isAlive) obs.addOnGlobalLayoutListener(listener)
+        }
     }
 
     open fun showMirrorsDialogue() {
@@ -578,6 +647,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 activity?.popCurrentPage("FullScreenPlayer")
             }
         }
+        requestUpdateBrightnessOverlayOnNextLayout()
         super.onResume()
     }
 
@@ -1269,6 +1339,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             // Ignore if we have no zoom or mid animation
             playerView?.post {
                 applyZoomMatrix(matrix, true)
+                requestUpdateBrightnessOverlayOnNextLayout()
             }
         }
     }
@@ -1342,17 +1413,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             translationY = 0.0f
         }
 
-        safe {
-            gpuPlayerView?.setPlayerScaleType(
-                when (resize) {
-                    PlayerResize.Fit -> PlayerScaleType.RESIZE_FIT
-                    PlayerResize.Fill -> PlayerScaleType.RESIZE_FILL
-                    PlayerResize.Zoom -> PlayerScaleType.RESIZE_ZOOM
-                }
-            )
-        }
-
         super.resize(resize, showToast)
+        requestUpdateBrightnessOverlayOnNextLayout()
     }
 
     /**
@@ -1433,6 +1495,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             videoView.scaleY = scaledAspect
             videoView.translationX = expectedTranslationX
             videoView.translationY = expectedTranslationY
+            updateBrightnessOverlayBounds()
         }
     }
 
@@ -1505,6 +1568,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                         // Delta move
                         matrix.postTranslate(newPan.x - oldPan.x, newPan.y - oldPan.y)
                         applyZoomMatrix(matrix, false)
+                        updateBrightnessOverlayBounds()
                     }
                     lastPan = newPan
                 }
@@ -1790,16 +1854,18 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                     }
 
                                     val lastRequested = currentRequestedBrightness
-                                    val nextBrightness =
+                                    val nextBrightness = if (extraBrightnessEnabled) {
+                                        currentRequestedBrightness + verticalAddition
+                                    } else {
                                         (currentRequestedBrightness + verticalAddition).coerceIn(
                                             0.0f,
                                             1.0f
-                                        ) // !!! Removed due to HDR conflict !!!
-                                    //
+                                        )
+                                    }
                                     // Log.e("Brightness", "Current: $currentRequestedBrightness, Next: $nextBrightness")
                                     // show toast
-                                    if (nextBrightness > 1.0f && isBrightnessLocked && !hasShownBrightnessToast) {
-                                        //showToast(R.string.slide_up_again_to_exceed_100)
+                                    if (extraBrightnessEnabled && nextBrightness > 1.0f && isBrightnessLocked && !hasShownBrightnessToast) {
+                                        showToast(R.string.slide_up_again_to_exceed_100)
                                         hasShownBrightnessToast = true
                                     }
                                     currentRequestedBrightness = nextBrightness
@@ -1809,7 +1875,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                         setBrightness(currentRequestedBrightness)
 
                                     val level1ProgressBar = playerProgressbarRightLevel1
-                                    //val level2ProgressBar = playerProgressbarRightLevel2
 
                                     // max is set high to make it smooth
                                     level1ProgressBar.max = 100_000
@@ -1822,75 +1887,26 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                             ) * 100_000f).toInt()
                                         )
 
-                                    // !!! Removed due to HDR conflict !!!
-                                    /*if (!isBrightnessLocked) {
+                                    if (extraBrightnessEnabled && !isBrightnessLocked) {
+                                        val level2ProgressBar = playerProgressbarRightLevel2
+
                                         currentExtraBrightness = if (currentRequestedBrightness > 1.0f) min(2.0f, currentRequestedBrightness) - 1.0f else 0.0f
                                         level2ProgressBar.max = 100_000
                                         level2ProgressBar.progress =
                                             (currentExtraBrightness * 100_000f).toInt().coerceIn(2_000, 100_000)
                                         level2ProgressBar.isVisible = currentRequestedBrightness > 1.0f
-
-                                        // Only create/remove the GL filter when crossing the 1.0 threshold
-                                        val wasExtra = lastRequested > 1.0f
-                                        val willExtra = currentRequestedBrightness > 1.0f
-
-                                        if (willExtra && !wasExtra) {
-                                            // crossed from <=1.0 to >1.0: initialize filter
-                                            try {
-                                                if (gpuBrightnessFilter == null) {
-                                                    gpuBrightnessFilter = GlBrightnessFilter()
-                                                    gpuPlayerView?.setGlFilter(gpuBrightnessFilter)
-                                                }
-                                                setGpuExtraBrightness(currentExtraBrightness)
-                                                hasBrightnessBoostError = false
-                                            } catch (t: Throwable) {
-                                                logError(t)
-                                                hasBrightnessBoostError = true
-                                            }
-                                        } else if (willExtra) {
-                                            // still >1.0: only update brightness
-                                            try {
-                                                setGpuExtraBrightness(currentExtraBrightness)
-                                            } catch (t: Throwable) {
-                                                logError(t)
-                                                hasBrightnessBoostError = true
-                                            }
-                                        } else if (wasExtra) {
-                                            // crossed from >1.0 to <=1.0: remove filter
-                                            try {
-                                                gpuPlayerView?.setGlFilter(null)
-                                                gpuBrightnessFilter = null
-                                            } catch (t: Throwable) {
-                                                logError(t)
-                                                hasBrightnessBoostError = true
-                                            }
+                                        brightnessOverlay?.let {
+                                            it.alpha = currentExtraBrightness
                                         }
-
-                                        if (willExtra) {
-                                            level2ProgressBar.progressTintList = ColorStateList.valueOf(
-                                                ContextCompat.getColor(
-                                                    level2ProgressBar.context, if (hasBrightnessBoostError) {
-                                                        R.color.colorPrimaryRed
-                                                    } else {
-                                                        R.color.colorPrimaryOrange
-                                                    }
-                                                )
-                                            )
-                                        }
-                                    }*/
+                                    }
 
                                     // Log.i("Brightness", "current: $currentRequestedBrightness, ce: $currentExtraBrightness L1: ${level1ProgressBar.progress}, L2: ${level2ProgressBar.progress}")
                                     playerProgressbarRightIcon.setImageResource(
-                                        brightnessIcons[min( // clamp the value just in case
+                                        brightnessIcons[min( // clamp the value in case of extra brightness
                                             brightnessIcons.size - 1,
                                             max(
                                                 0,
-                                                round(
-                                                    max(
-                                                        currentRequestedBrightness,
-                                                        1.0f
-                                                    ) * (brightnessIcons.size - 1)
-                                                ).toInt()
+                                                round(currentRequestedBrightness * (brightnessIcons.size - 1)).toInt()
                                             )
                                         )]
                                     )
@@ -2345,6 +2361,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     false
                 )
 
+                extraBrightnessEnabled = settingsManager.getBoolean(
+                    ctx.getString(R.string.extra_brightness_key),
+                    false
+                )
 
                 val profiles = QualityDataHelper.getProfiles()
                 val type = if (ctx.isUsingMobileData())
