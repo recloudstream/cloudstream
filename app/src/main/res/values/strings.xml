@@ -624,6 +624,8 @@
     <string name="set_default">Set default</string>
     <string name="use">Use</string>
     <string name="edit">Edit</string>
+    <string name="source_priority">Source priority</string>
+    <string name="source_priority_help">Decide how video sources should be sorted in the player</string>
     <string name="profiles">Profiles</string>
     <string name="help">Help</string>
     <string name="quality_profile_help">
