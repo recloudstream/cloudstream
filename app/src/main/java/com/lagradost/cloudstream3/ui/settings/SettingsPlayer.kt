@@ -9,6 +9,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.BasePreferenceFragmentCompat
+import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -21,6 +22,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setTool
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.ui.subtitles.ChromecastSubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
@@ -34,6 +36,7 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
         setPaddingBottom()
         setToolBarScrollFlags()
     }
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_player, rootKey)
@@ -49,7 +52,7 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
             ),
             TV or EMULATOR
         )
-        
+
         getPref(R.string.preview_seekbar_key)?.hideOn(TV)
         getPref(R.string.pref_category_android_tv_key)?.hideOn(PHONE)
 
@@ -120,7 +123,7 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
 
             // Player defaults
             val playerDefaults = mapOf(
-                ctx.getString(R.string.show_name_key)       to true,
+                ctx.getString(R.string.show_name_key) to true,
                 ctx.getString(R.string.show_resolution_key) to true,
                 ctx.getString(R.string.show_media_info_key) to false
             )
@@ -211,7 +214,8 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
                 add("")
                 addAll(players.map { it.uniqueId() })
             }
-            val current = settingsManager.getString(getString(R.string.player_default_key), "") ?: ""
+            val current =
+                settingsManager.getString(getString(R.string.player_default_key), "") ?: ""
 
             activity?.showBottomDialog(
                 prefNames.toList(),
@@ -234,6 +238,21 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
 
         getPref(R.string.subtitle_settings_chromecast_key)?.setOnPreferenceClickListener {
             ChromecastSubtitlesFragment.push(activity, false)
+            return@setOnPreferenceClickListener true
+        }
+
+        getPref(R.string.player_source_priority_key)?.setOnPreferenceClickListener {
+            ioSafe {
+                val defaultSources = QualityProfileDialog.getAllDefaultSources()
+                val activity = activity ?: return@ioSafe
+                activity.runOnUiThread {
+                    QualityProfileDialog(
+                        activity,
+                        R.style.DialogFullscreenPlayer,
+                        defaultSources,
+                    ).show()
+                }
+            }
             return@setOnPreferenceClickListener true
         }
 
