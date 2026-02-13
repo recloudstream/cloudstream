@@ -308,29 +308,16 @@
                     </LinearLayout>
 
                     <TextView
-                        android:id="@+id/player_video_title_rez"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:gravity="end"
-                        android:maxWidth="600dp"
-                        android:textAlignment="viewEnd"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        tools:text="1920x1080" />
-
-                    <TextView
                         android:id="@+id/player_video_info"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
+                        android:layout_marginTop="6dp"
                         android:layout_marginBottom="2.5dp"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        android:visibility="gone"
+                        android:textColor="@color/grayTextColor"
+                        android:textSize="12sp"
                         android:layout_gravity="end"
-                        tools:text="HDR10 • HEVC" />
-
+                        tools:text="1920x1080 • HDR10 • HEVC" />
 
                     <FrameLayout
                         android:id="@+id/player_episode_filler_holder"

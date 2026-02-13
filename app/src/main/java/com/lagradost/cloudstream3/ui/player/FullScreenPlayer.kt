@@ -444,12 +444,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 start()
             }
         }
-        playerBinding?.playerVideoTitleRez?.let {
-            ObjectAnimator.ofFloat(it, "translationY", titleMove).apply {
-                duration = 200
-                start()
-            }
-        }
+
         playerBinding?.playerVideoInfo?.let {
             ObjectAnimator.ofFloat(it, "translationY", titleMove).apply {
                 duration = 200
@@ -1001,7 +996,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             // video_bar.startAnimation(fadeAnimation)
 
             // TITLE
-            playerVideoTitleRez.startAnimation(fadeAnimation)
             playerVideoInfo.startAnimation(fadeAnimation)
             playerEpisodeFiller.startAnimation(fadeAnimation)
             playerVideoTitleHolder.startAnimation(fadeAnimation)
