@@ -30,6 +30,8 @@ import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
 import com.lagradost.cloudstream3.utils.DataStore.getSharedPrefs
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllResumeStateIds
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
 import com.lagradost.cloudstream3.utils.ResourceLiveData
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
@@ -164,12 +166,18 @@ class DownloadViewModel : ViewModel() {
     ) {
         val settingsManager = context.getSharedPrefs()
         ioSafe {
+           // Do not remove headers used by resume watching
+            val resumeWatchingIds =
+                getAllResumeStateIds()?.mapNotNull { id ->
+                    getLastWatched(id)?.parentId
+                }?.toSet() ?: emptySet()
+
             settingsManager.edit {
                 cached.forEach { header ->
                     val downloads = totalDownloads[header.id] ?: 0
                     val bytes = totalBytesUsedByChild[header.id] ?: 0
 
-                    if (downloads <= 0 || bytes <= 0) {
+                    if ( (downloads <= 0 || bytes <= 0) && !resumeWatchingIds.contains(header.id) ) {
                         Log.i(TAG, "Removing download header key: ${header.id}")
                         val oldPAth = getFolderName(DOWNLOAD_HEADER_CACHE, header.id.toString())
                         val newPath =
