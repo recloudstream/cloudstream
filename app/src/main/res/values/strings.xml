@@ -32,6 +32,7 @@
     <string name="title_home">Home</string>
     <string name="title_search">Search</string>
     <string name="title_downloads">Downloads</string>
+    <string name="download_queue">Download queue</string>
     <string name="title_settings">Settings</string>
     <string name="search_hint">Search…</string>
     <string name="search_hint_site" formatted="true">Search %s…</string>
@@ -74,6 +75,7 @@
     <string name="download_done">Download Done</string>
     <string name="downloads_delete_select">Select Items to Delete</string>
     <string name="downloads_empty">There are currently no downloads.</string>
+    <string name="queue_empty_message">There are currently no queued downloads.</string>
     <string name="offline_file">Available for watching offline</string>
     <string name="select_all">Select All</string>
     <string name="deselect_all">Deselect All</string>
@@ -164,6 +166,9 @@
     <string name="use_system_brightness_settings_des">Use system brightness in the app player instead of a dark
         overlay
     </string>
+    <string name="extra_brightness_settings">Extra brightness</string>
+    <string name="extra_brightness_settings_des">Enable brightness filter when 100% display brightness is exceeded</string>
+    <string name="extra_brightness_key">extra_brightness_enabled</string>
     <string name="episode_sync_settings">Update watch progress</string>
     <string name="episode_sync_settings_des">Automatically sync your current episode progress</string>
     <string name="restore_settings">Restore data from backup</string>
@@ -181,9 +186,13 @@
     <string name="settings_info">Info</string>
     <string name="advanced_search">Advanced Search</string>
     <string name="advanced_search_des">Gives you the search results separated by provider</string>
+    <string name="search_suggestions">Search Suggestions</string>
+    <string name="search_suggestions_des">Show search suggestions while typing</string>
+    <string name="clear_suggestions">Clear Suggestions</string>
     <string name="show_fillers_settings">Show filler episode for anime</string>
     <string name="show_trailers_settings">Show trailers</string>
     <string name="kitsu_settings">Show posters from Kitsu</string>
+    <string name="show_cast_in_details">Show cast panel</string>
     <string name="pref_filter_search_quality">Hide selected video quality in search results</string>
     <string name="automatic_plugin_updates">Automatic plugin updates</string>
     <string name="automatic_plugin_download">Automatically download plugins</string>
@@ -319,7 +328,7 @@
     <string name="watch_quality_pref">Preferred watch quality (WiFi)</string>
     <string name="watch_quality_pref_data">Preferred watch quality (Mobile Data)</string>
     <string name="limit_title">Video player title max chars</string>
-    <string name="limit_title_rez">Video player resolution</string>
+    <string name="limit_title_rez">Show player information</string>
     <string name="video_buffer_size_settings">Video buffer size</string>
     <string name="video_buffer_length_settings">Video buffer length</string>
     <string name="video_buffer_disk_settings">Video cache on disk</string>
@@ -466,6 +475,7 @@
     <string name="resolution_and_title">Resolution and title</string>
     <string name="title">Title</string>
     <string name="resolution">Resolution</string>
+    <string name="video_info">Media Info</string>
     <string name="error_invalid_id">Invalid ID</string>
     <string name="error_invalid_data">Invalid data</string>
     <string name="error_invalid_url">Invalid URL</string>
@@ -743,7 +753,12 @@
     <string name="action_reload">Reloaded</string>
     <string name="reload_provider">Reload Provider</string>
     <string name="name">Name</string>
+    <string name="source_name">Source Name</string>
     <string name="resolution_and_name">Resolution and name</string>
+    <string name="download_all">Download all</string>
+    <string name="cancel_all">Cancel all</string>
+    <string name="download_episode_range">Do you want to download episode %s?</string>
+    <string name="cancel_queue_message">Do you want to cancel all queued downloads?</string>
     <string name="subs_subtitle_alignment">Subtitle Alignment</string>
     <string name="bottom_left">Bottom left</string>
     <string name="bottom_center">Bottom center</string>
@@ -754,4 +769,14 @@
     <string name="top_left">Top left</string>
     <string name="top_center">Top center</string>
     <string name="top_right">Top right</string>
+
+    <plurals name="downloads_active">
+        <item quantity="one">%d active download</item>
+        <item quantity="other">%d active downloads</item>
+    </plurals>
+
+    <plurals name="downloads_queued">
+        <item quantity="one">%d download queued</item>
+        <item quantity="other">%d downloads queued</item>
+    </plurals>
 </resources>

@@ -257,7 +257,7 @@
     <string name="update">Cập nhật</string>
     <string name="watch_quality_pref">Chất lượng xem ưu tiên (WiFi)</string>
     <string name="limit_title">Kí tự tối đa trên tiêu đề</string>
-    <string name="limit_title_rez">Nội dung trình phát video</string>
+    <string name="limit_title_rez">Hiện thông tin trình phát</string>
     <string name="video_buffer_size_settings">Kích thước bộ nhớ đệm video</string>
     <string name="video_buffer_length_settings">Thời lượng bộ nhớ đệm</string>
     <string name="video_buffer_disk_settings">Lưu bộ nhớ đệm video trên ổ cứng</string>
@@ -417,7 +417,7 @@
     <string name="view_public_repositories_button">Xem kho lưu trữ của cộng đồng</string>
     <string name="view_public_repositories_button_short">Danh sách công khai</string>
     <string name="uppercase_all_subtitles">In hoa toàn bộ phụ đề</string>
-    <string name="download_all_plugins_from_repo">Cảnh báo: CloudStream 3 không chịu trách nhiệm về các tiện ích bên thứ ba và không cung cấp bất kỳ sự hỗ trợ nào!</string>
+    <string name="download_all_plugins_from_repo">Cảnh báo: CloudStream không chịu trách nhiệm về các tiện ích bên thứ ba và không cung cấp bất kỳ sự hỗ trợ nào!</string>
     <string name="single_plugin_disabled" formatted="true">%s (Đã vô hiệu hoá)</string>
     <string name="tracks">Âm thanh &amp; Chất lượng</string>
     <string name="audio_tracks">Âm thanh</string>
@@ -673,7 +673,7 @@
     <string name="encoding_error">Lỗi mã hóa</string>
     <string name="software_decoding_desc">Giải mã phần mềm cho phép phát các tệp video không được thiết bị của bạn hỗ trợ, nhưng có thể gây ra phản hồi chậm hoặc phát lại không ổn định ở độ phân giải cao.</string>
     <string name="software_decoding">Bộ giải mã ứng dụng</string>
-    <string name="torrent_not_accepted">Khởi động lại ứng dụng và chấp nhận cửa sổ Stream Torrent để tiếp tục</string>
+    <string name="torrent_not_accepted">Khởi động lại ứng dụng và chấp nhận cửa sổ Stream Torrent để tiếp tục.</string>
     <string name="torrent_preferred_media">Kích hoạt torrent trong Cài đặt/Nguồn phim/Thể loại ưu tiên</string>
     <string name="player_load_one_subtitle_online">Tải phụ đề đầu tiên có sẵn</string>
     <string name="audio_singluar">Âm thanh</string>
@@ -745,4 +745,16 @@
     <string name="middle_left">Giữa trái</string>
     <string name="middle_right">Giữa phải</string>
     <string name="play_full_series_button">Phát trọn bộ loạt phim</string>
+    <string name="search_suggestions">Gợi ý tìm kiếm</string>
+    <string name="search_suggestions_des">Hiển thị gợi ý tìm kiếm khi đang nhập</string>
+    <string name="clear_suggestions">Xóa gợi ý</string>
+    <string name="install_prerelease">Cài đặt phiên bản phát hành trước</string>
+    <string name="prerelease_already_installed">Bản phát hành trước đã được cài đặt.</string>
+    <string name="prerelease_install_failed">Cài đặt bản phát hành trước thất bại.</string>
+    <string name="show_episode_text">Chữ của tập</string>
+    <string name="extra_brightness_settings_des">Kích hoạt bộ lọc độ sáng khi độ sáng màn hình vượt quá 100%</string>
+    <string name="show_cast_in_details">Hiển thị bảng điều khiển</string>
+    <string name="video_info">Thông tin âm thanh</string>
+    <string name="extra_brightness_settings">Độ sáng bổ sung</string>
+    <string name="source_name">Tên nguồn</string>
 </resources>

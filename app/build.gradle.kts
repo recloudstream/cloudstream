@@ -63,7 +63,7 @@ android {
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 67
-        versionName = "4.6.1"
+        versionName = "4.6.2"
 
         resValue("string", "commit_hash", getGitCommitHash())
 
@@ -228,8 +228,6 @@ dependencies {
 
         this.extra.set("isDebug", isDebug)
     })
-    // Extra brightness video filters
-    implementation(libs.gpuv)
 }
 
 tasks.register<Jar>("androidSourcesJar") {

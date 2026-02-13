@@ -33,7 +33,7 @@
 
         <Preference
             android:icon="@drawable/ic_baseline_text_format_24"
-            android:key="@string/prefer_limit_title_rez_key"
+            android:key="@string/prefer_limit_show_player_info"
             android:title="@string/limit_title_rez" />
         <SwitchPreference
             android:defaultValue="false"
@@ -112,11 +112,17 @@
             app:defaultValue="true"
             app:key="@string/preview_seekbar_key" />
         <Preference
-            android:icon="@drawable/ic_baseline_extension_24"
-            android:summary="@string/software_decoding_desc"
-            android:title="@string/software_decoding"
-            app:defaultValue="true"
-            app:key="@string/software_decoding_key" />
+                android:icon="@drawable/ic_baseline_extension_24"
+                android:summary="@string/software_decoding_desc"
+                android:title="@string/software_decoding"
+                app:defaultValue="true"
+                app:key="@string/software_decoding_key" />
+        <SwitchPreference
+            android:icon="@drawable/sun_7_24"
+            android:summary="@string/extra_brightness_settings_des"
+            android:title="@string/extra_brightness_settings"
+            app:defaultValue="false"
+            app:key="@string/extra_brightness_key" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/pref_category_gestures"

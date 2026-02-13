@@ -227,6 +227,7 @@ import com.lagradost.cloudstream3.extractors.StreamWishExtractor
 import com.lagradost.cloudstream3.extractors.StreamhideCom
 import com.lagradost.cloudstream3.extractors.StreamhideTo
 import com.lagradost.cloudstream3.extractors.Streamhub2
+import com.lagradost.cloudstream3.extractors.Streamix
 import com.lagradost.cloudstream3.extractors.Streamlare
 import com.lagradost.cloudstream3.extractors.StreamoUpload
 import com.lagradost.cloudstream3.extractors.Streamplay
@@ -253,6 +254,8 @@ import com.lagradost.cloudstream3.extractors.UpstreamExtractor
 import com.lagradost.cloudstream3.extractors.Uqload
 import com.lagradost.cloudstream3.extractors.Uqload1
 import com.lagradost.cloudstream3.extractors.Uqload2
+import com.lagradost.cloudstream3.extractors.Uqloadcx
+import com.lagradost.cloudstream3.extractors.Uqloadbz
 import com.lagradost.cloudstream3.extractors.UqloadsXyz
 import com.lagradost.cloudstream3.extractors.Urochsunloath
 import com.lagradost.cloudstream3.extractors.Userload
@@ -282,6 +285,8 @@ import com.lagradost.cloudstream3.extractors.Vidguardto3
 import com.lagradost.cloudstream3.extractors.VidhideExtractor
 import com.lagradost.cloudstream3.extractors.Vidmoly
 import com.lagradost.cloudstream3.extractors.Vidmolyme
+import com.lagradost.cloudstream3.extractors.Vidmolyto
+import com.lagradost.cloudstream3.extractors.Vidmolybiz
 import com.lagradost.cloudstream3.extractors.Vidnest
 import com.lagradost.cloudstream3.extractors.Vido
 import com.lagradost.cloudstream3.extractors.Vidoza
@@ -995,6 +1000,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Uqload(),
     Uqload1(),
     Uqload2(),
+    Uqloadcx(),
+    Uqloadbz(),
     Evoload(),
     Evoload1(),
     UpstreamExtractor(),
@@ -1128,6 +1135,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Streamplay(),
     Vidmoly(),
     Vidmolyme(),
+    Vidmolyto(),
+    Vidmolybiz(),
     Voe(),
     Voe1(),
     Tubeless(),
@@ -1136,6 +1145,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Jeniusplay(),
     StreamoUpload(),
     Streamup(),
+    Streamix(),
 
     GamoVideo(),
     Gdriveplayerapi(),

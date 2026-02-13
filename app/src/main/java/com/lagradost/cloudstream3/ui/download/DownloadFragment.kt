@@ -29,6 +29,7 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
+import com.lagradost.cloudstream3.ui.download.queue.DownloadQueueViewModel
 import com.lagradost.cloudstream3.ui.player.BasicLink
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.LinkGenerator
@@ -58,6 +59,7 @@ class DownloadFragment : BaseFragment<FragmentDownloadsBinding>(
 ) {
 
     private val downloadViewModel: DownloadViewModel by activityViewModels()
+    private val downloadQueueViewModel: DownloadQueueViewModel by activityViewModels()
 
     private fun View.setLayoutWidth(weight: Long) {
         val param = LinearLayout.LayoutParams(
@@ -142,6 +144,17 @@ class DownloadFragment : BaseFragment<FragmentDownloadsBinding>(
                 binding.downloadApp
             )
         }
+        observe(downloadQueueViewModel.childCards) { cards ->
+            val size = cards.currentDownloads.size + cards.queue.size
+            val context = binding.root.context
+            val baseText = context.getString(R.string.download_queue)
+            binding.downloadQueueText.text =  if (size > 0) {
+                "$baseText (${cards.currentDownloads.size}/$size)"
+            } else {
+                baseText
+            }
+        }
+
         observe(downloadViewModel.selectedBytes) {
             updateDeleteButton(downloadViewModel.selectedItemIds.value?.count() ?: 0, it)
         }
@@ -213,7 +226,7 @@ class DownloadFragment : BaseFragment<FragmentDownloadsBinding>(
             setLinearListLayout(
                 isHorizontal = false,
                 nextRight = FOCUS_SELF,
-                nextDown = FOCUS_SELF,
+                nextDown = R.id.download_queue_button,
             )
         }
 
@@ -225,6 +238,10 @@ class DownloadFragment : BaseFragment<FragmentDownloadsBinding>(
             downloadStreamButton.apply {
                 isGone = isLayout(TV)
                 setOnClickListener { showStreamInputDialog(it.context) }
+            }
+
+            downloadQueueButton.setOnClickListener {
+                activity?.navigate(R.id.action_navigation_global_to_navigation_download_queue)
             }
 
             downloadStreamButtonTv.isFocusableInTouchMode = isLayout(TV)

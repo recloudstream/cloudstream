@@ -49,7 +49,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getCurrentAccount
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
@@ -68,7 +68,7 @@ class HomeViewModel : ViewModel() {
             val resumeWatchingResult = withContext(Dispatchers.IO) {
                 resumeWatching?.mapNotNull { resume ->
 
-                    val data = getKey<VideoDownloadHelper.DownloadHeaderCached>(
+                    val data = getKey<DownloadObjects.DownloadHeaderCached>(
                         DOWNLOAD_HEADER_CACHE,
                         resume.parentId.toString()
                     ) ?: return@mapNotNull null
@@ -523,7 +523,7 @@ class HomeViewModel : ViewModel() {
             } else if (api == null) {
                 // API is not found aka not loaded or removed, post the loading
                 // progress if waiting for plugins, otherwise nothing
-                if (PluginManager.loadedOnlinePlugins || PluginManager.checkSafeModeFile() || lastError != null) {
+                if (PluginManager.loadedOnlinePlugins || PluginManager.isSafeMode()) {
                     loadAndCancel(noneApi)
                 } else {
                     _page.postValue(Resource.Loading())
