@@ -265,9 +265,15 @@ class CustomSubripParser : SubtitleParser {
             timestampMs += Assertions.checkNotNull<String?>(matcher.group(groupOffset + 3))
                 .toLong() * 1000
             val millis = matcher.group(groupOffset + 4)
-            if (millis != null) {
-                timestampMs += millis.toLong()
+
+            timestampMs += when (millis?.length) {
+                null -> 0L
+                1 -> millis.toLong() * 100L
+                2 -> millis.toLong() * 10L
+                3 -> millis.toLong() * 1L
+                else -> millis.substring(0, 3).toLong()
             }
+
             return timestampMs * 1000
         }
 

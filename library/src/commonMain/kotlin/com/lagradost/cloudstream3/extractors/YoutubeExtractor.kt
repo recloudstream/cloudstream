@@ -8,6 +8,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.newExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import org.schabi.newpipe.extractor.stream.StreamInfo
+import org.schabi.newpipe.extractor.stream.StreamType
 
 class YoutubeShortLinkExtractor : YoutubeExtractor() {
     override val mainUrl = "https://youtu.be"
@@ -38,9 +39,13 @@ open class YoutubeExtractor : ExtractorApi() {
 
         val info = StreamInfo.getInfo(watchUrl)
 
-        val isLive = info.streamType?.name.equals("LIVE_STREAM")
+        val isLive =
+            info.streamType == StreamType.LIVE_STREAM
+                    || info.streamType == StreamType.AUDIO_LIVE_STREAM
+                    || info.streamType == StreamType.POST_LIVE_STREAM
+                    || info.streamType == StreamType.POST_LIVE_AUDIO_STREAM
 
-        if( isLive && info.hlsUrl != null ) {
+        if (isLive && info.hlsUrl != null) {
             callback(
                 newExtractorLink(
                     source = name,
