@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.newExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import org.schabi.newpipe.extractor.stream.StreamInfo
 
 class YoutubeShortLinkExtractor : YoutubeExtractor() {
@@ -35,12 +36,26 @@ open class YoutubeExtractor : ExtractorApi() {
         val videoId = extractYouTubeId(url)
         val watchUrl = "$mainUrl/watch?v=$videoId"
 
-        val streamInfo = StreamInfo.getInfo(watchUrl)
+        val info = StreamInfo.getInfo(watchUrl)
 
-        processStreams(streamInfo, subtitleCallback, callback)
+        val isLive = info.streamType?.name.equals("LIVE_STREAM")
+
+        if( isLive && info.hlsUrl != null ) {
+            callback(
+                newExtractorLink(
+                    source = name,
+                    name = "YouTube Live",
+                    url = info.hlsUrl
+                ) {
+                    type = ExtractorLinkType.M3U8
+                }
+            )
+        } else {
+            processVideo(info, subtitleCallback, callback)
+        }
     }
 
-    private suspend fun processStreams(
+    private suspend fun processVideo(
         info: StreamInfo,
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
