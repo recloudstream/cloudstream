@@ -63,9 +63,20 @@ android {
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 67
-        versionName = "4.6.2"
+        versionName = "4.6.20"
 
         resValue("string", "commit_hash", getGitCommitHash())
+         
+        resourceConfigurations.addAll(
+            listOf(
+                "en", "af", "am", "apc", "ar", "ars", "as", "az", "be", "bg", "bn", "ca", "ckb", "cs",
+                "de", "el", "eo", "es", "fa", "fil", "fr", "gl", "hi", "hr", "hu", "in", "it", "iw",
+                "ja", "kn", "ko", "lt", "lv", "mk", "ml", "ms", "mt", "my", "ne", "nl", "nn", "no",
+                "or", "pl", "pt", "pt-rBR", "ro", "ru", "sk", "so", "sv", "ta", "ti", "tl", "tr",
+                "uk", "ur", "vi", "zh", "zh-rTW"
+            )
+        )
+
 
         manifestPlaceholders["target_sdk_version"] = libs.versions.targetSdk.get()
 
@@ -152,7 +163,15 @@ android {
         resValues = true
     }
 
+
+
     namespace = "com.lagradost.cloudstream3"
+
+    sourceSets {
+        getByName("main") {
+            res.srcDirs("src/main/res", "src/main/res-car")
+        }
+    }
 }
 
 dependencies {
@@ -171,6 +190,7 @@ dependencies {
     implementation(libs.fragment.ktx)
     implementation(libs.bundles.lifecycle)
     implementation(libs.bundles.navigation)
+    implementation(libs.car.app)
 
     // Design & UI
     implementation(libs.preference.ktx)

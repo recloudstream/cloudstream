@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<automotiveApp>
+    <uses name="media" />
+    <uses name="template" />
+    <uses name="navigation" />
+</automotiveApp>
