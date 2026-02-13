@@ -48,4 +48,7 @@
     <string name="car_library">Biblioteka</string>
     <string name="car_bookmarks">Obeleživači</string>
     <string name="car_resuming">Nastavljanje %1$s...</string>
+    <string name="car_player_mode">Režim reproduktora</string>
+    <string name="car_player_mode_advanced">Napredni reproduktor (hardware)</string>
+    <string name="car_player_mode_simple">Jednostavni reproduktor (legacy)</string>
 </resources>

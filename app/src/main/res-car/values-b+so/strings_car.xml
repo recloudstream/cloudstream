@@ -71,4 +71,7 @@
     <string name="car_library">Library</string>
     <string name="car_bookmarks">Bookmarks</string>
     <string name="car_resuming">Resuming %1$s...</string>
+    <string name="car_player_mode">Qaabka ciyaaryahanka</string>
+    <string name="car_player_mode_advanced">Ciyaaryahan horumarsan (hardware)</string>
+    <string name="car_player_mode_simple">Ciyaaryahan fudud (legacy)</string>
 </resources>

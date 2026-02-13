@@ -51,6 +51,7 @@ const val RESULT_DUB = "result_dub"
 const val KEY_RESULT_SORT = "result_sort"
 const val USER_PINNED_PROVIDERS = "user_pinned_providers" //key for pinned user set
 const val CAR_CATEGORY_VIEW_MODE = "car_category_view_mode"
+const val CAR_PLAYER_MODE = "car_player_mode"
 
 class UserPreferenceDelegate<T : Any>(
     private val key: String, private val default: T //, private val klass: KClass<T>
@@ -149,6 +150,7 @@ object DataStoreHelper {
         }
 
     var carCategoryViewMode: Int by UserPreferenceDelegate(CAR_CATEGORY_VIEW_MODE, 0)
+    var carPlayerMode: Int by UserPreferenceDelegate(CAR_PLAYER_MODE, 0)
 
     data class Account(
         @JsonProperty("keyIndex")

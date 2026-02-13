@@ -71,4 +71,7 @@
     <string name="car_library">Library</string>
     <string name="car_bookmarks">Bookmarks</string>
     <string name="car_resuming">Resuming %1$s...</string>
+    <string name="car_player_mode">播放器模式</string>
+    <string name="car_player_mode_advanced">進階播放器（hardware）</string>
+    <string name="car_player_mode_simple">簡易播放器（legacy）</string>
 </resources>

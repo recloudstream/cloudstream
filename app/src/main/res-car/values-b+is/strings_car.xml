@@ -48,4 +48,7 @@
     <string name="car_library">Bókasafn</string>
     <string name="car_bookmarks">Bókamerki</string>
     <string name="car_resuming">Heldur áfram %1$s...</string>
+    <string name="car_player_mode">Spilarahamur</string>
+    <string name="car_player_mode_advanced">Háþróaður spilari (hardware)</string>
+    <string name="car_player_mode_simple">Einfaldur spilari (legacy)</string>
 </resources>

@@ -48,4 +48,7 @@
     <string name="car_library">Biblioteka</string>
     <string name="car_bookmarks">Faqerojtësit</string>
     <string name="car_resuming">Duke vazhduar %1$s...</string>
+    <string name="car_player_mode">Modaliteti i luajtësit</string>
+    <string name="car_player_mode_advanced">Luajtës i avancuar (hardware)</string>
+    <string name="car_player_mode_simple">Luajtës i thjeshtë (legacy)</string>
 </resources>

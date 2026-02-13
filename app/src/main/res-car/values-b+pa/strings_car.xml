@@ -48,4 +48,7 @@
     <string name="car_library">ਲਾਇਬ੍ਰੇਰੀ</string>
     <string name="car_bookmarks">ਬੁੱਕਮਾਰਕ</string>
     <string name="car_resuming">%1$s ਮੁੜ ਸ਼ੁਰੂ ਹੋ ਰਿਹਾ ਹੈ...</string>
+    <string name="car_player_mode">ਪਲੇਅਰ ਮੋਡ</string>
+    <string name="car_player_mode_advanced">ਉੱਨਤ ਪਲੇਅਰ (hardware)</string>
+    <string name="car_player_mode_simple">ਸਰਲ ਪਲੇਅਰ (legacy)</string>
 </resources>

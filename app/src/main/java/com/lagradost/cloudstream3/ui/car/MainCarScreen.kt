@@ -146,6 +146,21 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
         )
 
         menuListBuilder.addItem(
+            Row.Builder()
+                .setTitle(CarStrings.get(R.string.car_player_mode))
+                .addText("${CarStrings.get(R.string.car_current)}: ${
+                    if (DataStoreHelper.carPlayerMode == 0) CarStrings.get(R.string.car_player_mode_advanced)
+                    else CarStrings.get(R.string.car_player_mode_simple)
+                }")
+                .setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, android.R.drawable.ic_menu_preferences)).build())
+                .setOnClickListener {
+                    DataStoreHelper.carPlayerMode = if (DataStoreHelper.carPlayerMode == 0) 1 else 0
+                    invalidate()
+                }
+                .build()
+        )
+
+        menuListBuilder.addItem(
             createMenuRow(
                 title = CarStrings.get(R.string.car_about_me),
                 iconRes = android.R.drawable.ic_menu_info_details,

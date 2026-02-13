@@ -48,4 +48,7 @@
     <string name="car_library">Knjižnica</string>
     <string name="car_bookmarks">Zaznamki</string>
     <string name="car_resuming">Nadaljujem %1$s...</string>
+    <string name="car_player_mode">Način predvajalnika</string>
+    <string name="car_player_mode_advanced">Napredni predvajalnik (hardware)</string>
+    <string name="car_player_mode_simple">Preprost predvajalnik (legacy)</string>
 </resources>

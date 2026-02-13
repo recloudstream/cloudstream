@@ -48,4 +48,7 @@
     <string name="car_library">Бібліятэка</string>
     <string name="car_bookmarks">Закладкі</string>
     <string name="car_resuming">Аднаўленне %1$s...</string>
+    <string name="car_player_mode">Рэжым прайгравальніка</string>
+    <string name="car_player_mode_advanced">Пашыраны прайгравальнік (hardware)</string>
+    <string name="car_player_mode_simple">Просты прайгравальнік (legacy)</string>
 </resources>

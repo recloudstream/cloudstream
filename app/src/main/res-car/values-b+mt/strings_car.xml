@@ -71,4 +71,7 @@
     <string name="car_library">Library</string>
     <string name="car_bookmarks">Bookmarks</string>
     <string name="car_resuming">Resuming %1$s...</string>
+    <string name="car_player_mode">Modalità tal-player</string>
+    <string name="car_player_mode_advanced">Player avvanzat (hardware)</string>
+    <string name="car_player_mode_simple">Player sempliċi (legacy)</string>
 </resources>

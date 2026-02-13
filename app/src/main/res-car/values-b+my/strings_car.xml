@@ -48,4 +48,7 @@
     <string name="car_library">စာကြည့်တိုက်</string>
     <string name="car_bookmarks">မှတ်သားမှုများ</string>
     <string name="car_resuming">%1$s ကို ဆက်လက်ကြည့်ရှုနေသည်...</string>
+    <string name="car_player_mode">ပလေယာမုဒ်</string>
+    <string name="car_player_mode_advanced">အဆင့်မြင့်ပလေယာ (hardware)</string>
+    <string name="car_player_mode_simple">ရိုးရှင်းပလေယာ (legacy)</string>
 </resources>

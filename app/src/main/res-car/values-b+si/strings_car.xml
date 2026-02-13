@@ -48,4 +48,7 @@
     <string name="car_library">පුස්තකාලය</string>
     <string name="car_bookmarks">පොත් යොමු</string>
     <string name="car_resuming">%1$s නැවත ආරම්භ කරමින්...</string>
+    <string name="car_player_mode">ප්ලේයර් ප්‍රකාරය</string>
+    <string name="car_player_mode_advanced">උසස් ප්ලේයර් (hardware)</string>
+    <string name="car_player_mode_simple">සරල ප්ලේයර් (legacy)</string>
 </resources>

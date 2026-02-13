@@ -48,4 +48,7 @@
     <string name="car_library">Китепкана</string>
     <string name="car_bookmarks">Кыстармалар</string>
     <string name="car_resuming">Улантылууда %1$s...</string>
+    <string name="car_player_mode">Ойноткуч режими</string>
+    <string name="car_player_mode_advanced">Өнүккөн ойноткуч (hardware)</string>
+    <string name="car_player_mode_simple">Жөнөкөй ойноткуч (legacy)</string>
 </resources>

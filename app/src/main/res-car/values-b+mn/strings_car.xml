@@ -48,4 +48,7 @@
     <string name="car_library">Сан</string>
     <string name="car_bookmarks">Хавчуурга</string>
     <string name="car_resuming">%1$s үргэлжлүүлж байна...</string>
+    <string name="car_player_mode">Тоглуулагчийн горим</string>
+    <string name="car_player_mode_advanced">Дэвшилтэт тоглуулагч (hardware)</string>
+    <string name="car_player_mode_simple">Энгийн тоглуулагч (legacy)</string>
 </resources>

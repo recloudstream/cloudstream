@@ -48,4 +48,7 @@
     <string name="car_library">Raamatukogu</string>
     <string name="car_bookmarks">Järjehoidjad</string>
     <string name="car_resuming">Jätkamine %1$s...</string>
+    <string name="car_player_mode">Mängija režiim</string>
+    <string name="car_player_mode_advanced">Täiustatud mängija (hardware)</string>
+    <string name="car_player_mode_simple">Lihtne mängija (legacy)</string>
 </resources>

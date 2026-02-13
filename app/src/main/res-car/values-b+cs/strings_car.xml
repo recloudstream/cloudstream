@@ -48,4 +48,7 @@
     <string name="car_library">Knihovna</string>
     <string name="car_bookmarks">Záložky</string>
     <string name="car_resuming">Obnovování %1$s...</string>
+    <string name="car_player_mode">Režim přehrávače</string>
+    <string name="car_player_mode_advanced">Pokročilý přehrávač (hardware)</string>
+    <string name="car_player_mode_simple">Jednoduchý přehrávač (legacy)</string>
 </resources>

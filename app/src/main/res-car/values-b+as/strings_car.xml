@@ -71,4 +71,7 @@
     <string name="car_library">Library</string>
     <string name="car_bookmarks">Bookmarks</string>
     <string name="car_resuming">Resuming %1$s...</string>
+    <string name="car_player_mode">প্লেয়াৰ মোড</string>
+    <string name="car_player_mode_advanced">উন্নত প্লেয়াৰ (hardware)</string>
+    <string name="car_player_mode_simple">সৰল প্লেয়াৰ (legacy)</string>
 </resources>

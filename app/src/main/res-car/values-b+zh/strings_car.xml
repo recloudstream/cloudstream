@@ -48,4 +48,7 @@
     <string name="car_library">库</string>
     <string name="car_bookmarks">书签</string>
     <string name="car_resuming">恢复播放 %1$s...</string>
+    <string name="car_player_mode">播放器模式</string>
+    <string name="car_player_mode_advanced">高级播放器（hardware）</string>
+    <string name="car_player_mode_simple">简易播放器（legacy）</string>
 </resources>

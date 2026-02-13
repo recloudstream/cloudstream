@@ -48,4 +48,7 @@
     <string name="car_library">Βιβλιοθήκη</string>
     <string name="car_bookmarks">Σελιδοδείκτες</string>
     <string name="car_resuming">Συνέχιση %1$s...</string>
+    <string name="car_player_mode">Λειτουργία αναπαραγωγής</string>
+    <string name="car_player_mode_advanced">Προηγμένη αναπαραγωγή (hardware)</string>
+    <string name="car_player_mode_simple">Απλή αναπαραγωγή (legacy)</string>
 </resources>

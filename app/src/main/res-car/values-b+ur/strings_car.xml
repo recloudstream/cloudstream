@@ -48,4 +48,7 @@
     <string name="car_library">لائبریری</string>
     <string name="car_bookmarks">بک مارکس</string>
     <string name="car_resuming">%1$s دوبارہ شروع ہو رہا ہے...</string>
+    <string name="car_player_mode">پلیئر موڈ</string>
+    <string name="car_player_mode_advanced">ایڈوانسڈ پلیئر (hardware)</string>
+    <string name="car_player_mode_simple">سادہ پلیئر (legacy)</string>
 </resources>

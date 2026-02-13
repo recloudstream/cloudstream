@@ -48,4 +48,7 @@
     <string name="car_library">ห้องสมุด</string>
     <string name="car_bookmarks">บุ๊กมาร์ก</string>
     <string name="car_resuming">กำลังดูต่อ %1$s...</string>
+    <string name="car_player_mode">โหมดเครื่องเล่น</string>
+    <string name="car_player_mode_advanced">เครื่องเล่นขั้นสูง (hardware)</string>
+    <string name="car_player_mode_simple">เครื่องเล่นอย่างง่าย (legacy)</string>
 </resources>

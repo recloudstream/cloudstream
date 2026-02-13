@@ -48,4 +48,7 @@
     <string name="car_library">Biblioteka</string>
     <string name="car_bookmarks">Žymos</string>
     <string name="car_resuming">Tęsiama %1$s...</string>
+    <string name="car_player_mode">Grotuvo režimas</string>
+    <string name="car_player_mode_advanced">Išplėstinis grotuvas (hardware)</string>
+    <string name="car_player_mode_simple">Paprastas grotuvas (legacy)</string>
 </resources>

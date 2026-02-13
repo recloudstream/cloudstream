@@ -48,4 +48,7 @@
     <string name="car_library">Кітапхана</string>
     <string name="car_bookmarks">Бетбелгілер</string>
     <string name="car_resuming">Жалғастырылуда %1$s...</string>
+    <string name="car_player_mode">Ойнатқыш режимі</string>
+    <string name="car_player_mode_advanced">Жетілдірілген ойнатқыш (hardware)</string>
+    <string name="car_player_mode_simple">Қарапайым ойнатқыш (legacy)</string>
 </resources>

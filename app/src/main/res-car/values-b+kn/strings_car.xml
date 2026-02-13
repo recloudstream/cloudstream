@@ -48,4 +48,7 @@
     <string name="car_library">ಗ್ರಂಥಾಲಯ</string>
     <string name="car_bookmarks">ಬುಕ್‌ಮಾರ್ಕ್‌ಗಳು</string>
     <string name="car_resuming">%1$s ಪುನರಾರಂಭವಾಗುತ್ತಿದೆ...</string>
+    <string name="car_player_mode">ಪ್ಲೇಯರ್ ಮೋಡ್</string>
+    <string name="car_player_mode_advanced">ಸುಧಾರಿತ ಪ್ಲೇಯರ್ (hardware)</string>
+    <string name="car_player_mode_simple">ಸರಳ ಪ್ಲೇಯರ್ (legacy)</string>
 </resources>

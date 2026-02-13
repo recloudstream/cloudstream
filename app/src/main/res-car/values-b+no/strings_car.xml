@@ -48,4 +48,7 @@
     <string name="car_library">Bibliotek</string>
     <string name="car_bookmarks">Bokmerker</string>
     <string name="car_resuming">Gjenopptar %1$s...</string>
+    <string name="car_player_mode">Spillermodus</string>
+    <string name="car_player_mode_advanced">Avansert spiller (hardware)</string>
+    <string name="car_player_mode_simple">Enkel spiller (legacy)</string>
 </resources>

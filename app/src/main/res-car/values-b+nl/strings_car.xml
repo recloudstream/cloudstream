@@ -48,4 +48,7 @@
     <string name="car_library">Bibliotheek</string>
     <string name="car_bookmarks">Bladwijzers</string>
     <string name="car_resuming">Hervatten %1$s...</string>
+    <string name="car_player_mode">Spelermodus</string>
+    <string name="car_player_mode_advanced">Geavanceerde speler (hardware)</string>
+    <string name="car_player_mode_simple">Eenvoudige speler (legacy)</string>
 </resources>

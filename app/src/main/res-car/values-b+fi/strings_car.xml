@@ -48,4 +48,7 @@
     <string name="car_library">Kirjasto</string>
     <string name="car_bookmarks">Kirjanmerkit</string>
     <string name="car_resuming">Jatketaan %1$s...</string>
+    <string name="car_player_mode">Soittimen tila</string>
+    <string name="car_player_mode_advanced">Edistynyt soitin (hardware)</string>
+    <string name="car_player_mode_simple">Yksinkertainen soitin (legacy)</string>
 </resources>

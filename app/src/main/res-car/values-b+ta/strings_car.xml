@@ -48,4 +48,7 @@
     <string name="car_library">நூலகம்</string>
     <string name="car_bookmarks">புத்தகக்குறிகள்</string>
     <string name="car_resuming">%1$s தொடர்கிறது...</string>
+    <string name="car_player_mode">பிளேயர் பயன்முறை</string>
+    <string name="car_player_mode_advanced">மேம்பட்ட பிளேயர் (hardware)</string>
+    <string name="car_player_mode_simple">எளிய பிளேயர் (legacy)</string>
 </resources>

@@ -48,4 +48,7 @@
     <string name="car_library">라이브러리</string>
     <string name="car_bookmarks">북마크</string>
     <string name="car_resuming">%1$s 이어보는 중...</string>
+    <string name="car_player_mode">플레이어 모드</string>
+    <string name="car_player_mode_advanced">고급 플레이어 (hardware)</string>
+    <string name="car_player_mode_simple">간단한 플레이어 (legacy)</string>
 </resources>

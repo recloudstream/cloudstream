@@ -48,4 +48,7 @@
     <string name="car_library">ቤተ-መጽሐፍት</string>
     <string name="car_bookmarks">ዕልባቶች</string>
     <string name="car_resuming">%1$s በመቀጠል ላይ...</string>
+    <string name="car_player_mode">የማጫወቻ ሁነታ</string>
+    <string name="car_player_mode_advanced">የላቀ ማጫወቻ (hardware)</string>
+    <string name="car_player_mode_simple">ቀላል ማጫወቻ (legacy)</string>
 </resources>

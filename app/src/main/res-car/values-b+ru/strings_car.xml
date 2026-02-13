@@ -48,4 +48,7 @@
     <string name="car_library">Библиотека</string>
     <string name="car_bookmarks">Закладки</string>
     <string name="car_resuming">Возобновление %1$s...</string>
+    <string name="car_player_mode">Режим плеера</string>
+    <string name="car_player_mode_advanced">Расширенный плеер (hardware)</string>
+    <string name="car_player_mode_simple">Простой плеер (legacy)</string>
 </resources>

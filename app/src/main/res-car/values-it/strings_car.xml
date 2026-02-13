@@ -47,6 +47,11 @@
     <string name="car_fit_to_screen">Adatta allo schermo</string>
     <string name="car_fill_screen">Riempi schermo</string>
 
+    <!-- Modalità Player -->
+    <string name="car_player_mode">Modalità player</string>
+    <string name="car_player_mode_advanced">Player avanzato (hardware)</string>
+    <string name="car_player_mode_simple">Player semplice (legacy)</string>
+
     <!-- Source Selection -->
     <string name="car_no_source_found">Nessuna sorgente trovata</string>
     <string name="car_no_source_available">Nessuna sorgente disponibile</string>

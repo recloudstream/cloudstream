@@ -48,4 +48,7 @@
     <string name="car_library">Pustaka</string>
     <string name="car_bookmarks">Penanda</string>
     <string name="car_resuming">Melanjutkan %1$s...</string>
+    <string name="car_player_mode">Mode pemutar</string>
+    <string name="car_player_mode_advanced">Pemutar lanjutan (hardware)</string>
+    <string name="car_player_mode_simple">Pemutar sederhana (legacy)</string>
 </resources>

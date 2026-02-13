@@ -48,4 +48,7 @@
     <string name="car_library">Bibliothek</string>
     <string name="car_bookmarks">Lesezeichen</string>
     <string name="car_resuming">Setze %1$s fort...</string>
+    <string name="car_player_mode">Player-Modus</string>
+    <string name="car_player_mode_advanced">Erweiterter Player (Hardware)</string>
+    <string name="car_player_mode_simple">Einfacher Player (Legacy)</string>
 </resources>

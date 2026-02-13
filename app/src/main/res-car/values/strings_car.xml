@@ -47,6 +47,11 @@
     <string name="car_fit_to_screen">Fit to screen</string>
     <string name="car_fill_screen">Fill screen</string>
 
+    <!-- Player Mode -->
+    <string name="car_player_mode">Player mode</string>
+    <string name="car_player_mode_advanced">Advanced Player (hardware)</string>
+    <string name="car_player_mode_simple">Simple Player (legacy)</string>
+
     <!-- Source Selection -->
     <string name="car_no_source_found">No source found</string>
     <string name="car_no_source_available">No source available</string>

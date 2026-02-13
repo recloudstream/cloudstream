@@ -48,4 +48,7 @@
     <string name="car_library">Kutubxona</string>
     <string name="car_bookmarks">Xatcho\'plar</string>
     <string name="car_resuming">%1$s davom ettirilmoqda...</string>
+    <string name="car_player_mode">Pleyer rejimi</string>
+    <string name="car_player_mode_advanced">Kengaytirilgan pleyer (hardware)</string>
+    <string name="car_player_mode_simple">Oddiy pleyer (legacy)</string>
 </resources>

@@ -48,4 +48,7 @@
     <string name="car_library">ბიბლიოთეკა</string>
     <string name="car_bookmarks">სანიშნეები</string>
     <string name="car_resuming">გრძელდება %1$s...</string>
+    <string name="car_player_mode">პლეერის რეჟიმი</string>
+    <string name="car_player_mode_advanced">გაფართოებული პლეერი (hardware)</string>
+    <string name="car_player_mode_simple">მარტივი პლეერი (legacy)</string>
 </resources>

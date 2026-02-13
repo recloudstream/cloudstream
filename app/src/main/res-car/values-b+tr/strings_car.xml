@@ -48,4 +48,7 @@
     <string name="car_library">Kütüphane</string>
     <string name="car_bookmarks">Yer İmleri</string>
     <string name="car_resuming">%1$s devam ettiriliyor...</string>
+    <string name="car_player_mode">Oynatıcı modu</string>
+    <string name="car_player_mode_advanced">Gelişmiş Oynatıcı (hardware)</string>
+    <string name="car_player_mode_simple">Basit Oynatıcı (legacy)</string>
 </resources>

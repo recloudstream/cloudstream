@@ -48,4 +48,7 @@
     <string name="car_library">Aklatan</string>
     <string name="car_bookmarks">Mga Bookmark</string>
     <string name="car_resuming">Ipinagpapatuloy ang %1$s...</string>
+    <string name="car_player_mode">Mode ng player</string>
+    <string name="car_player_mode_advanced">Advanced Player (hardware)</string>
+    <string name="car_player_mode_simple">Simple Player (legacy)</string>
 </resources>

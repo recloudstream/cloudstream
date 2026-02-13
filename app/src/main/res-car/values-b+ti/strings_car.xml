@@ -71,4 +71,7 @@
     <string name="car_library">Library</string>
     <string name="car_bookmarks">Bookmarks</string>
     <string name="car_resuming">Resuming %1$s...</string>
+    <string name="car_player_mode">ናይ ተጻዋቲ ሁነታ</string>
+    <string name="car_player_mode_advanced">ዝለዓለ ተጻዋቲ (hardware)</string>
+    <string name="car_player_mode_simple">ቀሊል ተጻዋቲ (legacy)</string>
 </resources>

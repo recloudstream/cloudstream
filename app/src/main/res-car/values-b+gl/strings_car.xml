@@ -48,4 +48,7 @@
     <string name="car_library">Biblioteca</string>
     <string name="car_bookmarks">Marcadores</string>
     <string name="car_resuming">Retomando %1$s...</string>
+    <string name="car_player_mode">Modo do reprodutor</string>
+    <string name="car_player_mode_advanced">Reprodutor avanzado (hardware)</string>
+    <string name="car_player_mode_simple">Reprodutor simple (legacy)</string>
 </resources>

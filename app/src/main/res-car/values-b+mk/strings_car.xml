@@ -48,4 +48,7 @@
     <string name="car_library">Библиотека</string>
     <string name="car_bookmarks">Обележувачи</string>
     <string name="car_resuming">Продолжување %1$s...</string>
+    <string name="car_player_mode">Режим на плеер</string>
+    <string name="car_player_mode_advanced">Напреден плеер (hardware)</string>
+    <string name="car_player_mode_simple">Едноставен плеер (legacy)</string>
 </resources>

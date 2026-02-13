@@ -48,4 +48,7 @@
     <string name="car_library">ຫ້ອງສະໝຸດ</string>
     <string name="car_bookmarks">ບຸກມາກ</string>
     <string name="car_resuming">ກຳລັງເບິ່ງຕໍ່ %1$s...</string>
+    <string name="car_player_mode">ໂໝດເຄື່ອງຫຼິ້ນ</string>
+    <string name="car_player_mode_advanced">ເຄື່ອງຫຼິ້ນຂັ້ນສູງ (hardware)</string>
+    <string name="car_player_mode_simple">ເຄື່ອງຫຼິ້ນງ່າຍດາຍ (legacy)</string>
 </resources>

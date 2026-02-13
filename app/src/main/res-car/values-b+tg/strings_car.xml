@@ -48,4 +48,7 @@
     <string name="car_library">Китобхона</string>
     <string name="car_bookmarks">Хабовҳо</string>
     <string name="car_resuming">Идомаи %1$s...</string>
+    <string name="car_player_mode">Ҳолати плеер</string>
+    <string name="car_player_mode_advanced">Плеери пешрафта (hardware)</string>
+    <string name="car_player_mode_simple">Плеери оддӣ (legacy)</string>
 </resources>

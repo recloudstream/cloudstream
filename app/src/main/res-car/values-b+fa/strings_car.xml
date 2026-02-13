@@ -48,4 +48,7 @@
     <string name="car_library">کتابخانه</string>
     <string name="car_bookmarks">نشانک‌ها</string>
     <string name="car_resuming">درحال ادامه %1$s...</string>
+    <string name="car_player_mode">حالت پخش‌کننده</string>
+    <string name="car_player_mode_advanced">پخش‌کننده پیشرفته (hardware)</string>
+    <string name="car_player_mode_simple">پخش‌کننده ساده (legacy)</string>
 </resources>

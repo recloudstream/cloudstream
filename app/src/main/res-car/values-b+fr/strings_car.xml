@@ -48,4 +48,7 @@
     <string name="car_library">Bibliothèque</string>
     <string name="car_bookmarks">Marque-pages</string>
     <string name="car_resuming">Reprise %1$s...</string>
+    <string name="car_player_mode">Mode du lecteur</string>
+    <string name="car_player_mode_advanced">Lecteur avancé (hardware)</string>
+    <string name="car_player_mode_simple">Lecteur simple (legacy)</string>
 </resources>
