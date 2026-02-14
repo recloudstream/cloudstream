@@ -63,11 +63,9 @@ android {
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 67
-        versionName = "4.6.1"
+        versionName = "4.6.2"
 
-        resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
         resValue("string", "commit_hash", getGitCommitHash())
-        resValue("bool", "is_prerelease", "false")
 
         manifestPlaceholders["target_sdk_version"] = libs.versions.targetSdk.get()
 
@@ -116,12 +114,9 @@ android {
     productFlavors {
         create("stable") {
             dimension = "state"
-            resValue("bool", "is_prerelease", "false")
         }
         create("prerelease") {
             dimension = "state"
-            resValue("bool", "is_prerelease", "true")
-            buildConfigField("boolean", "BETA", "true")
             applicationIdSuffix = ".prerelease"
             if (signingConfigs.names.contains("prerelease")) {
                 signingConfig = signingConfigs.getByName("prerelease")
@@ -150,7 +145,6 @@ android {
     lint {
         abortOnError = false
         checkReleaseBuilds = false
-        disable.add("MissingTranslation")
     }
 
     buildFeatures {
@@ -174,6 +168,7 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.activity.ktx)
     implementation(libs.appcompat)
+    implementation(libs.fragment.ktx)
     implementation(libs.bundles.lifecycle)
     implementation(libs.bundles.navigation)
 
@@ -181,7 +176,6 @@ dependencies {
     implementation(libs.preference.ktx)
     implementation(libs.material)
     implementation(libs.constraintlayout)
-    implementation(libs.swiperefreshlayout)
 
     // Coil Image Loading
     implementation(libs.bundles.coil)
@@ -210,12 +204,12 @@ dependencies {
     // Extensions & Other Libs
     implementation(libs.jsoup) // HTML Parser
     implementation(libs.rhino) // Run JavaScript
-    implementation(libs.quickjs)
     implementation(libs.fuzzywuzzy) // Library/Ext Searching with Levenshtein Distance
     implementation(libs.safefile) // To Prevent the URI File Fu*kery
     coreLibraryDesugaring(libs.desugar.jdk.libs.nio) // NIO Flavor Needed for NewPipeExtractor
     implementation(libs.conscrypt.android) // To Fix SSL Fu*kery on Android 9
     implementation(libs.jackson.module.kotlin) // JSON Parser
+    implementation(libs.zipline)
 
     // Torrent Support
     implementation(libs.torrentserver)
@@ -238,7 +232,7 @@ dependencies {
 
 tasks.register<Jar>("androidSourcesJar") {
     archiveClassifier.set("sources")
-    from(android.sourceSets.getByName("main").java.srcDirs) // Full Sources
+    from(android.sourceSets.getByName("main").java.directories) // Full Sources
 }
 
 tasks.register<Copy>("copyJar") {

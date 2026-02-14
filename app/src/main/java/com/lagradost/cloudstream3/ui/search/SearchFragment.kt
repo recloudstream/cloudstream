@@ -225,7 +225,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
         // Fix grid
         currentSpan = view.context.getSpanCount()
         binding?.searchAutofitResults?.spanCount = currentSpan
-        HomeFragment.configEvent.invoke(currentSpan)
+        HomeFragment.configEvent.invoke()
     }
 
     override fun onBindingCreated(

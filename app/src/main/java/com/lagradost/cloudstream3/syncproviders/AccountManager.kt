@@ -5,6 +5,7 @@ import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.syncproviders.providers.Addic7ed
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi
+import com.lagradost.cloudstream3.syncproviders.providers.KitsuApi
 import com.lagradost.cloudstream3.syncproviders.providers.LocalList
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi
 import com.lagradost.cloudstream3.syncproviders.providers.OpenSubtitlesApi
@@ -18,6 +19,7 @@ abstract class AccountManager {
     companion object {
         const val NONE_ID: Int = -1
         val malApi = MALApi()
+        val kitsuApi = KitsuApi()
         val aniListApi = AniListApi()
         val simklApi = SimklApi()
         val localListApi = LocalList()
@@ -59,10 +61,10 @@ abstract class AccountManager {
 
         val allApis = arrayOf(
             SyncRepo(malApi),
+            SyncRepo(kitsuApi),
             SyncRepo(aniListApi),
             SyncRepo(simklApi),
             SyncRepo(localListApi),
-
             SubtitleRepo(openSubtitlesApi),
             SubtitleRepo(addic7ed),
             SubtitleRepo(subDlApi)
@@ -107,6 +109,7 @@ abstract class AccountManager {
         // accessing other classes
         fun initMainAPI() {
             LoadResponse.malIdPrefix = malApi.idPrefix
+            LoadResponse.kitsuIdPrefix = kitsuApi.idPrefix
             LoadResponse.aniListIdPrefix = aniListApi.idPrefix
             LoadResponse.simklIdPrefix = simklApi.idPrefix
         }
@@ -118,6 +121,7 @@ abstract class AccountManager {
         )
         val syncApis = arrayOf(
             SyncRepo(malApi),
+            SyncRepo(kitsuApi),
             SyncRepo(aniListApi),
             SyncRepo(simklApi),
             SyncRepo(localListApi)

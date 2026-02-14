@@ -191,5 +191,4 @@
     <string name="picture_in_picture">Bilde i bilde</string>
     <string name="continue_watching">Fortsett å sjå</string>
     <string name="reload_error">Prøv tilkopling på nytt…</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>

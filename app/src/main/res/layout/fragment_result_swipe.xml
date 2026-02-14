@@ -20,7 +20,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
             <ImageView
-                    android:nextFocusRight="@id/result_share"
+                    android:nextFocusRight="@id/result_mini_sync"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
 
                     android:id="@+id/result_back"
@@ -33,22 +33,22 @@
                     android:src="@drawable/ic_baseline_arrow_back_24"
                     android:contentDescription="@string/go_back"
                     app:tint="?attr/white" />
-            <androidx.recyclerview.widget.RecyclerView
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:id="@+id/result_mini_sync"
-                    android:layout_width="match_parent"
-                    android:descendantFocusability="afterDescendants"
-                    android:layout_height="wrap_content"
-                    android:fadingEdge="horizontal"
-                    android:focusableInTouchMode="false"
-                    android:focusable="false"
-                    android:layout_gravity="center"
-                    android:orientation="horizontal"
-                    android:requiresFadingEdge="horizontal"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:itemCount="2"
-                    tools:listitem="@layout/result_mini_image" />
+
+            <ImageView
+                android:visibility="gone"
+                android:nextFocusRight="@id/result_subscribe"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+
+                android:id="@+id/result_mini_sync"
+                android:clickable="true"
+                android:focusable="true"
+
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="5dp"
+                android:layout_gravity="center_vertical|start"
+                android:src="@drawable/bookmark_star_24px"
+                app:tint="?attr/white" />
         </LinearLayout>
 
         <LinearLayout

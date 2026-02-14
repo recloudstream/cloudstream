@@ -103,7 +103,8 @@ object UIHelper {
     fun populateChips(
         view: ChipGroup?,
         tags: List<String>,
-        @StyleRes style: Int = R.style.ChipFilled
+        @StyleRes style: Int = R.style.ChipFilled,
+        @AttrRes textColor: Int? = R.attr.white,
     ) {
         if (view == null) return
         view.removeAllViews()
@@ -124,7 +125,9 @@ object UIHelper {
             chip.isCheckable = false
             chip.isFocusable = false
             chip.isClickable = false
-            chip.setTextColor(context.colorFromAttribute(R.attr.white))
+            textColor?.let {
+                chip.setTextColor(context.colorFromAttribute(it))
+            }
             view.addView(chip)
         }
     }
@@ -200,10 +203,10 @@ object UIHelper {
         listView.requestLayout()
     }
 
-    fun Context.getSpanCount(): Int {
-        val compactView = false
-        val spanCountLandscape = if (compactView) 2 else 6
-        val spanCountPortrait = if (compactView) 1 else 3
+    fun Context.getSpanCount(isHorizontal:Boolean=false): Int {
+//        val compactView = false
+        val spanCountLandscape = if (isHorizontal) 3 else 6
+        val spanCountPortrait = if (isHorizontal) 2 else 3
         val orientation = resources.configuration.orientation
 
         return if (orientation == Configuration.ORIENTATION_LANDSCAPE) {

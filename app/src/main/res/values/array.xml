@@ -54,23 +54,18 @@
         <item>@string/nsfw</item>
     </array>
 
-    <array name="limit_title_rez_pref_names">
-        <item>@string/resolution_and_name</item>
-        <item>@string/name</item>
-        <item>@string/resolution_and_title</item>
-        <item>@string/title</item>
+    <array name="title_info_pref_names">
+        <item>@string/source_name</item>
         <item>@string/resolution</item>
-        <item>@string/none</item>
+        <item>@string/video_info</item>
     </array>
 
-    <array name="limit_title_rez_pref_values">
-        <item>5</item>
-        <item>4</item>
-        <item>3</item>
-        <item>2</item>
-        <item>1</item>
-        <item>0</item>
+    <array name="title_info_pref_values">
+        <item>@string/show_name_key</item>
+        <item>@string/show_resolution_key</item>
+        <item>@string/show_media_info_key</item>
     </array>
+
 
     <array name="limit_title_pref_names">
         <item>@string/none</item>
@@ -208,6 +203,7 @@
         <item>@string/show_sub</item>
         <item>@string/show_rating</item>
         <item>@string/show_title</item>
+        <item>@string/show_episode_text</item>
     </array>
 
     <array name="poster_ui_options_values">
@@ -216,6 +212,7 @@
         <item>@string/show_sub_key</item>
         <item>@string/show_rating_key</item>
         <item>@string/show_title_key</item>
+        <item>@string/show_episode_text_key</item>
     </array>
 
     <array name="app_layout">
@@ -234,14 +231,16 @@
 
     <array name="software_decoding_switch">
         <item>@string/automatic</item>
-        <item>@string/yes</item>
-        <item>@string/no</item>
+        <item>HW+SW</item>
+        <item>SW+HW</item>
+        <item>HW</item>
     </array>
 
     <array name="software_decoding_switch_values">
-        <item>-1</item>
-        <item>0</item>
-        <item>1</item>
+        <item>-1</item> <!-- Auto-->
+        <item>0</item>  <!-- HW+SW, aka on but prefer hw -->
+        <item>2</item>  <!-- SW+HW, aka on but prefer sw -->
+        <item>1</item>  <!-- HW, aka off -->
     </array>
 
     <array name="confirm_exit">
@@ -313,6 +312,7 @@
         <item>Material You</item>
         <item>Dracula</item>
         <item>Lavender Dreams</item>
+        <item>Silent Blue</item>
     </string-array>
     <string-array name="themes_names_values">
         <item>AmoledLight</item>
@@ -323,6 +323,7 @@
         <item>Monet</item>
         <item>Dracula</item>
         <item>Lavender</item>
+        <item>SilentBlue</item>
     </string-array>
 
     <string-array name="extension_statuses">

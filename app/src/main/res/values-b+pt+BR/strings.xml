@@ -154,8 +154,6 @@
     <string name="automatic_plugin_updates">Atualização automática de plugins</string>
     <string name="updates_settings">Mostrar atualizações do app</string>
     <string name="updates_settings_des">Automaticamente procurar por novas atualizações ao abrir.</string>
-    <string name="uprereleases_settings">Permitir versões em pré-lançamento</string>
-    <string name="uprereleases_settings_des">Permitir a instação de versões em pré-lançamento ao invés de somente versões estáveis</string>
     <string name="github">GitHub</string>
     <string name="lightnovel">App de Light novel criado pelos mesmos desenvolvedores</string>
     <string name="anim">App de Anime criado pelos mesmos desenvolvedores</string>
@@ -268,7 +266,6 @@
     <string name="resize_fill">Esticar</string>
     <string name="resize_zoom">Zoom</string>
     <string name="legal_notice">Aviso Legal</string>
-    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">Geral</string>
     <string name="random_button_settings">Botão Aleatório</string>
     <string name="random_button_settings_desc">Mostrar botão aleatório na página inicial e na biblioteca</string>
@@ -293,14 +290,6 @@
     <string name="example_site_name">NovoNomedoSite</string>
     <string name="example_site_url">https://example.com</string>
     <string name="example_lang_name">Codigo da Língua (bp)</string>
-    <!--
-    <string name="mal_account_settings" translatable="false">MAL</string>
-    <string name="anilist_account_settings" translatable="false">AniList</string>
-    <string name="tmdb_account_settings" translatable="false">TMDB</string>
-    <string name="imdb_account_settings" translatable="false">IMDB</string>
-    <string name="kitsu_account_settings" translatable="false">Kitsu</string>
-    <string name="trakt_account_settings" translatable="false">Trakt</string>
-    -->
     <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">Conta</string>
     <string name="logout">Sair</string>
@@ -413,7 +402,7 @@
     <string name="view_public_repositories_button">Ver repositórios da comunidade</string>
     <string name="view_public_repositories_button_short">Lista pública</string>
     <string name="uppercase_all_subtitles">Todas as legendas em maiúsculas</string>
-    <string name="download_all_plugins_from_repo">Atenção: CloudStream 3 não assume nenhuma responsabilidade pelo uso de extensões de terceiros e não fornece nenhum suporte para elas!</string>
+    <string name="download_all_plugins_from_repo">Aviso: CloudStream não assume nenhuma responsabilidade pelo uso de extensões de terceiros e não fornece nenhum suporte para elas!</string>
     <string name="single_plugin_disabled" formatted="true">%s (Desativado)</string>
     <string name="autoplay_next_settings">Reproduzir automaticamente próximo episódio</string>
     <string name="autoplay_next_settings_des">Começa o próximo episódio quando o atual termina</string>
@@ -484,7 +473,7 @@
     <string name="subscription_episode_released">Episódio %d lançado!</string>
     <string name="set_default">Selecionar padrão</string>
     <string name="subscription_deleted">Inscrição cancelada de %s</string>
-    <string name="apk_installer_settings_des">Alguns aparelhos não permitem instalação automática. Tente a opção legada (manual) se a atualização falhar.</string>
+    <string name="apk_installer_settings_des">Alguns dispositivos não são compatíveis com o novo instalador de pacotes. Se as atualizações não forem instaladas, tente a opção legada.</string>
     <string name="mobile_data">Dados móveis</string>
     <string name="profile_number">Perfil %d</string>
     <string name="subscription_in_progress_notification">Atualizando shows inscritos</string>
@@ -642,7 +631,6 @@
     <string name="device_pin_error_message">Não é possível obter o código PIN do dispositivo, tente a autenticação local</string>
     <string name="device_pin_expired_message">O código PIN expirou!</string>
     <string name="device_pin_counter_text">O código expira em %1$dm %2$ds</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="play_from_beginning_img_des">Reproduzir do começo</string>
     <string name="test_warning">Reprovou alguns testes</string>
     <string name="delete_plugin">Excluir plugin</string>
@@ -678,7 +666,7 @@
     <string name="audio_singluar">Áudio</string>
     <string name="podcast_singluar">Podcast</string>
     <string name="software_decoding">Decodificação de software</string>
-    <string name="software_decoding_desc">A decodificação de software permite que o player reproduza arquivos de vídeo não compatíveis com o telefone, mas pode causar lentidão ou instabilidade na reprodução em alta resolução</string>
+    <string name="software_decoding_desc">A decodificação por software permite que o reprodutor reproduza arquivos de vídeo não suportados pelo seu dispositivo, mas pode causar lentidão ou instabilidade na reprodução em alta resolução.</string>
     <string name="torrent_preferred_media">Habilitar torrent em Configurações/Provedores/Mídia preferida</string>
     <string name="torrent_not_accepted">Reinicie o aplicativo e aceite o pop-up do Stream Torrent para continuar.</string>
     <string name="sort_episodes_number_asc">Episódio (Ascendente)</string>
@@ -745,4 +733,10 @@
     <string name="top_left">Superior esquerdo</string>
     <string name="top_center">Superior centralizado</string>
     <string name="top_right">Superior direito</string>
+    <string name="play_full_series_button">Assistir à série completa</string>
+    <string name="resolution_and_name">Resolução e nome</string>
+    <string name="prerelease_install_failed">Falha ao instalar a versão antecipada.</string>
+    <string name="prerelease_already_installed">Versão antecipada instalada.</string>
+    <string name="install_prerelease">Instalar versão antecipada</string>
+    <string name="show_episode_text">Episódio Text</string>
 </resources>

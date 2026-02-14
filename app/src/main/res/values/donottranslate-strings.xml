@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- KEYS -->
+    <string name="search_providers_list_key">search_providers_list</string>
+    <string name="locale_key">app_locale</string>
+    <string name="search_types_list_key">search_type_list</string>
+    <string name="auto_update_key">auto_update</string>
+    <string name="auto_update_plugins_key">auto_update_plugins</string>
+    <string name="auto_download_plugins_key">auto_download_plugins_key2</string>
+    <string name="skip_update_key">skip_update_key</string>
+    <string name="install_prerelease_key">install_prerelease_key</string>
+    <string name="manual_check_update_key">manual_check_update</string>
+    <string name="fast_forward_button_time_key">fast_forward_button_time</string>
+    <string name="benene_count">benene_count</string>
+    <string name="subtitle_settings_key">subtitle_settings_key</string>
+    <string name="test_providers_key">test_providers_key</string>
+    <string name="subtitle_settings_chromecast_key">subtitle_settings_chromecast_key</string>
+    <string name="quality_pref_key">quality_pref_key</string>
+    <string name="quality_pref_mobile_data_key">quality_pref_mobile_data_key</string>
+    <string name="player_default_key">player_default_key</string>
+    <string name="prefer_limit_title_key">prefer_limit_title_key</string>
+    <string name="prefer_limit_show_player_info">prefer_limit_show_player_info</string>
+    <string name="apk_installer_key">apk_installer_key</string>
+    <string name="video_buffer_size_key">video_buffer_size_key</string>
+    <string name="video_buffer_length_key">video_buffer_length_key</string>
+    <string name="video_buffer_clear_key">video_buffer_clear_key</string>
+    <string name="video_buffer_disk_key">video_buffer_disk_key</string>
+    <string name="use_system_brightness_key">use_system_brightness_key</string>
+    <string name="swipe_enabled_key">swipe_enabled_key</string>
+    <string name="playback_speed_enabled_key">playback_speed_enabled_key</string>
+    <string name="player_resize_enabled_key">player_resize_enabled_key</string>
+    <string name="player_source_priority_key">player_source_priority_key</string>
+    <string name="pip_enabled_key">pip_enabled_key</string>
+    <string name="double_tap_enabled_key">double_tap_enabled_key</string>
+    <string name="double_tap_pause_enabled_key">double_tap_pause_enabled_key</string>
+    <string name="double_tap_seek_time_key">double_tap_seek_time_key2</string>
+    <string name="android_tv_interface_off_seek_key">android_tv_interface_off_seek_key</string>
+    <string name="android_tv_interface_on_seek_key">android_tv_interface_on_seek_key</string>
+    <string name="swipe_vertical_enabled_key">swipe_vertical_enabled_key</string>
+    <string name="autoplay_next_key">autoplay_next_key</string>
+    <string name="display_sub_key">display_sub_key</string>
+    <string name="show_fillers_key">show_fillers_key</string>
+    <string name="show_trailers_key">show_trailers_key</string>
+    <string name="show_kitsu_posters_key">show_kitsu_posters_key</string>
+    <string name="show_cast_in_details_key">show_cast_in_details_key</string>
+    <string name="random_button_key">random_button_key</string>
+    <string name="provider_lang_key">provider_lang_key</string>
+    <string name="dns_key">dns_key</string>
+    <string name="jsdelivr_proxy_key">jsdelivr_proxy_key</string>
+    <string name="download_path_key">download_path_key</string>
+    <string name="download_parallel_key">download_parallel_key</string>
+    <string name="download_concurrent_key">download_concurrent_key</string>
+    <string name="download_path_key_visual">download_path_key_visual</string>
+    <string name="app_name_download_path">Cloudstream</string>
+    <string name="app_layout_key">app_layout_key</string>
+    <string name="primary_color_key">primary_color_key</string>
+    <string name="restore_key">restore_key</string>
+    <string name="backup_key">backup_key</string>
+    <string name="automatic_backup_key">automatic_backup_key</string>
+    <string name="prefer_media_type_key">prefer_media_type_key_2</string>
+    <string name="app_theme_key">app_theme_key</string>
+    <string name="episode_sync_enabled_key">episode_sync_enabled_key</string>
+    <string name="log_enabled_key">log_enabled_key</string>
+    <string name="show_logcat_key">show_logcat_key</string>
+    <string name="bottom_title_key">bottom_title_key</string>
+    <string name="poster_ui_key">poster_ui_key</string>
+    <string name="overscan_key">overscan_key</string>
+    <string name="poster_size_key">poster_size_key</string>
+    <string name="subtitles_encoding_key">subtitles_encoding_key</string>
+    <string name="override_site_key">override_site_key</string>
+    <string name="redo_setup_key">redo_setup_key</string>
+    <string name="filter_sub_lang_key">filter_sub_lang_key</string>
+    <string name="pref_filter_search_quality_key">pref_filter_search_quality_key</string>
+    <string name="enable_nsfw_on_providers_key">enable_nsfw_on_providers_key</string>
+    <string name="skip_startup_account_select_key">skip_startup_account_select_key</string>
+    <string name="enable_skip_op_from_database">enable_skip_op_from_database</string>
+    <string name="rotate_video_key">rotate_video_key</string>
+    <string name="auto_rotate_video_key">auto_rotate_video_key</string>
+    <string name="biometric_key">biometric_key</string>
+    <string name="battery_optimisation_key">battery_optimisation</string>
+    <string name="show_hd_key">show_hd_key</string>
+    <string name="show_dub_key">show_dub_key</string>
+    <string name="show_sub_key">show_sub_key</string>
+    <string name="show_rating_key">show_rating_key</string>
+    <string name="show_title_key">show_title_key</string>
+    <string name="show_episode_text_key">show_episode_text_key</string>
+    <string name="hide_player_control_names_key">hide_player_control_names_key</string>
+    <string name="preview_seekbar_key">preview_seekbar_key</string>
+    <string name="backup_path_key">backup_path_key</string>
+    <string name="backup_dir_key">backup_dir_key</string>
+    <string name="confirm_exit_key">confirm_exit_key</string>
+    <string name="software_decoding_key">software_decoding_key2</string>
+    <string name="manual_update_plugins_key">manual_update_plugins</string>
+    <string name="legal_notice_key">legal_notice_key</string>
+    <string name="speedup_key">speedup_key</string>
+    <string name="anilist_key">anilist_key</string>
+    <string name="simkl_key">simkl_key</string>
+    <string name="mal_key">mal_key</string>
+    <string name="kitsu_key">kitsu_key</string>
+    <string name="opensubtitles_key">opensubtitles_key</string>
+    <string name="subdl_key">subdl_key</string>
+
+    <string name="pref_category_security_key">pref_category_security_key</string>
+    <string name="pref_category_gestures_key">pref_category_gestures_key</string>
+    <string name="pref_category_android_tv_key">pref_category_android_tv_key</string>
+
+    <string name="tv_no_focus_tag">tv_no_focus_tag</string>
+
+    <!-- FORMAT WILL CAUSE CRASH IF APPLIED WRONG -->
+    <string name="extra_info_format" formatted="true">%1$d %2$s | %3$s</string>
+    <string name="storage_size_format" formatted="true">%1$s • %2$s</string>
+    <string name="download_format" formatted="true">%1$s - %2$s</string>
+    <string name="download_size_format" formatted="true">%1$s / %2$s</string>
+    <string name="episode_name_format" formatted="true">%1$s %2$s</string>
+    <string name="episode_text">S1E1</string>
+    <string name="ffw_text_format" formatted="true">+%d</string>
+    <string name="rew_text_format" formatted="true">-%d</string>
+    <string name="ffw_text_regular_format" formatted="true">%d</string>
+    <string name="rew_text_regular_format" formatted="true">%d</string>
+    <string name="rating_format" formatted="true">%s/10.0</string>
+    <string name="year_format" formatted="true">%d</string>
+
+    <string name="episode_play_img_des">@string/play_episode</string>
+    <string name="change_providers_img_des">@string/home_change_provider_img_des</string>
+    <string name="result_plot">@string/synopsis</string>
+
+    <string name="subtitles_none">@string/none</string>
+    <string name="type_none">@string/none</string>
+    <string name="duplicate_cancel">@string/cancel</string>
+    <string name="sort_cancel">@string/cancel</string>
+    <string name="default_subtitles">@string/action_default</string>
+    <string name="default_account">@string/action_default</string>
+
+    <string name="show_name_key">show_name</string>
+    <string name="show_resolution_key">show_resolution</string>
+    <string name="show_media_info_key">show_media_info</string>
+    <string name="prefer_title_limit_key">prefer_title_limit</string>
+
+    <string name="legal_notice_text">Any legal issues regarding the content on this application
+        should be taken up with the actual file hosts and providers themselves as we are not affiliated with them.
+
+        In case of copyright infringement, please directly contact the responsible parties or the streaming websites.
+
+        The app is purely for educational and personal use.
+
+        CloudStream does not host any content on the app, and has no control over what media is put up or taken down.
+        CloudStream functions like any other search engine, such as Google. CloudStream does not host, upload or
+        manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient,
+        user-friendly interface.
+
+        It merely scrapes 3rd-party websites that are publicly accessible via any regular web browser. It is the
+        responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use
+        CloudStream at your own risk.
+    </string>
+
+    <plurals name="episodes">
+        <item quantity="one">@string/episode</item>
+        <item quantity="other">@string/episodes</item>
+    </plurals>
+</resources>

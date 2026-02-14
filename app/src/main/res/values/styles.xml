@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. Material3 -->
     <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>
@@ -102,6 +102,7 @@
         <item name="android:fontFamily">@font/google_sans</item>
         <item name="android:tag">@string/tv_no_focus_tag</item>
         <item name="chipMinTouchTargetSize">0dp</item>
+        <item name="checkedIconVisible">false</item>
     </style>
 
     <style name="RoundProgressbar">
@@ -112,8 +113,10 @@
 
     <style name="ChipFilledSemiTransparent" parent="@style/ChipFilled">
         <item name="chipBackgroundColor">@color/transparent</item>
-        <item name="chipSurfaceColor">@color/white_attr_20</item>
+        <item name="chipSurfaceColor">#33FFFFFF</item>
         <item name="backgroundColor">@color/transparent</item>
+        <item name="android:textColor">@color/textColor</item>
+        <item name="textColor">@color/textColor</item>
     </style>
 
     <style name="ChipParent">
@@ -143,6 +146,9 @@
 
     <style name="SubButton" parent="@style/SearchBox">
         <item name="android:text">@string/app_subbed_text</item>
+    </style>
+    <style name="EpisodeTextButton" parent="@style/SearchBox">
+        <item name="android:text">@string/episode_text</item>
     </style>
 
     <!--<style name="RatingButton" parent="@style/SearchBox">
@@ -174,7 +180,7 @@
         <item name="black">@color/white</item>
         <item name="colorOnPrimary">@color/blackText</item>
         <item name="isLightTheme">true</item>
-        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
     </style>
 
     <style name="DraculaMode">
@@ -189,6 +195,19 @@
         <item name="colorOnPrimary">@color/DraculaTextColor</item>
     </style>
 
+
+    <style name="SilentBlueMode">
+        <item name="primaryGrayBackground">@color/SilentBluePrimaryGrayBackground</item>
+        <item name="primaryBlackBackground">@color/SilentBlueBitDarkerGrayBackground</item>
+        <item name="iconGrayBackground">@color/SilentBlueGrayBackground</item>
+        <item name="boxItemBackground">@color/SilentBlueItemBackground</item>
+        <item name="textColor">@color/SilentBlueTextColor</item>
+        <item name="iconColor">@color/SilentBlueIconColor</item>
+        <item name="white">@color/SilentBlueTextColor</item>
+        <item name="black">@color/SilentBluePrimaryGrayBackground</item>
+        <item name="colorOnPrimary">@color/SilentBlueTextColor</item>
+    </style>
+
     <style name="LavenderMode">
         <item name="primaryGrayBackground">@color/LavenderPrimaryGrayBackground</item>
         <item name="primaryBlackBackground">@color/LavenderBitDarkerGrayBackground</item>
@@ -200,7 +219,7 @@
         <item name="black">@color/LavenderPrimaryGrayBackground</item>
         <item name="colorOnPrimary">@color/LavenderTextColor</item>
         <item name="isLightTheme">true</item>
-        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
     </style>
 
     <style name="MonetMode">
@@ -574,7 +593,7 @@
         <item name="android:windowIsFloating">false</item>
         <item name="android:navigationBarColor">?attr/primaryBlackBackground</item>
         <item name="android:statusBarColor">?attr/primaryBlackBackground</item>
-        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">?attr/isLightTheme</item>
     </style>
 
     <style name="DialogHalfFullscreen" parent="AlertDialogCustom">
@@ -1053,6 +1072,7 @@
         <item name="android:layout_gravity">center</item>
         <item name="indicatorColor">@color/white</item>
         <item name="indicatorTrackGapSize">0dp</item>
+        <item name="trackColor">@color/white_attr_20</item>
     </style>
 
     <style name="HomePlayUnderlayProgress" parent="PlayUnderlayProgress">

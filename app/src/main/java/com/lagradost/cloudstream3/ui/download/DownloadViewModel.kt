@@ -5,31 +5,48 @@ import android.content.DialogInterface
 import android.os.Environment
 import android.os.StatFs
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.edit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lagradost.api.Log
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.isEpisodeBased
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.services.DownloadQueueService
+import com.lagradost.cloudstream3.services.DownloadQueueService.Companion.downloadInstances
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.ConsistentLiveData
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
+import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE_BACKUP
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
+import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE_BACKUP
 import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
+import com.lagradost.cloudstream3.utils.DataStore.getSharedPrefs
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllResumeStateIds
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
 import com.lagradost.cloudstream3.utils.ResourceLiveData
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.deleteFilesAndUpdateSettings
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.getDownloadFileInfoAndUpdateSettings
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
+import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.deleteFilesAndUpdateSettings
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDownloadFileInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class DownloadViewModel : ViewModel() {
-    private val _headerCards = ResourceLiveData<List<VisualDownloadCached.Header>>(Resource.Loading())
+    companion object {
+        const val TAG = "DownloadViewModel"
+    }
+
+    private val _headerCards =
+        ResourceLiveData<List<VisualDownloadCached.Header>>(Resource.Loading())
     val headerCards: LiveData<Resource<List<VisualDownloadCached.Header>>> = _headerCards
 
     private val _childCards = ResourceLiveData<List<VisualDownloadCached.Child>>(Resource.Loading())
@@ -47,22 +64,20 @@ class DownloadViewModel : ViewModel() {
     private val _selectedBytes = ConsistentLiveData<Long>(0)
     val selectedBytes: LiveData<Long> = _selectedBytes
 
-    private val _isMultiDeleteState = ConsistentLiveData(false)
-    val isMultiDeleteState: LiveData<Boolean> = _isMultiDeleteState
+    private val _selectedItemIds = ConsistentLiveData<Set<Int>?>(null)
+    val selectedItemIds: LiveData<Set<Int>?> = _selectedItemIds
 
-    private val _selectedItemIds = ConsistentLiveData<Set<Int>>(mutableSetOf())
-    val selectedItemIds: LiveData<Set<Int>> = _selectedItemIds
 
-    fun setIsMultiDeleteState(value: Boolean) {
-        _isMultiDeleteState.postValue(value)
+    fun cancelSelection() {
+        updateSelectedItems { null }
     }
 
     fun addSelected(itemId: Int) {
-        updateSelectedItems { it + itemId }
+        updateSelectedItems { it?.plus(itemId) ?: setOf(itemId) }
     }
 
     fun removeSelected(itemId: Int) {
-        updateSelectedItems { it - itemId }
+        updateSelectedItems { it?.minus(itemId) ?: emptySet() }
     }
 
     fun selectAllHeaders() {
@@ -97,8 +112,8 @@ class DownloadViewModel : ViewModel() {
         return currentSelected.size == headers.size && headers.all { it.data.id in currentSelected }
     }
 
-    private fun updateSelectedItems(action: (Set<Int>) -> Set<Int>) {
-        val currentSelected = action(selectedItemIds.value ?: mutableSetOf())
+    private fun updateSelectedItems(action: (Set<Int>?) -> Set<Int>?) {
+        val currentSelected = action(selectedItemIds.value)
         _selectedItemIds.postValue(currentSelected)
         postHeaders()
         postChildren()
@@ -112,24 +127,109 @@ class DownloadViewModel : ViewModel() {
     }
 
 
+    fun removeRedundantEpisodeKeys(context: Context, keys: List<Pair<Int, Int>>) {
+        val settingsManager = context.getSharedPrefs()
+        ioSafe {
+            settingsManager.edit {
+                keys.forEach { (parentId, childId) ->
+                    Log.i(TAG, "Removing download episode key: ${parentId}/${childId}")
+                    val oldPath = getFolderName(
+                        getFolderName(
+                            DOWNLOAD_EPISODE_CACHE,
+                            parentId.toString()
+                        ),
+                        childId.toString()
+                    )
+                    val newPath = getFolderName(
+                        getFolderName(
+                            DOWNLOAD_EPISODE_CACHE_BACKUP,
+                            parentId.toString()
+                        ),
+                        childId.toString()
+                    )
+
+                    val oldPref = settingsManager.getString(oldPath, null)
+                    // Cowardly future backup solution in case the key removal fails in some edge case.
+                    // This and all backup keys may be removed in a future update if the key removal is proven to be robust.
+                    this.putString(newPath, oldPref)
+                    this.remove(oldPath)
+                }
+            }
+        }
+    }
+
+    fun removeRedundantHeaderKeys(
+        context: Context,
+        cached: List<DownloadObjects.DownloadHeaderCached>,
+        totalBytesUsedByChild: Map<Int, Long>,
+        totalDownloads: Map<Int, Int>
+    ) {
+        val settingsManager = context.getSharedPrefs()
+        ioSafe {
+           // Do not remove headers used by resume watching
+            val resumeWatchingIds =
+                getAllResumeStateIds()?.mapNotNull { id ->
+                    getLastWatched(id)?.parentId
+                }?.toSet() ?: emptySet()
+
+            settingsManager.edit {
+                cached.forEach { header ->
+                    val downloads = totalDownloads[header.id] ?: 0
+                    val bytes = totalBytesUsedByChild[header.id] ?: 0
+
+                    if ( (downloads <= 0 || bytes <= 0) && !resumeWatchingIds.contains(header.id) ) {
+                        Log.i(TAG, "Removing download header key: ${header.id}")
+                        val oldPAth = getFolderName(DOWNLOAD_HEADER_CACHE, header.id.toString())
+                        val newPath =
+                            getFolderName(DOWNLOAD_HEADER_CACHE_BACKUP, header.id.toString())
+                        val oldPref = settingsManager.getString(oldPAth, null)
+                        // Cowardly future backup solution in case the key removal fails in some edge case.
+                        // This and all backup keys may be removed in a future update if the key removal is proven to be robust.
+                        this.putString(newPath, oldPref)
+                        this.remove(oldPAth)
+                    }
+                }
+            }
+        }
+    }
+
     fun updateHeaderList(context: Context) = viewModelScope.launchSafe {
         // Do not push loading as it interrupts the UI
         //_headerCards.postValue(Resource.Loading())
-        clearSelectedItems()
 
-        val visual = withContext(Dispatchers.IO) {
+        val visual = ioWork {
             val children = context.getKeys(DOWNLOAD_EPISODE_CACHE)
-                .mapNotNull { context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(it) }
+                .mapNotNull { context.getKey<DownloadObjects.DownloadEpisodeCached>(it) }
                 .distinctBy { it.id } // Remove duplicates
 
-            val (totalBytesUsedByChild, currentBytesUsedByChild, totalDownloads) =
+            val isCurrentlyDownloading =
+                DownloadQueueService.isRunning || downloadInstances.value.isNotEmpty() || DownloadQueueManager.queue.value.isNotEmpty()
+
+            val downloadStats =
                 calculateDownloadStats(context, children)
 
             val cached = context.getKeys(DOWNLOAD_HEADER_CACHE)
-                .mapNotNull { context.getKey<VideoDownloadHelper.DownloadHeaderCached>(it) }
+                .mapNotNull { context.getKey<DownloadObjects.DownloadHeaderCached>(it) }
+
+            // Download stats and header keys may change when downloading.
+            // To prevent the downloader and key removal from colliding, simply do not prune keys when downloading.
+            if (!isCurrentlyDownloading) {
+                removeRedundantHeaderKeys(
+                    context,
+                    cached,
+                    downloadStats.totalBytesUsedByChild,
+                    downloadStats.totalDownloads
+                )
+            }
+            // calculateDownloadStats already performed checks when creating redundantDownloads, no extra check required
+            removeRedundantEpisodeKeys(context, downloadStats.redundantDownloads)
 
             createVisualDownloadList(
-                context, cached, totalBytesUsedByChild, currentBytesUsedByChild, totalDownloads
+                context,
+                cached,
+                downloadStats.totalBytesUsedByChild,
+                downloadStats.currentBytesUsedByChild,
+                downloadStats.totalDownloads
             )
         }
 
@@ -161,20 +261,38 @@ class DownloadViewModel : ViewModel() {
         }))
     }
 
+    private data class DownloadStats(
+        val totalBytesUsedByChild: Map<Int, Long>,
+        val currentBytesUsedByChild: Map<Int, Long>,
+        val totalDownloads: Map<Int, Int>,
+        /** Parent ID to child ID. Keys to be removed. */
+        val redundantDownloads: List<Pair<Int, Int>>
+    )
+
     private fun calculateDownloadStats(
         context: Context,
-        children: List<VideoDownloadHelper.DownloadEpisodeCached>
-    ): Triple<Map<Int, Long>, Map<Int, Long>, Map<Int, Int>> {
+        children: List<DownloadObjects.DownloadEpisodeCached>
+    ): DownloadStats {
         // parentId : bytes
         val totalBytesUsedByChild = mutableMapOf<Int, Long>()
         // parentId : bytes
         val currentBytesUsedByChild = mutableMapOf<Int, Long>()
         // parentId : downloadsCount
         val totalDownloads = mutableMapOf<Int, Int>()
+        val redundantDownloads = mutableListOf<Pair<Int, Int>>()
 
         children.forEach { child ->
-            val childFile =
-                getDownloadFileInfoAndUpdateSettings(context, child.id) ?: return@forEach
+            val childFile = getDownloadFileInfo(context, child.id)
+
+            if (childFile == null) {
+                // It may not be a redundant child if something is currently downloading.
+                // DOWNLOAD_EPISODE_CACHE gets created before KEY_DOWNLOAD_INFO in the downloader
+                // leading to valid situations where getDownloadFileInfo is null, but we do not want to remove DOWNLOAD_EPISODE_CACHE
+                if (!DownloadQueueService.isRunning && downloadInstances.value.isEmpty() && DownloadQueueManager.queue.value.isEmpty()) {
+                    redundantDownloads.add(child.parentId to child.id)
+                }
+                return@forEach
+            }
             if (childFile.fileLength <= 1) return@forEach
 
             val len = childFile.totalBytes
@@ -184,12 +302,17 @@ class DownloadViewModel : ViewModel() {
             currentBytesUsedByChild.merge(child.parentId, flen, Long::plus)
             totalDownloads.merge(child.parentId, 1, Int::plus)
         }
-        return Triple(totalBytesUsedByChild, currentBytesUsedByChild, totalDownloads)
+        return DownloadStats(
+            totalBytesUsedByChild,
+            currentBytesUsedByChild,
+            totalDownloads,
+            redundantDownloads
+        )
     }
 
     private fun createVisualDownloadList(
         context: Context,
-        cached: List<VideoDownloadHelper.DownloadHeaderCached>,
+        cached: List<DownloadObjects.DownloadHeaderCached>,
         totalBytesUsedByChild: Map<Int, Long>,
         currentBytesUsedByChild: Map<Int, Long>,
         totalDownloads: Map<Int, Int>
@@ -198,11 +321,14 @@ class DownloadViewModel : ViewModel() {
             val downloads = totalDownloads[it.id] ?: 0
             val bytes = totalBytesUsedByChild[it.id] ?: 0
             val currentBytes = currentBytesUsedByChild[it.id] ?: 0
-            if (bytes <= 0 || downloads <= 0) return@mapNotNull null
+
+            if (bytes <= 0 || downloads <= 0) {
+                return@mapNotNull null
+            }
 
             val isSelected = selectedItemIds.value?.contains(it.id) ?: false
             val movieEpisode =
-                if (it.type.isEpisodeBased()) null else context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(
+                if (it.type.isEpisodeBased()) null else context.getKey<DownloadObjects.DownloadEpisodeCached>(
                     DOWNLOAD_EPISODE_CACHE,
                     getFolderName(it.id.toString(), it.id.toString())
                 )
@@ -232,15 +358,13 @@ class DownloadViewModel : ViewModel() {
 
     fun updateChildList(context: Context, folder: String) = viewModelScope.launchSafe {
         _childCards.postValue(Resource.Loading()) // always push loading
-        clearSelectedItems()
 
         val visual = withContext(Dispatchers.IO) {
             context.getKeys(folder).mapNotNull { key ->
-                context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(key)
+                context.getKey<DownloadObjects.DownloadEpisodeCached>(key)
             }.mapNotNull {
                 val isSelected = selectedItemIds.value?.contains(it.id) ?: false
-                val info =
-                    getDownloadFileInfoAndUpdateSettings(context, it.id) ?: return@mapNotNull null
+                val info = getDownloadFileInfo(context, it.id) ?: return@mapNotNull null
                 VisualDownloadCached.Child(
                     currentBytes = info.fileLength,
                     totalBytes = info.totalBytes,
@@ -260,6 +384,7 @@ class DownloadViewModel : ViewModel() {
     }
 
     private fun removeItems(idsToRemove: Set<Int>) = viewModelScope.launchSafe {
+        _selectedItemIds.postValue(null)
         postHeaders(_headerCards.success?.filter { it.data.id !in idsToRemove })
         postChildren(_childCards.success?.filter { it.data.id !in idsToRemove })
     }
@@ -315,7 +440,7 @@ class DownloadViewModel : ViewModel() {
                     if (item.data.type.isEpisodeBased()) {
                         val episodes = context.getKeys(DOWNLOAD_EPISODE_CACHE)
                             .mapNotNull {
-                                context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(
+                                context.getKey<DownloadObjects.DownloadEpisodeCached>(
                                     it
                                 )
                             }
@@ -339,7 +464,7 @@ class DownloadViewModel : ViewModel() {
 
                 is VisualDownloadCached.Child -> {
                     ids.add(item.data.id)
-                    val parent = context.getKey<VideoDownloadHelper.DownloadHeaderCached>(
+                    val parent = context.getKey<DownloadObjects.DownloadHeaderCached>(
                         DOWNLOAD_HEADER_CACHE,
                         item.data.parentId.toString()
                     )
@@ -368,14 +493,14 @@ class DownloadViewModel : ViewModel() {
             .joinToString(separator = "\n") { "• $it" }
 
         return when {
+            data.seriesNames.isNotEmpty() && data.names.isEmpty() -> {
+                context.getString(R.string.delete_message_series_only).format(formattedSeriesNames)
+            }
+
             data.ids.count() == 1 -> {
                 context.getString(R.string.delete_message).format(
                     data.names.firstOrNull()
                 )
-            }
-
-            data.seriesNames.isNotEmpty() && data.names.isEmpty() -> {
-                context.getString(R.string.delete_message_series_only).format(formattedSeriesNames)
             }
 
             data.parentName != null && data.names.isNotEmpty() -> {
@@ -406,7 +531,6 @@ class DownloadViewModel : ViewModel() {
                 when (which) {
                     DialogInterface.BUTTON_POSITIVE -> {
                         viewModelScope.launchSafe {
-                            setIsMultiDeleteState(false)
                             deleteFilesAndUpdateSettings(context, ids, this) { successfulIds ->
                                 // We always remove parent because if we are deleting from here
                                 // and we have it as non-empty, it was triggered on

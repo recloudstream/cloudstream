@@ -184,7 +184,7 @@
     <string name="network_adress_example">https://example.com/example.mp4</string>
     <string name="subtitle_offset_extra_hint_none_format">字幕遅延なし</string>
     <string name="delete_repository">リポジトリ削除</string>
-    <string name="download_all_plugins_from_repo">警告: CloudStream 3はサードパーティの拡張機能の使用について一切の責任を負わず、それらに対するサポートも提供しません！</string>
+    <string name="download_all_plugins_from_repo">警告: CloudStreamはサードパーティの拡張機能の使用について一切の責任を負わず、それらに対するサポートも提供しません！</string>
     <string name="action_add_to_bookmarks">視聴状態を設定</string>
     <string name="subtitle_offset">字幕を同期</string>
     <string name="add_repository">リポジトリを追加</string>
@@ -234,7 +234,6 @@
     <string name="autoplay_next_settings_des">現在のエピソードが終了したら次のエピソードを開始する</string>
     <string name="subs_hold_to_reset_to_default">長押しするとデフォルトにリセットされます</string>
     <string name="popup_resume_download">ダウンロードを再開</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="filter_bookmarks">ブックマークのフィルタ</string>
     <string name="normal_no_plot">プロットが見つかりません</string>
     <string name="double_tap_to_pause_settings">ダブルタップで一時停止</string>
@@ -299,7 +298,7 @@
     <string name="toast_copied">コピーされました！</string>
     <string name="audio_book_singular">オーディオブック</string>
     <string name="custom_media_singluar">メディア</string>
-    <string name="limit_title_rez">ビデオプレーヤーの解像度</string>
+    <string name="limit_title_rez">プレイヤー情報を表示</string>
     <string name="speed_setting_summary">プレイヤーに速度オプションを追加</string>
     <string name="downloads_delete_select">削除する項目を選択</string>
     <string name="offline_file">オフラインで視聴可能</string>
@@ -311,7 +310,6 @@
     <string name="nginx_url_pref">NGINXサーバーのURL</string>
     <string name="restore_settings">バックアップからデータを復元</string>
     <string name="updates_settings_des">アプリ起動後に自動的に更新を探します。</string>
-    <string name="uprereleases_settings">プレリリースにアップデート</string>
     <string name="subs_default_reset_toast">初期値にリセット</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="no_episodes_found">エピソードが見つかりません</string>
@@ -416,7 +414,6 @@
     <string name="subtitles_from_embedded">埋め込み</string>
     <string name="subtitles_from_online">オンライン</string>
     <string name="lightnovel">同じ開発者によるライトノベルアプリ</string>
-    <string name="uprereleases_settings_des">完全リリースだけでなくプレリリースのアップデートも検索</string>
     <string name="add_site_pref">サイトをクローン</string>
     <string name="actor_main">メイン</string>
     <string name="subtitles_remove_bloat">字幕から不要なものを削除</string>
@@ -707,4 +704,17 @@
     <string name="top_center">上中央</string>
     <string name="top_right">右上</string>
     <string name="play_full_series_button">全シリーズを再生</string>
+    <string name="install_prerelease">プレリリース版をインストール</string>
+    <string name="prerelease_already_installed">プレリリース版は既にインストールされています。</string>
+    <string name="prerelease_install_failed">プレリリース版のインストールに失敗しました。</string>
+    <string name="show_episode_text">エピソードのテキスト</string>
+    <string name="search_suggestions">検索候補</string>
+    <string name="search_suggestions_des">入力中に検索候補を表示する</string>
+    <string name="clear_suggestions">候補を消去</string>
+    <string name="show_cast_in_details">キャストパネルを表示</string>
+    <string name="source_name">ソース名</string>
+    <string name="video_info">メディア情報</string>
+    <string name="extra_brightness_settings">追加の輝度設定</string>
+    <string name="extra_brightness_settings_des">画面の輝度が100%を超えた場合に輝度フィルターを有効にします</string>
+    <string name="extra_brightness_key">追加の輝度を有効化</string>
 </resources>

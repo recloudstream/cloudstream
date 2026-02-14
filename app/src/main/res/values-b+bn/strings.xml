@@ -149,7 +149,6 @@
     <string name="double_tap_to_seek_settings_des">সামনে বা পিছনের দিকে যেতে ডান বা বাম দিকে দুবার আলতো চাপুন</string>
     <string name="delete_file">ফাইল ডিলিট</string>
     <string name="subs_default_reset_toast">মান ডিফল্ট এ রিসেট করুন</string>
-    <string name="uprereleases_settings_des">ফুল রিলিজের পরিবর্তে শুধুমাত্র প্রি-রিলিজ আপডেটের জন্য অনুসন্ধান করুন</string>
     <string name="updates_settings_des">স্টার্টআপে নতুন আপডেটের জন্য স্বয়ংক্রিয়ভাবে অনুসন্ধান করুন</string>
     <string name="movies_singular">সিনেমা</string>
     <string name="show_fillers_settings">এনিমে এর ফিলার পর্ব দেখায়</string>
@@ -200,7 +199,6 @@
     <string name="advanced_search_des">প্রোভাইডার অনুযায়ী আপনাকে পৃথক অনুসন্ধান ফলাফল দেয়</string>
     <string name="tv_series_singular">সিরিজ</string>
     <string name="rating">রেটিং</string>
-    <string name="uprereleases_settings">প্রি-রিলিজে আপডেট করুন</string>
     <string name="redo_setup_process">সেটআপ প্রক্রিয়া পুনরায় করুন</string>
     <string name="benene">ভাই এক কাপ চা খাওয়াও ☕</string>
     <string name="restore_settings">ব্যাকআপ থেকে ডেটা পুনরুদ্ধার করুন</string>
@@ -240,7 +238,6 @@
     <string name="video_disk_description">অ্যান্ড্রয়েড টিভির মতো, কম মেমরির ডিভাইসে খুব বেশি সেট করা হলে সমস্যা করবে।</string>
     <string name="add_site_pref">ক্লোন সাইট</string>
     <string name="pref_category_player_features">প্লেয়ারের ফিচার</string>
-    <string name="login_format" formatted="true"><string name="mal_account_settings" translatable="false">MAL</string> <string name="anilist_account_settings" translatable="false">AniList</string> <string name="tmdb_account_settings" translatable="false">TMDB</string> <string name="imdb_account_settings" translatable="false">IMDB</string> <string name="kitsu_account_settings" translatable="false">Kitsu</string> <string name="trakt_account_settings" translatable="false">Trakt</string> %1$s%2$s</string>
     <string name="app_theme_settings">অ্যাপ থিম</string>
     <string name="recommendations_tooltip">রিকমেন্ডেশনগুলো দেখাও</string>
     <string name="speed_setting_summary">প্লেয়ারে গতির বিকল্প যোগ কর</string>
@@ -353,5 +350,4 @@
     <string name="account">অ্যাকাউন্ট</string>
     <string name="logout">প্রস্থান</string>
     <string name="episode_format" formatted="true">%1$d%2$s</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>

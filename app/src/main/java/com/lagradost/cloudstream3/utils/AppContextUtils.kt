@@ -18,7 +18,6 @@ import android.media.tv.TvContract.Channels.COLUMN_INTERNAL_PROVIDER_ID
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
-import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -33,6 +32,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AlertDialog
+import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import androidx.core.text.toSpanned
 import androidx.core.widget.ContentLoadingProgressBar
@@ -40,7 +40,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.tvprovider.media.tv.PreviewChannelHelper
@@ -86,6 +85,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
 import com.lagradost.cloudstream3.utils.FillerEpisodeCheck.toClassDir
 import com.lagradost.cloudstream3.utils.JsUnpacker.Companion.load
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okhttp3.Cache
@@ -152,7 +152,7 @@ object AppContextUtils {
     private fun buildWatchNextProgramUri(
         context: Context,
         card: DataStoreHelper.ResumeWatchingResult,
-        resumeWatching: VideoDownloadHelper.ResumeWatching?
+        resumeWatching: DownloadObjects.ResumeWatching?
     ): WatchNextProgram {
         val isSeries = card.type?.isMovieType() == false
         val title = if (isSeries) {
@@ -170,10 +170,10 @@ object AppContextUtils {
             )
             .setWatchNextType(TvContractCompat.WatchNextPrograms.WATCH_NEXT_TYPE_CONTINUE)
             .setTitle(title)
-            .setPosterArtUri(Uri.parse(card.posterUrl))
-            .setIntentUri(Uri.parse(card.id?.let {
+            .setPosterArtUri(card.posterUrl?.toUri())
+            .setIntentUri((card.id?.let {
                 "$APP_STRING_RESUME_WATCHING://$it"
-            } ?: card.url))
+            } ?: card.url).toUri())
             .setInternalProviderId(card.url)
             .setLastEngagementTimeUtcMillis(
                 resumeWatching?.updateTime ?: System.currentTimeMillis()
@@ -319,7 +319,7 @@ object AppContextUtils {
         val context = this
         continueWatchingLock.withLock {
             // A way to get all last watched timestamps
-            val timeStampHashMap = HashMap<Int, VideoDownloadHelper.ResumeWatching>()
+            val timeStampHashMap = HashMap<Int, DownloadObjects.ResumeWatching>()
             getAllResumeStateIds()?.forEach { id ->
                 val lastWatched = getLastWatched(id) ?: return@forEach
                 timeStampHashMap[lastWatched.parentId] = lastWatched
@@ -603,7 +603,7 @@ object AppContextUtils {
     ) = (this.getActivity() ?: activity)?.runOnUiThread {
         try {
             val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(url)
+            intent.data = url.toUri()
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
             // activityResultRegistry is used to fall back to webview if a browser is missing
@@ -685,6 +685,18 @@ object AppContextUtils {
             }
         }
         return ""
+    }
+
+    fun Context.getShortSeasonText(episode: Int?, season: Int?): String? {
+        val rEpisode = if (episode == 0) null else episode
+        val rSeason = if (season == 0) null else season
+        val seasonNameShort = getString(R.string.season_short)
+        val episodeNameShort = getString(R.string.episode_short)
+        return if (rEpisode != null && rSeason != null) {
+            "$seasonNameShort${rSeason}:$episodeNameShort${rEpisode}"
+        } else if (rEpisode != null) {
+            "$episodeNameShort$rEpisode"
+        }else null
     }
 
     fun Activity?.loadCache() {

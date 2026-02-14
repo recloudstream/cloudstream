@@ -18,7 +18,6 @@ import androidx.media3.extractor.text.SubtitleParser
 import androidx.media3.extractor.text.dvb.DvbParser
 import androidx.media3.extractor.text.pgs.PgsParser
 import androidx.media3.extractor.text.ssa.SsaParser
-import androidx.media3.extractor.text.subrip.SubripParser
 import androidx.media3.extractor.text.ttml.TtmlParser
 import androidx.media3.extractor.text.tx3g.Tx3gParser
 import androidx.media3.extractor.text.webvtt.Mp4WebvttParser
@@ -35,8 +34,8 @@ import java.nio.charset.Charset
 /**
  * @param fallbackFormat used to create a decoder based on mimetype if the subtitle string is not
  * enough to identify the subtitle format.
- **/
-@UnstableApi
+ */
+@OptIn(UnstableApi::class)
 class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
     companion object {
         fun updateForcedEncoding(context: Context) {
@@ -251,14 +250,14 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
                 ignoreCase = true
             )) -> SsaParser(fallbackFormat?.initializationData)
 
-            trimmedText.startsWith("1", ignoreCase = true) -> SubripParser()
+            trimmedText.startsWith("1", ignoreCase = true) -> CustomSubripParser()
             fallbackFormat != null -> {
-                when (val mimeType = fallbackFormat.sampleMimeType) {
+                when (fallbackFormat.sampleMimeType) {
                     MimeTypes.TEXT_VTT -> WebvttParser()
                     MimeTypes.TEXT_SSA -> SsaParser(fallbackFormat.initializationData)
                     MimeTypes.APPLICATION_MP4VTT -> Mp4WebvttParser()
                     MimeTypes.APPLICATION_TTML -> TtmlParser()
-                    MimeTypes.APPLICATION_SUBRIP -> SubripParser()
+                    MimeTypes.APPLICATION_SUBRIP -> CustomSubripParser()
                     MimeTypes.APPLICATION_TX3G -> Tx3gParser(fallbackFormat.initializationData)
                     // These decoders are not converted to parsers yet
                     // TODO
@@ -392,7 +391,7 @@ class CustomSubtitleDecoderFactory : SubtitleDecoderFactory {
     /**
      * Decoders created here persists across reset()
      * Do not save state in the decoder which you want to reset (e.g subtitle offset)
-     **/
+     */
     override fun createDecoder(format: Format): SubtitleDecoder {
         val parser = CustomDecoder(format)
         // Allow garbage collection if player releases the decoder
@@ -404,8 +403,8 @@ class CustomSubtitleDecoderFactory : SubtitleDecoderFactory {
     }
 }
 
-@OptIn(UnstableApi::class)
 /** We need to convert the newer SubtitleParser to an older SubtitleDecoder */
+@OptIn(UnstableApi::class)
 class DelegatingSubtitleDecoder(name: String, private val parser: SubtitleParser) :
     SimpleSubtitleDecoder(name) {
 
