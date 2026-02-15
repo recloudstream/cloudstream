@@ -439,72 +439,60 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
         if (isApplyingRemoteData) return
         isApplyingRemoteData = true
         try {
-        val remoteMap = snapshot.data ?: return
+            val remoteMap = snapshot.data ?: return
             
-            // log("Applying remote data (${remoteMap.size} keys)")
-            
-            // CRITICAL FIX: Always hydrate cachedRemotePlugins from snapshot regardless of timestamp
-            // This ensures we know the cloud state even if we have fresh local data preserving timestamps
-            if (remoteMap.containsKey(FIREBASE_PLUGINS_KEY)) {
-                try {
-                     val rawPayload = remoteMap[FIREBASE_PLUGINS_KEY]
-                     if (rawPayload is Map<*, *>) {
-                         val v = rawPayload["v"] as? String // JSON string
-                         if (v != null) {
-                             cachedRemotePlugins = parseJson<Array<PluginData>>(v).toMutableList()
-                             // Force process to calculate pending list
-                             handleRemotePlugins(context, v)
-                         }
-                     }
-                } catch (e: Exception) {
-                    // log("Sync: Failed to hydrate cache: ${e.message}")
-                }
-            } else {
-                // log("Sync: Snapshot missing $FIREBASE_PLUGINS_KEY")
-            }
-        
-            remoteMap.forEach { (key, rawPayload) ->
-                if (key == "last_sync") return@forEach
-                if (key == FIREBASE_PLUGINS_KEY) return@forEach // Handled above
-                
-                try {
-                    if (rawPayload !is Map<*, *>) return@forEach
-                    
-                    val v = rawPayload["v"]
-                    val t = (rawPayload["t"] as? Number)?.toLong() ?: 0L
-                    val d = (rawPayload["d"] as? Boolean) ?: false
-                    
-                    val localT = getLocalTimestamp(context, key)
-                    
-                    if (t > localT) {
-                        // Remote is newer
-                        applyPayload(context, key, v, d)
-                        setLocalTimestamp(context, key, t)
-                    }
-                } catch (e: Exception) {
-                    // log("Sync: Error parsing key $key: ${e.message}")
-                }
-            }
+            hydrateCachedPlugins(context, remoteMap)
+            applyRemotePayloads(context, remoteMap)
             
             val remoteSyncTime = (remoteMap["last_sync"] as? Number)?.toLong() ?: 0L
             if (remoteSyncTime > 0) {
                  context.setKey(FIREBASE_LAST_SYNC, remoteSyncTime)
             }
             
-            // log("Sync: Finished applying remote data. New Pending Count: ${getPendingPlugins(context).size}")
-            
-            // Ensure we are marked as initialized even if no new data was applied
-            // But only if we are not waiting for a deferred load
             if (pendingRemotePluginJson == null) {
                 isPluginsInitialized = true
             }
 
-        // Fire UI update event ONCE outside the loop to prevent lag
-        com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread {
-            MainActivity.syncUpdatedEvent.invoke(true)
-        }
+            main {
+                MainActivity.syncUpdatedEvent.invoke(true)
+            }
         } finally {
             isApplyingRemoteData = false
+        }
+    }
+
+    private fun hydrateCachedPlugins(context: Context, remoteMap: Map<String, Any?>) {
+        if (!remoteMap.containsKey(FIREBASE_PLUGINS_KEY)) return
+        try {
+            val rawPayload = remoteMap[FIREBASE_PLUGINS_KEY]
+            if (rawPayload is Map<*, *>) {
+                val v = rawPayload["v"] as? String
+                if (v != null) {
+                    cachedRemotePlugins = parseJson<Array<PluginData>>(v).toMutableList()
+                    handleRemotePlugins(context, v)
+                }
+            }
+        } catch (_: Exception) { }
+    }
+
+    private fun applyRemotePayloads(context: Context, remoteMap: Map<String, Any?>) {
+        remoteMap.forEach { (key, rawPayload) ->
+            if (key == "last_sync" || key == FIREBASE_PLUGINS_KEY) return@forEach
+            
+            try {
+                if (rawPayload !is Map<*, *>) return@forEach
+                
+                val v = rawPayload["v"]
+                val t = (rawPayload["t"] as? Number)?.toLong() ?: 0L
+                val d = rawPayload["d"] as? Boolean ?: false
+                
+                val localT = getLocalTimestamp(context, key)
+                
+                if (t > localT) {
+                    applyPayload(context, key, v, d)
+                    setLocalTimestamp(context, key, t)
+                }
+            } catch (_: Exception) { }
         }
     }
     
@@ -682,133 +670,99 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
     private fun handleRemotePlugins(context: Context, remoteJson: String) {
         try {
             val remoteList = parseJson<Array<PluginData>>(remoteJson).toList()
-            
-            // Baseline Update: Always track the absolute cloud state 
-            // so our next local push is a merge, not an overwrite.
             cachedRemotePlugins = remoteList.toMutableList()
-
-                // log("Sync: Deferring plugin comparison until PluginManager is ready")
 
             val json = context.getSharedPrefs().getString(PENDING_PLUGINS_KEY, "[]") ?: "[]"
             val rawPending = try {
                 parseJson<Array<PluginData>>(json).toMutableList()
             } catch(_:Exception) { mutableListOf<PluginData>() }
             
-            val onlinePlugins = PluginManager.getPluginsOnline()
-            val localPlugins = PluginManager.getPluginsLocal()
-            val installedPlugins = (localPlugins + onlinePlugins).toList() // CRITICAL: Use both local and online
-            val ignoredJson = context.getSharedPrefs().getString(IGNORED_PLUGINS_KEY, "[]") ?: "[]"
-            val ignoredList = try {
-                 parseJson<Array<String>>(ignoredJson).map { it.trim() }.toSet() 
-            } catch(_:Exception) { emptySet<String>() }
+            val installedPlugins = (PluginManager.getPluginsLocal() + PluginManager.getPluginsOnline()).toList()
+            val ignoredList = getIgnoredPlugins(context)
             
-            var changed = false
+            val changed = processRemotePluginChanges(context, remoteList, installedPlugins, rawPending, ignoredList)
+            cleanupPendingPlugins(remoteList, rawPending)
             
-            // --- PROCESS DELETIONS & INSTALLS ---
-            remoteList.forEach { remote ->
-                val isLocal = installedPlugins.firstOrNull { isMatchingPlugin(remote, it) }
-                
-                if (remote.isDeleted) {
-                    // CASE: Deleted on Remote
-                    if (isLocal != null) {
-                        // log("Sync: Uninstalling deleted plugin ${remote.internalName}")
-                        val file = File(isLocal.filePath)
-                        if (file.exists()) {
-                            file.delete()
-                            // Update local plugin list
-                            val updatedLocalPlugins = PluginManager.getPluginsLocal()
-                                .filter { it.filePath != isLocal.filePath }
-                                .toTypedArray()
-                            context.setKeyLocal(PLUGINS_KEY_LOCAL, updatedLocalPlugins)
-                        }
+            if (changed) {
+                context.setKeyLocal(PENDING_PLUGINS_KEY, rawPending.toJson())
+                main { MainActivity.syncUpdatedEvent.invoke(true) }
+            }
+            
+            updateOnlinePluginList(context, remoteList)
+        } catch (_: Exception) { }
+    }
+
+    private fun getIgnoredPlugins(context: Context): Set<String> {
+        val ignoredJson = context.getSharedPrefs().getString(IGNORED_PLUGINS_KEY, "[]") ?: "[]"
+        return try {
+            parseJson<Array<String>>(ignoredJson).map { it.trim() }.toSet()
+        } catch(_:Exception) { emptySet() }
+    }
+
+    private fun processRemotePluginChanges(
+        context: Context,
+        remoteList: List<PluginData>,
+        installedPlugins: List<PluginData>,
+        rawPending: MutableList<PluginData>,
+        ignoredList: Set<String>
+    ): Boolean {
+        var changed = false
+        remoteList.forEach { remote ->
+            val isLocal = installedPlugins.firstOrNull { isMatchingPlugin(remote, it) }
+            if (remote.isDeleted) {
+                if (isLocal != null) {
+                    val file = File(isLocal.filePath)
+                    if (file.exists()) {
+                        file.delete()
+                        val updatedLocalPlugins = PluginManager.getPluginsLocal()
+                            .filter { it.filePath != isLocal.filePath }
+                            .toTypedArray()
+                        context.setKeyLocal(PLUGINS_KEY_LOCAL, updatedLocalPlugins)
                     }
-                    
-                    // Also remove from Pending if present
-                    if (rawPending.removeIf { isMatchingPlugin(remote, it) }) {
+                }
+                if (rawPending.removeIf { isMatchingPlugin(remote, it) }) changed = true
+            } else {
+                if (isLocal == null) {
+                    val cleanName = remote.internalName.trim()
+                    if (!ignoredList.contains(cleanName) && rawPending.none { isMatchingPlugin(remote, it) }) {
+                        rawPending.add(remote)
                         changed = true
                     }
-                    
-                } else {
-                    // CASE: Active on Remote
-                    if (isLocal == null) {
-                        val cleanName = remote.internalName.trim()
-                        if (!ignoredList.contains(cleanName)) {
-                            if (rawPending.none { isMatchingPlugin(remote, it) }) {
-                                rawPending.add(remote)
-                                changed = true
-                            }
-                        }
-                    } else {
-                        // Installed locally. Ensure not in pending.
-                        if (rawPending.removeIf { isMatchingPlugin(remote, it) }) {
-                            changed = true
-                        }
-                    }
+                } else if (rawPending.removeIf { isMatchingPlugin(remote, it) }) {
+                    changed = true
                 }
             }
-            
-            // --- CLEANUP PENDING ---
-            rawPending.retainAll { pending ->
-                remoteList.any { remote -> isMatchingPlugin(remote, pending) }
-            }
-            
-            /*lastSyncDebugInfo = """
-                Remote: ${remoteList.size}
-                Local: ${localPlugins.size} (${localPlugins.take(3).map { it.internalName }})
-                Ignored: ${ignoredList.size}
-                Pending: ${rawPending.size} (${rawPending.take(3).map { it.internalName }})
-            """.trimIndent()
-            
-            log("Sync Debug: $lastSyncDebugInfo")
-            
-            if (changed) {
-                log("Sync: Pending plugins list updated. New size: ${rawPending.size}")
-                context.setKeyLocal(PENDING_PLUGINS_KEY, rawPending.toJson())
-                // Notify UI via event
-                main { MainActivity.syncUpdatedEvent.invoke(true) }
-            }*/
-            
-            if (changed) {
-                context.setKeyLocal(PENDING_PLUGINS_KEY, rawPending.toJson())
-                // Notify UI via event
-                main { MainActivity.syncUpdatedEvent.invoke(true) }
-            }
-            
-            // We need to ensure that what's in PLUGINS_KEY matches the installed plugins that are still ACTIVE on remote,
-            // PLUS any local online plugins we already had that aren't in the cloud yet (to avoid deletion).
-            val currentOnlinePlugins = onlinePlugins.toMutableList()
-            
-            remoteList.forEach { remote ->
-                val match = currentOnlinePlugins.indexOfFirst { isMatchingPlugin(remote, it) }
-                if (remote.isDeleted) {
-                    if (match != -1) currentOnlinePlugins.removeAt(match)
-                } else {
-                    if (match != -1) {
-                        // Update existing with cloud metadata (version, url etc)
-                        currentOnlinePlugins[match] = remote.copy(
-                            filePath = currentOnlinePlugins[match].filePath,
-                            isOnline = true
-                        )
-                    } else {
-                        // If it's on disk but not in our list yet, it will be added by a local scan or later.
-                        // But if it IS in allLocalPlugins (meaning it's installed as manual), we might want to convert?
-                        // For now, only track what we already had as online.
-                    }
-                }
-            }
-            
-            if (remoteList.isNotEmpty()) {
-                context.setKeyLocal(PLUGINS_KEY, currentOnlinePlugins.toTypedArray())
-            }
-            
-            isPluginsInitialized = true
-            // log("Sync: Plugins initialized from remote data.")
-            
-        } catch(e:Exception) {
-            // log("Plugin Parse Error: ${e.message}")
-            // Ensure flag is set even on error to avoid blocking forever
-            isPluginsInitialized = true
         }
+        return changed
+    }
+
+    private fun cleanupPendingPlugins(remoteList: List<PluginData>, rawPending: MutableList<PluginData>) {
+        rawPending.retainAll { pending ->
+            remoteList.any { remote -> isMatchingPlugin(remote, pending) }
+        }
+    }
+
+    private fun updateOnlinePluginList(context: Context, remoteList: List<PluginData>) {
+        val onlinePlugins = PluginManager.getPluginsOnline()
+        val currentOnlinePlugins = onlinePlugins.toMutableList()
+        remoteList.forEach { remote ->
+            val match = currentOnlinePlugins.indexOfFirst { isMatchingPlugin(remote, it) }
+            if (remote.isDeleted) {
+                if (match != -1) currentOnlinePlugins.removeAt(match)
+            } else if (match != -1) {
+                currentOnlinePlugins[match] = remote.copy(
+                    filePath = currentOnlinePlugins[match].filePath,
+                    isOnline = true
+                )
+            }
+        }
+        
+        if (remoteList.isNotEmpty()) {
+            context.setKeyLocal(PLUGINS_KEY, currentOnlinePlugins.toTypedArray())
+        }
+        
+        // Signal initialized
+        isPluginsInitialized = true
     }
 
     /**

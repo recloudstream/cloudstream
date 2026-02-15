@@ -236,82 +236,81 @@ class SyncSettingsFragment : BaseFragment<FragmentSyncSettingsBinding>(
         val binding = binding ?: return
         val context = context ?: return
         
-        // 1. Connection Status
         val enabled = FirestoreSyncManager.isEnabled(context)
         val isOnline = FirestoreSyncManager.isOnline()
         val isLogged = FirestoreSyncManager.isLogged()
         
-        // Status Card
+        updateConnectionStatus(binding, context, enabled, isOnline, isLogged)
+        updateAuthState(binding, context, isLogged)
+        updatePendingPlugins(binding, context, enabled)
+    }
+
+    private fun updateConnectionStatus(
+        binding: FragmentSyncSettingsBinding,
+        context: android.content.Context,
+        enabled: Boolean,
+        isOnline: Boolean,
+        isLogged: Boolean
+    ) {
         binding.syncStatusCard.isVisible = enabled
-        
-        // Account Card Visibility: Only show if enabled (connected to DB config)
         binding.syncAccountCard.isVisible = enabled
         
-        if (enabled) {
-            if (isLogged) {
-                binding.syncStatusText.text = getString(R.string.sync_status_connected)
-                binding.syncStatusText.setTextColor(context.getColor(R.color.sync_status_connected))
-            } else if (isOnline) {
-                // Connected to DB but not logged in
-                binding.syncStatusText.text = getString(R.string.sync_status_login_needed)
-                binding.syncStatusText.setTextColor(context.getColor(R.color.sync_status_login_needed))
-            } else {
-                val error = FirestoreSyncManager.lastInitError
-                if (error != null) {
-                    binding.syncStatusText.text = getString(R.string.sync_status_error_prefix, error)
-                } else {
-                    binding.syncStatusText.text = getString(R.string.sync_status_disconnected)
-                }
-                binding.syncStatusText.setTextColor(context.getColor(R.color.sync_status_error))
-            }
-
-            val lastSync = FirestoreSyncManager.getLastSyncTime(context)
-            binding.syncLastTime.text = lastSync?.let {
-                SimpleDateFormat("MMM dd, HH:mm:ss", Locale.getDefault()).format(Date(it))
-            } ?: getString(R.string.sync_never)
-        } else {
+        if (!enabled) {
             binding.syncConnectBtn.text = getString(R.string.sync_connect_database)
+            return
         }
 
-        // 2. Auth State
+        if (isLogged) {
+            binding.syncStatusText.text = getString(R.string.sync_status_connected)
+            binding.syncStatusText.setTextColor(context.getColor(R.color.sync_status_connected))
+        } else if (isOnline) {
+            binding.syncStatusText.text = getString(R.string.sync_status_login_needed)
+            binding.syncStatusText.setTextColor(context.getColor(R.color.sync_status_login_needed))
+        } else {
+            val error = FirestoreSyncManager.lastInitError
+            binding.syncStatusText.text = if (error != null) getString(R.string.sync_status_error_prefix, error) else getString(R.string.sync_status_disconnected)
+            binding.syncStatusText.setTextColor(context.getColor(R.color.sync_status_error))
+        }
+
+        val lastSync = FirestoreSyncManager.getLastSyncTime(context)
+        binding.syncLastTime.text = lastSync?.let { it: Long ->
+            SimpleDateFormat("MMM dd, HH:mm:ss", Locale.getDefault()).format(Date(it))
+        } ?: getString(R.string.sync_never)
+    }
+
+    private fun updateAuthState(
+        binding: FragmentSyncSettingsBinding,
+        context: android.content.Context,
+        isLogged: Boolean
+    ) {
         if (isLogged) {
             val email = FirestoreSyncManager.getUserEmail() ?: getString(R.string.sync_unknown_user_label)
             binding.syncAccountStatus.text = getString(R.string.sync_signed_in_as, email)
             binding.syncAccountStatus.setTextColor(context.getColor(R.color.sync_status_connected))
             binding.syncAccountActionBtn.text = getString(R.string.sync_manage_accounts)
-
-            // Show content sections
-            binding.syncAppSettingsCard.isVisible = true
-            binding.syncLibraryCard.isVisible = true
-            binding.syncExtensionsCard.isVisible = true
-            binding.syncInterfaceCard.isVisible = true
         } else {
             binding.syncAccountStatus.text = getString(R.string.sync_not_logged_in)
             binding.syncAccountStatus.setTextColor(context.getColor(R.color.sync_status_error))
             binding.syncAccountActionBtn.text = getString(R.string.sync_login_via_accounts)
-
-            // Hide content sections (require login)
-            binding.syncAppSettingsCard.isVisible = false
-            binding.syncLibraryCard.isVisible = false
-            binding.syncExtensionsCard.isVisible = false
-            binding.syncInterfaceCard.isVisible = false
         }
 
-        // 3. Pending Plugins
+        val contentVisible = isLogged
+        binding.syncAppSettingsCard.isVisible = contentVisible
+        binding.syncLibraryCard.isVisible = contentVisible
+        binding.syncExtensionsCard.isVisible = contentVisible
+        binding.syncInterfaceCard.isVisible = contentVisible
+    }
+
+    private fun updatePendingPlugins(
+        binding: FragmentSyncSettingsBinding,
+        context: android.content.Context,
+        enabled: Boolean
+    ) {
         val pendingPlugins = FirestoreSyncManager.getPendingPlugins(context)
 
         if (pendingPlugins.isNotEmpty() && enabled) {
             binding.syncPendingPluginsCard.isVisible = true
-            // Update Header with Count
             binding.syncPendingTitle.text = getString(R.string.sync_new_plugins_detected, pendingPlugins.size)
-            /*binding.syncPendingTitle.setOnLongClickListener {
-                com.google.android.material.dialog.MaterialAlertDialogBuilder(context)
-                    .setTitle(getString(R.string.sync_debug_info_title))
-                    .setMessage(FirestoreSyncManager.lastSyncDebugInfo)
-                    .setPositiveButton(getString(R.string.ok), null)
-                    .show()
-                true
-            }*/
 
             val adapter = PluginAdapter(pendingPlugins) { plugin: PluginData, action: String ->
                 when (action) {

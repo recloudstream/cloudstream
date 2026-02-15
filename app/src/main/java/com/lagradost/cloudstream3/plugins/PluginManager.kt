@@ -508,7 +508,7 @@ object PluginManager {
         }
 
         // Load all plugins sequentially to avoid DataStore race conditions!
-        (getPluginsOnline()).toList().forEach { pluginData ->
+        getPluginsOnline().toList().forEach { pluginData ->
             loadPlugin(
                 context,
                 File(pluginData.filePath),
