@@ -16,8 +16,6 @@ class Videa : ExtractorApi() {
     override val requiresReferer = false
 
     private val videaSecret = "xHb0ZvME5q8CBcoQi6AngerDu3FGO9fkUlwPmLVY_RTzj2hJIS4NasXWKy1td7p"
-    private var key = ""
-    private var cookie = ""
 
     override suspend fun getUrl(
         url: String,
@@ -26,11 +24,11 @@ class Videa : ExtractorApi() {
         callback: (ExtractorLink) -> Unit
     ) {
         var currentUrl = url
-        var found = false
-
+        var key = ""
+        var lastUrl: String? = null
         // Handle redirect loop until we get valid XML
-        while (!found) {
-            val webUrl = getXmlUrl(currentUrl) ?: return
+        while (true) {
+            val webUrl = getXmlUrl(currentUrl) { cookie -> /* no-op, cookie not used */ } ?: return
             val response = app.get(webUrl)
             val rawBytes = response.body.bytes()
 
@@ -54,23 +52,24 @@ class Videa : ExtractorApi() {
             // Check for redirect in XML error
             val redirectMatch = """<error.*?"noembed".*>(.*)</error>""".toRegex().find(videaXml)
 
-            if (redirectMatch != null) {
+            if (redirectMatch != null && redirectMatch.groupValues[1] != currentUrl) {
+                lastUrl = currentUrl
                 currentUrl = redirectMatch.groupValues[1]
             } else {
-                found = true
                 parseVideoSources(videaXml, callback)
+                break
             }
         }
     }
 
-    private suspend fun getXmlUrl(url: String): String? {
+    private suspend fun getXmlUrl(url: String, cookieCallback: (String) -> Unit = {}): String? {
         val response = app.get(url)
         val html = response.text
 
         // Extract sl cookie if present
         response.headers["Set-Cookie"]?.let { cookieHeader ->
             """sl=([^;]+)""".toRegex().find(cookieHeader)?.let {
-                cookie = it.value
+                cookieCallback(it.value)
             }
         }
 
@@ -78,7 +77,7 @@ class Videa : ExtractorApi() {
         val playerUrl = if ("/player" in url) {
             url
         } else {
-            val iframeMatch = """<iframe.*?src="(/player\?[^"]+)""".toRegex().find(html)
+            val iframeMatch = """<iframe.*?src="(/player\?[^\"]+)""".toRegex().find(html)
             iframeMatch?.let { "$mainUrl${it.groupValues[1]}" } ?: return null
         }
 
@@ -89,13 +88,13 @@ class Videa : ExtractorApi() {
         // Update cookie from player response
         playerResponse.headers["Set-Cookie"]?.let { cookieHeader ->
             """sl=([^;]+)""".toRegex().find(cookieHeader)?.let {
-                cookie = it.value
+                cookieCallback(it.value)
             }
         }
 
         // Extract nonce and generate tokens
-        val nonceMatch = """_xt\s*=\s*"([^"]+)"""".toRegex().find(playerHtml) ?: return null
-        val (s, t) = generateTokens(nonceMatch.groupValues[1])
+        val nonceMatch = """_xt\s*=\s*"([^"]+)""".toRegex().find(playerHtml) ?: return null
+        val (s, t, key) = generateTokens(nonceMatch.groupValues[1])
 
         // Extract video parameter
         val videoParam = when {
@@ -107,7 +106,7 @@ class Videa : ExtractorApi() {
         return "$mainUrl/player/xml?platform=desktop&$videoParam&_s=$s&_t=$t"
     }
 
-    private fun generateTokens(nonce: String): Pair<String, String> {
+    private fun generateTokens(nonce: String): Triple<String, String, String> {
         val lo = nonce.take(32)
         val s = nonce.substring(32)
         var result = ""
@@ -121,8 +120,8 @@ class Videa : ExtractorApi() {
         val chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         val randomSeed = (1..8).map { chars.random() }.joinToString("")
 
-        key = result.substring(16) + randomSeed
-        return Pair(randomSeed, result.take(16))
+        val key = result.substring(16) + randomSeed
+        return Triple(randomSeed, result.take(16), key)
     }
 
     private suspend fun parseVideoSources(xml: String, callback: (ExtractorLink) -> Unit) {
