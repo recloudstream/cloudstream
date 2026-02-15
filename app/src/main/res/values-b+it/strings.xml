@@ -765,4 +765,22 @@
     <string name="extra_brightness_settings">Luminosità extra</string>
     <string name="extra_brightness_settings_des">Attiva il filtro di luminosità quando viene superato il 100% della luminosità dello schermo</string>
     <string name="extra_brightness_key">extra_brightness_enabled</string>
+    <string name="download_queue">Coda di download</string>
+    <string name="queue_empty_message">Al momento non ci sono download in coda.</string>
+    <string name="download_all">Scarica tutto</string>
+    <string name="cancel_all">Annulla tutto</string>
+    <string name="download_episode_range">Vuoi scaricare l\'episodio %s?</string>
+    <string name="cancel_queue_message">Vuoi annullare tutti i download in coda?</string>
+    <plurals name="downloads_active">
+        <item quantity="one">%d download attivo</item>
+        <item quantity="many">%d download attivi</item>
+        <item quantity="other">%d download attivi</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="one">%d download in coda</item>
+        <item quantity="many">%d download in coda</item>
+        <item quantity="other">%d download in coda</item>
+    </plurals>
+    <string name="source_priority">Priorità sorgente</string>
+    <string name="source_priority_help">Decidi come le sorgenti video devono essere ordinate nel lettore</string>
 </resources>

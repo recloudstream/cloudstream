@@ -305,7 +305,7 @@
     <string name="skip_type_op">Вступление</string>
     <string name="skip_type_creddits">Титры</string>
     <string name="action_mark_as_watched">Отметить как просмотренное</string>
-    <string name="limit_title_rez">Показывать информацию об игроке</string>
+    <string name="limit_title_rez">Показывать информацию про видеоплеер</string>
     <string name="watch_quality_pref">Предпочтительное качество видео (WiFi)</string>
     <string name="limit_title">Максимум символов</string>
     <string name="video_buffer_length_settings">Длинна буфера</string>
