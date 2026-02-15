@@ -313,7 +313,7 @@
     <string name="update_notification_downloading">Téléchargement de la mise à jour…</string>
     <string name="next_episode_format" formatted="true">L\'épisode %d sera publié dans</string>
     <string name="show_hd">Étiquette de qualité</string>
-    <string name="limit_title_rez">Résolution du lecteur vidéo</string>
+    <string name="limit_title_rez">Afficher les informations du lecteur</string>
     <string name="add_site_pref">Cloner le site</string>
     <string name="remove_site_pref">Supprimer le site</string>
     <string name="add_site_summary">Ajoute un clone à un site déjà existant, avec une URL différente</string>
@@ -729,4 +729,10 @@
     <string name="search_suggestions">Suggestions de recherche</string>
     <string name="search_suggestions_des">Afficher des suggestions de recherche pendant la saisie</string>
     <string name="clear_suggestions">Effacer les suggestions</string>
+    <string name="extra_brightness_settings">Luminosité supplémentaire</string>
+    <string name="extra_brightness_settings_des">Activer le filtre de luminosité lorsque la luminosité dépasse 100 %</string>
+    <string name="extra_brightness_key">extra_brightness_enabled</string>
+    <string name="show_cast_in_details">Afficher le panneau de cast</string>
+    <string name="video_info">Information du média</string>
+    <string name="source_name">Nom de la source</string>
 </resources>

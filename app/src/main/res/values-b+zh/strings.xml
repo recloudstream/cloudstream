@@ -756,4 +756,18 @@
     <string name="source_name">源名称</string>
     <string name="extra_brightness_settings">额外亮度</string>
     <string name="extra_brightness_settings_des">超过 100% 亮度时启用亮度过滤器</string>
+    <string name="download_queue">下载队列</string>
+    <string name="queue_empty_message">队列中当前无下载。</string>
+    <string name="download_all">全部下载</string>
+    <string name="cancel_all">全部取消</string>
+    <string name="download_episode_range">要下载第 %s 集吗？</string>
+    <string name="cancel_queue_message">要取消队列中的所有下载吗？</string>
+    <plurals name="downloads_active">
+        <item quantity="other">%d 个活跃下载</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="other">队列中有 %d 个下载</item>
+    </plurals>
+    <string name="source_priority">源优先级</string>
+    <string name="source_priority_help">确定在播放器中如何排列视频源的顺序</string>
 </resources>

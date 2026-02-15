@@ -56,7 +56,7 @@
     <string name="subtitles_remove_captions">Eliminar Closed Captions (CC) de los subtítulos</string>
     <string name="double_tap_to_seek_amount_settings">Cantidad de búsquedas del reproductor (segundos)</string>
     <string name="use_system_brightness_settings_des">Use el brillo del sistema en el reproductor de la app en lugar de una superposición oscura</string>
-    <string name="limit_title_rez">Resolución del reproductor de video</string>
+    <string name="limit_title_rez">Mostrar la información del reproductor de video</string>
     <string name="category_player">Reproductor</string>
     <string name="autoplay_next_settings_des">Iniciar el siguiente episodio cuando el actual termine</string>
     <string name="video_skip_op">Omitir Intro</string>
@@ -733,4 +733,9 @@
     <string name="search_suggestions_des">Mostrar sugerencias de búsqueda mientras escribe</string>
     <string name="clear_suggestions">Borrar Sugerencias</string>
     <string name="show_cast_in_details">Mostrar panel de reparto</string>
+    <string name="extra_brightness_settings">Atenuación extra</string>
+    <string name="extra_brightness_settings_des">Active el filtro de atenuación cuando se supere el 100 % de brillo de la pantalla</string>
+    <string name="extra_brightness_key">atenuación_extra_activado</string>
+    <string name="video_info">Información del archivo multimedia</string>
+    <string name="source_name">Nombre de la fuente</string>
 </resources>
