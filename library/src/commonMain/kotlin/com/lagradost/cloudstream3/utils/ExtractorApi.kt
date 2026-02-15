@@ -261,6 +261,7 @@ import com.lagradost.cloudstream3.extractors.Urochsunloath
 import com.lagradost.cloudstream3.extractors.Userload
 import com.lagradost.cloudstream3.extractors.Userscloud
 import com.lagradost.cloudstream3.extractors.Uservideo
+import com.lagradost.cloudstream3.extractors.Videa
 import com.lagradost.cloudstream3.extractors.Vanfem
 import com.lagradost.cloudstream3.extractors.Vicloud
 import com.lagradost.cloudstream3.extractors.VidHidePro
@@ -985,7 +986,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Lvturbo(),
 
     Fastream(),
-
+    Videa(),
     FEmbed(),
     FeHD(),
     Fplayer(),
