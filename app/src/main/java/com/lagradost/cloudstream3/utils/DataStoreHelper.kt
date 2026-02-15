@@ -44,7 +44,7 @@ const val RESULT_WATCH_STATE_DATA = "result_watch_state_data"
 const val RESULT_SUBSCRIBED_STATE_DATA = "result_subscribed_state_data"
 const val RESULT_FAVORITES_STATE_DATA = "result_favorites_state_data"
 const val RESULT_RESUME_WATCHING = "result_resume_watching_2" // changed due to id changes
-const val RESULT_RESUME_WATCHING_DELETED = "result_resume_watching_deleted"
+
 const val RESULT_RESUME_WATCHING_OLD = "result_resume_watching"
 const val RESULT_RESUME_WATCHING_HAS_MIGRATED = "result_resume_watching_migrated"
 const val RESULT_EPISODE = "result_episode"
@@ -495,12 +495,7 @@ object DataStoreHelper {
         }
     }
 
-    fun getAllResumeStateDeletionIds(): List<Int>? {
-        val folder = "$currentAccount/$RESULT_RESUME_WATCHING_DELETED"
-        return getKeys(folder)?.mapNotNull {
-            it.removePrefix("$folder/").toIntOrNull()
-        }
-    }
+
 
     private fun getAllResumeStateIdsOld(): List<Int>? {
         val folder = "$currentAccount/$RESULT_RESUME_WATCHING_OLD"
@@ -550,8 +545,6 @@ object DataStoreHelper {
                 isFromDownload
             )
         )
-        // Remove tombstone if it exists (Re-vivification)
-        removeKey("$currentAccount/$RESULT_RESUME_WATCHING_DELETED", parentId.toString())
     }
 
     private fun removeLastWatchedOld(parentId: Int?) {
@@ -562,19 +555,9 @@ object DataStoreHelper {
     fun removeLastWatched(parentId: Int?) {
         if (parentId == null) return
         removeKey("$currentAccount/$RESULT_RESUME_WATCHING", parentId.toString())
-        // Set tombstone
-        setKey("$currentAccount/$RESULT_RESUME_WATCHING_DELETED", parentId.toString(), System.currentTimeMillis())
     }
 
-    fun setLastWatchedDeletionTime(parentId: Int?, time: Long) {
-        if (parentId == null) return
-        setKey("$currentAccount/$RESULT_RESUME_WATCHING_DELETED", parentId.toString(), time)
-    }
 
-    fun getLastWatchedDeletionTime(parentId: Int?): Long? {
-        if (parentId == null) return null
-        return getKey("$currentAccount/$RESULT_RESUME_WATCHING_DELETED", parentId.toString(), null)
-    }
 
     fun getLastWatched(id: Int?): VideoDownloadHelper.ResumeWatching? {
         if (id == null) return null
@@ -803,6 +786,33 @@ object DataStoreHelper {
         return idPrefixes.map { idPrefix ->
             getKey("${idPrefix}_sync", id.toString())
         }
+    }
+
+    /**
+     * Deletes all local data that is part of the sync process.
+     * Used when switching accounts to ensure a clean state.
+     */
+    fun deleteAllSyncableData() {
+        // Resume Watching
+        deleteAllResumeStateIds()
+        
+        // Bookmarks / Watch States
+        val watchStateIds = getAllWatchStateIds()
+        watchStateIds?.forEach { id ->
+            deleteBookmarkedData(id)
+        }
+        
+        // Subscriptions
+        getKeys("$currentAccount/$RESULT_SUBSCRIBED_STATE_DATA")?.forEach { removeKey(it) }
+        
+        // Favorites
+        getKeys("$currentAccount/$RESULT_FAVORITES_STATE_DATA")?.forEach { removeKey(it) }
+        
+        // Video Positions
+        removeKeys("$currentAccount/$VIDEO_POS_DUR")
+        
+        // Watch States (raw)
+        removeKeys("$currentAccount/$VIDEO_WATCH_STATE")
     }
 
     var pinnedProviders: Array<String>

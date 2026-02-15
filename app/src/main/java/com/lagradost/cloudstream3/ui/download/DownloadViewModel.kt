@@ -1,7 +1,7 @@
 package com.lagradost.cloudstream3.ui.download
 
 import android.content.Context
-import com.lagradost.cloudstream3.utils.DataStore
+import com.lagradost.cloudstream3.utils.getFolderName
 import android.content.DialogInterface
 import android.os.Environment
 import android.os.StatFs
@@ -202,7 +202,7 @@ class DownloadViewModel : ViewModel() {
             val movieEpisode =
                 if (it.type.isEpisodeBased()) null else context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(
                     DOWNLOAD_EPISODE_CACHE,
-                    DataStore.getFolderName(it.id.toString(), it.id.toString())
+                    getFolderName(it.id.toString(), it.id.toString())
                 )
 
             VisualDownloadCached.Header(

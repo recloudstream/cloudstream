@@ -717,7 +717,7 @@
     <fragment
         android:id="@+id/navigation_settings_sync"
         android:name="com.lagradost.cloudstream3.ui.settings.SyncSettingsFragment"
-        android:label="Firebase Sync"
+        android:label="Firebase Settings"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"
         app:popEnterAnim="@anim/enter_anim"

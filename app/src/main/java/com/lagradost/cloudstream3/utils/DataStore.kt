@@ -51,57 +51,39 @@ class PreferenceDelegate<T : Any>(
 }
 
 /** When inserting many keys use this function, this is because apply for every key is very expensive on memory */
-data class Editor(
-    val editor: SharedPreferences.Editor
-) {
-    /** Always remember to call apply after */
-    fun <T> setKeyRaw(path: String, value: T) {
-        @Suppress("UNCHECKED_CAST")
-        if (isStringSet(value)) {
-            editor.putStringSet(path, value as Set<String>)
-        } else {
-            when (value) {
-                is Boolean -> editor.putBoolean(path, value)
-                is Int -> editor.putInt(path, value)
-                is String -> editor.putString(path, value)
-                is Float -> editor.putFloat(path, value)
-                is Long -> editor.putLong(path, value)
-            }
+fun editor(context: Context, isEditingAppSettings: Boolean = false): SharedPreferences.Editor {
+    return if (isEditingAppSettings) context.getDefaultSharedPrefs()
+        .edit() else context.getSharedPrefs().edit()
+}
+
+fun <T> SharedPreferences.Editor.setKeyRaw(path: String, value: T) {
+    @Suppress("UNCHECKED_CAST")
+    if (value is Set<*>) {
+        putStringSet(path, value as Set<String>)
+    } else {
+        when (value) {
+            is Boolean -> putBoolean(path, value)
+            is Int -> putInt(path, value)
+            is String -> putString(path, value)
+            is Float -> putFloat(path, value)
+            is Long -> putLong(path, value)
         }
     }
+}
 
-    private fun isStringSet(value: Any?): Boolean {
-        if (value is Set<*>) {
-            return value.filterIsInstance<String>().size == value.size
-        }
-        return false
-    }
+val mapper: JsonMapper = JsonMapper.builder().addModule(kotlinModule())
+    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()
 
-    fun apply() {
-        editor.apply()
-        System.gc()
-    }
+fun getFolderName(folder: String, path: String): String {
+    return "${folder}/${path}"
 }
 
 object DataStore {
-    val mapper: JsonMapper = JsonMapper.builder().addModule(kotlinModule())
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()
-
     fun getPreferences(context: Context): SharedPreferences {
         return context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
     }
-
-    fun getFolderName(folder: String, path: String): String {
-        return "${folder}/${path}"
-    }
-
-    fun editor(context: Context, isEditingAppSettings: Boolean = false): Editor {
-        val editor: SharedPreferences.Editor =
-            if (isEditingAppSettings) context.getDefaultSharedPrefs()
-                .edit() else context.getSharedPrefs().edit()
-        return Editor(editor)
-    }
 }
+
 
 // Top-level extension functions
 
@@ -118,11 +100,11 @@ fun Context.getKeys(folder: String): List<String> {
 }
 
 fun Context.removeKey(folder: String, path: String) {
-    removeKey(DataStore.getFolderName(folder, path))
+    removeKey(getFolderName(folder, path))
 }
 
 fun Context.containsKey(folder: String, path: String): Boolean {
-    return containsKey(DataStore.getFolderName(folder, path))
+    return containsKey(getFolderName(folder, path))
 }
 
 fun Context.containsKey(path: String): Boolean {
@@ -162,13 +144,13 @@ fun Context.removeKeys(folder: String): Int {
     }
 }
 
-fun <T> Context.setKey(path: String, value: T) {
+fun <T> Context.setKey(path: String, value: T, commit: Boolean = false) {
     try {
-        val json = DataStore.mapper.writeValueAsString(value)
+        val json = mapper.writeValueAsString(value)
         val current = getSharedPrefs().getString(path, null)
         if (current == json) return
 
-        getSharedPrefs().edit {
+        getSharedPrefs().edit(commit = commit) {
             putString(path, json)
         }
         // Hook for Sync: Write
@@ -179,11 +161,11 @@ fun <T> Context.setKey(path: String, value: T) {
 }
 
 // Internal local set without sync hook (used by sync manager to avoid loops)
-fun <T> Context.setKeyLocal(path: String, value: T) {
+fun <T> Context.setKeyLocal(path: String, value: T, commit: Boolean = false) {
     try {
         // Handle generic value or raw string
-        val stringValue = if (value is String) value else DataStore.mapper.writeValueAsString(value)
-        getSharedPrefs().edit {
+        val stringValue = if (value is String) value else mapper.writeValueAsString(value)
+        getSharedPrefs().edit(commit = commit) {
             putString(path, stringValue)
         }
     } catch (e: Exception) {
@@ -191,8 +173,8 @@ fun <T> Context.setKeyLocal(path: String, value: T) {
     }
 }
 
-fun <T> Context.setKeyLocal(folder: String, path: String, value: T) {
-    setKeyLocal(DataStore.getFolderName(folder, path), value)
+fun <T> Context.setKeyLocal(folder: String, path: String, value: T, commit: Boolean = false) {
+    setKeyLocal(getFolderName(folder, path), value, commit)
 }
 
 fun Context.removeKeyLocal(path: String) {
@@ -216,16 +198,16 @@ fun <T> Context.getKey(path: String, valueType: Class<T>): T? {
     }
 }
 
-fun <T> Context.setKey(folder: String, path: String, value: T) {
-    setKey(DataStore.getFolderName(folder, path), value)
+fun <T> Context.setKey(folder: String, path: String, value: T, commit: Boolean = false) {
+    setKey(getFolderName(folder, path), value, commit)
 }
 
 inline fun <reified T : Any> String.toKotlinObject(): T {
-    return DataStore.mapper.readValue(this, T::class.java)
+    return mapper.readValue(this, T::class.java)
 }
 
 fun <T> String.toKotlinObject(valueType: Class<T>): T {
-    return DataStore.mapper.readValue(this, valueType)
+    return mapper.readValue(this, valueType)
 }
 
 // GET KEY GIVEN PATH AND DEFAULT VALUE, NULL IF ERROR
@@ -274,9 +256,9 @@ inline fun <reified T : Any> Context.getKey(path: String): T? {
 }
 
 inline fun <reified T : Any> Context.getKey(folder: String, path: String): T? {
-    return getKey(DataStore.getFolderName(folder, path), null)
+    return getKey(getFolderName(folder, path), null)
 }
 
 inline fun <reified T : Any> Context.getKey(folder: String, path: String, defVal: T?): T? {
-    return getKey(DataStore.getFolderName(folder, path), defVal) ?: defVal
+    return getKey(getFolderName(folder, path), defVal) ?: defVal
 }

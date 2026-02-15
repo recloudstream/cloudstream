@@ -172,7 +172,11 @@ class PluginsViewModel : ViewModel() {
         )
 
         val (success, message) = if (file.exists()) {
-            PluginManager.deletePlugin(file) to R.string.plugin_deleted
+            val res = PluginManager.deletePlugin(file)
+            if (res) {
+                 ioSafe { com.lagradost.cloudstream3.utils.FirestoreSyncManager.notifyPluginDeleted(plugin.second.internalName) }
+            }
+            res to R.string.plugin_deleted
         } else {
             val isEnabled = plugin.second.status != PROVIDER_STATUS_DOWN
             val message = if (isEnabled) R.string.plugin_loaded else R.string.plugin_downloaded

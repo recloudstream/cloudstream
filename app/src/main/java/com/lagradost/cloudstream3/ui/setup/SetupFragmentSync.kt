@@ -27,12 +27,12 @@ class SetupFragmentSync : BaseFragment<FragmentSetupSyncBinding>(
         val context = context ?: return
 
         if (FirestoreSyncManager.isLogged()) {
-            binding.syncDescriptionText.text = "Account Connected!\nYou are ready to sync."
+            binding.syncDescriptionText.text = getString(R.string.sync_setup_connected_title) + "\n" + getString(R.string.sync_setup_connected_desc)
             // Hide the "Yes, Setup Sync" button since it is already done
              binding.syncYesBtt.isVisible = false
             // The Next button is already named "Next" in XML
         } else {
-             binding.syncDescriptionText.text = "With Firebase SYNC, you can sync all your settings with your other devices."
+             binding.syncDescriptionText.text = getString(R.string.sync_setup_welcome_desc)
              binding.syncYesBtt.isVisible = true
         }
     }

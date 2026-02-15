@@ -52,6 +52,10 @@ class AccountAdapter(
             root.setOnClickListener {
                 clickCallback.invoke(AccountClickCallback(0, root, item))
             }
+
+            accountDelete.setOnClickListener {
+                clickCallback.invoke(AccountClickCallback(1, it, item))
+            }
         }
     }
 }

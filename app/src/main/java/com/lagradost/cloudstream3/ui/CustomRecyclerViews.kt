@@ -71,7 +71,7 @@ class GrdLayoutManager(val context: Context, spanCount: Int) :
         val orientation = this.orientation
 
         // fixes arabic by inverting left and right layout focus
-        val correctDirection = if (this.isLayoutRTL) {
+        val correctDirection = if (this.layoutDirection == View.LAYOUT_DIRECTION_RTL) {
             when (direction) {
                 View.FOCUS_RIGHT -> View.FOCUS_LEFT
                 View.FOCUS_LEFT -> View.FOCUS_RIGHT
@@ -169,8 +169,8 @@ class AutofitRecyclerView @JvmOverloads constructor(context: Context, attrs: Att
  */
 class MaxRecyclerView(ctx: Context, attrs: AttributeSet) : RecyclerView(ctx, attrs) {
     private var biggestObserved: Int = 0
-    private val orientation = LayoutManager.getProperties(context, attrs, 0, 0).orientation
-    private val isHorizontal = orientation == HORIZONTAL
+    private val orientation = RecyclerView.LayoutManager.getProperties(context, attrs, 0, 0).orientation
+    private val isHorizontal = orientation == RecyclerView.HORIZONTAL
     private fun View.updateMaxSize() {
         if (isHorizontal) {
             this.minimumHeight = biggestObserved

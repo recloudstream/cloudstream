@@ -2,7 +2,7 @@
 # https://docs.gradle.org/current/userguide/dependency_versions.html#sec:strict-version
 [versions]
 activityKtx = "1.11.0"
-androidGradlePlugin = "9.0.0"
+androidGradlePlugin = "8.13.2"
 appcompat = "1.7.1"
 biometric = "1.4.0-alpha04"
 buildkonfigGradlePlugin = "0.17.1"
@@ -18,7 +18,7 @@ fragmentKtx = "1.8.9"
 fuzzywuzzy = "1.4.0"
 jacksonModuleKotlin = { strictly = "2.13.1" } # Later versions don't support minSdk <26 (Crashes on Android TV's and FireSticks)
 json = "20251224"
-firebaseBom = "33.7.0"
+firebaseBom = "32.8.1"
 googleServices = "4.4.2"
 jsoup = "1.21.2"
 junit = "4.13.2"
@@ -51,7 +51,7 @@ zipline = "1.24.0"
 
 jvmTarget = "1.8"
 jdkToolchain = "17"
-minSdk = "23"
+minSdk = "21"
 compileSdk = "36"
 targetSdk = "36"
 
@@ -115,8 +115,7 @@ work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "w
 zipline = { module = "app.cash.zipline:zipline-android", version.ref = "zipline" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
-firebase-auth = { module = "com.google.firebase:firebase-auth" }
-firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

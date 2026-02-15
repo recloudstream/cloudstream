@@ -25,7 +25,20 @@
     <TextView
         android:foreground="@null"
         android:id="@+id/account_name"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         tools:text="Account 1"
         style="@style/SettingsItem" />
+
+    <ImageView
+        android:id="@+id/account_delete"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_baseline_delete_outline_24"
+        android:contentDescription="@string/delete"
+        app:tint="?attr/colorError" />
 </LinearLayout>
 

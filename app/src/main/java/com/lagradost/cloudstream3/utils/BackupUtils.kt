@@ -1,7 +1,9 @@
 package com.lagradost.cloudstream3.utils
 
 import android.content.Context
-import com.lagradost.cloudstream3.utils.DataStore
+import com.lagradost.cloudstream3.utils.editor
+import com.lagradost.cloudstream3.utils.setKeyRaw
+import com.lagradost.cloudstream3.utils.mapper
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -185,7 +187,7 @@ object BackupUtils {
 
             fileStream = stream.openNew()
             printStream = PrintWriter(fileStream)
-            printStream.print(DataStore.mapper.writeValueAsString(backupFile))
+            printStream.print(mapper.writeValueAsString(backupFile))
 
             showToast(
                 R.string.backup_success,
@@ -231,7 +233,7 @@ object BackupUtils {
                                 ?: return@ioSafe
 
                             val restoredValue =
-                                DataStore.mapper.readValue(input, BackupFile::class.java)
+                                mapper.readValue(input, BackupFile::class.java)
 
                             restore(
                                 activity,
@@ -280,7 +282,7 @@ object BackupUtils {
         map: Map<String, T>?,
         isEditingAppSettings: Boolean = false
     ) {
-        val editor = DataStore.editor(this, isEditingAppSettings)
+        val editor = com.lagradost.cloudstream3.utils.editor(this, isEditingAppSettings)
         map?.forEach {
             if (it.key.isTransferable()) {
                 editor.setKeyRaw(it.key, it.value)

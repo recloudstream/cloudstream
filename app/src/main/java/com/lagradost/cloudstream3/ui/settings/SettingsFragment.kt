@@ -224,6 +224,7 @@ class SettingsFragment : BaseFragment<MainSettingsBinding>(
                 settingsGeneral to R.id.action_navigation_global_to_navigation_settings_general,
                 settingsPlayer to R.id.action_navigation_global_to_navigation_settings_player,
                 settingsCredits to R.id.action_navigation_global_to_navigation_settings_account,
+                // settingsSync removed
                 settingsUi to R.id.action_navigation_global_to_navigation_settings_ui,
                 settingsProviders to R.id.action_navigation_global_to_navigation_settings_providers,
                 settingsUpdates to R.id.action_navigation_global_to_navigation_settings_updates,

@@ -12,6 +12,7 @@ import com.lagradost.cloudstream3.syncproviders.providers.OpenSubtitlesApi
 import com.lagradost.cloudstream3.syncproviders.providers.SimklApi
 import com.lagradost.cloudstream3.syncproviders.providers.SubDlApi
 import com.lagradost.cloudstream3.syncproviders.providers.SubSourceApi
+import com.lagradost.cloudstream3.syncproviders.providers.FirebaseApi
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import java.util.concurrent.TimeUnit
 
@@ -28,6 +29,7 @@ abstract class AccountManager {
         val addic7ed = Addic7ed()
         val subDlApi = SubDlApi()
         val subSourceApi = SubSourceApi()
+        val firebaseApi = FirebaseApi()
 
         var cachedAccounts: MutableMap<String, Array<AuthData>>
         var cachedAccountIds: MutableMap<String, Int>
@@ -67,7 +69,8 @@ abstract class AccountManager {
             SyncRepo(localListApi),
             SubtitleRepo(openSubtitlesApi),
             SubtitleRepo(addic7ed),
-            SubtitleRepo(subDlApi)
+            SubtitleRepo(subDlApi),
+            FirebaseRepo(firebaseApi)
         )
 
         fun updateAccountIds() {
@@ -112,6 +115,31 @@ abstract class AccountManager {
             LoadResponse.kitsuIdPrefix = kitsuApi.idPrefix
             LoadResponse.aniListIdPrefix = aniListApi.idPrefix
             LoadResponse.simklIdPrefix = simklApi.idPrefix
+            detectFirebaseAccount()
+        }
+
+        fun detectFirebaseAccount() {
+            try {
+                // If FirebaseAuth has a user but our account manager doesn't, add it.
+                // We use the default app instance if it exists.
+                val firebaseUser = com.lagradost.cloudstream3.utils.FirestoreSyncManager.getFirebaseAuth().currentUser ?: return
+                
+                val repo = FirebaseRepo(firebaseApi)
+                if (repo.accounts.none { it.user.id == firebaseUser.uid.hashCode() }) {
+                    val token = AuthToken(accessToken = firebaseUser.uid, payload = firebaseUser.email)
+                    val authUser = AuthUser(firebaseUser.email, firebaseUser.uid.hashCode(), null)
+                    
+                    val currentAccounts = repo.accounts.toMutableList()
+                    currentAccounts.add(AuthData(authUser, token))
+                    
+                    updateAccounts(repo.idPrefix, currentAccounts.toTypedArray())
+                    if (repo.accountId == NONE_ID) {
+                        updateAccountsId(repo.idPrefix, authUser.id)
+                    }
+                }
+            } catch (t: Throwable) {
+                // Ignore errors during detection
+            }
         }
 
         val subtitleProviders = arrayOf(
@@ -157,6 +185,14 @@ abstract class AccountManager {
             }
             //println("$days $hours $minutes")
             return "${if (days != 0L) "$days" + "d " else ""}${if (hours != 0L) "$hours" + "h " else ""}${minutes}m"
+        }
+    }
+
+    class FirebaseRepo(api: AuthAPI) : AuthRepo(api) {
+        override fun onAccountChanged(id: Int) {
+            val account = accounts.firstOrNull { it.user.id == id }
+            val uid = account?.token?.accessToken
+            com.lagradost.cloudstream3.utils.FirestoreSyncManager.switchAccount(uid ?: "")
         }
     }
 }

@@ -115,12 +115,12 @@ object PluginManager {
     /**
      * Store data about the plugin for fetching later
      * */
-    fun getPluginsOnline(): Array<PluginData> {
-        return (getKey<Array<PluginData>>(PLUGINS_KEY) ?: emptyArray()).filter { !it.isDeleted }.toTypedArray()
+    fun getPluginsOnline(includeDeleted: Boolean = false): Array<PluginData> {
+        return (getKey<Array<PluginData>>(PLUGINS_KEY) ?: emptyArray()).filter { includeDeleted || !it.isDeleted }.toTypedArray()
     }
 
     // Helper for internal use to preserve tombstones
-    private fun getPluginsOnlineRaw(): Array<PluginData> {
+    fun getPluginsOnlineRaw(): Array<PluginData> {
         return getKey<Array<PluginData>>(PLUGINS_KEY) ?: emptyArray()
     }
 
@@ -134,11 +134,12 @@ object PluginManager {
                 // Update or Add: filter out old entry (by filePath or internalName?)
                 // filePath is unique per install.
                 // We want to keep others, and replace THIS one.
-                val newPlugins = plugins.filter { it.filePath != data.filePath } + data.copy(isDeleted = false, addedDate = System.currentTimeMillis())
-                setKey(PLUGINS_KEY, newPlugins)
+                val newPlugins = (plugins.filter { it.filePath != data.filePath } + data.copy(isDeleted = false, addedDate = System.currentTimeMillis())).toTypedArray()
+                setKey(PLUGINS_KEY, newPlugins, commit = true)
             } else {
                 val plugins = getPluginsLocal()
-                setKey(PLUGINS_KEY_LOCAL, plugins.filter { it.filePath != data.filePath } + data)
+                val newPlugins = (plugins.filter { it.filePath != data.filePath } + data).toTypedArray()
+                setKey(PLUGINS_KEY_LOCAL, newPlugins, commit = true)
             }
         }
     }
@@ -154,8 +155,8 @@ object PluginManager {
                 }
                 setKey(PLUGINS_KEY, newPlugins)
             } else {
-                val plugins = getPluginsLocal().filter { it.filePath != data.filePath }
-                setKey(PLUGINS_KEY_LOCAL, plugins)
+                val plugins = getPluginsLocal().filter { it.filePath != data.filePath }.toTypedArray()
+                setKey(PLUGINS_KEY_LOCAL, plugins, commit = true)
             }
         }
     }
@@ -175,7 +176,7 @@ object PluginManager {
             // Wait, removeRepository calls PluginManager.deleteRepositoryData(file.absolutePath)
             // It also deletes the directory.
             // So we just need to update the Key.
-            setKey(PLUGINS_KEY, newPlugins)
+            setKey(PLUGINS_KEY, newPlugins.toTypedArray(), commit = true)
         }
     }
 
@@ -195,8 +196,8 @@ object PluginManager {
 
 
 
-    fun getPluginsLocal(): Array<PluginData> {
-        return getKey(PLUGINS_KEY_LOCAL) ?: emptyArray()
+    fun getPluginsLocal(includeDeleted: Boolean = false): Array<PluginData> {
+        return (getKey<Array<PluginData>>(PLUGINS_KEY_LOCAL) ?: emptyArray()).filter { includeDeleted || !it.isDeleted }.toTypedArray()
     }
 
     private val CLOUD_STREAM_FOLDER =
@@ -223,18 +224,6 @@ object PluginManager {
     var loadedOnlinePlugins = false
         private set
 
-    private suspend fun maybeLoadPlugin(context: Context, file: File) {
-        val name = file.name
-        if (file.extension == "zip" || file.extension == "cs3") {
-            loadPlugin(
-                context,
-                file,
-                PluginData(name, null, false, file.absolutePath, PLUGIN_VERSION_NOT_SET)
-            )
-        } else {
-            Log.i(TAG, "Skipping invalid plugin file: $file")
-        }
-    }
 
 
     // Helper class for updateAllOnlinePluginsAndLoadThem
@@ -322,7 +311,7 @@ object PluginManager {
 
         val updatedPlugins = mutableListOf<String>()
 
-        outdatedPlugins.amap { pluginData ->
+        outdatedPlugins.forEach { pluginData ->
             if (pluginData.isDisabled) {
                 //updatedPlugins.add(activity.getString(R.string.single_plugin_disabled, pluginData.onlineData.second.name))
                 unloadPlugin(pluginData.savedData.filePath)
@@ -471,6 +460,7 @@ object PluginManager {
         // }
 
         Log.i(TAG, "Plugin download done!")
+        loadedOnlinePlugins = true
     }
 
     @Throws
@@ -492,18 +482,40 @@ object PluginManager {
         replaceWith = ReplaceWith("loadPlugin"),
         level = DeprecationLevel.ERROR
     )
-    @Throws
     suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(context: Context) {
         assertNonRecursiveCallstack()
 
-        // Load all plugins as fast as possible!
-        (getPluginsOnline()).toList().amap { pluginData ->
+        // Migration: Move plugins that were incorrectly stored in PLUGINS_KEY_LOCAL
+        // (with isOnline=false) back to PLUGINS_KEY where they belong.
+        // A plugin with a non-null URL was downloaded from a repo and should be online.
+        val localPlugins = getPluginsLocal()
+        val misplacedPlugins = localPlugins.filter { it.url != null }
+        if (misplacedPlugins.isNotEmpty()) {
+            Log.i(TAG, "Migrating ${misplacedPlugins.size} misplaced plugins from LOCAL to ONLINE key")
+            lock.withLock {
+                val onlinePlugins = getPluginsOnlineRaw().toMutableList()
+                misplacedPlugins.forEach { plugin ->
+                    val migrated = plugin.copy(isOnline = true)
+                    // Remove from online list if already exists (by filePath)
+                    onlinePlugins.removeAll { it.filePath == migrated.filePath }
+                    onlinePlugins.add(migrated)
+                }
+                setKey(PLUGINS_KEY, onlinePlugins.toTypedArray(), commit = true)
+                // Remove migrated plugins from local list
+                val remainingLocal = localPlugins.filter { it.url == null }.toTypedArray()
+                setKey(PLUGINS_KEY_LOCAL, remainingLocal, commit = true)
+            }
+        }
+
+        // Load all plugins sequentially to avoid DataStore race conditions!
+        (getPluginsOnline()).toList().forEach { pluginData ->
             loadPlugin(
                 context,
                 File(pluginData.filePath),
                 pluginData
             )
         }
+        loadedOnlinePlugins = true
     }
 
     /**
@@ -553,6 +565,7 @@ object PluginManager {
             val res = dir.mkdirs()
             if (!res) {
                 Log.w(TAG, "Failed to create local directories")
+                loadedLocalPlugins = true // Mark as ready anyway so sync isn't blocked
                 return
             }
         }
@@ -570,10 +583,12 @@ object PluginManager {
             pluginDirectory.mkdirs() // Ensure the plugins directory exists
         }
 
-        // Make sure all local plugins are fully refreshed.
-        removeKey(PLUGINS_KEY_LOCAL)
+        // Make sure all local plugins are fully refreshed but preserve their metadata (like URLs)
+        // We no longer removeKey(PLUGINS_KEY_LOCAL) here because it's destructive.
+        // Instead, maybeLoadPlugin will merge/update existing entries.
 
-        sortedPlugins?.sortedBy { it.name }?.amap { file ->
+        val localPluginsToSet = mutableListOf<PluginData>()
+        sortedPlugins?.sortedBy { it.name }?.forEach { file ->
             try {
                 val destinationFile = File(pluginDirectory, file.name)
 
@@ -594,10 +609,30 @@ object PluginManager {
                 }
 
                 // Load the plugin after it has been copied
-                maybeLoadPlugin(context, destinationFile)
+                val name = destinationFile.name
+                if (destinationFile.extension == "zip" || destinationFile.extension == "cs3") {
+                    // Check if we have existing metadata for this file to preserve URL and other data
+                    val existing = getPluginsLocal().firstOrNull { it.filePath == destinationFile.absolutePath }
+                    val data = existing ?: PluginData(name, null, false, destinationFile.absolutePath, PLUGIN_VERSION_NOT_SET)
+                    
+                    if (loadPlugin(context, destinationFile, data)) {
+                        // Successfully loaded, add to our batch list
+                        val updatedData = getPluginsLocal().firstOrNull { it.filePath == destinationFile.absolutePath } ?: data
+                        localPluginsToSet.add(updatedData)
+                        Log.d(TAG, "Successfully registered plugin: ${updatedData.internalName}")
+                    }
+                }
             } catch (t: Throwable) {
-                Log.e(TAG, "Failed to copy the file")
+                Log.e(TAG, "Failed to copy/load the file ${file.name}")
                 logError(t)
+            }
+        }
+        
+        // Finalize the local plugin list with a single batched write to avoid race conditions
+        if (localPluginsToSet.isNotEmpty()) {
+            Log.d(TAG, "Batch updating PLUGINS_KEY_LOCAL with ${localPluginsToSet.size} plugins")
+            lock.withLock {
+                setKey(PLUGINS_KEY_LOCAL, localPluginsToSet.toTypedArray(), commit = true)
             }
         }
 
@@ -666,8 +701,11 @@ object PluginManager {
             val pluginInstance: BasePlugin =
                 pluginClass.getDeclaredConstructor().newInstance() as BasePlugin
 
-            // Sets with the proper version
-            setPluginData(data.copy(version = version))
+            // Sets with the proper version ONLY if it has changed to avoid redundant DataStore writes
+            if (data.version != version) {
+                Log.d(TAG, "Updating plugin version for ${data.internalName}: ${data.version} -> $version")
+                setPluginData(data.copy(version = version))
+            }
 
             if (plugins.containsKey(filePath)) {
                 Log.i(TAG, "Plugin with name $name already exists")
@@ -799,7 +837,7 @@ object PluginManager {
             val data = PluginData(
                 internalName,
                 pluginUrl,
-                false, // Mark as local so it updates PLUGINS_KEY_LOCAL immediately
+                true, // Online plugin from repo, stored in PLUGINS_KEY for loading on restart
                 newFile.absolutePath,
                 PLUGIN_VERSION_NOT_SET,
                 System.currentTimeMillis()
@@ -876,7 +914,7 @@ object PluginManager {
 
         val updatedPlugins = mutableListOf<String>()
 
-        allPlugins.amap { pluginData ->
+        allPlugins.forEach { pluginData ->
             if (pluginData.isDisabled) {
                 Log.e(
                     "PluginManager",

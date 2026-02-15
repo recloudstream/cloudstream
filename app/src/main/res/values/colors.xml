@@ -123,4 +123,7 @@
     <color name="colorTestFail">#ea596e</color>
     <color name="colorTestWarning">#FF9800</color>
     <color name="playIconBackground">#B3000000</color>
+    <color name="sync_status_connected">#4CAF50</color>
+    <color name="sync_status_login_needed">#FFC107</color>
+    <color name="sync_status_error">#F44336</color>
 </resources>

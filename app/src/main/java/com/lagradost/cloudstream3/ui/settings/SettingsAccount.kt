@@ -27,6 +27,7 @@ import com.lagradost.cloudstream3.databinding.AccountSwitchBinding
 import com.lagradost.cloudstream3.databinding.AddAccountInputBinding
 import com.lagradost.cloudstream3.databinding.DeviceAuthBinding
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.kitsuApi
@@ -118,7 +119,7 @@ class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
             }
         }
 
-        private fun showAccountSwitch(activity: FragmentActivity, api: AuthRepo) {
+        internal fun showAccountSwitch(activity: FragmentActivity, api: AuthRepo) {
             val accounts = api.accounts
             val binding: AccountSwitchBinding =
                 AccountSwitchBinding.inflate(activity.layoutInflater, null, false)
@@ -133,14 +134,30 @@ class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
                 dialog?.dismissSafe(activity)
             }
 
-            binding.accountNone.setOnClickListener {
+            binding.accountNone.isVisible = false
+            /*binding.accountNone.setOnClickListener {
                 api.accountId = -1
                 dialog?.dismissSafe(activity)
-            }
+            }*/
 
-            val adapter = AccountAdapter {
-                dialog?.dismissSafe(activity)
-                api.accountId = it.card.user.id
+            val adapter = AccountAdapter { callback ->
+                if (callback.action == 1) { // Delete
+                    ioSafe {
+                        api.logout(callback.card.user)
+                        activity.runOnUiThread {
+                            val newAccounts = api.accounts
+                            if (newAccounts.isEmpty()) {
+                                dialog?.dismissSafe(activity)
+                            } else {
+                                // Refresh list
+                                (dialog.findViewById<RecyclerView>(R.id.account_list)?.adapter as? AccountAdapter)?.submitList(newAccounts.toList())
+                            }
+                        }
+                    }
+                } else {
+                    dialog?.dismissSafe(activity)
+                    api.accountId = callback.card.user.id
+                }
             }.apply {
                 submitList(accounts.toList())
             }
@@ -397,7 +414,7 @@ class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
                     throw NotImplementedError("The api ${api.name} has no login")
                 }
             } catch (t: Throwable) {
-                showToast(txt(R.string.authenticated_user_fail, api.name))
+                showToast(t.message ?: txt(R.string.authenticated_user_fail, api.name).toString())
                 logError(t)
             }
         }
@@ -469,6 +486,7 @@ class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
                 R.string.simkl_key to SyncRepo(simklApi),
                 R.string.opensubtitles_key to SubtitleRepo(openSubtitlesApi),
                 R.string.subdl_key to SubtitleRepo(subDlApi),
+                R.string.firebase_key to AccountManager.FirebaseRepo(AccountManager.firebaseApi),
             )
 
         for ((key, api) in syncApis) {
@@ -479,7 +497,11 @@ class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
                     val info = api.authUser()
                     val index = api.accounts.indexOfFirst { account -> account.user.id == info?.id }
                     if (api.accounts.isNotEmpty()) {
-                        showLoginInfo(activity, api, info, index)
+                        if (api is AccountManager.FirebaseRepo && api.accounts.size > 1) {
+                            showAccountSwitch(activity, api)
+                        } else {
+                            showLoginInfo(activity, api, info, index)
+                        }
                     } else {
                         addAccount(activity, api)
                     }

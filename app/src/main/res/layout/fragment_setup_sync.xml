@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:gravity="center"
-        android:text="Firebase Sync"
+        android:text="@string/sync_setup_welcome_title"
         android:textSize="24sp"
         android:textStyle="bold" />
 
@@ -27,7 +27,7 @@
             android:id="@+id/sync_description_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="With Firebase SYNC, you can sync all your settings with your other devices."
+            android:text="@string/sync_setup_welcome_desc"
             android:gravity="center"
             android:textSize="18sp"
             android:layout_marginBottom="32dp"/>
@@ -37,7 +37,7 @@
             style="@style/WhiteButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Yes, Setup Sync"
+            android:text="@string/sync_setup_yes_btn"
             android:layout_marginBottom="16dp"/>
 
     </LinearLayout>
@@ -56,7 +56,7 @@
             style="@style/BlackButton"
             android:layout_width="wrap_content"
             android:layout_gravity="center_vertical|end"
-            android:text="Next" />
+            android:text="@string/next" />
     </LinearLayout>
 
 </LinearLayout>

@@ -21,7 +21,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.openBrowser
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
-import com.lagradost.cloudstream3.utils.DataStore
+
 import com.lagradost.cloudstream3.utils.getKey
 import com.lagradost.cloudstream3.utils.getKeys
 import com.lagradost.cloudstream3.utils.removeKey
@@ -128,12 +128,12 @@ class CloudStreamApp : Application(), SingletonImageLoader.Factory {
             return context?.removeKeys(folder)
         }
 
-        fun <T> setKey(path: String, value: T) {
-            context?.setKey(path, value)
+        fun <T> setKey(path: String, value: T, commit: Boolean = false) {
+            context?.setKey(path, value, commit)
         }
 
-        fun <T> setKey(folder: String, path: String, value: T) {
-            context?.setKey(folder, path, value)
+        fun <T> setKey(folder: String, path: String, value: T, commit: Boolean = false) {
+            context?.setKey(folder, path, value, commit)
         }
 
         inline fun <reified T : Any> getKey(path: String, defVal: T?): T? {

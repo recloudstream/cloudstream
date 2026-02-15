@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
     // alias(libs.plugins.dokka)
 
     // alias(libs.plugins.google.services) // We use manual Firebase initialization
@@ -223,7 +224,6 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
-    implementation(libs.firebase.analytics)
 
     configurations.all {
         resolutionStrategy {

@@ -102,6 +102,8 @@
                 android:nextFocusDown="@id/settings_extensions"
                 android:text="@string/category_account" />
 
+
+
             <TextView
                 android:id="@+id/settings_extensions"
                 style="@style/SettingsItem"

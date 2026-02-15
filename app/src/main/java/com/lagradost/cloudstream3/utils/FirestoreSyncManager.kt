@@ -7,19 +7,13 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
-import com.lagradost.cloudstream3.utils.DataStore
-import com.lagradost.cloudstream3.utils.getDefaultSharedPrefs
-import com.lagradost.cloudstream3.utils.getSharedPrefs
-import com.lagradost.cloudstream3.utils.getKeys
-import com.lagradost.cloudstream3.utils.setKey
-import com.lagradost.cloudstream3.utils.setKeyLocal
-import com.lagradost.cloudstream3.utils.removeKey
+import com.lagradost.cloudstream3.utils.Coroutines.main
+
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.PLUGINS_KEY
@@ -27,21 +21,15 @@ import com.lagradost.cloudstream3.plugins.PLUGINS_KEY_LOCAL
 import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
-import kotlin.math.max
 import com.lagradost.cloudstream3.CommonActivity
-import com.lagradost.cloudstream3.AutoDownloadMode
-import com.lagradost.cloudstream3.mvvm.safe
-import com.lagradost.cloudstream3.utils.AppContextUtils.isNetworkAvailable
-import androidx.core.content.edit
-import kotlinx.coroutines.*
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.Date
-import java.text.SimpleDateFormat
-import java.util.Locale
 import com.lagradost.cloudstream3.plugins.PluginData
+import kotlinx.coroutines.*
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Manages Firebase Firestore synchronization with generic tombstone support and Auth.
@@ -54,33 +42,24 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
     // Internal keys
     const val PENDING_PLUGINS_KEY = "pending_plugins_install"
     const val IGNORED_PLUGINS_KEY = "firestore_ignored_plugins_key"
+    const val FIREBASE_PLUGINS_KEY = "firebase_plugins_list"
 
     private var db: FirebaseFirestore? = null
     private var auth: FirebaseAuth? = null
+    private var syncListener: com.google.firebase.firestore.ListenerRegistration? = null
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val isInitializing = AtomicBoolean(false)
     private var isConnected = false
     
+    private var appContext: Context? = null
     private val throttleBatch = ConcurrentHashMap<String, Any?>()
-    private val syncLogs = mutableListOf<String>()
     
     var lastInitError: String? = null
         private set
-
-    var lastSyncDebugInfo: String = "No sync recorded yet."
-        private set
     
-    fun getLogs(): String {
-        return syncLogs.joinToString("\n")
-    }
-
-    private fun log(message: String) {
-        val sdf = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-        val entry = "[${sdf.format(Date())}] $message"
-        syncLogs.add(entry)
-        if (syncLogs.size > 100) syncLogs.removeAt(0)
-        Log.d(TAG, entry)
-    }
+    private var isPluginsInitialized = false
+    private var isApplyingRemoteData = false
+    private var pendingRemotePluginJson: String? = null
     
     // Config keys in local DataStore
     const val FIREBASE_API_KEY = "firebase_api_key"
@@ -121,76 +100,45 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
 
     // --- Auth Public API ---
     
-    fun getUserEmail(): String? = auth?.currentUser?.email
+    // Auth is now handled by AccountManager (FirebaseApi)
+    // We just listen to the state in initialize()
+
     fun isLogged(): Boolean = auth?.currentUser != null
 
-    fun login(email: String, pass: String, callback: (Boolean, String?) -> Unit) {
-        val currentAuth = auth ?: return callback(false, "Firebase not initialized")
-        currentAuth.signInWithEmailAndPassword(email, pass)
-            .addOnSuccessListener { callback(true, null) }
-            .addOnFailureListener { callback(false, it.message) }
+    fun getUserEmail(): String? = auth?.currentUser?.email
+
+    fun getFirebaseAuth(): FirebaseAuth {
+        return auth ?: FirebaseAuth.getInstance()
     }
 
-    fun register(email: String, pass: String, callback: (Boolean, String?) -> Unit) {
-        val currentAuth = auth ?: return callback(false, "Firebase not initialized")
-        currentAuth.createUserWithEmailAndPassword(email, pass)
-            .addOnSuccessListener { callback(true, null) }
-            .addOnFailureListener { callback(false, it.message) }
-    }
-
-    fun loginOrRegister(email: String, pass: String, callback: (Boolean, String?) -> Unit) {
-        login(email, pass) { success, msg ->
-            if (success) {
-                callback(true, null)
-            } else {
-                // Check if error implies user not found, or just try registering
-                // Simple approach: Try registering if login fails
-                log("Login failed, trying registration... ($msg)")
-                register(email, pass) { regSuccess, regMsg ->
-                    if (regSuccess) {
-                        callback(true, null)
-                    } else {
-                        // Return the login error if registration also fails, or a combined message
-                        callback(false, "Login: $msg | Register: $regMsg")
-                    }
-                }
-            }
-        }
-    }
-
-    fun logout(context: Context) {
-        auth?.signOut()
-        // Clear local timestamps to force re-sync on next login
-        context.getSharedPreferences(TIMESTAMPS_PREF, Context.MODE_PRIVATE).edit().clear().apply()
-        log("Logged out.")
-    }
 
     // --- Initialization ---
 
     override fun onStop(owner: androidx.lifecycle.LifecycleOwner) {
         super.onStop(owner)
-        // Ensure pending writes are flushed immediately
-        // Do NOT call pushAllLocalData() as it refreshes timestamps for all keys, reviving deleted items (zombies)
-        scope.launch {
-            flushBatch()
+        val ctx = appContext ?: return
+        if (isEnabled(ctx)) {
+            scope.launch {
+                flushBatch()
+            }
         }
     }
 
     fun isEnabled(context: Context): Boolean {
-        // Use getKey to handle potential JSON string format from DataStore
         return context.getKey<Boolean>(FIREBASE_ENABLED) ?: false
     }
 
     fun initialize(context: Context) {
+        appContext = context.applicationContext
+
         com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread {
             try {
                 androidx.lifecycle.ProcessLifecycleOwner.get().lifecycle.addObserver(this)
-            } catch (e: Exception) { }
+            } catch (_: Exception) { }
         }
 
         if (!isEnabled(context)) return
 
-        // Use getKey<String> to clean up any JSON quotes around the string values
         val config = SyncConfig(
             apiKey = context.getKey<String>(FIREBASE_API_KEY) ?: "",
             projectId = context.getKey<String>(FIREBASE_PROJECT_ID) ?: "",
@@ -204,59 +152,82 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
 
     fun initialize(context: Context, config: SyncConfig) {
         if (isInitializing.getAndSet(true)) return
+        appContext = context.applicationContext
         
         scope.launch {
-            try {
-                val options = FirebaseOptions.Builder()
-                    .setApiKey(config.apiKey)
-                    .setProjectId(config.projectId)
-                    .setApplicationId(config.appId)
-                    .build()
-
-                val appName = "sync_${config.projectId.replace(":", "_")}"
-                val app = try {
-                    FirebaseApp.getInstance(appName)
-                } catch (e: Exception) {
-                    FirebaseApp.initializeApp(context, options, appName)
-                }
-
-                db = FirebaseFirestore.getInstance(app)
-                auth = FirebaseAuth.getInstance(app)
-                isConnected = true
-                
-                // Save config
-                context.setKey(FIREBASE_API_KEY, config.apiKey)
-                context.setKey(FIREBASE_PROJECT_ID, config.projectId)
-                context.setKey(FIREBASE_APP_ID, config.appId)
-                context.setKey(FIREBASE_ENABLED, true)
-
-                log("Firebase initialized. Waiting for User...")
-                
-                // Auth State Listener
-                auth?.addAuthStateListener { firebaseAuth ->
-                    val user = firebaseAuth.currentUser
-                    if (user != null) {
-                        log("User signed in: ${user.email}")
-                        setupRealtimeListener(context, user.uid)
-                    } else {
-                        log("User signed out.")
-                        // Detach listeners if any? (Firestore handles this mostly)
-                    }
-                }
-
-            } catch (e: Exception) {
-                lastInitError = e.message
-                log("Init Error: ${e.message}")
-            } finally {
-                isInitializing.set(false)
-            }
+            initializeInternal(context, config)
         }
     }
 
+    private suspend fun initializeInternal(context: Context, config: SyncConfig) {
+        try {
+            val options = FirebaseOptions.Builder()
+                .setApiKey(config.apiKey)
+                .setProjectId(config.projectId)
+                .setApplicationId(config.appId)
+                .build()
+
+            val appName = "sync_${config.projectId.replace(":", "_")}"
+            val app = try {
+                FirebaseApp.getInstance(appName)
+            } catch (_: Exception) {
+                FirebaseApp.initializeApp(context, options, appName)
+            }
+
+            db = FirebaseFirestore.getInstance(app)
+            auth = FirebaseAuth.getInstance(app)
+            isConnected = true
+            
+            // Save config
+            context.setKey(FIREBASE_API_KEY, config.apiKey)
+            context.setKey(FIREBASE_PROJECT_ID, config.projectId)
+            context.setKey(FIREBASE_APP_ID, config.appId)
+            context.setKey(FIREBASE_ENABLED, true)
+            
+            // Auth State Listener
+            auth?.addAuthStateListener { firebaseAuth ->
+                val user = firebaseAuth.currentUser
+                if (user != null) {
+                    setupRealtimeListener(context, user.uid)
+                }
+                // Refresh UI when auth state changes
+                main { MainActivity.syncUpdatedEvent.invoke(true) }
+            }
+
+        } catch (e: Exception) {
+            lastInitError = e.message
+            // log("Init Error: ${e.message}")
+        } finally {
+            isInitializing.set(false)
+        }
+    }
+
+    fun switchAccount(uid: String) {
+        val context = appContext ?: return
+        // log("Switching sync account to UID: $uid")
+        
+        // Stop current listener
+        syncListener?.remove()
+        syncListener = null
+        
+        // Overwrite local data with a clean slate
+        DataStoreHelper.deleteAllSyncableData()
+        
+        // Start listener for new account if not logging out
+        if (uid.isNotBlank()) {
+            setupRealtimeListener(context, uid)
+        }
+    }
+
+    private fun isPluginManagerReady(): Boolean {
+        return PluginManager.loadedLocalPlugins && PluginManager.loadedOnlinePlugins
+    }
+
     private fun setupRealtimeListener(context: Context, uid: String) {
-        db?.collection(SYNC_COLLECTION)?.document(uid)?.addSnapshotListener { snapshot, e ->
+        syncListener?.remove()
+        syncListener = db?.collection(SYNC_COLLECTION)?.document(uid)?.addSnapshotListener { snapshot, e ->
             if (e != null) {
-                log("Listen error: ${e.message}")
+                // log("Listen error: ${e.message}")
                 return@addSnapshotListener
             }
             if (snapshot != null && snapshot.exists()) {
@@ -265,8 +236,13 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
                 }
             } else {
                 // New user / empty doc -> Push local
-                 log("Empty remote doc, pushing local data.")
-                 pushAllLocalData(context, immediate = true)
+                 // Only allow initialization if the scan is actually done
+                 if (isPluginManagerReady()) {
+                     isPluginsInitialized = true 
+                     scope.launch {
+                         pushAllLocalData(context, immediate = true)
+                     }
+                 }
             }
         }
     }
@@ -275,9 +251,9 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
 
     // Local Timestamp Management
     private fun setLocalTimestamp(context: Context, key: String, timestamp: Long) {
-        context.getSharedPreferences(TIMESTAMPS_PREF, Context.MODE_PRIVATE).edit {
-            putLong(key, timestamp)
-        }
+        context.getSharedPreferences(TIMESTAMPS_PREF, Context.MODE_PRIVATE).edit()
+            .putLong(key, timestamp)
+            .apply()
     }
 
     private fun getLocalTimestamp(context: Context, key: String): Long {
@@ -285,98 +261,139 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
     }
 
     // Push: Write (Update or Create)
+    // Called from DataStore.setKey without context parameter
     fun pushWrite(key: String, value: Any?) {
-        if (isInternalKey(key)) return
+        val ctx = appContext ?: return
+        if (!isEnabled(ctx)) return
+        if (isApplyingRemoteData) return
         
-        // Intercept Plugin Check
-        if (key == PLUGINS_KEY_LOCAL) {
-             val json = value as? String ?: return
-             // Don't push raw local list. Merge it.
-             // We need context... but pushWrite doesn't have it. 
-             // However, strictly speaking, we just need the value to merge into our cache.
-             updatePluginList(null, json) 
+        // Intercept Plugin Check - MUST handle this before isInternalKey
+        if (key == PLUGINS_KEY_LOCAL || key == PLUGINS_KEY) {
+             if (!isPluginManagerReady()) return
+             scope.launch {
+                updatePluginList(ctx) 
+             }
              return
         }
+
+        if (isInternalKey(key)) return
+        if (!shouldSync(ctx, key)) return
         
-        // Debounce/Throttle handled by simple map for now to avoid spam
         throttleBatch[key] = value
-        // We will flush this batch periodically or via pushAllLocalData
-        // For immediate "pushData" calls from DataStore, we can just trigger a flush job
         triggerFlush()
     }
-    
-    // ...
+
+    private fun shouldSync(context: Context, key: String): Boolean {
+        // Essential toggles themselves always sync
+        if (key.startsWith("sync_setting_")) return true
+        if (key == FIREBASE_LAST_SYNC) return true
+        
+        // Granular toggles
+        if (key.startsWith("app_") || key.startsWith("ui_")) return context.getKey<Boolean>(SYNC_SETTING_APPEARANCE) ?: true
+        if (key.startsWith("player_")) return context.getKey<Boolean>(SYNC_SETTING_PLAYER) ?: true
+        if (key.startsWith("download_")) return context.getKey<Boolean>(SYNC_SETTING_DOWNLOADS) ?: true
+        if (key.startsWith("data_store_helper/account")) return context.getKey<Boolean>(SYNC_SETTING_ACCOUNTS) ?: true
+        if (key.startsWith("result_resume_watching")) return context.getKey<Boolean>(SYNC_SETTING_RESUME_WATCHING) ?: true
+        if (key.contains("bookmark")) return context.getKey<Boolean>(SYNC_SETTING_BOOKMARKS) ?: true
+        if (key == REPOSITORIES_KEY) return context.getKey<Boolean>(SYNC_SETTING_REPOSITORIES) ?: true
+        if (key == FIREBASE_PLUGINS_KEY) return context.getKey<Boolean>(SYNC_SETTING_PLUGINS) ?: true
+        if (key == USER_SELECTED_HOMEPAGE_API) return context.getKey<Boolean>(SYNC_SETTING_HOMEPAGE_API) ?: true
+        
+        return context.getKey<Boolean>(SYNC_SETTING_GENERAL) ?: true
+    }
 
     // --- Plugin Merge Logic ---
     private var cachedRemotePlugins: MutableList<PluginData> = mutableListOf()
     
-    // Called when Local List changes (Install/Uninstall) OR when we want to push specific updates
-    private fun updatePluginList(context: Context?, localJson: String?) {
-        scope.launch {
-             val localList = if (localJson != null) {
-                 try {
-                     parseJson<Array<PluginData>>(localJson).toList()
-                 } catch(e:Exception) { emptyList() }
-             } else {
-                 emptyList()
-             }
-             
-             // 1. Merge Local into Cached Remote
-             // Rule: If it exists in Local, it exists in Remote (Active).
-             // We do NOT remove things from Remote just because they are missing in Local (other devices).
-             
-             var changed = false
-             
-             localList.forEach { local ->
-                 val existingIndex = cachedRemotePlugins.indexOfFirst { isMatchingPlugin(it, local) }
-                 if (existingIndex != -1) {
-                     val existing = cachedRemotePlugins[existingIndex]
-                     if (existing.isDeleted) {
-                         // Reactivating a deleted plugin
-                         cachedRemotePlugins[existingIndex] = existing.copy(isDeleted = false, version = local.version)
-                         changed = true
-                     }
-                     // Else: matched and active. Update version?
-                 } else {
-                     // New plugin from local
-                     cachedRemotePlugins.add(local.copy(isOnline = true, isDeleted = false))
-                     changed = true
-                 }
-             }
-             
-             if (changed) {
-                 // Push the MASTER LIST to PLUGINS_KEY
-                 // Note: We deliberately write to PLUGINS_KEY (the shared one), not PLUGINS_KEY_LOCAL
-                 pushWriteDirect(PLUGINS_KEY, cachedRemotePlugins.toJson())
-             }
-        }
+    // Called when Any Local List changes (Install/Uninstall) OR when we want to push specific updates
+    private suspend fun updatePluginList(context: Context) {
+         if (!isPluginManagerReady()) {
+             // log("Sync: Skipping plugin update push (PluginManager not ready)")
+             return
+         }
+         val localList = PluginManager.getPluginsLocal(includeDeleted = true).toList()
+         val onlineList = PluginManager.getPluginsOnline(includeDeleted = true).toList()
+         val allLocal = localList + onlineList
+          
+          // 1. Merge Local into Cached Remote (Additions/Updates)
+          var changed = false
+          
+          allLocal.forEach { local ->
+              if (local.url.isNullOrBlank()) return@forEach
+
+              val existingIndex = cachedRemotePlugins.indexOfFirst { isMatchingPlugin(it, local) }
+              if (existingIndex != -1) {
+                  val existing = cachedRemotePlugins[existingIndex]
+                  // If local is active but remote is deleted, reactivate remote
+                  if (existing.isDeleted && !local.isDeleted) {
+                      cachedRemotePlugins[existingIndex] = existing.copy(isDeleted = false, version = local.version, addedDate = System.currentTimeMillis())
+                      changed = true
+                  } else if (!existing.isDeleted && local.isDeleted) {
+                      // If local is deleted but remote is active, mark remote as deleted
+                      cachedRemotePlugins[existingIndex] = existing.copy(isDeleted = true, addedDate = System.currentTimeMillis())
+                      changed = true
+                  }
+              } else if (!local.isDeleted) {
+                  // New plugin, not in cloud yet
+                  cachedRemotePlugins.add(local.copy(isOnline = true, isDeleted = false))
+                  changed = true
+              }
+          }
+          
+          // 2. Sync deletions from local metadata (plugins explicitly marked deleted)
+          allLocal.filter { it.isDeleted }.forEach { local ->
+              val existingIndex = cachedRemotePlugins.indexOfFirst { isMatchingPlugin(it, local) }
+              if (existingIndex != -1 && !cachedRemotePlugins[existingIndex].isDeleted) {
+                  // log("Sync: Syncing local uninstall for ${local.internalName} to cloud")
+                  cachedRemotePlugins[existingIndex] = cachedRemotePlugins[existingIndex].copy(isDeleted = true, addedDate = System.currentTimeMillis())
+                  changed = true
+              }
+          }
+          
+          if (changed) {
+               if (!isPluginsInitialized) {
+                   // log("Sync: Ignoring plugin list push (not initialized yet)")
+                   return
+               }
+               // log("Sync: Pushing updated plugin list to cloud (${cachedRemotePlugins.count { !it.isDeleted }} active).")
+               pushWriteDirect(FIREBASE_PLUGINS_KEY, cachedRemotePlugins.toJson())
+           } else {
+               // log("Sync: No changes to plugin list push.")
+           }
     }
     
-    fun notifyPluginDeleted(internalName: String) {
-        scope.launch {
-            val idx = cachedRemotePlugins.indexOfFirst { it.internalName.trim().equals(internalName.trim(), ignoreCase = true) }
-            if (idx != -1) {
-                val existing = cachedRemotePlugins[idx]
-                if (!existing.isDeleted) {
-                    cachedRemotePlugins[idx] = existing.copy(isDeleted = true, addedDate = System.currentTimeMillis())
-                    log("Marking plugin $internalName as DELETED in sync.")
-                    pushWriteDirect(PLUGINS_KEY, cachedRemotePlugins.toJson())
+    suspend fun notifyPluginDeleted(internalName: String) {
+        val idx = cachedRemotePlugins.indexOfFirst { it.internalName.trim().equals(internalName.trim(), ignoreCase = true) }
+        if (idx != -1) {
+            val existing = cachedRemotePlugins[idx]
+            if (!existing.isDeleted) {
+                cachedRemotePlugins[idx] = existing.copy(isDeleted = true, addedDate = System.currentTimeMillis())
+                // log("Marking plugin $internalName as DELETED in sync.")
+                if (!isPluginsInitialized) {
+                    // log("Sync: Ignoring plugin list push (not initialized yet)")
+                    return
                 }
-            } else {
-                // Deleting something we didn't even know about?
-                log("Warning: Deleting unknown plugin $internalName")
+               pushWriteDirect(FIREBASE_PLUGINS_KEY, cachedRemotePlugins.toJson())
             }
         }
     }
     
     private fun pushWriteDirect(key: String, value: Any?) {
+        // log("Sync: Queuing direct push for $key")
         throttleBatch[key] = value
         triggerFlush()
     }
     
     // Push: Delete
+    // Called from DataStore.removeKey without context parameter
     fun pushDelete(key: String) {
-         // Generic tombstone value
+         val ctx = appContext ?: return
+         if (!isEnabled(ctx) || isInternalKey(key)) return
+         if (!shouldSync(ctx, key)) return
+         
+         // Intercept Plugin Check
+         if (key == PLUGINS_KEY_LOCAL) return
+
          throttleBatch[key] = SyncPayload(null, System.currentTimeMillis(), true)
          triggerFlush()
     }
@@ -390,8 +407,9 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
         }
     }
 
-    private fun flushBatch() {
+    private suspend fun flushBatch() {
         val uid = auth?.currentUser?.uid ?: return
+        val ctx = appContext ?: return
         val updates = mutableMapOf<String, Any?>()
         val now = System.currentTimeMillis()
         
@@ -412,56 +430,85 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
         }
         
         updates["last_sync"] = now
+        ctx.setKey(FIREBASE_LAST_SYNC, now)
         
         db?.collection(SYNC_COLLECTION)?.document(uid)
             ?.set(updates, SetOptions.merge())
-            ?.addOnSuccessListener { log("Flushed ${currentBatch.size} keys.") }
-            ?.addOnFailureListener { e -> 
-                log("Flush failed: ${e.message}") 
-                // Restore headers? Simplification: Ignore failure for now, expensive to retry
-            }
     }
-
-    private fun applyRemoteData(context: Context, snapshot: DocumentSnapshot) {
+    private suspend fun applyRemoteData(context: Context, snapshot: DocumentSnapshot) {
+        if (isApplyingRemoteData) return
+        isApplyingRemoteData = true
+        try {
         val remoteMap = snapshot.data ?: return
-        val currentUid = auth?.currentUser?.uid ?: return
-        
-        log("Applying remote data (${remoteMap.size} keys)")
-        
-        remoteMap.forEach { (key, rawPayload) ->
-            if (key == "last_sync") return@forEach
             
-            try {
-                // generic parsing
-                // Firestore stores generic maps as Map<String, Object>
-                if (rawPayload !is Map<*, *>) return@forEach
-                
-                // manual mapping to SyncPayload
-                val v = rawPayload["v"]
-                val t = (rawPayload["t"] as? Number)?.toLong() ?: 0L
-                val d = (rawPayload["d"] as? Boolean) ?: false
-                
-                val localT = getLocalTimestamp(context, key)
-                
-                if (t > localT) {
-                    // Remote is newer
-                    applyPayload(context, key, v, d)
-                    setLocalTimestamp(context, key, t)
-
-                    // Check for Continue Watching updates and trigger UI refresh
-                    if (key.contains("result_resume_watching")) {
-                         com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread {
-                             MainActivity.syncUpdatedEvent.invoke(true)
+            // log("Applying remote data (${remoteMap.size} keys)")
+            
+            // CRITICAL FIX: Always hydrate cachedRemotePlugins from snapshot regardless of timestamp
+            // This ensures we know the cloud state even if we have fresh local data preserving timestamps
+            if (remoteMap.containsKey(FIREBASE_PLUGINS_KEY)) {
+                try {
+                     val rawPayload = remoteMap[FIREBASE_PLUGINS_KEY]
+                     if (rawPayload is Map<*, *>) {
+                         val v = rawPayload["v"] as? String // JSON string
+                         if (v != null) {
+                             cachedRemotePlugins = parseJson<Array<PluginData>>(v).toMutableList()
+                             // Force process to calculate pending list
+                             handleRemotePlugins(context, v)
                          }
-                    }
+                     }
+                } catch (e: Exception) {
+                    // log("Sync: Failed to hydrate cache: ${e.message}")
                 }
-            } catch (e: Exception) {
-                log("Error parsing key $key: ${e.message}")
+            } else {
+                // log("Sync: Snapshot missing $FIREBASE_PLUGINS_KEY")
             }
+        
+            remoteMap.forEach { (key, rawPayload) ->
+                if (key == "last_sync") return@forEach
+                if (key == FIREBASE_PLUGINS_KEY) return@forEach // Handled above
+                
+                try {
+                    if (rawPayload !is Map<*, *>) return@forEach
+                    
+                    val v = rawPayload["v"]
+                    val t = (rawPayload["t"] as? Number)?.toLong() ?: 0L
+                    val d = (rawPayload["d"] as? Boolean) ?: false
+                    
+                    val localT = getLocalTimestamp(context, key)
+                    
+                    if (t > localT) {
+                        // Remote is newer
+                        applyPayload(context, key, v, d)
+                        setLocalTimestamp(context, key, t)
+                    }
+                } catch (e: Exception) {
+                    // log("Sync: Error parsing key $key: ${e.message}")
+                }
+            }
+            
+            val remoteSyncTime = (remoteMap["last_sync"] as? Number)?.toLong() ?: 0L
+            if (remoteSyncTime > 0) {
+                 context.setKey(FIREBASE_LAST_SYNC, remoteSyncTime)
+            }
+            
+            // log("Sync: Finished applying remote data. New Pending Count: ${getPendingPlugins(context).size}")
+            
+            // Ensure we are marked as initialized even if no new data was applied
+            // But only if we are not waiting for a deferred load
+            if (pendingRemotePluginJson == null) {
+                isPluginsInitialized = true
+            }
+
+        // Fire UI update event ONCE outside the loop to prevent lag
+        com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread {
+            MainActivity.syncUpdatedEvent.invoke(true)
+        }
+        } finally {
+            isApplyingRemoteData = false
         }
     }
     
-    // Handles the actual application of a single Key-Value-Tombstone triplet
+     // Handles the actual application of a single Key-Value-Tombstone triplet
      private fun applyPayload(context: Context, key: String, value: Any?, isDeleted: Boolean) {
          if (isDeleted) {
              context.removeKeyLocal(key)
@@ -469,33 +516,27 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
          }
          
          // Special Handling for Plugins (The Shared Master List)
-         if (key == PLUGINS_KEY) {
+         if (key == FIREBASE_PLUGINS_KEY) {
              val json = value as? String ?: return
              
              // Update Cache
              try {
                  val list = parseJson<Array<PluginData>>(json).toMutableList()
                  cachedRemotePlugins = list
-             } catch(e:Exception) {}
+             } catch(_:Exception) {}
              
              // Process
              handleRemotePlugins(context, json)
              return
          }
          
-         // Ignore direct PLUGINS_KEY_LOCAL writes from remote (shouldn't happen with new logic, but safety)
+         // Ignore direct PLUGINS_KEY_LOCAL writes from remote
          if (key == PLUGINS_KEY_LOCAL) return 
-
+ 
          // Default Apply
          if (value is String) {
              context.setKeyLocal(key, value)
          } else if (value != null) {
-              // Try to serialize if it's a map? 
-              // Our SyncPayload.v is Any?
-              // Firestore converts JSON objects to Maps.
-              // If we originally pushed a String (JSON), Firestore keeps it as String usually.
-              // If it became a Map, we might need to stringify it back?
-              // Assuming we pushed Strings mostly.
               context.setKeyLocal(key, value.toString())
          }
     }
@@ -503,8 +544,15 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
     // --- Plugin Safety ---
     
     private fun isMatchingPlugin(p1: PluginData, local: PluginData): Boolean {
-        if (p1.internalName.trim().equals(local.internalName.trim(), ignoreCase = true)) return true
+        val name1 = p1.internalName.trim()
+        val name2 = local.internalName.trim()
+        
+        // Match by internal name (case-insensitive)
+        if (name1.equals(name2, ignoreCase = true)) return true
+        
+        // Secondary match by URL if available (must be exact)
         if (p1.url?.isNotBlank() == true && p1.url == local.url) return true
+        
         return false
     }
 
@@ -513,29 +561,30 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
          return try {
              val pending = parseJson<Array<PluginData>>(json).toList()
              val localPlugins = PluginManager.getPluginsLocal()
+             val onlinePlugins = PluginManager.getPluginsOnline()
+             val allLocal = localPlugins + onlinePlugins
              
-             pending.filter { pendingPlugin -> 
-                 localPlugins.none { local -> isMatchingPlugin(pendingPlugin, local) }
+             val res = pending.filter { pendingPlugin -> 
+                 allLocal.none { local -> isMatchingPlugin(pendingPlugin, local) }
              }
+             // if (res.isNotEmpty()) log("Sync: detected ${res.size} pending plugins not installed locally.")
+             res
          } catch(e:Exception) { emptyList() }
     }
     
     suspend fun installPendingPlugin(activity: Activity, plugin: PluginData): Boolean {
-        // 1. Get all available repositories
         val context = activity.applicationContext
         val savedRepos = context.getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
         val allRepos = (savedRepos + RepositoryManager.PREBUILT_REPOSITORIES).distinctBy { it.url }
 
-        // 2. Find the plugin in repositories (Network intensive!)
-        // Optimally we should maybe cache this, but for "Install" action it's acceptable to wait.
-        log("Searching repositories for ${plugin.internalName}...")
+        // log("Searching repositories for ${plugin.internalName}...")
         
         for (repo in allRepos) {
             val plugins = RepositoryManager.getRepoPlugins(repo.url) ?: continue
             val match = plugins.firstOrNull { it.second.internalName == plugin.internalName }
             
             if (match != null) {
-                log("Found in ${repo.name}. Installing...")
+                // log("Found in ${repo.name}. Installing...")
                 val success = PluginManager.downloadPlugin(
                     activity, 
                     match.second.url, 
@@ -551,8 +600,8 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
             }
         }
         
-        log("Could not find repository for plugin: ${plugin.internalName}")
-        CommonActivity.showToast(activity, "Could not find source repository for ${plugin.internalName}", 1)
+        // log("Could not find repository for plugin: ${plugin.internalName}")
+        CommonActivity.showToast(activity, activity.getString(com.lagradost.cloudstream3.R.string.sync_plugin_repo_not_found, plugin.internalName), 1)
         return false
     }
 
@@ -561,11 +610,10 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
         val pending = getPendingPlugins(context)
         if (pending.isEmpty()) return
 
-        // Batch optimization: Fetch all repo plugins ONCE
         val savedRepos = context.getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
         val allRepos = (savedRepos + RepositoryManager.PREBUILT_REPOSITORIES).distinctBy { it.url }
         
-        val onlineMap = mutableMapOf<String, Pair<String, String>>() // InternalName -> (PluginUrl, RepoUrl)
+        val onlineMap = mutableMapOf<String, Pair<String, String>>()
         
         allRepos.forEach { repo ->
              RepositoryManager.getRepoPlugins(repo.url)?.forEach { (repoUrl, sitePlugin) ->
@@ -591,10 +639,10 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
         context.setKeyLocal(PENDING_PLUGINS_KEY, remaining.toJson())
         
         if (installedCount > 0) {
-            CommonActivity.showToast(activity, "Installed $installedCount plugins.", 0)
+            CommonActivity.showToast(activity, activity.getString(com.lagradost.cloudstream3.R.string.sync_plugins_installed, installedCount), 0)
         }
         if (remaining.isNotEmpty()) {
-             CommonActivity.showToast(activity, "Failed to find/install ${remaining.size} plugins.", 1)
+             CommonActivity.showToast(activity, activity.getString(com.lagradost.cloudstream3.R.string.sync_plugins_install_failed, remaining.size), 1)
         }
     }
     
@@ -605,14 +653,12 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
     }
     
     fun ignorePendingPlugin(context: Context, plugin: PluginData) {
-        // Remove from pending
         removeFromPending(context, plugin)
         
-        // Add to ignored list
         val ignoredJson = context.getSharedPrefs().getString(IGNORED_PLUGINS_KEY, "[]") ?: "[]"
         val ignoredList = try {
             parseJson<Array<String>>(ignoredJson).toMutableSet()
-        } catch(e:Exception) { mutableSetOf<String>() }
+        } catch(_:Exception) { mutableSetOf<String>() }
         
         ignoredList.add(plugin.internalName)
         context.setKeyLocal(IGNORED_PLUGINS_KEY, ignoredList.toJson())
@@ -624,7 +670,7 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
             val ignoredJson = context.getSharedPrefs().getString(IGNORED_PLUGINS_KEY, "[]") ?: "[]"
             val ignoredList = try {
                 parseJson<Array<String>>(ignoredJson).toMutableSet()
-            } catch(e:Exception) { mutableSetOf<String>() }
+            } catch(_:Exception) { mutableSetOf<String>() }
             
             pending.forEach { ignoredList.add(it.internalName) }
             
@@ -636,57 +682,44 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
     private fun handleRemotePlugins(context: Context, remoteJson: String) {
         try {
             val remoteList = parseJson<Array<PluginData>>(remoteJson).toList()
-            val remoteNames = remoteList.map { it.internalName }.toSet()
             
-            // 1. Get RAW pending list
+            // Baseline Update: Always track the absolute cloud state 
+            // so our next local push is a merge, not an overwrite.
+            cachedRemotePlugins = remoteList.toMutableList()
+
+                // log("Sync: Deferring plugin comparison until PluginManager is ready")
+
             val json = context.getSharedPrefs().getString(PENDING_PLUGINS_KEY, "[]") ?: "[]"
             val rawPending = try {
                 parseJson<Array<PluginData>>(json).toMutableList()
-            } catch(e:Exception) { mutableListOf<PluginData>() }
+            } catch(_:Exception) { mutableListOf<PluginData>() }
             
+            val onlinePlugins = PluginManager.getPluginsOnline()
             val localPlugins = PluginManager.getPluginsLocal()
+            val installedPlugins = (localPlugins + onlinePlugins).toList() // CRITICAL: Use both local and online
             val ignoredJson = context.getSharedPrefs().getString(IGNORED_PLUGINS_KEY, "[]") ?: "[]"
             val ignoredList = try {
                  parseJson<Array<String>>(ignoredJson).map { it.trim() }.toSet() 
-            } catch(e:Exception) { emptySet<String>() }
+            } catch(_:Exception) { emptySet<String>() }
             
             var changed = false
             
             // --- PROCESS DELETIONS & INSTALLS ---
             remoteList.forEach { remote ->
-                val isLocal = localPlugins.firstOrNull { isMatchingPlugin(remote, it) }
+                val isLocal = installedPlugins.firstOrNull { isMatchingPlugin(remote, it) }
                 
                 if (remote.isDeleted) {
                     // CASE: Deleted on Remote
                     if (isLocal != null) {
-                        // It is installed locally -> DELETE IT
-                        log("Sync: Uninstalling deleted plugin ${remote.internalName}")
-                        // We need to delete the file. PluginManager.deletePlugin(file) requires File.
-                        // We can construct the path.
+                        // log("Sync: Uninstalling deleted plugin ${remote.internalName}")
                         val file = File(isLocal.filePath)
                         if (file.exists()) {
-                            // Run on IO
-                            scope.launch {
-                                // Warning: This might trigger notifyPluginDeleted, but since it's already deleted in Remote,
-                                // the circular logic should stabilize (idempotent).
-                                // We need a way to invoke PluginManager.deletePlugin which is a suspend function.
-                                // Since we are in handleRemotePlugins (inside applyRemoteData -> scope.launch), we can call suspend?
-                                // handleRemotePlugins is regular fun. We need scope.
-                                // Actually better: Just delete the file and update key locally?
-                                // PluginManager.deletePlugin does: delete file + unload + deletePluginData.
-                                // It's safer to use the Manager.
-                                // But we can't call suspend from here easily if this isn't suspend.
-                                // Let's simplify: Just delete file and remove key.
-                                file.delete()
-                                file.delete()
-                                // Update local plugin list: Remove this specific plugin, do NOT nuke the whole list
-                                val updatedLocalPlugins = PluginManager.getPluginsLocal()
-                                    .filter { it.filePath != isLocal.filePath }
-                                    .toTypedArray()
-                                context.setKeyLocal(PLUGINS_KEY_LOCAL, updatedLocalPlugins)
-                                // We can't easily do full uninstall logic here without PluginManager.
-                                // Let's post a Toast/Notification "Plugin Uninstalled via Sync"?
-                            }
+                            file.delete()
+                            // Update local plugin list
+                            val updatedLocalPlugins = PluginManager.getPluginsLocal()
+                                .filter { it.filePath != isLocal.filePath }
+                                .toTypedArray()
+                            context.setKeyLocal(PLUGINS_KEY_LOCAL, updatedLocalPlugins)
                         }
                     }
                     
@@ -698,11 +731,8 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
                 } else {
                     // CASE: Active on Remote
                     if (isLocal == null) {
-                        // Not installed locally.
-                        // Check if Ignored
                         val cleanName = remote.internalName.trim()
                         if (!ignoredList.contains(cleanName)) {
-                            // Check if already in Pending
                             if (rawPending.none { isMatchingPlugin(remote, it) }) {
                                 rawPending.add(remote)
                                 changed = true
@@ -718,15 +748,11 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
             }
             
             // --- CLEANUP PENDING ---
-            // Remove any pending items that are NOT in the remote list anymore?
-            // If Device A deleted it, it comes as isDeleted=true.
-            // If Device A hard-removed it (tombstone gc?), it disappears.
-            // If it disappears, we should probably remove it from pending.
             rawPending.retainAll { pending ->
                 remoteList.any { remote -> isMatchingPlugin(remote, pending) }
             }
             
-            lastSyncDebugInfo = """
+            /*lastSyncDebugInfo = """
                 Remote: ${remoteList.size}
                 Local: ${localPlugins.size} (${localPlugins.take(3).map { it.internalName }})
                 Ignored: ${ignoredList.size}
@@ -736,51 +762,120 @@ object FirestoreSyncManager : androidx.lifecycle.DefaultLifecycleObserver {
             log("Sync Debug: $lastSyncDebugInfo")
             
             if (changed) {
-                log("Saving updated pending plugins list. Size: ${rawPending.size}")
+                log("Sync: Pending plugins list updated. New size: ${rawPending.size}")
                 context.setKeyLocal(PENDING_PLUGINS_KEY, rawPending.toJson())
+                // Notify UI via event
+                main { MainActivity.syncUpdatedEvent.invoke(true) }
+            }*/
+            
+            if (changed) {
+                context.setKeyLocal(PENDING_PLUGINS_KEY, rawPending.toJson())
+                // Notify UI via event
+                main { MainActivity.syncUpdatedEvent.invoke(true) }
             }
             
+            // We need to ensure that what's in PLUGINS_KEY matches the installed plugins that are still ACTIVE on remote,
+            // PLUS any local online plugins we already had that aren't in the cloud yet (to avoid deletion).
+            val currentOnlinePlugins = onlinePlugins.toMutableList()
+            
+            remoteList.forEach { remote ->
+                val match = currentOnlinePlugins.indexOfFirst { isMatchingPlugin(remote, it) }
+                if (remote.isDeleted) {
+                    if (match != -1) currentOnlinePlugins.removeAt(match)
+                } else {
+                    if (match != -1) {
+                        // Update existing with cloud metadata (version, url etc)
+                        currentOnlinePlugins[match] = remote.copy(
+                            filePath = currentOnlinePlugins[match].filePath,
+                            isOnline = true
+                        )
+                    } else {
+                        // If it's on disk but not in our list yet, it will be added by a local scan or later.
+                        // But if it IS in allLocalPlugins (meaning it's installed as manual), we might want to convert?
+                        // For now, only track what we already had as online.
+                    }
+                }
+            }
+            
+            if (remoteList.isNotEmpty()) {
+                context.setKeyLocal(PLUGINS_KEY, currentOnlinePlugins.toTypedArray())
+            }
+            
+            isPluginsInitialized = true
+            // log("Sync: Plugins initialized from remote data.")
+            
         } catch(e:Exception) {
-            log("Plugin Parse Error: ${e.message}")
+            // log("Plugin Parse Error: ${e.message}")
+            // Ensure flag is set even on error to avoid blocking forever
+            isPluginsInitialized = true
         }
     }
 
-    // --- Helpers ---
+    /**
+     * Called by MainActivity after various plugin loading events.
+     * Applies any deferred remote plugin data that arrived before PluginManager was ready.
+     */
+    fun onPluginsReady(context: Context) {
+        if (!PluginManager.loadedLocalPlugins || !PluginManager.loadedOnlinePlugins) {
+             // log("Sync: Plugins not fully ready yet (Local: ${PluginManager.loadedLocalPlugins}, Online: ${PluginManager.loadedOnlinePlugins})")
+             return
+        }
 
+        if (isPluginsInitialized) return // Already signaled
+
+        // Crucial: Mark as initialized so we can now push local changes to cloud
+        isPluginsInitialized = true
+        // log("Sync: Plugins are now fully ready (Both Local and Online loaded).")
+        
+        val pending = pendingRemotePluginJson
+        if (pending != null) {
+            // log("Applying deferred remote plugin data.")
+            pendingRemotePluginJson = null
+            handleRemotePlugins(context, pending)
+        } else {
+            // Even if no remote data, we should now push our local list to ensure cloud is synced
+            scope.launch {
+                updatePluginList(context)
+            }
+        }
+    }
+ 
+    // --- Helpers ---
+ 
     private fun isInternalKey(key: String): Boolean {
-        // Prevent syncing of internal state keys
+        if (key == FIREBASE_PLUGINS_KEY) return false // Explicitly allow sync list
         if (key.startsWith("firebase_")) return true
-        if (key.startsWith("firestore_")) return true // Includes IGNORED_PLUGINS_KEY
+        if (key.startsWith("firestore_")) return true
         if (key == PENDING_PLUGINS_KEY) return true
+        if (key == PLUGINS_KEY) return true // PLUGINS_KEY is managed via FIREBASE_PLUGINS_KEY
         return false
     }
-
-    fun pushAllLocalData(context: Context, immediate: Boolean = false) {
-         if (!isLogged()) return
+ 
+    suspend fun pushAllLocalData(context: Context, immediate: Boolean = false) {
+         if (auth?.currentUser == null) return
          val prefs = context.getSharedPrefs()
-         scope.launch {
-             prefs.all.forEach { (k, v) ->
-                 if (!isInternalKey(k) && k != PLUGINS_KEY_LOCAL && v != null) {
-                      // Normal keys
-                     pushWrite(k, v)
-                 } else if (k == PLUGINS_KEY_LOCAL && v != null) {
-                     // Trigger plugin merge
-                     val json = v as? String
-                     if (json != null) updatePluginList(context, json)
-                 }
+         prefs.all.forEach { (k, v) ->
+             if (!isInternalKey(k) && k != PLUGINS_KEY_LOCAL && k != PLUGINS_KEY && v != null) {
+                 pushWrite(k, v)
              }
-             if (immediate) flushBatch()
          }
+         
+         // Unified Plugin Push
+         updatePluginList(context)
+         
+         if (immediate) flushBatch()
     }
-
+ 
     fun syncNow(context: Context) {
-        pushAllLocalData(context, true)
+        scope.launch {
+            pushAllLocalData(context, true)
+        }
     }
-
+ 
     fun isOnline(): Boolean {
         return isConnected
     }
-
+ 
     fun getLastSyncTime(context: Context): Long? {
         val time = context.getKey<Long>(FIREBASE_LAST_SYNC)
         return if (time == 0L) null else time

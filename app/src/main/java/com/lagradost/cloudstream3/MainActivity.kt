@@ -96,6 +96,7 @@ import com.lagradost.cloudstream3.plugins.PluginManager.loadSinglePlugin
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.services.SubscriptionWorkManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_PLAYER
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_REPO
@@ -208,6 +209,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         const val ANIMATED_OUTLINE: Boolean = false
         var lastError: String? = null
 
+
+
         private const val FILE_DELETE_KEY = "FILES_TO_DELETE_KEY"
         const val API_NAME_EXTRA_KEY = "API_NAME_EXTRA_KEY"
 
@@ -261,14 +264,16 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         val reloadLibraryEvent = Event<Boolean>()
 
         /**
+         * Used by FirestoreSyncManager to notify UI about incoming data changes (e.g. pending plugins)
+         */
+        val syncUpdatedEvent = Event<Boolean>()
+        
+        /**
          * Used by DataStoreHelper to fully reload Navigation Rail header picture
          */
         val reloadAccountEvent = Event<Boolean>()
 
-        /**
-         * Used to notify HomeViewModel that sync data (specifically Continue Watching) has been updated
-         */
-        val syncUpdatedEvent = Event<Boolean>()
+
 
         /**
          * @return true if the str has launched an app task (be it successful or not)
@@ -630,7 +635,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     override fun onResume() {
         super.onResume()
         if (FirestoreSyncManager.isEnabled(this)) {
-            FirestoreSyncManager.pushAllLocalData(this)
+            ioSafe { FirestoreSyncManager.pushAllLocalData(this@MainActivity) }
         }
         afterPluginsLoadedEvent += ::onAllPluginsLoaded
         setActivityInstance(this)
@@ -646,7 +651,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     override fun onPause() {
         super.onPause()
         if (FirestoreSyncManager.isEnabled(this)) {
-            FirestoreSyncManager.pushAllLocalData(this)
+            ioSafe { FirestoreSyncManager.pushAllLocalData(this@MainActivity) }
         }
         // Start any delayed updates
         if (ApkInstaller.delayedInstaller?.startInstallation() == true) {
@@ -835,6 +840,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     }
                 }
             }
+            // Signal FirestoreSyncManager that plugins are ready,
+            // so any deferred remote plugin data can be applied safely.
+            FirestoreSyncManager.onPluginsReady(this@MainActivity)
         }
     }
 
@@ -1206,8 +1214,18 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             logError(t)
         }
         
+
+
         lifecycleScope.launch(Dispatchers.IO) {
             FirestoreSyncManager.initialize(this@MainActivity)
+        }
+
+        afterPluginsLoadedEvent += {
+             FirestoreSyncManager.onPluginsReady(this)
+        }
+        
+        mainPluginsLoadedEvent += {
+             FirestoreSyncManager.onPluginsReady(this)
         }
 
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
@@ -1367,6 +1385,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         )
                     } else {
                         ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(this@MainActivity)
+                        afterPluginsLoadedEvent.invoke(false)
                     }
 
                     //Automatically download not existing plugins, using mode specified.
@@ -1376,19 +1395,31 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                             0
                         )
                     ) ?: AutoDownloadMode.Disable
-                    if (autoDownloadPlugin != AutoDownloadMode.Disable) {
-                        PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_downloadNotExistingPluginsAndLoad(
-                            this@MainActivity,
-                            autoDownloadPlugin
-                        )
+                    try {
+                        if (autoDownloadPlugin != AutoDownloadMode.Disable) {
+                            PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_downloadNotExistingPluginsAndLoad(
+                                this@MainActivity,
+                                autoDownloadPlugin
+                            )
+                        }
+                    } catch (e: Exception) {
+                        main { showToast(txt("Online Plugin Load Failed: ${e.message}"), Toast.LENGTH_LONG) }
+                        e.printStackTrace()
                     }
+                    main { FirestoreSyncManager.onPluginsReady(this@MainActivity) }
                 }
 
                 ioSafe {
-                    PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(
-                        this@MainActivity,
-                        false
-                    )
+                    try {
+                        PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(
+                            this@MainActivity,
+                            false
+                        )
+                    } catch (e: Exception) {
+                        main { showToast(txt("Local Plugin Load Failed: ${e.message}"), Toast.LENGTH_LONG) }
+                        e.printStackTrace()
+                    }
+                    main { FirestoreSyncManager.onPluginsReady(this@MainActivity) }
                 }
 
 // Add your channel creation here
@@ -2053,6 +2084,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             updateLocale()
             runDefault()
         }
+
     }
 
     /** Biometric stuff **/

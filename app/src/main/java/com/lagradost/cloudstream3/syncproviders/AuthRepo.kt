@@ -115,7 +115,10 @@ abstract class AuthRepo(open val api: AuthAPI) {
         }
         set(value) {
             AccountManager.updateAccountsId(idPrefix, value)
+            onAccountChanged(value)
         }
+
+    open fun onAccountChanged(id: Int) {}
 
     @Throws
     suspend fun pinRequest() =
@@ -146,7 +149,8 @@ abstract class AuthRepo(open val api: AuthAPI) {
 
     @Throws
     suspend fun login(form: AuthLoginResponse): Boolean {
-        return setupLogin(api.login(form) ?: return false)
+        val token = api.login(form) ?: throw ErrorLoadingException(txt(R.string.authenticated_user_fail, api.name).toString())
+        return setupLogin(token)
     }
 
     @Throws

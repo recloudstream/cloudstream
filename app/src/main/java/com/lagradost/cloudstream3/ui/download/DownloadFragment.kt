@@ -43,7 +43,7 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.loadResult
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
-import com.lagradost.cloudstream3.utils.DataStore
+import com.lagradost.cloudstream3.utils.getFolderName
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
@@ -249,7 +249,7 @@ class DownloadFragment : BaseFragment<FragmentDownloadsBinding>(
             DOWNLOAD_ACTION_GO_TO_CHILD -> {
                 if (click.data.type.isEpisodeBased()) {
                     val folder =
-                        DataStore.getFolderName(DOWNLOAD_EPISODE_CACHE, click.data.id.toString())
+                        getFolderName(DOWNLOAD_EPISODE_CACHE, click.data.id.toString())
                     activity?.navigate(
                         R.id.action_navigation_downloads_to_navigation_download_child,
                         DownloadChildFragment.newInstance(click.data.name, folder)

@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.utils.getKey
 import com.lagradost.cloudstream3.utils.setKey
 import com.lagradost.cloudstream3.utils.FirestoreSyncManager
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
+import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -23,12 +24,28 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import androidx.fragment.app.FragmentActivity
+import com.lagradost.cloudstream3.syncproviders.AccountManager
+import com.lagradost.cloudstream3.databinding.ItemSyncPluginBinding
+import com.lagradost.cloudstream3.plugins.PluginData
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment
+import com.lagradost.cloudstream3.MainActivity
+import com.lagradost.cloudstream3.MainActivity.Companion.syncUpdatedEvent
 
 class SyncSettingsFragment : BaseFragment<FragmentSyncSettingsBinding>(
     BaseFragment.BindingCreator.Inflate(FragmentSyncSettingsBinding::inflate)
 ) {
+    data class SyncToggle(
+        val key: String,
+        val title: String,
+        val desc: String
+    )
+
     override fun fixLayout(view: View) {
-        // No special layout fixes needed currently
+        // Fix for TV: ensure items are focusable
     }
 
     override fun onResume() {
@@ -53,20 +70,21 @@ class SyncSettingsFragment : BaseFragment<FragmentSyncSettingsBinding>(
         }
 
         binding.syncNowBtn.setOnClickListener {
-            showToast("Syncing...")
-            FirestoreSyncManager.syncNow(requireContext())
+            val ctx = context ?: return@setOnClickListener
+            showToast(txt(R.string.sync_syncing))
+            FirestoreSyncManager.syncNow(ctx)
             view?.postDelayed({ updateUI() }, 1000)
         }
 
-        binding.syncCopyLogsBtn.setOnClickListener {
+        /*binding.syncCopyLogsBtn.setOnClickListener {
             val logs = FirestoreSyncManager.getLogs()
             if (logs.isBlank()) {
-                showToast("No logs available yet.")
+                showToast(txt(R.string.sync_no_logs))
             } else {
-                clipboardHelper(txt("Sync Logs"), logs)
-                showToast("Logs copied to clipboard")
+                clipboardHelper(txt(R.string.sync_logs_label), logs)
+                showToast(txt(R.string.sync_logs_copied))
             }
-        }
+        }*/
         
         // Toggle Database Config Visibility
         binding.syncConfigHeader.setOnClickListener {
@@ -78,17 +96,23 @@ class SyncSettingsFragment : BaseFragment<FragmentSyncSettingsBinding>(
         }
         
         // Auto-expand if not enabled/connected
-        val isEnabled = FirestoreSyncManager.isEnabled(requireContext())
+        val ctx = context ?: return
+        val isEnabled = FirestoreSyncManager.isEnabled(ctx)
         binding.syncConfigContainer.isVisible = !isEnabled
         if (!isEnabled) {
              binding.syncConfigHeader.getChildAt(1).rotation = 180f
         }
         
         updateUI()
+
+        // Refresh UI when sync data changes (like new plugins detected)
+        MainActivity.syncUpdatedEvent += { success: Boolean ->
+             if (success) main { updateUI() }
+        }
     }
 
     private fun setupDatabaseConfigInputs(binding: FragmentSyncSettingsBinding) {
-        val context = requireContext()
+        val context = context ?: return
         binding.apply {
             // Fix: Use getKey<String> to ensure we get the clean string value (handling JSON quotes if any)
             syncApiKey.setText(context.getKey<String>(FirestoreSyncManager.FIREBASE_API_KEY) ?: "")
@@ -109,85 +133,91 @@ class SyncSettingsFragment : BaseFragment<FragmentSyncSettingsBinding>(
     }
 
     private fun setupAuthActions(binding: FragmentSyncSettingsBinding) {
-        binding.syncLoginRegisterBtn.setOnClickListener {
-            val email = binding.syncEmailInput.text?.toString()?.trim() ?: ""
-            val pass = binding.syncPasswordInput.text?.toString()?.trim() ?: ""
-            
-            if (email.isBlank() || pass.length < 6) {
-                showToast("Please enter email and password (min 6 chars).", 1)
-                return@setOnClickListener
-            }
-            
-            binding.syncLoginRegisterBtn.isEnabled = false
-            binding.syncLoginRegisterBtn.text = "Authenticating..."
-            
-            FirestoreSyncManager.loginOrRegister(email, pass) { success, msg ->
-                main {
-                    binding.syncLoginRegisterBtn.isEnabled = true
-                    binding.syncLoginRegisterBtn.text = "Login / Register"
-                    
-                    if (success) {
-                        showToast("Authenticated successfully!", 0)
-                        updateUI()
-                    } else {
-                        showToast("Auth failed: $msg", 1)
-                    }
-                }
-            }
-        }
-        
-        binding.syncLogoutBtn.setOnClickListener {
-            FirestoreSyncManager.logout(requireContext())
-            updateUI()
+        // Direct Account Management for Firebase
+        binding.syncAccountActionBtn.setOnClickListener {
+             val activity = activity as? FragmentActivity ?: return@setOnClickListener
+             val api = AccountManager.FirebaseRepo(AccountManager.firebaseApi)
+             val info = api.authUser()
+             val index = api.accounts.indexOfFirst { account -> account.user.id == info?.id }
+             
+             if (api.accounts.isNotEmpty()) {
+                 if (api.accounts.size > 1) {
+                     SettingsAccount.showAccountSwitch(activity, api)
+                 } else {
+                     SettingsAccount.showLoginInfo(activity, api, info, index)
+                 }
+             } else {
+                 SettingsAccount.addAccount(activity, api)
+             }
         }
     }
 
     private fun setupPluginActions(binding: FragmentSyncSettingsBinding) {
         binding.syncInstallPluginsBtn.setOnClickListener {
-            showToast("Installing all pending plugins...")
+            showToast(txt(R.string.sync_installing_plugins))
              ioSafe {
-                 FirestoreSyncManager.installAllPending(requireActivity())
+                 val act = activity ?: return@ioSafe
+                 FirestoreSyncManager.installAllPending(act)
                  main { updateUI() }
              }
         }
         
         binding.syncIgnorePluginsBtn.setOnClickListener {
+            val ctx = context ?: return@setOnClickListener
             // Updated to use the new robust ignore logic
-            FirestoreSyncManager.ignoreAllPendingPlugins(requireContext())
+            FirestoreSyncManager.ignoreAllPendingPlugins(ctx)
             updateUI()
-            showToast("Pending list cleared and ignored.")
+            showToast(txt(R.string.sync_pending_cleared))
         }
     }
 
     private fun setupGranularToggles(binding: FragmentSyncSettingsBinding) {
         binding.apply {
-            setupGranularToggle(syncAppearanceLayout, FirestoreSyncManager.SYNC_SETTING_APPEARANCE, "Appearance", "Sync theme, colors, and layout preferences.")
-            setupGranularToggle(syncPlayerLayout, FirestoreSyncManager.SYNC_SETTING_PLAYER, "Player Settings", "Sync subtitle styles, player gestures, and video quality.")
-            setupGranularToggle(syncDownloadsLayout, FirestoreSyncManager.SYNC_SETTING_DOWNLOADS, "Downloads", "Sync download paths and parallel download limits.")
-            setupGranularToggle(syncGeneralLayout, FirestoreSyncManager.SYNC_SETTING_GENERAL, "General Settings", "Sync miscellaneous app-wide preferences.")
+            setupToggleCategory(syncAppearanceRecycler, listOf(
+                SyncToggle(FirestoreSyncManager.SYNC_SETTING_APPEARANCE, getString(R.string.sync_appearance_title), getString(R.string.sync_appearance_desc))
+            ))
+            setupToggleCategory(syncPlayerRecycler, listOf(
+                SyncToggle(FirestoreSyncManager.SYNC_SETTING_PLAYER, getString(R.string.sync_player_title), getString(R.string.sync_player_desc))
+            ))
+            setupToggleCategory(syncDownloadsRecycler, listOf(
+                SyncToggle(FirestoreSyncManager.SYNC_SETTING_DOWNLOADS, getString(R.string.sync_downloads_title), getString(R.string.sync_downloads_desc))
+            ))
+            setupToggleCategory(syncGeneralRecycler, listOf(
+                SyncToggle(FirestoreSyncManager.SYNC_SETTING_GENERAL, getString(R.string.sync_general_title), getString(R.string.sync_general_desc))
+            ))
             
-            setupGranularToggle(syncAccountsLayout, FirestoreSyncManager.SYNC_SETTING_ACCOUNTS, "User Profiles", "Sync profile names, avatars, and linked accounts.")
-            setupGranularToggle(syncBookmarksLayout, FirestoreSyncManager.SYNC_SETTING_BOOKMARKS, "Bookmarks", "Sync your watchlist and favorite items.")
-            setupGranularToggle(syncResumeWatchingLayout, FirestoreSyncManager.SYNC_SETTING_RESUME_WATCHING, "Watch Progress", "Sync where you left off on every movie/episode.")
+            setupToggleCategory(syncAccountsRecycler, listOf(
+                SyncToggle(FirestoreSyncManager.SYNC_SETTING_ACCOUNTS, getString(R.string.sync_user_profiles_title), getString(R.string.sync_user_profiles_desc))
+            ))
+            setupToggleCategory(syncBookmarksRecycler, listOf(
+                SyncToggle(FirestoreSyncManager.SYNC_SETTING_BOOKMARKS, getString(R.string.sync_bookmarks_title), getString(R.string.sync_bookmarks_desc))
+            ))
+            setupToggleCategory(syncResumeWatchingRecycler, listOf(
+                SyncToggle(FirestoreSyncManager.SYNC_SETTING_RESUME_WATCHING, getString(R.string.sync_watch_progress_title), getString(R.string.sync_watch_progress_desc))
+            ))
             
-            setupGranularToggle(syncRepositoriesLayout, FirestoreSyncManager.SYNC_SETTING_REPOSITORIES, "Source Repositories", "Sync the list of added plugin repositories.")
-            setupGranularToggle(syncPluginsLayout, FirestoreSyncManager.SYNC_SETTING_PLUGINS, "Installed Plugins", "Sync which online plugins are installed.")
+            setupToggleCategory(syncRepositoriesRecycler, listOf(
+                SyncToggle(FirestoreSyncManager.SYNC_SETTING_REPOSITORIES, getString(R.string.sync_repositories_title), getString(R.string.sync_repositories_desc))
+            ))
+            setupToggleCategory(syncPluginsRecycler, listOf(
+                SyncToggle(FirestoreSyncManager.SYNC_SETTING_PLUGINS, getString(R.string.sync_plugins_title), getString(R.string.sync_plugins_desc))
+            ))
             
-            setupGranularToggle(syncHomepageLayout, FirestoreSyncManager.SYNC_SETTING_HOMEPAGE_API, "Home Provider", "Sync which homepage source is currently active.")
-            setupGranularToggle(syncPinnedLayout, FirestoreSyncManager.SYNC_SETTING_PINNED_PROVIDERS, "Pinned Providers", "Sync your pinned providers on the home screen.")
+            setupToggleCategory(syncHomepageRecycler, listOf(
+                SyncToggle(FirestoreSyncManager.SYNC_SETTING_HOMEPAGE_API, getString(R.string.sync_home_provider_title), getString(R.string.sync_home_provider_desc))
+            ))
+            setupToggleCategory(syncPinnedRecycler, listOf(
+                SyncToggle(FirestoreSyncManager.SYNC_SETTING_PINNED_PROVIDERS, getString(R.string.sync_pinned_providers_title), getString(R.string.sync_pinned_providers_desc))
+            ))
         }
     }
 
-    private fun setupGranularToggle(row: com.lagradost.cloudstream3.databinding.SyncItemRowBinding, key: String, title: String, desc: String) {
-        row.syncItemTitle.text = title
-        row.syncItemDesc.text = desc
-        val current = requireContext().getKey(key, true) ?: true
-        row.syncItemSwitch.isChecked = current
-        
-        row.syncItemSwitch.setOnCheckedChangeListener { _, isChecked ->
-            requireContext().setKey(key, isChecked)
-        }
+    private fun setupToggleCategory(recycler: RecyclerView, toggles: List<SyncToggle>) {
+        recycler.adapter = ToggleAdapter(toggles)
+        recycler.isNestedScrollingEnabled = false
     }
+
+
 
     private fun connect(binding: FragmentSyncSettingsBinding) {
         val config = FirestoreSyncManager.SyncConfig(
@@ -196,8 +226,9 @@ class SyncSettingsFragment : BaseFragment<FragmentSyncSettingsBinding>(
             appId = binding.syncAppId.text?.toString() ?: ""
         )
         
-        FirestoreSyncManager.initialize(requireContext(), config)
-        showToast("Connecting...")
+        val ctx = context ?: return
+        FirestoreSyncManager.initialize(ctx, config)
+        showToast(txt(R.string.sync_connecting))
         view?.postDelayed({ updateUI() }, 1500)
     }
 
@@ -218,126 +249,154 @@ class SyncSettingsFragment : BaseFragment<FragmentSyncSettingsBinding>(
         
         if (enabled) {
             if (isLogged) {
-                binding.syncStatusText.text = "Connected"
-                binding.syncStatusText.setTextColor(Color.parseColor("#4CAF50")) // Green
+                binding.syncStatusText.text = getString(R.string.sync_status_connected)
+                binding.syncStatusText.setTextColor(context.getColor(R.color.sync_status_connected))
             } else if (isOnline) {
-                 // Connected to DB but not logged in
-                 binding.syncStatusText.text = "Login Needed"
-                 binding.syncStatusText.setTextColor(Color.parseColor("#FFC107")) // Amber/Yellow
+                // Connected to DB but not logged in
+                binding.syncStatusText.text = getString(R.string.sync_status_login_needed)
+                binding.syncStatusText.setTextColor(context.getColor(R.color.sync_status_login_needed))
             } else {
-                 val error = FirestoreSyncManager.lastInitError
-                 if (error != null) {
-                     binding.syncStatusText.text = "Error: $error"
-                 } else {
-                     binding.syncStatusText.text = "Disconnected"
-                 }
-                 binding.syncStatusText.setTextColor(Color.parseColor("#F44336")) // Red
+                val error = FirestoreSyncManager.lastInitError
+                if (error != null) {
+                    binding.syncStatusText.text = getString(R.string.sync_status_error_prefix, error)
+                } else {
+                    binding.syncStatusText.text = getString(R.string.sync_status_disconnected)
+                }
+                binding.syncStatusText.setTextColor(context.getColor(R.color.sync_status_error))
             }
 
             val lastSync = FirestoreSyncManager.getLastSyncTime(context)
-            if (lastSync != null) {
-                val sdf = SimpleDateFormat("MMM dd, HH:mm:ss", Locale.getDefault())
-                binding.syncLastTime.text = sdf.format(Date(lastSync))
-            } else {
-                binding.syncLastTime.text = "Never"
-            }
+            binding.syncLastTime.text = lastSync?.let {
+                SimpleDateFormat("MMM dd, HH:mm:ss", Locale.getDefault()).format(Date(it))
+            } ?: getString(R.string.sync_never)
         } else {
-             binding.syncConnectBtn.text = "Connect Database"
+            binding.syncConnectBtn.text = getString(R.string.sync_connect_database)
         }
 
         // 2. Auth State
         if (isLogged) {
-            val email = FirestoreSyncManager.getUserEmail() ?: "Unknown User"
-            binding.syncAccountStatus.text = "Signed in as: $email"
-            binding.syncAccountStatus.setTextColor(Color.parseColor("#4CAF50")) // Green
-            binding.syncAuthInputContainer.isVisible = false
-            binding.syncLogoutBtn.isVisible = true
-            
+            val email = FirestoreSyncManager.getUserEmail() ?: getString(R.string.sync_unknown_user_label)
+            binding.syncAccountStatus.text = getString(R.string.sync_signed_in_as, email)
+            binding.syncAccountStatus.setTextColor(context.getColor(R.color.sync_status_connected))
+            binding.syncAccountActionBtn.text = getString(R.string.sync_manage_accounts)
+
             // Show content sections
             binding.syncAppSettingsCard.isVisible = true
             binding.syncLibraryCard.isVisible = true
             binding.syncExtensionsCard.isVisible = true
             binding.syncInterfaceCard.isVisible = true
         } else {
-            binding.syncAccountStatus.text = "Not Logged In"
-            binding.syncAccountStatus.setTextColor(Color.parseColor("#F44336")) // Red
-            binding.syncAuthInputContainer.isVisible = true
-            binding.syncLogoutBtn.isVisible = false
-            
+            binding.syncAccountStatus.text = getString(R.string.sync_not_logged_in)
+            binding.syncAccountStatus.setTextColor(context.getColor(R.color.sync_status_error))
+            binding.syncAccountActionBtn.text = getString(R.string.sync_login_via_accounts)
+
             // Hide content sections (require login)
             binding.syncAppSettingsCard.isVisible = false
             binding.syncLibraryCard.isVisible = false
             binding.syncExtensionsCard.isVisible = false
             binding.syncInterfaceCard.isVisible = false
         }
-        
+
         // 3. Pending Plugins
         val pendingPlugins = FirestoreSyncManager.getPendingPlugins(context)
-        if (pendingPlugins.isNotEmpty() && isLogged) {
+
+        if (pendingPlugins.isNotEmpty() && enabled) {
             binding.syncPendingPluginsCard.isVisible = true
-            binding.syncPendingPluginsList.removeAllViews()
-            
             // Update Header with Count
-            binding.syncPendingTitle.text = "New Plugins Detected (${pendingPlugins.size})"
-            binding.syncPendingTitle.setOnLongClickListener {
+            binding.syncPendingTitle.text = getString(R.string.sync_new_plugins_detected, pendingPlugins.size)
+            /*binding.syncPendingTitle.setOnLongClickListener {
                 com.google.android.material.dialog.MaterialAlertDialogBuilder(context)
-                    .setTitle("Sync Debug Info")
+                    .setTitle(getString(R.string.sync_debug_info_title))
                     .setMessage(FirestoreSyncManager.lastSyncDebugInfo)
-                    .setPositiveButton("OK", null)
+                    .setPositiveButton(getString(R.string.ok), null)
                     .show()
                 true
+            }*/
+
+            val adapter = PluginAdapter(pendingPlugins) { plugin: PluginData, action: String ->
+                when (action) {
+                    "INSTALL" -> {
+                        ioSafe {
+                            val activity = activity ?: return@ioSafe
+                            val success = FirestoreSyncManager.installPendingPlugin(activity, plugin)
+                            main { if (success) updateUI() }
+                        }
+                    }
+                    "IGNORE" -> {
+                        FirestoreSyncManager.ignorePendingPlugin(context, plugin)
+                        updateUI()
+                    }
+                }
             }
-            
-            pendingPlugins.forEach { plugin ->
-                 val itemLayout = LinearLayout(context).apply {
-                     orientation = LinearLayout.HORIZONTAL
-                     setPadding(0, 10, 0, 10)
-                     layoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT, 
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                     )
-                 }
-                 
-                 val nameView = TextView(context).apply {
-                     text = plugin.internalName
-                     textSize = 16f
-                     setTextColor(Color.WHITE) // TODO: Get attr color
-                     layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-                 }
-                 
-                 // Install Button (Small)
-                 val installBtn = com.google.android.material.button.MaterialButton(context).apply {
-                     text = "Install"
-                     textSize = 12f
-                     setOnClickListener {
-                         ioSafe {
-                             val success = FirestoreSyncManager.installPendingPlugin(requireActivity(), plugin)
-                             main { 
-                                 if(success) updateUI() 
-                             }
-                         }
-                     }
-                 }
-                 
-                 // Dismiss Button (Small, Red)
-                 val dismissBtn = com.google.android.material.button.MaterialButton(context).apply {
-                     text = "X"
-                     textSize = 12f
-                     setBackgroundColor(Color.TRANSPARENT)
-                     setTextColor(Color.RED)
-                     setOnClickListener {
-                         FirestoreSyncManager.ignorePendingPlugin(context, plugin)
-                         updateUI()
-                     }
-                 }
-                 
-                 itemLayout.addView(nameView)
-                 itemLayout.addView(dismissBtn)
-                 itemLayout.addView(installBtn)
-                 binding.syncPendingPluginsList.addView(itemLayout)
-            }
+            binding.syncPendingPluginsRecycler.adapter = adapter
+            binding.syncPendingPluginsRecycler.isVisible = true
         } else {
             binding.syncPendingPluginsCard.isVisible = false
         }
+    }
+
+    inner class PluginAdapter(
+        private val items: List<PluginData>,
+        private val callback: (PluginData, String) -> Unit
+    ) : RecyclerView.Adapter<PluginAdapter.PluginViewHolder>() {
+
+        inner class PluginViewHolder(val binding: ItemSyncPluginBinding) : RecyclerView.ViewHolder(binding.root)
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PluginViewHolder {
+            val binding = ItemSyncPluginBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return PluginViewHolder(binding)
+        }
+
+        override fun onBindViewHolder(holder: PluginViewHolder, position: Int) {
+            val item = items[position]
+            holder.binding.itemPluginName.text = item.internalName
+            holder.binding.itemPluginInstall.setOnClickListener { callback(item, "INSTALL") }
+            holder.binding.itemPluginIgnore.setOnClickListener { callback(item, "IGNORE") }
+            
+            // TV Navigation support: Don't let root intercept focus from buttons
+            holder.binding.root.isFocusable = false
+            holder.binding.root.isClickable = false
+        }
+
+        override fun getItemCount() = items.size
+    }
+
+    inner class ToggleAdapter(
+        private val items: List<SyncToggle>
+    ) : RecyclerView.Adapter<ToggleAdapter.ToggleViewHolder>() {
+
+        inner class ToggleViewHolder(val binding: com.lagradost.cloudstream3.databinding.SyncItemRowBinding) :
+            RecyclerView.ViewHolder(binding.root)
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ToggleViewHolder {
+            val binding = com.lagradost.cloudstream3.databinding.SyncItemRowBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            )
+            return ToggleViewHolder(binding)
+        }
+
+        override fun onBindViewHolder(holder: ToggleViewHolder, position: Int) {
+            val item = items[position]
+            holder.binding.syncItemTitle.text = item.title
+            holder.binding.syncItemDesc.text = item.desc
+            
+            val ctx = holder.binding.root.context
+            val current = ctx.getKey(item.key, true) ?: true
+            
+            holder.binding.syncItemSwitch.setOnCheckedChangeListener(null)
+            holder.binding.syncItemSwitch.isChecked = current
+            holder.binding.syncItemSwitch.setOnCheckedChangeListener { _, isChecked ->
+                ctx.setKey(item.key, isChecked)
+            }
+            
+            // TV Navigation support
+            holder.binding.root.isFocusable = true
+            holder.binding.root.isClickable = true
+            holder.binding.root.setOnClickListener {
+                holder.binding.syncItemSwitch.toggle()
+            }
+        }
+
+        override fun getItemCount() = items.size
     }
 }

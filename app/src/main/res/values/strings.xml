@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
-    <string name="firebase_sync">Firebase Sync</string>
-    <string name="firebase_sync_key">firebase_sync_key</string>
+    <string name="firebase_key">Firebase</string>
+    <string name="firebase_sync_key">Firebase</string>
+    <string name="firebase_sync">Firebase</string>
+
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
     <string name="cast_format" formatted="true">Cast: %s</string>
@@ -182,7 +184,7 @@
     <string name="search">Search</string>
     <string name="library">Library</string>
     <string name="category_account">Accounts and Security</string>
-    <string name="category_sync">Firebase Sync</string>
+    <string name="category_sync">Firebase</string>
     <string name="category_updates">Updates and Backup</string>
     <string name="settings_info">Info</string>
     <string name="advanced_search">Advanced Search</string>
@@ -766,4 +768,82 @@
     <string name="top_left">Top left</string>
     <string name="top_center">Top center</string>
     <string name="top_right">Top right</string>
+    <string name="sync_plugin_repo_not_found">Could not find source repository for %s</string>
+    <string name="sync_plugins_installed">Installed %d plugins.</string>
+    <string name="sync_plugins_install_failed">Failed to find/install %d plugins.</string>
+
+    <!-- Sync Settings Strings -->
+    <string name="sync_syncing">Syncing…</string>
+    <string name="sync_no_logs">No sync logs available.</string>
+    <string name="sync_logs_copied">Sync logs copied to clipboard.</string>
+    <string name="sync_installing_plugins">Installing plugins…</string>
+    <string name="sync_pending_cleared">Pending plugins cleared.</string>
+    <string name="sync_connecting">Connecting…</string>
+    <string name="sync_status_connected">Connected</string>
+    <string name="sync_status_login_needed">Login needed</string>
+    <string name="sync_status_error_prefix">Error: %s</string>
+    <string name="sync_status_disconnected">Disconnected</string>
+    <string name="sync_signed_in_as">Signed in as %s</string>
+    <string name="sync_manage_accounts">Manage Accounts</string>
+    <string name="sync_not_logged_in">Not logged in</string>
+    <string name="sync_login_via_accounts">Log in via Accounts</string>
+    <string name="sync_new_plugins_detected" formatted="true">New plugins detected (%d)</string>
+
+    <!-- Firebase Sync Settings -->
+    <string name="sync_account">Account</string>
+    <string name="sync_pending_plugins_title">New Plugins Detected</string>
+    <string name="sync_warn_tag">WARN</string>
+    <string name="sync_pending_plugins_description">The following plugins were synced from another device. Install them?</string>
+    <string name="sync_install_all">Install All</string>
+    <string name="sync_ignore">Ignore</string>
+    <string name="sync_database_configuration">Database Configuration</string>
+    <string name="sync_api_key">API Key</string>
+    <string name="sync_project_id">Project ID</string>
+    <string name="sync_app_id">Application ID</string>
+    <string name="sync_connect_database">Connect Database</string>
+    <string name="sync_app_configuration">App Configuration</string>
+    <string name="sync_library_data">My Library &amp; Data</string>
+    <string name="sync_extensions">Extensions</string>
+    <string name="sync_interface_personalization">Interface Personalization</string>
+    <string name="sync_status">Sync Status</string>
+    <string name="sync_status_label">Status:</string>
+    <string name="sync_last_sync_label">Last Sync:</string>
+    <string name="sync_never">Never</string>
+    <string name="sync_now_btn">Sync Now</string>
+
+    <!-- Granular Sync Toggles -->
+    <string name="sync_appearance_title">Appearance</string>
+    <string name="sync_appearance_desc">Sync theme, colors, and layout preferences.</string>
+    <string name="sync_player_title">Player Settings</string>
+    <string name="sync_player_desc">Sync subtitle styles, player gestures, and video quality.</string>
+    <string name="sync_downloads_title">Downloads</string>
+    <string name="sync_downloads_desc">Sync download paths and parallel download limits.</string>
+    <string name="sync_general_title">General Settings</string>
+    <string name="sync_general_desc">Sync miscellaneous app-wide preferences.</string>
+    <string name="sync_user_profiles_title">User Profiles</string>
+    <string name="sync_user_profiles_desc">Sync profile names, avatars, and linked accounts.</string>
+    <string name="sync_bookmarks_title">Bookmarks</string>
+    <string name="sync_bookmarks_desc">Sync your watchlist and favorite items.</string>
+    <string name="sync_watch_progress_title">Watch Progress</string>
+    <string name="sync_watch_progress_desc">Sync where you left off on every movie/episode.</string>
+    <string name="sync_repositories_title">Source Repositories</string>
+    <string name="sync_repositories_desc">Sync the list of added plugin repositories.</string>
+    <string name="sync_plugins_title">Installed Plugins</string>
+    <string name="sync_plugins_desc">Sync which online plugins are installed.</string>
+    <string name="sync_home_provider_title">Home Provider</string>
+    <string name="sync_home_provider_desc">Sync which homepage source is currently active.</string>
+    <string name="sync_pinned_providers_title">Pinned Providers</string>
+    <string name="sync_pinned_providers_desc">Sync your pinned providers on the home screen.</string>
+
+    <!-- Misc Sync Strings -->
+    <string name="sync_setup_welcome_title">Firebase</string>
+    <string name="sync_setup_welcome_desc">With Firebase, you can sync all your settings with your other devices.</string>
+    <string name="sync_setup_yes_btn">Yes, Setup Sync</string>
+    <string name="sync_setup_connected_title">Account Connected!</string>
+    <string name="sync_setup_connected_desc">You are ready to sync.</string>
+    <string name="sync_accounts_navigation_error">Could not open Accounts settings.</string>
+    <string name="sync_unknown_user_label">Unknown User</string>
+    <string name="sync_login_needed_label">Login needed</string>
+    <string name="sync_error_prefix">Error: %s</string>
+    <string name="sync_plugin_install_label">Install</string>
 </resources>

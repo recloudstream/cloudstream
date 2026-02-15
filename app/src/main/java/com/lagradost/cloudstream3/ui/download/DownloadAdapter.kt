@@ -21,13 +21,6 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 
-const val DOWNLOAD_ACTION_PLAY_FILE = 0
-const val DOWNLOAD_ACTION_DELETE_FILE = 1
-const val DOWNLOAD_ACTION_RESUME_DOWNLOAD = 2
-const val DOWNLOAD_ACTION_PAUSE_DOWNLOAD = 3
-const val DOWNLOAD_ACTION_DOWNLOAD = 4
-const val DOWNLOAD_ACTION_LONG_CLICK = 5
-
 const val DOWNLOAD_ACTION_GO_TO_CHILD = 0
 const val DOWNLOAD_ACTION_LOAD_RESULT = 1
 
@@ -54,11 +47,6 @@ sealed class VisualDownloadCached {
         val totalDownloads: Int,
     ) : VisualDownloadCached()
 }
-
-data class DownloadClickEvent(
-    val action: Int,
-    val data: VideoDownloadHelper.DownloadEpisodeCached
-)
 
 data class DownloadHeaderClickEvent(
     val action: Int,

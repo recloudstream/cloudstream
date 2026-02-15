@@ -1,8 +1,12 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.app.Activity
-import com.lagradost.cloudstream3.utils.DataStore
+import com.lagradost.cloudstream3.utils.getFolderName
+import com.lagradost.cloudstream3.utils.mapper
+import com.lagradost.cloudstream3.utils.editor
+import com.lagradost.cloudstream3.utils.setKeyRaw
 import android.content.*
+import android.content.SharedPreferences
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.MainThread
@@ -59,6 +63,8 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.Coroutines.ioWorkSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.setKey
+import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
+import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllBookmarkedData
@@ -757,7 +763,7 @@ class ResultViewModel2 : ViewModel() {
                 )
 
                 setKey(
-                    DataStore.getFolderName(
+                    getFolderName(
                         DOWNLOAD_EPISODE_CACHE,
                         parentId.toString()
                     ), // 3 deep folder for faster acess
@@ -1462,15 +1468,15 @@ class ResultViewModel2 : ViewModel() {
     }
 
     private fun markEpisodes(
-        editor: Editor,
+        editor: SharedPreferences.Editor,
         episodeIds: Array<String>,
         watchState: VideoWatchState
     ) {
-        val watchStateString = DataStore.mapper.writeValueAsString(watchState)
+        val watchStateString = mapper.writeValueAsString(watchState)
         episodeIds.forEach {
             if (getVideoWatchState(it.toInt()) != watchState) {
-                editor.setKeyRaw<String>(
-                    DataStore.getFolderName("$currentAccount/$VIDEO_WATCH_STATE", it),
+                editor.setKeyRaw(
+                    getFolderName("$currentAccount/$VIDEO_WATCH_STATE", it),
                     watchStateString
                 )
             }
@@ -1724,7 +1730,7 @@ class ResultViewModel2 : ViewModel() {
             }
 
             ACTION_MARK_WATCHED_UP_TO_THIS_EPISODE -> ioSafe {
-                val editor = context?.let { it1 -> DataStore.editor(it1, false) }
+                val editor = context?.let { com.lagradost.cloudstream3.utils.editor(it, false) }
 
                 if (editor != null) {
                     val (clickSeason, clickEpisode) = click.data.let {
