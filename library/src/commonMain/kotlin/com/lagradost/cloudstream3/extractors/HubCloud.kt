@@ -148,42 +148,7 @@ class HubCloud : ExtractorApi() {
                         ) { this.quality = quality }
                     )
                 }
-
-                text.contains("10Gbps", ignoreCase = true) -> {
-                    var currentLink = link
-                    var redirectUrl: String?
-                    var redirectCount = 0
-                    val maxRedirects = 3
-
-                    while (redirectCount < maxRedirects) {
-                        val response = app.get(currentLink, allowRedirects = false)
-                        redirectUrl = response.headers["location"]
-
-                        if (redirectUrl == null) {
-                            Log.e(tag, "10Gbps: No redirect")
-                            return@amap
-                        }
-
-                        if ("link=" in redirectUrl) {
-                            val finalLink = redirectUrl.substringAfter("link=")
-                            callback.invoke(
-                                newExtractorLink(
-                                    "10Gbps [Download]",
-                                    "10Gbps [Download] $labelExtras",
-                                    finalLink
-                                ) { this.quality = quality }
-                            )
-                            return@amap
-                        }
-
-                        currentLink = redirectUrl
-                        redirectCount++
-                    }
-
-                    Log.e(tag, "10Gbps: Redirect limit reached ($maxRedirects)")
-                    return@amap
-                }
-
+                
                 else -> {
                     loadExtractor(link, "", subtitleCallback, callback)
                 }

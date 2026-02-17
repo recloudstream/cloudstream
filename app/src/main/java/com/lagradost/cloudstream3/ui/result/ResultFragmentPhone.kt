@@ -18,6 +18,7 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -58,7 +59,9 @@ import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_LONG_CLICK
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.player.FullScreenPlayer
+import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
+import com.lagradost.cloudstream3.ui.result.ResultFragment.bindLogo
 import com.lagradost.cloudstream3.ui.result.ResultFragment.getStoredData
 import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
@@ -70,9 +73,8 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.openBrowser
 import com.lagradost.cloudstream3.utils.AppContextUtils.updateHasTrailers
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
-import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.disableBackPressedCallback
-import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.enableBackPressedCallback
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.openBatteryOptimizationSettings
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
@@ -86,15 +88,15 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import com.lagradost.cloudstream3.utils.UIHelper.setListViewHeightBasedOnItems
 import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
+import com.lagradost.cloudstream3.utils.txt
 import java.net.URLEncoder
-import java.nio.charset.Charset
-import kotlin.io.encoding.Base64
 import kotlin.math.roundToInt
 
 open class ResultFragmentPhone : FullScreenPlayer() {
@@ -142,7 +144,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         }
     }
 
-    var currentTrailers: List<ExtractorLink> = emptyList()
+    var currentTrailers: List<Pair<ExtractorLink, String>> = emptyList()
     var currentTrailerIndex = 0
 
     override fun nextMirror() {
@@ -163,26 +165,28 @@ open class ResultFragmentPhone : FullScreenPlayer() {
     }
 
     private fun loadTrailer(index: Int? = null) {
+
         val isSuccess =
-            currentTrailers.getOrNull(index ?: currentTrailerIndex)?.let { trailer ->
-                context?.let { ctx ->
-                    player.onPause()
-                    player.loadPlayer(
-                        ctx,
-                        false,
-                        trailer,
-                        null,
-                        startPosition = 0L,
-                        subtitles = emptySet(),
-                        subtitle = null,
-                        autoPlay = false,
-                        preview = false
-                    )
-                    true
+            currentTrailers.getOrNull(index ?: currentTrailerIndex)
+                ?.let { (extractedTrailerLink, _) ->
+                    context?.let { ctx ->
+                        player.onPause()
+                        player.loadPlayer(
+                            ctx,
+                            false,
+                            extractedTrailerLink,
+                            null,
+                            startPosition = 0L,
+                            subtitles = emptySet(),
+                            subtitle = null,
+                            autoPlay = false,
+                            preview = false
+                        )
+                        true
+                    } ?: run {
+                        false
+                    }
                 } ?: run {
-                    false
-                }
-            } ?: run {
                 false
             }
         //result_trailer_thumbnail?.setImageBitmap(result_poster_background?.drawable?.toBitmap())
@@ -191,6 +195,17 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         // result_trailer_loading?.isVisible = isSuccess
         val turnVis = !isSuccess && !isFullScreenPlayer
         resultBinding?.apply {
+            // If we load a trailer, then cancel the big logo and only show the small title
+            if (isSuccess) {
+                // This is still a bit of a race condition, but it should work if we have the
+                // trailers observe after the page observe!
+                bindLogo(
+                    url = null,
+                    headers = null,
+                    logoView = backgroundPosterWatermarkBadge,
+                    titleView = resultTitle
+                )
+            }
             resultSmallscreenHolder.isVisible = turnVis
             resultPosterBackgroundHolder.apply {
                 val fadeIn: Animation = AlphaAnimation(alpha, if (turnVis) 1.0f else 0.0f).apply {
@@ -226,10 +241,10 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         //}
     }
 
-    private fun setTrailers(trailers: List<ExtractorLink>?) {
+    private fun setTrailers(trailers: List<Pair<ExtractorLink, String>>?) {
         context?.updateHasTrailers()
         if (!LoadResponse.isTrailersEnabled) return
-        currentTrailers = trailers?.sortedBy { -it.quality } ?: emptyList()
+        currentTrailers = trailers?.sortedBy { -it.first.quality } ?: emptyList()
         loadTrailer()
     }
 
@@ -476,15 +491,17 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
             activity?.attachBackPressedCallback(this@ResultFragmentPhone.toString()) {
                 if (resultOverlappingPanels.getSelectedPanel().ordinal == 1) {
-                    // If we don't disable we end up in a loop with default behavior calling
-                    // this callback as well, so we disable it, run default behavior,
-                    // then re-enable this callback so it can be used for next back press.
-                    activity?.disableBackPressedCallback(this@ResultFragmentPhone.toString())
-                    activity?.onBackPressedDispatcher?.onBackPressed()
-                    activity?.enableBackPressedCallback(this@ResultFragmentPhone.toString())
+                    runDefault()
                 } else resultOverlappingPanels.closePanels()
             }
 
+            resultMiniSync.setOnClickListener {
+                if (resultOverlappingPanels.getSelectedPanel().ordinal == 1) {
+                    resultOverlappingPanels.openStartPanel()
+                } else resultOverlappingPanels.closePanels()
+            }
+
+            /*
             resultMiniSync.setRecycledViewPool(ImageAdapter.sharedPool)
             resultMiniSync.adapter = ImageAdapter(
                 nextFocusDown = R.id.result_sync_set_score,
@@ -495,6 +512,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         } else resultOverlappingPanels.closePanels()
                     }
                 })
+            */
             resultSubscribe.setOnClickListener {
                 viewModel.toggleSubscriptionStatus(context) { newStatus: Boolean? ->
                     if (newStatus == null) return@toggleSubscriptionStatus
@@ -554,12 +572,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                             CastContext.getSharedInstance(act.applicationContext) {
                                 it.run()
                             }.addOnCompleteListener {
-                                isGone = if (it.isSuccessful) {
-                                    it.result.castState == CastState.NO_DEVICES_AVAILABLE
-                                } else {
-                                    true
-                                }
-
+                                isGone = !it.isSuccessful
                             }
                             // this shit leaks for some reason
                             //castContext.addCastStateListener { state ->
@@ -575,8 +588,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
         playerBinding?.apply {
             playerOpenSource.setOnClickListener {
-                currentTrailers.getOrNull(currentTrailerIndex)?.let {
-                    context?.openBrowser(it.url)
+                currentTrailers.getOrNull(currentTrailerIndex)?.let { (_, ogTrailerLink) ->
+                    context?.openBrowser(ogTrailerLink)
                 }
             }
         }
@@ -687,19 +700,83 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             binding?.resultFavorite?.setImageResource(drawable)
         }
 
-        observe(viewModel.trailers) { trailers ->
-            setTrailers(trailers.flatMap { it.mirros }) // I dont care about subtitles yet!
-        }
-
         observeNullable(viewModel.episodes) { episodes ->
             resultBinding?.apply {
                 // no failure?
                 resultEpisodeLoading.isVisible = episodes is Resource.Loading
                 resultEpisodes.isVisible = episodes is Resource.Success
+                resultBatchDownloadButton.isVisible =
+                    episodes is Resource.Success && episodes.value.isNotEmpty()
+
                 if (episodes is Resource.Success) {
                     (resultEpisodes.adapter as? EpisodeAdapter)?.submitList(episodes.value)
+
+                    // Show quality dialog with all sources
+                    resultBatchDownloadButton.setOnLongClickListener {
+                        ioSafe {
+                            val defaultSources = QualityProfileDialog.getAllDefaultSources()
+                            val activity = activity ?: return@ioSafe
+                            activity.runOnUiThread {
+                                QualityProfileDialog(
+                                    activity,
+                                    R.style.DialogFullscreenPlayer,
+                                    defaultSources,
+                                ).show()
+                            }
+                        }
+
+                        true
+                    }
+
+                    resultBatchDownloadButton.setOnClickListener { view ->
+                        val episodeStart =
+                            episodes.value.firstOrNull()?.episode ?: return@setOnClickListener
+                        val episodeEnd =
+                            episodes.value.lastOrNull()?.episode ?: return@setOnClickListener
+
+                        val episodeRange = if (episodeStart == episodeEnd) {
+                            episodeStart.toString()
+                        } else {
+                            txt(
+                                R.string.episodes_range,
+                                episodeStart,
+                                episodeEnd
+                            ).asString(view.context)
+                        }
+
+                        val rangeMessage = txt(
+                            R.string.download_episode_range,
+                            episodeRange
+                        ).asString(view.context)
+
+                        AlertDialog.Builder(view.context, R.style.AlertDialogCustom)
+                            .setTitle(R.string.download_all)
+                            .setMessage(rangeMessage)
+                            .setPositiveButton(R.string.yes) { _, _ ->
+                                ioSafe {
+                                    episodes.value.forEach { episode ->
+                                        viewModel.handleAction(
+                                            EpisodeClickEvent(
+                                                ACTION_DOWNLOAD_EPISODE,
+                                                episode
+                                            )
+                                        )
+                                            // Join to make the episodes ordered
+                                            .join()
+                                    }
+                                }
+                            }
+                            .setNegativeButton(R.string.cancel) { _, _ ->
+
+                            }.show()
+
+                    }
+
                 }
+
+
             }
+
         }
 
         observeNullable(viewModel.movie) { data ->
@@ -727,8 +804,11 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         )
                         return@setOnLongClickListener true
                     }
+
+                    val status = VideoDownloadManager.downloadStatus[ep.id]
+                    downloadButton.setStatus(status)
                     downloadButton.setDefaultClickListener(
-                        VideoDownloadHelper.DownloadEpisodeCached(
+                        DownloadObjects.DownloadEpisodeCached(
                             name = ep.name,
                             poster = ep.poster,
                             episode = 0,
@@ -807,6 +887,13 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         }
                     }
 
+                    bindLogo(
+                        url = d.logoUrl,
+                        headers = d.posterHeaders,
+                        titleView = resultTitle,
+                        logoView = backgroundPosterWatermarkBadge
+                    )
+
                     var isExpanded = false
                     resultDescription.apply {
                         setTextHtml(d.plotText)
@@ -823,8 +910,15 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultComingSoon.isVisible = d.comingSoon
                     resultDataHolder.isGone = d.comingSoon
 
-                    resultCastItems.isGone = d.actors.isNullOrEmpty()
-                    (resultCastItems.adapter as? ActorAdaptor)?.submitList(d.actors)
+                    val prefs =
+                        androidx.preference.PreferenceManager.getDefaultSharedPreferences(root.context)
+                    val showCast = prefs.getBoolean(
+                        root.context.getString(R.string.show_cast_in_details_key),
+                        true
+                    )
+
+                    resultCastItems.isGone = !showCast || d.actors.isNullOrEmpty()
+                    (resultCastItems.adapter as? ActorAdaptor)?.submitList(if (showCast) d.actors else emptyList())
 
                     if (d.contentRatingText == null) {
                         // If there is no rating to display, we don't want an empty gap
@@ -923,6 +1017,10 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             }
         }
 
+        observe(viewModel.trailers) { trailers ->
+            setTrailers(trailers.flatMap { it.mirros }) // I dont care about subtitles yet!
+        }
+
         observe(syncModel.synced) { list ->
             syncBinding?.resultSyncNames?.text =
                 list.filter { it.isSynced && it.hasAccount }.joinToString { it.name }
@@ -930,7 +1028,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             val newList = list.filter { it.isSynced && it.hasAccount }
 
             binding?.resultMiniSync?.isVisible = newList.isNotEmpty()
-            (binding?.resultMiniSync?.adapter as? ImageAdapter)?.submitList(newList.mapNotNull { it.icon })
+            //(binding?.resultMiniSync?.adapter as? ImageAdapter)?.submitList(newList.mapNotNull { it.icon })
         }
 
 

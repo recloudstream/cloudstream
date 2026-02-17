@@ -23,7 +23,6 @@ import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.services.BackupWorkManager
 import com.lagradost.cloudstream3.ui.BasePreferenceFragmentCompat
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
-import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.hideOn
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
@@ -33,13 +32,14 @@ import com.lagradost.cloudstream3.ui.settings.utils.getChooseFolderLauncher
 import com.lagradost.cloudstream3.utils.BackupUtils
 import com.lagradost.cloudstream3.utils.BackupUtils.restorePrompt
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.InAppUpdater.installPreReleaseIfNeeded
 import com.lagradost.cloudstream3.utils.InAppUpdater.runAutoUpdate
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
-import com.lagradost.cloudstream3.utils.VideoDownloadManager
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.txt
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -228,7 +228,7 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
         }
 
         getPref(R.string.manual_check_update_key)?.let { pref ->
-            pref.summary = BuildConfig.APP_VERSION
+            pref.summary = BuildConfig.VERSION_NAME
             pref.setOnPreferenceClickListener {
                 ioSafe {
                     if (activity?.runAutoUpdate(false) == false) {
@@ -240,6 +240,14 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
                         }
                     }
                 }
+                return@setOnPreferenceClickListener true
+            }
+        }
+        
+        getPref(R.string.install_prerelease_key)?.let { pref ->
+            pref.isVisible = BuildConfig.FLAVOR == "stable"
+            pref.setOnPreferenceClickListener {
+                activity?.installPreReleaseIfNeeded()
                 return@setOnPreferenceClickListener true
             }
         }

@@ -194,8 +194,6 @@
     <string name="automatic_plugin_download_summary">Automatikusan telepíti az összes még nem telepített bővítményt a hozzáadott tárolókból.</string>
     <string name="updates_settings">Alkalmazás frissítések megjelenítése</string>
     <string name="updates_settings_des">Automatikusan keressen új frissítéseket indításkor.</string>
-    <string name="uprereleases_settings">Frissítés az előzetes kiadásokhoz (prerelease)</string>
-    <string name="uprereleases_settings_des">Csak előzetesen kiadott frissítések (prerelease) keresése a teljes kiadások helyett</string>
     <string name="github">Github</string>
     <string name="discord">Csatlakozz a Discordhoz</string>
     <string name="benene">Adj Banánt a fejlesztőknek</string>
@@ -581,7 +579,6 @@
     <string name="pin_error_length">A PIN 4 karakter hosszú kell legyen</string>
     <string name="auto_rotate_video">Auto elforgatás</string>
     <string name="auto_rotate_video_desc">Az automatikus videó orientáció alapján való képernyő elforgatás bekapcsolása</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="open_local_video">Helyi videó megnyitása</string>
     <string name="repo_copy_label">Tárhely név és URL</string>
     <string name="torrent_info">Ez a videó egy Torrent, ami azt jelenti, hogy a videótevékenységed nyomon követhető.\nGyőződj meg róla, hogy megérted a torrentezés működését, mielőtt folytatnád.</string>

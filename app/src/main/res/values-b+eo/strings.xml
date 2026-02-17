@@ -127,5 +127,4 @@
     <string name="downloaded">Elŝutite</string>
     <string name="downloading">Elŝutante</string>
     <string name="download_failed">Elŝuto Malsukcesite</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>

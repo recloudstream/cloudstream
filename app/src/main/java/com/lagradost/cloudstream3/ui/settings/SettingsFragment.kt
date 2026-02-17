@@ -246,7 +246,7 @@ class SettingsFragment : BaseFragment<MainSettingsBinding>(
             }
         }
 
-        val appVersion = BuildConfig.APP_VERSION
+        val appVersion = BuildConfig.VERSION_NAME
         val commitInfo = getString(R.string.commit_hash)
         val buildTimestamp = SimpleDateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG,
             Locale.getDefault()

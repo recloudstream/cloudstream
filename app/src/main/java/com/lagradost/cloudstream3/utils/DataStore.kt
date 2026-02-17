@@ -14,10 +14,13 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import androidx.core.content.edit
 
+/** Used to display metadata about downloads and resume watching */
 const val DOWNLOAD_HEADER_CACHE = "download_header_cache"
+const val DOWNLOAD_HEADER_CACHE_BACKUP = "BACKUP_download_header_cache"
 
 //const val WATCH_HEADER_CACHE = "watch_header_cache"
 const val DOWNLOAD_EPISODE_CACHE = "download_episode_cache"
+const val DOWNLOAD_EPISODE_CACHE_BACKUP = "BACKUP_download_episode_cache"
 const val VIDEO_PLAYER_BRIGHTNESS = "video_player_alpha_key"
 const val USER_SELECTED_HOMEPAGE_API = "home_api_used"
 const val USER_PROVIDER_API = "user_custom_sites"
@@ -113,7 +116,9 @@ object DataStore {
     }
 
     fun Context.getKeys(folder: String): List<String> {
-        return this.getSharedPrefs().all.keys.filter { it.startsWith(folder) }
+        // Ensure that the folder ends with "/" to prevent matching with other folders
+        val fixedFolder = folder.trimEnd('/') + "/"
+        return this.getSharedPrefs().all.keys.filter { it.startsWith(fixedFolder) }
     }
 
     fun Context.removeKey(folder: String, path: String) {

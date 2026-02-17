@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.player
 
 import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
@@ -10,6 +11,7 @@ import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Color
+import android.graphics.Matrix
 import android.media.AudioManager
 import android.media.audiofx.LoudnessEnhancer
 import android.os.Build
@@ -22,6 +24,7 @@ import android.text.format.DateUtils
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
@@ -47,9 +50,11 @@ import androidx.core.widget.doOnTextChanged
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.button.MaterialButton
+import com.lagradost.api.BuildConfig
 import com.lagradost.cloudstream3.CommonActivity.keyEventListener
 import com.lagradost.cloudstream3.CommonActivity.playerEventListener
 import com.lagradost.cloudstream3.CommonActivity.screenHeightWithOrientation
@@ -61,6 +66,7 @@ import com.lagradost.cloudstream3.databinding.PlayerCustomLayoutBinding
 import com.lagradost.cloudstream3.databinding.SpeedDialogBinding
 import com.lagradost.cloudstream3.databinding.SubtitleOffsetBinding
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer.Companion.subsProvidersIsActive
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
@@ -85,12 +91,21 @@ import com.lagradost.cloudstream3.utils.Vector2
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.txt
 import kotlin.math.abs
+import kotlin.math.absoluteValue
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
 import kotlin.math.roundToInt
 
+// You can zoom out more than 100%, but it will zoom back into 100%
+const val MINIMUM_ZOOM = 0.95f
+
+// How sensitive the auto zoom is to center at the min zoom
+const val ZOOM_SNAP_SENSITIVITY = 0.07f
+
+// Maximum zoom to avoid getting lost
+const val MAXIMUM_ZOOM = 4.0f
 
 const val MINIMUM_SEEK_TIME = 7000L         // when swipe seeking
 const val MINIMUM_VERTICAL_SWIPE = 2.0f     // in percentage
@@ -109,6 +124,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected open var lockRotation = true
     protected open var isFullScreenPlayer = true
     protected var playerBinding: PlayerCustomLayoutBinding? = null
+    protected var brightnessOverlay: View? = null
 
     private var durationMode: Boolean by UserPreferenceDelegate("duration_mode", false)
 
@@ -116,10 +132,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected var isShowing = false
     private var uiShowingBeforeGesture = false
     protected var isLocked = false
+    protected var timestampShowState = false
 
     protected var hasEpisodes = false
         private set
-    //protected val hasEpisodes
+    // protected val hasEpisodes
     //    get() = episodes.isNotEmpty()
 
     // options for player
@@ -133,6 +150,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     //    protected var currentPrefQuality =
 //        Qualities.P2160.value // preferred maximum quality, used for ppl w bad internet or on cell
+    protected var extraBrightnessEnabled = false
     protected var fastForwardTime = 10000L
     protected var androidTVInterfaceOffSeekTime = 10000L
     protected var androidTVInterfaceOnSeekTime = 30000L
@@ -160,9 +178,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             0L
         }
 
-    //private var useSystemBrightness = false
+    // private var useSystemBrightness = false
     protected var useTrueSystemBrightness = true
-    private val fullscreenNotch = true //TODO SETTING
+    private val fullscreenNotch = true // TODO SETTING
 
     private var statusBarHeight: Int? = null
     private var navigationBarHeight: Int? = null
@@ -174,7 +192,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         R.drawable.sun_4,
         R.drawable.sun_5,
         R.drawable.sun_6,
-        //R.drawable.sun_7,
+        R.drawable.sun_7,
         // R.drawable.ic_baseline_brightness_1_24,
         // R.drawable.ic_baseline_brightness_2_24,
         // R.drawable.ic_baseline_brightness_3_24,
@@ -199,12 +217,128 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     ): View? {
         val root = super.onCreateView(inflater, container, savedInstanceState) ?: return null
         playerBinding = PlayerCustomLayoutBinding.bind(root.findViewById(R.id.player_holder))
+
+        // Inject the overlay from a separate XML into the PlayerView content frame
+        safe {
+            val pv = root.findViewById<androidx.media3.ui.PlayerView>(R.id.player_view)
+            val packageName = context?.packageName ?: return@safe
+            val contentId = resources.getIdentifier("exo_content_frame", "id", packageName)
+            val contentFrame = pv?.findViewById<ViewGroup>(contentId)
+            if (contentFrame != null) {
+                brightnessOverlay = contentFrame.findViewById<View>(R.id.extra_brightness_overlay)
+                brightnessOverlay = LayoutInflater.from(context).inflate(
+                    R.layout.extra_brightness_overlay,
+                    contentFrame,
+                    false
+                )
+                contentFrame.addView(brightnessOverlay)
+                requestUpdateBrightnessOverlayOnNextLayout()
+            }
+        }
+
         return root
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
+    override fun playerUpdated(player: Any?) {
+        super.playerUpdated(player)
+    }
+
     override fun onDestroyView() {
+        // Clean up brightness overlay if created
+        safe {
+            // remove overlay if present
+            brightnessOverlay?.let { overlay ->
+                val oParent = overlay.parent as? ViewGroup
+                oParent?.removeView(overlay)
+            }
+        }
+        brightnessOverlay = null
         playerBinding = null
         super.onDestroyView()
+    }
+
+    /**
+     * Resize/position the brightness overlay to exactly match the visible video surface.
+     * This copies the video surface size, scale and translation so the overlay won't cover
+     * letterbox/pillarbox areas when zooming or panning.
+     */
+    private fun updateBrightnessOverlayBounds() {
+        val overlay = brightnessOverlay ?: return
+        val pv = playerView ?: return
+        val video = pv.videoSurfaceView ?: return
+
+        // Compute accurate transformed bounding box of the video view after scale+translation
+        val vw = video.width.toFloat()
+        val vh = video.height.toFloat()
+        val sx = video.scaleX
+        val sy = video.scaleY
+        if (vw > 0f && vh > 0f) {
+            // pivot defaults to center if not set
+            val pivotX = if (video.pivotX != 0f) video.pivotX else vw * 0.5f
+            val pivotY = if (video.pivotY != 0f) video.pivotY else vh * 0.5f
+            // Use view position (includes translation) as base; avoid double-counting translation
+            val tx = video.x
+            val ty = video.y
+
+            // transform function for a local point (lx,ly)
+            fun transform(lx: Float, ly: Float): Pair<Float, Float> {
+                val gx = tx + pivotX + (lx - pivotX) * sx
+                val gy = ty + pivotY + (ly - pivotY) * sy
+                return Pair(gx, gy)
+            }
+
+            val p0 = transform(0f, 0f)
+            val p1 = transform(vw, 0f)
+            val p2 = transform(0f, vh)
+            val p3 = transform(vw, vh)
+
+            val minX = min(min(p0.first, p1.first), min(p2.first, p3.first))
+            val maxX = max(max(p0.first, p1.first), max(p2.first, p3.first))
+            val minY = min(min(p0.second, p1.second), min(p2.second, p3.second))
+            val maxY = max(max(p0.second, p1.second), max(p2.second, p3.second))
+
+            val newW = ceil(maxX - minX).toInt().coerceAtLeast(0)
+            val newH = ceil(maxY - minY).toInt().coerceAtLeast(0)
+
+            val lp = overlay.layoutParams
+            if (lp == null) {
+                overlay.layoutParams = ViewGroup.LayoutParams(newW, newH)
+            } else {
+                if (lp.width != newW || lp.height != newH) {
+                    lp.width = newW
+                    lp.height = newH
+                    overlay.layoutParams = lp
+                }
+            }
+
+            overlay.scaleX = 1.0f
+            overlay.scaleY = 1.0f
+            overlay.x = minX
+            overlay.y = minY
+        }
+    }
+
+    /**
+     * Ensure the overlay is updated once the next layout pass completes.
+     * Adds a one-time global layout listener (PiP/resizing/rotation frames).
+     */
+    private fun requestUpdateBrightnessOverlayOnNextLayout() {
+        val pv = playerView ?: return
+        safe {
+            val obs = pv.viewTreeObserver
+            val listener = object : android.view.ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    safe {
+                        updateBrightnessOverlayBounds()
+                    }
+                    if (obs.isAlive) {
+                        obs.removeOnGlobalLayoutListener(this)
+                    }
+                }
+            }
+            if (obs.isAlive) obs.addOnGlobalLayoutListener(listener)
+        }
     }
 
     open fun showMirrorsDialogue() {
@@ -304,7 +438,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
 
         val titleMove = if (isShowing) 0f else -50.toPx.toFloat()
-        playerBinding?.playerVideoTitle?.let {
+        playerBinding?.playerVideoTitleHolder?.let {
             ObjectAnimator.ofFloat(it, "translationY", titleMove).apply {
                 duration = 200
                 start()
@@ -316,6 +450,13 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 start()
             }
         }
+        playerBinding?.playerVideoInfo?.let {
+            ObjectAnimator.ofFloat(it, "translationY", titleMove).apply {
+                duration = 200
+                start()
+            }
+        }
+
         val playerBarMove = if (isShowing) 0f else 50.toPx.toFloat()
         playerBinding?.bottomPlayerBar?.let {
             ObjectAnimator.ofFloat(it, "translationY", playerBarMove).apply {
@@ -369,7 +510,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                         player_pause_play_holder?.startAnimation(fadeAnimation)
                         player_pause_play?.startAnimation(fadeAnimation)
                     }*/
-                //player_buffering?.startAnimation(fadeAnimation)
+                // player_buffering?.startAnimation(fadeAnimation)
             }
 
             bottomPlayerBar.startAnimation(fadeAnimation)
@@ -381,7 +522,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     override fun subtitlesChanged() {
         val tracks = player.getVideoTracks()
         val isBuiltinSubtitles = tracks.currentTextTracks.all { track ->
-            track.mimeType == MimeTypes.APPLICATION_MEDIA3_CUES
+            track.sampleMimeType == MimeTypes.APPLICATION_MEDIA3_CUES
         }
         // Subtitle offset is not possible on built-in media3 tracks
         playerBinding?.playerSubtitleOffsetBtt?.isGone =
@@ -474,7 +615,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     protected fun exitFullscreen() {
-        //if (lockRotation)
+        // if (lockRotation)
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
 
         // simply resets brightness and notch settings that might have been overridden
@@ -506,6 +647,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 activity?.popCurrentPage("FullScreenPlayer")
             }
         }
+        requestUpdateBrightnessOverlayOnNextLayout()
         super.onResume()
     }
 
@@ -553,7 +695,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
         dialog.show()
 
-        val isPortrait = ctx.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+        val isPortrait =
+            ctx.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
         fixSystemBarsPadding(binding.root, fixIme = isPortrait)
 
         var currentOffset = subtitleDelay
@@ -717,7 +860,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             }
         }
 
-        //if (isLayout(PHONE)) {
+        // if (isLayout(PHONE)) {
         //    val builder =
         //        BottomSheetDialog(act, R.style.AlertDialogCustom)
         //    builder.setContentView(binding.root)
@@ -839,14 +982,14 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         val fadeTo = if (isLocked) 0f else 1f
         playerBinding?.apply {
-            val fadeAnimation = AlphaAnimation(playerVideoTitle.alpha, fadeTo).apply {
+            val fadeAnimation = AlphaAnimation(playerVideoTitleHolder.alpha, fadeTo).apply {
                 duration = 100
                 fillAfter = true
             }
 
             updateUIVisibility()
             // MENUS
-            //centerMenu.startAnimation(fadeAnimation)
+            // centerMenu.startAnimation(fadeAnimation)
             playerPausePlay.startAnimation(fadeAnimation)
             playerFfwdHolder.startAnimation(fadeAnimation)
             playerRewHolder.startAnimation(fadeAnimation)
@@ -854,17 +997,18 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
             if (hasEpisodes)
                 playerEpisodesButton.startAnimation(fadeAnimation)
-            //player_media_route_button?.startAnimation(fadeAnimation)
-            //video_bar.startAnimation(fadeAnimation)
+            // player_media_route_button?.startAnimation(fadeAnimation)
+            // video_bar.startAnimation(fadeAnimation)
 
-            //TITLE
+            // TITLE
             playerVideoTitleRez.startAnimation(fadeAnimation)
+            playerVideoInfo.startAnimation(fadeAnimation)
             playerEpisodeFiller.startAnimation(fadeAnimation)
-            playerVideoTitle.startAnimation(fadeAnimation)
+            playerVideoTitleHolder.startAnimation(fadeAnimation)
             playerTopHolder.startAnimation(fadeAnimation)
             // BOTTOM
             playerLockHolder.startAnimation(fadeAnimation)
-            //player_go_back_holder?.startAnimation(fadeAnimation)
+            // player_go_back_holder?.startAnimation(fadeAnimation)
 
             shadowOverlay.isVisible = true
             shadowOverlay.startAnimation(fadeAnimation)
@@ -888,17 +1032,17 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             playerVideoBar.isGone = isGone
 
             playerPausePlay.isGone = isGone
-            //player_buffering?.isGone = isGone
+            // player_buffering?.isGone = isGone
             playerTopHolder.isGone = isGone
             val showPlayerEpisodes = !isGone && isThereEpisodes()
             playerEpisodesButtonRoot.isVisible = showPlayerEpisodes
             playerEpisodesButton.isVisible = showPlayerEpisodes
-            playerVideoTitle.isGone = togglePlayerTitleGone
+            playerVideoTitleHolder.isGone = togglePlayerTitleGone
 //        player_video_title_rez?.isGone = isGone
             playerEpisodeFiller.isGone = isGone
             playerCenterMenu.isGone = isGone
             playerLock.isGone = !isShowing
-            //player_media_route_button?.isClickable = !isGone
+            // player_media_route_button?.isClickable = !isGone
             playerGoBackHolder.isGone = isGone
             playerSourcesBtt.isGone = isGone
             playerSkipEpisode.isClickable = !isGone
@@ -980,7 +1124,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     // this value is within the range [0,2] where 1+ is loudness
     private var currentRequestedVolume: Float = 0.0f
 
-    // this value is within the range [0,1]
+    // from [0.0f, 1.0f] where 1.0f is max extra brightness, used only to track extra brightness
+    private var currentExtraBrightness: Float = 0.0f
+
+    // this value is within the range [0,2] where 1+ is extra brightness
     private var currentRequestedBrightness: Float = 1.0f
 
     enum class TouchAction {
@@ -990,6 +1137,34 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     companion object {
+        /**
+         * Gets the translationXY + scale form a matrix with no rotation.
+         *
+         * @return (translationX, translationY, scale)
+         * */
+        fun matrixToTranslationAndScale(matrix: Matrix): Triple<Float, Float, Float> {
+            val points = floatArrayOf(0.0f, 0.0f, 1.0f, 1.0f)
+            matrix.mapPoints(points)
+
+            // A linear matrix will map (0,0) to the translation
+            val translationX = points[0]
+            val translationY = points[1]
+
+            // The unit vectors (1,0) and (0,1) will map to the scale if you remove the translation
+            // As this assumes a uniform scaling, only a single vector is needed
+            val scaleX = points[2] - translationX
+            val scaleY = points[3] - translationY
+
+            // The matrix should have the same scaleX and scaleY
+            if (BuildConfig.DEBUG) {
+                assert((scaleX - scaleY).absoluteValue < 0.1f) {
+                    "$scaleY != $scaleX"
+                }
+            }
+
+            return Triple(translationX, translationY, scaleX)
+        }
+
         private fun forceLetters(inp: Long, letters: Int = 2): String {
             val added: Int = letters - inp.toString().length
             return if (added > 0) {
@@ -1004,7 +1179,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             val min = ceil((sec - rsec) / 60.0).toInt()
             val rmin = min % 60L
             val h = ceil((min - rmin) / 60.0).toLong()
-            //int rh = h;// h % 24;
+            // int rh = h;// h % 24;
             return (if (h > 0) forceLetters(h) + ":" else "") + (if (rmin >= 0 || h >= 0) forceLetters(
                 rmin
             ) + ":" else "") + forceLetters(
@@ -1030,6 +1205,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         )
     }
 
+    /**
+     * Returns screen brightness in <0.0f, 1.0f> range
+     */
     private fun getBrightness(): Float? {
         return if (useTrueSystemBrightness) {
             try {
@@ -1054,6 +1232,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
     }
 
+    /**
+     * Sets the screen brightness in the range <0.0f, 1.0f>. Values outside this range
+     * will be clamped to the minimum (0.0f) or maximum (1.0f).
+     *
+     * @param brightness desired brightness (values outside the range will be clamped)
+     */
     private fun setBrightness(brightness: Float) {
         if (useTrueSystemBrightness) {
             try {
@@ -1065,7 +1249,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                 Settings.System.putInt(
                     context?.contentResolver,
-                    Settings.System.SCREEN_BRIGHTNESS, (brightness * 255).toInt()
+                    Settings.System.SCREEN_BRIGHTNESS,
+                    min(1, (brightness.coerceIn(0.0f, 1.0f) * 255).toInt())
                 )
             } catch (e: Exception) {
                 useTrueSystemBrightness = false
@@ -1074,7 +1259,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         } else {
             try {
                 val lp = activity?.window?.attributes
-                lp?.screenBrightness = brightness
+                // use 0.004f instead of 0, because on some devices setting too small value
+                // causes system to override it and in turn system makes the screen apply system brightness level instead
+                // which can be too bright, and it is very hard to fine tune very low brightness, because of it.
+                // Without this clamp, it can jump from almost 0% to 100% brightness when this threshold is crossed.
+                lp?.screenBrightness = brightness.coerceIn(0.004f, 1.0f)
+                // Log.i("Brightness", "clamped brightness: ${lp?.screenBrightness}")
                 activity?.window?.attributes = lp
             } catch (e: Exception) {
                 logError(e)
@@ -1084,6 +1274,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     private var isVolumeLocked: Boolean = false
     private var hasShownVolumeToast: Boolean = false
+
+    private var isBrightnessLocked: Boolean = false
+    private var hasShownBrightnessToast: Boolean = false
 
     private var progressBarLeftHideRunnable: Runnable? = null
     private var progressBarRightHideRunnable: Runnable? = null
@@ -1136,15 +1329,297 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        // If we rotate the device we need to recalculate the zoom
+        val matrix = zoomMatrix
+        val animation = matrixAnimation
+        if ((animation == null || !animation.isRunning) && matrix != null) {
+            // Ignore if we have no zoom or mid animation
+            playerView?.post {
+                applyZoomMatrix(matrix, true)
+                requestUpdateBrightnessOverlayOnNextLayout()
+            }
+        }
+    }
+
+    private var scaleGestureDetector: ScaleGestureDetector? = null
+    private var lastPan: Vector2? = null
+
+    /**
+     * Gets the non-null zoom matrix,
+     * this is different from `zoomMatrix ?: Matrix()`
+     * because it allows used to start zooming at different resizeModes.
+     *
+     * The main issue is that RESIZE_MODE_FIT = 100% zoom, but if you are in RESIZE_MODE_ZOOM
+     * 100% will make the zoom snap to less zoomed in then you already are.
+     * */
+    fun currentZoomMatrix(): Matrix {
+        val current = zoomMatrix
+        if (current != null) {
+            // Already assigned
+            return current
+        }
+
+        val playerView = playerView
+        val videoView = playerView?.videoSurfaceView
+
+        if (playerView == null || videoView == null || playerView.resizeMode != AspectRatioFrameLayout.RESIZE_MODE_ZOOM) {
+            // This is a fit or fill resize mode so start at 100% zoom
+            return Matrix()
+        }
+
+        val videoWidth = videoView.width.toFloat()
+        val videoHeight = videoView.height.toFloat()
+        val playerWidth = screenWidthWithOrientation
+        val playerHeight = screenHeightWithOrientation
+
+        // Sanity check
+        if (videoWidth <= 1.0f || videoHeight <= 1.0f || playerWidth <= 1.0f || playerHeight <= 1.0f) {
+            // Something is wrong with the video, return the default 100% zoom
+            return Matrix()
+        }
+
+        val initAspect =
+            (playerHeight * videoWidth) / (playerWidth * videoHeight)
+        val aspect = max(initAspect, 1.0f / initAspect)
+
+        // Return the matrix with the correct zoom, as it is already zoomed in
+        return Matrix().apply { postScale(aspect, aspect) }
+    }
+
+    /** A Matrix encoding the translation and scale of the current zoom */
+    private var zoomMatrix: Matrix? = null
+
+    /** A Matrix encoding the translation and scale of the desired zoom,
+     * aka after you release the zoom */
+    private var desiredMatrix: Matrix? = null
+
+    /** The animation of zooming to the desiredMatrix */
+    private var matrixAnimation: ValueAnimator? = null
+
+    @SuppressLint("UnsafeOptInUsageError")
+    override fun resize(resize: PlayerResize, showToast: Boolean) {
+        // Clear all zoom stuff if we resize
+        matrixAnimation?.cancel()
+        matrixAnimation = null
+        zoomMatrix = null
+        desiredMatrix = null
+        playerView?.videoSurfaceView?.apply {
+            scaleX = 1.0f
+            scaleY = 1.0f
+            translationX = 0.0f
+            translationY = 0.0f
+        }
+
+        super.resize(resize, showToast)
+        requestUpdateBrightnessOverlayOnNextLayout()
+    }
+
+    /**
+     * Applies a new zoom matrix to the screen. Matrix should only contain a scale + translation.
+     *
+     * @param newMatrix The new zoom matrix
+     * @param animation If this zoom is part of an animation,
+     * as then it will not auto zoom after we are done
+     */
+    @OptIn(UnstableApi::class)
+    fun applyZoomMatrix(newMatrix: Matrix, animation: Boolean) {
+        if (!animation) {
+            matrixAnimation?.cancel()
+            matrixAnimation = null
+        }
+        val (translationX, translationY, scale) = matrixToTranslationAndScale(newMatrix)
+
+        playerView?.let { player ->
+            if (player.resizeMode == AspectRatioFrameLayout.RESIZE_MODE_FIT) {
+                player.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+            }
+
+            val videoView = player.videoSurfaceView ?: return@let
+
+            val videoWidth = videoView.width.toFloat()
+            val videoHeight = videoView.height.toFloat()
+            val playerWidth = screenWidthWithOrientation
+            val playerHeight = screenHeightWithOrientation
+
+            // Sanity check
+            if (videoWidth <= 1.0f || videoHeight <= 1.0f || playerWidth <= 1.0f || playerHeight <= 1.0f || scale <= 0.01f) {
+                return
+            }
+
+            // Calculate the scaled aspect ratio as the view height is not real, check the debugger
+            // and you will see videoView.height > screen.heigh
+            val initAspect =
+                (playerHeight * videoWidth) / (playerWidth * videoHeight)
+            val aspect = min(initAspect, 1.0f / initAspect)
+            val scaledAspect = scale * aspect
+
+            // Calculate clamp, this is very weird because we need to use aspect here as videoHeight > playerHeight
+            val maxTransX = max(0.0f, videoWidth * scaledAspect - playerWidth) * 0.5f
+            val maxTransY = max(0.0f, videoHeight * scaledAspect - playerHeight) * 0.5f
+
+            // Correct the translation to clamp within the viewing area
+            val expectedTranslationX = translationX.coerceIn(-maxTransX, maxTransX)
+            val expectedTranslationY = translationY.coerceIn(-maxTransY, maxTransY)
+
+            // Set the transform to the correct x and y
+            newMatrix.postTranslate(
+                expectedTranslationX - translationX,
+                expectedTranslationY - translationY
+            )
+            zoomMatrix = newMatrix
+
+            if (!animation) {
+                // If we are not in an animation, set up the values for the animation
+                if ((scaledAspect - 1.0f).absoluteValue < ZOOM_SNAP_SENSITIVITY) {
+                    // We are within the correct scaling, so center and fit it
+                    playerBinding?.videoOutline?.isVisible = true
+                    val desired = Matrix()
+                    desired.setScale(1.0f / aspect, 1.0f / aspect)
+                    desiredMatrix = desired
+                } else if (scale < 1.0f) {
+                    // We have zoomed too far, zoom to 100%
+                    playerBinding?.videoOutline?.isVisible = false
+                    desiredMatrix = Matrix()
+                } else {
+                    // Keep the same scaling after zoom
+                    playerBinding?.videoOutline?.isVisible = false
+                    desiredMatrix = null
+                }
+            }
+
+            // Finally set the actual scale + translation
+            videoView.scaleX = scaledAspect
+            videoView.scaleY = scaledAspect
+            videoView.translationX = expectedTranslationX
+            videoView.translationY = expectedTranslationY
+            updateBrightnessOverlayBounds()
+        }
+    }
+
+    fun createScaleGestureDetector(context: Context) {
+        scaleGestureDetector = ScaleGestureDetector(
+            context,
+            object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                override fun onScale(detector: ScaleGestureDetector): Boolean {
+                    val matrix = currentZoomMatrix()
+                    val (_, _, scale) = matrixToTranslationAndScale(matrix)
+                    // Clamp scale of the zoom, do it here as it is easier then doing it within applyZoomMatrix
+                    val newScale = (scale * detector.scaleFactor).coerceIn(
+                        MINIMUM_ZOOM,
+                        MAXIMUM_ZOOM
+                    )
+                    // How much we should scale it with to prevent inf scaling
+                    val actualScaleFactor = newScale / scale
+
+                    // Scale around the focus point, this is more natural than just zoom
+                    val pivotX = detector.focusX - screenWidthWithOrientation.toFloat() * 0.5f
+                    val pivotY = detector.focusY - screenHeightWithOrientation.toFloat() * 0.5f
+                    matrix.postScale(
+                        actualScaleFactor,
+                        actualScaleFactor,
+                        pivotX,
+                        pivotY
+                    )
+                    applyZoomMatrix(matrix, false)
+                    return true
+                }
+            })
+    }
+
     @SuppressLint("SetTextI18n")
     private fun handleMotionEvent(view: View?, event: MotionEvent?): Boolean {
         if (event == null || view == null) return false
         val currentTouch = Vector2(event.x, event.y)
         val startTouch = currentTouchStart
 
-        playerBinding?.apply {
-            playerIntroPlay.isGone = true
+        playerBinding?.playerIntroPlay?.isGone = true
 
+        // Handle pan with two fingers
+        if (event.pointerCount == 2 && !isLocked && isFullScreenPlayer && !hasTriggeredSpeedUp && currentTouchAction == null) {
+            holdhandler.removeCallbacks(holdRunnable) // remove 2x speed
+
+            // Gesture detectors for zoom & pan
+            if (scaleGestureDetector == null) {
+                createScaleGestureDetector(view.context)
+            }
+
+            isCurrentTouchValid = false // Prevent other touches
+            scaleGestureDetector?.onTouchEvent(event)
+
+            when (event.actionMasked) {
+                MotionEvent.ACTION_POINTER_DOWN -> {
+                    // Hide UI
+                    if (isShowing) {
+                        onClickChange()
+                    }
+                }
+
+                MotionEvent.ACTION_MOVE -> {
+                    val newPan = Vector2(
+                        (event.getX(0) + event.getX(1)) / 2f,
+                        (event.getY(0) + event.getY(1)) / 2f
+                    )
+                    val oldPan = lastPan
+                    if (oldPan != null) {
+                        val matrix = currentZoomMatrix()
+                        // Delta move
+                        matrix.postTranslate(newPan.x - oldPan.x, newPan.y - oldPan.y)
+                        applyZoomMatrix(matrix, false)
+                        updateBrightnessOverlayBounds()
+                    }
+                    lastPan = newPan
+                }
+
+                MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_UP -> {
+                    // Reset touch
+                    lastPan = null
+                    currentTouchStart = null
+                    currentLastTouchAction = null
+                    currentTouchAction = null
+                    currentTouchStartPlayerTime = null
+                    currentTouchLast = null
+                    currentTouchStartTime = null
+
+                    // Reset views
+                    playerBinding?.videoOutline?.isVisible = false
+                    matrixAnimation?.cancel()
+                    matrixAnimation = null
+
+                    // After we have zoomed in, snap to
+                    matrixAnimation = ValueAnimator.ofFloat(0.0f, 1.0f).apply {
+                        startDelay = 0
+                        duration = 200
+
+                        val startMatrix = currentZoomMatrix()
+                        val endMatrix = desiredMatrix ?: return@apply
+
+                        val (startX, startY, startScale) = matrixToTranslationAndScale(startMatrix)
+                        val (endX, endY, endScale) = matrixToTranslationAndScale(endMatrix)
+
+                        addUpdateListener { animation ->
+                            val value = animation.animatedValue as Float // ValueAnimator.ofFloat
+
+                            // Linear interpolation of scale and translation between startMatrix and endMatrix
+                            val valueInv = 1.0f - value
+                            val x = startX * valueInv + endX * value
+                            val y = startY * valueInv + endY * value
+                            val s = startScale * valueInv + endScale * value
+                            val m = Matrix()
+                            m.setScale(s, s)
+                            m.postTranslate(x, y)
+                            applyZoomMatrix(m, true)
+                        }
+                        start()
+                    }
+                }
+            }
+            return true
+        }
+
+        playerBinding?.apply {
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     // validates if the touch is inside of the player area
@@ -1163,13 +1638,18 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                             hasShownVolumeToast = false
                         }
 
+                        isBrightnessLocked = currentRequestedBrightness < 1.0f
+                        if (currentRequestedBrightness <= 1.0f) {
+                            hasShownBrightnessToast = false
+                        }
+
                         currentTouchStartTime = System.currentTimeMillis()
                         currentTouchStart = currentTouch
                         currentTouchLast = currentTouch
                         currentTouchStartPlayerTime = player.getPosition()
 
                         getBrightness()?.let {
-                            currentRequestedBrightness = it
+                            currentRequestedBrightness = it + currentExtraBrightness
                         }
                         verifyVolume()
                     }
@@ -1247,7 +1727,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                             if (!hasTriggeredSpeedUp) {
                                 toggleShowDelayed()
                             }
-                            //onClickChange()
+                            // onClickChange()
                         }
                     } else {
                         currentClickCount = 0
@@ -1374,23 +1854,55 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                     }
 
                                     val lastRequested = currentRequestedBrightness
-                                    currentRequestedBrightness =
-                                        min(
-                                            1.0f,
-                                            max(currentRequestedBrightness + verticalAddition, 0.0f)
+                                    val nextBrightness = if (extraBrightnessEnabled) {
+                                        currentRequestedBrightness + verticalAddition
+                                    } else {
+                                        (currentRequestedBrightness + verticalAddition).coerceIn(
+                                            0.0f,
+                                            1.0f
                                         )
+                                    }
+                                    // Log.e("Brightness", "Current: $currentRequestedBrightness, Next: $nextBrightness")
+                                    // show toast
+                                    if (extraBrightnessEnabled && nextBrightness > 1.0f && isBrightnessLocked && !hasShownBrightnessToast) {
+                                        showToast(R.string.slide_up_again_to_exceed_100)
+                                        hasShownBrightnessToast = true
+                                    }
+                                    currentRequestedBrightness = nextBrightness
 
                                     // this is to not spam request it, just in case it fucks over someone
                                     if (lastRequested != currentRequestedBrightness)
                                         setBrightness(currentRequestedBrightness)
 
-                                    // max is set high to make it smooth
-                                    playerProgressbarRight.max = 100_000
-                                    playerProgressbarRight.progress =
-                                        max(2_000, (currentRequestedBrightness * 100_000f).toInt())
+                                    val level1ProgressBar = playerProgressbarRightLevel1
 
+                                    // max is set high to make it smooth
+                                    level1ProgressBar.max = 100_000
+                                    level1ProgressBar.progress =
+                                        max(
+                                            2_000,
+                                            (min(
+                                                1.0f,
+                                                currentRequestedBrightness
+                                            ) * 100_000f).toInt()
+                                        )
+
+                                    if (extraBrightnessEnabled && !isBrightnessLocked) {
+                                        val level2ProgressBar = playerProgressbarRightLevel2
+
+                                        currentExtraBrightness = if (currentRequestedBrightness > 1.0f) min(2.0f, currentRequestedBrightness) - 1.0f else 0.0f
+                                        level2ProgressBar.max = 100_000
+                                        level2ProgressBar.progress =
+                                            (currentExtraBrightness * 100_000f).toInt().coerceIn(2_000, 100_000)
+                                        level2ProgressBar.isVisible = currentRequestedBrightness > 1.0f
+                                        brightnessOverlay?.let {
+                                            it.alpha = currentExtraBrightness
+                                        }
+                                    }
+
+                                    // Log.i("Brightness", "current: $currentRequestedBrightness, ce: $currentExtraBrightness L1: ${level1ProgressBar.progress}, L2: ${level2ProgressBar.progress}")
                                     playerProgressbarRightIcon.setImageResource(
-                                        brightnessIcons[min( // clamp the value just in case
+                                        brightnessIcons[min( // clamp the value in case of extra brightness
                                             brightnessIcons.size - 1,
                                             max(
                                                 0,
@@ -1431,7 +1943,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             when (keyCode) {
                 KeyEvent.KEYCODE_DPAD_CENTER -> {
                     if (!isShowing) {
-                        if (!isLocked) player.handleEvent(CSPlayerEvent.PlayPauseToggle)
+                        // If UI is not shown make click instantly skip to next chapter even if locked
+                        if (timestampShowState) {
+                            player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
+                        } else if (!isLocked) {
+                            player.handleEvent(CSPlayerEvent.PlayPauseToggle)
+                        }
                         onClickChange()
                         return true
                     }
@@ -1844,6 +2361,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     false
                 )
 
+                extraBrightnessEnabled = settingsManager.getBoolean(
+                    ctx.getString(R.string.extra_brightness_key),
+                    false
+                )
 
                 val profiles = QualityDataHelper.getProfiles()
                 val type = if (ctx.isUsingMobileData())
@@ -1851,7 +2372,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 else QualityDataHelper.QualityProfileType.WiFi
 
                 currentQualityProfile =
-                    profiles.firstOrNull { it.type == type }?.id ?: profiles.firstOrNull()?.id
+                    profiles.firstOrNull { it.types.contains(type) }?.id ?: profiles.firstOrNull()?.id
                             ?: currentQualityProfile
 
 //                currentPrefQuality = settingsManager.getInt(
@@ -1902,7 +2423,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
             playerPausePlay.setOnClickListener {
                 autoHide()
-                player.handleEvent(CSPlayerEvent.PlayPauseToggle)
+                if (currentPlayerStatus == CSPlayerLoading.IsEnded && isLayout(PHONE)) {
+                    player.handleEvent(CSPlayerEvent.Restart)
+                } else {
+                    player.handleEvent(CSPlayerEvent.PlayPauseToggle)
+                }
             }
 
             exoDuration.setOnClickListener {
@@ -2096,7 +2621,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             isShowingEpisodeOverlay = true
             animateEpisodesOverlay(true)
         } else if (isShowingEpisodeOverlay) {
-            if(previousPlayStatus) player.handleEvent(CSPlayerEvent.Play)
+            if (previousPlayStatus) player.handleEvent(CSPlayerEvent.Play)
             isShowingEpisodeOverlay = false
             animateEpisodesOverlay(false)
         }

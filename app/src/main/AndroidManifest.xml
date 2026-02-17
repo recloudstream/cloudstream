@@ -216,6 +216,12 @@
             android:foregroundServiceType="dataSync"
             android:exported="false" />
 
+        <service
+            android:name=".services.DownloadQueueService"
+            android:enabled="true"
+            android:foregroundServiceType="dataSync"
+            android:exported="false" />
+
         <!-- Necessary for WorkManager services: https://stackoverflow.com/a/77186316 -->
         <service
             android:name="androidx.work.impl.foreground.SystemForegroundService"

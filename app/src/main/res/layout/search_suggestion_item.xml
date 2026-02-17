@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/suggestion_item"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="16dp"
+    android:paddingEnd="8dp">
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:contentDescription="@string/search_hint"
+        android:src="@drawable/search_icon"
+        app:tint="?attr/textColor" />
+
+    <TextView
+        android:id="@+id/suggestion_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="?attr/textColor"
+        android:textSize="18sp"
+        tools:text="Search suggestion" />
+
+    <ImageView
+        android:id="@+id/suggestion_fill"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/search_hint"
+        android:padding="8dp"
+        android:src="@drawable/ic_baseline_north_west_24"
+        app:tint="?attr/textColor" />
+
+</LinearLayout>

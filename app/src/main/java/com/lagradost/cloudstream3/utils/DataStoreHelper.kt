@@ -30,6 +30,7 @@ import com.lagradost.cloudstream3.ui.result.EpisodeSortType
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.VideoWatchState
 import com.lagradost.cloudstream3.utils.AppContextUtils.filterProviderByPreferredMedia
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import java.util.Calendar
 import java.util.Date
 import java.util.GregorianCalendar
@@ -529,7 +530,7 @@ object DataStoreHelper {
         setKey(
             "$currentAccount/$RESULT_RESUME_WATCHING",
             parentId.toString(),
-            VideoDownloadHelper.ResumeWatching(
+            DownloadObjects.ResumeWatching(
                 parentId,
                 episodeId,
                 episode,
@@ -550,7 +551,7 @@ object DataStoreHelper {
         removeKey("$currentAccount/$RESULT_RESUME_WATCHING", parentId.toString())
     }
 
-    fun getLastWatched(id: Int?): VideoDownloadHelper.ResumeWatching? {
+    fun getLastWatched(id: Int?): DownloadObjects.ResumeWatching? {
         if (id == null) return null
         return getKey(
             "$currentAccount/$RESULT_RESUME_WATCHING",
@@ -558,7 +559,7 @@ object DataStoreHelper {
         )
     }
 
-    private fun getLastWatchedOld(id: Int?): VideoDownloadHelper.ResumeWatching? {
+    private fun getLastWatchedOld(id: Int?): DownloadObjects.ResumeWatching? {
         if (id == null) return null
         return getKey(
             "$currentAccount/$RESULT_RESUME_WATCHING_OLD",
