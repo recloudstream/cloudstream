@@ -43,6 +43,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
+import androidx.core.content.withStyledAttributes
 import androidx.core.graphics.alpha
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
@@ -304,16 +305,23 @@ object UIHelper {
 
     @ColorInt
     fun Context.getResourceColor(@AttrRes resource: Int, alphaFactor: Float = 1f): Int {
-        val typedArray = obtainStyledAttributes(intArrayOf(resource))
-        val color = typedArray.getColor(0, 0)
-        typedArray.recycle()
+        val color = colorFromAttribute(resource)
+        return if (alphaFactor < 1f) adjustAlpha(color, alphaFactor) else color
+    }
 
-        if (alphaFactor < 1f) {
-            val alpha = (color.alpha * alphaFactor).roundToInt()
-            return Color.argb(alpha, color.red, color.green, color.blue)
+    @ColorInt
+    fun Context.colorFromAttribute(@AttrRes attribute: Int): Int {
+        var color = 0
+        withStyledAttributes(attrs = intArrayOf(attribute)) {
+            color = getColor(0, 0)
         }
-
         return color
+    }
+
+    @ColorInt
+    fun adjustAlpha(@ColorInt color: Int, factor: Float): Int {
+        val alpha = (color.alpha * factor).roundToInt()
+        return Color.argb(alpha, color.red, color.green, color.blue)
     }
 
     var createPaletteAsyncCache: HashMap<String, Palette> = hashMapOf()
@@ -328,21 +336,6 @@ object UIHelper {
                 callback(palette)
             }
         }
-    }
-
-    fun adjustAlpha(@ColorInt color: Int, factor: Float): Int {
-        val alpha = (Color.alpha(color) * factor).roundToInt()
-        val red = Color.red(color)
-        val green = Color.green(color)
-        val blue = Color.blue(color)
-        return Color.argb(alpha, red, green, blue)
-    }
-
-    fun Context.colorFromAttribute(attribute: Int): Int {
-        val attributes = obtainStyledAttributes(intArrayOf(attribute))
-        val color = attributes.getColor(0, 0)
-        attributes.recycle()
-        return color
     }
 
     fun Activity.hideSystemUI() {
