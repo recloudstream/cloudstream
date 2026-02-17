@@ -4,7 +4,9 @@ import android.content.Context
 import android.graphics.Matrix
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import androidx.core.content.withStyledAttributes
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.mvvm.logError
 
 /**
  * A custom [AppCompatImageView] that allows precise control over the visible crop area
@@ -144,22 +146,23 @@ class PercentageCropImageView : androidx.appcompat.widget.AppCompatImageView {
 
     private fun initAttrs(context: Context, attrs: AttributeSet?) {
         attrs ?: return
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.PercentageCropImageView)
-        try {
-            if (typedArray.hasValue(R.styleable.PercentageCropImageView_cropYCenterOffsetPct)) {
-                mCropYCenterOffsetPct = typedArray.getFloat(
-                    R.styleable.PercentageCropImageView_cropYCenterOffsetPct,
-                    0.5f
-                )
+        context.withStyledAttributes(attrs, R.styleable.PercentageCropImageView) {
+            try {
+                if (hasValue(R.styleable.PercentageCropImageView_cropYCenterOffsetPct)) {
+                    mCropYCenterOffsetPct = getFloat(
+                        R.styleable.PercentageCropImageView_cropYCenterOffsetPct,
+                        0.5f
+                    )
+                }
+                if (hasValue(R.styleable.PercentageCropImageView_cropXCenterOffsetPct)) {
+                    mCropXCenterOffsetPct = getFloat(
+                        R.styleable.PercentageCropImageView_cropXCenterOffsetPct,
+                        0.5f
+                    )
+                }
+            } catch (e: Exception) {
+                logError(e)
             }
-            if (typedArray.hasValue(R.styleable.PercentageCropImageView_cropXCenterOffsetPct)) {
-                mCropXCenterOffsetPct = typedArray.getFloat(
-                    R.styleable.PercentageCropImageView_cropXCenterOffsetPct,
-                    0.5f
-                )
-            }
-        } finally {
-            typedArray.recycle()
         }
     }
 }

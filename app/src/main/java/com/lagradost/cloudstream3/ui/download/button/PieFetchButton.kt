@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.MainThread
 import androidx.core.content.ContextCompat
+import androidx.core.content.withStyledAttributes
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
@@ -66,7 +67,7 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
     open fun onInflate() {}
 
     init {
-        context.obtainStyledAttributes(attributeSet, R.styleable.PieFetchButton, 0, 0).apply {
+        context.withStyledAttributes(attributeSet, R.styleable.PieFetchButton, 0, 0) {
             try {
                 inflate(
                     overrideLayout ?: getResourceId(
@@ -75,17 +76,13 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
                     )
                 )
             } catch (e: Exception) {
+                recycle() // Manually call recycle first to avoid memory leaks
                 Log.e(
                     "PieFetchButton", "Error inflating PieFetchButton, " +
                             "check that you have declared the required aria2c attrs: aria2c_icon_scale aria2c_icon_color aria2c_outline_color aria2c_fill_color"
                 )
                 throw e
             }
-
-
-            progressBar = findViewById(R.id.progress_downloaded)
-            progressBarBackground = findViewById(R.id.progress_downloaded_background)
-            statusView = findViewById(R.id.image_download_status)
 
             animateWaiting = getBoolean(
                 R.styleable.PieFetchButton_download_animate_waiting,
@@ -95,16 +92,13 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
                 R.styleable.PieFetchButton_download_hide_when_icon,
                 true
             )
-
             waitingAnimation = getResourceId(
                 R.styleable.PieFetchButton_download_waiting_animation,
                 R.anim.rotate_around_center_point
             )
-
             activeOutline = getResourceId(
                 R.styleable.PieFetchButton_download_outline_active, R.drawable.circle_shape
             )
-
             nonActiveOutline = getResourceId(
                 R.styleable.PieFetchButton_download_outline_non_active,
                 R.drawable.circle_shape_dotted
@@ -132,15 +126,17 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
             )
 
             val fillIndex = getInt(R.styleable.PieFetchButton_download_fill, 0)
-
             progressDrawable = getResourceId(
                 R.styleable.PieFetchButton_download_fill_override, fillArray[fillIndex]
             )
-
-            progressBar.progressDrawable = ContextCompat.getDrawable(context, progressDrawable)
-
-            recycle()
         }
+        
+        progressBar = findViewById(R.id.progress_downloaded)
+        progressBarBackground = findViewById(R.id.progress_downloaded_background)
+        statusView = findViewById(R.id.image_download_status)
+        
+        progressBar.progressDrawable = ContextCompat.getDrawable(context, progressDrawable)
+
         // resetView()
         onInflate()
     }
