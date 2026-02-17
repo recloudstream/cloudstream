@@ -52,7 +52,7 @@
     <string name="next_episode">Следующая серия</string>
     <string name="result_tags">Жанры</string>
     <string name="result_share">Поделиться</string>
-    <string name="result_open_in_browser">Открыть в веб обозревателе</string>
+    <string name="result_open_in_browser">Открыть в Браузере</string>
     <string name="skip_loading">Пропустить загрузку</string>
     <string name="type_watching">Просмотр</string>
     <string name="type_on_hold">Приостановлено</string>
@@ -305,7 +305,7 @@
     <string name="skip_type_op">Вступление</string>
     <string name="skip_type_creddits">Титры</string>
     <string name="action_mark_as_watched">Отметить как просмотренное</string>
-    <string name="limit_title_rez">Разрешение видеоплеера</string>
+    <string name="limit_title_rez">Показывать информацию об игроке</string>
     <string name="watch_quality_pref">Предпочтительное качество видео (WiFi)</string>
     <string name="limit_title">Максимум символов</string>
     <string name="video_buffer_length_settings">Длинна буфера</string>
@@ -655,7 +655,7 @@
     <string name="sort_button_rating">Оценка %s</string>
     <string name="sort_button_date">Дата %s</string>
     <string name="sort_episodes_date_newest">Дата выпуска (Новейшие)</string>
-    <string name="software_decoding_desc">Программное декодирование позволяет проигрователю воспроизводить видео, которые не поддерживаются вашим устройством, но может быть с задержками или нестабильным воспроизведением при высоком разрешении</string>
+    <string name="software_decoding_desc">Программное декодирование позволяет проигрователю воспроизводить видео, которые не поддерживаются вашим устройством, но может быть с задержками или нестабильным воспроизведением при высоком разрешении.</string>
     <string name="software_decoding">Программное декодирование</string>
     <string name="player_notification_channel_description">Уведомление проигрывателя для управления воспроизведением в фоновом режиме</string>
     <string name="update_plugins">Обновить дополнения</string>
@@ -707,17 +707,23 @@
     <string name="resolution_and_name">Резолюция и название</string>
     <string name="subs_subtitle_alignment">Выравнивание Субтитров</string>
     <string name="bottom_left">Нижний левый</string>
-    <string name="bottom_center">Нижний центральный</string>
+    <string name="bottom_center">Нижний центр</string>
     <string name="bottom_right">Нижний правый</string>
     <string name="middle_left">Средний левый</string>
     <string name="middle_center">Средний центр</string>
     <string name="middle_right">Средний правый</string>
-    <string name="top_left">Вверху слева</string>
-    <string name="top_center">Вверху центр</string>
-    <string name="top_right">Вверху правый</string>
+    <string name="top_left">Верхний слева</string>
+    <string name="top_center">Верхний центр</string>
+    <string name="top_right">Верхний справа</string>
     <string name="play_full_series_button">Смотреть полностью</string>
     <string name="install_prerelease">Установить предварительный выпуск</string>
     <string name="prerelease_already_installed">Предварительный выпуск уже установлен.</string>
     <string name="prerelease_install_failed">Не удалось установить предварительный выпуск.</string>
     <string name="show_episode_text">Текст эпизода</string>
+    <string name="search_suggestions">Поиск предложений</string>
+    <string name="search_suggestions_des">Показывать подсказки поиска при вводе текста</string>
+    <string name="clear_suggestions">Очистить подсказки</string>
+    <string name="show_cast_in_details">Показать панель приведения</string>
+    <string name="video_info">Информация о средствах массовой информации</string>
+    <string name="source_name">Имя источника</string>
 </resources>

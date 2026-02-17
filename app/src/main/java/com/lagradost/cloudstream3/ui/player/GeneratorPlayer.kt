@@ -78,7 +78,9 @@ import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.player.CS3IPlayer.Companion.preferredAudioTrackLanguage
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.updateForcedEncoding
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
+import com.lagradost.cloudstream3.ui.player.source_priority.LinkSource
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
+import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper.getLinkPriority
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
 import com.lagradost.cloudstream3.ui.result.ACTION_CLICK_DEFAULT
 import com.lagradost.cloudstream3.ui.result.EpisodeAdapter
@@ -116,7 +118,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.getImageBitmapFromUrl
+import com.lagradost.cloudstream3.utils.downloader.DownloadUtils.getImageBitmapFromUrl
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.safefile.SafeFile
@@ -544,31 +546,10 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
-    private fun closestQuality(target: Int?): Qualities {
-        if (target == null) return Qualities.Unknown
-        return Qualities.entries.minBy { abs(it.value - target) }
-    }
-
-    private fun getLinkPriority(
-        qualityProfile: Int,
-        link: Pair<ExtractorLink?, ExtractorUri?>
-    ): Int {
-        val (linkData, _) = link
-
-        val qualityPriority = QualityDataHelper.getQualityPriority(
-            qualityProfile,
-            closestQuality(linkData?.quality)
-        )
-        val sourcePriority =
-            QualityDataHelper.getSourcePriority(qualityProfile, linkData?.source)
-
-        // negative because we want to sort highest quality first
-        return qualityPriority + sourcePriority
-    }
-
     private fun sortLinks(qualityProfile: Int): List<Pair<ExtractorLink?, ExtractorUri?>> {
         return currentLinks.sortedBy {
-            -getLinkPriority(qualityProfile, it)
+            // negative because we want to sort highest quality first
+            -getLinkPriority(qualityProfile, it.first)
         }
     }
 
@@ -1300,7 +1281,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     QualityProfileDialog(
                         activity,
                         R.style.DialogFullscreenPlayer,
-                        currentLinks.mapNotNull { it.first },
+                        currentLinks.mapNotNull { it.first?.let { extractorLink -> LinkSource(extractorLink) } },
                         currentQualityProfile
                     ) { profile ->
                         currentQualityProfile = profile.id
@@ -2156,7 +2137,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
             safe {
                 if (currentLinks.any { link ->
-                        getLinkPriority(currentQualityProfile, link) >=
+                        getLinkPriority(currentQualityProfile, link.first) >=
                                 QualityDataHelper.AUTO_SKIP_PRIORITY
                     }
                 ) {

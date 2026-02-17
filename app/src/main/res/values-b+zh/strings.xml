@@ -259,7 +259,7 @@
     <string name="update">更新</string>
     <string name="watch_quality_pref">首选播放画质（WiFi）</string>
     <string name="limit_title">视频播放器标题最多字符</string>
-    <string name="limit_title_rez">视频播放器标题</string>
+    <string name="limit_title_rez">显示播放器信息</string>
     <string name="video_buffer_size_settings">视频缓冲大小</string>
     <string name="video_buffer_length_settings">视频缓冲长度</string>
     <string name="video_buffer_disk_settings">视频缓存存储</string>
@@ -748,4 +748,12 @@
     <string name="prerelease_already_installed">已安装预发行版。</string>
     <string name="prerelease_install_failed">安装预发行版失败。</string>
     <string name="show_episode_text">剧集文本</string>
+    <string name="search_suggestions">搜索建议</string>
+    <string name="search_suggestions_des">输入时显示搜索建议</string>
+    <string name="clear_suggestions">清除建议</string>
+    <string name="show_cast_in_details">显示投屏面板</string>
+    <string name="video_info">媒体信息</string>
+    <string name="source_name">源名称</string>
+    <string name="extra_brightness_settings">额外亮度</string>
+    <string name="extra_brightness_settings_des">超过 100% 亮度时启用亮度过滤器</string>
 </resources>

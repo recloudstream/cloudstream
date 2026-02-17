@@ -83,7 +83,7 @@
     <string name="sort_close">Chiudi</string>
     <string name="sort_clear">Cancella</string>
     <string name="sort_save">Salva</string>
-    <string name="player_speed">Velocità video</string>
+    <string name="player_speed">Velocità lettore</string>
     <string name="subtitles_settings">Impostazioni sottotitoli</string>
     <string name="subs_text_color">Colore testo</string>
     <string name="subs_outline_color">Colore contorno</string>
@@ -114,7 +114,7 @@
     <string name="torrent_no_plot">Nessuna descrizione trovata</string>
     <string name="show_log_cat">Mostra Logcat 🐈</string>
     <string name="picture_in_picture">Picture-in-Picture</string>
-    <string name="picture_in_picture_des">Continua la riproduzione in un player in miniatura sopra altre applicazioni</string>
+    <string name="picture_in_picture_des">Continua la riproduzione in un lettore in miniatura sopra altre applicazioni</string>
     <string name="player_size_settings">Pulsante di ridimensionamento del video</string>
     <string name="player_size_settings_des">Rimuovi bordi neri</string>
     <string name="player_subtitles_settings">Sottotitoli</string>
@@ -256,8 +256,8 @@
     <string name="skip_update">Salta questo aggiornamento</string>
     <string name="update">Aggiorna</string>
     <string name="watch_quality_pref">Qualità di visualizzazione preferita (WiFi)</string>
-    <string name="limit_title">Limita i caratteri del titolo nel player</string>
-    <string name="limit_title_rez">Risoluzione video player</string>
+    <string name="limit_title">Limita i caratteri del titolo nel lettore</string>
+    <string name="limit_title_rez">Mostra informazioni sul lettore</string>
     <string name="video_buffer_size_settings">Dimensione cache video</string>
     <string name="video_buffer_length_settings">Lunghezza buffer video</string>
     <string name="video_buffer_disk_settings">Dimensione cache video su disco</string>
@@ -437,8 +437,8 @@
     <string name="extension_language">Lingua</string>
     <string name="extension_install_first">Prima installa l\'estensione</string>
     <string name="hls_playlist">Playlist HLS</string>
-    <string name="player_pref">Video player preferito</string>
-    <string name="player_settings_play_in_app">Player interno</string>
+    <string name="player_pref">Video lettore preferito</string>
+    <string name="player_settings_play_in_app">Lettore interno</string>
     <string name="app_not_found_error">App non trovata</string>
     <string name="all_languages_preference">Tutte le lingue</string>
     <string name="skip_type_format" formatted="true">Salta %s</string>
@@ -511,11 +511,11 @@
     <string name="empty_library_logged_in_message">Questo elenco è vuoto. Prova a passare a un altro.</string>
     <string name="safe_mode_file">File \"safe mode\" trovato!
 \nAll\'avvio non sarà caricata alcuna estensione finchè il file non verrà rimosso.</string>
-    <string name="android_tv_interface_off_seek_settings_summary">Quantità di avanzamento usata quando il player è nascosto</string>
+    <string name="android_tv_interface_off_seek_settings_summary">Intervallo di ricerca utilizzato quando il lettore è nascosto</string>
     <string name="pref_category_android_tv">TV Android</string>
-    <string name="android_tv_interface_on_seek_settings_summary">Quantità di avanzamento usata quando il player è visibile</string>
-    <string name="android_tv_interface_on_seek_settings">Player visibile - Quantità di secondi da avanzare</string>
-    <string name="android_tv_interface_off_seek_settings">Player nascosto - Quantità di secondi da avanzare</string>
+    <string name="android_tv_interface_on_seek_settings_summary">Intervallo di ricerca utilizzato quando il lettore è visibile</string>
+    <string name="android_tv_interface_on_seek_settings">Lettore visibile - Intervallo di ricerca</string>
+    <string name="android_tv_interface_off_seek_settings">Lettore nascosto - Intervallo di ricerca</string>
     <string name="test_log">Registro</string>
     <string name="start">Avvia</string>
     <string name="category_provider_test">Test del provider</string>
@@ -756,4 +756,13 @@
     <string name="prerelease_already_installed">La versione pre-release è già installata.</string>
     <string name="prerelease_install_failed">Impossibile installare la versione pre-release.</string>
     <string name="show_episode_text">Testo dell\'episodio</string>
+    <string name="search_suggestions">Suggerimenti per la ricerca</string>
+    <string name="search_suggestions_des">Mostra suggerimenti di ricerca durante la digitazione</string>
+    <string name="clear_suggestions">Cancella suggerimenti</string>
+    <string name="show_cast_in_details">Mostra pannello cast</string>
+    <string name="video_info">Info sui media</string>
+    <string name="source_name">Nome sorgente</string>
+    <string name="extra_brightness_settings">Luminosità extra</string>
+    <string name="extra_brightness_settings_des">Attiva il filtro di luminosità quando viene superato il 100% della luminosità dello schermo</string>
+    <string name="extra_brightness_key">extra_brightness_enabled</string>
 </resources>

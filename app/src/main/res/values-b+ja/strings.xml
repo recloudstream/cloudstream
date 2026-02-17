@@ -298,7 +298,7 @@
     <string name="toast_copied">コピーされました！</string>
     <string name="audio_book_singular">オーディオブック</string>
     <string name="custom_media_singluar">メディア</string>
-    <string name="limit_title_rez">ビデオプレーヤーの解像度</string>
+    <string name="limit_title_rez">プレイヤー情報を表示</string>
     <string name="speed_setting_summary">プレイヤーに速度オプションを追加</string>
     <string name="downloads_delete_select">削除する項目を選択</string>
     <string name="offline_file">オフラインで視聴可能</string>
@@ -708,4 +708,13 @@
     <string name="prerelease_already_installed">プレリリース版は既にインストールされています。</string>
     <string name="prerelease_install_failed">プレリリース版のインストールに失敗しました。</string>
     <string name="show_episode_text">エピソードのテキスト</string>
+    <string name="search_suggestions">検索候補</string>
+    <string name="search_suggestions_des">入力中に検索候補を表示する</string>
+    <string name="clear_suggestions">候補を消去</string>
+    <string name="show_cast_in_details">キャストパネルを表示</string>
+    <string name="source_name">ソース名</string>
+    <string name="video_info">メディア情報</string>
+    <string name="extra_brightness_settings">追加の輝度設定</string>
+    <string name="extra_brightness_settings_des">画面の輝度が100%を超えた場合に輝度フィルターを有効にします</string>
+    <string name="extra_brightness_key">追加の輝度を有効化</string>
 </resources>

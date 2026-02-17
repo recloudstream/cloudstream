@@ -18,6 +18,7 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -58,6 +59,7 @@ import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_LONG_CLICK
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.player.FullScreenPlayer
+import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment.bindLogo
 import com.lagradost.cloudstream3.ui.result.ResultFragment.getStoredData
@@ -72,6 +74,7 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.updateHasTrailers
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.openBatteryOptimizationSettings
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
@@ -85,12 +88,14 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import com.lagradost.cloudstream3.utils.UIHelper.setListViewHeightBasedOnItems
 import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
+import com.lagradost.cloudstream3.utils.txt
 import java.net.URLEncoder
 import kotlin.math.roundToInt
 
@@ -700,10 +705,78 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 // no failure?
                 resultEpisodeLoading.isVisible = episodes is Resource.Loading
                 resultEpisodes.isVisible = episodes is Resource.Success
+                resultBatchDownloadButton.isVisible =
+                    episodes is Resource.Success && episodes.value.isNotEmpty()
+
                 if (episodes is Resource.Success) {
                     (resultEpisodes.adapter as? EpisodeAdapter)?.submitList(episodes.value)
+
+                    // Show quality dialog with all sources
+                    resultBatchDownloadButton.setOnLongClickListener {
+                        ioSafe {
+                            val defaultSources = QualityProfileDialog.getAllDefaultSources()
+                            val activity = activity ?: return@ioSafe
+                            activity.runOnUiThread {
+                                QualityProfileDialog(
+                                    activity,
+                                    R.style.DialogFullscreenPlayer,
+                                    defaultSources,
+                                ).show()
+                            }
+                        }
+
+                        true
+                    }
+
+                    resultBatchDownloadButton.setOnClickListener { view ->
+                        val episodeStart =
+                            episodes.value.firstOrNull()?.episode ?: return@setOnClickListener
+                        val episodeEnd =
+                            episodes.value.lastOrNull()?.episode ?: return@setOnClickListener
+
+                        val episodeRange = if (episodeStart == episodeEnd) {
+                            episodeStart.toString()
+                        } else {
+                            txt(
+                                R.string.episodes_range,
+                                episodeStart,
+                                episodeEnd
+                            ).asString(view.context)
+                        }
+
+                        val rangeMessage = txt(
+                            R.string.download_episode_range,
+                            episodeRange
+                        ).asString(view.context)
+
+                        AlertDialog.Builder(view.context, R.style.AlertDialogCustom)
+                            .setTitle(R.string.download_all)
+                            .setMessage(rangeMessage)
+                            .setPositiveButton(R.string.yes) { _, _ ->
+                                ioSafe {
+                                    episodes.value.forEach { episode ->
+                                        viewModel.handleAction(
+                                            EpisodeClickEvent(
+                                                ACTION_DOWNLOAD_EPISODE,
+                                                episode
+                                            )
+                                        )
+                                            // Join to make the episodes ordered
+                                            .join()
+                                    }
+                                }
+                            }
+                            .setNegativeButton(R.string.cancel) { _, _ ->
+
+                            }.show()
+
+                    }
+
                 }
+
+
             }
+
         }
 
         observeNullable(viewModel.movie) { data ->
@@ -731,8 +804,11 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         )
                         return@setOnLongClickListener true
                     }
+
+                    val status = VideoDownloadManager.downloadStatus[ep.id]
+                    downloadButton.setStatus(status)
                     downloadButton.setDefaultClickListener(
-                        VideoDownloadHelper.DownloadEpisodeCached(
+                        DownloadObjects.DownloadEpisodeCached(
                             name = ep.name,
                             poster = ep.poster,
                             episode = 0,
@@ -834,8 +910,12 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultComingSoon.isVisible = d.comingSoon
                     resultDataHolder.isGone = d.comingSoon
 
-                    val prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(root.context)
-                    val showCast = prefs.getBoolean(root.context.getString(R.string.show_cast_in_details_key), true)
+                    val prefs =
+                        androidx.preference.PreferenceManager.getDefaultSharedPreferences(root.context)
+                    val showCast = prefs.getBoolean(
+                        root.context.getString(R.string.show_cast_in_details_key),
+                        true
+                    )
 
                     resultCastItems.isGone = !showCast || d.actors.isNullOrEmpty()
                     (resultCastItems.adapter as? ActorAdaptor)?.submitList(if (showCast) d.actors else emptyList())
