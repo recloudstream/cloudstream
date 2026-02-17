@@ -494,24 +494,34 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
             try {
                 // https://stackoverflow.com/questions/6866238/concurrent-modification-exception-adding-to-an-arraylist
                 listLock.lock()
+
+                val pinnedOrder = DataStoreHelper.pinnedProviders.toList().reversed()
+
+                val sortedList = list.toList().sortedWith(compareBy { pair ->
+                    val index = pinnedOrder.indexOf(pair.first)
+                    if (index == -1) Int.MAX_VALUE else index
+                })
+
                 (binding.searchMasterRecycler.adapter as? ParentItemAdapter)?.apply {
-                    val newItems = list.map { ongoing ->
-                        val dataList = ongoing.value.list
+                    val newItems = sortedList.map { ongoing ->
+
+                        val providerName = ongoing.first
+                        val providerData = ongoing.second
+
+                        val dataList = providerData.list
                         val dataListFiltered =
                             context?.filterSearchResultByFilmQuality(dataList) ?: dataList
 
                         val homePageList = HomePageList(
-                            ongoing.key,
+                            providerName,
                             dataListFiltered
                         )
 
-                        val expandableList = HomeViewModel.ExpandableHomepageList(
+                        HomeViewModel.ExpandableHomepageList(
                             homePageList,
-                            ongoing.value.currentPage,
-                            ongoing.value.hasNext
+                            providerData.currentPage,
+                            providerData.hasNext
                         )
-
-                        expandableList
                     }
 
                     submitList(newItems)
