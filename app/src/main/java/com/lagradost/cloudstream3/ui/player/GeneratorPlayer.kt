@@ -1466,22 +1466,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                                     ?: "Audio"
                                 ).replaceFirstChar { it.uppercaseChar() }
 
-                        val codec = track.sampleMimeType
-                            ?.lowercase()
-                            ?.let { mime ->
-                                when {
-                                    mime.contains("eac3-joc") -> "Dolby Atmos"
-                                    mime.contains("eac3") -> "E-AC3"
-                                    mime.contains("ac-3") || mime.contains("ac3") -> "AC3"
-                                    mime.contains("mp4a") || mime.contains("aac") -> "AAC"
-                                    mime.contains("opus") -> "Opus"
-                                    mime.contains("vorbis") -> "Vorbis"
-                                    mime.contains("mp3") -> "MP3"
-                                    mime.contains("flac") -> "FLAC"
-                                    mime.contains("dts") -> "DTS"
-                                    else -> "Unknown"
-                                }
-                            } ?: "Unknown"
+                        val codec = audioCodecName(track.sampleMimeType)
 
                         val channels = when (track.channelCount ?: 0) {
                             1 -> "Mono"
@@ -1870,8 +1855,8 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
-    private fun audioCodecName(mime: String?): String? {
-        val m = mime?.lowercase() ?: return null
+    private fun audioCodecName(mime: String?): String {
+        val m = mime?.lowercase() ?: return "Unknown"
         return when {
             m.contains("eac3-joc") -> "Dolby Atmos"
             m.contains("mp4a") || m.contains("aac") -> "AAC"
