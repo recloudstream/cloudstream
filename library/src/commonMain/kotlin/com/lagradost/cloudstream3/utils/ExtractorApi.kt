@@ -59,7 +59,6 @@ import com.lagradost.cloudstream3.extractors.Ds2video
 import com.lagradost.cloudstream3.extractors.DsstOnline
 import com.lagradost.cloudstream3.extractors.Dumbalag
 import com.lagradost.cloudstream3.extractors.Dwish
-import com.lagradost.cloudstream3.extractors.EPlayExtractor
 import com.lagradost.cloudstream3.extractors.Embedgram
 import com.lagradost.cloudstream3.extractors.EmturbovidExtractor
 import com.lagradost.cloudstream3.extractors.Evoload
@@ -73,7 +72,6 @@ import com.lagradost.cloudstream3.extractors.Fembed9hd
 import com.lagradost.cloudstream3.extractors.FileMoon
 import com.lagradost.cloudstream3.extractors.FileMoonIn
 import com.lagradost.cloudstream3.extractors.FileMoonSx
-import com.lagradost.cloudstream3.extractors.Filegram
 import com.lagradost.cloudstream3.extractors.FilemoonV2
 import com.lagradost.cloudstream3.extractors.Filesim
 import com.lagradost.cloudstream3.extractors.FlaswishCom
@@ -83,7 +81,6 @@ import com.lagradost.cloudstream3.extractors.FourPlayRu
 import com.lagradost.cloudstream3.extractors.Fplayer
 import com.lagradost.cloudstream3.extractors.FsstOnline
 import com.lagradost.cloudstream3.extractors.GDMirrorbot
-import com.lagradost.cloudstream3.extractors.GMPlayer
 import com.lagradost.cloudstream3.extractors.GUpload
 import com.lagradost.cloudstream3.extractors.GamoVideo
 import com.lagradost.cloudstream3.extractors.Gdriveplayer
@@ -260,8 +257,6 @@ import com.lagradost.cloudstream3.extractors.VidHidePro6
 import com.lagradost.cloudstream3.extractors.VidMoxy
 import com.lagradost.cloudstream3.extractors.VidStack
 import com.lagradost.cloudstream3.extractors.VideoSeyred
-import com.lagradost.cloudstream3.extractors.VideoVard
-import com.lagradost.cloudstream3.extractors.VideovardSX
 import com.lagradost.cloudstream3.extractors.Videzz
 import com.lagradost.cloudstream3.extractors.Vidgomunime
 import com.lagradost.cloudstream3.extractors.Vidgomunimesb
@@ -270,7 +265,6 @@ import com.lagradost.cloudstream3.extractors.Vidmoly
 import com.lagradost.cloudstream3.extractors.Vidmolyme
 import com.lagradost.cloudstream3.extractors.Vidmolyto
 import com.lagradost.cloudstream3.extractors.Vidmolybiz
-import com.lagradost.cloudstream3.extractors.Vidnest
 import com.lagradost.cloudstream3.extractors.Vido
 import com.lagradost.cloudstream3.extractors.Vidoza
 import com.lagradost.cloudstream3.extractors.VinovoSi
@@ -895,9 +889,6 @@ suspend fun loadExtractor(
 
 val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     //AllProvider(),
-    Vidstreamz(),
-    VideoVard(),
-    VideovardSX(),
     Mp4Upload(),
     StreamTape(),
     StreamTapeNet(),
@@ -1008,8 +999,6 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     DoodWatchExtractor(),
     DoodWfExtractor(),
     DoodYtExtractor(),
-
-    AsianLoad(),
 
     // GenericM3U8(),
     Zplayer(),
@@ -1162,7 +1151,6 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     FlaswishCom(),
     SfastwishCom(),
     Playerwish(),
-    Vidnest(),
     StreamEmbed(),
     EmturbovidExtractor(),
     Vtbe(),
