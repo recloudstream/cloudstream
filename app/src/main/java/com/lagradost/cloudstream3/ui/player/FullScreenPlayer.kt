@@ -615,6 +615,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     protected fun exitFullscreen() {
+        resetZoomToDefault()
         // if (lockRotation)
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
 
@@ -627,6 +628,29 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
         activity?.window?.attributes = lp
         activity?.showSystemUI()
+    }
+    private fun resetZoomToDefault() {
+        matrixAnimation?.cancel()
+        matrixAnimation = null
+        zoomMatrix = null
+        desiredMatrix = null
+        playerView?.videoSurfaceView?.apply {
+            scaleX = 1.0f
+            scaleY = 1.0f
+            translationX = 0.0f
+            translationY = 0.0f
+            invalidate()
+        }
+        playerView?.let {
+            if (it.resizeMode == AspectRatioFrameLayout.RESIZE_MODE_ZOOM) {
+                it.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+            }
+        }
+        playerView?.post {
+            playerView?.requestLayout()
+            playerView?.invalidate()
+        }
+        requestUpdateBrightnessOverlayOnNextLayout()
     }
 
     override fun onResume() {
