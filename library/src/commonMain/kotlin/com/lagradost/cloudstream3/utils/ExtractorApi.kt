@@ -23,6 +23,7 @@ import com.lagradost.cloudstream3.extractors.ByseSX
 import com.lagradost.cloudstream3.extractors.Bysezejataos
 import com.lagradost.cloudstream3.extractors.ByseBuho
 import com.lagradost.cloudstream3.extractors.ByseVepoin
+import com.lagradost.cloudstream3.extractors.ByseQekaho
 import com.lagradost.cloudstream3.extractors.ByteShare
 import com.lagradost.cloudstream3.extractors.Cavanhabg
 import com.lagradost.cloudstream3.extractors.Cda
@@ -1283,6 +1284,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Up4FunTop(),
     GUpload(),
     HlsWish(),
+    ByseQekaho(),
 )
 
 
