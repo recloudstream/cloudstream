@@ -1856,22 +1856,23 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     private fun audioCodecName(mime: String?): String {
-        val m = mime?.lowercase() ?: return ""
+        val m = mime?.lowercase()?.trim().orEmpty()
+        if (m.isBlank()) return ""
         return when {
             m.contains("eac3-joc") -> "Dolby Atmos"
-            m.contains("mp4a") || m.contains("aac") -> "AAC"
-            m.contains("ac-3") || m.contains("ac3") -> "AC3"
+            m.contains("truehd") -> "TrueHD"
             m.contains("eac3") -> "E-AC3"
+            m.contains("ac-3") || m.contains("ac3") -> "AC3"
+            m.contains("aac") || m.contains("mp4a") -> "AAC"
             m.contains("opus") -> "Opus"
             m.contains("vorbis") -> "Vorbis"
             m.contains("mp3") -> "MP3"
             m.contains("flac") -> "FLAC"
             m.contains("dts") -> "DTS"
-            "/" in m -> m.substringAfter("/").uppercase()
-            else -> m.uppercase()
+            m.contains("/") -> m.substringAfter("/").uppercase().takeIf { it.isNotBlank() } ?: ""
+            else -> ""
         }
     }
-
 
     private fun updatePlayerInfo() {
         val tracks = player.getVideoTracks()
