@@ -1478,9 +1478,10 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                         listOfNotNull(
                             language.takeIf { it.isNotBlank() }?.replaceFirstChar { it.uppercaseChar() },
-                            channels.takeIf { it.isNotBlank() }?.replaceFirstChar { it.uppercaseChar() },
-                            codec.takeIf { it.isNotBlank() }?.uppercase()?.let { "($it)" }
-                        ).joinToString(" ")
+                            channels.takeIf { it.isNotBlank() },
+                            codec.takeIf { it.isNotBlank() }?.uppercase()
+                        ).joinToString(" • ")
+
 
                     }
                 )
