@@ -1869,6 +1869,9 @@ class GeneratorPlayer : FullScreenPlayer() {
             m.contains("mp3") -> "MP3"
             m.contains("flac") -> "FLAC"
             m.contains("dts") -> "DTS"
+            m.contains("pcm") -> "PCM"
+            m.contains("alac") -> "ALAC"
+            m.contains("amr") -> "AMR"
             m.contains("/") -> m.substringAfter("/").uppercase().takeIf { it.isNotBlank() } ?: ""
             else -> ""
         }
@@ -1899,7 +1902,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         val language = languageName?.takeIf { it.isNotBlank() }?.let { lang ->
             label?.takeIf { it.isNotBlank() && !it.equals(lang, true) }
-                ?.let { "$lang ($it)" }
+                ?.let { lang }
                 ?: lang
         } ?: label?.takeIf { it.isNotBlank() }
 
