@@ -1888,13 +1888,26 @@ class GeneratorPlayer : FullScreenPlayer() {
         val languageName = fromTagToLanguageName(audioTrack?.language)
         val label = audioTrack?.label
 
+        val channels = when (audioTrack?.channelCount ?: 0) {
+            1 -> "Mono"
+            2 -> "Stereo"
+            6 -> "5.1"
+            8 -> "7.1"
+            else -> audioTrack?.channelCount?.let { "${it}ch" }
+        }
+
         val language = languageName?.takeIf { it.isNotBlank() }?.let { lang ->
             label?.takeIf { it.isNotBlank() && !it.equals(lang, true) }
                 ?.let { "$lang ($it)" }
                 ?: lang
         } ?: label?.takeIf { it.isNotBlank() }
 
-        val stats = arrayOf(videoCodec, audioCodec, language).filter { !it.isNullOrBlank() }.joinToString(" • ")
+        val stats = arrayOf(
+            videoCodec,
+            language,
+            channels,
+            audioCodec
+        ).filter { !it.isNullOrBlank() }.joinToString(" • ")
 
         playerBinding?.playerVideoInfo?.apply {
             text = stats
