@@ -243,29 +243,36 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     private fun scheduleMetadataVisibility() {
         val metadataScrim = playerBinding?.playerMetadataScrim ?: return
+        val ctx = metadataScrim.context ?: return
 
-        val isPaused  = metadataScrim.context?.shouldShowPlayerMetadata() == true && !isLayout(PHONE)
-        if (!isPaused) {
-            metadataScrim.animate().cancel()
+        if (!ctx.shouldShowPlayerMetadata()) {
             metadataScrim.isVisible = false
-            metadataVisibilityToken++
+            metadataVisibilityToken++ // invalidate pending callbacks
             return
         }
 
+        if (isLayout(PHONE)) {
+            metadataScrim.isVisible = false
+            metadataVisibilityToken++ // invalidate pending callbacks
+            return
+        }
+
+        val isPaused = currentPlayerStatus == CSPlayerLoading.IsPaused
         metadataScrim.animate().cancel()
         val token = ++metadataVisibilityToken
 
-        if (currentPlayerStatus == CSPlayerLoading.IsPaused) {
+        if (isPaused) {
             metadataScrim.postDelayed({
-                if (token == metadataVisibilityToken) {
-                    metadataScrim.isVisible = true
-                    hidePlayerUI()
-                }
-            }, 8_000L)
+                if (token != metadataVisibilityToken) return@postDelayed
+                metadataScrim.isVisible = true
+                hidePlayerUI()
+            }, 8000L)
+
         } else {
             metadataScrim.isVisible = false
         }
     }
+
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun playerUpdated(player: Any?) {
