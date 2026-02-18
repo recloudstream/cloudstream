@@ -1856,7 +1856,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     private fun audioCodecName(mime: String?): String {
-        val m = mime?.lowercase() ?: return "Unknown"
+        val m = mime?.lowercase() ?: return ""
         return when {
             m.contains("eac3-joc") -> "Dolby Atmos"
             m.contains("mp4a") || m.contains("aac") -> "AAC"
