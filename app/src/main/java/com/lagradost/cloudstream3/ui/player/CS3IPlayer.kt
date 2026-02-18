@@ -544,10 +544,10 @@ class CS3IPlayer : IPlayer {
         currentSubtitleOffset = offset
         CustomDecoder.subtitleOffset = offset
         if (currentTextRenderer?.state == STATE_ENABLED || currentTextRenderer?.state == STATE_STARTED) {
-            exoPlayer?.currentPosition?.also { pos ->
+            exoPlayer?.currentPosition?.let { pos ->
                 // This seems to properly refresh all subtitles
                 // It needs to be done as all subtitle cues with timings are pre-processed
-                currentTextRenderer?.resetPosition(pos, false)
+                currentTextRenderer?.resetPosition(pos)
             }
         }
     }
