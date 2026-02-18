@@ -1284,7 +1284,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Up4FunTop(),
     GUpload(),
     HlsWish(),
-    ByseQekaho
+    ByseQekaho(),
 )
 
 
