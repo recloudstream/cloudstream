@@ -10,7 +10,6 @@ import com.lagradost.cloudstream3.extractors.AStreamHub
 import com.lagradost.cloudstream3.extractors.Acefile
 import com.lagradost.cloudstream3.extractors.Ahvsh
 import com.lagradost.cloudstream3.extractors.Aico
-import com.lagradost.cloudstream3.extractors.AsianLoad
 import com.lagradost.cloudstream3.extractors.Asnwish
 import com.lagradost.cloudstream3.extractors.Auvexiug
 import com.lagradost.cloudstream3.extractors.Awish
@@ -143,7 +142,6 @@ import com.lagradost.cloudstream3.extractors.Mediafire
 import com.lagradost.cloudstream3.extractors.Megacloud
 import com.lagradost.cloudstream3.extractors.Meownime
 import com.lagradost.cloudstream3.extractors.MetaGnathTuggers
-import com.lagradost.cloudstream3.extractors.Minoplres
 import com.lagradost.cloudstream3.extractors.MixDrop
 import com.lagradost.cloudstream3.extractors.MixDropAg
 import com.lagradost.cloudstream3.extractors.MixDropBz
@@ -1057,8 +1055,6 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     DoodWfExtractor(),
     DoodYtExtractor(),
 
-    AsianLoad(),
-
     // GenericM3U8(),
     Jawcloud(),
     Zplayer(),
@@ -1130,7 +1126,6 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Vido(),
     Linkbox(),
     Acefile(),
-    Minoplres(), // formerly SpeedoStream
     Zorofile(),
     Embedgram(),
     Mvidoo(),
