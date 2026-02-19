@@ -2385,8 +2385,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             playerBinding?.apply {
                 playerSpeedBtt.isVisible = playBackSpeedEnabled
                 playerResizeBtt.isVisible = playerResizeEnabled
-                playerRotateBtt.isVisible =
-                    if (isLayout(TV or EMULATOR)) false else playerRotateEnabled
+                playerRotateBtt.isVisible = playerRotateEnabled
                 if (hideControlsNames) {
                     hideControlsNames()
                 }
@@ -2602,6 +2601,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     private fun dynamicOrientation(): Int {
+        if (isLayout(TV or EMULATOR)) {
+            return ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        }
         return if (autoPlayerRotateEnabled) {
             if (isVerticalOrientation) {
                 ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
