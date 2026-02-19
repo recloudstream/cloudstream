@@ -6,7 +6,9 @@ import com.lagradost.cloudstream3.utils.*
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.network.WebViewResolver
 
-
+class Multimoviesshg : Filesim() {
+    override var mainUrl = "https://multimoviesshg.com"
+}
 
 class Guccihide : Filesim() {
     override val name = "Guccihide"

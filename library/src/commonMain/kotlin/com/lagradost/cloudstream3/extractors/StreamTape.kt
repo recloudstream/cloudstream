@@ -7,6 +7,10 @@ import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.newExtractorLink
 import org.mozilla.javascript.Context
 
+class Watchadsontape : StreamTape() {
+    override var mainUrl = "https://watchadsontape.com"
+}
+
 class StreamTapeNet : StreamTape() {
     override var mainUrl = "https://streamtape.net"
 }
