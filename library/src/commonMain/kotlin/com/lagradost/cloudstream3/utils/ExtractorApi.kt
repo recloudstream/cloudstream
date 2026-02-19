@@ -23,6 +23,7 @@ import com.lagradost.cloudstream3.extractors.ByseSX
 import com.lagradost.cloudstream3.extractors.Bysezejataos
 import com.lagradost.cloudstream3.extractors.ByseBuho
 import com.lagradost.cloudstream3.extractors.ByseVepoin
+import com.lagradost.cloudstream3.extractors.ByseQekaho
 import com.lagradost.cloudstream3.extractors.ByteShare
 import com.lagradost.cloudstream3.extractors.Cavanhabg
 import com.lagradost.cloudstream3.extractors.Cda
@@ -261,6 +262,7 @@ import com.lagradost.cloudstream3.extractors.Urochsunloath
 import com.lagradost.cloudstream3.extractors.Userload
 import com.lagradost.cloudstream3.extractors.Userscloud
 import com.lagradost.cloudstream3.extractors.Uservideo
+import com.lagradost.cloudstream3.extractors.Videa
 import com.lagradost.cloudstream3.extractors.Vanfem
 import com.lagradost.cloudstream3.extractors.Vicloud
 import com.lagradost.cloudstream3.extractors.VidHidePro
@@ -985,7 +987,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Lvturbo(),
 
     Fastream(),
-
+    Videa(),
     FEmbed(),
     FeHD(),
     Fplayer(),
@@ -1282,6 +1284,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Up4FunTop(),
     GUpload(),
     HlsWish(),
+    ByseQekaho(),
 )
 
 

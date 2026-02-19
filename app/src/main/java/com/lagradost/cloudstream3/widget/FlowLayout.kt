@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.ViewGroup
+import androidx.core.content.withStyledAttributes
 import androidx.core.view.isVisible
 import androidx.core.view.marginEnd
 import com.lagradost.cloudstream3.R
@@ -19,9 +20,9 @@ class FlowLayout : ViewGroup {
 
     @SuppressLint("CustomViewStyleable")
     internal constructor(c: Context, attrs: AttributeSet?) : super(c, attrs) {
-        val t = c.obtainStyledAttributes(attrs, R.styleable.FlowLayout_Layout)
-        itemSpacing = t.getDimensionPixelSize(R.styleable.FlowLayout_Layout_itemSpacing, 0)
-        t.recycle()
+        c.withStyledAttributes(attrs, R.styleable.FlowLayout_Layout) {
+            itemSpacing = getDimensionPixelSize(R.styleable.FlowLayout_Layout_itemSpacing, 0)
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -104,9 +105,9 @@ class FlowLayout : ViewGroup {
 
         @SuppressLint("CustomViewStyleable")
         internal constructor(c: Context, attrs: AttributeSet?) : super(c, attrs) {
-            val t = c.obtainStyledAttributes(attrs, R.styleable.FlowLayout_Layout)
-            spacing = 0//t.getDimensionPixelSize(R.styleable.FlowLayout_Layout_itemSpacing, 0);
-            t.recycle()
+            c.withStyledAttributes(attrs, R.styleable.FlowLayout_Layout) {
+                spacing = 0
+            }
         }
 
         internal constructor(width: Int, height: Int) : super(width, height) {
