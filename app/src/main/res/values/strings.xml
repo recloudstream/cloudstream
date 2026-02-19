@@ -201,9 +201,9 @@
     <string name="updates_settings">Show app updates</string>
     <string name="updates_settings_des">Automatically search for new updates after starting the app.</string>
     <string name="redo_setup_process">Redo setup process</string>
-	<string name="install_prerelease">Install pre-release version</string>
-	<string name="prerelease_already_installed">Pre-release is already installed.</string>
-	<string name="prerelease_install_failed">Failed to install pre-release.</string>
+    <string name="install_prerelease">Install pre-release version</string>
+    <string name="prerelease_already_installed">Pre-release is already installed.</string>
+    <string name="prerelease_install_failed">Failed to install pre-release.</string>
     <string name="apk_installer_settings">APK Installer</string>
     <string name="apk_installer_settings_des">Some devices do not support the new package installer. Try the legacy option if updates do not install.</string>
     <string name="github">Github</string>
@@ -771,12 +771,10 @@
     <string name="top_left">Top left</string>
     <string name="top_center">Top center</string>
     <string name="top_right">Top right</string>
-
     <plurals name="downloads_active">
         <item quantity="one">%d active download</item>
         <item quantity="other">%d active downloads</item>
     </plurals>
-
     <plurals name="downloads_queued">
         <item quantity="one">%d download queued</item>
         <item quantity="other">%d downloads queued</item>
