@@ -313,7 +313,7 @@
     <string name="update_notification_downloading">Téléchargement de la mise à jour…</string>
     <string name="next_episode_format" formatted="true">L\'épisode %d sera publié dans</string>
     <string name="show_hd">Étiquette de qualité</string>
-    <string name="limit_title_rez">Résolution du lecteur vidéo</string>
+    <string name="limit_title_rez">Afficher les informations du lecteur</string>
     <string name="add_site_pref">Cloner le site</string>
     <string name="remove_site_pref">Supprimer le site</string>
     <string name="add_site_summary">Ajoute un clone à un site déjà existant, avec une URL différente</string>
@@ -729,4 +729,28 @@
     <string name="search_suggestions">Suggestions de recherche</string>
     <string name="search_suggestions_des">Afficher des suggestions de recherche pendant la saisie</string>
     <string name="clear_suggestions">Effacer les suggestions</string>
+    <string name="extra_brightness_settings">Luminosité supplémentaire</string>
+    <string name="extra_brightness_settings_des">Activer le filtre de luminosité lorsque la luminosité dépasse 100 %</string>
+    <string name="extra_brightness_key">extra_brightness_enabled</string>
+    <string name="show_cast_in_details">Afficher le panneau de cast</string>
+    <string name="video_info">Information du média</string>
+    <string name="source_name">Nom de la source</string>
+    <string name="download_queue">File d\'attente de téléchargements</string>
+    <string name="queue_empty_message">Il n\'y a actuellement aucun téléchargement en attente.</string>
+    <string name="source_priority">Priorité de la source</string>
+    <string name="source_priority_help">Déterminez comment les sources vidéo seront triées dans le lecteur</string>
+    <string name="download_all">Télécharger tout</string>
+    <string name="cancel_all">Tout annuler</string>
+    <string name="download_episode_range">Voulez-vous télécharger l\'épisode %s ?</string>
+    <string name="cancel_queue_message">Vous voulez annuler tous les téléchargements en file d\'attente ?</string>
+    <plurals name="downloads_active">
+        <item quantity="one">%d téléchargement actif</item>
+        <item quantity="many">%d téléchargements actifs</item>
+        <item quantity="other">%d téléchargements actifs</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="one">%d téléchargement en attente</item>
+        <item quantity="many">%d téléchargements en attente</item>
+        <item quantity="other">%d téléchargements en attente</item>
+    </plurals>
 </resources>

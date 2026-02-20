@@ -305,7 +305,7 @@
     <string name="skip_type_op">Вступление</string>
     <string name="skip_type_creddits">Титры</string>
     <string name="action_mark_as_watched">Отметить как просмотренное</string>
-    <string name="limit_title_rez">Показывать информацию об игроке</string>
+    <string name="limit_title_rez">Показывать информацию про видеоплеер</string>
     <string name="watch_quality_pref">Предпочтительное качество видео (WiFi)</string>
     <string name="limit_title">Максимум символов</string>
     <string name="video_buffer_length_settings">Длинна буфера</string>
@@ -726,4 +726,27 @@
     <string name="show_cast_in_details">Показать панель приведения</string>
     <string name="video_info">Информация о средствах массовой информации</string>
     <string name="source_name">Имя источника</string>
+    <plurals name="downloads_active">
+        <item quantity="one">%d активная загрузка</item>
+        <item quantity="few">%d активные загрузки</item>
+        <item quantity="many">%d активных загрузок</item>
+        <item quantity="other">%d активных загрузок</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="one">Запланировано %d загрузка</item>
+        <item quantity="few">Запланировано %d загрузки</item>
+        <item quantity="many">Запланировано %d загрузок</item>
+        <item quantity="other">Запланировано %d загрузок</item>
+    </plurals>
+    <string name="download_queue">Очередь загрузок</string>
+    <string name="queue_empty_message">В настоящее время нет загрузок в очереди.</string>
+    <string name="extra_brightness_settings">Дополнительная яркость</string>
+    <string name="extra_brightness_settings_des">Включать фильтр яркости при превышении 100% яркости</string>
+    <string name="extra_brightness_key">extra_brightness_enabled</string>
+    <string name="source_priority">Приоритетный источник</string>
+    <string name="source_priority_help">Выберите способ сортировки видеоисточников в плеере</string>
+    <string name="download_all">Скачать всё</string>
+    <string name="cancel_all">Отменить всё</string>
+    <string name="download_episode_range">Вы хотите загрузить эпизод %s?</string>
+    <string name="cancel_queue_message">Вы хотите отменить всё запланированные загрузки?</string>
 </resources>
