@@ -615,6 +615,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     protected fun exitFullscreen() {
+        resetZoomToDefault()
         // if (lockRotation)
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
 
@@ -627,6 +628,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
         activity?.window?.attributes = lp
         activity?.showSystemUI()
+    }
+    private fun resetZoomToDefault() {
+        if (zoomMatrix != null) resize(PlayerResize.Fit, false)
     }
 
     override fun onResume() {
