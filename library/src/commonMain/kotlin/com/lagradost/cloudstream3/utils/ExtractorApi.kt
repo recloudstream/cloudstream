@@ -269,6 +269,7 @@ import com.lagradost.cloudstream3.extractors.Vido
 import com.lagradost.cloudstream3.extractors.Vidoza
 import com.lagradost.cloudstream3.extractors.VinovoSi
 import com.lagradost.cloudstream3.extractors.VinovoTo
+import com.lagradost.cloudstream3.extractors.VidNest
 import com.lagradost.cloudstream3.extractors.VkExtractor
 import com.lagradost.cloudstream3.extractors.Voe
 import com.lagradost.cloudstream3.extractors.Voe1
@@ -1118,6 +1119,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     VidHidePro4(),
     VidHidePro5(),
     VidHidePro6(),
+    VidNest(),
     Dhtpre(),
 
     // CineMM Redirects
