@@ -758,4 +758,24 @@
     <string name="extra_brightness_key">extra_brightness_enabled</string>
     <string name="video_info">Informace o médiu</string>
     <string name="source_name">Název zdroje</string>
+    <string name="download_queue">Fronta stahování</string>
+    <string name="queue_empty_message">Momentálně nemáte žádná stahování ve frontě.</string>
+    <string name="download_all">Stáhnout vše</string>
+    <string name="cancel_all">Zrušit vše</string>
+    <string name="download_episode_range">Chcete stáhnout epizodu %s?</string>
+    <string name="cancel_queue_message">Chcete zrušit všechna stahování ve frontě?</string>
+    <plurals name="downloads_active">
+        <item quantity="one">%d aktivní stahování</item>
+        <item quantity="few">%d aktivní stahování</item>
+        <item quantity="many">%d aktivních stahování</item>
+        <item quantity="other">%d aktivních stahování</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="one">%d stahování uloženo do fronty</item>
+        <item quantity="few">%d stahování uložena do fronty</item>
+        <item quantity="many">%d stahování uloženo do fronty</item>
+        <item quantity="other">%d stahování uloženo do fronty</item>
+    </plurals>
+    <string name="source_priority">Priorita zdrojů</string>
+    <string name="source_priority_help">Rozhodněte, jak mají být řazeny zdroje videí v přehrávači</string>
 </resources>
