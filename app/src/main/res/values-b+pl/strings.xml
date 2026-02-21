@@ -746,4 +746,24 @@
     <string name="extra_brightness_settings">Dodatkowa jasność</string>
     <string name="extra_brightness_settings_des">Włącz filtr jasności, gdy jasność wyświetlacza przekroczy 100%</string>
     <string name="extra_brightness_key">Włączono dodatkową jasność</string>
+    <string name="download_queue">Kolejka pobierania</string>
+    <string name="queue_empty_message">Obecnie nie ma żadnych plików do pobrania w kolejce.</string>
+    <string name="download_all">Pobierz wszystkie</string>
+    <string name="cancel_all">Anuluj wszystkie</string>
+    <string name="download_episode_range">Czy chcesz pobrać odcinek %s?</string>
+    <string name="cancel_queue_message">Czy chcesz anulować wszystkie pliki do pobrania z kolejki?</string>
+    <plurals name="downloads_active">
+        <item quantity="one">%d aktywne pobieranie</item>
+        <item quantity="few">%d aktywne pobierania</item>
+        <item quantity="many">%d aktywnych pobierań</item>
+        <item quantity="other">%d aktywnych pobierań</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="one">%d pobieranie w kolejce</item>
+        <item quantity="few">%d pobierania w kolejce</item>
+        <item quantity="many">%d pobierań w kolejce</item>
+        <item quantity="other">%d pobierań w kolejce</item>
+    </plurals>
+    <string name="source_priority">Priorytet źródła</string>
+    <string name="source_priority_help">Zdecyduj, jak mają być sortowane źródła wideo w odtwarzaczu</string>
 </resources>

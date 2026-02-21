@@ -51,6 +51,8 @@ import com.lagradost.cloudstream3.extractors.DoodWatchExtractor
 import com.lagradost.cloudstream3.extractors.DoodWfExtractor
 import com.lagradost.cloudstream3.extractors.DoodWsExtractor
 import com.lagradost.cloudstream3.extractors.DoodYtExtractor
+import com.lagradost.cloudstream3.extractors.Doodspro
+import com.lagradost.cloudstream3.extractors.Dsvplay
 import com.lagradost.cloudstream3.extractors.Doodporn
 import com.lagradost.cloudstream3.extractors.DoodstreamCom
 import com.lagradost.cloudstream3.extractors.Dooood
@@ -74,6 +76,7 @@ import com.lagradost.cloudstream3.extractors.FileMoonIn
 import com.lagradost.cloudstream3.extractors.FileMoonSx
 import com.lagradost.cloudstream3.extractors.FilemoonV2
 import com.lagradost.cloudstream3.extractors.Filesim
+import com.lagradost.cloudstream3.extractors.Multimoviesshg
 import com.lagradost.cloudstream3.extractors.FlaswishCom
 import com.lagradost.cloudstream3.extractors.FourCX
 import com.lagradost.cloudstream3.extractors.FourPichive
@@ -123,6 +126,7 @@ import com.lagradost.cloudstream3.extractors.Linkbox
 import com.lagradost.cloudstream3.extractors.LuluStream
 import com.lagradost.cloudstream3.extractors.Lulustream1
 import com.lagradost.cloudstream3.extractors.Lulustream2
+import com.lagradost.cloudstream3.extractors.Luluvdoo
 import com.lagradost.cloudstream3.extractors.Luxubu
 import com.lagradost.cloudstream3.extractors.Lvturbo
 import com.lagradost.cloudstream3.extractors.MailRu
@@ -137,6 +141,10 @@ import com.lagradost.cloudstream3.extractors.MixDropAg
 import com.lagradost.cloudstream3.extractors.MixDropBz
 import com.lagradost.cloudstream3.extractors.MixDropCh
 import com.lagradost.cloudstream3.extractors.MixDropTo
+import com.lagradost.cloudstream3.extractors.MixDropPs
+import com.lagradost.cloudstream3.extractors.Mdy
+import com.lagradost.cloudstream3.extractors.MixDropSi
+import com.lagradost.cloudstream3.extractors.MxDropTo
 import com.lagradost.cloudstream3.extractors.Movhide
 import com.lagradost.cloudstream3.extractors.Moviehab
 import com.lagradost.cloudstream3.extractors.MoviehabNet
@@ -209,6 +217,7 @@ import com.lagradost.cloudstream3.extractors.StreamSilk
 import com.lagradost.cloudstream3.extractors.StreamTape
 import com.lagradost.cloudstream3.extractors.StreamTapeNet
 import com.lagradost.cloudstream3.extractors.StreamTapeXyz
+import com.lagradost.cloudstream3.extractors.Watchadsontape
 import com.lagradost.cloudstream3.extractors.StreamWishExtractor
 import com.lagradost.cloudstream3.extractors.StreamhideCom
 import com.lagradost.cloudstream3.extractors.StreamhideTo
@@ -254,6 +263,8 @@ import com.lagradost.cloudstream3.extractors.VidHidePro3
 import com.lagradost.cloudstream3.extractors.VidHidePro4
 import com.lagradost.cloudstream3.extractors.VidHidePro5
 import com.lagradost.cloudstream3.extractors.VidHidePro6
+import com.lagradost.cloudstream3.extractors.VidHideHub
+import com.lagradost.cloudstream3.extractors.Ryderjet
 import com.lagradost.cloudstream3.extractors.VidMoxy
 import com.lagradost.cloudstream3.extractors.VidStack
 import com.lagradost.cloudstream3.extractors.VideoSeyred
@@ -894,6 +905,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     StreamTapeNet(),
     ShaveTape(),
     StreamTapeXyz(),
+    Watchadsontape(),
 
     //mixdrop extractors
     MixDropBz(),
@@ -901,6 +913,10 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     MixDropTo(),
     MixDropAg(),
     MixDrop(),
+    MixDropPs(),
+    Mdy(),
+    MxDropTo(),
+    MixDropSi(),
 
     XStreamCdn(),
 
@@ -999,6 +1015,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     DoodWatchExtractor(),
     DoodWfExtractor(),
     DoodYtExtractor(),
+    Doodspro(),
+    Dsvplay(),
 
     // GenericM3U8(),
     Zplayer(),
@@ -1054,6 +1072,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     FileMoonIn(),
     Moviesm4u(),
     Filesim(),
+    Multimoviesshg(),
     Ahvsh(),
     Guccihide(),
     FileMoon(),
@@ -1118,6 +1137,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     VidHidePro4(),
     VidHidePro5(),
     VidHidePro6(),
+    VidHideHub(),
+    Ryderjet(),
     Dhtpre(),
 
     // CineMM Redirects
@@ -1141,6 +1162,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     LuluStream(),
     Lulustream1(),
     Lulustream2(),
+    Luluvdoo(),
     StreamWishExtractor(),
     StreamHLS(),
     BigwarpIO(),
