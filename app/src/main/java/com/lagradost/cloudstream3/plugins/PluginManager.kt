@@ -515,25 +515,10 @@ object PluginManager {
     suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(context: Context, forceReload: Boolean) {
         assertNonRecursiveCallstack()
 
-        val dir = File(LOCAL_PLUGINS_PATH)
-
-        if (!dir.exists()) {
-            val res = dir.mkdirs()
-            if (!res) {
-                Log.w(TAG, "Failed to create local directories")
-                return
-            }
-        }
-
-        val sortedPlugins = dir.listFiles()
-        // Always sort plugins alphabetically for reproducible results
-
-        Log.d(TAG, "Files in '${LOCAL_PLUGINS_PATH}' folder: ${sortedPlugins?.size}")
-
-        // Use app-specific external files directory and copy the file there.
+        // Use app-specific files directory and copy the file there.
         // We have to do this because on Android 14+, it otherwise gives SecurityException
-        // due to dex files and setReadOnly seems to have no effect unless it it here.
-        val pluginDirectory = File(context.getExternalFilesDir(null), "plugins")
+        // due to dex files and setReadOnly seems to have no effect unless it is here.
+        val pluginDirectory = File(context.filesDir, "plugins")
         if (!pluginDirectory.exists()) {
             pluginDirectory.mkdirs() // Ensure the plugins directory exists
         }
@@ -541,7 +526,35 @@ object PluginManager {
         // Make sure all local plugins are fully refreshed.
         removeKey(PLUGINS_KEY_LOCAL)
 
-        sortedPlugins?.sortedBy { it.name }?.amap { file ->
+        val dir = File(LOCAL_PLUGINS_PATH)
+
+        if (!dir.exists()) {
+            Log.d(TAG, "No local plugins folder found at '${LOCAL_PLUGINS_PATH}'")
+            // Clean up all existing plugins since the local plugins folder doesn't exist
+            // This is required since the user might stop using local plugins but still have old
+            // plugins lying around taking up space.
+            // These cannot be deleted manually by the user without root access
+            pluginDirectory.listFiles()?.forEach { it.delete() }
+
+            // Since there are no local plugins, we can consider them loaded
+            loadedLocalPlugins = true
+            return
+        }
+
+        // Always sort plugins alphabetically for reproducible results
+        val sortedPlugins = dir.listFiles()?.sortedBy { it.name }
+        Log.d(TAG, "Files in '${LOCAL_PLUGINS_PATH}' folder: ${sortedPlugins?.size}")
+
+        val sortedPluginNames = sortedPlugins?.mapTo(HashSet()) { it.name }
+        pluginDirectory.listFiles()?.sortedBy { it.name }?.amap {
+            // If the plugin doesn't exist in the local plugins folder, delete it
+            if (!it.isDirectory && sortedPluginNames?.contains(it.name) == false) {
+                Log.d(TAG, "Deleting removed local plugin: ${it.name}")
+                it.delete()
+            }
+        }
+
+        sortedPlugins?.amap { file ->
             try {
                 val destinationFile = File(pluginDirectory, file.name)
 
