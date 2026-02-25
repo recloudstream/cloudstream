@@ -824,14 +824,7 @@ class CS3IPlayer : IPlayer {
 
             // These are extra headers the browser like to insert, not sure if we want to include them
             // for WIDEVINE/drm as well? Do that if someone gets 404 and creates an issue.
-            val headers = mapOf(
-                "accept" to "*/*",
-                "sec-ch-ua" to "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\"",
-                "sec-ch-ua-mobile" to "?0",
-                "sec-fetch-user" to "?1",
-                "sec-fetch-mode" to "navigate",
-                "sec-fetch-dest" to "video"
-            ) + refererMap + link.headers // Adds the headers from the provider, e.g Authorization
+            val headers = refererMap + link.headers // Adds the headers from the provider, e.g Authorization
 
             return source.apply {
                 setDefaultRequestProperties(headers)
