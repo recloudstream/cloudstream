@@ -149,8 +149,7 @@ object DownloadButtonSetup {
                                 uri = Uri.EMPTY,
                                 id = it.id,
                                 parentId = it.parentId,
-                                name = it.name
-                                    ?: (act.getString(R.string.episode) + it.episode),
+                                name = it.name ?: (act.getString(R.string.downloaded_file)),
                                 season = it.season,
                                 episode = it.episode,
                                 headerName = parent.name,
