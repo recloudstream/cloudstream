@@ -13,7 +13,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllResumeStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
@@ -57,7 +57,7 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                     ids?.mapNotNull { id ->
                         getLastWatched(id)
                     }?.sortedBy { -it.updateTime }?.mapNotNull { resume ->
-                       val data = getKey<VideoDownloadHelper.DownloadHeaderCached>(
+                       val data = getKey<DownloadObjects.DownloadHeaderCached>(
                             DOWNLOAD_HEADER_CACHE,
                             resume.parentId.toString()
                         )
@@ -122,7 +122,7 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
         }
     }
     
-    private fun playResumeItem(resume: VideoDownloadHelper.ResumeWatching, cachedData: VideoDownloadHelper.DownloadHeaderCached) {
+    private fun playResumeItem(resume: DownloadObjects.ResumeWatching, cachedData: DownloadObjects.DownloadHeaderCached) {
         scope.launch {
             withContext(Dispatchers.Main) {
                 androidx.car.app.CarToast.makeText(carContext, CarStrings.get(R.string.car_resuming, cachedData.name), androidx.car.app.CarToast.LENGTH_LONG).show()

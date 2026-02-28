@@ -7,8 +7,8 @@ import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
 import androidx.car.app.model.Row
 import androidx.car.app.model.Template
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
-import com.lagradost.cloudstream3.utils.VideoDownloadManager
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
@@ -46,10 +46,10 @@ class DownloadsScreen(
         scope.launch {
             val context = carContext
             val children = context.getKeys(DOWNLOAD_EPISODE_CACHE)
-                 .mapNotNull { context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(it) }
+                 .mapNotNull { context.getKey<DownloadObjects.DownloadEpisodeCached>(it) }
                  .filter { it.parentId == id }
                  .filter { 
-                     val info = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, it.id)
+                     val info = VideoDownloadManager.getDownloadFileInfo(context, it.id)
                      (info?.fileLength ?: 0L) > 0
                  }
                  .sortedWith(compareBy({ it.season }, { it.episode }))
@@ -83,7 +83,7 @@ class DownloadsScreen(
     private fun loadHeaders() {
         scope.launch {
             val headers = carContext.getKeys(DOWNLOAD_HEADER_CACHE)
-                .mapNotNull { carContext.getKey<VideoDownloadHelper.DownloadHeaderCached>(it) }
+                .mapNotNull { carContext.getKey<DownloadObjects.DownloadHeaderCached>(it) }
                 .sortedBy { it.name }
 
             val builder = ItemList.Builder()
@@ -95,12 +95,12 @@ class DownloadsScreen(
                 
                 // Get all children (episodes or movies) for this header
                 val children = context.getKeys(DOWNLOAD_EPISODE_CACHE)
-                     .mapNotNull { context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(it) }
+                     .mapNotNull { context.getKey<DownloadObjects.DownloadEpisodeCached>(it) }
                      .filter { it.parentId == id }
                 
                 // Check if AT LEAST ONE child is valid (> 0 bytes)
                 children.any { child ->
-                    val info = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, child.id)
+                    val info = VideoDownloadManager.getDownloadFileInfo(context, child.id)
                     (info?.fileLength ?: 0L) > 0
                 }
             }
@@ -141,8 +141,8 @@ class DownloadsScreen(
     private fun playEpisode(episodeId: Int, parentId: Int) {
          scope.launch {
              val context = carContext
-             val fileInfo = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, episodeId)
-             if (fileInfo?.path == null) {
+             val fileInfo = VideoDownloadManager.getDownloadFileInfo(context, episodeId)
+             if (fileInfo == null) {
                  withContext(Dispatchers.Main) {
                      androidx.car.app.CarToast.makeText(carContext, CarStrings.get(R.string.car_file_not_found), androidx.car.app.CarToast.LENGTH_SHORT).show()
                  }
@@ -167,17 +167,17 @@ class DownloadsScreen(
          }
     }
 
-    private fun onHeaderClick(header: VideoDownloadHelper.DownloadHeaderCached) {
+    private fun onHeaderClick(header: DownloadObjects.DownloadHeaderCached) {
         scope.launch {
              val context = carContext
              val id = header.id
              
              // Get children
              val children = context.getKeys(DOWNLOAD_EPISODE_CACHE)
-                 .mapNotNull { context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(it) }
+                 .mapNotNull { context.getKey<DownloadObjects.DownloadEpisodeCached>(it) }
                  .filter { it.parentId == id }
                  .filter { 
-                     val info = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, it.id)
+                     val info = VideoDownloadManager.getDownloadFileInfo(context, it.id)
                      (info?.fileLength ?: 0L) > 0
                  }
 

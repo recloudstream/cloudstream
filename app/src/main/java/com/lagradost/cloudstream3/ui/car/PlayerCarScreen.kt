@@ -36,7 +36,7 @@ import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.PlayerCarHelper
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -413,7 +413,7 @@ class PlayerCarScreen(
 
     private fun populateEpisodeFromDownloadCache() {
         try {
-            val cachedEp = carContext.getKey<VideoDownloadHelper.DownloadEpisodeCached>(
+            val cachedEp = carContext.getKey<DownloadObjects.DownloadEpisodeCached>(
                 DOWNLOAD_EPISODE_CACHE, videoId.toString()
             )
             if (cachedEp != null) {

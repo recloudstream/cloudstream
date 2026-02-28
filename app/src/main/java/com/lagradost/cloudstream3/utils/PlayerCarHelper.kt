@@ -14,7 +14,7 @@ import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.utils.DataStoreHelper
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.ui.player.NEXT_WATCH_EPISODE_PERCENTAGE
@@ -42,7 +42,7 @@ object PlayerCarHelper {
             val mainUrl = api?.mainUrl ?: ""
             val id = url.replace(mainUrl, "").replace("/", "").hashCode()
 
-            val header = VideoDownloadHelper.DownloadHeaderCached(
+            val header = DownloadObjects.DownloadHeaderCached(
                 apiName = apiName,
                 url = url,
                 type = type,
