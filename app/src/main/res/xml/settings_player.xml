@@ -57,6 +57,11 @@
 
 
     <PreferenceCategory android:title="@string/pref_category_player_features">
+        <Preference
+            android:icon="@drawable/ic_baseline_people_24"
+            android:summary="@string/source_priority_help"
+            android:title="@string/source_priority"
+            app:key="@string/player_source_priority_key"/>
         <SwitchPreference
             android:icon="@drawable/ic_baseline_picture_in_picture_alt_24"
             android:summary="@string/picture_in_picture_des"
@@ -112,11 +117,11 @@
             app:defaultValue="true"
             app:key="@string/preview_seekbar_key" />
         <Preference
-                android:icon="@drawable/ic_baseline_extension_24"
-                android:summary="@string/software_decoding_desc"
-                android:title="@string/software_decoding"
-                app:defaultValue="true"
-                app:key="@string/software_decoding_key" />
+            android:icon="@drawable/ic_baseline_extension_24"
+            android:summary="@string/software_decoding_desc"
+            android:title="@string/software_decoding"
+            app:defaultValue="true"
+            app:key="@string/software_decoding_key" />
         <SwitchPreference
             android:icon="@drawable/sun_7_24"
             android:summary="@string/extra_brightness_settings_des"

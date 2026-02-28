@@ -10,6 +10,14 @@ import com.lagradost.cloudstream3.utils.newExtractorLink
 import java.net.URI
 import kotlin.random.Random
 
+class Doodspro : DoodLaExtractor() {
+    override var mainUrl = "https://doods.pro"
+}
+
+class Dsvplay : DoodLaExtractor() {
+    override var mainUrl = "https://dsvplay.com"
+}
+
 class D0000d : DoodLaExtractor() {
     override var mainUrl = "https://d0000d.com"
 }

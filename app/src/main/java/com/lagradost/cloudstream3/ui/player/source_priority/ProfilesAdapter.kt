@@ -20,7 +20,7 @@ import com.lagradost.cloudstream3.utils.drawableToBitmap
 import com.lagradost.cloudstream3.utils.setText
 
 class ProfilesAdapter(
-    val usedProfile: Int,
+    val usedProfile: Int?,
     val clickCallback: (oldIndex: Int?, newIndex: Int) -> Unit,
 ) :
     NoStateAdapter<QualityDataHelper.QualityProfile>(diffCallback = BaseDiffCallback(itemSame = { a, b ->
@@ -68,25 +68,27 @@ class ProfilesAdapter(
         val profileBg: ImageView = binding.profileImageBackground
         val wifiText: TextView = binding.textIsWifi
         val dataText: TextView = binding.textIsMobileData
+        val downloadText: TextView = binding.textIsDownloadData
         val outline: View = binding.outline
         val cardView: View = binding.cardView
         val itemView = holder.itemView
 
         priorityText.setText(item.name)
-        dataText.isVisible = item.type == QualityDataHelper.QualityProfileType.Data
-        wifiText.isVisible = item.type == QualityDataHelper.QualityProfileType.WiFi
+        dataText.isVisible = item.types.contains(QualityDataHelper.QualityProfileType.Data)
+        wifiText.isVisible = item.types.contains(QualityDataHelper.QualityProfileType.WiFi)
+        downloadText.isVisible = item.types.contains(QualityDataHelper.QualityProfileType.Download)
 
         fun setCurrentItem() {
-            val prevIndex = currentItem?.first
+            val prevIndex = currentItem
             // Prevent UI bug when re-selecting the item quickly
             if (prevIndex == position) {
                 return
             }
-            currentItem = position to item
+            currentItem = position
             clickCallback.invoke(prevIndex, position)
         }
 
-        outline.isVisible = currentItem?.second?.id == item.id
+        outline.isVisible = currentItem == position
         val drawableResId = art[position % art.size]
         profileBg.loadImage(drawableResId)
 
@@ -107,6 +109,7 @@ class ProfilesAdapter(
                     if (color != null) {
                         wifiText.backgroundTintList = ColorStateList.valueOf(color)
                         dataText.backgroundTintList = ColorStateList.valueOf(color)
+                        downloadText.backgroundTintList = ColorStateList.valueOf(color)
                     }
                 }
             }
@@ -126,9 +129,9 @@ class ProfilesAdapter(
         }
     }
 
-    private var currentItem: Pair<Int, QualityDataHelper.QualityProfile>? = null
+    private var currentItem: Int? = null
 
     fun getCurrentProfile(): QualityDataHelper.QualityProfile? {
-        return currentItem?.second
+        return currentItem?.let { index -> immutableCurrentList.getOrNull(index) }
     }
 }

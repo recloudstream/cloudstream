@@ -255,7 +255,7 @@
     <string name="update">Update</string>
     <string name="watch_quality_pref">Bevorzugte Videoqualität (WLAN)</string>
     <string name="limit_title">Videoplayertitel max. Zeichen</string>
-    <string name="limit_title_rez">Videoplayer Auflösung</string>
+    <string name="limit_title_rez">Playerinformationen anzeigen</string>
     <string name="video_buffer_size_settings">Videopuffergröße</string>
     <string name="video_buffer_length_settings">Videopufferlänge</string>
     <string name="video_buffer_disk_settings">Video-Cache in Speicher</string>
@@ -738,4 +738,15 @@
     <string name="search_suggestions_des">Beim Tippen Suchempfehlungen anzeigen</string>
     <string name="clear_suggestions">Empfehlungen löschen</string>
     <string name="extra_brightness_settings">Zusätzliche Helligkeit</string>
+    <string name="extra_brightness_settings_des">Aktiviere Helligkeitsfilter, wenn 100% Bildschirmhelligkeit überschritten ist</string>
+    <string name="extra_brightness_key">Erhöhte Helligkeit aktiviert</string>
+    <string name="show_cast_in_details">Cast-Panel zeigen</string>
+    <string name="video_info">Medieninfo</string>
+    <string name="source_name">Quellname</string>
+    <string name="download_all">Alle herunterladen</string>
+    <string name="download_episode_range">Möchtest du Episode%s herunter laden?</string>
+    <plurals name="downloads_active">
+        <item quantity="one">%d aktiver Download</item>
+        <item quantity="other">%d aktive Downloads</item>
+    </plurals>
 </resources>

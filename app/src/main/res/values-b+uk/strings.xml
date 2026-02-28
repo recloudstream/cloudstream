@@ -715,4 +715,24 @@
     <string name="show_cast_in_details">Показати панель трансляції</string>
     <string name="video_info">Інформація про медіа</string>
     <string name="source_name">Назва джерела</string>
+    <string name="download_queue">Черга завантаження</string>
+    <string name="queue_empty_message">Наразі немає завантажень у черзі.</string>
+    <string name="download_all">Завантажити все</string>
+    <string name="cancel_all">Скасувати все</string>
+    <string name="download_episode_range">Бажаєте завантажити %s епізод?</string>
+    <string name="cancel_queue_message">Бажаєте скасувати всі завантаження в черзі?</string>
+    <plurals name="downloads_active">
+        <item quantity="one">%d активне завантаження</item>
+        <item quantity="few">%d активні завантаження</item>
+        <item quantity="many">%d активних завантажень</item>
+        <item quantity="other">%d активних завантажень</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="one">%d завантаження в черзі</item>
+        <item quantity="few">%d завантаження в черзі</item>
+        <item quantity="many">%d завантажень у черзі</item>
+        <item quantity="other">%d завантажень у черзі</item>
+    </plurals>
+    <string name="source_priority">Пріоритетне джерело</string>
+    <string name="source_priority_help">Виберіть спосіб сортування джерел відео у програвачі</string>
 </resources>

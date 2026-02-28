@@ -325,11 +325,11 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
                         android:layout_marginBottom="2.5dp"
-                        android:textColor="@color/white"
+                        android:layout_gravity="end"
+                        android:textColor="#B3FFFFFF"
                         android:textSize="16sp"
                         android:visibility="gone"
-                        android:layout_gravity="end"
-                        tools:text="HDR10 • HEVC" />
+                        tools:text="HEVC • English • 5.1 • E-AC3" />
 
 
                     <FrameLayout

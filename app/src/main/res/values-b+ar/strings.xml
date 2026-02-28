@@ -247,7 +247,7 @@
     <string name="update">تحديث</string>
     <string name="watch_quality_pref">جودة المشاهدة المفضلة (WiFi)</string>
     <string name="limit_title">أقصى عدد لحروف عنوان مُشغل الفيديو</string>
-    <string name="limit_title_rez">أبعاد مُشغل الفيديو</string>
+    <string name="limit_title_rez">عرض معلومات المشغل</string>
     <string name="video_buffer_size_settings">حجم ذاكرة التخزين المؤقت للفيديو</string>
     <string name="video_buffer_length_settings">طول التخزين المؤقت</string>
     <string name="video_buffer_disk_settings">التخزين المؤقت للفيديو على القرص</string>
@@ -743,4 +743,17 @@
     <string name="top_center">اعلى وسط</string>
     <string name="top_right">اعلى يمين</string>
     <string name="play_full_series_button">شاهد المسلسل كاملاً</string>
+    <string name="extra_brightness_settings">سطوع إضافي</string>
+    <string name="extra_brightness_settings_des">تفعيل فلتر السطوع عند تجاوز سطوع الشاشة 100%</string>
+    <string name="extra_brightness_key">تفعيل فلتر السطوع الإضافي</string>
+    <string name="search_suggestions">اقتراحات البحث</string>
+    <string name="search_suggestions_des">عرض اقتراحات البحث أثناء الكتابة</string>
+    <string name="clear_suggestions">مسح الاقتراحات</string>
+    <string name="show_cast_in_details">عرض لوحة البث</string>
+    <string name="install_prerelease">تثبيت الإصدار التجريبي</string>
+    <string name="prerelease_already_installed">تم تثبيت الإصدار التجريبي بالفعل.</string>
+    <string name="prerelease_install_failed">فشل تثبيت الإصدار التجريبي.</string>
+    <string name="show_episode_text">نص الحلقة</string>
+    <string name="video_info">معلومات الوسائط</string>
+    <string name="source_name">اسم المصدر</string>
 </resources>

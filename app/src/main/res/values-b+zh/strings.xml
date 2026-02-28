@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
-    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s 共 %2$d 集</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
     <string name="cast_format" formatted="true">演员：%s</string>
     <string name="next_episode_format" formatted="true">第 %d 集将发布于</string>
     <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
@@ -756,4 +756,19 @@
     <string name="source_name">源名称</string>
     <string name="extra_brightness_settings">额外亮度</string>
     <string name="extra_brightness_settings_des">超过 100% 亮度时启用亮度过滤器</string>
+    <string name="download_queue">下载队列</string>
+    <string name="queue_empty_message">队列中当前无下载。</string>
+    <string name="download_all">全部下载</string>
+    <string name="cancel_all">全部取消</string>
+    <string name="download_episode_range">要下载第 %s 集吗？</string>
+    <string name="cancel_queue_message">要取消队列中的所有下载吗？</string>
+    <plurals name="downloads_active">
+        <item quantity="other">%d 个活跃下载</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="other">队列中有 %d 个下载</item>
+    </plurals>
+    <string name="source_priority">源优先级</string>
+    <string name="source_priority_help">确定在播放器中如何排列视频源的顺序</string>
+    <string name="extra_brightness_key">已启用额外亮度</string>
 </resources>

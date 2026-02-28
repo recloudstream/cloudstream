@@ -9,6 +9,7 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.context
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.LoadResponse
@@ -40,6 +41,7 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.filterSearchResultByFilm
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadResult
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
+import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE_BACKUP
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteAllResumeStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllResumeStateIds
@@ -49,7 +51,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getCurrentAccount
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
@@ -67,11 +69,26 @@ class HomeViewModel : ViewModel() {
             }
             val resumeWatchingResult = withContext(Dispatchers.IO) {
                 resumeWatching?.mapNotNull { resume ->
-
-                    val data = getKey<VideoDownloadHelper.DownloadHeaderCached>(
+                    val headerCache = getKey<DownloadObjects.DownloadHeaderCached>(
                         DOWNLOAD_HEADER_CACHE,
                         resume.parentId.toString()
-                    ) ?: return@mapNotNull null
+                    )
+
+                    val data = if (headerCache == null) {
+                        // We store resume watching data in download header cache
+                        // Because downloads automatically pruned outdated download headers we
+                        // removed resume watching data. We should restore the data for affected users.
+                        val oldData = getKey<DownloadObjects.DownloadHeaderCached>(
+                            DOWNLOAD_HEADER_CACHE_BACKUP,
+                            resume.parentId.toString()
+                        ) ?: return@mapNotNull null
+
+                        // Restore data
+                        setKey(DOWNLOAD_HEADER_CACHE, resume.parentId.toString(), oldData)
+                        oldData
+                    } else {
+                        headerCache
+                    }
 
                     val watchPos = getViewPos(resume.episodeId)
 
@@ -523,7 +540,7 @@ class HomeViewModel : ViewModel() {
             } else if (api == null) {
                 // API is not found aka not loaded or removed, post the loading
                 // progress if waiting for plugins, otherwise nothing
-                if (PluginManager.loadedOnlinePlugins || PluginManager.checkSafeModeFile() || lastError != null) {
+                if (PluginManager.loadedOnlinePlugins || PluginManager.isSafeMode()) {
                     loadAndCancel(noneApi)
                 } else {
                     _page.postValue(Resource.Loading())

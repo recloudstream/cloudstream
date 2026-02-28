@@ -2372,7 +2372,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 else QualityDataHelper.QualityProfileType.WiFi
 
                 currentQualityProfile =
-                    profiles.firstOrNull { it.type == type }?.id ?: profiles.firstOrNull()?.id
+                    profiles.firstOrNull { it.types.contains(type) }?.id ?: profiles.firstOrNull()?.id
                             ?: currentQualityProfile
 
 //                currentPrefQuality = settingsManager.getInt(
