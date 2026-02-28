@@ -1084,7 +1084,7 @@ class CS3IPlayer : IPlayer {
                     }
 
                     val factory = if (isSoftwareDecodingEnabled) {
-                        NextRenderersFactory(context).apply {
+                        FixedNextRenderersFactory(context).apply {
                             setEnableDecoderFallback(true)
                             setExtensionRendererMode(
                                 if (isSoftwareDecodingPreferred)
