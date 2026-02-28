@@ -744,9 +744,19 @@
     <string name="video_info">Medieninfo</string>
     <string name="source_name">Quellname</string>
     <string name="download_all">Alle herunterladen</string>
-    <string name="download_episode_range">Möchtest du Episode%s herunter laden?</string>
+    <string name="download_episode_range">Möchtest du Episode %s herunter laden?</string>
     <plurals name="downloads_active">
         <item quantity="one">%d aktiver Download</item>
         <item quantity="other">%d aktive Downloads</item>
     </plurals>
+    <string name="cancel_queue_message">Möchtest du alle Downloads in der Warteschlange abbrechen?</string>
+    <string name="cancel_all">Alles abbrechen</string>
+    <plurals name="downloads_queued">
+        <item quantity="one">%d Download in Warteschlange</item>
+        <item quantity="other">%d Downloads in Warteschlange</item>
+    </plurals>
+    <string name="download_queue">Download in Warteschlange</string>
+    <string name="queue_empty_message">Es befinden sich keine Downloads in der Warteschlange.</string>
+    <string name="source_priority">Quellpriorität</string>
+    <string name="source_priority_help">Entscheide, wie Videoquellen im Player sortiert werden sollen</string>
 </resources>
