@@ -88,10 +88,14 @@ object BackupUtils {
         // The download path URI can not be transferred.
         // In the future we may potentially write metadata to files in the download directory
         // and make it possible to restore download folders using that metadata.
-        DOWNLOAD_HEADER_CACHE_BACKUP,
-        DOWNLOAD_HEADER_CACHE,
         DOWNLOAD_EPISODE_CACHE_BACKUP,
         DOWNLOAD_EPISODE_CACHE,
+        
+        // Download headers are unintuitively used in the resume watching system.
+        // We can therefore not prune download headers in backups.
+        //DOWNLOAD_HEADER_CACHE_BACKUP,
+        //DOWNLOAD_HEADER_CACHE,
+        
 
         // This may overwrite valid local data with invalid data
         KEY_DOWNLOAD_INFO,
