@@ -247,7 +247,7 @@
     <string name="update">Atualizar</string>
     <string name="watch_quality_pref">Qualidade preferida de reprodução (Wi-fi)</string>
     <string name="limit_title">Máximo de caracteres do título de vídeos</string>
-    <string name="limit_title_rez">Resolução do player de vídeo</string>
+    <string name="limit_title_rez">Exibir informação do reprodutor</string>
     <string name="video_buffer_size_settings">Tamanho do buffer do vídeo</string>
     <string name="video_buffer_length_settings">Duração do buffer do vídeo</string>
     <string name="video_buffer_disk_settings">Cache do vídeo em disco</string>
@@ -739,4 +739,31 @@
     <string name="prerelease_already_installed">Versão antecipada instalada.</string>
     <string name="install_prerelease">Instalar versão antecipada</string>
     <string name="show_episode_text">Episódio Text</string>
+    <string name="download_queue">Fila de download</string>
+    <string name="queue_empty_message">Não há itens na fila para download.</string>
+    <string name="extra_brightness_settings">Brilho extra</string>
+    <string name="extra_brightness_settings_des">Ativar filtro de claridade ao exceder 100% do brilho do display</string>
+    <string name="extra_brightness_key">brilho_extra_ativado</string>
+    <string name="search_suggestions">Sugestões de Busca</string>
+    <string name="search_suggestions_des">Exibir sugestões de pesquisa durante a digitação</string>
+    <string name="clear_suggestions">Limpar Sugestões</string>
+    <string name="show_cast_in_details">Exibir painel de elenco</string>
+    <string name="video_info">Informação de mídia</string>
+    <string name="source_priority">Prioridade de fonte</string>
+    <string name="source_priority_help">Decidir como fontes de vídeo devem estar dispostas no reprodutor</string>
+    <string name="source_name">Nome da fonte</string>
+    <string name="download_all">Baixar tudo</string>
+    <string name="cancel_all">Cancelar tudo</string>
+    <string name="download_episode_range">Você deseja baixar o episódio%s</string>
+    <string name="cancel_queue_message">Você gostaria de cancelar todos os downloads da fila?</string>
+    <plurals name="downloads_active">
+        <item quantity="one">%ddownload ativo</item>
+        <item quantity="many">%ddownloads ativos</item>
+        <item quantity="other">%ddownloads ativos</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="one">%d download na sequência</item>
+        <item quantity="many">%d downloads na sequência</item>
+        <item quantity="other">%d downloads na sequência</item>
+    </plurals>
 </resources>

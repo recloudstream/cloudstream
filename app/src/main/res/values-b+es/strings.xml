@@ -56,7 +56,7 @@
     <string name="subtitles_remove_captions">Eliminar Closed Captions (CC) de los subtítulos</string>
     <string name="double_tap_to_seek_amount_settings">Cantidad de búsquedas del reproductor (segundos)</string>
     <string name="use_system_brightness_settings_des">Use el brillo del sistema en el reproductor de la app en lugar de una superposición oscura</string>
-    <string name="limit_title_rez">Resolución del reproductor de video</string>
+    <string name="limit_title_rez">Mostrar la información del reproductor de video</string>
     <string name="category_player">Reproductor</string>
     <string name="autoplay_next_settings_des">Iniciar el siguiente episodio cuando el actual termine</string>
     <string name="video_skip_op">Omitir Intro</string>
@@ -113,7 +113,7 @@
     <string name="title_home">Inicio</string>
     <string name="title_search">Buscar</string>
     <string name="title_downloads">Descargas</string>
-    <string name="title_settings">Configuración</string>
+    <string name="title_settings">Ajustes</string>
     <string name="search_hint">Buscar…</string>
     <string name="search_hint_site" formatted="true">Buscar en %s…</string>
     <string name="no_data">Sin datos</string>
@@ -733,4 +733,27 @@
     <string name="search_suggestions_des">Mostrar sugerencias de búsqueda mientras escribe</string>
     <string name="clear_suggestions">Borrar Sugerencias</string>
     <string name="show_cast_in_details">Mostrar panel de reparto</string>
+    <string name="extra_brightness_settings">Atenuación extra</string>
+    <string name="extra_brightness_settings_des">Active el filtro de atenuación cuando se supere el 100 % de brillo de la pantalla</string>
+    <string name="extra_brightness_key">atenuación_extra_activado</string>
+    <string name="video_info">Información del archivo multimedia</string>
+    <string name="source_name">Nombre de origen</string>
+    <string name="download_queue">Cola de descarga</string>
+    <string name="queue_empty_message">Actualmente no hay descargas encoladas.</string>
+    <string name="source_priority">Prioridad de origen</string>
+    <string name="source_priority_help">Decida como los orígenes del vídeo estarían ordenados en el reproductor</string>
+    <string name="download_all">Descargar todo</string>
+    <string name="cancel_all">Cancelar todo</string>
+    <string name="download_episode_range">¿Desea descargar el episodio %s?</string>
+    <string name="cancel_queue_message">¿Desea cancelar todas las descargas de la cola?</string>
+    <plurals name="downloads_active">
+        <item quantity="one">%d descarga activa</item>
+        <item quantity="many">%d descargas activas</item>
+        <item quantity="other">%d descargas activas</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="one">%d descarga encolada</item>
+        <item quantity="many">%d descargas encoladas</item>
+        <item quantity="other">%d descargas encoladas</item>
+    </plurals>
 </resources>

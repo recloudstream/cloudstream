@@ -2,18 +2,18 @@
 <resources>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s B. %2$d</string>
-    <string name="cast_format" formatted="true">Cast: %s</string>
-    <string name="next_episode_format" formatted="true">Bölüm %d şu tarihte yayınlanacak</string>
-    <string name="next_episode_time_day_format" formatted="true">%1$dg %2$ds %3$dd</string>
-    <string name="next_episode_time_hour_format" formatted="true">%1$ds %2$dd</string>
-    <string name="next_episode_time_min_format" formatted="true">%dd</string>
+    <string name="cast_format" formatted="true">Oyuncular: %s</string>
+    <string name="next_episode_format" formatted="true">%d. Bölüm şu tarihte yayınlanacak</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dg %2$dsa %3$ddk</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dsa %2$ddk</string>
+    <string name="next_episode_time_min_format" formatted="true">%ddk</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Afiş</string>
     <string name="search_poster_img_des">Afiş</string>
     <string name="episode_poster_img_des">Bölüm Afişi</string>
     <string name="home_main_poster_img_des">Ana Afiş</string>
     <string name="home_next_random_img_des">Sonraki Rastgele</string>
-    <string name="go_back_img_des">Geri git</string>
+    <string name="go_back_img_des">Geri dön</string>
     <string name="home_change_provider_img_des">Sağlayıcıyı Değiştir</string>
     <string name="preview_background_img_des">Arkaplanı Önizle</string>
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
@@ -616,7 +616,7 @@
     <string name="app_unrestricted_toast">Uygulama pil kullanımı zaten sınırsız olarak ayarlanmış</string>
     <string name="reset_btn">Sıfırla</string>
     <string name="episode_upcoming_format" formatted="true">%s içinde yaklaşıyor</string>
-    <string name="next_season_episode_format" formatted="true">Sezon %1$d Bölüm %2$d tarihinde yayınlanacak</string>
+    <string name="next_season_episode_format" formatted="true">%1$d. Sezon %2$d. Bölüm şu tarihte yayınlanacak</string>
     <string name="player_settings_select_cast_device">Yansıtılacak cihaz seç</string>
     <string name="episode_action_cast_mirror">Ekran yansıtma</string>
     <string name="cs3wiki">CloudStream bilgi</string>
@@ -755,4 +755,20 @@
     <string name="extra_brightness_key">Ekstra parlaklık aktifleştirildi</string>
     <string name="video_info">Medya bilgisi</string>
     <string name="source_name">Kaynağın adı</string>
+    <string name="download_queue">İndirme kuyruğu</string>
+    <string name="queue_empty_message">Şu anda bekleyen indirme yok.</string>
+    <string name="download_all">Tümünü indir</string>
+    <string name="cancel_all">Tümünü iptal et</string>
+    <string name="download_episode_range">%s numaralı bölümü indirmek istiyor musunuz?</string>
+    <string name="cancel_queue_message">Kuyruktaki tüm indirmeleri iptal etmek istiyor musunuz?</string>
+    <plurals name="downloads_active">
+        <item quantity="one">%d aktif indirme</item>
+        <item quantity="other">%d aktif indirmeler</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="one">%d indirme kuyrukta</item>
+        <item quantity="other">%d indirilecekler kuyruğa alındı</item>
+    </plurals>
+    <string name="source_priority">Öncelikli kaynak</string>
+    <string name="source_priority_help">Oynatıcıda video kaynaklarının nasıl sıralanacağını belirleyin</string>
 </resources>
