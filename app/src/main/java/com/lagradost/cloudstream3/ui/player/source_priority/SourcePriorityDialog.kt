@@ -8,7 +8,6 @@ import androidx.appcompat.app.AlertDialog
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.PlayerSelectSourcePriorityBinding
 import com.lagradost.cloudstream3.utils.txt
-import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
@@ -16,7 +15,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 class SourcePriorityDialog(
     val ctx: Context,
     @StyleRes themeRes: Int,
-    val links: List<ExtractorLink>,
+    val links: List<LinkSource>,
     private val profile: QualityDataHelper.QualityProfile,
     /**
      * Notify that the profile overview should be updated, for example if the name has been updated

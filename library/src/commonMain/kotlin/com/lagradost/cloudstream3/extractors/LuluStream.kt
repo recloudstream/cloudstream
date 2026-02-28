@@ -8,6 +8,11 @@ import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.newExtractorLink
 
+
+class Luluvdoo : LuluStream() {
+    override var mainUrl = "https://luluvdoo.com"
+}
+
 class Lulustream1 : LuluStream() {
     override val name = "Lulustream"
     override val mainUrl = "https://lulustream.com"

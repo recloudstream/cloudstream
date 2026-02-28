@@ -59,6 +59,7 @@ import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_LONG_CLICK
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.player.FullScreenPlayer
+import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment.bindLogo
 import com.lagradost.cloudstream3.ui.result.ResultFragment.getStoredData
@@ -709,6 +710,24 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
                 if (episodes is Resource.Success) {
                     (resultEpisodes.adapter as? EpisodeAdapter)?.submitList(episodes.value)
+
+                    // Show quality dialog with all sources
+                    resultBatchDownloadButton.setOnLongClickListener {
+                        ioSafe {
+                            val defaultSources = QualityProfileDialog.getAllDefaultSources()
+                            val activity = activity ?: return@ioSafe
+                            activity.runOnUiThread {
+                                QualityProfileDialog(
+                                    activity,
+                                    R.style.DialogFullscreenPlayer,
+                                    defaultSources,
+                                ).show()
+                            }
+                        }
+
+                        true
+                    }
+
                     resultBatchDownloadButton.setOnClickListener { view ->
                         val episodeStart =
                             episodes.value.firstOrNull()?.episode ?: return@setOnClickListener
@@ -891,8 +910,12 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultComingSoon.isVisible = d.comingSoon
                     resultDataHolder.isGone = d.comingSoon
 
-                    val prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(root.context)
-                    val showCast = prefs.getBoolean(root.context.getString(R.string.show_cast_in_details_key), true)
+                    val prefs =
+                        androidx.preference.PreferenceManager.getDefaultSharedPreferences(root.context)
+                    val showCast = prefs.getBoolean(
+                        root.context.getString(R.string.show_cast_in_details_key),
+                        true
+                    )
 
                     resultCastItems.isGone = !showCast || d.actors.isNullOrEmpty()
                     (resultCastItems.adapter as? ActorAdaptor)?.submitList(if (showCast) d.actors else emptyList())
