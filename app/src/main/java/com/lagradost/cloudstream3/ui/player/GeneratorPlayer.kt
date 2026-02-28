@@ -1162,7 +1162,6 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 val subsArrayAdapter =
                     ArrayAdapter<Spanned>(ctx, R.layout.sort_bottom_single_choice)
-                subsArrayAdapter.add(ctx.getString(R.string.no_subtitles).html())
 
                 val subtitlesGrouped =
                     currentSubtitles.groupBy { it.originalName }.map { (key, value) ->
@@ -1172,8 +1171,11 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 val subtitles = subtitlesGrouped.map { it.key.html() }
 
-                val subtitleGroupIndexStart =
-                    subtitlesGrouped.keys.indexOf(currentSelectedSubtitles?.originalName) + 1
+                val subtitleGroupIndexStart = if (currentSelectedSubtitles == null) {
+                    subtitlesGrouped.size
+                } else {
+                    subtitlesGrouped.keys.indexOf(currentSelectedSubtitles?.originalName)
+                }
                 var subtitleGroupIndex = subtitleGroupIndexStart
 
                 val subtitleOptionIndexStart =
@@ -1182,6 +1184,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 var subtitleOptionIndex = subtitleOptionIndexStart
 
                 subsArrayAdapter.addAll(subtitles)
+                subsArrayAdapter.add(ctx.getString(R.string.no_subtitles).html())
 
                 subtitleList.adapter = subsArrayAdapter
                 subtitleList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
@@ -1200,7 +1203,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                     val subtitleOptions =
                         subtitlesGroupedList
-                            .getOrNull(subtitleGroupIndex - 1)?.value?.map { subtitle ->
+                            .getOrNull(subtitleGroupIndex)?.value?.map { subtitle ->
                                 val nameSuffix = subtitle.nameSuffix.html()
                                 nameSuffix.ifBlank {
                                     when (subtitle.origin) {
@@ -1252,7 +1255,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
 
                 subtitleOptionList.setOnItemClickListener { _, _, which, _ ->
-                    if (which >= (subtitlesGroupedList.getOrNull(subtitleGroupIndex - 1)?.value?.size
+                    if (which >= (subtitlesGroupedList.getOrNull(subtitleGroupIndex)?.value?.size
                             ?: -1)
                     ) {
                         val child = subtitleOptionList.adapter.getView(which, null, subtitleList)
@@ -1337,10 +1340,10 @@ class GeneratorPlayer : FullScreenPlayer() {
                 binding.applyBtt.setOnClickListener {
                     var init = sourceIndex != startSource
                     if (subtitleGroupIndex != subtitleGroupIndexStart || subtitleOptionIndex != subtitleOptionIndexStart) {
-                        init = init or if (subtitleGroupIndex <= 0) {
+                        init = init or if (subtitleGroupIndex >= subtitlesGrouped.size) {
                             noSubtitles()
                         } else {
-                            subtitlesGroupedList.getOrNull(subtitleGroupIndex - 1)?.value?.getOrNull(
+                            subtitlesGroupedList.getOrNull(subtitleGroupIndex)?.value?.getOrNull(
                                 subtitleOptionIndex
                             )?.let {
                                 setSubtitles(it, true)
