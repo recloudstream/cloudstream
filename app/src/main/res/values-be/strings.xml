@@ -715,4 +715,24 @@
     <string name="top_left">Зверху злева</string>
     <string name="top_center">Зверху па цэнтру</string>
     <string name="top_right">Зверху справа</string>
+    <string name="download_queue">Чагра спампоўванняў</string>
+    <string name="queue_empty_message">У чарзе пакуль што няма спампоўванняў.</string>
+    <string name="source_priority">Прыярытэт крыніц</string>
+    <string name="source_priority_help">Выберыце, як сартаваць крыніцы відэа ў прайгравальніку</string>
+    <string name="download_all">Спампаваць усё</string>
+    <string name="cancel_all">Скасаваць усё</string>
+    <string name="download_episode_range">Спампаваць %s серыю?</string>
+    <string name="cancel_queue_message">Скасаваць усе спампоўванні ў чарзе?</string>
+    <plurals name="downloads_active">
+        <item quantity="one">%d актыўнае спампоўванне</item>
+        <item quantity="few">%d актыўных спампоўвання</item>
+        <item quantity="many">%d актыўных спампоўванняў</item>
+        <item quantity="other">%d актыўных спампоўванняў</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="one">%d спампоўванне ў чарзе</item>
+        <item quantity="few">%d спампоўвання ў чарзе</item>
+        <item quantity="many">%d спампоўванняў у чарзе</item>
+        <item quantity="other">%d спампоўванняў у чарзе</item>
+    </plurals>
 </resources>
