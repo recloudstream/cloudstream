@@ -1761,7 +1761,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
             is ExtractorUri -> {
                 headerName = meta.headerName
-                subName = meta.name
+                subName = if(meta.name != context?.getString(R.string.downloaded_file)) meta.name else ""
                 episode = meta.episode
                 season = meta.season
                 tvType = meta.tvType
