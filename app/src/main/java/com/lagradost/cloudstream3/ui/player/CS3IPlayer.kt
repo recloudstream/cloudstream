@@ -544,10 +544,10 @@ class CS3IPlayer : IPlayer {
         currentSubtitleOffset = offset
         CustomDecoder.subtitleOffset = offset
         if (currentTextRenderer?.state == STATE_ENABLED || currentTextRenderer?.state == STATE_STARTED) {
-            exoPlayer?.currentPosition?.let { pos ->
+            exoPlayer?.currentPosition?.also { pos ->
                 // This seems to properly refresh all subtitles
                 // It needs to be done as all subtitle cues with timings are pre-processed
-                currentTextRenderer?.resetPosition(pos)
+                currentTextRenderer?.resetPosition(pos, false)
             }
         }
     }
@@ -824,14 +824,7 @@ class CS3IPlayer : IPlayer {
 
             // These are extra headers the browser like to insert, not sure if we want to include them
             // for WIDEVINE/drm as well? Do that if someone gets 404 and creates an issue.
-            val headers = mapOf(
-                "accept" to "*/*",
-                "sec-ch-ua" to "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\"",
-                "sec-ch-ua-mobile" to "?0",
-                "sec-fetch-user" to "?1",
-                "sec-fetch-mode" to "navigate",
-                "sec-fetch-dest" to "video"
-            ) + refererMap + link.headers // Adds the headers from the provider, e.g Authorization
+            val headers = refererMap + link.headers // Adds the headers from the provider, e.g Authorization
 
             return source.apply {
                 setDefaultRequestProperties(headers)
@@ -1091,7 +1084,7 @@ class CS3IPlayer : IPlayer {
                     }
 
                     val factory = if (isSoftwareDecodingEnabled) {
-                        NextRenderersFactory(context).apply {
+                        FixedNextRenderersFactory(context).apply {
                             setEnableDecoderFallback(true)
                             setExtensionRendererMode(
                                 if (isSoftwareDecodingPreferred)
