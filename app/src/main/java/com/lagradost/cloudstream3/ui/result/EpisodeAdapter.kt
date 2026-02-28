@@ -28,6 +28,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.utils.AppContextUtils.getShortSeasonText
 import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
@@ -206,35 +207,28 @@ class EpisodeAdapter(
                     downloadButton.setStatus(status)
 
                     val name =
-                        if (item.name == null) "${episodeText.context.getString(R.string.episode)} ${item.episode}" else "${item.episode}. ${item.name}"
+                        item.name ?: "${episodeText.context.getString(R.string.episode)} ${item.episode}"
                     episodeFiller.isVisible = item.isFiller == true
                     episodeText.text =
                         name//if(card.isFiller == true) episodeText.context.getString(R.string.filler).format(name) else name
                     episodeText.isSelected = true // is needed for text repeating
 
+                    episodeIndex.context?.getShortSeasonText(item.episode, item.season)?.let { text->
+                        episodeIndex.text = text
+                        episodeIndex.isVisible = true
+                    }
+
                     if (item.videoWatchState == VideoWatchState.Watched) {
                         // This cannot be done in getDisplayPosition() as when you have not watched something
                         // the duration and position is 0
-                        //episodeProgress.max = 1
-                        //episodeProgress.progress = 1
-                        episodePlayIcon.setImageResource(R.drawable.ic_baseline_check_24)
-                        episodeProgress.isVisible = false
+                        episodeProgress.max = 1
+                        episodeProgress.progress = 1
+                        episodeProgress.isVisible = true
                     } else {
                         val displayPos = item.getDisplayPosition()
-                        val durationSec = (item.duration / 1000).toInt()
-                        val progressSec = (displayPos / 1000).toInt()
-
-                        if (displayPos >= item.duration && displayPos > 0) {
-                            episodePlayIcon.setImageResource(R.drawable.ic_baseline_check_24)
-                            episodeProgress.isVisible = false
-                        } else {
-                            episodePlayIcon.setImageResource(R.drawable.netflix_play)
-                            episodeProgress.apply {
-                                max = durationSec
-                                progress = progressSec
-                                isVisible = displayPos > 0L
-                            }
-                        }
+                        episodeProgress.max = (item.duration / 1000).toInt()
+                        episodeProgress.progress = (displayPos / 1000).toInt()
+                        episodeProgress.isVisible = displayPos > 0L
                     }
 
                     val posterVisible = !item.poster.isNullOrBlank()
@@ -299,7 +293,7 @@ class EpisodeAdapter(
                         if (isUpcoming) {
                             episodeProgress.isVisible = false
                             episodePlayIcon.isVisible = false
-                            episodeUpcomingIcon.isVisible = !posterVisible
+                            episodeUpcomingIcon.isVisible = true
                             episodeDate.setText(
                                 txt(
                                     R.string.episode_upcoming_format,
@@ -434,24 +428,16 @@ class EpisodeAdapter(
                     episodeText.isSelected = true // is needed for text repeating
 
                     if (item.videoWatchState == VideoWatchState.Watched) {
-                        episodePlayIcon.setImageResource(R.drawable.ic_baseline_check_24)
-                        episodeProgress.isVisible = false
+                        // This cannot be done in getDisplayPosition() as when you have not watched something
+                        // the duration and position is 0
+                        episodeProgress.max = 1
+                        episodeProgress.progress = 1
+                        episodeProgress.isVisible = true
                     } else {
                         val displayPos = item.getDisplayPosition()
-                        val durationSec = (item.duration / 1000).toInt()
-                        val progressSec = (displayPos / 1000).toInt()
-
-                        if (displayPos >= item.duration && displayPos > 0) {
-                            episodePlayIcon.setImageResource(R.drawable.ic_baseline_check_24)
-                            episodeProgress.isVisible = false
-                        } else {
-                            episodePlayIcon.setImageResource(R.drawable.play_button_transparent)
-                            episodeProgress.apply {
-                                max = durationSec
-                                progress = progressSec
-                                isVisible = displayPos > 0L
-                            }
-                        }
+                        episodeProgress.max = (item.duration / 1000).toInt()
+                        episodeProgress.progress = (displayPos / 1000).toInt()
+                        episodeProgress.isVisible = displayPos > 0L
                     }
 
                     itemView.setOnClickListener {
