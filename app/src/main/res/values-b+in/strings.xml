@@ -391,7 +391,7 @@
     <string name="view_public_repositories_button">Lihat repositori komunitas</string>
     <string name="view_public_repositories_button_short">Daftar publik</string>
     <string name="blank_repo_message">CloudStream tidak memiliki situs yang terinstal secara default. Anda perlu menginstal situs-situs dari repositori.
-\n
+
 \nBergabunglah dengan Discord kami atau cari secara online.</string>
     <string name="repository_url_hint">URL Repositori atau Kode Pendek</string>
     <string name="create_account">Buat Akun</string>
@@ -528,11 +528,11 @@
     <string name="mobile_data">Data seluler</string>
     <string name="help">Bantuan</string>
     <string name="quality_profile_help">Di sini anda dapat mengubah sumber yang diurutkan. Jika video memiliki prioritas lebih tinggi, video tersebut akan muncul lebih tinggi dalam pemilihan sumber. Jumlah prioritas sumber dan prioritas kualitas adalah prioritas video.
-\n
+
 \nSumber A: 3
 \nKualitas B: 7
 \nAkan memiliki prioritas video yang digabung 10.
-\n
+
 \nCATATAN: Jika jumlahnya 10 atau lebih, pemain akan melewatkan pemuatan secara otomatis saat tautan dimuat!</string>
     <string name="profile_number">Profil %d</string>
     <string name="wifi">Wifi</string>
@@ -639,16 +639,16 @@
     <string name="deselect_all">Batal Pilih Semua</string>
     <string name="delete_files">Hapus File</string>
     <string name="delete_message_multiple" formatted="true">Apakah Anda yakin ingin menghapus item berikut secara permanen?
-\n
+
 \n%s</string>
     <string name="delete_message_series_episodes" formatted="true">Apakah Anda yakin ingin menghapus episode berikut di %1$s secara permanen?
-\n
+
 \n%2$s</string>
     <string name="delete_message_series_section" formatted="true">Anda juga akan menghapus semua episode dalam seri berikut secara permanen:
-\n
+
 \n%s</string>
     <string name="delete_message_series_only" formatted="true">Apakah Anda yakin ingin menghapus semua episode dalam seri berikut secara permanen?
-\n
+
 \n%s</string>
     <string name="delete_format" formatted="true">Hapus (%1$d | %2$s)</string>
     <string name="delete_plugin">Hapus plugin</string>
@@ -764,4 +764,11 @@
     <string name="cancel_all">Batalkan semua</string>
     <string name="download_episode_range">Apakah kamu ingin mengunduh episode %s?</string>
     <string name="cancel_queue_message">Apakah kamu ingin membatalkan semua unduhan dalam antrean?</string>
+
+    <string name="subtitles_dual_enabled">Subtitle ganda (eksperimental)</string>
+    <string name="subtitles_edit_primary">Utama</string>
+    <string name="subtitles_edit_secondary">Sekunder</string>
+    <string name="subtitles_secondary_unsupported_embedded">Subtitle sekunder belum mendukung trek yang disematkan</string>
+    <string name="subtitles_secondary_unsupported_combo">Kombinasi subtitle ini tidak didukung untuk subtitle ganda</string>
+    <string name="subtitles_secondary_load_failed">Gagal memuat dua subtitel</string>
 </resources>

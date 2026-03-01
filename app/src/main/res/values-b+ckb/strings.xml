@@ -83,4 +83,11 @@
     <string name="sort_copy">کۆپی</string>
     <string name="sort_close">داخستن</string>
     <string name="sort_save">سەیڤ</string>
+
+<string name="subtitles_dual_enabled">دوو ژێرنووس (تاقیکاری)</string>
+    <string name="subtitles_edit_primary">سەرەکی</string>
+    <string name="subtitles_edit_secondary">قۆناغی لاوەکی</string>
+    <string name="subtitles_secondary_unsupported_embedded">ژێرنووسی لاوەکی هێشتا پشتگیری لە تراکە جێگیرکراوەکان ناکەن</string>
+    <string name="subtitles_secondary_unsupported_combo">ئەم تێکەڵە ژێرنووسە بۆ ژێرنووسی دووانە پشتگیری ناکرێت</string>
+    <string name="subtitles_secondary_load_failed">شکستی هێنا لە بارکردنی دوو ژێرنووس</string>
 </resources>

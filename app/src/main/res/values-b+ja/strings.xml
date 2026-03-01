@@ -731,4 +731,11 @@
     </plurals>
     <string name="source_priority">ソースの優先順位</string>
     <string name="source_priority_help">プレイヤーでのビデオソースの並び順を設定します</string>
+
+    <string name="subtitles_dual_enabled">二重字幕 (実験的)</string>
+    <string name="subtitles_edit_primary">主要な</string>
+    <string name="subtitles_edit_secondary">二次</string>
+    <string name="subtitles_secondary_unsupported_embedded">セカンダリ字幕は埋め込みトラックをまだサポートしていません</string>
+    <string name="subtitles_secondary_unsupported_combo">この字幕の組み合わせはデュアル字幕ではサポートされていません</string>
+    <string name="subtitles_secondary_load_failed">二重字幕の読み込みに失敗しました</string>
 </resources>

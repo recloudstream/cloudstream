@@ -362,9 +362,9 @@
     <string name="subtitles_shadow">خيال</string>
     <string name="subscription_in_progress_notification">عم نجدِد المثلثلات يللي مشتركينلها</string>
     <string name="duplicate_message_multiple" formatted="true">مبين إنو فيه عنصر متل هيدا موجود بال مكتبة عندكن:
-\n
+
 \n%s
-\n
+
 \nبدكن تزيدو هيدا العنصر بأيّ حال، أو تستبدلوه مع العنصر الموجود، أو تلغو الإجراء؟</string>
     <string name="batch_download_finish_format" formatted="true">نزلت %1$d %2$s</string>
     <string name="error_invalid_id">معرف مش صالح</string>
@@ -374,7 +374,7 @@
     <string name="apk_installer_legacy">الطريقة القديمة</string>
     <string name="subtitles_raised">معلى</string>
     <string name="blank_repo_message">\"كلود ستريم\" م بتجي مع مصادر ڤيديوات. لازم تنزلو المصادر من ريپويات.
-\n
+
 \nفيه معلومات على الـ\"ديسكورد\" تبعنا، أو فيكن تنبشو ع معلومات على الإنترنت.</string>
     <string name="add_sync">زبد تتبع</string>
     <string name="mobile_data">3G/4G…</string>
@@ -542,7 +542,7 @@
     <string name="no_plugins_found_error">م لقينا ولا إضافة بال ريپو</string>
     <string name="duplicate_message_single" formatted="true">مبين إنو في عنصر متل هيدا موجود بالمكتبة عندكن:
 \n\"%s\"
-\n
+
 \nبدكن تزيدو هيدا العنصر بأيّ حال، أو تستبدلوّ مع العنصر الموجود، أو تلغو الإجراء؟</string>
     <string name="error_invalid_url">رايط مش صالح</string>
     <string name="subtitle_offset_hint">1000 مللي ثانية</string>
@@ -564,11 +564,11 @@
     <string name="action_remove_from_watched">شيلو من لايحة المحتوى الحاضرينو</string>
     <string name="skip_type_creddits">الإعتمادات</string>
     <string name="quality_profile_help">فيكُن هون تغيرو طريقة ترتيب المصادر. المصدر يللي عنده أولوية أكتر بينحط أعلى بلايحت تنقايت المصدر. إنتو بتنقو الأولوية يإستعمال الأرقام. حطو الرقم الأعلى للمصادر والجودات يللي بتفضلوها.
-\n
+
 \nمتلًا:
 \nإزا المصدر \"أ\" بتفضلوه، بتعطوه كتير نقات (متلًا 8).
 \nإزا الجودة 480 ما بتحبوها، بتعطوها نقات قليلة (متلًا 1).
-\n
+
 \nعلامت المصدر وال جودة تبعه بينجمعو مع بعض (8 + 1 = 9). يللي علامته 10 أو أعلى، بينحط تلقائيًا، من دون ما ينعمل لود لكل المصادر!</string>
     <string name="enter_current_pin">حطو الأرقام السرية الحالية</string>
     <string name="audio_tracks">صوت</string>
@@ -635,19 +635,19 @@
     <string name="offline_file">موجود لينحضر بلا إنترنت</string>
     <string name="delete_files">محي الفايلات</string>
     <string name="delete_message_multiple" formatted="true">متأكد إنو بدك تمحي هيدي الإشيا ل الأبد؟
-\n
+
 \n%s</string>
     <string name="delete_message_series_section" formatted="true">رح كمان تمحي ل الأبد كل الحلقات اللي ب هيدا المسلسل؟
-\n
+
 \n%s</string>
     <string name="select_all">نقي كل شي</string>
     <string name="deselect_all">شيل التنقاية</string>
     <string name="delete_format" formatted="true">محي (%1$d | %2$s)</string>
     <string name="delete_message_series_episodes" formatted="true">متأكد إنو بدك تمحي هيدي الحلقات من %1$s؟
-\n
+
 \n%2$s</string>
     <string name="delete_message_series_only" formatted="true">متأكد إنو بدك تمحي كل الحلقات اللي بهيدا المسلسل؟
-\n
+
 \n%s</string>
     <string name="preview_seekbar">صورة زغيرة مع التقريب وال تبعيد</string>
     <string name="preview_seekbar_desc">بت حط صورة زغير من الڤيديو إنت و عم بت قرب أو ترجع بال ڤيديو</string>
@@ -739,4 +739,11 @@
     <string name="top_left">فوق، عال شمال</string>
     <string name="top_center">فوق، بال نُص</string>
     <string name="top_right">فوق، عال يمين</string>
+
+<string name="subtitles_dual_enabled">ترجمات مزدوجة (تجريبية)</string>
+    <string name="subtitles_edit_primary">أساسي</string>
+    <string name="subtitles_edit_secondary">ثانوي</string>
+    <string name="subtitles_secondary_unsupported_embedded">الترجمات الثانوية لا تدعم المسارات المضمنة حتى الآن</string>
+    <string name="subtitles_secondary_unsupported_combo">مجموعة الترجمة هذه غير مدعومة للترجمات المزدوجة</string>
+    <string name="subtitles_secondary_load_failed">فشل تحميل الترجمات المزدوجة</string>
 </resources>

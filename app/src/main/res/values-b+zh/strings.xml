@@ -415,7 +415,7 @@
     <string name="plugins_not_downloaded" formatted="true">未下载：%d</string>
     <string name="plugins_updated" formatted="true">已更新 %d 插件</string>
     <string name="blank_repo_message">CloudStream 默认不安装片源。您需要从仓库中安装片源。
-\n
+
 \n加入我们的 Discord 或在网上搜索。</string>
     <string name="view_public_repositories_button">查看社区仓库</string>
     <string name="view_public_repositories_button_short">公开列表</string>
@@ -535,11 +535,11 @@
     <string name="help">帮助</string>
     <string name="mobile_data">移动流量</string>
     <string name="quality_profile_help">在这里，您可以更改源的排序方式。如果视频具有更高的优先级，它将在源选择中显示得更高。源优先级和质量优先级的总和就是视频优先级。
-\n
+
 \n来源 A：3
 \n质量 B： 7
 \n组合视频优先级为 10。
-\n
+
 \n注意：如果总和为 10 或更多，则加载该链接时播放器将自动跳过加载！</string>
     <string name="qualities">质量</string>
     <string name="profile_background_des">个人资料背景</string>
@@ -571,12 +571,12 @@
     <string name="favorite_added">%s已添加到收藏夹</string>
     <string name="favorite_removed">%s已从收藏夹中删除</string>
     <string name="duplicate_message_single" formatted="true">您的资料库中似乎已经存在一个可能相同的项目：\'%s.\'
-\n
+
 \n您想添加该项目、替换现有项目还是取消操作？</string>
     <string name="duplicate_message_multiple" formatted="true">在您的资料库中发现了潜在的重复项目：
-\n
+
 \n%s
-\n
+
 \n您想添加此项目、替换现有项目还是取消操作？</string>
     <string name="enter_pin">确认PIN</string>
     <string name="enter_pin_with_name" formatted="true">输入来自 %s 的 PIN 码</string>
@@ -645,16 +645,16 @@
     <string name="delete_files">删除文件</string>
     <string name="delete_format" formatted="true">删除 (%1$d | %2$s)</string>
     <string name="delete_message_multiple" formatted="true">您确定要永久删除以下项目吗？
-\n
+
 \n%s</string>
     <string name="delete_message_series_episodes" formatted="true">您确定要永久删除 %1$s中的下述剧集吗？
-\n
+
 \n%2$s</string>
     <string name="delete_message_series_section" formatted="true">您还将永久删除下述系列中的所有剧集：
-\n
+
 \n%s</string>
     <string name="delete_message_series_only" formatted="true">您确定要永久删除下述系列的所有剧集吗？
-\n
+
 \n%s</string>
     <string name="sort_release_date_new">发布日期（从新至旧）</string>
     <string name="device_pin_error_message">无法获取设备 PIN 码，尝试本地身份验证</string>
@@ -771,4 +771,11 @@
     <string name="source_priority">源优先级</string>
     <string name="source_priority_help">确定在播放器中如何排列视频源的顺序</string>
     <string name="extra_brightness_key">已启用额外亮度</string>
+
+    <string name="subtitles_dual_enabled">双字幕（实验性）</string>
+    <string name="subtitles_edit_primary">基本的</string>
+    <string name="subtitles_edit_secondary">中学</string>
+    <string name="subtitles_secondary_unsupported_embedded">辅助字幕尚不支持嵌入轨道</string>
+    <string name="subtitles_secondary_unsupported_combo">双字幕不支持此字幕组合</string>
+    <string name="subtitles_secondary_load_failed">加载双字幕失败</string>
 </resources>

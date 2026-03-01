@@ -279,7 +279,7 @@
     <string name="quality_cam_rip">uug</string>
     <string name="delete_plugin">oooogg oooogg</string>
     <string name="blank_repo_message">oooohhhoogg uuh uh uuuhh aaaaggguh og ooooggg uug aagg ek aaaaggg oog aaahh aagg uuuugggooohh
-\n
+
 \nJoin uuh uuuuggg ag uuuuhh eeeeek</string>
     <string name="audio_tracks">uuugg aaaagg</string>
     <string name="safe_mode_title">oogg uugg uh</string>
@@ -314,11 +314,11 @@
     <string name="edit">aahh</string>
     <string name="profiles">oooogggk</string>
     <string name="quality_profile_help">eeek aag uug uuuuhh ooh aak uuuuggg ooh uuuuhhh ug g eeeek oog h uuuuhh oooogggh ag aahh oooohh aaaagg uh oog uuuugg uuuugggog uug oog uh uuh aaaagg uuuuuukg uug aah uuuuuuk uuuuuukg ak ooh uuuhh aaaagggk
-\n
+
 \nSource A: 3
 \nQuality B: 7
 \nWill uuhh k uuuuhhhk ooogg uuuuhhhh uk 10
-\n
+
 \nNOTE: ah uug oog ug 10 og oogg uug aaaahh uuhh uuuugggaaaahh oogg aaaahhh oogg uuhh aahh uh loaded!</string>
     <string name="favorites_list_name">uuuuhhhug</string>
     <string name="favorite_removed">%s aaaaggg uuhh aaaagggug</string>
@@ -489,8 +489,7 @@
     <string name="favorite_added">%s ooogg oh oooohhhog</string>
     <string name="duplicate_replace_all">aaaahhh uuh</string>
     <string name="duplicate_message_single" formatted="true">oh ooooggg oogg k uuuuuukaahh uuuugggag uuhh ooooggg oooogg ah oogg library: \'%s\'
-\n
-\n
+
 \nWould uug uugg uh aak oogg oohh anyway, oooohhh uuh oooohhhg one, oh aaaagg eek action?</string>
     <string name="enter_pin">ooogg uuh</string>
     <string name="speed_setting_summary">uuhh g ooogg oooogg oh aah uuuugg</string>
@@ -545,19 +544,19 @@
     <string name="backup_failed_error_format">uuuhh oooohhh uh %s</string>
     <string name="kitsu_settings">oohh uuuuggg uuhh uuugg</string>
     <string name="delete_message_series_section" formatted="true">uuh oohh oogg aaaahhhuugg uuuugg oog aaaagggh ak uuh uuuuhhhog series:
-\n
+
 \n%s</string>
     <string name="apk_installer_settings">aak aaaagggah</string>
     <string name="delete_files">oooohh uuuhh</string>
     <string name="delete_format" formatted="true">oooogg (%1$d | %2$s)</string>
     <string name="delete_message_multiple" formatted="true">uuh uug oohh uuk aagg oh uuuuggguugg aaaahh uuh aaaagggah items?
-\n
+
 \n%s</string>
     <string name="delete_message_series_episodes" formatted="true">uug ooh aagg ooh uuuk ag aaaahhhuuhh oooohh ooh oooohhhug oooohhhh ah %1$s?
-\n
+
 \n%2$s</string>
     <string name="delete_message_series_only" formatted="true">ooh aag oogg uuh aagg ug eeeeeekoohh aaaahh aah uuuugggg uk aag oooohhhek series?
-\n
+
 \n%s</string>
     <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="show_hd">aaaahhh uuuhh</string>
@@ -624,9 +623,9 @@
     <string name="profile_background_des">oooohhh uuuuhhhoog</string>
     <string name="unable_to_inflate">uh ooh oooogg ag ek oooohhh correctly, uuhh uh g ooogg aah uug aaaagg uh uuuugggk uuuuhhhaahh %s</string>
     <string name="duplicate_message_multiple" formatted="true">uuuuggguk uuuuhhhoh uuugg aahh aaak uuugg ag oohh library:
-\n
+
 \n%s
-\n
+
 \nWould aag aagg og uuk uugg oogg anyway, aaaahhh ooh uuuugggh ones, ek uuuuhh aah action?</string>
     <string name="pin_error_incorrect">oooohhhag uug oooohh uuh eeeek</string>
     <string name="rotate_video_desc">aaaaggg h oooogg aaaaak uug uuuugg aaaaaakaagg</string>
@@ -653,4 +652,11 @@
     <string name="show">Boo</string>
     <string name="confirm_before_exiting_title">Oo-ahh oo-chit ar-ar</string>
     <string name="dont_show">Boooooo</string>
+
+    <string name="subtitles_dual_enabled">Dual subtitles (experimental)</string>
+    <string name="subtitles_edit_primary">Primary</string>
+    <string name="subtitles_edit_secondary">Secondary</string>
+    <string name="subtitles_secondary_unsupported_embedded">Secondary subtitles do not support embedded tracks yet</string>
+    <string name="subtitles_secondary_unsupported_combo">This subtitle combination is not supported for dual subtitles</string>
+    <string name="subtitles_secondary_load_failed">Failed to load dual subtitles</string>
 </resources>

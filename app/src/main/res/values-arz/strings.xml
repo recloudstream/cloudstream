@@ -1,3 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+<string name="subtitles_dual_enabled">ترجمات مزدوجة (تجريبية)</string>
+    <string name="subtitles_edit_primary">أساسي</string>
+    <string name="subtitles_edit_secondary">ثانوي</string>
+    <string name="subtitles_secondary_unsupported_embedded">الترجمات الثانوية لا تدعم المسارات المضمنة حتى الآن</string>
+    <string name="subtitles_secondary_unsupported_combo">مجموعة الترجمة هذه غير مدعومة للترجمات المزدوجة</string>
+    <string name="subtitles_secondary_load_failed">فشل تحميل الترجمات المزدوجة</string>
 </resources>

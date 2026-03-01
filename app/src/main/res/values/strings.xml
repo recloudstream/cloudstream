@@ -520,7 +520,7 @@
     <string name="plugins_not_downloaded" formatted="true">Not downloaded: %d</string>
     <string name="plugins_updated" formatted="true">Updated %d plugins</string>
     <string name="blank_repo_message">CloudStream has no sites installed by default. You need to install the sites from repositories.
-\n
+
 \nJoin our Discord or search online.</string>
     <string name="view_public_repositories_button">View community repositories</string>
     <string name="view_public_repositories_button_short">Public list</string>
@@ -779,4 +779,11 @@
         <item quantity="one">%d download queued</item>
         <item quantity="other">%d downloads queued</item>
     </plurals>
+
+<string name="subtitles_dual_enabled">Dual subtitles (experimental)</string>
+    <string name="subtitles_edit_primary">Primary</string>
+    <string name="subtitles_edit_secondary">Secondary</string>
+    <string name="subtitles_secondary_unsupported_embedded">Secondary subtitles do not support embedded tracks yet</string>
+    <string name="subtitles_secondary_unsupported_combo">This subtitle combination is not supported for dual subtitles</string>
+    <string name="subtitles_secondary_load_failed">Failed to load dual subtitles</string>
 </resources>

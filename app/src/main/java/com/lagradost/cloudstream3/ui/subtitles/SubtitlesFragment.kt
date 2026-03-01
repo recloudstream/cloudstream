@@ -59,6 +59,7 @@ import java.io.File
 const val SUBTITLE_KEY = "subtitle_settings"
 const val SUBTITLE_AUTO_SELECT_KEY = "subs_auto_select"
 const val SUBTITLE_DOWNLOAD_KEY = "subs_auto_download"
+const val SUBTITLE_DUAL_ENABLED_KEY = "subs_dual_enabled"
 
 data class SaveCaptionStyle(
     @JsonProperty("foregroundColor") var foregroundColor: Int,
@@ -299,6 +300,10 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
 
         fun getAutoSelectLanguageTagIETF(): String {
             return getKey(SUBTITLE_AUTO_SELECT_KEY) ?: "en"
+        }
+
+        fun isDualSubtitlesEnabled(): Boolean {
+            return getKey(SUBTITLE_DUAL_ENABLED_KEY) ?: false
         }
     }
 
@@ -591,6 +596,10 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
             subtitlesRemoveBloat.isChecked = state.removeBloat
             subtitlesRemoveBloat.setOnCheckedChangeListener { _, b ->
                 state.removeBloat = b
+            }
+            subtitlesDualEnabled.isChecked = isDualSubtitlesEnabled()
+            subtitlesDualEnabled.setOnCheckedChangeListener { _, isChecked ->
+                setKey(SUBTITLE_DUAL_ENABLED_KEY, isChecked)
             }
             subtitlesUppercase.isChecked = state.upperCase
             subtitlesUppercase.setOnCheckedChangeListener { _, b ->

@@ -397,7 +397,7 @@
     <string name="plugins_disabled" formatted="true">Desativado: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Não transferido: %d</string>
     <string name="blank_repo_message">CloudStream não tem fontes instaladas por padrão. Você precisa instalar um site de repositórios.
-\n
+
 \nEntre no nosso Discord ou pesquise online.</string>
     <string name="view_public_repositories_button">Ver repositórios da comunidade</string>
     <string name="view_public_repositories_button_short">Lista pública</string>
@@ -461,11 +461,11 @@
     <string name="qualities">Qualidade</string>
     <string name="profile_background_des">Perfil de plano de fundo</string>
     <string name="quality_profile_help">Aqui você pode alterar como as fontes são ordenadas. Se um vídeo tiver uma prioridade mais alta, aparecerá mais alto na seleção da fonte. A soma da prioridade da fonte e da prioridade da qualidade é a prioridade do vídeo.
-\n
+
 \nFonte A: 3
 \nQualidade B: 7
 \nTerá uma prioridade de vídeo combinada de 10.
-\n
+
 \nNOTA: Se a soma for 10 ou mais, o Player pulará automaticamente o carregamento quando o link for carregado!</string>
     <string name="safe_mode_file">Arquivo de modo de segurança encontrado!
 \nNão carregar nenhuma extensão na inicialização até que o arquivo seja removido.</string>
@@ -554,9 +554,9 @@
     <string name="duplicate_add">Adicionar</string>
     <string name="duplicate_replace">Substituir</string>
     <string name="duplicate_message_multiple" formatted="true">Possíveis itens duplicados foram encontrados em sua biblioteca:
-\n
+
 \n %s
-\n
+
 \nGostaria de adicionar este item mesmo assim, substituir os existentes ou cancelar a ação?</string>
     <string name="enter_pin">Insira o PIN</string>
     <string name="enter_pin_with_name" formatted="true">Insira o PIN para %s</string>
@@ -577,7 +577,7 @@
     <string name="backup_frequency">Frequência de backup</string>
     <string name="duplicate_replace_all">Substitua tudo</string>
     <string name="duplicate_message_single" formatted="true">Parece que já existe um item potencialmente duplicado na sua biblioteca: \'%s.\'
-\n
+
 \nGostaria de adicionar este item mesmo assim, substituir o existente ou cancelar a ação?</string>
     <string name="action_subscribe">Inscrever-se</string>
     <string name="action_unsubscribe">Cancelar inscrição</string>
@@ -766,4 +766,10 @@
         <item quantity="many">%d downloads na sequência</item>
         <item quantity="other">%d downloads na sequência</item>
     </plurals>
+<string name="subtitles_dual_enabled">Legendas duplas (experimental)</string>
+    <string name="subtitles_edit_primary">Primário</string>
+    <string name="subtitles_edit_secondary">Secundário</string>
+    <string name="subtitles_secondary_unsupported_embedded">As legendas secundárias ainda não suportam faixas incorporadas</string>
+    <string name="subtitles_secondary_unsupported_combo">Esta combinação de legendas não é compatível com legendas duplas</string>
+    <string name="subtitles_secondary_load_failed">Falha ao carregar legendas duplas</string>
 </resources>

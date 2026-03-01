@@ -365,7 +365,7 @@
     <string name="plugins_disabled" formatted="true">Desativado: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Não transferido: %d</string>
     <string name="blank_repo_message">O CloudStream não tem sites instalados por padrão. É necessário instalar os sites a partir de repositórios.
-\n
+
 \nJunte-se ao nosso Discord ou pesquise online.</string>
     <string name="view_public_repositories_button">Ver repositórios da comunidade</string>
     <string name="view_public_repositories_button_short">Lista pública</string>
@@ -523,11 +523,11 @@
     <string name="qualities">Qualidades</string>
     <string name="profile_background_des">Perfil de fundo</string>
     <string name="quality_profile_help">Aqui pode alterar a forma como as fontes são ordenadas. Se um vídeo tiver uma prioridade mais elevada, aparecerá mais alto na seleção da fonte. A soma da prioridade da fonte com a prioridade da qualidade é a prioridade do vídeo.
-\n
+
 \nFonte A: 3
 \nQualidade B: 7
 \nTerá uma prioridade de vídeo combinada de 10.
-\n
+
 \nNOTA: Se a soma for 10 ou mais, o leitor saltará automaticamente o carregamento quando essa ligação for carregada!</string>
     <string name="automatic_plugin_download_mode_title">Selecionar o modo para filtrar a transferência de plug-ins</string>
     <string name="unable_to_inflate">Não foi possível criar corretamente a interface do utilizador, trata-se de um GRANDE BUG e deve ser comunicado imediatamente %s</string>
@@ -561,12 +561,12 @@
     <string name="manage_accounts">Gerenciar contas</string>
     <string name="use_default_account">Usar conta padrão</string>
     <string name="duplicate_message_multiple" formatted="true">Potenciais itens duplicados foram encontrados na sua biblioteca:
-\n
+
 \n%s
-\n
+
 \nDeseja adicionar esse item mesmo assim, subtituir os existentes, ou cancelar a ação?</string>
     <string name="duplicate_message_single" formatted="true">Parece que já existe um item potencialmente duplicado na sua biblioteca: \'%s.\'
-\n
+
 \nDeseja adicionar esse item mesmo assim, subtituir o existente, ou cancelar a ação?</string>
     <string name="recommendations_tooltip">Mostrar recomendações</string>
     <string name="speed_setting_summary">Adiciona uma opção de velocidade no leitor</string>
@@ -612,7 +612,7 @@
     <string name="preview_seekbar_desc">Ativar a miniatura de pré-visualização na barra de progresso</string>
     <string name="auth_locally">Autenticação Local</string>
     <string name="delete_message_series_section" formatted="true">Irá também eliminar permanentemente todos os episódios da seguinte série:
-\n
+
 \n%s</string>
     <string name="delete_format" formatted="true">Eliminar (%1$d | %2$s)</string>
     <string name="device_pin_url_message">Visite <b>%s</b> no seu smartphone ou computador e introduza o código acima</string>
@@ -627,13 +627,13 @@
     <string name="delete_files">Eliminar Ficheiros</string>
     <string name="test_warning">Aviso</string>
     <string name="delete_message_multiple" formatted="true">Tem a certeza que pretende eliminar permanentemente os seguintes items?
-\n
+
 \n%s</string>
     <string name="delete_message_series_episodes" formatted="true">Tem a certeza que pretende eliminar permanentemente os seguintes episódios em %1$s?
-\n
+
 \n%2$s</string>
     <string name="delete_message_series_only" formatted="true">Tem a certeza que pretende eliminar permanentemente todos os episódios da seguinte série?
-\n
+
 \n%s</string>
     <string name="pref_category_security">Segurança</string>
     <string name="pref_category_accounts">Contas</string>
@@ -734,4 +734,11 @@
     <string name="prerelease_already_installed">Versão de pré-lançamento já instalada.</string>
     <string name="prerelease_install_failed">Falha ao instalar pré-lançamento.</string>
     <string name="show_episode_text">Texto do Episódio</string>
+
+    <string name="subtitles_dual_enabled">Legendas duplas (experimental)</string>
+    <string name="subtitles_edit_primary">Primário</string>
+    <string name="subtitles_edit_secondary">Secundário</string>
+    <string name="subtitles_secondary_unsupported_embedded">As legendas secundárias ainda não suportam faixas incorporadas</string>
+    <string name="subtitles_secondary_unsupported_combo">Esta combinação de legendas não é compatível com legendas duplas</string>
+    <string name="subtitles_secondary_load_failed">Falha ao carregar legendas duplas</string>
 </resources>

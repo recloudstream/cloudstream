@@ -715,4 +715,11 @@
     <string name="top_left">Зверху злева</string>
     <string name="top_center">Зверху па цэнтру</string>
     <string name="top_right">Зверху справа</string>
+
+    <string name="subtitles_dual_enabled">Двайныя субтытры (эксперыментальныя)</string>
+    <string name="subtitles_edit_primary">Першасны</string>
+    <string name="subtitles_edit_secondary">Другасны</string>
+    <string name="subtitles_secondary_unsupported_embedded">Другасныя субтытры пакуль не падтрымліваюць убудаваныя трэкі</string>
+    <string name="subtitles_secondary_unsupported_combo">Гэта спалучэнне субтытраў не падтрымліваецца для падвойных субтытраў</string>
+    <string name="subtitles_secondary_load_failed">Не ўдалося загрузіць двайныя субтытры</string>
 </resources>

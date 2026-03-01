@@ -129,4 +129,11 @@
     <string name="swipe_to_change_settings_des">Brightness ಅಥವಾ volume ಬದಲಾಯಿಸಲು ಎಡ ಅಥವಾ ಬಲಭಾಗದಲ್ಲಿ ಮೇಲಕ್ಕೆ ಅಥವಾ ಕೆಳಕ್ಕೆ ಸ್ಲೈಡ್ ಮಾಡಿ</string>
     <string name="autoplay_next_settings_des">ಈಗಿನ ಎಪಿಸೋಡ್ ಮುಗಿದಾಗ ಮುಂದಿನ ಎಪಿಸೋಡ್ ಅನ್ನು ಪ್ರಾರಂಭಿಸಿ</string>
     <string name="swipe_to_change_settings">ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಬದಲಾಯಿಸಲು ಸ್ವೈಪ್ ಮಾಡಿ</string>
+
+    <string name="subtitles_dual_enabled">ಡ್ಯುಯಲ್ ಉಪಶೀರ್ಷಿಕೆಗಳು (ಪ್ರಾಯೋಗಿಕ)</string>
+    <string name="subtitles_edit_primary">ಪ್ರಾಥಮಿಕ</string>
+    <string name="subtitles_edit_secondary">ಮಾಧ್ಯಮಿಕ</string>
+    <string name="subtitles_secondary_unsupported_embedded">à²¸à³à²à³à²à²¡à²°à²¿ à²à²ªà²¶à³à²°à³à²·à²¿à²à³à²à²³à³ à²à²à²¬à³à²¡à³à²¡à³ à²à³à²°à³à²¯à²¾à²à³‌à²à²³à²¨à³à²¨à³ à²à²¨à³à²¨à³ à²¬à³à²à²¬à²²à²¿à²¸à³à²µà³à²¦à²¿à²²à³à²²</string>
+    <string name="subtitles_secondary_unsupported_combo">ಈ ಉಪಶೀರ್ಷಿಕೆ ಸಂಯೋಜನೆಯು ಎರಡು ಉಪಶೀರ್ಷಿಕೆಗಳಿಗೆ ಬೆಂಬಲಿತವಾಗಿಲ್ಲ</string>
+    <string name="subtitles_secondary_load_failed">ಡ್ಯುಯಲ್ ಉಪಶೀರ್ಷಿಕೆಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ</string>
 </resources>

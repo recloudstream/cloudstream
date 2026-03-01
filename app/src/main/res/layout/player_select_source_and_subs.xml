@@ -92,7 +92,7 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal">
 
@@ -113,7 +113,8 @@
                         android:id="@+id/subtitles_encoding_format"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
+                        android:layout_alignTop="@id/subtitles_text"
+                        android:layout_alignBottom="@id/subtitles_text"
                         android:layout_gravity="center"
                         android:layout_toStartOf="@+id/subtitle_settings_btt"
                         android:layout_toEndOf="@id/subtitles_text"
@@ -127,12 +128,86 @@
                         android:textSize="15sp"
                         tools:text="Thai (TIS 620-2533/ISO 8859-11)" />
 
+                    <LinearLayout
+                        android:id="@+id/subtitles_dual_controls"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/subtitles_text"
+                        android:layout_marginEnd="56dp"
+                        android:orientation="vertical"
+                        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+                        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+                        android:paddingBottom="6dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/subtitles_edit_primary_btt"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:clickable="true"
+                                    android:focusable="true"
+                                    android:foreground="@drawable/outline_drawable_forced"
+                                    android:gravity="center"
+                                    android:paddingVertical="4dp"
+                                    android:text="@string/subtitles_edit_primary"
+                                    android:textColor="@color/subtitle_tab_text_selector"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold" />
+
+                                <View
+                                    android:id="@+id/subtitles_edit_primary_indicator"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="2dp"
+                                    android:background="?attr/colorPrimary" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/subtitles_edit_secondary_btt"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:clickable="true"
+                                    android:focusable="true"
+                                    android:foreground="@drawable/outline_drawable_forced"
+                                    android:gravity="center"
+                                    android:paddingVertical="4dp"
+                                    android:text="@string/subtitles_edit_secondary"
+                                    android:textColor="@color/subtitle_tab_text_selector"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold" />
+
+                                <View
+                                    android:id="@+id/subtitles_edit_secondary_indicator"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="2dp"
+                                    android:background="?attr/colorPrimary" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
                     <ImageView
                         android:id="@+id/subtitle_settings_btt"
                         android:layout_width="wrap_content"
                         android:layout_height="44dp"
                         android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
+                        android:layout_alignTop="@id/subtitles_text"
+                        android:layout_alignBottom="@id/subtitles_text"
                         android:layout_gravity="center"
                         android:contentDescription="@string/subtitles_settings"
                         android:foreground="@drawable/outline_drawable_forced"

@@ -505,7 +505,7 @@
     <string name="app_layout_subtext">اپنے آلے کے مطابق ایپ کی شکل تبدیل کریں</string>
     <string name="next">اگلے</string>
     <string name="blank_repo_message">CloudStream میں بذریعہ ڈیفالٹ کوئی سائٹ انسٹال نہیں ہے۔ آپ کو ریپوزٹری سے سائٹس انسٹال کرنے کی ضرورت ہے۔
-\n
+
 \nہمارے Discord میں شامل ہوں یا آن لائن تلاش کریں۔</string>
     <string name="safe_mode_description">تمام ایکسٹینشنز کریش کی وجہ سے آف کر دی گئیں تاکہ آپ کو پریشانی کا باعث تلاش کرنے میں مدد مل سکے۔</string>
     <string name="extension_install_first">پہلے ایکسٹینشن انسٹال کریں</string>
@@ -529,11 +529,11 @@
     <string name="no_plugins_found_error">مخزن میں کوئی پلگ انز نہیں ملا</string>
     <string name="set_default">ترجیحی تعین کریں</string>
     <string name="quality_profile_help">یہاں آپ تبدیلی کرسکتے ہیں کہ سورسز کو کس طرح کی ترتیب دی جائے۔ اگر ایک ویڈیو کی زیادہ پرائیورٹی ہوتی ہے تو یہ سورس کی انتخاب میں زیادہ اوپر آئے گی۔ سورس کی پرائیورٹی اور کوالٹی کی پرائیورٹی کا مجموعہ ویڈیو کی پرائیورٹی ہوتی ہے۔
-\n
+
 \nسورس A: 3
 \nکوالٹی B: 7
 \nاس کا مجموعی ویڈیو پرائیورٹی 10 ہوتی ہے۔
-\n
+
 \nنوٹ: اگر مجموعہ 10 یا اس سے زیادہ ہو تو پلیر وہ لنک لوڈ کرنے کو خود بخود چھوڑ دے گا!</string>
     <string name="favorites_list_name">پسندیدہ</string>
     <string name="favorite_added">%s کو پسندیدہ میں شامل کیا گیا</string>
@@ -562,12 +562,12 @@
     <string name="duplicate_replace_all">سب کو بدل دیں</string>
     <string name="duplicate_replace">بدل دیں</string>
     <string name="duplicate_message_multiple" formatted="true">آپ کی لائبریری میں ممکنہ ڈپلیکیٹ آئٹمز مل گئے ہیں:
-\n
+
 \n%s
-\n
+
 \nکیا آپ بہرحال اس آئٹم کو شامل کرنا چاہیں گے، موجودہ کو تبدیل کرنا چاہیں گے، یا کارروائی کو منسوخ کریں گے؟</string>
     <string name="duplicate_message_single" formatted="true">ایسا معلوم ہوتا ہے کہ آپ کی لائبریری میں ممکنہ طور پر ڈپلیکیٹ آئٹم پہلے سے موجود ہے: \'%s۔\'
-\n
+
 \nکیا آپ بہرحال اس آئٹم کو شامل کرنا چاہیں گے، موجودہ کو تبدیل کرنا چاہیں گے، یا کارروائی کو منسوخ کریں گے؟</string>
     <string name="lock_profile">پروفائل لاک کریں</string>
     <string name="skip_startup_account_select_pref">آغاز پر اکاؤنٹ کا انتخاب چھوڑ دیں</string>
@@ -620,4 +620,11 @@
     <string name="audio_singluar">آواز</string>
     <string name="sort_button_date">تاریخ %s</string>
     <string name="device_pin_url_message">اپنے اسمارٹ فون یا کمپیوٹر پر یہ <b>%s</b> وزٹ کریں اور مندرجہ بالا کوڈ ڈالیں</string>
+
+    <string name="subtitles_dual_enabled">دوہری ذیلی عنوانات (تجرباتی)</string>
+    <string name="subtitles_edit_primary">پرائمری</string>
+    <string name="subtitles_edit_secondary">ثانوی</string>
+    <string name="subtitles_secondary_unsupported_embedded">ثانوی ذیلی عنوانات ابھی تک سرایت شدہ ٹریکس کو سپورٹ نہیں کرتے ہیں۔</string>
+    <string name="subtitles_secondary_unsupported_combo">یہ سب ٹائٹل مجموعہ دوہری سب ٹائٹلز کے لیے تعاون یافتہ نہیں ہے۔</string>
+    <string name="subtitles_secondary_load_failed">دوہری سب ٹائٹلز لوڈ کرنے میں ناکام</string>
 </resources>

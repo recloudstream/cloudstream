@@ -343,9 +343,9 @@
     <string name="apk_installer_package_installer">ထည့်သွင်းသူ</string>
     <string name="delayed_update_notice">ထွက်ချိန်တွင် အက်ပ်ကို အပ်ဒိတ်လုပ်ပါမည်</string>
     <string name="blank_repo_message">CloudStream တွင် မူရင်းအတိုင်း ထည့်သွင်းထားသည့်ဆိုက်များ မရှိပါ။ ရီပိုစစ်ထရီများ မှ ဆိုဒ် များကို ထည့်သွင်းရန်လိုအပ်သည်။
-\n
+
 \nSky UK Limited မှ ဦးနှောက်မဲ့ DMCA ကို ဖယ်ရှားလိုက်ခြင်းကြောင့် 🤮 ကျွန်ုပ်တို့သည် ရီပိုစစ်ထရီဆိုဒ်ကို အက်ပ်တွင် ချိတ်ဆက်၍မရပါ။
-\n
+
 \nကျွန်ုပ်တို့၏ Discord တွင်ပါဝင်ပါ သို့မဟုတ် အွန်လိုင်းတွင်ရှာဖွေပါ။</string>
     <string name="view_public_repositories_button">အခြားသူများ၏ရီပိုစစ်ထရီများကိုရှာဖွေမည်</string>
     <string name="tracks">အသံများ</string>
@@ -526,15 +526,22 @@
     <string name="profiles">ပရိုဖိုင်များ</string>
     <string name="help">အကူအညီ</string>
     <string name="quality_profile_help">ဤနေရာတွင် သင်သည် အရင်းအမြစ်များကို မည်ကဲ့သို့ အစီအစဥ်ချမည်ကို ပြောင်းလဲနိုင်သည်။ ဗီဒီယိုတစ်ခုတွင် ပိုမိုဦးစားပေးပါက ရင်းမြစ်ရွေးချယ်မှုတွင် ပိုမိုမြင့်မားလာမည်ဖြစ်သည်။ အရင်းအမြစ် ဦးစားပေးနှင့် အရည်အသွေး ဦးစားပေး၏ ပေါင်းစုသည် ဗီဒီယို ဦးစားပေးဖြစ်သည်။
-\n
+
 \nအရင်းအမြစ် A: 3
 \nအရည်အသွေး B: 7
 \nပေါင်းစပ်ဗီဒီယို ဦးစားပေး 10 ခု ရှိပါမည်။
-\n
+
 \nမှတ်ချက်- ပေါင်းလဒ်သည် 10 သို့မဟုတ် ထို့ထက်ပိုပါက ထိုလင့်ခ်ကို တင်သည့်အခါ ဗီဒီယိုဖွင့်စက်သည် အလိုအလျောက် ဒေါင်းလုဒ်ကို ကျော်သွားမည်ဖြစ်သည်</string>
     <string name="profile_background_des">ပရိုဖိုင်နောက်ခံ</string>
     <string name="unable_to_inflate">UI ကို မှန်ကန်စွာ ဖန်တီး၍မရပါ၊ ၎င်းသည် အဓိက ချို့ယွင်းချက်တစ်ခုဖြစ်ပြီး ချက်ချင်းသတင်းပို့သင့်သည်။ %s</string>
     <string name="already_voted">သင်နဂိုတည်းကသတ်မှတ်ပြီး</string>
     <string name="select_library">လိုက်ဘရီရွေးချယ်ရန်</string>
     <string name="open_with">ဖြင့်ဖွင့်မည်</string>
+
+    <string name="subtitles_dual_enabled">စာတန်းနှစ်ခု (စမ်းသပ်မှု)</string>
+    <string name="subtitles_edit_primary">မူလတန်း</string>
+    <string name="subtitles_edit_secondary">အလယ်တန်း</string>
+    <string name="subtitles_secondary_unsupported_embedded">ဆင့်ပွားစာတန်းထိုးများသည် ထည့်သွင်းထားသော သီချင်းများကို မပံ့ပိုးရသေးပါ။</string>
+    <string name="subtitles_secondary_unsupported_combo">ဤစာတန်းထိုးပေါင်းစပ်မှုကို စာတန်းထိုးနှစ်ခုအတွက် ပံ့ပိုးမထားပါ။</string>
+    <string name="subtitles_secondary_load_failed">စာတန်းနှစ်ခုကို တင်၍မရပါ။</string>
 </resources>

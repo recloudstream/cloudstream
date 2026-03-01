@@ -485,7 +485,7 @@
     <string name="skip_type_mixed_op">Blandad inledning</string>
     <string name="skip_type_format" formatted="true">Skippa %s</string>
     <string name="blank_repo_message">CloudStream har inga webbplatser installerade som standard. Du måste installera webbplatser från arkiv.
-\n
+
 \nGå med i vår Discord eller sök online.</string>
     <string name="select_library">Välj bibliotek</string>
     <string name="empty_library_no_accounts_message">Ditt bibliotek är tomt :(
@@ -559,19 +559,19 @@
     <string name="pin">PIN-kod</string>
     <string name="android_tv_interface_off_seek_settings_summary">Sök mängden som används när spelaren är dold</string>
     <string name="duplicate_message_multiple" formatted="true">Det verkar som om ett potentiellt duplicerat objekt redan finns i ditt bibliotek:
-\n
+
 \n\'%s.\'
-\n
+
 \nVill du lägga till det här objektet ändå, ersätta det befintliga eller avbryta åtgärden?</string>
     <string name="duplicate_message_single" formatted="true">Det verkar som om ett potentiellt duplicerat objekt redan finns i ditt bibliotek: \'%s.\'
-\n
+
 \nVill du lägga till det här objektet ändå, ersätta det befintliga eller avbryta åtgärden?</string>
     <string name="quality_profile_help">Här kan du ändra hur källorna ska sorteras, om en video har högre prioritet visas den högre upp i källvalet. Summan av källprioriteten och kvalitetsprioriteten är videoprioriteten.
-\n
+
 \nKälla A: 3
 \nKvalitet B: 7
 \nKommer att ha en kombinerad videoprioritet på 10.
-\n
+
 \nOBS: Om summan är 10 eller mer kommer spelaren automatiskt att hoppa över laddningen när den länken laddas!</string>
     <string name="subscribe_tooltip">Avisering om nytt avsnitt</string>
     <string name="result_search_tooltip">Sök i andra tillägg</string>
@@ -618,7 +618,7 @@
     <string name="qr_image">QR-kodbild</string>
     <string name="device_pin_expired_message">PIN-koden har upphört att gälla!</string>
     <string name="delete_message_series_episodes" formatted="true">Är du säker på att du vill radera följande avsnitt permanent i %1$s?
-\n
+
 \n%2$s</string>
     <string name="preview_seekbar_desc">Aktivera förhandsgranskningsminiatyr i sökfältet</string>
     <string name="preview_seekbar">Förhandsgranskning av sökfältet</string>
@@ -634,13 +634,13 @@
     <string name="delete_files">Radera Filer</string>
     <string name="delete_format" formatted="true">Radera (%1$d | %2$s)</string>
     <string name="delete_message_multiple" formatted="true">Är du säker på att du vill ta bort följande objekt permanent?
-\n
+
 \n%s</string>
     <string name="delete_message_series_section" formatted="true">Du kommer också permanent att radera alla avsnitt i följande serie:
-\n
+
 \n%s</string>
     <string name="delete_message_series_only" formatted="true">Är du säker på att du permanent vill radera alla avsnitt i följande serie?
-\n
+
 \n%s</string>
     <string name="delete_plugin">Ta bort insticksprogram</string>
     <string name="hide_player_control_names">Dölj namnen på spelarens kontroller</string>
@@ -759,4 +759,11 @@
     <string name="all_subtitles_bold">Gör alla undertexter fetstilta</string>
     <string name="all_subtitles_italic">Gör alla undertexter kursivstila</string>
     <string name="background_radius">Bakgrundsradie</string>
+
+    <string name="subtitles_dual_enabled">Dubbla undertexter (experimentell)</string>
+    <string name="subtitles_edit_primary">Primär</string>
+    <string name="subtitles_edit_secondary">Sekundär</string>
+    <string name="subtitles_secondary_unsupported_embedded">Sekundära undertexter stöder inte inbäddade spår ännu</string>
+    <string name="subtitles_secondary_unsupported_combo">Denna undertextkombination stöds inte för dubbla undertexter</string>
+    <string name="subtitles_secondary_load_failed">Det gick inte att läsa in dubbla undertexter</string>
 </resources>

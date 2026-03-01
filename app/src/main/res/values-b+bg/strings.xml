@@ -406,7 +406,7 @@
     <string formatted="true" name="plugins_not_downloaded">Не е изтеглено: %d</string>
     <string formatted="true" name="plugins_updated">Актуализирани %d плъгини</string>
     <string name="blank_repo_message">CloudStream няма инсталирани сайтове по подразбиране. Трябва да инсталирате сайтовете от хранилища.
-\n
+
 \nПрисъединете се към нашия Дискорд или потърсете онлайн.</string>
     <string name="view_public_repositories_button">Вижте хранилищата на общността</string>
     <string name="view_public_repositories_button_short">Публичен списък</string>
@@ -552,21 +552,21 @@
     <string name="android_tv_interface_off_seek_settings_summary">Сумата за търсене, използвана, когато играчът е скрит</string>
     <string name="sort_updated_new">Актуализирано (от ново към старо)</string>
     <string name="quality_profile_help">Тук можете да промените начина на подреждане на източниците. Ако даден видеоклип има по-висок приоритет, той ще се показва по-високо в избора на източник. Сборът от приоритета на източника и приоритета на качеството е приоритетът на видеото.
-\n
+
 \nИзточник A: 3
 \nКачество B: 7
 \nЩе има комбиниран видео приоритет от 10.
-\n
+
 \nЗАБЕЛЕЖКА: Ако сумата е 10 или повече, играчът автоматично ще пропусне зареждането, когато тази връзка се зареди!</string>
     <string name="duplicate_replace">Замени</string>
     <string name="duplicate_replace_all">Замени Всички</string>
     <string name="duplicate_message_single" formatted="true">Изглежда, че потенциално дублиран елемент вече съществува във вашата библиотека: „%s“.
-\n
+
 \nИскате ли все пак да добавите този елемент, да замените съществуващия или да отмените действието?</string>
     <string name="duplicate_message_multiple" formatted="true">Във вашата библиотека са намерени потенциални дублиращи се елементи:
-\n
+
 \n%s
-\n
+
 \nИскате ли все пак да добавите този елемент, да замените съществуващите или да отмените действието?</string>
     <string name="lock_profile">Заключи Профил</string>
     <string name="enter_current_pin">Вкарай Сегашен ПИН</string>
@@ -700,4 +700,11 @@
     <string name="player_settings_always_ask">Винаги изпращай запитване</string>
     <string name="speedup_summary">Задръжте, за да удвоите скоростта</string>
     <string name="speedup_title">Дълго задържане за смяна на скоростта</string>
+
+<string name="subtitles_dual_enabled">Двойни субтитри (експериментално)</string>
+    <string name="subtitles_edit_primary">Първичен</string>
+    <string name="subtitles_edit_secondary">Вторичен</string>
+    <string name="subtitles_secondary_unsupported_embedded">Вторичните субтитри все още не поддържат вградени песни</string>
+    <string name="subtitles_secondary_unsupported_combo">Тази комбинация от субтитри не се поддържа за двойни субтитри</string>
+    <string name="subtitles_secondary_load_failed">Неуспешно зареждане на двойни субтитри</string>
 </resources>

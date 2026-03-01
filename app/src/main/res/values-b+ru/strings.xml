@@ -412,7 +412,7 @@
     <string name="single_plugin_disabled" formatted="true">%s (отключено)</string>
     <string name="next">Далее</string>
     <string name="blank_repo_message">В CloudStream по умолчанию не установлены сайты. Вам необходимо установить сайты из репозиториев.
-\n
+
 \nПрисоединяйтесь к нашему Discord-серверу или найдите в интернете.</string>
     <string name="error_invalid_data">Недопустимые данные</string>
     <string name="resolution_and_title">Разрешение и название</string>
@@ -527,11 +527,11 @@
     <string name="no_plugins_found_error">Никаких дополнений не обнаружено в источнике</string>
     <string name="set_default">Поставить обычный</string>
     <string name="quality_profile_help">Здесь вы можете изменить порядок расположения источников. Если видео имеет более высокий приоритет, оно будет отображаться выше в списке источников. Сумма приоритета источника и приоритета качества составляет приоритет видео.
-\n
+
 \nИсточник А: 3
 \nКачество Б: 7
 \nБудет иметь общий приоритет видео 10.
-\n
+
 \nПРИМЕЧАНИЕ. Если сумма равна 10 или более, плеер автоматически пропустит загрузку при загрузке этой ссылки!</string>
     <string name="links_reloaded_toast">Ссылки перезагружены</string>
     <string name="select_an_account">Выберите учётную запись</string>
@@ -618,7 +618,7 @@
     <string name="downloads_delete_select">Выберите элементы для удаления</string>
     <string name="delete_format" formatted="true">Удалить (%1$d | %2$s)</string>
     <string name="delete_message_multiple" formatted="true">Вы уверены, что хотите навсегда удалить данный объект?
-\n
+
 \n%s</string>
     <string name="device_pin_error_message">Невозможно получить ПИН-код устройства, попробуйте локальную аутентификацию</string>
     <string name="device_pin_url_message">Откройте <b>%s</b> на вашем смартфоне или компьютере и введите данный код</string>
@@ -749,4 +749,11 @@
     <string name="cancel_all">Отменить всё</string>
     <string name="download_episode_range">Вы хотите загрузить эпизод %s?</string>
     <string name="cancel_queue_message">Вы хотите отменить всё запланированные загрузки?</string>
+
+    <string name="subtitles_dual_enabled">Двойные субтитры (экспериментально)</string>
+    <string name="subtitles_edit_primary">Начальный</string>
+    <string name="subtitles_edit_secondary">вторичный</string>
+    <string name="subtitles_secondary_unsupported_embedded">Вторичные субтитры пока не поддерживают встроенные треки.</string>
+    <string name="subtitles_secondary_unsupported_combo">Эта комбинация субтитров не поддерживается для двойных субтитров.</string>
+    <string name="subtitles_secondary_load_failed">Не удалось загрузить двойные субтитры.</string>
 </resources>

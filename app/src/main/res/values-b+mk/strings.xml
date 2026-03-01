@@ -708,4 +708,11 @@
     <string name="top_center">Горе во центар</string>
     <string name="top_right">Горе на десно</string>
     <string name="play_full_series_button">Пушти ја целата серија</string>
+
+    <string name="subtitles_dual_enabled">Двоен титл (експериментален)</string>
+    <string name="subtitles_edit_primary">Примарен</string>
+    <string name="subtitles_edit_secondary">Секундарна</string>
+    <string name="subtitles_secondary_unsupported_embedded">Секундарните преводи сè уште не поддржуваат вградени песни</string>
+    <string name="subtitles_secondary_unsupported_combo">Оваа комбинација на преводи не е поддржана за двојни преводи</string>
+    <string name="subtitles_secondary_load_failed">Не успеа да се вчитаат двојни преводи</string>
 </resources>

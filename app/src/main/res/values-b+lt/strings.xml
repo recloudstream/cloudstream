@@ -182,9 +182,9 @@
     <string name="batch_download_finish_format" formatted="true">Atsiųsta %1$d %2$s</string>
     <string name="skip_type_format" formatted="true">Praleisti %s</string>
     <string name="blank_repo_message">Pagal numatytuosius nustatymus „CloudStream“ neturi įdiegtų svetainių. Turite įdiegti svetaines iš saugyklų.
-\n
+
 \nDėl beprotiško DMCA reikalavimų, kurios atliko Sky UK Limited 🤮, negalime susieti saugyklos svetainės programoje.
-\n
+
 \nPrisijunkite prie mūsų Discord arba ieškokite internete.</string>
     <string name="mobile_data">Mobilūs duomenys</string>
     <string name="example_username">šaunusPrisijungimoVardas</string>
@@ -254,4 +254,11 @@
     <string name="confirm_exit_dialog">Ar tikrai norite išeiti?</string>
     <string name="action_remove_from_watched">Pašalinti iš žiūrimų</string>
     <string name="audio_tracks">Garso takelis</string>
+
+    <string name="subtitles_dual_enabled">Dvigubi subtitrai (eksperimentinis)</string>
+    <string name="subtitles_edit_primary">Pirminis</string>
+    <string name="subtitles_edit_secondary">Antrinis</string>
+    <string name="subtitles_secondary_unsupported_embedded">Antriniai subtitrai dar nepalaiko įterptųjų takelių</string>
+    <string name="subtitles_secondary_unsupported_combo">Šis subtitrų derinys nepalaikomas naudojant dvigubus subtitrus</string>
+    <string name="subtitles_secondary_load_failed">Nepavyko įkelti dvigubų subtitrų</string>
 </resources>

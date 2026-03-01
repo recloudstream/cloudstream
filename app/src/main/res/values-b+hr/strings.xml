@@ -412,7 +412,7 @@
     <string name="plugins_disabled" formatted="true">Onemogućeno: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Nepreuzeto: %d</string>
     <string name="blank_repo_message">CloudStream standardno nema instalirane web stranice. Stranice morate instalirati iz repozitorija.
-\n
+
 \nPridružite se našem Discordu ili tražite online.</string>
     <string name="view_public_repositories_button">Prikaži repozitorije zajednice</string>
     <string name="view_public_repositories_button_short">Javni popis</string>
@@ -542,11 +542,11 @@
     <string name="no_plugins_found_error">U repozitoriju nisu pronađeni dodaci</string>
     <string name="no_repository_found_error">Repozitorij nije pronađen. Provjeri URL i pokušaj VPN</string>
     <string name="quality_profile_help">Ovdje možete promijeniti način na koji su izvori poredani. Ako video ima viši prioritet, pojavit će se više u odabiru izvora. Zbroj prioriteta izvora i prioriteta kvalitete je prioritet videa.
-\n
+
 \nIzvor A: 3
 \nKvaliteta B: 7
 \nImat će kombinirani prioritet videa od 10.
-\n
+
 \nNAPOMENA: Ako je zbroj 10 ili više, video player će automatski preskočiti učitavanje kada se ta poveznica učita!</string>
     <string name="already_voted">Već si glasao/la</string>
     <string name="backup_frequency">Učestalost spremanja sigurnosne kopije</string>
@@ -554,9 +554,9 @@
     <string name="favorites_list_name">Favoriti</string>
     <string name="favorite_added">%s dodano u favorite</string>
     <string name="duplicate_message_multiple" formatted="true">Potencijalni duplikati pronađeni su u vašoj biblioteci:
-\n
+
 \n%s
-\n
+
 \nŽelite li ipak dodati ovu stavku koja zamjenjuje postojeće ili poništiti radnju?</string>
     <string name="duplicate_title">Pronađen potencijalni duplikat</string>
     <string name="lock_profile">Zaključaj profil</string>
@@ -571,7 +571,7 @@
     <string name="action_remove_from_favorites">Ukloni iz favorita</string>
     <string name="select_an_account">Odaberite račun</string>
     <string name="duplicate_message_single" formatted="true">Čini se da potencijalno duplicirana stavka već postoji u vašoj biblioteci: \'%s.\'
-\n
+
 \nŽelite li ipak dodati ovu stavku koja zamjenjuje postojeću ili poništiti radnju?</string>
     <string name="enter_pin">Unesite PIN</string>
     <string name="pin">PIN</string>
@@ -643,20 +643,20 @@
     <string name="offline_file">Dostupno za gledanje offline</string>
     <string name="select_all">Označi sve</string>
     <string name="delete_message_multiple" formatted="true">Stvarno želite trajno izbrisati sljedeće stavke?
-\n
+
 \n%s</string>
     <string name="delete_message_series_episodes" formatted="true">Stvarno želite trajno izbrisati sljedeće epizode u %1$s?
-\n
+
 \n%2$s</string>
     <string name="delete_message_series_section" formatted="true">Trajno ćete izbrisati i sve epizode u sljedećim serijama:
-\n
+
 \n%s</string>
     <string name="downloads_delete_select">Odaberi stavke za brisanje</string>
     <string name="deselect_all">Odznači sve</string>
     <string name="delete_format" formatted="true">Izbriši (%1$d | %2$s)</string>
     <string name="delete_files">Izbriši datoteke</string>
     <string name="delete_message_series_only" formatted="true">Stvarno želite trajno izbrisati sve epizode u sljedećoj seriji?
-\n
+
 \n%s</string>
     <string name="no_subtitles_loaded">Još nije učitan nijedan titl</string>
     <string name="preview_seekbar">Pretpregled trake za traženje</string>
@@ -775,4 +775,11 @@
     <string name="download_episode_range">Želiš li preuzeti epizodu %s?</string>
     <string name="cancel_queue_message">Želiš li otkazati sva preuzimanja u redu čekanja?</string>
     <string name="show_cast_in_details">Prikaži ploču glumačke postave</string>
+
+    <string name="subtitles_dual_enabled">Dvostruki titlovi (eksperimentalno)</string>
+    <string name="subtitles_edit_primary">Primarni</string>
+    <string name="subtitles_edit_secondary">Sekundarna</string>
+    <string name="subtitles_secondary_unsupported_embedded">Sekundarni titlovi još ne podržavaju ugrađene pjesme</string>
+    <string name="subtitles_secondary_unsupported_combo">Ova kombinacija titlova nije podržana za dvostruke titlove</string>
+    <string name="subtitles_secondary_load_failed">Učitavanje dvostrukih titlova nije uspjelo</string>
 </resources>

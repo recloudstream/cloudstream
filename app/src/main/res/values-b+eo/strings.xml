@@ -127,4 +127,11 @@
     <string name="downloaded">Elŝutite</string>
     <string name="downloading">Elŝutante</string>
     <string name="download_failed">Elŝuto Malsukcesite</string>
+
+<string name="subtitles_dual_enabled">Duoblaj subtekstoj (eksperimentaj)</string>
+    <string name="subtitles_edit_primary">Primara</string>
+    <string name="subtitles_edit_secondary">Sekundara</string>
+    <string name="subtitles_secondary_unsupported_embedded">Malĉefaj subtekstoj ankoraŭ ne subtenas enigitajn trakojn</string>
+    <string name="subtitles_secondary_unsupported_combo">Ĉi tiu kombinaĵo de subtitoloj ne estas subtenata por duoblaj subtekstoj</string>
+    <string name="subtitles_secondary_load_failed">Malsukcesis ŝargi duoblajn subtekstojn</string>
 </resources>

@@ -457,7 +457,7 @@
     <string name="plugins_disabled" formatted="true">নিষ্ক্ৰিয় কৰা: %d</string>
     <string name="plugins_not_downloaded" formatted="true">ডাউনলোড কৰা নহয়: %d</string>
     <string name="blank_repo_message">CloudStreamত কোনো চাইট ডিফল্টভাৱে ইনষ্টল হোৱা নাই। আপুনিয়ে ৰিপ\'জিট\'ৰিবোৰৰ পৰা চাইটসমূহ ইনষ্টল কৰিব লাগিব।
-\n
+
 \nআমাৰ Discordত যোগদান কৰক বা অনলাইন বিচাৰক।</string>
     <string name="view_public_repositories_button">সম্প্ৰদায়ৰ ৰিপ\'জিট\'ৰিসমূহ চাওক</string>
     <string name="uppercase_all_subtitles">সকলো চাবটাইটল মুকলি আখৰত</string>
@@ -540,11 +540,11 @@
     <string name="profiles">প্ৰ\'ফাইলসমূহ</string>
     <string name="help">সহায়</string>
     <string name="quality_profile_help">ইয়াত আপুনি উৎসসমূহ কেনেকৈ ক্ৰম অনুযায়ী চিহ্নিত কৰিব সেই বিষয়ে সলনি কৰিব পাৰে। যদি এখন ভিডিঅ\'ৰ উচ্চ অগ্ৰাধিকাৰ থাকে তেন্তে সেইটো উৎস নিৰ্বাচনৰ সময়ত ওপৰত দেখা যাব। উৎস অগ্ৰাধিকাৰ আৰু গুণ অগ্ৰাধিকাৰৰ মুঠ যোগফল হৈছে ভিডিঅ\'ৰ অগ্ৰাধিকাৰ।
-\n
+
 \nউৎস A: 3
 \nগুণ B: 7
 \nসৰহযোগে ভিডিঅ\'ৰ অগ্ৰাধিকাৰ হ\'ব 10।
-\n
+
 \nদ্ৰষ্টব্য: যদি যোগফল 10 বা তাৰ ওপৰত থাকে তেন্তে প্লেয়াৰটো নিজেই লিংক ল\'ড কৰাৰ সময়ত ল\'ডিং এড়াই যাব!</string>
     <string name="profile_background_des">প্ৰ\'ফাইলৰ পটভূমি</string>
     <string name="unable_to_inflate">UI সঠিকভাৱে সৃষ্টি কৰিব পৰা নগ\'ল, ই এটা গুৰুত্বপূৰ্ণ সমস্যা আৰু তাক অবিলম্বে জনোৱা উচিত %s</string>
@@ -557,12 +557,12 @@
     <string name="duplicate_title">সম্ভাৱ্য নকল বস্ত্ত পোৱা গৈছে</string>
     <string name="duplicate_replace_all">সকলো প্ৰতিস্থাপন কৰক</string>
     <string name="duplicate_message_single" formatted="true">আপোনাৰ পুথিভঁৰালীতে সম্ভাৱ্য নকল বস্তু পোৱা গৈছে: \'%s.\'
-\n
+
 \nআপুনি এই বস্তু যিকোনো হ\'লে যোগ কৰিব বিচাৰেনে, বিদ্যমান বস্তু প্ৰতিস্থাপন কৰিব, বা কাৰ্য বাতিল কৰিব বিচাৰেনে?</string>
     <string name="duplicate_message_multiple" formatted="true">আপোনাৰ পুথিভঁৰালীতে সম্ভাৱ্য নকল বস্তুসমূহ পোৱা গৈছে:
-\n
+
 \n%s
-\n
+
 \nআপুনি এই বস্তু যিকোনো হ\'লে যোগ কৰিব বিচাৰেনে, বিদ্যমানবোৰ প্ৰতিস্থাপন কৰিব, বা কাৰ্য বাতিল কৰিব বিচাৰেনে?</string>
     <string name="enter_pin_with_name" formatted="true">%s ৰ বাবে পিন সন্নিবিষ্ট কৰক</string>
     <string name="enter_current_pin">বৰ্তমান পিন সন্নিবিষ্ট কৰক</string>
@@ -610,16 +610,16 @@
     <string name="delete_files">ফাইলসমূহ ডিলিট কৰক</string>
     <string name="delete_format" formatted="true">ডিলিট (%1$d | %2$s)</string>
     <string name="delete_message_multiple" formatted="true">আপুনি স্থায়ীভাৱে তলত দিয়া আইটেমসমূহ ডিলিট কৰিবলৈ নিশ্চিত নেকি?
-\n
+
 \n%s</string>
     <string name="delete_message_series_episodes" formatted="true">%1$s ত তলত দিয়া এপিচ’ডসমূহ স্থায়ীভাৱে ডিলিট কৰিব নেকি?
-\n
+
 \n%2$s</string>
     <string name="delete_message_series_section" formatted="true">আপুনি দিয়া ছিৰিজৰ সকলো এপিচ’ড স্থায়ীভাৱে ডিলিট কৰিব:
-\n
+
 \n%s</string>
     <string name="delete_message_series_only" formatted="true">আপুনি দিয়া ছিৰিজৰ সকলো এপিচ’ড স্থায়ীভাৱে ডিলিট কৰিবলৈ নিশ্চিত নেকি?
-\n
+
 \n%s</string>
     <string name="sort_release_date_old">মুক্তিৰ তাৰিখ (পুৰণাৰ পৰা নতুন)</string>
     <string name="test_warning">সতৰ্কবাৰ্তা</string>
@@ -664,4 +664,11 @@
     <string name="torrent_preferred_media">সংহতিসমূহ/প্ৰদানকাৰী/পছন্দৰ মাধ্যমত টৰেণ্ট সামৰ্থবান কৰক</string>
     <string name="software_decoding">চফ্টৱেৰ ডিকোডিং</string>
     <string name="software_decoding_desc">চফ্টৱেৰ ডিকোডিঙে প্লেয়াৰক আপোনাৰ ফোন দ্বাৰা সমৰ্থিত নোহোৱা ভিডিঅ\' ফাইলসমূহ চলাবলৈ সামৰ্থবান কৰে, কিন্তু উচ্চ ৰিজ\'লিউচনত লেগি বা অস্থিৰ প্লেবেকৰ সৃষ্টি কৰিব পাৰে</string>
+
+<string name="subtitles_dual_enabled">দ্বৈত উপশিৰোনামা (পৰীক্ষামূলক)</string>
+    <string name="subtitles_edit_primary">প্ৰাথমিক</string>
+    <string name="subtitles_edit_secondary">মাধ্যমিক</string>
+    <string name="subtitles_secondary_unsupported_embedded">গৌণ উপশিৰোনামাসমূহে এতিয়াও এম্বেড কৰা ট্ৰেকসমূহ সমৰ্থন নকৰে</string>
+    <string name="subtitles_secondary_unsupported_combo">এই উপশিৰোনামাৰ সংমিশ্ৰণ দ্বৈত উপশিৰোনামাৰ বাবে সমৰ্থিত নহয়</string>
+    <string name="subtitles_secondary_load_failed">দ্বৈত উপশিৰোনামা লোড কৰাত ব্যৰ্থ</string>
 </resources>

@@ -417,7 +417,7 @@
     <string name="is_adult">18+</string>
     <string name="batch_download_start_format" formatted="true">Spuštěno stahování %1$d %2$s…</string>
     <string name="blank_repo_message">CloudStream nemá ve výchozím nastavení nainstalované žádné zdroje. Je třeba je nainstalovat z repozitářů.
-\n
+
 \nPřipojte se na náš Discord nebo hledejte na internetu.</string>
     <string name="plugins_disabled" formatted="true">Zakázáno: %d</string>
     <string name="plugins_updated" formatted="true">Aktualizováno %d doplňků</string>
@@ -538,11 +538,11 @@
     <string name="qualities">Kvality</string>
     <string name="profile_background_des">Pozadí profilu</string>
     <string name="quality_profile_help">Zde můžete změnit pořadí zdrojů. Pokud má video vyšší prioritu, objeví se ve výběru zdrojů výše. Součet priority zdroje a priority kvality je priorita videa.
-\n
+
 \nZdroj A: 3
 \nKvalita B: 7
 \nBudou mít celkovou prioritu videa 10.
-\n
+
 \nPOZNÁMKA: Pokud je součet 10 nebo vyšší, přehrávač automaticky přeskočí načítání při načtení daného odkazu!</string>
     <string name="unable_to_inflate">Nepodařilo se správně vytvořit rozhraní. Toto je VÁŽNÁ CHYBA, kterou je potřeba ihned nahlásit %s</string>
     <string name="disable">Vypnout</string>
@@ -554,9 +554,9 @@
     <string name="favorites_list_name">Oblíbené</string>
     <string name="favorite_added">%s přidáno do oblíbených</string>
     <string name="duplicate_message_multiple" formatted="true">Ve vaší knihovně byl nalezen potenciální duplikát:
-\n
+
 \n%s
-\n
+
 \nChcete přesto přidat tuto položku, nahradit existující nebo zrušit akci?</string>
     <string name="backup_frequency">Frekvence záloh</string>
     <string name="duplicate_title">Nalezena potenciální duplicita</string>
@@ -572,7 +572,7 @@
     <string name="action_remove_from_favorites">Odebrat z oblíbených</string>
     <string name="select_an_account">Vyberte účet</string>
     <string name="duplicate_message_single">Vypadá to, že ve vaší knihovně již existuje potenciální duplikát: „%s“.
-\n
+
 \nChcete přesto přidat tuto položku, nahradit existující nebo zrušit akci?</string>
     <string name="enter_pin">Zadejte PIN</string>
     <string name="pin">PIN</string>
@@ -645,18 +645,18 @@
     <string name="offline_file">Dostupné pro sledování offline</string>
     <string name="select_all">Vybrat vše</string>
     <string name="delete_message_multiple" formatted="true">Opravdu chcete trvale odstranit následující položky?
-\n
+
 \n%s</string>
     <string name="delete_message_series_episodes" formatted="true">Opravdu chcete trvale odstranit následující epizody v %1$s?
-\n
+
 \n%2$s</string>
     <string name="delete_message_series_only" formatted="true">Opravdu chcete trvale odstranit všechny epizody v následujících sériích?
-\n
+
 \n%s</string>
     <string name="deselect_all">Zrušit výběr všeho</string>
     <string name="delete_files">Odstranit soubory</string>
     <string name="delete_message_series_section" formatted="true">Také trvale odstraníte všechny epizody v následujících sériích:
-\n
+
 \n%s</string>
     <string name="delete_format" formatted="true">Odstranit (%1$d | %2$s)</string>
     <string name="preview_seekbar">Náhled v liště přehrávače</string>
@@ -778,4 +778,11 @@
     </plurals>
     <string name="source_priority">Priorita zdrojů</string>
     <string name="source_priority_help">Rozhodněte, jak mají být řazeny zdroje videí v přehrávači</string>
+
+<string name="subtitles_dual_enabled">Dvojité titulky (experimentální)</string>
+    <string name="subtitles_edit_primary">Primární</string>
+    <string name="subtitles_edit_secondary">Sekundární</string>
+    <string name="subtitles_secondary_unsupported_embedded">Sekundární titulky zatím nepodporují vložené stopy</string>
+    <string name="subtitles_secondary_unsupported_combo">Tato kombinace titulků není podporována pro duální titulky</string>
+    <string name="subtitles_secondary_load_failed">Nepodařilo se načíst duální titulky</string>
 </resources>

@@ -3,4 +3,11 @@
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s ክፋል %2$d</string>
     <string name="next_episode_format" formatted="true">ክፋል %d በ ላይ ይወጣል</string>
     <string name="cast_format" formatted="true">ተዋሳእቲ፡ %s</string>
+
+    <string name="subtitles_dual_enabled">ድርብ ንኡስ ኣርእስቲ (ፈተነ)</string>
+    <string name="subtitles_edit_primary">ቀዳማይ</string>
+    <string name="subtitles_edit_secondary">ካልኣይ ደረጃ</string>
+    <string name="subtitles_secondary_unsupported_embedded">ካልኣዊ ንኡስ ርእሲ ገና ንዝተሰረተ ትራክ ኣይድግፍን እዩ።</string>
+    <string name="subtitles_secondary_unsupported_combo">እዚ ውህደት ንኡስ ኣርእስቲ ንድርብ ንኡስ ኣርእስቲ ኣይድገፍን እዩ።</string>
+    <string name="subtitles_secondary_load_failed">ድርብ ንኡስ ርእሲ ምጽዓን ኣይከኣለን</string>
 </resources>

@@ -402,7 +402,7 @@
     <string name="plugins_disabled" formatted="true">Deaktiviert: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Nicht heruntergeladen: %d</string>
     <string name="blank_repo_message">CloudStream hat standardmäßig keine Websites installiert. Websites müssen aus Repositories installiert werden.
-\n
+
 \nTrete unserem Discord Server bei oder suche online.</string>
     <string name="view_public_repositories_button">Community-Repositories anzeigen</string>
     <string name="view_public_repositories_button_short">Öffentliche Liste</string>
@@ -523,11 +523,11 @@
     <string name="qualities">Qualitäten</string>
     <string name="profile_background_des">Profil-Hintergrund</string>
     <string name="quality_profile_help">Hier kannst du verändern, wie die Quellen geordnet werden. Wenn ein Video eine höhere Priorität hat, wird es höher in der Quellenauswahl erscheinen. Die Summe der Quellenpriorität und der Qualitätspriorität ist die Videopriorität.
-\n
+
 \nQuelle A: 3
 \nQualität B: 7
 \nWerden eine kombinierte Videopriorität von 10 haben.
-\n
+
 \nHINWEIS: Wenn die Summe 10 oder mehr beträgt, überspringt der Player automatisch das Laden, wenn der Link geladen wird!</string>
     <string name="automatic_plugin_download_mode_title">Filtermodus für Plugin-Downloads auswählen</string>
     <string name="already_voted">Es wurde bereits abgestimmt</string>
@@ -561,12 +561,12 @@
     <string name="manage_accounts">Konten verwalten</string>
     <string name="edit_account">Konto bearbeiten</string>
     <string name="duplicate_message_multiple" formatted="true">Es wurden potentielle Duplikate in deiner Bibliothek gefunden:
-\n
+
 \n%s
-\n
+
 \nMöchtest du dieses Element dennoch hinzufügen, das existierende ersetzen oder diese Aktion abbrechen?</string>
     <string name="duplicate_message_single" formatted="true">Deine Bibliothek enthält möglicherweise schon ein Duplikat dieses Elements: \'%s\'
-\n
+
 \nMöchtest du dieses Element dennoch hinzufügen, das existierende ersetzen oder diese Aktion abbrechen?</string>
     <string name="links_reloaded_toast">Links wurden neu geladen</string>
     <string name="rotate_video">Drehen</string>
@@ -631,16 +631,16 @@
     <string name="downloads_delete_select">Elemente zum Löschen auswählen</string>
     <string name="offline_file">Zum Offline-Ansehen verfügbar</string>
     <string name="delete_message_multiple" formatted="true">Bist du dir sicher, dass du die folgenden Elemente permanent löschen willst?
-\n
+
 \n%s</string>
     <string name="delete_message_series_episodes" formatted="true">Bist du dir sicher, dass du die folgenden Episoden in %1$s permanent löschen willst?
-\n
+
 \n%2$s</string>
     <string name="delete_message_series_section" formatted="true">Du wirst ebenfalls alle Episoden der folgenden Serien permanent löschen:
-\n
+
 \n%s</string>
     <string name="delete_message_series_only" formatted="true">Bist du dir sicher, dass du alle Episoden der folgenden Serien permanent löschen willst?
-\n
+
 \n%s</string>
     <string name="sort_release_date_new">Veröffentlichungsdatum (von neu nach alt)</string>
     <string name="sort_release_date_old">Veröffentlichungsdatum (von alt nach neu)</string>
@@ -749,4 +749,11 @@
         <item quantity="one">%d aktiver Download</item>
         <item quantity="other">%d aktive Downloads</item>
     </plurals>
+
+<string name="subtitles_dual_enabled">Doppelte Untertitel (experimentell)</string>
+    <string name="subtitles_edit_primary">Primär</string>
+    <string name="subtitles_edit_secondary">Sekundär</string>
+    <string name="subtitles_secondary_unsupported_embedded">Sekundäre Untertitel unterstützen eingebettete Titel noch nicht</string>
+    <string name="subtitles_secondary_unsupported_combo">Diese Untertitelkombination wird für Doppeluntertitel nicht unterstützt</string>
+    <string name="subtitles_secondary_load_failed">Doppelte Untertitel konnten nicht geladen werden</string>
 </resources>

@@ -154,9 +154,9 @@
     <string name="app_name">क्लाउडस्ट्रीम</string>
     <string name="play_with_app_name">क्लाउडस्ट्रीम के साथ चलाएं</string>
     <string name="duplicate_message_multiple" formatted="true">आपकी लाइब्रेरी में संभावित डुप्लिकेट आइटम पाए गए हैं:
-\n
+
 \n%s
-\n
+
 \nक्या आप किसी भी तरह इस आइटम को जोड़ना चाहेंगे, मौजूदा आइटम को बदलना चाहेंगे, या कार्रवाई रद्द करना चाहेंगे?</string>
     <string name="enter_pin_with_name" formatted="true">%s के लिए पिन दर्ज करें</string>
     <string name="duplicate_title">संभावित डुप्लिकेट मिला</string>
@@ -178,7 +178,7 @@
     <string name="skip_loading">लोडिंग स्किप करे</string>
     <string name="loading">लोडिंग…</string>
     <string name="duplicate_message_single" formatted="true">ऐसा प्रतीत होता है कि संभावित रूप से डुप्लिकेट आइटम आपकी लाइब्रेरी में पहले से मौजूद है: \'%s.\'
-\n
+
 \nक्या आप किसी भी तरह इस आइटम को जोड़ना चाहेंगे, मौजूदा आइटम को बदलना चाहेंगे, या कार्रवाई रद्द करना चाहेंगे?</string>
     <string name="enter_pin">पिन दर्ज करें</string>
     <string name="pin">पिन</string>
@@ -418,4 +418,11 @@
     <string name="added_sync_format" formatted="true">जोड़ा गया %s</string>
     <string name="upload_sync">Sync</string>
     <string name="sync_score">रेटेड</string>
+
+    <string name="subtitles_dual_enabled">दोहरे उपशीर्षक (प्रयोगात्मक)</string>
+    <string name="subtitles_edit_primary">प्राथमिक</string>
+    <string name="subtitles_edit_secondary">माध्यमिक</string>
+    <string name="subtitles_secondary_unsupported_embedded">द्वितीयक उपशीर्षक अभी तक एम्बेडेड ट्रैक का समर्थन नहीं करते हैं</string>
+    <string name="subtitles_secondary_unsupported_combo">यह उपशीर्षक संयोजन दोहरे उपशीर्षक के लिए समर्थित नहीं है</string>
+    <string name="subtitles_secondary_load_failed">दोहरे उपशीर्षक लोड करने में विफल</string>
 </resources>

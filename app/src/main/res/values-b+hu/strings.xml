@@ -417,7 +417,7 @@
     <string name="is_adult">18+</string>
     <string name="delete_repository_plugins">Ez az összes tároló bővítményt is törli</string>
     <string name="blank_repo_message">A CloudStream alapértelmezés szerint nem telepített webhelyeket. A webhelyeket a tárolókból kell telepítenie.
-\n
+
 \nCsatlakozz a Discord-unkhoz vagy keress online.</string>
     <string name="extension_version">Verzió</string>
     <string name="action_mark_as_watched">Megjelölés megtekintettként</string>
@@ -537,16 +537,16 @@
     <string name="action_remove_from_favorites">Eltávolítás kedvencekből</string>
     <string name="enter_current_pin">Adja meg a jelenlegi PIN-t</string>
     <string name="quality_profile_help">Itt beállíthatja hogyan rendezze el a forrásokat. Ha egy videónak nagyobb a prioritása, előbb fog megjelenni a listában. A forrás prioritás és a minőség prioritás együttes értéke adja ki a videó prioritást.
-\n
+
 \nForrás A: 3
 \nMinőség B: 7
 \nEzek összértéke egy 10-es videó prioritást eredményez.
-\n
+
 \nFIGYELEM: Ha az összeg több mint 10, a lejátszó nem tölt be mást ha már a link betöltésre került!</string>
     <string name="duplicate_message_multiple" formatted="true">Potenciálisan dupla elemek a könyvtárjában:
-\n
+
 \n%s
-\n
+
 \nSzeretné hozzáadni ezt az elemet mindenképpen, ezzel felülírva a jelenlegit, vagy visszavonja a műveletet?</string>
     <string name="skip_startup_account_select_pref">Fiók választás kihagyása belépéskor</string>
     <string name="use_default_account">Használjon alapértelmezett fiókot</string>
@@ -557,7 +557,7 @@
     <string name="favorite_removed">%s eltávolítva a kedvencekből</string>
     <string name="action_add_to_favorites">Hozzáadás a kedvencekhez</string>
     <string name="duplicate_message_single" formatted="true">Úgy tűnik egy potenciálisan dupla elem már létezik a könyvtárjában: \'%s.\'
-\n
+
 \nMindenképpen hozzá akarja adni ezt az elemet, ezzel felülírva a régit, vagy visszavonja a műveletet?</string>
     <string name="enter_pin">Adja meg a PIN-t</string>
     <string name="lock_profile">Profil Zárolása</string>
@@ -591,4 +591,11 @@
     <string name="offline_file">Elérhető offline megtekintésre</string>
     <string name="select_all">Mindet Kiválaszt</string>
     <string name="deselect_all">Mindent Kijelölés Eltávolítása</string>
+
+    <string name="subtitles_dual_enabled">Kettős felirat (kísérleti)</string>
+    <string name="subtitles_edit_primary">Elsődleges</string>
+    <string name="subtitles_edit_secondary">Másodlagos</string>
+    <string name="subtitles_secondary_unsupported_embedded">A másodlagos feliratok még nem támogatják a beágyazott számokat</string>
+    <string name="subtitles_secondary_unsupported_combo">Ez a feliratkombináció nem támogatott kettős feliratoknál</string>
+    <string name="subtitles_secondary_load_failed">Nem sikerült betölteni a kettős feliratot</string>
 </resources>

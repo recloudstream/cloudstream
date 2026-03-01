@@ -351,4 +351,11 @@
     <string name="test_extensions">­همه افزونه ها را تست کنید</string>
     <string name="automatic">خودکار</string>
     <string name="primary_color_settings">رنگ اصلی</string>
+
+    <string name="subtitles_dual_enabled">زیرنویس دوگانه (تجربی)</string>
+    <string name="subtitles_edit_primary">اولیه</string>
+    <string name="subtitles_edit_secondary">ثانویه</string>
+    <string name="subtitles_secondary_unsupported_embedded">Ø²ÛØ±ÙÙÛØ³‌ÙØ§Û Ø«Ø§ÙÙÛÙ ÙÙÙØ² Ø§Ø² Ø¢ÙÙÚ¯‌ÙØ§Û ØªØ¹Ø¨ÛÙ‌Ø´Ø¯Ù Ù¾Ø´ØªÛØ¨Ø§ÙÛ ÙÙÛ‌Ú©ÙÙØ¯</string>
+    <string name="subtitles_secondary_unsupported_combo">Ø§ÛÙ ØªØ±Ú©ÛØ¨ Ø²ÛØ±ÙÙÛØ³ Ø¨Ø±Ø§Û Ø²ÛØ±ÙÙÛØ³‌ÙØ§Û Ø¯ÙÚ¯Ø§ÙÙ Ù¾Ø´ØªÛØ¨Ø§ÙÛ ÙÙÛ‌Ø´ÙØ¯</string>
+    <string name="subtitles_secondary_load_failed">زیرنویس دوگانه بارگیری نشد</string>
 </resources>

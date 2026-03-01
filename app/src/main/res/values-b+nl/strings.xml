@@ -521,9 +521,9 @@
     <string name="subscription_deleted">Uitgeschreven bij %s</string>
     <string name="revert">Terugkeren</string>
     <string name="blank_repo_message">CloudStream heeft standaard geen sites geïnstalleerd. U moet de sites uit repositories installeren.
-\n
+
 \nVanwege een hersenloze DMCA verwijdering door Sky UK Limited 🤮 kunnen we de repository site niet linken in de app.
-\n
+
 \nWord lid van onze Discord of zoek online.</string>
     <string name="audio_tracks">Audiosporen</string>
     <string name="sort_by">Gesorteerd op</string>
@@ -537,11 +537,11 @@
     <string name="profile_background_des">Profiel achtergrond</string>
     <string name="use">Gebruik</string>
     <string name="quality_profile_help">Hier kan je de volgorde van de bronnen veranderen. Als een video een hogere prioriteit heeft zal het hoger in de bronnenlijst staan. De som van de prioriteit van de bron en de prioriteit van de kwaliteit is de prioriteit van de video.
-\n
+
 \nBron A: 3
 \nKwaliteit B: 7
 \nHeeft een totale prioriteit van de video van 10.
-\n
+
 \nNOTITIE: Als de som 10 of hoger is zal de speler automatisch het laden overslaan wanneer die link is geladen!</string>
     <string name="profile_number">Profiel %d</string>
     <string name="no_repository_found_error">Repository niet gevonden, controleer de URL en probeer een VPN</string>
@@ -555,9 +555,9 @@
     <string name="favorite_added">%s toegevoegd aan favorieten</string>
     <string name="logged_account" formatted="true">Aangemeld als %s</string>
     <string name="duplicate_message_multiple" formatted="true">Er zijn mogelijk dubbele items gevonden in uw bibliotheek:
-\n
+
 \n%s
-\n
+
 \nWilt u dit item toch toevoegen, de bestaande vervangen of de actie annuleren?</string>
     <string name="enter_pin_with_name" formatted="true">Voer PIN in voor %s</string>
     <string name="backup_frequency">Backupfrequentie</string>
@@ -578,7 +578,7 @@
     <string name="action_remove_from_favorites">Verwijder uit favorieten</string>
     <string name="select_an_account">Selecteer een Account</string>
     <string name="duplicate_message_single" formatted="true">Het lijkt erop dat er al een mogelijk duplicaat bestaat in uw bibliotheek: \'%s.\'
-\n
+
 \nWilt u dit item toch toevoegen, het bestaande item vervangen of de actie annuleren?</string>
     <string name="enter_pin">PIN invoeren</string>
     <string name="pin">PIN</string>
@@ -658,4 +658,11 @@
     <string name="device_pin_url_message">Ga naar <b>%s</b> op je smartphone of computer en voeren de bovenstaande code in</string>
     <string name="device_pin_expired_message">PIN-code is nu verlopen!</string>
     <string name="device_pin_counter_text">Code verloopt in %1$dm %2$ds</string>
+
+    <string name="subtitles_dual_enabled">Dubbele ondertitels (experimenteel)</string>
+    <string name="subtitles_edit_primary">Primair</string>
+    <string name="subtitles_edit_secondary">Secundair</string>
+    <string name="subtitles_secondary_unsupported_embedded">Secundaire ondertitels ondersteunen nog geen ingebedde tracks</string>
+    <string name="subtitles_secondary_unsupported_combo">Deze ondertitelcombinatie wordt niet ondersteund voor dubbele ondertitels</string>
+    <string name="subtitles_secondary_load_failed">Kan dubbele ondertiteling niet laden</string>
 </resources>
