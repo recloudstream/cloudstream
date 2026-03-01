@@ -1,8 +1,8 @@
 package com.lagradost.cloudstream3.mvvm
 
-import com.lagradost.api.BuildConfig
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.ErrorLoadingException
+import com.lagradost.cloudstream3.utils.AppDebug
 import kotlinx.coroutines.*
 import java.io.InterruptedIOException
 import java.net.SocketTimeoutException
@@ -18,31 +18,31 @@ const val DEBUG_PRINT = "DEBUG PRINT"
 class DebugException(message: String) : Exception("$DEBUG_EXCEPTION\n$message")
 
 inline fun debugException(message: () -> String) {
-    if (BuildConfig.DEBUG) {
+    if (AppDebug.isDebug) {
         throw DebugException(message.invoke())
     }
 }
 
 inline fun debugPrint(tag: String = DEBUG_PRINT, message: () -> String) {
-    if (BuildConfig.DEBUG) {
+    if (AppDebug.isDebug) {
         Log.d(tag, message.invoke())
     }
 }
 
 inline fun debugWarning(message: () -> String) {
-    if (BuildConfig.DEBUG) {
+    if (AppDebug.isDebug) {
         logError(DebugException(message.invoke()))
     }
 }
 
 inline fun debugAssert(assert: () -> Boolean, message: () -> String) {
-    if (BuildConfig.DEBUG && assert.invoke()) {
+    if (AppDebug.isDebug && assert.invoke()) {
         throw DebugException(message.invoke())
     }
 }
 
 inline fun debugWarning(assert: () -> Boolean, message: () -> String) {
-    if (BuildConfig.DEBUG && assert.invoke()) {
+    if (AppDebug.isDebug && assert.invoke()) {
         logError(DebugException(message.invoke()))
     }
 }
