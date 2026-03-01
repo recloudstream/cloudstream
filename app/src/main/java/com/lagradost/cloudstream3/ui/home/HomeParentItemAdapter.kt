@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.lagradost.cloudstream3.HomePageList
@@ -48,7 +49,7 @@ open class ParentItemAdapter(
 ) {
     companion object {
         val sharedPool =
-            RecyclerView.RecycledViewPool().apply { this.setMaxRecycledViews(CONTENT, 4) }
+            RecyclerView.RecycledViewPool().apply { this.setMaxRecycledViews(CONTENT, 8) }
     }
 
     data class ParentItemHolder(val binding: ViewBinding) : ViewHolderState<Bundle>(binding) {
@@ -92,79 +93,51 @@ open class ParentItemAdapter(
     ) {
         val startFocus = R.id.nav_rail_view
         val endFocus = FOCUS_SELF
-        val binding = holder.view
-        if (binding !is HomepageParentBinding) return
+        val binding = holder.view as? HomepageParentBinding ?: return
         val info = item.list
-        binding.apply {
-            val currentAdapter = homeChildRecyclerview.adapter as? HomeChildItemAdapter
-            if (currentAdapter == null) {
-                homeChildRecyclerview.setRecycledViewPool(HomeChildItemAdapter.sharedPool)
-                homeChildRecyclerview.adapter = HomeChildItemAdapter(
-                    id = id + position + 100,
-                    clickCallback = clickCallback,
-                    nextFocusUp = homeChildRecyclerview.nextFocusUpId,
-                    nextFocusDown = homeChildRecyclerview.nextFocusDownId,
-                ).apply {
-                    isHorizontal = info.isHorizontalImages
-                    hasNext = item.hasNext
-                    submitList(item.list.list)
-                }
-            } else {
-                currentAdapter.apply {
-                    isHorizontal = info.isHorizontalImages
-                    hasNext = item.hasNext
-                    this.clickCallback = this@ParentItemAdapter.clickCallback
-                    nextFocusUp = homeChildRecyclerview.nextFocusUpId
-                    nextFocusDown = homeChildRecyclerview.nextFocusDownId
-                    submitIncomparableList(item.list.list)
-                }
+
+        val currentAdapter = (binding.homeChildRecyclerview.adapter as? HomeChildItemAdapter)
+            ?.apply {
+                if (isHorizontal != info.isHorizontalImages) isHorizontal = info.isHorizontalImages
+                if (hasNext != item.hasNext) hasNext = item.hasNext
+                submitIncomparableList(info.list)
             }
+            ?: HomeChildItemAdapter(
+                id = id + position + 100,
+                clickCallback = clickCallback,
+                nextFocusUp = binding.homeChildRecyclerview.nextFocusUpId,
+                nextFocusDown = binding.homeChildRecyclerview.nextFocusDownId,
+            ).also { adapter ->
+                adapter.isHorizontal = info.isHorizontalImages
+                adapter.hasNext = item.hasNext
+                adapter.submitList(info.list)
 
-            homeChildRecyclerview.setLinearListLayout(
-                isHorizontal = true,
-                nextLeft = startFocus,
-                nextRight = endFocus,
-            )
-            homeChildMoreInfo.text = info.name
-
-            homeChildRecyclerview.addOnScrollListener(object :
-                RecyclerView.OnScrollListener() {
-                var expandCount = 0
-                val name = item.list.name
-
-                override fun onScrollStateChanged(
-                    recyclerView: RecyclerView,
-                    newState: Int
-                ) {
-                    super.onScrollStateChanged(recyclerView, newState)
-
-                    val adapter = recyclerView.adapter
-                    if (adapter !is HomeChildItemAdapter) return
-
-                    val count = adapter.itemCount
-                    val hasNext = adapter.hasNext
-                    /*println(
-                        "scolling ${recyclerView.isRecyclerScrollable()} ${
-                            recyclerView.canScrollHorizontally(
-                                1
-                            )
-                        }"
-                    )*/
-                    //!recyclerView.canScrollHorizontally(1)
-                    if (!recyclerView.isRecyclerScrollable() && hasNext && expandCount != count) {
-                        expandCount = count
-                        expandCallback?.invoke(name)
+                binding.homeChildRecyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                    var expandCount = 0
+                    override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                        super.onScrollStateChanged(recyclerView, newState)
+                        val adapter = recyclerView.adapter as? HomeChildItemAdapter ?: return
+                        if (!recyclerView.isRecyclerScrollable() && adapter.hasNext && expandCount != adapter.itemCount) {
+                            expandCount = adapter.itemCount
+                            expandCallback?.invoke(info.name)
+                        }
                     }
-                }
-            })
-
-            //(recyclerView.adapter as HomeChildItemAdapter).notifyDataSetChanged()
-            if (isLayout(PHONE)) {
-                homeChildMoreInfo.setOnClickListener {
-                    moreInfoClickCallback.invoke(item)
-                }
+                })
+                binding.homeChildRecyclerview.adapter = adapter
             }
-        }
+
+        binding.homeChildRecyclerview.setRecycledViewPool(HomeChildItemAdapter.sharedPool)
+        binding.homeChildRecyclerview.setHasFixedSize(true)
+        binding.homeChildRecyclerview.isNestedScrollingEnabled = false
+        (binding.homeChildRecyclerview.layoutManager as? LinearLayoutManager)?.initialPrefetchItemCount = 8
+        binding.homeChildRecyclerview.setLinearListLayout(
+            isHorizontal = true,
+            nextLeft = startFocus,
+            nextRight = endFocus
+        )
+
+        binding.homeChildMoreInfo.text = info.name
+        if (isLayout(PHONE)) binding.homeChildMoreInfo.setOnClickListener { moreInfoClickCallback(item) }
     }
 
     override fun onCreateContent(parent: ViewGroup): ParentItemHolder {
