@@ -1434,45 +1434,38 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 val audioArrayAdapter = ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
 
-                audioArrayAdapter.addAll(currentAudioTracks.mapIndexed { index, track ->
-                    val language = track.language?.let { fromTagToLanguageName(it) ?: it } 
-                        ?: track.label 
-                        ?: "Audio"
-                    
-                    val codec = track.sampleMimeType?.let { mimeType ->
-                    when {
-                            mimeType.contains("mp4a") || mimeType.contains("aac") -> "aac"
-                            mimeType.contains("ac-3") || mimeType.contains("ac3") -> "ac3"
-                            mimeType.contains("eac3-joc") -> "Dolby Atmos"
-                            mimeType.contains("eac3") -> "eac3"
-                            mimeType.contains("opus") -> "opus"
-                            mimeType.contains("vorbis") -> "vorbis"
-                            mimeType.contains("mp3") || mimeType.contains("mpeg") -> "mp3"
-                            mimeType.contains("flac") -> "flac"
-                            mimeType.contains("dts") -> "dts"
-                            else -> mimeType.substringAfter("/")
+                audioArrayAdapter.addAll(
+                    currentAudioTracks.mapIndexed { _, track ->
+
+                        val language = (
+                                track.language?.trim()?.let { raw ->
+                                    fromTagToLanguageName(raw)
+                                        ?: fromTagToLanguageName(raw.replace('_','-').substringBefore('-').lowercase())
+                                        ?: raw
+                                }
+                                    ?: track.label
+                                    ?: "Audio"
+                                ).replaceFirstChar { it.uppercaseChar() }
+
+                        val codec = audioCodecName(track.sampleMimeType)
+
+                        val channels = when (track.channelCount ?: 0) {
+                            1 -> "Mono"
+                            2 -> "Stereo"
+                            6 -> "5.1"
+                            8 -> "7.1"
+                            else -> "${track.channelCount ?: "?"}ch"
                         }
-                    } ?: "codec?"
 
-                    
-                    val channels: Int = track.channelCount ?: 0
-                    val channelConfig = when (channels) {
-                        1 -> "mono"
-                        2 -> "stereo"
-                        6 -> "5.1"
-                        8 -> "7.1"
-                        else -> "${channels}Ch"
+                        listOfNotNull(
+                            language.takeIf { it.isNotBlank() }?.replaceFirstChar { it.uppercaseChar() },
+                            channels.takeIf { it.isNotBlank() },
+                            codec.takeIf { it.isNotBlank() }?.uppercase()
+                        ).joinToString(" • ")
+
+
                     }
-
-                    listOfNotNull(
-                        "[$index]",
-                        language.replaceFirstChar { it.uppercaseChar() },
-                        codec.uppercase(),
-                        channelConfig.replaceFirstChar { it.uppercaseChar() }
-                    ).joinToString(" • ")
-                    
-                    "[$index] $language $codec $channelConfig"
-                })
+                )
 
                 audioList.adapter = audioArrayAdapter
                 audioList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
@@ -1830,6 +1823,42 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+
+    private fun videoCodecName(mime: String?): String? {
+        val m = mime?.lowercase() ?: return null
+        return when {
+            m.contains("avc") || m.contains("h264") -> "AVC"
+            m.contains("hevc") || m.contains("h265") -> "HEVC"
+            m.contains("av1") -> "AV1"
+            m.contains("vp9") -> "VP9"
+            m.contains("vp8") -> "VP8"
+            "/" in m -> m.substringAfter("/").uppercase()
+            else -> m.uppercase()
+        }
+    }
+
+    private fun audioCodecName(mime: String?): String {
+        val m = mime?.lowercase()?.trim().orEmpty()
+        if (m.isBlank()) return ""
+        return when {
+            m.contains("eac3-joc") -> "Dolby Atmos"
+            m.contains("truehd") -> "TrueHD"
+            m.contains("eac3") -> "E-AC3"
+            m.contains("ac-3") || m.contains("ac3") -> "AC3"
+            m.contains("aac") || m.contains("mp4a") -> "AAC"
+            m.contains("opus") -> "Opus"
+            m.contains("vorbis") -> "Vorbis"
+            m.contains("mp3") -> "MP3"
+            m.contains("flac") -> "FLAC"
+            m.contains("dts") -> "DTS"
+            m.contains("pcm") -> "PCM"
+            m.contains("alac") -> "ALAC"
+            m.contains("amr") -> "AMR"
+            m.contains("/") -> m.substringAfter("/").uppercase().takeIf { it.isNotBlank() } ?: ""
+            else -> ""
+        }
+    }
+
     private fun updatePlayerInfo() {
         val tracks = player.getVideoTracks()
 
@@ -1840,14 +1869,31 @@ class GeneratorPlayer : FullScreenPlayer() {
         val prefs = PreferenceManager.getDefaultSharedPreferences(ctx)
         showMediaInfo = prefs.getBoolean(ctx.getString(R.string.show_media_info_key), false)
 
-        val videoCodec = videoTrack?.sampleMimeType?.substringAfterLast('/')?.uppercase()
-        val audioCodec = audioTrack?.sampleMimeType?.substringAfterLast('/')?.uppercase()
-        val language = listOfNotNull(
-            audioTrack?.label,
-            fromTagToLanguageName(audioTrack?.language)?.let { "[$it]" }
-        ).joinToString(" ")
+        val videoCodec = videoCodecName(videoTrack?.sampleMimeType)
+        val audioCodec = audioCodecName(audioTrack?.sampleMimeType)
+        val languageName = fromTagToLanguageName(audioTrack?.language)
+        val label = audioTrack?.label
 
-        val stats = arrayOf(videoCodec, audioCodec, language).filter { !it.isNullOrBlank() }.joinToString(" • ")
+        val channels = when (audioTrack?.channelCount ?: 0) {
+            1 -> "Mono"
+            2 -> "Stereo"
+            6 -> "5.1"
+            8 -> "7.1"
+            else -> audioTrack?.channelCount?.let { "${it}ch" }
+        }
+
+        val language = languageName?.takeIf { it.isNotBlank() }?.let { lang ->
+            label?.takeIf { it.isNotBlank() && !it.equals(lang, true) }
+                ?.let { lang }
+                ?: lang
+        } ?: label?.takeIf { it.isNotBlank() }
+
+        val stats = arrayOf(
+            videoCodec,
+            language,
+            channels,
+            audioCodec
+        ).filter { !it.isNullOrBlank() }.joinToString(" • ")
 
         playerBinding?.playerVideoInfo?.apply {
             text = stats
