@@ -279,7 +279,12 @@
                 android:gravity="center"
                 android:text="@string/subs_import_text"
                 android:textColor="?attr/textColor"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:background="?attr/selectableItemBackground"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:clickable="true"
+                android:focusable="true" />
 
             <LinearLayout
                 android:layout_width="match_parent"
