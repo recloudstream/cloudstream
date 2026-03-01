@@ -449,6 +449,14 @@ object AppContextUtils {
         return settingsManager.getBoolean(this.getString(R.string.show_trailers_key), true)
     }
 
+    fun Context.shouldShowPlayerMetadata(): Boolean {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        return prefs.getBoolean(
+            getString(R.string.show_player_metadata_key),
+            true
+        )
+    }
+
     fun Context.filterProviderByPreferredMedia(hasHomePageIsRequired: Boolean = true): List<MainAPI> {
         // We are getting the weirdest crash ever done:
         // java.lang.ClassCastException: com.lagradost.cloudstream3.TvType cannot be cast to com.lagradost.cloudstream3.TvType

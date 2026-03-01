@@ -35,6 +35,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.view.animation.DecelerateInterpolator
 import android.widget.LinearLayout
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AlertDialog
@@ -97,6 +98,8 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
 import kotlin.math.roundToInt
+import com.lagradost.cloudstream3.utils.AppContextUtils.shouldShowPlayerMetadata
+
 
 // You can zoom out more than 100%, but it will zoom back into 100%
 const val MINIMUM_ZOOM = 0.95f
@@ -133,7 +136,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     private var uiShowingBeforeGesture = false
     protected var isLocked = false
     protected var timestampShowState = false
-
+    private var metadataVisibilityToken = 0
     protected var hasEpisodes = false
         private set
     // protected val hasEpisodes
@@ -235,9 +238,41 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 requestUpdateBrightnessOverlayOnNextLayout()
             }
         }
-
         return root
     }
+
+    private fun scheduleMetadataVisibility() {
+        val metadataScrim = playerBinding?.playerMetadataScrim ?: return
+        val ctx = metadataScrim.context ?: return
+
+        if (!ctx.shouldShowPlayerMetadata()) {
+            metadataScrim.isVisible = false
+            metadataVisibilityToken++ // invalidate pending callbacks
+            return
+        }
+
+        if (isLayout(PHONE)) {
+            metadataScrim.isVisible = false
+            metadataVisibilityToken++ // invalidate pending callbacks
+            return
+        }
+
+        val isPaused = currentPlayerStatus == CSPlayerLoading.IsPaused
+        metadataScrim.animate().cancel()
+        val token = ++metadataVisibilityToken
+
+        if (isPaused) {
+            metadataScrim.postDelayed({
+                if (token != metadataVisibilityToken) return@postDelayed
+                metadataScrim.isVisible = true
+                hidePlayerUI()
+            }, 8000L)
+
+        } else {
+            metadataScrim.isVisible = false
+        }
+    }
+
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun playerUpdated(player: Any?) {
@@ -456,6 +491,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 start()
             }
         }
+        playerBinding?.playerMetadataScrim?.let {
+            ObjectAnimator.ofFloat(it, "translationY", 1f).apply {
+                duration = 200
+                start()
+            }
+        }
 
         val playerBarMove = if (isShowing) 0f else 50.toPx.toFloat()
         playerBinding?.bottomPlayerBar?.let {
@@ -522,7 +563,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     override fun subtitlesChanged() {
         val tracks = player.getVideoTracks()
         val isBuiltinSubtitles = tracks.currentTextTracks.all { track ->
-            track.sampleMimeType == MimeTypes.APPLICATION_MEDIA3_CUES
+            track.sampleMimeType  == MimeTypes.APPLICATION_MEDIA3_CUES
         }
         // Subtitle offset is not possible on built-in media3 tracks
         playerBinding?.playerSubtitleOffsetBtt?.isGone =
@@ -1013,7 +1054,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             // BOTTOM
             playerLockHolder.startAnimation(fadeAnimation)
             // player_go_back_holder?.startAnimation(fadeAnimation)
-
             shadowOverlay.isVisible = true
             shadowOverlay.startAnimation(fadeAnimation)
         }
@@ -1084,6 +1124,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     override fun playerStatusChanged() {
         super.playerStatusChanged()
+        scheduleMetadataVisibility()
         delayHide()
     }
 
