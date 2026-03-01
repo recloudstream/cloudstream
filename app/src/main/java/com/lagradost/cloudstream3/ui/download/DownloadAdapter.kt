@@ -17,6 +17,7 @@ import com.lagradost.cloudstream3.ui.NoStateAdapter
 import com.lagradost.cloudstream3.ui.ViewHolderState
 import com.lagradost.cloudstream3.ui.download.button.DownloadStatusTell
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
+import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
@@ -152,22 +153,12 @@ class DownloadAdapter(
         downloadHeaderGotoChild.isVisible = false
 
         val posDur = getViewPos(card.data.id)
-        watchProgressContainer.isVisible = true
         downloadHeaderEpisodeProgress.apply {
             isVisible = posDur != null
             posDur?.let {
-                val max = (it.duration / 1000).toInt()
-                val progress = (it.position / 1000).toInt()
-
-                if (max > 0 && progress >= (0.95 * max).toInt()) {
-                    playIcon.setImageResource(R.drawable.ic_baseline_check_24)
-                    isVisible = false
-                } else {
-                    playIcon.setImageResource(R.drawable.netflix_play)
-                    this.max = max
-                    this.progress = progress
-                    isVisible = true
-                }
+                val visualPos = it.fixVisual()
+                max = (visualPos.duration / 1000).toInt()
+                progress = (visualPos.position / 1000).toInt()
             }
         }
 
@@ -200,7 +191,6 @@ class DownloadAdapter(
                 )
         }
 
-        downloadHeaderInfo.isVisible = true
         downloadButton.setDefaultClickListener(card.child, downloadHeaderInfo, onItemClickEvent)
         downloadButton.isVisible = !isMultiDeleteState
 
@@ -221,7 +211,6 @@ class DownloadAdapter(
         formattedSize: String
     ) {
         downloadButton.resetViewData()
-        watchProgressContainer.isVisible = false
         downloadButton.isVisible = false
         downloadHeaderEpisodeProgress.isVisible = false
         downloadHeaderGotoChild.isVisible = !isMultiDeleteState

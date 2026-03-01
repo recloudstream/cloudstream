@@ -578,145 +578,89 @@
                             android:visibility="gone"
                             app:icon="@drawable/ic_baseline_add_24" />
 
-                        <FrameLayout
-                            android:id="@+id/result_resume_progress_holder"
+                        <LinearLayout
+                            android:id="@+id/result_resume_parent"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:paddingVertical="5dp"
+                            android:layout_marginVertical="5dp"
+                            android:orientation="vertical"
                             android:visibility="gone"
                             tools:visibility="visible">
+
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/result_resume_series_button"
                                 style="@style/WhiteButton"
                                 android:layout_width="match_parent"
-                                android:layout_margin="0dp"
-                                android:visibility="visible" />
 
-                            <LinearLayout
-                                android:id="@+id/progress_group"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:orientation="horizontal">
-
-                                <FrameLayout
-                                    android:id="@+id/watch_progress_container"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center">
-
-                                    <ImageView
-                                        android:id="@+id/episode_play_icon"
-                                        style="@style/ContinueWatchingPlayUnderlayProgress"
-                                        app:tint="?attr/black" />
-
-                                    <com.google.android.material.progressindicator.CircularProgressIndicator
-                                        android:id="@+id/result_resume_series_progress"
-                                        style="@style/ContinueWatchingCircularProgress"
-                                        app:indicatorColor="?attr/iconGrayBackground"
-                                        app:trackColor="@color/skipOpTransparent"
-                                        tools:progress="50" />
-                                </FrameLayout>
-
-                                <TextView
-                                    android:id="@+id/result_resume_series_title"
-                                    style="@style/Widget.MaterialComponents.Button.TextButton"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:clickable="false"
-                                    android:ellipsize="end"
-                                    android:focusable="false"
-                                    android:gravity="center_vertical"
-                                    android:maxLines="1"
-                                    android:paddingStart="5dp"
-                                    android:textAllCaps="false"
-                                    android:textColor="?attr/iconGrayBackground"
-                                    android:textSize="15sp"
-                                    android:textStyle="bold"
-                                    android:visibility="visible"
-                                    tools:ignore="RtlSymmetry"
-                                    tools:text="S1E1 Episode 1"
-                                    tools:visibility="visible" />
-
-                                <TextView
-                                    android:id="@+id/result_resume_series_progress_text"
-                                    style="@style/Widget.MaterialComponents.Button.TextButton"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:clickable="false"
-                                    android:focusable="false"
-                                    android:gravity="center"
-                                    android:maxLines="1"
-                                    android:paddingStart="5dp"
-                                    android:textAllCaps="false"
-                                    android:textColor="?attr/iconGrayBackground"
-                                    android:textSize="15sp"
-                                    android:textStyle="bold"
-                                    android:visibility="gone"
-                                    tools:ignore="RtlSymmetry"
-                                    tools:text="69m remaining"
-                                    tools:visibility="visible" />
-                            </LinearLayout>
-                        </FrameLayout>
-
-                        <LinearLayout
-                            android:id="@+id/result_resume_parent"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:visibility="gone"
-                            tools:visibility="visible">
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginStart="0dp"
+                                android:layout_marginEnd="0dp"
+                                android:nextFocusUp="@id/result_bookmark_Button"
+                                android:nextFocusDown="@id/result_download_movie"
+                                android:text="@string/resume"
+                                app:icon="@drawable/ic_baseline_play_arrow_24"
+                                tools:visibility="visible"
+                                android:visibility="gone"
+                                android:ellipsize="end"
+                                android:maxLines="1"/>
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/result_next_series_button"
                                 style="@style/WhiteButton"
                                 android:layout_width="match_parent"
+
                                 android:layout_gravity="center_vertical"
-                                android:layout_marginVertical="5dp"
                                 android:layout_marginStart="0dp"
                                 android:layout_marginEnd="0dp"
-                                android:ellipsize="end"
-                                android:maxLines="1"
                                 android:nextFocusUp="@id/result_bookmark_Button"
                                 android:nextFocusDown="@id/result_download_movie"
-                                android:text="S1E2 Episode 2"
-                                android:visibility="gone"
+                                android:text="@string/next_episode"
                                 app:icon="@drawable/cast_ic_mini_controller_skip_next"
-                                tools:visibility="visible" />
+                                android:visibility="gone"
+                                tools:visibility="visible"
+                                android:ellipsize="end"
+                                android:maxLines="1"/>
+
+                            <!--                            <TextView-->
+                            <!--                                android:id="@+id/result_resume_series_title"-->
+                            <!--                                android:layout_width="match_parent"-->
+                            <!--                                android:layout_height="wrap_content"-->
+                            <!--                                android:textColor="?attr/textColor"-->
+                            <!--                                android:textSize="17sp"-->
+                            <!--                                android:textStyle="bold"-->
+                            <!--                                tools:text="S1E1 Episode 1"-->
+                            <!--                                android:visibility="gone"/>-->
                         </LinearLayout>
 
                         <LinearLayout
                             android:id="@+id/result_movie_parent"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginVertical="5dp"
                             android:orientation="vertical"
                             tools:visibility="visible">
 
-                            <LinearLayout
-                                android:id="@+id/result_play_parent"
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/result_play_movie"
+                                style="@style/WhiteButton"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginVertical="5dp">
 
-                                <com.google.android.material.button.MaterialButton
-                                    android:id="@+id/result_play_movie"
-                                    style="@style/WhiteButton"
-                                    android:layout_width="match_parent"
-                                    android:layout_gravity="center_vertical"
-                                    android:layout_marginStart="0dp"
-                                    android:layout_marginEnd="0dp"
-                                    android:nextFocusUp="@id/result_bookmark_Button"
-                                    android:nextFocusDown="@id/result_download_movie"
-                                    android:text="@string/play_movie_button"
-                                    android:visibility="visible"
-                                    app:icon="@drawable/ic_baseline_play_arrow_24">
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginStart="0dp"
+                                android:layout_marginEnd="0dp"
+                                android:layout_marginBottom="10dp"
+                                android:nextFocusUp="@id/result_bookmark_Button"
+                                android:nextFocusDown="@id/result_download_movie"
+                                android:text="@string/play_movie_button"
+                                android:visibility="visible"
+                                app:icon="@drawable/ic_baseline_play_arrow_24">
 
-                                    <requestFocus />
+                                <requestFocus />
 
-                                </com.google.android.material.button.MaterialButton>
-                            </LinearLayout>
+                            </com.google.android.material.button.MaterialButton>
+
+
                             <!--<com.google.android.material.button.MaterialButton
                                     android:nextFocusUp="@id/result_play_movie"
                                     android:nextFocusDown="@id/result_season_button"
@@ -739,7 +683,6 @@
                                 android:id="@+id/download_button"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="5dp"
                                 app:download_layout="@layout/download_button_layout" />
 
                             <!--<androidx.core.widget.ContentLoadingProgressBar
@@ -765,6 +708,44 @@
                                       android:layout_width="wrap_content"
                                       android:layout_height="match_parent" />-->
                         </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/result_resume_progress_holder"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="5dp"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <androidx.core.widget.ContentLoadingProgressBar
+                                android:id="@+id/result_resume_series_progress"
+                                style="?android:attr/progressBarStyleHorizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="20dp"
+                                android:layout_gravity="end|center_vertical"
+                                android:layout_weight="1"
+                                android:indeterminate="false"
+                                android:max="100"
+                                android:progress="0"
+                                android:progressBackgroundTint="?attr/colorPrimary"
+                                android:visibility="visible"
+                                tools:progress="50"
+                                tools:visibility="visible" />
+
+                            <TextView
+                                android:id="@+id/result_resume_series_progress_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="0"
+                                android:gravity="center"
+                                android:paddingStart="10dp"
+                                android:textColor="?attr/grayTextColor"
+                                tools:ignore="RtlSymmetry"
+                                tools:text="69m\nremaining" />
+                        </LinearLayout>
+
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -861,6 +842,7 @@
                                     tools:visibility="visible">
 
                                 </ImageView>
+
                                 <TextView
                                     android:id="@+id/result_episodes_text"
                                     android:layout_width="wrap_content"
