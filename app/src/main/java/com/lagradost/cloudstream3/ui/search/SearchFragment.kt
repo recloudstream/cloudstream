@@ -521,7 +521,38 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
                     }
 
                     submitList(newItems)
-                    //notifyDataSetChanged()
+                    
+                    val firstNonEmptyIndex = newItems.indexOfFirst { it.list.list.isNotEmpty() }
+                    if (firstNonEmptyIndex != -1 && pinnedOrder.isNotEmpty()) {
+                        val masterRecycler = binding.searchMasterRecycler
+
+                        masterRecycler.post {
+                            try {
+                                masterRecycler.scrollToPosition(firstNonEmptyIndex)
+
+                                masterRecycler.post {
+                                    val parentVH = masterRecycler.findViewHolderForAdapterPosition(firstNonEmptyIndex)
+                                    val parentView = parentVH?.itemView
+                                        ?: masterRecycler.layoutManager?.findViewByPosition(firstNonEmptyIndex)
+
+                                    val childRecycler = parentView
+                                        ?.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.home_child_recyclerview)
+
+                                    childRecycler?.post {
+                                        val firstChild =
+                                            childRecycler.layoutManager?.findViewByPosition(0)
+                                                ?: childRecycler.findViewHolderForAdapterPosition(0)?.itemView
+
+                                        firstChild?.let { view ->
+                                            view.isFocusableInTouchMode = true
+                                            view.requestFocus()
+                                        }
+                                    }
+                                }
+                            } catch (_: Throwable) {
+                            }
+                        }
+                    }
                 }
             } catch (e: Exception) {
                 logError(e)
