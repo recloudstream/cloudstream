@@ -449,7 +449,7 @@
     <string name="plugin">plugins</string>
     <string name="delete_repository_plugins">Cela supprimera également tous les plugins du repository</string>
     <string name="blank_repo_message">CloudStream n\'a aucun site installé par défaut. Vous devez installer les sites à partir de dépôts.
-\n
+
 \nRejoignez notre Discord ou cherchez en ligne.</string>
     <string name="extension_language">Langage</string>
     <string name="enable_skip_op_from_database_des">Afficher les popups skip pour les intro / fins</string>
@@ -516,11 +516,11 @@
     <string name="already_voted">Vous avez déjà voté</string>
     <string name="disable">Désactivé</string>
     <string name="quality_profile_help">Ici, vous pouvez modifier la façon dont les sources sont ordonnées. Si une vidéo a une priorité plus élevée, elle apparaîtra plus haut dans la sélection de la source. La somme de la priorité source et de la priorité qualité est la priorité vidéo.
-\n
+
 \nSource A : 3
 \nQualité B : 7
 \nLa priorité vidéo combinée sera de 10.
-\n
+
 \nREMARQUE : Si la somme est de 10 ou plus, le joueur sautera automatiquement le chargement lorsque ce lien est chargé !</string>
     <string name="no_plugins_found_error">Aucun plugin trouvé dans ce dossier</string>
     <string name="no_repository_found_error">Dépôt introuvable, vérifiez l\'URL et essayez avec un VPN</string>
@@ -555,9 +555,9 @@
     <string name="favorites_list_name">Favoris</string>
     <string name="logged_account" formatted="true">Connecté en tant que %s</string>
     <string name="duplicate_message_multiple" formatted="true">Des doublons potentiels ont été trouvés dans votre bibliothèque :
-\n
+
 \n%s
-\n
+
 \nSouhaitez-vous ajouter cet élément, remplacer les éléments existants ou annuler l\'action ?</string>
     <string name="enter_pin_with_name" formatted="true">Saisir le code PIN pour %s</string>
     <string name="duplicate_title">Doublon potentiel trouvé</string>
@@ -566,7 +566,7 @@
     <string name="action_unsubscribe">Se désabonner</string>
     <string name="action_subscribe">S\'abonner</string>
     <string name="duplicate_message_single" formatted="true">Il semble qu\'un élément potentiellement dupliqué existe déjà dans votre bibliothèque : \'%s.
-\n
+
 \nSouhaitez-vous ajouter cet élément, remplacer l\'élément existant ou annuler l\'action ?</string>
     <string name="enter_current_pin">Saisir le code PIN actuel</string>
     <string name="rotate_video">Pivoter</string>
@@ -753,4 +753,10 @@
         <item quantity="many">%d téléchargements en attente</item>
         <item quantity="other">%d téléchargements en attente</item>
     </plurals>
+<string name="subtitles_dual_enabled">Double sous-titres (expérimental)</string>
+    <string name="subtitles_edit_primary">Primaire</string>
+    <string name="subtitles_edit_secondary">Secondaire</string>
+    <string name="subtitles_secondary_unsupported_embedded">Les sous-titres secondaires ne prennent pas encore en charge les pistes intégrées</string>
+    <string name="subtitles_secondary_unsupported_combo">Cette combinaison de sous-titres n\'est pas prise en charge pour les sous-titres doubles</string>
+    <string name="subtitles_secondary_load_failed">Échec du chargement des sous-titres doubles</string>
 </resources>

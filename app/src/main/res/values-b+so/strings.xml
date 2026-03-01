@@ -428,9 +428,9 @@
     <string name="plugins_not_downloaded" formatted="true">Aan dejinayn: %d</string>
     <string name="plugins_updated" formatted="true">Waxa la cusbooneysiiyey %d sidkane</string>
     <string name="blank_repo_message">Ugu horreyn cloudstream ma laha wax websaydyo uu filimaanta kasoo xigto, waxay noqonaysaa inaad adigu rakibato reboositarradooda...
-\n
+
 \nSababtuna waa in mar dhexdaas ah na dacweeyeen shirkadda Sky UK Limited🤮, markaa si aan mar dambe taasi u dhicin anagu kuma rakibi karno...
-\n
+
 \nDiscord naga soo qabo ama internetka ka baadh.</string>
     <string name="download_all_plugins_from_repo">Soo deji dhamaan sidkanayaasha reboositarkan?</string>
     <string name="result_poster_img_des">Boodhka</string>
@@ -472,4 +472,11 @@
     <string name="skip_type_op">Bilowga</string>
     <string name="skip_type_mixed_op">Bilow isku qasan</string>
     <string name="skip_type_creddits">Qoraalka dhamaadka</string>
+
+    <string name="subtitles_dual_enabled">Laba qoraal hoosaadyo (tijaabo)</string>
+    <string name="subtitles_edit_primary">Asal ahaan</string>
+    <string name="subtitles_edit_secondary">Sare</string>
+    <string name="subtitles_secondary_unsupported_embedded">Qoraal-hoosaadyada labaad weli ma taageeraan raad-raacyada guntanka ah</string>
+    <string name="subtitles_secondary_unsupported_combo">Isku darka qoraal-hoosaadkan laguma taageero laba qoraal-hoosaadyo</string>
+    <string name="subtitles_secondary_load_failed">Ku guuldarraystay in la soo geliyo laba qoraal-hoosaadyo</string>
 </resources>

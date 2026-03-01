@@ -386,7 +386,7 @@
     <string name="plugins_not_downloaded" formatted="true">Nie pobrano: %d</string>
     <string name="plugins_updated">Zaaktualizowano %d rozszerzeń</string>
     <string name="blank_repo_message">CloudStream nie ma domyślnie zainstalowanych żadnych witryn. Musisz zainstalować witryny z repozytoriów.
-\n
+
 \nDołącz do naszego Discorda lub poszukaj online.</string>
     <string name="view_public_repositories_button">Zobacz repozytoria społeczności</string>
     <string name="view_public_repositories_button_short">Publiczna lista</string>
@@ -516,11 +516,11 @@
     <string name="jsdelivr_enabled">Nie udało się połączyć z GitHubem. Włączono serwer pośredniczący jsDelivr…</string>
     <string name="watch_quality_pref_data">Domyślna jakość (dane mobilne)</string>
     <string name="quality_profile_help">W tym miejscu można zmienić kolejność źródeł. Jeśli wideo ma wyższy priorytet, pojawi się wyżej w wyborze źródła. Priorytet wideo jest sumą priorytetu źródła i priorytetu jakości.
-\n
+
 \nŹródło A: 3
 \nJakość B: 7
 \nŁączny priorytet wideo będzie wynosił 10.
-\n
+
 \nUWAGA: Jeśli suma wynosi 10 lub więcej, odtwarzacz automatycznie pominie ładowanie po załadowaniu tego łącza!</string>
     <string name="profile_number">Profil %d</string>
     <string name="wifi">Wi-Fi</string>
@@ -542,9 +542,9 @@
     <string name="favorites_list_name">Ulubione</string>
     <string name="favorite_added">Dodano %s do ulubionych</string>
     <string name="duplicate_message_multiple" formatted="true">W swojej bibliotece znaleziono potencjalne duplikaty:
-\n
+
 \n%s
-\n
+
 \nCzy chcesz dodać ten element, zastąpić istniejące, czy anulować operację?</string>
     <string name="enter_pin_with_name" formatted="true">Wprowadź PIN dla %s</string>
     <string name="backup_frequency">Częstotliwość tworzenia kopii zapasowych</string>
@@ -563,7 +563,7 @@
     <string name="action_remove_from_favorites">Usuń z ulubionych</string>
     <string name="select_an_account">Wybierz konto</string>
     <string name="duplicate_message_single" formatted="true">Wygląda się, że potencjalny duplikat już znajduje się w bibliotece: \'%s\'. \'
-\n
+
 \nCzy chciałbyś dodać ten element, zastąpić istniejący, czy anulować akcję?</string>
     <string name="enter_pin">Wprowadź PIN</string>
     <string name="pin">PIN</string>
@@ -634,17 +634,17 @@
     <string name="downloads_delete_select">Zaznacz elementy do usunięcia</string>
     <string name="deselect_all">Odznacz wszystkie</string>
     <string name="delete_message_multiple" formatted="true">Czy na pewno chcesz na stałe usunąć następujące elementy?
-\n
+
 \n%s</string>
     <string name="delete_message_series_section" formatted="true">Usuniesz na stale wszystkie odcinki następującego serialu:
-\n
+
 \n%s</string>
     <string name="delete_message_series_only" formatted="true">Czy na pewno chcesz na stałe usunąć wszystkie odcinki następującego serialu?
-\n
+
 \n%s</string>
     <string name="delete_files">Usuń pliki</string>
     <string name="delete_message_series_episodes" formatted="true">Czy na pewno chcesz na stałe usunąć następujące odcinki %1$s?
-\n
+
 \n%2$s</string>
     <string name="delete_format" formatted="true">Usuń (%1$d | %2$s)</string>
     <string name="preview_seekbar">Podgląd paska przewijania</string>
@@ -766,4 +766,11 @@
     </plurals>
     <string name="source_priority">Priorytet źródła</string>
     <string name="source_priority_help">Zdecyduj, jak mają być sortowane źródła wideo w odtwarzaczu</string>
+
+    <string name="subtitles_dual_enabled">Podwójne napisy (eksperymentalne)</string>
+    <string name="subtitles_edit_primary">Podstawowy</string>
+    <string name="subtitles_edit_secondary">Wtórny</string>
+    <string name="subtitles_secondary_unsupported_embedded">Napisy dodatkowe nie obsługują jeszcze osadzonych ścieżek</string>
+    <string name="subtitles_secondary_unsupported_combo">Ta kombinacja napisów nie jest obsługiwana w przypadku podwójnych napisów</string>
+    <string name="subtitles_secondary_load_failed">Nie udało się załadować podwójnych napisów</string>
 </resources>

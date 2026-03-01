@@ -362,7 +362,7 @@
     <string name="repository_url_hint">URL adresa repozitára</string>
     <string name="view_public_repositories_button_short">Verejný zoznam</string>
     <string name="blank_repo_message">CloudStream nemá nainštalované žiadne stránky v predvolenom nastavení. Musíte nainštalovať stránky z repozitára.
-\n
+
 \nPripojte sa k nášmu Discord alebo vyhľadajte online.</string>
     <string name="update_notification_failed">Nepodarilo sa nainštalovať novú verziu aplikácie</string>
     <string name="download_all_plugins_from_repo">Upozornenie: CloudStream 3 nenesie žiadnu zodpovednosť za používanie rozšírenia tretích strán a neposkytuje žiadnu podporu pre nich!</string>
@@ -457,4 +457,11 @@
     <string name="podcast_singluar">Podcast</string>
     <string name="all">Všetko</string>
     <string name="encoding_error">Chyba kódovania</string>
+
+    <string name="subtitles_dual_enabled">Dvojité titulky (experimentálne)</string>
+    <string name="subtitles_edit_primary">Primárne</string>
+    <string name="subtitles_edit_secondary">Sekundárne</string>
+    <string name="subtitles_secondary_unsupported_embedded">Sekundárne titulky zatiaľ nepodporujú vložené stopy</string>
+    <string name="subtitles_secondary_unsupported_combo">Táto kombinácia titulkov nie je podporovaná pre dvojité titulky</string>
+    <string name="subtitles_secondary_load_failed">Nepodarilo sa načítať duálne titulky</string>
 </resources>

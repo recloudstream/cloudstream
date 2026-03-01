@@ -298,9 +298,9 @@
     <string name="setup_extensions_subtext">사용하려는 사이트 목록 다운로드</string>
     <string name="plugins_downloaded" formatted="true">다운로드됨: %d</string>
     <string name="blank_repo_message">CloudStream에는 기본적으로 설치된 사이트가 없습니다. 저장소에서 사이트를 설치해야 합니다.
-\n
+
 \nSky UK Limited의 무분별한 DMCA 게시 중단으로 인해 앱에서 저장소 사이트를 연결 할 수 없습니다.
-\n
+
 \nDiscord에 가입하거나 온라인으로 검색해 보세요.</string>
     <string name="view_public_repositories_button">커뮤니티 저장소 보기</string>
     <string name="view_public_repositories_button_short">공개 목록</string>
@@ -573,15 +573,15 @@
     <string name="action_subscribe">구독</string>
     <string name="use">사용</string>
     <string name="duplicate_message_single" formatted="true">당신의 라이브러리에 이미 잠재적으로 중복된 항목이 존재합니다: \'%s\'.
-\n
+
 \n이 항목을 그래도 추가하시겠습니까, 기존 항목을 교체하시겠습니까, 아니면 작업을 취소하시겠습니까?</string>
     <string name="duplicate_replace_all">전부 대체</string>
     <string name="duplicate_add">추가</string>
     <string name="favorite_removed">즐겨찾기에서 %s 제거</string>
     <string name="duplicate_message_multiple" formatted="true">당신의 라이브러리에 잠재적으로 중복된 항목이 발견되었습니다:
-\n
+
 \n%s
-\n
+
 \n이 항목을 그래도 추가하시겠습니까, 기존 항목을 교체하시겠습니까, 아니면 작업을 취소하시겠습니까?</string>
     <string name="select_an_account">계정 선택</string>
     <string name="use_default_account">기본 계정 사용</string>
@@ -602,11 +602,11 @@
     <string name="device_pin_url_message">스마트폰이나 컴퓨터에서 <b>%s</b>를 방문하여 위의 코드를 입력하세요</string>
     <string name="battery_dialog_message">구독 TV 프로그램에 대한 중단 없는 다운로드 및 알림을 보장하기 위해 CloudStream은 백그라운드에서 실행할 수 있는 권한이 필요합니다. 확인을 누르면 App info로 이동합니다. 거기서 𝘼𝙥𝙥 𝙗𝙖𝙩𝙩𝙚𝙧𝙮 𝙪𝙨𝙖𝙜𝙚로 스크롤하여 배터리 사용량을 𝙐𝙣𝙧𝙚𝙨𝙩𝙧𝙞𝙘𝙩𝙚𝙙로 설정합니다. 이 권한은 CS3가 배터리를 소모한다는 의미가 아닙니다. 알림을 받거나 공식 확장에서 동영상을 다운로드하는 등 필요할 때만 백그라운드에서 작동합니다. 취소를 선택한 경우 나중에 𝙂𝙚𝙣𝙚𝙧𝙖𝙡 𝙎𝙚𝙩𝙩𝙞𝙣𝙜𝙨에서 이 설정을 조정할 수 있습니다.</string>
     <string name="quality_profile_help">여기서 소스의 순서를 변경할 수 있습니다. 비디오의 우선 순위가 높은 경우에는 소스 선택에 더 높게 나타납니다. 소스 우선 순위와 품질 우선 순위의 합이 비디오 우선 순위입니다.
-\n
+
 \n참고 A: 3
 \n품질 B: 7
 \n총 비디오 우선 순위는 10입니다.
-\n
+
 \n참고: 합이 10 이상이면 해당 링크가 로드되면 플레이어는 자동으로 로드를 건너뜁니다!</string>
     <string name="next_season_episode_format" formatted="true">시즌 %1$d 에피소드 %2$d이(가) 출시됩니다</string>
     <string name="result_search_tooltip">다른 확장자에서 검색</string>
@@ -634,16 +634,16 @@
     <string name="delete_files">파일 삭제</string>
     <string name="delete_format" formatted="true">삭제 (%1$d | %2$s)</string>
     <string name="delete_message_multiple" formatted="true">다음 항목을 영구적으로 삭제 하시겠습니까??
-\n
+
 \n%s</string>
     <string name="delete_message_series_episodes" formatted="true">다음 에피소드를 영구적으로 삭제 하시겠습니까? %1$s?
-\n
+
 \n%2$s</string>
     <string name="delete_message_series_section" formatted="true">또한 다음 시리즈의 모든 에피소드를 영구적으로 삭제합니다:
-\n
+
 \n%s</string>
     <string name="delete_message_series_only" formatted="true">다음 시리즈의 모든 에피소드를 영구적으로 삭제 하시겠습니까??
-\n
+
 \n%s</string>
     <string name="sort_release_date_new">출시일 (새로운 것부터 오래된 것)</string>
     <string name="sort_release_date_old">출시일 (오래된것부터 새로운것)</string>
@@ -732,4 +732,11 @@
     <string name="top_left">왼쪽 위</string>
     <string name="top_center">중앙 위</string>
     <string name="top_right">오른쪽 위</string>
+
+    <string name="subtitles_dual_enabled">이중 자막(실험적)</string>
+    <string name="subtitles_edit_primary">주요한</string>
+    <string name="subtitles_edit_secondary">반성</string>
+    <string name="subtitles_secondary_unsupported_embedded">보조 자막은 아직 포함된 트랙을 지원하지 않습니다.</string>
+    <string name="subtitles_secondary_unsupported_combo">이 자막 조합은 이중 자막에는 지원되지 않습니다.</string>
+    <string name="subtitles_secondary_load_failed">이중 자막을 로드하지 못했습니다.</string>
 </resources>

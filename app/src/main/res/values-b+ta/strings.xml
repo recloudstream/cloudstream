@@ -676,4 +676,11 @@
     <string name="download_time_left_hour_min_sec_format" formatted="true">%1$d மணி %2$d நிமிடம் %3$d விநாடி</string>
     <string name="download_time_left_min_sec_format" formatted="true">%1$d நிமிடம் %2$d விநாடி</string>
     <string name="download_time_left_sec_format" formatted="true">%1$d விநாடி</string>
+
+    <string name="subtitles_dual_enabled">இரட்டை வசன வரிகள் (பரிசோதனை)</string>
+    <string name="subtitles_edit_primary">முதன்மை</string>
+    <string name="subtitles_edit_secondary">இரண்டாம் நிலை</string>
+    <string name="subtitles_secondary_unsupported_embedded">இரண்டாம் நிலை வசனங்கள் இன்னும் உட்பொதிக்கப்பட்ட டிராக்குகளை ஆதரிக்கவில்லை</string>
+    <string name="subtitles_secondary_unsupported_combo">இந்த வசன சேர்க்கை இரட்டை வசனங்களுக்கு ஆதரவளிக்காது</string>
+    <string name="subtitles_secondary_load_failed">இரட்டை வசனங்களை ஏற்றுவதில் தோல்வி</string>
 </resources>

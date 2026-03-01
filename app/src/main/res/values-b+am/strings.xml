@@ -108,4 +108,11 @@
     <string name="action_open_watching">ተጨማሪ መረጃ</string>
     <string name="search_provider_text_types">ዓይነቶችን በመጠቀም ይፈልጉ</string>
     <string name="subs_import_text" formatted="true">ቅርጸ-ቁምፊዎችን በ%s ውስጥ በማስቀመጥ ያጫኑ</string>
+
+<string name="subtitles_dual_enabled">ድርብ የትርጉም ጽሑፎች (የሙከራ)</string>
+    <string name="subtitles_edit_primary">ዋና</string>
+    <string name="subtitles_edit_secondary">ሁለተኛ ደረጃ</string>
+    <string name="subtitles_secondary_unsupported_embedded">የሁለተኛ ደረጃ የትርጉም ጽሑፎች እስካሁን የተካተቱ ትራኮችን አይደግፉም።</string>
+    <string name="subtitles_secondary_unsupported_combo">ይህ የትርጉም ጽሑፍ ጥምረት ለድርብ የትርጉም ጽሑፎች አይደገፍም።</string>
+    <string name="subtitles_secondary_load_failed">ድርብ የትርጉም ጽሑፎችን መጫን አልተሳካም።</string>
 </resources>

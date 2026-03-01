@@ -413,7 +413,7 @@
     <string name="plugins_not_downloaded" formatted="true">Non scaricato: %d</string>
     <string name="plugins_updated" formatted="true">Aggiornati %d plugin</string>
     <string name="blank_repo_message">CloudStream non ha siti installati per impostazione predefinita. È necessario installare i siti dai repository.
-\n
+
 \nUnisciti al nostro Discord o cerca online.</string>
     <string name="view_public_repositories_button">Visualizza i repository della comunità</string>
     <string name="view_public_repositories_button_short">Lista pubblica</string>
@@ -535,11 +535,11 @@
     <string name="subscription_episode_released">L\'episodio %d è stato rilasciato!</string>
     <string name="watch_quality_pref_data">Qualità di visualizzazione preferita (Dati mobili)</string>
     <string name="quality_profile_help">Qui puoi cambiare l\'ordine delle fonti. Se un video ha una priorità maggiore, apparirà più in alto nella selezione delle fonti. La somma tra la priorità della fonte e la priorità della qualità è la priorità video.
-\n
+
 \nFonte A: 3
 \nQualità B: 7
 \nAvranno una priorità video combinata di 10.
-\n
+
 \nNOTA: se la somma è pari o superiore a 10, il lettore salterà automaticamente il caricamento quando viene caricato quel link!</string>
     <string name="profile_number">Profilo %d</string>
     <string name="wifi">Wi-Fi</string>
@@ -561,9 +561,9 @@
     <string name="favorites_list_name">Preferiti</string>
     <string name="favorite_added">%s aggiunto ai preferiti</string>
     <string name="duplicate_message_multiple" formatted="true">Dei possibili duplicati sono stati trovati nella tua libreria:
-\n
+
 \n%s
-\n
+
 \nVorresti aggiungere l\'oggetto alla libreria comunque, rimpiazzare l\'esistente, o cancellare l\'azione?</string>
     <string name="backup_frequency">Frequenza di backup</string>
     <string name="duplicate_title">Trovato Possibile Duplicato</string>
@@ -578,7 +578,7 @@
     <string name="action_remove_from_favorites">Rimuovi dai preferiti</string>
     <string name="select_an_account">Seleziona un account</string>
     <string name="duplicate_message_single">Sembra che nella tua libreria esista già un elemento potenzialmente duplicato: \'%s.\'
-\n
+
 \nDesideri aggiungere comunque questo elemento, sostituire quello esistente o annullare l\'azione?</string>
     <string name="enter_pin">Inserisci PIN</string>
     <string name="pin">PIN</string>
@@ -653,18 +653,18 @@
     <string name="deselect_all">Deseleziona tutto</string>
     <string name="delete_format" formatted="true">Elimina (%1$d | %2$s)</string>
     <string name="delete_message_series_episodes" formatted="true">Sei sicuro di voler eliminare definitivamente i seguenti episodi in %1$s?
-\n
+
 \n%2$s</string>
     <string name="delete_message_series_section" formatted="true">Eliminerai definitivamente anche tutti gli episodi delle seguenti serie:
-\n
+
 \n%s</string>
     <string name="delete_message_series_only" formatted="true">Sei sicuro di voler eliminare definitivamente tutti gli episodi delle seguenti serie?
-\n
+
 \n%s</string>
     <string name="sort_release_date_old">Data di rilascio (dal più vecchio)</string>
     <string name="delete_files">Elimina file</string>
     <string name="delete_message_multiple" formatted="true">Sei sicuro di voler eliminare definitivamente i seguenti elementi?
-\n
+
 \n%s</string>
     <string name="preview_seekbar">Anteprima barra di avanzamento</string>
     <string name="preview_seekbar_desc">Abilita miniatura di anteprima sulla barra di avanzamento</string>
@@ -783,4 +783,11 @@
     </plurals>
     <string name="source_priority">Priorità sorgente</string>
     <string name="source_priority_help">Decidi come le sorgenti video devono essere ordinate nel lettore</string>
+
+    <string name="subtitles_dual_enabled">Doppio sottotitolo (sperimentale)</string>
+    <string name="subtitles_edit_primary">Primario</string>
+    <string name="subtitles_edit_secondary">Secondario</string>
+    <string name="subtitles_secondary_unsupported_embedded">I sottotitoli secondari non supportano ancora le tracce incorporate</string>
+    <string name="subtitles_secondary_unsupported_combo">Questa combinazione di sottotitoli non è supportata per i sottotitoli doppi</string>
+    <string name="subtitles_secondary_load_failed">Impossibile caricare i doppi sottotitoli</string>
 </resources>

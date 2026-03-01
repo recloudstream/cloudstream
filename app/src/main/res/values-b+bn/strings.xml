@@ -357,4 +357,11 @@
     <string name="play_from_beginning_img_des">শুরু থেকে চালু করুন</string>
     <string name="speech_recognition_unavailable">স্পিচ রিকগনিশন উপলব্ধ নেই</string>
     <string name="begin_speaking">কথা বলা শুরু করুন…</string>
+
+<string name="subtitles_dual_enabled">দ্বৈত সাবটাইটেল (পরীক্ষামূলক)</string>
+    <string name="subtitles_edit_primary">প্রাথমিক</string>
+    <string name="subtitles_edit_secondary">মাধ্যমিক</string>
+    <string name="subtitles_secondary_unsupported_embedded">সেকেন্ডারি সাবটাইটেল এখনও এমবেডেড ট্র্যাক সমর্থন করে না৷</string>
+    <string name="subtitles_secondary_unsupported_combo">এই সাবটাইটেল সমন্বয় দ্বৈত সাবটাইটেলের জন্য সমর্থিত নয়</string>
+    <string name="subtitles_secondary_load_failed">ডুয়াল সাবটাইটেল লোড করতে ব্যর্থ হয়েছে৷</string>
 </resources>

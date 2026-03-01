@@ -402,7 +402,7 @@
     <string name="plugins_disabled" formatted="true">مُعطل %d</string>
     <string name="plugins_not_downloaded" formatted="true">غير مُحمل: %d</string>
     <string name="blank_repo_message">لا يحتوي CloudStream على مواقع مثبتة افتراضيًا. تحتاج إلى تثبيت المواقع من المستودعات.
-\n
+
 \nانضم إلى ديسكورد أو ابحث عبر الإنترنت.</string>
     <string name="view_public_repositories_button">عرض مستودعات المجتمع</string>
     <string name="view_public_repositories_button_short">قائمة عامة</string>
@@ -534,11 +534,11 @@
     <string name="profiles">الملفات التعريفية</string>
     <string name="help">مساعدة</string>
     <string name="quality_profile_help">‎‎هنا يمكنك تغيير طريقة ترتيب المصادر. إذا كان للفيديو أولوية أعلى ، فسيظهر في الأعلى في اختيار المصدر. يمثل مجموع أولوية المصدر وأولوية الجودة أولوية الفيديو.
-\n
+
 \nالمصدر أ: 3
 \nالجودة ب: 7
 \nسيكون لها أولوية فيديو مجمعة تبلغ 10.
-\n
+
 \nملاحظة: إذا كان المجموع 10 أو أكثر ، فسيتخطى المشغل التحميل تلقائيًا عند تحميل هذا الرابط!</string>
     <string name="qualities">النوعيات</string>
     <string name="profile_background_des">خلفية الملف الشخصي</string>
@@ -553,9 +553,9 @@
     <string name="favorites_list_name">المفضلة</string>
     <string name="favorite_added">تمت إضافة %s إلى المفضلة</string>
     <string name="duplicate_message_multiple" formatted="true">احتمال وجود تكرارات في مكتبتك.
-\n
+
 \n%s
-\n
+
 \nهل تريد الاضافة على اي حال مستبدلاً النسخة الموجودة بالفعل, أم تفضل إلغاء العملية؟</string>
     <string name="duplicate_title">احتمال أن يكون موجود بالفعل</string>
     <string name="lock_profile">قفل الحساب</string>
@@ -570,7 +570,7 @@
     <string name="action_remove_from_favorites">إزالة من المفضلة</string>
     <string name="select_an_account">اختار حساب</string>
     <string name="duplicate_message_single">يبدو أن هناك عنصرًا مكررًا موجود بالفعل في مكتبتك: \'%s\'.
-\n
+
 \nهل ترغب في إضافة هذا العنصر على أية حال، أو استبدال العنصر الموجود، أو إلغاء الإجراء؟</string>
     <string name="enter_pin">ادخال ال PIN</string>
     <string name="pin">PIN</string>
@@ -643,19 +643,19 @@
     <string name="select_all">تحديد الكل</string>
     <string name="delete_files">حذف الملفات</string>
     <string name="delete_message_series_episodes" formatted="true">هل أنت متأكد أنك تريد حذف الحلقات التالية نهائيًا في %1$s ؟
-\n
+
 \n%2$s</string>
     <string name="delete_message_series_section" formatted="true">ستقوم أيضًا بحذف جميع الحلقات في السلسلة التالية نهائيًا:
-\n
+
 \n%s</string>
     <string name="delete_format" formatted="true">حذف (%1$d | %2$s)</string>
     <string name="offline_file">متاح للمشاهدة في وضع عدم الاتصال</string>
     <string name="deselect_all">إلغاء تحديد الكل</string>
     <string name="delete_message_multiple" formatted="true">هل أنت متأكد أنك تريد حذف العناصر التالية نهائيًا ؟
-\n
+
 \n%s</string>
     <string name="delete_message_series_only" formatted="true">هل أنت متأكد أنك تريد حذف جميع الحلقات في السلسلة التالية نهائيًا ؟
-\n
+
 \n%s</string>
     <string name="preview_seekbar">معاينة شريط البحث</string>
     <string name="preview_seekbar_desc">تمكين معاينة الصورة المصغرة على شريط البحث</string>
@@ -756,4 +756,11 @@
     <string name="show_episode_text">نص الحلقة</string>
     <string name="video_info">معلومات الوسائط</string>
     <string name="source_name">اسم المصدر</string>
+
+<string name="subtitles_dual_enabled">ترجمات مزدوجة (تجريبية)</string>
+    <string name="subtitles_edit_primary">أساسي</string>
+    <string name="subtitles_edit_secondary">ثانوي</string>
+    <string name="subtitles_secondary_unsupported_embedded">الترجمات الثانوية لا تدعم المسارات المضمنة حتى الآن</string>
+    <string name="subtitles_secondary_unsupported_combo">مجموعة الترجمة هذه غير مدعومة للترجمات المزدوجة</string>
+    <string name="subtitles_secondary_load_failed">فشل تحميل الترجمات المزدوجة</string>
 </resources>

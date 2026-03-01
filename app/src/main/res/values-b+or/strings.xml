@@ -158,4 +158,11 @@
     <string name="next_episode_format" formatted="true">ଏପିସୋଡ୍ %d ମୁକ୍ତିଲାଭ କରିବ</string>
     <string name="next_season_episode_format" formatted="true">ସିଜିନ୍ %1$d ଏପିସୋଡ୍ %2$d ମୁକ୍ତିଲାଭ କରିବ</string>
     <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dଘଣ୍ଟା %2$dମିନିଟ୍ %3$dସେକେଣ୍ଡ</string>
+
+    <string name="subtitles_dual_enabled">ଡୁଆଲ୍ ସବ୍ଟାଇଟ୍ (ପରୀକ୍ଷାମୂଳକ)</string>
+    <string name="subtitles_edit_primary">ପ୍ରାଥମିକ</string>
+    <string name="subtitles_edit_secondary">ଦ୍ Secondary ିତୀୟ</string>
+    <string name="subtitles_secondary_unsupported_embedded">ସେକେଣ୍ଡାରୀ ସବ୍ଟାଇଟ୍ସ ଏପର୍ଯ୍ୟନ୍ତ ଏମ୍ବେଡ୍ ହୋଇଥିବା ଟ୍ରାକକୁ ସମର୍ଥନ କରେନାହିଁ |</string>
+    <string name="subtitles_secondary_unsupported_combo">ଏହି ସବ୍ଟାଇଟ୍ ମିଶ୍ରଣ ଡୁଆଲ୍ ସବ୍ଟାଇଟ୍ ପାଇଁ ସମର୍ଥିତ ନୁହେଁ |</string>
+    <string name="subtitles_secondary_load_failed">ଡୁଆଲ୍ ସବ୍ଟାଇଟ୍ ଲୋଡ୍ କରିବାରେ ବିଫଳ |</string>
 </resources>

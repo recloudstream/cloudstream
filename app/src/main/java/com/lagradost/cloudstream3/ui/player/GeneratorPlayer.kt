@@ -47,6 +47,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.CloudStreamApp
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.LoadResponse
@@ -95,6 +96,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.subtitles.SUBTITLE_AUTO_SELECT_KEY
+import com.lagradost.cloudstream3.ui.subtitles.SUBTITLE_DUAL_ENABLED_KEY
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAutoSelectLanguageTagIETF
 import com.lagradost.cloudstream3.utils.AppContextUtils.html
@@ -165,10 +167,16 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     private var currentSelectedLink: Pair<ExtractorLink?, ExtractorUri?>? = null
     private var currentSelectedSubtitles: SubtitleData? = null
+    private var currentSelectedSecondarySubtitles: SubtitleData? = null
     private var currentMeta: Any? = null
     private var nextMeta: Any? = null
     private var isActive: Boolean = false
     private var isNextEpisode: Boolean = false // this is used to reset the watch time
+
+    private enum class SubtitleSelectionMode {
+        PRIMARY,
+        SECONDARY,
+    }
 
     private var preferredAutoSelectSubtitles: String? = null // null means do nothing, "" means none
 
@@ -177,6 +185,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     private fun startLoading() {
         player.release()
         currentSelectedSubtitles = null
+        currentSelectedSecondarySubtitles = null
         isActive = false
         binding?.overlayLoadingSkipButton?.isVisible = false
         binding?.playerLoadingOverlay?.isVisible = true
@@ -203,6 +212,27 @@ class GeneratorPlayer : FullScreenPlayer() {
         return player.setPreferredSubtitles(subtitle)
     }
 
+    private fun setSecondarySubtitles(subtitle: SubtitleData?): Boolean {
+        currentSelectedSecondarySubtitles = subtitle
+        return player.setSecondarySubtitles(subtitle)
+    }
+
+    private fun isDualSubtitleEnabled(): Boolean {
+        return getKey<Boolean>(SUBTITLE_DUAL_ENABLED_KEY) ?: false
+    }
+
+    private fun isDualSubtitleCombinationSupported(
+        primary: SubtitleData?,
+        secondary: SubtitleData?
+    ): Boolean {
+        if (secondary == null) return true
+        if (primary == null) return false
+        if (secondary.origin == SubtitleOrigin.EMBEDDED_IN_VIDEO) return false
+        if (primary.origin == SubtitleOrigin.EMBEDDED_IN_VIDEO) return false
+        val supportedOrigins = setOf(SubtitleOrigin.URL, SubtitleOrigin.DOWNLOADED_FILE)
+        return primary.origin in supportedOrigins && secondary.origin in supportedOrigins
+    }
+
     override fun embeddedSubtitlesFetched(subtitles: List<SubtitleData>) {
         viewModel.addSubtitles(subtitles.toSet())
     }
@@ -224,10 +254,6 @@ class GeneratorPlayer : FullScreenPlayer() {
         if (player.getIsPlaying()) {
             viewModel.forceClearCache = false
         }
-    }
-
-    private fun noSubtitles(): Boolean {
-        return setSubtitles(null, true)
     }
 
     private fun getPos(): Long {
@@ -516,8 +542,11 @@ class GeneratorPlayer : FullScreenPlayer() {
         isActive = true
         setPlayerDimen(null)
         setTitle()
-        if (!sameEpisode)
+        if (!sameEpisode) {
             hasRequestedStamps = false
+            currentSelectedSecondarySubtitles = null
+            setSecondarySubtitles(null)
+        }
 
         loadExtractorJob(link.first)
         // load player
@@ -1012,6 +1041,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     override fun showMirrorsDialogue() {
         try {
             currentSelectedSubtitles = player.getCurrentPreferredSubtitle()
+            currentSelectedSecondarySubtitles = player.getCurrentSecondarySubtitle()
             //println("CURRENT SELECTED :$currentSelectedSubtitles of $currentSubs")
             context?.let { ctx ->
                 val isPlaying = player.getIsPlaying()
@@ -1172,22 +1202,33 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 val subtitles = subtitlesGrouped.map { it.key.html() }
 
-                val subtitleGroupIndexStart =
-                    subtitlesGrouped.keys.indexOf(currentSelectedSubtitles?.originalName) + 1
-                var subtitleGroupIndex = subtitleGroupIndexStart
+                val dualEnabled = isDualSubtitleEnabled()
+                binding.subtitlesDualControls.isGone = !dualEnabled
 
-                val subtitleOptionIndexStart =
-                    subtitlesGrouped[currentSelectedSubtitles?.originalName]?.indexOfFirst { it.nameSuffix == currentSelectedSubtitles?.nameSuffix }
+                val primaryGroupIndexStart =
+                    subtitlesGrouped.keys.indexOf(currentSelectedSubtitles?.originalName) + 1
+                var primaryGroupIndex = primaryGroupIndexStart
+                val primaryOptionIndexStart =
+                    subtitlesGrouped[currentSelectedSubtitles?.originalName]
+                        ?.indexOfFirst { it.nameSuffix == currentSelectedSubtitles?.nameSuffix }
                         ?: 0
-                var subtitleOptionIndex = subtitleOptionIndexStart
+                var primaryOptionIndex = primaryOptionIndexStart
+
+                val secondaryGroupIndexStart =
+                    subtitlesGrouped.keys.indexOf(currentSelectedSecondarySubtitles?.originalName) + 1
+                var secondaryGroupIndex = secondaryGroupIndexStart
+                val secondaryOptionIndexStart =
+                    subtitlesGrouped[currentSelectedSecondarySubtitles?.originalName]
+                        ?.indexOfFirst { it.nameSuffix == currentSelectedSecondarySubtitles?.nameSuffix }
+                        ?: 0
+                var secondaryOptionIndex = secondaryOptionIndexStart
+
+                var selectionMode = SubtitleSelectionMode.PRIMARY
 
                 subsArrayAdapter.addAll(subtitles)
 
                 subtitleList.adapter = subsArrayAdapter
                 subtitleList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
-
-                subtitleList.setSelection(subtitleGroupIndex)
-                subtitleList.setItemChecked(subtitleGroupIndex, true)
 
                 val subsOptionsArrayAdapter =
                     ArrayAdapter<Spanned>(ctx, R.layout.sort_bottom_single_choice)
@@ -1195,8 +1236,71 @@ class GeneratorPlayer : FullScreenPlayer() {
                 subtitleOptionList.adapter = subsOptionsArrayAdapter
                 subtitleOptionList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
 
+                fun selectedSubtitle(groupIndex: Int, optionIndex: Int): SubtitleData? {
+                    if (groupIndex <= 0) return null
+                    return subtitlesGroupedList.getOrNull(groupIndex - 1)?.value?.getOrNull(optionIndex)
+                }
+
+                fun getActiveGroupIndex(): Int {
+                    return if (selectionMode == SubtitleSelectionMode.PRIMARY) {
+                        primaryGroupIndex
+                    } else {
+                        secondaryGroupIndex
+                    }
+                }
+
+                fun getActiveOptionIndex(): Int {
+                    return if (selectionMode == SubtitleSelectionMode.PRIMARY) {
+                        primaryOptionIndex
+                    } else {
+                        secondaryOptionIndex
+                    }
+                }
+
+                fun getStartGroupIndexForMode(): Int {
+                    return if (selectionMode == SubtitleSelectionMode.PRIMARY) {
+                        primaryGroupIndexStart
+                    } else {
+                        secondaryGroupIndexStart
+                    }
+                }
+
+                fun getStartOptionIndexForMode(): Int {
+                    return if (selectionMode == SubtitleSelectionMode.PRIMARY) {
+                        primaryOptionIndexStart
+                    } else {
+                        secondaryOptionIndexStart
+                    }
+                }
+
+                fun setActiveGroupIndex(value: Int) {
+                    if (selectionMode == SubtitleSelectionMode.PRIMARY) {
+                        primaryGroupIndex = value
+                    } else {
+                        secondaryGroupIndex = value
+                    }
+                }
+
+                fun setActiveOptionIndex(value: Int) {
+                    if (selectionMode == SubtitleSelectionMode.PRIMARY) {
+                        primaryOptionIndex = value
+                    } else {
+                        secondaryOptionIndex = value
+                    }
+                }
+
+                fun updateModeButtons() {
+                    if (!dualEnabled) return
+                    val isPrimary = selectionMode == SubtitleSelectionMode.PRIMARY
+                    binding.subtitlesEditPrimaryBtt.isSelected = isPrimary
+                    binding.subtitlesEditSecondaryBtt.isSelected = !isPrimary
+                    binding.subtitlesEditPrimaryIndicator.isVisible = isPrimary
+                    binding.subtitlesEditSecondaryIndicator.isVisible = !isPrimary
+                }
+
                 fun updateSubtitleOptionList() {
                     subsOptionsArrayAdapter.clear()
+                    val subtitleGroupIndex = getActiveGroupIndex()
 
                     val subtitleOptions =
                         subtitlesGroupedList
@@ -1219,11 +1323,30 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                     subsOptionsArrayAdapter.addAll(subtitleOptions)
 
+                    val subtitleOptionIndex = getActiveOptionIndex()
                     subtitleOptionList.setSelection(subtitleOptionIndex)
                     subtitleOptionList.setItemChecked(subtitleOptionIndex, true)
                 }
 
-                updateSubtitleOptionList()
+                fun updateSubtitleSelection() {
+                    val activeGroup = getActiveGroupIndex()
+                    subtitleList.setSelection(activeGroup)
+                    subtitleList.setItemChecked(activeGroup, true)
+                    updateSubtitleOptionList()
+                    updateModeButtons()
+                }
+
+                binding.subtitlesEditPrimaryBtt.setOnClickListener {
+                    selectionMode = SubtitleSelectionMode.PRIMARY
+                    updateSubtitleSelection()
+                }
+
+                binding.subtitlesEditSecondaryBtt.setOnClickListener {
+                    selectionMode = SubtitleSelectionMode.SECONDARY
+                    updateSubtitleSelection()
+                }
+
+                updateSubtitleSelection()
 
                 subtitleList.setOnItemClickListener { _, _, which, _ ->
                     if (which > subtitlesGrouped.size) {
@@ -1237,28 +1360,31 @@ class GeneratorPlayer : FullScreenPlayer() {
                         val child = subtitleList.adapter.getView(which, null, subtitleList)
                         child?.performClick()
                     } else {
-                        if (subtitleGroupIndex != which) {
-                            subtitleGroupIndex = which
-                            subtitleOptionIndex =
-                                if (subtitleGroupIndex == subtitleGroupIndexStart) {
-                                    subtitleOptionIndexStart
+                        val currentGroup = getActiveGroupIndex()
+                        if (currentGroup != which) {
+                            setActiveGroupIndex(which)
+                            setActiveOptionIndex(
+                                if (which == getStartGroupIndexForMode()) {
+                                    getStartOptionIndexForMode()
                                 } else {
                                     0
                                 }
+                            )
                         }
                         subtitleList.setItemChecked(which, true)
-                        updateSubtitleOptionList()
+                        updateSubtitleSelection()
                     }
                 }
 
                 subtitleOptionList.setOnItemClickListener { _, _, which, _ ->
+                    val subtitleGroupIndex = getActiveGroupIndex()
                     if (which >= (subtitlesGroupedList.getOrNull(subtitleGroupIndex - 1)?.value?.size
                             ?: -1)
                     ) {
                         val child = subtitleOptionList.adapter.getView(which, null, subtitleList)
                         child?.performClick()
                     } else {
-                        subtitleOptionIndex = which
+                        setActiveOptionIndex(which)
                         subtitleOptionList.setItemChecked(which, true)
                     }
                 }
@@ -1336,17 +1462,38 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 binding.applyBtt.setOnClickListener {
                     var init = sourceIndex != startSource
-                    if (subtitleGroupIndex != subtitleGroupIndexStart || subtitleOptionIndex != subtitleOptionIndexStart) {
-                        init = init or if (subtitleGroupIndex <= 0) {
-                            noSubtitles()
+                    val selectedPrimary = selectedSubtitle(primaryGroupIndex, primaryOptionIndex)
+                    val selectedSecondary =
+                        if (dualEnabled) selectedSubtitle(secondaryGroupIndex, secondaryOptionIndex) else null
+
+                    if (dualEnabled && !isDualSubtitleCombinationSupported(
+                            selectedPrimary,
+                            selectedSecondary
+                        )
+                    ) {
+                        val messageRes = if (selectedPrimary?.origin == SubtitleOrigin.EMBEDDED_IN_VIDEO ||
+                            selectedSecondary?.origin == SubtitleOrigin.EMBEDDED_IN_VIDEO
+                        ) {
+                            R.string.subtitles_secondary_unsupported_embedded
                         } else {
-                            subtitlesGroupedList.getOrNull(subtitleGroupIndex - 1)?.value?.getOrNull(
-                                subtitleOptionIndex
-                            )?.let {
-                                setSubtitles(it, true)
-                            } ?: false
+                            R.string.subtitles_secondary_unsupported_combo
                         }
+                        showToast(messageRes, Toast.LENGTH_LONG)
+                        return@setOnClickListener
                     }
+
+                    if (selectedPrimary != currentSelectedSubtitles) {
+                        init = init or setSubtitles(selectedPrimary, true)
+                    }
+
+                    if (dualEnabled) {
+                        if (selectedSecondary != currentSelectedSecondarySubtitles) {
+                            init = init or setSecondarySubtitles(selectedSecondary)
+                        }
+                    } else if (currentSelectedSecondarySubtitles != null) {
+                        init = init or setSecondarySubtitles(null)
+                    }
+
                     if (init) {
                         sortedUrls.getOrNull(sourceIndex)?.let {
                             loadLink(it, true)

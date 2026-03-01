@@ -511,11 +511,11 @@
     <string name="watch_quality_pref_data">Calidad de visualización preferida (Datos móviles)</string>
     <string name="help">Ayuda</string>
     <string name="quality_profile_help">Aquí puedes cambiar el orden de las fuentes. Si un vídeo tiene una prioridad más alta, aparecerá más arriba en la selección de las fuentes. La suma de la prioridad de la fuente y la prioridad de la calidad es la prioridad del vídeo.
-\n
+
 \nFuente A: 3
 \nCalidad B: 7
 \nTendrá una prioridad en el vídeo combinada de 10.
-\n
+
 \nNOTA: ¡Si la suma es 10 o más el reproductor saltará automáticamente la carga cuando se cargue ese enlace!</string>
     <string name="profile_number">Perfil %d</string>
     <string name="wifi">Wifi</string>
@@ -537,9 +537,9 @@
     <string name="favorites_list_name">Favoritos</string>
     <string name="favorite_added">%s añadido a favoritos</string>
     <string name="duplicate_message_multiple" formatted="true">Se han encontrado posibles elementos duplicados en su biblioteca:
-\n
+
 \n%s
-\n
+
 \n¿Desea añadir este elemento de todos modos, sustituir los existentes o cancelar la acción?</string>
     <string name="duplicate_title">Posible duplicado encontrado</string>
     <string name="lock_profile">Bloquear perfil</string>
@@ -622,7 +622,7 @@
     <string name="sort_release_date_old">Fecha de lanzamiento (antigua a nueva)</string>
     <string name="sort_release_date_new">Fecha de lanzamiento (de nueva a antigua)</string>
     <string name="delete_message_series_only" formatted="true">¿Estás seguro de que quieres borrar permanentemente todos los episodios de la serie?
-\n
+
 \n%s</string>
     <string name="downloads_delete_select">Seleccionar elementos para eliminar</string>
     <string name="offline_file">Disponible para visualizar sin conexión</string>
@@ -631,13 +631,13 @@
     <string name="delete_files">Borrar archivos</string>
     <string name="delete_format" formatted="true">Borrar (%1$d | %2$s)</string>
     <string name="delete_message_multiple" formatted="true">¿Seguro que quieres borrar de forma permanente los siguientes elementos?
-\n
+
 \n%s</string>
     <string name="delete_message_series_episodes" formatted="true">¿Estás seguro de que deseas eliminar permanentemente los siguientes episodios en %1$s?
-\n
+
 \n%2$s</string>
     <string name="delete_message_series_section" formatted="true">También borrará permanentemente todos los episodios de las siguientes series:
-\n
+
 \n%s</string>
     <string name="preview_seekbar_desc">Activar la previsualización para las miniaturas en la barra de búsqueda</string>
     <string name="preview_seekbar">Previsualización de Seekbar</string>
@@ -756,4 +756,11 @@
         <item quantity="many">%d descargas encoladas</item>
         <item quantity="other">%d descargas encoladas</item>
     </plurals>
+
+<string name="subtitles_dual_enabled">Subtítulos duales (experimental)</string>
+    <string name="subtitles_edit_primary">Primario</string>
+    <string name="subtitles_edit_secondary">Secundario</string>
+    <string name="subtitles_secondary_unsupported_embedded">Los subtítulos secundarios aún no admiten pistas incrustadas</string>
+    <string name="subtitles_secondary_unsupported_combo">Esta combinación de subtítulos no es compatible con subtítulos duales.</string>
+    <string name="subtitles_secondary_load_failed">No se pudieron cargar subtítulos duales</string>
 </resources>

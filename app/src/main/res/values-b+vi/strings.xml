@@ -412,7 +412,7 @@
     <string name="plugins_disabled" formatted="true">Đã vô hiệu: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Không tải: %d</string>
     <string name="blank_repo_message">CloudStream không có sẵn trang web nào. Bạn cần cài đặt các trang web từ kho lưu trữ.
-\n
+
 \nHãy tham gia Discord của chúng tôi hoặc tìm kiếm trực tuyến.</string>
     <string name="view_public_repositories_button">Xem kho lưu trữ của cộng đồng</string>
     <string name="view_public_repositories_button_short">Danh sách công khai</string>
@@ -537,11 +537,11 @@
     <string name="help">Trợ giúp</string>
     <string name="profile_background_des">Nền hồ sơ</string>
     <string name="quality_profile_help">Tại đây bạn có thể thay đổi cách sắp xếp các nguồn. Nếu video có mức độ ưu tiên cao hơn thì video đó sẽ xuất hiện cao hơn trong lựa chọn nguồn. Tổng ưu tiên nguồn và ưu tiên chất lượng là ưu tiên video.
-\n
+
 \nNguồn A: 3
 \nChất lượng B: 7
 \nSẽ có mức độ ưu tiên video kết hợp là 10.
-\n
+
 \nLƯU Ý: Nếu tổng là 10 hoặc nhiều hơn, trình phát sẽ tự động bỏ tải khi liên kết đó được tải!</string>
     <string name="qualities">Các chất lượng</string>
     <string name="already_voted">Bạn đã bình chọn</string>
@@ -554,9 +554,9 @@
     <string name="favorites_list_name">Yêu thích</string>
     <string name="favorite_added">%s đã thêm vào mục yêu thích</string>
     <string name="duplicate_message_multiple" formatted="true">Các mục có thể trùng lặp đã được tìm thấy trong thư viện của bạn:
-\n
+
 \n%s
-\n
+
 \nBạn vẫn muốn thêm mục này, thay thế những mục hiện có hay hủy hành động?</string>
     <string name="backup_frequency">Tần suất sao lưu</string>
     <string name="duplicate_title">Đã tìm thấy bản sao tiềm năng</string>
@@ -572,7 +572,7 @@
     <string name="action_remove_from_favorites">Loại bỏ khỏi mục yêu thích</string>
     <string name="select_an_account">Chọn một tài khoản</string>
     <string name="duplicate_message_single">Có vẻ như một mục có khả năng trùng lặp đã tồn tại trong thư viện của bạn: \'%s.\'
-\n
+
 \nBạn vẫn muốn thêm mục này, thay thế mục hiện có hay hủy hành động?</string>
     <string name="enter_pin">Nhập PIN</string>
     <string name="pin">PIN</string>
@@ -645,16 +645,16 @@
     <string name="delete_files">Xoá các tệp</string>
     <string name="delete_format" formatted="true">Xoá (%1$d | %2$s)</string>
     <string name="delete_message_multiple" formatted="true">Bạn có chắc chắn muốn xóa vĩnh viễn các mục sau không?
-\n
+
 \n%s</string>
     <string name="delete_message_series_episodes" formatted="true">Bạn có chắc chắn muốn xóa vĩnh viễn các tập trong %1$s?
-\n
+
 \n%2$s</string>
     <string name="delete_message_series_section" formatted="true">Bạn cũng sẽ xóa vĩnh viễn tất cả các tập trong loạt phim sau:
-\n
+
 \n%s</string>
     <string name="delete_message_series_only" formatted="true">Bạn có chắc chắn muốn xóa vĩnh viễn tất cả các tập trong loạt phim này không?
-\n
+
 \n%s</string>
     <string name="delete_plugin">Xóa plugin</string>
     <string name="sort_release_date_old">Ngày phát hành (Cũ đến mới)</string>
@@ -757,4 +757,11 @@
     <string name="video_info">Thông tin âm thanh</string>
     <string name="extra_brightness_settings">Độ sáng bổ sung</string>
     <string name="source_name">Tên nguồn</string>
+
+    <string name="subtitles_dual_enabled">Phụ đề kép (thử nghiệm)</string>
+    <string name="subtitles_edit_primary">Sơ đẳng</string>
+    <string name="subtitles_edit_secondary">Sơ trung</string>
+    <string name="subtitles_secondary_unsupported_embedded">Phụ đề phụ chưa hỗ trợ các bản nhạc được nhúng</string>
+    <string name="subtitles_secondary_unsupported_combo">Sự kết hợp phụ đề này không được hỗ trợ cho phụ đề kép</string>
+    <string name="subtitles_secondary_load_failed">Không tải được phụ đề kép</string>
 </resources>

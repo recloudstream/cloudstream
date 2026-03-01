@@ -127,4 +127,11 @@
     <string name="player_subtitles_settings_des">प्लेयरको उपशीर्षकको सेटिङ</string>
     <string name="repo_copy_label">रिपोजिटरी को नाम र यूआरएल</string>
     <string name="toast_copied">कपी गरियो!</string>
+
+    <string name="subtitles_dual_enabled">दोहोरो उपशीर्षक (प्रयोगात्मक)</string>
+    <string name="subtitles_edit_primary">प्राथमिक</string>
+    <string name="subtitles_edit_secondary">माध्यमिक</string>
+    <string name="subtitles_secondary_unsupported_embedded">माध्यमिक उपशीर्षकहरूले अझै सम्म इम्बेडेड ट्र्याकहरूलाई समर्थन गर्दैनन्</string>
+    <string name="subtitles_secondary_unsupported_combo">यो उपशीर्षक संयोजन दोहोरो उपशीर्षकहरूको लागि समर्थित छैन</string>
+    <string name="subtitles_secondary_load_failed">दोहोरो उपशीर्षकहरू लोड गर्न असफल भयो</string>
 </resources>

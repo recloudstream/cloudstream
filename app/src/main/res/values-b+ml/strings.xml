@@ -193,7 +193,7 @@
     <string name="safe_mode_description">പ്രശ്‌നമുണ്ടാക്കുന്ന ഒന്ന് കണ്ടെത്താൻ നിങ്ങളെ സഹായിക്കുന്നതിന് ഒരു ക്രാഷ് കാരണം എല്ലാ വിപുലീകരണങ്ങളും ഓഫാക്കി.</string>
     <string name="view_public_repositories_button_short">പൊതു പട്ടിക</string>
     <string name="blank_repo_message">CloudStream-ന് സ്ഥിരസ്ഥിതിയായി സൈറ്റുകളൊന്നും ഇൻസ്റ്റാൾ ചെയ്തിട്ടില്ല. നിങ്ങൾ റിപ്പോസിറ്ററികളിൽ നിന്ന് സൈറ്റുകൾ ഇൻസ്റ്റാൾ ചെയ്യേണ്ടതുണ്ട്.
-\n
+
 \nഞങ്ങളുടെ ഡിസ്കോർഡിൽ ചേരുക അല്ലെങ്കിൽ ഓൺലൈനിൽ തിരയുക.</string>
     <string name="sort_copy">പകർത്തുക</string>
     <string name="uppercase_all_subtitles">എല്ലാ സബ്‌ടൈറ്റിലുകളും വലിയക്ഷരമാക്കുക</string>
@@ -272,4 +272,11 @@
     <string name="subs_edge_type">എഡ്ജ് തരം</string>
     <string name="subs_outline_color">ഔട്ട്ലൈൻ നിറം</string>
     <string name="subs_background_color">പശ്ചാത്തല നിറം</string>
+
+    <string name="subtitles_dual_enabled">à´à´°à´àµà´ à´¸à´¬àµ‌à´àµà´±àµà´±à´¿à´²àµà´àµ¾ (à´ªà´°àµà´àµà´·à´£à´¾à´¤àµà´®à´à´)</string>
+    <string name="subtitles_edit_primary">പ്രാഥമികം</string>
+    <string name="subtitles_edit_secondary">സെക്കൻഡറി</string>
+    <string name="subtitles_secondary_unsupported_embedded">à´¦àµà´µà´¿à´¤àµà´¯ à´¸à´¬àµ‌à´àµà´±àµà´±à´¿à´²àµà´àµ¾ à´à´¤àµà´µà´°àµ à´àµ¾à´àµà´àµàµ¼à´¤àµà´¤ à´àµà´°à´¾à´àµà´àµà´à´³àµ à´ªà´¿à´¨àµà´¤àµà´£à´¯àµà´àµà´àµà´¨àµà´¨à´¿à´²àµà´²</string>
+    <string name="subtitles_secondary_unsupported_combo">à´ à´¸à´¬àµ‌à´àµà´±àµà´±à´¿àµ½ à´àµà´®àµà´ªà´¿à´¨àµà´·àµ» à´à´°à´àµà´ à´¸à´¬àµ‌à´àµà´±àµà´±à´¿à´²àµà´àµ¾à´àµà´àµ à´ªà´¿à´¨àµà´¤àµà´£ à´¨àµ½à´àµà´¨àµà´¨à´¿à´²àµà´²</string>
+    <string name="subtitles_secondary_load_failed">à´à´°à´àµà´ à´¸à´¬àµ‌à´àµà´±àµà´±à´¿à´²àµà´àµ¾ à´²àµà´¡àµà´àµà´¯àµà´¯àµà´¨àµà´¨à´¤à´¿àµ½ à´ªà´°à´¾à´à´¯à´ªàµà´ªàµà´àµà´àµ</string>
 </resources>

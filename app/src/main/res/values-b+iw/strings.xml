@@ -445,9 +445,9 @@
     <string name="plugins_disabled" formatted="true">מוגבל: %d</string>
     <string name="plugins_not_downloaded" formatted="true">לא מורד: %d</string>
     <string name="blank_repo_message">לקלאודסטרים אין אתרים מותקנים כברירת מחדל. עליכם להתקין את האתרים ממאגרים.
-\n
+
 \nבגלל הסרת DMCA על ידי Sky UK LImited 🤮 אנחנו לא יכולים לקשר את אתר המאגרים באפליקציה.
-\n
+
 \nתצטרפו לדיסקורד שלנו או תחפשו באינטרנט.</string>
     <string name="view_public_repositories_button">הצג מאגרים קהילתיים</string>
     <string name="view_public_repositories_button_short">רשימה ציבורית</string>
@@ -531,11 +531,11 @@
     <string name="test_passed">עבר</string>
     <string name="pref_category_bypass">מעקף ספק אינטרנט</string>
     <string name="quality_profile_help">כאן ניתן לשנות את סדר המקורות. אם לוידיאו יש עדיפות גבוהה יותר, הוא יופיע גבוה יותר בבחירת המקור. סכום עדיפות המקור ועדיפות האיכות היא עדיפות הוידיאו.
-\n
+
 \nמקור א: 3
 \nאיכות ב: 7
 \nיגרמו לעדיפות הסרטון להיות 10.
-\n
+
 \nשימו לב: אם הסכום הוא 10 או יותר, הנגן ידלג על טעינת הסרטון כאשר הלינק נטען!</string>
     <string name="next_season_episode_format" formatted="true">עונה %1$d פרק %2$d תשודר ב:</string>
     <string name="download_time_left_hour_min_sec_format" formatted="true">%1$d שעות %2$d דקות %3$d שניות</string>
@@ -559,4 +559,11 @@
     <string name="recommendations_tooltip">הראה המלצות</string>
     <string name="speed_setting_summary">מוסיף אפשרות מהירות בנגן</string>
     <string name="backup_frequency">תדירות גיבוי</string>
+
+    <string name="subtitles_dual_enabled">כתוביות כפולות (ניסיוני)</string>
+    <string name="subtitles_edit_primary">יְסוֹדִי</string>
+    <string name="subtitles_edit_secondary">מִשׁנִי</string>
+    <string name="subtitles_secondary_unsupported_embedded">כתוביות משניות אינן תומכות עדיין ברצועות מוטמעות</string>
+    <string name="subtitles_secondary_unsupported_combo">שילוב כתוביות זה אינו נתמך עבור כתוביות כפולות</string>
+    <string name="subtitles_secondary_load_failed">טעינת כתוביות כפולות נכשלה</string>
 </resources>

@@ -596,4 +596,11 @@
     <string name="all_subtitles_italic">Padarīt visus subtitrus slīprakstā</string>
     <string name="speed_setting_summary">Pievieno atskaņošanas ātruma izvēli atskaņotājā</string>
     <string name="delete_format" formatted="true">Dzēst (%1$d | %2$s)</string>
+
+    <string name="subtitles_dual_enabled">Divi subtitri (eksperimentāli)</string>
+    <string name="subtitles_edit_primary">Primārais</string>
+    <string name="subtitles_edit_secondary">Sekundārais</string>
+    <string name="subtitles_secondary_unsupported_embedded">Sekundārie subtitri vēl neatbalsta iegultos ierakstus</string>
+    <string name="subtitles_secondary_unsupported_combo">Šī subtitru kombinācija netiek atbalstīta diviem subtitriem</string>
+    <string name="subtitles_secondary_load_failed">Neizdevās ielādēt dubultos subtitrus</string>
 </resources>

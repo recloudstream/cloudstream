@@ -413,7 +413,7 @@
     <string name="plugins_not_downloaded" formatted="true">İndirilmeyen: %d</string>
     <string name="plugins_updated" formatted="true">%d eklentiler güncellendi</string>
     <string name="blank_repo_message">CloudStream, varsayılan olarak hiçbir site ile gelmez. Siteleri depolardan kurmanız gerekir.
-\n
+
 \nDiscord\'umuza katılın veya çevrimiçi arama yapın.</string>
     <string name="view_public_repositories_button">Topluluk depolarını görüntüle</string>
     <string name="view_public_repositories_button_short">Herkese açık liste</string>
@@ -534,11 +534,11 @@
     <string name="set_default">Varsayılanı ayarla</string>
     <string name="edit">Düzenle</string>
     <string name="quality_profile_help">Burada kaynakların nasıl sıralandığını değiştirebilirsiniz. Bir video daha yüksek bir önceliğe sahipse, kaynak seçiminde daha yüksek görünecektir. Kaynak önceliği ve kalite önceliğinin toplamı video önceliğidir.
-\n
+
 \nKaynak A: 3
 \nKalite B: 7
 \nBirleştirilmiş video önceliği 10 olacaktır.
-\n
+
 \nNOT: Toplam 10 veya daha fazlaysa, bu bağlantı yüklendiğinde oynatıcı otomatik olarak yüklemeyi atlayacaktır!</string>
     <string name="qualities">Kaliteler</string>
     <string name="profile_background_des">Profil arkaplanı</string>
@@ -549,9 +549,9 @@
     <string name="favorite_added">%s favorilere eklendi</string>
     <string name="logged_account" formatted="true">%s olarak giriş yapıldı</string>
     <string name="duplicate_message_multiple" formatted="true">Kütüphanenizde potensiyel kopya ürünler bulundu:
-\n
+
 \n%s
-\n
+
 \nYine de ekleyerek var olanları değiştirmek mi istersiniz, yoksa iptal etmek mi?</string>
     <string name="enter_pin_with_name" formatted="true">%s için PIN girin</string>
     <string name="backup_frequency">Yedekleme sıklığı</string>
@@ -576,7 +576,7 @@
     <string name="already_voted">Zaten oyladınız</string>
     <string name="no_plugins_found_error">Depoda eklenti bulunamadı</string>
     <string name="duplicate_message_single" formatted="true">Görünüşe göre potansiyel bir kopya kütüphanenizde zaten bulunuyor: \'%s\'
-\n
+
 \nYine de ekleyerek var olanı değiştirmek mi istersiniz, yoksa iptal etmek mi?</string>
     <string name="enter_pin">PIN girin</string>
     <string name="pin">PIN</string>
@@ -640,18 +640,18 @@
     <string name="play_from_beginning_img_des">Baştan Oynat</string>
     <string name="select_all">Tümünü Seç</string>
     <string name="delete_message_multiple" formatted="true">Aşağıdaki öğeleri kalıcı olarak silmek istediğinizden emin misiniz?
-\n
+
 \n%s</string>
     <string name="delete_message_series_episodes" formatted="true">%1$s içindeki aşağıdaki bölümleri kalıcı olarak silmek istediğinizden emin misiniz?
-\n
+
 \n%2$s</string>
     <string name="delete_files">Dosyaları Silin</string>
     <string name="delete_format" formatted="true">Sil (%1$d | %2$s)</string>
     <string name="delete_message_series_only" formatted="true">Aşağıdaki dizideki tüm bölümleri kalıcı olarak silmek istediğinizden emin misiniz?
-\n
+
 \n%s</string>
     <string name="delete_message_series_section" formatted="true">Ayrıca aşağıdaki dizideki tüm bölümleri kalıcı olarak sileceksiniz:
-\n
+
 \n%s</string>
     <string name="downloads_delete_select">Silinecek Öğeleri Seçin</string>
     <string name="deselect_all">Tüm Seçimi Kaldır</string>
@@ -771,4 +771,11 @@
     </plurals>
     <string name="source_priority">Öncelikli kaynak</string>
     <string name="source_priority_help">Oynatıcıda video kaynaklarının nasıl sıralanacağını belirleyin</string>
+
+    <string name="subtitles_dual_enabled">Çift altyazı (deneysel)</string>
+    <string name="subtitles_edit_primary">Öncelik</string>
+    <string name="subtitles_edit_secondary">İkincil</string>
+    <string name="subtitles_secondary_unsupported_embedded">İkincil altyazılar henüz gömülü parçaları desteklemiyor</string>
+    <string name="subtitles_secondary_unsupported_combo">Bu altyazı kombinasyonu çift altyazı için desteklenmez</string>
+    <string name="subtitles_secondary_load_failed">Çift altyazı yüklenemedi</string>
 </resources>

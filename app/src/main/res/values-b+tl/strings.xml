@@ -257,4 +257,11 @@
     <string name="chromecast_subtitles_settings">Mga Subtitle ng Chromecast</string>
     <string name="chromecast_subtitles_settings_des">Mga setting ng mga subtitle ng Chromecast</string>
     <string name="play_trailer_button">Maglaro ng Trailer</string>
+
+    <string name="subtitles_dual_enabled">Dalawang subtitle (pang-eksperimento)</string>
+    <string name="subtitles_edit_primary">Pangunahin</string>
+    <string name="subtitles_edit_secondary">Pangalawa</string>
+    <string name="subtitles_secondary_unsupported_embedded">Hindi pa sinusuportahan ng mga pangalawang subtitle ang mga naka-embed na track</string>
+    <string name="subtitles_secondary_unsupported_combo">Ang kumbinasyong subtitle na ito ay hindi sinusuportahan para sa dalawahang subtitle</string>
+    <string name="subtitles_secondary_load_failed">Nabigong i-load ang dalawahang subtitle</string>
 </resources>

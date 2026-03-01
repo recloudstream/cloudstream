@@ -288,4 +288,11 @@
     <string name="video_aspect_ratio_resize">Redimensionar</string>
     <string name="video_skip_op">Omitir introducción</string>
     <string name="dont_show_again">Non volver a amosar</string>
+
+    <string name="subtitles_dual_enabled">Subtítulos duales (experimental)</string>
+    <string name="subtitles_edit_primary">Primaria</string>
+    <string name="subtitles_edit_secondary">Secundaria</string>
+    <string name="subtitles_secondary_unsupported_embedded">Os subtítulos secundarios aínda non admiten pistas incorporadas</string>
+    <string name="subtitles_secondary_unsupported_combo">Esta combinación de subtítulos non é compatible con subtítulos dobres</string>
+    <string name="subtitles_secondary_load_failed">Produciuse un erro ao cargar os subtítulos dobres</string>
 </resources>

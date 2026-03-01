@@ -324,7 +324,7 @@
     <string name="plugins_not_downloaded" formatted="true">Δεν κατέβηκε: %d</string>
     <string name="plugins_updated" formatted="true">Ενημερώθηκαν %d πρόσθετα</string>
     <string name="blank_repo_message">Το CloudStream δεν έχει προεγκατεστημένους ιστότοπους. Πρέπει να εγκαταστήσετε ιστότοπους μέσω ορισμένων αποθετηρίων.
-\n
+
 \nΒρείτε μας στο Discord ή ψάξτε στο διαδίκτυο.</string>
     <string name="view_public_repositories_button">Προβολή αποθετηρίων κοινότητας</string>
     <string name="view_public_repositories_button_short">Δημόσια λίστα</string>
@@ -498,11 +498,11 @@
     <string name="no_plugins_found_error">Δε βρέθηκαν επεκτάσεις στο αποθετήριο</string>
     <string name="no_repository_found_error">Δε βρέθηκε αποθετήριο, ελέγξτε την URL και δοκιμάστε VPN</string>
     <string name="quality_profile_help">Από εδώ μπορείτε να αλλάξετε τον τρόπο σειράς των πηγών. Εάν ένα βίντεο έχει υψηλότερη προτεραιότητα, θα εμφανίζεται ψηλότερα στην επιλογή πηγής. Το άθροισμα της προτεραιότητας πηγής και της ποιότητας, είναι η προτεραιότητα του βίντεο.
-\n
+
 \nΠηγή Α: 3
 \nΠοιότητα Β: 7
 \nΘα έχει συνδυασμένη προτεραιότητα βίντεο 10.
-\n
+
 \nΣΗΜΕΙΩΣΗ: Εάν το άθροισμα είναι 10 ή περισσότερο, η συσκευή αναπαραγωγής θα παραλείψει αυτόματα τη φόρτωση όταν φορτωθεί αυτός ο σύνδεσμος!</string>
     <string name="category_provider_test">Δοκιμή παρόχου</string>
     <string name="watch_quality_pref_data">Προτιμώμενη ποιότητας παρακολούθησης (Δεδομένα τηλεφώνου)</string>
@@ -550,7 +550,7 @@
     <string name="battery_dialog_title">Απενεργοποιήση της εξοικονόμησης της μπαταρίας</string>
     <string name="already_voted">Έχετε ήδη ψηφίσει</string>
     <string name="duplicate_message_single" formatted="true">Φαίνεται πως ένα πιθανό αντίγραφο βρίσκεται στη βιβλιοθήκη σας: \'%s.\'
-\n
+
 \nΘα επιθυμούσατε να το προσθέσετε, να το αντικαταστήσετε, ή να ακυρώσετε την ενέργεια;</string>
     <string name="enter_current_pin">Εισαγωγή Τρέχον Κωδικού</string>
     <string name="lock_profile">Κλείδωμα Προφίλ</string>
@@ -579,9 +579,9 @@
     <string name="duplicate_add">Προσθήκη</string>
     <string name="duplicate_replace">Αντικατάσταση</string>
     <string name="duplicate_message_multiple" formatted="true">Πιθανά διπλά αρχεία βρέθηκαν στην βιβλιοθήκη:
-\n
+
 \n%s
-\n
+
 \nΘα επιθυμούσατε να προσθέσετε αυτό το αρχείο ούτως η άλλως, να αντικαταστήσετε τα ήδη υπάρχοντα, ή να ακυρώσετε την ενέργεια?</string>
     <string name="enter_pin_with_name" formatted="true">Εισαγωγή Κωδικού για %s</string>
     <string name="pin">Κωδικός</string>
@@ -683,4 +683,11 @@
     <string name="all_subtitles_italic">Κάντε όλους τους υπότιτλους πλάγιους</string>
     <string name="background_radius">Ακτίνα φόντου</string>
     <string name="slide_up_again_to_exceed_100">Σύρετε ξανά προς τα πάνω για να υπερβείτε το 100%</string>
+
+<string name="subtitles_dual_enabled">Διπλοί υπότιτλοι (πειραματικό)</string>
+    <string name="subtitles_edit_primary">Πρωταρχικός</string>
+    <string name="subtitles_edit_secondary">Δευτερεύων</string>
+    <string name="subtitles_secondary_unsupported_embedded">Οι δευτερεύοντες υπότιτλοι δεν υποστηρίζουν ακόμη ενσωματωμένα κομμάτια</string>
+    <string name="subtitles_secondary_unsupported_combo">Αυτός ο συνδυασμός υποτίτλων δεν υποστηρίζεται για διπλούς υπότιτλους</string>
+    <string name="subtitles_secondary_load_failed">Αποτυχία φόρτωσης διπλών υπότιτλων</string>
 </resources>

@@ -472,7 +472,7 @@
     <string name="safe_mode_description">Toate extensiile au fost dezactivate din cauza unei defecțiuni pentru a vă ajuta să o găsiți pe cea care cauzează probleme.</string>
     <string name="update_notification_downloading">Se descarcă actualizarea aplicației…</string>
     <string name="blank_repo_message">CloudStream nu are niciun site instalat din start. Trebuie să instalați site-urile din depozite.
-\n
+
 \nAlăturați-vă Discord-ului nostru sau căutați online.</string>
     <string name="batch_download_start_format" formatted="true">A început să descarce %1$d %2$s…</string>
     <string name="safe_mode_title">Mod sigur pornit</string>
@@ -532,11 +532,11 @@
     <string name="pref_category_subtitles">Subtitrări</string>
     <string name="disable">Dezactivați</string>
     <string name="quality_profile_help">Aici puteți schimba modul în care sunt ordonate sursele. Dacă un videoclip are o prioritate mai mare, acesta va apărea mai sus în selecția surselor. Suma dintre prioritatea sursei și prioritatea calității reprezintă prioritatea video.
-\n
+
 \nSursa A: 3
 \nCalitate B: 7
 \nVa avea o prioritate video combinată de 10.
-\n
+
 \nNOTĂ: Dacă suma este 10 sau mai mare, playerul va sări automat peste încărcare atunci când este încărcat link-ul respectiv!</string>
     <string name="no_plugins_found_error">Nu s-a găsit plugin-uri în depozit</string>
     <string name="no_repository_found_error">Nu s-a găsit depozitul, verificați URL-ul și încercați cu un VPN</string>
@@ -554,16 +554,16 @@
     <string name="automatic_plugin_download_mode_title">Selectați modul de filtrare a descărcării plugin-urilor</string>
     <string name="already_voted">Ați votat deja</string>
     <string name="duplicate_message_multiple" formatted="true">Elemente potențial duplicate au fost găsite în biblioteca ta:
-\n
+
 \n%s
-\n
+
 \nÎn ciuda acestui fapt, ai dori să adaugi acest alement, să le înlocuiești pe cele existente, sau să anulezi acțiunea?</string>
     <string name="favorite_added">%s a fost adăugat la favoriți/te</string>
     <string name="favorite_removed">%s a fost eliminat din favoriți/te</string>
     <string name="action_add_to_favorites">Adaugă la favoriți/te</string>
     <string name="action_remove_from_favorites">Elimină din favoriți/te</string>
     <string name="duplicate_message_single" formatted="true">Se pare că un element potențial duplicat deja există în biblioteca ta: \'%s.\'
-\n
+
 \nÎn ciuda aceasta, ai dori să adaugi acest element, să îl înlocuiești pe cel existent, sau să anulezi acțiunea?</string>
     <string name="enter_pin_with_name" formatted="true">Introduce PIN-ul pentru %s</string>
     <string name="enter_current_pin">Introduce PIN-ul actual</string>
@@ -661,4 +661,11 @@
     <string name="install_prerelease">Instalează versiunea preliminară</string>
     <string name="prerelease_already_installed">Versiunea preliminară este deja instalată.</string>
     <string name="prerelease_install_failed">Instalarea versiunii preliminare a eșuat.</string>
+
+    <string name="subtitles_dual_enabled">Subtitrări duble (experimental)</string>
+    <string name="subtitles_edit_primary">Primar</string>
+    <string name="subtitles_edit_secondary">Secundar</string>
+    <string name="subtitles_secondary_unsupported_embedded">Subtitrările secundare nu acceptă încă melodiile încorporate</string>
+    <string name="subtitles_secondary_unsupported_combo">Această combinație de subtitrări nu este acceptată pentru subtitrări duale</string>
+    <string name="subtitles_secondary_load_failed">Nu s-au încărcat subtitrări duble</string>
 </resources>
