@@ -603,7 +603,7 @@ object DataStoreHelper {
         if (id == null || data == null || episodeResponse == null) return
         val newData = data.copy(
             latestUpdatedTime = unixTimeMS,
-            lastSeenEpisodeCount = episodeResponse.getLatestEpisodes()
+            lastSeenEpisodeCount = episodeResponse.getLatestEpisodes(),
         )
         setKey("$currentAccount/$RESULT_SUBSCRIBED_STATE_DATA", id.toString(), newData)
     }
