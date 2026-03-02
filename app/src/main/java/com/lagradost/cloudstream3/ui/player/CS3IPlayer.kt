@@ -587,9 +587,8 @@ class CS3IPlayer : IPlayer {
     }
 
     private fun isDualSubtitleTrackSelectionEnabled(): Boolean {
-        return getKey<Boolean>(SUBTITLE_DUAL_ENABLED_KEY) ?: false &&
-            currentSubtitles != null &&
-            currentSecondarySubtitles != null
+        val enabled = getKey<Boolean>(SUBTITLE_DUAL_ENABLED_KEY) ?: false
+        return enabled && currentSubtitles != null && currentSecondarySubtitles != null
     }
 
     private var currentSubtitleOffset: Long = 0
@@ -1784,9 +1783,11 @@ class CS3IPlayer : IPlayer {
     }
 
     private fun isDualSubtitleCombinationSupported(
-        primary: SubtitleData,
-        secondary: SubtitleData
+        primary: SubtitleData?,
+        secondary: SubtitleData?
     ): Boolean {
+        if (secondary == null) return true
+        if (primary == null) return false
         val supportedOrigins = setOf(SubtitleOrigin.URL, SubtitleOrigin.DOWNLOADED_FILE)
         return primary.origin in supportedOrigins && secondary.origin in supportedOrigins
     }
