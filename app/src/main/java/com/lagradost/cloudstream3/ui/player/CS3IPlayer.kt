@@ -298,6 +298,7 @@ class CS3IPlayer : IPlayer {
             currentSubtitles = subtitle
             currentSecondarySubtitles = null
             dualMergedTrackId = null
+            cleanDualSubtitleCache(context)
             playbackPosition = 0
         }
 
@@ -1792,6 +1793,16 @@ class CS3IPlayer : IPlayer {
         return primary.origin in supportedOrigins && secondary.origin in supportedOrigins
     }
 
+    private fun cleanDualSubtitleCache(context: Context, exclude: File? = null) {
+        try {
+            context.cacheDir.listFiles { file ->
+                file.name.startsWith("dual_sub_") && file.name.endsWith(".vtt") && file != exclude
+            }?.forEach { it.delete() }
+        } catch (t: Throwable) {
+            logError(t)
+        }
+    }
+
     private fun buildMergedDualSubtitleSource(
         context: Context,
         offlineSourceFactory: DataSource.Factory?,
@@ -1811,6 +1822,7 @@ class CS3IPlayer : IPlayer {
             context.cacheDir,
             "dual_sub_${primary.getId().hashCode()}_${secondary.getId().hashCode()}.vtt"
         )
+        cleanDualSubtitleCache(context, exclude = cacheFile)
         cacheFile.writeText(mergedContent)
 
         val mergedSubtitle = SubtitleData(
