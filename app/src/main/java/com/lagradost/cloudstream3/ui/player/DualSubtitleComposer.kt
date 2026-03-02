@@ -89,8 +89,8 @@ object DualSubtitleComposer {
     private fun formatTimestamp(timeMs: Long): String {
         val clamped = timeMs.coerceAtLeast(0)
         val hours = clamped / 3_600_000
-        val minutes = (clamped % 3_600_000) / 60_000
-        val seconds = (clamped % 60_000) / 1_000
+        val minutes = clamped % 3_600_000 / 60_000
+        val seconds = clamped % 60_000 / 1_000
         val millis = clamped % 1_000
         return String.format(
             Locale.US,

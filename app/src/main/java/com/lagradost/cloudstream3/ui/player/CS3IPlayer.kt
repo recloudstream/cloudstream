@@ -587,7 +587,7 @@ class CS3IPlayer : IPlayer {
     }
 
     private fun isDualSubtitleTrackSelectionEnabled(): Boolean {
-        return (getKey<Boolean>(SUBTITLE_DUAL_ENABLED_KEY) ?: false) &&
+        return getKey<Boolean>(SUBTITLE_DUAL_ENABLED_KEY) ?: false &&
             currentSubtitles != null &&
             currentSecondarySubtitles != null
     }
@@ -1712,7 +1712,7 @@ class CS3IPlayer : IPlayer {
         subHelper: PlayerSubtitleHelper,
         interceptor: Interceptor?,
     ): Pair<List<SingleSampleMediaSource>, List<SubtitleData>> {
-        val dualEnabled = (getKey<Boolean>(SUBTITLE_DUAL_ENABLED_KEY) ?: false)
+        val dualEnabled = getKey<Boolean>(SUBTITLE_DUAL_ENABLED_KEY) ?: false
         val selectedPrimary = currentSubtitles
         val selectedSecondary = currentSecondarySubtitles
 
