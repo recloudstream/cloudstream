@@ -592,6 +592,16 @@ class CS3IPlayer : IPlayer {
         return enabled && currentSubtitles != null && currentSecondarySubtitles != null
     }
 
+    override fun isDualSubtitleCombinationSupported(
+        primary: SubtitleData?,
+        secondary: SubtitleData?
+    ): Boolean {
+        if (secondary == null) return true
+        if (primary == null) return false
+        val supportedOrigins = setOf(SubtitleOrigin.URL, SubtitleOrigin.DOWNLOADED_FILE)
+        return primary.origin in supportedOrigins && secondary.origin in supportedOrigins
+    }
+
     private var currentSubtitleOffset: Long = 0
 
     override fun setSubtitleOffset(offset: Long) {
@@ -788,6 +798,10 @@ class CS3IPlayer : IPlayer {
                 setKey("$currentAccount/$PREFERRED_AUDIO_LANGUAGE_KEY", value)
                 field = value
             }
+
+        private const val DUAL_SUB_DIR = "dual_subtitles"
+        private const val DUAL_SUB_PREFIX = "dual_sub_"
+        private const val DUAL_SUB_EXTENSION = ".vtt"
 
         private var simpleCache: SimpleCache? = null
 
@@ -1717,39 +1731,33 @@ class CS3IPlayer : IPlayer {
         val selectedSecondary = currentSecondarySubtitles
 
         if (dualEnabled && selectedSecondary != null && selectedPrimary == null) {
-            event(ErrorEvent(ErrorLoadingException(context.getString(R.string.subtitles_secondary_unsupported_combo))))
+            Log.w(TAG, "Secondary subtitle selected without primary, falling back to no subtitles")
+            currentSecondarySubtitles = null
             dualMergedTrackId = null
-            return Pair(emptyList(), emptyList())
-        }
-
-        if (dualEnabled && selectedPrimary != null && selectedSecondary != null) {
+            // Fall through to single subtitle loading
+        } else if (dualEnabled && selectedPrimary != null && selectedSecondary != null) {
             if (!isDualSubtitleCombinationSupported(selectedPrimary, selectedSecondary)) {
-                val message = if (selectedPrimary.origin == SubtitleOrigin.EMBEDDED_IN_VIDEO ||
-                    selectedSecondary.origin == SubtitleOrigin.EMBEDDED_IN_VIDEO
-                ) {
-                    context.getString(R.string.subtitles_secondary_unsupported_embedded)
-                } else {
-                    context.getString(R.string.subtitles_secondary_unsupported_combo)
-                }
-                event(ErrorEvent(ErrorLoadingException(message)))
+                Log.w(TAG, "Unsupported dual subtitle combination, falling back to primary only")
+                currentSecondarySubtitles = null
                 dualMergedTrackId = null
-                return Pair(emptyList(), emptyList())
-            }
+                // Fall through to single subtitle loading
+            } else {
+                buildMergedDualSubtitleSource(
+                    context = context,
+                    offlineSourceFactory = offlineSourceFactory,
+                    primary = selectedPrimary,
+                    secondary = selectedSecondary,
+                    interceptor = interceptor
+                )?.let { merged ->
+                    dualMergedTrackId = merged.second.getId()
+                    return Pair(listOf(merged.first), listOf(merged.second))
+                }
 
-            buildMergedDualSubtitleSource(
-                context = context,
-                offlineSourceFactory = offlineSourceFactory,
-                primary = selectedPrimary,
-                secondary = selectedSecondary,
-                interceptor = interceptor
-            )?.let { merged ->
-                dualMergedTrackId = merged.second.getId()
-                return Pair(listOf(merged.first), listOf(merged.second))
+                Log.w(TAG, "Failed to build merged dual subtitles, falling back to primary only")
+                currentSecondarySubtitles = null
+                dualMergedTrackId = null
+                // Fall through to single subtitle loading
             }
-
-            event(ErrorEvent(ErrorLoadingException(context.getString(R.string.subtitles_secondary_load_failed))))
-            dualMergedTrackId = null
-            return Pair(emptyList(), emptyList())
         }
 
         dualMergedTrackId = null
@@ -1783,20 +1791,12 @@ class CS3IPlayer : IPlayer {
         return Pair(subSources, activeSubtitles)
     }
 
-    private fun isDualSubtitleCombinationSupported(
-        primary: SubtitleData?,
-        secondary: SubtitleData?
-    ): Boolean {
-        if (secondary == null) return true
-        if (primary == null) return false
-        val supportedOrigins = setOf(SubtitleOrigin.URL, SubtitleOrigin.DOWNLOADED_FILE)
-        return primary.origin in supportedOrigins && secondary.origin in supportedOrigins
-    }
-
     private fun cleanDualSubtitleCache(context: Context, exclude: File? = null) {
         try {
-            context.cacheDir.listFiles { file ->
-                file.name.startsWith("dual_sub_") && file.name.endsWith(".vtt") && file != exclude
+            val dualSubDir = File(context.cacheDir, DUAL_SUB_DIR)
+            if (!dualSubDir.exists()) return
+            dualSubDir.listFiles { file ->
+                file.name.startsWith(DUAL_SUB_PREFIX) && file.name.endsWith(DUAL_SUB_EXTENSION) && file != exclude
             }?.forEach { it.delete() }
         } catch (t: Throwable) {
             logError(t)
@@ -1818,9 +1818,10 @@ class CS3IPlayer : IPlayer {
         if (mergedSegments.isEmpty()) return null
 
         val mergedContent = DualSubtitleComposer.toWebVtt(mergedSegments)
+        val dualSubDir = File(context.cacheDir, DUAL_SUB_DIR).apply { mkdirs() }
         val cacheFile = File(
-            context.cacheDir,
-            "dual_sub_${primary.getId().hashCode()}_${secondary.getId().hashCode()}.vtt"
+            dualSubDir,
+            "${DUAL_SUB_PREFIX}${primary.getId().hashCode()}_${secondary.getId().hashCode()}${DUAL_SUB_EXTENSION}"
         )
         cleanDualSubtitleCache(context, exclude = cacheFile)
         cacheFile.writeText(mergedContent)
@@ -1869,16 +1870,7 @@ class CS3IPlayer : IPlayer {
         return try {
             when (subtitle.origin) {
                 SubtitleOrigin.URL -> {
-                    val mergedHeaders = mutableMapOf<String, String>().apply {
-                        currentLink?.let { link ->
-                            if (link.referer.isNotBlank()) {
-                                put("referer", link.referer)
-                            }
-                            putAll(link.headers)
-                        }
-                        putAll(subtitle.headers)
-                    }
-                    val factory = createOnlineSource(mergedHeaders, interceptor)
+                    val factory = createOnlineSource(subtitle.headers, interceptor)
                     val dataSource = factory.createDataSource()
                     val dataSpec = DataSpec.Builder()
                         .setUri(subtitle.getFixedUrl().toUri())

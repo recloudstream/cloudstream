@@ -374,9 +374,9 @@
     <string name="batch_download">Knippe-nedlasting</string>
     <string name="delete_repository">Slett pakkebrønn</string>
     <string name="blank_repo_message">CloudStream har ingen sider installert som forvalg. Du må installere sidene fra pakkebrønner.
-
+\n
 \nSom følge av en hjernedød DMCA-forespørsel fra Sky UK Limited 🤮 kan vi ikke lenke til pakkebrønnssiden i programmet.
-
+\n
 \nTa del i vår Discord, eller søk på nett.</string>
     <string name="subtitle_offset_extra_hint_before_format">Bruk dette hvis undertekster vises %d ms for sent</string>
     <string name="plugin_loaded">Programtillegg innlastet</string>
@@ -523,11 +523,4 @@
     <string name="use">Bruk</string>
     <string name="help">Hjelp</string>
     <string name="profile_background_des">Profilbakgrunn</string>
-
-    <string name="subtitles_dual_enabled">Doble undertekster (eksperimentell)</string>
-    <string name="subtitles_edit_primary">Primær</string>
-    <string name="subtitles_edit_secondary">Sekundær</string>
-    <string name="subtitles_secondary_unsupported_embedded">Sekundære undertekster støtter ikke innebygde spor ennå</string>
-    <string name="subtitles_secondary_unsupported_combo">Denne undertekstkombinasjonen støttes ikke for doble undertekster</string>
-    <string name="subtitles_secondary_load_failed">Kunne ikke laste inn doble undertekster</string>
 </resources>

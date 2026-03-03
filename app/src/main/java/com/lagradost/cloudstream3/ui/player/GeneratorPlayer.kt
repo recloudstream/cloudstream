@@ -221,18 +221,6 @@ class GeneratorPlayer : FullScreenPlayer() {
         return getKey<Boolean>(SUBTITLE_DUAL_ENABLED_KEY) ?: false
     }
 
-    private fun isDualSubtitleCombinationSupported(
-        primary: SubtitleData?,
-        secondary: SubtitleData?
-    ): Boolean {
-        if (secondary == null) return true
-        if (primary == null) return false
-        if (secondary.origin == SubtitleOrigin.EMBEDDED_IN_VIDEO) return false
-        if (primary.origin == SubtitleOrigin.EMBEDDED_IN_VIDEO) return false
-        val supportedOrigins = setOf(SubtitleOrigin.URL, SubtitleOrigin.DOWNLOADED_FILE)
-        return primary.origin in supportedOrigins && secondary.origin in supportedOrigins
-    }
-
     override fun embeddedSubtitlesFetched(subtitles: List<SubtitleData>) {
         viewModel.addSubtitles(subtitles.toSet())
     }
@@ -1466,7 +1454,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     val selectedSecondary =
                         if (dualEnabled) selectedSubtitle(secondaryGroupIndex, secondaryOptionIndex) else null
 
-                    if (dualEnabled && !isDualSubtitleCombinationSupported(
+                    if (dualEnabled && !player.isDualSubtitleCombinationSupported(
                             selectedPrimary,
                             selectedSecondary
                         )
