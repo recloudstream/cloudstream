@@ -591,4 +591,32 @@
     <string name="offline_file">Elérhető offline megtekintésre</string>
     <string name="select_all">Mindet Kiválaszt</string>
     <string name="deselect_all">Mindent Kijelölés Eltávolítása</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dh %2$dm %3$ds</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dm %2$ds</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$ds</string>
+    <string name="download_queue">Letöltési sor</string>
+    <string name="speech_recognition_unavailable">Beszédfelismerés nem elérhető</string>
+    <string name="begin_speaking">Kezdjen beszélni…</string>
+    <string name="play_full_series_button">Teljes sorozat lejátszása</string>
+    <string name="queue_empty_message">Jelenleg nincs sorban álló letöltés.</string>
+    <string name="extra_brightness_settings">Extra fényerő</string>
+    <string name="extra_brightness_settings_des">A fényerő szűrő engedélyezése, ha a kijelző fényereje meghaladja a 100% -ot</string>
+    <string name="extra_brightness_key">extra_brightness_enabled</string>
+    <string name="search_suggestions">Keresési javaslatok</string>
+    <string name="search_suggestions_des">Mutasson keresési javaslatok gépelés közben</string>
+    <string name="clear_suggestions">Javaslatok törlése</string>
+    <string name="show_cast_in_details">Szereplők panel megjelenítése</string>
+    <string name="install_prerelease">Telepít kiadás előtti verziót</string>
+    <string name="prerelease_already_installed">Az előzetes verzió már telepítve van.</string>
+    <string name="prerelease_install_failed">Az előzetes verzió telepítése sikertelen.</string>
+    <string name="delete_files">Fájlok törlése</string>
+    <string name="delete_message_series_only" formatted="true">Biztosan törölni szeretné az alábbi sorozat összes megjelenését?\n\n%s</string>
+    <string name="resume_remaining" formatted="true">%s \nmaradék</string>
+    <string name="music_singlar">Zene</string>
+    <string name="audio_book_singular">Hangoskönyv</string>
+    <string name="custom_media_singluar">Média</string>
+    <string name="audio_singluar">Hang</string>
+    <string name="podcast_singluar">Podcast</string>
+    <string name="encoding_error">Kódolási hiba</string>
+    <string name="unsupported_error">Hiba nem támogatott</string>
 </resources>
