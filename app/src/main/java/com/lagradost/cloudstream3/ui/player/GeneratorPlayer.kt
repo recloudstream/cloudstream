@@ -1174,7 +1174,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                 val subtitleGroupIndexStart = if (currentSelectedSubtitles == null) {
                     subtitlesGrouped.size
                 } else {
-                    subtitlesGrouped.keys.indexOf(currentSelectedSubtitles?.originalName)
+                    val index = subtitlesGrouped.keys.indexOf(currentSelectedSubtitles?.originalName)
+                    if (index == -1) subtitlesGrouped.size else index
                 }
                 var subtitleGroupIndex = subtitleGroupIndexStart
 
