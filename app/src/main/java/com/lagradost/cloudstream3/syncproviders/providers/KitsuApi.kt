@@ -106,6 +106,7 @@ class KitsuApi: SyncAPI() {
                 )
             ).parsed<ResponseToken>()
         } catch (e: Exception) {
+            e.printStackTrace()
             app.post(
                 "$fallbackOauthUrl/token",
                 data = mapOf(
