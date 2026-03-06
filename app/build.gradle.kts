@@ -63,7 +63,7 @@ android {
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 67
-        versionName = "4.6.1"
+        versionName = "4.6.2"
 
         resValue("string", "commit_hash", getGitCommitHash())
 
@@ -152,6 +152,14 @@ android {
         resValues = true
     }
 
+    packaging {
+        jniLibs {
+            // Enables legacy JNI packaging to reduce APK size (similar to builds before minSdk 23).
+            // Note: This may increase app startup time slightly.
+            useLegacyPackaging = true
+        }
+    }
+
     namespace = "com.lagradost.cloudstream3"
 }
 
@@ -228,8 +236,6 @@ dependencies {
 
         this.extra.set("isDebug", isDebug)
     })
-    // Extra brightness video filters
-    implementation(libs.gpuv)
 }
 
 tasks.register<Jar>("androidSourcesJar") {

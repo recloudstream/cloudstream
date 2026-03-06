@@ -22,7 +22,7 @@
             android:paddingTop="10dp"
             android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
             android:paddingBottom="10dp"
-            android:text="@string/profiles"
+            android:text="@string/source_priority"
             android:textColor="?attr/textColor"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -93,6 +93,12 @@
                     android:text="@string/use" />
             </LinearLayout>
         </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/apply_btt"
+            style="@style/WhiteButton"
+            android:layout_width="wrap_content"
+            android:text="@string/sort_apply" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/cancel_btt"

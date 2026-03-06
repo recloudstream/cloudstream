@@ -45,7 +45,7 @@
     <string name="home_main_poster_img_des">@string/result_poster_img_des</string>
     <string name="home_play">Spela upp</string>
     <string name="home_info">Info</string>
-    <string name="home_next_random_img_des">Nästa</string>
+    <string name="home_next_random_img_des">Nästa slumpvis</string>
     <string name="home_change_provider_img_des">Byt leverantör</string>
     <string name="filter_bookmarks">Filtrera bokmärken</string>
     <string name="error_bookmarks_text">Bokmärken</string>
@@ -248,7 +248,7 @@
     <string name="backup_failed">Lagringsbehörigheter saknas. Var vänlig försök igen.</string>
     <string name="no_episodes_found">Inga episoder hittade</string>
     <string name="kitsu_settings">Visa bilder från Kitsu</string>
-    <string name="apk_installer_settings_des">Vissa telefoner stöder inte den nya paketinstallatören. Prova alternativet för äldre versioner om uppdateringarna inte installeras.</string>
+    <string name="apk_installer_settings_des">Vissa enheter stöjder inte den nya paketinstallatören. Prova alternativet för äldre versioner om uppdateringarna inte installeras.</string>
     <string name="apk_installer_settings">APK-installatör</string>
     <string name="subs_import_text" formatted="true">Importera typsnitt genom att placera filerna i %s</string>
     <string name="episode_sync_settings_des">Automatiskt uppdatera antalet episoder sedda</string>
@@ -270,7 +270,7 @@
     <string name="show_hd">Kvalitetsetikett</string>
     <string name="show_title">Titel</string>
     <string name="poster_ui_settings">Växla UI-element på affisch</string>
-    <string name="limit_title_rez">Videospelarens upplösning</string>
+    <string name="limit_title_rez">Visa videospelarens information</string>
     <string name="history">Historik</string>
     <string name="action_mark_as_watched">Markera som sedd</string>
     <string name="chromecast_subtitles_settings_des">Inställningar för Chromecast-undertexter</string>
@@ -421,7 +421,7 @@
     <string name="stream">Nätverksflöde</string>
     <string name="repository_name_hint">Databasens namn (valfritt)</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">All %s har redan laddats ner</string>
-    <string name="download_all_plugins_from_repo">Varning: CloudStream 3 tar inget ansvar för att använda tredjepartstillägg och ger inget stöd för dem!</string>
+    <string name="download_all_plugins_from_repo">Varning: CloudStream tar inget ansvar för att använda tredjepartstillägg och ger inget stöd för dem!</string>
     <string name="safe_mode_title">Felsäkert läge på</string>
     <string name="apply_on_restart">Starta om appen för att se ändringar.</string>
     <string name="player_settings_play_in_app">Intern spelare</string>
@@ -591,7 +591,7 @@
 \nkvarstår</string>
     <string name="toast_copied">kopierad!</string>
     <string name="repo_copy_label">Lagringsnamn och URL</string>
-    <string name="battery_dialog_message">För att säkerställa oavbrutna nedladdningar och aviseringar för prenumererade tv-program behöver CloudStream tillstånd att köras i bakgrunden. Genom att trycka på OK kommer du till App info. Där bläddrar du till appens batterianvändning och ställer in batterianvändningen på obegränsad. Observera att denna behörighet inte betyder att CS3 kommer att tömma ditt batteri. Den fungerar bara i bakgrunden när det behövs, till exempel när du tar emot aviseringar eller laddar ner videor från officiella tillägg. Om du väljer att avbryta kan du ändra denna inställning senare i allmänna inställningar.</string>
+    <string name="battery_dialog_message">För att säkerställa oavbrutna nedladdningar och aviseringar för prenumererade tv-program behöver CloudStream tillstånd att köras i bakgrunden. Genom att trycka på OK kommer du få en förfrågningsdialogruta. Tryck då på \'Tillåt\'.\n\nObservera att denna behörighet inte betyder att CS3 kommer att tömma ditt batteri. Den fungerar bara i bakgrunden när det behövs, till exempel när du tar emot aviseringar eller laddar ner videor från officiella tillägg.</string>
     <string name="biometric_warning">Din CloudStream-data har säkerhetskopierats nu. Även om möjligheten till detta är mycket liten, kan alla enheter bete sig olika. I det sällsynta fallet att du blir utelåst från att komma åt appen, rensa appdata helt och återställ från en säkerhetskopia. Vi ber om ursäkt för eventuella besvär som detta uppstår.</string>
     <string name="audio_book_singular">Ljudbok</string>
     <string name="clipboard_permission_error">Det gick inte att komma åt urklipp. Försök igen.</string>
@@ -652,11 +652,11 @@
     <string name="show">Visa</string>
     <string name="backup_path_title">Säkerhetskopieringsmapp</string>
     <string name="confirm_before_exiting_desc">Visa dialogruta innan stängning av appen</string>
-    <string name="software_decoding_desc">Mjukvaruavkodning tillåter spelaren att spela upp videofiler som inte stöds av din enhet, men kan orsaka ostadig uppspelning vid hög upplösning</string>
+    <string name="software_decoding_desc">Mjukvaruavkodning tillåter spelaren att spela upp videofiler som inte stöds av din enhet, men kan orsaka ostadig uppspelning vid hög upplösning.</string>
     <string name="audio_singluar">Ljud</string>
     <string name="podcast_singluar">Podcast</string>
     <string name="software_decoding">Mjukvaruavkodning</string>
-    <string name="torrent_not_accepted">Ogiltig torrent</string>
+    <string name="torrent_not_accepted">Starta om appen och acceptera popup-fönstret för Stream Torrent för att fortsätta.</string>
     <string name="torrent_preferred_media">Aktivera torrent i Inställningar/Leverantörer/Föredragen media</string>
     <string name="encoding_error">Avkodningsfel</string>
     <string name="player_load_one_subtitle_online">Ladda in första möjliga</string>
@@ -677,4 +677,86 @@
     <string name="sort_button_rating">Betyg%s</string>
     <string name="update_plugins">Uppdatera Plugins</string>
     <string name="go_to_downloads">Gå till Hämtade filer</string>
+    <string name="download_parallel_settings_des">Mängden av olika föremål som kan bli nedladdat i parallell</string>
+    <string name="parallel_downloads">Parallel nedladdningar</string>
+    <string name="concurrent_connections">Samtidiga anslutningar</string>
+    <string name="concurrent_connections_settings_des">Mängden av samtidiga anslutningar varje nedladdning kan använda</string>
+    <string name="no_internet_connection">Ingen anslutning. \n\nAnslut till ett nätverk och försök igen. Du kan titta på dina nedladdningar medan du inte är ansluten.</string>
+    <string name="overscan_settings_des">Ändrar skärmens gränser</string>
+    <string name="overscan_settings">Överskanning</string>
+    <string name="poster_size_settings_des">Ändrar storleken på affischer</string>
+    <string name="poster_size_settings">Affischstorlek</string>
+    <string name="speedup_title">LångPress Hastighet Växling</string>
+    <string name="speedup_summary">Tryck ner för 2x hastighet</string>
+    <string name="edit_profile_image_title">Redigera Profil Bild</string>
+    <string name="edit_profile_image_hint">Ange URL för Profil Bilden</string>
+    <string name="edit_profile_image_error_empty">Inget URL hittades</string>
+    <string name="edit_profile_image_error_invalid">Ogiltig URL eller Bild</string>
+    <string name="edit_profile_image_success">Bilden ändrades</string>
+    <string name="action_mark_watched_up_to_this_episode">Markera som \"sett fram\" till detta avsnitt</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">Ta bort \"sett fram\" till detta avsnitt</string>
+    <string name="action_reload">Omladdad</string>
+    <string name="reload_provider">Ladda om leverantören</string>
+    <string name="name">Namn</string>
+    <string name="source_name">Källnamn</string>
+    <string name="resolution_and_name">Upplösning och Namn</string>
+    <string name="download_all">Ladda ned alla</string>
+    <string name="cancel_all">Avbryt alla</string>
+    <string name="download_episode_range">Vill du ladda ned avsnitt %s?</string>
+    <string name="cancel_queue_message">Vill du avbryta alla köade hämtningar?</string>
+    <string name="subs_subtitle_alignment">Justera undertexter</string>
+    <string name="bottom_left">Nederst till vänster</string>
+    <string name="bottom_center">Nederst i mitten</string>
+    <string name="bottom_right">Nederst till höger</string>
+    <string name="middle_left">Mitten vänster</string>
+    <string name="middle_center">I mitten</string>
+    <string name="middle_right">Mitten till höger</string>
+    <string name="top_left">Övre vänster</string>
+    <string name="top_center">Övre mitten</string>
+    <string name="top_right">Övre höger</string>
+    <plurals name="downloads_active">
+        <item quantity="one">%d aktiv nedladdning</item>
+        <item quantity="other">%d aktiva nedladdningar</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="one">%d nedladdning i kö</item>
+        <item quantity="other">%d nedladdningar i kö</item>
+    </plurals>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dh %2$dm %3$ds</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dm %2$ds</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$ds</string>
+    <string name="download_queue">Nedladdningskö</string>
+    <string name="play_full_series_button">Spela hela serierna</string>
+    <string name="queue_empty_message">Det finns inga nedladdningar i kö just nu.</string>
+    <string name="extra_brightness_settings">Extra ljusstyrka</string>
+    <string name="extra_brightness_settings_des">Aktivera ljusstyrkefiltret när ljusstyrkan överstiger 100%</string>
+    <string name="extra_brightness_key">extra_brightness_enabled</string>
+    <string name="search_suggestions">Sökförslag</string>
+    <string name="search_suggestions_des">Visa sökförslag medan du skriver</string>
+    <string name="clear_suggestions">Rensa förslag</string>
+    <string name="show_cast_in_details">Visa skådespelarpanelen</string>
+    <string name="install_prerelease">Installera förhandsversionen</string>
+    <string name="prerelease_already_installed">Förhandsversionen är redan installerad.</string>
+    <string name="prerelease_install_failed">Misslyckades med att installera förhandsversionen.</string>
+    <string name="episode_action_play_mirror">Spela mirror</string>"
+    <string name="show_rating">Graderingstitel</string>
+    <string name="show_episode_text">Avsnitt Text</string>
+    <string name="video_info">Media Info</string>
+    <string name="player_settings_always_ask">Fråga alltid</string>
+    <string name="sort_episodes_date_newest">Sändningsdatum (nyast)</string>
+    <string name="sort_episodes_date_oldest">Sändningsdatum (äldst)</string>
+    <string name="source_priority">Källprioritet</string>
+    <string name="source_priority_help">Välj hur videokällor ska sorteras i spelaren</string>
+    <string name="no_account">Inget konto</string>
+    <string name="slide_up_again_to_exceed_100">Dra uppåt igen för att gå över 100%</string>
+    <string name="starting_plugin_update_manually">Startar plugin uppdateringsprocessen!</string>
+    <string name="plugins_updated_manually">%d plugin(s) har uppdaterats!</string>
+    <string name="no_plugins_updated_manually">Inga plugins blev uppdaterade.</string>
+    <string name="player_notification_channel_name">Spelarnotiser</string>
+    <string name="player_notification_channel_description">Spelarnotisen för att styra uppspelningen i bakgrunden</string>
+    <string name="subtitles_from_embedded">Inbäddad</string>
+    <string name="subtitles_from_online">Ansluten</string>
+    <string name="all_subtitles_bold">Gör alla undertexter fetstilta</string>
+    <string name="all_subtitles_italic">Gör alla undertexter kursivstila</string>
+    <string name="background_radius">Bakgrundsradie</string>
 </resources>

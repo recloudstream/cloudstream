@@ -21,6 +21,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -56,6 +57,7 @@ import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
@@ -71,6 +73,8 @@ import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.SubtitleHelper
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
@@ -137,6 +141,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
     override fun onDestroyView() {
         hideKeyboard()
         bottomSheetDialog?.ownHide()
+        activity?.detachBackPressedCallback("SearchFragment")
         super.onDestroyView()
     }
 
@@ -400,17 +405,29 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
 
         val settingsManager = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
         val isAdvancedSearch = settingsManager?.getBoolean("advanced_search", true) ?: true
+        val isSearchSuggestionsEnabled = settingsManager?.getBoolean("search_suggestions_enabled", true) ?: true
 
         selectedSearchTypes = DataStoreHelper.searchPreferenceTags.toMutableList()
 
-        if (isLayout(TV)) {
+        if (!isLayout(PHONE)) {
             binding.searchFilter.isFocusable = true
             binding.searchFilter.isFocusableInTouchMode = true
         }
+        
+        // Hide suggestions when search view loses focus (phone only)
+        if (isLayout(PHONE)) {
+            binding.mainSearch.setOnQueryTextFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    searchViewModel.clearSuggestions()
+                }
+            }
+        }
+
 
         binding.mainSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 search(query)
+                searchViewModel.clearSuggestions()
 
                 binding.mainSearch.let {
                     hideKeyboard(it)
@@ -425,50 +442,24 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
                 if (showHistory) {
                     searchViewModel.clearSearch()
                     searchViewModel.updateHistory()
+                    searchViewModel.clearSuggestions()
+                } else {
+                    // Fetch suggestions when user is typing (if enabled)
+                    if (isSearchSuggestionsEnabled) {
+                        searchViewModel.fetchSuggestions(newText)
+                    }
                 }
                 binding.apply {
-                    searchHistoryHolder.isVisible = showHistory
+                    searchHistoryRecycler.isVisible = showHistory
                     searchMasterRecycler.isVisible = !showHistory && isAdvancedSearch
                     searchAutofitResults.isVisible = !showHistory && !isAdvancedSearch
+                    // Hide suggestions when showing history or showing search results
+                    searchSuggestionsRecycler.isVisible = !showHistory && isSearchSuggestionsEnabled
                 }
 
                 return true
             }
         })
-
-        binding.searchClearCallHistory.setOnClickListener {
-            activity?.let { ctx ->
-                val builder: AlertDialog.Builder = AlertDialog.Builder(ctx)
-                val dialogClickListener =
-                    DialogInterface.OnClickListener { _, which ->
-                        when (which) {
-                            DialogInterface.BUTTON_POSITIVE -> {
-                                removeKeys("$currentAccount/$SEARCH_HISTORY_KEY")
-                                searchViewModel.updateHistory()
-                            }
-
-                            DialogInterface.BUTTON_NEGATIVE -> {
-                            }
-                        }
-                    }
-
-                try {
-                    builder.setTitle(R.string.clear_history).setMessage(
-                        ctx.getString(R.string.delete_message).format(
-                            ctx.getString(R.string.history)
-                        )
-                    )
-                        .setPositiveButton(R.string.sort_clear, dialogClickListener)
-                        .setNegativeButton(R.string.cancel, dialogClickListener)
-                        .show().setDefaultFocus()
-                } catch (e: Exception) {
-                    logError(e)
-                    // ye you somehow fucked up formatting did you?
-                }
-            }
-
-
-        }
 
         observe(searchViewModel.searchResponse) {
             when (it) {
@@ -503,24 +494,30 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
             try {
                 // https://stackoverflow.com/questions/6866238/concurrent-modification-exception-adding-to-an-arraylist
                 listLock.lock()
+
+                val pinnedOrder = DataStoreHelper.pinnedProviders.reversedArray()
+
+                val sortedList = list.toList().sortedWith(compareBy { (providerName, _) ->
+                    val index = pinnedOrder.indexOf(providerName)
+                    if (index == -1) Int.MAX_VALUE else index
+                })
+
                 (binding.searchMasterRecycler.adapter as? ParentItemAdapter)?.apply {
-                    val newItems = list.map { ongoing ->
-                        val dataList = ongoing.value.list
+                    val newItems = sortedList.map { (providerName, providerData) ->
+                        val dataList = providerData.list
                         val dataListFiltered =
                             context?.filterSearchResultByFilmQuality(dataList) ?: dataList
 
                         val homePageList = HomePageList(
-                            ongoing.key,
+                            providerName,
                             dataListFiltered
                         )
 
-                        val expandableList = HomeViewModel.ExpandableHomepageList(
+                        HomeViewModel.ExpandableHomepageList(
                             homePageList,
-                            ongoing.value.currentPage,
-                            ongoing.value.hasNext
+                            providerData.currentPage,
+                            providerData.hasNext
                         )
-
-                        expandableList
                     }
 
                     submitList(newItems)
@@ -559,6 +556,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
             val searchItem = click.item
             when (click.clickAction) {
                 SEARCH_HISTORY_OPEN -> {
+                    if (searchItem == null) return@SearchHistoryAdaptor
                     searchViewModel.clearSearch()
                     if (searchItem.type.isNotEmpty())
                         updateChips(
@@ -569,8 +567,41 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
                 }
 
                 SEARCH_HISTORY_REMOVE -> {
+                    if (searchItem == null) return@SearchHistoryAdaptor
                     removeKey("$currentAccount/$SEARCH_HISTORY_KEY", searchItem.key)
                     searchViewModel.updateHistory()
+                }
+                
+                SEARCH_HISTORY_CLEAR -> {
+                    // Show confirmation dialog (from footer button)
+                    activity?.let { ctx ->
+                        val builder: AlertDialog.Builder = AlertDialog.Builder(ctx)
+                        val dialogClickListener =
+                            DialogInterface.OnClickListener { _, which ->
+                                when (which) {
+                                    DialogInterface.BUTTON_POSITIVE -> {
+                                        removeKeys("$currentAccount/$SEARCH_HISTORY_KEY")
+                                        searchViewModel.updateHistory()
+                                    }
+
+                                    DialogInterface.BUTTON_NEGATIVE -> {
+                                    }
+                                }
+                            }
+
+                        try {
+                            builder.setTitle(R.string.clear_history).setMessage(
+                                ctx.getString(R.string.delete_message).format(
+                                    ctx.getString(R.string.history)
+                                )
+                            )
+                                .setPositiveButton(R.string.sort_clear, dialogClickListener)
+                                .setNegativeButton(R.string.cancel, dialogClickListener)
+                                .show().setDefaultFocus()
+                        } catch (e: Exception) {
+                            logError(e)
+                        }
+                    }
                 }
 
                 else -> {
@@ -579,10 +610,32 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
             }
         }
 
+        val suggestionAdapter = SearchSuggestionAdapter { callback ->
+            when (callback.clickAction) {
+                SEARCH_SUGGESTION_CLICK -> {
+                    // Search directly
+                    binding.mainSearch.setQuery(callback.suggestion, true)
+                    searchViewModel.clearSuggestions()
+                }
+                SEARCH_SUGGESTION_FILL -> {
+                    // Fill the search box without searching
+                    binding.mainSearch.setQuery(callback.suggestion, false)
+                }
+                SEARCH_SUGGESTION_CLEAR -> {
+                    // Clear suggestions (from footer button)
+                    searchViewModel.clearSuggestions()
+                }
+            }
+        }
+
         binding.apply {
             searchHistoryRecycler.adapter = historyAdapter
             searchHistoryRecycler.setLinearListLayout(isHorizontal = false, nextRight = FOCUS_SELF)
             //searchHistoryRecycler.layoutManager = GridLayoutManager(context, 1)
+
+            // Setup suggestions RecyclerView
+            searchSuggestionsRecycler.adapter = suggestionAdapter
+            searchSuggestionsRecycler.layoutManager = LinearLayoutManager(context)
 
             searchMasterRecycler.setRecycledViewPool(ParentItemAdapter.sharedPool)
             searchMasterRecycler.adapter = masterAdapter
@@ -608,8 +661,34 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
         }
 
         observe(searchViewModel.currentHistory) { list ->
-            binding.searchClearCallHistory.isVisible = list.isNotEmpty()
             (binding.searchHistoryRecycler.adapter as? SearchHistoryAdaptor?)?.submitList(list)
+             // Scroll to top to show newest items (list is sorted by newest first)
+            if (list.isNotEmpty()) {
+                binding.searchHistoryRecycler.scrollToPosition(0)
+            }
+        }
+
+        // Observe search suggestions
+        observe(searchViewModel.searchSuggestions) { suggestions ->
+            val hasSuggestions = suggestions.isNotEmpty()
+            binding.searchSuggestionsRecycler.isVisible = hasSuggestions
+            (binding.searchSuggestionsRecycler.adapter as? SearchSuggestionAdapter?)?.submitList(suggestions)
+            
+            // On non-phone layouts, redirect focus and handle back button
+            if (!isLayout(PHONE)) {
+                if (hasSuggestions) {
+                    binding.tvtypesChipsScroll.tvtypesChips.root.nextFocusDownId = R.id.search_suggestions_recycler
+                    // Attach back button callback to clear suggestions
+                    activity?.attachBackPressedCallback("SearchFragment") {
+                        searchViewModel.clearSuggestions()
+                    }
+                } else {
+                    // Reset to default focus target (history)
+                    binding.tvtypesChipsScroll.tvtypesChips.root.nextFocusDownId = R.id.search_history_recycler
+                    // Detach back button callback when no suggestions
+                    activity?.detachBackPressedCallback("SearchFragment")
+                }
+            }
         }
 
         searchViewModel.updateHistory()

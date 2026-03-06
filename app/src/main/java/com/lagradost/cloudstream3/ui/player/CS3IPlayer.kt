@@ -40,12 +40,15 @@ import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
 import androidx.media3.datasource.cache.SimpleCache
 import androidx.media3.datasource.cronet.CronetDataSource
 import androidx.media3.datasource.okhttp.OkHttpDataSource
+import androidx.media3.exoplayer.DecoderCounters
+import androidx.media3.exoplayer.DecoderReuseEvaluation
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.Renderer.STATE_ENABLED
 import androidx.media3.exoplayer.Renderer.STATE_STARTED
 import androidx.media3.exoplayer.SeekParameters
+import androidx.media3.exoplayer.analytics.AnalyticsListener
 import androidx.media3.exoplayer.dash.DashMediaSource
 import androidx.media3.exoplayer.drm.DefaultDrmSessionManager
 import androidx.media3.exoplayer.drm.FrameworkMediaDrm
@@ -104,6 +107,7 @@ import kotlinx.coroutines.delay
 import okhttp3.Interceptor
 import org.chromium.net.CronetEngine
 import java.io.File
+import java.security.SecureRandom
 import java.util.UUID
 import java.util.concurrent.Executors
 import javax.net.ssl.HttpsURLConnection
@@ -382,36 +386,34 @@ class CS3IPlayer : IPlayer {
             ?: return
     }
 
-    override fun setPreferredAudioTrack(trackLanguage: String?, id: String?) {
+    override fun setPreferredAudioTrack(trackLanguage: String?, id: String?, formatIndex: Int?) {
         preferredAudioTrackLanguage = trackLanguage
-
-        if (id != null) {
-            val audioTrack =
-                exoPlayer?.currentTracks?.groups?.filter { it.type == TRACK_TYPE_AUDIO }
-                    ?.getTrack(id)
-
-            if (audioTrack != null) {
-                exoPlayer?.trackSelectionParameters = exoPlayer?.trackSelectionParameters
-                    ?.buildUpon()
-                    ?.setOverrideForType(
-                        TrackSelectionOverride(
-                            audioTrack.first,
-                            audioTrack.second
-                        )
-                    )
-                    ?.build()
-                    ?: return
-                return
-            }
+        id?.let { trackId ->
+            val trackFormatIndex = formatIndex ?: 0
+            exoPlayer?.currentTracks?.groups
+                ?.filter { it.type == TRACK_TYPE_AUDIO }
+                ?.find { group ->
+                    group.getFormats().any { (format, _) ->
+                        format.id == trackId
+                    }
+                }
+                ?.let { group ->
+                    exoPlayer?.trackSelectionParameters
+                        ?.buildUpon()
+                        ?.setOverrideForType(TrackSelectionOverride(group.mediaTrackGroup, trackFormatIndex))
+                        ?.build()
+                }
+                ?.let { newParams ->
+                    exoPlayer?.trackSelectionParameters = newParams
+                    return
+                }
         }
-
+        // Fallback to language-based selection
         exoPlayer?.trackSelectionParameters = exoPlayer?.trackSelectionParameters
             ?.buildUpon()
             ?.setPreferredAudioLanguage(trackLanguage)
-            ?.build()
-            ?: return
+            ?.build() ?: return
     }
-
 
     /**
      * Gets all supported formats in a list
@@ -430,11 +432,14 @@ class CS3IPlayer : IPlayer {
         }
     }
 
-    private fun Format.toAudioTrack(): AudioTrack {
+    private fun Format.toAudioTrack(formatIndex: Int?): AudioTrack {
         return AudioTrack(
-            this.id?.stripTrackId(),
+            this.id,
             this.label,
-            this.language
+            this.language,
+            this.sampleMimeType,
+            this.channelCount,
+            formatIndex ?: 0,
         )
     }
 
@@ -443,7 +448,7 @@ class CS3IPlayer : IPlayer {
             this.id?.stripTrackId(),
             this.label,
             this.language,
-            this.sampleMimeType
+            this.sampleMimeType,
         )
     }
 
@@ -454,27 +459,35 @@ class CS3IPlayer : IPlayer {
             this.language,
             this.width,
             this.height,
+            this.sampleMimeType
         )
     }
 
     override fun getVideoTracks(): CurrentTracks {
-        val allTracks = exoPlayer?.currentTracks?.groups ?: emptyList()
-        val videoTracks = allTracks.filter { it.type == TRACK_TYPE_VIDEO }
+        val allTrackGroups = exoPlayer?.currentTracks?.groups ?: emptyList()
+        val videoTracks = allTrackGroups.filter { it.type == TRACK_TYPE_VIDEO }
             .getFormats()
             .map { it.first.toVideoTrack() }
-        val audioTracks = allTracks.filter { it.type == TRACK_TYPE_AUDIO }.getFormats()
-            .map { it.first.toAudioTrack() }
-
-        val textTracks = allTracks.filter { it.type == TRACK_TYPE_TEXT }.getFormats()
+        var currentAudioTrack: AudioTrack? = null
+        val audioTracks = allTrackGroups.filter { it.type == TRACK_TYPE_AUDIO }
+            .flatMap { group ->
+                group.getFormats().map { (format, formatIndex) ->
+                    val audioTrack = format.toAudioTrack(formatIndex)
+                    if (group.isTrackSelected(formatIndex)) {
+                        currentAudioTrack = audioTrack
+                    }
+                    audioTrack
+                }
+            }
+        val textTracks = allTrackGroups.filter { it.type == TRACK_TYPE_TEXT }
+            .getFormats()
             .map { it.first.toSubtitleTrack() }
-
         val currentTextTracks = textTracks.filter { track ->
             playerSelectedSubtitleTracks.any { it.second && it.first == track.id }
         }
-
         return CurrentTracks(
             exoPlayer?.videoFormat?.toVideoTrack(),
-            exoPlayer?.audioFormat?.toAudioTrack(),
+            currentAudioTrack,
             currentTextTracks,
             videoTracks,
             audioTracks,
@@ -488,60 +501,41 @@ class CS3IPlayer : IPlayer {
     override fun setPreferredSubtitles(subtitle: SubtitleData?): Boolean {
         Log.i(TAG, "setPreferredSubtitles init $subtitle")
         currentSubtitles = subtitle
-
-        fun getTextTrack(id: String) =
-            exoPlayer?.currentTracks?.groups?.filter { it.type == TRACK_TYPE_TEXT }
-                ?.getTrack(id)
-
-        return (exoPlayer?.trackSelector as? DefaultTrackSelector?)?.let { trackSelector ->
-            if (subtitle == null) {
-                trackSelector.setParameters(
-                    trackSelector.buildUponParameters()
-                        .setTrackTypeDisabled(TRACK_TYPE_TEXT, true)
-                        .clearOverridesOfType(TRACK_TYPE_TEXT)
-                )
-            } else {
-                when (subtitleHelper.subtitleStatus(subtitle)) {
-                    SubtitleStatus.REQUIRES_RELOAD -> {
-                        Log.i(TAG, "setPreferredSubtitles REQUIRES_RELOAD")
-                        return@let true
-                    }
-
-                    SubtitleStatus.IS_ACTIVE -> {
-                        Log.i(TAG, "setPreferredSubtitles IS_ACTIVE")
-
+        val trackSelector = exoPlayer?.trackSelector as? DefaultTrackSelector ?: return false
+        // Disable subtitles if null
+        if (subtitle == null) {
+            trackSelector.setParameters(
+                trackSelector.buildUponParameters()
+                    .setTrackTypeDisabled(TRACK_TYPE_TEXT, true)
+                    .clearOverridesOfType(TRACK_TYPE_TEXT)
+            )
+            return false
+        }
+        // Handle subtitle based on status
+        when (subtitleHelper.subtitleStatus(subtitle)) {
+            SubtitleStatus.REQUIRES_RELOAD -> {
+                Log.i(TAG, "setPreferredSubtitles REQUIRES_RELOAD")
+                return true
+            }
+            SubtitleStatus.NOT_FOUND -> {
+                Log.i(TAG, "setPreferredSubtitles NOT_FOUND")
+                return true
+            }
+            SubtitleStatus.IS_ACTIVE -> {
+                Log.i(TAG, "setPreferredSubtitles IS_ACTIVE")
+                exoPlayer?.currentTracks?.groups
+                    ?.filter { it.type == TRACK_TYPE_TEXT }
+                    ?.getTrack(subtitle.getId())
+                    ?.let { (trackGroup, trackIndex) ->
                         trackSelector.setParameters(
                             trackSelector.buildUponParameters()
-                                .apply {
-                                    val track = getTextTrack(subtitle.getId())
-                                    if (track != null) {
-                                        setTrackTypeDisabled(TRACK_TYPE_TEXT, false)
-                                        setOverrideForType(
-                                            TrackSelectionOverride(
-                                                track.first,
-                                                track.second
-                                            )
-                                        )
-                                    }
-                                }
+                                .setTrackTypeDisabled(TRACK_TYPE_TEXT, false)
+                                .setOverrideForType(TrackSelectionOverride(trackGroup, trackIndex))
                         )
-
-                        // ugliest code I have written, it seeks 1ms to *update* the subtitles
-                        //exoPlayer?.applicationLooper?.let {
-                        //    Handler(it).postDelayed({
-                        //        seekTime(1L)
-                        //    }, 1)
-                        //}
                     }
-
-                    SubtitleStatus.NOT_FOUND -> {
-                        Log.i(TAG, "setPreferredSubtitles NOT_FOUND")
-                        return@let true
-                    }
-                }
+                return false
             }
-            return false
-        } ?: false
+        }
     }
 
     private var currentSubtitleOffset: Long = 0
@@ -550,10 +544,10 @@ class CS3IPlayer : IPlayer {
         currentSubtitleOffset = offset
         CustomDecoder.subtitleOffset = offset
         if (currentTextRenderer?.state == STATE_ENABLED || currentTextRenderer?.state == STATE_STARTED) {
-            exoPlayer?.currentPosition?.let { pos ->
+            exoPlayer?.currentPosition?.also { pos ->
                 // This seems to properly refresh all subtitles
                 // It needs to be done as all subtitle cues with timings are pre-processed
-                currentTextRenderer?.resetPosition(pos)
+                currentTextRenderer?.resetPosition(pos, false)
             }
         }
     }
@@ -830,14 +824,7 @@ class CS3IPlayer : IPlayer {
 
             // These are extra headers the browser like to insert, not sure if we want to include them
             // for WIDEVINE/drm as well? Do that if someone gets 404 and creates an issue.
-            val headers = mapOf(
-                "accept" to "*/*",
-                "sec-ch-ua" to "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\"",
-                "sec-ch-ua-mobile" to "?0",
-                "sec-fetch-user" to "?1",
-                "sec-fetch-mode" to "navigate",
-                "sec-fetch-dest" to "video"
-            ) + refererMap + link.headers // Adds the headers from the provider, e.g Authorization
+            val headers = refererMap + link.headers // Adds the headers from the provider, e.g Authorization
 
             return source.apply {
                 setDefaultRequestProperties(headers)
@@ -1097,7 +1084,7 @@ class CS3IPlayer : IPlayer {
                     }
 
                     val factory = if (isSoftwareDecodingEnabled) {
-                        NextRenderersFactory(context).apply {
+                        FixedNextRenderersFactory(context).apply {
                             setEnableDecoderFallback(true)
                             setExtensionRendererMode(
                                 if (isSoftwareDecodingPreferred)
@@ -1358,6 +1345,7 @@ class CS3IPlayer : IPlayer {
             )
             setHandleAudioBecomingNoisy(true)
             setPlaybackSpeed(playBackSpeed)
+            this.addAnalyticsListener(tracksAnalyticsListener)
         }
     }
 
@@ -1843,7 +1831,7 @@ class CS3IPlayer : IPlayer {
             if (ignoreSSL) {
                 // Disables ssl check
                 val sslContext: SSLContext = SSLContext.getInstance("TLS")
-                sslContext.init(null, arrayOf(SSLTrustManager()), java.security.SecureRandom())
+                sslContext.init(null, arrayOf(SSLTrustManager()), SecureRandom())
                 sslContext.createSSLEngine()
                 HttpsURLConnection.setDefaultHostnameVerifier { _: String, _: SSLSession ->
                     true
@@ -1929,4 +1917,39 @@ class CS3IPlayer : IPlayer {
             loadOfflinePlayer(context, it)
         }
     }
+
+    private val tracksAnalyticsListener = object : AnalyticsListener {
+
+        override fun onVideoInputFormatChanged(
+            eventTime: AnalyticsListener.EventTime,
+            format: Format,
+            decoderReuseEvaluation: DecoderReuseEvaluation?
+        ) {
+            event(TracksChangedEvent())
+        }
+
+        override fun onAudioInputFormatChanged(
+            eventTime: AnalyticsListener.EventTime,
+            format: Format,
+            decoderReuseEvaluation: DecoderReuseEvaluation?
+        ) {
+            event(TracksChangedEvent())
+        }
+
+        override fun onVideoDisabled(
+            eventTime: AnalyticsListener.EventTime,
+            decoderCounters: DecoderCounters
+        ) {
+            event(TracksChangedEvent())
+        }
+
+        override fun onAudioDisabled(
+            eventTime: AnalyticsListener.EventTime,
+            decoderCounters: DecoderCounters
+        ) {
+            event(TracksChangedEvent())
+        }
+    }
+
 }
+

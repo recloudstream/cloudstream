@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/searchRoot"
@@ -7,8 +7,12 @@
     android:layout_height="match_parent"
     android:layout_marginTop="@dimen/navbar_height"
     android:background="?attr/primaryGrayBackground"
-    android:orientation="vertical"
     tools:context=".ui.search.SearchFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -141,42 +145,30 @@
 
         android:nextFocusLeft="@id/nav_rail_view"
         android:nextFocusUp="@id/tvtypes_chips"
-        android:nextFocusDown="@id/search_clear_call_history"
         android:visibility="gone"
         tools:listitem="@layout/homepage_parent" />
 
-    <FrameLayout
-        android:id="@+id/search_history_holder"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_history_recycler"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="?attr/primaryBlackBackground"
+        android:descendantFocusability="afterDescendants"
+        android:nextFocusLeft="@id/nav_rail_view"
+        android:nextFocusUp="@id/tvtypes_chips"
+        android:visibility="visible"
+        tools:listitem="@layout/search_history_item" />
+    </LinearLayout>
 
+    <!-- Suggestions overlay - appears on top of content -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_suggestions_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:background="?attr/primaryGrayBackground"
+        android:elevation="8dp"
+        android:visibility="gone"
+        tools:listitem="@layout/search_suggestion_item" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/search_history_recycler"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-
-            android:background="?attr/primaryBlackBackground"
-            android:descendantFocusability="afterDescendants"
-            android:nextFocusLeft="@id/nav_rail_view"
-            android:nextFocusUp="@id/tvtypes_chips"
-            android:nextFocusDown="@id/search_clear_call_history"
-
-            android:paddingBottom="50dp"
-            android:visibility="visible"
-            tools:listitem="@layout/search_history_item" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/search_clear_call_history"
-            style="@style/BlackButton"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_gravity="bottom"
-            android:layout_margin="0dp"
-            android:nextFocusUp="@id/search_history_recycler"
-            android:padding="0dp"
-            android:text="@string/clear_history"
-            app:cornerRadius="0dp"
-            app:icon="@drawable/delete_all" />
-    </FrameLayout>
-</LinearLayout>
+</FrameLayout>

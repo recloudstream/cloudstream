@@ -74,24 +74,24 @@
         </LinearLayout>
 
         <LinearLayout
-            android:background="?attr/primaryGrayBackground"
-            android:focusable="true"
-            android:nextFocusRight="@id/download_stream_button_tv"
-            android:nextFocusLeft="@id/navigation_downloads"
-            android:nextFocusDown="@id/download_list"
-            android:foreground="@drawable/outline_drawable"
             android:id="@+id/download_appbar"
-            android:baselineAligned="false"
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="?attr/primaryGrayBackground"
+            android:baselineAligned="false"
+            android:focusable="true"
+            android:foreground="@drawable/outline_drawable"
+            android:nextFocusLeft="@id/navigation_downloads"
+            android:nextFocusRight="@id/download_stream_button_tv"
+            android:nextFocusDown="@id/download_list"
+            android:orientation="horizontal">
 
             <LinearLayout
                 android:id="@+id/download_storage_appbar"
-                android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
+                android:layout_weight="1"
                 android:orientation="vertical"
                 android:visibility="visible">
 
@@ -112,8 +112,8 @@
                     app:shimmer_base_alpha="0.2"
                     app:shimmer_duration="@integer/loading_time"
                     app:shimmer_highlight_alpha="0.3"
-                    tools:visibility="gone"
-                    tools:ignore="MissingClass">
+                    tools:ignore="MissingClass"
+                    tools:visibility="gone">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -125,13 +125,14 @@
                         <include layout="@layout/loading_line_short" />
                     </LinearLayout>
                 </com.facebook.shimmer.ShimmerFrameLayout>
+
                 <LinearLayout
-                    android:visibility="gone"
-                    tools:visibility="visible"
-                    android:orientation="vertical"
                     android:id="@+id/download_bytes_bar"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    tools:visibility="visible">
 
                     <androidx.cardview.widget.CardView
                         android:layout_width="fill_parent"
@@ -233,8 +234,8 @@
                 android:id="@+id/steam_imageview_holder"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
                 android:gravity="center"
+                android:orientation="vertical"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp">
 
@@ -248,20 +249,19 @@
 
                 <ImageView
                     android:id="@+id/download_stream_button_tv"
-                    android:padding="8dp"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
-
                     android:background="@drawable/outline_drawable"
+
                     android:contentDescription="@string/stream"
                     android:focusable="true"
-                    android:nextFocusDown="@id/download_list"
                     android:nextFocusLeft="@id/download_appbar"
+                    android:nextFocusDown="@id/download_list"
+                    android:padding="8dp"
 
                     android:src="@drawable/ic_network_stream"
-                    app:tint="?attr/textColor">
-                </ImageView>
+                    app:tint="?attr/textColor"></ImageView>
             </LinearLayout>
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
@@ -308,9 +308,38 @@
             android:descendantFocusability="afterDescendants"
             android:nextFocusUp="@id/download_appbar"
             android:nextFocusLeft="@id/navigation_downloads"
+            android:nextFocusDown="@id/download_queue_button"
             android:tag="@string/tv_no_focus_tag"
             tools:listitem="@layout/download_header_episode" />
- 
+
+        <LinearLayout
+            android:focusable="true"
+            android:nextFocusUp="@id/download_list"
+            android:foreground="@drawable/outline_drawable"
+            android:id="@+id/download_queue_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom"
+            android:background="?attr/primaryGrayBackground"
+            android:orientation="vertical">
+
+            <ImageView
+                android:paddingTop="5dp"
+                android:layout_width="20dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:src="@drawable/round_keyboard_arrow_up_24" />
+
+            <TextView
+                android:id="@+id/download_queue_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/download_queue"
+                android:textColor="?attr/textColor" />
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/text_no_downloads"
             android:layout_width="wrap_content"
@@ -326,28 +355,29 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="bottom|end">
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="50dp"
+        android:orientation="vertical">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/open_local_video_button"
+            style="?attr/floatingActionButtonSmallStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="?attr/floatingActionButtonSmallStyle"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="16dp"
             android:backgroundTint="?attr/primaryGrayBackground"
+            android:contentDescription="@string/open_local_video"
             android:src="@drawable/netflix_play"
             app:tint="?attr/textColor"
-            android:layout_marginEnd="16dp"
-            android:tooltipText="@string/open_local_video"
-            android:layout_gravity="bottom|end"
-            android:contentDescription="@string/open_local_video" />
+            android:tooltipText="@string/open_local_video" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/download_stream_button"
             style="@style/ExtendedFloatingActionButton"
+            android:contentDescription="@string/stream"
             android:text="@string/stream"
             android:textColor="?attr/textColor"
-            app:icon="@drawable/ic_network_stream"
-            android:contentDescription="@string/stream" />
+            app:icon="@drawable/ic_network_stream" />
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

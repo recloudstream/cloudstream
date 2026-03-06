@@ -739,7 +739,7 @@ fun capitalizeStringNullable(str: String?): String? {
     if (str == null)
         return null
     return try {
-        str.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        str.replaceFirstChar(Char::titlecase)
     } catch (e: Exception) {
         str
     }
@@ -748,7 +748,7 @@ fun capitalizeStringNullable(str: String?): String? {
 fun fixTitle(str: String): String {
     return str.split(" ").joinToString(" ") {
         it.lowercase()
-            .replaceFirstChar { char -> if (char.isLowerCase()) char.titlecase(Locale.getDefault()) else it }
+            .replaceFirstChar(Char::titlecase)
     }
 }
 

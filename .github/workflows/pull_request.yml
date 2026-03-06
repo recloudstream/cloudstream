@@ -24,7 +24,7 @@ jobs:
         cache-read-only: false
 
     - name: Run Gradle
-      run: ./gradlew assemblePrereleaseDebug
+      run: ./gradlew assemblePrereleaseDebug lint
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v6

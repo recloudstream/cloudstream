@@ -7,6 +7,14 @@
     android:orientation="vertical"
     tools:orientation="vertical">
 
+    <ImageView
+        android:visibility="gone"
+        android:id="@+id/video_outline"
+        android:src="@drawable/video_outline"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </ImageView>
+
 
     <!--
         <LinearLayout android:layout_width="match_parent"
@@ -146,6 +154,18 @@
                         android:gravity="center"
                         android:textColor="@color/white"
                         tools:text="1920x1080" />
+
+
+                    <TextView
+                        android:id="@+id/player_video_info"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_marginBottom="2.5dp"
+                        android:textColor="@color/white"
+                        android:visibility="gone"
+                        tools:text="HEVC" />
+
                     <LinearLayout
                         android:id="@+id/player_video_title_holder"
                         android:layout_width="match_parent"
