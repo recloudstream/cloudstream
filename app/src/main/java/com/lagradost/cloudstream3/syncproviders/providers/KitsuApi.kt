@@ -5,11 +5,11 @@ import androidx.annotation.StringRes
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
-import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.ShowStatus
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AuthData
 import com.lagradost.cloudstream3.syncproviders.AuthLoginRequirement
@@ -22,15 +22,16 @@ import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.txt
-
+import okhttp3.Interceptor
+import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
-import kotlin.collections.set
 
 const val KITSU_MAX_SEARCH_LIMIT = 20
 
@@ -62,32 +63,55 @@ class KitsuApi: SyncAPI() {
         email = true
     )
 
+    private class FallbackInterceptor(private val apiUrl: String, private val fallbackApiUrl: String) : Interceptor {
+        override fun intercept(chain: Interceptor.Chain): Response {
+            val request: Request = chain.request()
+
+            try {
+
+                val response = chain.proceed(request);
+
+                if (response.isSuccessful) return response
+
+                response.close()
+
+            } catch (_: Exception) {
+
+                val fallbackRequest: Request = request.newBuilder()
+                    .url(request.url.toString().replaceFirst(apiUrl, fallbackApiUrl))
+                    .build()
+
+                return chain.proceed(fallbackRequest)
+
+            }
+
+            val fallbackRequest: Request = request.newBuilder()
+                .url(request.url.toString().replaceFirst(apiUrl, fallbackApiUrl))
+                .build()
+
+            return chain.proceed(fallbackRequest)
+
+        }
+    }
+
+    private val apiFallbackInterceptor = FallbackInterceptor(apiUrl, fallbackApiUrl)
+    private val oauthFallbackInterceptor = FallbackInterceptor(oauthUrl, fallbackOauthUrl)
+
     override suspend fun login(form: AuthLoginResponse): AuthToken? {
         val username = form.email ?: return null
         val password = form.password ?: return null
 
         val grantType = "password"
 
-        val token = try {
-            app.post(
-                "$oauthUrl/token",
-                data = mapOf(
-                    "grant_type" to grantType,
-                    "username" to username,
-                    "password" to password
-                )
-            ).parsed<ResponseToken>()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            app.post(
-                "$fallbackOauthUrl/token",
-                data = mapOf(
-                    "grant_type" to grantType,
-                    "username" to username,
-                    "password" to password
-                )
-            ).parsed<ResponseToken>()
-        }
+        val token = app.post(
+            "$oauthUrl/token",
+            data = mapOf(
+                "grant_type" to grantType,
+                "username" to username,
+                "password" to password
+            ),
+            interceptor = oauthFallbackInterceptor
+        ).parsed<ResponseToken>()
 
         return AuthToken(
             accessTokenLifetime = unixTime + token.expiresIn.toLong(),
@@ -97,24 +121,14 @@ class KitsuApi: SyncAPI() {
     }
 
     override suspend fun refreshToken(token: AuthToken): AuthToken {
-        val res = try {
-            app.post(
-                "$oauthUrl/token",
-                data = mapOf(
-                    "grant_type" to "refresh_token",
-                    "refresh_token" to token.refreshToken!!
-                )
-            ).parsed<ResponseToken>()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            app.post(
-                "$fallbackOauthUrl/token",
-                data = mapOf(
-                    "grant_type" to "refresh_token",
-                    "refresh_token" to token.refreshToken!!
-                )
-            ).parsed<ResponseToken>()
-        }
+        val res = app.post(
+            "$oauthUrl/token",
+            data = mapOf(
+                "grant_type" to "refresh_token",
+                "refresh_token" to token.refreshToken!!
+            ),
+            interceptor = oauthFallbackInterceptor
+        ).parsed<ResponseToken>()
 
         return AuthToken(
             accessToken = res.accessToken,
@@ -124,22 +138,13 @@ class KitsuApi: SyncAPI() {
     }
 
     override suspend fun user(token: AuthToken?): AuthUser? {
-        val user = try {
-            app.get(
-                "$apiUrl/users?filter[self]=true",
-                headers = mapOf(
-                    "Authorization" to "Bearer ${token?.accessToken ?: return null}"
-                ), cacheTime = 0,
-            ).parsed<KitsuResponse>()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            app.get(
-                "$fallbackApiUrl/users?filter[self]=true",
-                headers = mapOf(
-                    "Authorization" to "Bearer ${token?.accessToken ?: return null}"
-                ), cacheTime = 0,
-            ).parsed<KitsuResponse>()
-        }
+        val user = app.get(
+            "$apiUrl/users?filter[self]=true",
+            headers = mapOf(
+                "Authorization" to "Bearer ${token?.accessToken ?: return null}"
+            ), cacheTime = 0,
+            interceptor = apiFallbackInterceptor
+        ).parsed<KitsuResponse>()
 
         if (user.data.isEmpty()) {
            return null
@@ -156,22 +161,13 @@ class KitsuApi: SyncAPI() {
         val auth = auth?.token?.accessToken ?: return null
         val animeSelectedFields = arrayOf("titles","canonicalTitle","posterImage","episodeCount")
         val url = "$apiUrl/anime?filter[text]=$query&page[limit]=$KITSU_MAX_SEARCH_LIMIT&fields[anime]=${animeSelectedFields.joinToString(",")}"
-        val fallbackUrl = "$fallbackApiUrl/anime?filter[text]=$query&page[limit]=$KITSU_MAX_SEARCH_LIMIT&fields[anime]=${animeSelectedFields.joinToString(",")}"
 
-        val res = try {
-            app.get(
-                url, headers = mapOf(
-                    "Authorization" to "Bearer $auth",
-                ), cacheTime = 0
-            ).parsed<KitsuResponse>()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            app.get(
-                fallbackUrl, headers = mapOf(
-                    "Authorization" to "Bearer $auth",
-                ), cacheTime = 0
-            ).parsed<KitsuResponse>()
-        }
+        val res = app.get(
+            url, headers = mapOf(
+                "Authorization" to "Bearer $auth",
+            ), cacheTime = 0,
+            interceptor = apiFallbackInterceptor
+        ).parsed<KitsuResponse>()
 
         return res.data.map {
             val attributes = it.attributes
@@ -201,23 +197,13 @@ class KitsuApi: SyncAPI() {
 
         val url =
             "$apiUrl/anime/$id"
-        val fallbackUrl =
-            "$fallbackApiUrl/anime/$id"
 
-        val anime = try {
-            app.get(
-                url, headers = mapOf(
-                    "Authorization" to "Bearer $auth"
-                )
-            ).parsed<KitsuResponse>().data.attributes
-        } catch (e: Exception) {
-            e.printStackTrace()
-            app.get(
-                fallbackUrl, headers = mapOf(
-                    "Authorization" to "Bearer $auth"
-                )
-            ).parsed<KitsuResponse>().data.attributes
-        }
+        val anime = app.get(
+            url, headers = mapOf(
+                "Authorization" to "Bearer $auth"
+            ),
+            interceptor = apiFallbackInterceptor
+        ).parsed<KitsuResponse>().data.attributes
 
         return SyncResult(
             id = id,
@@ -254,23 +240,12 @@ class KitsuApi: SyncAPI() {
         val url =
             "$apiUrl/library-entries?filter[userId]=$userId&filter[animeId]=$id&fields[libraryEntries]=${selectedFields.joinToString(",")}"
 
-        val fallbackUrl =
-            "$fallbackApiUrl/library-entries?filter[userId]=$userId&filter[animeId]=$id&fields[libraryEntries]=${selectedFields.joinToString(",")}"
-
-        val anime = try {
-            app.get(
-                url, headers = mapOf(
-                    "Authorization" to "Bearer $accessToken"
-                )
-            ).parsed<KitsuResponse>().data.firstOrNull()?.attributes
-        } catch(e: Exception) {
-            e.printStackTrace()
-            app.get(
-                fallbackUrl, headers = mapOf(
-                    "Authorization" to "Bearer $accessToken"
-                )
-            ).parsed<KitsuResponse>().data.firstOrNull()?.attributes
-        }
+        val anime = app.get(
+            url, headers = mapOf(
+                "Authorization" to "Bearer $accessToken"
+            ),
+            interceptor = apiFallbackInterceptor
+        ).parsed<KitsuResponse>().data.firstOrNull()?.attributes
 
         if (anime == null) {
             return SyncStatus(
@@ -292,14 +267,8 @@ class KitsuApi: SyncAPI() {
 
         val animeSelectedFields = arrayOf("titles","canonicalTitle")
         val url = "$apiUrl/anime?filter[text]=$title&page[limit]=$KITSU_MAX_SEARCH_LIMIT&fields[anime]=${animeSelectedFields.joinToString(",")}"
-        val fallbackUrl = "$fallbackApiUrl/anime?filter[text]=$title&page[limit]=$KITSU_MAX_SEARCH_LIMIT&fields[anime]=${animeSelectedFields.joinToString(",")}"
 
-        val res = try {
-            app.get(url).parsed<KitsuResponse>()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            app.get(fallbackUrl).parsed<KitsuResponse>()
-        }
+        val res = app.get(url, interceptor = apiFallbackInterceptor).parsed<KitsuResponse>()
 
         return res.data.firstOrNull()?.id
 
@@ -339,22 +308,14 @@ class KitsuApi: SyncAPI() {
             // Delete anime from library
             if (status == null || status == KitsuStatusType.None) {
 
-                val res = try {
-                    app.delete(
-                        "$apiUrl/library-entries/$libraryEntryId",
-                        headers = mapOf(
-                            "Authorization" to "Bearer ${auth.token.accessToken}"
-                        ),
-                    )
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    app.delete(
-                        "$fallbackApiUrl/library-entries/$libraryEntryId",
-                        headers = mapOf(
-                            "Authorization" to "Bearer ${auth.token.accessToken}"
-                        ),
-                    )
-                }
+                val res = app.delete(
+                    "$apiUrl/library-entries/$libraryEntryId",
+                    headers = mapOf(
+                        "Authorization" to "Bearer ${auth.token.accessToken}"
+                    ),
+                    interceptor = apiFallbackInterceptor
+                )
+
 
                 return res.isSuccessful
 
@@ -395,26 +356,15 @@ class KitsuApi: SyncAPI() {
             )
         )
 
-        val res = try {
-            app.post(
-                "$apiUrl/library-entries",
-                headers = mapOf(
-                    "content-type" to "application/vnd.api+json",
-                    "Authorization" to "Bearer ${auth.token.accessToken}"
-                ),
-                requestBody = data.toJson().toRequestBody()
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-            app.post(
-                "$fallbackApiUrl/library-entries",
-                headers = mapOf(
-                    "content-type" to "application/vnd.api+json",
-                    "Authorization" to "Bearer ${auth.token.accessToken}"
-                ),
-                requestBody = data.toJson().toRequestBody()
-            )
-        }
+        val res = app.post(
+            "$apiUrl/library-entries",
+            headers = mapOf(
+                "content-type" to "application/vnd.api+json",
+                "Authorization" to "Bearer ${auth.token.accessToken}"
+            ),
+            requestBody = data.toJson().toRequestBody(),
+            interceptor = apiFallbackInterceptor
+        )
 
         return res.isSuccessful
 
@@ -440,26 +390,16 @@ class KitsuApi: SyncAPI() {
             )
         )
 
-        val res = try {
-            app.patch(
-                "$apiUrl/library-entries/$id",
-                headers = mapOf(
-                    "content-type" to "application/vnd.api+json",
-                    "Authorization" to "Bearer ${auth.token.accessToken}"
-                ),
-                requestBody = data.toJson().toRequestBody()
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-            app.patch(
-                "$fallbackApiUrl/library-entries/$id",
-                headers = mapOf(
-                    "content-type" to "application/vnd.api+json",
-                    "Authorization" to "Bearer ${auth.token.accessToken}"
-                ),
-                requestBody = data.toJson().toRequestBody()
-            )
-        }
+        val res = app.patch(
+            "$apiUrl/library-entries/$id",
+            headers = mapOf(
+                "content-type" to "application/vnd.api+json",
+                "Authorization" to "Bearer ${auth.token.accessToken}"
+            ),
+            requestBody = data.toJson().toRequestBody(),
+            interceptor = apiFallbackInterceptor
+        )
+
 
         return res.isSuccessful
 
@@ -469,22 +409,13 @@ class KitsuApi: SyncAPI() {
 
         val userId = auth.user.id
 
-        val res = try {
-            app.get(
-                "$apiUrl/library-entries?filter[userId]=$userId&filter[animeId]=$id",
-                headers = mapOf(
-                    "Authorization" to "Bearer ${auth.token.accessToken}"
-                ),
-            ).parsed<KitsuResponse>().data.firstOrNull() ?: return null
-        } catch (e: Exception) {
-            e.printStackTrace()
-            app.get(
-                "$fallbackApiUrl/library-entries?filter[userId]=$userId&filter[animeId]=$id",
-                headers = mapOf(
-                    "Authorization" to "Bearer ${auth.token.accessToken}"
-                ),
-            ).parsed<KitsuResponse>().data.firstOrNull() ?: return null
-        }
+        val res = app.get(
+            "$apiUrl/library-entries?filter[userId]=$userId&filter[animeId]=$id",
+            headers = mapOf(
+                "Authorization" to "Bearer ${auth.token.accessToken}"
+            ),
+            interceptor = apiFallbackInterceptor
+        ).parsed<KitsuResponse>().data.firstOrNull() ?: return null
 
         return res.id.toInt()
 
@@ -534,22 +465,12 @@ class KitsuApi: SyncAPI() {
         val libraryEntriesSelectedFields = arrayOf("progress","rating","updatedAt", "status")
         val limit = 500
         var url = "$apiUrl/library-entries?filter[userId]=$userId&filter[kind]=anime&include=anime&page[limit]=$limit&page[offset]=0&fields[anime]=${animeSelectedFields.joinToString(",")}&fields[libraryEntries]=${libraryEntriesSelectedFields.joinToString(",")}"
-        val initialFallbackUrl = "$fallbackApiUrl/library-entries?filter[userId]=$userId&filter[kind]=anime&include=anime&page[limit]=$limit&page[offset]=0&fields[anime]=${animeSelectedFields.joinToString(",")}&fields[libraryEntries]=${libraryEntriesSelectedFields.joinToString(",")}"
 
         val fullList = mutableListOf<KitsuNode>()
 
-        var inFallback = false
-
         while (true) {
 
-            val data: KitsuResponse = try {
-                getKitsuAnimeListSlice(token, url)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                if(inFallback) break
-                inFallback = true
-                getKitsuAnimeListSlice(token, initialFallbackUrl)
-            }
+            val data: KitsuResponse = getKitsuAnimeListSlice(token, url)
 
             data.data.forEachIndexed { index, value ->
                 value.anime = data.included?.get(index)
@@ -568,7 +489,8 @@ class KitsuApi: SyncAPI() {
         val res = app.get(
             url, headers = mapOf(
                 "Authorization" to "Bearer ${token.accessToken}",
-            )
+            ),
+            interceptor = apiFallbackInterceptor
         ).parsed<KitsuResponse>()
         return res
     }
