@@ -180,12 +180,12 @@
                             android:textColor="@color/white"
                             android:textStyle="bold"
                             android:visibility="visible"
-                            tools:text="Hello world " />
+                            tools:text="Hello world" />
                         <ImageView
                             android:id="@+id/offline_pin"
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:layout_marginStart="2dp"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_marginStart="1dp"
                             android:src="@drawable/ic_offline_pin_24"
                             android:visibility="gone"
                             tools:visibility="visible"
