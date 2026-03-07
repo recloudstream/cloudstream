@@ -76,13 +76,6 @@ class KitsuApi: SyncAPI() {
                 response.close()
 
             } catch (_: Exception) {
-
-                val fallbackRequest: Request = request.newBuilder()
-                    .url(request.url.toString().replaceFirst(apiUrl, fallbackApiUrl))
-                    .build()
-
-                return chain.proceed(fallbackRequest)
-
             }
 
             val fallbackRequest: Request = request.newBuilder()
