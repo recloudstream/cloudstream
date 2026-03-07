@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- General -->
+    <string name="car_loading">Loading...</string>
+    <string name="car_error">Error</string>
+    <string name="car_loading_content">Error loading content</string>
+
+    <!-- Main Menu -->
+    <string name="car_favorites">Favorites</string>
+    <string name="car_history">History</string>
+    <string name="car_downloads">Downloads</string>
+    <string name="car_provider">Provider</string>
+    <string name="car_current">Current</string>
+    <string name="car_menu">Menu</string>
+    <string name="car_home_content">Home Content</string>
+    <string name="car_no_content_from_provider">No content from provider</string>
+    <string name="car_provider_not_found">Provider not found</string>
+    <string name="car_about_me">About me</string>
+
+    <!-- Details -->
+    <string name="car_source">Source</string>
+    <string name="car_sources">Sources</string>
+    <string name="car_plot">Plot</string>
+    <string name="car_cast">Cast</string>
+    <string name="car_error_loading_details">Error loading details</string>
+
+    <!-- TV Series -->
+    <string name="car_episode_list">Episode List</string>
+    <string name="car_season">Season</string>
+    <string name="car_seasons">Seasons</string>
+    <string name="car_episode">Episode</string>
+    <string name="car_no_episodes_found">No episodes found</string>
+    <string name="car_not_tv_series">Not a TV series</string>
+
+    <!-- Favorites -->
+    <string name="car_added_to_favorites">Added to favorites</string>
+    <string name="car_removed_from_favorites">Removed from favorites</string>
+    <string name="car_no_favorites_found">No favorites found</string>
+
+    <!-- Player -->
+    <string name="car_starting_playback">Starting playback...</string>
+    <string name="car_playing">Playing</string>
+    <string name="car_no_link_found">No link found</string>
+    <string name="car_no_playable_content">No playable content found</string>
+    <string name="car_unable_to_load_details">Unable to load details</string>
+    <string name="car_error_loading_links">Error loading links</string>
+    <string name="car_fit_to_screen">Fit to screen</string>
+    <string name="car_fill_screen">Fill screen</string>
+
+    <!-- Player Mode -->
+    <string name="car_player_mode">Player mode</string>
+    <string name="car_player_mode_advanced">Advanced Player (hardware)</string>
+    <string name="car_player_mode_simple">Simple Player (legacy)</string>
+
+    <!-- Source Selection -->
+    <string name="car_no_source_found">No source found</string>
+    <string name="car_no_source_available">No source available</string>
+    <string name="car_source_selected">Source selected</string>
+
+    <!-- Search -->
+    <string name="car_search">Search</string>
+    <string name="car_no_results_found">No results found</string>
+
+    <!-- History -->
+    <string name="car_no_continue_watching">No \'Continue watching\' items found</string>
+
+    <!-- Downloads -->
+    <string name="car_no_downloads_found">No completed downloads found</string>
+    <string name="car_file_not_found">File not found</string>
+    <string name="car_no_valid_episode">No valid episode found</string>
+
+    <!-- Provider -->
+    <string name="car_select_provider">Select Provider</string>
+    <string name="car_selected">Selected</string>
+
+    <!-- Library -->
+    <string name="car_library">Library</string>
+    <string name="car_bookmarks">Bookmarks</string>
+    <string name="car_resuming">Resuming %1$s...</string>
+</resources>
