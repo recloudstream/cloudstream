@@ -5,11 +5,11 @@ import androidx.annotation.StringRes
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
-import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.ShowStatus
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AuthData
 import com.lagradost.cloudstream3.syncproviders.AuthLoginRequirement
@@ -22,18 +22,16 @@ import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.txt
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.withIndex
+import okhttp3.Interceptor
+import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
-import kotlin.collections.set
 
 const val KITSU_MAX_SEARCH_LIMIT = 20
 
@@ -42,7 +40,9 @@ class KitsuApi: SyncAPI() {
     override val idPrefix = "kitsu"
 
     private val apiUrl = "https://kitsu.io/api/edge"
+    private val fallbackApiUrl = "https://kitsu.app/api/edge"
     private val oauthUrl = "https://kitsu.io/api/oauth"
+    private val fallbackOauthUrl = "https://kitsu.app/api/oauth"
     override val hasInApp = true
     override val mainUrl = "https://kitsu.app"
     override val icon = R.drawable.kitsu_icon
@@ -63,6 +63,33 @@ class KitsuApi: SyncAPI() {
         email = true
     )
 
+    private class FallbackInterceptor(private val apiUrl: String, private val fallbackApiUrl: String) : Interceptor {
+        override fun intercept(chain: Interceptor.Chain): Response {
+            val request: Request = chain.request()
+
+            try {
+
+                val response = chain.proceed(request);
+
+                if (response.isSuccessful) return response
+
+                response.close()
+
+            } catch (_: Exception) {
+            }
+
+            val fallbackRequest: Request = request.newBuilder()
+                .url(request.url.toString().replaceFirst(apiUrl, fallbackApiUrl))
+                .build()
+
+            return chain.proceed(fallbackRequest)
+
+        }
+    }
+
+    private val apiFallbackInterceptor = FallbackInterceptor(apiUrl, fallbackApiUrl)
+    private val oauthFallbackInterceptor = FallbackInterceptor(oauthUrl, fallbackOauthUrl)
+
     override suspend fun login(form: AuthLoginResponse): AuthToken? {
         val username = form.email ?: return null
         val password = form.password ?: return null
@@ -75,8 +102,10 @@ class KitsuApi: SyncAPI() {
                 "grant_type" to grantType,
                 "username" to username,
                 "password" to password
-            )
+            ),
+            interceptor = oauthFallbackInterceptor
         ).parsed<ResponseToken>()
+
         return AuthToken(
             accessTokenLifetime = unixTime + token.expiresIn.toLong(),
             refreshToken = token.refreshToken,
@@ -90,7 +119,8 @@ class KitsuApi: SyncAPI() {
             data = mapOf(
                 "grant_type" to "refresh_token",
                 "refresh_token" to token.refreshToken!!
-            )
+            ),
+            interceptor = oauthFallbackInterceptor
         ).parsed<ResponseToken>()
 
         return AuthToken(
@@ -105,7 +135,8 @@ class KitsuApi: SyncAPI() {
             "$apiUrl/users?filter[self]=true",
             headers = mapOf(
                 "Authorization" to "Bearer ${token?.accessToken ?: return null}"
-            ), cacheTime = 0
+            ), cacheTime = 0,
+            interceptor = apiFallbackInterceptor
         ).parsed<KitsuResponse>()
 
         if (user.data.isEmpty()) {
@@ -123,11 +154,14 @@ class KitsuApi: SyncAPI() {
         val auth = auth?.token?.accessToken ?: return null
         val animeSelectedFields = arrayOf("titles","canonicalTitle","posterImage","episodeCount")
         val url = "$apiUrl/anime?filter[text]=$query&page[limit]=$KITSU_MAX_SEARCH_LIMIT&fields[anime]=${animeSelectedFields.joinToString(",")}"
+
         val res = app.get(
             url, headers = mapOf(
                 "Authorization" to "Bearer $auth",
-            ), cacheTime = 0
+            ), cacheTime = 0,
+            interceptor = apiFallbackInterceptor
         ).parsed<KitsuResponse>()
+
         return res.data.map {
             val attributes = it.attributes
 
@@ -160,7 +194,8 @@ class KitsuApi: SyncAPI() {
         val anime = app.get(
             url, headers = mapOf(
                 "Authorization" to "Bearer $auth"
-            )
+            ),
+            interceptor = apiFallbackInterceptor
         ).parsed<KitsuResponse>().data.attributes
 
         return SyncResult(
@@ -201,7 +236,8 @@ class KitsuApi: SyncAPI() {
         val anime = app.get(
             url, headers = mapOf(
                 "Authorization" to "Bearer $accessToken"
-            )
+            ),
+            interceptor = apiFallbackInterceptor
         ).parsed<KitsuResponse>().data.firstOrNull()?.attributes
 
         if (anime == null) {
@@ -224,7 +260,8 @@ class KitsuApi: SyncAPI() {
 
         val animeSelectedFields = arrayOf("titles","canonicalTitle")
         val url = "$apiUrl/anime?filter[text]=$title&page[limit]=$KITSU_MAX_SEARCH_LIMIT&fields[anime]=${animeSelectedFields.joinToString(",")}"
-        val res = app.get(url).parsed<KitsuResponse>()
+
+        val res = app.get(url, interceptor = apiFallbackInterceptor).parsed<KitsuResponse>()
 
         return res.data.firstOrNull()?.id
 
@@ -269,7 +306,9 @@ class KitsuApi: SyncAPI() {
                     headers = mapOf(
                         "Authorization" to "Bearer ${auth.token.accessToken}"
                     ),
+                    interceptor = apiFallbackInterceptor
                 )
+
 
                 return res.isSuccessful
 
@@ -316,7 +355,8 @@ class KitsuApi: SyncAPI() {
                 "content-type" to "application/vnd.api+json",
                 "Authorization" to "Bearer ${auth.token.accessToken}"
             ),
-            requestBody = data.toJson().toRequestBody()
+            requestBody = data.toJson().toRequestBody(),
+            interceptor = apiFallbackInterceptor
         )
 
         return res.isSuccessful
@@ -349,8 +389,10 @@ class KitsuApi: SyncAPI() {
                 "content-type" to "application/vnd.api+json",
                 "Authorization" to "Bearer ${auth.token.accessToken}"
             ),
-            requestBody = data.toJson().toRequestBody()
+            requestBody = data.toJson().toRequestBody(),
+            interceptor = apiFallbackInterceptor
         )
+
 
         return res.isSuccessful
 
@@ -365,6 +407,7 @@ class KitsuApi: SyncAPI() {
             headers = mapOf(
                 "Authorization" to "Bearer ${auth.token.accessToken}"
             ),
+            interceptor = apiFallbackInterceptor
         ).parsed<KitsuResponse>().data.firstOrNull() ?: return null
 
         return res.id.toInt()
@@ -439,7 +482,8 @@ class KitsuApi: SyncAPI() {
         val res = app.get(
             url, headers = mapOf(
                 "Authorization" to "Bearer ${token.accessToken}",
-            )
+            ),
+            interceptor = apiFallbackInterceptor
         ).parsed<KitsuResponse>()
         return res
     }
@@ -474,7 +518,7 @@ class KitsuApi: SyncAPI() {
 
             val animeId = animeItem?.id
 
-            val description: String? = animeItem?.attributes?.synopsis
+            val synopsis: String? = animeItem?.attributes?.synopsis
 
             return LibraryItem(
                 canonicalTitle ?: titles?.enJp ?: titles?.jaJp.orEmpty(),
@@ -489,7 +533,7 @@ class KitsuApi: SyncAPI() {
                 posterImage?.large ?: posterImage?.medium,
                 null,
                 null,
-                plot = description,
+                plot = synopsis,
                 releaseDate = if (startDate == null) null else try {
                     Date.from(
                         Instant.from(
