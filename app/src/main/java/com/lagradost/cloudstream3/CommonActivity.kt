@@ -234,18 +234,7 @@ object CommonActivity {
     fun init(act: Activity) {
         setActivityInstance(act)
         ioSafe { Torrent.deleteAllFiles() }
-
-        // Clear all pools to apply the correct theme
-        for (pool in arrayOf(
-            PluginAdapter.sharedPool, HomeChildItemAdapter.sharedPool,
-            ParentItemAdapter.sharedPool, ActorAdaptor.sharedPool, EpisodeAdapter.sharedPool,
-            SearchAdapter.sharedPool, ImageAdapter.sharedPool
-        )) {
-            pool.clear()
-        }
-
         val componentActivity = activity as? ComponentActivity ?: return
-
 
         componentActivity.updateLocale()
         componentActivity.updateTv()

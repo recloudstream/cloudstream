@@ -5,12 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.ImageView
-import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import coil3.load
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.databinding.HomeRemoveGridBinding
@@ -20,6 +16,7 @@ import com.lagradost.cloudstream3.databinding.HomeResultGridExpandedBinding
 import com.lagradost.cloudstream3.ui.BaseAdapter
 import com.lagradost.cloudstream3.ui.BaseDiffCallback
 import com.lagradost.cloudstream3.ui.ViewHolderState
+import com.lagradost.cloudstream3.ui.newSharedPool
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
@@ -165,7 +162,7 @@ open class HomeChildItemAdapter(
         // The vast majority of the lag comes from creating the view
         // This simply shares the views between all HomeChildItemAdapter
         val sharedPool =
-            RecyclerView.RecycledViewPool().apply { this.setMaxRecycledViews(CONTENT, 20) }
+            newSharedPool { setMaxRecycledViews(CONTENT, 20) }
 
         var minPosterSize: Int = 0
         var maxPosterSize: Int = 0
