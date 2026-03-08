@@ -241,19 +241,21 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         return root
     }
 
+    private var hasStartedPlaying = false
+
     private fun scheduleMetadataVisibility() {
         val metadataScrim = playerBinding?.playerMetadataScrim ?: return
         val ctx = metadataScrim.context ?: return
 
         if (!ctx.shouldShowPlayerMetadata()) {
             metadataScrim.isVisible = false
-            metadataVisibilityToken++ // invalidate pending callbacks
+            metadataVisibilityToken++
             return
         }
 
         if (isLayout(PHONE)) {
             metadataScrim.isVisible = false
-            metadataVisibilityToken++ // invalidate pending callbacks
+            metadataVisibilityToken++
             return
         }
 
@@ -264,15 +266,26 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         if (isPaused) {
             metadataScrim.postDelayed({
                 if (token != metadataVisibilityToken) return@postDelayed
+                metadataScrim.alpha = 0f
                 metadataScrim.isVisible = true
+                metadataScrim.animate()
+                    .alpha(1f)
+                    .setDuration(500L)
+                    .setInterpolator(DecelerateInterpolator())
+                    .start()
                 hidePlayerUI()
             }, 8000L)
-
         } else {
-            metadataScrim.isVisible = false
+            if (metadataScrim.isVisible) {
+                metadataScrim.animate()
+                    .alpha(0f)
+                    .setDuration(300L)
+                    .setInterpolator(AccelerateDecelerateInterpolator())
+                    .withEndAction { metadataScrim.isVisible = false }
+                    .start()
+            }
         }
     }
-
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun playerUpdated(player: Any?) {
@@ -2214,6 +2227,13 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     protected fun uiReset() {
+        hasStartedPlaying = false
+        metadataVisibilityToken++
+        playerBinding?.playerMetadataScrim?.let {
+            it.animate().cancel()
+            it.alpha = 0f
+            it.isVisible = false
+        }
         isShowing = false
         toggleEpisodesOverlay(false)
         // if nothing has loaded these buttons should not be visible

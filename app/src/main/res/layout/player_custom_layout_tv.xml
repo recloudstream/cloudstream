@@ -22,14 +22,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:layout_gravity="center_vertical"
             android:paddingStart="64dp"
             android:paddingEnd="32dp"
-            android:paddingBottom="32dp"
-            android:layout_gravity="center_vertical">
+            android:paddingBottom="32dp">
 
+            <!-- TITLE / LOGO -->
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="84dp">
+                android:layout_height="88dp">
 
                 <ImageView
                     android:id="@+id/player_movie_logo"
@@ -38,7 +39,7 @@
                     android:adjustViewBounds="true"
                     android:scaleType="fitStart"
                     android:visibility="gone"
-                    tools:visibility="visible" />
+                    tools:visibility="visible"/>
 
                 <TextView
                     android:id="@+id/player_movie_title"
@@ -46,44 +47,43 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:textColor="@android:color/white"
-                    android:textSize="34sp"
+                    android:textSize="30sp"
                     android:textStyle="bold"
                     android:maxLines="2"
                     android:ellipsize="end"
-                    tools:text="Zootopia 2" />
+                    tools:text="Zootopia 2"/>
             </FrameLayout>
 
+            <!-- GENRES / YEAR / RATING -->
             <TextView
                 android:id="@+id/player_movie_meta"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:textColor="#D9FFFFFF"
-                android:textSize="15sp"
+                android:layout_marginTop="12dp"
+                android:textColor="#B3FFFFFF"
+                android:textSize="14sp"
                 android:maxLines="2"
-                tools:text="Animation • Action • Adventure • 2025 • ⭐ 7.6" />
+                tools:text="Animation • Action • Adventure • 2025 • 7.6"/>
 
+            <!-- SYNOPSIS -->
             <TextView
                 android:id="@+id/player_movie_overview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="20dp"
                 android:textColor="#E6FFFFFF"
-                android:textSize="14sp"
-                android:lineSpacingExtra="6dp"
-                android:maxLines="4"
-                tools:text="Brave rabbit cop Judy Hopps and her friend, the fox Nick Wilde, team up again to crack a new case." />
+                android:textSize="16sp"
+                android:lineSpacingExtra="8dp"
+                android:maxLines="5"
+                tools:text="Brave rabbit cop Judy Hopps and her friend, the fox Nick Wilde, team up again to crack a new case."/>
 
         </LinearLayout>
-
         <ImageView
-            android:visibility="gone"
             android:id="@+id/video_outline"
+            android:visibility="gone"
             android:src="@drawable/video_outline"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </ImageView>
-
+            android:layout_height="match_parent"/>
     </FrameLayout>
 
     <FrameLayout
