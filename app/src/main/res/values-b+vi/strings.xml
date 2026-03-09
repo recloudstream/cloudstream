@@ -757,4 +757,18 @@
     <string name="video_info">Thông tin âm thanh</string>
     <string name="extra_brightness_settings">Độ sáng bổ sung</string>
     <string name="source_name">Tên nguồn</string>
+    <string name="download_queue">Hàng đợi tải xuống</string>
+    <string name="queue_empty_message">Hiện tại không có tệp nào đang chờ tải xuống.</string>
+    <string name="source_priority_help">Hãy quyết định cách sắp xếp các nguồn video trong trình phát.</string>
+    <string name="source_priority">Ưu tiên nguồn</string>
+    <string name="download_all">Tải xuống tất cả</string>
+    <string name="cancel_all">Hủy tất cả</string>
+    <string name="download_episode_range">Bạn có muốn tải xuống tập %s không?</string>
+    <string name="cancel_queue_message">Bạn có muốn hủy tất cả các lượt tải xuống đang chờ xử lý không?</string>
+    <plurals name="downloads_active">
+        <item quantity="other">%d đang tải xuống</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="other">%d lượt tải xuống đang chờ xử lý</item>
+    </plurals>
 </resources>
