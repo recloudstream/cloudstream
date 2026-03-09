@@ -281,6 +281,7 @@ import com.lagradost.cloudstream3.extractors.Vidoza
 import com.lagradost.cloudstream3.extractors.VinovoSi
 import com.lagradost.cloudstream3.extractors.VinovoTo
 import com.lagradost.cloudstream3.extractors.VidNest
+import com.lagradost.cloudstream3.extractors.Vidara
 import com.lagradost.cloudstream3.extractors.Vide0Net
 import com.lagradost.cloudstream3.extractors.VkExtractor
 import com.lagradost.cloudstream3.extractors.Voe
@@ -1101,6 +1102,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     StreamoUpload(),
     Streamup(),
     Streamix(),
+    Vidara(),
 
     GamoVideo(),
     Gdriveplayerapi(),
