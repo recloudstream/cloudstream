@@ -4,11 +4,9 @@ import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import com.lagradost.cloudstream3.utils.newExtractorLink
 import java.net.URI
-import kotlin.random.Random
 
 class Doodspro : DoodLaExtractor() {
     override var mainUrl = "https://doods.pro"
@@ -79,6 +77,10 @@ class Ds2play : DoodLaExtractor() {
 
 class Ds2video : DoodLaExtractor() {
     override var mainUrl = "https://ds2video.com"
+}
+
+class Vide0Net: DoodLaExtractor() {
+    override var mainUrl = "https://vide0.net"
 }
 
 class MyVidPlay : DoodLaExtractor() {

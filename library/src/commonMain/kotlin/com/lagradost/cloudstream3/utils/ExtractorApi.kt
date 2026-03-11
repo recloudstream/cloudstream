@@ -281,6 +281,7 @@ import com.lagradost.cloudstream3.extractors.Vidoza
 import com.lagradost.cloudstream3.extractors.VinovoSi
 import com.lagradost.cloudstream3.extractors.VinovoTo
 import com.lagradost.cloudstream3.extractors.VidNest
+import com.lagradost.cloudstream3.extractors.Vide0Net
 import com.lagradost.cloudstream3.extractors.VkExtractor
 import com.lagradost.cloudstream3.extractors.Voe
 import com.lagradost.cloudstream3.extractors.Voe1
@@ -1227,6 +1228,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     ByseVepoin(),
     ByseBuho(),
     MyVidPlay(),
+    Vide0Net(),
     Up4Stream(),
     Up4FunTop(),
     GUpload(),
