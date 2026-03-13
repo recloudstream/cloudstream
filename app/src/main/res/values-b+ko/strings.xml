@@ -109,7 +109,7 @@
     <string name="player_subtitles_settings_des">플레이어 자막 설정</string>
     <string name="chromecast_subtitles_settings">Chromecast 자막</string>
     <string name="chromecast_subtitles_settings_des">Chromecast 자막 설정</string>
-    <string name="eigengraumode_settings">배속 모드</string>
+    <string name="eigengraumode_settings">Playback 속도</string>
     <string name="swipe_to_seek_settings">스와이프하여 탐색</string>
     <string name="swipe_to_seek_settings_des">좌우로 스와이프하여 동영상 위치 제어하기</string>
     <string name="swipe_to_change_settings">스와이프하여 설정 변경</string>
@@ -142,7 +142,7 @@
     <string name="automatic_plugin_download_summary">추가된 저장소에서 아직 설치되지 않은 모든 플러그인을 자동으로 설치합니다.</string>
     <string name="updates_settings">앱 업데이트 표시</string>
     <string name="updates_settings_des">앱을 시작한 후 새 업데이트를 자동으로 검색합니다.</string>
-    <string name="apk_installer_settings_des">일부 휴대폰은 새 패키지 설치 프로그램을 지원하지 않습니다. 업데이트가 설치되지 않으면 레거시 옵션을 사용해 보세요.</string>
+    <string name="apk_installer_settings_des">일부 장치는 새 패키지 설치 프로그램을 지원하지 않습니다. 업데이트가 설치되지 않으면 레거시 옵션을 사용해보십시오.</string>
     <string name="lightnovel">같은 개발자가 만든 라이트 노벨 앱</string>
     <string name="anim">같은 개발자가 만든 애니메이션 앱</string>
     <string name="discord">Discord에 참여하기</string>
@@ -198,12 +198,12 @@
     <string name="skip_update">이 업데이트 건너뛰기</string>
     <string name="watch_quality_pref">선호하는 화질 (WiFi)</string>
     <string name="watch_quality_pref_data">선호하는 화질 (모바일 데이터)</string>
-    <string name="limit_title_rez">동영상 플레이어 해상도</string>
+    <string name="limit_title_rez">본문 바로가기</string>
     <string name="video_buffer_size_settings">동영상 버퍼 크기</string>
     <string name="video_buffer_clear_settings">동영상 및 이미지 캐시 지우기</string>
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="jsdelivr_enabled">GitHub에 연결할 수 없습니다. jsDelivr 프록시를 켜는 중…</string>
-    <string name="jsdelivr_proxy_summary">jsDelivr을 사용하여 GitHub 차단을 우회합니다. 업데이트가 며칠 지연될 수 있습니다.</string>
+    <string name="jsdelivr_proxy_summary">JsDelivr를 사용하여 원시 github URL 차단을 우회하십시오. 몇 일 지연 될 업데이트가 발생할 수 있습니다.</string>
     <string name="add_site_pref">복제 사이트</string>
     <string name="remove_site_pref">사이트 삭제</string>
     <string name="add_site_summary">다른 URL을 사용하여 기존 사이트의 복제본을 추가합니다</string>
@@ -217,10 +217,10 @@
     <string name="category_general">일반</string>
     <string name="pref_category_player_features">플레이어 기능</string>
     <string name="pref_category_ui_features">기능</string>
-    <string name="provider_lang_settings">소스 언어</string>
+    <string name="provider_lang_settings">확장 언어</string>
     <string name="app_layout">앱 레이아웃</string>
     <string name="preferred_media_settings">선호하는 미디어</string>
-    <string name="enable_nsfw_on_providers">지원되는 공급업체에서 19금 사용 설정</string>
+    <string name="enable_nsfw_on_providers">지원된 연장에 NSFW 활성화</string>
     <string name="subtitles_encoding">자막 인코딩</string>
     <string name="category_providers">소스</string>
     <string name="category_provider_test">소스 테스트</string>
@@ -305,11 +305,11 @@
     <string name="view_public_repositories_button">커뮤니티 저장소 보기</string>
     <string name="view_public_repositories_button_short">공개 목록</string>
     <string name="uppercase_all_subtitles">모든 자막 대문자화</string>
-    <string name="download_all_plugins_from_repo">이 저장소에서 모든 플러그인을 다운로드하시겠습니까?경고: CloudStream 3은 타 사 확장 프로그램 사용에 대해 책임을 지지 않으며 이를 지원하지 않습니다!</string>
+    <string name="download_all_plugins_from_repo">경고: CloudStream은 제3자 확장을 이용하여 어떠한 책임도 지지 않습니다!</string>
     <string name="single_plugin_disabled" formatted="true">%s (사용불가)</string>
     <string name="add_repository">저장소 추가</string>
-    <string name="repository_name_hint">저장소 이름</string>
-    <string name="repository_url_hint">저장소 URL</string>
+    <string name="repository_name_hint">저장소 이름 (선택 사항)</string>
+    <string name="repository_url_hint">저장소 URL 또는 단축 코드</string>
     <string name="plugin_loaded">플러그인이 로드됨</string>
     <string name="plugin_downloaded">플러그인 다운로드</string>
     <string name="plugin_deleted">플러그인 삭제됨</string>
@@ -380,7 +380,7 @@
     <string name="dont_show_again">다시 표시하지 않음</string>
     <string name="no_update_found">업데이트를 찾을 수 없음</string>
     <string name="update">업데이트</string>
-    <string name="jsdelivr_proxy">raw.githubusercontent.com 프록시</string>
+    <string name="jsdelivr_proxy">GitHub 프록시</string>
     <string name="video_buffer_length_settings">동영상 버퍼 길이</string>
     <string name="video_buffer_disk_settings">저장소에 동영상 캐시</string>
     <string name="video_ram_description">Android TV와 같이 메모리가 부족한 디바이스에서 너무 높게 설정하면 충돌이 발생할 수 있습니다.</string>
@@ -397,12 +397,12 @@
     <string name="pref_category_app_updates">앱 업데이트</string>
     <string name="pref_category_extensions">확장 기능</string>
     <string name="logout">로그아웃</string>
-    <string name="example_site_url">사이트 URL</string>
+    <string name="example_site_url">https://example.com</string>
     <string name="example_password">비밀번호</string>
     <string name="account">계정</string>
     <string name="example_username">사용자 이름</string>
     <string name="example_lang_name">언어 코드 (ko)</string>
-    <string name="example_site_name">사이트 이름</string>
+    <string name="example_site_name">새사이트이름</string>
     <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="subtitle_offset_extra_hint_before_format">자막이 %d ms 너무 늦게 표시되는 경우, 사용하세요</string>
     <string name="subtitle_offset_extra_hint_none_format">자막 지연 없음</string>
@@ -497,16 +497,16 @@
     <string name="pref_category_actions">동작</string>
     <string name="pref_category_looks">외형</string>
     <string name="random_button_settings">랜덤 버튼</string>
-    <string name="random_button_settings_desc">홈페이지에 랜덤 버튼 표시</string>
+    <string name="random_button_settings_desc">홈페이지 및 도서관에서 임의 버튼 표시</string>
     <string name="bottom_title_settings_des">포스터 아래에 제목을 이동</string>
     <string name="subtitles_depressed">내려감</string>
     <string name="subtitles_raised">올라감</string>
     <string name="subtitles_example_text">다람쥐 헌 쳇바퀴에 타고파</string>
     <string name="subtitles_remove_bloat">자막에서 부풀림 제거</string>
     <string name="extras">엑스트라</string>
-    <string name="network_adress_example">스트림 링크</string>
+    <string name="network_adress_example">https://example.com/example.mp4</string>
     <string name="tracks">트랙</string>
-    <string name="referer">레퍼러</string>
+    <string name="referer">Referer (선택)</string>
     <string name="skip_type_recap">요약</string>
     <string name="action_mark_as_watched">시청함으로 표시</string>
     <string name="revert">되돌리기</string>
@@ -600,7 +600,7 @@
     <string name="automatic_plugin_download_mode_title">플러그인 다운로드를 필터링할 모드 선택</string>
     <string name="biometric_warning">데이터가 백업되었습니다. 장치에 따라 동작이 다를 수 있으며 앱 접근이 차단될 경우 앱 데이터를 완전히 지우고 백업에서 복원하세요. 이로 인해 발생하는 불편을 사과드립니다.</string>
     <string name="device_pin_url_message">스마트폰이나 컴퓨터에서 <b>%s</b>를 방문하여 위의 코드를 입력하세요</string>
-    <string name="battery_dialog_message">구독 TV 프로그램에 대한 중단 없는 다운로드 및 알림을 보장하기 위해 CloudStream은 백그라운드에서 실행할 수 있는 권한이 필요합니다. 확인을 누르면 App info로 이동합니다. 거기서 𝘼𝙥𝙥 𝙗𝙖𝙩𝙩𝙚𝙧𝙮 𝙪𝙨𝙖𝙜𝙚로 스크롤하여 배터리 사용량을 𝙐𝙣𝙧𝙚𝙨𝙩𝙧𝙞𝙘𝙩𝙚𝙙로 설정합니다. 이 권한은 CS3가 배터리를 소모한다는 의미가 아닙니다. 알림을 받거나 공식 확장에서 동영상을 다운로드하는 등 필요할 때만 백그라운드에서 작동합니다. 취소를 선택한 경우 나중에 𝙂𝙚𝙣𝙚𝙧𝙖𝙡 𝙎𝙚𝙩𝙩𝙞𝙣𝙜𝙨에서 이 설정을 조정할 수 있습니다.</string>
+    <string name="battery_dialog_message">구독 된 TV 프로그램에 대한 특이성 다운로드 및 알림을 보려면 클라우드 스트림은 배경에서 오른쪽으로 실행할 권리가 필요합니다. 확인을 눌러 요청 대화 상자를 표시하십시오. 필요한 경우 필요에 따라 CP3에 제한되지 않고 공식을 다운로드하거나 공식화에서 확대를 누릴 필요가 있습니다.</string>
     <string name="quality_profile_help">여기서 소스의 순서를 변경할 수 있습니다. 비디오의 우선 순위가 높은 경우에는 소스 선택에 더 높게 나타납니다. 소스 우선 순위와 품질 우선 순위의 합이 비디오 우선 순위입니다.
 \n
 \n참고 A: 3
@@ -651,7 +651,7 @@
     <string name="torrent_info">이 동영상은 토렌트이므로 동영상 활동이 추적될 수 있습니다.\n계속하기 전에 토렌트에 대해 충분히 이해했는지 확인하세요.</string>
     <string name="audio_singluar">오디오</string>
     <string name="podcast_singluar">팟캐스트</string>
-    <string name="begin_speaking">음성 시작…</string>
+    <string name="begin_speaking">시작하기 …</string>
     <string name="encoding_error">인코딩 오류</string>
     <string name="unsupported_error">지원되지 않는 오류</string>
     <string name="speech_recognition_unavailable">음성 인식 사용 불가</string>
@@ -732,4 +732,31 @@
     <string name="top_left">왼쪽 위</string>
     <string name="top_center">중앙 위</string>
     <string name="top_right">오른쪽 위</string>
+    <string name="source_priority_help">비디오 소스가 플레이어에서 정렬되어야하는 방법 결정</string>
+    <string name="extra_brightness_settings_des">100% 표시 광도가 초과될 때 Enable 광도 여과기</string>
+    <string name="cancel_queue_message">모든 퀴즈 다운로드를 취소하시겠습니까?</string>
+    <string name="download_episode_range">에피소드를 다운로드 하시겠습니까 %s?</string>
+    <string name="queue_empty_message">현재 누락된 다운로드가 없습니다.</string>
+    <plurals name="downloads_active">
+        <item quantity="other">%d 활성 다운로드</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="other">%d 다운로드</item>
+    </plurals>
+    <string name="search_suggestions_des">검색 결과 표시</string>
+    <string name="show_cast_in_details">회사 소개</string>
+    <string name="background_radius">배경 반경</string>
+    <string name="reload_provider">Reload 공급자</string>
+    <string name="search_suggestions">검색 제안</string>
+    <string name="clear_suggestions">자주 묻는 질문</string>
+    <string name="video_info">미디어 정보</string>
+    <string name="source_name">근원 이름</string>
+    <string name="extra_brightness_settings">추가 밝기</string>
+    <string name="download_queue">다운로드 queue</string>
+    <string name="download_all">다운로드</string>
+    <string name="cancel_all">모든 것</string>
+    <string name="source_priority">근원 우선권</string>
+    <string name="overscan_settings">구름 많음</string>
+    <string name="action_reload">관련 상품</string>
+    <string name="extra_brightness_key">추가_brightness_enabled</string>
 </resources>
