@@ -45,7 +45,7 @@ open class Streamup() : ExtractorApi() {
             )
         )
 
-        fileInfo.subtitles.forEach { subtitle ->
+        fileInfo.subtitles?.forEach { subtitle ->
             subtitleCallback.invoke(
                 newSubtitleFile(subtitle.language, subtitle.filePath)
             )
@@ -57,7 +57,7 @@ open class Streamup() : ExtractorApi() {
         val thumbnail: String,
         @JsonProperty("streaming_url")
         val streamingUrl: String,
-        val subtitles: List<StreamUpSubtitle>
+        val subtitles: List<StreamUpSubtitle>?
     )
 
     private data class StreamUpSubtitle(
