@@ -1188,12 +1188,13 @@ class GeneratorPlayer : FullScreenPlayer() {
                         }
 
                         val hiddenLinks = fullSortedLinks.size - sortedLinks.size
+                        providerList.removeFooterView(currentHiddenFooter)
+
                         if (hiddenLinks > 0) {
                             val hiddenLinksFooter: TextView = layoutInflater.inflate(
                                 R.layout.sort_bottom_footer_add_choice, null
                             ) as TextView
 
-                            providerList.removeFooterView(currentHiddenFooter)
                             providerList.addFooterView(hiddenLinksFooter, null, false)
                             currentHiddenFooter = hiddenLinksFooter
 
