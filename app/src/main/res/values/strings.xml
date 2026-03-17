@@ -619,6 +619,14 @@
     <string name="action_subscribe">Subscribe</string>
     <string name="action_unsubscribe">Unsubscribe</string>
     <string name="profile_number">Profile %d</string>
+    <string name="profile_settings">Profile settings</string>
+    <string name="profile_hide_negative_sources">Hide sources with a negative priority</string>
+    <string name="profile_hide_error_sources">Hide sources with errors</string>
+    <plurals name="links_hidden">
+        <item quantity="one">%d hidden link</item>
+        <item quantity="other">%d hidden links</item>
+    </plurals>
+
     <string name="wifi">Wi-Fi</string>
     <string name="mobile_data">Mobile data</string>
     <string name="set_default">Set default</string>
