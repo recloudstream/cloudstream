@@ -252,7 +252,7 @@
     <string name="update">Актуализация</string>
     <string name="watch_quality_pref">Предпочитано качество за гледане (през WiFi)</string>
     <string name="limit_title">Максимален брой знаци за заглавие във видеоплейъра</string>
-    <string name="limit_title_rez">Разделителна способност на видео плейъра</string>
+    <string name="limit_title_rez">Покажи информация за плейъра</string>
     <string name="video_buffer_size_settings">Размер на видео буфера</string>
     <string name="video_buffer_length_settings">Дължина на видео буфера</string>
     <string name="video_buffer_disk_settings">Видео кеш на диск</string>
@@ -411,7 +411,7 @@
     <string name="view_public_repositories_button">Вижте хранилищата на общността</string>
     <string name="view_public_repositories_button_short">Публичен списък</string>
     <string name="uppercase_all_subtitles">Всички субтитри с главни букви</string>
-    <string name="download_all_plugins_from_repo">Предупреждение: CloudStream 3 не носи отговорност за използването на трети страни разширения и не предоставя поддръжка за тях!</string>
+    <string name="download_all_plugins_from_repo">Предупреждение: CloudStream не носи отговорност за използването на трети страни разширения и не предоставя поддръжка за тях!</string>
     <string name="single_plugin_disabled" formatted="true">%s (Деактивиран)</string>
     <string name="tracks">Потоци</string>
     <string name="audio_tracks">Аудио потоци</string>
@@ -456,7 +456,7 @@
     <string name="clear_history">Изчистване на историята</string>
     <string name="automatic_plugin_download_summary">Автоматично инсталиране на всички все още неинсталирани добавки от добавени хранилища.</string>
     <string name="apk_installer_settings">APK Инсталатор</string>
-    <string name="apk_installer_settings_des">Някои телефони не поддържат новия пакет за инсталиране. Опитайте предпоследената опция, ако актуализациите не се инсталират.</string>
+    <string name="apk_installer_settings_des">Някои устройства не поддържат новия пакет за инсталиране. Опитайте предпоследената опция, ако актуализациите не се инсталират.</string>
     <string name="play_trailer_button">Пусни трейлър</string>
     <string name="pref_category_links">Връзки</string>
     <string name="pref_category_app_updates">Актуализации на приложението</string>
@@ -639,7 +639,7 @@
     <string name="no_plugins_updated_manually">Няма актуализирани плъгини.</string>
     <string name="delete_message_series_only" formatted="true">Are you sure you wСигурни ли сте, че искате трайно да изтриете всички епизоди от тази поредица?\n\n%s</string>
     <string name="torrent_not_accepted">Рестартирайте приложението и приемете изскачащото съобщение за Stream Torrent, за да продължите.</string>
-    <string name="software_decoding_desc">Софтуерното декодиране позволява на плейъра да възпроизвежда видео файлове, които не се поддържат от телефона ви, но може да причини забавяне или нестабилно възпроизвеждане при висока резолюция</string>
+    <string name="software_decoding_desc">Софтуерното декодиране позволява на плейъра да възпроизвежда видео файлове, които не се поддържат от устройството ви, но може да причини забавяне или нестабилно възпроизвеждане при висока резолюция</string>
     <string name="player_notification_channel_name">Известия на плейъра</string>
     <string name="sort_episodes_number_desc">Епизод (низходящо)</string>
     <string name="starting_plugin_update_manually">Започва процесът на актуализация на плъгините!</string>
@@ -700,4 +700,56 @@
     <string name="player_settings_always_ask">Винаги изпращай запитване</string>
     <string name="speedup_summary">Задръжте, за да удвоите скоростта</string>
     <string name="speedup_title">Дълго задържане за смяна на скоростта</string>
+    <string name="download_queue">Опашка за изтегляне</string>
+    <string name="play_full_series_button">Пусни цялата поредица</string>
+    <string name="queue_empty_message">В момента няма изтегляния в опашката.</string>
+    <string name="extra_brightness_settings">Допълнителна яркост</string>
+    <string name="extra_brightness_settings_des">Активирай филтъра за яркост, когато яркостта на екрана надвиши 100%</string>
+    <string name="search_suggestions">Предложения за търсене</string>
+    <string name="search_suggestions_des">Показвай предложения за търсене по време на писане</string>
+    <string name="clear_suggestions">Изтрий предложения</string>
+    <string name="show_cast_in_details">Покажи панела за излъчване</string>
+    <string name="install_prerelease">Инсталирай предварителна версия</string>
+    <string name="prerelease_already_installed">Предварителна версия вече е изтеглена.</string>
+    <string name="prerelease_install_failed">Неуспешна инсталация на предварителната версия.</string>
+    <string name="show_rating">Етикет за рейтинг</string>
+    <string name="show_episode_text">Текст на епизода</string>
+    <string name="video_info">Информация за медията</string>
+    <string name="source_priority">Приоритет на източника</string>
+    <string name="source_priority_help">Определи как източниците на видеото да се сортират в плейъра</string>
+    <string name="no_account">Няма акаунт</string>
+    <string name="edit_profile_image_title">Редактирай профилната снимка</string>
+    <string name="edit_profile_image_hint">Въведи линк за профилна снимка</string>
+    <string name="edit_profile_image_error_empty">Няма намерен URL</string>
+    <string name="edit_profile_image_error_invalid">Невалиден URL или снимка</string>
+    <string name="edit_profile_image_success">Успешно актуализирана снимка</string>
+    <string name="action_mark_watched_up_to_this_episode">Маркирай като гледано до този епизод</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">Премахни маркирането като гледано до този епизод</string>
+    <string name="action_reload">Презаредено</string>
+    <string name="reload_provider">Презареди доставчика</string>
+    <string name="name">Име</string>
+    <string name="source_name">Име на източника</string>
+    <string name="resolution_and_name">Резолюция и име</string>
+    <string name="download_all">Изтегли всички</string>
+    <string name="cancel_all">Откажи всички</string>
+    <string name="download_episode_range">Искаш ли да изтеглиш епизод %s?</string>
+    <string name="cancel_queue_message">Искаш ли да отмениш всички изтегляния в опашката?</string>
+    <string name="subs_subtitle_alignment">Подравняване на субтитрите</string>
+    <string name="bottom_left">Долу вляво</string>
+    <string name="bottom_center">Долу в центъра</string>
+    <string name="bottom_right">Долу вдясно</string>
+    <string name="middle_left">В средата вляво</string>
+    <string name="middle_center">В средата в центъра</string>
+    <string name="middle_right">В средата вдясно</string>
+    <string name="top_left">Горе вляво</string>
+    <string name="top_center">Горе в центъра</string>
+    <string name="top_right">Горе вдясно</string>
+    <plurals name="downloads_active">
+        <item quantity="one">%d активно изтегляне</item>
+        <item quantity="other">%d активни изтегляния</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="one">%d изтегляне в опашката</item>
+        <item quantity="other">%d изтегляния в опашката</item>
+    </plurals>
 </resources>
