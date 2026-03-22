@@ -242,7 +242,7 @@
     <string name="update">Atualizar</string>
     <string name="watch_quality_pref">Qualidade Preferida (WiFi)</string>
     <string name="limit_title">Máximo de caracteres do título no player de video</string>
-    <string name="limit_title_rez">Resolução do player de vídeo</string>
+    <string name="limit_title_rez">Mostrar informações do player de vídeo</string>
     <string name="video_buffer_size_settings">Tamanho do buffer do vídeo</string>
     <string name="video_buffer_length_settings">Comprimento do buffer do vídeo</string>
     <string name="video_buffer_disk_settings">Cache do vídeo em disco</string>
@@ -663,7 +663,7 @@
     <string name="torrent_preferred_media">Ativar torrent nas Configurações/Provedores/Mídia preferida</string>
     <string name="torrent_not_accepted">Reinicie a aplicação e aceite o pop-up do Stream Torrent para continuar.</string>
     <string name="software_decoding">Descodificação por software</string>
-    <string name="software_decoding_desc">Descodificação por software permite que o leitor reproduza ficheiros não suportados pelo seu dispositivo, mas pode resultar numa reprodução desfasada ou instável em altas resoluções</string>
+    <string name="software_decoding_desc">Descodificação por software permite que o leitor reproduza ficheiros não suportados pelo seu dispositivo, mas pode resultar numa reprodução desfasada ou instável em altas resoluções.</string>
     <string name="subtitles_from_embedded">Incorporada</string>
     <string name="subtitles_from_online">Online</string>
     <string name="sort_episodes_number_asc">Episódio (Ascendente)</string>
@@ -734,4 +734,31 @@
     <string name="prerelease_already_installed">Versão de pré-lançamento já instalada.</string>
     <string name="prerelease_install_failed">Falha ao instalar pré-lançamento.</string>
     <string name="show_episode_text">Texto do Episódio</string>
+    <string name="download_queue">Fila de downloads</string>
+    <string name="queue_empty_message">Não há downloads na fila no momento.</string>
+    <string name="extra_brightness_settings">Brilho extra</string>
+    <string name="extra_brightness_settings_des">Ativar filtro de brilho quando o brilho da tela exceder 100%</string>
+    <string name="extra_brightness_key">extra_brightness_enabled</string>
+    <string name="search_suggestions">Sugestões de pesquisa</string>
+    <string name="search_suggestions_des">Mostrar sugestões de pesquisa enquanto digita</string>
+    <string name="clear_suggestions">Limpar Sugestões</string>
+    <string name="show_cast_in_details">Mostrar Painel de Elenco</string>
+    <string name="video_info">Informações da mídia</string>
+    <string name="source_priority">Prioridade da fonte</string>
+    <string name="source_priority_help">Decida como as fontes de vídeo devem ser classificadas no player</string>
+    <string name="source_name">Nome da fonte</string>
+    <string name="download_all">Baixar tudo</string>
+    <string name="cancel_all">Cancelar tudo</string>
+    <string name="download_episode_range">Deseja baixar o episódio %s?</string>
+    <string name="cancel_queue_message">Deseja cancelar todos os downloads em fila?</string>
+    <plurals name="downloads_active">
+        <item quantity="one">%d download ativo</item>
+        <item quantity="many">%d downloads ativos</item>
+        <item quantity="other">%d downloads ativos</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="one">%d download na fila</item>
+        <item quantity="many">%d downloads na fila</item>
+        <item quantity="other">%d downloads na fila</item>
+    </plurals>
 </resources>
