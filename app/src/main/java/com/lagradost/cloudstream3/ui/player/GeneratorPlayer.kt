@@ -1468,12 +1468,16 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                         val codec = audioCodecName(track.sampleMimeType)
 
-                        val channels = when (track.channelCount ?: 0) {
-                            1 -> "Mono"
-                            2 -> "Stereo"
-                            6 -> "5.1"
-                            8 -> "7.1"
-                            else -> "${track.channelCount ?: "?"}ch"
+                        val channelCount = track.channelCount
+
+                        val channels = when {
+                            // May be below 1 or null when unknown
+                            channelCount == null || channelCount <= 0 -> ""
+                            channelCount == 1 -> "Mono"
+                            channelCount == 2 -> "Stereo"
+                            channelCount == 6 -> "5.1"
+                            channelCount == 8 -> "7.1"
+                            else -> "${channelCount}ch"
                         }
 
                         listOfNotNull(
@@ -1893,12 +1897,16 @@ class GeneratorPlayer : FullScreenPlayer() {
         val languageName = fromTagToLanguageName(audioTrack?.language)
         val label = audioTrack?.label
 
-        val channels = when (audioTrack?.channelCount ?: 0) {
-            1 -> "Mono"
-            2 -> "Stereo"
-            6 -> "5.1"
-            8 -> "7.1"
-            else -> audioTrack?.channelCount?.let { "${it}ch" }
+        val channelCount = audioTrack?.channelCount
+
+        val channels = when {
+            // May be below 1 or null when unknown
+            channelCount == null || channelCount <= 0 -> ""
+            channelCount == 1 -> "Mono"
+            channelCount == 2 -> "Stereo"
+            channelCount == 6 -> "5.1"
+            channelCount == 8 -> "7.1"
+            else -> "${channelCount}ch"
         }
 
         val language = languageName?.takeIf { it.isNotBlank() }?.let { lang ->
