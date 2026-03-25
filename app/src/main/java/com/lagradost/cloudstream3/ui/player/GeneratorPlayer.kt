@@ -104,7 +104,6 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.sortSubs
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DataStoreHelper
-import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -132,90 +131,6 @@ import kotlinx.coroutines.launch
 import java.io.Serializable
 import java.util.Calendar
 
-private const val PLAYER_EPISODE_PREFERENCES = "player_episode_preferences"
-
-internal data class EpisodePlaybackPreference(
-    val sourceDisplayName: String? = null,
-    val subtitleOriginalName: String? = null,
-    val subtitleSuffix: String? = null,
-    val subtitleLanguageTag: String? = null,
-    val subtitlesDisabled: Boolean = false,
-)
-
-internal data class ResolvedEpisodeSubtitlePreference(
-    val subtitle: SubtitleData?,
-    val blockFallback: Boolean,
-)
-
-internal fun getSourceDisplayName(link: Pair<ExtractorLink?, ExtractorUri?>?): String? {
-    return link?.first?.name ?: link?.second?.name
-}
-
-internal fun resolveEpisodePreferenceSource(
-    links: List<Pair<ExtractorLink?, ExtractorUri?>>,
-    preference: EpisodePlaybackPreference?,
-): Pair<ExtractorLink?, ExtractorUri?>? {
-    val preferredSourceName = preference?.sourceDisplayName ?: return null
-    return links.firstOrNull { getSourceDisplayName(it) == preferredSourceName }
-}
-
-internal fun resolveEpisodePreferenceSubtitle(
-    subtitles: Set<SubtitleData>,
-    preference: EpisodePlaybackPreference?,
-): ResolvedEpisodeSubtitlePreference {
-    if (preference == null) {
-        return ResolvedEpisodeSubtitlePreference(
-            subtitle = null,
-            blockFallback = false,
-        )
-    }
-
-    if (preference.subtitlesDisabled) {
-        return ResolvedEpisodeSubtitlePreference(
-            subtitle = null,
-            blockFallback = true,
-        )
-    }
-
-    val sortedSubtitles = sortSubs(subtitles)
-
-    sortedSubtitles.firstOrNull { subtitle ->
-        subtitle.originalName == preference.subtitleOriginalName &&
-                subtitle.nameSuffix == preference.subtitleSuffix
-    }?.let { subtitle ->
-        return ResolvedEpisodeSubtitlePreference(
-            subtitle = subtitle,
-            blockFallback = false,
-        )
-    }
-
-    preference.subtitleOriginalName?.let { originalName ->
-        sortedSubtitles.firstOrNull { subtitle ->
-            subtitle.originalName == originalName
-        }?.let { subtitle ->
-            return ResolvedEpisodeSubtitlePreference(
-                subtitle = subtitle,
-                blockFallback = false,
-            )
-        }
-    }
-
-    preference.subtitleLanguageTag?.let { languageTag ->
-        sortedSubtitles.firstOrNull { subtitle ->
-            subtitle.matchesLanguageCode(languageTag)
-        }?.let { subtitle ->
-            return ResolvedEpisodeSubtitlePreference(
-                subtitle = subtitle,
-                blockFallback = false,
-            )
-        }
-    }
-
-    return ResolvedEpisodeSubtitlePreference(
-        subtitle = null,
-        blockFallback = false,
-    )
-}
 
 @OptIn(UnstableApi::class)
 class GeneratorPlayer : FullScreenPlayer() {
@@ -275,7 +190,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     private fun setSubtitles(subtitle: SubtitleData?, userInitiated: Boolean): Boolean {
-        // If subtitle is changed and user initiated -> Save the language
+        // If subtitle is changed and user initiated -> Save the language and episode preference
         if (subtitle != currentSelectedSubtitles && userInitiated) {
             val subtitleLanguageTagIETF = if (subtitle == null) {
                 "" // -> No Subtitles
@@ -288,6 +203,9 @@ class GeneratorPlayer : FullScreenPlayer() {
                 setKey(SUBTITLE_AUTO_SELECT_KEY, subtitleLanguageTagIETF)
                 preferredAutoSelectSubtitles = subtitleLanguageTagIETF
             }
+
+            // Persist episode-specific subtitle preference
+            EpisodePreferenceHelper.persistSubtitlePreference(currentMeta, subtitle)
         }
 
         currentSelectedSubtitles = subtitle
@@ -322,81 +240,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         return setSubtitles(null, true)
     }
 
-    private fun getEpisodePreferenceParentId(meta: Any?): Int? {
-        return when (meta) {
-            is ResultEpisode -> meta.parentId.takeIf { meta.tvType.isEpisodeBased() }
-            is ExtractorUri -> meta.parentId.takeIf { meta.tvType?.isEpisodeBased() == true }
-            else -> null
-        }
-    }
 
-    private fun getEpisodePreference(meta: Any?): EpisodePlaybackPreference? {
-        val parentId = getEpisodePreferenceParentId(meta) ?: return null
-        return getKey(
-            "$currentAccount/$PLAYER_EPISODE_PREFERENCES",
-            parentId.toString()
-        )
-    }
-
-    private fun updateEpisodePreference(
-        meta: Any?,
-        update: EpisodePlaybackPreference.() -> EpisodePlaybackPreference,
-    ) {
-        val parentId = getEpisodePreferenceParentId(meta) ?: return
-        val updatedPreference = update(getEpisodePreference(meta) ?: EpisodePlaybackPreference())
-        setKey(
-            "$currentAccount/$PLAYER_EPISODE_PREFERENCES",
-            parentId.toString(),
-            updatedPreference
-        )
-    }
-
-    private fun persistSelectedSourcePreference(
-        meta: Any?,
-        link: Pair<ExtractorLink?, ExtractorUri?>?,
-    ) {
-        val sourceDisplayName = getSourceDisplayName(link) ?: return
-        updateEpisodePreference(meta) {
-            copy(sourceDisplayName = sourceDisplayName)
-        }
-    }
-
-    private fun persistSelectedSubtitlePreference(
-        meta: Any?,
-        subtitle: SubtitleData?,
-    ) {
-        updateEpisodePreference(meta) {
-            if (subtitle == null) {
-                copy(
-                    subtitleOriginalName = null,
-                    subtitleSuffix = null,
-                    subtitleLanguageTag = null,
-                    subtitlesDisabled = true,
-                )
-            } else {
-                copy(
-                    subtitleOriginalName = subtitle.originalName,
-                    subtitleSuffix = subtitle.nameSuffix,
-                    subtitleLanguageTag = subtitle.getIETF_tag(),
-                    subtitlesDisabled = false,
-                )
-            }
-        }
-    }
-
-    private fun resolveStoredSubtitlePreference(meta: Any?): ResolvedEpisodeSubtitlePreference {
-        return resolveEpisodePreferenceSubtitle(currentSubs, getEpisodePreference(meta))
-    }
-
-    private fun shouldWaitForPreferredSource(
-        links: Set<Pair<ExtractorLink?, ExtractorUri?>>,
-        meta: Any?,
-    ): Boolean {
-        val preferredSourceName = getEpisodePreference(meta)?.sourceDisplayName ?: return false
-        return links.none { link ->
-            getSourceDisplayName(link) == preferredSourceName
-        }
-    }
 
     private fun getPos(): Long {
         val durPos = getViewPos(viewModel.getId()) ?: return 0L
@@ -688,19 +532,16 @@ class GeneratorPlayer : FullScreenPlayer() {
             hasRequestedStamps = false
 
         loadExtractorJob(link.first)
+        // Subtitle selection uses getAutoSelectSubtitle which checks episode preference,
+        // then settings, then downloads - in that priority order.
         val preferredSubtitle = if (sameEpisode) {
             currentSelectedSubtitles
         } else {
-            val storedSubtitlePreference = resolveStoredSubtitlePreference(currentMeta)
-            if (storedSubtitlePreference.blockFallback) {
-                null
-            } else {
-                storedSubtitlePreference.subtitle ?: getAutoSelectSubtitle(
-                    currentSubs,
-                    settings = true,
-                    downloads = true
-                )
-            }
+            getAutoSelectSubtitle(
+                currentSubs,
+                settings = true,
+                downloads = true
+            )
         }
         // load player
         context?.let { ctx ->
@@ -1536,13 +1377,10 @@ class GeneratorPlayer : FullScreenPlayer() {
                             } ?: false
                         }
 
-                        if (subtitleGroupIndex <= 0 || selectedSubtitle != null) {
-                            persistSelectedSubtitlePreference(currentMeta, selectedSubtitle)
-                        }
                     }
 
                     if (sourceChanged) {
-                        persistSelectedSourcePreference(currentMeta, selectedSource)
+                        EpisodePreferenceHelper.persistSourcePreference(currentMeta, selectedSource)
                     }
 
                     if (shouldReload) {
@@ -1747,8 +1585,8 @@ class GeneratorPlayer : FullScreenPlayer() {
             return
         }
 
-        val episodePreference = getEpisodePreference(viewModel.getMeta())
-        val preferredLink = resolveEpisodePreferenceSource(links, episodePreference)
+        val episodePreference = EpisodePreferenceHelper.getEpisodePreference(viewModel.getMeta())
+        val preferredLink = EpisodePreferenceHelper.resolvePreferenceSource(links, episodePreference)
         loadLink(preferredLink ?: links.first(), false)
     }
 
@@ -1868,9 +1706,26 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+    /**
+     * Auto-selects a subtitle based on the following priority:
+     * 1. Episode preference (user's previous selection for this series)
+     * 2. Settings-based language preference (preferredAutoSelectSubtitles)
+     * 3. Downloaded subtitle files matching the language preference
+     *
+     * Returns null if no suitable subtitle is found or if episode preference
+     * explicitly disables subtitles (blockFallback=true).
+     */
     private fun getAutoSelectSubtitle(
         subtitles: Set<SubtitleData>, settings: Boolean, downloads: Boolean
     ): SubtitleData? {
+        // Priority 1: Check episode-specific preference (user's previous selection for this series)
+        val episodePref = EpisodePreferenceHelper.resolvePreferenceSubtitle(
+            subtitles, EpisodePreferenceHelper.getEpisodePreference(currentMeta)
+        )
+        if (episodePref.blockFallback) return null // User explicitly disabled subtitles
+        if (episodePref.subtitle != null) return episodePref.subtitle
+
+        // Priority 2 & 3: Settings and downloads based auto-selection
         val langCode = preferredAutoSelectSubtitles ?: return null
         if (downloads) {
             return sortSubs(subtitles).firstOrNull { it.origin == SubtitleOrigin.DOWNLOADED_FILE && it.matchesLanguageCode(langCode) }
@@ -1911,26 +1766,6 @@ class GeneratorPlayer : FullScreenPlayer() {
         return false
     }
 
-    private fun autoSelectFromEpisodePreference(): Boolean {
-        val preferredSubtitle = resolveStoredSubtitlePreference(currentMeta)
-        if (preferredSubtitle.blockFallback) {
-            if (player.getCurrentPreferredSubtitle() != null) {
-                setSubtitles(null, false)
-            }
-            return true
-        }
-
-        val selectedSubtitle = preferredSubtitle.subtitle ?: return false
-        context?.let { ctx ->
-            if (setSubtitles(selectedSubtitle, false)) {
-                player.saveData()
-                player.reloadPlayer(ctx)
-                player.handleEvent(CSPlayerEvent.Play)
-            }
-        }
-        return true
-    }
-
     private fun autoSelectFromDownloads(): Boolean {
         if (player.getCurrentPreferredSubtitle() == null) {
             getAutoSelectSubtitle(currentSubs, settings = false, downloads = true)?.let { sub ->
@@ -1947,10 +1782,14 @@ class GeneratorPlayer : FullScreenPlayer() {
         return false
     }
 
+    /**
+     * Auto-selects subtitles by delegating to getAutoSelectSubtitle which handles
+     * all preference systems in priority order (episode pref > settings > downloads).
+     */
     private fun autoSelectSubtitles() {
         //Log.i(TAG, "autoSelectSubtitles")
         safe {
-            if (!autoSelectFromEpisodePreference() && !autoSelectFromSettings()) {
+            if (!autoSelectFromSettings()) {
                 autoSelectFromDownloads()
             }
         }
@@ -2034,7 +1873,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             currentLinks = it
             val turnVisible = it.isNotEmpty() && lastUsedGenerator?.canSkipLoading == true
             val wasGone = binding?.overlayLoadingSkipButton?.isGone == true
-            val waitingForPreferredSource = shouldWaitForPreferredSource(it, viewModel.getMeta())
+            val waitingForPreferredSource = EpisodePreferenceHelper.shouldWaitForPreferredSource(it, viewModel.getMeta())
 
             binding?.overlayLoadingSkipButton?.apply {
                 isVisible = turnVisible
