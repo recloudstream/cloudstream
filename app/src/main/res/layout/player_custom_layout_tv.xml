@@ -63,7 +63,7 @@
                 android:textColor="#B3FFFFFF"
                 android:textSize="14sp"
                 android:maxLines="2"
-                tools:text="Animation • Action • Adventure • 2025 • 7.6"/>
+                tools:text="Animation • Action • Adventure • 2025 • ⭐ 7.6"/>
 
             <!-- SYNOPSIS -->
             <TextView

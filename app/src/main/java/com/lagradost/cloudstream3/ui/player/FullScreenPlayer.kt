@@ -241,8 +241,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         return root
     }
 
-    private var hasStartedPlaying = false
-
     private fun scheduleMetadataVisibility() {
         val metadataScrim = playerBinding?.playerMetadataScrim ?: return
         val ctx = metadataScrim.context ?: return
@@ -260,7 +258,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
 
         val isPaused = currentPlayerStatus == CSPlayerLoading.IsPaused
-        metadataScrim.animate().cancel()
         val token = ++metadataVisibilityToken
 
         if (isPaused) {
@@ -281,7 +278,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     .alpha(0f)
                     .setDuration(300L)
                     .setInterpolator(AccelerateDecelerateInterpolator())
-                    .withEndAction { metadataScrim.isVisible = false }
+                    .withEndAction {
+                        metadataScrim.alpha = 0f      // force final state
+                        metadataScrim.isVisible = false
+                    }
                     .start()
             }
         }
@@ -2227,7 +2227,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     protected fun uiReset() {
-        hasStartedPlaying = false
         metadataVisibilityToken++
         playerBinding?.playerMetadataScrim?.let {
             it.animate().cancel()
