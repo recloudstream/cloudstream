@@ -41,7 +41,7 @@ abstract class GenerateGitHashTask : DefaultTask() {
                     val commitFile = File(head.parentFile, refPath)
                     if (commitFile.exists()) commitFile.readText().trim() else ""
                 } else headContent // If it's a detached HEAD (commit hash directly)
-            } else ""  // If .git/HEAD doesn't exist
+            } else "" // If .git/HEAD doesn't exist
         } catch (_: Throwable) {
             "" // Just set to an empty string if any exception occurs
         }.take(7) // Get the short commit hash
