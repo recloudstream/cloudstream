@@ -16,45 +16,50 @@ val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
 val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
 val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
 
-tasks.register("generateGitHash") {
-    val gitHashDir = layout.buildDirectory.dir("generated/git")
-    val rootDir = project.rootDir
-    outputs.dir(gitHashDir)
+abstract class GenerateGitHashTask : DefaultTask() {
 
-    doLast {
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val headFile: RegularFileProperty
+
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val headsDir: DirectoryProperty
+
+    @get:OutputDirectory
+    abstract val outputDir: DirectoryProperty
+
+    @TaskAction
+    fun generate() {
+        val head = headFile.get().asFile
+
         val hash = try {
-            // Read the commit hash from .git/HEAD
-            val headFile = File(rootDir, ".git/HEAD")
-            if (headFile.exists()) {
-                val headContent = headFile.readText().trim()
+            if (head.exists()) {
+                // Read the commit hash from .git/HEAD
+                val headContent = head.readText().trim()
                 if (headContent.startsWith("ref:")) {
                     val refPath = headContent.substring(5) // e.g., refs/heads/main
-                    val commitFile = File(rootDir, ".git/$refPath")
+                    val commitFile = File(head.parentFile, refPath)
                     if (commitFile.exists()) commitFile.readText().trim() else ""
                 } else headContent // If it's a detached HEAD (commit hash directly)
-            } else "" // If .git/HEAD doesn't exist
+            } else ""  // If .git/HEAD doesn't exist
         } catch (_: Throwable) {
             "" // Just set to an empty string if any exception occurs
         }.take(7) // Get the short commit hash
 
-        val outFile = gitHashDir.get().file("git-hash.txt").asFile
+        val outFile = outputDir.file("git-hash.txt").get().asFile
         outFile.parentFile.mkdirs()
         outFile.writeText(hash)
     }
 }
 
-tasks.withType<MergeSourceSetFolders> {
-    if (name.contains("Assets", ignoreCase = true)) {
-        dependsOn("generateGitHash")
-        val gitHashDir = layout.buildDirectory.dir("generated/git")
+val generateGitHash = tasks.register<GenerateGitHashTask>("generateGitHash") {
+    val gitDir = layout.projectDirectory.dir("../.git")
 
-        doLast {
-            val assetsDir = outputs.files.singleFile
-            val gitHashFile = gitHashDir.get().file("git-hash.txt").asFile
-            val outFile = File(assetsDir, "git-hash.txt")
-            gitHashFile.copyTo(outFile, overwrite = true)
-        }
-    }
+    headFile.set(gitDir.file("HEAD"))
+    headsDir.set(gitDir.dir("refs/heads"))
+
+    outputDir.set(layout.buildDirectory.dir("generated/git"))
 }
 
 android {
@@ -66,7 +71,14 @@ android {
     viewBinding {
         enable = true
     }
-
+    androidComponents {
+        onVariants { variant ->
+            variant.sources.assets?.addGeneratedSourceDirectory(
+                generateGitHash,
+                GenerateGitHashTask::outputDir
+            )
+        }
+    }
     signingConfigs {
         if (prereleaseStoreFile != null) {
             create("prerelease") {
