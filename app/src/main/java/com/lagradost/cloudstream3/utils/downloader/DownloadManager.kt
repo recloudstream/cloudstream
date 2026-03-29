@@ -187,8 +187,8 @@ object VideoDownloadManager {
     private val DOWNLOAD_PARTIAL_SUCCESS =
         DownloadStatus(retrySame = true, tryNext = false, success = true)
 
-    /** 10MB minimum size */
-    const val DOWNLOAD_PARTIAL_MIN_SIZE = 1_048_576L * 10L
+    /** 50MB minimum size */
+    const val DOWNLOAD_PARTIAL_MIN_SIZE = 1_048_576L * 50L
 
     /** bad config, skip all mirrors as every call to download will have the same bad config */
     private val DOWNLOAD_BAD_CONFIG =
