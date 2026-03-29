@@ -70,6 +70,7 @@ android {
     viewBinding {
         enable = true
     }
+
     androidComponents {
         onVariants { variant ->
             variant.sources.assets?.addGeneratedSourceDirectory(
@@ -78,6 +79,7 @@ android {
             )
         }
     }
+
     signingConfigs {
         if (prereleaseStoreFile != null) {
             create("prerelease") {
