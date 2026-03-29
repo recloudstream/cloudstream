@@ -896,6 +896,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         viewModel.addSubtitles(subtitleData.toSet())
 
         selectSourceDialog?.dismissSafe()
+        selectSourceDialog = null
 
         showToast(
             String.format(ctx.getString(R.string.player_loaded_subtitles), selectedSubtitle.name),
@@ -935,10 +936,6 @@ class GeneratorPlayer : FullScreenPlayer() {
                 addAndSelectSubtitles(subtitleData)
             }
         }
-
-    private var selectSourceDialog: Dialog? = null
-    // var selectTracksDialog: AlertDialog? = null
-
 
     /** Will toast both when an error is found and when a subtitle is selected,
      * so only use from a user click and not a background process */
@@ -1072,6 +1069,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     loadFromOpenSubsFooter.setOnClickListener {
                         shouldDismiss = false
                         sourceDialog.dismissSafe(activity)
+                        selectSourceDialog = null
                         openOnlineSubPicker(it.context, currentLoadResponse) {
                             dismiss()
                         }
@@ -1092,6 +1090,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                         loadFromFirstSubsFooter.setOnClickListener {
                             sourceDialog.dismissSafe(activity)
+                            selectSourceDialog = null
                             showToast(R.string.loading)
                             addFirstSub(
                                 SubtitleSearch(
@@ -1267,6 +1266,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 binding.cancelBtt.setOnClickListener {
                     sourceDialog.dismissSafe(activity)
+                    this.selectSourceDialog = null
                 }
 
                 fun setProfileName(profile: Int) {
@@ -1317,6 +1317,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                     shouldDismiss = false
                     sourceDialog.dismissSafe(activity)
+                    selectSourceDialog = null
 
                     val index = prefValues.indexOf(currentPrefMedia)
                     activity?.showDialog(
@@ -1355,6 +1356,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                         }
                     }
                     sourceDialog.dismissSafe(activity)
+                    selectSourceDialog = null
                 }
             }
         } catch (e: Exception) {
@@ -1378,6 +1380,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 val binding: PlayerSelectTracksBinding =
                     PlayerSelectTracksBinding.inflate(LayoutInflater.from(ctx), null, false)
                 val trackDialog = Dialog(ctx, R.style.DialogFullscreenPlayer)
+                this.selectTrackDialog = trackDialog
                 trackDialog.setContentView(binding.root)
                 trackDialog.show()
 
@@ -1486,6 +1489,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 binding.cancelBtt.setOnClickListener {
                     trackDialog.dismissSafe(activity)
+                    this.selectTrackDialog = null
                 }
 
                 binding.applyBtt.setOnClickListener {
@@ -1503,6 +1507,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                         player.setMaxVideoSize(width, height, currentVideo?.id)
                     }
                     trackDialog.dismissSafe(activity)
+                    this.selectTrackDialog = null
                 }
             }
         } catch (e: Exception) {

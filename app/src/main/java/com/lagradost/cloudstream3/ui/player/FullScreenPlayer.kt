@@ -241,6 +241,53 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         return root
     }
 
+    /**
+     * Wet code but this can not be made into a function as it is a setter.
+     *
+     * The reason for this setter is to fix a bug with the titlecard popup, as we want it to autohide
+     * when pressing back.
+     *
+     * Note that we move the call to autoHide after field assignment with prevField to avoid inf recursion. */
+    protected var selectSourceDialog: Dialog? = null
+        set(value) {
+            val prevField = field
+            field = value
+            if (value == null && prevField != null) {
+                autoHide()
+            }
+        }
+    protected var selectTrackDialog: Dialog? = null
+        set(value) {
+            val prevField = field
+            field = value
+            if (value == null && prevField != null) {
+                autoHide()
+            }
+        }
+    protected var selectSpeedDialog: Dialog? = null
+        set(value) {
+            val prevField = field
+            field = value
+            if (value == null && prevField != null) {
+                autoHide()
+            }
+        }
+    protected var selectSubtitlesDialog: Dialog? = null
+        set(value) {
+            val prevField = field
+            field = value
+            if (value == null && prevField != null) {
+                autoHide()
+            }
+        }
+
+    /** Checks if any top level dialog is open and showing */
+    fun isDialogOpen() =
+        selectSourceDialog?.isShowing == true
+                || selectTrackDialog?.isShowing == true
+                || selectSpeedDialog?.isShowing == true
+                || selectSubtitlesDialog?.isShowing == true
+
     private fun scheduleMetadataVisibility() {
         val metadataScrim = playerBinding?.playerMetadataScrim ?: return
         val ctx = metadataScrim.context ?: return
@@ -262,7 +309,15 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         if (isPaused) {
             metadataScrim.postDelayed({
+                /** Make sure the user has not interacted with anything */
                 if (token != metadataVisibilityToken) return@postDelayed
+                /** If already visible, then do not rerun the animation */
+                if (metadataScrim.isVisible) return@postDelayed
+                /** Failsafe, as this should only be shown when paused */
+                if (currentPlayerStatus != CSPlayerLoading.IsPaused) return@postDelayed
+                /** We do not want to show the logo in the background when the user is within another screen */
+                if (isDialogOpen()) return@postDelayed
+
                 metadataScrim.alpha = 0f
                 metadataScrim.isVisible = true
                 metadataScrim.animate()
@@ -751,6 +806,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         val dialog = Dialog(ctx, R.style.DialogFullscreenPlayer).apply {
             setContentView(binding.root)
         }
+        this.selectSubtitlesDialog = dialog
         dialog.show()
 
         val isPortrait =
@@ -840,20 +896,24 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             }
 
             dialog.setOnDismissListener {
+                selectSubtitlesDialog = null
                 if (isFullScreenPlayer)
                     activity?.hideSystemUI()
             }
             applyBtt.setOnClickListener {
+                selectSubtitlesDialog = null
                 subtitleDelay = currentOffset
                 dialog.dismissSafe(activity)
                 player.seekTime(1L)
             }
             resetBtt.setOnClickListener {
+                selectSubtitlesDialog = null
                 subtitleDelay = 0
                 dialog.dismissSafe(activity)
                 player.seekTime(1L)
             }
             cancelBtt.setOnClickListener {
+                selectSubtitlesDialog = null
                 dialog.dismissSafe(activity)
             }
         }
@@ -916,6 +976,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             if (isPlaying) {
                 player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
             }
+            selectSpeedDialog = null
         }
 
         // if (isLayout(PHONE)) {
@@ -930,6 +991,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 .setView(binding.root)
         builder.setOnDismissListener(dismiss)
         val dialog = builder.create()
+        this.selectSpeedDialog = dialog
         dialog.show()
         //}
     }
@@ -1124,8 +1186,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     private var currentTapIndex = 0
     protected fun autoHide() {
+        metadataVisibilityToken++
         currentTapIndex++
         delayHide()
+        scheduleMetadataVisibility()
     }
 
     protected fun hidePlayerUI() {
