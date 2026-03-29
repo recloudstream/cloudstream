@@ -43,7 +43,8 @@ object SubtitleUtils {
         cleanDisplay: String
     ): Boolean {
         // Check if the file has a valid subtitle extension
-        val hasValidExtension = allowedExtensions.any { name.contains(it, ignoreCase = true) }
+        val lowerName = name.lowercase()
+        val hasValidExtension = allowedExtensions.any { lowerName.endsWith(it) }
 
         // We can't have the exact same file as a subtitle
         val isNotDisplayName = !name.equals(display, ignoreCase = true)
