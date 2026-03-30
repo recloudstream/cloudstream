@@ -771,4 +771,5 @@
     <string name="source_priority">源优先级</string>
     <string name="source_priority_help">确定在播放器中如何排列视频源的顺序</string>
     <string name="extra_brightness_key">已启用额外亮度</string>
+    <string name="show_player_metadata_overlay">显示播放器元数据遮罩层</string>
 </resources>
