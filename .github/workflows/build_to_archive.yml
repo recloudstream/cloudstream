@@ -56,7 +56,7 @@ jobs:
         echo "key_pwd=$KEY_PWD" >> $GITHUB_OUTPUT
 
     - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v5
+      uses: gradle/actions/setup-gradle@v6
       with:
         cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 

@@ -18,7 +18,7 @@ jobs:
       run: chmod +x gradlew
 
     - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v5
+      uses: gradle/actions/setup-gradle@v6
       with:
         cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
         cache-read-only: false
@@ -27,7 +27,7 @@ jobs:
       run: ./gradlew assemblePrereleaseDebug lint
 
     - name: Upload Artifact
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: pull-request-build
         path: "app/build/outputs/apk/prerelease/debug/*.apk"
