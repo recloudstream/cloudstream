@@ -39,6 +39,14 @@ android {
         unitTests.isReturnDefaultValues = true
     }
 
+    // Looks like google likes to add metadata only they can read https://gitlab.com/IzzyOnDroid/repo/-/work_items/491
+    dependenciesInfo {
+        // Disables dependency metadata when building APKs.
+        includeInApk = false
+        // Disables dependency metadata when building Android App Bundles.
+        includeInBundle = false
+    }
+
     viewBinding {
         enable = true
     }
@@ -65,8 +73,8 @@ android {
         applicationId = "com.lagradost.cloudstream3"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 67
-        versionName = "4.6.2"
+        versionCode = 68
+        versionName = "4.7.0"
 
         resValue("string", "commit_hash", getGitCommitHash())
 

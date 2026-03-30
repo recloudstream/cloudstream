@@ -778,4 +778,5 @@
     </plurals>
     <string name="source_priority">Priorita zdrojů</string>
     <string name="source_priority_help">Rozhodněte, jak mají být řazeny zdroje videí v přehrávači</string>
+    <string name="show_player_metadata_overlay">Zobrazit překrytí metadat v přehrávači</string>
 </resources>

@@ -85,6 +85,11 @@
             android:key="@string/show_fillers_key"
             android:title="@string/show_fillers_settings" />
         <SwitchPreference
+            android:defaultValue="true"
+            android:icon="@drawable/metadata_overlay_icon"
+            android:key="@string/show_player_metadata_key"
+            android:title="@string/show_player_metadata_overlay" />
+        <SwitchPreference
             android:icon="@drawable/ic_baseline_play_arrow_24"
             android:summary="@string/random_button_settings_desc"
             android:title="@string/random_button_settings"
