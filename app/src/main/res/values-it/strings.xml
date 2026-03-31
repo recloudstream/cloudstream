@@ -783,4 +783,5 @@
     </plurals>
     <string name="source_priority">Priorità sorgente</string>
     <string name="source_priority_help">Decidi come le sorgenti video devono essere ordinate nel lettore</string>
+    <string name="show_player_metadata_overlay">Mostra sovrapposizione metadati lettore</string>
 </resources>

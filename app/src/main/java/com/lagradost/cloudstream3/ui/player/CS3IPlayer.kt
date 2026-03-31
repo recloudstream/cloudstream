@@ -1868,6 +1868,13 @@ class CS3IPlayer : IPlayer {
                 )
             }
 
+            // For DASH or HLS single streams (non-playlist), prefer the player's default
+            // live position instead of starting at 0. Use TIME_UNSET to let ExoPlayer pick
+            // the live/default position when no explicit start position was provided.
+            if (playbackPosition == 0L && (link.type == ExtractorLinkType.M3U8 || link.type == ExtractorLinkType.DASH)) {
+                playbackPosition = TIME_UNSET
+            }
+
             val provider = getApiFromNameNull(link.source)
             val interceptor: Interceptor? = provider?.getVideoInterceptor(link)
 

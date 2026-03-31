@@ -766,4 +766,5 @@
     </plurals>
     <string name="source_priority">Priorytet źródła</string>
     <string name="source_priority_help">Zdecyduj, jak mają być sortowane źródła wideo w odtwarzaczu</string>
+    <string name="show_player_metadata_overlay">Pokaż nakładkę metadanych odtwarzacza</string>
 </resources>
