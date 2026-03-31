@@ -286,6 +286,7 @@ dokka {
     moduleName = "App"
     dokkaSourceSets {
         main {
+            includes.setFrom("packages.md")
             analysisPlatform = KotlinPlatform.JVM
             documentedVisibilities(
                 VisibilityModifier.Public,

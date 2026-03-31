@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.android.lint) apply false
     alias(libs.plugins.android.multiplatform.library) apply false
     alias(libs.plugins.buildkonfig) apply false // Universal build config
-    alias(libs.plugins.dokka) apply false
+    alias(libs.plugins.dokka) apply true
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.jvm) apply false
     alias(libs.plugins.kotlin.multiplatform) apply false
@@ -13,5 +13,17 @@ allprojects {
     // https://docs.gradle.org/current/userguide/upgrading_major_version_9.html#test_task_fails_when_no_tests_are_discovered
     tasks.withType<AbstractTestTask>().configureEach {
         failOnNoDiscoveredTests = false
+    }
+}
+
+dependencies {
+    dokka(project(":app:"))
+    dokka(project(":library:"))
+}
+
+dokka {
+    moduleName = "CloudStream"
+    pluginsConfiguration.html {
+        footerMessage.set("© CloudStream")
     }
 }

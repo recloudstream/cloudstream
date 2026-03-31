@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
-    id("maven-publish") // Gradle core plugin
+    `maven-publish`
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.lint)
     alias(libs.plugins.android.multiplatform.library)
@@ -98,6 +98,7 @@ dokka {
     moduleName = "Library"
     dokkaSourceSets {
         configureEach {
+            includes.setFrom("packages.md")
             analysisPlatform = KotlinPlatform.AndroidJVM
             documentedVisibilities(
                 VisibilityModifier.Public,
