@@ -26,6 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.util.concurrent.ConcurrentHashMap
 
 class CategoryScreen(
     carContext: CarContext,
@@ -33,12 +34,11 @@ class CategoryScreen(
 ) : Screen(carContext) {
 
     private val scope = CoroutineScope(Dispatchers.IO + Job())
-    private val iconCache = mutableMapOf<String, CarIcon>()
-    private val loadingUrls = mutableSetOf<String>()
+    private val iconCache = ConcurrentHashMap<String, CarIcon>()
+    private val loadingUrls = ConcurrentHashMap.newKeySet<String>()
 
     private fun loadIcon(imageUrl: String) {
-        if (loadingUrls.contains(imageUrl)) return
-        loadingUrls.add(imageUrl)
+        if (!loadingUrls.add(imageUrl)) return
 
         scope.launch {
              try {
@@ -50,9 +50,7 @@ class CategoryScreen(
                  val bitmap = result.image?.asDrawable(carContext.resources)?.toBitmap()
                  if (bitmap != null) {
                      val icon = CarIcon.Builder(IconCompat.createWithBitmap(bitmap)).build()
-                     synchronized(iconCache) {
-                        iconCache[imageUrl] = icon
-                     }
+                     iconCache[imageUrl] = icon
                      invalidate()
                  }
             } catch (e: Exception) {
@@ -75,9 +73,7 @@ class CategoryScreen(
             
             // Check cache or trigger load
             val icon = if (!imageUrl.isNullOrEmpty()) {
-                synchronized(iconCache) {
-                    iconCache[imageUrl]
-                } ?: run {
+                iconCache[imageUrl] ?: run {
                     loadIcon(imageUrl)
                     CarIcon.Builder(IconCompat.createWithResource(carContext, R.mipmap.ic_launcher)).build()
                 }
