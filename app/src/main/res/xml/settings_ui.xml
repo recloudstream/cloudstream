@@ -89,12 +89,72 @@
             android:icon="@drawable/metadata_overlay_icon"
             android:key="@string/show_player_metadata_key"
             android:title="@string/show_player_metadata_overlay" />
-        <SwitchPreference
+        <Preference
             android:icon="@drawable/ic_baseline_play_arrow_24"
-            android:summary="@string/random_button_settings_desc"
-            android:title="@string/random_button_settings"
+            android:key="@string/home_quick_action_key"
+            android:title="@string/home_quick_action_settings" />
+        <SwitchPreference
+            android:icon="@drawable/ic_baseline_tv_24"
+            android:summary="@string/tv_mode_settings_desc"
+            android:title="@string/tv_mode_settings"
             app:defaultValue="false"
-            app:key="@string/random_button_key" />
+            app:key="@string/tv_mode_button_key" />
+        <Preference
+            android:icon="@drawable/ic_baseline_filter_list_24"
+            android:key="@string/tv_mode_content_key"
+            android:title="@string/tv_mode_content_settings" />
+        <Preference
+            android:icon="@drawable/ic_baseline_play_arrow_24"
+            android:key="@string/tv_mode_dub_preference_key"
+            android:title="@string/tv_mode_dub_settings" />
+        <Preference
+            android:icon="@drawable/ic_baseline_tv_24"
+            android:key="@string/tv_mode_season_scope_key"
+            android:title="@string/tv_mode_season_settings" />
+        <Preference
+            android:icon="@drawable/ic_baseline_play_arrow_24"
+            android:key="@string/tv_mode_player_start_key"
+            android:title="@string/tv_mode_player_start_settings" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:icon="@drawable/ic_baseline_autorenew_24"
+            android:key="@string/tv_mode_loop_key"
+            android:summary="@string/tv_mode_loop_settings_desc"
+            android:title="@string/tv_mode_loop_settings" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:icon="@drawable/ic_baseline_tv_24"
+            android:key="@string/tv_mode_continue_watching_key"
+            android:summary="@string/tv_mode_continue_watching_settings_desc"
+            android:title="@string/tv_mode_continue_watching_settings" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_baseline_autorenew_24"
+            android:key="@string/tv_mode_stall_protection_key"
+            android:summary="@string/tv_mode_stall_protection_settings_desc"
+            android:title="@string/tv_mode_stall_protection_settings" />
+        <SeekBarPreference
+            android:defaultValue="3"
+            android:icon="@drawable/ic_baseline_replay_24"
+            android:key="@string/tv_mode_retry_limit_key"
+            android:max="10"
+            android:summary="@string/tv_mode_retry_limit_settings_desc"
+            android:title="@string/tv_mode_retry_limit_settings"
+            app:adjustable="true"
+            app:min="1"
+            app:seekBarIncrement="1"
+            app:showSeekBarValue="true" />
+        <SeekBarPreference
+            android:defaultValue="20"
+            android:icon="@drawable/hourglass_24"
+            android:key="@string/tv_mode_loading_timeout_key"
+            android:max="120"
+            android:summary="@string/tv_mode_loading_timeout_settings_desc"
+            android:title="@string/tv_mode_loading_timeout_settings"
+            app:adjustable="true"
+            app:min="5"
+            app:seekBarIncrement="1"
+            app:showSeekBarValue="true" />
         <Preference
             android:icon="@drawable/ic_baseline_exit_24"
             android:key="@string/confirm_exit_key"

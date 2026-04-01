@@ -73,6 +73,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.EmptyEvent
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
+import com.lagradost.cloudstream3.utils.TvModeHelper
 import com.lagradost.cloudstream3.utils.TvChannelUtils
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
@@ -576,6 +577,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         super.onDestroyView()
     }
 
+    override fun onResume() {
+        super.onResume()
+        homeViewModel.reloadStored()
+        binding?.let { updateQuickActionButtons(it) }
+    }
+
     private val apiChangeClickListener = View.OnClickListener { view ->
         view.context.selectHomepage(currentApiName) { api ->
             homeViewModel.loadAndCancel(api, forceReload = true, fromUI = true)
@@ -590,12 +597,84 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     }
 
     private var currentApiName: String? = null
-    private var toggleRandomButton = false
+    private var homeQuickActionMode = TvModeHelper.HomeQuickActionMode.NONE
+    private var latestHomepageCards: List<SearchResponse> = emptyList()
 
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var homeMasterAdapter: HomeParentItemAdapterPreview? = null
 
     var lastSavedHomepage: String? = null
+
+    private fun updateShortcutSettings(context: Context) {
+        homeQuickActionMode = TvModeHelper.getHomeQuickActionMode(context)
+    }
+
+    private fun updateQuickActionButtons(
+        binding: FragmentHomeBinding,
+        homepageCards: List<SearchResponse> = latestHomepageCards
+    ) {
+        val context = context ?: return
+        updateShortcutSettings(context)
+        latestHomepageCards = homepageCards.distinctBy { it.url }
+        TvModeHelper.rememberHomepageCandidates(latestHomepageCards)
+
+        val hasRandomItems = latestHomepageCards.isNotEmpty()
+        val hasTvModeItems = latestHomepageCards.isNotEmpty()
+        val isPhoneLayout = isLayout(PHONE)
+        val showRandomButton = homeQuickActionMode == TvModeHelper.HomeQuickActionMode.RANDOM
+        val showTvModeButton =
+            homeQuickActionMode == TvModeHelper.HomeQuickActionMode.TV_MODE && TvModeHelper.isEnabled(context)
+
+        val randomClickListener = View.OnClickListener {
+            TvModeHelper.stopSession()
+            latestHomepageCards.randomOrNull()?.let { card ->
+                activity?.loadSearchResult(card)
+            }
+        }
+        val tvModeClickListener = View.OnClickListener {
+            TvModeHelper.startFromHome(activity, latestHomepageCards)
+        }
+
+        binding.homeRandom.isVisible = showRandomButton && isPhoneLayout && hasRandomItems
+        binding.homeRandomButtonTv.isVisible = showRandomButton && !isPhoneLayout && hasRandomItems
+        binding.homeTvMode.isVisible = showTvModeButton && isPhoneLayout && hasTvModeItems
+        binding.homeTvModeButtonTv.isVisible =
+            showTvModeButton && !isPhoneLayout && hasTvModeItems
+
+        binding.homeRandom.setOnClickListener(randomClickListener)
+        binding.homeRandomButtonTv.setOnClickListener(randomClickListener)
+        binding.homeTvMode.setOnClickListener(tvModeClickListener)
+        binding.homeTvModeButtonTv.setOnClickListener(tvModeClickListener)
+
+        if (!isPhoneLayout) {
+            val previewRightFocus = when {
+                binding.homeRandomButtonTv.isVisible -> R.id.home_random_button_tv
+                binding.homeTvModeButtonTv.isVisible -> R.id.home_tv_mode_button_tv
+                else -> R.id.home_switch_account
+            }
+            val accountLeftFocus = when {
+                binding.homeTvModeButtonTv.isVisible -> R.id.home_tv_mode_button_tv
+                binding.homeRandomButtonTv.isVisible -> R.id.home_random_button_tv
+                else -> R.id.home_preview_search_button
+            }
+            val tvModeLeftFocus = if (binding.homeRandomButtonTv.isVisible) {
+                R.id.home_random_button_tv
+            } else {
+                R.id.home_preview_search_button
+            }
+            val randomRightFocus = if (binding.homeTvModeButtonTv.isVisible) {
+                R.id.home_tv_mode_button_tv
+            } else {
+                R.id.home_switch_account
+            }
+
+            binding.homePreviewSearchButton.nextFocusRightId = previewRightFocus
+            binding.homeRandomButtonTv.nextFocusRightId = randomRightFocus
+            binding.homeTvModeButtonTv.nextFocusLeftId = tvModeLeftFocus
+            binding.homeTvModeButtonTv.nextFocusRightId = R.id.home_switch_account
+            binding.homeSwitchAccount.nextFocusLeftId = accountLeftFocus
+        }
+    }
 
     fun saveHomepageToTV(page: Map<String, HomeViewModel.ExpandableHomepageList>) {
         // No need to update for phone
@@ -681,10 +760,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                         if (dy > 0) { //check for scroll down
                             homeApiFab.shrink() // hide
                             homeRandom.shrink()
+                            homeTvMode.shrink()
                         } else if (dy < -5) {
                             if (isLayout(PHONE)) {
                                 homeApiFab.extend() // show
                                 homeRandom.extend()
+                                homeTvMode.extend()
                             }
                         }
                     } else {
@@ -723,14 +804,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         //Load value for toggling Random button. Hide at startup
         context?.let {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(it)
-            toggleRandomButton =
-                settingsManager.getBoolean(
-                    getString(R.string.random_button_key),
-                    false
-                )
+            updateShortcutSettings(it)
             binding.homeRandom.visibility = View.GONE
             binding.homeRandomButtonTv.visibility = View.GONE
+            binding.homeTvMode.visibility = View.GONE
+            binding.homeTvModeButtonTv.visibility = View.GONE
         }
 
         observe(homeViewModel.apiName) { apiName ->
@@ -761,24 +839,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                         homeMasterRecycler.isVisible = true
                         homeLoadingShimmer.stopShimmer()
                         //home_loaded?.isVisible = true
-                        if (toggleRandomButton) {
-                            val distinct = d.values
-                                .flatMap { it.list.list }
-                                .distinctBy { it.url }
-                            val hasItems = distinct.isNotEmpty()
-                            val isPhone = isLayout(PHONE)
-                            val randomClickListener = View.OnClickListener {
-                                distinct.randomOrNull()?.let { activity.loadSearchResult(it) }
-                            }
-
-                            homeRandom.isVisible = isPhone && hasItems
-                            homeRandom.setOnClickListener(randomClickListener)
-                            homeRandomButtonTv.isVisible = !isPhone && hasItems
-                            homeRandomButtonTv.setOnClickListener(randomClickListener)
-                        } else {
-                            homeRandom.isGone = true
-                            homeRandomButtonTv.isGone = true
-                        }
+                        val distinct = d.values
+                            .flatMap { it.list.list }
+                            .distinctBy { it.url }
+                        updateQuickActionButtons(this, distinct)
                     }
 
                     is Resource.Failure -> {

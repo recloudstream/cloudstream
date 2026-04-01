@@ -101,6 +101,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.FillerEpisodeCheck
 import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.TvModeHelper
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.utils.VIDEO_WATCH_STATE
@@ -2474,6 +2475,133 @@ class ResultViewModel2 : ViewModel() {
     }
 
     fun hasLoaded() = currentResponse != null
+    fun hasEpisodeContent() = currentEpisodes.values.any { it.isNotEmpty() }
+    fun getCurrentSeasonSelection(): Int? = currentIndex?.season
+    fun startTvModePlayback(activity: Activity?) {
+        if (activity == null) return
+        tryStartTvModePlayback(activity)
+    }
+
+    private fun continueTvModePlayback(
+        activity: Activity,
+        primaryUrl: String,
+        fallbackUrl: String,
+        episodeId: Int? = null,
+    ) {
+        TvModeHelper.rejectPlayback(primaryUrl, episodeId, fallbackUrl)
+        TvModeHelper.playNextFromSession(activity, replaceExisting = true)
+    }
+
+    private fun stopTvModePlayback(activity: Activity, messageRes: Int = R.string.tv_mode_no_playable_content) {
+        TvModeHelper.stopSession()
+        showToast(activity, messageRes, Toast.LENGTH_SHORT)
+    }
+
+    private fun tryStartTvModePlayback(activity: Activity) {
+        val response = currentResponse ?: run {
+            TvModeHelper.playNextFromSession(activity, replaceExisting = true)
+            return
+        }
+        val primaryUrl = response.uniqueUrl.ifBlank { response.url }
+        val fallbackUrl = response.url
+        val isLocalSession = TvModeHelper.isLocalSession(primaryUrl, fallbackUrl)
+        val hasEpisodeContent = hasEpisodeContent()
+        val isMovie = response.isMovie() && !hasEpisodeContent
+
+        if (!TvModeHelper.acceptsLoadedContent(
+                activity,
+                isMovie,
+                hasEpisodeContent,
+                primaryUrl,
+                fallbackUrl
+            )
+        ) {
+            continueTvModePlayback(activity, primaryUrl, fallbackUrl)
+            return
+        }
+
+        if (isMovie && !isLocalSession) {
+            val movie = getMovie() ?: run {
+                continueTvModePlayback(activity, primaryUrl, fallbackUrl)
+                return
+            }
+            TvModeHelper.markPlaybackManaged(primaryUrl, movie.id, fallbackUrl)
+            handleAction(
+                EpisodeClickEvent(
+                    getPlayerAction(activity),
+                    movie
+                )
+            )
+            return
+        }
+
+        if (!hasEpisodeContent) {
+            if (isLocalSession) {
+                stopTvModePlayback(activity)
+            } else {
+                continueTvModePlayback(activity, primaryUrl, fallbackUrl)
+            }
+            return
+        }
+
+        val seasonFilter = TvModeHelper.getLocalSeasonFilter(primaryUrl, fallbackUrl)
+        val availableEntries = currentEpisodes.entries.filter { entry ->
+            entry.value.isNotEmpty() && (seasonFilter == null || entry.key.season == seasonFilter)
+        }
+        if (availableEntries.isEmpty()) {
+            if (isLocalSession) {
+                stopTvModePlayback(activity)
+            } else {
+                continueTvModePlayback(activity, primaryUrl, fallbackUrl)
+            }
+            return
+        }
+
+        val preferredDub = TvModeHelper.resolveDubStatus(
+            activity,
+            availableEntries.map { it.key.dubStatus }
+        )
+        val filteredEntries = availableEntries.filter { it.key.dubStatus == preferredDub }
+            .ifEmpty { availableEntries }
+        val candidateEpisodes = filteredEntries
+            .flatMap { (indexer, episodes) -> episodes.map { episode -> indexer to episode } }
+        val rejectedEpisodeIds = TvModeHelper.getRejectedEpisodeIds(primaryUrl, fallbackUrl)
+        val playableEpisodes = candidateEpisodes
+            .filterNot { (_, episode) -> rejectedEpisodeIds.contains(episode.id) }
+        if (playableEpisodes.isEmpty()) {
+            stopTvModePlayback(activity)
+            return
+        }
+
+        val recentEpisodeIds = TvModeHelper.getRecentEpisodeIds(primaryUrl, fallbackUrl)
+        val randomEpisode = playableEpisodes
+            .filterNot { (_, episode) -> recentEpisodeIds.contains(episode.id) }
+            .ifEmpty { playableEpisodes }
+            .randomOrNull()
+            ?: run {
+                stopTvModePlayback(activity)
+                return
+            }
+
+        val (indexer, episode) = randomEpisode
+        val targetRange = currentRanges[indexer]?.firstOrNull { range ->
+            episode.episode in range.startEpisode..range.endEpisode
+        } ?: currentRanges[indexer]?.lastOrNull()
+
+        if (targetRange == null) {
+            continueTvModePlayback(activity, primaryUrl, fallbackUrl, episode.id)
+            return
+        }
+
+        postEpisodeRange(indexer, targetRange, currentSorting ?: DataStoreHelper.resultsSortingMode)
+        TvModeHelper.markPlaybackManaged(primaryUrl, episode.id, fallbackUrl)
+        handleAction(
+            EpisodeClickEvent(
+                getPlayerAction(activity),
+                episode
+            )
+        )
+    }
 
     private fun handleAutoStart(activity: Activity?, autostart: AutoResume?) =
         viewModelScope.launchSafe {
@@ -2510,6 +2638,10 @@ class ResultViewModel2 : ViewModel() {
                             episode
                         )
                     )
+                }
+
+                START_ACTION_TV_MODE -> {
+                    tryStartTvModePlayback(activity)
                 }
             }
         }

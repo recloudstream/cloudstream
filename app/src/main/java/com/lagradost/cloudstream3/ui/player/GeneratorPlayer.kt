@@ -32,6 +32,7 @@ import androidx.core.content.edit
 import androidx.core.text.toSpanned
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Format.NO_VALUE
@@ -45,6 +46,7 @@ import androidx.media3.ui.PlayerNotificationManager.MediaDescriptionAdapter
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
@@ -54,6 +56,7 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getTMDbId
+import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
@@ -90,6 +93,7 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment.bindLogo
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.SyncViewModel
+import com.lagradost.cloudstream3.ui.result.getId
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.setRecycledViewPool
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
@@ -114,6 +118,7 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToEnglishLanguageName
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
 import com.lagradost.cloudstream3.utils.SubtitleHelper.languages
+import com.lagradost.cloudstream3.utils.TvModeHelper
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -175,7 +180,14 @@ class GeneratorPlayer : FullScreenPlayer() {
     private var preferredAutoSelectSubtitles: String? = null // null means do nothing, "" means none
 
     private var binding: FragmentPlayerBinding? = null
+    private var playerTvModeButton: MaterialButton? = null
     private var allMeta: List<ResultEpisode>? = null
+    private var tvModeLoadingTimeoutJob: Job? = null
+    private var tvModeBufferTimeoutJob: Job? = null
+    private var tvModeBufferRetryCount = 0
+    private var tvModePlaybackStarted = false
+    private var tvModeLastStatus = CSPlayerLoading.IsBuffering
+    private var tvModeSkipInProgress = false
     private fun startLoading() {
         player.release()
         currentSelectedSubtitles = null
@@ -223,8 +235,250 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     override fun playerStatusChanged() {
         super.playerStatusChanged()
+        val newStatus = currentPlayerStatus
+        val previousStatus = tvModeLastStatus
+
+        when (newStatus) {
+            CSPlayerLoading.IsPlaying, CSPlayerLoading.IsPaused -> {
+                tvModePlaybackStarted = true
+                cancelTvModeBufferTimeout()
+            }
+
+            CSPlayerLoading.IsBuffering -> {
+                scheduleTvModeBufferTimeout()
+                if (tvModePlaybackStarted &&
+                    previousStatus != CSPlayerLoading.IsBuffering &&
+                    shouldUseTvModeStallProtection()
+                ) {
+                    tvModeBufferRetryCount += 1
+                    val currentContext = context
+                    if (currentContext != null &&
+                        tvModeBufferRetryCount >= TvModeHelper.getStallRetryLimit(currentContext)
+                    ) {
+                        maybeSkipStalledTvModeContent("buffer_retry_limit")
+                    }
+                }
+            }
+
+            CSPlayerLoading.IsEnded -> {
+                cancelTvModeWatchdogs()
+            }
+        }
+
+        if (newStatus != CSPlayerLoading.IsBuffering) {
+            cancelTvModeBufferTimeout()
+        }
+        tvModeLastStatus = newStatus
+
         if (player.getIsPlaying()) {
             viewModel.forceClearCache = false
+        }
+    }
+
+    private fun getCurrentTvModeSelection(): Triple<String, String, Int?>? {
+        val loadResponse = viewModel.getLoadResponse() ?: return null
+        val primaryUrl = loadResponse.uniqueUrl.ifBlank { loadResponse.url }
+        val fallbackUrl = loadResponse.url
+        val episodeId = (currentMeta as? ResultEpisode)?.id ?: (viewModel.getMeta() as? ResultEpisode)?.id
+        return Triple(primaryUrl, fallbackUrl, episodeId)
+    }
+
+    private fun markCurrentTvModeFailure() {
+        val currentContext = context ?: return
+        if (!TvModeHelper.isManagedPlayback(currentContext)) return
+
+        val (primaryUrl, fallbackUrl, episodeId) = getCurrentTvModeSelection() ?: return
+        TvModeHelper.rejectPlayback(primaryUrl, episodeId, fallbackUrl)
+    }
+
+    private fun continueTvModeAfterFailure(): Boolean {
+        val currentContext = context ?: return false
+        if (!TvModeHelper.isManagedPlayback(currentContext)) return false
+
+        cancelTvModeWatchdogs()
+        markCurrentTvModeFailure()
+        player.release()
+        val didContinue = TvModeHelper.playNextFromSession(activity, replaceExisting = true)
+        if (!didContinue) {
+            tvModeSkipInProgress = false
+        }
+        return didContinue
+    }
+
+    private fun shouldUseTvModeStallProtection(): Boolean {
+        val currentContext = context ?: return false
+        return TvModeHelper.isManagedPlayback(currentContext) &&
+            TvModeHelper.isStallProtectionEnabled(currentContext)
+    }
+
+    private fun cancelTvModeLoadingTimeout() {
+        tvModeLoadingTimeoutJob?.cancel()
+        tvModeLoadingTimeoutJob = null
+    }
+
+    private fun cancelTvModeBufferTimeout() {
+        tvModeBufferTimeoutJob?.cancel()
+        tvModeBufferTimeoutJob = null
+    }
+
+    private fun cancelTvModeWatchdogs() {
+        cancelTvModeLoadingTimeout()
+        cancelTvModeBufferTimeout()
+    }
+
+    private fun resetTvModeStallTracking() {
+        cancelTvModeWatchdogs()
+        tvModeBufferRetryCount = 0
+        tvModePlaybackStarted = false
+        tvModeLastStatus = CSPlayerLoading.IsBuffering
+        tvModeSkipInProgress = false
+    }
+
+    private fun maybeSkipStalledTvModeContent(reason: String): Boolean {
+        if (!shouldUseTvModeStallProtection()) return false
+        if (tvModeSkipInProgress) return true
+
+        Log.i(TAG, "Skipping stalled TV mode content due to $reason")
+        tvModeSkipInProgress = true
+        return continueTvModeAfterFailure()
+    }
+
+    private fun scheduleTvModeLoadingTimeout() {
+        val currentContext = context ?: return
+        if (!shouldUseTvModeStallProtection()) return
+
+        val timeoutSeconds = TvModeHelper.getLoadingTimeoutSeconds(currentContext)
+        cancelTvModeLoadingTimeout()
+        tvModeLoadingTimeoutJob = lifecycleScope.launch {
+            delay(timeoutSeconds * 1000L)
+            if (viewModel.loadingLinks.value is Resource.Loading) {
+                maybeSkipStalledTvModeContent("loading_timeout")
+            }
+        }
+    }
+
+    private fun scheduleTvModeBufferTimeout() {
+        val currentContext = context ?: return
+        if (!shouldUseTvModeStallProtection()) return
+
+        val timeoutSeconds = TvModeHelper.getLoadingTimeoutSeconds(currentContext)
+        cancelTvModeBufferTimeout()
+        tvModeBufferTimeoutJob = lifecycleScope.launch {
+            delay(timeoutSeconds * 1000L)
+            if (!this@GeneratorPlayer.isActive) return@launch
+            if (currentPlayerStatus == CSPlayerLoading.IsBuffering) {
+                maybeSkipStalledTvModeContent("buffer_timeout")
+            }
+        }
+    }
+
+    private fun ensurePlayerTvModeButton() {
+        val currentContext = context ?: return
+        val controlsHolder = playerBinding?.playerLockHolder ?: return
+
+        (playerTvModeButton?.parent as? ViewGroup)?.let { parent ->
+            if (parent !== controlsHolder) {
+                parent.removeView(playerTvModeButton)
+                playerTvModeButton = null
+            }
+        }
+
+        if (playerTvModeButton != null) return
+
+        val layoutRes = if (isLayout(TV or EMULATOR)) {
+            R.layout.player_tv_mode_button_tv
+        } else {
+            R.layout.player_tv_mode_button
+        }
+
+        val button = LayoutInflater.from(currentContext)
+            .inflate(layoutRes, controlsHolder, false) as? MaterialButton ?: return
+
+        val hideNames = PreferenceManager.getDefaultSharedPreferences(currentContext).getBoolean(
+            currentContext.getString(R.string.hide_player_control_names_key),
+            false
+        )
+        if (hideNames) {
+            button.textSize = 0f
+            button.iconPadding = 0
+            button.iconGravity = MaterialButton.ICON_GRAVITY_TEXT_START
+            button.setPadding(0, 0, 0, 0)
+        }
+
+        button.isVisible = false
+        button.contentDescription = button.text
+        val insertAfter = playerBinding?.playerTracksBtt
+        val insertIndex = insertAfter?.let { controlsHolder.indexOfChild(it) + 1 } ?: controlsHolder.childCount
+        controlsHolder.addView(button, insertIndex)
+        playerTvModeButton = button
+    }
+
+    private fun updatePlayerTvModeButton() {
+        ensurePlayerTvModeButton()
+        val button = playerTvModeButton ?: return
+        val currentContext = context ?: return
+        val featureEnabled = TvModeHelper.isEnabled(currentContext)
+        val sessionActive = TvModeHelper.hasSession()
+        val buttonId = button.id
+
+        button.isVisible = featureEnabled
+        if (featureEnabled) {
+            button.text = currentContext.getString(
+                if (sessionActive) R.string.tv_mode_player_on else R.string.tv_mode_player_off
+            )
+            button.contentDescription = button.text
+
+            if (layout == R.layout.fragment_player) {
+                val accentColor = currentContext.colorFromAttribute(R.attr.colorPrimary)
+                val textColor = accentColor
+                val inactiveColor = ContextCompat.getColor(currentContext, android.R.color.white)
+                val resolvedColor = if (sessionActive) textColor else inactiveColor
+                button.iconTint = ColorStateList.valueOf(resolvedColor)
+                button.setTextColor(resolvedColor)
+            }
+        }
+
+        val rightTarget = when {
+            playerBinding?.playerSkipOp?.isVisible == true -> R.id.player_skip_op
+            playerBinding?.playerSkipEpisode?.isVisible == true -> R.id.player_skip_episode
+            else -> R.id.player_tracks_btt
+        }
+        val defaultSkipOpLeftId = if (isLayout(TV or EMULATOR)) {
+            R.id.player_pause_play
+        } else {
+            R.id.player_sources_btt
+        }
+
+        playerBinding?.playerTracksBtt?.nextFocusRightId =
+            if (featureEnabled) buttonId else rightTarget
+        playerBinding?.playerSkipOp?.nextFocusLeftId =
+            if (featureEnabled) buttonId else defaultSkipOpLeftId
+        button.nextFocusLeftId = R.id.player_tracks_btt
+        button.nextFocusRightId = rightTarget
+        button.nextFocusUpId = R.id.player_pause_play
+        button.nextFocusDownId = rightTarget
+    }
+
+    private fun clearContinueWatchingForTvMode() {
+        val currentContext = context ?: return
+        if (!TvModeHelper.hasSession()) return
+        if (TvModeHelper.shouldIncludeInContinueWatching(currentContext)) return
+
+        val parentIds = linkedSetOf<Int>()
+        when (val meta = currentMeta) {
+            is ResultEpisode -> parentIds.add(meta.parentId)
+            is ExtractorUri -> meta.parentId?.let(parentIds::add)
+        }
+        when (val meta = nextMeta) {
+            is ResultEpisode -> parentIds.add(meta.parentId)
+            is ExtractorUri -> meta.parentId?.let(parentIds::add)
+        }
+        viewModel.getLoadResponse()?.let { response ->
+            parentIds.add(response.getId())
+        }
+
+        parentIds.forEach { parentId ->
+            DataStoreHelper.removeLastWatched(parentId)
         }
     }
 
@@ -508,6 +762,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         currentSelectedLink = link
         currentMeta = viewModel.getMeta()
         nextMeta = viewModel.getNextMeta()
+        resetTvModeStallTracking()
         allMeta = viewModel.getAllMeta()?.filterIsInstance<ResultEpisode>()?.map { episode ->
             // Refresh all the episodes watch duration
             getViewPos(episode.id)?.let { data ->
@@ -518,6 +773,8 @@ class GeneratorPlayer : FullScreenPlayer() {
         isActive = true
         setPlayerDimen(null)
         setTitle()
+        updatePlayerTvModeButton()
+        clearContinueWatchingForTvMode()
         if (!sameEpisode)
             hasRequestedStamps = false
 
@@ -540,6 +797,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 preview = isFullScreenPlayer
             )
         }
+        scheduleTvModeBufferTimeout()
 
         if (!sameEpisode) {
             player.addTimeStamps(emptyList()) // clear stamps
@@ -1539,8 +1797,12 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     private fun noLinksFound() {
         viewModel.forceClearCache = true
+        cancelTvModeWatchdogs()
 
         showToast(R.string.no_links_found_toast, Toast.LENGTH_SHORT)
+        if (continueTvModeAfterFailure()) {
+            return
+        }
         activity?.popCurrentPage()
     }
 
@@ -1604,6 +1866,14 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun nextEpisode() {
+        val currentContext = context
+        if (currentContext != null && TvModeHelper.isManagedPlayback(currentContext)) {
+            isNextEpisode = true
+            player.release()
+            TvModeHelper.playNextFromSession(activity, replaceExisting = true)
+            return
+        }
+
         if (viewModel.hasNextEpisode() == true) {
             isNextEpisode = true
             player.release()
@@ -1624,6 +1894,10 @@ class GeneratorPlayer : FullScreenPlayer() {
         return links.isNotEmpty() && links.indexOf(currentSelectedLink) + 1 < links.size
     }
 
+    override fun onPlaybackExhausted() {
+        markCurrentTvModeFailure()
+    }
+
     override fun nextMirror() {
         val links = sortLinks(currentQualityProfile)
         if (links.isEmpty()) {
@@ -1642,6 +1916,8 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     override fun onDestroy() {
         ResultFragment.updateUI()
+        TvModeHelper.clearManagedPlayback()
+        cancelTvModeWatchdogs()
         currentVerifyLink?.cancel()
         super.onDestroy()
     }
@@ -1671,13 +1947,22 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         val percentage = position * 100L / duration
 
-        DataStoreHelper.setViewPosAndResume(
-            viewModel.getId(),
-            position,
-            duration,
-            currentMeta,
-            nextMeta
-        )
+        val shouldSkipContinueWatching = context?.let { ctx ->
+            TvModeHelper.hasSession() && !TvModeHelper.shouldIncludeInContinueWatching(ctx)
+        } == true
+
+        if (shouldSkipContinueWatching) {
+            DataStoreHelper.setViewPos(viewModel.getId(), position, duration)
+            clearContinueWatchingForTvMode()
+        } else {
+            DataStoreHelper.setViewPosAndResume(
+                viewModel.getId(),
+                position,
+                duration,
+                currentMeta,
+                nextMeta
+            )
+        }
 
         var isOpVisible = false
         when (val meta = currentMeta) {
@@ -1996,6 +2281,8 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun onDestroyView() {
+        cancelTvModeWatchdogs()
+        playerTvModeButton = null
         binding = null
         super.onDestroyView()
     }
@@ -2204,6 +2491,48 @@ class GeneratorPlayer : FullScreenPlayer() {
             }
         }
 
+        ensurePlayerTvModeButton()
+        playerTvModeButton?.setOnClickListener {
+            autoHide()
+            val currentContext = context ?: return@setOnClickListener
+
+            if (TvModeHelper.hasSession()) {
+                TvModeHelper.stopSession()
+                updatePlayerTvModeButton()
+                return@setOnClickListener
+            }
+
+            val loadResponse = viewModel.getLoadResponse() ?: return@setOnClickListener
+            val primaryUrl = loadResponse.uniqueUrl.ifBlank { loadResponse.url }
+            val fallbackUrl = loadResponse.url
+            val episodeMeta = (currentMeta as? ResultEpisode) ?: (viewModel.getMeta() as? ResultEpisode)
+            val shouldUseCurrentShow =
+                episodeMeta != null &&
+                    TvModeHelper.getPlayerStartMode(currentContext) == TvModeHelper.TvModePlayerStartMode.CURRENT_SHOW
+
+            val didStart = if (shouldUseCurrentShow) {
+                TvModeHelper.startForResult(
+                    activity,
+                    primaryUrl,
+                    loadResponse.apiName,
+                    loadResponse.name,
+                    episodeMeta.season
+                )
+            } else {
+                TvModeHelper.startGlobalSessionFromCache(
+                    activity,
+                    loadResponse.recommendations ?: emptyList()
+                )
+            }
+
+            if (didStart) {
+                TvModeHelper.markPlaybackManaged(primaryUrl, episodeMeta?.id, fallbackUrl)
+                clearContinueWatchingForTvMode()
+                updatePlayerTvModeButton()
+            }
+        }
+        updatePlayerTvModeButton()
+
         observe(viewModel.currentStamps) { stamps ->
             player.addTimeStamps(stamps)
         }
@@ -2212,9 +2541,11 @@ class GeneratorPlayer : FullScreenPlayer() {
             when (it) {
                 is Resource.Loading -> {
                     startLoading()
+                    scheduleTvModeLoadingTimeout()
                 }
 
                 is Resource.Success -> {
+                    cancelTvModeLoadingTimeout()
                     // provider returned false
                     //if (it.value != true) {
                     //    showToast(activity, R.string.unexpected_error, Toast.LENGTH_SHORT)
@@ -2223,6 +2554,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
 
                 is Resource.Failure -> {
+                    cancelTvModeLoadingTimeout()
                     showToast(it.errorString, Toast.LENGTH_LONG)
                     startPlayer()
                 }

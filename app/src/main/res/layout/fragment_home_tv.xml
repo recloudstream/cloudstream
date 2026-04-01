@@ -243,6 +243,24 @@
             app:tint="@color/player_on_button_tv_attr" />
 
         <ImageView
+            android:id="@+id/home_tv_mode_button_tv"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:background="@drawable/player_button_tv_attr_no_bg"
+            android:clickable="true"
+            android:contentDescription="@string/home_tv_mode"
+            android:focusable="true"
+            android:nextFocusLeft="@id/home_random_button_tv"
+            android:nextFocusRight="@id/home_switch_account"
+            android:nextFocusDown="@id/home_preview_info_btt"
+            android:padding="10dp"
+            android:src="@drawable/ic_baseline_tv_24"
+            android:tag="@string/tv_no_focus_tag"
+            android:visibility="gone"
+            app:tint="@color/player_on_button_tv_attr" />
+
+        <ImageView
             android:visibility="gone"
             android:id="@+id/home_switch_account"
             android:layout_width="wrap_content"
@@ -251,7 +269,7 @@
             android:background="@drawable/player_button_tv_attr_no_bg"
             android:contentDescription="@string/account"
             android:focusable="true"
-            android:nextFocusLeft="@id/home_preview_search_button"
+            android:nextFocusLeft="@id/home_tv_mode_button_tv"
             android:nextFocusRight="@id/home_switch_account"
             android:nextFocusDown="@id/home_change_api"
 
@@ -277,6 +295,18 @@
         android:textColor="?attr/textColor"
         android:visibility="gone"
         app:icon="@drawable/ic_baseline_play_arrow_24"
+        tools:ignore="ContentDescription"
+        tools:visibility="visible" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/home_tv_mode"
+        style="@style/ExtendedFloatingActionButton"
+        android:layout_gravity="bottom|start"
+        android:layout_marginBottom="88dp"
+        android:text="@string/home_tv_mode"
+        android:textColor="?attr/textColor"
+        android:visibility="gone"
+        app:icon="@drawable/ic_baseline_tv_24"
         tools:ignore="ContentDescription"
         tools:visibility="visible" />
 </FrameLayout>

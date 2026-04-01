@@ -366,6 +366,32 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/result_tv_mode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/result_tv_mode_button"
+                        style="@style/ResultSmallButtonTV"
+                        android:focusable="true"
+                        android:nextFocusUp="@id/result_tv_mode_button"
+                        android:nextFocusDown="@id/result_description"
+                        android:tag="@string/tv_no_focus_tag"
+                        app:icon="@drawable/ic_baseline_tv_24"
+                        app:iconPadding="0dp" />
+
+                    <TextView
+                        android:id="@+id/result_tv_mode_text"
+                        style="@style/ResultMarqueeButtonText"
+                        android:text="@string/home_tv_mode" />
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/result_resume_series"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

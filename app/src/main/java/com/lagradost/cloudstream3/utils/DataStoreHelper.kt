@@ -549,6 +549,7 @@ object DataStoreHelper {
     fun removeLastWatched(parentId: Int?) {
         if (parentId == null) return
         removeKey("$currentAccount/$RESULT_RESUME_WATCHING", parentId.toString())
+        removeLastWatchedOld(parentId)
     }
 
     fun getLastWatched(id: Int?): DownloadObjects.ResumeWatching? {
@@ -662,6 +663,20 @@ object DataStoreHelper {
                     }
                 }
             }
+        }
+
+        val shouldSkipResumeWatching = context?.let { ctx ->
+            TvModeHelper.hasSession() && !TvModeHelper.shouldIncludeInContinueWatching(ctx)
+        } == true
+
+        if (shouldSkipResumeWatching) {
+            listOf(currentEpisode, nextEpisode).forEach { meta ->
+                when (meta) {
+                    is ResultEpisode -> removeLastWatched(meta.parentId)
+                    is ExtractorUri -> removeLastWatched(meta.parentId)
+                }
+            }
+            return
         }
 
         val percentage = position * 100L / duration

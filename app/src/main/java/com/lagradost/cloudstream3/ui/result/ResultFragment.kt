@@ -24,6 +24,7 @@ import com.lagradost.cloudstream3.utils.UiImage
 
 const val START_ACTION_RESUME_LATEST = 1
 const val START_ACTION_LOAD_EP = 2
+const val START_ACTION_TV_MODE = 3
 
 /**
  * Future proofed way to mark episodes as watched

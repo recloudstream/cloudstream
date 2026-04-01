@@ -50,6 +50,7 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppContextUtils.reduceDragSensitivity
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
+import com.lagradost.cloudstream3.utils.TvModeHelper
 import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import java.util.concurrent.CopyOnWriteArrayList
@@ -94,6 +95,15 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(
 
     override fun pickLayout(): Int? =
         if (isLayout(PHONE)) R.layout.fragment_library else R.layout.fragment_library_tv
+
+    override fun onResume() {
+        super.onResume()
+        context?.let {
+            toggleRandomButton =
+                TvModeHelper.getHomeQuickActionMode(it) == TvModeHelper.HomeQuickActionMode.RANDOM
+        }
+        binding?.let { updateRandomVisibility(it) }
+    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         binding?.viewpager?.currentItem?.let { currentItem ->
@@ -192,12 +202,8 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(
 
         //Load value for toggling Random button. Hide at startup
         context?.let {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(it)
             toggleRandomButton =
-                settingsManager.getBoolean(
-                    getString(R.string.random_button_key),
-                    false
-                )
+                TvModeHelper.getHomeQuickActionMode(it) == TvModeHelper.HomeQuickActionMode.RANDOM
             binding.libraryRandom.visibility = View.GONE
             binding.libraryRandomButtonTv.visibility = View.GONE
         }
@@ -382,18 +388,15 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(
                             binding.searchBar.setExpanded(true)
                         }
 
-                        // Set up random button click listener
-                        if (toggleRandomButton) {
-                            val randomClickListener = View.OnClickListener {
-                                val position = libraryViewModel.currentPage.value ?: 0
-                                val syncIdName = libraryViewModel.currentSyncApi?.syncIdName ?: return@OnClickListener
-                                pages[position].items.randomOrNull()?.let { item ->
-                                    loadLibraryItem(syncIdName, item.syncId, item)
-                                }
+                        val randomClickListener = View.OnClickListener {
+                            val position = libraryViewModel.currentPage.value ?: 0
+                            val syncIdName = libraryViewModel.currentSyncApi?.syncIdName ?: return@OnClickListener
+                            pages[position].items.randomOrNull()?.let { item ->
+                                loadLibraryItem(syncIdName, item.syncId, item)
                             }
-                            libraryRandom.setOnClickListener(randomClickListener)
-                            libraryRandomButtonTv.setOnClickListener(randomClickListener)
                         }
+                        libraryRandom.setOnClickListener(randomClickListener)
+                        libraryRandomButtonTv.setOnClickListener(randomClickListener)
                         updateRandomVisibility(binding)
 
                         // Only stop loading after 300ms to hide the fade effect the viewpager produces when updating

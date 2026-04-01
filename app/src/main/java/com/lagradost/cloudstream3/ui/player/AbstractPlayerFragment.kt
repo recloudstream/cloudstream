@@ -55,6 +55,7 @@ import com.lagradost.cloudstream3.utils.AppContextUtils
 import com.lagradost.cloudstream3.utils.AppContextUtils.requestLocalAudioFocus
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.EpisodeSkip
+import com.lagradost.cloudstream3.utils.TvModeHelper
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
@@ -270,6 +271,8 @@ abstract class AbstractPlayerFragment(
         throw NotImplementedError()
     }
 
+    open fun onPlaybackExhausted() = Unit
+
     private fun requestAudioFocus() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             activity?.requestLocalAudioFocus(AppContextUtils.getFocusRequest())
@@ -289,7 +292,18 @@ abstract class AbstractPlayerFragment(
                     context?.getString(R.string.no_links_found_toast) + "\n" + message,
                     Toast.LENGTH_LONG
                 )
-                activity?.popCurrentPage()
+                onPlaybackExhausted()
+                val continuedTvMode = context?.let { ctx ->
+                    if (!TvModeHelper.isManagedPlayback(ctx)) {
+                        false
+                    } else {
+                        player.release()
+                        TvModeHelper.playNextFromSession(activity, replaceExisting = true)
+                    }
+                } == true
+                if (!continuedTvMode) {
+                    activity?.popCurrentPage()
+                }
             }
         }
 
@@ -526,13 +540,17 @@ abstract class AbstractPlayerFragment(
 
             is VideoEndedEvent -> {
                 context?.let { ctx ->
-                    // Only play next episode if autoplay is on (default)
-                    if (PreferenceManager.getDefaultSharedPreferences(ctx)
-                            ?.getBoolean(
-                                ctx.getString(R.string.autoplay_next_key),
-                                true
-                            ) == true
-                    ) {
+                    val isTvModePlayback = TvModeHelper.isManagedPlayback(ctx)
+                    val shouldPlayNext = if (isTvModePlayback) {
+                        TvModeHelper.shouldForceContinuousPlayback(ctx)
+                    } else {
+                        PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(
+                            ctx.getString(R.string.autoplay_next_key),
+                            true
+                        )
+                    }
+
+                    if (shouldPlayNext) {
                         player.handleEvent(
                             CSPlayerEvent.NextEpisode,
                             source = PlayerEventSource.Player
