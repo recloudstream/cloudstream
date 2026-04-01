@@ -5,8 +5,12 @@
       <verify-signatures>false</verify-signatures>
       <trusted-artifacts>
          <trust group="gradle" name="gradle"/>
-         <trust file=".*-javadoc[.]jar" regex="true"/>
-         <trust file=".*-sources[.]jar" regex="true"/>
+         <trust file=".*-javadoc[.]jar" regex="true" reason="Android Studio downloads javadoc jars but doesn't add checksums - fixes building in AS"/>
+         <trust file=".*-sources[.]jar" regex="true" reason="Android Studio downloads javadoc jars but doesn't add checksums - fixes building in AS"/>
+         <trust group="com.fasterxml.jackson" name="jackson-base" reason="parent POM only, no artifact to checksum"/>
+         <trust group="com.google.guava" name="guava-parent" reason="parent POM only, no artifact to checksum"/>
+         <trust group="org.jetbrains.kotlinx" name="kotlinx-coroutines-bom" reason="BOM only, no artifact to checksum"/>
+         <trust group="org.junit" name="junit-bom" reason="BOM only, no artifact to checksum"/>
       </trusted-artifacts>
    </configuration>
    <components>
