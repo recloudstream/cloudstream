@@ -111,9 +111,8 @@ class SettingsUI : BasePreferenceFragmentCompat() {
             tvModeLoopPref?.isVisible = isEnabled
             tvModeContinueWatchingPref?.isVisible = isEnabled
             tvModeStallProtectionPref?.isVisible = isEnabled
-            val showStallProtectionDetails = isEnabled && (
-                stallProtectionEnabledOverride ?: isTvModeStallProtectionEnabled()
-                )
+            val showStallProtectionDetails = isEnabled &&
+                (stallProtectionEnabledOverride ?: isTvModeStallProtectionEnabled())
             tvModeRetryLimitPref?.isVisible = showStallProtectionDetails
             tvModeLoadingTimeoutPref?.isVisible = showStallProtectionDetails
             tvModeContentPref?.summary = getString(getTvModeContentMode().labelRes)

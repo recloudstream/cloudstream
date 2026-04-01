@@ -132,7 +132,7 @@ object TvModeHelper {
     }
 
     fun isManagedPlayback(context: Context): Boolean {
-        return isEnabled(context) && (currentSession?.managedPlayback == true)
+        return isEnabled(context) && currentSession?.managedPlayback == true
     }
 
     fun isLoopEnabled(context: Context): Boolean {

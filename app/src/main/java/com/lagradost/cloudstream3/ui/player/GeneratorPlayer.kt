@@ -1922,82 +1922,310 @@ class GeneratorPlayer : FullScreenPlayer() {
         super.onDestroy()
     }
 
-    var maxEpisodeSet: Int? = null
-    var hasRequestedStamps: Boolean = false
-    override fun playerPositionChanged(position: Long, duration: Long) {
-        // Don't save livestream data
-        if ((currentMeta as? ResultEpisode)?.tvType?.isLiveStream() == true) return
+    private data class SubtitleFilterConfig(
+        val languages: List<String> = emptyList(),
+        val filterByLanguage: Boolean = false,
+    )
 
-        // Don't save NSFW data
-        if ((currentMeta as? ResultEpisode)?.tvType == TvType.NSFW) return
+    private fun shouldIgnorePlaybackProgress(): Boolean {
+        val tvType = (currentMeta as? ResultEpisode)?.tvType
+        return tvType?.isLiveStream() == true || tvType == TvType.NSFW
+    }
 
-        if (duration <= 0L) return // idk how you achieved this, but div by zero crash
-        if (!hasRequestedStamps) {
-            hasRequestedStamps = true
-            val fetchStamps = context?.let { ctx ->
-                val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
-                settingsManager.getBoolean(
-                    ctx.getString(R.string.enable_skip_op_from_database),
-                    true
-                )
-            } ?: true
-            if (fetchStamps)
-                viewModel.loadStamps(duration)
+    private fun maybeLoadStamps(duration: Long) {
+        if (hasRequestedStamps) return
+
+        hasRequestedStamps = true
+        val fetchStamps = context?.let { ctx ->
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+            settingsManager.getBoolean(
+                ctx.getString(R.string.enable_skip_op_from_database),
+                true
+            )
+        } ?: true
+
+        if (fetchStamps) {
+            viewModel.loadStamps(duration)
         }
+    }
 
-        val percentage = position * 100L / duration
+    private fun shouldSkipContinueWatching(): Boolean {
+        val currentContext = context ?: return false
+        return TvModeHelper.hasSession() && !TvModeHelper.shouldIncludeInContinueWatching(currentContext)
+    }
 
-        val shouldSkipContinueWatching = context?.let { ctx ->
-            TvModeHelper.hasSession() && !TvModeHelper.shouldIncludeInContinueWatching(ctx)
-        } == true
-
-        if (shouldSkipContinueWatching) {
+    private fun persistPlaybackProgress(position: Long, duration: Long) {
+        if (shouldSkipContinueWatching()) {
             DataStoreHelper.setViewPos(viewModel.getId(), position, duration)
             clearContinueWatchingForTvMode()
+            return
+        }
+
+        DataStoreHelper.setViewPosAndResume(
+            viewModel.getId(),
+            position,
+            duration,
+            currentMeta,
+            nextMeta
+        )
+    }
+
+    private fun updateSyncProgress(percentage: Long) {
+        val meta = currentMeta as? ResultEpisode ?: return
+        if (percentage < UPDATE_SYNC_PROGRESS_PERCENTAGE || (maxEpisodeSet ?: -1) >= meta.episode) {
+            return
+        }
+
+        context?.let { ctx ->
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+            if (settingsManager.getBoolean(ctx.getString(R.string.episode_sync_enabled_key), true)) {
+                maxEpisodeSet = meta.episode
+            }
+            sync.modifyMaxEpisode(meta.totalEpisodeIndex ?: meta.episode)
+        }
+    }
+
+    private fun isSkipOpVisible(percentage: Long): Boolean {
+        val meta = currentMeta as? ResultEpisode ?: return false
+        return meta.tvType.isAnimeOp() && percentage < SKIP_OP_VIDEO_PERCENTAGE
+    }
+
+    private fun updateEpisodeNavigationButtons(isOpVisible: Boolean) {
+        playerBinding?.playerSkipOp?.isVisible = isOpVisible
+
+        if (isLayout(PHONE)) {
+            playerBinding?.playerSkipEpisode?.isVisible =
+                !isOpVisible && viewModel.hasNextEpisode() == true
+            return
+        }
+
+        val hasNextEpisode = viewModel.hasNextEpisode() == true
+        playerBinding?.playerGoForward?.isVisible = hasNextEpisode
+        playerBinding?.playerGoForwardRoot?.isVisible = hasNextEpisode
+    }
+
+    private fun readSubtitleFilterConfig(ctx: Context): SubtitleFilterConfig {
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+        showName = settingsManager.getBoolean(ctx.getString(R.string.show_name_key), true)
+        showResolution = settingsManager.getBoolean(ctx.getString(R.string.show_resolution_key), true)
+        showMediaInfo = settingsManager.getBoolean(ctx.getString(R.string.show_media_info_key), false)
+        limitTitle = settingsManager.getInt(ctx.getString(R.string.prefer_title_limit_key), 0)
+        updateForcedEncoding(ctx)
+
+        val shouldFilterByLanguage =
+            settingsManager.getBoolean(getString(R.string.filter_sub_lang_key), false)
+        if (!shouldFilterByLanguage) {
+            return SubtitleFilterConfig()
+        }
+
+        val preferredLanguages = settingsManager.getStringSet(
+            getString(R.string.provider_lang_key),
+            mutableSetOf("en")
+        )
+
+        return SubtitleFilterConfig(
+            languages = preferredLanguages?.mapNotNull {
+                fromTagToEnglishLanguageName(it)?.lowercase()
+            } ?: emptyList(),
+            filterByLanguage = true,
+        )
+    }
+
+    private fun restorePlayerState(savedInstanceState: Bundle?) {
+        unwrapBundle(savedInstanceState)
+        unwrapBundle(arguments)
+        sync.updateUserData()
+        preferredAutoSelectSubtitles = getAutoSelectLanguageTagIETF()
+
+        if (currentSelectedLink == null) {
+            viewModel.loadLinks()
+        }
+    }
+
+    private fun setupPlayerControls() {
+        binding?.overlayLoadingSkipButton?.setOnClickListener {
+            startPlayer()
+        }
+
+        binding?.playerLoadingGoBack?.setOnClickListener {
+            exitFullscreen()
+            player.release()
+            activity?.popCurrentPage()
+        }
+
+        playerBinding?.downloadHeader?.setOnClickListener {
+            it?.isVisible = false
+        }
+
+        playerBinding?.downloadHeaderToggle?.setOnClickListener {
+            playerBinding?.downloadHeader?.let {
+                it.isVisible = !it.isVisible
+            }
+        }
+    }
+
+    private fun togglePlayerTvMode() {
+        autoHide()
+        val currentContext = context ?: return
+
+        if (TvModeHelper.hasSession()) {
+            TvModeHelper.stopSession()
+            updatePlayerTvModeButton()
+            return
+        }
+
+        val loadResponse = viewModel.getLoadResponse() ?: return
+        val primaryUrl = loadResponse.uniqueUrl.ifBlank { loadResponse.url }
+        val fallbackUrl = loadResponse.url
+        val episodeMeta = currentMeta as? ResultEpisode ?: viewModel.getMeta() as? ResultEpisode
+        val shouldUseCurrentShow =
+            episodeMeta != null &&
+                TvModeHelper.getPlayerStartMode(currentContext) == TvModeHelper.TvModePlayerStartMode.CURRENT_SHOW
+
+        val didStart = if (shouldUseCurrentShow) {
+            TvModeHelper.startForResult(
+                activity,
+                primaryUrl,
+                loadResponse.apiName,
+                loadResponse.name,
+                episodeMeta.season
+            )
         } else {
-            DataStoreHelper.setViewPosAndResume(
-                viewModel.getId(),
-                position,
-                duration,
-                currentMeta,
-                nextMeta
+            TvModeHelper.startGlobalSessionFromCache(
+                activity,
+                loadResponse.recommendations ?: emptyList()
             )
         }
 
-        var isOpVisible = false
-        when (val meta = currentMeta) {
-            is ResultEpisode -> {
-                if (percentage >= UPDATE_SYNC_PROGRESS_PERCENTAGE && (maxEpisodeSet
-                        ?: -1) < meta.episode
-                ) {
-                    context?.let { ctx ->
-                        val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
-                        if (settingsManager.getBoolean(
-                                ctx.getString(R.string.episode_sync_enabled_key), true
-                            )
-                        ) maxEpisodeSet = meta.episode
-                        sync.modifyMaxEpisode(meta.totalEpisodeIndex ?: meta.episode)
-                    }
+        if (didStart) {
+            TvModeHelper.markPlaybackManaged(primaryUrl, episodeMeta?.id, fallbackUrl)
+            clearContinueWatchingForTvMode()
+            updatePlayerTvModeButton()
+        }
+    }
+
+    private fun setupPlayerTvModeControl() {
+        ensurePlayerTvModeButton()
+        playerTvModeButton?.setOnClickListener {
+            togglePlayerTvMode()
+        }
+        updatePlayerTvModeButton()
+    }
+
+    private fun observeLoadingLinks() {
+        observe(viewModel.loadingLinks) {
+            when (it) {
+                is Resource.Loading -> {
+                    startLoading()
+                    scheduleTvModeLoadingTimeout()
                 }
 
-                if (meta.tvType.isAnimeOp()) isOpVisible = percentage < SKIP_OP_VIDEO_PERCENTAGE
+                is Resource.Success -> {
+                    cancelTvModeLoadingTimeout()
+                    startPlayer()
+                }
+
+                is Resource.Failure -> {
+                    cancelTvModeLoadingTimeout()
+                    showToast(it.errorString, Toast.LENGTH_LONG)
+                    startPlayer()
+                }
             }
         }
+    }
 
-        playerBinding?.playerSkipOp?.isVisible = isOpVisible
-
-        when {
-            isLayout(PHONE) ->
-                playerBinding?.playerSkipEpisode?.isVisible =
-                    !isOpVisible && viewModel.hasNextEpisode() == true
-
-            else -> {
-                val hasNextEpisode = viewModel.hasNextEpisode() == true
-                playerBinding?.playerGoForward?.isVisible = hasNextEpisode
-                playerBinding?.playerGoForwardRoot?.isVisible = hasNextEpisode
+    private fun updateSkipLoadingButton(isVisible: Boolean) {
+        binding?.overlayLoadingSkipButton?.apply {
+            this.isVisible = isVisible
+            val value = viewModel.currentLinks.value
+            if (value.isNullOrEmpty()) {
+                setText(R.string.skip_loading)
+            } else {
+                text = "${context.getString(R.string.skip_loading)} (${value.size})"
             }
-
         }
+    }
+
+    private fun maybeAutoStartLoadedLinks() {
+        safe {
+            if (currentLinks.any { link ->
+                    getLinkPriority(currentQualityProfile, link.first) >=
+                        QualityDataHelper.AUTO_SKIP_PRIORITY
+                }
+            ) {
+                startPlayer()
+            }
+        }
+    }
+
+    private fun observeCurrentLinks() {
+        observe(viewModel.currentLinks) {
+            currentLinks = it
+            val turnVisible = it.isNotEmpty() && lastUsedGenerator?.canSkipLoading == true
+            val wasGone = binding?.overlayLoadingSkipButton?.isGone == true
+
+            updateSkipLoadingButton(turnVisible)
+            maybeAutoStartLoadedLinks()
+
+            if (turnVisible && wasGone) {
+                binding?.overlayLoadingSkipButton?.requestFocus()
+            }
+        }
+    }
+
+    private fun applySubtitleFilter(
+        subtitles: Set<SubtitleData>,
+        config: SubtitleFilterConfig,
+    ): Set<SubtitleData> {
+        if (!config.filterByLanguage || config.languages.isEmpty()) {
+            return subtitles
+        }
+
+        val filteredSubtitles = mutableSetOf<SubtitleData>()
+        Log.i("subfilter", "Filtering subtitle")
+        config.languages.forEach { language ->
+            Log.i("subfilter", "Lang: $language")
+            filteredSubtitles += subtitles.filter {
+                it.originalName.contains(language, ignoreCase = true) ||
+                    it.origin != SubtitleOrigin.URL
+            }
+        }
+        return filteredSubtitles
+    }
+
+    private fun observeCurrentSubs(config: SubtitleFilterConfig) {
+        observe(viewModel.currentSubs) { set ->
+            currentSubs = applySubtitleFilter(set, config)
+            player.setActiveSubtitles(set)
+
+            if (set.lastOrNull()?.origin != SubtitleOrigin.DOWNLOADED_FILE) {
+                autoSelectSubtitles()
+            }
+        }
+    }
+
+    private fun observePlayerViewModel(config: SubtitleFilterConfig) {
+        observe(viewModel.currentStamps) { stamps ->
+            player.addTimeStamps(stamps)
+        }
+
+        observeLoadingLinks()
+        observeCurrentLinks()
+        observeCurrentSubs(config)
+    }
+
+    var maxEpisodeSet: Int? = null
+    var hasRequestedStamps: Boolean = false
+    override fun playerPositionChanged(position: Long, duration: Long) {
+        if (shouldIgnorePlaybackProgress()) return
+        if (duration <= 0L) return // idk how you achieved this, but div by zero crash
+
+        maybeLoadStamps(duration)
+
+        val percentage = position * 100L / duration
+        persistPlaybackProgress(position, duration)
+        updateSyncProgress(percentage)
+        updateEpisodeNavigationButtons(isSkipOpVisible(percentage))
 
         if (percentage >= PRELOAD_NEXT_EPISODE_PERCENTAGE) {
             viewModel.preLoadNextLinks()
@@ -2438,184 +2666,12 @@ class GeneratorPlayer : FullScreenPlayer() {
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var langFilterList = listOf<String>()
-        var filterSubByLang = false
+        val subtitleFilterConfig = context?.let(::readSubtitleFilterConfig) ?: SubtitleFilterConfig()
 
-        context?.let { ctx ->
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
-            showName        = settingsManager.getBoolean(ctx.getString(R.string.show_name_key), true)
-            showResolution  = settingsManager.getBoolean(ctx.getString(R.string.show_resolution_key), true)
-            showMediaInfo   = settingsManager.getBoolean(ctx.getString(R.string.show_media_info_key), false)
-            limitTitle      = settingsManager.getInt(ctx.getString(R.string.prefer_title_limit_key), 0)
-            updateForcedEncoding(ctx)
-            filterSubByLang =
-                settingsManager.getBoolean(getString(R.string.filter_sub_lang_key), false)
-            if (filterSubByLang) {
-                val langFromPrefMedia = settingsManager.getStringSet(
-                    this.getString(R.string.provider_lang_key), mutableSetOf("en")
-                )
-                langFilterList = langFromPrefMedia?.mapNotNull {
-                    fromTagToEnglishLanguageName(it)?.lowercase() ?: return@mapNotNull null
-                } ?: listOf()
-            }
-        }
-
-        unwrapBundle(savedInstanceState)
-        unwrapBundle(arguments)
-
-        sync.updateUserData()
-
-        preferredAutoSelectSubtitles = getAutoSelectLanguageTagIETF()
-
-        if (currentSelectedLink == null) {
-            viewModel.loadLinks()
-        }
-
-        binding?.overlayLoadingSkipButton?.setOnClickListener {
-            startPlayer()
-        }
-
-        binding?.playerLoadingGoBack?.setOnClickListener {
-            exitFullscreen()
-            player.release()
-            activity?.popCurrentPage()
-        }
-
-        playerBinding?.downloadHeader?.setOnClickListener {
-            it?.isVisible = false
-        }
-
-        playerBinding?.downloadHeaderToggle?.setOnClickListener {
-            playerBinding?.downloadHeader?.let {
-                it.isVisible = !it.isVisible
-            }
-        }
-
-        ensurePlayerTvModeButton()
-        playerTvModeButton?.setOnClickListener {
-            autoHide()
-            val currentContext = context ?: return@setOnClickListener
-
-            if (TvModeHelper.hasSession()) {
-                TvModeHelper.stopSession()
-                updatePlayerTvModeButton()
-                return@setOnClickListener
-            }
-
-            val loadResponse = viewModel.getLoadResponse() ?: return@setOnClickListener
-            val primaryUrl = loadResponse.uniqueUrl.ifBlank { loadResponse.url }
-            val fallbackUrl = loadResponse.url
-            val episodeMeta = (currentMeta as? ResultEpisode) ?: (viewModel.getMeta() as? ResultEpisode)
-            val shouldUseCurrentShow =
-                episodeMeta != null &&
-                    TvModeHelper.getPlayerStartMode(currentContext) == TvModeHelper.TvModePlayerStartMode.CURRENT_SHOW
-
-            val didStart = if (shouldUseCurrentShow) {
-                TvModeHelper.startForResult(
-                    activity,
-                    primaryUrl,
-                    loadResponse.apiName,
-                    loadResponse.name,
-                    episodeMeta.season
-                )
-            } else {
-                TvModeHelper.startGlobalSessionFromCache(
-                    activity,
-                    loadResponse.recommendations ?: emptyList()
-                )
-            }
-
-            if (didStart) {
-                TvModeHelper.markPlaybackManaged(primaryUrl, episodeMeta?.id, fallbackUrl)
-                clearContinueWatchingForTvMode()
-                updatePlayerTvModeButton()
-            }
-        }
-        updatePlayerTvModeButton()
-
-        observe(viewModel.currentStamps) { stamps ->
-            player.addTimeStamps(stamps)
-        }
-
-        observe(viewModel.loadingLinks) {
-            when (it) {
-                is Resource.Loading -> {
-                    startLoading()
-                    scheduleTvModeLoadingTimeout()
-                }
-
-                is Resource.Success -> {
-                    cancelTvModeLoadingTimeout()
-                    // provider returned false
-                    //if (it.value != true) {
-                    //    showToast(activity, R.string.unexpected_error, Toast.LENGTH_SHORT)
-                    //}
-                    startPlayer()
-                }
-
-                is Resource.Failure -> {
-                    cancelTvModeLoadingTimeout()
-                    showToast(it.errorString, Toast.LENGTH_LONG)
-                    startPlayer()
-                }
-            }
-        }
-
-        observe(viewModel.currentLinks) {
-            currentLinks = it
-            val turnVisible = it.isNotEmpty() && lastUsedGenerator?.canSkipLoading == true
-            val wasGone = binding?.overlayLoadingSkipButton?.isGone == true
-
-            binding?.overlayLoadingSkipButton?.apply {
-                isVisible = turnVisible
-                val value = viewModel.currentLinks.value
-                if (value.isNullOrEmpty()) {
-                    setText(R.string.skip_loading)
-                } else {
-                    text = "${context.getString(R.string.skip_loading)} (${value.size})"
-                }
-            }
-
-            safe {
-                if (currentLinks.any { link ->
-                        getLinkPriority(currentQualityProfile, link.first) >=
-                                QualityDataHelper.AUTO_SKIP_PRIORITY
-                    }
-                ) {
-                    startPlayer()
-                }
-            }
-
-            if (turnVisible && wasGone) {
-                binding?.overlayLoadingSkipButton?.requestFocus()
-            }
-        }
-
-        observe(viewModel.currentSubs) { set ->
-            val setOfSub = mutableSetOf<SubtitleData>()
-            if (langFilterList.isNotEmpty() && filterSubByLang) {
-                Log.i("subfilter", "Filtering subtitle")
-                langFilterList.forEach { lang ->
-                    Log.i("subfilter", "Lang: $lang")
-                    setOfSub += set.filter {
-                        it.originalName.contains(lang, ignoreCase = true) ||
-                                it.origin != SubtitleOrigin.URL
-                    }
-                }
-                currentSubs = setOfSub
-            } else {
-                currentSubs = set
-            }
-            player.setActiveSubtitles(set)
-
-            // If the file is downloaded then do not select auto select the subtitles
-            // Downloaded subtitles cannot be selected immediately after loading since
-            // player.getCurrentPreferredSubtitle() cannot fetch data from non-loaded subtitles
-            // Resulting in unselecting the downloaded subtitle
-            if (set.lastOrNull()?.origin != SubtitleOrigin.DOWNLOADED_FILE) {
-                autoSelectSubtitles()
-            }
-        }
+        restorePlayerState(savedInstanceState)
+        setupPlayerControls()
+        setupPlayerTvModeControl()
+        observePlayerViewModel(subtitleFilterConfig)
     }
 
 }
