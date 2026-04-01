@@ -7,6 +7,7 @@
          <trust group="gradle" name="gradle"/>
          <trust file=".*-javadoc[.]jar" regex="true" reason="Android Studio downloads javadoc jars but doesn't add checksums - fixes building in AS"/>
          <trust file=".*-sources[.]jar" regex="true" reason="Android Studio downloads javadoc jars but doesn't add checksums - fixes building in AS"/>
+         <trust group="com.android.tools.build" name="aapt2" version="8.13.2-14304508" reason="ships OS specific artifacts (win/linux) - temp global trust"/>
          <trust group="com.fasterxml.jackson" name="jackson-base" reason="parent POM only, no artifact to checksum"/>
          <trust group="com.google.guava" name="guava-parent" reason="parent POM only, no artifact to checksum"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-bom" reason="BOM only, no artifact to checksum"/>
