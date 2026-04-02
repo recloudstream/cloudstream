@@ -281,12 +281,14 @@ internal object GoogleDriveApi {
 
         client.newCall(req).execute().use { response ->
             if (!response.isSuccessful) {
-                var errorBody = response.body.string()
-                try {
-                    val jsonObj = JSONObject(errorBody)
-                    errorBody = jsonObj.optJSONObject("error")?.optString("message") ?: errorBody
-                } catch (e: Exception) {}
-                throw Exception("${response.code}: $errorBody")
+                val responseBody = response.body.string()
+                val displayError = try {
+                    val jsonObj = JSONObject(responseBody)
+                    jsonObj.optJSONObject("error")?.optString("message") ?: responseBody
+                } catch (_: Exception) {
+                    responseBody
+                }
+                throw Exception("${response.code}: $displayError")
             }
         }
     }
