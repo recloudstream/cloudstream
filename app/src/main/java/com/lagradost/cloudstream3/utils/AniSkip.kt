@@ -88,7 +88,7 @@ object EpisodeSkip {
                     out.addAll(list)
                 }
             }
-        } else if (data.type == TvType.TvSeries) {
+        } else if (data.type == TvType.TvSeries || data.type == TvType.AsianDrama) {
             val season = episode.season
             val imdbId = data.getImdbId()
 
