@@ -1,8 +1,8 @@
 package com.lagradost.cloudstream3.utils
 
-import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.lagradost.api.Log
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
 import com.lagradost.cloudstream3.app
@@ -22,9 +22,7 @@ object IntroDbSkip {
         episode: Int,
     ): IntroDbResponse? {
         return try {
-            val url =
-                "https://api.introdb.app/segments?imdb_id=$imdbId&season=$season&episode=$episode&segment_type=intro"
-            Log.i(TAG, "Requesting $url")
+            val url = "https://api.introdb.app/segments?imdb_id=$imdbId&season=$season&episode=$episode&segment_type=intro"
             app.get(url).parsed<IntroDbResponse>()
         } catch (t: Throwable) {
             Log.i(TAG, "error = ${t.message}")
@@ -59,7 +57,7 @@ object IntroDbSkip {
         hasNextEpisode: Boolean,
     ): List<EpisodeSkip.SkipStamp> {
         val season = episode.season ?: return emptyList()
-        val episodeNumber = episode.episode ?: return emptyList()
+        val episodeNumber = episode.episode
         val imdbId = data.getImdbId() ?: return emptyList()
 
         val result = getResult(
