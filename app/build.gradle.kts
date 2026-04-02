@@ -87,6 +87,11 @@ android {
             "SIMKL_CLIENT_SECRET",
             "\"" + (System.getenv("SIMKL_CLIENT_SECRET") ?: localProperties["simkl.secret"]) + "\""
         )
+        buildConfigField(
+            "String",
+            "GOOGLE_CLIENT_ID",
+            "\"" + (localProperties["google.client_id"] ?: "") + "\""
+        )
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -227,6 +232,13 @@ dependencies {
     implementation(libs.nicehttp) // HTTP Lib
 
     implementation(project(":library"))
+
+    // Google Drive Sync
+    implementation(libs.play.services.auth)          // AuthorizationClient for Drive token
+    implementation(libs.credentials)
+    implementation(libs.credentials.play.services.auth)
+    implementation(libs.googleid)
+    implementation(libs.kotlinx.coroutines.play.services) // .await() on GMS Tasks
 }
 
 tasks.register<Jar>("androidSourcesJar") {

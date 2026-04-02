@@ -107,8 +107,14 @@ object BackupUtils {
     )
 
     /** false if key should not be contained in backup */
-    private fun String.isTransferable(): Boolean {
-        return !nonTransferableKeys.any { this.contains(it) }
+    private fun String.isTransferable(context: Context): Boolean {
+        val pluginSyncEnabled = context.getDefaultSharedPrefs().getBoolean("sync_plugins_enabled", false)
+        val excluded = if (pluginSyncEnabled) {
+            nonTransferableKeys.filter { it != PLUGINS_KEY }
+        } else {
+            nonTransferableKeys
+        }
+        return !excluded.any { this.contains(it) }
     }
 
     private var restoreFileSelector: ActivityResultLauncher<Array<String>>? = null
@@ -129,11 +135,11 @@ object BackupUtils {
     )
 
     @Suppress("UNCHECKED_CAST")
-    private fun getBackup(context: Context?): BackupFile? {
+    internal fun getBackup(context: Context?): BackupFile? {
         if (context == null) return null
 
-        val allData = context.getSharedPrefs().all.filter { it.key.isTransferable() }
-        val allSettings = context.getDefaultSharedPrefs().all.filter { it.key.isTransferable() }
+        val allData = context.getSharedPrefs().all.filter { it.key.isTransferable(context) }
+        val allSettings = context.getDefaultSharedPrefs().all.filter { it.key.isTransferable(context) }
 
         val allDataSorted = BackupVars(
             allData.filter { it.value is Boolean } as? Map<String, Boolean>,
@@ -307,7 +313,7 @@ object BackupUtils {
     ) {
         val editor = DataStore.editor(this, isEditingAppSettings)
         map?.forEach {
-            if (it.key.isTransferable()) {
+            if (it.key.isTransferable(this)) {
                 editor.setKeyRaw(it.key, it.value)
             }
         }

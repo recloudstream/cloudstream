@@ -779,4 +779,35 @@
         <item quantity="one">%d download queued</item>
         <item quantity="other">%d downloads queued</item>
     </plurals>
+    <!-- Cross-device sync strings -->
+    <string name="sync_category_account">Google Drive Sync</string>
+    <string name="sync_category_actions">Sync Actions</string>
+    <string name="sync_category_options">Sync Options</string>
+    <string name="sync_connect_title">Connect Google Drive</string>
+    <string name="sync_connect_summary">Sync your watchlist and history across devices</string>
+    <string name="sync_disconnect_title">Disconnect (%s)</string>
+    <string name="sync_connected_summary">Connected as %s</string>
+    <string name="sync_status_title">Sync Status</string>
+    <string name="sync_status_not_connected">Not connected</string>
+    <string name="sync_status_never">Never synced</string>
+    <string name="sync_status_last">Last synced: %s</string>
+    <string name="sync_push_title">Upload to Cloud</string>
+    <string name="sync_push_summary">Save local data to Google Drive now</string>
+    <string name="sync_pull_title">Download from Cloud</string>
+    <string name="sync_pull_summary">Restore data from Google Drive now</string>
+    <string name="sync_auto_launch_title">Sync on app start</string>
+    <string name="sync_auto_launch_summary">Automatically pull from cloud when opening the app</string>
+    <string name="sync_auto_close_title">Sync on app close</string>
+    <string name="sync_auto_close_summary">Automatically push to cloud when closing the app</string>
+    <string name="sync_plugins_title">Sync online plugins</string>
+    <string name="sync_plugins_summary">Include the list of installed online plugins in the sync</string>
+    <string name="sync_connected_toast">Google Drive connected</string>
+    <string name="sync_disconnected_toast">Google Drive disconnected</string>
+    <string name="sync_push_started">Uploading to cloud…</string>
+    <string name="sync_pull_started">Downloading from cloud…</string>
+    <string name="sync_push_success">✓ Upload to cloud successful</string>
+    <string name="sync_push_failed">✗ Upload to cloud failed</string>
+    <string name="sync_pull_success">✓ Download from cloud successful</string>
+    <string name="sync_pull_failed">✗ Download from cloud failed</string>
+    <string name="sync_auth_success">Google Drive authorized! You can now sync.</string>
 </resources>

@@ -73,6 +73,11 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.settings_updates, rootKey)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
+        getPref(R.string.sync_category_account)?.setOnPreferenceClickListener {
+            findNavController().navigate(R.id.action_navigation_global_to_navigation_settings_sync)
+            return@setOnPreferenceClickListener true
+        }
+
         getPref(R.string.backup_key)?.setOnPreferenceClickListener {
             BackupUtils.backup(activity)
             return@setOnPreferenceClickListener true
