@@ -31,6 +31,7 @@ class SyncSettingsFragment : PreferenceFragmentCompat() {
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        preferenceManager.sharedPreferencesName = "cs3_sync_prefs"
         setPreferencesFromResource(R.xml.settings_sync, rootKey)
 
         findPreference<Preference>("sync_google_drive_connect")?.setOnPreferenceClickListener {
@@ -129,6 +130,22 @@ class SyncSettingsFragment : PreferenceFragmentCompat() {
             else -> {
                 val formatted = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date(lastSync))
                 getString(R.string.sync_status_last, formatted)
+            }
+        }
+
+        val cloudPref = findPreference<Preference>("sync_cloud_status")
+        cloudPref?.isVisible = isConnected
+        if (isConnected) {
+            cloudPref?.summary = getString(R.string.sync_status_cloud_fetching)
+            lifecycleScope.launch {
+                val meta = SyncManager.getCloudMetadata(ctx)
+                val status = if (meta != null) {
+                    val formatted = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date(meta.updatedAt))
+                    getString(R.string.sync_status_cloud, formatted)
+                } else {
+                    getString(R.string.sync_status_cloud_none)
+                }
+                cloudPref?.summary = status
             }
         }
 

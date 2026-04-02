@@ -632,7 +632,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
     override fun onStart() {
         super.onStart()
-        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        val prefs = getSharedPreferences("cs3_sync_prefs", Context.MODE_PRIVATE)
+        SyncManager.trySilentAuth(this)
         if (prefs.getBoolean("sync_auto_on_launch", false) && SyncManager.isEnabled(this)) {
             SyncManager.pull(this)
         }
@@ -670,7 +671,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
     override fun onStop() {
         super.onStop()
-        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        val prefs = getSharedPreferences("cs3_sync_prefs", Context.MODE_PRIVATE)
         if (prefs.getBoolean("sync_auto_on_close", false) && SyncManager.isEnabled(this)) {
             SyncManager.push(this)
         }

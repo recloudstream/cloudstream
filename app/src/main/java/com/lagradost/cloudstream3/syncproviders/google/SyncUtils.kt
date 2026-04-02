@@ -1,55 +1,29 @@
 package com.lagradost.cloudstream3.syncproviders.google
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.utils.BackupUtils
 
 data class SyncMetadata(
-    @JsonProperty("updated_at") val updatedAt: Long = 0,
-    @JsonProperty("tombstones") val tombstones: Set<String> = emptySet()
-)
-
-data class SyncShard(
-    @JsonProperty("data") val data: Map<String, String> = emptyMap(),
-    @JsonProperty("metadata") val metadata: Map<String, Long> = emptyMap()
+    @JsonProperty("updated_at") val updatedAt: Long = 0
 )
 
 object SyncUtils {
-    fun mergeShards(
-        localData: Map<String, String>,
-        localMetadata: Map<String, Long>,
-        remoteData: Map<String, String>,
-        remoteMetadata: Map<String, Long>,
-        tombstones: Set<String>
-    ): Pair<Map<String, String>, Map<String, Long>> {
-        val mergedData = localData.toMutableMap()
-        val mergedMetadata = localMetadata.toMutableMap()
-
-        // Handle remote changes
-        remoteData.forEach { (key, remoteValue) ->
-            if (tombstones.contains(key)) {
-                mergedData.remove(key)
-                mergedMetadata.remove(key)
-                return@forEach
-            }
-
-            val remoteTime = remoteMetadata[key] ?: 0L
-            val localTime = mergedMetadata[key] ?: 0L
-
-            if (remoteTime > localTime) {
-                mergedData[key] = remoteValue
-                mergedMetadata[key] = remoteTime
-            }
+    fun convertLegacyToShards(backup: BackupUtils.BackupFile): Pair<SyncManager.Shard, SyncManager.Shard> {
+        val datastoreData = mutableMapOf<String, Any>()
+        val settingsData = mutableMapOf<String, Any>()
+        
+        fun flatten(vars: BackupUtils.BackupVars?, target: MutableMap<String, Any>) {
+            vars?.bool?.forEach { (k, v) -> target[k] = v }
+            vars?.int?.forEach { (k, v) -> target[k] = v }
+            vars?.string?.forEach { (k, v) -> target[k] = v }
+            vars?.float?.forEach { (k, v) -> target[k] = v }
+            vars?.long?.forEach { (k, v) -> target[k] = v }
+            vars?.stringSet?.forEach { (k, v) -> target[k] = v ?: emptySet<String>() }
         }
 
-        // Apply tombstones to local data
-        tombstones.forEach { key ->
-            mergedData.remove(key)
-            mergedMetadata.remove(key)
-        }
+        flatten(backup.datastore, datastoreData)
+        flatten(backup.settings, settingsData)
 
-        return mergedData to mergedMetadata
-    }
-
-    fun getLocalTimestamp(key: String, metadata: Map<String, Long>): Long {
-        return metadata[key] ?: 0L
+        return SyncManager.Shard(1, datastoreData) to SyncManager.Shard(1, settingsData)
     }
 }

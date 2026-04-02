@@ -15,6 +15,12 @@
             android:summary="@string/sync_status_not_connected"
             android:title="@string/sync_status_title" />
 
+        <Preference
+            android:key="sync_cloud_status"
+            android:selectable="false"
+            android:summary="@string/sync_status_not_connected"
+            android:title="Cloud Backup Status" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/sync_category_actions">

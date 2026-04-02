@@ -810,4 +810,7 @@
     <string name="sync_pull_success">✓ Download from cloud successful</string>
     <string name="sync_pull_failed">✗ Download from cloud failed</string>
     <string name="sync_auth_success">Google Drive authorized! You can now sync.</string>
+    <string name="sync_status_cloud">Last Cloud Backup: %s</string>
+    <string name="sync_status_cloud_fetching">Fetching cloud status...</string>
+    <string name="sync_status_cloud_none">No cloud backup found</string>
 </resources>
