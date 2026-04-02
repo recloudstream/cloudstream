@@ -249,7 +249,7 @@
     <string name="update">Update</string>
     <string name="watch_quality_pref">Voorkeurskwaliteit voor kijken (WiFi)</string>
     <string name="limit_title">Maximaal aantal tekens voor titel van videospeler</string>
-    <string name="limit_title_rez">Videospeler Resolutie</string>
+    <string name="limit_title_rez">Toon spelerinformatie</string>
     <string name="video_buffer_size_settings">Grootte videobuffer</string>
     <string name="video_buffer_length_settings">Lengte videobuffer</string>
     <string name="video_buffer_disk_settings">Video cache op schijf</string>
@@ -289,7 +289,7 @@
     <string name="example_username">Gebruikersnaam</string>
     <string name="example_email">hello@Wereld.com</string>
     <string name="example_ip">127.0.0.1</string>
-    <string name="example_site_name">MyCoolSite</string>
+    <string name="example_site_name">NieuweSiteNaam</string>
     <string name="example_site_url">https://voorbeeld.com</string>
     <string name="example_lang_name">Taalcode (nl)</string>
     <string name="login_format" formatted="true">%1$s %2$s</string>
@@ -432,7 +432,7 @@
     <string name="repository_name_hint">Repository naam (Optioneel)</string>
     <string name="plugin_downloaded">Plugin Gedownload</string>
     <string name="test_failed">Mislukt</string>
-    <string name="jsdelivr_proxy_summary">Omzeilt de blokkering van GitHub met behulp van jsDelivr, waardoor updates enkele dagen vertraging kunnen oplopen.</string>
+    <string name="jsdelivr_proxy_summary">Omzeil de blokkering van ruwe GitHub-URL’s via jsDelivr. Hierdoor kunnen updates enkele dagen vertraagd zijn.</string>
     <string name="repository_url_hint">Repository URL of Shortcode</string>
     <string name="batch_download_finish_format" formatted="true">Download %1$d %2$s voltooid</string>
     <string name="hls_playlist">HLS Afspeellijst</string>
@@ -658,4 +658,28 @@
     <string name="device_pin_url_message">Ga naar <b>%s</b> op je smartphone of computer en voeren de bovenstaande code in</string>
     <string name="device_pin_expired_message">PIN-code is nu verlopen!</string>
     <string name="device_pin_counter_text">Code verloopt in %1$dm %2$ds</string>
+    <string name="download_queue">Downloadwachtrij</string>
+    <string name="queue_empty_message">Er staan momenteel geen downloads in de wachtrij.</string>
+    <string name="extra_brightness_settings">Extra helderheid</string>
+    <string name="extra_brightness_settings_des">Schakel het helderheidsfilter in zodra de schermhelderheid boven 100% komt</string>
+    <string name="extra_brightness_key">extra_helderheid_ingeschakeld</string>
+    <string name="search_suggestions">Zoeksuggesties</string>
+    <string name="search_suggestions_des">Zoeksuggesties laten zien tijdens het typen</string>
+    <string name="clear_suggestions">Suggesties verwijderen</string>
+    <string name="show_cast_in_details">Castpaneel weergeven</string>
+    <string name="install_prerelease">Pre-releaseversie installeren</string>
+    <string name="prerelease_already_installed">Pre-releaseversie is al geïnstaleerd.</string>
+    <string name="prerelease_install_failed">Installatie van de pre-release is mislukt.</string>
+    <string name="episode_action_cast_mirror">Schermspiegeling</string>
+    <string name="episode_action_play_mirror">Spiegeling spelen</string>"
+    <string name="show_rating">Beoordelingslabel</string>
+    <string name="show_episode_text">Afleveringstekst</string>
+    <string name="test_extensions_summary">Deze test is alleen bedoeld voor ontwikkelaars en bevestigt noch ontkent de werking van een extensie.</string>
+    <string name="auth_locally">Lokale authenticatie</string>
+    <string name="video_info">Media info</string>
+    <string name="download_all_plugins_from_repo">Waarschuwing: Cloudstream is niet verandwoordelijk voor het gebruik van extensies van derden en biedt hier ook geen ondersteuning voor!</string>
+    <string name="player_settings_select_cast_device">Cast apparaat selecteren</string>
+    <string name="clipboard_permission_error">Fout bij toegang tot het Klembord, Probeer het opnieuw.</string>
+    <string name="clipboard_unknown_error">Fout bij het kopiëren. Kopieer alsjeblieft de logcat en neem contact op met de app-ondersteuning.</string>
+    <string name="dismiss">Afwijzen</string>
 </resources>

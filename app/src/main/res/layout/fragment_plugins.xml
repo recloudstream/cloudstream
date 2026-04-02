@@ -6,8 +6,8 @@
     android:id="@+id/extensions_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="?attr/primaryGrayBackground">
+    android:background="?attr/primaryGrayBackground"
+    android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -26,20 +26,28 @@
             app:titleTextColor="?attr/textColor"
             tools:title="Overlord" />
 
-        <include
-            android:id="@+id/tvtypes_chips_scroll"
-            layout="@layout/tvtypes_chips_scroll" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/primaryGrayBackground"
+            android:paddingBottom="10dp"
+            app:layout_scrollFlags="scroll|enterAlways">
+
+            <include
+                android:id="@+id/tvtypes_chips_scroll"
+                layout="@layout/tvtypes_chips_scroll" />
+        </FrameLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/plugin_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="?attr/primaryBlackBackground"
+        android:clipToPadding="false"
+
         android:nextFocusLeft="@id/nav_rail_view"
         android:nextFocusUp="@id/tvtypes_chips"
-
-        android:clipToPadding="false"
-        android:background="?attr/primaryBlackBackground"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:listitem="@layout/repository_item" />

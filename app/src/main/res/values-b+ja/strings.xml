@@ -46,7 +46,7 @@
     <string name="category_general">全般</string>
     <string name="other_singular">動画</string>
     <string name="category_player">プレーヤー</string>
-    <string name="type_plan_to_watch">懐う</string>
+    <string name="type_plan_to_watch">視聴予定</string>
     <string name="play_trailer_button">予告編を再生</string>
     <string name="episode_short">エピソード</string>
     <string name="type_watching">視聴</string>
@@ -81,13 +81,13 @@
     <string name="home_main_poster_img_des">主要ポスター</string>
     <string name="home_next_random_img_des">次のランダム</string>
     <string name="go_back_img_des">戻り</string>
-    <string name="rated_format" formatted="true">視聴率 %.1f</string>
+    <string name="rated_format" formatted="true">評価: %.1f</string>
     <string name="new_update_format" formatted="true">新しいアップデートを発見!
 \n%1$s -&gt; %2$s</string>
     <string name="duration_format" formatted="true">%d分</string>
     <string name="search_hint_site" formatted="true">%sを検索…</string>
     <string name="pick_source">ソース</string>
-    <string name="filler" formatted="true">ろくごうきじ</string>
+    <string name="filler" formatted="true">番外編</string>
     <string name="reload_error">接続を再試行…</string>
     <string name="go_back">戻り</string>
     <string name="action_remove_from_bookmarks">削除</string>
@@ -298,7 +298,7 @@
     <string name="toast_copied">コピーされました！</string>
     <string name="audio_book_singular">オーディオブック</string>
     <string name="custom_media_singluar">メディア</string>
-    <string name="limit_title_rez">ビデオプレーヤーの解像度</string>
+    <string name="limit_title_rez">プレイヤー情報を表示</string>
     <string name="speed_setting_summary">プレイヤーに速度オプションを追加</string>
     <string name="downloads_delete_select">削除する項目を選択</string>
     <string name="offline_file">オフラインで視聴可能</string>
@@ -708,4 +708,27 @@
     <string name="prerelease_already_installed">プレリリース版は既にインストールされています。</string>
     <string name="prerelease_install_failed">プレリリース版のインストールに失敗しました。</string>
     <string name="show_episode_text">エピソードのテキスト</string>
+    <string name="search_suggestions">検索候補</string>
+    <string name="search_suggestions_des">入力中に検索候補を表示する</string>
+    <string name="clear_suggestions">候補を消去</string>
+    <string name="show_cast_in_details">キャストパネルを表示</string>
+    <string name="source_name">ソース名</string>
+    <string name="video_info">メディア情報</string>
+    <string name="extra_brightness_settings">追加の輝度設定</string>
+    <string name="extra_brightness_settings_des">画面の輝度が100%を超えた場合に輝度フィルターを有効にします</string>
+    <string name="extra_brightness_key">追加の輝度を有効化</string>
+    <string name="download_queue">ダウンロードキュー</string>
+    <string name="queue_empty_message">現在、ダウンロードキューは空です。</string>
+    <string name="download_all">すべてダウンロード</string>
+    <string name="cancel_all">すべてキャンセル</string>
+    <string name="download_episode_range">エピソード %s をダウンロードしますか？</string>
+    <string name="cancel_queue_message">ダウンロードキューをすべてキャンセルしますか？</string>
+    <plurals name="downloads_active">
+        <item quantity="other">%d 件をダウンロード中</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="other">%d 件が待機中</item>
+    </plurals>
+    <string name="source_priority">ソースの優先順位</string>
+    <string name="source_priority_help">プレイヤーでのビデオソースの並び順を設定します</string>
 </resources>

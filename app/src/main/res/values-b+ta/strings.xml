@@ -278,7 +278,7 @@
     <string name="resume">தற்குறிப்பு</string>
     <string name="go_back_30">-30</string>
     <string name="other_singular">ஒளிதோற்றம்</string>
-    <string name="limit_title_rez">வீடியோ பிளேயர் தீர்மானம்</string>
+    <string name="limit_title_rez">பிளேயர் தகவலைக் காட்டு</string>
     <string name="video_buffer_size_settings">வீடியோ இடையக அளவு</string>
     <string name="add_site_pref">நகலி தளம்</string>
     <string name="jsdelivr_proxy">அறிவிலிமையம் பதிலாள்</string>
@@ -286,7 +286,7 @@
     <string name="no_repository_found_error">களஞ்சியம் கிடைக்கவில்லை, முகவரி ஐ சரிபார்த்து VPN ஐ முயற்சிக்கவும்</string>
     <string name="batch_download">தொகுதி பதிவிறக்கம்</string>
     <string name="plugin_singular">சொருகு</string>
-    <string name="download_all_plugins_from_repo">எச்சரிக்கை: கிளவுட்ச்ட்ரீம் 3 மூன்றாம் தரப்பு நீட்டிப்புகளைப் பயன்படுத்துவதற்கான எந்தப் பொறுப்பையும் ஏற்காது, அவர்களுக்கு எந்த ஆதரவையும் வழங்காது!</string>
+    <string name="download_all_plugins_from_repo">எச்சரிக்கை: மூன்றாம் தரப்பு நீட்டிப்புகளைப் பயன்படுத்துவதற்கு CloudStream எந்தப் பொறுப்பையும் ஏற்காது, அவற்றிற்கு எந்த ஆதரவையும் வழங்காது!</string>
     <string name="extension_language">மொழி</string>
     <string name="revert">திரும்பவும்</string>
     <string name="subscription_deleted">%s இலிருந்து குழுவிலகப்பட்டது</string>
@@ -555,7 +555,7 @@
     <string name="update">புதுப்பிப்பு</string>
     <string name="logout">விடுபதிகை</string>
     <string name="quality_webrip">விரலிடைத் தோல்</string>
-    <string name="apk_installer_settings_des">சில தொலைபேசிகள் புதிய தொகுப்பு நிறுவியை ஆதரிக்கவில்லை. புதுப்பிப்புகள் நிறுவப்படாவிட்டால் மரபு விருப்பத்தை முயற்சிக்கவும்.</string>
+    <string name="apk_installer_settings_des">சில சாதனங்கள் புதிய தொகுப்பு நிறுவியை ஆதரிக்கவில்லை. புதுப்பிப்புகள் நிறுவப்படவில்லை என்றால், மரபு விருப்பத்தை முயற்சிக்கவும்.</string>
     <string name="battery_dialog_message">சந்தா தொலைக்காட்சி நிகழ்ச்சிகளுக்கான தடையற்ற பதிவிறக்கங்கள் மற்றும் அறிவிப்புகளை உறுதிப்படுத்த, கிளவுட்ச்ட்ரீம் பின்னணியில் இயங்க இசைவு தேவை. சரி என்பதை அழுத்துவதன் மூலம், உங்களுக்கு கோரிக்கை உரையாடல் காண்பிக்கப்படும். தயவுசெய்து \'இசைவு\' என்பதை அழுத்தவும். \n\nதயவுசெய்து கவனிக்கவும், இந்த இசைவு CS3 உங்கள் பேட்டரியை வெளியேற்றும் என்று அர்த்தமல்ல. அறிவிப்புகளைப் பெறும்போது அல்லது உத்தியோகபூர்வ நீட்டிப்புகளிலிருந்து வீடியோக்களைப் பதிவிறக்குவது போன்ற பின்னணியில் மட்டுமே இது செயல்படும்.</string>
     <string name="app_unrestricted_toast">பயன்பாட்டு பேட்டரி பயன்பாடு ஏற்கனவே கட்டுப்பாடற்றதாக அமைக்கப்பட்டுள்ளது</string>
     <string name="update_notification_installing">பயன்பாட்டு புதுப்பிப்பை நிறுவுகிறது…</string>
@@ -648,7 +648,7 @@
     <string name="torrent_preferred_media">அமைப்புகள்/வழங்குநர்கள்/விருப்பமான ஊடகங்களில் டொரெண்டை இயக்கவும்</string>
     <string name="torrent_not_accepted">பயன்பாட்டை மறுதொடக்கம் செய்து, தொடர ச்ட்ரீம் டொரண்ட் பாப்-அப் ஏற்றுக்கொள்ளுங்கள்.</string>
     <string name="software_decoding">மென்பொருள் டிகோடிங்</string>
-    <string name="software_decoding_desc">மென்பொருள் டிகோடிங் உங்கள் தொலைபேசியால் ஆதரிக்கப்படாத வீடியோ கோப்புகளை இயக்க பிளேயருக்கு உதவுகிறது, ஆனால் உயர் தெளிவுத்திறனில் பின்னடைவு அல்லது நிலையற்ற பின்னணியை ஏற்படுத்தக்கூடும்</string>
+    <string name="software_decoding_desc">மென்பொருள் டிகோடிங் உங்கள் சாதனத்தால் ஆதரிக்கப்படாத வீடியோ கோப்புகளை பிளேயருக்கு இயக்க உதவுகிறது, ஆனால் உயர் தெளிவுத்திறனில் பின்னடைவு அல்லது நிலையற்ற பிளேபேக்கை ஏற்படுத்தலாம்.</string>
     <string name="volume_exceeded_100">தொகுதி 100% ஐ தாண்டியுள்ளது</string>
     <string name="slide_up_again_to_exceed_100">100% க்கு அப்பால் செல்ல மீண்டும் சறுக்கவும்</string>
     <string name="update_plugins">செருகுநிரல்களைப் புதுப்பிக்கவும்</string>
@@ -676,4 +676,61 @@
     <string name="download_time_left_hour_min_sec_format" formatted="true">%1$d மணி %2$d நிமிடம் %3$d விநாடி</string>
     <string name="download_time_left_min_sec_format" formatted="true">%1$d நிமிடம் %2$d விநாடி</string>
     <string name="download_time_left_sec_format" formatted="true">%1$d விநாடி</string>
+    <string name="download_queue">பதிவிறக்க வரிசை</string>
+    <string name="play_full_series_button">முழு தொடரையும் விளையாடு</string>
+    <string name="queue_empty_message">தற்போது வரிசைப்படுத்தப்பட்ட பதிவிறக்கங்கள் எதுவும் இல்லை.</string>
+    <string name="extra_brightness_settings">கூடுதல் ஒளி</string>
+    <string name="extra_brightness_settings_des">100% காட்சி பிரகாசத்தை மீறும் போது பிரகாச வடிப்பானை இயக்கவும்</string>
+    <string name="extra_brightness_key">கூடுதல்_பிரகாசம்_செயல்படுத்தப்பட்டது</string>
+    <string name="search_suggestions">தேடல் பரிந்துரைகள்</string>
+    <string name="search_suggestions_des">தட்டச்சு செய்யும் போது தேடல் பரிந்துரைகளைக் காட்டு</string>
+    <string name="clear_suggestions">தெளிவான பரிந்துரைகள்</string>
+    <string name="show_cast_in_details">காச்ட் பேனலைக் காட்டு</string>
+    <string name="install_prerelease">வெளியீட்டிற்கு முந்தைய பதிப்பை நிறுவவும்</string>
+    <string name="prerelease_already_installed">முன் வெளியீடு ஏற்கனவே நிறுவப்பட்டுள்ளது.</string>
+    <string name="prerelease_install_failed">முன் வெளியீட்டை நிறுவுவதில் தோல்வி.</string>
+    <string name="episode_action_play_mirror">கண்ணாடியை விளையாடு</string>"
+    <string name="show_rating">மதிப்பீடு சிட்டை</string>
+    <string name="show_episode_text">எபிசோட் உரை</string>
+    <string name="video_info">மீடியா செய்தி</string>
+    <string name="player_settings_always_ask">எப்போதும் கேளுங்கள்</string>
+    <string name="source_priority">மூல முன்னுரிமை</string>
+    <string name="source_priority_help">பிளேயரில் வீடியோ ஆதாரங்கள் எவ்வாறு வரிசைப்படுத்தப்பட வேண்டும் என்பதைத் தீர்மானிக்கவும்</string>
+    <string name="no_account">கணக்கு இல்லை</string>
+    <string name="speedup_title">LongPress விரைவு மாற்று</string>
+    <string name="speedup_summary">2x வேகத்தைப் பெற அழுத்திப் பிடிக்கவும்</string>
+    <string name="edit_profile_image_title">சுயவிவரப் படத்தைத் திருத்து</string>
+    <string name="edit_profile_image_hint">சுயவிவரப் பட முகவரி ஐ உள்ளிடவும்</string>
+    <string name="edit_profile_image_error_empty">முகவரி இல்லை</string>
+    <string name="edit_profile_image_error_invalid">தவறான முகவரி அல்லது படம்</string>
+    <string name="edit_profile_image_success">படம் வெற்றிகரமாக புதுப்பிக்கப்பட்டது</string>
+    <string name="action_mark_watched_up_to_this_episode">இந்த எபிசோட் வரை பார்த்ததாகக் குறிக்கவும்</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">இந்த எபிசோட் வரை பார்த்ததை அகற்று</string>
+    <string name="action_reload">மீண்டும் ஏற்றப்பட்டது</string>
+    <string name="reload_provider">மறுஏற்றம் வழங்குநர்</string>
+    <string name="name">பெயர்</string>
+    <string name="source_name">மூலப் பெயர்</string>
+    <string name="resolution_and_name">தீர்மானம் மற்றும் பெயர்</string>
+    <string name="download_all">அனைத்தையும் பதிவிறக்கவும்</string>
+    <string name="cancel_all">அனைத்தையும் ரத்து வெற்றி</string>
+    <string name="download_episode_range">அத்தியாயம் %s ஐ பதிவிறக்க விரும்புகிறீர்களா?</string>
+    <string name="cancel_queue_message">வரிசைப்படுத்தப்பட்ட அனைத்து பதிவிறக்கங்களையும் ரத்துசெய்ய விரும்புகிறீர்களா?</string>
+    <string name="subs_subtitle_alignment">வசன சீரமைப்பு</string>
+    <string name="bottom_left">கீழே இடது</string>
+    <string name="bottom_center">கீழ் நடுவண்</string>
+    <string name="bottom_right">கீழ் வலது</string>
+    <string name="middle_left">நடுத்தர இடது</string>
+    <string name="middle_center">நடுத்தர நடுவண்</string>
+    <string name="middle_right">நடுத்தர வலது</string>
+    <string name="top_left">மேல் இடது</string>
+    <string name="top_center">மேல் நடுவண்</string>
+    <string name="top_right">மேல் வலது</string>
+    <plurals name="downloads_active">
+        <item quantity="one">%d செயலில் பதிவிறக்கம்</item>
+        <item quantity="other">%d செயலில் உள்ள பதிவிறக்கங்கள்</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="one">%d பதிவிறக்கம் வரிசையில் உள்ளது</item>
+        <item quantity="other">%d பதிவிறக்கங்கள் வரிசையில் உள்ளன</item>
+    </plurals>
 </resources>

@@ -155,7 +155,7 @@
     <string name="show_trailers_settings">顯示預告片</string>
     <string name="kitsu_settings">顯示來自 Kitsu 的封面</string>
     <string name="pref_filter_search_quality">在搜尋結果中隱藏所選的影片畫質</string>
-    <string name="automatic_plugin_updates">自動更新外掛程式</string>
+    <string name="automatic_plugin_updates">自動更新外掛</string>
     <string name="updates_settings">顯示應用程式更新</string>
     <string name="updates_settings_des">啟動應用程式後自動搜尋更新。</string>
     <string name="github">Github</string>
@@ -258,7 +258,7 @@
     <string name="update">更新</string>
     <string name="watch_quality_pref">偏好播放畫質 (WiFi)</string>
     <string name="limit_title">影片播放器標題最大字數</string>
-    <string name="limit_title_rez">影片播放器標題</string>
+    <string name="limit_title_rez">顯示播放器資訊</string>
     <string name="video_buffer_size_settings">影片緩衝大小</string>
     <string name="video_buffer_length_settings">影片緩衝長度</string>
     <string name="video_buffer_disk_settings">磁碟上的影片快取</string>
@@ -397,16 +397,16 @@
     <string name="repository_name_hint">資源庫名稱（選填）</string>
     <string name="repository_url_hint">資源庫 URL 或簡碼</string>
     <string name="plugin_loaded">外掛程式已載入</string>
-    <string name="plugin_deleted">外掛程式已刪除</string>
+    <string name="plugin_deleted">外掛已刪除</string>
     <string name="plugin_load_fail" formatted="true">無法載入 %s</string>
     <string name="is_adult">18+</string>
     <string name="batch_download_start_format" formatted="true">開始下載 %1$d %2$s …</string>
     <string name="batch_download_finish_format" formatted="true">已下載 %1$d %2$s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">全部 %s 已經下載</string>
     <string name="batch_download">批次下載</string>
-    <string name="plugin_singular">外掛程式</string>
-    <string name="plugin">外掛程式</string>
-    <string name="delete_repository_plugins">這也將刪除所有在資源庫中的外掛程式</string>
+    <string name="plugin_singular">外掛</string>
+    <string name="plugin">外掛</string>
+    <string name="delete_repository_plugins">這也將刪除所有在資源庫中的外掛</string>
     <string name="delete_repository">刪除資源庫</string>
     <string name="setup_extensions_subtext">下載你所需的片源</string>
     <string name="plugins_downloaded" formatted="true">已下載：%d</string>
@@ -419,14 +419,14 @@
     <string name="view_public_repositories_button">查看</string>
     <string name="view_public_repositories_button_short">公開清單</string>
     <string name="uppercase_all_subtitles">字幕全大寫</string>
-    <string name="download_all_plugins_from_repo">警告：CloudStream 3 不對使用第三方擴充功能承擔任何責任，也不提供任何支援！</string>
+    <string name="download_all_plugins_from_repo">警告：CloudStream 不對使用第三方擴充功能承擔任何責任，也不提供任何支援！</string>
     <string name="single_plugin_disabled" formatted="true">%s （停用）</string>
     <string name="tracks">軌道</string>
     <string name="audio_tracks">音頻軌道</string>
     <string name="video_tracks">影片軌道</string>
     <string name="apply_on_restart">重新啟動應用程式以查看變更。</string>
     <string name="safe_mode_title">安全模式已啟用</string>
-    <string name="safe_mode_description">由於程式崩潰，所有外掛程式皆已關閉，以協助您找到導致問題的程式。</string>
+    <string name="safe_mode_description">由於程式當掉，為了協助您找到導致問題的程式，所有外掛皆已關閉。</string>
     <string name="safe_mode_crash_info">查看程式崩潰資訊</string>
     <string name="extension_rating" formatted="true">評分：%s</string>
     <string name="extension_description">簡介</string>
@@ -436,7 +436,7 @@
     <string name="extension_authors">作者</string>
     <string name="extension_types">類型</string>
     <string name="extension_language">語言</string>
-    <string name="extension_install_first">請先安裝外掛程式</string>
+    <string name="extension_install_first">請先安裝外掛</string>
     <string name="hls_playlist">HLS 播放清單</string>
     <string name="player_pref">偏好影片播放器</string>
     <string name="player_settings_play_in_app">內部播放器</string>
@@ -452,13 +452,13 @@
     <string name="skip_type_intro">介紹</string>
     <string name="clear_history">清除歷史紀錄</string>
     <string name="history">歷史紀錄</string>
-    <string name="automatic_plugin_download">自動下載外掛程式</string>
+    <string name="automatic_plugin_download">自動下載外掛</string>
     <string name="confirm_exit_dialog">你確定要離開？</string>
     <string name="automatic_plugin_download_summary">從新增的資源庫自動安裝所有尚未安裝的外掛程式。</string>
     <string name="enable_skip_op_from_database_des">在開始/結束顯示跳過彈出視窗</string>
     <string name="update_notification_failed">無法安裝新版本的應用程式</string>
     <string name="apk_installer_settings">APK 安裝器</string>
-    <string name="apk_installer_settings_des">有些手機不支援新的軟體包安裝程式。 如果未安裝更新，請嘗試使用舊版選項。</string>
+    <string name="apk_installer_settings_des">部分裝置不支援新的軟體安裝程式。 如果未安裝更新，請嘗試使用舊版選項。</string>
     <string name="clipboard_too_large">文字太多。 無法儲存到剪貼簿。</string>
     <string name="yes">是</string>
     <string name="update_notification_downloading">正在下載應用程式更新…</string>
@@ -619,7 +619,7 @@
     <string name="app_info_intent_error">無法開啟 CloudStream 的應用程式資訊頁面。</string>
     <string name="biometric_warning">您的 CloudStream 資料已完成備份。儘管可能性非常低，但因不同裝置的行為都有所不同，在極少數情況下，您可能會無法存取本應用程式。此時請完全清除本應用程式的資料，再使用已有的備份進行還原。若因此造成任何不便，我們深感抱歉。</string>
     <string name="test_extensions_summary">此測試是供開發人員參考，而不是用以驗證任何擴充功能的正常運作與否。</string>
-    <string name="battery_dialog_message">為了確保下載與通知已訂閱的電視節目的不間斷，CloudStream 需要取得在背景執行的權限。若點選「確定」，將移至「應用程式資訊」，請找到「應用程式電池使用」並將電池用量設置為「無限制」。請注意，取得此權限並不表示 CS3 會明顯增加電池用量，而是只在必要時在背景執行，例如取得通知或使用官方擴充功能下載影片時。若選擇「取消」，您可以稍後在「一般設定」中調整此設定。</string>
+    <string name="battery_dialog_message">為了確保已訂閱的電視節目的不間斷下載與通知，CloudStream 需要取得在背景執行的權限。若點選「確定」，將顯示「請求權限」，請選擇「允許」。\n\n請注意，取得此權限並不表示本程式會明顯增加電池用量，而是只在必要時在背景執行，例如取得通知或使用擴充功能下載影片。</string>
     <string name="cs3wiki">CloudStream Wiki</string>
     <string name="biometric_unsupported">此裝置不支援生物特徵認證</string>
     <string name="device_pin_error_message">無法取得裝置 PIN 碼，請嘗試本機驗證</string>
@@ -663,9 +663,104 @@
     <string name="subs_edge_size">subs_edge_size</string>
     <string name="audio_singluar">音樂</string>
     <string name="encoding_error">編碼錯誤</string>
-    <string name="unsupported_error">因為不支持造成的錯誤</string>
+    <string name="unsupported_error">因為不支援造成錯誤</string>
     <string name="podcast_singluar">播客</string>
     <string name="software_decoding">軟體解碼</string>
-    <string name="torrent_not_accepted">不接受的種子</string>
+    <string name="torrent_not_accepted">重開程式並「同意」線上播放 Torrent 視窗。</string>
     <string name="player_load_one_subtitle_online">載入第一個可用的</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$d小時 %2$d分鐘 %3$d秒</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$d分鐘 %2$d秒</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$d秒</string>
+    <string name="download_queue">下載佇列</string>
+    <string name="speech_recognition_unavailable">不支援語音辨識</string>
+    <string name="begin_speaking">開始說話……</string>
+    <string name="play_full_series_button">播放全劇</string>
+    <string name="queue_empty_message">目前佇列中無下載影片。</string>
+    <string name="extra_brightness_settings">額外亮度</string>
+    <string name="extra_brightness_settings_des">超過100%亮度時開啟亮度調整</string>
+    <string name="extra_brightness_key">已開啟額外亮度</string>
+    <string name="search_suggestions">搜尋建議</string>
+    <string name="search_suggestions_des">輸入時顯示搜尋建議</string>
+    <string name="clear_suggestions">清除建議</string>
+    <string name="show_cast_in_details">顯示投影控制板</string>
+    <string name="install_prerelease">安裝提前發行版</string>
+    <string name="prerelease_already_installed">已安裝提前發行版。</string>
+    <string name="prerelease_install_failed">提前發行版安裝失敗。</string>
+    <string name="episode_action_play_mirror">鏡像播放</string>"
+    <string name="show_rating">評分標籤</string>
+    <string name="show_episode_text">影劇文本</string>
+    <string name="video_info">媒體資訊</string>
+    <string name="player_settings_always_ask">總是詢問</string>
+    <string name="plugins_updated_manually">成功更新了 %d 外掛！</string>
+    <string name="no_plugins_updated_manually">沒有需要更新的外掛。</string>
+    <string name="player_notification_channel_name">播放器通知</string>
+    <string name="player_notification_channel_description">控制背景播放的通知</string>
+    <string name="subtitles_from_embedded">內嵌</string>
+    <string name="subtitles_from_online">線上</string>
+    <string name="all_subtitles_bold">所有字幕變為粗體</string>
+    <string name="all_subtitles_italic">所有字幕變為斜體</string>
+    <string name="background_radius">背景寬度</string>
+    <string name="download_parallel_settings_des">允許同時下載幾個項目</string>
+    <string name="parallel_downloads">同時下載</string>
+    <string name="concurrent_connections">同時連接量</string>
+    <string name="concurrent_connections_settings_des">下載時，每個下載可同時使用的連接量</string>
+    <string name="go_to_downloads">前往下載</string>
+    <string name="no_internet_connection">無網際網路。\n\n請連接網路後重試，或者以離線模式觀看已下載項目。</string>
+    <string name="overscan_settings_des">更改螢幕邊界</string>
+    <string name="overscan_settings">放大符合螢幕</string>
+    <string name="poster_size_settings_des">更改圖片尺寸</string>
+    <string name="poster_size_settings">圖片尺寸</string>
+    <string name="speedup_title">長按以切換速度</string>
+    <string name="speedup_summary">2 倍速（按住）</string>
+    <string name="edit_profile_image_title">編輯帳戶圖片</string>
+    <string name="edit_profile_image_hint">輸入需使用的網址 URL 以更改帳戶圖片</string>
+    <string name="edit_profile_image_error_empty">未找到該網址</string>
+    <string name="edit_profile_image_error_invalid">無效網址或圖片</string>
+    <string name="edit_profile_image_success">已成功更新圖片</string>
+    <string name="action_mark_watched_up_to_this_episode">將這集及之前集數標示為「已觀看」</string>
+    <string name="action_remove_mark_watched_up_to_this_episode">移除至此前所有集數「已觀看」狀態</string>
+    <string name="action_reload">已重新載入</string>
+    <string name="reload_provider">重新載入來源</string>
+    <string name="name">名稱</string>
+    <string name="source_name">來源名</string>
+    <string name="resolution_and_name">解析度與名稱</string>
+    <string name="download_all">全部下載</string>
+    <string name="cancel_all">全部取消</string>
+    <string name="download_episode_range">需要下載第 %s 集嗎？</string>
+    <string name="cancel_queue_message">需取消佇列中的所有下載嗎？</string>
+    <string name="subs_subtitle_alignment">字幕對齊</string>
+    <string name="bottom_left">左下</string>
+    <string name="bottom_center">底部置中</string>
+    <string name="bottom_right">右下</string>
+    <string name="middle_left">左中</string>
+    <string name="middle_center">正中</string>
+    <string name="middle_right">右中</string>
+    <string name="top_left">左上</string>
+    <string name="top_center">頂部置中</string>
+    <string name="top_right">右上</string>
+    <plurals name="downloads_active">
+        <item quantity="other">%d 個正在下載</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="other">佇列中有 %d 個下載</item>
+    </plurals>
+    <string name="sort_episodes_number_asc">集數（由舊至新）</string>
+    <string name="sort_episodes_number_desc">集數（由新至舊）</string>
+    <string name="sort_episodes_rating_high_low">評分（最高）</string>
+    <string name="sort_episodes_rating_low_high">評分（最低）</string>
+    <string name="sort_episodes_date_newest">播放日期（最新）</string>
+    <string name="sort_episodes_date_oldest">播放日期（最舊）</string>
+    <string name="sort_button_episode">第 %s 集</string>
+    <string name="sort_button_rating">評分 %s</string>
+    <string name="sort_button_date">日期 %s</string>
+    <string name="slide_up_again_to_exceed_100">讓音量超過 100%（再次上滑）</string>
+    <string name="update_plugins">更新外掛</string>
+    <string name="update_plugins_manually">手動更新外掛</string>
+    <string name="starting_plugin_update_manually">正在更新外掛！</string>
+    <string name="source_priority">來源優先順序</string>
+    <string name="source_priority_help">決定影片來源的排列順序</string>
+    <string name="no_account">帳戶不存在</string>
+    <string name="torrent_preferred_media">在「設定/影片來源/首選媒體」中啟用 Torrent下載</string>
+    <string name="software_decoding_desc">軟體解碼使程式可以播放裝置不支援的影片，但可能導致播放高解析的影片時的延遲或不穩定。</string>
+    <string name="volume_exceeded_100">音量已超過 100%</string>
 </resources>

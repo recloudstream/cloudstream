@@ -29,6 +29,7 @@
     <string name="swipe_enabled_key">swipe_enabled_key</string>
     <string name="playback_speed_enabled_key">playback_speed_enabled_key</string>
     <string name="player_resize_enabled_key">player_resize_enabled_key</string>
+    <string name="player_source_priority_key">player_source_priority_key</string>
     <string name="pip_enabled_key">pip_enabled_key</string>
     <string name="double_tap_enabled_key">double_tap_enabled_key</string>
     <string name="double_tap_pause_enabled_key">double_tap_pause_enabled_key</string>
@@ -39,6 +40,7 @@
     <string name="autoplay_next_key">autoplay_next_key</string>
     <string name="display_sub_key">display_sub_key</string>
     <string name="show_fillers_key">show_fillers_key</string>
+    <string name="show_player_metadata_key">show_player_metadata_key</string>
     <string name="show_trailers_key">show_trailers_key</string>
     <string name="show_kitsu_posters_key">show_kitsu_posters_key</string>
     <string name="show_cast_in_details_key">show_cast_in_details_key</string>

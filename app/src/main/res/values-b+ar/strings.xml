@@ -247,7 +247,7 @@
     <string name="update">تحديث</string>
     <string name="watch_quality_pref">جودة المشاهدة المفضلة (WiFi)</string>
     <string name="limit_title">أقصى عدد لحروف عنوان مُشغل الفيديو</string>
-    <string name="limit_title_rez">أبعاد مُشغل الفيديو</string>
+    <string name="limit_title_rez">عرض معلومات المشغل</string>
     <string name="video_buffer_size_settings">حجم ذاكرة التخزين المؤقت للفيديو</string>
     <string name="video_buffer_length_settings">طول التخزين المؤقت</string>
     <string name="video_buffer_disk_settings">التخزين المؤقت للفيديو على القرص</string>
@@ -743,4 +743,41 @@
     <string name="top_center">اعلى وسط</string>
     <string name="top_right">اعلى يمين</string>
     <string name="play_full_series_button">شاهد المسلسل كاملاً</string>
+    <string name="extra_brightness_settings">سطوع إضافي</string>
+    <string name="extra_brightness_settings_des">تفعيل فلتر السطوع عند تجاوز سطوع الشاشة 100%</string>
+    <string name="extra_brightness_key">تفعيل فلتر السطوع الإضافي</string>
+    <string name="search_suggestions">اقتراحات البحث</string>
+    <string name="search_suggestions_des">عرض اقتراحات البحث أثناء الكتابة</string>
+    <string name="clear_suggestions">مسح الاقتراحات</string>
+    <string name="show_cast_in_details">عرض لوحة البث</string>
+    <string name="install_prerelease">تثبيت الإصدار التجريبي</string>
+    <string name="prerelease_already_installed">تم تثبيت الإصدار التجريبي بالفعل.</string>
+    <string name="prerelease_install_failed">فشل تثبيت الإصدار التجريبي.</string>
+    <string name="show_episode_text">نص الحلقة</string>
+    <string name="video_info">معلومات الوسائط</string>
+    <string name="source_name">اسم المصدر</string>
+    <string name="download_queue">شريط التنزيلات</string>
+    <string name="queue_empty_message">لا يوجد تنزيلات قيد الانتظار حاليا.</string>
+    <string name="source_priority">أولوية المصدر</string>
+    <string name="source_priority_help">حَدِّد كيف يجب ترتيب مصادر الفيديو في المُشَّغِل</string>
+    <string name="download_all">تنزيل الكل</string>
+    <string name="cancel_all">إلغاء الكل</string>
+    <string name="download_episode_range">هل ترغب في تنزيل الحلقة %s ؟</string>
+    <string name="cancel_queue_message">هل ترغب في إلغاء جميع التنزيلات قيد الانتظار؟</string>
+    <plurals name="downloads_active">
+        <item quantity="zero">%d لا يوجد تنزيل نشط</item>
+        <item quantity="one">%d تنزيل واحد نشط</item>
+        <item quantity="two">%d تنزيلان نشطان</item>
+        <item quantity="few">%d تنزيلات نشطة</item>
+        <item quantity="many">%d تنزيل نشط</item>
+        <item quantity="other">%d تنزيل نشط</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="zero">%d لا يوجد تنزيلات في قائمة الانتظار</item>
+        <item quantity="one">%d تنزيل واحد قيد الانتظار</item>
+        <item quantity="two">%d تنزيلان قيد الانتظار</item>
+        <item quantity="few">%d تنزيلات قيد الانتظار</item>
+        <item quantity="many">%d تنزيل قيد الانتظار</item>
+        <item quantity="other">%d تنزيل قيد الانتظار</item>
+    </plurals>
 </resources>

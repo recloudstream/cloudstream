@@ -199,16 +199,16 @@
 \natlikušas</string>
     <string name="status_completed">Pabeigts</string>
     <string name="status">Statuss</string>
-    <string name="year">gads</string>
-    <string name="rating">Reitings</string>
+    <string name="year">Gads</string>
+    <string name="rating">Vērtējums</string>
     <string name="duration">Ilgums</string>
-    <string name="site">Saite</string>
-    <string name="synopsis">Synopsis</string>
-    <string name="queued">Gaida</string>
+    <string name="site">Vietne</string>
+    <string name="synopsis">Konspekts</string>
+    <string name="queued">ievietots rindā</string>
     <string name="used_storage">Lietotie</string>
     <string name="app_storage">Aplikācija</string>
     <string name="movies">Filmas</string>
-    <string name="tv_series">Seriāli</string>
+    <string name="tv_series">Seriāli, raidījumi</string>
     <string name="cartoons">Animācija</string>
     <string name="anime">Anime</string>
     <string name="torrent">Torrenti</string>
@@ -219,7 +219,7 @@
     <string name="nsfw">NSFW</string>
     <string name="others">Citi</string>
     <string name="movies_singular">Filmas</string>
-    <string name="tv_series_singular">Sērijas</string>
+    <string name="tv_series_singular">Seriāls, raidījums</string>
     <string name="cartoons_singular">Animācija</string>
     <string name="anime_singular">Anime</string>
     <string name="ova_singular">OVA</string>
@@ -464,7 +464,7 @@
     <string name="subscription_deleted">Anulēts %s abonements</string>
     <string name="subscription_episode_released">%d sērija izlaista!</string>
     <string name="apk_installer_settings">Apk insteletājs</string>
-    <string name="github">Github</string>
+    <string name="github">GitHub</string>
     <string name="no_subtitles">Nav subtitru</string>
     <string name="play_episode_toast">Atskaņot epizodi</string>
     <string name="status_ongoing">Iet</string>
@@ -596,4 +596,17 @@
     <string name="all_subtitles_italic">Padarīt visus subtitrus slīprakstā</string>
     <string name="speed_setting_summary">Pievieno atskaņošanas ātruma izvēli atskaņotājā</string>
     <string name="delete_format" formatted="true">Dzēst (%1$d | %2$s)</string>
+    <plurals name="downloads_active">
+        <item quantity="zero">%d aktīvas lejupielādes</item>
+        <item quantity="one">%d aktīva lejupielāde</item>
+        <item quantity="other">%d aktīvas lejupielādes</item>
+    </plurals>
+    <string name="download_queue">Lejupielādes rinda</string>
+    <string name="auto_rotate_video">Automātiski pagriezt</string>
+    <string name="biometric_authentication_title">Atbloķēt CloudStream</string>
+    <string name="password_pin_authentication_title">Paroles/PIN autentifikācija</string>
+    <string name="play_full_series_button">Atskaņot visas epizodes</string>
+    <string name="delete_message_series_episodes" formatted="true">Vai tiešām vēlaties neatgriezeniski dzēst šīs %1$s epizodes?\n\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">Jūs arī neatgriezeniski izdzēsīsiet visas šī seriāla, raidījuma epizodes:\n\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Vai tiešām vēlaties neatgriezeniski dzēst visas šī seriāla, raidījuma epizodes?\n\n%s</string>
 </resources>
