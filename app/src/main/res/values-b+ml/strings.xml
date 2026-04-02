@@ -95,8 +95,6 @@
     <string name="advanced_search_des">സ്ട്രോതസായി തിരിച്ച ഫലം തരുക</string>
     <string name="updates_settings">അപ്ഡേറ്റുകൾ അറിയിക്കുക</string>
     <string name="updates_settings_des">ആരംഭത്തിൽ അപ്ഡേറ്റുകൾ തിരയുക</string>
-    <string name="uprereleases_settings">പരീക്ഷണാത്മക അപ്ഡേറ്</string>
-    <string name="uprereleases_settings_des">പരീക്ഷണാത്മക അപ്ഡേറ്റുകൾ മാത്രം സ്വീകരിക്കുക</string>
     <string name="github">ഗിറ്റ്ഹബ്</string>
     <string name="lightnovel">നമ്മുടെ ലൈറ്റ് നോവൽ ആപ്പ്</string>
     <string name="anim">നമ്മുടെ ആനിമേ ആപ്പ്</string>
@@ -274,5 +272,4 @@
     <string name="subs_edge_type">എഡ്ജ് തരം</string>
     <string name="subs_outline_color">ഔട്ട്ലൈൻ നിറം</string>
     <string name="subs_background_color">പശ്ചാത്തല നിറം</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>

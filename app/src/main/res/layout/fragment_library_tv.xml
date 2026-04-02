@@ -78,9 +78,10 @@
                 app:tint="?attr/textColor" />
 
             <FrameLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_margin="10dp"
+                android:layout_weight="1"
                 android:background="@drawable/search_background"
                 android:visibility="visible"
                 app:layout_scrollFlags="scroll|enterAlways">
@@ -108,6 +109,23 @@
 
                 </androidx.appcompat.widget.SearchView>
             </FrameLayout>
+
+            <ImageView
+                android:id="@+id/library_random_button_tv"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="10dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:contentDescription="@string/home_random"
+                android:focusable="true"
+                android:nextFocusLeft="@id/main_search"
+                android:nextFocusDown="@id/search_result_root"
+                android:padding="8dp"
+                android:src="@drawable/ic_baseline_play_arrow_24"
+                android:tag="@string/tv_no_focus_tag"
+                android:visibility="gone"
+                app:tint="?attr/textColor" />
         </LinearLayout>
 
         <com.google.android.material.tabs.TabLayout

@@ -49,6 +49,7 @@
                     style="@style/AppEditStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:autofillHints="no"
                     android:inputType="number"
                     android:textColorHint="?attr/grayTextColor"
                     android:textSize="20sp"

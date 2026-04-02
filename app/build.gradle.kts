@@ -12,8 +12,6 @@ plugins {
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
-val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
-val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
 
 fun getGitCommitHash(): String {
     return try {
@@ -41,14 +39,27 @@ android {
         unitTests.isReturnDefaultValues = true
     }
 
+    // Looks like google likes to add metadata only they can read https://gitlab.com/IzzyOnDroid/repo/-/work_items/491
+    dependenciesInfo {
+        // Disables dependency metadata when building APKs.
+        includeInApk = false
+        // Disables dependency metadata when building Android App Bundles.
+        includeInBundle = false
+    }
+
     viewBinding {
         enable = true
     }
 
     signingConfigs {
-        if (prereleaseStoreFile != null) {
+        // We just use SIGNING_KEY_ALIAS here since it won't change
+        // so won't kill the configuration cache.
+        if (System.getenv("SIGNING_KEY_ALIAS") != null) {
             create("prerelease") {
-                storeFile = file(prereleaseStoreFile)
+                val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
+                val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
+
+                storeFile = prereleaseStoreFile?.let { file(it) }
                 storePassword = System.getenv("SIGNING_STORE_PASSWORD")
                 keyAlias = System.getenv("SIGNING_KEY_ALIAS")
                 keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
@@ -62,12 +73,10 @@ android {
         applicationId = "com.lagradost.cloudstream3"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 67
-        versionName = "4.6.1"
+        versionCode = 68
+        versionName = "4.7.0"
 
-        resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
         resValue("string", "commit_hash", getGitCommitHash())
-        resValue("bool", "is_prerelease", "false")
 
         manifestPlaceholders["target_sdk_version"] = libs.versions.targetSdk.get()
 
@@ -116,12 +125,9 @@ android {
     productFlavors {
         create("stable") {
             dimension = "state"
-            resValue("bool", "is_prerelease", "false")
         }
         create("prerelease") {
             dimension = "state"
-            resValue("bool", "is_prerelease", "true")
-            buildConfigField("boolean", "BETA", "true")
             applicationIdSuffix = ".prerelease"
             if (signingConfigs.names.contains("prerelease")) {
                 signingConfig = signingConfigs.getByName("prerelease")
@@ -157,6 +163,14 @@ android {
         resValues = true
     }
 
+    packaging {
+        jniLibs {
+            // Enables legacy JNI packaging to reduce APK size (similar to builds before minSdk 23).
+            // Note: This may increase app startup time slightly.
+            useLegacyPackaging = true
+        }
+    }
+
     namespace = "com.lagradost.cloudstream3"
 }
 
@@ -173,6 +187,7 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.activity.ktx)
     implementation(libs.appcompat)
+    implementation(libs.fragment.ktx)
     implementation(libs.bundles.lifecycle)
     implementation(libs.bundles.navigation)
 
@@ -180,7 +195,6 @@ dependencies {
     implementation(libs.preference.ktx)
     implementation(libs.material)
     implementation(libs.constraintlayout)
-    implementation(libs.swiperefreshlayout)
 
     // Coil Image Loading
     implementation(libs.bundles.coil)
@@ -209,12 +223,12 @@ dependencies {
     // Extensions & Other Libs
     implementation(libs.jsoup) // HTML Parser
     implementation(libs.rhino) // Run JavaScript
-    implementation(libs.quickjs)
     implementation(libs.fuzzywuzzy) // Library/Ext Searching with Levenshtein Distance
     implementation(libs.safefile) // To Prevent the URI File Fu*kery
     coreLibraryDesugaring(libs.desugar.jdk.libs.nio) // NIO Flavor Needed for NewPipeExtractor
     implementation(libs.conscrypt.android) // To Fix SSL Fu*kery on Android 9
     implementation(libs.jackson.module.kotlin) // JSON Parser
+    implementation(libs.zipline)
 
     // Torrent Support
     implementation(libs.torrentserver)
@@ -223,24 +237,16 @@ dependencies {
     implementation(libs.work.runtime.ktx)
     implementation(libs.nicehttp) // HTTP Lib
 
-    implementation(project(":library") {
-        // There does not seem to be a good way of getting the android flavor.
-        val isDebug = gradle.startParameter.taskRequests.any { task ->
-            task.args.any { arg ->
-                arg.contains("debug", true)
-            }
-        }
-
-        this.extra.set("isDebug", isDebug)
-    })
+    implementation(project(":library"))
 }
 
 tasks.register<Jar>("androidSourcesJar") {
     archiveClassifier.set("sources")
-    from(android.sourceSets.getByName("main").java.srcDirs) // Full Sources
+    from(android.sourceSets.getByName("main").java.directories) // Full Sources
 }
 
 tasks.register<Copy>("copyJar") {
+    dependsOn("build", ":library:jvmJar")
     from(
         "build/intermediates/compile_app_classes_jar/prereleaseDebug/bundlePrereleaseDebugClassesToCompileJar",
         "../library/build/libs"
@@ -268,8 +274,11 @@ tasks.withType<KotlinJvmCompile> {
     compilerOptions {
         jvmTarget.set(javaTarget)
         jvmDefault.set(JvmDefaultMode.ENABLE)
-        optIn.add("com.lagradost.cloudstream3.Prerelease")
         freeCompilerArgs.add("-Xannotation-default-target=param-property")
+        optIn.addAll(
+            "com.lagradost.cloudstream3.InternalAPI",
+            "com.lagradost.cloudstream3.Prerelease",
+        )
     }
 }
 

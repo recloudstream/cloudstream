@@ -10,6 +10,10 @@
             android:key="@string/mal_key" />
 
         <Preference
+            android:icon="@drawable/kitsu_icon"
+            android:key="@string/kitsu_key" />
+
+        <Preference
             android:icon="@drawable/ic_anilist_icon"
             android:key="@string/anilist_key" />
 

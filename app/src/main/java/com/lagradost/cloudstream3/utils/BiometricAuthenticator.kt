@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.KeyguardManager
 import android.content.Context
@@ -100,31 +101,51 @@ object BiometricAuthenticator {
     }
 
     private fun isBiometricHardWareAvailable(): Boolean {
-        // authentication occurs only when this is true and device is truly capable
+        // Authentication occurs only when this is true and device is truly capable.
         var result = false
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            when (biometricManager?.canAuthenticate(
-                DEVICE_CREDENTIAL or BIOMETRIC_STRONG or BIOMETRIC_WEAK
-            )) {
-                BiometricManager.BIOMETRIC_SUCCESS -> result = true
-                BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> result = false
-                BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> result = false
-                BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> result = false
-                BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED -> result = true
-                BiometricManager.BIOMETRIC_ERROR_UNSUPPORTED -> result = true
-                BiometricManager.BIOMETRIC_STATUS_UNKNOWN -> result = false
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA -> {
+                @SuppressLint("RestrictedApi")
+                when (biometricManager?.canAuthenticate(
+                    DEVICE_CREDENTIAL or BIOMETRIC_STRONG or BIOMETRIC_WEAK
+                )) {
+                    BiometricManager.BIOMETRIC_SUCCESS -> result = true
+                    BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> result = false
+                    BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> result = false
+                    BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> result = false
+                    BiometricManager.BIOMETRIC_ERROR_NOT_ENABLED_FOR_APPS -> result = false
+                    BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED -> result = true
+                    BiometricManager.BIOMETRIC_ERROR_UNSUPPORTED -> result = true
+                    BiometricManager.BIOMETRIC_STATUS_UNKNOWN -> result = false
+                }
             }
-        } else {
-            @Suppress("DEPRECATION")
-            when (biometricManager?.canAuthenticate()) {
-                BiometricManager.BIOMETRIC_SUCCESS -> result = true
-                BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> result = false
-                BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> result = false
-                BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> result = false
-                BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED -> result = true
-                BiometricManager.BIOMETRIC_ERROR_UNSUPPORTED -> result = true
-                BiometricManager.BIOMETRIC_STATUS_UNKNOWN -> result = false
+
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                @Suppress("SwitchIntDef")
+                when (biometricManager?.canAuthenticate(
+                    DEVICE_CREDENTIAL or BIOMETRIC_STRONG or BIOMETRIC_WEAK
+                )) {
+                    BiometricManager.BIOMETRIC_SUCCESS -> result = true
+                    BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> result = false
+                    BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> result = false
+                    BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> result = false
+                    BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED -> result = true
+                    BiometricManager.BIOMETRIC_ERROR_UNSUPPORTED -> result = true
+                    BiometricManager.BIOMETRIC_STATUS_UNKNOWN -> result = false
+                }
+            }
+
+            else -> {
+                @Suppress("DEPRECATION", "SwitchIntDef")
+                when (biometricManager?.canAuthenticate()) {
+                    BiometricManager.BIOMETRIC_SUCCESS -> result = true
+                    BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> result = false
+                    BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> result = false
+                    BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> result = false
+                    BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED -> result = true
+                    BiometricManager.BIOMETRIC_ERROR_UNSUPPORTED -> result = true
+                    BiometricManager.BIOMETRIC_STATUS_UNKNOWN -> result = false
+                }
             }
         }
 

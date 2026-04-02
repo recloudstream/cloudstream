@@ -2,8 +2,8 @@ package com.lagradost.cloudstream3.utils
 
 import android.content.Context
 import com.lagradost.api.Log
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.getFolder
-import com.lagradost.safefile.SafeFile
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.basePathToFile
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 
 object SubtitleUtils {
 
@@ -13,17 +13,21 @@ object SubtitleUtils {
         ".ttml", ".sbv", ".dfxp"
     )
 
-    fun deleteMatchingSubtitles(context: Context, info: VideoDownloadManager.DownloadedFileInfo) {
-        val relative = info.relativePath
-        val display = info.displayName
-        val cleanDisplay = cleanDisplayName(display)
+    fun deleteMatchingSubtitles(context: Context, info: DownloadObjects.DownloadedFileInfo) {
+        val cleanDisplay = cleanDisplayName(info.displayName)
 
-        getFolder(context, relative, info.basePath)?.forEach { (name, uri) ->
-            if (isMatchingSubtitle(name, display, cleanDisplay)) {
-                val subtitleFile = SafeFile.fromUri(context, uri)
-                if (subtitleFile == null || subtitleFile.delete() != true) {
-                    Log.e("SubtitleDeletion", "Failed to delete subtitle file: ${subtitleFile?.name()}")
-                }
+        val base = basePathToFile(context, info.basePath)
+        val folder =
+            base?.gotoDirectory(info.relativePath, createMissingDirectories = false) ?: return
+        val folderFiles = folder.listFiles() ?: return
+
+        for (file in folderFiles) {
+            val name = file.name() ?: continue
+            if (!isMatchingSubtitle(name, info.displayName, cleanDisplay)) {
+                continue
+            }
+            if (file.delete() != true) {
+                Log.e("SubtitleDeletion", "Failed to delete subtitle file: $name")
             }
         }
     }
@@ -39,7 +43,7 @@ object SubtitleUtils {
         cleanDisplay: String
     ): Boolean {
         // Check if the file has a valid subtitle extension
-        val hasValidExtension = allowedExtensions.any { name.contains(it, ignoreCase = true) }
+        val hasValidExtension = allowedExtensions.any { name.endsWith(it, ignoreCase = true) }
 
         // We can't have the exact same file as a subtitle
         val isNotDisplayName = !name.equals(display, ignoreCase = true)

@@ -1,6 +1,7 @@
 // Made by @kraptor123 for cs-kraptor
 package com.lagradost.cloudstream3.extractors
 
+import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
@@ -9,6 +10,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import com.lagradost.cloudstream3.utils.newExtractorLink
 
+@Prerelease
 open class VkExtractor : ExtractorApi() {
     override val name = "Vk"
     override val mainUrl = "https://vkvideo.ru"

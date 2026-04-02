@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.bindChips
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
+import com.lagradost.cloudstream3.ui.setRecycledViewPool
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
@@ -66,7 +67,7 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
         val downloadAllButton = binding.settingsToolbar.menu?.findItem(R.id.download_all)
 
         if (url == null || name == null) {
-            activity?.onBackPressedDispatcher?.onBackPressed()
+            dispatchBackPressed()
             return
         }
 
@@ -126,7 +127,7 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
                 if (searchView?.isIconified == false) {
                     searchView.isIconified = true
                 } else {
-                    activity?.onBackPressedDispatcher?.onBackPressed()
+                    dispatchBackPressed()
                 }
             }
             searchView?.setOnQueryTextFocusChangeListener { _, hasFocus ->

@@ -3,12 +3,13 @@ package com.lagradost.cloudstream3.utils
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Build.VERSION.SDK_INT
 import android.os.PowerManager
 import android.provider.Settings
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.edit
+import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CommonActivity.showToast
@@ -38,7 +39,6 @@ object BatteryOptimizationChecker {
 
     fun Context.showBatteryOptimizationDialog() {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-
         try {
             AlertDialog.Builder(this)
                 .setTitle(R.string.battery_dialog_title)
@@ -46,9 +46,9 @@ object BatteryOptimizationChecker {
                 .setMessage(R.string.battery_dialog_message)
                 .setPositiveButton(R.string.ok) { _, _ -> showRequestIgnoreBatteryOptDialog() }
                 .setNegativeButton(R.string.cancel) { _, _ ->
-                    settingsManager.edit()
-                        .putBoolean(getString(R.string.battery_optimisation_key), false)
-                        .apply()
+                    settingsManager.edit {
+                        putBoolean(getString(R.string.battery_optimisation_key), false)
+                    }
                 }
                 .show()
         } catch (t: Throwable) {
@@ -67,7 +67,7 @@ object BatteryOptimizationChecker {
         try {
             val intent = Intent().apply {
                 action =  Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-                data = Uri.parse("package:$PACKAGE_NAME")
+                data = "package:$PACKAGE_NAME".toUri()
             }
             startActivity(intent)
         } catch (t: Throwable) {

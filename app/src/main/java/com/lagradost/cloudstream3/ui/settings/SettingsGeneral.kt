@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.edit
 import androidx.core.os.ConfigurationCompat
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -43,8 +44,9 @@ import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
-import com.lagradost.cloudstream3.utils.VideoDownloadManager
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.getBasePath
+import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import java.util.Locale
 
 // Change local language settings in the app.
@@ -156,10 +158,10 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
     private val pathPicker = getChooseFolderLauncher { uri, path ->
         val context = context ?: CloudStreamApp.context ?: return@getChooseFolderLauncher
         (path ?: uri.toString()).let {
-            PreferenceManager.getDefaultSharedPreferences(context).edit()
-                .putString(getString(R.string.download_path_key), uri.toString())
-                .putString(getString(R.string.download_path_key_visual), it)
-                .apply()
+            PreferenceManager.getDefaultSharedPreferences(context).edit {
+                putString(getString(R.string.download_path_key), uri.toString())
+                putString(getString(R.string.download_path_key_visual), it)
+            }
         }
     }
 
@@ -185,7 +187,9 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
                 try {
                     val langTagIETF = languageTagsIETF[selectedLangIndex]
                     CommonActivity.setLocale(activity, langTagIETF)
-                    settingsManager.edit().putString(getString(R.string.locale_key), langTagIETF).apply()
+                    settingsManager.edit {
+                        putString(getString(R.string.locale_key), langTagIETF)
+                    }
                     activity?.recreate()
                 } catch (e: Exception) {
                     logError(e)
@@ -316,7 +320,7 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
                 getString(R.string.dns_pref),
                 true,
                 {}) {
-                settingsManager.edit().putInt(getString(R.string.dns_pref), prefValues[it]).apply()
+                settingsManager.edit { putInt(getString(R.string.dns_pref), prefValues[it]) }
                 (context ?: CloudStreamApp.context)?.let { ctx -> app.initClient(ctx) }
             }
             return@setOnPreferenceClickListener true
@@ -325,7 +329,7 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
         fun getDownloadDirs(): List<String> {
             return safe {
                 context?.let { ctx ->
-                    val defaultDir = VideoDownloadManager.getDefaultDir(ctx)?.filePath()
+                    val defaultDir = DownloadFileManagement.getDefaultDir(ctx)?.filePath()
 
                     val first = listOf(defaultDir)
                     (try {
@@ -341,9 +345,15 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
             } ?: emptyList()
         }
 
-        settingsManager.edit().putBoolean(getString(R.string.jsdelivr_proxy_key), getKey(getString(R.string.jsdelivr_proxy_key), false) ?: false).apply()
+        settingsManager.edit { putBoolean(getString(R.string.jsdelivr_proxy_key), getKey(getString(R.string.jsdelivr_proxy_key), false) ?: false) }
         getPref(R.string.jsdelivr_proxy_key)?.setOnPreferenceChangeListener { _, newValue ->
             setKey(getString(R.string.jsdelivr_proxy_key), newValue)
+            return@setOnPreferenceChangeListener true
+        }
+
+        getPref(R.string.download_parallel_key)?.setOnPreferenceChangeListener { _, _ ->
+            // Notify that the queue logic has been changed
+            DownloadQueueManager.forceRefreshQueue()
             return@setOnPreferenceChangeListener true
         }
 
@@ -352,7 +362,7 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
 
             val currentDir =
                 settingsManager.getString(getString(R.string.download_path_key_visual), null)
-                    ?: context?.let { ctx -> VideoDownloadManager.getDefaultDir(ctx)?.filePath() }
+                    ?: context?.let { ctx -> DownloadFileManagement.getDefaultDir(ctx)?.filePath() }
 
             activity?.showBottomDialog(
                 dirs + listOf(getString(R.string.custom)),
@@ -371,10 +381,10 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
                     // Sets both visual and actual paths.
                     // key = used path
                     // visual = visual path
-                    settingsManager.edit()
-                        .putString(getString(R.string.download_path_key), dirs[it])
-                        .putString(getString(R.string.download_path_key_visual), dirs[it])
-                        .apply()
+                    settingsManager.edit {
+                        putString(getString(R.string.download_path_key), dirs[it])
+                        putString(getString(R.string.download_path_key_visual), dirs[it])
+                    }
                 }
             }
             return@setOnPreferenceClickListener true
@@ -397,10 +407,12 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
                         if (beneneCount%20 == 0) {
                             activity?.navigate(R.id.action_navigation_settings_general_to_easterEggMonkeFragment)
                         }
-                        settingsManager.edit().putInt(
-                            getString(R.string.benene_count),
-                            beneneCount
-                        ).apply()
+                        settingsManager.edit {
+                            putInt(
+                                getString(R.string.benene_count),
+                                beneneCount
+                            )
+                        }
                         it.summary = getString(R.string.benene_count_text).format(beneneCount)
                     } catch (e: Exception) {
                         logError(e)

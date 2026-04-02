@@ -122,5 +122,4 @@
     <string name="error_bookmarks_text">Bookmarks</string>
     <string name="action_remove_from_bookmarks">Neħħi</string>
     <string name="download_failed">Falla t-tniżżil</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>

@@ -194,8 +194,6 @@
     <string name="automatic_plugin_download_summary">Automatikusan telepíti az összes még nem telepített bővítményt a hozzáadott tárolókból.</string>
     <string name="updates_settings">Alkalmazás frissítések megjelenítése</string>
     <string name="updates_settings_des">Automatikusan keressen új frissítéseket indításkor.</string>
-    <string name="uprereleases_settings">Frissítés az előzetes kiadásokhoz (prerelease)</string>
-    <string name="uprereleases_settings_des">Csak előzetesen kiadott frissítések (prerelease) keresése a teljes kiadások helyett</string>
     <string name="github">Github</string>
     <string name="discord">Csatlakozz a Discordhoz</string>
     <string name="benene">Adj Banánt a fejlesztőknek</string>
@@ -581,7 +579,6 @@
     <string name="pin_error_length">A PIN 4 karakter hosszú kell legyen</string>
     <string name="auto_rotate_video">Auto elforgatás</string>
     <string name="auto_rotate_video_desc">Az automatikus videó orientáció alapján való képernyő elforgatás bekapcsolása</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="open_local_video">Helyi videó megnyitása</string>
     <string name="repo_copy_label">Tárhely név és URL</string>
     <string name="torrent_info">Ez a videó egy Torrent, ami azt jelenti, hogy a videótevékenységed nyomon követhető.\nGyőződj meg róla, hogy megérted a torrentezés működését, mielőtt folytatnád.</string>
@@ -594,4 +591,66 @@
     <string name="offline_file">Elérhető offline megtekintésre</string>
     <string name="select_all">Mindet Kiválaszt</string>
     <string name="deselect_all">Mindent Kijelölés Eltávolítása</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dh %2$dm %3$ds</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dm %2$ds</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$ds</string>
+    <string name="download_queue">Letöltési sor</string>
+    <string name="speech_recognition_unavailable">Beszédfelismerés nem elérhető</string>
+    <string name="begin_speaking">Kezdjen beszélni…</string>
+    <string name="play_full_series_button">Teljes sorozat lejátszása</string>
+    <string name="queue_empty_message">Jelenleg nincs sorban álló letöltés.</string>
+    <string name="extra_brightness_settings">Extra fényerő</string>
+    <string name="extra_brightness_settings_des">A fényerő szűrő engedélyezése, ha a kijelző fényereje meghaladja a 100% -ot</string>
+    <string name="extra_brightness_key">extra_brightness_enabled</string>
+    <string name="search_suggestions">Keresési javaslatok</string>
+    <string name="search_suggestions_des">Mutasson keresési javaslatok gépelés közben</string>
+    <string name="clear_suggestions">Javaslatok törlése</string>
+    <string name="show_cast_in_details">Szereplők panel megjelenítése</string>
+    <string name="install_prerelease">Telepít kiadás előtti verziót</string>
+    <string name="prerelease_already_installed">Az előzetes verzió már telepítve van.</string>
+    <string name="prerelease_install_failed">Az előzetes verzió telepítése sikertelen.</string>
+    <string name="delete_files">Fájlok törlése</string>
+    <string name="delete_message_series_only" formatted="true">Biztosan törölni szeretné az alábbi sorozat összes megjelenését?\n\n%s</string>
+    <string name="resume_remaining" formatted="true">%s \nmaradék</string>
+    <string name="music_singlar">Zene</string>
+    <string name="audio_book_singular">Hangoskönyv</string>
+    <string name="custom_media_singluar">Média</string>
+    <string name="audio_singluar">Hang</string>
+    <string name="podcast_singluar">Podcast</string>
+    <string name="encoding_error">Kódolási hiba</string>
+    <string name="unsupported_error">Hiba nem támogatott</string>
+    <string name="delete_format" formatted="true">Törlés (%1$d | %2$s)</string>
+    <string name="test_warning">Figyelem</string>
+    <string name="delete_message_multiple" formatted="true">Biztosan véglegesen szeretné törölni a következő tételeket?\n\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Biztosan véglegesen szeretné törölni a következő epizódokat?\n\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">A következő sorozatok összes epizódját is véglegesen törli:\n\n%s</string>
+    <string name="episode_action_play_mirror">Lejátszás tükrözve</string>"
+    <string name="show_rating">Értékelési címke</string>
+    <string name="show_episode_text">Epizód szövege</string>
+    <string name="pref_category_security">Biztonság</string>
+    <string name="pref_category_accounts">Fiókok</string>
+    <string name="auth_locally">Helyi hitelesítés</string>
+    <string name="player_load_one_subtitle_online">Töltse be az első létezőt</string>
+    <string name="qr_image">QR kód képe</string>
+    <string name="video_info">Média információ</string>
+    <string name="delete_plugin">Plugin törlése</string>
+    <string name="player_settings_always_ask">Mindig kérdezzen</string>
+    <string name="player_settings_select_cast_device">Válassza ki a lejátszó eszközt</string>
+    <string name="clipboard_permission_error">Hiba történt a vágólap elérésénél, kérjük, próbálkozzon újra.</string>
+    <string name="clipboard_unknown_error">Hiba történt a másolás során. Kérjük, másolja a logcat fájlt, és vegye fel a kapcsolatot az alkalmazás ügyfélszolgálatával.</string>
+    <string name="ok">Rendben</string>
+    <string name="dismiss">Elutasítás</string>
+    <string name="password_pin_authentication_title">Jelszó/PIN-kód hitelesítés</string>
+    <string name="biometric_unsupported">A biometrikus hitelesítés nem támogatott ezen az eszközön</string>
+    <string name="biometric_setting_summary">Az alkalmazás feloldása ujjlenyomat, arcfelismerés, PIN-kód, minta vagy jelszó segítségével.</string>
+    <string name="biometric_prompt_description">Néhány sikertelen kísérlet után a parancssor bezárul. Egyszerűen indítsa újra az alkalmazást, és próbálja meg újra.</string>
+    <string name="reset_btn">Visszaállítás</string>
+    <string name="cs3wiki">CloudStream Wiki</string>
+    <string name="device_pin_url_message">Látogasson el <b>%s</b> okostelefonján vagy számítógépén, és írja be a fenti kódot</string>
+    <string name="device_pin_error_message">Nem működik az eszköz PIN-kódja, próbálkozzon helyi hitelesítéssel</string>
+    <string name="device_pin_expired_message">A PIN-kód most lejárt!</string>
+    <string name="device_pin_counter_text">A kód %1$dm %2$ds után lejár</string>
+    <string name="sort_release_date_new">Kiadás dátuma (újabbaktól régebbi felé)</string>
+    <string name="sort_release_date_old">Kiadás dátuma (régitől újig)</string>
+    <string name="hide_player_control_names">A lejátszó vezérlői neveinek elrejtése</string>
 </resources>

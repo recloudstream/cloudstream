@@ -59,6 +59,12 @@
             app:defaultValue="true"
             app:key="advanced_search" />
         <SwitchPreference
+            android:icon="@drawable/search_icon"
+            android:summary="@string/search_suggestions_des"
+            android:title="@string/search_suggestions"
+            app:defaultValue="true"
+            app:key="search_suggestions_enabled" />
+        <SwitchPreference
             android:defaultValue="true"
             android:icon="@drawable/baseline_theaters_24"
             android:key="@string/show_trailers_key"
@@ -69,10 +75,20 @@
             android:key="@string/show_kitsu_posters_key"
             android:title="@string/kitsu_settings" />
         <SwitchPreference
+            android:defaultValue="true"
+            android:icon="@drawable/ic_baseline_people_24"
+            android:key="@string/show_cast_in_details_key"
+            android:title="@string/show_cast_in_details" />    
+        <SwitchPreference
             android:defaultValue="false"
             android:icon="@drawable/ic_baseline_skip_next_24"
             android:key="@string/show_fillers_key"
             android:title="@string/show_fillers_settings" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:icon="@drawable/metadata_overlay_icon"
+            android:key="@string/show_player_metadata_key"
+            android:title="@string/show_player_metadata_overlay" />
         <SwitchPreference
             android:icon="@drawable/ic_baseline_play_arrow_24"
             android:summary="@string/random_button_settings_desc"

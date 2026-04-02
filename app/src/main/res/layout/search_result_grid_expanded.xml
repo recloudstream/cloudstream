@@ -17,7 +17,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/background_card"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_margin="2dp"
             android:layout_marginBottom="2dp"
             android:elevation="10dp"
@@ -98,6 +98,18 @@
                 android:visibility="gone"
                 tools:progress="50"
                 tools:visibility="visible" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:orientation="vertical"
+                android:paddingBottom="7dp">
+                <TextView
+                    android:id="@+id/episode_text"
+                    android:layout_width="wrap_content"
+                    style="@style/EpisodeTextButton"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
         </androidx.cardview.widget.CardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -117,4 +129,5 @@
         android:textColor="?attr/textColor"
         android:textSize="13sp"
         tools:text="The Perfect Run\nThe Perfect Run" />
+
 </LinearLayout>

@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.setup
 import android.view.View
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
+import androidx.core.content.edit
 import androidx.core.util.forEach
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
@@ -58,10 +59,12 @@ class SetupFragmentProviderLanguage : BaseFragment<FragmentSetupProviderLanguage
                     listview1.checkedItemPositions?.forEach { key, value ->
                         if (value) selectedLanguages.add(languagesTagName[key].first)
                     }
-                    settingsManager.edit().putStringSet(
-                        ctx.getString(R.string.provider_lang_key),
-                        selectedLanguages.toSet()
-                    ).apply()
+                    settingsManager.edit {
+                        putStringSet(
+                            ctx.getString(R.string.provider_lang_key),
+                            selectedLanguages.toSet()
+                        )
+                    }
                 }
 
                 nextBtt.setOnClickListener {

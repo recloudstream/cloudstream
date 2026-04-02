@@ -54,7 +54,6 @@
     <string name="result_share">Kongsi</string>
     <string name="title_settings">Tetapan</string>
     <string name="sort_close">Tutup</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="preview_background_img_des">Pratonton</string>
     <string name="rated_format" formatted="true">Resensi:%.1f</string>
     <string name="new_update_format" formatted="true">Kemas kini baru dijumpai!
@@ -499,8 +498,6 @@
     <string name="updates_settings">Tunjukkan kemas kini aplikasi</string>
     <string name="updates_settings_des">Secara automatik cari kemas kini baru selepas memulakan aplikasi.</string>
     <string name="redo_setup_process">Redo Proses Persediaan</string>
-    <string name="uprereleases_settings">Kemas kini kepada Prereleases</string>
-    <string name="uprereleases_settings_des">Cari kemas kini prerelease bukan sahaja siaran penuh</string>
     <string name="apk_installer_settings">Pemasang APK</string>
     <string name="apk_installer_settings_des">Sesetengah telefon tidak menyokong pemasang pakej baru. Cuba pilihan Legacy jika kemas kini tidak dipasang.</string>
     <string name="benene">Berikan benen kepada devs</string>
@@ -518,9 +515,6 @@
     <string name="backup_settings">Sandarkan data</string>
     <string name="restore_failed_format" formatted="true">Gagal pulihkan data dari fail %s</string>
     <string name="backup_failed_error_format">Ralat sandaran %s</string>
-    <plurals name="episodes" translatable="false">
-        <item quantity="other">Episode</item>
-    </plurals>
     <string name="episode_upcoming_format" formatted="true">Akan datang pada %s</string>
     <string name="delete_message" formatted="true">Ini akan memadamkan secara kekal %s\nAdakah anda pasti?</string>
     <string name="delete_message_multiple" formatted="true">Adakah anda pasti mahu memadamkan item berikut secara kekal?\n\n%s</string>

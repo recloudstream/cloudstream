@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.actions.temp
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import androidx.core.net.toUri
 import com.lagradost.cloudstream3.actions.OpenInAppAction
 import com.lagradost.cloudstream3.actions.updateDurationAndPosition
@@ -45,7 +44,7 @@ open class MpvKtPackage(
 
         intent.apply {
             putExtra("subs", result.subs.map { it.url.toUri() }.toTypedArray())
-            setDataAndType(Uri.parse(link.url), "video/*")
+            setDataAndType(link.url.toUri(), "video/*")
 
             // m3u8 plays, but changing sources feature is not available
             // makeTempM3U8Intent(activity, this, result)

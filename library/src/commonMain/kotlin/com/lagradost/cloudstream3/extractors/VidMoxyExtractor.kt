@@ -15,12 +15,12 @@ open class VidMoxy : ExtractorApi() {
         val extRef   = referer ?: ""
         val videoReq = app.get(url, referer=extRef).text
 
-		val subUrls = mutableSetOf<String>()
+        val subUrls = mutableSetOf<String>()
         Regex("""captions\",\"file\":\"([^\"]+)\",\"label\":\"([^\"]+)\"""").findAll(videoReq).forEach {
             val (subUrl, subLang) = it.destructured
 
-			if (subUrl in subUrls) { return@forEach }
- 			subUrls.add(subUrl)
+            if (subUrl in subUrls) { return@forEach }
+            subUrls.add(subUrl)
 
             subtitleCallback.invoke(
                 newSubtitleFile(

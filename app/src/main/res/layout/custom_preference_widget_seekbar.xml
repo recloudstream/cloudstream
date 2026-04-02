@@ -18,13 +18,12 @@
 <!-- Layout used by SeekBarPreference for the seekbar widget style. -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="?android:attr/listPreferredItemHeightSmall"
     android:gravity="center_vertical"
-    android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
     android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-    android:paddingRight="?android:attr/listPreferredItemPaddingRight"
     android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
     android:background="?attr/focusBackground"
     android:clipChildren="false"
@@ -54,14 +53,14 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceListItem"
-                android:ellipsize="marquee"/>
+                android:ellipsize="marquee"
+                tools:ignore="LabelFor" />
 
             <TextView
                 android:id="@android:id/summary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@android:id/title"
-                android:layout_alignLeft="@android:id/title"
                 android:layout_alignStart="@android:id/title"
                 android:layout_gravity="start"
                 android:textAlignment="viewStart"
@@ -79,9 +78,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:paddingLeft="0dp"
             android:paddingStart="0dp"
-            android:paddingRight="16dp"
             android:paddingEnd="16dp"
             android:clipChildren="false"
             android:clipToPadding="false">
@@ -99,9 +96,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/preference_seekbar_padding_horizontal"
                 android:paddingStart="@dimen/preference_seekbar_padding_horizontal"
-                android:paddingRight="@dimen/preference_seekbar_padding_horizontal"
                 android:paddingEnd="@dimen/preference_seekbar_padding_horizontal"
                 android:paddingTop="@dimen/preference_seekbar_padding_vertical"
                 android:paddingBottom="@dimen/preference_seekbar_padding_vertical"
@@ -113,13 +108,11 @@
             <TextView
                 android:id="@+id/seekbar_value"
                 android:minWidth="@dimen/preference_seekbar_value_minWidth"
-                android:paddingLeft="8dp"
                 android:paddingStart="8dp"
-                android:paddingRight="0dp"
                 android:paddingEnd="0dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="right"
+                android:gravity="end"
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceListItem"
                 android:ellipsize="marquee"

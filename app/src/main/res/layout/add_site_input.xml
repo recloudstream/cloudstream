@@ -62,6 +62,7 @@
 
         <EditText
                 android:textColorHint="?attr/grayTextColor"
+                android:autofillHints="no"
                 android:hint="@string/example_site_url"
                 android:id="@+id/site_url_input"
                 android:nextFocusRight="@id/cancel_btt"

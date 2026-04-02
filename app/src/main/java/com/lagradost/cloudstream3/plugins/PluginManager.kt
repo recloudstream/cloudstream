@@ -29,6 +29,7 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainAPI.Companion.settingsForProvider
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
+import com.lagradost.cloudstream3.MainActivity.Companion.lastError
 import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
 import com.lagradost.cloudstream3.PROVIDER_STATUS_OK
 import com.lagradost.cloudstream3.R
@@ -51,7 +52,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UiText
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.sanitizeFilename
 import com.lagradost.cloudstream3.utils.extractorApis
 import com.lagradost.cloudstream3.utils.txt
 import dalvik.system.PathClassLoader
@@ -570,6 +571,11 @@ object PluginManager {
 
         loadedLocalPlugins = true
         afterPluginsLoadedEvent.invoke(forceReload)
+    }
+
+    /** @return true if safe mode is enabled in any possible way. */
+    fun isSafeMode(): Boolean {
+        return checkSafeModeFile() || lastError != null
     }
 
     /**

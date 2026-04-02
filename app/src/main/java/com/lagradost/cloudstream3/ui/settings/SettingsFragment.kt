@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.MainSettingsBinding
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthRepo
 import com.lagradost.cloudstream3.ui.BaseFragment
@@ -136,7 +137,7 @@ class SettingsFragment : BaseFragment<MainSettingsBinding>(
                     setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
                     children.firstOrNull { it is ImageView }?.tag = getString(R.string.tv_no_focus_tag)
                     setNavigationOnClickListener {
-                        activity?.onBackPressedDispatcher?.onBackPressed()
+                        safe { activity?.onBackPressedDispatcher?.onBackPressed() }
                     }
                 }
             }
@@ -245,13 +246,14 @@ class SettingsFragment : BaseFragment<MainSettingsBinding>(
             }
         }
 
-        val appVersion = getString(R.string.app_version)
+        val appVersion = BuildConfig.VERSION_NAME
         val commitInfo = getString(R.string.commit_hash)
         val buildTimestamp = SimpleDateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG,
             Locale.getDefault()
         ).apply { timeZone = TimeZone.getTimeZone("UTC")
         }.format(Date(BuildConfig.BUILD_DATE)).replace("UTC", "")
 
+        binding.appVersion.text = appVersion
         binding.buildDate.text = buildTimestamp
         binding.appVersionInfo.setOnLongClickListener {
             clipboardHelper(txt(R.string.extension_version), "$appVersion $commitInfo $buildTimestamp")

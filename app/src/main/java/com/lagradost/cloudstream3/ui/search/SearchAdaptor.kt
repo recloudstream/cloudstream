@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.databinding.SearchResultGridBinding
 import com.lagradost.cloudstream3.databinding.SearchResultGridExpandedBinding
@@ -12,6 +11,7 @@ import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import com.lagradost.cloudstream3.ui.BaseDiffCallback
 import com.lagradost.cloudstream3.ui.NoStateAdapter
 import com.lagradost.cloudstream3.ui.ViewHolderState
+import com.lagradost.cloudstream3.ui.newSharedPool
 import com.lagradost.cloudstream3.utils.UIHelper.isBottomLayout
 import kotlin.math.roundToInt
 
@@ -32,6 +32,7 @@ class SearchClickCallback(
 
 class SearchAdapter(
     private val resView: AutofitRecyclerView,
+    private val isHorizontal:Boolean = false,
     private val clickCallback: (SearchClickCallback) -> Unit,
 ) : NoStateAdapter<SearchResponse>(diffCallback = BaseDiffCallback(itemSame = { a, b ->
     if (a.id != null || b.id != null) {
@@ -42,12 +43,14 @@ class SearchAdapter(
 })) {
     companion object {
         val sharedPool =
-            RecyclerView.RecycledViewPool().apply { this.setMaxRecycledViews(CONTENT, 10) }
+            newSharedPool { setMaxRecycledViews(CONTENT, 10) }
     }
 
     var hasNext: Boolean = false
 
-    private val coverHeight: Int get() = (resView.itemWidth / 0.68).roundToInt()
+    private val coverRatio = if(isHorizontal) 1.8 else 0.68
+
+    private val coverHeight: Int get() = (resView.itemWidth / coverRatio).roundToInt()
 
     override fun onCreateContent(parent: ViewGroup): ViewHolderState<Any> {
         val inflater = LayoutInflater.from(parent.context)

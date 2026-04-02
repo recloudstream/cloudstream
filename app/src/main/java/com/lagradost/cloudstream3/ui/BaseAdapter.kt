@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui
 
+import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.viewbinding.ViewBinding
 import coil3.dispose
+import java.util.WeakHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 
 open class ViewHolderState<T>(val view: ViewBinding) : ViewHolder(view.root) {
@@ -21,6 +23,33 @@ open class ViewHolderState<T>(val view: ViewBinding) : ViewHolder(view.root) {
 abstract class NoStateAdapter<T : Any>(
     diffCallback: DiffUtil.ItemCallback<T> = BaseDiffCallback()
 ) : BaseAdapter<T, Any>(0, diffCallback)
+
+/** Creates a new shared pool, using the supplied lambda as a constructor.
+ *
+ * The reason for this complicated structure is that a pool should not be shared between contexts
+ * as it makes coil fuck up, and theming.
+ * */
+fun newSharedPool(lambda: RecyclerView.RecycledViewPool.() -> Unit = { }): Pair<WeakHashMap<Context, RecyclerView.RecycledViewPool>, RecyclerView.RecycledViewPool.() -> Unit> =
+    WeakHashMap<Context, RecyclerView.RecycledViewPool>() to lambda
+
+/** Sets the shared pool of the recyclerview */
+fun RecyclerView.setRecycledViewPool(pool: Pair<WeakHashMap<Context, RecyclerView.RecycledViewPool>, RecyclerView.RecycledViewPool.() -> Unit>) {
+    val ctx = context ?: return
+    synchronized(pool.first) {
+        this.setRecycledViewPool(pool.first.getOrPut(ctx) {
+            RecyclerView.RecycledViewPool().apply(pool.second)
+        })
+    }
+}
+
+/** Clears the shared pool of views */
+fun Pair<WeakHashMap<Context, RecyclerView.RecycledViewPool>, RecyclerView.RecycledViewPool.() -> Unit>.clear() {
+    synchronized(this.first) {
+        for (pool in this.first.values) {
+            pool?.clear()
+        }
+    }
+}
 
 /**
  * BaseAdapter is a persistent state stored adapter that supports headers and footers.
