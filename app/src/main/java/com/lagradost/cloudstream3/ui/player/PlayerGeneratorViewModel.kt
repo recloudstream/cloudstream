@@ -16,7 +16,6 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
-import com.lagradost.cloudstream3.utils.IntroDbSkip
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -180,23 +179,14 @@ class PlayerGeneratorViewModel : ViewModel() {
             val meta = generator?.getCurrent()
             val page = (generator as? RepoLinkGenerator?)?.page
             if (page != null && meta is ResultEpisode) {
-                val hasNext = hasNextEpisode() ?: false
                 _currentStamps.postValue(listOf())
-                val aniSkipStamps = EpisodeSkip.getStamps(
-                    page,
-                    meta,
-                    duration,
-                    hasNext
-                )
                 _currentStamps.postValue(
-                    aniSkipStamps.ifEmpty {
-                        IntroDbSkip.getStamps(
-                            page,
-                            meta,
-                            duration,
-                            hasNext
-                        )
-                    }
+                    EpisodeSkip.getStamps(
+                        page,
+                        meta,
+                        duration,
+                        hasNextEpisode() ?: false
+                    )
                 )
             }
         }
