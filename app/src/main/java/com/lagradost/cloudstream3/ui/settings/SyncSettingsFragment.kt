@@ -25,27 +25,19 @@ class SyncSettingsFragment : PreferenceFragmentCompat() {
     private val credentialManager by lazy { CredentialManager.create(requireContext()) }
     
     private val syncResolutionLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-        println("[SyncSettings] Resolution finished: ${result.resultCode}")
         if (result.resultCode == android.app.Activity.RESULT_OK) {
-            // Retry sync logic would go here, or just inform user to try again
-            println("[SyncSettings] Resolution success, user should retry sync")
             Toast.makeText(context, R.string.sync_auth_success, Toast.LENGTH_SHORT).show()
         }
     }
-
-    // ─── Fragment lifecycle ─────────────────────────────────────────────────────
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings_sync, rootKey)
 
         findPreference<Preference>("sync_google_drive_connect")?.setOnPreferenceClickListener {
-            println("[SyncSettings] Connect/Disconnect clicked")
             val email = SyncManager.getConnectedEmail(requireContext())
             if (email == null) {
-                // Not signed in → launch Credential Manager bottom sheet
                 launchSignIn()
             } else {
-                // Already signed in → sign out
                 SyncManager.signOut(requireContext())
                 updateUiState()
                 Toast.makeText(context, R.string.sync_disconnected_toast, Toast.LENGTH_SHORT).show()
@@ -54,14 +46,12 @@ class SyncSettingsFragment : PreferenceFragmentCompat() {
         }
 
         findPreference<Preference>("sync_push_now")?.setOnPreferenceClickListener {
-            println("[SyncSettings] Push Now clicked")
             SyncManager.push(requireContext())
             Toast.makeText(context, R.string.sync_push_started, Toast.LENGTH_SHORT).show()
             true
         }
 
         findPreference<Preference>("sync_pull_now")?.setOnPreferenceClickListener {
-            println("[SyncSettings] Pull Now clicked")
             SyncManager.pull(requireContext())
             Toast.makeText(context, R.string.sync_pull_started, Toast.LENGTH_SHORT).show()
             true
@@ -74,34 +64,27 @@ class SyncSettingsFragment : PreferenceFragmentCompat() {
 
         lifecycleScope.launch {
             SyncManager.syncEvents.collectLatest { result ->
-                println("[SyncSettings] syncEvent received: $result")
-                
                 if (result is SyncManager.SyncResult.NeedsAuth) {
-                    println("[SyncSettings] Launching auth resolution")
                     try {
                         syncResolutionLauncher.launch(
                             androidx.activity.result.IntentSenderRequest.Builder(result.pendingIntent.intentSender).build()
                         )
                     } catch (e: Exception) {
-                        println("[SyncSettings] Resolution launch failed: $e")
+                        e.printStackTrace()
                     }
                     return@collectLatest
                 }
 
                 updateUiState()
-                val msgRes = when {
-                    result is SyncManager.SyncResult.Push && result.isSuccess  -> R.string.sync_push_success
-                    result is SyncManager.SyncResult.Push && !result.isSuccess -> R.string.sync_push_failed
-                    result is SyncManager.SyncResult.Pull && result.isSuccess  -> R.string.sync_pull_success
-                    else                                                        -> R.string.sync_pull_failed
+                val msgText = when (result) {
+                    is SyncManager.SyncResult.Push -> if (result.isSuccess) getString(R.string.sync_push_success) else getString(R.string.sync_push_failed) + (result.error?.let { " - $it" } ?: "")
+                    is SyncManager.SyncResult.Pull -> if (result.isSuccess) getString(R.string.sync_pull_success) else getString(R.string.sync_pull_failed) + (result.error?.let { " - $it" } ?: "")
+                    else -> getString(R.string.sync_pull_failed)
                 }
-                println("[SyncSettings] Target Toast: ${resources.getResourceEntryName(msgRes)}")
-                Toast.makeText(context, msgRes, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, msgText, Toast.LENGTH_LONG).show()
             }
         }
     }
-
-    // ─── Sign-in ────────────────────────────────────────────────────────────────
 
     private fun launchSignIn() {
         val request = GetCredentialRequest.Builder()
@@ -121,8 +104,6 @@ class SyncSettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    // ─── UI helpers ─────────────────────────────────────────────────────────────
-
     private fun updateUiState() {
         val ctx = context ?: return
         val email = SyncManager.getConnectedEmail(ctx)
@@ -130,24 +111,25 @@ class SyncSettingsFragment : PreferenceFragmentCompat() {
         val lastSync = SyncManager.getLastSyncTime(ctx)
 
         findPreference<Preference>("sync_google_drive_connect")?.apply {
-            title = if (isConnected)
+            title = if (isConnected) {
                 getString(R.string.sync_disconnect_title, email)
-            else
+            } else {
                 getString(R.string.sync_connect_title)
-            summary = if (isConnected)
+            }
+            summary = if (isConnected) {
                 getString(R.string.sync_connected_summary, email)
-            else
+            } else {
                 getString(R.string.sync_connect_summary)
+            }
         }
 
-        findPreference<Preference>("sync_status")?.summary = if (!isConnected) {
-            getString(R.string.sync_status_not_connected)
-        } else if (lastSync == 0L) {
-            getString(R.string.sync_status_never)
-        } else {
-            val formatted = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
-                .format(Date(lastSync))
-            getString(R.string.sync_status_last, formatted)
+        findPreference<Preference>("sync_status")?.summary = when {
+            !isConnected -> getString(R.string.sync_status_not_connected)
+            lastSync == 0L -> getString(R.string.sync_status_never)
+            else -> {
+                val formatted = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date(lastSync))
+                getString(R.string.sync_status_last, formatted)
+            }
         }
 
         findPreference<Preference>("sync_push_now")?.isEnabled = isConnected
