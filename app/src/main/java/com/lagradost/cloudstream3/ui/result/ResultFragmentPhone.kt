@@ -330,7 +330,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         PanelsChildGestureRegionObserver.Provider.get()
             .addGestureRegionsUpdateListener(gestureRegionsListener)
         resultBinding?.resultTvModeButton?.isVisible =
-            context?.let { TvModeHelper.isEnabled(it) } == true && viewModel.hasEpisodeContent()
+            context?.let { TvModeHelper.isEnabled(it) } == true && viewModel.hasTvModeEpisodeContent()
     }
 
     override fun onStop() {
@@ -725,7 +725,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 resultTvModeButton.isVisible =
                     context?.let { TvModeHelper.isEnabled(it) } == true &&
                         episodes is Resource.Success &&
-                        viewModel.hasEpisodeContent()
+                        viewModel.hasTvModeEpisodeContent()
 
                 if (episodes is Resource.Success) {
                     resultTvModeButton.setOnClickListener { startLocalTvMode.invoke() }

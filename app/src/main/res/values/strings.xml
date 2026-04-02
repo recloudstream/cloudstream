@@ -381,6 +381,9 @@
     <string name="random_button_settings_desc">Show random button on Homepage and Library</string>
     <string name="tv_mode_settings">TV Mode</string>
     <string name="tv_mode_settings_desc">Enable TV mode buttons, player toggle, and auto-play behavior</string>
+    <string name="tv_mode_settings_menu_desc">Configure TV mode playback, filtering, and recovery options</string>
+    <string name="tv_mode_activation_notice_title">TV Mode is not active</string>
+    <string name="tv_mode_activation_notice_desc">Select TV Mode in Homepage quick action under Layout to use TV Mode buttons and playback.</string>
     <string name="tv_mode_content_settings">TV mode content</string>
     <string name="tv_mode_dub_settings">TV mode audio preference</string>
     <string name="tv_mode_season_settings">TV mode local seasons</string>

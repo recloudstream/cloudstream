@@ -197,7 +197,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         afterPluginsLoadedEvent += ::reloadViewModel
         super.onResume()
         binding?.resultTvMode?.isVisible =
-            context?.let { TvModeHelper.isEnabled(it) } == true && viewModel.hasEpisodeContent()
+            context?.let { TvModeHelper.isEnabled(it) } == true && viewModel.hasTvModeEpisodeContent()
     }
 
     override fun onStop() {
@@ -830,7 +830,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                 if (episodes is Resource.Success) {
                     resultTvMode.isVisible =
                         context?.let { TvModeHelper.isEnabled(it) } == true &&
-                            viewModel.hasEpisodeContent()
+                            viewModel.hasTvModeEpisodeContent()
                     val lastWatchedIndex = episodes.value.indexOfLast { ep ->
                         ep.getWatchProgress() >= NEXT_WATCH_EPISODE_PERCENTAGE.toFloat() / 100.0f || ep.videoWatchState == VideoWatchState.Watched
                     }

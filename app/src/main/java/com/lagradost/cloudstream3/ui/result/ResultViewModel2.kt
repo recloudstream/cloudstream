@@ -428,6 +428,12 @@ data class ExtractedTrailerData(
 )
 
 class ResultViewModel2 : ViewModel() {
+    private enum class TvModeResolvedContent {
+        MOVIE,
+        SERIES,
+        UNSUPPORTED,
+    }
+
     private var currentResponse: LoadResponse? = null
     var EPISODE_RANGE_SIZE: Int = 20
     fun clear() {
@@ -455,6 +461,7 @@ class ResultViewModel2 : ViewModel() {
     private var currentId: Int? = null
     private var fillers: Map<Int, Boolean> = emptyMap()
     private var generator: IGenerator? = null
+    private var pendingTvModeStart: Boolean = false
     private var preferDubStatus: DubStatus? = null
     private var preferStartEpisode: Int? = null
     private var preferStartSeason: Int? = null
@@ -2361,8 +2368,29 @@ class ResultViewModel2 : ViewModel() {
         currentRanges = ranges
 
 
+        val primaryUrl = loadResponse.uniqueUrl.ifBlank { loadResponse.url }
+        val fallbackUrl = loadResponse.url
+        val isGlobalTvModeAnimeLoad =
+            pendingTvModeStart &&
+                loadResponse is AnimeLoadResponse &&
+                !TvModeHelper.isLocalSession(primaryUrl, fallbackUrl)
+        val allowedTvModeDubStatuses = if (isGlobalTvModeAnimeLoad) {
+            context?.let { TvModeHelper.getAllowedAnimeDubStatuses(it, currentDubStatus) }
+                ?: emptySet()
+        } else {
+            emptySet()
+        }
+        val candidateKeys = when {
+            allowedTvModeDubStatuses.isNotEmpty() -> {
+                ranges.keys.filter { index -> allowedTvModeDubStatuses.contains(index.dubStatus) }
+            }
+
+            isGlobalTvModeAnimeLoad -> emptyList()
+            else -> ranges.keys.toList()
+        }
+
         // this takes the indexer most preferable by the user given the current sorting
-        val min = ranges.keys.minByOrNull { index ->
+        val min = candidateKeys.minByOrNull { index ->
             kotlin.math.abs(
                 index.season - (preferStartSeason ?: 1)
             ) + if (index.dubStatus == preferDubStatus) 0 else 100000
@@ -2374,12 +2402,30 @@ class ResultViewModel2 : ViewModel() {
             it.startEpisode >= (preferStartEpisode ?: 0)
         } ?: ranger?.lastOrNull()
 
-        postEpisodeRange(min, range, DataStoreHelper.resultsSortingMode)
+        if (min != null && range != null) {
+            postEpisodeRange(min, range, DataStoreHelper.resultsSortingMode)
+        } else {
+            clearEpisodeSelection()
+        }
         postResume()
     }
 
     private fun postResume() {
         _resumeWatching.postValue(resume())
+    }
+
+    private fun clearEpisodeSelection() {
+        currentIndex = null
+        currentRange = null
+        generator = null
+        _selectedRange.postValue(null)
+        _selectedRangeIndex.postValue(-1)
+        _selectedSeason.postValue(null)
+        _selectedSeasonIndex.postValue(-1)
+        _selectedDubStatus.postValue(null)
+        _selectedDubStatusIndex.postValue(-1)
+        _episodes.postValue(Resource.Success(emptyList()))
+        _episodesCountText.postValue(null)
     }
 
     private fun resume(): ResumeWatchingStatus? {
@@ -2476,6 +2522,33 @@ class ResultViewModel2 : ViewModel() {
 
     fun hasLoaded() = currentResponse != null
     fun hasEpisodeContent() = currentEpisodes.values.any { it.isNotEmpty() }
+
+    private fun isMovieLikePlaybackEntry(): Boolean {
+        val episodes = currentEpisodes.values.flatten()
+        if (episodes.size != 1) return false
+
+        val entry = episodes.first()
+        return entry.episode <= 0 && entry.season == null
+    }
+
+    private fun resolveTvModeContent(): TvModeResolvedContent {
+        val response = currentResponse ?: return TvModeResolvedContent.UNSUPPORTED
+
+        return when {
+            response is LiveStreamLoadResponse || response is TorrentLoadResponse -> {
+                TvModeResolvedContent.UNSUPPORTED
+            }
+
+            response is MovieLoadResponse -> TvModeResolvedContent.MOVIE
+            response.isEpisodeBased() -> TvModeResolvedContent.SERIES
+            response.isMovie() -> TvModeResolvedContent.MOVIE
+            isMovieLikePlaybackEntry() -> TvModeResolvedContent.MOVIE
+            hasEpisodeContent() -> TvModeResolvedContent.SERIES
+            else -> TvModeResolvedContent.UNSUPPORTED
+        }
+    }
+
+    fun hasTvModeEpisodeContent() = resolveTvModeContent() == TvModeResolvedContent.SERIES
     fun getCurrentSeasonSelection(): Int? = currentIndex?.season
     fun startTvModePlayback(activity: Activity?) {
         if (activity == null) return
@@ -2505,18 +2578,23 @@ class ResultViewModel2 : ViewModel() {
         val primaryUrl = response.uniqueUrl.ifBlank { response.url }
         val fallbackUrl = response.url
         val isLocalSession = TvModeHelper.isLocalSession(primaryUrl, fallbackUrl)
-        val hasEpisodeContent = hasEpisodeContent()
-        val isMovie = response.isMovie() && !hasEpisodeContent
+        val contentKind = resolveTvModeContent()
+        val hasSeriesContent = contentKind == TvModeResolvedContent.SERIES
+        val isMovie = contentKind == TvModeResolvedContent.MOVIE
 
         if (!TvModeHelper.acceptsLoadedContent(
                 activity,
                 isMovie,
-                hasEpisodeContent,
+                hasSeriesContent,
                 primaryUrl,
                 fallbackUrl
             )
         ) {
-            continueTvModePlayback(activity, primaryUrl, fallbackUrl)
+            if (isLocalSession) {
+                stopTvModePlayback(activity)
+            } else {
+                continueTvModePlayback(activity, primaryUrl, fallbackUrl)
+            }
             return
         }
 
@@ -2535,7 +2613,7 @@ class ResultViewModel2 : ViewModel() {
             return
         }
 
-        if (!hasEpisodeContent) {
+        if (!hasSeriesContent) {
             if (isLocalSession) {
                 stopTvModePlayback(activity)
             } else {
@@ -2557,12 +2635,23 @@ class ResultViewModel2 : ViewModel() {
             return
         }
 
-        val preferredDub = TvModeHelper.resolveDubStatus(
-            activity,
-            availableEntries.map { it.key.dubStatus }
-        )
-        val filteredEntries = availableEntries.filter { it.key.dubStatus == preferredDub }
-            .ifEmpty { availableEntries }
+        val filteredEntries = if (response is AnimeLoadResponse) {
+            val allowedDubStatuses = TvModeHelper.getAllowedAnimeDubStatuses(
+                activity,
+                availableEntries.map { it.key.dubStatus }
+            )
+            availableEntries.filter { entry -> allowedDubStatuses.contains(entry.key.dubStatus) }
+        } else {
+            availableEntries
+        }
+        if (filteredEntries.isEmpty()) {
+            if (isLocalSession) {
+                stopTvModePlayback(activity)
+            } else {
+                continueTvModePlayback(activity, primaryUrl, fallbackUrl)
+            }
+            return
+        }
         val candidateEpisodes = filteredEntries
             .flatMap { (indexer, episodes) -> episodes.map { episode -> indexer to episode } }
         val rejectedEpisodeIds = TvModeHelper.getRejectedEpisodeIds(primaryUrl, fallbackUrl)
@@ -2722,6 +2811,7 @@ class ResultViewModel2 : ViewModel() {
             _page.postValue(Resource.Loading(url))
             _episodes.postValue(Resource.Loading())
 
+            pendingTvModeStart = autostart?.startAction == START_ACTION_TV_MODE
             preferDubStatus = dubStatus
             currentShowFillers = showFillers
 
@@ -2771,7 +2861,9 @@ class ResultViewModel2 : ViewModel() {
                     if (!isActive) return@ioSafe
                     val mainId = loadResponse.getId()
 
-                    preferDubStatus = getDub(mainId) ?: preferDubStatus
+                    if (!(pendingTvModeStart && data.value is AnimeLoadResponse)) {
+                        preferDubStatus = getDub(mainId) ?: preferDubStatus
+                    }
                     preferStartEpisode = getResultEpisode(mainId)
                     preferStartSeason = getResultSeason(mainId) ?: 1
 

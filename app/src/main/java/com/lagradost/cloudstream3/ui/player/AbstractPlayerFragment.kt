@@ -112,6 +112,8 @@ abstract class AbstractPlayerFragment(
 
     open fun playerStatusChanged() {}
 
+    open fun onUserSeekStarted() {}
+
     open fun playerDimensionsLoaded(width: Int, height: Int) {
         throw NotImplementedError()
     }
@@ -590,6 +592,7 @@ abstract class AbstractPlayerFragment(
                 var resume = false
                 progressBar.addOnScrubListener(object : PreviewBar.OnScrubListener {
                     override fun onScrubStart(previewBar: PreviewBar?) {
+                        onUserSeekStarted()
                         val hasPreview = player.hasPreview()
                         progressBar.isPreviewEnabled = hasPreview
                         resume = player.getIsPlaying()
@@ -644,10 +647,13 @@ abstract class AbstractPlayerFragment(
              * and once by the UI even if it should only be registered once by the UI */
             playerView?.findViewById<DefaultTimeBar>(R.id.exo_progress)
                 ?.addListener(object : TimeBar.OnScrubListener {
-                    override fun onScrubStart(timeBar: TimeBar, position: Long) = Unit
+                    override fun onScrubStart(timeBar: TimeBar, position: Long) {
+                        onUserSeekStarted()
+                    }
                     override fun onScrubMove(timeBar: TimeBar, position: Long) = Unit
                     override fun onScrubStop(timeBar: TimeBar, position: Long, canceled: Boolean) {
                         if (canceled) return
+                        onUserSeekStarted()
                         val playerDuration = player.getDuration() ?: return
                         val playerPosition = player.getPosition() ?: return
                         mainCallback(

@@ -46,6 +46,7 @@
     <string name="show_cast_in_details_key">show_cast_in_details_key</string>
     <string name="random_button_key">random_button_key</string>
     <string name="tv_mode_button_key">tv_mode_button_key</string>
+    <string name="tv_mode_settings_menu_key">tv_mode_settings_menu_key</string>
     <string name="home_quick_action_key">home_quick_action_key</string>
     <string name="tv_mode_content_key">tv_mode_content_key</string>
     <string name="tv_mode_dub_preference_key">tv_mode_dub_preference_key</string>

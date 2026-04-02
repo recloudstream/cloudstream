@@ -6,20 +6,39 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.navigation.NavOptions
 import androidx.preference.PreferenceManager
+import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
+import com.lagradost.cloudstream3.APIHolder.getApiFromUrlNull
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.DubStatus
+import com.lagradost.cloudstream3.LiveStreamLoadResponse
+import com.lagradost.cloudstream3.LoadResponse
+import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.TorrentLoadResponse
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.isEpisodeBased
+import com.lagradost.cloudstream3.metaproviders.SyncRedirector
+import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.safeApiCall
+import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.result.START_ACTION_TV_MODE
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.utils.AppContextUtils.getApiDubstatusSettings
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import java.util.ArrayDeque
 
 object TvModeHelper {
+    private enum class ResolvedContentKind {
+        MOVIE,
+        SERIES,
+        UNSUPPORTED,
+    }
+
     enum class TvModeContentMode(val value: Int, @StringRes val labelRes: Int) {
         SERIES_ONLY(0, R.string.tv_mode_content_series_only),
         MOVIES_ONLY(1, R.string.tv_mode_content_movies_only),
@@ -96,6 +115,7 @@ object TvModeHelper {
             val candidates: List<SearchResponse>,
             val recentUrls: ArrayDeque<String> = ArrayDeque(),
             val rejectedUrls: LinkedHashSet<String> = linkedSetOf(),
+            val resolvedContentKinds: MutableMap<String, ResolvedContentKind> = linkedMapOf(),
             override var managedPlayback: Boolean = false,
         ) : TvModeSession
 
@@ -121,10 +141,7 @@ object TvModeHelper {
     }
 
     fun isEnabled(context: Context): Boolean {
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
-            context.getString(R.string.tv_mode_button_key),
-            false
-        )
+        return getHomeQuickActionMode(context) == HomeQuickActionMode.TV_MODE
     }
 
     fun shouldForceContinuousPlayback(context: Context): Boolean {
@@ -187,10 +204,6 @@ object TvModeHelper {
                 HomeQuickActionMode.RANDOM
             }
 
-            preferences.getBoolean(context.getString(R.string.tv_mode_button_key), false) -> {
-                HomeQuickActionMode.TV_MODE
-            }
-
             else -> HomeQuickActionMode.NONE
         }
     }
@@ -206,27 +219,97 @@ object TvModeHelper {
 
     fun getEligibleCandidates(context: Context, candidates: List<SearchResponse>): List<SearchResponse> {
         val contentMode = getContentMode(context)
-        return candidates.filter { it.matchesContentMode(contentMode) }.ifEmpty { candidates }
+        return candidates.filter { it.matchesContentMode(contentMode) }
     }
 
     fun resolveDubStatus(context: Context, available: Collection<DubStatus>): DubStatus? {
         val normalized = available.distinct()
         if (normalized.isEmpty()) return null
+        val allowed = getAllowedAnimeDubStatuses(context, normalized)
+        if (allowed.isEmpty()) return null
 
-        return when (getDubPreference(context)) {
-            TvModeDubPreference.PREFER_DUBBED -> {
-                normalized.firstOrNull { it == DubStatus.Dubbed }
+        return when {
+            allowed.contains(DubStatus.None) &&
+                allowed.contains(DubStatus.Subbed) &&
+                !allowed.contains(DubStatus.Dubbed) -> {
+                normalized.firstOrNull { it == DubStatus.None }
                     ?: normalized.firstOrNull { it == DubStatus.Subbed }
-                    ?: normalized.randomOrNull()
             }
 
-            TvModeDubPreference.PREFER_SUBBED -> {
+            allowed.contains(DubStatus.Subbed) &&
+                !allowed.contains(DubStatus.Dubbed) -> {
                 normalized.firstOrNull { it == DubStatus.Subbed }
-                    ?: normalized.firstOrNull { it == DubStatus.Dubbed }
-                    ?: normalized.randomOrNull()
+                    ?: normalized.firstOrNull { it == DubStatus.None }
             }
 
-            TvModeDubPreference.RANDOM -> normalized.randomOrNull()
+            allowed.contains(DubStatus.Dubbed) &&
+                !allowed.contains(DubStatus.Subbed) &&
+                !allowed.contains(DubStatus.None) -> {
+                normalized.firstOrNull { it == DubStatus.Dubbed }
+            }
+
+            else -> allowed.randomOrNull()
+        }
+    }
+
+    fun getAllowedAnimeDubStatuses(
+        context: Context,
+        available: Collection<DubStatus>,
+    ): Set<DubStatus> {
+        val normalized = available.distinct()
+        if (normalized.isEmpty()) return emptySet()
+
+        val selected = context.getApiDubstatusSettings()
+        val hasNone = selected.contains(DubStatus.None)
+        val hasDubbed = selected.contains(DubStatus.Dubbed)
+        val hasSubbed = selected.contains(DubStatus.Subbed)
+
+        val hasAvailableDubbed = normalized.contains(DubStatus.Dubbed)
+        val hasAvailableSubbed = normalized.contains(DubStatus.Subbed)
+        val hasAvailableNone = normalized.contains(DubStatus.None)
+
+        return when {
+            hasDubbed && !hasSubbed -> {
+                normalized.filterTo(linkedSetOf()) { it == DubStatus.Dubbed }
+            }
+
+            !hasDubbed && hasSubbed && !hasNone -> {
+                normalized.filterTo(linkedSetOf()) {
+                    it == DubStatus.Subbed || (!hasAvailableSubbed && it == DubStatus.None)
+                }
+            }
+
+            !hasDubbed && hasSubbed && hasNone -> {
+                normalized.filterTo(linkedSetOf()) {
+                    it == DubStatus.None || it == DubStatus.Subbed
+                }
+            }
+
+            !hasDubbed && !hasSubbed && hasNone -> {
+                when {
+                    hasAvailableDubbed || hasAvailableSubbed -> {
+                        normalized.filterTo(linkedSetOf()) {
+                            it == DubStatus.Dubbed || it == DubStatus.Subbed
+                        }
+                    }
+
+                    else -> normalized.filterTo(linkedSetOf()) { it == DubStatus.None }
+                }
+            }
+
+            hasDubbed && hasSubbed -> {
+                when {
+                    hasAvailableDubbed || hasAvailableSubbed -> {
+                        normalized.filterTo(linkedSetOf()) {
+                            it == DubStatus.Dubbed || it == DubStatus.Subbed
+                        }
+                    }
+
+                    else -> normalized.filterTo(linkedSetOf()) { it == DubStatus.None }
+                }
+            }
+
+            else -> normalized.toSet()
         }
     }
 
@@ -296,13 +379,21 @@ object TvModeHelper {
 
         return when (session) {
             is TvModeSession.Global -> {
-                val next = pickCandidate(validActivity, session) ?: run {
-                    stopSession()
-                    showToast(validActivity, R.string.tv_mode_no_playable_content, Toast.LENGTH_SHORT)
-                    return false
+                validActivity.ioSafe {
+                    val next = pickCandidate(validActivity, session)
+                    validActivity.main {
+                        if (next == null) {
+                            stopSession()
+                            showToast(
+                                validActivity,
+                                R.string.tv_mode_no_playable_content,
+                                Toast.LENGTH_SHORT
+                            )
+                        } else {
+                            navigateToResult(validActivity, next, replaceExisting)
+                        }
+                    }
                 }
-
-                navigateToResult(validActivity, next, replaceExisting)
                 true
             }
 
@@ -376,18 +467,18 @@ object TvModeHelper {
     fun acceptsLoadedContent(
         context: Context,
         isMovie: Boolean,
-        hasEpisodeContent: Boolean,
+        hasSeriesContent: Boolean,
         primaryUrl: String?,
         fallbackUrl: String? = null,
     ): Boolean {
         if (isLocalSession(primaryUrl, fallbackUrl)) {
-            return hasEpisodeContent
+            return hasSeriesContent
         }
 
         return when (getContentMode(context)) {
-            TvModeContentMode.SERIES_ONLY -> hasEpisodeContent
+            TvModeContentMode.SERIES_ONLY -> hasSeriesContent
             TvModeContentMode.MOVIES_ONLY -> isMovie
-            TvModeContentMode.BOTH -> isMovie || hasEpisodeContent
+            TvModeContentMode.BOTH -> isMovie || hasSeriesContent
         }
     }
 
@@ -429,12 +520,18 @@ object TvModeHelper {
     }
 
     private fun getDubPreference(context: Context): TvModeDubPreference {
-        return TvModeDubPreference.fromValue(
-            PreferenceManager.getDefaultSharedPreferences(context).getInt(
-                context.getString(R.string.tv_mode_dub_preference_key),
-                TvModeDubPreference.PREFER_DUBBED.value
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val key = context.getString(R.string.tv_mode_dub_preference_key)
+        if (preferences.contains(key)) {
+            return TvModeDubPreference.fromValue(
+                preferences.getInt(
+                    key,
+                    TvModeDubPreference.PREFER_DUBBED.value
+                )
             )
-        )
+        }
+
+        return TvModeDubPreference.RANDOM
     }
 
     private fun getSeasonMode(context: Context): TvModeSeasonMode {
@@ -510,7 +607,7 @@ object TvModeHelper {
         )
     }
 
-    private fun pickCandidate(
+    private suspend fun pickCandidate(
         context: Context,
         session: TvModeSession.Global,
     ): SearchResponse? {
@@ -518,18 +615,95 @@ object TvModeHelper {
             .filterNot { candidate -> session.rejectedUrls.contains(candidate.url) }
         if (availableCandidates.isEmpty()) return null
 
-        val preferredCandidates = getEligibleCandidates(context, availableCandidates)
-        val candidatePool = if (preferredCandidates.isNotEmpty()) {
-            preferredCandidates
-        } else {
-            availableCandidates
-        }
-
-        val freshCandidates = candidatePool.filterNot { candidate ->
+        val contentMode = getContentMode(context)
+        val freshCandidates = availableCandidates.filterNot { candidate ->
             session.recentUrls.contains(candidate.url)
         }
+        val staleCandidates = availableCandidates.filter { candidate ->
+            session.recentUrls.contains(candidate.url)
+        }
+        val orderedCandidates =
+            prioritizeCandidates(session, freshCandidates, contentMode) +
+                prioritizeCandidates(session, staleCandidates, contentMode)
 
-        return (if (freshCandidates.isNotEmpty()) freshCandidates else candidatePool).randomOrNull()
+        return when (contentMode) {
+            TvModeContentMode.BOTH -> orderedCandidates.firstOrNull()
+            TvModeContentMode.MOVIES_ONLY -> {
+                orderedCandidates.firstOrNull { candidate ->
+                    resolveCandidateContentKind(session, candidate) == ResolvedContentKind.MOVIE
+                }
+            }
+
+            TvModeContentMode.SERIES_ONLY -> {
+                orderedCandidates.firstOrNull { candidate ->
+                    resolveCandidateContentKind(session, candidate) == ResolvedContentKind.SERIES
+                }
+            }
+        }
+    }
+
+    private fun prioritizeCandidates(
+        session: TvModeSession.Global,
+        candidates: List<SearchResponse>,
+        contentMode: TvModeContentMode,
+    ): List<SearchResponse> {
+        return candidates
+            .shuffled()
+            .sortedBy { candidate -> getCandidatePriority(session, candidate, contentMode) }
+    }
+
+    private fun getCandidatePriority(
+        session: TvModeSession.Global,
+        candidate: SearchResponse,
+        contentMode: TvModeContentMode,
+    ): Int {
+        val cachedKind = session.resolvedContentKinds[candidate.url]
+        val hintedKind = candidate.guessContentKind()
+        val effectiveKind = cachedKind ?: hintedKind
+
+        return when (contentMode) {
+            TvModeContentMode.BOTH -> if (effectiveKind == ResolvedContentKind.UNSUPPORTED) 1 else 0
+            TvModeContentMode.MOVIES_ONLY -> when (effectiveKind) {
+                ResolvedContentKind.MOVIE -> 0
+                null -> 1
+                ResolvedContentKind.SERIES -> 2
+                ResolvedContentKind.UNSUPPORTED -> 3
+            }
+
+            TvModeContentMode.SERIES_ONLY -> when (effectiveKind) {
+                ResolvedContentKind.SERIES -> 0
+                null -> 1
+                ResolvedContentKind.MOVIE -> 2
+                ResolvedContentKind.UNSUPPORTED -> 3
+            }
+        }
+    }
+
+    private suspend fun resolveCandidateContentKind(
+        session: TvModeSession.Global,
+        candidate: SearchResponse,
+    ): ResolvedContentKind {
+        session.resolvedContentKinds[candidate.url]?.let { return it }
+
+        val api = getApiFromNameNull(candidate.apiName) ?: getApiFromUrlNull(candidate.url)
+            ?: return ResolvedContentKind.UNSUPPORTED.also {
+                session.resolvedContentKinds[candidate.url] = it
+            }
+
+        val validUrl = (safeApiCall {
+            SyncRedirector.redirect(candidate.url, api)
+        } as? Resource.Success)?.value
+            ?: return ResolvedContentKind.UNSUPPORTED.also {
+                session.resolvedContentKinds[candidate.url] = it
+            }
+
+        val resolvedKind = when (val data = APIRepository(api).load(validUrl)) {
+            is Resource.Success -> data.value.resolveContentKind()
+            else -> ResolvedContentKind.UNSUPPORTED
+        }
+
+        session.resolvedContentKinds[candidate.url] = resolvedKind
+        return resolvedKind
     }
 
     private fun rememberRecentUrl(session: TvModeSession.Global, url: String) {
@@ -566,6 +740,28 @@ object TvModeHelper {
             TvModeContentMode.SERIES_ONLY -> type.isTvModeSeries()
             TvModeContentMode.MOVIES_ONLY -> type.isTvModeMovie()
             TvModeContentMode.BOTH -> type.isTvModeSeries() || type.isTvModeMovie()
+        }
+    }
+
+    private fun SearchResponse.guessContentKind(): ResolvedContentKind? {
+        return when {
+            type.isTvModeSeries() -> ResolvedContentKind.SERIES
+            type.isTvModeMovie() -> ResolvedContentKind.MOVIE
+            else -> null
+        }
+    }
+
+    private fun LoadResponse.resolveContentKind(): ResolvedContentKind {
+        return when {
+            this is LiveStreamLoadResponse || this is TorrentLoadResponse -> {
+                ResolvedContentKind.UNSUPPORTED
+            }
+
+            this.isEpisodeBased() -> ResolvedContentKind.SERIES
+            this.isMovie() -> ResolvedContentKind.MOVIE
+            this.type.isTvModeSeries() -> ResolvedContentKind.SERIES
+            this.type.isTvModeMovie() -> ResolvedContentKind.MOVIE
+            else -> ResolvedContentKind.UNSUPPORTED
         }
     }
 

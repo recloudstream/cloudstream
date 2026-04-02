@@ -188,6 +188,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     private var tvModePlaybackStarted = false
     private var tvModeLastStatus = CSPlayerLoading.IsBuffering
     private var tvModeSkipInProgress = false
+    private var tvModeIgnoreBufferingFromManualSeek = false
     private fun startLoading() {
         player.release()
         currentSelectedSubtitles = null
@@ -239,23 +240,31 @@ class GeneratorPlayer : FullScreenPlayer() {
         val previousStatus = tvModeLastStatus
 
         when (newStatus) {
-            CSPlayerLoading.IsPlaying, CSPlayerLoading.IsPaused -> {
+            CSPlayerLoading.IsPlaying -> {
                 tvModePlaybackStarted = true
                 cancelTvModeBufferTimeout()
             }
 
+            CSPlayerLoading.IsPaused -> {
+                cancelTvModeBufferTimeout()
+            }
+
             CSPlayerLoading.IsBuffering -> {
-                scheduleTvModeBufferTimeout()
-                if (tvModePlaybackStarted &&
-                    previousStatus != CSPlayerLoading.IsBuffering &&
-                    shouldUseTvModeStallProtection()
-                ) {
-                    tvModeBufferRetryCount += 1
-                    val currentContext = context
-                    if (currentContext != null &&
-                        tvModeBufferRetryCount >= TvModeHelper.getStallRetryLimit(currentContext)
+                if (tvModeIgnoreBufferingFromManualSeek) {
+                    cancelTvModeBufferTimeout()
+                } else {
+                    scheduleTvModeBufferTimeout()
+                    if (tvModePlaybackStarted &&
+                        previousStatus != CSPlayerLoading.IsBuffering &&
+                        shouldUseTvModeStallProtection()
                     ) {
-                        maybeSkipStalledTvModeContent("buffer_retry_limit")
+                        tvModeBufferRetryCount += 1
+                        val currentContext = context
+                        if (currentContext != null &&
+                            tvModeBufferRetryCount >= TvModeHelper.getStallRetryLimit(currentContext)
+                        ) {
+                            maybeSkipStalledTvModeContent("buffer_retry_limit")
+                        }
                     }
                 }
             }
@@ -326,12 +335,31 @@ class GeneratorPlayer : FullScreenPlayer() {
         cancelTvModeBufferTimeout()
     }
 
+    private fun ignoreTvModeStallProtectionUntilPlaybackResumes() {
+        if (!shouldUseTvModeStallProtection()) return
+        tvModeIgnoreBufferingFromManualSeek = true
+        cancelTvModeBufferTimeout()
+    }
+
+    private fun maybeClearTvModeManualSeekProtection(event: PositionEvent) {
+        if (!tvModeIgnoreBufferingFromManualSeek) return
+        if (event.source != PlayerEventSource.Player) return
+        if (currentPlayerStatus != CSPlayerLoading.IsPlaying) return
+
+        tvModeIgnoreBufferingFromManualSeek = false
+    }
+
+    override fun onUserSeekStarted() {
+        ignoreTvModeStallProtectionUntilPlaybackResumes()
+    }
+
     private fun resetTvModeStallTracking() {
         cancelTvModeWatchdogs()
         tvModeBufferRetryCount = 0
         tvModePlaybackStarted = false
         tvModeLastStatus = CSPlayerLoading.IsBuffering
         tvModeSkipInProgress = false
+        tvModeIgnoreBufferingFromManualSeek = false
     }
 
     private fun maybeSkipStalledTvModeContent(reason: String): Boolean {
@@ -360,6 +388,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     private fun scheduleTvModeBufferTimeout() {
         val currentContext = context ?: return
         if (!shouldUseTvModeStallProtection()) return
+        if (tvModeIgnoreBufferingFromManualSeek) return
 
         val timeoutSeconds = TvModeHelper.getLoadingTimeoutSeconds(currentContext)
         cancelTvModeBufferTimeout()
@@ -370,6 +399,19 @@ class GeneratorPlayer : FullScreenPlayer() {
                 maybeSkipStalledTvModeContent("buffer_timeout")
             }
         }
+    }
+
+    override fun mainCallback(event: PlayerEvent) {
+        if (event is PositionEvent &&
+            event.source == PlayerEventSource.UI &&
+            event.fromMs != event.toMs
+        ) {
+            ignoreTvModeStallProtectionUntilPlaybackResumes()
+        }
+        if (event is PositionEvent) {
+            maybeClearTvModeManualSeekProtection(event)
+        }
+        super.mainCallback(event)
     }
 
     private fun ensurePlayerTvModeButton() {
