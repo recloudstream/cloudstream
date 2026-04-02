@@ -6,14 +6,9 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.newExtractorLink
 
-class Vidnest : AsianLoad() {
-    override var name = "Vidnest"
+open class VidNest : ExtractorApi() {
+    override var name = "VidNest"
     override var mainUrl = "https://vidnest.io"
-}
-
-open class AsianLoad : ExtractorApi() {
-    override var name = "AsianLoad"
-    override var mainUrl = "https://asianhdplay.pro"
     override val requiresReferer = true
 
     private val sourceRegex = Regex("""sources:[\W\w]*?file:\s*?["'](.*?)["']""")

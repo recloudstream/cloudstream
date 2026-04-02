@@ -350,4 +350,11 @@
     <string name="account">অ্যাকাউন্ট</string>
     <string name="logout">প্রস্থান</string>
     <string name="episode_format" formatted="true">%1$d%2$s</string>
+    <string name="next_season_episode_format" formatted="true">সিজন %1$d পর্ব %2$d প্রকাশিত হবে</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dঘন্টা %2$dমিনিট %3$dসেকেন্ড</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dমিনিট %2$dসেকেন্ড</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$dসেকেন্ড</string>
+    <string name="play_from_beginning_img_des">শুরু থেকে চালু করুন</string>
+    <string name="speech_recognition_unavailable">স্পিচ রিকগনিশন উপলব্ধ নেই</string>
+    <string name="begin_speaking">কথা বলা শুরু করুন…</string>
 </resources>

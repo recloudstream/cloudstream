@@ -2,11 +2,11 @@ package com.lagradost.cloudstream3.ui.result
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.databinding.ResultMiniImageBinding
 import com.lagradost.cloudstream3.ui.BaseDiffCallback
 import com.lagradost.cloudstream3.ui.NoStateAdapter
 import com.lagradost.cloudstream3.ui.ViewHolderState
+import com.lagradost.cloudstream3.ui.newSharedPool
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
@@ -27,7 +27,7 @@ class ImageAdapter(
     ) {
     companion object {
         val sharedPool =
-            RecyclerView.RecycledViewPool().apply { this.setMaxRecycledViews(CONTENT, 10) }
+            newSharedPool { setMaxRecycledViews(CONTENT, 10) }
     }
 
     override fun onCreateContent(parent: ViewGroup): ViewHolderState<Any> {

@@ -233,7 +233,9 @@ object M3u8Helper2 {
             val ts = allTsLinks[index]
 
             val tsResponse = app.get(ts.url, headers = headers, verify = false)
-            val tsData = tsResponse.body.bytes()
+            val body = tsResponse.body
+            val tsData = body.bytes()
+            body.close()
             if (tsData.isEmpty()) throw ErrorLoadingException("no data")
 
             return if (isEncrypted) {
@@ -329,7 +331,9 @@ object M3u8Helper2 {
             encryptionIv = match[3].toByteArray()
             val encryptionKeyResponse =
                 app.get(encryptionUri, headers = playlistStream.headers, verify = false)
-            encryptionData = encryptionKeyResponse.body.bytes()
+            val body = encryptionKeyResponse.body
+            encryptionData = body.bytes()
+            body.close()
         } else {
             encryptionState = false
         }
