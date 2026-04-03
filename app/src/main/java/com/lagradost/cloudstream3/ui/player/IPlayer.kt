@@ -4,8 +4,8 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.util.Rational
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
-import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
 
 enum class PlayerEventType(val value: Int) {
     Pause(0),
@@ -86,13 +86,13 @@ data class ErrorEvent(
 
 /** Event when timestamps appear, null when it should disappear */
 data class TimestampInvokedEvent(
-    val timestamp: EpisodeSkip.SkipStamp,
+    val timestamp: VideoSkipStamp,
     override val source: PlayerEventSource = PlayerEventSource.Player,
 ) : PlayerEvent()
 
 /** Event for when a chapter is skipped, aka when event is handled (or for future use when skip automatically ads/sponsor) */
 data class TimestampSkippedEvent(
-    val timestamp: EpisodeSkip.SkipStamp,
+    val timestamp: VideoSkipStamp,
     override val source: PlayerEventSource = PlayerEventSource.Player,
 ) : PlayerEvent()
 
@@ -254,7 +254,7 @@ interface IPlayer {
     fun updateSubtitleStyle(style: SaveCaptionStyle)
     fun saveData()
 
-    fun addTimeStamps(timeStamps: List<EpisodeSkip.SkipStamp>)
+    fun addTimeStamps(timeStamps: List<VideoSkipStamp>)
 
     fun loadPlayer(
         context: Context,

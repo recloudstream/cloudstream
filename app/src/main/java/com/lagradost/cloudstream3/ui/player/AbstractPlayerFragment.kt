@@ -54,10 +54,10 @@ import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.AppContextUtils
 import com.lagradost.cloudstream3.utils.AppContextUtils.requestLocalAudioFocus
 import com.lagradost.cloudstream3.utils.DataStoreHelper
-import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
+import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
 import java.net.SocketTimeoutException
 
 enum class PlayerResize(@StringRes val nameRes: Int) {
@@ -127,11 +127,11 @@ abstract class AbstractPlayerFragment(
         throw NotImplementedError()
     }
 
-    open fun onTimestamp(timestamp: EpisodeSkip.SkipStamp?) {
+    open fun onTimestamp(timestamp: VideoSkipStamp?) {
 
     }
 
-    open fun onTimestampSkipped(timestamp: EpisodeSkip.SkipStamp) {
+    open fun onTimestampSkipped(timestamp: VideoSkipStamp) {
 
     }
 
