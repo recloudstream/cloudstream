@@ -23,7 +23,6 @@ package com.lagradost.cloudstream3.ui.player
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.os.Build
 import android.text.Layout.Alignment
 import android.text.StaticLayout
 import android.text.TextPaint
@@ -60,25 +59,12 @@ class RoundedBackgroundColorSpan(
         }
 
         val width = p.measureText(text, start, end)
-        val textLayout: StaticLayout = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            StaticLayout.Builder
-                .obtain(text, 0, text.length, TextPaint(p), width.toInt())
-                .setAlignment(alignment)
-                .setLineSpacing(0.0f, 1.0f)
-                .setIncludePad(true)
-                .build()
-        } else {
-            @Suppress("DEPRECATION")
-            StaticLayout(
-                text,
-                TextPaint(p),
-                width.toInt(),
-                alignment,
-                1.0f,
-                0.0f,
-                true
-            )
-        }
+        val textLayout: StaticLayout = StaticLayout.Builder
+            .obtain(text, 0, text.length, TextPaint(p), width.toInt())
+            .setAlignment(alignment)
+            .setLineSpacing(0.0f, 1.0f)
+            .setIncludePad(true)
+            .build()
 
         val center = (left + right).toFloat() * 0.5f
 

@@ -593,7 +593,7 @@
         <item name="android:windowIsFloating">false</item>
         <item name="android:navigationBarColor">?attr/primaryBlackBackground</item>
         <item name="android:statusBarColor">?attr/primaryBlackBackground</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">?attr/isLightTheme</item>
+        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
     </style>
 
     <style name="DialogHalfFullscreen" parent="AlertDialogCustom">

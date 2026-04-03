@@ -639,15 +639,10 @@ object AppContextUtils {
     fun Context.isNetworkAvailable(): Boolean {
         val connectivityManager =
             getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val network = connectivityManager.activeNetwork ?: return false
-            val networkCapabilities =
-                connectivityManager.getNetworkCapabilities(network) ?: return false
-            networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-        } else {
-            @Suppress("DEPRECATION")
-            connectivityManager.activeNetworkInfo?.isConnected == true
-        }
+        val network = connectivityManager.activeNetwork ?: return false
+        val networkCapabilities =
+            connectivityManager.getNetworkCapabilities(network) ?: return false
+        return networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
     fun splitQuery(url: URL): Map<String, String> {
@@ -864,15 +859,10 @@ object AppContextUtils {
 
     fun Context.isUsingMobileData(): Boolean {
         val connectionManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val activeNetwork: Network? = connectionManager.activeNetwork
-            val networkCapabilities = connectionManager.getNetworkCapabilities(activeNetwork)
-            networkCapabilities?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) == true &&
-                    !networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-        } else {
-            @Suppress("DEPRECATION")
-            connectionManager.activeNetworkInfo?.type == ConnectivityManager.TYPE_MOBILE
-        }
+        val activeNetwork: Network? = connectionManager.activeNetwork
+        val networkCapabilities = connectionManager.getNetworkCapabilities(activeNetwork)
+        return networkCapabilities?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) == true &&
+            !networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
     }
 
 

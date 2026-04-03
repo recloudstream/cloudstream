@@ -263,9 +263,8 @@ class GeneratorPlayer : FullScreenPlayer() {
     ): PendingIntent {
         val intent: Intent = Intent(action).setPackage(context.packageName)
         intent.putExtra(EXTRA_INSTANCE_ID, instanceId)
-        val pendingFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        } else PendingIntent.FLAG_UPDATE_CURRENT
+        val pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT or
+            PendingIntent.FLAG_IMMUTABLE
 
         return PendingIntent.getBroadcast(context, instanceId, intent, pendingFlags)
     }

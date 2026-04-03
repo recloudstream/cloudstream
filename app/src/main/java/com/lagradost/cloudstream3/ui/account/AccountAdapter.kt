@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.ui.account
 
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -62,12 +61,10 @@ class AccountAdapter(
                         root.requestFocus()
                     }
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        root.foreground = ContextCompat.getDrawable(
-                            root.context,
-                            R.drawable.outline_drawable
-                        )
-                    }
+                    root.foreground = ContextCompat.getDrawable(
+                        root.context,
+                        R.drawable.outline_drawable
+                    )
                 } else {
                     root.setOnLongClickListener {
                         showAccountEditDialog(
@@ -114,12 +111,10 @@ class AccountAdapter(
                         root.requestFocus()
                     }
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        root.foreground = ContextCompat.getDrawable(
-                            root.context,
-                            R.drawable.outline_drawable
-                        )
-                    }
+                    root.foreground = ContextCompat.getDrawable(
+                        root.context,
+                        R.drawable.outline_drawable
+                    )
                 }
 
                 root.setOnClickListener {

@@ -2642,10 +2642,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 return@setOnTouchListener handleMotionEvent(callView, event)
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                playerControlsScroll.setOnScrollChangeListener { _, _, _, _, _ ->
-                    autoHide()
-                }
+            playerControlsScroll.setOnScrollChangeListener { _, _, _, _, _ ->
+                autoHide()
             }
 
             exoProgress.setOnTouchListener { _, event ->

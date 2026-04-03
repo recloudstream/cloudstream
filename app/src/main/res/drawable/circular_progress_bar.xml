@@ -6,7 +6,7 @@
             android:innerRadiusRatio="2.5"
             android:shape="ring"
             android:thickness="2dp"
-            android:useLevel="true"><!-- this line fixes the issue for lollipop api 21 -->
+            android:useLevel="true">
 
         <gradient
                 android:angle="0"

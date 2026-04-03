@@ -8,7 +8,7 @@
         android:shape="ring"
         android:innerRadius="0dp"
         android:thicknessRatio="2.65"
-        android:useLevel="true"><!-- this line fixes the issue for lollipop api 21 -->
+        android:useLevel="true">
         <solid android:color="?attr/download_fill_color" tools:color="#FFF" />
     </shape>
 </rotate>

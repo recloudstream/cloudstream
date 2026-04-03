@@ -1,13 +1,11 @@
 package com.lagradost.cloudstream3.ui.library
 
-import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.doOnAttach
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView.OnFlingListener
 import com.google.android.material.appbar.AppBarLayout
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.LibraryViewpagerPageBinding
@@ -94,31 +92,21 @@ class ViewpagerAdapter(
                 // scrollToPosition(0)
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
-                    val diff = scrollY - oldScrollY
-
-                    //Expand the top Appbar based on scroll direction up/down, simulate phone behavior
-                    if (isLayout(TV or EMULATOR)) {
-                        binding.root.rootView.findViewById<AppBarLayout>(R.id.search_bar)
-                            ?.apply {
-                                if (diff <= 0)
-                                    setExpanded(true)
-                                else
-                                    setExpanded(false)
-                            }
-                    }
-                    if (diff == 0) return@setOnScrollChangeListener
-
-                    scrollCallback.invoke(diff > 0)
+            setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+                val diff = scrollY - oldScrollY
+                // Expand the top Appbar based on scroll direction up/down, simulate phone behavior
+                if (isLayout(TV or EMULATOR)) {
+                    binding.root.rootView.findViewById<AppBarLayout>(R.id.search_bar)
+                        ?.apply {
+                            if (diff <= 0)
+                                setExpanded(true)
+                            else
+                                setExpanded(false)
+                        }
                 }
-            } else {
-                onFlingListener = object : OnFlingListener() {
-                    override fun onFling(velocityX: Int, velocityY: Int): Boolean {
-                        scrollCallback.invoke(velocityY > 0)
-                        return false
-                    }
-                }
+
+                if (diff == 0) return@setOnScrollChangeListener
+                scrollCallback.invoke(diff > 0)
             }
         }
     }
