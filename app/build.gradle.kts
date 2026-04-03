@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.dokka)
-    alias(libs.plugins.kotlin.android)
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
@@ -285,8 +284,10 @@ tasks.withType<KotlinJvmCompile> {
 dokka {
     moduleName = "App"
     dokkaSourceSets {
-        main {
+        configureEach {
+            suppress = name != "prereleaseDebug"
             analysisPlatform = KotlinPlatform.JVM
+            displayName = "JVM"
             documentedVisibilities(
                 VisibilityModifier.Public,
                 VisibilityModifier.Protected
