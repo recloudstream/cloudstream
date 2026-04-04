@@ -9,6 +9,8 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.Manifest
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Gravity
@@ -190,6 +192,16 @@ object CommonActivity {
                 binding.root // FIXME Find an alternative using default Toasts since custom toasts are deprecated and won't appear with api30 set as minSDK version.
             currentToast = toast
             toast.show()
+
+            val handler = Handler(Looper.getMainLooper())
+            val ref = WeakReference(toast)
+
+            /* Clean up activity leak */
+            handler.postDelayed({
+                if (ref.get() == currentToast) {
+                    currentToast = null
+                }
+            }, 10_000)
 
         } catch (e: Exception) {
             logError(e)

@@ -12,8 +12,6 @@ plugins {
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
-val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
-val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
 
 fun getGitCommitHash(): String {
     return try {
@@ -41,14 +39,27 @@ android {
         unitTests.isReturnDefaultValues = true
     }
 
+    // Looks like google likes to add metadata only they can read https://gitlab.com/IzzyOnDroid/repo/-/work_items/491
+    dependenciesInfo {
+        // Disables dependency metadata when building APKs.
+        includeInApk = false
+        // Disables dependency metadata when building Android App Bundles.
+        includeInBundle = false
+    }
+
     viewBinding {
         enable = true
     }
 
     signingConfigs {
-        if (prereleaseStoreFile != null) {
+        // We just use SIGNING_KEY_ALIAS here since it won't change
+        // so won't kill the configuration cache.
+        if (System.getenv("SIGNING_KEY_ALIAS") != null) {
             create("prerelease") {
-                storeFile = file(prereleaseStoreFile)
+                val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
+                val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
+
+                storeFile = prereleaseStoreFile?.let { file(it) }
                 storePassword = System.getenv("SIGNING_STORE_PASSWORD")
                 keyAlias = System.getenv("SIGNING_KEY_ALIAS")
                 keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
@@ -62,8 +73,8 @@ android {
         applicationId = "com.lagradost.cloudstream3"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 67
-        versionName = "4.6.2"
+        versionCode = 68
+        versionName = "4.7.0"
 
         resValue("string", "commit_hash", getGitCommitHash())
 

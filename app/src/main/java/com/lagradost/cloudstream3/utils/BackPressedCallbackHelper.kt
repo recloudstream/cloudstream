@@ -56,7 +56,7 @@ object BackPressedCallbackHelper {
     fun ComponentActivity.detachBackPressedCallback(id: String) {
         val callbackMap = backPressedCallbacks[this] ?: return
         callbackMap[id]?.let { callback ->
-            callback.isEnabled = false
+            callback.remove()
             callbackMap.remove(id)
         }
 
