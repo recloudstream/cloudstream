@@ -67,7 +67,6 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
         }
     }
 
-    @Suppress("DEPRECATION_ERROR")
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_updates, rootKey)
