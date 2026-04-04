@@ -45,7 +45,7 @@ torrentserver = "7861970e038b35cd8c6918384e49caf26903e09e"
 tvprovider = "1.1.0"
 video = "1.0.0"
 workRuntimeKtx = "2.11.1"
-zipline = "1.26.0"
+zipline = "1.27.0"
 
 jvmTarget = "1.8"
 jdkToolchain = "17"
