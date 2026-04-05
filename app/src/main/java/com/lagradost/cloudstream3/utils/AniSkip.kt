@@ -127,9 +127,8 @@ object EpisodeSkip {
                             val start = it.startMs ?: return@let null
                             val end = it.endMs ?: return@let null
                             SkipStamp(
-                                type = SkipType.Credits,
-                                skipToNextEpisode = hasNextEpisode &&
-                                        shouldSkipToNextEpisode(end, episodeDurationMs),
+                                type = SkipType.Ending,
+                                skipToNextEpisode = hasNextEpisode,
                                 startMs = start,
                                 endMs = end
                             )
