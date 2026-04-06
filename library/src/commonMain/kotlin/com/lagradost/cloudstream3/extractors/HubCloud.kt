@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.api.Log
-import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
@@ -12,7 +11,6 @@ import com.lagradost.cloudstream3.utils.loadExtractor
 import com.lagradost.cloudstream3.utils.newExtractorLink
 import java.net.URI
 
-@Prerelease
 class HubCloud : ExtractorApi() {
     override val name = "Hub-Cloud"
     override val mainUrl = "https://hubcloud.*"

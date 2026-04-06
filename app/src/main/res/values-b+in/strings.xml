@@ -764,4 +764,5 @@
     <string name="cancel_all">Batalkan semua</string>
     <string name="download_episode_range">Apakah kamu ingin mengunduh episode %s?</string>
     <string name="cancel_queue_message">Apakah kamu ingin membatalkan semua unduhan dalam antrean?</string>
+    <string name="show_player_metadata_overlay">Tampilkan overlay metadata pemutar</string>
 </resources>
