@@ -152,18 +152,11 @@ abstract class AbstractPlayerFragment(
         isPlaying: CSPlayerLoading
     ) {
         val isPlayingRightNow = CSPlayerLoading.IsPlaying == isPlaying
-        val isPausedRightNow = CSPlayerLoading.IsPaused == isPlaying
+        val isBuffering = CSPlayerLoading.IsBuffering == isPlaying
         currentPlayerStatus = isPlaying
 
-        val shouldKeepScreenOn = when (isPlaying) {
-            CSPlayerLoading.IsPlaying,
-            CSPlayerLoading.IsBuffering -> true
-            else -> false
-        }
+        keepScreenOn(isPlayingRightNow || isBuffering)
 
-        keepScreenOn(shouldKeepScreenOn)
-
-        val isBuffering = CSPlayerLoading.IsBuffering == isPlaying
         if (isBuffering) {
             playerPausePlayHolderHolder?.isVisible = false
             playerBuffering?.isVisible = true
