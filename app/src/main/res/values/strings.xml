@@ -394,6 +394,8 @@
     <string name="tv_mode_loop_settings_desc">When playback ends, automatically start another random title</string>
     <string name="tv_mode_continue_watching_settings">Show TV mode in Continue Watching</string>
     <string name="tv_mode_continue_watching_settings_desc">Save TV mode playback to Continue Watching like normal viewing</string>
+    <string name="tv_mode_auto_start_settings">Start TV Mode automatically when app starts</string>
+    <string name="tv_mode_auto_start_settings_desc">Automatically launch TV Mode when the app opens and Homepage content is ready</string>
     <string name="tv_mode_stall_protection_settings">TV mode stall protection</string>
     <string name="tv_mode_stall_protection_settings_desc">Skip stuck content automatically while TV mode is active</string>
     <string name="tv_mode_retry_limit_settings">TV mode stall retries</string>

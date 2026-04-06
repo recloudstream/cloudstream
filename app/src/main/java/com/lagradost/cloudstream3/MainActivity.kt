@@ -161,6 +161,7 @@ import com.lagradost.cloudstream3.utils.InAppUpdater.runAutoUpdate
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SnackbarHelper.showSnackbar
 import com.lagradost.cloudstream3.utils.TvChannelUtils
+import com.lagradost.cloudstream3.utils.TvModeHelper
 import com.lagradost.cloudstream3.utils.UIHelper.changeStatusBarState
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -1175,6 +1176,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        TvModeHelper.resetAutoStartOnAppLaunch(this)
 
         setLastError(this)
 

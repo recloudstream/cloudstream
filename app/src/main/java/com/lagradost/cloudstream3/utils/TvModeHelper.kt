@@ -39,6 +39,14 @@ object TvModeHelper {
         UNSUPPORTED,
     }
 
+    private enum class AnimeDubSelectionMode {
+        DUBBED_ONLY,
+        SUBBED_ONLY,
+        SUBBED_OR_NONE,
+        EXPLICIT_ONLY,
+        ANY,
+    }
+
     enum class TvModeContentMode(val value: Int, @StringRes val labelRes: Int) {
         SERIES_ONLY(0, R.string.tv_mode_content_series_only),
         MOVIES_ONLY(1, R.string.tv_mode_content_movies_only),
@@ -135,6 +143,7 @@ object TvModeHelper {
 
     private var currentSession: TvModeSession? = null
     private var cachedHomepageCandidates: List<SearchResponse> = emptyList()
+    private var autoStartPending = false
 
     fun hasSession(): Boolean {
         return currentSession != null
@@ -142,6 +151,33 @@ object TvModeHelper {
 
     fun isEnabled(context: Context): Boolean {
         return getHomeQuickActionMode(context) == HomeQuickActionMode.TV_MODE
+    }
+
+    fun shouldAutoStartOnAppLaunch(context: Context): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+            context.getString(R.string.tv_mode_auto_start_key),
+            false
+        )
+    }
+
+    fun resetAutoStartOnAppLaunch(context: Context) {
+        autoStartPending = shouldAutoStartOnAppLaunch(context) && isEnabled(context)
+    }
+
+    @Synchronized
+    fun maybeAutoStartFromHome(activity: Activity?, candidates: List<SearchResponse>): Boolean {
+        val validActivity = activity ?: return false
+        if (!autoStartPending) return false
+        if (candidates.isEmpty()) return false
+
+        val canAutoStart = shouldAutoStartOnAppLaunch(validActivity) && isEnabled(validActivity)
+        if (!canAutoStart) {
+            autoStartPending = false
+            return false
+        }
+
+        autoStartPending = false
+        return startFromHome(validActivity, candidates)
     }
 
     fun shouldForceContinuousPlayback(context: Context): Boolean {
@@ -228,6 +264,61 @@ object TvModeHelper {
         val allowed = getAllowedAnimeDubStatuses(context, normalized)
         if (allowed.isEmpty()) return null
 
+        return pickAnimeDubStatus(normalized, allowed)
+    }
+
+    fun getAllowedAnimeDubStatuses(
+        context: Context,
+        available: Collection<DubStatus>,
+    ): Set<DubStatus> {
+        val normalized = available.distinct()
+        if (normalized.isEmpty()) return emptySet()
+        val mode = resolveAnimeDubSelectionMode(context.getApiDubstatusSettings())
+
+        return when (mode) {
+            AnimeDubSelectionMode.DUBBED_ONLY -> normalized.filterStatuses { it == DubStatus.Dubbed }
+            AnimeDubSelectionMode.SUBBED_ONLY -> {
+                normalized.filterStatuses {
+                    it == DubStatus.Subbed || (!normalized.contains(DubStatus.Subbed) && it == DubStatus.None)
+                }
+            }
+
+            AnimeDubSelectionMode.SUBBED_OR_NONE -> {
+                normalized.filterStatuses { it == DubStatus.None || it == DubStatus.Subbed }
+            }
+
+            AnimeDubSelectionMode.EXPLICIT_ONLY -> {
+                val explicitStatuses = normalized.explicitAnimeStatuses()
+                if (explicitStatuses.isNotEmpty()) {
+                    explicitStatuses
+                } else {
+                    normalized.filterStatuses { it == DubStatus.None }
+                }
+            }
+
+            AnimeDubSelectionMode.ANY -> normalized.toSet()
+        }
+    }
+
+    private fun resolveAnimeDubSelectionMode(selected: Set<DubStatus>): AnimeDubSelectionMode {
+        val hasNone = selected.contains(DubStatus.None)
+        val hasDubbed = selected.contains(DubStatus.Dubbed)
+        val hasSubbed = selected.contains(DubStatus.Subbed)
+
+        return when {
+            hasDubbed && !hasSubbed -> AnimeDubSelectionMode.DUBBED_ONLY
+            !hasDubbed && hasSubbed && !hasNone -> AnimeDubSelectionMode.SUBBED_ONLY
+            !hasDubbed && hasSubbed && hasNone -> AnimeDubSelectionMode.SUBBED_OR_NONE
+            !hasDubbed && !hasSubbed && hasNone -> AnimeDubSelectionMode.EXPLICIT_ONLY
+            hasDubbed && hasSubbed -> AnimeDubSelectionMode.EXPLICIT_ONLY
+            else -> AnimeDubSelectionMode.ANY
+        }
+    }
+
+    private fun pickAnimeDubStatus(
+        normalized: List<DubStatus>,
+        allowed: Set<DubStatus>,
+    ): DubStatus? {
         return when {
             allowed.contains(DubStatus.None) &&
                 allowed.contains(DubStatus.Subbed) &&
@@ -252,65 +343,12 @@ object TvModeHelper {
         }
     }
 
-    fun getAllowedAnimeDubStatuses(
-        context: Context,
-        available: Collection<DubStatus>,
-    ): Set<DubStatus> {
-        val normalized = available.distinct()
-        if (normalized.isEmpty()) return emptySet()
+    private fun List<DubStatus>.explicitAnimeStatuses(): Set<DubStatus> {
+        return filterStatuses { it == DubStatus.Dubbed || it == DubStatus.Subbed }
+    }
 
-        val selected = context.getApiDubstatusSettings()
-        val hasNone = selected.contains(DubStatus.None)
-        val hasDubbed = selected.contains(DubStatus.Dubbed)
-        val hasSubbed = selected.contains(DubStatus.Subbed)
-
-        val hasAvailableDubbed = normalized.contains(DubStatus.Dubbed)
-        val hasAvailableSubbed = normalized.contains(DubStatus.Subbed)
-        val hasAvailableNone = normalized.contains(DubStatus.None)
-
-        return when {
-            hasDubbed && !hasSubbed -> {
-                normalized.filterTo(linkedSetOf()) { it == DubStatus.Dubbed }
-            }
-
-            !hasDubbed && hasSubbed && !hasNone -> {
-                normalized.filterTo(linkedSetOf()) {
-                    it == DubStatus.Subbed || (!hasAvailableSubbed && it == DubStatus.None)
-                }
-            }
-
-            !hasDubbed && hasSubbed && hasNone -> {
-                normalized.filterTo(linkedSetOf()) {
-                    it == DubStatus.None || it == DubStatus.Subbed
-                }
-            }
-
-            !hasDubbed && !hasSubbed && hasNone -> {
-                when {
-                    hasAvailableDubbed || hasAvailableSubbed -> {
-                        normalized.filterTo(linkedSetOf()) {
-                            it == DubStatus.Dubbed || it == DubStatus.Subbed
-                        }
-                    }
-
-                    else -> normalized.filterTo(linkedSetOf()) { it == DubStatus.None }
-                }
-            }
-
-            hasDubbed && hasSubbed -> {
-                when {
-                    hasAvailableDubbed || hasAvailableSubbed -> {
-                        normalized.filterTo(linkedSetOf()) {
-                            it == DubStatus.Dubbed || it == DubStatus.Subbed
-                        }
-                    }
-
-                    else -> normalized.filterTo(linkedSetOf()) { it == DubStatus.None }
-                }
-            }
-
-            else -> normalized.toSet()
-        }
+    private fun List<DubStatus>.filterStatuses(predicate: (DubStatus) -> Boolean): Set<DubStatus> {
+        return filterTo(linkedSetOf(), predicate)
     }
 
     @Synchronized

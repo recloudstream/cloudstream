@@ -434,6 +434,26 @@ class ResultViewModel2 : ViewModel() {
         UNSUPPORTED,
     }
 
+    private data class TvModePlaybackContext(
+        val response: LoadResponse,
+        val primaryUrl: String,
+        val fallbackUrl: String,
+        val isLocalSession: Boolean,
+        val contentKind: TvModeResolvedContent,
+    ) {
+        val hasSeriesContent: Boolean
+            get() = contentKind == TvModeResolvedContent.SERIES
+
+        val isMovie: Boolean
+            get() = contentKind == TvModeResolvedContent.MOVIE
+    }
+
+    private data class TvModeEpisodeSelection(
+        val indexer: EpisodeIndexer,
+        val episode: ResultEpisode,
+        val range: EpisodeRange?,
+    )
+
     private var currentResponse: LoadResponse? = null
     var EPISODE_RANGE_SIZE: Int = 20
     fun clear() {
@@ -2154,260 +2174,247 @@ class ResultViewModel2 : ViewModel() {
         updateFillers: Boolean
     ) {
         _episodes.postValue(Resource.Loading())
+        maybeUpdateEpisodeFillers(loadResponse, updateFillers)
 
+        val allEpisodes = buildEpisodeMap(loadResponse, mainId)
+        updateEpisodeSelectionState(loadResponse, allEpisodes)
+        applyInitialEpisodeSelection(loadResponse, allEpisodes)
+        postResume()
+    }
+
+    private suspend fun maybeUpdateEpisodeFillers(
+        loadResponse: LoadResponse,
+        updateFillers: Boolean,
+    ) {
         if (updateFillers && loadResponse is AnimeLoadResponse) {
             updateFillers(loadResponse.name)
         }
+    }
 
-        val allEpisodes = when (loadResponse) {
-            is AnimeLoadResponse -> {
-                val existingEpisodes = HashSet<Int>()
-                val episodes: MutableMap<EpisodeIndexer, MutableList<ResultEpisode>> =
-                    mutableMapOf()
-                loadResponse.episodes.map { ep ->
-                    val idIndex = ep.key.id
-                    for ((index, i) in ep.value.withIndex()) {
-                        val episode = i.episode ?: (index + 1)
-                        val id =
-                            mainId + episode + idIndex * 1_000_000 + (i.season?.times(10_000)
-                                ?: 0)
-
-                        val totalIndex =
-                            i.season?.let { season ->
-                                loadResponse.getTotalEpisodeIndex(
-                                    episode,
-                                    season
-                                )
-                            }
-
-                        if (!existingEpisodes.contains(id)) {
-                            existingEpisodes.add(id)
-                            val seasonData = loadResponse.seasonNames.getSeason(i.season)
-                            val eps =
-                                buildResultEpisode(
-                                    loadResponse.name,
-                                    filterName(i.name),
-                                    i.posterUrl,
-                                    episode,
-                                    i.season,
-                                    if (seasonData != null) seasonData.displaySeason else i.season,
-                                    i.data,
-                                    loadResponse.apiName,
-                                    id,
-                                    index,
-                                    i.score,
-                                    i.description,
-                                    fillers.getOrDefault(episode, false),
-                                    loadResponse.type,
-                                    mainId,
-                                    totalIndex,
-                                    airDate = i.date,
-                                    runTime = i.runTime,
-                                    seasonData = seasonData,
-                                )
-
-                            val season = eps.seasonIndex ?: 0
-                            val indexer = EpisodeIndexer(ep.key, season)
-                            episodes[indexer]?.add(eps) ?: run {
-                                episodes[indexer] = mutableListOf(eps)
-                            }
-                        }
-                    }
-                }
-                episodes
-            }
-
-            is TvSeriesLoadResponse -> {
-                val episodes: MutableMap<EpisodeIndexer, MutableList<ResultEpisode>> =
-                    mutableMapOf()
-                val existingEpisodes = HashSet<Int>()
-                for ((index, episode) in loadResponse.episodes.sortedBy {
-                    (it.season?.times(10_000) ?: 0) + (it.episode ?: 0)
-                }.withIndex()) {
-                    val episodeIndex = episode.episode ?: (index + 1)
-                    val id =
-                        mainId + (episode.season?.times(100_000) ?: 0) + episodeIndex + 1
-                    if (!existingEpisodes.contains(id)) {
-                        existingEpisodes.add(id)
-                        val seasonData =
-                            loadResponse.seasonNames.getSeason(episode.season)
-
-                        val totalIndex =
-                            episode.season?.let { season ->
-                                loadResponse.getTotalEpisodeIndex(
-                                    episodeIndex,
-                                    season
-                                )
-                            }
-
-                        val ep =
-                            buildResultEpisode(
-                                loadResponse.name,
-                                filterName(episode.name),
-                                episode.posterUrl,
-                                episodeIndex,
-                                episode.season,
-                                if (seasonData != null) seasonData.displaySeason else episode.season,
-                                episode.data,
-                                loadResponse.apiName,
-                                id,
-                                index,
-                                episode.score,
-                                episode.description,
-                                null,
-                                loadResponse.type,
-                                mainId,
-                                totalIndex,
-                                airDate = episode.date,
-                                runTime = episode.runTime,
-                                seasonData = seasonData,
-                            )
-
-                        val season = ep.seasonIndex ?: 0
-                        val indexer = EpisodeIndexer(DubStatus.None, season)
-
-                        episodes[indexer]?.add(ep) ?: kotlin.run {
-                            episodes[indexer] = mutableListOf(ep)
-                        }
-                    }
-                }
-                episodes
-            }
-
-            is MovieLoadResponse -> {
-                singleMap(
-                    buildResultEpisode(
-                        loadResponse.name,
-                        loadResponse.name,
-                        null,
-                        0,
-                        null,
-                        null,
-                        loadResponse.dataUrl,
-                        loadResponse.apiName,
-                        (mainId), // HAS SAME ID
-                        0,
-                        null,
-                        null,
-                        null,
-                        loadResponse.type,
-                        mainId,
-                        null,
-                    )
-                )
-            }
-
-            is LiveStreamLoadResponse -> {
-                singleMap(
-                    buildResultEpisode(
-                        loadResponse.name,
-                        loadResponse.name,
-                        null,
-                        0,
-                        null,
-                        null,
-                        loadResponse.dataUrl,
-                        loadResponse.apiName,
-                        (mainId), // HAS SAME ID
-                        0,
-                        null,
-                        null,
-                        null,
-                        loadResponse.type,
-                        mainId,
-                        null
-                    )
-                )
-            }
-
+    private fun buildEpisodeMap(
+        loadResponse: LoadResponse,
+        mainId: Int,
+    ): Map<EpisodeIndexer, List<ResultEpisode>> {
+        return when (loadResponse) {
+            is AnimeLoadResponse -> buildAnimeEpisodeMap(loadResponse, mainId)
+            is TvSeriesLoadResponse -> buildTvSeriesEpisodeMap(loadResponse, mainId)
+            is MovieLoadResponse -> buildSingleEntryEpisodeMap(loadResponse, mainId, loadResponse.dataUrl)
+            is LiveStreamLoadResponse -> buildSingleEntryEpisodeMap(loadResponse, mainId, loadResponse.dataUrl)
             is TorrentLoadResponse -> {
-                singleMap(
-                    buildResultEpisode(
-                        loadResponse.name,
-                        loadResponse.name,
-                        null,
-                        0,
-                        null,
-                        null,
-                        loadResponse.torrent ?: loadResponse.magnet ?: "",
-                        loadResponse.apiName,
-                        (mainId), // HAS SAME ID
-                        0,
-                        null,
-                        null,
-                        null,
-                        loadResponse.type,
-                        mainId,
-                        null
-                    )
+                buildSingleEntryEpisodeMap(
+                    loadResponse,
+                    mainId,
+                    loadResponse.torrent ?: loadResponse.magnet ?: ""
                 )
             }
 
-            else -> {
-                mapOf()
+            else -> emptyMap()
+        }
+    }
+
+    private fun buildAnimeEpisodeMap(
+        loadResponse: AnimeLoadResponse,
+        mainId: Int,
+    ): Map<EpisodeIndexer, List<ResultEpisode>> {
+        val existingEpisodes = HashSet<Int>()
+        val episodes = mutableMapOf<EpisodeIndexer, MutableList<ResultEpisode>>()
+
+        loadResponse.episodes.forEach { dubEntry ->
+            val dubStatus = dubEntry.key
+            val dubIndex = dubStatus.id
+
+            dubEntry.value.forEachIndexed { index, episodeEntry ->
+                val episode = episodeEntry.episode ?: (index + 1)
+                val id = mainId + episode + dubIndex * 1_000_000 + (episodeEntry.season?.times(10_000) ?: 0)
+                if (!existingEpisodes.add(id)) return@forEachIndexed
+
+                val seasonData = loadResponse.seasonNames.getSeason(episodeEntry.season)
+                val totalIndex = episodeEntry.season?.let { season ->
+                    loadResponse.getTotalEpisodeIndex(episode, season)
+                }
+                val resultEpisode = buildResultEpisode(
+                    loadResponse.name,
+                    filterName(episodeEntry.name),
+                    episodeEntry.posterUrl,
+                    episode,
+                    episodeEntry.season,
+                    seasonData?.displaySeason ?: episodeEntry.season,
+                    episodeEntry.data,
+                    loadResponse.apiName,
+                    id,
+                    index,
+                    episodeEntry.score,
+                    episodeEntry.description,
+                    fillers.getOrDefault(episode, false),
+                    loadResponse.type,
+                    mainId,
+                    totalIndex,
+                    airDate = episodeEntry.date,
+                    runTime = episodeEntry.runTime,
+                    seasonData = seasonData,
+                )
+
+                val indexer = EpisodeIndexer(dubStatus, resultEpisode.seasonIndex ?: 0)
+                episodes.getOrPut(indexer) { mutableListOf() }.add(resultEpisode)
             }
         }
 
-        val seasonsSelection = mutableSetOf<Int>()
-        val dubSelection = mutableSetOf<DubStatus>()
-        allEpisodes.keys.forEach { key ->
-            seasonsSelection += key.season
-            dubSelection += key.dubStatus
-        }
-        currentDubStatus = dubSelection.toList()
-        currentSeasons = seasonsSelection.toList()
-        _dubSubSelections.postValue(dubSelection.map { txt(it) to it })
-        if (loadResponse is EpisodeResponse) {
-            _seasonSelections.postValue(seasonsSelection.map { seasonNumber ->
-                loadResponse.seasonNames.getSeasonTxt(seasonNumber) to seasonNumber
-            })
-        }
+        return episodes
+    }
 
+    private fun buildTvSeriesEpisodeMap(
+        loadResponse: TvSeriesLoadResponse,
+        mainId: Int,
+    ): Map<EpisodeIndexer, List<ResultEpisode>> {
+        val existingEpisodes = HashSet<Int>()
+        val episodes = mutableMapOf<EpisodeIndexer, MutableList<ResultEpisode>>()
+
+        loadResponse.episodes
+            .sortedBy { (it.season?.times(10_000) ?: 0) + (it.episode ?: 0) }
+            .forEachIndexed { index, episodeEntry ->
+                val episode = episodeEntry.episode ?: (index + 1)
+                val id = mainId + (episodeEntry.season?.times(100_000) ?: 0) + episode + 1
+                if (!existingEpisodes.add(id)) return@forEachIndexed
+
+                val seasonData = loadResponse.seasonNames.getSeason(episodeEntry.season)
+                val totalIndex = episodeEntry.season?.let { season ->
+                    loadResponse.getTotalEpisodeIndex(episode, season)
+                }
+                val resultEpisode = buildResultEpisode(
+                    loadResponse.name,
+                    filterName(episodeEntry.name),
+                    episodeEntry.posterUrl,
+                    episode,
+                    episodeEntry.season,
+                    seasonData?.displaySeason ?: episodeEntry.season,
+                    episodeEntry.data,
+                    loadResponse.apiName,
+                    id,
+                    index,
+                    episodeEntry.score,
+                    episodeEntry.description,
+                    null,
+                    loadResponse.type,
+                    mainId,
+                    totalIndex,
+                    airDate = episodeEntry.date,
+                    runTime = episodeEntry.runTime,
+                    seasonData = seasonData,
+                )
+
+                val indexer = EpisodeIndexer(DubStatus.None, resultEpisode.seasonIndex ?: 0)
+                episodes.getOrPut(indexer) { mutableListOf() }.add(resultEpisode)
+            }
+
+        return episodes
+    }
+
+    private fun buildSingleEntryEpisodeMap(
+        loadResponse: LoadResponse,
+        mainId: Int,
+        dataUrl: String,
+    ): Map<EpisodeIndexer, List<ResultEpisode>> {
+        return singleMap(
+            buildResultEpisode(
+                loadResponse.name,
+                loadResponse.name,
+                null,
+                0,
+                null,
+                null,
+                dataUrl,
+                loadResponse.apiName,
+                mainId,
+                0,
+                null,
+                null,
+                null,
+                loadResponse.type,
+                mainId,
+                null,
+            )
+        )
+    }
+
+    private fun updateEpisodeSelectionState(
+        loadResponse: LoadResponse,
+        allEpisodes: Map<EpisodeIndexer, List<ResultEpisode>>,
+    ) {
+        val seasonsSelection = allEpisodes.keys.map { it.season }.distinct()
+        val dubSelection = allEpisodes.keys.map { it.dubStatus }.distinct()
+
+        currentDubStatus = dubSelection
+        currentSeasons = seasonsSelection
+        _dubSubSelections.postValue(dubSelection.map { txt(it) to it })
+
+        if (loadResponse is EpisodeResponse) {
+            _seasonSelections.postValue(
+                seasonsSelection.map { seasonNumber ->
+                    loadResponse.seasonNames.getSeasonTxt(seasonNumber) to seasonNumber
+                }
+            )
+        }
+    }
+
+    private fun applyInitialEpisodeSelection(
+        loadResponse: LoadResponse,
+        allEpisodes: Map<EpisodeIndexer, List<ResultEpisode>>,
+    ) {
         currentEpisodes = allEpisodes
         val ranges = getRanges(allEpisodes, EPISODE_RANGE_SIZE)
         currentRanges = ranges
 
+        val candidateKeys = getInitialEpisodeCandidateKeys(loadResponse, ranges)
+        val selection = pickInitialEpisodeSelection(ranges, candidateKeys)
 
+        if (selection != null) {
+            postEpisodeRange(selection.first, selection.second, DataStoreHelper.resultsSortingMode)
+        } else {
+            clearEpisodeSelection()
+        }
+    }
+
+    private fun getInitialEpisodeCandidateKeys(
+        loadResponse: LoadResponse,
+        ranges: Map<EpisodeIndexer, List<EpisodeRange>>,
+    ): List<EpisodeIndexer> {
         val primaryUrl = loadResponse.uniqueUrl.ifBlank { loadResponse.url }
         val fallbackUrl = loadResponse.url
         val isGlobalTvModeAnimeLoad =
             pendingTvModeStart &&
                 loadResponse is AnimeLoadResponse &&
                 !TvModeHelper.isLocalSession(primaryUrl, fallbackUrl)
-        val allowedTvModeDubStatuses = if (isGlobalTvModeAnimeLoad) {
-            context?.let { TvModeHelper.getAllowedAnimeDubStatuses(it, currentDubStatus) }
-                ?: emptySet()
-        } else {
-            emptySet()
-        }
-        val candidateKeys = when {
-            allowedTvModeDubStatuses.isNotEmpty() -> {
-                ranges.keys.filter { index -> allowedTvModeDubStatuses.contains(index.dubStatus) }
-            }
 
-            isGlobalTvModeAnimeLoad -> emptyList()
-            else -> ranges.keys.toList()
+        if (!isGlobalTvModeAnimeLoad) {
+            return ranges.keys.toList()
         }
 
-        // this takes the indexer most preferable by the user given the current sorting
-        val min = candidateKeys.minByOrNull { index ->
-            kotlin.math.abs(
-                index.season - (preferStartSeason ?: 1)
-            ) + if (index.dubStatus == preferDubStatus) 0 else 100000
+        val allowedDubStatuses = context?.let {
+            TvModeHelper.getAllowedAnimeDubStatuses(it, currentDubStatus)
+        } ?: emptySet()
+
+        if (allowedDubStatuses.isEmpty()) {
+            return emptyList()
         }
 
-        // this takes the range most preferable by the user given the current sorting
-        val ranger = ranges[min]
-        val range = ranger?.firstOrNull {
-            it.startEpisode >= (preferStartEpisode ?: 0)
-        } ?: ranger?.lastOrNull()
+        return ranges.keys.filter { index -> allowedDubStatuses.contains(index.dubStatus) }
+    }
 
-        if (min != null && range != null) {
-            postEpisodeRange(min, range, DataStoreHelper.resultsSortingMode)
-        } else {
-            clearEpisodeSelection()
-        }
-        postResume()
+    private fun pickInitialEpisodeSelection(
+        ranges: Map<EpisodeIndexer, List<EpisodeRange>>,
+        candidateKeys: List<EpisodeIndexer>,
+    ): Pair<EpisodeIndexer, EpisodeRange>? {
+        val preferredIndexer = candidateKeys.minByOrNull { index ->
+            kotlin.math.abs(index.season - (preferStartSeason ?: 1)) +
+                if (index.dubStatus == preferDubStatus) 0 else 100000
+        } ?: return null
+
+        val preferredRange = ranges[preferredIndexer]
+            ?.firstOrNull { it.startEpisode >= (preferStartEpisode ?: 0) }
+            ?: ranges[preferredIndexer]?.lastOrNull()
+            ?: return null
+
+        return preferredIndexer to preferredRange
     }
 
     private fun postResume() {
@@ -2571,125 +2578,194 @@ class ResultViewModel2 : ViewModel() {
     }
 
     private fun tryStartTvModePlayback(activity: Activity) {
-        val response = currentResponse ?: run {
+        val playbackContext = createTvModePlaybackContext() ?: run {
             TvModeHelper.playNextFromSession(activity, replaceExisting = true)
             return
         }
-        val primaryUrl = response.uniqueUrl.ifBlank { response.url }
-        val fallbackUrl = response.url
-        val isLocalSession = TvModeHelper.isLocalSession(primaryUrl, fallbackUrl)
-        val contentKind = resolveTvModeContent()
-        val hasSeriesContent = contentKind == TvModeResolvedContent.SERIES
-        val isMovie = contentKind == TvModeResolvedContent.MOVIE
 
-        if (!TvModeHelper.acceptsLoadedContent(
+        if (!acceptsTvModePlayback(activity, playbackContext)) {
+            handleUnavailableTvModePlayback(activity, playbackContext)
+            return
+        }
+
+        if (playbackContext.isMovie && !playbackContext.isLocalSession) {
+            startTvModeMoviePlayback(activity, playbackContext)
+            return
+        }
+
+        if (!playbackContext.hasSeriesContent) {
+            handleUnavailableTvModePlayback(activity, playbackContext)
+            return
+        }
+
+        val selection = pickTvModeEpisodeSelection(activity, playbackContext) ?: run {
+            handleUnavailableTvModePlayback(activity, playbackContext)
+            return
+        }
+        if (selection.range == null) {
+            continueTvModePlayback(
                 activity,
-                isMovie,
-                hasSeriesContent,
-                primaryUrl,
-                fallbackUrl
-            )
-        ) {
-            if (isLocalSession) {
-                stopTvModePlayback(activity)
-            } else {
-                continueTvModePlayback(activity, primaryUrl, fallbackUrl)
-            }
-            return
-        }
-
-        if (isMovie && !isLocalSession) {
-            val movie = getMovie() ?: run {
-                continueTvModePlayback(activity, primaryUrl, fallbackUrl)
-                return
-            }
-            TvModeHelper.markPlaybackManaged(primaryUrl, movie.id, fallbackUrl)
-            handleAction(
-                EpisodeClickEvent(
-                    getPlayerAction(activity),
-                    movie
-                )
+                playbackContext.primaryUrl,
+                playbackContext.fallbackUrl,
+                selection.episode.id
             )
             return
         }
 
-        if (!hasSeriesContent) {
-            if (isLocalSession) {
-                stopTvModePlayback(activity)
-            } else {
-                continueTvModePlayback(activity, primaryUrl, fallbackUrl)
-            }
-            return
-        }
-
-        val seasonFilter = TvModeHelper.getLocalSeasonFilter(primaryUrl, fallbackUrl)
-        val availableEntries = currentEpisodes.entries.filter { entry ->
-            entry.value.isNotEmpty() && (seasonFilter == null || entry.key.season == seasonFilter)
-        }
-        if (availableEntries.isEmpty()) {
-            if (isLocalSession) {
-                stopTvModePlayback(activity)
-            } else {
-                continueTvModePlayback(activity, primaryUrl, fallbackUrl)
-            }
-            return
-        }
-
-        val filteredEntries = if (response is AnimeLoadResponse) {
-            val allowedDubStatuses = TvModeHelper.getAllowedAnimeDubStatuses(
-                activity,
-                availableEntries.map { it.key.dubStatus }
-            )
-            availableEntries.filter { entry -> allowedDubStatuses.contains(entry.key.dubStatus) }
-        } else {
-            availableEntries
-        }
-        if (filteredEntries.isEmpty()) {
-            if (isLocalSession) {
-                stopTvModePlayback(activity)
-            } else {
-                continueTvModePlayback(activity, primaryUrl, fallbackUrl)
-            }
-            return
-        }
-        val candidateEpisodes = filteredEntries
-            .flatMap { (indexer, episodes) -> episodes.map { episode -> indexer to episode } }
-        val rejectedEpisodeIds = TvModeHelper.getRejectedEpisodeIds(primaryUrl, fallbackUrl)
-        val playableEpisodes = candidateEpisodes
-            .filterNot { (_, episode) -> rejectedEpisodeIds.contains(episode.id) }
-        if (playableEpisodes.isEmpty()) {
-            stopTvModePlayback(activity)
-            return
-        }
-
-        val recentEpisodeIds = TvModeHelper.getRecentEpisodeIds(primaryUrl, fallbackUrl)
-        val randomEpisode = playableEpisodes
-            .filterNot { (_, episode) -> recentEpisodeIds.contains(episode.id) }
-            .ifEmpty { playableEpisodes }
-            .randomOrNull()
-            ?: run {
-                stopTvModePlayback(activity)
-                return
-            }
-
-        val (indexer, episode) = randomEpisode
-        val targetRange = currentRanges[indexer]?.firstOrNull { range ->
-            episode.episode in range.startEpisode..range.endEpisode
-        } ?: currentRanges[indexer]?.lastOrNull()
-
-        if (targetRange == null) {
-            continueTvModePlayback(activity, primaryUrl, fallbackUrl, episode.id)
-            return
-        }
-
-        postEpisodeRange(indexer, targetRange, currentSorting ?: DataStoreHelper.resultsSortingMode)
-        TvModeHelper.markPlaybackManaged(primaryUrl, episode.id, fallbackUrl)
+        postEpisodeRange(
+            selection.indexer,
+            selection.range,
+            currentSorting ?: DataStoreHelper.resultsSortingMode
+        )
+        TvModeHelper.markPlaybackManaged(
+            playbackContext.primaryUrl,
+            selection.episode.id,
+            playbackContext.fallbackUrl
+        )
         handleAction(
             EpisodeClickEvent(
                 getPlayerAction(activity),
-                episode
+                selection.episode
             )
         )
+    }
+
+    private fun createTvModePlaybackContext(): TvModePlaybackContext? {
+        val response = currentResponse ?: return null
+        val primaryUrl = response.uniqueUrl.ifBlank { response.url }
+        val fallbackUrl = response.url
+        return TvModePlaybackContext(
+            response = response,
+            primaryUrl = primaryUrl,
+            fallbackUrl = fallbackUrl,
+            isLocalSession = TvModeHelper.isLocalSession(primaryUrl, fallbackUrl),
+            contentKind = resolveTvModeContent(),
+        )
+    }
+
+    private fun acceptsTvModePlayback(
+        activity: Activity,
+        playbackContext: TvModePlaybackContext,
+    ): Boolean {
+        return TvModeHelper.acceptsLoadedContent(
+            activity,
+            playbackContext.isMovie,
+            playbackContext.hasSeriesContent,
+            playbackContext.primaryUrl,
+            playbackContext.fallbackUrl
+        )
+    }
+
+    private fun handleUnavailableTvModePlayback(
+        activity: Activity,
+        playbackContext: TvModePlaybackContext,
+    ) {
+        if (playbackContext.isLocalSession) {
+            stopTvModePlayback(activity)
+        } else {
+            continueTvModePlayback(
+                activity,
+                playbackContext.primaryUrl,
+                playbackContext.fallbackUrl
+            )
+        }
+    }
+
+    private fun startTvModeMoviePlayback(
+        activity: Activity,
+        playbackContext: TvModePlaybackContext,
+    ) {
+        val movie = getMovie() ?: run {
+            continueTvModePlayback(activity, playbackContext.primaryUrl, playbackContext.fallbackUrl)
+            return
+        }
+        TvModeHelper.markPlaybackManaged(playbackContext.primaryUrl, movie.id, playbackContext.fallbackUrl)
+        handleAction(
+            EpisodeClickEvent(
+                getPlayerAction(activity),
+                movie
+            )
+        )
+    }
+
+    private fun pickTvModeEpisodeSelection(
+        activity: Activity,
+        playbackContext: TvModePlaybackContext,
+    ): TvModeEpisodeSelection? {
+        val availableEntries = getTvModeAvailableEntries(playbackContext)
+        if (availableEntries.isEmpty()) return null
+
+        val filteredEntries = filterTvModeEntriesForPlayback(activity, playbackContext, availableEntries)
+        if (filteredEntries.isEmpty()) return null
+
+        val playableEpisodes = getPlayableTvModeEpisodes(playbackContext, filteredEntries)
+        if (playableEpisodes.isEmpty()) return null
+
+        val randomEpisode = getPreferredTvModeEpisode(playbackContext, playableEpisodes) ?: return null
+        val range = currentRanges[randomEpisode.first]?.firstOrNull { candidateRange ->
+            randomEpisode.second.episode in candidateRange.startEpisode..candidateRange.endEpisode
+        } ?: currentRanges[randomEpisode.first]?.lastOrNull()
+
+        return TvModeEpisodeSelection(
+            indexer = randomEpisode.first,
+            episode = randomEpisode.second,
+            range = range,
+        )
+    }
+
+    private fun getTvModeAvailableEntries(
+        playbackContext: TvModePlaybackContext,
+    ): List<Map.Entry<EpisodeIndexer, List<ResultEpisode>>> {
+        val seasonFilter = TvModeHelper.getLocalSeasonFilter(
+            playbackContext.primaryUrl,
+            playbackContext.fallbackUrl
+        )
+        return currentEpisodes.entries.filter { entry ->
+            entry.value.isNotEmpty() && (seasonFilter == null || entry.key.season == seasonFilter)
+        }
+    }
+
+    private fun filterTvModeEntriesForPlayback(
+        activity: Activity,
+        playbackContext: TvModePlaybackContext,
+        availableEntries: List<Map.Entry<EpisodeIndexer, List<ResultEpisode>>>,
+    ): List<Map.Entry<EpisodeIndexer, List<ResultEpisode>>> {
+        if (playbackContext.response !is AnimeLoadResponse) {
+            return availableEntries
+        }
+
+        val allowedDubStatuses = TvModeHelper.getAllowedAnimeDubStatuses(
+            activity,
+            availableEntries.map { it.key.dubStatus }
+        )
+        return availableEntries.filter { entry -> allowedDubStatuses.contains(entry.key.dubStatus) }
+    }
+
+    private fun getPlayableTvModeEpisodes(
+        playbackContext: TvModePlaybackContext,
+        filteredEntries: List<Map.Entry<EpisodeIndexer, List<ResultEpisode>>>,
+    ): List<Pair<EpisodeIndexer, ResultEpisode>> {
+        val rejectedEpisodeIds = TvModeHelper.getRejectedEpisodeIds(
+            playbackContext.primaryUrl,
+            playbackContext.fallbackUrl
+        )
+        return filteredEntries
+            .flatMap { (indexer, episodes) -> episodes.map { episode -> indexer to episode } }
+            .filterNot { (_, episode) -> rejectedEpisodeIds.contains(episode.id) }
+    }
+
+    private fun getPreferredTvModeEpisode(
+        playbackContext: TvModePlaybackContext,
+        playableEpisodes: List<Pair<EpisodeIndexer, ResultEpisode>>,
+    ): Pair<EpisodeIndexer, ResultEpisode>? {
+        val recentEpisodeIds = TvModeHelper.getRecentEpisodeIds(
+            playbackContext.primaryUrl,
+            playbackContext.fallbackUrl
+        )
+        return playableEpisodes
+            .filterNot { (_, episode) -> recentEpisodeIds.contains(episode.id) }
+            .ifEmpty { playableEpisodes }
+            .randomOrNull()
     }
 
     private fun handleAutoStart(activity: Activity?, autostart: AutoResume?) =

@@ -32,6 +32,13 @@
 
     <SwitchPreference
         android:defaultValue="false"
+        android:icon="@drawable/ic_baseline_play_arrow_24"
+        android:key="@string/tv_mode_auto_start_key"
+        android:summary="@string/tv_mode_auto_start_settings_desc"
+        android:title="@string/tv_mode_auto_start_settings" />
+
+    <SwitchPreference
+        android:defaultValue="false"
         android:icon="@drawable/ic_baseline_autorenew_24"
         android:key="@string/tv_mode_stall_protection_key"
         android:summary="@string/tv_mode_stall_protection_settings_desc"

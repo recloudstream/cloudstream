@@ -645,6 +645,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         binding.homeRandomButtonTv.setOnClickListener(randomClickListener)
         binding.homeTvMode.setOnClickListener(tvModeClickListener)
         binding.homeTvModeButtonTv.setOnClickListener(tvModeClickListener)
+        TvModeHelper.maybeAutoStartFromHome(activity, latestHomepageCards)
 
         if (!isPhoneLayout) {
             val previewRightFocus = when {
