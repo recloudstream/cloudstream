@@ -152,12 +152,11 @@ abstract class AbstractPlayerFragment(
         isPlaying: CSPlayerLoading
     ) {
         val isPlayingRightNow = CSPlayerLoading.IsPlaying == isPlaying
-        val isPausedRightNow = CSPlayerLoading.IsPaused == isPlaying
+        val isBuffering = CSPlayerLoading.IsBuffering == isPlaying
         currentPlayerStatus = isPlaying
 
-        keepScreenOn(!isPausedRightNow)
+        keepScreenOn(isPlayingRightNow || isBuffering)
 
-        val isBuffering = CSPlayerLoading.IsBuffering == isPlaying
         if (isBuffering) {
             playerPausePlayHolderHolder?.isVisible = false
             playerBuffering?.isVisible = true
@@ -165,7 +164,7 @@ abstract class AbstractPlayerFragment(
             playerPausePlayHolderHolder?.isVisible = true
             playerBuffering?.isVisible = false
 
-            if(isPlaying == CSPlayerLoading.IsEnded && isLayout(PHONE)){
+            if (isPlaying == CSPlayerLoading.IsEnded && isLayout(PHONE)) {
                 playerPausePlay?.setImageResource(R.drawable.ic_baseline_replay_24)
             } else if (wasPlaying != isPlaying) {
                 playerPausePlay?.setImageResource(if (isPlayingRightNow) R.drawable.play_to_pause else R.drawable.pause_to_play)
