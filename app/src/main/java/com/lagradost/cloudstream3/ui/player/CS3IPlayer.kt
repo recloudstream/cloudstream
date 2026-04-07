@@ -42,6 +42,7 @@ import androidx.media3.datasource.cronet.CronetDataSource
 import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.DecoderCounters
 import androidx.media3.exoplayer.DecoderReuseEvaluation
+import androidx.media3.exoplayer.DefaultLivePlaybackSpeedControl
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
@@ -54,6 +55,7 @@ import androidx.media3.exoplayer.drm.DefaultDrmSessionManager
 import androidx.media3.exoplayer.drm.FrameworkMediaDrm
 import androidx.media3.exoplayer.drm.HttpMediaDrmCallback
 import androidx.media3.exoplayer.drm.LocalMediaDrmCallback
+import androidx.media3.exoplayer.hls.playlist.HlsPlaylistTracker
 import androidx.media3.exoplayer.source.ClippingMediaSource
 import androidx.media3.exoplayer.source.ConcatenatingMediaSource
 import androidx.media3.exoplayer.source.ConcatenatingMediaSource2
@@ -83,6 +85,8 @@ import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.fixSubtitleAlignment
+import com.lagradost.cloudstream3.ui.player.live.LiveHelper
+import com.lagradost.cloudstream3.ui.player.live.PREFERRED_LIVE_OFFSET
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
@@ -102,7 +106,6 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.PLAYREADY_UUID
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
 import com.lagradost.cloudstream3.utils.WIDEVINE_UUID
-import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
 import kotlinx.coroutines.delay
 import okhttp3.Interceptor
 import org.chromium.net.CronetEngine
@@ -273,6 +276,10 @@ class CS3IPlayer : IPlayer {
     }
 
     override fun hasPreview(): Boolean {
+        // No previews on livestreams because the previews get outdated
+        if (exoPlayer?.isCurrentMediaItemDynamic == true) {
+            return false
+        }
         return imageGenerator.hasPreview()
     }
 
@@ -400,7 +407,12 @@ class CS3IPlayer : IPlayer {
                 ?.let { group ->
                     exoPlayer?.trackSelectionParameters
                         ?.buildUpon()
-                        ?.setOverrideForType(TrackSelectionOverride(group.mediaTrackGroup, trackFormatIndex))
+                        ?.setOverrideForType(
+                            TrackSelectionOverride(
+                                group.mediaTrackGroup,
+                                trackFormatIndex
+                            )
+                        )
                         ?.build()
                 }
                 ?.let { newParams ->
@@ -517,10 +529,12 @@ class CS3IPlayer : IPlayer {
                 Log.i(TAG, "setPreferredSubtitles REQUIRES_RELOAD")
                 return true
             }
+
             SubtitleStatus.NOT_FOUND -> {
                 Log.i(TAG, "setPreferredSubtitles NOT_FOUND")
                 return true
             }
+
             SubtitleStatus.IS_ACTIVE -> {
                 Log.i(TAG, "setPreferredSubtitles IS_ACTIVE")
                 exoPlayer?.currentTracks?.groups
@@ -1068,6 +1082,17 @@ class CS3IPlayer : IPlayer {
     ): ExoPlayer {
         val exoPlayerBuilder =
             ExoPlayer.Builder(context)
+                .setMediaSourceFactory(
+                    DefaultMediaSourceFactory(context).setLiveTargetOffsetMs(
+                        PREFERRED_LIVE_OFFSET
+                    )
+                )
+                .setLivePlaybackSpeedControl(
+                    DefaultLivePlaybackSpeedControl.Builder()
+                        .setFallbackMaxPlaybackSpeed(1.03f)
+                        .setFallbackMinPlaybackSpeed(0.97f)
+                        .build()
+                )
                 .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
                     val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
                     val current = settingsManager.getInt(
@@ -1399,6 +1424,8 @@ class CS3IPlayer : IPlayer {
                 return
             }
 
+            LiveHelper.registerPlayer(exoPlayer)
+
             exoPlayer?.addListener(object : Player.Listener {
                 override fun onTracksChanged(tracks: Tracks) {
                     safe {
@@ -1506,6 +1533,23 @@ class CS3IPlayer : IPlayer {
                             exoPlayer?.seekToDefaultPosition()
                             exoPlayer?.prepare()
                         }
+
+                        // PlaylistStuckException usually happens when the player position is ahead of the live window.
+                        // Seek to the default location in that case
+                        error.cause is HlsPlaylistTracker.PlaylistStuckException -> {
+                            val position = exoPlayer?.currentPosition ?: exoPlayer?.duration ?: 0
+
+                            // Seek to live head
+                            val aheadOfLive = LiveHelper.getLiveManager(exoPlayer)?.getTimeAheadOfLive(position) ?: 0
+
+                            if (aheadOfLive > 100) {
+                                exoPlayer?.seekTo(position - aheadOfLive)
+                            } else {
+                                exoPlayer?.seekToDefaultPosition()
+                            }
+                            exoPlayer?.prepare()
+                        }
+
 
                         else -> {
                             event(ErrorEvent(error))

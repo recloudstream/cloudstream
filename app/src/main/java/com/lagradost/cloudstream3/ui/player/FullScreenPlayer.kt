@@ -631,7 +631,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     override fun subtitlesChanged() {
         val tracks = player.getVideoTracks()
         val isBuiltinSubtitles = tracks.currentTextTracks.all { track ->
-            track.sampleMimeType  == MimeTypes.APPLICATION_MEDIA3_CUES
+            track.sampleMimeType == MimeTypes.APPLICATION_MEDIA3_CUES
         }
         // Subtitle offset is not possible on built-in media3 tracks
         playerBinding?.playerSubtitleOffsetBtt?.isGone =
@@ -738,6 +738,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         activity?.window?.attributes = lp
         activity?.showSystemUI()
     }
+
     private fun resetZoomToDefault() {
         if (zoomMatrix != null) resize(PlayerResize.Fit, false)
     }
@@ -2648,6 +2649,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 }
             }
 
+            exoProgress.registerPlayerView(playerView)
+
             exoProgress.setOnTouchListener { _, event ->
                 // this makes the bar not disappear when sliding
                 when (event.action) {
@@ -2715,10 +2718,20 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         val duration = player.getDuration()
         val position = player.getPosition()
 
+        if (playerBinding?.exoProgress?.isAtLiveEdge() == true) {
+            // Hide using a parentView instead?
+            playerBinding?.timeLeft?.alpha = 0f
+            playerBinding?.exoDuration?.alpha = 0f
+            playerBinding?.timeLive?.isVisible = true
+        } else {
+            playerBinding?.timeLeft?.alpha = 1f
+            playerBinding?.exoDuration?.alpha = 1f
+            playerBinding?.timeLive?.isVisible = false
+        }
+
         if (duration != null && duration > 1 && position != null) {
             val remainingTimeSeconds = (duration - position + 500) / 1000
             val formattedTime = "-${DateUtils.formatElapsedTime(remainingTimeSeconds)}"
-
             playerBinding?.timeLeft?.text = formattedTime
         }
     }
