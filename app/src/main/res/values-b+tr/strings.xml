@@ -412,13 +412,11 @@
     <string name="plugins_disabled" formatted="true">Devre dışı: %d</string>
     <string name="plugins_not_downloaded" formatted="true">İndirilmeyen: %d</string>
     <string name="plugins_updated" formatted="true">%d eklentiler güncellendi</string>
-    <string name="blank_repo_message">CloudStream, varsayılan olarak hiçbir site ile gelmez. Siteleri depolardan kurmanız gerekir.
-\n
-\nDiscord\'umuza katılın veya çevrimiçi arama yapın.</string>
+    <string name="blank_repo_message">CloudStream, varsayılan olarak hiçbir site ile gelmez. Siteleri depolardan kurmanız gerekir. \n \nDiscord\'umuza katılın veya internet üzerinden arama yapın.</string>
     <string name="view_public_repositories_button">Topluluk depolarını görüntüle</string>
     <string name="view_public_repositories_button_short">Herkese açık liste</string>
     <string name="uppercase_all_subtitles">Tüm altyazılar büyük harf</string>
-    <string name="download_all_plugins_from_repo">Uyarı: CloudStream 3, üçüncü taraf uzantıların kullanımı için herhangi bir sorumluluk kabul etmez ve bunlar için herhangi bir destek sağlamaz!</string>
+    <string name="download_all_plugins_from_repo">Uyarı: CloudStream 3.taraf uzantıların kullanımı için herhangi bir sorumluluk kabul etmez ve bunlar için herhangi bir destek sağlamaz!</string>
     <string name="single_plugin_disabled" formatted="true">%s (Devre dışı)</string>
     <string name="tracks">Parçalar</string>
     <string name="audio_tracks">Ses parçaları</string>
@@ -471,7 +469,7 @@
     <string name="update_notification_downloading">Uygulama güncellemesi indiriliyor…</string>
     <string name="update_notification_failed">Uygulamanın yeni sürümü kurulamadı</string>
     <string name="clear_history">Geçmişi temizle</string>
-    <string name="apk_installer_package_installer">PaketKurucu</string>
+    <string name="apk_installer_package_installer">Paket Kurucu</string>
     <string name="apk_installer_legacy">Eski</string>
     <string name="pref_category_gestures">Hareketler</string>
     <string name="all_languages_preference">Tüm Diller</string>
@@ -572,7 +570,7 @@
     <string name="action_remove_from_favorites">Favorilerden çıkar</string>
     <string name="select_an_account">Hesap Seç</string>
     <string name="disable">Devre dışı bırak</string>
-    <string name="no_repository_found_error">Depo bulunamadı, bağlantı adresini kontrol edin ve VPN deneyin</string>
+    <string name="no_repository_found_error">Depo bulunamadı, bağlantı adresini kontrol edin veya VPN ile deneyin</string>
     <string name="already_voted">Zaten oyladınız</string>
     <string name="no_plugins_found_error">Depoda eklenti bulunamadı</string>
     <string name="duplicate_message_single" formatted="true">Görünüşe göre potansiyel bir kopya kütüphanenizde zaten bulunuyor: \'%s\'
@@ -724,7 +722,7 @@
     <string name="edit_profile_image_error_empty">URL bulunamadı</string>
     <string name="edit_profile_image_error_invalid">Geçersiz Bağlantı veya Görsel</string>
     <string name="edit_profile_image_success">Görsel Başarıyla Güncellendi</string>
-    <string name="episode_action_play_mirror">Ekranda oynat</string>"
+    <string name="episode_action_play_mirror">Şu kaynaktan oynat</string>"
     <string name="action_mark_watched_up_to_this_episode">Bu bölüme kadar izlenmiş olarak işaretle</string>
     <string name="action_remove_mark_watched_up_to_this_episode">Bu bölümü izlenmemiş olarak işaretle</string>
     <string name="action_reload">Yeniden yükle</string>
@@ -771,4 +769,5 @@
     </plurals>
     <string name="source_priority">Öncelikli kaynak</string>
     <string name="source_priority_help">Oynatıcıda video kaynaklarının nasıl sıralanacağını belirleyin</string>
+    <string name="show_player_metadata_overlay">Meta Verileri Katmanını Göster</string>
 </resources>
