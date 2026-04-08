@@ -2707,6 +2707,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     override fun playerDimensionsLoaded(width: Int, height: Int) {
+        // On TV, don't rotate for portrait videos; display with pillarbox (black bars on sides)
+        if (isLayout(TV or EMULATOR)) {
+            isVerticalOrientation = false
+            return
+        }
         isVerticalOrientation = height > width
         updateOrientation()
     }
@@ -2730,6 +2735,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     private fun dynamicOrientation(): Int {
+        // TV should always remain in landscape mode
+        if (isLayout(TV or EMULATOR)) {
+            return ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        }
         return if (autoPlayerRotateEnabled) {
             if (isVerticalOrientation) {
                 ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
