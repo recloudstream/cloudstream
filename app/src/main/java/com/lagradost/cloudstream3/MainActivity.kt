@@ -274,7 +274,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
          * @return true if the str has launched an app task (be it successful or not)
          * @param isWebview does not handle providers and opening download page if true. Can still add repos and login.
          * */
-        @Suppress("DEPRECATION_ERROR")
         fun handleAppIntentUrl(
             activity: FragmentActivity?,
             str: String?,
@@ -1169,7 +1168,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
     }
 
-    @Suppress("DEPRECATION_ERROR")
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)

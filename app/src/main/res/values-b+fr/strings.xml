@@ -753,4 +753,5 @@
         <item quantity="many">%d téléchargements en attente</item>
         <item quantity="other">%d téléchargements en attente</item>
     </plurals>
+    <string name="show_player_metadata_overlay">Afficher les métadata de l\'overlay du lecteur vidéo</string>
 </resources>

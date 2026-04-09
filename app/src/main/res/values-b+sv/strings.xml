@@ -759,4 +759,5 @@
     <string name="all_subtitles_bold">Gör alla undertexter fetstilta</string>
     <string name="all_subtitles_italic">Gör alla undertexter kursivstila</string>
     <string name="background_radius">Bakgrundsradie</string>
+    <string name="show_player_metadata_overlay">Visa spelarens metadata överlägg</string>
 </resources>

@@ -35,6 +35,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.view.animation.DecelerateInterpolator
 import android.widget.LinearLayout
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AlertDialog
@@ -97,6 +98,8 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
 import kotlin.math.roundToInt
+import com.lagradost.cloudstream3.utils.AppContextUtils.shouldShowPlayerMetadata
+
 
 // You can zoom out more than 100%, but it will zoom back into 100%
 const val MINIMUM_ZOOM = 0.95f
@@ -133,7 +136,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     private var uiShowingBeforeGesture = false
     protected var isLocked = false
     protected var timestampShowState = false
-
+    private var metadataVisibilityToken = 0
     protected var hasEpisodes = false
         private set
     // protected val hasEpisodes
@@ -235,8 +238,108 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 requestUpdateBrightnessOverlayOnNextLayout()
             }
         }
-
         return root
+    }
+
+    /**
+     * Wet code but this can not be made into a function as it is a setter.
+     *
+     * The reason for this setter is to fix a bug with the titlecard popup, as we want it to autohide
+     * when pressing back.
+     *
+     * Note that we move the call to autoHide after field assignment with prevField to avoid inf recursion. */
+    protected var selectSourceDialog: Dialog? = null
+        set(value) {
+            val prevField = field
+            field = value
+            if (value == null && prevField != null) {
+                autoHide()
+            }
+        }
+    protected var selectTrackDialog: Dialog? = null
+        set(value) {
+            val prevField = field
+            field = value
+            if (value == null && prevField != null) {
+                autoHide()
+            }
+        }
+    protected var selectSpeedDialog: Dialog? = null
+        set(value) {
+            val prevField = field
+            field = value
+            if (value == null && prevField != null) {
+                autoHide()
+            }
+        }
+    protected var selectSubtitlesDialog: Dialog? = null
+        set(value) {
+            val prevField = field
+            field = value
+            if (value == null && prevField != null) {
+                autoHide()
+            }
+        }
+
+    /** Checks if any top level dialog is open and showing */
+    fun isDialogOpen() =
+        selectSourceDialog?.isShowing == true
+                || selectTrackDialog?.isShowing == true
+                || selectSpeedDialog?.isShowing == true
+                || selectSubtitlesDialog?.isShowing == true
+
+    private fun scheduleMetadataVisibility() {
+        val metadataScrim = playerBinding?.playerMetadataScrim ?: return
+        val ctx = metadataScrim.context ?: return
+
+        if (!ctx.shouldShowPlayerMetadata()) {
+            metadataScrim.isVisible = false
+            metadataVisibilityToken++
+            return
+        }
+
+        if (isLayout(PHONE)) {
+            metadataScrim.isVisible = false
+            metadataVisibilityToken++
+            return
+        }
+
+        val isPaused = currentPlayerStatus == CSPlayerLoading.IsPaused
+        val token = ++metadataVisibilityToken
+
+        if (isPaused) {
+            metadataScrim.postDelayed({
+                /** Make sure the user has not interacted with anything */
+                if (token != metadataVisibilityToken) return@postDelayed
+                /** If already visible, then do not rerun the animation */
+                if (metadataScrim.isVisible) return@postDelayed
+                /** Failsafe, as this should only be shown when paused */
+                if (currentPlayerStatus != CSPlayerLoading.IsPaused) return@postDelayed
+                /** We do not want to show the logo in the background when the user is within another screen */
+                if (isDialogOpen()) return@postDelayed
+
+                metadataScrim.alpha = 0f
+                metadataScrim.isVisible = true
+                metadataScrim.animate()
+                    .alpha(1f)
+                    .setDuration(500L)
+                    .setInterpolator(DecelerateInterpolator())
+                    .start()
+                hidePlayerUI()
+            }, 8000L)
+        } else {
+            if (metadataScrim.isVisible) {
+                metadataScrim.animate()
+                    .alpha(0f)
+                    .setDuration(300L)
+                    .setInterpolator(AccelerateDecelerateInterpolator())
+                    .withEndAction {
+                        metadataScrim.alpha = 0f      // force final state
+                        metadataScrim.isVisible = false
+                    }
+                    .start()
+            }
+        }
     }
 
     @SuppressLint("UnsafeOptInUsageError")
@@ -456,6 +559,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 start()
             }
         }
+        playerBinding?.playerMetadataScrim?.let {
+            ObjectAnimator.ofFloat(it, "translationY", 1f).apply {
+                duration = 200
+                start()
+            }
+        }
 
         val playerBarMove = if (isShowing) 0f else 50.toPx.toFloat()
         playerBinding?.bottomPlayerBar?.let {
@@ -522,7 +631,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     override fun subtitlesChanged() {
         val tracks = player.getVideoTracks()
         val isBuiltinSubtitles = tracks.currentTextTracks.all { track ->
-            track.sampleMimeType == MimeTypes.APPLICATION_MEDIA3_CUES
+            track.sampleMimeType  == MimeTypes.APPLICATION_MEDIA3_CUES
         }
         // Subtitle offset is not possible on built-in media3 tracks
         playerBinding?.playerSubtitleOffsetBtt?.isGone =
@@ -697,6 +806,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         val dialog = Dialog(ctx, R.style.DialogFullscreenPlayer).apply {
             setContentView(binding.root)
         }
+        this.selectSubtitlesDialog = dialog
         dialog.show()
 
         val isPortrait =
@@ -786,20 +896,24 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             }
 
             dialog.setOnDismissListener {
+                selectSubtitlesDialog = null
                 if (isFullScreenPlayer)
                     activity?.hideSystemUI()
             }
             applyBtt.setOnClickListener {
+                selectSubtitlesDialog = null
                 subtitleDelay = currentOffset
                 dialog.dismissSafe(activity)
                 player.seekTime(1L)
             }
             resetBtt.setOnClickListener {
+                selectSubtitlesDialog = null
                 subtitleDelay = 0
                 dialog.dismissSafe(activity)
                 player.seekTime(1L)
             }
             cancelBtt.setOnClickListener {
+                selectSubtitlesDialog = null
                 dialog.dismissSafe(activity)
             }
         }
@@ -862,6 +976,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             if (isPlaying) {
                 player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
             }
+            selectSpeedDialog = null
         }
 
         // if (isLayout(PHONE)) {
@@ -876,6 +991,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 .setView(binding.root)
         builder.setOnDismissListener(dismiss)
         val dialog = builder.create()
+        this.selectSpeedDialog = dialog
         dialog.show()
         //}
     }
@@ -1013,7 +1129,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             // BOTTOM
             playerLockHolder.startAnimation(fadeAnimation)
             // player_go_back_holder?.startAnimation(fadeAnimation)
-
             shadowOverlay.isVisible = true
             shadowOverlay.startAnimation(fadeAnimation)
         }
@@ -1071,8 +1186,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     private var currentTapIndex = 0
     protected fun autoHide() {
+        metadataVisibilityToken++
         currentTapIndex++
         delayHide()
+        scheduleMetadataVisibility()
     }
 
     protected fun hidePlayerUI() {
@@ -1084,6 +1201,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     override fun playerStatusChanged() {
         super.playerStatusChanged()
+        scheduleMetadataVisibility()
         delayHide()
     }
 
@@ -1542,7 +1660,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         playerBinding?.playerIntroPlay?.isGone = true
 
         // Handle pan with two fingers
-        if (event.pointerCount == 2 && !isLocked && isFullScreenPlayer && !hasTriggeredSpeedUp && currentTouchAction == null) {
+        if ((event.pointerCount == 2 || lastPan != null) && !isLocked && isFullScreenPlayer && !hasTriggeredSpeedUp && currentTouchAction == null) {
             holdhandler.removeCallbacks(holdRunnable) // remove 2x speed
 
             // Gesture detectors for zoom & pan
@@ -1577,7 +1695,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     lastPan = newPan
                 }
 
-                MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_UP -> {
+                MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_UP -> {
                     // Reset touch
                     lastPan = null
                     currentTouchStart = null
@@ -1659,7 +1777,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     }
                 }
 
-                MotionEvent.ACTION_UP -> {
+                MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
                     holdhandler.removeCallbacks(holdRunnable)
                     if (hasTriggeredSpeedUp) {
                         player.setPlaybackSpeed(DataStoreHelper.playBackSpeed)
@@ -2177,6 +2295,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     protected fun uiReset() {
+        metadataVisibilityToken++
+        playerBinding?.playerMetadataScrim?.let {
+            it.animate().cancel()
+            it.alpha = 0f
+            it.isVisible = false
+        }
         isShowing = false
         toggleEpisodesOverlay(false)
         // if nothing has loaded these buttons should not be visible
@@ -2583,6 +2707,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     override fun playerDimensionsLoaded(width: Int, height: Int) {
+        // On TV, don't rotate for portrait videos; display with pillarbox (black bars on sides)
+        if (isLayout(TV or EMULATOR)) {
+            isVerticalOrientation = false
+            return
+        }
         isVerticalOrientation = height > width
         updateOrientation()
     }
@@ -2606,6 +2735,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     private fun dynamicOrientation(): Int {
+        // TV should always remain in landscape mode
+        if (isLayout(TV or EMULATOR)) {
+            return ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        }
         return if (autoPlayerRotateEnabled) {
             if (isVerticalOrientation) {
                 ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT

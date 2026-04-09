@@ -259,10 +259,12 @@ object UIHelper {
     }
 
     // Open activities from an activity outside the nav graph
-    fun Context.openActivity(activity: Class<*>, args: Bundle? = null) {
+    fun Context.openActivity(activity: Class<*>, args: Bundle? = null, baseIntent: Intent? = null) {
         val tag = "NavComponent"
         try {
-            val intent = Intent(this, activity)
+            val intent = baseIntent ?: Intent()
+            intent.setClass(this, activity)
+
             if (args != null) {
                 intent.putExtras(args)
             }

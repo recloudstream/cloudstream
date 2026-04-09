@@ -95,14 +95,13 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.DrmExtractorLink
-import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.PLAYREADY_UUID
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
 import com.lagradost.cloudstream3.utils.WIDEVINE_UUID
-import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
+import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
 import kotlinx.coroutines.delay
 import okhttp3.Interceptor
 import org.chromium.net.CronetEngine
@@ -884,10 +883,10 @@ class CS3IPlayer : IPlayer {
         private var currentTextRenderer: TextRenderer? = null
     }
 
-    private fun getCurrentTimestamp(writePosition: Long? = null): EpisodeSkip.SkipStamp? {
+    private fun getCurrentTimestamp(writePosition: Long? = null): VideoSkipStamp? {
         val position = writePosition ?: this@CS3IPlayer.getPosition() ?: return null
         for (lastTimeStamp in lastTimeStamps) {
-            if (lastTimeStamp.startMs <= position && (position + (toleranceBeforeUs / 1000L) + 1) < lastTimeStamp.endMs) {
+            if (lastTimeStamp.timestamp.startMs <= position && (position + (toleranceBeforeUs / 1000L) + 1) < lastTimeStamp.timestamp.endMs) {
                 return lastTimeStamp
             }
         }
@@ -999,7 +998,7 @@ class CS3IPlayer : IPlayer {
                             if (lastTimeStamp.skipToNextEpisode) {
                                 handleEvent(CSPlayerEvent.NextEpisode, source)
                             } else {
-                                seekTo(lastTimeStamp.endMs + 1L)
+                                seekTo(lastTimeStamp.timestamp.endMs + 1L)
                             }
                             event(TimestampSkippedEvent(timestamp = lastTimeStamp, source = source))
                         }
@@ -1578,9 +1577,9 @@ class CS3IPlayer : IPlayer {
         }
     }
 
-    private var lastTimeStamps: List<EpisodeSkip.SkipStamp> = emptyList()
+    private var lastTimeStamps: List<VideoSkipStamp> = emptyList()
 
-    override fun addTimeStamps(timeStamps: List<EpisodeSkip.SkipStamp>) {
+    override fun addTimeStamps(timeStamps: List<VideoSkipStamp>) {
         lastTimeStamps = timeStamps
         timeStamps.forEach { timestamp ->
             exoPlayer?.createMessage { _, _ ->
@@ -1589,7 +1588,7 @@ class CS3IPlayer : IPlayer {
                 //    onTimestampInvoked?.invoke(payload)
             }
                 ?.setLooper(Looper.getMainLooper())
-                ?.setPosition(timestamp.startMs)
+                ?.setPosition(timestamp.timestamp.startMs)
                 //?.setPayload(timestamp)
                 ?.setDeleteAfterDelivery(false)
                 ?.send()
