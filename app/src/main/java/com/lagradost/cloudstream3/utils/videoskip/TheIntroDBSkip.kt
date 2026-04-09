@@ -2,12 +2,14 @@ package com.lagradost.cloudstream3.utils.videoskip
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.LoadResponse
+import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getTMDbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.app
 
+/** https://theintrodb.org/docs */
 class TheIntroDBSkip : SkipAPI() {
     override val name = "TheIntroDB"
     override val supportedTypes = setOf(TvType.TvSeries, TvType.Cartoon, TvType.Anime, TvType.Movie)
@@ -19,12 +21,16 @@ class TheIntroDBSkip : SkipAPI() {
         episode: ResultEpisode,
         episodeDurationMs: Long
     ): List<SkipStamp>? {
-        val tmdbId = data.getTMDbId() ?: return null
+        val idSuffix =
+            data.getTMDbId()?.let { tmdbId -> "tmdb_id=$tmdbId" }
+                ?: data.getImdbId()?.let { imdbId -> "imdb_id=$imdbId" }
+                ?: return null
 
         val url = if (data.isMovie()) {
-            "$mainUrl/v2/media?tmdb_id=$tmdbId"
+            "$mainUrl/v2/media?$idSuffix"
         } else {
-            "$mainUrl/v2/media?tmdb_id=$tmdbId&season=${episode.season ?: 1}&episode=${episode.episode}"
+            val season = episode.season ?: return null
+            "$mainUrl/v2/media?$idSuffix&season=$season&episode=${episode.episode}"
         }
         val root = app.get(url).parsed<Root>()
         return arrayOf(
