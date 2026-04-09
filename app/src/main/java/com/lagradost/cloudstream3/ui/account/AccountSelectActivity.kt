@@ -38,11 +38,24 @@ import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
 
 class AccountSelectActivity : FragmentActivity(), BiometricCallback {
 
+    companion object {
+        var hasLoggedIn: Boolean = false
+    }
+
     val accountViewModel: AccountViewModel by viewModels()
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Sometimes we start this activity when we have already logged in
+        // For example when using cloudstreamsearch://
+        // In those cases we want to just go to the main activity instantly
+        if (hasLoggedIn) {
+            navigateToMainActivity()
+            return
+        }
+
         loadThemes(this)
 
         enableEdgeToEdgeCompat()
@@ -188,8 +201,11 @@ class AccountSelectActivity : FragmentActivity(), BiometricCallback {
         askBiometricAuth()
     }
 
+    @SuppressLint("UnsafeIntentLaunch")
     private fun navigateToMainActivity() {
-        openActivity(MainActivity::class.java)
+        hasLoggedIn = true
+        // We want to propagate any intent we get here to MainActivity since this is just an intermediary
+        openActivity(MainActivity::class.java, baseIntent = intent)
         finish() // Finish the account selection activity
     }
 
