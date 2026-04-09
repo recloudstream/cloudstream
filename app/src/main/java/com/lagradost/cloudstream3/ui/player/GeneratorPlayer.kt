@@ -1997,24 +1997,24 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun onDestroyView() {
-        clearSkipChapterAutoClick(resetText = false)
+        clearSkipChapterAutoClick()
         binding = null
         super.onDestroyView()
     }
 
     var skipAnimator: ValueAnimator? = null
     var skipIndex = 0
-    private var currentTimestamp: EpisodeSkip.SkipStamp? = null
+    private var currentTimestamp: VideoSkipStamp? = null
     private var skipAutoClickRunnable: Runnable? = null
     private var skipAutoClickSecondsRemaining: Int? = null
     private var skipAutoClickIndex: Int? = null
-    private var skipAutoClickTimestamp: EpisodeSkip.SkipStamp? = null
+    private var skipAutoClickTimestamp: VideoSkipStamp? = null
 
     private fun isAutoSkipPopupEnabled(): Boolean {
-        val ctx = context ?: return true
+        val ctx = context ?: return false
         return PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(
             ctx.getString(R.string.auto_skip_popup_key),
-            true
+            false
         )
     }
 
@@ -2031,27 +2031,26 @@ class GeneratorPlayer : FullScreenPlayer() {
         playerBinding?.skipChapterButton?.setText(text)
     }
 
-    private fun clearSkipChapterAutoClick(resetText: Boolean = true) {
+    private fun clearSkipChapterAutoClick() {
+        val button = playerBinding?.skipChapterButton
+
         skipAutoClickRunnable?.let { runnable ->
-            playerBinding?.skipChapterButton?.removeCallbacks(runnable)
+            button?.removeCallbacks(runnable)
         }
+
         skipAutoClickRunnable = null
         skipAutoClickSecondsRemaining = null
         skipAutoClickIndex = null
         skipAutoClickTimestamp = null
-        if (resetText && currentTimestamp != null) {
-            updateSkipChapterButtonText()
-        }
     }
-
-    private fun startSkipChapterAutoClick(timestamp: EpisodeSkip.SkipStamp, currentIndex: Int) {
+    private fun startSkipChapterAutoClick(timestamp: VideoSkipStamp, currentIndex: Int) {
         if (
             skipAutoClickRunnable != null &&
             skipAutoClickIndex == currentIndex &&
             skipAutoClickTimestamp == timestamp
         ) return
 
-        clearSkipChapterAutoClick(resetText = false)
+        clearSkipChapterAutoClick()
         if (!isAutoSkipPopupEnabled()) {
             updateSkipChapterButtonText()
             return
@@ -2068,7 +2067,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 val nextSeconds = (skipAutoClickSecondsRemaining ?: return) - 1
                 if (nextSeconds <= 0) {
-                    clearSkipChapterAutoClick(resetText = false)
+                    clearSkipChapterAutoClick()
                     player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
                     return
                 }
@@ -2134,7 +2133,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     override fun onTimestampSkipped(timestamp: VideoSkipStamp) {
         currentTimestamp = null
-        clearSkipChapterAutoClick(resetText = false)
+        clearSkipChapterAutoClick()
         displayTimeStamp(false)
     }
 
@@ -2151,7 +2150,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             startSkipChapterAutoClick(timestamp, currentIndex)
         } else {
             currentTimestamp = null
-            clearSkipChapterAutoClick(resetText = false)
+            clearSkipChapterAutoClick()
             displayTimeStamp(false)
         }
     }

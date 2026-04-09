@@ -102,7 +102,7 @@
             android:icon="@drawable/ic_baseline_skip_next_24"
             android:summary="@string/auto_skip_popup_settings_des"
             android:title="@string/auto_skip_popup_settings"
-            app:defaultValue="true"
+            app:defaultValue="false"
             app:key="@string/auto_skip_popup_key" />
         <SwitchPreference
             android:icon="@drawable/screen_rotation"
