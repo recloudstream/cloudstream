@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/sync_category_account">
+
+        <Preference
+            android:key="sync_google_drive_connect"
+            android:summary="@string/sync_connect_summary"
+            android:title="@string/sync_connect_title"
+            android:icon="@drawable/ic_google_logo" />
+
+        <Preference
+            android:key="sync_status"
+            android:selectable="false"
+            android:summary="@string/sync_status_not_connected"
+            android:title="@string/sync_status_title" />
+
+        <Preference
+            android:key="sync_cloud_status"
+            android:selectable="false"
+            android:summary="@string/sync_status_not_connected"
+            android:title="Cloud Backup Status" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/sync_category_actions">
+
+        <Preference
+            android:key="sync_push_now"
+            android:summary="@string/sync_push_summary"
+            android:title="@string/sync_push_title" />
+
+        <Preference
+            android:key="sync_pull_now"
+            android:summary="@string/sync_pull_summary"
+            android:title="@string/sync_pull_title" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/sync_category_options">
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="sync_auto_on_launch"
+            android:summary="@string/sync_auto_launch_summary"
+            android:title="@string/sync_auto_launch_title" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="sync_auto_on_close"
+            android:summary="@string/sync_auto_close_summary"
+            android:title="@string/sync_auto_close_title" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="sync_plugins_enabled"
+            android:summary="@string/sync_plugins_summary"
+            android:title="@string/sync_plugins_title" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

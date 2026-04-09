@@ -47,32 +47,26 @@ import java.util.Locale
 
 object BackupUtils {
 
-    /**
-     * No sensitive or breaking data in the backup
-     * */
     private val nonTransferableKeys = listOf(
         ANILIST_CACHED_LIST,
         MAL_CACHED_LIST,
         KITSU_CACHED_LIST,
 
-        // The plugins themselves are not backed up
+        
         PLUGINS_KEY,
         PLUGINS_KEY_LOCAL,
 
         AccountManager.ACCOUNT_TOKEN,
         AccountManager.ACCOUNT_IDS,
 
-        "biometric_key", // can lock down users if backup is shared on a incompatible device
-        "nginx_user", // Nginx user key
+        "biometric_key", 
+        "nginx_user", 
 
-        // No access rights after restore data from backup
         "download_path_key",
         "download_path_key_visual",
         "backup_path_key",
         "backup_dir_path_key",
 
-        // When sharing backup we do not want to transfer what is essentially the password
-        // Note that this is deprecated, and can be removed after all tokens have expired
         "anilist_token",
         "anilist_user",
         "mal_user",
@@ -84,36 +78,37 @@ object BackupUtils {
         "simkl_token",
 
 
-        // Downloads can not be restored from backups.
-        // The download path URI can not be transferred.
-        // In the future we may potentially write metadata to files in the download directory
-        // and make it possible to restore download folders using that metadata.
+      
         DOWNLOAD_EPISODE_CACHE_BACKUP,
         DOWNLOAD_EPISODE_CACHE,
         
-        // Download headers are unintuitively used in the resume watching system.
-        // We can therefore not prune download headers in backups.
         //DOWNLOAD_HEADER_CACHE_BACKUP,
         //DOWNLOAD_HEADER_CACHE,
         
 
-        // This may overwrite valid local data with invalid data
+     
         KEY_DOWNLOAD_INFO,
 
-        // Prevent backups from automatically starting downloads
+      
         KEY_RESUME_IN_QUEUE,
         KEY_RESUME_PACKAGES,
         QUEUE_KEY
     )
 
-    /** false if key should not be contained in backup */
-    private fun String.isTransferable(): Boolean {
-        return !nonTransferableKeys.any { this.contains(it) }
+
+    fun String.isTransferable(context: Context): Boolean {
+        val pluginSyncEnabled = context.getDefaultSharedPrefs().getBoolean("sync_plugins_enabled", false)
+        val excluded = if (pluginSyncEnabled) {
+            nonTransferableKeys.filter { it != PLUGINS_KEY }
+        } else {
+            nonTransferableKeys
+        }
+        return !excluded.any { this.contains(it) }
     }
 
     private var restoreFileSelector: ActivityResultLauncher<Array<String>>? = null
 
-    // Kinda hack, but I couldn't think of a better way
+
     data class BackupVars(
         @JsonProperty("_Bool") val bool: Map<String, Boolean>?,
         @JsonProperty("_Int") val int: Map<String, Int>?,
@@ -129,11 +124,11 @@ object BackupUtils {
     )
 
     @Suppress("UNCHECKED_CAST")
-    private fun getBackup(context: Context?): BackupFile? {
+    internal fun getBackup(context: Context?): BackupFile? {
         if (context == null) return null
 
-        val allData = context.getSharedPrefs().all.filter { it.key.isTransferable() }
-        val allSettings = context.getDefaultSharedPrefs().all.filter { it.key.isTransferable() }
+        val allData = context.getSharedPrefs().all.filter { it.key.isTransferable(context) }
+        val allSettings = context.getDefaultSharedPrefs().all.filter { it.key.isTransferable(context) }
 
         val allDataSorted = BackupVars(
             allData.filter { it.value is Boolean } as? Map<String, Boolean>,
@@ -307,7 +302,7 @@ object BackupUtils {
     ) {
         val editor = DataStore.editor(this, isEditingAppSettings)
         map?.forEach {
-            if (it.key.isTransferable()) {
+            if (it.key.isTransferable(this)) {
                 editor.setKeyRaw(it.key, it.value)
             }
         }

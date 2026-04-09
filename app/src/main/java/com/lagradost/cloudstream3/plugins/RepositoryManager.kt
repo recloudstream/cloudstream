@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.plugins
 
 import android.content.Context
+import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.context
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
@@ -144,6 +145,8 @@ object RepositoryManager {
         pluginUrl: String,
         file: File
     ): File? {
+        Log.d("RepositoryManager", "Downloading $pluginUrl to ${file.absolutePath}")
+
         return safeAsync {
             file.mkdirs()
 

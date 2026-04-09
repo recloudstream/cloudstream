@@ -7,21 +7,25 @@
         <Preference
             android:title="@string/check_for_update"
             app:icon="@drawable/ic_baseline_system_update_24"
+            app:iconSpaceReserved="true"
             app:key="@string/manual_check_update_key" />
 
         <Preference
-            android:icon="@drawable/ic_baseline_developer_mode_24"
+            app:icon="@drawable/ic_baseline_developer_mode_24"
+            app:iconSpaceReserved="true"
             android:title="@string/install_prerelease"
             app:key="@string/install_prerelease_key" />
 
         <Preference
-            android:icon="@drawable/netflix_download"
+            app:icon="@drawable/netflix_download"
+            app:iconSpaceReserved="true"
             android:key="@string/apk_installer_key"
             android:title="@string/apk_installer_settings"
             android:summary="@string/apk_installer_settings_des" />
 
         <SwitchPreference
-            android:icon="@drawable/ic_baseline_notifications_active_24"
+            app:icon="@drawable/ic_baseline_notifications_active_24"
+            app:iconSpaceReserved="true"
             android:summary="@string/updates_settings_des"
             android:title="@string/updates_settings"
             app:defaultValue="true"
@@ -30,23 +34,35 @@
 
     <PreferenceCategory
         android:title="@string/pref_category_backup">
+        
         <Preference
-            android:icon="@drawable/baseline_save_as_24"
+            app:icon="@drawable/ic_google_logo"
+            app:iconSpaceReserved="true"
+            android:key="@string/sync_category_account"
+            android:title="@string/sync_category_account"
+            android:summary="@string/sync_connect_summary" />
+
+        <Preference
+            app:icon="@drawable/baseline_save_as_24"
+            app:iconSpaceReserved="true"
             android:key="@string/backup_key"
             android:title="@string/backup_settings" />
 
         <Preference
-            android:icon="@drawable/baseline_save_as_24"
+            app:icon="@drawable/baseline_save_as_24"
+            app:iconSpaceReserved="true"
             android:key="@string/automatic_backup_key"
             android:title="@string/backup_frequency" />
 
         <Preference
-            android:icon="@drawable/baseline_restore_page_24"
+            app:icon="@drawable/baseline_restore_page_24"
+            app:iconSpaceReserved="true"
             android:key="@string/restore_key"
             android:title="@string/restore_settings" />
 
         <Preference
-            android:icon="@drawable/ic_baseline_folder_open_24"
+            app:icon="@drawable/ic_baseline_folder_open_24"
+            app:iconSpaceReserved="true"
             android:key="@string/backup_path_key"
             android:title="@string/backup_path_title" />
     </PreferenceCategory>
