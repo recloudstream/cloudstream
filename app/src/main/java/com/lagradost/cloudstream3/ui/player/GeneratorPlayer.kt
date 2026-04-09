@@ -2133,6 +2133,8 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun onTimestampSkipped(timestamp: VideoSkipStamp) {
+        currentTimestamp = null
+        clearSkipChapterAutoClick(resetText = false)
         displayTimeStamp(false)
     }
 
