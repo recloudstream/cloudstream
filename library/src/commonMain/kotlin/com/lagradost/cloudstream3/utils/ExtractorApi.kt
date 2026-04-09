@@ -174,6 +174,7 @@ import com.lagradost.cloudstream3.extractors.PlayLtXyz
 import com.lagradost.cloudstream3.extractors.PlayRu
 import com.lagradost.cloudstream3.extractors.PlayerVoxzer
 import com.lagradost.cloudstream3.extractors.Playerwish
+import com.lagradost.cloudstream3.extractors.Playmogo
 import com.lagradost.cloudstream3.extractors.Rabbitstream
 import com.lagradost.cloudstream3.extractors.RapidVid
 import com.lagradost.cloudstream3.extractors.Rasacintaku
@@ -1232,6 +1233,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     ByseVepoin(),
     ByseBuho(),
     MyVidPlay(),
+    Playmogo(),
     Vide0Net(),
     Up4Stream(),
     Up4FunTop(),

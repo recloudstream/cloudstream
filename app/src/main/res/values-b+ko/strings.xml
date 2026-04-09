@@ -15,7 +15,7 @@
 \n%1$s -&gt; %2$s</string>
     <string name="duration_format" formatted="true">%d분</string>
     <string name="app_name">CloudStream</string>
-    <string name="play_with_app_name">CloudStream에서 재생</string>
+    <string name="play_with_app_name">CloudStream으로 재생</string>
     <string name="title_home">홈</string>
     <string name="title_downloads">다운로드</string>
     <string name="title_settings">설정</string>
@@ -26,7 +26,7 @@
     <string name="next_episode">다음 에피소드</string>
     <string name="result_tags">장르</string>
     <string name="result_share">공유</string>
-    <string name="result_open_in_browser">브라우저에서 열기</string>
+    <string name="result_open_in_browser">브라우저로 열기</string>
     <string name="browser">브라우저</string>
     <string name="skip_loading">로딩 건너뛰기</string>
     <string name="loading">로딩중…</string>
@@ -62,7 +62,7 @@
     <string name="subs_edge_type">윤곽선 유형</string>
     <string name="subs_subtitle_elevation">자막 높이</string>
     <string name="subs_font">폰트</string>
-    <string name="subs_font_size">자막 크기</string>
+    <string name="subs_font_size">글자 크기</string>
     <string name="downloaded">다운로드됨</string>
     <string name="downloading">다운로드중</string>
     <string name="download_paused">다운로드 일시정지</string>
@@ -180,8 +180,8 @@
     <string name="anime">애니</string>
     <string name="torrent">토렌트</string>
     <string name="episode_action_chromecast_mirror">Chromecast 미러링</string>
-    <string name="episode_action_play_in_app">앱에서 재생</string>
-    <string name="episode_action_play_in_format">%s부터 재생</string>
+    <string name="episode_action_play_in_app">앱으로 재생</string>
+    <string name="episode_action_play_in_format">%s로 재생</string>
     <string name="episode_action_auto_download">자동 다운로드</string>
     <string name="episode_action_download_mirror">다운로드 소스 목록</string>
     <string name="episode_action_reload_links">링크 새로고침</string>
@@ -489,7 +489,7 @@
     <string name="show_fillers_settings">애니메이션용 필러 에피소드 표시</string>
     <string name="test_passed">통과</string>
     <string name="resume">계속</string>
-    <string name="limit_title">플레이어 표시 제목의 최대 글자 수</string>
+    <string name="limit_title">플레이어 내 표시 제목의 최대 글자 수</string>
     <string name="android_tv_interface_on_seek_settings">플레이어 표시 시 탐색 시간</string>
     <string name="android_tv_interface_on_seek_settings_summary">플레이어 표시 중 탐색 간격</string>
     <string name="android_tv_interface_off_seek_settings">플레이어 미표시 시 탐색 시간</string>
@@ -508,7 +508,7 @@
     <string name="tracks">트랙</string>
     <string name="referer">Referer (선택)</string>
     <string name="skip_type_recap">요약</string>
-    <string name="action_mark_as_watched">시청함으로 표시</string>
+    <string name="action_mark_as_watched">시청 완료로 표시</string>
     <string name="revert">되돌리기</string>
     <string name="subscription_in_progress_notification">구독한 프로그램 업데이트</string>
     <string name="subscription_list_name">구독중</string>
@@ -520,7 +520,7 @@
     <string name="toast_copied">복사됨!</string>
     <string name="repo_copy_label">레포지토리 이름 및 URL</string>
     <string name="test_extensions_summary">본 테스트는 개발자만을 대상으로 하며, 확장자의 작업을 확인하거나 거부하지 않습니다.</string>
-    <string name="cs3wiki">클라우스스트림 위키</string>
+    <string name="cs3wiki">CloudStream 위키</string>
     <string name="links_reloaded_toast">링크 새로고침 완료</string>
     <string name="backup_frequency">백업 빈도</string>
     <string name="favorites_list_name">즐겨찾기</string>
@@ -603,7 +603,7 @@
     <string name="battery_dialog_message">구독 중인 TV 쇼의 알림을 받고 다운로드를 끊김 없이 완료하려면, CloudStream의 백그라운드 실행 권한이 필요합니다. \'확인\'을 누른 후 나타나는 요청 창에서 \'허용\'을 선택해 주세요.\n\n참고로, 이 권한을 허용한다고 해서 배터리가 계속 소모되는 것은 아닙니다. 알림을 받거나 공식 확장 프로그램에서 영상을 다운로드할 때처럼 꼭 필요한 상황에서만 백그라운드 작업을 수행합니다.</string>
     <string name="quality_profile_help">여기서 소스의 순서를 변경할 수 있습니다. 비디오의 우선 순위가 높은 경우에는 소스 선택 화면에 더 높게 나타납니다. 소스 우선 순위와 품질 우선 순위의 합이 비디오 우선 순위입니다. \n \n참고 A: 3 \n품질 B: 7 \n총 비디오 우선 순위는 10입니다. \n \n참고: 합이 10 이상이면 해당 링크가 로드되면 플레이어는 자동으로 로드를 건너뜁니다!</string>
     <string name="next_season_episode_format" formatted="true">시즌 %1$d 에피소드 %2$d 공개 예정</string>
-    <string name="result_search_tooltip">다른 확장자에서 검색</string>
+    <string name="result_search_tooltip">다른 확장프로그램에서 검색</string>
     <string name="subscribe_tooltip">새로운 에피소드 알림</string>
     <string name="recommendations_tooltip">추천목록 보기</string>
     <string name="speed_setting_summary">플레이어에 속도 옵션을 추가합니다</string>
@@ -712,7 +712,7 @@
     <string name="edit_profile_image_error_empty">URL을 찾을 수 없습니다</string>
     <string name="edit_profile_image_error_invalid">잘못된 URL 혹은 이미지 입니다</string>
     <string name="edit_profile_image_success">이미지 업데이트 성공</string>
-    <string name="action_mark_watched_up_to_this_episode">이 에피소드까지 시청함으로 표시</string>
+    <string name="action_mark_watched_up_to_this_episode">이 에피소드까지 시청 완료로 표시</string>
     <string name="action_remove_mark_watched_up_to_this_episode">이 에피소드까지 시청함 표시 제거</string>
     <string name="name">이름</string>
     <string name="resolution_and_name">해상도 및 이름</string>

@@ -1159,7 +1159,6 @@ suspend fun newSubtitleFile(
  * @property headers Optional headers for the audio file request.
  * @see newAudioFile
  * */
-@Prerelease
 @ConsistentCopyVisibility
 data class AudioFile internal constructor(
     var url: String,
@@ -1171,7 +1170,6 @@ data class AudioFile internal constructor(
  * @param initializer Lambda to configure additional properties like headers.
  * @return Configured AudioFile instance.
  * */
-@Prerelease
 suspend fun newAudioFile(
     url: String,
     initializer: suspend AudioFile.() -> Unit = { }
@@ -1786,7 +1784,6 @@ interface LoadResponse {
     var posterHeaders: Map<String, String>?
     var backgroundPosterUrl: String?
 
-    @Prerelease
     var logoUrl: String?
     var contentRating: String?
 
@@ -1893,7 +1890,6 @@ interface LoadResponse {
             this.addSimklId(SimklSyncServices.Mal, id.toString())
         }
 
-        @Prerelease
         fun LoadResponse.addKitsuId(id: Int?) {
             this.syncData[kitsuIdPrefix] = (id ?: return).toString()
         }

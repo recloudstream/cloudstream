@@ -1660,7 +1660,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         playerBinding?.playerIntroPlay?.isGone = true
 
         // Handle pan with two fingers
-        if (event.pointerCount == 2 && !isLocked && isFullScreenPlayer && !hasTriggeredSpeedUp && currentTouchAction == null) {
+        if ((event.pointerCount == 2 || lastPan != null) && !isLocked && isFullScreenPlayer && !hasTriggeredSpeedUp && currentTouchAction == null) {
             holdhandler.removeCallbacks(holdRunnable) // remove 2x speed
 
             // Gesture detectors for zoom & pan
@@ -1695,7 +1695,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     lastPan = newPan
                 }
 
-                MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_UP -> {
+                MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_UP -> {
                     // Reset touch
                     lastPan = null
                     currentTouchStart = null
@@ -1777,7 +1777,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     }
                 }
 
-                MotionEvent.ACTION_UP -> {
+                MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
                     holdhandler.removeCallbacks(holdRunnable)
                     if (hasTriggeredSpeedUp) {
                         player.setPlaybackSpeed(DataStoreHelper.playBackSpeed)
@@ -2707,6 +2707,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     override fun playerDimensionsLoaded(width: Int, height: Int) {
+        // On TV, don't rotate for portrait videos; display with pillarbox (black bars on sides)
+        if (isLayout(TV or EMULATOR)) {
+            isVerticalOrientation = false
+            return
+        }
         isVerticalOrientation = height > width
         updateOrientation()
     }
@@ -2730,6 +2735,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     private fun dynamicOrientation(): Int {
+        // TV should always remain in landscape mode
+        if (isLayout(TV or EMULATOR)) {
+            return ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        }
         return if (autoPlayerRotateEnabled) {
             if (isVerticalOrientation) {
                 ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
