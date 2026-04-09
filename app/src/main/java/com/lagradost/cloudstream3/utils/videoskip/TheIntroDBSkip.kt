@@ -12,7 +12,10 @@ import com.lagradost.cloudstream3.app
 /** https://theintrodb.org/docs */
 class TheIntroDBSkip : SkipAPI() {
     override val name = "TheIntroDB"
-    override val supportedTypes = setOf(TvType.TvSeries, TvType.Cartoon, TvType.Anime, TvType.Movie)
+    override val supportedTypes = setOf(
+        TvType.TvSeries, TvType.Cartoon, TvType.Anime, TvType.Movie,
+        TvType.AsianDrama
+    )
 
     val mainUrl = "https://api.theintrodb.org"
 
@@ -39,7 +42,13 @@ class TheIntroDBSkip : SkipAPI() {
             root.recap to SkipType.Recap,
             root.preview to SkipType.Preview
         ).map { (list, type) ->
-            list.map { stamp -> SkipStamp(type, stamp.startMs, stamp.endMs) }
+            list.map { stamp ->
+                SkipStamp(
+                    type,
+                    stamp.startMs ?: 0L,
+                    stamp.endMs ?: episodeDurationMs
+                )
+            }
         }.flatten()
     }
 
@@ -60,8 +69,8 @@ class TheIntroDBSkip : SkipAPI() {
 
     data class Stamp(
         @JsonProperty("start_ms")
-        val startMs: Long,
+        val startMs: Long?,
         @JsonProperty("end_ms")
-        val endMs: Long,
+        val endMs: Long?,
     )
 }
