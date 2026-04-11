@@ -73,5 +73,5 @@ object LiveHelper {
         }
     }
 
-    fun getLiveManager(player: Player?) = liveManagers[player]
+    fun getLiveManager(player: Player?) = liveManagers[player]?.first
 }
