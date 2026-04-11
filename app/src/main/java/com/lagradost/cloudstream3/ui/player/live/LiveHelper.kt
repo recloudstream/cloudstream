@@ -8,11 +8,9 @@ import com.lagradost.cloudstream3.mvvm.debugWarning
 import java.util.WeakHashMap
 
 object LiveHelper {
-    private val liveManagers = WeakHashMap<Player, LiveManager>()
-    private val listeners = WeakHashMap<Player, Player.Listener>()
+    private val liveManagers = WeakHashMap<Player, Pair<LiveManager, Player.Listener>>()
 
     @OptIn(UnstableApi::class)
-
     fun registerPlayer(player: Player?) {
         if (player == null) {
             debugWarning { "LiveHelper registerPlayer called with null player!" }
@@ -20,7 +18,7 @@ object LiveHelper {
         }
 
         // Prevent duplicates
-        if (liveManagers.contains(player) || listeners.contains(player)) {
+        if (liveManagers.contains(player)) {
             return
         }
 
@@ -51,11 +49,8 @@ object LiveHelper {
         }
 
         synchronized(liveManagers) {
-            liveManagers[player] = liveManager
-        }
-        synchronized(listeners) {
             player.addListener(listener)
-            listeners[player] = listener
+            liveManagers[player] = liveManager to listener
         }
     }
 
@@ -64,19 +59,17 @@ object LiveHelper {
             debugWarning { "LiveHelper unregisterPlayer called with null player!" }
             return
         }
+
         // Prevent duplicates
-        if (!liveManagers.contains(player) && !listeners.contains(player)) {
+        if (!liveManagers.contains(player)) {
             return
         }
 
         synchronized(liveManagers) {
-            liveManagers.remove(player)
-        }
-        synchronized(listeners) {
-            listeners[player]?.let {
-                player.removeListener(it)
+            liveManagers[player]?.let { (_, listener) ->
+                player.removeListener(listener)
             }
-            listeners.remove(player)
+            liveManagers.remove(player)
         }
     }
 
