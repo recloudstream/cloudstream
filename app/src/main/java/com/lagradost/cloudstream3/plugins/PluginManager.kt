@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.WorkerThread
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -45,6 +46,7 @@ import com.lagradost.cloudstream3.plugins.RepositoryManager.ONLINE_PLUGINS_FOLDE
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.plugins.RepositoryManager.downloadPluginToFile
 import com.lagradost.cloudstream3.plugins.RepositoryManager.getRepoPlugins
+import com.lagradost.cloudstream3.plugins.RepositoryManager.sha256
 import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
@@ -78,6 +80,12 @@ data class PluginData(
     @JsonProperty("filePath") val filePath: String,
     @JsonProperty("version") val version: Int,
 ) {
+    @WorkerThread
+    fun getFileHash(): String {
+        return sha256(File(this.filePath))
+    }
+
+    @WorkerThread
     fun toSitePlugin(): SitePlugin {
         return SitePlugin(
             this.filePath,
@@ -92,7 +100,8 @@ data class PluginData(
             null,
             null,
             null,
-            File(this.filePath).length()
+            File(this.filePath).length(),
+            getFileHash()
         )
     }
 }
@@ -302,6 +311,7 @@ object PluginManager {
                 downloadPlugin(
                     activity,
                     pluginData.onlineData.second.url,
+                    pluginData.onlineData.second.fileHash,
                     pluginData.savedData.internalName,
                     File(pluginData.savedData.filePath),
                     true
@@ -413,6 +423,7 @@ object PluginManager {
             downloadPlugin(
                 activity,
                 pluginData.onlineData.second.url,
+                pluginData.onlineData.second.fileHash,
                 pluginData.savedData.internalName,
                 pluginData.onlineData.first,
                 !pluginData.isDisabled
@@ -730,25 +741,27 @@ object PluginManager {
     suspend fun downloadPlugin(
         activity: Activity,
         pluginUrl: String,
+        pluginHash: String?,
         internalName: String,
         repositoryUrl: String,
         loadPlugin: Boolean
     ): Boolean {
         val file = getPluginPath(activity, internalName, repositoryUrl)
-        return downloadPlugin(activity, pluginUrl, internalName, file, loadPlugin)
+        return downloadPlugin(activity, pluginUrl, pluginHash, internalName, file, loadPlugin)
     }
 
     suspend fun downloadPlugin(
         activity: Activity,
         pluginUrl: String,
+        pluginHash: String?,
         internalName: String,
         file: File,
-        loadPlugin: Boolean
+        loadPlugin: Boolean,
     ): Boolean {
         try {
             Log.d(TAG, "Downloading plugin: $pluginUrl to ${file.absolutePath}")
             // The plugin file needs to be salted with the repository url hash as to allow multiple repositories with the same internal plugin names
-            val newFile = downloadPluginToFile(pluginUrl, file) ?: return false
+            val newFile = downloadPluginToFile(pluginUrl, file, pluginHash) ?: return false
 
             val data = PluginData(
                 internalName,
@@ -836,6 +849,7 @@ object PluginManager {
                 if (downloadPlugin(
                         activity,
                         pluginData.onlineData.second.url,
+                        pluginData.onlineData.second.fileHash,
                         pluginData.savedData.internalName,
                         existingFile,
                         true

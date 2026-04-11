@@ -128,6 +128,7 @@ class PluginsViewModel : ViewModel() {
                     PluginManager.downloadPlugin(
                         activity,
                         metadata.url,
+                        metadata.fileHash,
                         metadata.internalName,
                         repo,
                         metadata.status != PROVIDER_STATUS_DOWN
@@ -179,6 +180,7 @@ class PluginsViewModel : ViewModel() {
             PluginManager.downloadPlugin(
                 activity,
                 metadata.url,
+                metadata.fileHash,
                 metadata.internalName,
                 repo,
                 isEnabled
@@ -286,7 +288,7 @@ class PluginsViewModel : ViewModel() {
 
         val downloadedPlugins = (PluginManager.getPluginsOnline() + PluginManager.getPluginsLocal())
             .distinctBy { it.filePath }
-            .map {
+            .amap {
                 PluginViewData("" to it.toSitePlugin(), true)
             }
 
