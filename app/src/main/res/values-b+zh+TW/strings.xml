@@ -763,4 +763,5 @@
     <string name="torrent_preferred_media">在「設定/影片來源/首選媒體」中啟用 Torrent下載</string>
     <string name="software_decoding_desc">軟體解碼使程式可以播放裝置不支援的影片，但可能導致播放高解析的影片時的延遲或不穩定。</string>
     <string name="volume_exceeded_100">音量已超過 100%</string>
+    <string name="show_player_metadata_overlay">顯示播放器元資料遮罩層</string>
 </resources>
