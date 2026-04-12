@@ -10,7 +10,7 @@
 
     <FrameLayout
         android:id="@+id/player_metadata_scrim"
-        android:layout_width="640dp"
+        android:layout_width="680dp"
         android:layout_height="match_parent"
         android:background="@drawable/bg_player_metadata_scrim_netflix"
         app:layout_constraintStart_toStartOf="parent"
@@ -49,6 +49,10 @@
                     android:textColor="@android:color/white"
                     android:textSize="30sp"
                     android:textStyle="bold"
+                    android:shadowColor="@android:color/black"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="4"
                     android:maxLines="2"
                     android:ellipsize="end"
                     tools:text="Zootopia 2"/>
@@ -74,8 +78,12 @@
                 android:textColor="#E6FFFFFF"
                 android:textSize="16sp"
                 android:lineSpacingExtra="8dp"
+                android:shadowColor="@android:color/black"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="4"
                 android:maxLines="5"
-                tools:text="Brave rabbit cop Judy Hopps and her friend, the fox Nick Wilde, team up again to crack a new case."/>
+                tools:text="Brave rabbit cop Judy Hopps..."/>
 
         </LinearLayout>
         <ImageView
