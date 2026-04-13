@@ -11,6 +11,9 @@ concurrency:
   group: "locale"
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   create:
     runs-on: ubuntu-latest
