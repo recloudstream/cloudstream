@@ -732,7 +732,7 @@
                         android:scaleType="centerCrop" />
                 </FrameLayout>
 
-                <com.github.rubensousa.previewseekbar.media3.PreviewTimeBar
+                <com.lagradost.cloudstream3.ui.player.live.LivePreviewTimeBar
                     android:id="@id/exo_progress"
                     android:layout_width="0dp"
                     android:layout_height="30dp"
@@ -765,6 +765,23 @@
                     app:layout_constraintBaseline_toBaselineOf="@id/exo_position"
                     app:layout_constraintEnd_toEndOf="@id/player_fullscreen"
                     tools:text="23:20" />
+                <TextView
+                    android:id="@+id/time_live"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center|center_vertical"
+                    android:text="@string/player_is_live"
+                    android:layout_marginEnd="30dp"
+                    android:includeFontPadding="false"
+                    android:minWidth="50dp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+                    android:visibility="gone"
+                    app:layout_constraintBaseline_toBaselineOf="@id/exo_position"
+                    app:layout_constraintEnd_toEndOf="@id/player_fullscreen" />
 
                 <TextView
                     android:id="@+id/time_left"

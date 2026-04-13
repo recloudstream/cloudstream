@@ -780,4 +780,5 @@
         <item quantity="many">%d تنزيل قيد الانتظار</item>
         <item quantity="other">%d تنزيل قيد الانتظار</item>
     </plurals>
+    <string name="show_player_metadata_overlay">عرض واجهة منبثقة للبيانات الوصفية للمشغِّل</string>
 </resources>
