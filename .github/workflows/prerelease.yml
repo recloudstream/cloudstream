@@ -12,6 +12,9 @@ concurrency:
   group: "pre-release"
   cancel-in-progress: true
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest

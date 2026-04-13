@@ -6,6 +6,9 @@ on:
     paths-ignore:
       - '*.md'
 
+permissions:
+  contents: read
+
 concurrency:
   group: "dokka"
   cancel-in-progress: true

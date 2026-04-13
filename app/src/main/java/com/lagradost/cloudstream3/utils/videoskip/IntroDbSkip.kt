@@ -47,7 +47,7 @@ class IntroDbSkip : SkipAPI() {
                 val start = it.startMs ?: return@let null
                 val end = it.endMs ?: return@let null
                 SkipStamp(
-                    type = SkipType.Credits,
+                    type = SkipType.Ending,
                     startMs = start,
                     endMs = end
                 )

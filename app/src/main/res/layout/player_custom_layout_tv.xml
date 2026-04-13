@@ -10,7 +10,7 @@
 
     <FrameLayout
         android:id="@+id/player_metadata_scrim"
-        android:layout_width="640dp"
+        android:layout_width="680dp"
         android:layout_height="match_parent"
         android:background="@drawable/bg_player_metadata_scrim_netflix"
         app:layout_constraintStart_toStartOf="parent"
@@ -49,6 +49,10 @@
                     android:textColor="@android:color/white"
                     android:textSize="30sp"
                     android:textStyle="bold"
+                    android:shadowColor="@android:color/black"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="4"
                     android:maxLines="2"
                     android:ellipsize="end"
                     tools:text="Zootopia 2"/>
@@ -74,8 +78,12 @@
                 android:textColor="#E6FFFFFF"
                 android:textSize="16sp"
                 android:lineSpacingExtra="8dp"
+                android:shadowColor="@android:color/black"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="4"
                 android:maxLines="5"
-                tools:text="Brave rabbit cop Judy Hopps and her friend, the fox Nick Wilde, team up again to crack a new case."/>
+                tools:text="Brave rabbit cop Judy Hopps..."/>
 
         </LinearLayout>
         <ImageView
@@ -917,7 +925,7 @@
                             android:scaleType="centerCrop" />
                     </FrameLayout>
 
-                    <com.github.rubensousa.previewseekbar.media3.PreviewTimeBar
+                    <com.lagradost.cloudstream3.ui.player.live.LivePreviewTimeBar
                         android:id="@id/exo_progress"
                         android:layout_width="0dp"
                         android:layout_height="30dp"
@@ -950,6 +958,25 @@
                         app:layout_constraintBaseline_toBaselineOf="@id/exo_position"
                         app:layout_constraintEnd_toEndOf="parent"
                         tools:text="23:20" />
+
+                    <TextView
+                        android:id="@+id/time_live"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center|center_vertical"
+                        android:text="@string/player_is_live"
+                        android:layout_marginEnd="20dp"
+                        android:includeFontPadding="false"
+                        android:minWidth="50dp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:textStyle="normal"
+                        android:visibility="gone"
+                        app:layout_constraintBaseline_toBaselineOf="@id/exo_position"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        />
 
                     <TextView
                         android:id="@+id/time_left"
@@ -1094,6 +1121,7 @@
         android:layout_height="match_parent">
 
     </FrameLayout>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/player_speedup_button"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
