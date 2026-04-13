@@ -9,6 +9,9 @@ on:
       - '**/wcokey.txt'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
   group: "Archive-build"
   cancel-in-progress: true
