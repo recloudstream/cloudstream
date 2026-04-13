@@ -205,7 +205,7 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
             val prefNames = resources.getStringArray(R.array.apk_installer_pref)
             val prefValues = resources.getIntArray(R.array.apk_installer_values)
 
-            // Default legacy installed until we make the new installer completely reliable
+            // Use legacy installer as default until we make the new installer completely reliable
             val currentInstaller =
                 settingsManager.getInt(getString(R.string.apk_installer_key), 1)
 
