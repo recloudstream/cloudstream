@@ -1173,6 +1173,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         @OptIn(UnsafeSSL::class)
         insecureApp.initClient(this, ignoreSSL = true)
 
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+
         setLastError(this)
 
         val settingsForProvider = SettingsJson()
