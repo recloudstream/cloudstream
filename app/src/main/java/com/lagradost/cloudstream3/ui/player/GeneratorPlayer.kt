@@ -2005,10 +2005,8 @@ class GeneratorPlayer : FullScreenPlayer() {
     var skipAnimator: ValueAnimator? = null
     var skipIndex = 0
     private var currentTimestamp: VideoSkipStamp? = null
-    private var skipAutoClickRunnable: Runnable? = null
-    private var skipAutoClickSecondsRemaining: Int? = null
-    private var skipAutoClickIndex: Int? = null
-    private var skipAutoClickTimestamp: VideoSkipStamp? = null
+
+    private var skipAutoClickJob: Job? = null
 
     private fun isAutoSkipPopupEnabled(): Boolean {
         val ctx = context ?: return false
@@ -2018,37 +2016,32 @@ class GeneratorPlayer : FullScreenPlayer() {
         )
     }
 
-    private fun updateSkipChapterButtonText() {
-        val text = currentTimestamp?.let { timestamp ->
-            if (isAutoSkipPopupEnabled()) {
-                skipAutoClickSecondsRemaining?.let { seconds ->
-                    txt(R.string.skip_chapter_countdown_format, timestamp.uiText, seconds)
-                } ?: timestamp.uiText
+    private fun updateSkipChapterButtonText(
+        timestamp: VideoSkipStamp? = null,
+        secondsRemaining: Int? = null
+    ) {
+        val displayTimestamp = timestamp ?: currentTimestamp
+
+        val text = displayTimestamp?.let { ts ->
+            if (isAutoSkipPopupEnabled() && secondsRemaining != null) {
+                txt(R.string.skip_chapter_countdown_format, ts.uiText, secondsRemaining)
             } else {
-                timestamp.uiText
+                ts.uiText
             }
         }
+
         playerBinding?.skipChapterButton?.setText(text)
     }
 
     private fun clearSkipChapterAutoClick() {
-        val button = playerBinding?.skipChapterButton
-
-        skipAutoClickRunnable?.let { runnable ->
-            button?.removeCallbacks(runnable)
-        }
-
-        skipAutoClickRunnable = null
-        skipAutoClickSecondsRemaining = null
-        skipAutoClickIndex = null
-        skipAutoClickTimestamp = null
+        skipAutoClickJob?.cancel()
+        skipAutoClickJob = null
     }
+
     private fun startSkipChapterAutoClick(timestamp: VideoSkipStamp, currentIndex: Int) {
-        if (
-            skipAutoClickRunnable != null &&
-            skipAutoClickIndex == currentIndex &&
-            skipAutoClickTimestamp == timestamp
-        ) return
+        if (skipAutoClickJob?.isActive == true) {
+            return
+        }
 
         clearSkipChapterAutoClick()
         if (!isAutoSkipPopupEnabled()) {
@@ -2056,30 +2049,23 @@ class GeneratorPlayer : FullScreenPlayer() {
             return
         }
 
-        skipAutoClickIndex = currentIndex
-        skipAutoClickTimestamp = timestamp
-        skipAutoClickSecondsRemaining = SKIP_CHAPTER_AUTO_CLICK_COUNTDOWN_SECONDS
-        updateSkipChapterButtonText()
+        skipAutoClickJob = viewModel.viewModelScope.launch {
+            try {
+                for (secondsRemaining in SKIP_CHAPTER_AUTO_CLICK_COUNTDOWN_SECONDS downTo 1) {
+                    if (!isActive) return@launch
+                    if (skipIndex != currentIndex || currentTimestamp != timestamp) return@launch
 
-        val runnable = object : Runnable {
-            override fun run() {
-                if (skipIndex != currentIndex || currentTimestamp != timestamp) return
-
-                val nextSeconds = (skipAutoClickSecondsRemaining ?: return) - 1
-                if (nextSeconds <= 0) {
-                    clearSkipChapterAutoClick()
-                    player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
-                    return
+                    updateSkipChapterButtonText(timestamp, secondsRemaining)
+                    delay(1000)
                 }
 
-                skipAutoClickSecondsRemaining = nextSeconds
-                updateSkipChapterButtonText()
-                playerBinding?.skipChapterButton?.handler?.postDelayed(this, 1000)
+                if (isActive && skipIndex == currentIndex && currentTimestamp == timestamp) {
+                    player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
+                }
+            } finally {
+                clearSkipChapterAutoClick()
             }
         }
-
-        skipAutoClickRunnable = runnable
-        playerBinding?.skipChapterButton?.handler?.postDelayed(runnable, 1000)
     }
 
     private fun displayTimeStamp(show: Boolean) {
