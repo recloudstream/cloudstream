@@ -55,6 +55,13 @@ annotation class Prerelease
 )
 annotation class InternalAPI
 
+@Retention(AnnotationRetention.BINARY) // This is only an IDE hint, and will not be used in the runtime
+@RequiresOptIn(
+    message = "Only use this if you know what you are doing and you need to bypass the SSL certificate checks. Never use this for sensitive network requests such as logins.",
+    level = RequiresOptIn.Level.WARNING
+)
+annotation class UnsafeSSL
+
 /**
  * Defines the constant for the all languages preference, if this is set then it is
  * the equivalent of all languages being set
