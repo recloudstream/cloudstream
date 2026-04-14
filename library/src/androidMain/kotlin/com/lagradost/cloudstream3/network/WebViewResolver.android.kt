@@ -123,7 +123,6 @@ actual class WebViewResolver actual constructor(
         val extraRequestList = threadSafeListOf<Request>()
 
         main {
-            // Useful for debugging
             try {
                 webView = WebView(
                     (getContext() as? Context)
