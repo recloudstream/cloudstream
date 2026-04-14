@@ -48,10 +48,16 @@ class AccountSelectActivity : FragmentActivity(), BiometricCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Are we editing and coming from MainActivity?
+        val isEditingFromMainActivity = intent.getBooleanExtra(
+            "isEditingFromMainActivity",
+            false
+        )
+
         // Sometimes we start this activity when we have already logged in
         // For example when using cloudstreamsearch://
         // In those cases we want to just go to the main activity instantly
-        if (hasLoggedIn) {
+        if (hasLoggedIn && !isEditingFromMainActivity) {
             navigateToMainActivity()
             return
         }
@@ -60,12 +66,6 @@ class AccountSelectActivity : FragmentActivity(), BiometricCallback {
 
         enableEdgeToEdgeCompat()
         setNavigationBarColorCompat(R.attr.primaryBlackBackground)
-
-        // Are we editing and coming from MainActivity?
-        val isEditingFromMainActivity = intent.getBooleanExtra(
-            "isEditingFromMainActivity",
-            false
-        )
 
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
         val skipStartup = settingsManager.getBoolean(
