@@ -131,6 +131,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.io.Serializable
 import java.util.Calendar
+import kotlin.coroutines.cancellation.CancellationException
 
 @OptIn(UnstableApi::class)
 class GeneratorPlayer : FullScreenPlayer() {
@@ -2004,8 +2005,6 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     var skipAnimator: ValueAnimator? = null
     var skipIndex = 0
-    private var currentTimestamp: VideoSkipStamp? = null
-
     private var skipAutoClickJob: Job? = null
 
     private fun isAutoSkipPopupEnabled(): Boolean {
@@ -2017,17 +2016,13 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     private fun updateSkipChapterButtonText(
-        timestamp: VideoSkipStamp? = null,
+        timestamp: VideoSkipStamp,
         secondsRemaining: Int? = null
     ) {
-        val displayTimestamp = timestamp ?: currentTimestamp
-
-        val text = displayTimestamp?.let { ts ->
-            if (isAutoSkipPopupEnabled() && secondsRemaining != null) {
-                txt(R.string.skip_chapter_countdown_format, ts.uiText, secondsRemaining)
-            } else {
-                ts.uiText
-            }
+        val text = if (isAutoSkipPopupEnabled() && secondsRemaining != null) {
+            txt(R.string.skip_chapter_countdown_format, timestamp.uiText, secondsRemaining)
+        } else {
+            timestamp.uiText
         }
 
         playerBinding?.skipChapterButton?.setText(text)
@@ -2039,13 +2034,9 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     private fun startSkipChapterAutoClick(timestamp: VideoSkipStamp, currentIndex: Int) {
-        if (skipAutoClickJob?.isActive == true) {
-            return
-        }
-
         clearSkipChapterAutoClick()
         if (!isAutoSkipPopupEnabled()) {
-            updateSkipChapterButtonText()
+            updateSkipChapterButtonText(timestamp)
             return
         }
 
@@ -2053,17 +2044,21 @@ class GeneratorPlayer : FullScreenPlayer() {
             try {
                 for (secondsRemaining in SKIP_CHAPTER_AUTO_CLICK_COUNTDOWN_SECONDS downTo 1) {
                     if (!isActive) return@launch
-                    if (skipIndex != currentIndex || currentTimestamp != timestamp) return@launch
+                    if (skipIndex != currentIndex) return@launch
 
                     updateSkipChapterButtonText(timestamp, secondsRemaining)
                     delay(1000)
                 }
 
-                if (isActive && skipIndex == currentIndex && currentTimestamp == timestamp) {
+                if (isActive && skipIndex == currentIndex) {
                     player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
                 }
+            } catch (e: CancellationException) {
+                throw e
             } finally {
-                clearSkipChapterAutoClick()
+                if (isActive) {
+                    clearSkipChapterAutoClick()
+                }
             }
         }
     }
@@ -2075,16 +2070,12 @@ class GeneratorPlayer : FullScreenPlayer() {
         playerBinding?.skipChapterButton?.apply {
             val showWidth = 170.toPx
             val noShowWidth = 10.toPx
-            //if((show && width == showWidth) || (!show && width == noShowWidth)) {
-            //    return
-            //}
             val to = if (show) showWidth else noShowWidth
             val from = if (!show) showWidth else noShowWidth
 
             skipAnimator?.cancel()
             isVisible = true
 
-            // just in case
             val lay = layoutParams
             lay.width = from
             layoutParams = lay
@@ -2094,13 +2085,11 @@ class GeneratorPlayer : FullScreenPlayer() {
                 addListener(onEnd = {
                     if (show) {
                         if (!isShowing) {
-                            // Automatically request focus if the menu is not opened
                             playerBinding?.skipChapterButton?.requestFocus()
                         }
                     } else {
                         playerBinding?.skipChapterButton?.isVisible = false
                         if (!isShowing) {
-                            // Automatically return focus to play pause
                             playerBinding?.playerPausePlay?.requestFocus()
                         }
                     }
@@ -2118,14 +2107,12 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun onTimestampSkipped(timestamp: VideoSkipStamp) {
-        currentTimestamp = null
         clearSkipChapterAutoClick()
         displayTimeStamp(false)
     }
 
     override fun onTimestamp(timestamp: VideoSkipStamp?) {
         if (timestamp != null) {
-            currentTimestamp = timestamp
             playerBinding?.skipChapterButton?.setText(timestamp.uiText)
             displayTimeStamp(true)
             val currentIndex = skipIndex
@@ -2135,7 +2122,6 @@ class GeneratorPlayer : FullScreenPlayer() {
             }, 6000)
             startSkipChapterAutoClick(timestamp, currentIndex)
         } else {
-            currentTimestamp = null
             clearSkipChapterAutoClick()
             displayTimeStamp(false)
         }
