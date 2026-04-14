@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.player.source_priority
 
 import androidx.annotation.StringRes
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKeys
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.R
@@ -9,14 +10,23 @@ import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
+import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
+import kotlin.math.abs
 
 object QualityDataHelper {
     private const val VIDEO_SOURCE_PRIORITY = "video_source_priority"
     private const val VIDEO_PROFILE_NAME = "video_profile_name"
     private const val VIDEO_QUALITY_PRIORITY = "video_quality_priority"
+
+    // Old key only supporting one type per profile
+    @Deprecated("Changed to support multiple types per profile")
     private const val VIDEO_PROFILE_TYPE = "video_profile_type"
+    // New key supporting more than one type per profile
+
+    private const val VIDEO_PROFILE_TYPES = "video_profile_types_2"
     private const val DEFAULT_SOURCE_PRIORITY = 1
+
     /**
      * Automatically skip loading links once this priority is reached
      **/
@@ -33,13 +43,14 @@ object QualityDataHelper {
     enum class QualityProfileType(@StringRes val stringRes: Int, val unique: Boolean) {
         None(R.string.none, false),
         WiFi(R.string.wifi, true),
-        Data(R.string.mobile_data, true)
+        Data(R.string.mobile_data, true),
+        Download(R.string.download, true)
     }
 
     data class QualityProfile(
         val name: UiText,
         val id: Int,
-        val type: QualityProfileType
+        val types: Set<QualityProfileType>
     )
 
     fun getSourcePriority(profile: Int, name: String?): Int {
@@ -51,8 +62,21 @@ object QualityDataHelper {
         ) ?: DEFAULT_SOURCE_PRIORITY
     }
 
+    fun getAllSourcePriorityNames(profile: Int): List<String> {
+        val folder = "$currentAccount/$VIDEO_SOURCE_PRIORITY/$profile"
+        return getKeys(folder)?.map { key ->
+            key.substringAfter("$folder/")
+        } ?: emptyList()
+    }
+
     fun setSourcePriority(profile: Int, name: String, priority: Int) {
-        setKey("$currentAccount/$VIDEO_SOURCE_PRIORITY/$profile", name, priority)
+        val folder = "$currentAccount/$VIDEO_SOURCE_PRIORITY/$profile"
+        // Prevent unnecessary keys
+        if (priority == DEFAULT_SOURCE_PRIORITY) {
+            removeKey(folder, name)
+        } else {
+            setKey(folder, name, priority)
+        }
     }
 
     fun setProfileName(profile: Int, name: String?) {
@@ -85,16 +109,40 @@ object QualityDataHelper {
         )
     }
 
-    fun getQualityProfileType(profile: Int): QualityProfileType {
-        return getKey("$currentAccount/$VIDEO_PROFILE_TYPE/$profile") ?: QualityProfileType.None
+
+    @Suppress("DEPRECATION")
+    fun getQualityProfileTypes(profile: Int): Set<QualityProfileType> {
+        val newKey = "$currentAccount/$VIDEO_PROFILE_TYPES/$profile"
+        // Use arrays for to make with work with setKey properly (weird crashes otherwise)
+        val newProfiles = getKey<Array<QualityProfileType>>(newKey)?.toSet()
+
+        // Migrate to new profile key
+        if (newProfiles == null) {
+            val oldProfile =
+                getKey<QualityProfileType>("$currentAccount/$VIDEO_PROFILE_TYPE/$profile")
+            val newSet = oldProfile?.let { arrayOf(it) } ?: arrayOf()
+            setKey(newKey, newSet)
+            return newSet.toSet()
+        } else {
+            return newProfiles
+        }
     }
 
-    fun setQualityProfileType(profile: Int, type: QualityProfileType?) {
-        val path = "$currentAccount/$VIDEO_PROFILE_TYPE/$profile"
-        if (type == QualityProfileType.None) {
-            removeKey(path)
-        } else {
-            setKey(path, type)
+    fun addQualityProfileType(profile: Int, type: QualityProfileType) {
+        val path = "$currentAccount/$VIDEO_PROFILE_TYPES/$profile"
+        val currentTypes = getQualityProfileTypes(profile)
+
+        if (type != QualityProfileType.None) {
+            setKey(path, (currentTypes + type).toTypedArray())
+        }
+    }
+
+    fun removeQualityProfileType(profile: Int, type: QualityProfileType) {
+        val path = "$currentAccount/$VIDEO_PROFILE_TYPES/$profile"
+        val currentTypes = getQualityProfileTypes(profile)
+
+        if (type != QualityProfileType.None) {
+            setKey(path, (currentTypes - type).toTypedArray())
         }
     }
 
@@ -106,37 +154,39 @@ object QualityDataHelper {
         val availableTypes = QualityProfileType.entries.toMutableList()
         val profiles = (1..PROFILE_COUNT).map { profileNumber ->
             // Get the real type
-            val type = getQualityProfileType(profileNumber)
+            val types = getQualityProfileTypes(profileNumber)
 
-            // This makes it impossible to get more than one of each type
-            // Duplicates will be turned to None
-            val uniqueType = if (type.unique && !availableTypes.remove(type)) {
-                QualityProfileType.None
-            } else {
-                type
-            }
+            val uniqueTypes = types.mapNotNull { type ->
+                // This makes it impossible to get more than one of each type
+                if (type.unique && !availableTypes.remove(type)) {
+                    null
+                } else {
+                    type
+                }
+            }.toSet()
 
             QualityProfile(
                 getProfileName(profileNumber),
                 profileNumber,
-                uniqueType
+                uniqueTypes
             )
         }.toMutableList()
 
         /**
-         * If no profile of this type exists: insert it on the earliest profile with None type
+         * If no profile of this type exists: insert it on the earliest profile
          **/
         fun insertType(
             list: MutableList<QualityProfile>,
             type: QualityProfileType
         ) {
-            if (list.any { it.type == type }) return
-            val index =
-                list.indexOfFirst { it.type == QualityProfileType.None }
-            list.getOrNull(index)?.copy(type = type)
-                ?.let { fixed ->
-                    list.set(index, fixed)
-                }
+            if (list.any { it.types.contains(type) }) return
+
+            synchronized(list) {
+                val firstItem = list.firstOrNull() ?: return
+                val fixedTypes = firstItem.types + type
+                val fixedItem = firstItem.copy(types = fixedTypes)
+                list.set(0, fixedItem)
+            }
         }
 
         QualityProfileType.entries.forEach {
@@ -145,7 +195,7 @@ object QualityDataHelper {
 
         debugAssert({
             !QualityProfileType.entries.all { type ->
-                !type.unique || profiles.any { it.type == type }
+                !type.unique || profiles.any { it.types.contains(type) }
             }
         }, { "All unique quality types do not exist" })
 
@@ -154,5 +204,23 @@ object QualityDataHelper {
         }, { "No profiles!" })
 
         return profiles
+    }
+
+    fun getLinkPriority(
+        qualityProfile: Int,
+        linkData: ExtractorLink?
+    ): Int {
+        val qualityPriority = getQualityPriority(
+            qualityProfile,
+            closestQuality(linkData?.quality)
+        )
+        val sourcePriority = getSourcePriority(qualityProfile, linkData?.source)
+
+        return qualityPriority + sourcePriority
+    }
+
+    private fun closestQuality(target: Int?): Qualities {
+        if (target == null) return Qualities.Unknown
+        return Qualities.entries.minBy { abs(it.value - target) }
     }
 }

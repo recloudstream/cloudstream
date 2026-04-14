@@ -9,6 +9,8 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.Manifest
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Gravity
@@ -191,6 +193,16 @@ object CommonActivity {
             currentToast = toast
             toast.show()
 
+            val handler = Handler(Looper.getMainLooper())
+            val ref = WeakReference(toast)
+
+            /* Clean up activity leak */
+            handler.postDelayed({
+                if (ref.get() == currentToast) {
+                    currentToast = null
+                }
+            }, 10_000)
+
         } catch (e: Exception) {
             logError(e)
         }
@@ -234,18 +246,7 @@ object CommonActivity {
     fun init(act: Activity) {
         setActivityInstance(act)
         ioSafe { Torrent.deleteAllFiles() }
-
-        // Clear all pools to apply the correct theme
-        for (pool in arrayOf(
-            PluginAdapter.sharedPool, HomeChildItemAdapter.sharedPool,
-            ParentItemAdapter.sharedPool, ActorAdaptor.sharedPool, EpisodeAdapter.sharedPool,
-            SearchAdapter.sharedPool, ImageAdapter.sharedPool
-        )) {
-            pool.clear()
-        }
-
         val componentActivity = activity as? ComponentActivity ?: return
-
 
         componentActivity.updateLocale()
         componentActivity.updateTv()
@@ -353,6 +354,7 @@ object CommonActivity {
 
                 "Dracula" -> R.style.DraculaMode
                 "Lavender" -> R.style.LavenderMode
+                "SilentBlue" -> R.style.SilentBlueMode
 
                 else -> R.style.AppTheme
             }

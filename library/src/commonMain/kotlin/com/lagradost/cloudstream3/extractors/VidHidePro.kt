@@ -6,13 +6,16 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
 
-class VidHidePro1 : VidHidePro() {
-    override var mainUrl = "https://filelions.live"
+class Ryderjet: VidHidePro() {
+    override var mainUrl = "https://ryderjet.com"
 }
 
-class Dhcplay: VidHidePro() {
-    override var name = "DHC Play"
-    override var mainUrl = "https://dhcplay.com"
+class VidHideHub : VidHidePro() {
+    override var mainUrl = "https://vidhidehub.com"
+}
+
+class VidHidePro1 : VidHidePro() {
+    override var mainUrl = "https://filelions.live"
 }
 
 class VidHidePro2 : VidHidePro() {

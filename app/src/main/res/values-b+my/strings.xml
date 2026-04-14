@@ -537,5 +537,4 @@
     <string name="already_voted">သင်နဂိုတည်းကသတ်မှတ်ပြီး</string>
     <string name="select_library">လိုက်ဘရီရွေးချယ်ရန်</string>
     <string name="open_with">ဖြင့်ဖွင့်မည်</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>

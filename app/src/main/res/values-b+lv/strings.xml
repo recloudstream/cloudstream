@@ -2,11 +2,11 @@
 <resources>
     <string name="search_poster_img_des">Plakāts</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
-    <string name="cast_format" formatted="true">Cast: %s</string>
+    <string name="cast_format" formatted="true">Lomās: %s</string>
     <string name="result_poster_img_des">Plakāts</string>
     <string name="episode_poster_img_des">Epizodes plakāts</string>
     <string name="home_main_poster_img_des">Galvenais plakāts</string>
-    <string name="home_next_random_img_des">Nākamais random</string>
+    <string name="home_next_random_img_des">Nākamais nejaušais</string>
     <string name="go_back_img_des">Iet atpakaļ</string>
     <string name="home_change_provider_img_des">Nomainīt dvēju</string>
     <string name="preview_background_img_des">Apskatīt background</string>
@@ -15,15 +15,15 @@
     <string name="new_update_format" formatted="true">Jauns atjauninājums atrasts!
 \n%1$s -&gt; %2$s</string>
     <string name="duration_format" formatted="true">%d galvenais</string>
-    <string name="app_name">Claudstream</string>
+    <string name="app_name">CloudStream</string>
     <string name="play_with_app_name">Atskaņo ar cloudstream</string>
-    <string name="title_home">Mājas</string>
+    <string name="title_home">Sākums</string>
     <string name="title_search">Meklēt</string>
     <string name="search_hint_site" formatted="true">Meklēt %s…</string>
     <string name="no_data">Nav datu</string>
     <string name="episode_more_options_des">Vairāk opcijas</string>
     <string name="next_episode">Nākamā epizode</string>
-    <string name="browser">Internets</string>
+    <string name="browser">Pārlūks</string>
     <string name="skip_loading">Izlaist ladešanos</string>
     <string name="loading">Lādējas…</string>
     <string name="type_watching">Skaties</string>
@@ -42,14 +42,14 @@
     <string name="go_back">Iet atpakaļ</string>
     <string name="play_episode">Palaist epizodi</string>
     <string name="download">Ieladēt</string>
-    <string name="download_paused">Lādēšana pauzēta</string>
+    <string name="download_paused">Lejupielāde iepauzēta</string>
     <string name="download_started">Lādēšana sakās</string>
-    <string name="download_failed">Ielādēt neizdevās</string>
-    <string name="download_canceled">Ielādēšana atcelta</string>
-    <string name="download_done">Pabeidza ieladēt</string>
-    <string name="update_started">Atjauninājums sakās</string>
+    <string name="download_failed">Lejupielāde neizdevās</string>
+    <string name="download_canceled">Lejupielāde atcelta</string>
+    <string name="download_done">Lejupielāde pabeigta</string>
+    <string name="update_started">Atjaunināšana sākta</string>
     <string name="stream">Tīkla plūsma</string>
-    <string name="error_loading_links_toast">Kļūda padejot linkus</string>
+    <string name="error_loading_links_toast">Kļūda, ielādējot saites</string>
     <string name="download_storage_text">Iekšējā atmiņa</string>
     <string name="app_dubbed_text">Dub</string>
     <string name="popup_delete_file">Dzēst datni</string>
@@ -78,14 +78,14 @@
     <string name="search_provider_text_providers">Meklēt izmantojot devējus</string>
     <string name="search_provider_text_types">Meklēt izmantojot tipus</string>
     <string name="benene_count_text">%d Banāni iedoti veidotājiem</string>
-    <string name="next_episode_format" formatted="true">Episode %d būs izlaista</string>
+    <string name="next_episode_format" formatted="true">%d. epizode būs pieejama</string>
     <string name="filler" formatted="true">Filtrs</string>
-    <string name="title_downloads">Ieladētas</string>
+    <string name="title_downloads">Lejupielādes</string>
     <string name="search_hint">Meklēt…</string>
-    <string name="title_settings">Settingi</string>
+    <string name="title_settings">Iestatījumi</string>
     <string name="result_tags">Žanrs</string>
-    <string name="result_share">Dalities</string>
-    <string name="result_open_in_browser">Atvērt internetā</string>
+    <string name="result_share">Kopīgot</string>
+    <string name="result_open_in_browser">Atvērt pārlūkā</string>
     <string name="downloaded">Ieladēts</string>
     <string name="downloading">Lādējas</string>
     <string name="sort_close">Aizvērt</string>
@@ -95,9 +95,9 @@
     <string name="sort_clear">Iztīrīt</string>
     <string name="subs_text_color">Teksta krāsa</string>
     <string name="subs_auto_select_language">Automātiski-iestādīt valodu</string>
-    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
-    <string name="next_episode_time_min_format" formatted="true">%dm</string>
-    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dst. %2$dmin.</string>
+    <string name="next_episode_time_min_format" formatted="true">%dmin.</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd. %2$dst. %3$dmin.</string>
     <string name="subs_download_languages">Ielādēt valodas</string>
     <string name="subs_subtitle_languages">Subtitru valoda</string>
     <string name="subs_hold_to_reset_to_default">Tūri lai restartētu uz sākumu</string>
@@ -115,7 +115,7 @@
     <string name="show_log_cat">Rādīt Logcat 🐈</string>
     <string name="test_log">Log</string>
     <string name="picture_in_picture">Bilde bildē</string>
-    <string name="picture_in_picture_des">Turpina spēlēt mazā lodziņā virs aplikācijām</string>
+    <string name="picture_in_picture_des">Turpina atskaņošanu miniatūrā atskaņotājā virs citām lietotnēm</string>
     <string name="player_size_settings">Players izmēra poga</string>
     <string name="player_size_settings_des">Noņemt melnās malas</string>
     <string name="player_subtitles_settings">Subtitri</string>
@@ -135,7 +135,7 @@
     <string name="double_tap_to_seek_settings_des">Uzpied divreiz pa labi vai kreisi lai palaistu atpakaļ vai uz priekšu</string>
     <string name="double_tap_to_pause_settings_des">Uzpied divreiz vidū lai pauzētu</string>
     <string name="use_system_brightness_settings">Lietot sistēmas gaišums</string>
-    <string name="use_system_brightness_settings_des">Lietot sistēmas gaišumu aplikācijas playerī nevis tumšunu</string>
+    <string name="use_system_brightness_settings_des">Izmanto sistēmas spilgtumu, nevis atskaņotāja tumšo pārklājumu</string>
     <string name="episode_sync_settings">Atjaunināt skatīšanos progresu</string>
     <string name="episode_sync_settings_des">Automātiski sync savu pašreizējo epizodes progresu</string>
     <string name="restore_settings">Atgūt datus no backupa</string>
@@ -160,15 +160,15 @@
     <string name="automatic_plugin_download">Automātiski lejupielādēt papildinājumus</string>
     <string name="automatic_plugin_download_summary">Automātiski uzstāda visus vēl neuzstādītos papildinājumus no pievienotajiem repozitorijiem.</string>
     <string name="updates_settings">Rādīt lietotņu atjauninājumus</string>
-    <string name="updates_settings_des">Automātiski meklēt jaunus atjauninājumus kad palaiž aplikāciju.</string>
+    <string name="updates_settings_des">Automātiski pārbauda atjauninājumus, kad atver lietotni.</string>
     <string name="redo_setup_process">Atsākt uzstādīšanas procesu</string>
     <string name="apk_installer_settings_des">Dažas ierīces neatbalsta jauno pakotnes uzstādītāju. Izmantojiet legacy (veco) uzstādītāju, ja atjauninājumus nevar uzstādīt.</string>
-    <string name="lightnovel">Noveles aplikācija no šiem izstrādātājiem</string>
-    <string name="anim">Anime aplikāciju no tiem pašiem izstradatājiem</string>
+    <string name="lightnovel">Viegla romānu lietotne no šiem pašiem izstrādātājiem</string>
+    <string name="anim">Anime lietotne no šiem pašiem izstrādātājiem</string>
     <string name="discord">Ienāc discordā</string>
     <string name="benene">Iedot banānu izstrādātājiem</string>
     <string name="benene_des">Iedotie banāni</string>
-    <string name="app_language">Aplikācijas valoda</string>
+    <string name="app_language">Lietotnes valoda</string>
     <string name="no_chromecast_support_toast">Šim devējam nav Chromecast pieņemšana</string>
     <string name="no_links_found_toast">Nav linku strastu</string>
     <string name="copy_link_toast">Links kopēts cliobordā</string>
@@ -199,16 +199,16 @@
 \natlikušas</string>
     <string name="status_completed">Pabeigts</string>
     <string name="status">Statuss</string>
-    <string name="year">gads</string>
-    <string name="rating">Reitings</string>
+    <string name="year">Gads</string>
+    <string name="rating">Vērtējums</string>
     <string name="duration">Ilgums</string>
-    <string name="site">Saite</string>
-    <string name="synopsis">Synopsis</string>
-    <string name="queued">Gaida</string>
+    <string name="site">Vietne</string>
+    <string name="synopsis">Konspekts</string>
+    <string name="queued">ievietots rindā</string>
     <string name="used_storage">Lietotie</string>
-    <string name="app_storage">Aplikācija</string>
+    <string name="app_storage">Lietotne</string>
     <string name="movies">Filmas</string>
-    <string name="tv_series">Seriāli</string>
+    <string name="tv_series">Seriāli, raidījumi</string>
     <string name="cartoons">Animācija</string>
     <string name="anime">Anime</string>
     <string name="torrent">Torrenti</string>
@@ -219,7 +219,7 @@
     <string name="nsfw">NSFW</string>
     <string name="others">Citi</string>
     <string name="movies_singular">Filmas</string>
-    <string name="tv_series_singular">Sērijas</string>
+    <string name="tv_series_singular">Seriāls, raidījums</string>
     <string name="cartoons_singular">Animācija</string>
     <string name="anime_singular">Anime</string>
     <string name="ova_singular">OVA</string>
@@ -235,7 +235,7 @@
     <string name="storage_error">Ielādēšanas kļūda, pārbaudi atmiņas atļauju</string>
     <string name="episode_action_chromecast_episode">Chromecast epizode</string>
     <string name="episode_action_chromecast_mirror">Chromecast morror</string>
-    <string name="episode_action_play_in_app">Palaist aplikācijā</string>
+    <string name="episode_action_play_in_app">Atskaņot lietotnē</string>
     <string name="episode_action_play_in_format">Atskaņot uekšā %s</string>
     <string name="episode_action_auto_download">Automātiski ielādēt</string>
     <string name="episode_action_download_mirror">Ielādēt spoguli</string>
@@ -277,7 +277,7 @@
     <string name="legal_notice">Atruna</string>
     <string name="pref_category_bypass">ISP Izlaists</string>
     <string name="pref_category_links">Links</string>
-    <string name="pref_category_app_updates">Aplikācijas atjauninājumus</string>
+    <string name="pref_category_app_updates">Lietotnes atjauninājumi</string>
     <string name="pref_category_backup">Dublējums</string>
     <string name="pref_category_extensions">Papildinājumi</string>
     <string name="pref_category_actions">Akcijas</string>
@@ -294,7 +294,7 @@
     <string name="random_button_settings">Randomā poga</string>
     <string name="random_button_settings_desc">Rādīt izlases pogu Sākums un Bibliotēka sadaļās</string>
     <string name="provider_lang_settings">Papildinājuma valodas</string>
-    <string name="app_layout">Aplikācijas izskats</string>
+    <string name="app_layout">Lietotnes izkārtojums</string>
     <string name="preferred_media_settings">Izvēlētā media</string>
     <string name="enable_nsfw_on_providers">Iespējot nepiedienīgu, izaicinošu saturu (NSFW) atbalstītajos papildinājumos</string>
     <string name="subtitles_encoding">Subtitru kodējums</string>
@@ -345,7 +345,7 @@
     <string name="subtitles_example_text">Fogts čuhņā mīļi lenc - ģērbj, žvadz, pūkšķ</string>
     <string name="player_loaded_subtitles" formatted="true">Ielādēti %s</string>
     <string name="player_load_subtitles">Ielādēt no datnes</string>
-    <string name="app_theme_settings">Aplikācijas theme</string>
+    <string name="app_theme_settings">Lietotnes motīvs</string>
     <string name="player_load_subtitles_online">Lejupielādēt no interneta</string>
     <string name="downloaded_file">Lejupielādēta datne</string>
     <string name="actor_main">Galvenais</string>
@@ -408,7 +408,7 @@
     <string name="view_public_repositories_button">Skatīt kopienas repozitorijus</string>
     <string name="view_public_repositories_button_short">Publiskais saraksts</string>
     <string name="uppercase_all_subtitles">Visi subtitri ar lielajiem burtiem</string>
-    <string name="download_all_plugins_from_repo">Uzmanību: CloudStream 3 neuzņemas nekādu atbildību par trešo pušu papildinājumu izmantošanu un nesniedz nekādu tā atbalstu!</string>
+    <string name="download_all_plugins_from_repo">Uzmanību: CloudStream neuzņemas nekādu atbildību par trešo pušu papildinājumu izmantošanu un nesniedz nekādu tā atbalstu!</string>
     <string name="single_plugin_disabled" formatted="true">%s (atspējots)</string>
     <string name="tracks">Tracks</string>
     <string name="audio_tracks">Audio dziesmas</string>
@@ -430,7 +430,7 @@
     <string name="hls_playlist">HLS atskaņošanas saraksts</string>
     <string name="player_pref">Vēlamais video atskaņotājs</string>
     <string name="player_settings_play_in_app">Iekšējais atskaņotājs</string>
-    <string name="app_not_found_error">Aplikācijs nav atrasta</string>
+    <string name="app_not_found_error">Lietotne nav atrasta</string>
     <string name="all_languages_preference">Visas valodas</string>
     <string name="skip_type_ed">Beigas</string>
     <string name="skip_type_recap">Kopsavilkums</string>
@@ -464,7 +464,7 @@
     <string name="subscription_deleted">Anulēts %s abonements</string>
     <string name="subscription_episode_released">%d sērija izlaista!</string>
     <string name="apk_installer_settings">Apk insteletājs</string>
-    <string name="github">Github</string>
+    <string name="github">GitHub</string>
     <string name="no_subtitles">Nav subtitru</string>
     <string name="play_episode_toast">Atskaņot epizodi</string>
     <string name="status_ongoing">Iet</string>
@@ -498,7 +498,7 @@
     <string name="setup_extensions_subtext">Lejupielādējiet to vietņu sarakstu, kuras vēlaties izmantot</string>
     <string name="extension_install_first">Vispirms uzstādīt papildinājumu</string>
     <string name="skip_type_op">Atvēršana</string>
-    <string name="skip_type_intro">Sākums</string>
+    <string name="skip_type_intro">Ievads</string>
     <string name="skip_type_format" formatted="true">Izlaist %s</string>
     <string name="action_remove_from_watched">Noņemt no skatītajiem</string>
     <string name="action_mark_as_watched">Atzīmēt kā skatītu</string>
@@ -509,17 +509,16 @@
     <string name="subscription_in_progress_notification">Abonēto šovu atjaunināšana</string>
     <string name="subscription_list_name">Abonēts</string>
     <string name="subscription_new">Abonēts %s</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
-    <string name="next_season_episode_format" formatted="true">%1$d. sezona un %2$d. sērija tiks izlaista pēc</string>
-    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dh %2$dm %3$ds</string>
-    <string name="download_time_left_min_sec_format" formatted="true">%1$dm %2$ds</string>
-    <string name="download_time_left_sec_format" formatted="true">%1$ds</string>
+    <string name="next_season_episode_format" formatted="true">%1$d. sezonas %2$d. epizode būs pieejama</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dst. %2$dmin. %3$dsek.</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dmin. %2$dsek.</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$dsek.</string>
     <string name="play_from_beginning_img_des">Atskaņot no sākuma</string>
     <string name="speech_recognition_unavailable">Runas atpazīšana nav pieejama</string>
     <string name="begin_speaking">Sāciet runāt…</string>
     <string name="torrent_info">Šis video ir torrenta fails, kas nozīmē, ka jūsu video aktivitātes var izsekot.\nPirms turpināt, pārliecinieties, ka saprotat torrenta failu lietošanu.</string>
-    <string name="downloads_delete_select">Atlasiet dzēšamos vienumus</string>
-    <string name="downloads_empty">Pašlaik nav lejupielāžu.</string>
+    <string name="downloads_delete_select">Atlasiet vienumus, ko dzēst</string>
+    <string name="downloads_empty">Pašlaik nav pieejama neviena lejupielāde.</string>
     <string name="offline_file">Pieejams skatīšanai bezsaistē</string>
     <string name="wifi">Bezvadu (Wi-Fi)</string>
     <string name="use">Izmantot</string>
@@ -595,4 +594,21 @@
     <string name="no_subtitles_loaded">Neviens subtitrs vēl nav ielādēts</string>
     <string name="all_subtitles_bold">Padarīt visus subtitrus treknrakstā</string>
     <string name="all_subtitles_italic">Padarīt visus subtitrus slīprakstā</string>
+    <string name="speed_setting_summary">Pievieno atskaņošanas ātruma izvēli atskaņotājā</string>
+    <string name="delete_format" formatted="true">Dzēst (%1$d | %2$s)</string>
+    <plurals name="downloads_active">
+        <item quantity="zero">%d aktīvas lejupielādes</item>
+        <item quantity="one">%d aktīva lejupielāde</item>
+        <item quantity="other">%d aktīvas lejupielādes</item>
+    </plurals>
+    <string name="download_queue">Lejupielādes rinda</string>
+    <string name="auto_rotate_video">Automātiski pagriezt</string>
+    <string name="biometric_authentication_title">Atbloķēt CloudStream</string>
+    <string name="password_pin_authentication_title">Paroles/PIN autentifikācija</string>
+    <string name="play_full_series_button">Atskaņot visas epizodes</string>
+    <string name="delete_message_series_episodes" formatted="true">Vai tiešām vēlaties neatgriezeniski dzēst šīs %1$s epizodes?\n\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">Jūs arī neatgriezeniski izdzēsīsiet visas šī seriāla, raidījuma epizodes:\n\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Vai tiešām vēlaties neatgriezeniski dzēst visas šī seriāla, raidījuma epizodes?\n\n%s</string>
+    <string name="queue_empty_message">Pašlaik nav nevienas rindā ievietotas lejupielādes.</string>
+    <string name="open_local_video">Atvērt vietējo video</string>
 </resources>

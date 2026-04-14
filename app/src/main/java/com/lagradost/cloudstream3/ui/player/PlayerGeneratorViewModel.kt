@@ -13,9 +13,10 @@ import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
-import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import com.lagradost.cloudstream3.utils.videoskip.SkipAPI
+import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -35,8 +36,8 @@ class PlayerGeneratorViewModel : ViewModel() {
     private val _loadingLinks = MutableLiveData<Resource<Boolean?>>()
     val loadingLinks: LiveData<Resource<Boolean?>> = _loadingLinks
 
-    private val _currentStamps = MutableLiveData<List<EpisodeSkip.SkipStamp>>(emptyList())
-    val currentStamps: LiveData<List<EpisodeSkip.SkipStamp>> = _currentStamps
+    private val _currentStamps = MutableLiveData<List<VideoSkipStamp>>(emptyList())
+    val currentStamps: LiveData<List<VideoSkipStamp>> = _currentStamps
 
     private val _currentSubtitleYear = MutableLiveData<Int?>(null)
     val currentSubtitleYear: LiveData<Int?> = _currentSubtitleYear
@@ -181,7 +182,7 @@ class PlayerGeneratorViewModel : ViewModel() {
             if (page != null && meta is ResultEpisode) {
                 _currentStamps.postValue(listOf())
                 _currentStamps.postValue(
-                    EpisodeSkip.getStamps(
+                    SkipAPI.videoStamps(
                         page,
                         meta,
                         duration,

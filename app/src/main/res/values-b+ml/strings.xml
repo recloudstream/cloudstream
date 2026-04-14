@@ -272,5 +272,4 @@
     <string name="subs_edge_type">എഡ്ജ് തരം</string>
     <string name="subs_outline_color">ഔട്ട്ലൈൻ നിറം</string>
     <string name="subs_background_color">പശ്ചാത്തല നിറം</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>

@@ -161,7 +161,6 @@
     <string name="automatic_plugin_download_mode_title">Selecciona o modo para filtrar a descarga dos complementos</string>
     <string name="automatic_plugin_download_summary">Instala automáticamente todos os complementos aínda non instalados dos repositorios engadidos.</string>
     <string name="updates_settings">Mostrar actualizacións da aplicación</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="subs_default_reset_toast">Reiniciar aos valores predefinidos</string>
     <string name="go_back_30">-30</string>
     <string name="audio_book_singular">Audiolibro</string>
@@ -274,10 +273,6 @@
     <string name="copy_link_toast">Ligazón copiada ó portapapeis</string>
     <string name="play_episode_toast">Reproducir capítulo</string>
     <string name="season">Temporada</string>
-    <plurals name="episodes" translatable="false">
-        <item quantity="one">Capítulos</item>
-        <item quantity="other"/>
-    </plurals>
     <string name="episodes_range">%1$d-%2$d</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="season_short">T</string>

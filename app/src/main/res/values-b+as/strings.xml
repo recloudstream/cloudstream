@@ -607,7 +607,6 @@
     <string name="pick_subtitle">চাবটাইটলসমূহ</string>
     <string name="play_episode">এপিচ\'ড প্লে কৰক</string>
     <string name="sort_apply">প্ৰয়োগ কৰক</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="delete_files">ফাইলসমূহ ডিলিট কৰক</string>
     <string name="delete_format" formatted="true">ডিলিট (%1$d | %2$s)</string>
     <string name="delete_message_multiple" formatted="true">আপুনি স্থায়ীভাৱে তলত দিয়া আইটেমসমূহ ডিলিট কৰিবলৈ নিশ্চিত নেকি?

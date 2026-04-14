@@ -11,6 +11,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.throwAbleToResource
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.kitsuApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.simklApi
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
@@ -276,6 +277,7 @@ class SyncViewModel : ViewModel() {
         // fix because of bad old data :pensive:
         val realName = when (syncName) {
             "MAL" -> malApi.idPrefix
+            "Kitsu" -> kitsuApi.idPrefix
             "Simkl" -> simklApi.idPrefix
             "AniList" -> aniListApi.idPrefix
             else -> syncName

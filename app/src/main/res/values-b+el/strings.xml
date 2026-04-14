@@ -611,7 +611,6 @@
     <string name="biometric_warning">Τα δεδομένα σας στο CloudStream έχουν κάνει back up. Αν και η πιθανότητα είναι πολύ χαμηλή, όλες οι συσκευές συμπεριφέρονται διαφορετικά. Στη σπάνια περίπτωση, που απαγορευτεί η πρόσβασή σας από την εφαρμογή, διαγράψτε τα δεδομένα εφαρμογής και επαναφέρετέ τα από ένα ήδη υπάρχον backup. Συγνώμη για οποιαδήποτε ταλαιπωρία.</string>
     <string name="pref_category_accounts">Λογαριασμοί</string>
     <string name="pref_category_security">Ασφάλεια</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="dismiss">Απόρριψη</string>
     <string name="subtitles_from_embedded">Ενσωματωμένο</string>
     <string name="subtitles_from_online">Συνδεμένοι</string>

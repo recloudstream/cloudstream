@@ -54,10 +54,10 @@ import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.AppContextUtils
 import com.lagradost.cloudstream3.utils.AppContextUtils.requestLocalAudioFocus
 import com.lagradost.cloudstream3.utils.DataStoreHelper
-import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
+import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
 import java.net.SocketTimeoutException
 
 enum class PlayerResize(@StringRes val nameRes: Int) {
@@ -127,11 +127,11 @@ abstract class AbstractPlayerFragment(
         throw NotImplementedError()
     }
 
-    open fun onTimestamp(timestamp: EpisodeSkip.SkipStamp?) {
+    open fun onTimestamp(timestamp: VideoSkipStamp?) {
 
     }
 
-    open fun onTimestampSkipped(timestamp: EpisodeSkip.SkipStamp) {
+    open fun onTimestampSkipped(timestamp: VideoSkipStamp) {
 
     }
 
@@ -152,12 +152,11 @@ abstract class AbstractPlayerFragment(
         isPlaying: CSPlayerLoading
     ) {
         val isPlayingRightNow = CSPlayerLoading.IsPlaying == isPlaying
-        val isPausedRightNow = CSPlayerLoading.IsPaused == isPlaying
+        val isBuffering = CSPlayerLoading.IsBuffering == isPlaying
         currentPlayerStatus = isPlaying
 
-        keepScreenOn(!isPausedRightNow)
+        keepScreenOn(isPlayingRightNow || isBuffering)
 
-        val isBuffering = CSPlayerLoading.IsBuffering == isPlaying
         if (isBuffering) {
             playerPausePlayHolderHolder?.isVisible = false
             playerBuffering?.isVisible = true
@@ -165,7 +164,7 @@ abstract class AbstractPlayerFragment(
             playerPausePlayHolderHolder?.isVisible = true
             playerBuffering?.isVisible = false
 
-            if(isPlaying == CSPlayerLoading.IsEnded && isLayout(PHONE)){
+            if (isPlaying == CSPlayerLoading.IsEnded && isLayout(PHONE)) {
                 playerPausePlay?.setImageResource(R.drawable.ic_baseline_replay_24)
             } else if (wasPlaying != isPlaying) {
                 playerPausePlay?.setImageResource(if (isPlayingRightNow) R.drawable.play_to_pause else R.drawable.pause_to_play)
@@ -712,7 +711,7 @@ abstract class AbstractPlayerFragment(
     }
 
     @SuppressLint("UnsafeOptInUsageError")
-    fun resize(resize: PlayerResize, showToast: Boolean) {
+    open fun resize(resize: PlayerResize, showToast: Boolean) {
         DataStoreHelper.resizeMode = resize.ordinal
         val type = when (resize) {
             PlayerResize.Fill -> AspectRatioFrameLayout.RESIZE_MODE_FILL

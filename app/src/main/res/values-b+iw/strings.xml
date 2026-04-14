@@ -537,7 +537,6 @@
 \nיגרמו לעדיפות הסרטון להיות 10.
 \n
 \nשימו לב: אם הסכום הוא 10 או יותר, הנגן ידלג על טעינת הסרטון כאשר הלינק נטען!</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="next_season_episode_format" formatted="true">עונה %1$d פרק %2$d תשודר ב:</string>
     <string name="download_time_left_hour_min_sec_format" formatted="true">%1$d שעות %2$d דקות %3$d שניות</string>
     <string name="download_time_left_min_sec_format" formatted="true">%1$d דקות %2$d שניות</string>

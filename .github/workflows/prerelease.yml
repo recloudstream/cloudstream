@@ -12,6 +12,9 @@ concurrency:
   group: "pre-release"
   cancel-in-progress: true
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -53,7 +56,7 @@ jobs:
         cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
     - name: Run Gradle
-      run: ./gradlew assemblePrerelease build androidSourcesJar makeJar
+      run: ./gradlew assemblePrereleaseRelease androidSourcesJar makeJar
       env:
         SIGNING_KEY_ALIAS: "key0"
         SIGNING_KEY_PASSWORD: ${{ steps.fetch_keystore.outputs.key_pwd }}

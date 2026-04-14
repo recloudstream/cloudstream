@@ -8,6 +8,91 @@
     android:tag="television"
     tools:orientation="vertical">
 
+    <FrameLayout
+        android:id="@+id/player_metadata_scrim"
+        android:layout_width="680dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_player_metadata_scrim_netflix"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:id="@+id/player_metadata_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical"
+            android:paddingStart="64dp"
+            android:paddingEnd="32dp"
+            android:paddingBottom="32dp">
+
+            <!-- TITLE / LOGO -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="88dp">
+
+                <ImageView
+                    android:id="@+id/player_movie_logo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitStart"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
+
+                <TextView
+                    android:id="@+id/player_movie_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@android:color/white"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    android:shadowColor="@android:color/black"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="4"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    tools:text="Zootopia 2"/>
+            </FrameLayout>
+
+            <!-- GENRES / YEAR / RATING -->
+            <TextView
+                android:id="@+id/player_movie_meta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textColor="#B3FFFFFF"
+                android:textSize="14sp"
+                android:maxLines="2"
+                tools:text="Animation • Action • Adventure • 2025 • ⭐ 7.6"/>
+
+            <!-- SYNOPSIS -->
+            <TextView
+                android:id="@+id/player_movie_overview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:textColor="#E6FFFFFF"
+                android:textSize="16sp"
+                android:lineSpacingExtra="8dp"
+                android:shadowColor="@android:color/black"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="4"
+                android:maxLines="5"
+                tools:text="Brave rabbit cop Judy Hopps..."/>
+
+        </LinearLayout>
+        <ImageView
+            android:id="@+id/video_outline"
+            android:visibility="gone"
+            android:src="@drawable/video_outline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/piphide"
@@ -146,7 +231,7 @@
                 </ImageView>
 
                 <ProgressBar
-                    android:id="@+id/player_progressbar_right"
+                    android:id="@+id/player_progressbar_right_level1"
                     style="@android:style/Widget.Material.ProgressBar.Horizontal"
                     android:layout_width="5dp"
                     android:layout_height="150dp"
@@ -156,7 +241,24 @@
                     android:indeterminate="false"
                     android:max="100"
                     android:progress="100"
-                    android:progressDrawable="@drawable/progress_drawable_vertical" />
+                    android:progressDrawable="@drawable/progress_drawable_vertical"
+                    android:progressTint="@color/white"
+                    android:progressTintMode="src_in" />
+
+                <ProgressBar
+                    android:id="@+id/player_progressbar_right_level2"
+                    style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                    android:layout_width="5dp"
+                    android:layout_height="150dp"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="40dp"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/progress_drawable_vertical"
+                    android:progressTint="@color/colorPrimaryOrange"
+                    android:progressTintMode="src_in" />
             </RelativeLayout>
         </LinearLayout>
 
@@ -253,19 +355,34 @@
                     android:layout_marginEnd="32dp"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:maxLines="2"
-                        android:id="@+id/player_video_title"
+                    <LinearLayout
+                        android:id="@+id/player_video_title_holder"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:gravity="end"
-                        android:maxWidth="600dp"
-                        android:textAlignment="viewEnd"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        tools:text="Hello world" />
+                        android:layout_gravity="end">
+                        <TextView
+                            android:maxLines="2"
+                            android:id="@+id/player_video_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:gravity="end"
+                            android:maxWidth="600dp"
+                            android:textAlignment="viewEnd"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:text="Hello world" />
+                        <ImageView
+                            android:id="@+id/offline_pin"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_marginStart="2dp"
+                            android:src="@drawable/ic_offline_pin_24"
+                            android:visibility="gone"
+                            tools:visibility="visible"
+                            android:layout_gravity="start"/>
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/player_video_title_rez"
@@ -278,6 +395,19 @@
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         tools:text="1920x1080" />
+
+                    <TextView
+                        android:id="@+id/player_video_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginBottom="2.5dp"
+                        android:layout_gravity="end"
+                        android:textColor="#B3FFFFFF"
+                        android:textSize="16sp"
+                        android:visibility="gone"
+                        tools:text="HEVC • English • 5.1 • E-AC3" />
+
 
                     <FrameLayout
                         android:id="@+id/player_episode_filler_holder"
@@ -795,7 +925,7 @@
                             android:scaleType="centerCrop" />
                     </FrameLayout>
 
-                    <com.github.rubensousa.previewseekbar.media3.PreviewTimeBar
+                    <com.lagradost.cloudstream3.ui.player.live.LivePreviewTimeBar
                         android:id="@id/exo_progress"
                         android:layout_width="0dp"
                         android:layout_height="30dp"
@@ -828,6 +958,25 @@
                         app:layout_constraintBaseline_toBaselineOf="@id/exo_position"
                         app:layout_constraintEnd_toEndOf="parent"
                         tools:text="23:20" />
+
+                    <TextView
+                        android:id="@+id/time_live"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center|center_vertical"
+                        android:text="@string/player_is_live"
+                        android:layout_marginEnd="20dp"
+                        android:includeFontPadding="false"
+                        android:minWidth="50dp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:textStyle="normal"
+                        android:visibility="gone"
+                        app:layout_constraintBaseline_toBaselineOf="@id/exo_position"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        />
 
                     <TextView
                         android:id="@+id/time_left"
@@ -972,6 +1121,7 @@
         android:layout_height="match_parent">
 
     </FrameLayout>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/player_speedup_button"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"

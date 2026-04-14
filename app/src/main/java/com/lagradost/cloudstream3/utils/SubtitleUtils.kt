@@ -2,7 +2,8 @@ package com.lagradost.cloudstream3.utils
 
 import android.content.Context
 import com.lagradost.api.Log
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.basePathToFile
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.basePathToFile
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 
 object SubtitleUtils {
 
@@ -12,7 +13,7 @@ object SubtitleUtils {
         ".ttml", ".sbv", ".dfxp"
     )
 
-    fun deleteMatchingSubtitles(context: Context, info: VideoDownloadManager.DownloadedFileInfo) {
+    fun deleteMatchingSubtitles(context: Context, info: DownloadObjects.DownloadedFileInfo) {
         val cleanDisplay = cleanDisplayName(info.displayName)
 
         val base = basePathToFile(context, info.basePath)
@@ -42,7 +43,7 @@ object SubtitleUtils {
         cleanDisplay: String
     ): Boolean {
         // Check if the file has a valid subtitle extension
-        val hasValidExtension = allowedExtensions.any { name.contains(it, ignoreCase = true) }
+        val hasValidExtension = allowedExtensions.any { name.endsWith(it, ignoreCase = true) }
 
         // We can't have the exact same file as a subtitle
         val isNotDisplayName = !name.equals(display, ignoreCase = true)

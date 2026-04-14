@@ -313,7 +313,7 @@
     <string name="update_notification_downloading">Téléchargement de la mise à jour…</string>
     <string name="next_episode_format" formatted="true">L\'épisode %d sera publié dans</string>
     <string name="show_hd">Étiquette de qualité</string>
-    <string name="limit_title_rez">Résolution du lecteur vidéo</string>
+    <string name="limit_title_rez">Afficher les informations du lecteur</string>
     <string name="add_site_pref">Cloner le site</string>
     <string name="remove_site_pref">Supprimer le site</string>
     <string name="add_site_summary">Ajoute un clone à un site déjà existant, avec une URL différente</string>
@@ -606,7 +606,6 @@
     <string name="biometric_setting">Verrouillage biométrique</string>
     <string name="player_settings_select_cast_device">Sélectionnez un appareil de diffusion</string>
     <string name="next_season_episode_format" formatted="true">Saison %1$d Episode %2$d sera publié dans</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="play_from_beginning_img_des">Regarder depuis le début</string>
     <string name="open_local_video">Ouvrir une vidéo locale</string>
     <string name="test_warning">Attention</string>
@@ -711,7 +710,7 @@
     <string name="reload_provider">Recharger le fournisseur</string>
     <string name="resolution_and_name">Solution et nom</string>
     <string name="name">Nom</string>
-    <string name="episode_action_play_mirror">Mise en miroir</string>"
+    <string name="episode_action_play_mirror">Lancer le miroir</string>"
     <string name="subs_subtitle_alignment">Alignement des Sous-titres</string>
     <string name="bottom_left">En bas à gauche</string>
     <string name="bottom_center">En bas au centre</string>
@@ -723,4 +722,36 @@
     <string name="top_center">En haut au centre</string>
     <string name="top_right">En haut à droite</string>
     <string name="play_full_series_button">Jouer la série complète</string>
+    <string name="install_prerelease">Installer la version préliminaire</string>
+    <string name="prerelease_already_installed">La version préliminaire est déjà installée.</string>
+    <string name="prerelease_install_failed">L\'installation de la version préliminaire a échouée.</string>
+    <string name="show_episode_text">Texte de l\'épisode</string>
+    <string name="search_suggestions">Suggestions de recherche</string>
+    <string name="search_suggestions_des">Afficher des suggestions de recherche pendant la saisie</string>
+    <string name="clear_suggestions">Effacer les suggestions</string>
+    <string name="extra_brightness_settings">Luminosité supplémentaire</string>
+    <string name="extra_brightness_settings_des">Activer le filtre de luminosité lorsque la luminosité dépasse 100 %</string>
+    <string name="extra_brightness_key">extra_brightness_enabled</string>
+    <string name="show_cast_in_details">Afficher le panneau de cast</string>
+    <string name="video_info">Information du média</string>
+    <string name="source_name">Nom de la source</string>
+    <string name="download_queue">File d\'attente de téléchargements</string>
+    <string name="queue_empty_message">Il n\'y a actuellement aucun téléchargement en attente.</string>
+    <string name="source_priority">Priorité de la source</string>
+    <string name="source_priority_help">Déterminez comment les sources vidéo seront triées dans le lecteur</string>
+    <string name="download_all">Télécharger tout</string>
+    <string name="cancel_all">Tout annuler</string>
+    <string name="download_episode_range">Voulez-vous télécharger l\'épisode %s ?</string>
+    <string name="cancel_queue_message">Vous voulez annuler tous les téléchargements en file d\'attente ?</string>
+    <plurals name="downloads_active">
+        <item quantity="one">%d téléchargement actif</item>
+        <item quantity="many">%d téléchargements actifs</item>
+        <item quantity="other">%d téléchargements actifs</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="one">%d téléchargement en attente</item>
+        <item quantity="many">%d téléchargements en attente</item>
+        <item quantity="other">%d téléchargements en attente</item>
+    </plurals>
+    <string name="show_player_metadata_overlay">Afficher les métadata de l\'overlay du lecteur vidéo</string>
 </resources>

@@ -5,7 +5,6 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
 
-@Prerelease
 class PixelDrainDev : PixelDrain() {
     override var mainUrl = "https://pixeldrain.dev"
 }

@@ -604,7 +604,6 @@
     <string name="result_search_tooltip">دیگر ایکسٹینشنز میں تلاش کریں</string>
     <string name="recommendations_tooltip">سفارشات دکھائیں</string>
     <string name="biometric_warning">آپ کے CloudStream ڈیٹا کا اب بیک اپ لیا گیا ہے۔ اگرچہ اس کا امکان بہت کم ہے، لیکن مختلف ڈیوائس مختلف طریقے سے کام کر سکتے ہیں۔ اگر آپ ایپ تک رسائی حاصل کرنے سے قاصر ہیں تو، ایپ کا ڈیٹا مکمل طور پر صاف کریں اور بیک اپ سے بحال کریں۔ اس سے ہونے والی کسی بھی تکلیف کے لیے ہم بہت معذرت خواہ ہیں۔</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="next_season_episode_format" formatted="true">سیزن %1$d کی قسط %2$d جاری ہوگی</string>
     <string name="play_from_beginning_img_des">شروع سےپلے کریں</string>
     <string name="speech_recognition_unavailable">کلام شناسی دستیاب نہیں</string>
