@@ -124,7 +124,6 @@ actual class WebViewResolver actual constructor(
 
         main {
             // Useful for debugging
-            WebView.setWebContentsDebuggingEnabled(true)
             try {
                 webView = WebView(
                     (getContext() as? Context)
