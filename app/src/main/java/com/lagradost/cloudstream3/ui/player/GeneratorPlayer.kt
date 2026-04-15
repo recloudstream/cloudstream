@@ -47,6 +47,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.CloudStreamApp
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.LoadResponse
@@ -132,6 +133,7 @@ import kotlinx.coroutines.launch
 import java.io.Serializable
 import java.util.Calendar
 
+
 @OptIn(UnstableApi::class)
 class GeneratorPlayer : FullScreenPlayer() {
     companion object {
@@ -174,6 +176,11 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     private var preferredAutoSelectSubtitles: String? = null // null means do nothing, "" means none
 
+    private data class SubtitleFilterSettings(
+        val languageNames: List<String> = emptyList(),
+        val filterByLanguage: Boolean = false,
+    )
+
     private var binding: FragmentPlayerBinding? = null
     private var allMeta: List<ResultEpisode>? = null
     private fun startLoading() {
@@ -185,7 +192,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     private fun setSubtitles(subtitle: SubtitleData?, userInitiated: Boolean): Boolean {
-        // If subtitle is changed and user initiated -> Save the language
+        // If subtitle is changed and user initiated -> Save the language and episode preference
         if (subtitle != currentSelectedSubtitles && userInitiated) {
             val subtitleLanguageTagIETF = if (subtitle == null) {
                 "" // -> No Subtitles
@@ -198,6 +205,9 @@ class GeneratorPlayer : FullScreenPlayer() {
                 setKey(SUBTITLE_AUTO_SELECT_KEY, subtitleLanguageTagIETF)
                 preferredAutoSelectSubtitles = subtitleLanguageTagIETF
             }
+
+            // Persist episode-specific subtitle preference
+            EpisodePreferenceHelper.persistSubtitlePreference(currentMeta, subtitle)
         }
 
         currentSelectedSubtitles = subtitle
@@ -231,6 +241,8 @@ class GeneratorPlayer : FullScreenPlayer() {
     private fun noSubtitles(): Boolean {
         return setSubtitles(null, true)
     }
+
+
 
     private fun getPos(): Long {
         val durPos = getViewPos(viewModel.getId()) ?: return 0L
@@ -522,6 +534,17 @@ class GeneratorPlayer : FullScreenPlayer() {
             hasRequestedStamps = false
 
         loadExtractorJob(link.first)
+        // Subtitle selection uses getAutoSelectSubtitle which checks episode preference,
+        // then settings, then downloads - in that priority order.
+        val preferredSubtitle = if (sameEpisode) {
+            currentSelectedSubtitles
+        } else {
+            getAutoSelectSubtitle(
+                currentSubs,
+                settings = true,
+                downloads = true
+            )
+        }
         // load player
         context?.let { ctx ->
             val (url, uri) = link
@@ -534,9 +557,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     if (isNextEpisode) 0L else getPos()
                 },
                 currentSubs,
-                (if (sameEpisode) currentSelectedSubtitles else null) ?: getAutoSelectSubtitle(
-                    currentSubs, settings = true, downloads = true
-                ),
+                preferredSubtitle,
                 preview = isFullScreenPlayer
             )
         }
@@ -1338,20 +1359,35 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
 
                 binding.applyBtt.setOnClickListener {
-                    var init = sourceIndex != startSource
-                    if (subtitleGroupIndex != subtitleGroupIndexStart || subtitleOptionIndex != subtitleOptionIndexStart) {
-                        init = init or if (subtitleGroupIndex <= 0) {
+                    val sourceChanged = sourceIndex != startSource
+                    val subtitleChanged =
+                        subtitleGroupIndex != subtitleGroupIndexStart ||
+                                subtitleOptionIndex != subtitleOptionIndexStart
+                    val selectedSource = sortedUrls.getOrNull(sourceIndex) ?: currentSelectedLink
+                    var shouldReload = sourceChanged
+
+                    if (subtitleChanged) {
+                        val selectedSubtitle =
+                            subtitlesGroupedList.getOrNull(subtitleGroupIndex - 1)
+                                ?.value
+                                ?.getOrNull(subtitleOptionIndex)
+
+                        shouldReload = shouldReload or if (subtitleGroupIndex <= 0) {
                             noSubtitles()
                         } else {
-                            subtitlesGroupedList.getOrNull(subtitleGroupIndex - 1)?.value?.getOrNull(
-                                subtitleOptionIndex
-                            )?.let {
+                            selectedSubtitle?.let {
                                 setSubtitles(it, true)
                             } ?: false
                         }
+
                     }
-                    if (init) {
-                        sortedUrls.getOrNull(sourceIndex)?.let {
+
+                    if (sourceChanged) {
+                        EpisodePreferenceHelper.persistSourcePreference(currentMeta, selectedSource)
+                    }
+
+                    if (shouldReload) {
+                        selectedSource?.let {
                             loadLink(it, true)
                         }
                     }
@@ -1552,7 +1588,10 @@ class GeneratorPlayer : FullScreenPlayer() {
             noLinksFound()
             return
         }
-        loadLink(links.first(), false)
+
+        val episodePreference = EpisodePreferenceHelper.getEpisodePreference(viewModel.getMeta())
+        val preferredLink = EpisodePreferenceHelper.resolvePreferenceSource(links, episodePreference)
+        loadLink(preferredLink ?: links.first(), false)
         showPlayerMetadata()
     }
 
@@ -1719,9 +1758,26 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+    /**
+     * Auto-selects a subtitle based on the following priority:
+     * 1. Episode preference (user's previous selection for this series)
+     * 2. Settings-based language preference (preferredAutoSelectSubtitles)
+     * 3. Downloaded subtitle files matching the language preference
+     *
+     * Returns null if no suitable subtitle is found or if episode preference
+     * explicitly disables subtitles (blockFallback=true).
+     */
     private fun getAutoSelectSubtitle(
         subtitles: Set<SubtitleData>, settings: Boolean, downloads: Boolean
     ): SubtitleData? {
+        // Priority 1: Check episode-specific preference (user's previous selection for this series)
+        val episodePref = EpisodePreferenceHelper.resolvePreferenceSubtitle(
+            subtitles, EpisodePreferenceHelper.getEpisodePreference(currentMeta)
+        )
+        if (episodePref.blockFallback) return null // User explicitly disabled subtitles
+        if (episodePref.subtitle != null) return episodePref.subtitle
+
+        // Priority 2 & 3: Settings and downloads based auto-selection
         val langCode = preferredAutoSelectSubtitles ?: return null
         if (downloads) {
             return sortSubs(subtitles).firstOrNull { it.origin == SubtitleOrigin.DOWNLOADED_FILE && it.matchesLanguageCode(langCode) }
@@ -1778,11 +1834,159 @@ class GeneratorPlayer : FullScreenPlayer() {
         return false
     }
 
+    /**
+     * Auto-selects subtitles by delegating to getAutoSelectSubtitle which handles
+     * all preference systems in priority order (episode pref > settings > downloads).
+     */
     private fun autoSelectSubtitles() {
         //Log.i(TAG, "autoSelectSubtitles")
         safe {
             if (!autoSelectFromSettings()) {
                 autoSelectFromDownloads()
+            }
+        }
+    }
+
+    private fun loadSubtitleFilterSettings(): SubtitleFilterSettings {
+        val ctx = context ?: return SubtitleFilterSettings()
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+        showName = settingsManager.getBoolean(ctx.getString(R.string.show_name_key), true)
+        showResolution = settingsManager.getBoolean(ctx.getString(R.string.show_resolution_key), true)
+        showMediaInfo = settingsManager.getBoolean(ctx.getString(R.string.show_media_info_key), false)
+        limitTitle = settingsManager.getInt(ctx.getString(R.string.prefer_title_limit_key), 0)
+        updateForcedEncoding(ctx)
+
+        val filterByLanguage =
+            settingsManager.getBoolean(getString(R.string.filter_sub_lang_key), false)
+        if (!filterByLanguage) {
+            return SubtitleFilterSettings(filterByLanguage = false)
+        }
+
+        val languageNames = settingsManager.getStringSet(
+            getString(R.string.provider_lang_key),
+            mutableSetOf("en")
+        )?.mapNotNull {
+            fromTagToEnglishLanguageName(it)?.lowercase()
+        } ?: emptyList()
+
+        return SubtitleFilterSettings(
+            languageNames = languageNames,
+            filterByLanguage = true,
+        )
+    }
+
+    private fun setupPlayerControls() {
+        binding?.overlayLoadingSkipButton?.setOnClickListener {
+            startPlayer()
+        }
+
+        binding?.playerLoadingGoBack?.setOnClickListener {
+            exitFullscreen()
+            player.release()
+            activity?.popCurrentPage()
+        }
+
+        playerBinding?.downloadHeader?.setOnClickListener {
+            it?.isVisible = false
+        }
+
+        playerBinding?.downloadHeaderToggle?.setOnClickListener {
+            playerBinding?.downloadHeader?.let {
+                it.isVisible = !it.isVisible
+            }
+        }
+    }
+
+    private fun observeLoadingLinks() {
+        observe(viewModel.loadingLinks) {
+            when (it) {
+                is Resource.Loading -> {
+                    startLoading()
+                }
+
+                is Resource.Success -> {
+                    // provider returned false
+                    //if (it.value != true) {
+                    //    showToast(activity, R.string.unexpected_error, Toast.LENGTH_SHORT)
+                    //}
+                    startPlayer()
+                }
+
+                is Resource.Failure -> {
+                    showToast(it.errorString, Toast.LENGTH_LONG)
+                    startPlayer()
+                }
+            }
+        }
+    }
+
+    private fun observeCurrentLinks() {
+        observe(viewModel.currentLinks) {
+            currentLinks = it
+            val turnVisible = it.isNotEmpty() && lastUsedGenerator?.canSkipLoading == true
+            val wasGone = binding?.overlayLoadingSkipButton?.isGone == true
+            val waitingForPreferredSource = EpisodePreferenceHelper.shouldWaitForPreferredSource(it, viewModel.getMeta())
+
+            binding?.overlayLoadingSkipButton?.apply {
+                isVisible = turnVisible
+                val value = viewModel.currentLinks.value
+                if (value.isNullOrEmpty()) {
+                    setText(R.string.skip_loading)
+                } else {
+                    text = "${context.getString(R.string.skip_loading)} (${value.size})"
+                }
+            }
+
+            safe {
+                if (!waitingForPreferredSource && currentLinks.any { link ->
+                        getLinkPriority(currentQualityProfile, link.first) >=
+                                QualityDataHelper.AUTO_SKIP_PRIORITY
+                    }
+                ) {
+                    startPlayer()
+                }
+            }
+
+            if (turnVisible && wasGone) {
+                binding?.overlayLoadingSkipButton?.requestFocus()
+            }
+        }
+    }
+
+    private fun observeCurrentSubs(subtitleFilterSettings: SubtitleFilterSettings) {
+        observe(viewModel.currentSubs) { set ->
+            currentSubs = filterSubtitles(set, subtitleFilterSettings)
+            player.setActiveSubtitles(set)
+
+            // If the file is downloaded then do not select auto select the subtitles
+            // Downloaded subtitles cannot be selected immediately after loading since
+            // player.getCurrentPreferredSubtitle() cannot fetch data from non-loaded subtitles
+            // Resulting in unselecting the downloaded subtitle
+            if (set.lastOrNull()?.origin != SubtitleOrigin.DOWNLOADED_FILE) {
+                autoSelectSubtitles()
+            }
+        }
+    }
+
+    private fun filterSubtitles(
+        subtitles: Set<SubtitleData>,
+        subtitleFilterSettings: SubtitleFilterSettings,
+    ): Set<SubtitleData> {
+        if (
+            !subtitleFilterSettings.filterByLanguage ||
+            subtitleFilterSettings.languageNames.isEmpty()
+        ) {
+            return subtitles
+        }
+
+        Log.i("subfilter", "Filtering subtitle")
+        return buildSet {
+            subtitleFilterSettings.languageNames.forEach { language ->
+                Log.i("subfilter", "Lang: $language")
+                addAll(subtitles.filter {
+                    it.originalName.contains(language, ignoreCase = true) ||
+                            it.origin != SubtitleOrigin.URL
+                })
             }
         }
     }
@@ -2151,27 +2355,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var langFilterList = listOf<String>()
-        var filterSubByLang = false
-
-        context?.let { ctx ->
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
-            showName        = settingsManager.getBoolean(ctx.getString(R.string.show_name_key), true)
-            showResolution  = settingsManager.getBoolean(ctx.getString(R.string.show_resolution_key), true)
-            showMediaInfo   = settingsManager.getBoolean(ctx.getString(R.string.show_media_info_key), false)
-            limitTitle      = settingsManager.getInt(ctx.getString(R.string.prefer_title_limit_key), 0)
-            updateForcedEncoding(ctx)
-            filterSubByLang =
-                settingsManager.getBoolean(getString(R.string.filter_sub_lang_key), false)
-            if (filterSubByLang) {
-                val langFromPrefMedia = settingsManager.getStringSet(
-                    this.getString(R.string.provider_lang_key), mutableSetOf("en")
-                )
-                langFilterList = langFromPrefMedia?.mapNotNull {
-                    fromTagToEnglishLanguageName(it)?.lowercase() ?: return@mapNotNull null
-                } ?: listOf()
-            }
-        }
+        val subtitleFilterSettings = loadSubtitleFilterSettings()
 
         unwrapBundle(savedInstanceState)
         unwrapBundle(arguments)
@@ -2184,106 +2368,15 @@ class GeneratorPlayer : FullScreenPlayer() {
             viewModel.loadLinks()
         }
 
-        binding?.overlayLoadingSkipButton?.setOnClickListener {
-            startPlayer()
-        }
-
-        binding?.playerLoadingGoBack?.setOnClickListener {
-            exitFullscreen()
-            player.release()
-            activity?.popCurrentPage()
-        }
-
-        playerBinding?.downloadHeader?.setOnClickListener {
-            it?.isVisible = false
-        }
-
-        playerBinding?.downloadHeaderToggle?.setOnClickListener {
-            playerBinding?.downloadHeader?.let {
-                it.isVisible = !it.isVisible
-            }
-        }
+        setupPlayerControls()
 
         observe(viewModel.currentStamps) { stamps ->
             player.addTimeStamps(stamps)
         }
 
-        observe(viewModel.loadingLinks) {
-            when (it) {
-                is Resource.Loading -> {
-                    startLoading()
-                }
-
-                is Resource.Success -> {
-                    // provider returned false
-                    //if (it.value != true) {
-                    //    showToast(activity, R.string.unexpected_error, Toast.LENGTH_SHORT)
-                    //}
-                    startPlayer()
-                }
-
-                is Resource.Failure -> {
-                    showToast(it.errorString, Toast.LENGTH_LONG)
-                    startPlayer()
-                }
-            }
-        }
-
-        observe(viewModel.currentLinks) {
-            currentLinks = it
-            val turnVisible = it.isNotEmpty() && lastUsedGenerator?.canSkipLoading == true
-            val wasGone = binding?.overlayLoadingSkipButton?.isGone == true
-
-            binding?.overlayLoadingSkipButton?.apply {
-                isVisible = turnVisible
-                val value = viewModel.currentLinks.value
-                if (value.isNullOrEmpty()) {
-                    setText(R.string.skip_loading)
-                } else {
-                    text = "${context.getString(R.string.skip_loading)} (${value.size})"
-                }
-            }
-
-            safe {
-                if (currentLinks.any { link ->
-                        getLinkPriority(currentQualityProfile, link.first) >=
-                                QualityDataHelper.AUTO_SKIP_PRIORITY
-                    }
-                ) {
-                    startPlayer()
-                }
-            }
-
-            if (turnVisible && wasGone) {
-                binding?.overlayLoadingSkipButton?.requestFocus()
-            }
-        }
-
-        observe(viewModel.currentSubs) { set ->
-            val setOfSub = mutableSetOf<SubtitleData>()
-            if (langFilterList.isNotEmpty() && filterSubByLang) {
-                Log.i("subfilter", "Filtering subtitle")
-                langFilterList.forEach { lang ->
-                    Log.i("subfilter", "Lang: $lang")
-                    setOfSub += set.filter {
-                        it.originalName.contains(lang, ignoreCase = true) ||
-                                it.origin != SubtitleOrigin.URL
-                    }
-                }
-                currentSubs = setOfSub
-            } else {
-                currentSubs = set
-            }
-            player.setActiveSubtitles(set)
-
-            // If the file is downloaded then do not select auto select the subtitles
-            // Downloaded subtitles cannot be selected immediately after loading since
-            // player.getCurrentPreferredSubtitle() cannot fetch data from non-loaded subtitles
-            // Resulting in unselecting the downloaded subtitle
-            if (set.lastOrNull()?.origin != SubtitleOrigin.DOWNLOADED_FILE) {
-                autoSelectSubtitles()
-            }
-        }
+        observeLoadingLinks()
+        observeCurrentLinks()
+        observeCurrentSubs(subtitleFilterSettings)
     }
 
 }
