@@ -29,6 +29,7 @@ import androidx.media3.common.TrackGroup
 import androidx.media3.common.TrackSelectionOverride
 import androidx.media3.common.Tracks
 import androidx.media3.common.VideoSize
+import androidx.media3.common.util.ExperimentalApi
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.database.StandaloneDatabaseProvider
 import androidx.media3.datasource.DataSource
@@ -1195,6 +1196,7 @@ class CS3IPlayer : IPlayer {
                             CustomDecoder.subtitleOffset = subtitleOffset
                             val decoder = CustomSubtitleDecoderFactory()
 
+                            @OptIn(ExperimentalApi::class)
                             val currentTextRenderer = TextRenderer(
                                 customTextOutput,
                                 eventHandler.looper,
