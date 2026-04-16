@@ -67,6 +67,7 @@ import com.lagradost.cloudstream3.isEpisodeBased
 import com.lagradost.cloudstream3.isLiveStream
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
@@ -2040,11 +2041,11 @@ class GeneratorPlayer : FullScreenPlayer() {
             return
         }
 
-        skipAutoClickJob = viewModel.viewModelScope.launch {
+        skipAutoClickJob = viewModel.viewModelScope.launchSafe  {
             try {
                 for (secondsRemaining in SKIP_CHAPTER_AUTO_CLICK_COUNTDOWN_SECONDS downTo 1) {
-                    if (!isActive) return@launch
-                    if (skipIndex != currentIndex) return@launch
+                    if (!isActive) return@launchSafe
+                    if (skipIndex != currentIndex) return@launchSafe
 
                     updateSkipChapterButtonText(timestamp, secondsRemaining)
                     delay(1000)
@@ -2053,8 +2054,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                 if (isActive && skipIndex == currentIndex) {
                     player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
                 }
-            } catch (e: CancellationException) {
-                throw e
+            } catch (_: CancellationException) {
+                // If we get canceled, do nothing.
             } finally {
                 if (isActive) {
                     clearSkipChapterAutoClick()
@@ -2085,6 +2086,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 addListener(onEnd = {
                     if (show) {
                         if (!isShowing) {
+                            // Automatically request focus if the menu is not opened
                             playerBinding?.skipChapterButton?.requestFocus()
                         }
                     } else {
