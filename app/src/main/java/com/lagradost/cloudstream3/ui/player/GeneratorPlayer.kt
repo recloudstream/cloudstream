@@ -2085,8 +2085,8 @@ class GeneratorPlayer : FullScreenPlayer() {
             ).apply {
                 addListener(onEnd = {
                     if (show) {
+                        // Automatically request focus if the menu is not opened
                         if (!isShowing) {
-                            // Automatically request focus if the menu is not opened
                             playerBinding?.skipChapterButton?.requestFocus()
                         }
                     } else {
