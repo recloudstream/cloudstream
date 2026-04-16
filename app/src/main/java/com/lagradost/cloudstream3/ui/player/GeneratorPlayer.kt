@@ -2071,12 +2071,16 @@ class GeneratorPlayer : FullScreenPlayer() {
         playerBinding?.skipChapterButton?.apply {
             val showWidth = 170.toPx
             val noShowWidth = 10.toPx
+            //if((show && width == showWidth) || (!show && width == noShowWidth)) {
+            //    return
+            //}
             val to = if (show) showWidth else noShowWidth
             val from = if (!show) showWidth else noShowWidth
 
             skipAnimator?.cancel()
             isVisible = true
 
+            // just in case
             val lay = layoutParams
             lay.width = from
             layoutParams = lay
