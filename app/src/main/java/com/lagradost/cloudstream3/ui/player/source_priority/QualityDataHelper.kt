@@ -13,6 +13,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import java.util.EnumMap
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.also
 import kotlin.math.abs
 
@@ -58,7 +59,7 @@ object QualityDataHelper {
 
 
     // Map profile and name to priority
-    val sourcePriorityCache: HashMap<Int, HashMap<String, Int>> = hashMapOf()
+    val sourcePriorityCache: ConcurrentHashMap<Int, HashMap<String, Int>> = ConcurrentHashMap()
 
     fun getSourcePriority(profile: Int, name: String?): Int {
         if (name == null) return DEFAULT_SOURCE_PRIORITY
@@ -68,7 +69,7 @@ object QualityDataHelper {
             name,
             DEFAULT_SOURCE_PRIORITY
         ) ?: DEFAULT_SOURCE_PRIORITY).also {
-            sourcePriorityCache[profile] = sourcePriorityCache[profile] ?: hashMapOf()
+            sourcePriorityCache.getOrPut(profile) { hashMapOf() }
             sourcePriorityCache[profile]?.set(name, it)
         }
     }
@@ -107,15 +108,14 @@ object QualityDataHelper {
     }
 
     // Map profile and quality to priority
-    val qualityPriorityCache: HashMap<Int, EnumMap<Qualities, Int>> = hashMapOf()
+    val qualityPriorityCache: ConcurrentHashMap<Int, EnumMap<Qualities, Int>> = ConcurrentHashMap()
     fun getQualityPriority(profile: Int, quality: Qualities): Int {
         return qualityPriorityCache[profile]?.get(quality) ?: (getKey(
             "$currentAccount/$VIDEO_QUALITY_PRIORITY/$profile",
             quality.value.toString(),
             quality.defaultPriority
         )?.also {
-            qualityPriorityCache[profile] =
-                qualityPriorityCache[profile] ?: EnumMap(Qualities::class.java)
+            qualityPriorityCache.getOrPut(profile) { EnumMap(Qualities::class.java) }
             qualityPriorityCache[profile]?.set(quality, it)
         }) ?: quality.defaultPriority
     }
