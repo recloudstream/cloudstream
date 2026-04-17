@@ -4,12 +4,10 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
@@ -56,8 +54,14 @@ import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_LONG_CLICK
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
+import com.lagradost.cloudstream3.databinding.PlayerCustomLayoutBinding
+import com.lagradost.cloudstream3.ui.BaseFragment
+import com.lagradost.cloudstream3.ui.player.CS3IPlayer
 import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
-import com.lagradost.cloudstream3.ui.player.FullScreenPlayer
+import com.lagradost.cloudstream3.ui.player.IPlayer
+import com.lagradost.cloudstream3.ui.player.PlayerView as PlayerHostView
+import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
+import com.lagradost.cloudstream3.utils.UIHelper.showSystemUI
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment.bindLogo
@@ -99,7 +103,9 @@ import com.lagradost.cloudstream3.utils.txt
 import java.net.URLEncoder
 import kotlin.math.roundToInt
 
-open class ResultFragmentPhone : FullScreenPlayer() {
+open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
+    BindingCreator.Inflate(FragmentResultSwipeBinding::inflate)
+), PlayerHostView.Callbacks {
     private val gestureRegionsListener =
         object : PanelsChildGestureRegionObserver.GestureRegionsListener {
             override fun onGestureRegionsUpdate(gestureRegions: List<Rect>) {
@@ -110,31 +116,49 @@ open class ResultFragmentPhone : FullScreenPlayer() {
     protected lateinit var viewModel: ResultViewModel2
     protected lateinit var syncModel: SyncViewModel
 
-    protected var binding: FragmentResultSwipeBinding? = null
     protected var resultBinding: FragmentResultBinding? = null
     protected var recommendationBinding: ResultRecommendationsBinding? = null
     protected var syncBinding: ResultSyncBinding? = null
 
-    override var layout = R.layout.fragment_result_swipe
+    var player: IPlayer = CS3IPlayer()
+    protected open var hasPipModeSupport: Boolean = false
+    protected open var isFullScreenPlayer: Boolean = true
+    protected open var lockRotation: Boolean = true
+    protected var playerBinding: PlayerCustomLayoutBinding? = null
+    protected var isShowing: Boolean = false
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        viewModel = ViewModelProvider(this)[ResultViewModel2::class.java]
-        syncModel = ViewModelProvider(this)[SyncViewModel::class.java]
-        updateUIEvent += ::updateUI
+    protected lateinit var playerHostView: PlayerHostView
 
-        val root = super.onCreateView(inflater, container, savedInstanceState) ?: return null
-        FragmentResultSwipeBinding.bind(root).let { bind ->
-            resultBinding = bind.fragmentResult
-            recommendationBinding = bind.resultRecommendations
-            syncBinding = bind.resultSync
-            binding = bind
+    protected open fun enterFullscreen() {
+        activity?.hideSystemUI()
+        if (lockRotation) {
+            activity?.requestedOrientation =
+                android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         }
+    }
 
-        return root
+    protected open fun exitFullscreen() {
+        activity?.showSystemUI()
+        activity?.requestedOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_USER
+    }
+
+    open fun updateUIVisibility() {}
+
+    protected fun uiReset() {
+        isShowing = false
+        updateUIVisibility()
+    }
+
+    open fun showMirrorsDialogue() {}
+    open fun showTracksDialogue() {}
+    open fun openOnlineSubPicker(
+        context: android.content.Context,
+        loadResponse: LoadResponse?,
+        dismissCallback: () -> Unit
+    ) {}
+
+    override fun fixLayout(view: View) {
+        fixSystemBarsPadding(view)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -158,7 +182,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
     override fun playerError(exception: Throwable) {
         if (player.getIsPlaying()) { // because we don't want random toasts in player
-            super.playerError(exception)
+            if (::playerHostView.isInitialized) playerHostView.playerError(exception)
         } else {
             nextMirror()
         }
@@ -258,7 +282,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         }
 
         updateUIEvent -= ::updateUI
-        binding = null
+        if (::playerHostView.isInitialized) playerHostView.release()
+        playerBinding = null
         resultBinding?.resultScroll?.setOnClickListener(null)
         resultBinding = null
         syncBinding = null
@@ -282,7 +307,6 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
     var selectSeason: String? = null
     var selectEpisodeRange: String? = null
-    var selectSort: EpisodeSortType? = null
 
     private fun setUrl(url: String?) {
         if (url == null) {
@@ -325,6 +349,12 @@ open class ResultFragmentPhone : FullScreenPlayer() {
     override fun onResume() {
         afterPluginsLoadedEvent += ::reloadViewModel
         activity?.setNavigationBarColorCompat(R.attr.primaryBlackBackground)
+        context?.let { ctx ->
+            if (::playerHostView.isInitialized) {
+                playerHostView.onResume(ctx)
+                playerHostView.setupKeyEventListener()
+            }
+        }
         super.onResume()
         PanelsChildGestureRegionObserver.Provider.get()
             .addGestureRegionsUpdateListener(gestureRegionsListener)
@@ -332,30 +362,44 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
     override fun onStop() {
         afterPluginsLoadedEvent -= ::reloadViewModel
+        if (::playerHostView.isInitialized) playerHostView.onStop()
         super.onStop()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun updateUI(id: Int?) {
         syncModel.updateUserData()
         viewModel.reloadEpisodes()
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        view?.let { fixSystemBarsPadding(it) }
-    }
+    override fun onBindingCreated(binding: FragmentResultSwipeBinding, savedInstanceState: Bundle?) {
+        // Set up sub-binding references
+        viewModel = ViewModelProvider(this)[ResultViewModel2::class.java]
+        syncModel = ViewModelProvider(this)[SyncViewModel::class.java]
+        updateUIEvent += ::updateUI
 
-    @SuppressLint("SetTextI18n")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        resultBinding = binding.fragmentResult
+        recommendationBinding = binding.resultRecommendations
+        syncBinding = binding.resultSync
+
+        // Set up trailer player
+        val ctx = context ?: return
+        playerHostView = PlayerHostView(ctx)
+        playerHostView.player = player
+        playerHostView.hasPipModeSupport = hasPipModeSupport
+        playerHostView.callbacks = this
+        playerHostView.bindViews(binding.root)
+        playerBinding = binding.root.findViewById<View?>(R.id.player_holder)?.let {
+            PlayerCustomLayoutBinding.bind(it)
+        }
+        playerHostView.initialize()
 
         // ===== setup =====
-        fixSystemBarsPadding(view)
         val storedData = getStoredData() ?: return
         activity?.window?.decorView?.clearFocus()
         activity?.loadCache()
         context?.updateHasTrailers()
-        hideKeyboard()
+        hideKeyboard(binding.root)
         if (storedData.restart || !viewModel.hasLoaded())
             viewModel.load(
                 activity,
@@ -373,7 +417,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         // This may not be 100% reliable, and may delay for small period
         // before resultCastItems will be scrollable again, but this does work
         // most of the time.
-        binding?.resultOverlappingPanels?.registerEndPanelStateListeners(
+        binding.resultOverlappingPanels.registerEndPanelStateListeners(
             object : OverlappingPanelsLayout.PanelStateListener {
                 override fun onPanelStateChange(panelState: PanelState) {
                     PanelsChildGestureRegionObserver.Provider.get().apply {
@@ -385,8 +429,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
         // ===== ===== =====
 
-        binding?.resultSearch?.isGone = storedData.name.isBlank()
-        binding?.resultSearch?.setOnClickListener {
+        binding.resultSearch.isGone = storedData.name.isBlank()
+        binding.resultSearch.setOnClickListener {
             QuickSearchFragment.pushSearch(activity, storedData.name)
         }
 
@@ -415,7 +459,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     focused: View?
                 ): Boolean {
                     // Make the cast always focus the first visible item when focused
-                    // from somewhere else. Otherwise it jumps to the last item.
+                    // from somewhere else. Otherwise, it jumps to the last item.
                     return if (parent.focusedChild == null) {
                         scrollToPosition(this.findFirstCompletelyVisibleItemPosition())
                         true
@@ -468,9 +512,9 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             resultScroll.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
                 val dy = scrollY - oldScrollY
                 if (dy > 0) { //check for scroll down
-                    binding?.resultBookmarkFab?.shrink()
+                    binding.resultBookmarkFab.shrink()
                 } else if (dy < -5) {
-                    binding?.resultBookmarkFab?.extend()
+                    binding.resultBookmarkFab.extend()
                 }
                 if (!isFullScreenPlayer && player.getIsPlaying()) {
                     if (scrollY > (resultBinding?.fragmentTrailer?.playerBackground?.height
@@ -482,7 +526,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             })
         }
 
-        binding?.apply {
+        binding.apply {
             resultOverlappingPanels.setStartPanelLockState(OverlappingPanelsLayout.LockState.CLOSE)
             resultOverlappingPanels.setEndPanelLockState(OverlappingPanelsLayout.LockState.CLOSE)
             resultBack.setOnClickListener {
@@ -675,7 +719,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         }
 
         observeNullable(viewModel.subscribeStatus) { isSubscribed ->
-            binding?.resultSubscribe?.isVisible = isSubscribed != null
+            binding.resultSubscribe.isVisible = isSubscribed != null
             if (isSubscribed == null) return@observeNullable
 
             val drawable = if (isSubscribed) {
@@ -684,11 +728,11 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 R.drawable.baseline_notifications_none_24
             }
 
-            binding?.resultSubscribe?.setImageResource(drawable)
+            binding.resultSubscribe.setImageResource(drawable)
         }
 
         observeNullable(viewModel.favoriteStatus) { isFavorite ->
-            binding?.resultFavorite?.isVisible = isFavorite != null
+            binding.resultFavorite.isVisible = isFavorite != null
             if (isFavorite == null) return@observeNullable
 
             val drawable = if (isFavorite) {
@@ -697,7 +741,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 R.drawable.ic_baseline_favorite_border_24
             }
 
-            binding?.resultFavorite?.setImageResource(drawable)
+            binding.resultFavorite.setImageResource(drawable)
         }
 
         observeNullable(viewModel.episodes) { episodes ->
@@ -932,7 +976,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         syncModel.addFromUrl(d.url)
                     }
 
-                    binding?.apply {
+                    binding.apply {
                         resultSearch.isGone = d.title.isBlank()
                         resultSearch.setOnClickListener {
                             QuickSearchFragment.pushSearch(activity, d.title)
@@ -967,10 +1011,11 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 }
 
                 (data as? Resource.Failure)?.let { data ->
+                    @SuppressLint("SetTextI18n")
                     resultErrorText.text = storedData.url.plus("\n") + data.errorString
                 }
 
-                binding?.resultBookmarkFab?.isVisible = data is Resource.Success
+                binding.resultBookmarkFab.isVisible = data is Resource.Success
                 resultFinishLoading.isVisible = data is Resource.Success
 
                 resultLoading.isVisible = data is Resource.Loading
@@ -1018,7 +1063,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         }
 
         observe(viewModel.trailers) { trailers ->
-            setTrailers(trailers.flatMap { it.mirros }) // I dont care about subtitles yet!
+            setTrailers(trailers.flatMap { it.mirros }) // I don't care about subtitles yet!
         }
 
         observe(syncModel.synced) { list ->
@@ -1027,8 +1072,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
             val newList = list.filter { it.isSynced && it.hasAccount }
 
-            binding?.resultMiniSync?.isVisible = newList.isNotEmpty()
-            //(binding?.resultMiniSync?.adapter as? ImageAdapter)?.submitList(newList.mapNotNull { it.icon })
+            binding.resultMiniSync.isVisible = newList.isNotEmpty()
         }
 
 
@@ -1123,7 +1167,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     }
                 }
             }
-            binding?.resultOverlappingPanels?.setStartPanelLockState(if (closed) OverlappingPanelsLayout.LockState.CLOSE else OverlappingPanelsLayout.LockState.UNLOCKED)
+            binding.resultOverlappingPanels.setStartPanelLockState(if (closed) OverlappingPanelsLayout.LockState.CLOSE else OverlappingPanelsLayout.LockState.UNLOCKED)
         }
         observe(viewModel.recommendations) { recommendations ->
             setRecommendations(recommendations, null)
@@ -1184,7 +1228,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         }
 
         observe(viewModel.watchStatus) { watchType ->
-            binding?.resultBookmarkFab?.apply {
+            binding.resultBookmarkFab.apply {
                 setText(watchType.stringRes)
                 if (watchType == WatchType.NONE) {
                     context?.colorFromAttribute(R.attr.white)
@@ -1239,6 +1283,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         viewModel.skipLoading()
                     }
                     isVisible = true
+                    @SuppressLint("SetTextI18n")
                     text = "${context.getString(R.string.skip_loading)} (${load.linksLoaded})"
                 }
             }
@@ -1359,6 +1404,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
     }
 
     override fun onPause() {
+        if (::playerHostView.isInitialized) playerHostView.releaseKeyEventListener()
         super.onPause()
         PanelsChildGestureRegionObserver.Provider.get()
             .addGestureRegionsUpdateListener(gestureRegionsListener)

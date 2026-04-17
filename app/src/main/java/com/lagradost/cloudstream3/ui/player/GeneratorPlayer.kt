@@ -174,7 +174,6 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     private var preferredAutoSelectSubtitles: String? = null // null means do nothing, "" means none
 
-    private var binding: FragmentPlayerBinding? = null
     private var allMeta: List<ResultEpisode>? = null
     private fun startLoading() {
         player.release()
@@ -348,16 +347,13 @@ class GeneratorPlayer : FullScreenPlayer() {
                         }
 
                         // retry several times with a preview in case the preview generator is slow
-                        for (i in 0..10) {
+                        repeat(10) {
                             val preview = this@GeneratorPlayer.player.getPreview(0.5f)
-                            if (preview == null) {
-                                delay(1000L)
-                                continue
+                            if (preview != null) {
+                                callback.onBitmap(preview)
+                                return@repeat
                             }
-                            callback.onBitmap(
-                                preview
-                            )
-                            break
+                            delay(1000L)
                         }
                     }
 
@@ -373,6 +369,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     return mutableMapOf(
                         STOP_ACTION to NotificationCompat.Action(
                             R.drawable.baseline_stop_24,
+                            @SuppressLint("PrivateResource")
                             context.getString(androidx.media3.ui.R.string.exo_controls_stop_description),
                             createBroadcastIntent(STOP_ACTION, context, instanceId)
                         )
@@ -633,7 +630,6 @@ class GeneratorPlayer : FullScreenPlayer() {
                     imageViewEnd.setImageDrawable(drawableEnd)
                 }
 
-                @SuppressLint("SetTextI18n")
                 override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                     val view = convertView ?: LayoutInflater.from(context).inflate(layout, null)
 
@@ -649,6 +645,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                         item?.let { fromTagToLanguageName(it.lang) ?: it.lang } ?: ""
                     val providerSuffix =
                         if (isSingleProvider || item == null) "" else " · ${item.source}"
+                    @SuppressLint("SetTextI18n")
                     secondaryTextView?.text = language + providerSuffix
 
                     setHearingImpairedIcon(drawableEnd, position)
@@ -1515,7 +1512,6 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
-
     override fun playerError(exception: Throwable) {
         val currentUrl =
             currentSelectedLink?.let { it.first?.url ?: it.second?.uri?.toString() } ?: "unknown"
@@ -1841,8 +1837,6 @@ class GeneratorPlayer : FullScreenPlayer() {
         return ""
     }
 
-
-    @SuppressLint("SetTextI18n")
     fun setTitle() {
         var playerVideoTitle = getPlayerVideoTitle()
 
@@ -1864,7 +1858,6 @@ class GeneratorPlayer : FullScreenPlayer() {
         playerBinding?.offlinePin?.isVisible = lastUsedGenerator is DownloadFileGenerator
     }
 
-    @SuppressLint("SetTextI18n")
     fun setPlayerDimen(widthHeight: Pair<Int, Int>?) {
         val resolution = widthHeight?.let { "${it.first}x${it.second}" }
         val name = currentSelectedLink?.first?.name ?: currentSelectedLink?.second?.name
@@ -1976,29 +1969,8 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
-        // this is used instead of layout-television to follow the settings and some TV devices are not classified as TV for some reason
-        layout =
-            if (isLayout(TV or EMULATOR)) R.layout.fragment_player_tv else R.layout.fragment_player
-
-        viewModel = ViewModelProvider(this)[PlayerGeneratorViewModel::class.java]
-        sync = ViewModelProvider(this)[SyncViewModel::class.java]
-
-        viewModel.attachGenerator(lastUsedGenerator)
-        unwrapBundle(savedInstanceState)
-        unwrapBundle(arguments)
-
-        val root = super.onCreateView(inflater, container, savedInstanceState) ?: return null
-        binding = FragmentPlayerBinding.bind(root)
-        return root
-    }
-
-    override fun onDestroyView() {
-        binding = null
-        super.onDestroyView()
-    }
+    override fun pickLayout(): Int =
+        if (isLayout(TV or EMULATOR)) R.layout.fragment_player_tv else R.layout.fragment_player
 
     var skipAnimator: ValueAnimator? = null
     var skipIndex = 0
@@ -2120,17 +2092,14 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
 
                 // update overlay season title
-                var lastTopIndex = -1
+                val lastTopIndex = -1
                 playerEpisodeList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                    @SuppressLint("SetTextI18n", "DefaultLocale")
                     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                         val layoutManager =
                             recyclerView.layoutManager as? LinearLayoutManager ?: return
                         val topIndex = layoutManager.findFirstCompletelyVisibleItemPosition()
                         if (topIndex != RecyclerView.NO_POSITION && topIndex != lastTopIndex) {
-                            lastTopIndex = topIndex
                             val topItem = episodes.getOrNull(topIndex)
-
                             topItem?.let {
                                 playerEpisodeOverlayTitle.setText(
                                     ResultViewModel2.seasonToTxt(
@@ -2148,9 +2117,15 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
-    @SuppressLint("SetTextI18n")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onBindingCreated(binding: FragmentPlayerBinding, savedInstanceState: Bundle?) {
+        viewModel = ViewModelProvider(this)[PlayerGeneratorViewModel::class.java]
+        sync = ViewModelProvider(this)[SyncViewModel::class.java]
+        viewModel.attachGenerator(lastUsedGenerator)
+        unwrapBundle(savedInstanceState)
+        unwrapBundle(arguments)
+
+        super.onBindingCreated(binding, savedInstanceState)
+
         var langFilterList = listOf<String>()
         var filterSubByLang = false
 
@@ -2184,11 +2159,11 @@ class GeneratorPlayer : FullScreenPlayer() {
             viewModel.loadLinks()
         }
 
-        binding?.overlayLoadingSkipButton?.setOnClickListener {
+        binding.overlayLoadingSkipButton.setOnClickListener {
             startPlayer()
         }
 
-        binding?.playerLoadingGoBack?.setOnClickListener {
+        binding.playerLoadingGoBack.setOnClickListener {
             exitFullscreen()
             player.release()
             activity?.popCurrentPage()
@@ -2232,14 +2207,15 @@ class GeneratorPlayer : FullScreenPlayer() {
         observe(viewModel.currentLinks) {
             currentLinks = it
             val turnVisible = it.isNotEmpty() && lastUsedGenerator?.canSkipLoading == true
-            val wasGone = binding?.overlayLoadingSkipButton?.isGone == true
+            val wasGone = binding.overlayLoadingSkipButton.isGone
 
-            binding?.overlayLoadingSkipButton?.apply {
+            binding.overlayLoadingSkipButton.apply {
                 isVisible = turnVisible
                 val value = viewModel.currentLinks.value
                 if (value.isNullOrEmpty()) {
                     setText(R.string.skip_loading)
                 } else {
+                    @SuppressLint("SetTextI18n")
                     text = "${context.getString(R.string.skip_loading)} (${value.size})"
                 }
             }
@@ -2255,7 +2231,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             }
 
             if (turnVisible && wasGone) {
-                binding?.overlayLoadingSkipButton?.requestFocus()
+                binding.overlayLoadingSkipButton.requestFocus()
             }
         }
 
