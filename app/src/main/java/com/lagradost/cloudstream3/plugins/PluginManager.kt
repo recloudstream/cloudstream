@@ -81,11 +81,6 @@ data class PluginData(
     @JsonProperty("version") val version: Int,
 ) {
     @WorkerThread
-    fun getFileHash(): String {
-        return sha256(File(this.filePath))
-    }
-
-    @WorkerThread
     fun toSitePlugin(): SitePlugin {
         return SitePlugin(
             this.filePath,
@@ -101,7 +96,8 @@ data class PluginData(
             null,
             null,
             File(this.filePath).length(),
-            getFileHash()
+            // No file hash for local plugins. Local plugins have no use for the hash, and it's expensive to compute.
+            null
         )
     }
 }
