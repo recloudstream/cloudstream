@@ -1414,6 +1414,21 @@ class CS3IPlayer : IPlayer {
             event(PlayerAttachedEvent(exoPlayer))
             exoPlayer?.prepare()
 
+            // For offline fragmented MP4s, FLAG_MERGE_FRAGMENTED_SIDX builds the SIDX seek map
+            // incrementally as data is buffered. The initial seek resolves to the nearest merged
+            // entry (~first fragment, 3 s). On STATE_READY, re-seek to the actual saved position.
+            if (onlineSource == null && playbackPosition > (exoPlayer?.duration ?: 0L)) {
+                exoPlayer?.addListener(object : Player.Listener {
+                    private var seekApplied = false
+                    override fun onPlaybackStateChanged(playbackState: Int) {
+                        if (seekApplied || playbackState != Player.STATE_READY) return
+                        seekApplied = true
+                        exoPlayer?.seekTo(currentWindow, playbackPosition)
+                        exoPlayer?.removeListener(this)
+                    }
+                })
+            }
+
             exoPlayer?.let { exo ->
                 event(StatusEvent(CSPlayerLoading.IsBuffering, CSPlayerLoading.IsBuffering))
                 isPlaying = exo.isPlaying
