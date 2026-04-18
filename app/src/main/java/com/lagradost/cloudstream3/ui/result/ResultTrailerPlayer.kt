@@ -1,17 +1,15 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.animation.ValueAnimator
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
-import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.core.view.ViewCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.core.view.ViewCompat
 import com.lagradost.cloudstream3.CommonActivity.screenHeight
 import com.lagradost.cloudstream3.CommonActivity.screenWidth
 import com.lagradost.cloudstream3.LoadResponse
@@ -20,7 +18,6 @@ import com.lagradost.cloudstream3.databinding.FragmentResultSwipeBinding
 import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.player.CSPlayerLoading
 import com.lagradost.cloudstream3.ui.player.PlayerEventSource
-import com.lagradost.cloudstream3.ui.player.PlayerView
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
@@ -53,15 +50,10 @@ open class ResultTrailerPlayer : ResultFragmentPhone() {
         playerHostView.scheduleAutoHide()
     }
 
-    override fun isUiShowing(): Boolean = isShowing
+    override fun isUIShowing(): Boolean = isShowing
 
-    override fun onAutoHideUI() {
-        uiReset()
-    }
-
-    override fun onHidePlayerUI() {
-        uiReset()
-    }
+    override fun onAutoHideUI() = uiReset()
+    override fun onHidePlayerUI() = uiReset()
 
     override fun nextEpisode() {}
     override fun prevEpisode() {}
@@ -127,7 +119,7 @@ open class ResultTrailerPlayer : ResultFragmentPhone() {
                         val v = va.animatedValue as Int
                         val lp: ViewGroup.LayoutParams = layoutParams
                         lp.height = v
-                        setLayoutParams(lp)
+                        layoutParams = lp
                     }
                     anim.duration = 200
                     anim.start()
@@ -139,7 +131,7 @@ open class ResultTrailerPlayer : ResultFragmentPhone() {
     override fun playerDimensionsLoaded(width: Int, height: Int) {
         playerWidthHeight = width to height
         fixPlayerSize()
-        // Apply auto-rotation when fullscreen (lockRotation = true).
+        // Apply autorotation when fullscreen (lockRotation = true).
         // PlayerView already set isVerticalOrientation before this callback fires.
         if (lockRotation) {
             activity?.requestedOrientation = playerHostView.dynamicOrientation()
@@ -160,7 +152,6 @@ open class ResultTrailerPlayer : ResultFragmentPhone() {
     override fun onTracksInfoChanged() {}
     override fun exitedPipMode() {}
 
-    @SuppressLint("SetTextI18n")
     override fun onSeekPreviewText(text: String?) {
         playerBinding?.playerTimeText?.apply {
             isVisible = text != null

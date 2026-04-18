@@ -88,7 +88,7 @@ abstract class AbstractPlayerFragment<T : ViewBinding>(
     override fun hasNextMirror(): Boolean { throw NotImplementedError() }
     override fun nextMirror() { throw NotImplementedError() }
 
-    /** Delegates to [PlayerView.playerError] by default; override to customise. */
+    /** Delegates to [PlayerView.playerError] by default; override to customize. */
     override fun playerError(exception: Throwable) {
         if (::playerHostView.isInitialized) playerHostView.playerError(exception)
     }

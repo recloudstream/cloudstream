@@ -6,12 +6,14 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.ActivityInfo
 import android.graphics.drawable.AnimatedImageDrawable
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.media.metrics.PlaybackErrorEvent
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.text.format.DateUtils
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
@@ -48,6 +50,10 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.ui.player.live.LivePreviewTimeBar
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.AppContextUtils
@@ -56,15 +62,9 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
-import android.content.pm.ActivityInfo
-import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
-import com.lagradost.cloudstream3.ui.settings.Globals.TV
-import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.UserPreferenceDelegate
 import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
 import java.net.SocketTimeoutException
-import android.text.format.DateUtils
-import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 
 /**
  * Shared player view - manages ExoPlayer setup, view binding, lifecycle, and event
@@ -98,7 +98,6 @@ class PlayerView @JvmOverloads constructor(
     fun verifyVolume() = gestureHelper.verifyVolume()
     fun setupKeyEventListener() = gestureHelper.setupKeyEventListener()
     fun releaseKeyEventListener() = gestureHelper.releaseKeyEventListener()
-    fun clearZoomState() = gestureHelper.clearZoomState()
     fun requestUpdateBrightnessOverlayOnNextLayout() = gestureHelper.requestUpdateBrightnessOverlayOnNextLayout()
     fun releaseOverlayLayoutListener() = gestureHelper.releaseOverlayLayoutListener()
 
@@ -135,7 +134,7 @@ class PlayerView @JvmOverloads constructor(
         /** Called to validate a touch position; return false to discard nav-bar / status-bar touches. */
         fun isValidTouch(rawX: Float, rawY: Float): Boolean = true
         /** Returns whether the player UI (controls overlay) is currently visible. */
-        fun isUiShowing(): Boolean = false
+        fun isUIShowing(): Boolean = false
         /** Called on a valid ACTION_DOWN; use for e.g. dismissing an episode overlay. */
         fun onTouchDown() {}
         /** Called with seek-preview text during a horizontal-swipe, or null to clear it. */
@@ -226,20 +225,19 @@ class PlayerView @JvmOverloads constructor(
      * remain null, all usage is null-safe.
      */
     fun bindViews(root: View) {
-        playerPausePlayHolderHolder  = root.findViewById(R.id.player_pause_play_holder_holder)
-        playerPausePlay              = root.findViewById(R.id.player_pause_play)
-        playerBuffering              = root.findViewById(R.id.player_buffering)
-        exoPlayerView                = root.findViewById(R.id.player_view)
-        piphide                      = root.findViewById(R.id.piphide)
-        subtitleHolder               = root.findViewById(R.id.subtitle_holder)
-        playerRew                    = root.findViewById(R.id.player_rew)
-        playerFfwd                   = root.findViewById(R.id.player_ffwd)
-        exoRewText                   = root.findViewById(R.id.exo_rew_text)
+        exoDuration                  = root.findViewById(androidx.media3.ui.R.id.exo_duration)
         exoFfwdText                  = root.findViewById(R.id.exo_ffwd_text)
+        exoPlayerView                = root.findViewById(R.id.player_view)
+        exoPosition                  = root.findViewById(R.id.exo_position)
+        exoRewText                   = root.findViewById(R.id.exo_rew_text)
+        piphide                      = root.findViewById(R.id.piphide)
+        playerBuffering              = root.findViewById(R.id.player_buffering)
         playerCenterMenu             = root.findViewById(R.id.player_center_menu)
-        playerRewHolder              = root.findViewById(R.id.player_rew_holder)
+        playerFfwd                   = root.findViewById(R.id.player_ffwd)
         playerFfwdHolder             = root.findViewById(R.id.player_ffwd_holder)
-        playerVideoHolder            = root.findViewById(R.id.player_video_holder)
+        playerHolder                 = root.findViewById(R.id.player_holder)
+        playerPausePlay              = root.findViewById(R.id.player_pause_play)
+        playerPausePlayHolderHolder  = root.findViewById(R.id.player_pause_play_holder_holder)
         playerProgressbarLeftHolder  = root.findViewById(R.id.player_progressbar_left_holder)
         playerProgressbarLeftIcon    = root.findViewById(R.id.player_progressbar_left_icon)
         playerProgressbarLeftLevel1  = root.findViewById(R.id.player_progressbar_left_level1)
@@ -248,14 +246,14 @@ class PlayerView @JvmOverloads constructor(
         playerProgressbarRightIcon   = root.findViewById(R.id.player_progressbar_right_icon)
         playerProgressbarRightLevel1 = root.findViewById(R.id.player_progressbar_right_level1)
         playerProgressbarRightLevel2 = root.findViewById(R.id.player_progressbar_right_level2)
+        playerRew                    = root.findViewById(R.id.player_rew)
+        playerRewHolder              = root.findViewById(R.id.player_rew_holder)
         playerSpeedupButton          = root.findViewById(R.id.player_speedup_button)
-        playerHolder                 = root.findViewById(R.id.player_holder)
+        playerVideoHolder            = root.findViewById(R.id.player_video_holder)
+        skipChapterButton            = root.findViewById(R.id.skip_chapter_button)
+        subtitleHolder               = root.findViewById(R.id.subtitle_holder)
         timeLeft                     = root.findViewById(R.id.time_left)
         timeLive                     = root.findViewById(R.id.time_live)
-        exoDuration = playerHolder?.findViewById(androidx.media3.ui.R.id.exo_duration)
-            ?: root.findViewById(androidx.media3.ui.R.id.exo_duration)
-        exoPosition = playerHolder?.findViewById(androidx.media3.ui.R.id.exo_position)
-            ?: root.findViewById(androidx.media3.ui.R.id.exo_position)
     }
 
     /**
@@ -646,6 +644,8 @@ class PlayerView @JvmOverloads constructor(
     }
 
     fun resize(resize: Int, showToast: Boolean) {
+        // Clear all zoom state before applying the new resize mode
+        gestureHelper.clearZoomState()
         resize(PlayerResize.entries[resize], showToast)
     }
 
@@ -682,8 +682,12 @@ class PlayerView @JvmOverloads constructor(
         when (event) {
             is DownloadEvent              -> callbacks?.onDownload(event)
             is ResizedEvent               -> {
-                // TV never rotates; otherwise track whether the video is portrait.
-                isVerticalOrientation = !isLayout(TV or EMULATOR) && event.height > event.width
+                // Skip 0x0 dimensions that the player emits when going to STATE_IDLE
+                // to avoid incorrectly resetting the auto-detected orientation.
+                if (event.width > 0 && event.height > 0) {
+                    // TV never rotates; otherwise track whether the video is portrait.
+                    isVerticalOrientation = !isLayout(TV or EMULATOR) && event.height > event.width
+                }
                 callbacks?.playerDimensionsLoaded(event.width, event.height)
             }
             is PlayerAttachedEvent        -> playerUpdated(event.player)
@@ -759,7 +763,7 @@ class PlayerView @JvmOverloads constructor(
     /**
      * Schedules a delayed auto-hide of the player UI after [delayMs] ms.
      * Any previously pending hide is canceled first.
-     * The hide fires only when no touch is active and [Callbacks.isUiShowing] is true;
+     * The hide fires only when no touch is active and [Callbacks.isUIShowing] is true;
      * the actual hide action is delegated to [Callbacks.onAutoHideUI].
      */
     fun scheduleAutoHide(delayMs: Long = 3000L) {
@@ -768,7 +772,7 @@ class PlayerView @JvmOverloads constructor(
         autoHideHandler.postDelayed({
             if (token != autoHideToken) return@postDelayed
             if (gestureHelper.isCurrentTouchValid) return@postDelayed
-            if (callbacks?.isUiShowing() != true) return@postDelayed
+            if (callbacks?.isUIShowing() != true) return@postDelayed
             callbacks?.onAutoHideUI()
         }, delayMs)
     }

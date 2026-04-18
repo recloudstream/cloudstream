@@ -41,11 +41,11 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.CommonActivity.keyEventListener
-import com.lagradost.cloudstream3.databinding.FragmentPlayerBinding
 import com.lagradost.cloudstream3.CommonActivity.playerEventListener
 import com.lagradost.cloudstream3.CommonActivity.screenWidthWithOrientation
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.databinding.FragmentPlayerBinding
 import com.lagradost.cloudstream3.databinding.PlayerCustomLayoutBinding
 import com.lagradost.cloudstream3.databinding.SpeedDialogBinding
 import com.lagradost.cloudstream3.databinding.SubtitleOffsetBinding
@@ -872,7 +872,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         return rawY > (statusBarHeight ?: 0)
     }
 
-    override fun isUiShowing(): Boolean = isShowing
+    override fun isUIShowing(): Boolean = isShowing
 
     override fun onSingleTap() {
         onClickChange()
@@ -931,8 +931,6 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     }
 
     override fun resize(resize: PlayerResize, showToast: Boolean) {
-        // Clear all zoom state before applying the new resize mode
-        if (::playerHostView.isInitialized) playerHostView.clearZoomState()
         super.resize(resize, showToast)
         if (::playerHostView.isInitialized) playerHostView.requestUpdateBrightnessOverlayOnNextLayout()
     }
@@ -1056,7 +1054,6 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         super.onSaveInstanceState(outState)
     }
 
-    @SuppressLint("ClickableViewAccessibility", "DiscouragedApi")
     override fun onBindingCreated(binding: FragmentPlayerBinding, savedInstanceState: Bundle?) {
         // Set up playerBinding before super initializes the player
         // (brightness overlay is now injected by PlayerView.initialize())
@@ -1320,6 +1317,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
             exoProgress.registerPlayerView(playerView)
 
+            @SuppressLint("ClickableViewAccessibility")
             exoProgress.setOnTouchListener { _, event ->
                 // this makes the bar not disappear when sliding
                 when (event.action) {
@@ -1372,6 +1370,9 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     override fun playerDimensionsLoaded(width: Int, height: Int) {
         // PlayerView already set isVerticalOrientation; skip rotation on TV (pillarbox instead).
         if (isLayout(TV or EMULATOR)) return
+        // Skip zero-size events emitted when the player transitions to STATE_IDLE,
+        // acting on them would reset auto-detected orientation to landscape.
+        if (width <= 0 || height <= 0) return
         updateOrientation()
     }
 

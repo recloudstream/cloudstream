@@ -4,13 +4,13 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.provider.Settings
 import android.content.res.ColorStateList
 import android.graphics.Matrix
 import android.media.AudioManager
 import android.media.audiofx.LoudnessEnhancer
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -188,6 +188,7 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
         // directly on top of the video surface.  Alpha is set by handleBrightnessAdjustment.
         safe {
             val pkg = context.packageName
+            @SuppressLint("DiscouragedApi")
             val contentId = context.resources.getIdentifier("exo_content_frame", "id", pkg)
             val contentFrame = playerView.exoPlayerView?.findViewById<ViewGroup>(contentId)
             if (contentFrame != null) {
@@ -780,7 +781,7 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
             val rewHolder  = playerView.playerRewHolder ?: return
             val rew        = playerView.playerRew
             val rewText    = playerView.exoRewText
-            val wasShowing = playerView.callbacks?.isUiShowing() ?: false
+            val wasShowing = playerView.callbacks?.isUIShowing() ?: false
 
             // Only expose the parent chain when controls are currently hidden.
             val prevCenterMenuGone     = playerView.playerCenterMenu?.isGone ?: false
@@ -801,7 +802,7 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
                     rewText?.post {
                         resetRewindText()
                         // Restore parent chain only if we changed it and controls are still hidden.
-                        if (!wasShowing && !(playerView.callbacks?.isUiShowing() ?: false)) {
+                        if (!wasShowing && !(playerView.callbacks?.isUIShowing() ?: false)) {
                             playerView.playerCenterMenu?.isGone = prevCenterMenuGone
                             playerView.playerVideoHolder?.isVisible = prevVideoHolderVisible
                             rewHolder.alpha = 0f
@@ -821,7 +822,7 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
             val ffwdHolder = playerView.playerFfwdHolder ?: return
             val ffwd       = playerView.playerFfwd
             val ffwdText   = playerView.exoFfwdText
-            val wasShowing = playerView.callbacks?.isUiShowing() ?: false
+            val wasShowing = playerView.callbacks?.isUIShowing() ?: false
 
             val prevCenterMenuGone     = playerView.playerCenterMenu?.isGone ?: false
             val prevVideoHolderVisible = playerView.playerVideoHolder?.isVisible ?: true
@@ -840,7 +841,7 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
                 override fun onAnimationEnd(animation: Animation?) {
                     ffwdText?.post {
                         resetFastForwardText()
-                        if (!wasShowing && !(playerView.callbacks?.isUiShowing() ?: false)) {
+                        if (!wasShowing && !(playerView.callbacks?.isUIShowing() ?: false)) {
                             playerView.playerCenterMenu?.isGone = prevCenterMenuGone
                             playerView.playerVideoHolder?.isVisible = prevVideoHolderVisible
                             ffwdHolder.alpha = 0f
@@ -935,9 +936,9 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
 
     /** Touch gestures */
 
-    @SuppressLint("ClickableViewAccessibility")
     fun setupTouchGestures() {
         val holder = playerView.playerHolder ?: return
+        @SuppressLint("ClickableViewAccessibility")
         holder.setOnTouchListener { v, event -> handleGesture(v, event) }
     }
 
@@ -954,7 +955,7 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
                 event = event,
                 ctx = view.context,
                 onFirstPointerDown = {
-                    uiShowingBeforeGesture = playerView.callbacks?.isUiShowing() ?: false
+                    uiShowingBeforeGesture = playerView.callbacks?.isUIShowing() ?: false
                     playerView.callbacks?.onHidePlayerUI()
                 },
                 onGestureEnd = {
@@ -1000,7 +1001,7 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
                     if (swipeVerticalEnabled) {
                         if (abs(diffFromStart.y * 100 / screenHeightWithOrientation) > MINIMUM_VERTICAL_SWIPE) {
                             holdHandler.removeCallbacks(holdRunnable)
-                            uiShowingBeforeGesture = playerView.callbacks?.isUiShowing() ?: false
+                            uiShowingBeforeGesture = playerView.callbacks?.isUIShowing() ?: false
                             playerView.callbacks?.onHidePlayerUI()
                             currentTouchAction = if ((startTouch.x) >= view.width / 2f)
                                 TouchAction.Volume else TouchAction.Brightness
