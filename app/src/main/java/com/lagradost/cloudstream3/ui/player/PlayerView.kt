@@ -188,7 +188,6 @@ class PlayerView @JvmOverloads constructor(
     internal var playerRewHolder: View? = null
     internal var playerFfwdHolder: View? = null
     internal var playerVideoHolder: View? = null
-    private var skipChapterButton: View? = null
     var playerProgressbarLeftHolder: RelativeLayout? = null
     var playerProgressbarLeftIcon: ImageView? = null
     var playerProgressbarLeftLevel1: ProgressBar? = null
@@ -223,8 +222,8 @@ class PlayerView @JvmOverloads constructor(
     /** View discovery */
 
     /**
-     * Discovers player-related views from [root].  IDs absent in compact layouts simply
-     * remain null — all usage is null-safe.
+     * Discovers player-related views from [root].  IDs absent in compact layouts (e.g. trailer) simply
+     * remain null, all usage is null-safe.
      */
     fun bindViews(root: View) {
         playerPausePlayHolderHolder  = root.findViewById(R.id.player_pause_play_holder_holder)
@@ -241,7 +240,6 @@ class PlayerView @JvmOverloads constructor(
         playerRewHolder              = root.findViewById(R.id.player_rew_holder)
         playerFfwdHolder             = root.findViewById(R.id.player_ffwd_holder)
         playerVideoHolder            = root.findViewById(R.id.player_video_holder)
-        skipChapterButton            = root.findViewById(R.id.skip_chapter_button)
         playerProgressbarLeftHolder  = root.findViewById(R.id.player_progressbar_left_holder)
         playerProgressbarLeftIcon    = root.findViewById(R.id.player_progressbar_left_icon)
         playerProgressbarLeftLevel1  = root.findViewById(R.id.player_progressbar_left_level1)
@@ -374,7 +372,6 @@ class PlayerView @JvmOverloads constructor(
                 scheduleAutoHide()
                 gestureHelper.fastForward()
             }
-            skipChapterButton?.setOnClickListener { player.handleEvent(CSPlayerEvent.SkipCurrentChapter) }
 
             SubtitlesFragment.applyStyleEvent += subStyleListener
 
