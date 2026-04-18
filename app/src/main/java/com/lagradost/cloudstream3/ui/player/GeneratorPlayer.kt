@@ -393,6 +393,16 @@ class GeneratorPlayer : FullScreenPlayer() {
                     }
                 }
             })
+            .setNotificationListener(object : PlayerNotificationManager.NotificationListener {
+                override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {
+                    if (dismissedByUser) {
+                        // User explicitly swiped the notification away, detach cleanly so it
+                        // doesn't reappear and to avoid any further interactions with the player.
+                        cachedPlayerNotificationManager?.setPlayer(null)
+                        cachedPlayerNotificationManager = null
+                    }
+                }
+            })
             .setPlayActionIconResourceId(R.drawable.ic_baseline_play_arrow_24)
             .setPauseActionIconResourceId(R.drawable.netflix_pause)
             .setSmallIconResourceId(R.drawable.baseline_headphones_24)
