@@ -250,7 +250,6 @@ class PlayerView @JvmOverloads constructor(
         playerRewHolder              = root.findViewById(R.id.player_rew_holder)
         playerSpeedupButton          = root.findViewById(R.id.player_speedup_button)
         playerVideoHolder            = root.findViewById(R.id.player_video_holder)
-        skipChapterButton            = root.findViewById(R.id.skip_chapter_button)
         subtitleHolder               = root.findViewById(R.id.subtitle_holder)
         timeLeft                     = root.findViewById(R.id.time_left)
         timeLive                     = root.findViewById(R.id.time_live)
