@@ -288,7 +288,7 @@ class PluginsViewModel : ViewModel() {
 
         val downloadedPlugins = (PluginManager.getPluginsOnline() + PluginManager.getPluginsLocal())
             .distinctBy { it.filePath }
-            .amap {
+            .map {
                 PluginViewData("" to it.toSitePlugin(), true)
             }
 
