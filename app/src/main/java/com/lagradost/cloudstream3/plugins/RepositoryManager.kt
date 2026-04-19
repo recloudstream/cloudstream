@@ -164,8 +164,8 @@ object RepositoryManager {
     }
 
 
-    private val currentGlobalDownloads = AtomicInteger()
     suspend fun downloadPluginToFile(
+        context: Context,
         pluginUrl: String,
         file: File,
         expectedFileHash: String?
@@ -173,20 +173,9 @@ object RepositoryManager {
         return safeAsync {
             val parentDir = file.parentFile ?: return@safeAsync null
             parentDir.mkdirs()
-            val currentDownloads = currentGlobalDownloads.getAndIncrement()
-
-            // Only delete if there are no other downloads, otherwise we may delete in progress downloads
-            if (currentDownloads == 0) {
-                // Delete any temp files from crashed downloads (even if unlikely)
-                parentDir.listFiles {
-                    it.extension == "tmp"
-                }?.forEach {
-                    it.delete()
-                }
-            }
 
             // Prevent corrupting the plugin file if the operation fails
-            val tempFile = File.createTempFile(file.name, ".tmp", parentDir)
+            val tempFile = File.createTempFile(file.name, ".tmp", context.cacheDir)
 
             val body = app.get(convertRawGitUrl(pluginUrl)).okhttpResponse.body
 
@@ -219,8 +208,6 @@ object RepositoryManager {
                     StandardCopyOption.REPLACE_EXISTING
                 )
             }
-
-            currentGlobalDownloads.getAndDecrement()
 
             file
         }
