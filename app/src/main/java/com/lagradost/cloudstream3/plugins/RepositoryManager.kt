@@ -164,7 +164,7 @@ object RepositoryManager {
     }
 
 
-    val currentGlobalDownloads = AtomicInteger()
+    private val currentGlobalDownloads = AtomicInteger()
     suspend fun downloadPluginToFile(
         pluginUrl: String,
         file: File,
