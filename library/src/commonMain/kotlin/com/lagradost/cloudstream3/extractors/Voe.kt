@@ -45,6 +45,10 @@ class Voe1 : Voe() {
     override val mainUrl = "https://donaldlineelse.com"
 }
 
+class Voe2 : Voe() {
+    override val mainUrl = "https://charlestoughrace.com"
+}
+
 open class Voe : ExtractorApi() {
     override val name = "Voe"
     override val mainUrl = "https://voe.sx"
