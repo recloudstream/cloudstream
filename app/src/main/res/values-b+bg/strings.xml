@@ -451,7 +451,7 @@
     <string name="update_notification_downloading">Изтегля се актуализация на приложението…</string>
     <string name="skip_type_mixed_op">Смесено отваряне</string>
     <string name="skip_type_mixed_ed">Смесено затваряне</string>
-    <string name="skip_type_creddits">Кредити</string>
+    <string name="skip_type_credits">Кредити</string>
     <string name="skip_type_intro">въведение</string>
     <string name="clear_history">Изчистване на историята</string>
     <string name="automatic_plugin_download_summary">Автоматично инсталиране на всички все още неинсталирани добавки от добавени хранилища.</string>

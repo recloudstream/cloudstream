@@ -346,7 +346,7 @@
     <string name="sync_score_format" formatted="true">%d / 10</string>
     <string name="subtitles_raised">اٹھایا</string>
     <string name="subtitle_offset_extra_hint_before_format">اگر سب ٹائٹلز %d ms بہت جلد دکھائے جائیں تو اسے استعمال کریں</string>
-    <string name="skip_type_creddits">کریڈٹس</string>
+    <string name="skip_type_credits">کریڈٹس</string>
     <string name="extras">اضافی</string>
     <string name="actor_main">مرکزی</string>
     <string name="sort">ترتیب</string>

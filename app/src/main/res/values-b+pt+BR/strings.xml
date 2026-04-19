@@ -510,7 +510,7 @@
     <string name="extension_version">Versão</string>
     <string name="extension_authors">Autores</string>
     <string name="extension_install_first">Instale a extensão primeiro</string>
-    <string name="skip_type_creddits">Créditos</string>
+    <string name="skip_type_credits">Créditos</string>
     <string name="history">Historico</string>
     <string name="clear_history">Limpar historico</string>
     <string name="clipboard_too_large">Tem Muito texto. Não é possível salvar no clipboard.</string>

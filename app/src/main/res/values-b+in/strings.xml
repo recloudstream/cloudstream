@@ -467,7 +467,7 @@
     <string name="skip_type_ed">Sesi Akhir</string>
     <string name="skip_type_recap">Sinopsis</string>
     <string name="skip_type_mixed_ed">Sesi akhir ganda</string>
-    <string name="skip_type_creddits">Sesi Kredit</string>
+    <string name="skip_type_credits">Sesi Kredit</string>
     <string name="skip_type_intro">Sesi Intro</string>
     <string name="clipboard_too_large">Terlalu banyak teks. Tidak dapat menyalin ke papan klip.</string>
     <string name="confirm_exit_dialog">Yakin ingin keluar?</string>

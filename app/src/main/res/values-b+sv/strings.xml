@@ -549,7 +549,7 @@
     <string name="setup_extensions_subtext">Ladda ner listan över webbplatser du vill använda</string>
     <string name="single_plugin_disabled" formatted="true">%s (Inaktiverad)</string>
     <string name="extension_description">Beskrivning</string>
-    <string name="skip_type_creddits">Eftertexter</string>
+    <string name="skip_type_credits">Eftertexter</string>
     <string name="skip_type_intro">Introduktion</string>
     <string name="favorites_list_name">Favoriter</string>
     <string name="set_default">Ange standard</string>

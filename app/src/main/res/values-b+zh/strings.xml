@@ -449,7 +449,7 @@
     <string name="skip_type_recap">前情回顾</string>
     <string name="skip_type_mixed_ed">混合片尾</string>
     <string name="skip_type_mixed_op">混合片头</string>
-    <string name="skip_type_creddits">致谢名单</string>
+    <string name="skip_type_credits">致谢名单</string>
     <string name="skip_type_intro">介绍</string>
     <string name="clear_history">清除历史记录</string>
     <string name="history">历史记录</string>
