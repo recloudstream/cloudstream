@@ -2097,13 +2097,15 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
 
                 // update overlay season title
-                val lastTopIndex = -1
+                var lastTopIndex = -1
                 playerEpisodeList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                         val layoutManager =
                             recyclerView.layoutManager as? LinearLayoutManager ?: return
                         val topIndex = layoutManager.findFirstCompletelyVisibleItemPosition()
                         if (topIndex != RecyclerView.NO_POSITION && topIndex != lastTopIndex) {
+                            @Suppress("AssignedValueIsNeverRead")
+                            lastTopIndex = topIndex
                             val topItem = episodes.getOrNull(topIndex)
                             topItem?.let {
                                 playerEpisodeOverlayTitle.setText(
