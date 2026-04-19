@@ -422,7 +422,7 @@
     <string name="batch_download_nothing_to_download_format" formatted="true">כל %s כבר הורד</string>
     <string name="extension_authors">מחברים</string>
     <string name="extension_language">שפה</string>
-    <string name="skip_type_creddits">קרדיטים</string>
+    <string name="skip_type_credits">קרדיטים</string>
     <string name="sort">מיין</string>
     <string name="select_library">בחר ספרייה</string>
     <string name="empty_library_no_accounts_message">נראה שהספרייה שלכם ריקה :(

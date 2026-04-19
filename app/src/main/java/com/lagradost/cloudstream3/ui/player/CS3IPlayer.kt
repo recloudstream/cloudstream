@@ -29,7 +29,7 @@ import androidx.media3.common.TrackGroup
 import androidx.media3.common.TrackSelectionOverride
 import androidx.media3.common.Tracks
 import androidx.media3.common.VideoSize
-import androidx.media3.common.util.ExperimentalApi
+// import androidx.media3.common.util.ExperimentalApi
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.database.StandaloneDatabaseProvider
 import androidx.media3.datasource.DataSource
@@ -944,6 +944,22 @@ class CS3IPlayer : IPlayer {
                 when (event) {
                     CSPlayerEvent.Play -> {
                         event(PlayEvent(source))
+                        // If the player was stopped (e.g. notification dismissed) it lands in
+                        // STATE_IDLE. A bare play() call is a no-op in that state, re-prepare and
+                        // then resume to the current position once we are in STATE_READY again.
+                        if (playbackState == Player.STATE_IDLE) {
+                            val seekPosition = currentPosition
+                            exoPlayer?.addListener(object : Player.Listener {
+                                private var seekApplied = false
+                                override fun onPlaybackStateChanged(playbackState: Int) {
+                                    if (seekApplied || playbackState != Player.STATE_READY) return
+                                    seekApplied = true
+                                    exoPlayer?.seekTo(currentWindow, seekPosition)
+                                    exoPlayer?.removeListener(this)
+                                }
+                            })
+                            prepare()
+                        }
                         play()
                     }
 
@@ -1179,7 +1195,7 @@ class CS3IPlayer : IPlayer {
                             CustomDecoder.subtitleOffset = subtitleOffset
                             val decoder = CustomSubtitleDecoderFactory()
 
-                            @OptIn(ExperimentalApi::class)
+                            // @OptIn(ExperimentalApi::class)
                             val currentTextRenderer = TextRenderer(
                                 customTextOutput,
                                 eventHandler.looper,
@@ -1396,6 +1412,23 @@ class CS3IPlayer : IPlayer {
 
             event(PlayerAttachedEvent(exoPlayer))
             exoPlayer?.prepare()
+
+            // For offline fragmented MP4s, FLAG_MERGE_FRAGMENTED_SIDX builds the SIDX seek map
+            // incrementally as data is buffered. The initial seek resolves to the nearest merged
+            // entry (~first fragment, 3 s). On STATE_READY, re-seek to the actual saved position.
+            // This may only be reproducible on large and fairly long fragmented MP4 files with
+            // multiple sidx boxes.
+            if (onlineSource == null && playbackPosition > (exoPlayer?.duration ?: 0L)) {
+                exoPlayer?.addListener(object : Player.Listener {
+                    private var seekApplied = false
+                    override fun onPlaybackStateChanged(playbackState: Int) {
+                        if (seekApplied || playbackState != Player.STATE_READY) return
+                        seekApplied = true
+                        exoPlayer?.seekTo(currentWindow, playbackPosition)
+                        exoPlayer?.removeListener(this)
+                    }
+                })
+            }
 
             exoPlayer?.let { exo ->
                 event(StatusEvent(CSPlayerLoading.IsBuffering, CSPlayerLoading.IsBuffering))

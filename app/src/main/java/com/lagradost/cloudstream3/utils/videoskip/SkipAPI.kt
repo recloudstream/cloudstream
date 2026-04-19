@@ -16,7 +16,7 @@ enum class SkipType(@StringRes val res: Int) {
     Recap(R.string.skip_type_recap),
     MixedOpening(R.string.skip_type_mixed_op),
     MixedEnding(R.string.skip_type_mixed_ed),
-    Credits(R.string.skip_type_creddits),
+    Credits(R.string.skip_type_credits),
     Intro(R.string.skip_type_intro),
     Preview(R.string.skip_type_preview),
 }

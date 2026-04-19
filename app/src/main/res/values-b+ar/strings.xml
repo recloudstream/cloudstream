@@ -454,7 +454,7 @@
     <string name="player_settings_play_in_app">مشغل داخلي</string>
     <string name="app_not_found_error">لم يتم العثور على التطبيق</string>
     <string name="all_languages_preference">جميع اللغات</string>
-    <string name="skip_type_creddits">الإعتمادات</string>
+    <string name="skip_type_credits">الإعتمادات</string>
     <string name="update_notification_downloading">‌تنزيل تحديث التطبيق…</string>
     <string name="update_notification_installing">‏تثبيت تحديث التطبيق…</string>
     <string name="next_episode_time_min_format" formatted="true">%d دقيقة</string>

@@ -514,7 +514,7 @@
     <string name="safe_mode_title">Veilige mode aan</string>
     <string name="restart">Herstart</string>
     <string name="extension_description">Beschrijving</string>
-    <string name="skip_type_creddits">Waardering</string>
+    <string name="skip_type_credits">Waardering</string>
     <string name="clear_history">Wis geschiedenis</string>
     <string name="subscription_list_name">Ingeschreven</string>
     <string name="delete_repository">Wis repository</string>

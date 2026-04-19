@@ -438,7 +438,7 @@
     <string name="clear_history">Vymazat historii</string>
     <string name="all_languages_preference">Všechny jazyky</string>
     <string name="skip_type_mixed_op">Smíšený úvod</string>
-    <string name="skip_type_creddits">Poděkování</string>
+    <string name="skip_type_credits">Poděkování</string>
     <string name="skip_type_intro">Znělka</string>
     <string name="enable_skip_op_from_database_des">Zobrazit vyskakovací okna pro přeskočení úvodu/konce</string>
     <string name="update_notification_downloading">Stahování aktualizace aplikace…</string>

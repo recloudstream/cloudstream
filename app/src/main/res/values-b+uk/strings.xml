@@ -435,7 +435,7 @@
     <string name="skip_type_recap">Коротке повторення</string>
     <string name="skip_type_format" formatted="true">Пропустити %s</string>
     <string name="skip_type_mixed_ed">Змішаний ендінґ</string>
-    <string name="skip_type_creddits">Подяки</string>
+    <string name="skip_type_credits">Подяки</string>
     <string name="skip_type_op">Опенінґ</string>
     <string name="skip_type_intro">Вступ</string>
     <string name="clear_history">Очистити історію</string>

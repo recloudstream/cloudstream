@@ -2,10 +2,10 @@
 # https://docs.gradle.org/current/userguide/dependency_versions.html#sec:strict-version
 [versions]
 activityKtx = "1.13.0"
-androidGradlePlugin = "8.13.2"
+androidGradlePlugin = "9.1.1"
 appcompat = "1.7.1"
 biometric = "1.4.0-alpha06"
-buildkonfigGradlePlugin = "0.17.1"
+buildkonfigGradlePlugin = "0.18.0"
 coil = { strictly = "3.3.0" } # Later versions require jvmTarget 11 or later
 colorpicker = "6b46b49"
 conscryptAndroid = { strictly = "2.5.2" } # 2.5.3 crashes everything
@@ -18,7 +18,7 @@ fragmentKtx = "1.8.9"
 fuzzywuzzy = "1.4.0"
 jacksonModuleKotlin = { strictly = "2.13.1" } # Later versions don't support minSdk <26 (Crashes on Android TV's and FireSticks)
 json = "20251224"
-jsoup = "1.21.2"
+jsoup = "1.22.1"
 junit = "4.13.2"
 junitKtx = "1.3.0"
 junitVersion = "1.3.0"
@@ -27,11 +27,11 @@ kotlinGradlePlugin = "2.3.20"
 kotlinxCoroutinesCore = "1.10.2"
 lifecycleKtx = "2.10.0"
 material = "1.14.0-beta01"
-media3 = "1.10.0"
+media3 = "1.9.3"
 navigationKtx = "2.9.7"
 newpipeextractor = "v0.26.0"
-nextlibMedia3 = "1.10.0-0.12.1"
-nicehttp = "0.4.17"
+nextlibMedia3 = "1.9.3-0.12.0"
+nicehttp = "0.4.18"
 overlappingpanels = "0.1.5"
 paletteKtx = "1.0.0"
 preferenceKtx = "1.2.1"
@@ -45,7 +45,7 @@ torrentserver = "7861970"
 tvprovider = "1.1.0"
 video = "1.0.0"
 workRuntimeKtx = "2.11.2"
-zipline = "1.24.0"
+zipline = "1.27.0"
 
 jvmTarget = "1.8"
 jdkToolchain = "17"
@@ -117,7 +117,6 @@ android-lint = { id = "com.android.lint", version.ref = "androidGradlePlugin" }
 android-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "androidGradlePlugin" }
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfigGradlePlugin" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokkaGradlePlugin" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinGradlePlugin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm" , version.ref = "kotlinGradlePlugin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlinGradlePlugin" }
 

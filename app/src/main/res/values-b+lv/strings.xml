@@ -436,7 +436,7 @@
     <string name="skip_type_recap">Kopsavilkums</string>
     <string name="skip_type_mixed_ed">Jauktas beigas</string>
     <string name="skip_type_mixed_op">Jauktais sākums</string>
-    <string name="skip_type_creddits">Kredīts</string>
+    <string name="skip_type_credits">Kredīts</string>
     <string name="clear_history">Notīrīt vēsturi</string>
     <string name="history">Vēsture</string>
     <string name="enable_skip_op_from_database_des">Rādīt izlaižamos uznirstošos logus atvēršanai/beigšanai</string>

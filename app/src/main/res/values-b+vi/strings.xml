@@ -470,7 +470,7 @@
     <string name="skip_type_recap">Điểm lại nội dung</string>
     <string name="skip_type_mixed_ed">Kết thúc hỗn hợp</string>
     <string name="skip_type_mixed_op">Mở đầu hỗn hợp</string>
-    <string name="skip_type_creddits">Danh đề</string>
+    <string name="skip_type_credits">Danh đề</string>
     <string name="skip_type_intro">Giới thiệu</string>
     <string name="clear_history">Xoá lịch sử</string>
     <string name="enable_skip_op_from_database_des">Hiện các popup bỏ qua cho mở đầu/kết thúc</string>
