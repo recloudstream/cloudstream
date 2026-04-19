@@ -782,5 +782,9 @@
         <item quantity="other">%d downloads queued</item>
     </plurals>
     <string name="player_is_live">Live</string>
-
+    <string name="subtitles_dual_enabled">Dual subtitles (experimental)</string>
+    <string name="subtitles_edit_primary">Primary</string>
+    <string name="subtitles_edit_secondary">Secondary</string>
+    <string name="subtitles_secondary_unsupported_embedded">Secondary subtitles do not support embedded tracks yet</string>
+    <string name="subtitles_secondary_unsupported_combo">This subtitle combination is not supported for dual subtitles</string>
 </resources>
