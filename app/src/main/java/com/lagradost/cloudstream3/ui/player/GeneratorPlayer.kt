@@ -1171,11 +1171,12 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 val subtitles = subtitlesGrouped.map { it.key.html() }
 
-                val subtitleGroupIndexStart = if (currentSelectedSubtitles == null) {
+                val realIndex = subtitlesGrouped.keys.indexOf(currentSelectedSubtitles?.originalName)
+                val subtitleGroupIndexStart = if (realIndex == -1) {
+                    // The "No Subtitles" option is outside the subtitlesGrouped list.
                     subtitlesGrouped.size
                 } else {
-                    val index = subtitlesGrouped.keys.indexOf(currentSelectedSubtitles?.originalName)
-                    if (index == -1) subtitlesGrouped.size else index
+                    realIndex
                 }
                 var subtitleGroupIndex = subtitleGroupIndexStart
 
