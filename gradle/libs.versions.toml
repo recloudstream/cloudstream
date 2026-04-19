@@ -3,6 +3,7 @@
 [versions]
 activityKtx = "1.13.0"
 androidGradlePlugin = "9.1.1"
+animeDb = "1.0.2"
 appcompat = "1.7.1"
 biometric = "1.4.0-alpha06"
 buildkonfigGradlePlugin = "0.18.0"
