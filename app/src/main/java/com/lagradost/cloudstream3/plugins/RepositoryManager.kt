@@ -24,6 +24,7 @@ import java.nio.file.AtomicMoveNotSupportedException
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.security.MessageDigest
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Comes with the app, always available in the app, non removable.
@@ -162,6 +163,8 @@ object RepositoryManager {
         }.flatten()
     }
 
+
+    val currentGlobalDownloads = AtomicInteger()
     suspend fun downloadPluginToFile(
         pluginUrl: String,
         file: File,
@@ -170,12 +173,16 @@ object RepositoryManager {
         return safeAsync {
             val parentDir = file.parentFile ?: return@safeAsync null
             parentDir.mkdirs()
+            val currentDownloads = currentGlobalDownloads.getAndIncrement()
 
-            // Delete any temp files from crashed downloads (even if unlikely)
-            parentDir.listFiles {
-                it.extension == "tmp"
-            }?.forEach {
-                it.delete()
+            // Only delete if there are no other downloads, otherwise we may delete in progress downloads
+            if (currentDownloads == 0) {
+                // Delete any temp files from crashed downloads (even if unlikely)
+                parentDir.listFiles {
+                    it.extension == "tmp"
+                }?.forEach {
+                    it.delete()
+                }
             }
 
             // Prevent corrupting the plugin file if the operation fails
@@ -212,6 +219,8 @@ object RepositoryManager {
                     StandardCopyOption.REPLACE_EXISTING
                 )
             }
+
+            currentGlobalDownloads.getAndDecrement()
 
             file
         }
