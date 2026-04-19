@@ -477,7 +477,7 @@
     <string name="action_remove_from_watched">İzlenenlerden kaldır</string>
     <string name="skip_type_mixed_ed">Karışık son</string>
     <string name="skip_type_mixed_op">Karışık başlangıç</string>
-    <string name="skip_type_creddits">Katkıda Bulunanlar</string>
+    <string name="skip_type_credits">Katkıda Bulunanlar</string>
     <string name="skip_type_intro">Giriş</string>
     <string name="plugin_downloaded">Eklenti İndirildi</string>
     <string name="pref_category_actions">Eylemler</string>

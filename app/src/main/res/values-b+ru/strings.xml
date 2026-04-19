@@ -303,7 +303,7 @@
     <string name="app_not_found_error">Приложение не найдено</string>
     <string name="all_languages_preference">Все языки</string>
     <string name="skip_type_op">Вступление</string>
-    <string name="skip_type_creddits">Титры</string>
+    <string name="skip_type_credits">Титры</string>
     <string name="action_mark_as_watched">Отметить как просмотренное</string>
     <string name="limit_title_rez">Показывать информацию про видеоплеер</string>
     <string name="watch_quality_pref">Предпочтительное качество видео (WiFi)</string>

@@ -13,7 +13,7 @@
     <string name="episode_action_chromecast_mirror">Chromecast-Mirror</string>
     <string name="episode_action_play_in_app">In App wiedergeben</string>
     <string name="skip_type_mixed_op">Gemischte Openings</string>
-    <string name="skip_type_creddits">Abspann</string>
+    <string name="skip_type_credits">Abspann</string>
     <string name="skip_type_intro">Intro</string>
     <string name="clear_history">Verlauf löschen</string>
     <string name="history">Verlauf</string>

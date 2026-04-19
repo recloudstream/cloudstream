@@ -562,7 +562,7 @@
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="action_open_play">@string/home_play</string>
     <string name="action_remove_from_watched">شيلو من لايحة المحتوى الحاضرينو</string>
-    <string name="skip_type_creddits">الإعتمادات</string>
+    <string name="skip_type_credits">الإعتمادات</string>
     <string name="quality_profile_help">فيكُن هون تغيرو طريقة ترتيب المصادر. المصدر يللي عنده أولوية أكتر بينحط أعلى بلايحت تنقايت المصدر. إنتو بتنقو الأولوية يإستعمال الأرقام. حطو الرقم الأعلى للمصادر والجودات يللي بتفضلوها.
 \n
 \nمتلًا:

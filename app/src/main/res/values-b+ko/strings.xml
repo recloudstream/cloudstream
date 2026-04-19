@@ -443,7 +443,7 @@
     <string name="skip_type_ed">엔딩</string>
     <string name="skip_type_mixed_ed">혼합 엔딩</string>
     <string name="skip_type_mixed_op">혼합 오프닝</string>
-    <string name="skip_type_creddits">크레딧</string>
+    <string name="skip_type_credits">크레딧</string>
     <string name="skip_type_intro">소개</string>
     <string name="clear_history">기록 삭제</string>
     <string name="history">기록</string>

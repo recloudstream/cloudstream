@@ -410,7 +410,7 @@
     <string name="yes">Sim</string>
     <string name="update_notification_downloading">Baixando atualização do app…</string>
     <string name="subscription_episode_released">Episódio %d lançado!</string>
-    <string name="skip_type_creddits">Créditos</string>
+    <string name="skip_type_credits">Créditos</string>
     <string name="extension_description">Descrição</string>
     <string name="extension_size">Tamanho</string>
     <string name="stop">Parar</string>

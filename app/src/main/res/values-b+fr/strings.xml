@@ -302,7 +302,7 @@
     <string name="skip_type_format" formatted="true">Ignorer %s</string>
     <string name="skip_type_op">Ouverture</string>
     <string name="skip_type_recap">Récap</string>
-    <string name="skip_type_creddits">Crédits</string>
+    <string name="skip_type_credits">Crédits</string>
     <string name="skip_type_intro">Intro</string>
     <string name="clear_history">Effacer l\'historique</string>
     <string name="yes">Oui</string>

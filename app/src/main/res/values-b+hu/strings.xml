@@ -469,7 +469,7 @@
     <string name="repository_url_hint">Repó URL</string>
     <string name="plugin_loaded">Bővítmény betöltve</string>
     <string name="plugin_downloaded">Bővítmény letöltve</string>
-    <string name="skip_type_creddits">Közreműködők</string>
+    <string name="skip_type_credits">Közreműködők</string>
     <string name="sort_alphabetical_z">Betűrendben (Z-től az A-ig)</string>
     <string name="select_library">Könyvtár kiválasztása</string>
     <string name="safe_mode_file">Biztonságos módú fájlba ütköztünk!
