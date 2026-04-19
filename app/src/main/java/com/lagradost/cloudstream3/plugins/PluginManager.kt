@@ -757,7 +757,7 @@ object PluginManager {
         try {
             Log.d(TAG, "Downloading plugin: $pluginUrl to ${file.absolutePath}")
             // The plugin file needs to be salted with the repository url hash as to allow multiple repositories with the same internal plugin names
-            val newFile = downloadPluginToFile(pluginUrl, file, pluginHash) ?: return false
+            val newFile = downloadPluginToFile(activity, pluginUrl, file, pluginHash) ?: return false
 
             val data = PluginData(
                 internalName,
