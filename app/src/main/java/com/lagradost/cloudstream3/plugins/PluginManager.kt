@@ -691,16 +691,25 @@ object PluginManager {
             APIHolder.allProviders.removeIf { provider: MainAPI -> provider.sourcePlugin == plugin.filename }
         }
 
-        extractorApis.removeIf { provider: ExtractorApi -> provider.sourcePlugin == plugin.filename }
+        synchronized(extractorApis) {
+            extractorApis.removeIf { provider: ExtractorApi -> provider.sourcePlugin == plugin.filename }
+        }
 
         synchronized(VideoClickActionHolder.allVideoClickActions) {
             VideoClickActionHolder.allVideoClickActions.removeIf { action: VideoClickAction -> action.sourcePlugin == plugin.filename }
         }
 
-        classLoaders.values.removeIf { v -> v == plugin }
+        synchronized(classLoaders) {
+            classLoaders.values.removeIf { v -> v == plugin }
+        }
 
-        plugins.remove(absolutePath)
-        urlPlugins.values.removeIf { v -> v == plugin }
+        synchronized(plugins) {
+            plugins.remove(absolutePath)
+        }
+
+        synchronized(urlPlugins) {
+            urlPlugins.values.removeIf { v -> v == plugin }
+        }
     }
 
     /**
