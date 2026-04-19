@@ -59,6 +59,42 @@ import kotlin.math.roundToInt
 @OptIn(UnstableApi::class)
 class PlayerGestureHelper(private val playerView: PlayerView) {
 
+    companion object {
+        /** Swipe-seek constants */
+        const val MINIMUM_SEEK_TIME        = 7000L
+        const val MINIMUM_VERTICAL_SWIPE   = 2.0f   // % of screen height
+        const val MINIMUM_HORIZONTAL_SWIPE = 2.0f  // % of screen height
+        const val VERTICAL_MULTIPLIER      = 2.0f
+        const val HORIZONTAL_MULTIPLIER    = 2.0f
+
+        /** Double-tap constants */
+        /** Maximum finger-hold time (ms) for a tap to qualify as a double-tap seek. */
+        const val DOUBLE_TAP_MAXIMUM_HOLD_TIME = 200L
+        /** Time window (ms) between taps to count as a double-tap.
+         *  Also determines how long a single-tap is delayed before firing. */
+        const val DOUBLE_TAP_MINIMUM_TIME_BETWEEN = 200L
+        /** Fraction of view width on each side that counts as "left" / "right" seek zone. */
+        const val DOUBLE_TAP_PAUSE_PERCENTAGE = 0.15
+
+        /** Zoom constants */
+        /** Minimum zoom; allows zooming out past 100% but snaps back. */
+        const val MINIMUM_ZOOM = 0.95f
+        /** Sensitivity for the auto-snap to 100% at the minimum zoom boundary. */
+        const val ZOOM_SNAP_SENSITIVITY = 0.07f
+        /** Maximum zoom to prevent the user from getting lost. */
+        const val MAXIMUM_ZOOM = 4.0f
+
+        /** Extracts translation and uniform scale from a matrix with no rotation. */
+        fun matrixToTranslationAndScale(matrix: Matrix): Triple<Float, Float, Float> {
+            val points = floatArrayOf(0f, 0f, 1f, 1f)
+            matrix.mapPoints(points)
+            val translationX = points[0]
+            val translationY = points[1]
+            val scale = points[2] - translationX
+            return Triple(translationX, translationY, scale)
+        }
+    }
+
     private val context: Context get() = playerView.context
 
     /** Set true by the host when the player occupies the full screen.
@@ -1097,41 +1133,5 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
             }
         }
         return false
-    }
-
-    companion object {
-        /** Swipe-seek constants */
-        const val MINIMUM_SEEK_TIME        = 7000L
-        const val MINIMUM_VERTICAL_SWIPE   = 2.0f   // % of screen height
-        const val MINIMUM_HORIZONTAL_SWIPE = 2.0f  // % of screen height
-        const val VERTICAL_MULTIPLIER      = 2.0f
-        const val HORIZONTAL_MULTIPLIER    = 2.0f
-
-        /** Double-tap constants */
-        /** Maximum finger-hold time (ms) for a tap to qualify as a double-tap seek. */
-        const val DOUBLE_TAP_MAXIMUM_HOLD_TIME = 200L
-        /** Time window (ms) between taps to count as a double-tap.
-         *  Also determines how long a single-tap is delayed before firing. */
-        const val DOUBLE_TAP_MINIMUM_TIME_BETWEEN = 200L
-        /** Fraction of view width on each side that counts as "left" / "right" seek zone. */
-        const val DOUBLE_TAP_PAUSE_PERCENTAGE = 0.15
-
-        /** Zoom constants */
-        /** Minimum zoom; allows zooming out past 100% but snaps back. */
-        const val MINIMUM_ZOOM = 0.95f
-        /** Sensitivity for the auto-snap to 100% at the minimum zoom boundary. */
-        const val ZOOM_SNAP_SENSITIVITY = 0.07f
-        /** Maximum zoom to prevent the user from getting lost. */
-        const val MAXIMUM_ZOOM = 4.0f
-
-        /** Extracts translation and uniform scale from a matrix with no rotation. */
-        fun matrixToTranslationAndScale(matrix: Matrix): Triple<Float, Float, Float> {
-            val points = floatArrayOf(0f, 0f, 1f, 1f)
-            matrix.mapPoints(points)
-            val translationX = points[0]
-            val translationY = points[1]
-            val scale = points[2] - translationX
-            return Triple(translationX, translationY, scale)
-        }
     }
 }

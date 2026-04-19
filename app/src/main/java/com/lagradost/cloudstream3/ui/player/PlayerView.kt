@@ -77,6 +77,10 @@ class PlayerView @JvmOverloads constructor(
     attrs: AttributeSet? = null
 ) : FrameLayout(context, attrs) {
 
+    companion object {
+        private const val TAG = "PlayerView"
+    }
+
     /** All gesture, volume, brightness and key-event logic lives here. */
     val gestureHelper = PlayerGestureHelper(this)
 
@@ -780,9 +784,5 @@ class PlayerView @JvmOverloads constructor(
     fun cancelAutoHide() {
         autoHideToken++
         autoHideHandler.removeCallbacksAndMessages(null)
-    }
-
-    companion object {
-        private const val TAG = "PlayerView"
     }
 }
