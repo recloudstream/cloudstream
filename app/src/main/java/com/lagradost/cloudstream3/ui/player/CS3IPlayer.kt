@@ -965,13 +965,13 @@ class CS3IPlayer : IPlayer {
                         // STATE_IDLE. A bare play() call is a no-op in that state, re-prepare and
                         // then resume to the current position once we are in STATE_READY again.
                         if (playbackState == Player.STATE_IDLE) {
-                            val mediaPosition = currentPosition
+                            val seekPosition = currentPosition
                             exoPlayer?.addListener(object : Player.Listener {
                                 private var seekApplied = false
                                 override fun onPlaybackStateChanged(playbackState: Int) {
                                     if (seekApplied || playbackState != Player.STATE_READY) return
                                     seekApplied = true
-                                    exoPlayer?.seekTo(currentWindow, mediaPosition)
+                                    exoPlayer?.seekTo(currentWindow, seekPosition)
                                     exoPlayer?.removeListener(this)
                                 }
                             })
