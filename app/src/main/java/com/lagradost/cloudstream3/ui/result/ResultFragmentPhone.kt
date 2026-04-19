@@ -60,8 +60,6 @@ import com.lagradost.cloudstream3.ui.player.CS3IPlayer
 import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.player.IPlayer
 import com.lagradost.cloudstream3.ui.player.PlayerView as PlayerHostView
-import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
-import com.lagradost.cloudstream3.utils.UIHelper.showSystemUI
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment.bindLogo
@@ -127,20 +125,7 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
     protected var playerBinding: PlayerCustomLayoutBinding? = null
     protected var isShowing: Boolean = false
 
-    protected lateinit var playerHostView: PlayerHostView
-
-    protected open fun enterFullscreen() {
-        activity?.hideSystemUI()
-        if (lockRotation) {
-            activity?.requestedOrientation =
-                android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-        }
-    }
-
-    protected open fun exitFullscreen() {
-        activity?.showSystemUI()
-        activity?.requestedOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_USER
-    }
+    protected var playerHostView: PlayerHostView? = null
 
     open fun updateUIVisibility() {}
 
@@ -182,7 +167,7 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
 
     override fun playerError(exception: Throwable) {
         if (player.getIsPlaying()) { // because we don't want random toasts in player
-            if (::playerHostView.isInitialized) playerHostView.playerError(exception)
+            playerHostView?.playerError(exception)
         } else {
             nextMirror()
         }
@@ -282,7 +267,7 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
         }
 
         updateUIEvent -= ::updateUI
-        if (::playerHostView.isInitialized) playerHostView.release()
+        playerHostView?.release()
         playerBinding = null
         resultBinding?.resultScroll?.setOnClickListener(null)
         resultBinding = null
@@ -350,10 +335,8 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
         afterPluginsLoadedEvent += ::reloadViewModel
         activity?.setNavigationBarColorCompat(R.attr.primaryBlackBackground)
         context?.let { ctx ->
-            if (::playerHostView.isInitialized) {
-                playerHostView.onResume(ctx)
-                playerHostView.setupKeyEventListener()
-            }
+            playerHostView?.onResume(ctx)
+            playerHostView?.setupKeyEventListener()
         }
         super.onResume()
         PanelsChildGestureRegionObserver.Provider.get()
@@ -362,7 +345,7 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
 
     override fun onStop() {
         afterPluginsLoadedEvent -= ::reloadViewModel
-        if (::playerHostView.isInitialized) playerHostView.onStop()
+        playerHostView?.onStop()
         super.onStop()
     }
 
@@ -385,14 +368,14 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
         // Set up trailer player
         val ctx = context ?: return
         playerHostView = PlayerHostView(ctx)
-        playerHostView.player = player
-        playerHostView.hasPipModeSupport = hasPipModeSupport
-        playerHostView.callbacks = this
-        playerHostView.bindViews(binding.root)
+        playerHostView?.player = player
+        playerHostView?.hasPipModeSupport = hasPipModeSupport
+        playerHostView?.callbacks = this
+        playerHostView?.bindViews(binding.root)
         playerBinding = binding.root.findViewById<View?>(R.id.player_holder)?.let {
             PlayerCustomLayoutBinding.bind(it)
         }
-        playerHostView.initialize()
+        playerHostView?.initialize()
 
         // ===== setup =====
         val storedData = getStoredData() ?: return
@@ -1404,7 +1387,7 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
     }
 
     override fun onPause() {
-        if (::playerHostView.isInitialized) playerHostView.releaseKeyEventListener()
+        playerHostView?.releaseKeyEventListener()
         super.onPause()
         PanelsChildGestureRegionObserver.Provider.get()
             .addGestureRegionsUpdateListener(gestureRegionsListener)

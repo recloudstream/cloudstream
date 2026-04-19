@@ -383,7 +383,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 override fun onCustomAction(player: Player, action: String, intent: Intent) {
                     when (action) {
                         STOP_ACTION -> {
-                            exitFullscreen()
+                            playerHostView?.exitFullscreen()
                             this@GeneratorPlayer.player.release()
                             activity?.popCurrentPage()
                         }
@@ -534,7 +534,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 (if (sameEpisode) currentSelectedSubtitles else null) ?: getAutoSelectSubtitle(
                     currentSubs, settings = true, downloads = true
                 ),
-                preview = isFullScreenPlayer
+                preview = true
             )
         }
 
@@ -2169,7 +2169,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
 
         binding.playerLoadingGoBack.setOnClickListener {
-            exitFullscreen()
+            playerHostView?.exitFullscreen()
             player.release()
             activity?.popCurrentPage()
         }

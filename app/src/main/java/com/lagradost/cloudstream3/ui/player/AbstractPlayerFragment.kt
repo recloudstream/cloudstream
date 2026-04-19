@@ -39,39 +39,39 @@ abstract class AbstractPlayerFragment<T : ViewBinding>(
     private var _player: IPlayer = CS3IPlayer()
 
     /** The shared [PlayerView] host that owns all player state and view references. */
-    protected lateinit var playerHostView: PlayerView
+    protected var playerHostView: PlayerView? = null
 
     var player: IPlayer
-        get() = if (::playerHostView.isInitialized) playerHostView.player else _player
+        get() = playerHostView?.player ?: _player
         set(value) {
             _player = value
-            if (::playerHostView.isInitialized) playerHostView.player = value
+            playerHostView?.player = value
         }
 
     var subView: SubtitleView?
-        get() = if (::playerHostView.isInitialized) playerHostView.subView else null
-        set(value) { if (::playerHostView.isInitialized) playerHostView.subView = value }
+        get() = playerHostView?.subView
+        set(value) { playerHostView?.subView = value }
 
     protected open var hasPipModeSupport: Boolean
-        get() = if (::playerHostView.isInitialized) playerHostView.hasPipModeSupport else true
-        set(value) { if (::playerHostView.isInitialized) playerHostView.hasPipModeSupport = value }
+        get() = playerHostView?.hasPipModeSupport ?: true
+        set(value) { playerHostView?.hasPipModeSupport = value }
 
     var playerPausePlay: ImageView?
-        get() = if (::playerHostView.isInitialized) playerHostView.playerPausePlay else null
-        set(value) { if (::playerHostView.isInitialized) playerHostView.playerPausePlay = value }
+        get() = playerHostView?.playerPausePlay
+        set(value) { playerHostView?.playerPausePlay = value }
 
     /** The underlying [androidx.media3.ui.PlayerView] widget (named to avoid conflict with our [PlayerView]). */
     var playerView: androidx.media3.ui.PlayerView?
-        get() = if (::playerHostView.isInitialized) playerHostView.exoPlayerView else null
-        set(value) { if (::playerHostView.isInitialized) playerHostView.exoPlayerView = value }
+        get() = playerHostView?.exoPlayerView
+        set(value) { playerHostView?.exoPlayerView = value }
 
     var currentPlayerStatus: CSPlayerLoading
-        get() = if (::playerHostView.isInitialized) playerHostView.currentPlayerStatus else CSPlayerLoading.IsBuffering
-        set(value) { if (::playerHostView.isInitialized) playerHostView.currentPlayerStatus = value }
+        get() = playerHostView?.currentPlayerStatus ?: CSPlayerLoading.IsBuffering
+        set(value) { playerHostView?.currentPlayerStatus = value }
 
     protected var mMediaSession: MediaSession?
-        get() = if (::playerHostView.isInitialized) playerHostView.mMediaSession else null
-        set(value) { if (::playerHostView.isInitialized) playerHostView.mMediaSession = value }
+        get() = playerHostView?.mMediaSession
+        set(value) { playerHostView?.mMediaSession = value }
 
     // No-op callbacks (nextEpisode, prevEpisode, etc.) are intentionally left as
     // open so subclasses can override only what they need.  The ones below throw
@@ -90,7 +90,7 @@ abstract class AbstractPlayerFragment<T : ViewBinding>(
 
     /** Delegates to [PlayerView.playerError] by default; override to customize. */
     override fun playerError(exception: Throwable) {
-        if (::playerHostView.isInitialized) playerHostView.playerError(exception)
+        playerHostView?.playerError(exception)
     }
 
     /** Player fragments don't need system-bar padding adjustment by default. */
@@ -99,49 +99,45 @@ abstract class AbstractPlayerFragment<T : ViewBinding>(
     override fun onBindingCreated(binding: T, savedInstanceState: Bundle?) {
         val ctx = context ?: return
         playerHostView = PlayerView(ctx)
-        playerHostView.player = _player
-        playerHostView.hasPipModeSupport = hasPipModeSupport
-        playerHostView.callbacks = this
-        playerHostView.bindViews(binding.root)
-        playerHostView.initialize()
+        playerHostView?.player = _player
+        playerHostView?.hasPipModeSupport = hasPipModeSupport
+        playerHostView?.callbacks = this
+        playerHostView?.bindViews(binding.root)
+        playerHostView?.initialize()
     }
 
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode)
-        if (::playerHostView.isInitialized) {
-            playerHostView.onPictureInPictureModeChanged(isInPictureInPictureMode, activity)
-        }
+        playerHostView?.onPictureInPictureModeChanged(isInPictureInPictureMode, activity)
     }
 
     override fun onDestroy() {
-        if (::playerHostView.isInitialized) {
-            playerHostView.release()
-        }
+        playerHostView?.release()
         super.onDestroy()
     }
 
     override fun onPause() {
-        if (::playerHostView.isInitialized) playerHostView.releaseKeyEventListener()
+        playerHostView?.releaseKeyEventListener()
         super.onPause()
     }
 
     override fun onStop() {
-        if (::playerHostView.isInitialized) playerHostView.onStop()
+        playerHostView?.onStop()
         super.onStop()
     }
 
     override fun onResume() {
         context?.let { ctx ->
-            if (::playerHostView.isInitialized) playerHostView.onResume(ctx)
+            playerHostView?.onResume(ctx)
         }
         super.onResume()
     }
 
     fun nextResize() {
-        if (::playerHostView.isInitialized) playerHostView.nextResize()
+        playerHostView?.nextResize()
     }
 
     open fun resize(resize: PlayerResize, showToast: Boolean) {
-        if (::playerHostView.isInitialized) playerHostView.resize(resize, showToast)
+        playerHostView?.resize(resize, showToast)
     }
 }

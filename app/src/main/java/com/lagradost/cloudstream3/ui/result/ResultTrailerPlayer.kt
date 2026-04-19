@@ -23,7 +23,7 @@ import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPres
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
 import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 
-open class ResultTrailerPlayer : ResultFragmentPhone() {
+class ResultTrailerPlayer : ResultFragmentPhone() {
 
     override var lockRotation = false
     override var isFullScreenPlayer = false
@@ -47,7 +47,7 @@ open class ResultTrailerPlayer : ResultFragmentPhone() {
         if (introVisible) return
         isShowing = true
         updateUIVisibility()
-        playerHostView.scheduleAutoHide()
+        playerHostView?.scheduleAutoHide()
     }
 
     override fun isUIShowing(): Boolean = isShowing
@@ -134,7 +134,7 @@ open class ResultTrailerPlayer : ResultFragmentPhone() {
         // Apply autorotation when fullscreen (lockRotation = true).
         // PlayerView already set isVerticalOrientation before this callback fires.
         if (lockRotation) {
-            activity?.requestedOrientation = playerHostView.dynamicOrientation()
+            activity?.requestedOrientation = playerHostView?.dynamicOrientation() ?: return
         }
     }
 
@@ -162,13 +162,13 @@ open class ResultTrailerPlayer : ResultFragmentPhone() {
     private fun updateFullscreen(fullscreen: Boolean) {
         isFullScreenPlayer = fullscreen
         lockRotation = fullscreen
-        playerHostView.isFullScreen = fullscreen
+        playerHostView?.isFullScreen = fullscreen
 
         playerBinding?.playerFullscreen?.setImageResource(
             if (fullscreen) R.drawable.baseline_fullscreen_exit_24 else R.drawable.baseline_fullscreen_24
         )
         if (fullscreen) {
-            enterFullscreen()
+            playerHostView?.enterFullscreen()
             binding?.apply {
                 resultTopBar.isVisible = false
                 resultFullscreenHolder.isVisible = true
@@ -188,7 +188,7 @@ open class ResultTrailerPlayer : ResultFragmentPhone() {
                     resultBinding?.resultSmallscreenHolder?.addView(view)
                 }
             }
-            exitFullscreen()
+            playerHostView?.exitFullscreen()
         }
         fixPlayerSize()
         uiReset()
@@ -209,10 +209,10 @@ open class ResultTrailerPlayer : ResultFragmentPhone() {
             playerVideoHolder.isVisible = controlsVisible
             shadowOverlay.isVisible = controlsVisible
             playerPausePlayHolderHolder.isVisible =
-                controlsVisible && playerHostView.currentPlayerStatus != CSPlayerLoading.IsBuffering
+                controlsVisible && playerHostView?.currentPlayerStatus != CSPlayerLoading.IsBuffering
         }
         // Fade center controls in/out; also resets stale fillAfter alpha from seek animations.
-        playerHostView.gestureHelper.animateCenterControls(if (isShowing && !introVisible) 1f else 0f)
+        playerHostView?.gestureHelper?.animateCenterControls(if (isShowing && !introVisible) 1f else 0f)
     }
 
     override fun playerStatusChanged() {
@@ -224,8 +224,8 @@ open class ResultTrailerPlayer : ResultFragmentPhone() {
     override fun onBindingCreated(binding: FragmentResultSwipeBinding, savedInstanceState: Bundle?) {
         super.onBindingCreated(binding, savedInstanceState)
 
-        playerHostView.videoOutline = playerBinding?.videoOutline
-        playerHostView.requestUpdateBrightnessOverlayOnNextLayout()
+        playerHostView?.videoOutline = playerBinding?.videoOutline
+        playerHostView?.requestUpdateBrightnessOverlayOnNextLayout()
 
         playerBinding?.playerFullscreen?.setOnClickListener { updateFullscreen(!isFullScreenPlayer) }
         updateFullscreen(isFullScreenPlayer)

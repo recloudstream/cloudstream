@@ -21,7 +21,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
 import android.view.WindowManager
-import android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AlphaAnimation
 import android.view.animation.DecelerateInterpolator
@@ -83,7 +82,6 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 ) {
     override fun pickLayout(): Int = R.layout.fragment_player
     protected open var lockRotation = true
-    protected open var isFullScreenPlayer = true
     protected var playerBinding: PlayerCustomLayoutBinding? = null
 
     // state of player UI
@@ -120,8 +118,6 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             logError(e)
             0L
         }
-
-    private val fullscreenNotch = true // TODO SETTING
 
     private var statusBarHeight: Int? = null
     private var navigationBarHeight: Int? = null
@@ -233,7 +229,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     }
 
     override fun onDestroyView() {
-        if (::playerHostView.isInitialized) playerHostView.releaseOverlayLayoutListener()
+        playerHostView?.releaseOverlayLayoutListener()
         playerBinding = null
         super.onDestroyView()
     }
@@ -358,7 +354,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             }
 
             if (!isLocked) {
-                if (::playerHostView.isInitialized) playerHostView.gestureHelper.animateCenterControls(fadeTo)
+                playerHostView?.gestureHelper?.animateCenterControls(fadeTo)
                 shadowOverlay.isVisible = true
                 shadowOverlay.startAnimation(fadeAnimation)
                 downloadBothHeader.startAnimation(fadeAnimation)
@@ -389,7 +385,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             Configuration.ORIENTATION_PORTRAIT ->
                 ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
 
-            else -> playerHostView.dynamicOrientation()
+            else -> playerHostView?.dynamicOrientation() ?: return
         }
         activity.requestedOrientation = orientation
     }
@@ -403,7 +399,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             Configuration.ORIENTATION_PORTRAIT ->
                 ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
 
-            else -> playerHostView.dynamicOrientation()
+            else -> playerHostView?.dynamicOrientation() ?: return
         }
         activity.requestedOrientation = orientation
     }
@@ -431,7 +427,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                     else
                         ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
 
-            else -> orientation = playerHostView.dynamicOrientation()
+            else -> orientation = playerHostView?.dynamicOrientation() ?: return
         }
         activity.requestedOrientation = orientation
     }
@@ -445,39 +441,11 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                     if (ignoreDynamicOrientation || rotatedManually) {
                         restoreOrientationWithSensor(this)
                     } else {
-                        this.requestedOrientation = playerHostView.dynamicOrientation()
+                        this.requestedOrientation = playerHostView?.dynamicOrientation() ?: return@apply
                     }
                 }
             }
         }
-    }
-
-    protected fun enterFullscreen() {
-        if (isFullScreenPlayer) {
-            activity?.hideSystemUI()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && fullscreenNotch) {
-                val params = activity?.window?.attributes
-                params?.layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
-                activity?.window?.attributes = params
-            }
-        }
-        updateOrientation()
-    }
-
-    protected fun exitFullscreen() {
-        if (::playerHostView.isInitialized) playerHostView.gestureHelper.resetZoomToDefault()
-        // if (lockRotation)
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
-
-        // simply resets brightness and notch settings that might have been overridden
-        val lp = activity?.window?.attributes
-        lp?.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            lp?.layoutInDisplayCutoutMode =
-                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
-        }
-        activity?.window?.attributes = lp
-        activity?.showSystemUI()
     }
 
     private fun setupKeyEventListener() {
@@ -488,7 +456,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                 event.action == KeyEvent.ACTION_DOWN &&
                     (event.keyCode == KeyEvent.KEYCODE_VOLUME_UP ||
                      event.keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) ->
-                    playerHostView.handleVolumeKey(event.keyCode)
+                    playerHostView?.handleVolumeKey(event.keyCode) ?: false
                 player.isActive() -> handleKeyEvent(event, hasNavigated)
                 else -> false
             }
@@ -496,9 +464,9 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     }
 
     override fun onResume() {
-        enterFullscreen()
+        playerHostView?.enterFullscreen { updateOrientation() }
         setupKeyEventListener()
-        playerHostView.verifyVolume()
+        playerHostView?.verifyVolume()
         activity?.attachBackPressedCallback("FullScreenPlayer") {
             if (isShowingEpisodeOverlay) {
                 // isShowingEpisodeOverlay pauses, so this makes it easier to unpause
@@ -514,7 +482,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                 activity?.popCurrentPage("FullScreenPlayer")
             }
         }
-        playerHostView.requestUpdateBrightnessOverlayOnNextLayout()
+        playerHostView?.requestUpdateBrightnessOverlayOnNextLayout()
         super.onResume()
     }
 
@@ -524,7 +492,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     }
 
     override fun onDestroy() {
-        exitFullscreen()
+        playerHostView?.exitFullscreen()
         super.onDestroy()
     }
 
@@ -638,8 +606,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
             dialog.setOnDismissListener {
                 selectSubtitlesDialog = null
-                if (isFullScreenPlayer)
-                    activity?.hideSystemUI()
+                activity?.hideSystemUI()
             }
             applyBtt.setOnClickListener {
                 selectSubtitlesDialog = null
@@ -712,8 +679,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         }
 
         val dismiss = DialogInterface.OnDismissListener {
-            if (isFullScreenPlayer)
-                activity?.hideSystemUI()
+            activity?.hideSystemUI()
             if (isPlaying) {
                 player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
             }
@@ -743,8 +709,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             playerBinding?.playerIntroPlay?.isGone = true
             autoHide()
         }
-        if (isFullScreenPlayer)
-            activity?.hideSystemUI()
+        activity?.hideSystemUI()
         animateLayoutChanges()
         if (playerBinding?.playerEpisodeOverlay?.isGone == true) playerBinding?.playerPausePlay?.requestFocus()
     }
@@ -755,7 +720,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         }
 
         isLocked = !isLocked
-        if (::playerHostView.isInitialized) playerHostView.isLocked = isLocked
+        playerHostView?.isLocked = isLocked
         updateOrientation(true) // set true to ignore auto rotate to stay in current orientation
 
         if (isLocked && isShowing) {
@@ -767,7 +732,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         }
 
         val fadeTo = if (isLocked) 0f else 1f
-        if (::playerHostView.isInitialized) playerHostView.gestureHelper.animateCenterControls(fadeTo)
+        playerHostView?.gestureHelper?.animateCenterControls(fadeTo)
         playerBinding?.apply {
             val fadeAnimation = AlphaAnimation(playerVideoTitleHolder.alpha, fadeTo).apply {
                 duration = 100
@@ -846,7 +811,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
     protected fun autoHide() {
         metadataVisibilityToken++
-        if (::playerHostView.isInitialized) playerHostView.scheduleAutoHide()
+        playerHostView?.scheduleAutoHide()
         scheduleMetadataVisibility()
     }
 
@@ -918,21 +883,21 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         super.onConfigurationChanged(newConfig)
 
         // If we rotate the device we need to recalculate the zoom
-        val gh = if (::playerHostView.isInitialized) playerHostView.gestureHelper else return
+        val gh = playerHostView?.gestureHelper ?: return
         val matrix = gh.zoomMatrix
         val animation = gh.matrixAnimation
         if ((animation == null || !animation.isRunning) && matrix != null) {
             // Ignore if we have no zoom or mid-animation
             playerView?.post {
                 gh.applyZoomMatrix(matrix, true)
-                playerHostView.requestUpdateBrightnessOverlayOnNextLayout()
+                playerHostView?.requestUpdateBrightnessOverlayOnNextLayout()
             }
         }
     }
 
     override fun resize(resize: PlayerResize, showToast: Boolean) {
         super.resize(resize, showToast)
-        if (::playerHostView.isInitialized) playerHostView.requestUpdateBrightnessOverlayOnNextLayout()
+        playerHostView?.requestUpdateBrightnessOverlayOnNextLayout()
     }
 
     private fun handleKeyEvent(event: KeyEvent, hasNavigated: Boolean): Boolean {
@@ -987,8 +952,8 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
                 KeyEvent.KEYCODE_VOLUME_DOWN,
                 KeyEvent.KEYCODE_VOLUME_UP -> {
-                    // Handled entirely by PlayerView.handleVolumeKey (checks PHONE/EMULATOR + isFullScreen).
-                    if (playerHostView.handleVolumeKey(keyCode)) return true
+                    // Handled entirely by PlayerView.handleVolumeKey (checks PHONE/EMULATOR).
+                    if (playerHostView?.handleVolumeKey(keyCode) == true) return true
                 }
             }
         }
@@ -1042,10 +1007,8 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         updateLockUI()
         updateUIVisibility()
         animateLayoutChanges()
-        if (::playerHostView.isInitialized) {
-            playerHostView.gestureHelper.resetFastForwardText()
-            playerHostView.gestureHelper.resetRewindText()
-        }
+        playerHostView?.gestureHelper?.resetFastForwardText()
+        playerHostView?.gestureHelper?.resetRewindText()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -1062,11 +1025,11 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         super.onBindingCreated(binding, savedInstanceState)
 
         // This player is always full-screen; tell PlayerView so volume-key handling is active.
-        playerHostView.isFullScreen = true
+        playerHostView?.isFullScreen = true
 
         // Wire up the snap-hint outline view and schedule brightness overlay bounds update
-        playerHostView.videoOutline = playerBinding?.videoOutline
-        playerHostView.requestUpdateBrightnessOverlayOnNextLayout()
+        playerHostView?.videoOutline = playerBinding?.videoOutline
+        playerHostView?.requestUpdateBrightnessOverlayOnNextLayout()
 
         val view = binding.root
         // init variables
@@ -1323,7 +1286,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                 when (event.action) {
                     MotionEvent.ACTION_DOWN,
                     MotionEvent.ACTION_MOVE -> {
-                        if (::playerHostView.isInitialized) playerHostView.cancelAutoHide()
+                        playerHostView?.cancelAutoHide()
                     }
 
                     MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_BUTTON_RELEASE -> {

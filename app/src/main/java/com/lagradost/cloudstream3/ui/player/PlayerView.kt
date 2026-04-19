@@ -18,6 +18,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -62,6 +63,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
+import com.lagradost.cloudstream3.utils.UIHelper.showSystemUI
 import com.lagradost.cloudstream3.utils.UserPreferenceDelegate
 import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
 import java.net.SocketTimeoutException
@@ -406,6 +408,34 @@ class PlayerView @JvmOverloads constructor(
     }
 
     /** Lifecycle delegation */
+
+    var fullscreenNotch: Boolean = true // TODO SETTING
+
+    fun enterFullscreen(updateOrientation: () -> Unit = {}) {
+        val activity = context as? Activity
+        if (isFullScreen) {
+            activity?.hideSystemUI()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && fullscreenNotch) {
+                val params = activity?.window?.attributes
+                params?.layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+                activity?.window?.attributes = params
+            }
+        }
+        updateOrientation()
+    }
+
+    fun exitFullscreen() {
+        val activity = context as? Activity
+        gestureHelper.resetZoomToDefault()
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
+        val lp = activity?.window?.attributes
+        lp?.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            lp?.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
+        }
+        activity?.window?.attributes = lp
+        activity?.showSystemUI()
+    }
 
     fun onStop() {
         player.onStop()
