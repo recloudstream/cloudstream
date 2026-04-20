@@ -161,6 +161,7 @@ import com.lagradost.cloudstream3.utils.InAppUpdater.runAutoUpdate
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SnackbarHelper.showSnackbar
 import com.lagradost.cloudstream3.utils.TvChannelUtils
+import com.lagradost.cloudstream3.utils.TvModeHelper
 import com.lagradost.cloudstream3.utils.UIHelper.changeStatusBarState
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -369,7 +370,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                                 ?: return false
                         ioSafe {
                             val resumeWatchingCard =
-                                HomeViewModel.getResumeWatching()?.firstOrNull { it.id == id }
+                                HomeViewModel.getResumeWatching().firstOrNull { it.id == id }
                                     ?: return@ioSafe
                             activity.loadSearchResult(
                                 resumeWatchingCard,
@@ -508,6 +509,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             R.id.navigation_settings_player,
             R.id.navigation_settings_updates,
             R.id.navigation_settings_ui,
+            R.id.navigation_settings_tv_mode,
             R.id.navigation_settings_account,
             R.id.navigation_settings_providers,
             R.id.navigation_settings_general,
@@ -578,6 +580,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     R.id.navigation_settings_player,
                     R.id.navigation_settings_updates,
                     R.id.navigation_settings_ui,
+                    R.id.navigation_settings_tv_mode,
                     R.id.navigation_settings_account,
                     R.id.navigation_settings_providers,
                     R.id.navigation_settings_general,
@@ -1174,6 +1177,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         insecureApp.initClient(this, ignoreSSL = true)
 
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        TvModeHelper.resetAutoStartOnAppLaunch(this)
 
         setLastError(this)
 

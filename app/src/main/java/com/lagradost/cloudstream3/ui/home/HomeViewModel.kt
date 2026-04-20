@@ -59,14 +59,14 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 class HomeViewModel : ViewModel() {
     companion object {
-        suspend fun getResumeWatching(): List<DataStoreHelper.ResumeWatchingResult>? {
+        suspend fun getResumeWatching(): List<DataStoreHelper.ResumeWatchingResult> {
             val resumeWatching = withContext(Dispatchers.IO) {
                 getAllResumeStateIds()?.mapNotNull { id ->
                     getLastWatched(id)
-                }?.sortedBy { -it.updateTime }
+                }?.sortedBy { -it.updateTime } ?: emptyList()
             }
             val resumeWatchingResult = withContext(Dispatchers.IO) {
-                resumeWatching?.mapNotNull { resume ->
+                resumeWatching.mapNotNull { resume ->
                     val headerCache = getKey<DownloadObjects.DownloadHeaderCached>(
                         DOWNLOAD_HEADER_CACHE,
                         resume.parentId.toString()
@@ -153,15 +153,13 @@ class HomeViewModel : ViewModel() {
 
     private fun loadResumeWatching() = viewModelScope.launchSafe {
         val resumeWatchingResult = getResumeWatching()
-        if (isLayout(TV) && resumeWatchingResult != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (isLayout(TV) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             ioSafe {
                 // this WILL crash on non tvs, so keep this inside a try catch
                 activity?.addProgramsToContinueWatching(resumeWatchingResult)
             }
         }
-        resumeWatchingResult?.let {
-            _resumeWatching.postValue(it)
-        }
+        _resumeWatching.postValue(resumeWatchingResult)
     }
 
     fun loadStoredData(preferredWatchStatus: Set<WatchType>?) = viewModelScope.launchSafe {

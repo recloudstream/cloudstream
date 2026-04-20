@@ -28,7 +28,9 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpTo
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
+import com.lagradost.cloudstream3.utils.TvModeHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
+import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 
 class SettingsUI : BasePreferenceFragmentCompat() {
@@ -42,7 +44,18 @@ class SettingsUI : BasePreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_ui, rootKey)
-        val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        val ctx = context ?: return
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+        val homeQuickActionPref = getPref(R.string.home_quick_action_key)
+        val tvModeSettingsPref = getPref(R.string.tv_mode_settings_menu_key)
+
+        fun getHomeQuickActionMode(): TvModeHelper.HomeQuickActionMode {
+            return TvModeHelper.getHomeQuickActionMode(ctx)
+        }
+
+        fun updatePreferenceState() {
+            homeQuickActionPref?.summary = getString(getHomeQuickActionMode().labelRes)
+        }
 
         (getPref(R.string.overscan_key)?.hideOn(PHONE or EMULATOR) as? SeekBarPreference)?.setOnPreferenceChangeListener { pref, newValue ->
             val padding = (newValue as? Int)?.toPx ?: return@setOnPreferenceChangeListener true
@@ -247,5 +260,37 @@ class SettingsUI : BasePreferenceFragmentCompat() {
             )
             return@setOnPreferenceClickListener true
         }
+
+        homeQuickActionPref?.setOnPreferenceClickListener {
+            val currentActivity = activity ?: return@setOnPreferenceClickListener false
+            val modes = TvModeHelper.HomeQuickActionMode.entries
+            val selectedMode = getHomeQuickActionMode()
+
+            currentActivity.showBottomDialog(
+                items = modes.map { getString(it.labelRes) },
+                selectedIndex = modes.indexOf(selectedMode),
+                name = getString(R.string.home_quick_action_settings),
+                showApply = true,
+                dismissCallback = {},
+                callback = { selectedIndex ->
+                    val chosenMode = modes[selectedIndex]
+                    settingsManager.edit {
+                        putInt(getString(R.string.home_quick_action_key), chosenMode.value)
+                    }
+                    if (chosenMode != TvModeHelper.HomeQuickActionMode.TV_MODE) {
+                        TvModeHelper.stopSession()
+                    }
+                    updatePreferenceState()
+                }
+            )
+            true
+        }
+
+        tvModeSettingsPref?.setOnPreferenceClickListener {
+            activity?.navigate(R.id.action_navigation_global_to_navigation_settings_tv_mode, Bundle())
+            true
+        }
+
+        updatePreferenceState()
     }
 }

@@ -56,6 +56,7 @@ import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPres
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
+import com.lagradost.cloudstream3.utils.TvModeHelper
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
@@ -195,6 +196,8 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         activity?.setNavigationBarColorCompat(R.attr.primaryBlackBackground)
         afterPluginsLoadedEvent += ::reloadViewModel
         super.onResume()
+        binding?.resultTvMode?.isVisible =
+            context?.let { TvModeHelper.isEnabled(it) } == true && viewModel.hasTvModeEpisodeContent()
     }
 
     override fun onStop() {
@@ -258,6 +261,18 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
     override fun onBindingCreated(binding: FragmentResultTvBinding) {
         // ===== setup =====
         val storedData = getStoredData() ?: return
+        val startLocalTvMode = {
+            if (TvModeHelper.startForResult(
+                    activity,
+                    storedData.url,
+                    storedData.apiName,
+                    storedData.name,
+                    viewModel.getCurrentSeasonSelection()
+                )
+            ) {
+                viewModel.startTvModePlayback(activity)
+            }
+        }
         activity?.window?.decorView?.clearFocus()
         activity?.loadCache()
         hideKeyboard()
@@ -289,6 +304,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                     val views = listOf(
                         resultPlayMovieButton,
                         resultPlaySeriesButton,
+                        resultTvModeButton,
                         resultResumeSeriesButton,
                         resultPlayTrailerButton,
                         resultBookmarkButton,
@@ -324,6 +340,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
             mapOf(
                 resultPlayMovieButton to resultPlayMovieText,
                 resultPlaySeriesButton to resultPlaySeriesText,
+                resultTvModeButton to resultTvModeText,
                 resultResumeSeriesButton to resultResumeSeriesText,
                 resultPlayTrailerButton to resultPlayTrailerText,
                 resultBookmarkButton to resultBookmarkText,
@@ -676,6 +693,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
             }
 
             binding.apply {
+                resultTvMode.isGone = true
                 (data as? Resource.Success)?.value?.let { (_, ep) ->
                     resultPlayMovieButton.setOnClickListener {
                         viewModel.handleAction(
@@ -810,6 +828,9 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
 
                 //    resultEpisodeLoading.isVisible = episodes is Resource.Loading
                 if (episodes is Resource.Success) {
+                    resultTvMode.isVisible =
+                        context?.let { TvModeHelper.isEnabled(it) } == true &&
+                            viewModel.hasTvModeEpisodeContent()
                     val lastWatchedIndex = episodes.value.indexOfLast { ep ->
                         ep.getWatchProgress() >= NEXT_WATCH_EPISODE_PERCENTAGE.toFloat() / 100.0f || ep.videoWatchState == VideoWatchState.Watched
                     }
@@ -846,11 +867,13 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         if (!hasLoadedEpisodesOnce) {
                             hasLoadedEpisodesOnce = true
                             resultPlaySeries.isVisible = resultResumeSeries.isGone && !comingSoon
+                            resultTvMode.setOnClickListener { startLocalTvMode.invoke() }
                             resultEpisodesShow.isVisible = true && !comingSoon
                             resultPlaySeriesButton.requestFocus()
                         }
                     }
 
+                    resultTvModeButton.setOnClickListener { startLocalTvMode.invoke() }
 
                     (resultEpisodes.adapter as? EpisodeAdapter)?.submitList(episodes.value)
                 }

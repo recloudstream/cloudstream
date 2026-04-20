@@ -717,6 +717,22 @@
 
                                 </com.google.android.material.button.MaterialButton>
                             </LinearLayout>
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/result_tv_mode_button"
+                                style="@style/WhiteButton"
+                                android:layout_width="match_parent"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_marginStart="0dp"
+                                android:layout_marginEnd="0dp"
+                                android:nextFocusUp="@id/result_play_movie"
+                                android:nextFocusDown="@id/result_download_movie"
+                                android:text="@string/home_tv_mode"
+                                android:visibility="gone"
+                                app:icon="@drawable/ic_baseline_tv_24"
+                                tools:visibility="visible" />
                             <!--<com.google.android.material.button.MaterialButton
                                     android:nextFocusUp="@id/result_play_movie"
                                     android:nextFocusDown="@id/result_season_button"

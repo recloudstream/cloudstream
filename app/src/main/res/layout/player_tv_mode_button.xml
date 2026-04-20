@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.button.MaterialButton xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/player_tv_mode_button_dynamic"
+    style="@style/VideoButton"
+    android:text="@string/tv_mode_player_off"
+    android:visibility="gone"
+    app:icon="@drawable/ic_baseline_tv_24" />

@@ -20,10 +20,12 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
+import com.lagradost.cloudstream3.utils.TvModeHelper
 import com.lagradost.cloudstream3.utils.UiImage
 
 const val START_ACTION_RESUME_LATEST = 1
 const val START_ACTION_LOAD_EP = 2
+const val START_ACTION_TV_MODE = 3
 
 /**
  * Future proofed way to mark episodes as watched
@@ -285,10 +287,14 @@ object ResultFragment {
         val name = arguments?.getString(NAME_BUNDLE) ?: return null
         val showFillers =
             settingsManager.getBoolean(context.getString(R.string.show_fillers_key), false)
-        val dubStatus = if (context.getApiDubstatusSettings()
-                .contains(DubStatus.Dubbed)
-        ) DubStatus.Dubbed else DubStatus.Subbed
         val startAction = arguments?.getInt(START_ACTION_BUNDLE)
+        val dubStatus = if (startAction == START_ACTION_TV_MODE) {
+            TvModeHelper.resolveDubStatus(context, DubStatus.entries) ?: DubStatus.Subbed
+        } else if (context.getApiDubstatusSettings().contains(DubStatus.Dubbed)) {
+            DubStatus.Dubbed
+        } else {
+            DubStatus.Subbed
+        }
 
         val playerAction = getPlayerAction(context)
 

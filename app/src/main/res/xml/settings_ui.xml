@@ -89,12 +89,15 @@
             android:icon="@drawable/metadata_overlay_icon"
             android:key="@string/show_player_metadata_key"
             android:title="@string/show_player_metadata_overlay" />
-        <SwitchPreference
+        <Preference
             android:icon="@drawable/ic_baseline_play_arrow_24"
-            android:summary="@string/random_button_settings_desc"
-            android:title="@string/random_button_settings"
-            app:defaultValue="false"
-            app:key="@string/random_button_key" />
+            android:key="@string/home_quick_action_key"
+            android:title="@string/home_quick_action_settings" />
+        <Preference
+            android:icon="@drawable/ic_baseline_tv_24"
+            android:key="@string/tv_mode_settings_menu_key"
+            android:summary="@string/tv_mode_settings_menu_desc"
+            android:title="@string/tv_mode_settings" />
         <Preference
             android:icon="@drawable/ic_baseline_exit_24"
             android:key="@string/confirm_exit_key"

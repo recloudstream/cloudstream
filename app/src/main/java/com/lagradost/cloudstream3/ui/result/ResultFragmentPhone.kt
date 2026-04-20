@@ -80,6 +80,7 @@ import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
+import com.lagradost.cloudstream3.utils.TvModeHelper
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -328,6 +329,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         super.onResume()
         PanelsChildGestureRegionObserver.Provider.get()
             .addGestureRegionsUpdateListener(gestureRegionsListener)
+        resultBinding?.resultTvModeButton?.isVisible =
+            context?.let { TvModeHelper.isEnabled(it) } == true && viewModel.hasTvModeEpisodeContent()
     }
 
     override fun onStop() {
@@ -352,6 +355,18 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         // ===== setup =====
         fixSystemBarsPadding(view)
         val storedData = getStoredData() ?: return
+        val startLocalTvMode = {
+            if (TvModeHelper.startForResult(
+                    activity,
+                    storedData.url,
+                    storedData.apiName,
+                    storedData.name,
+                    viewModel.getCurrentSeasonSelection()
+                )
+            ) {
+                viewModel.startTvModePlayback(activity)
+            }
+        }
         activity?.window?.decorView?.clearFocus()
         activity?.loadCache()
         context?.updateHasTrailers()
@@ -707,8 +722,13 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 resultEpisodes.isVisible = episodes is Resource.Success
                 resultBatchDownloadButton.isVisible =
                     episodes is Resource.Success && episodes.value.isNotEmpty()
+                resultTvModeButton.isVisible =
+                    context?.let { TvModeHelper.isEnabled(it) } == true &&
+                        episodes is Resource.Success &&
+                        viewModel.hasTvModeEpisodeContent()
 
                 if (episodes is Resource.Success) {
+                    resultTvModeButton.setOnClickListener { startLocalTvMode.invoke() }
                     (resultEpisodes.adapter as? EpisodeAdapter)?.submitList(episodes.value)
 
                     // Show quality dialog with all sources
@@ -782,6 +802,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         observeNullable(viewModel.movie) { data ->
             resultBinding?.apply {
                 resultPlayMovie.isVisible = data is Resource.Success
+                resultTvModeButton.isGone = true
                 downloadButton.isVisible =
                     data is Resource.Success && viewModel.currentRepo?.api?.hasDownloadSupport == true
 
