@@ -100,6 +100,7 @@
     <string name="kitsu_key">kitsu_key</string>
     <string name="opensubtitles_key">opensubtitles_key</string>
     <string name="subdl_key">subdl_key</string>
+    <string name="animeskip_key">animeskip_key</string>
 
     <string name="pref_category_security_key">pref_category_security_key</string>
     <string name="pref_category_gestures_key">pref_category_gestures_key</string>
