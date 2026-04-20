@@ -100,6 +100,7 @@ object FillerEpisodeCheck {
 
     private val strip = Regex("[ :\\-.!]")
 
+    /** Makes names more uniform to make partial matches more still give a result */
     fun stripName(name: String): String =
         name.replace(strip, "").lowercase()
 
@@ -111,6 +112,8 @@ object FillerEpisodeCheck {
         database?.let {
             return it
         }
+        
+        /** The entire "database" is stored as a json file we can parse */
         val stream: InputStream = com.lagradost.AnimeDB.getDatabaseStream()!!
         val text = stream.reader().readText()
 
@@ -125,7 +128,7 @@ object FillerEpisodeCheck {
             map.malId?.let { id -> pending.mal[id] = media }
             map.anilistId?.let { id -> pending.anilist[id] = media }
             map.kitsuId?.let { id -> pending.kitsu[id] = media }
-            map.season?.tmdb?.let { id -> pending.kitsu[id] = media }
+            map.season?.tmdb?.let { id -> pending.tmdb[id] = media }
         }
         database = pending
         return pending
@@ -141,19 +144,19 @@ object FillerEpisodeCheck {
         if (data.type != TvType.Anime) {
             return null
         }
-        /** Try to hit the cache for this entry */
+        /** Try to hit the cache for this entry, to avoid recreating the hashset */
         loadCache[data.getId()]?.let { cachedResponse ->
             return cachedResponse
         }
-        val cache = loadJson()
+        val db = loadJson()
 
         val media =
-            cache.mal[data.getMalId()?.toLongOrNull()]
-                ?: cache.anilist[data.getAniListId()?.toLongOrNull()]
-                ?: cache.kitsu[data.getKitsuId()?.toLongOrNull()]
-                ?: cache.imdb[data.getImdbId()]
-                ?: cache.tmdb[data.getTMDbId()?.toLongOrNull()]
-                ?: cache.name[stripName(data.name)]
+            db.mal[data.getMalId()?.toLongOrNull()]
+                ?: db.anilist[data.getAniListId()?.toLongOrNull()]
+                ?: db.kitsu[data.getKitsuId()?.toLongOrNull()]
+                ?: db.imdb[data.getImdbId()]
+                ?: db.tmdb[data.getTMDbId()?.toLongOrNull()]
+                ?: db.name[stripName(data.name)]
 
         return media?.show?.filler?.toHashSet().also { response ->
             loadCache[data.getId()] = response
