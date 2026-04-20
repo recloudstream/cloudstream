@@ -1064,6 +1064,7 @@ enum class TvType(value: Int?) {
 
     Audio(16),
     Podcast(17),
+    Video(18),
 }
 
 enum class AutoDownloadMode(val value: Int) {
@@ -1079,14 +1080,15 @@ enum class AutoDownloadMode(val value: Int) {
 }
 
 /** Extension function of [TvType] to check if the type is Movie.
- * @return If the type is AnimeMovie, Live, Movie, Torrent returns true otherwise returns false.
+ * @return If the type is AnimeMovie, Live, Movie, Torrent, Video returns true otherwise returns false.
  * */
 fun TvType.isMovieType(): Boolean {
     return when (this) {
         TvType.AnimeMovie,
         TvType.Live,
         TvType.Movie,
-        TvType.Torrent -> true
+        TvType.Torrent,
+        TvType.Video -> true
 
         else -> false
     }
@@ -2162,6 +2164,7 @@ fun TvType.getFolderPrefix(): String {
         TvType.Podcast -> "Podcasts"
         TvType.Torrent -> "Torrents"
         TvType.TvSeries -> "TVSeries"
+        TvType.Video -> "Videos"
     }
 }
 
