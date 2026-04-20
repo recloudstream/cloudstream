@@ -234,6 +234,9 @@ dependencies {
     // FFmpeg Decoding
     implementation(libs.bundles.nextlib)
 
+    // Anime-db for filler
+    implementation(libs.anime.db)
+
     // PlayBack
     implementation(libs.colorpicker) // Subtitle Color Picker
     implementation(libs.newpipeextractor) // For Trailers

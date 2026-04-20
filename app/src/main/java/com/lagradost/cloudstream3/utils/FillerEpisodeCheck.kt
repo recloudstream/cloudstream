@@ -1,111 +1,165 @@
 package com.lagradost.cloudstream3.utils
 
-import com.lagradost.cloudstream3.app
+import androidx.annotation.WorkerThread
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.LoadResponse
+import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
+import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
+import com.lagradost.cloudstream3.LoadResponse.Companion.getKitsuId
+import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
+import com.lagradost.cloudstream3.LoadResponse.Companion.getTMDbId
+import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.ui.result.getId
 import com.lagradost.cloudstream3.utils.Coroutines.main
-import org.jsoup.Jsoup
 import java.lang.Thread.sleep
 import java.util.*
 import kotlin.concurrent.thread
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import java.io.InputStream
+import kotlin.let
 
 object FillerEpisodeCheck {
-    private const val MAIN_URL = "https://www.animefillerlist.com"
-
-    var list: HashMap<String, String>? = null
-    var cache: HashMap<String, HashMap<Int, Boolean>> = hashMapOf()
-
-    private fun fixName(name: String): String {
-        return name.lowercase(Locale.ROOT)/*.replace(" ", "")*/.replace("-", " ")
-            .replace("[^a-zA-Z0-9 ]".toRegex(), "")
-    }
-
-    private suspend fun getFillerList(): Boolean {
-        if (list != null) return true
-        try {
-            val result = app.get("$MAIN_URL/shows").text
-            val documented = Jsoup.parse(result)
-            val localHTMLList = documented.select("div#ShowList > div.Group > ul > li > a")
-            val localList = HashMap<String, String>()
-            for (i in localHTMLList) {
-                val name = i.text()
-
-                if (name.lowercase(Locale.ROOT).contains("manga only")) continue
-
-                val href = i.attr("href")
-                if (name.isNullOrEmpty() || href.isNullOrEmpty()) {
-                    continue
-                }
-
-                val values = "(.*) \\((.*)\\)".toRegex().matchEntire(name)?.groups
-                if (values != null) {
-                    for (index in 1 until values.size) {
-                        val localName = values[index]?.value ?: continue
-                        localList[fixName(localName)] = href
-                    }
-                } else {
-                    localList[fixName(name)] = href
-                }
-            }
-            if (localList.size > 0) {
-                list = localList
-                return true
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return false
-    }
-
     fun String?.toClassDir(): String {
         val q = this ?: "null"
         val z = (6..10).random().calc()
         return q + "cache" + z
     }
 
-    suspend fun getFillerEpisodes(query: String): HashMap<Int, Boolean>? {
-        try {
-            cache[query]?.let {
-                return it
-            }
-            if (!getFillerList()) return null
-            val localList = list ?: return null
+    data class Show(
+        @JsonProperty("slug")
+        val slug: String,
+        @JsonProperty("title")
+        val title: String,
+        @JsonProperty("filler")
+        val filler: ArrayList<Int>,
+        @JsonProperty("mixedCanon")
+        val mixedCanon: ArrayList<Int>,
+        @JsonProperty("mangaCanon")
+        val mangaCanon: ArrayList<Int>,
+        @JsonProperty("animeCanon")
+        val animeCanon: ArrayList<Int>,
+    )
 
-            // Strips these from the name
-            val blackList = listOf(
-                "TV Dubbed",
-                "(Dub)",
-                "Subbed",
-                "(TV)",
-                "(Uncensored)",
-                "(Censored)",
-                "(\\d+)" // year
-            )
-            val blackListRegex =
-                Regex(
-                    """ (${
-                        blackList.joinToString(separator = "|").replace("(", "\\(")
-                            .replace(")", "\\)")
-                    })"""
-                )
+    data class MappingRoot(
+        @JsonProperty("type")
+        val type: String?,
+        @JsonProperty("anidb_id")
+        val anidbId: Long?,
+        @JsonProperty("anilist_id")
+        val anilistId: Long?,
+        @JsonProperty("animecountdown_id")
+        val animecountdownId: Long?,
+        @JsonProperty("animenewsnetwork_id")
+        val animenewsnetworkId: Long?,
+        @JsonProperty("anime-planet_id")
+        val animePlanetId: String?,
+        @JsonProperty("anisearch_id")
+        val anisearchId: Long?,
+        @JsonProperty("imdb_id")
+        val imdbId: String?,
+        @JsonProperty("kitsu_id")
+        val kitsuId: Long?,
+        @JsonProperty("livechart_id")
+        val livechartId: Long?,
+        @JsonProperty("mal_id")
+        val malId: Long?,
+        @JsonProperty("simkl_id")
+        val simklId: Long?,
+        @JsonProperty("themoviedb_id")
+        val themoviedbId: Long?,
+        @JsonProperty("tvdb_id")
+        val tvdbId: Long?,
+        @JsonProperty("season")
+        val season: Season?,
+    )
 
-            val realQuery =
-                fixName(query.replace(blackListRegex, "")).replace("shippuuden", "shippuden")
-            if (!localList.containsKey(realQuery)) return null
-            val href = localList[realQuery]?.replace(MAIN_URL, "") ?: return null // JUST IN CASE
-            val result = app.get("$MAIN_URL$href").text
-            val documented = Jsoup.parse(result)
-            val hashMap = HashMap<Int, Boolean>()
-            documented.select("table.EpisodeList > tbody > tr").forEach {
-                val type = it.selectFirst("td.Type > span")?.text() == "Filler"
-                val episodeNumber = it.selectFirst("td.Number")?.text()?.toIntOrNull()
-                if (episodeNumber != null) {
-                    hashMap[episodeNumber] = type
-                }
-            }
-            cache[query] = hashMap
-            return hashMap
-        } catch (e: Exception) {
-            e.printStackTrace()
+    data class Season(
+        @JsonProperty("tvdb")
+        val tvdb: Long?,
+        @JsonProperty("tmdb")
+        val tmdb: Long?,
+    )
+
+    data class CombinedMedia(
+        @JsonProperty("mapping")
+        val mapping: MappingRoot?,
+        @JsonProperty("show")
+        val show: Show
+    )
+
+    data class Database(
+        val mal: HashMap<Long, CombinedMedia> = hashMapOf(),
+        val anilist: HashMap<Long, CombinedMedia> = hashMapOf(),
+        val kitsu: HashMap<Long, CombinedMedia> = hashMapOf(),
+        val tmdb: HashMap<Long, CombinedMedia> = hashMapOf(),
+        val imdb: HashMap<String, CombinedMedia> = hashMapOf(),
+        val name: HashMap<String, CombinedMedia> = hashMapOf(),
+    )
+
+    private var database: Database? = null
+
+    private val strip = Regex("[ :\\-.!]")
+
+    /** Makes names more uniform to make partial matches more still give a result */
+    fun stripName(name: String): String =
+        name.replace(strip, "").lowercase()
+
+
+    @Synchronized
+    @Throws
+    @WorkerThread
+    fun loadJson(): Database {
+        database?.let {
+            return it
+        }
+        
+        /** The entire "database" is stored as a json file we can parse */
+        val stream: InputStream = com.lagradost.AnimeDB.getDatabaseStream()!!
+        val text = stream.reader().readText()
+
+        val allMedia = parseJson<Array<CombinedMedia>>(text)
+        val pending = Database()
+        for (media in allMedia) {
+            val lowercase = stripName(media.show.title)
+            pending.name[lowercase] = media
+            val map = media.mapping ?: continue
+
+            map.imdbId?.let { id -> pending.imdb[id] = media }
+            map.malId?.let { id -> pending.mal[id] = media }
+            map.anilistId?.let { id -> pending.anilist[id] = media }
+            map.kitsuId?.let { id -> pending.kitsu[id] = media }
+            map.season?.tmdb?.let { id -> pending.tmdb[id] = media }
+        }
+        database = pending
+        return pending
+    }
+
+    val loadCache: HashMap<Int, HashSet<Int>?> = hashMapOf()
+
+    @Synchronized
+    @Throws
+    @WorkerThread
+    fun getFillerEpisodes(data: LoadResponse): HashSet<Int>? {
+        /** Only for anime */
+        if (data.type != TvType.Anime) {
             return null
+        }
+        /** Try to hit the cache for this entry, to avoid recreating the hashset */
+        loadCache[data.getId()]?.let { cachedResponse ->
+            return cachedResponse
+        }
+        val db = loadJson()
+
+        val media =
+            db.mal[data.getMalId()?.toLongOrNull()]
+                ?: db.anilist[data.getAniListId()?.toLongOrNull()]
+                ?: db.kitsu[data.getKitsuId()?.toLongOrNull()]
+                ?: db.imdb[data.getImdbId()]
+                ?: db.tmdb[data.getTMDbId()?.toLongOrNull()]
+                ?: db.name[stripName(data.name)]
+
+        return media?.show?.filler?.toHashSet().also { response ->
+            loadCache[data.getId()] = response
         }
     }
 
