@@ -1064,6 +1064,7 @@ enum class TvType(value: Int?) {
 
     Audio(16),
     Podcast(17),
+    @Prerelease
     Video(18),
 }
 
