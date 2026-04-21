@@ -171,7 +171,7 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
     /** Whether double-tapping left/right seeks backward/forward. */
     var doubleTapEnabled: Boolean = false
 
-    /** Whether double-tapping the centre of the screen pauses (left/right still seeks if [doubleTapEnabled]). */
+    /** Whether double-tapping the center of the screen pauses (left/right still seeks if [doubleTapEnabled]). */
     var doubleTapPauseEnabled: Boolean = false
 
     /** Seek distance (ms) for each double-tap seek. Read from prefs in [initialize]. */
@@ -285,7 +285,13 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
 
     /** Volume helpers */
 
-    /** Syncs [currentRequestedVolume] with the current system stream volume. */
+    /**
+     * Syncs [currentRequestedVolume] with the current system stream volume.
+     *
+     * This is here to make returning to the player less jarring, if we change the volume outside
+     * the app. Note that this will make it a bit wierd when using loudness in PiP, then returning
+     * however that is the cost of correctness.
+     */
     fun verifyVolume() {
         ((context as? Activity)?.getSystemService(Context.AUDIO_SERVICE) as? AudioManager)?.let { am ->
             val cur = am.getStreamVolume(AudioManager.STREAM_MUSIC)
@@ -503,6 +509,12 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
     /**
      * Returns the current zoom matrix, accounting for RESIZE_MODE_ZOOM which already has
      * an implicit zoom applied.
+     *
+     * This is different from `zoomMatrix ?: Matrix()`
+     * because it allows used to start zooming at different resizeModes.
+     *
+     * The main issue is that RESIZE_MODE_FIT = 100% zoom, but if you are in RESIZE_MODE_ZOOM
+     * 100% will make the zoom snap to less zoomed in then you already are.
      */
     fun currentZoomMatrix(): Matrix {
         val current = zoomMatrix
@@ -626,8 +638,11 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
                 override fun onScale(detector: ScaleGestureDetector): Boolean {
                     val matrix = currentZoomMatrix()
                     val (_, _, scale) = matrixToTranslationAndScale(matrix)
+                    // Clamp scale of the zoom, do it here as it is easier than doing it within applyZoomMatrix.
                     val newScale = (scale * detector.scaleFactor).coerceIn(MINIMUM_ZOOM, MAXIMUM_ZOOM)
+                    // This is how much we should scale it with to prevent infinite scaling.
                     val actualScaleFactor = newScale / scale
+                    // Scale around the focus point, this is more natural than just zoom.
                     val pivotX = detector.focusX - screenWidthWithOrientation.toFloat() * 0.5f
                     val pivotY = detector.focusY - screenHeightWithOrientation.toFloat() * 0.5f
                     matrix.postScale(actualScaleFactor, actualScaleFactor, pivotX, pivotY)
@@ -651,8 +666,8 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
     fun handleZoomPanGesture(
         event: MotionEvent,
         ctx: Context,
-        onFirstPointerDown: () -> Unit = {},
-        onGestureEnd: () -> Unit = {}
+        onFirstPointerDown: () -> Unit,
+        onGestureEnd: () -> Unit
     ): Boolean {
         if (scaleGestureDetector == null) createScaleGestureDetector(ctx)
         scaleGestureDetector?.onTouchEvent(event)
@@ -975,7 +990,7 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
     fun setupTouchGestures() {
         val holder = playerView.playerHolder ?: return
         @SuppressLint("ClickableViewAccessibility")
-        holder.setOnTouchListener { v, event -> handleGesture(v, event) }
+        holder.setOnTouchListener(::handleGesture)
     }
 
     private fun handleGesture(view: View, event: MotionEvent): Boolean {
@@ -1069,8 +1084,8 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
                                 }
                             }
                         }
-                        TouchAction.Brightness -> handleBrightnessAdjustment(verticalAddition)
-                        TouchAction.Volume     -> handleVolumeAdjustment(verticalAddition, false)
+                        TouchAction.Brightness -> if (!isLocked) handleBrightnessAdjustment(verticalAddition)
+                        TouchAction.Volume     -> if (!isLocked) handleVolumeAdjustment(verticalAddition, false)
                         null -> Unit
                     }
                     if (currentTouchAction != TouchAction.Time) {

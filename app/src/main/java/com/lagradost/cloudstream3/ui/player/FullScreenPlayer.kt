@@ -67,7 +67,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.getNavigationBarHeight
 import com.lagradost.cloudstream3.utils.UIHelper.getStatusBarHeight
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
-import com.lagradost.cloudstream3.utils.UIHelper.showSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.txt
@@ -705,10 +704,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
     private fun onClickChange() {
         isShowing = !isShowing
-        if (isShowing) {
-            playerBinding?.playerIntroPlay?.isGone = true
-            autoHide()
-        }
+        if (isShowing) autoHide()
         activity?.hideSystemUI()
         animateLayoutChanges()
         if (playerBinding?.playerEpisodeOverlay?.isGone == true) playerBinding?.playerPausePlay?.requestFocus()
@@ -784,7 +780,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             playerEpisodesButtonRoot.isVisible = showPlayerEpisodes
             playerEpisodesButton.isVisible = showPlayerEpisodes
             playerVideoTitleHolder.isGone = togglePlayerTitleGone
-//        player_video_title_rez?.isGone = isGone
+            playerVideoTitleRez.isGone = isGone
             playerEpisodeFiller.isGone = isGone
             playerCenterMenu.isGone = isGone
             playerLock.isGone = !isShowing
@@ -844,7 +840,6 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     }
 
     override fun onTouchDown() {
-        playerBinding?.playerIntroPlay?.isGone = true
         if (isShowingEpisodeOverlay) toggleEpisodesOverlay(show = false)
     }
 

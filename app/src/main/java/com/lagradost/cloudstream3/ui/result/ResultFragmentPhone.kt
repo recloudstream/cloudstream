@@ -43,6 +43,7 @@ import com.lagradost.cloudstream3.databinding.FragmentResultBinding
 import com.lagradost.cloudstream3.databinding.FragmentResultSwipeBinding
 import com.lagradost.cloudstream3.databinding.ResultRecommendationsBinding
 import com.lagradost.cloudstream3.databinding.ResultSyncBinding
+import com.lagradost.cloudstream3.databinding.TrailerCustomLayoutBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
@@ -50,16 +51,15 @@ import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.services.SubscriptionWorkManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_SHARE
+import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_LONG_CLICK
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
-import com.lagradost.cloudstream3.databinding.PlayerCustomLayoutBinding
-import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.player.CS3IPlayer
 import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.player.IPlayer
-import com.lagradost.cloudstream3.ui.player.PlayerView as PlayerHostView
+import com.lagradost.cloudstream3.ui.player.PlayerView
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment.bindLogo
@@ -103,7 +103,7 @@ import kotlin.math.roundToInt
 
 open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
     BindingCreator.Inflate(FragmentResultSwipeBinding::inflate)
-), PlayerHostView.Callbacks {
+), PlayerView.Callbacks {
     private val gestureRegionsListener =
         object : PanelsChildGestureRegionObserver.GestureRegionsListener {
             override fun onGestureRegionsUpdate(gestureRegions: List<Rect>) {
@@ -122,10 +122,10 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
     protected open var hasPipModeSupport: Boolean = false
     protected open var isFullScreenPlayer: Boolean = true
     protected open var lockRotation: Boolean = true
-    protected var playerBinding: PlayerCustomLayoutBinding? = null
+    protected var playerBinding: TrailerCustomLayoutBinding? = null
     protected var isShowing: Boolean = false
 
-    protected var playerHostView: PlayerHostView? = null
+    protected var playerHostView: PlayerView? = null
 
     open fun updateUIVisibility() {}
 
@@ -367,13 +367,13 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
 
         // Set up trailer player
         val ctx = context ?: return
-        playerHostView = PlayerHostView(ctx)
+        playerHostView = PlayerView(ctx)
         playerHostView?.player = player
         playerHostView?.hasPipModeSupport = hasPipModeSupport
         playerHostView?.callbacks = this
         playerHostView?.bindViews(binding.root)
         playerBinding = binding.root.findViewById<View?>(R.id.player_holder)?.let {
-            PlayerCustomLayoutBinding.bind(it)
+            TrailerCustomLayoutBinding.bind(it)
         }
         playerHostView?.initialize()
 
