@@ -32,6 +32,7 @@ import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.ui.search.SearchViewModel
+import com.lagradost.cloudstream3.ui.setRecycledViewPool
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV

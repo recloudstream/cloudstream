@@ -452,7 +452,7 @@
     <string name="skip_type_op">Opening</string>
     <string name="skip_type_ed">Ending</string>
     <string name="skip_type_mixed_op">Mixed opening</string>
-    <string name="skip_type_creddits">Napisy końcowe</string>
+    <string name="skip_type_credits">Napisy końcowe</string>
     <string name="skip_type_intro">Intro</string>
     <string name="skip_type_mixed_ed">Mixed ending</string>
     <string name="enable_skip_op_from_database_des">Pokaż wyskakujące okienka pomijania dla niektórych segmentów</string>
@@ -766,4 +766,5 @@
     </plurals>
     <string name="source_priority">Priorytet źródła</string>
     <string name="source_priority_help">Zdecyduj, jak mają być sortowane źródła wideo w odtwarzaczu</string>
+    <string name="show_player_metadata_overlay">Pokaż nakładkę metadanych odtwarzacza</string>
 </resources>

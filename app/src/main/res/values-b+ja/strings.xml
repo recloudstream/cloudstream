@@ -469,7 +469,7 @@
     <string name="plugins_disabled" formatted="true">無効: %d</string>
     <string name="player_pref">優先ビデオプレーヤー</string>
     <string name="skip_type_format" formatted="true">%s をスキップ</string>
-    <string name="skip_type_creddits">クレジット</string>
+    <string name="skip_type_credits">クレジット</string>
     <string name="app_unrestricted_toast">アプリのバッテリー使用はすでに無制限に設定されています</string>
     <string name="sort">並べ替え</string>
     <string name="revert">元に戻す</string>

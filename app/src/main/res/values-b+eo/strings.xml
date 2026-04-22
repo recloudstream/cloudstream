@@ -49,7 +49,7 @@
     <string name="result_tags">Ĝenroj</string>
     <string name="all_languages_preference">Ĉiuj lingvoj</string>
     <string name="search">Serĉi</string>
-    <string name="category_account">Kontoj</string>
+    <string name="category_account">Kontoj kaj Sekureco</string>
     <string name="github">GitHub</string>
     <string name="season">Sezono</string>
     <string name="episode">Epizodo</string>
@@ -127,4 +127,59 @@
     <string name="downloaded">Elŝutite</string>
     <string name="downloading">Elŝutante</string>
     <string name="download_failed">Elŝuto Malsukcesite</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dh %2$dm %3$ds</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dm %2$ds</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$ds</string>
+    <string name="next_season_episode_format" formatted="true">Sezono %1$d epizodo %2$d publikiĝos en</string>
+    <string name="play_from_beginning_img_des">Legi ekde la komenco</string>
+    <string name="download_queue">Elsûtovico</string>
+    <string name="speech_recognition_unavailable">La parolrekono ne haveblas</string>
+    <string name="begin_speaking">Komencu paroli…</string>
+    <string name="downloads_empty">Ne estas elŝuto ĉimomente.</string>
+    <string name="select_all">Selekti Ĉion</string>
+    <string name="deselect_all">Malselekti Ĉion</string>
+    <string name="open_local_video">Malfermi lokan videon</string>
+    <string name="popup_delete_file">Forigi Dosieron</string>
+    <string name="popup_resume_download">Daŭrigi Elŝuton</string>
+    <string name="popup_pause_download">Paŭzigi Elŝuton</string>
+    <string name="home_more_info">Pli da informoj</string>
+    <string name="home_expanded_hide">Kaŝi</string>
+    <string name="filter_bookmarks">Filtri Legosignojn</string>
+    <string name="error_bookmarks_text">Legosignoj</string>
+    <string name="repo_copy_label">Nomo kaj URL de la deponejo</string>
+    <string name="toast_copied">Kopiita!</string>
+    <string name="subscribe_tooltip">Sciigo de novo epizodo</string>
+    <string name="result_search_tooltip">Serĉi en aliaj kromprogramoj</string>
+    <string name="recommendations_tooltip">Montri la rekomendojn</string>
+    <string name="subtitles_settings">Subtekstaj Agordoj</string>
+    <string name="subs_outline_color">Kontura Koloro</string>
+    <string name="subs_background_color">Fona Koloro</string>
+    <string name="subs_edge_type">Randa Tipo</string>
+    <string name="search_provider_text_providers">Serĉi uzante provizantojn</string>
+    <string name="search_provider_text_types">Serĉi uzante tipojn</string>
+    <string name="subs_subtitle_languages">Subteksta Lingvo</string>
+    <string name="action_open_watching">Pli da informoj</string>
+    <string name="action_open_play">@string/home_play</string>
+    <string name="torrent_plot">Priskribo</string>
+    <string name="torrent_no_plot">Neniu Priskribo Trovita</string>
+    <string name="player_size_settings_des">Forigi nigrajn borderaĵojn</string>
+    <string name="player_subtitles_settings">Subtekstoj</string>
+    <string name="search_suggestions">Serĉaj Sugestoj</string>
+    <string name="discord">Aligi Diskordon</string>
+    <string name="no_links_found_toast">Neniu Ligilo Trovita</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
+    <string name="no_season">Neniu Sezono</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
+    <string name="no_episodes_found">Neniu Epizodo Trovita</string>
+    <string name="delete">Forigi</string>
+    <string name="delete_file">Forigi Dosieron</string>
+    <string name="delete_files">Forigi Dosierojn</string>
+    <string name="delete_format" formatted="true">Forigi (%1$d | %2$s)</string>
+    <string name="cancel">Nuligi</string>
+    <string name="pause">Paŭzigi</string>
+    <string name="resume">Daŭrigi</string>
+    <string name="duration">Daŭro</string>
+    <string name="synopsis">Sinoptiko</string>
+    <string name="no_subtitles">Neniu Subteksto</string>
 </resources>

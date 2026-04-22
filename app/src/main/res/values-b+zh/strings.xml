@@ -449,7 +449,7 @@
     <string name="skip_type_recap">前情回顾</string>
     <string name="skip_type_mixed_ed">混合片尾</string>
     <string name="skip_type_mixed_op">混合片头</string>
-    <string name="skip_type_creddits">致谢名单</string>
+    <string name="skip_type_credits">致谢名单</string>
     <string name="skip_type_intro">介绍</string>
     <string name="clear_history">清除历史记录</string>
     <string name="history">历史记录</string>
@@ -771,4 +771,5 @@
     <string name="source_priority">源优先级</string>
     <string name="source_priority_help">确定在播放器中如何排列视频源的顺序</string>
     <string name="extra_brightness_key">已启用额外亮度</string>
+    <string name="show_player_metadata_overlay">显示播放器元数据遮罩层</string>
 </resources>

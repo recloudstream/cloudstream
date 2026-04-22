@@ -46,6 +46,22 @@ import kotlin.math.roundToInt
 )
 annotation class Prerelease
 
+@Retention(AnnotationRetention.BINARY) // This is only an IDE hint, and will not be used in the runtime
+@RequiresOptIn(
+    message = "This API is marked as internal and should not be used by extensions. " +
+              "Using it could cause catastrophic build or runtime errors and may " +
+              "be changed or removed at any time.",
+    level = RequiresOptIn.Level.ERROR
+)
+annotation class InternalAPI
+
+@Retention(AnnotationRetention.BINARY) // This is only an IDE hint, and will not be used in the runtime
+@RequiresOptIn(
+    message = "Only use this if you know what you are doing and you need to bypass the SSL certificate checks. Never use this for sensitive network requests such as logins.",
+    level = RequiresOptIn.Level.WARNING
+)
+annotation class UnsafeSSL
+
 /**
  * Defines the constant for the all languages preference, if this is set then it is
  * the equivalent of all languages being set
@@ -1150,7 +1166,6 @@ suspend fun newSubtitleFile(
  * @property headers Optional headers for the audio file request.
  * @see newAudioFile
  * */
-@Prerelease
 @ConsistentCopyVisibility
 data class AudioFile internal constructor(
     var url: String,
@@ -1162,7 +1177,6 @@ data class AudioFile internal constructor(
  * @param initializer Lambda to configure additional properties like headers.
  * @return Configured AudioFile instance.
  * */
-@Prerelease
 suspend fun newAudioFile(
     url: String,
     initializer: suspend AudioFile.() -> Unit = { }
@@ -1777,7 +1791,6 @@ interface LoadResponse {
     var posterHeaders: Map<String, String>?
     var backgroundPosterUrl: String?
 
-    @Prerelease
     var logoUrl: String?
     var contentRating: String?
 
@@ -1884,7 +1897,6 @@ interface LoadResponse {
             this.addSimklId(SimklSyncServices.Mal, id.toString())
         }
 
-        @Prerelease
         fun LoadResponse.addKitsuId(id: Int?) {
             this.syncData[kitsuIdPrefix] = (id ?: return).toString()
         }

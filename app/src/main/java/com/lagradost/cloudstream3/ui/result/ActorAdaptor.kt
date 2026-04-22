@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.ActorRole
 import com.lagradost.cloudstream3.R
@@ -14,6 +13,7 @@ import com.lagradost.cloudstream3.databinding.CastItemBinding
 import com.lagradost.cloudstream3.ui.BaseDiffCallback
 import com.lagradost.cloudstream3.ui.NoStateAdapter
 import com.lagradost.cloudstream3.ui.ViewHolderState
+import com.lagradost.cloudstream3.ui.newSharedPool
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
@@ -26,7 +26,7 @@ class ActorAdaptor(
 })) {
     companion object {
         val sharedPool =
-            RecyclerView.RecycledViewPool().apply { this.setMaxRecycledViews(CONTENT, 10) }
+            newSharedPool { setMaxRecycledViews(CONTENT, 10) }
     }
 
     // Easier to store it here than to store it in the ActorData

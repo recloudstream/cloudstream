@@ -447,7 +447,7 @@
     <string name="skip_type_recap">Riassunto</string>
     <!--<string name="skip_type_mixed_ed">Mixed ending</string>-->
     <!--<string name="skip_type_mixed_op">Mixed opening</string>-->
-    <string name="skip_type_creddits">Crediti</string>
+    <string name="skip_type_credits">Crediti</string>
     <!--<string name="skip_type_intro">Intro</string>-->
     <string name="clear_history">Cancella cronologia</string>
     <string name="history">Cronologia</string>
@@ -783,4 +783,5 @@
     </plurals>
     <string name="source_priority">Priorità sorgente</string>
     <string name="source_priority_help">Decidi come le sorgenti video devono essere ordinate nel lettore</string>
+    <string name="show_player_metadata_overlay">Mostra sovrapposizione metadati lettore</string>
 </resources>

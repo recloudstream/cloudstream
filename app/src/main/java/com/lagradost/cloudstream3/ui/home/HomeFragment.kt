@@ -52,6 +52,7 @@ import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_PLAY_FILE
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
+import com.lagradost.cloudstream3.ui.setRecycledViewPool
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV

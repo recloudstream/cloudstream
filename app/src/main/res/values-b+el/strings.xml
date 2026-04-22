@@ -389,7 +389,7 @@
     <string name="quality_webrip">Web</string>
     <string name="quality_hdr">HDR</string>
     <string name="skip_type_mixed_op">Ανάμεικτοι τίτλοι αρχής</string>
-    <string name="skip_type_creddits">Εύσημα</string>
+    <string name="skip_type_credits">Εύσημα</string>
     <string name="skip_type_intro">Εισαγωγή</string>
     <string name="go_forward_30">+30</string>
     <string name="status_completed">Ολοκληρώθηκε</string>

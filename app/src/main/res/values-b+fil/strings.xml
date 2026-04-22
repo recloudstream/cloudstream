@@ -52,4 +52,108 @@
     <string name="pref_filter_search_quality">Itago ang napiling quality ng video sa mga resulta ng paghahanap</string>
     <string name="automatic_plugin_download_mode_title">Pumili ng mode upang i-filter ang pag-download ng mga plugin</string>
     <string name="automatic_plugin_download_summary">Awtomatikong i-install ang lahat ng hindi pa naka-install na plugin mula sa mga idinagdag na repository.</string>
+    <string name="cast_format" formatted="true">Tauhan: %s</string>
+    <string name="next_episode_format" formatted="true">Kabanata %d ay ipapalabas sa</string>
+    <string name="next_season_episode_format" formatted="true">Season %1$d Kabanata %2$d ay ipapalabas sa</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$da %2$do %3$dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$do %2$dm</string>
+    <string name="next_episode_time_min_format" formatted="true">%dm</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$do %2$dm %3$ds</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dm %2$ds</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$ds</string>
+    <string name="episode_poster_img_des">Poster ng Kabanata</string>
+    <string name="home_next_random_img_des">Susunod na Kahit Ano</string>
+    <string name="go_back_img_des">Bumalik</string>
+    <string name="play_from_beginning_img_des">Ipatugtog mula sa Simula</string>
+    <string name="home_change_provider_img_des">Baguhin ang Tagatustos</string>
+    <string name="preview_background_img_des">Background ng Pasilip</string>
+    <string name="player_speed_text_format" formatted="true">Bilis (%.2fx)</string>
+    <string name="rated_format" formatted="true">Na-rate: %.1f</string>
+    <string name="new_update_format" formatted="true">May nakitang bagong update!\n%1$s -&gt; %2$s</string>
+    <string name="duration_format" formatted="true">%d min</string>
+    <string name="play_with_app_name">Ipatugtog sa CloudStream</string>
+    <string name="title_home">Bahay</string>
+    <string name="title_search">Maghanap</string>
+    <string name="title_downloads">Mga Download</string>
+    <string name="download_queue">Nakapila na download</string>
+    <string name="title_settings">Mga pagpipilian</string>
+    <string name="search_hint">Maghanap…</string>
+    <string name="search_hint_site" formatted="true">Maghanap %s…</string>
+    <string name="begin_speaking">Magsimulang magsalita…</string>
+    <string name="no_data">Walang Data</string>
+    <string name="episode_more_options_des">Iba pang Mga Pagpipilian</string>
+    <string name="next_episode">Susunod na kabanata</string>
+    <string name="result_tags">Mga Genre</string>
+    <string name="result_share">Ibahagi</string>
+    <string name="browser">Browser</string>
+    <string name="skip_loading">Laktawan ang paglo-load</string>
+    <string name="loading">Naglo-load…</string>
+    <string name="type_watching">Pinapanood</string>
+    <string name="type_on_hold">Nakabinbin</string>
+    <string name="type_completed">Nakumpleto</string>
+    <string name="type_plan_to_watch">Pinaplanong Panoorin</string>
+    <string name="type_re_watching">Pinapanood muli</string>
+    <string name="play_movie_button">Ipatugtog ang Pelikula</string>
+    <string name="play_trailer_button">Ipatugtog ang Trailer</string>
+    <string name="play_livestream_button">Ipatugtog ang Livestream</string>
+    <string name="play_full_series_button">Ipatugtog ang Buong Serye</string>
+    <string name="pick_source">Mga Mapagkukunan</string>
+    <string name="pick_subtitle">Mga saling-teksto</string>
+    <string name="reload_error">Subukang muli kumonekta…</string>
+    <string name="go_back">Bumalik</string>
+    <string name="play_episode">Ipatugtog ang Kabanata</string>
+    <string name="play_torrent_button">I-stream ang Torrent</string>
+    <string name="download">I-download</string>
+    <string name="downloaded">Na-download</string>
+    <string name="downloading">Dina-download</string>
+    <string name="download_paused">Hininto ang pag-download</string>
+    <string name="download_started">Sinimulan ang pag-download</string>
+    <string name="download_failed">Nabigong ma-download</string>
+    <string name="download_canceled">Kinansela ang pag-download</string>
+    <string name="download_done">Natapos ang pag-download</string>
+    <string name="queue_empty_message">Kasalukuyang walang nakapilang mga download.</string>
+    <string name="update_started">Sinimulan ang pag-update</string>
+    <string name="open_local_video">Buksan ang local video</string>
+    <string name="error_loading_links_toast">Nagkamali sa paglo-load ng mga link</string>
+    <string name="links_reloaded_toast">Ini-load muli ang mga link</string>
+    <string name="download_storage_text">Imbakan</string>
+    <string name="app_dubbed_text">Dub</string>
+    <string name="app_subbed_text">Sub</string>
+    <string name="popup_delete_file">Burahin ang File</string>
+    <string name="popup_play_file">Ipatugtog ang File</string>
+    <string name="popup_resume_download">Ipagpatuloy ang pag-download</string>
+    <string name="popup_pause_download">Ihinto ang pag-download</string>
+    <string name="home_more_info">Higit pang impormasyon</string>
+    <string name="home_expanded_hide">Itago</string>
+    <string name="home_play">Ipatugtog</string>
+    <string name="home_info">Impormasyon</string>
+    <string name="filter_bookmarks">I-filter ang Mga Bookmark</string>
+    <string name="error_bookmarks_text">Mga Bookmark</string>
+    <string name="action_remove_from_bookmarks">Alisin</string>
+    <string name="action_add_to_bookmarks">Itakda ang kapalaran ng panonood</string>
+    <string name="sort_apply">Ilapat</string>
+    <string name="sort_copy">Ikopya</string>
+    <string name="sort_close">Isara</string>
+    <string name="sort_clear">Alisin</string>
+    <string name="sort_save">I-save</string>
+    <string name="repo_copy_label">Pangalan ng repository at URL</string>
+    <string name="toast_copied">nakopya!</string>
+    <string name="subscribe_tooltip">Bagong notipikasyon ng kabanata</string>
+    <string name="result_search_tooltip">Maghanap sa iba pang mga extension</string>
+    <string name="recommendations_tooltip">Ipakita ang mga rekomendasyon</string>
+    <string name="player_speed">Bilis ng Manlalaro</string>
+    <string name="subtitles_settings">Pagpipilian sa Saling-teksto</string>
+    <string name="subs_text_color">Kulay ng Teksto</string>
+    <string name="subs_outline_color">Kulay ng Balangkas</string>
+    <string name="subs_background_color">Kulay ng Likuran</string>
+    <string name="subs_window_color">Kulay ng Bintana</string>
+    <string name="subs_subtitle_elevation">Kataasan ng Saling-teksto</string>
+    <string name="subs_font">Font</string>
+    <string name="subs_font_size">Laki ng Font</string>
+    <string name="search_provider_text_providers">Maghanap gamit ang mga tagatustos</string>
+    <string name="search_provider_text_types">Maghanap gamit ang mga uri</string>
+    <string name="benene_count_text">%d Benenes naibigay sa mga dev</string>
+    <string name="benene_count_text_none">Walang Benenes na binigay</string>
+    <string name="subs_auto_select_language">Awtomatikong Piliin ang Wika</string>
+    <string name="subs_download_languages">Mag-download ng Mga Wika</string>
 </resources>

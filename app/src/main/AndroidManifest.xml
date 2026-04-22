@@ -108,14 +108,31 @@
         android:launchMode="singleTask"
         is a bit experimental, it makes loading repositories from browser still stay on the same page
         no idea about side effects
+
+        Not exported to prevent bypassing the AccountSelectActivity
         -->
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation|uiMode"
-            android:exported="true"
+            android:exported="false"
             android:launchMode="singleTask"
             android:resizeableActivity="true"
-            android:supportsPictureInPicture="true">
+            android:supportsPictureInPicture="true" />
+
+        <activity
+            android:name=".ui.account.AccountSelectActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden"
+            android:exported="true">
+            <intent-filter android:exported="true">
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
 
             <!-- cloudstreamplayer://encodedUrl?name=Dune -->
             <intent-filter>
@@ -173,7 +190,7 @@
                 <data android:scheme="cloudstreamcontinuewatching" />
             </intent-filter>
 
-            <intent-filter>
+            <intent-filter android:autoVerify="false">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -183,21 +200,6 @@
                     android:host="cs.repo"
                     android:pathPrefix="/"
                     android:scheme="https" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".ui.account.AccountSelectActivity"
-            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden"
-            android:exported="true">
-            <intent-filter android:exported="true">
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 

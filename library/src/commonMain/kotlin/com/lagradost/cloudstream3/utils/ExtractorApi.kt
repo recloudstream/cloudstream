@@ -135,7 +135,6 @@ import com.lagradost.cloudstream3.extractors.Mediafire
 import com.lagradost.cloudstream3.extractors.Megacloud
 import com.lagradost.cloudstream3.extractors.Meownime
 import com.lagradost.cloudstream3.extractors.MetaGnathTuggers
-import com.lagradost.cloudstream3.extractors.Minoplres
 import com.lagradost.cloudstream3.extractors.MixDrop
 import com.lagradost.cloudstream3.extractors.MixDropAg
 import com.lagradost.cloudstream3.extractors.MixDropBz
@@ -174,6 +173,7 @@ import com.lagradost.cloudstream3.extractors.PlayLtXyz
 import com.lagradost.cloudstream3.extractors.PlayRu
 import com.lagradost.cloudstream3.extractors.PlayerVoxzer
 import com.lagradost.cloudstream3.extractors.Playerwish
+import com.lagradost.cloudstream3.extractors.Playmogo
 import com.lagradost.cloudstream3.extractors.Rabbitstream
 import com.lagradost.cloudstream3.extractors.RapidVid
 import com.lagradost.cloudstream3.extractors.Rasacintaku
@@ -281,9 +281,13 @@ import com.lagradost.cloudstream3.extractors.Vidoza
 import com.lagradost.cloudstream3.extractors.VinovoSi
 import com.lagradost.cloudstream3.extractors.VinovoTo
 import com.lagradost.cloudstream3.extractors.VidNest
+import com.lagradost.cloudstream3.extractors.Vidara
+import com.lagradost.cloudstream3.extractors.Vide0Net
+import com.lagradost.cloudstream3.extractors.Vidsonic
 import com.lagradost.cloudstream3.extractors.VkExtractor
 import com.lagradost.cloudstream3.extractors.Voe
 import com.lagradost.cloudstream3.extractors.Voe1
+import com.lagradost.cloudstream3.extractors.Voe2
 import com.lagradost.cloudstream3.extractors.Vtbe
 import com.lagradost.cloudstream3.extractors.Wibufile
 import com.lagradost.cloudstream3.extractors.WishembedPro
@@ -1083,7 +1087,6 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Vido(),
     Linkbox(),
     Acefile(),
-    Minoplres(), // formerly SpeedoStream
     Embedgram(),
     Mvidoo(),
     Streamplay(),
@@ -1093,6 +1096,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Vidmolybiz(),
     Voe(),
     Voe1(),
+    Voe2(),
     Tubeless(),
     Moviehab(),
     MoviehabNet(),
@@ -1100,6 +1104,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     StreamoUpload(),
     Streamup(),
     Streamix(),
+    Vidara(),
 
     GamoVideo(),
     Gdriveplayerapi(),
@@ -1210,6 +1215,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Wishonly(),
     Ds2play(),
     Ds2video(),
+    Vidsonic(),
     InternetArchive(),
     VidStack(),
     GDMirrorbot(),
@@ -1227,6 +1233,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     ByseVepoin(),
     ByseBuho(),
     MyVidPlay(),
+    Playmogo(),
+    Vide0Net(),
     Up4Stream(),
     Up4FunTop(),
     GUpload(),

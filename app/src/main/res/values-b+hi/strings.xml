@@ -418,4 +418,8 @@
     <string name="added_sync_format" formatted="true">जोड़ा गया %s</string>
     <string name="upload_sync">Sync</string>
     <string name="sync_score">रेटेड</string>
+    <string name="download_queue">कतार डाउनलोड करें</string>
+    <string name="queue_empty_message">फिलहाल कोई डाउनलोड कतार में नहीं है।</string>
+    <string name="extra_brightness_settings">अतिरिक्त चमक</string>
+    <string name="extra_brightness_settings_des">डिस्प्ले की चमक 100% से अधिक होने पर ब्राइटनेस फ़िल्टर चालू करें</string>
 </resources>

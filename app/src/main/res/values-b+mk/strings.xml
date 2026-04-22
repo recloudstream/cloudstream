@@ -260,7 +260,7 @@
     <string name="sort">Подреди</string>
     <string name="player_settings_play_in_app">Внатрешен плеер</string>
     <string name="resolution">Резолуција</string>
-    <string name="skip_type_creddits">Кредити</string>
+    <string name="skip_type_credits">Кредити</string>
     <string name="search_hint_site" formatted="true">Пребарај %s…</string>
     <string name="plugin_deleted">Приклучокот е избришан</string>
     <string name="extension_status">Статус</string>

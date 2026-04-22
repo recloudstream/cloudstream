@@ -436,7 +436,7 @@
     <string name="extension_language">Jezik</string>
     <string name="hls_playlist">HLS playlista</string>
     <string name="automatic_plugin_download">Automatski instaliraj dodatke</string>
-    <string name="skip_type_creddits">Zasluge</string>
+    <string name="skip_type_credits">Zasluge</string>
     <string name="automatic_plugin_download_summary">Automatski instaliraj sve neinstalirane dodatke iz dodanih repozitorija.</string>
     <string name="player_pref">Preferirani video player</string>
     <string name="player_settings_play_in_app">Interni player</string>

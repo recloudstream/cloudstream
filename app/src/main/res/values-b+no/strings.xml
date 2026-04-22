@@ -381,7 +381,7 @@
     <string name="subtitle_offset_extra_hint_before_format">Bruk dette hvis undertekster vises %d ms for sent</string>
     <string name="plugin_loaded">Programtillegg innlastet</string>
     <string name="audio_tracks">Lydspor</string>
-    <string name="skip_type_creddits">Rulletekst</string>
+    <string name="skip_type_credits">Rulletekst</string>
     <string name="skip_type_intro">Introduksjon</string>
     <string name="backup_failed">Lagringstilgang mangler. Prøv igjen.</string>
     <string name="show_trailers_settings">Vis trailere</string>

@@ -522,7 +522,7 @@
     <string name="enable_skip_op_from_database_des">Afișează opțiunea de omitere a ferestrelor pop-up pentru început/sfârșit</string>
     <string name="all_languages_preference">Toate limbile</string>
     <string name="skip_type_mixed_op">Deschidere mixat</string>
-    <string name="skip_type_creddits">Credite</string>
+    <string name="skip_type_credits">Credite</string>
     <string name="extension_language">Limbă</string>
     <string name="plugin_singular">plugin</string>
     <string name="plugin">plugin-uri</string>

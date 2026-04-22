@@ -97,7 +97,7 @@ class SubscriptionWorkManager(val context: Context, workerParams: WorkerParamete
                 .build()
         )
     }
-    @Suppress("DEPRECATION_ERROR")
+
     override suspend fun doWork(): Result {
         try {
 //        println("Update subscriptions!")

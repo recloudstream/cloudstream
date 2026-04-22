@@ -118,7 +118,7 @@
     <string name="browser">Prehliadač</string>
     <string name="normal_no_plot">Zhrnutie sa nenašlo</string>
     <string name="double_tap_to_pause_settings">Dvojitým ťuknutím pozastaviť</string>
-    <string name="category_updates">Aktualizácie a zálohovanie</string>
+    <string name="category_updates">Aktualizácie a Zálohovanie</string>
     <string name="settings_info">Informácie</string>
     <string name="advanced_search">Rozšírené vyhľadávanie</string>
     <string name="kitsu_settings">Zobraziť plagáty z Kitsu</string>
@@ -126,7 +126,7 @@
     <string name="pref_filter_search_quality">Skryť vybranú kvalitu videa vo výsledkoch vyhľadávania</string>
     <string name="show_fillers_settings">Zobraziť výplňovú epizódu pre anime</string>
     <string name="apk_installer_settings">APK inštalátor</string>
-    <string name="apk_installer_settings_des">Niektoré telefóny nepodporujú nový inštalátor balíčkov. Ak sa aktualizácie nenainštalujú, skúste použiť staršiu možnosť.</string>
+    <string name="apk_installer_settings_des">Niektoré zariadenia nepodporujú nový inštalátor balíčkov. Ak sa aktualizácie nenainštalujú, skúste použiť staršiu možnosť.</string>
     <string name="lightnovel">Nenáročná aplikácia pre romány od rovnakých vývojárov</string>
     <string name="app_language">Jazyk aplikácie</string>
     <string name="no_links_found_toast">Nenašli sa žiadne odkazy</string>
@@ -157,7 +157,7 @@
     <string name="player_subtitles_settings_des">Nastavenia titulkov prehrávača</string>
     <string name="autoplay_next_settings_des">Spustiť ďalšiu epizódu po skončení aktuálnej</string>
     <string name="chromecast_subtitles_settings">Chromecast titulky</string>
-    <string name="eigengraumode_settings">Eigengravy režim</string>
+    <string name="eigengraumode_settings">Rýchlosť prehrávania (Eigengravy režim)</string>
     <string name="swipe_to_seek_settings">Potiahnutím pretočiť</string>
     <string name="autoplay_next_settings">Automaticky prehrať ďalšiu epizódu</string>
     <string name="episode_sync_settings">Aktualizovať priebeh sledovania</string>
@@ -168,7 +168,7 @@
     <string name="library">Knižnica</string>
     <string name="github">GitHub</string>
     <string name="search">Hľadať</string>
-    <string name="category_account">Účty</string>
+    <string name="category_account">Účty a Zabezpečenie</string>
     <string name="chromecast_subtitles_settings_des">Nastavenia Chromecast titulkov</string>
     <string name="swipe_to_seek_settings_des">Potiahnutím zo strany na stranu môžete ovládať svoju pozíciu vo videu</string>
     <string name="restore_failed_format" formatted="true">Nepodarilo sa obnoviť dáta zo súboru %s</string>
@@ -203,7 +203,7 @@
     <string name="app_layout">Rozloženie aplikácie</string>
     <string name="example_email">ahoj@svet.sk</string>
     <string name="test_passed">Úspešné</string>
-    <string name="example_username">MojeSuperMeno</string>
+    <string name="example_username">Meno</string>
     <string name="tv_series">Seriály</string>
     <string name="tv_series_singular">Seriál</string>
     <string name="episode_short">E</string>
@@ -227,7 +227,7 @@
     <string name="episode_action_play_in_app">Prehrať v aplikácii</string>
     <string name="episodes_range">%1$d-%2$d</string>
     <string name="video_ram_description">Spôsobuje zlyhania, ak je nastavená príliš vysoko na zariadeniach s nízkou pamäťou, ako je Android TV.</string>
-    <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
+    <string name="jsdelivr_proxy">GitHub Proxy</string>
     <string name="duration">Trvanie</string>
     <string name="app_storage">Aplikácia</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
@@ -242,7 +242,7 @@
     <string name="sync_score_format" formatted="true">%d / 10</string>
     <string name="resize_zoom">Priblížiť</string>
     <string name="torrent">Torrenty</string>
-    <string name="limit_title_rez">Rozlíšenie prehrávača</string>
+    <string name="limit_title_rez">Informácie o prehrávači</string>
     <string name="bottom_title_settings_des">Umiestniť názov pod plagát</string>
     <string name="watch_quality_pref">Preferovaná kvalita sledovania (WiFi)</string>
     <string name="pref_category_extensions">Rozšírenia</string>
@@ -260,11 +260,11 @@
     <string name="no_season">Žiadna sezóna</string>
     <string name="episode">Epizóda</string>
     <string name="episode_action_reload_links">Znova načítať odkazy</string>
-    <string name="provider_lang_settings">Jazyky poskytovateľa</string>
+    <string name="provider_lang_settings">Jazyky rozšírenia</string>
     <string name="start">Spustiť</string>
     <string name="livestreams">Živé prenosy</string>
     <string name="episode_action_download_subtitle">Stiahnuť titulky</string>
-    <string name="enable_nsfw_on_providers">Povoliť NSFW u podporovaných poskytovateľov</string>
+    <string name="enable_nsfw_on_providers">Povoliť NSFW u podporovaných rozšírení</string>
     <string name="pref_category_bypass">Obchádzanie ISP</string>
     <string name="poster_ui_settings">Prepnúť UI prvky na plagáte</string>
     <string name="pref_category_player_layout">Rozloženie</string>
@@ -290,7 +290,7 @@
     <string name="pref_category_looks">Vzhľad</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="jsdelivr_proxy_summary">Obchádza blokovanie GitHubu pomocou jsDelivr. Môže spôsobiť oneskorenie aktualizácií o niekoľko dní.</string>
-    <string name="random_button_settings_desc">Zobraziť náhodné tlačidlo na domovskej stránke</string>
+    <string name="random_button_settings_desc">Zobraziť náhodné tlačidlo na domovskej stránke a Knižnici</string>
     <string name="logout">Odhlásiť sa</string>
     <string name="update">Aktualizovať</string>
     <string name="site">Stránka</string>
@@ -305,7 +305,7 @@
     <string name="add_site_pref">Klonovať stránku</string>
     <string name="ova">OVA</string>
     <string name="movies">Filmy</string>
-    <string name="example_site_url">príklad.sk</string>
+    <string name="example_site_url">https://example.com</string>
     <string name="pref_category_cache">Vyrovnávacia pamäť</string>
     <string name="jsdelivr_enabled">Nepodarilo sa pripojiť na GitHub. Zapína sa proxy jsDelivr…</string>
     <string name="no_episodes_found">Nenašli sa žiadne epizódy</string>
@@ -328,7 +328,7 @@
     <string name="category_providers">Poskytovatelia</string>
     <string name="tv_layout">TV rozloženie</string>
     <string name="example_lang_name">Kód jazyka (sk)</string>
-    <string name="example_site_name">MôjSuperWeb</string>
+    <string name="example_site_name">NovyNazovWebu</string>
     <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="legal_notice">Vylúčenie zodpovednosti</string>
     <string name="nsfw">NSFW</string>
@@ -457,4 +457,24 @@
     <string name="podcast_singluar">Podcast</string>
     <string name="all">Všetko</string>
     <string name="encoding_error">Chyba kódovania</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dh %2$dm %3$ds</string>
+    <string name="download_queue">Poradie sťahovania</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$ds</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dm %2$ds</string>
+    <string name="speech_recognition_unavailable">Rozpoznanie reči nie je k dispozícii</string>
+    <string name="begin_speaking">Začnite hovoriť…</string>
+    <string name="queue_empty_message">Momentálne nie sú žiadne sťahovania v poradí.</string>
+    <string name="result_search_tooltip">Vyhľadávanie v iných rozšíreniach</string>
+    <string name="extra_brightness_settings">Extra Jas</string>
+    <string name="extra_brightness_settings_des">Spustiť filter jasu, keď je prekročený 100% jas displeja</string>
+    <string name="extra_brightness_key">extra_jas_zapnuty</string>
+    <string name="search_suggestions">Návrhy vyhľadávania</string>
+    <string name="search_suggestions_des">Zobraziť návrhy vyhľadávania pri písaní</string>
+    <string name="clear_suggestions">Vyčistiť Návrhy</string>
+    <string name="install_prerelease">Nainštalujte pre-release verziu</string>
+    <string name="prerelease_already_installed">Pre-release je už nainštalovaný.</string>
+    <string name="prerelease_install_failed">Nepodarilo sa nainštalovať pre-release.</string>
+    <string name="unsupported_error">Nepodporovaná chyba</string>
+    <string name="show_episode_text">Text Epizódy</string>
+    <string name="auth_locally">Lokálna verifikácia</string>
 </resources>

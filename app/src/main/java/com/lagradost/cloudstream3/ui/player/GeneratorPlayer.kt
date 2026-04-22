@@ -87,9 +87,11 @@ import com.lagradost.cloudstream3.ui.result.EpisodeAdapter
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.ResultFragment
+import com.lagradost.cloudstream3.ui.result.ResultFragment.bindLogo
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.SyncViewModel
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
+import com.lagradost.cloudstream3.ui.setRecycledViewPool
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -97,13 +99,13 @@ import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.subtitles.SUBTITLE_AUTO_SELECT_KEY
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAutoSelectLanguageTagIETF
+import com.lagradost.cloudstream3.utils.AppContextUtils.getShortSeasonText
 import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.AppContextUtils.sortSubs
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
-import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
@@ -121,6 +123,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.downloader.DownloadUtils.getImageBitmapFromUrl
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.txt
+import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
 import com.lagradost.safefile.SafeFile
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -128,7 +131,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.io.Serializable
 import java.util.Calendar
-import kotlin.math.abs
 
 @OptIn(UnstableApi::class)
 class GeneratorPlayer : FullScreenPlayer() {
@@ -894,6 +896,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         viewModel.addSubtitles(subtitleData.toSet())
 
         selectSourceDialog?.dismissSafe()
+        selectSourceDialog = null
 
         showToast(
             String.format(ctx.getString(R.string.player_loaded_subtitles), selectedSubtitle.name),
@@ -933,10 +936,6 @@ class GeneratorPlayer : FullScreenPlayer() {
                 addAndSelectSubtitles(subtitleData)
             }
         }
-
-    private var selectSourceDialog: Dialog? = null
-    // var selectTracksDialog: AlertDialog? = null
-
 
     /** Will toast both when an error is found and when a subtitle is selected,
      * so only use from a user click and not a background process */
@@ -1070,6 +1069,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     loadFromOpenSubsFooter.setOnClickListener {
                         shouldDismiss = false
                         sourceDialog.dismissSafe(activity)
+                        selectSourceDialog = null
                         openOnlineSubPicker(it.context, currentLoadResponse) {
                             dismiss()
                         }
@@ -1090,6 +1090,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                         loadFromFirstSubsFooter.setOnClickListener {
                             sourceDialog.dismissSafe(activity)
+                            selectSourceDialog = null
                             showToast(R.string.loading)
                             addFirstSub(
                                 SubtitleSearch(
@@ -1162,7 +1163,6 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 val subsArrayAdapter =
                     ArrayAdapter<Spanned>(ctx, R.layout.sort_bottom_single_choice)
-                subsArrayAdapter.add(ctx.getString(R.string.no_subtitles).html())
 
                 val subtitlesGrouped =
                     currentSubtitles.groupBy { it.originalName }.map { (key, value) ->
@@ -1172,8 +1172,13 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 val subtitles = subtitlesGrouped.map { it.key.html() }
 
-                val subtitleGroupIndexStart =
-                    subtitlesGrouped.keys.indexOf(currentSelectedSubtitles?.originalName) + 1
+                val realIndex = subtitlesGrouped.keys.indexOf(currentSelectedSubtitles?.originalName)
+                val subtitleGroupIndexStart = if (realIndex == -1) {
+                    // The "No Subtitles" option is outside the subtitlesGrouped list.
+                    subtitlesGrouped.size
+                } else {
+                    realIndex
+                }
                 var subtitleGroupIndex = subtitleGroupIndexStart
 
                 val subtitleOptionIndexStart =
@@ -1182,6 +1187,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 var subtitleOptionIndex = subtitleOptionIndexStart
 
                 subsArrayAdapter.addAll(subtitles)
+                subsArrayAdapter.add(ctx.getString(R.string.no_subtitles).html())
 
                 subtitleList.adapter = subsArrayAdapter
                 subtitleList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
@@ -1200,7 +1206,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                     val subtitleOptions =
                         subtitlesGroupedList
-                            .getOrNull(subtitleGroupIndex - 1)?.value?.map { subtitle ->
+                            .getOrNull(subtitleGroupIndex)?.value?.map { subtitle ->
                                 val nameSuffix = subtitle.nameSuffix.html()
                                 nameSuffix.ifBlank {
                                     when (subtitle.origin) {
@@ -1252,7 +1258,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
 
                 subtitleOptionList.setOnItemClickListener { _, _, which, _ ->
-                    if (which >= (subtitlesGroupedList.getOrNull(subtitleGroupIndex - 1)?.value?.size
+                    if (which >= (subtitlesGroupedList.getOrNull(subtitleGroupIndex)?.value?.size
                             ?: -1)
                     ) {
                         val child = subtitleOptionList.adapter.getView(which, null, subtitleList)
@@ -1265,6 +1271,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 binding.cancelBtt.setOnClickListener {
                     sourceDialog.dismissSafe(activity)
+                    this.selectSourceDialog = null
                 }
 
                 fun setProfileName(profile: Int) {
@@ -1315,6 +1322,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                     shouldDismiss = false
                     sourceDialog.dismissSafe(activity)
+                    selectSourceDialog = null
 
                     val index = prefValues.indexOf(currentPrefMedia)
                     activity?.showDialog(
@@ -1337,10 +1345,10 @@ class GeneratorPlayer : FullScreenPlayer() {
                 binding.applyBtt.setOnClickListener {
                     var init = sourceIndex != startSource
                     if (subtitleGroupIndex != subtitleGroupIndexStart || subtitleOptionIndex != subtitleOptionIndexStart) {
-                        init = init or if (subtitleGroupIndex <= 0) {
+                        init = init or if (subtitleGroupIndex >= subtitlesGrouped.size) {
                             noSubtitles()
                         } else {
-                            subtitlesGroupedList.getOrNull(subtitleGroupIndex - 1)?.value?.getOrNull(
+                            subtitlesGroupedList.getOrNull(subtitleGroupIndex)?.value?.getOrNull(
                                 subtitleOptionIndex
                             )?.let {
                                 setSubtitles(it, true)
@@ -1353,6 +1361,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                         }
                     }
                     sourceDialog.dismissSafe(activity)
+                    selectSourceDialog = null
                 }
             }
         } catch (e: Exception) {
@@ -1376,6 +1385,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 val binding: PlayerSelectTracksBinding =
                     PlayerSelectTracksBinding.inflate(LayoutInflater.from(ctx), null, false)
                 val trackDialog = Dialog(ctx, R.style.DialogFullscreenPlayer)
+                this.selectTrackDialog = trackDialog
                 trackDialog.setContentView(binding.root)
                 trackDialog.show()
 
@@ -1434,45 +1444,42 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 val audioArrayAdapter = ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
 
-                audioArrayAdapter.addAll(currentAudioTracks.mapIndexed { index, track ->
-                    val language = track.language?.let { fromTagToLanguageName(it) ?: it } 
-                        ?: track.label 
-                        ?: "Audio"
-                    
-                    val codec = track.sampleMimeType?.let { mimeType ->
-                    when {
-                            mimeType.contains("mp4a") || mimeType.contains("aac") -> "aac"
-                            mimeType.contains("ac-3") || mimeType.contains("ac3") -> "ac3"
-                            mimeType.contains("eac3-joc") -> "Dolby Atmos"
-                            mimeType.contains("eac3") -> "eac3"
-                            mimeType.contains("opus") -> "opus"
-                            mimeType.contains("vorbis") -> "vorbis"
-                            mimeType.contains("mp3") || mimeType.contains("mpeg") -> "mp3"
-                            mimeType.contains("flac") -> "flac"
-                            mimeType.contains("dts") -> "dts"
-                            else -> mimeType.substringAfter("/")
+                audioArrayAdapter.addAll(
+                    currentAudioTracks.mapIndexed { _, track ->
+
+                        val language = (
+                                track.language?.trim()?.let { raw ->
+                                    fromTagToLanguageName(raw)
+                                        ?: fromTagToLanguageName(raw.replace('_','-').substringBefore('-').lowercase())
+                                        ?: raw
+                                }
+                                    ?: track.label
+                                    ?: "Audio"
+                                ).replaceFirstChar { it.uppercaseChar() }
+
+                        val codec = audioCodecName(track.sampleMimeType)
+
+                        val channelCount = track.channelCount
+
+                        val channels = when {
+                            // May be below 1 or null when unknown
+                            channelCount == null || channelCount <= 0 -> ""
+                            channelCount == 1 -> "Mono"
+                            channelCount == 2 -> "Stereo"
+                            channelCount == 6 -> "5.1"
+                            channelCount == 8 -> "7.1"
+                            else -> "${channelCount}ch"
                         }
-                    } ?: "codec?"
 
-                    
-                    val channels: Int = track.channelCount ?: 0
-                    val channelConfig = when (channels) {
-                        1 -> "mono"
-                        2 -> "stereo"
-                        6 -> "5.1"
-                        8 -> "7.1"
-                        else -> "${channels}Ch"
+                        listOfNotNull(
+                            language.takeIf { it.isNotBlank() }?.replaceFirstChar { it.uppercaseChar() },
+                            channels.takeIf { it.isNotBlank() },
+                            codec.takeIf { it.isNotBlank() }?.uppercase()
+                        ).joinToString(" • ")
+
+
                     }
-
-                    listOfNotNull(
-                        "[$index]",
-                        language.replaceFirstChar { it.uppercaseChar() },
-                        codec.uppercase(),
-                        channelConfig.replaceFirstChar { it.uppercaseChar() }
-                    ).joinToString(" • ")
-                    
-                    "[$index] $language $codec $channelConfig"
-                })
+                )
 
                 audioList.adapter = audioArrayAdapter
                 audioList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
@@ -1487,6 +1494,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 binding.cancelBtt.setOnClickListener {
                     trackDialog.dismissSafe(activity)
+                    this.selectTrackDialog = null
                 }
 
                 binding.applyBtt.setOnClickListener {
@@ -1504,6 +1512,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                         player.setMaxVideoSize(width, height, currentVideo?.id)
                     }
                     trackDialog.dismissSafe(activity)
+                    this.selectTrackDialog = null
                 }
             }
         } catch (e: Exception) {
@@ -1549,6 +1558,54 @@ class GeneratorPlayer : FullScreenPlayer() {
             return
         }
         loadLink(links.first(), false)
+        showPlayerMetadata()
+    }
+
+    private fun showPlayerMetadata() {
+        val overlay = playerBinding?.playerMetadataScrim ?: return
+
+        val titleView = overlay.findViewById<TextView>(R.id.player_movie_title)
+        val logoView = overlay.findViewById<ImageView>(R.id.player_movie_logo)
+        val metaView = overlay.findViewById<TextView>(R.id.player_movie_meta)
+        val descView = overlay.findViewById<TextView>(R.id.player_movie_overview)
+
+        val load = viewModel.getLoadResponse() ?: return
+        val episode = currentMeta as? ResultEpisode
+        titleView.text = load.name
+
+        bindLogo(
+            url = load.logoUrl,
+            headers = load.posterHeaders,
+            titleView = titleView,
+            logoView = logoView
+        )
+
+        val meta = arrayOf(
+            load.tags?.takeIf { it.isNotEmpty() }?.joinToString(", "),
+            load.year?.toString(),
+            if (!load.type.isMovieType())
+                context?.getShortSeasonText(
+                    episode = episode?.episode,
+                    season = episode?.season
+                )
+            else null,
+            load.score?.let { "⭐ $it" }
+        ).filterNotNull()
+            .joinToString(" • ")
+
+        metaView.text = meta
+        metaView.isVisible = meta.isNotBlank()
+
+
+        val description = load.plot
+
+        if (!description.isNullOrBlank()) {
+            descView.isVisible = true
+            descView.text = description
+        } else {
+            descView.isVisible = false
+
+        }
     }
 
     override fun nextEpisode() {
@@ -1830,6 +1887,42 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+
+    private fun videoCodecName(mime: String?): String? {
+        val m = mime?.lowercase() ?: return null
+        return when {
+            m.contains("avc") || m.contains("h264") -> "AVC"
+            m.contains("hevc") || m.contains("h265") -> "HEVC"
+            m.contains("av1") -> "AV1"
+            m.contains("vp9") -> "VP9"
+            m.contains("vp8") -> "VP8"
+            "/" in m -> m.substringAfter("/").uppercase()
+            else -> m.uppercase()
+        }
+    }
+
+    private fun audioCodecName(mime: String?): String {
+        val m = mime?.lowercase()?.trim().orEmpty()
+        if (m.isBlank()) return ""
+        return when {
+            m.contains("eac3-joc") -> "Dolby Atmos"
+            m.contains("truehd") -> "TrueHD"
+            m.contains("eac3") -> "E-AC3"
+            m.contains("ac-3") || m.contains("ac3") -> "AC3"
+            m.contains("aac") || m.contains("mp4a") -> "AAC"
+            m.contains("opus") -> "Opus"
+            m.contains("vorbis") -> "Vorbis"
+            m.contains("mp3") -> "MP3"
+            m.contains("flac") -> "FLAC"
+            m.contains("dts") -> "DTS"
+            m.contains("pcm") -> "PCM"
+            m.contains("alac") -> "ALAC"
+            m.contains("amr") -> "AMR"
+            m.contains("/") -> m.substringAfter("/").uppercase().takeIf { it.isNotBlank() } ?: ""
+            else -> ""
+        }
+    }
+
     private fun updatePlayerInfo() {
         val tracks = player.getVideoTracks()
 
@@ -1840,14 +1933,35 @@ class GeneratorPlayer : FullScreenPlayer() {
         val prefs = PreferenceManager.getDefaultSharedPreferences(ctx)
         showMediaInfo = prefs.getBoolean(ctx.getString(R.string.show_media_info_key), false)
 
-        val videoCodec = videoTrack?.sampleMimeType?.substringAfterLast('/')?.uppercase()
-        val audioCodec = audioTrack?.sampleMimeType?.substringAfterLast('/')?.uppercase()
-        val language = listOfNotNull(
-            audioTrack?.label,
-            fromTagToLanguageName(audioTrack?.language)?.let { "[$it]" }
-        ).joinToString(" ")
+        val videoCodec = videoCodecName(videoTrack?.sampleMimeType)
+        val audioCodec = audioCodecName(audioTrack?.sampleMimeType)
+        val languageName = fromTagToLanguageName(audioTrack?.language)
+        val label = audioTrack?.label
 
-        val stats = arrayOf(videoCodec, audioCodec, language).filter { !it.isNullOrBlank() }.joinToString(" • ")
+        val channelCount = audioTrack?.channelCount
+
+        val channels = when {
+            // May be below 1 or null when unknown
+            channelCount == null || channelCount <= 0 -> ""
+            channelCount == 1 -> "Mono"
+            channelCount == 2 -> "Stereo"
+            channelCount == 6 -> "5.1"
+            channelCount == 8 -> "7.1"
+            else -> "${channelCount}ch"
+        }
+
+        val language = languageName?.takeIf { it.isNotBlank() }?.let { lang ->
+            label?.takeIf { it.isNotBlank() && !it.equals(lang, true) }
+                ?.let { lang }
+                ?: lang
+        } ?: label?.takeIf { it.isNotBlank() }
+
+        val stats = arrayOf(
+            videoCodec,
+            language,
+            channels,
+            audioCodec
+        ).filter { !it.isNullOrBlank() }.joinToString(" • ")
 
         playerBinding?.playerVideoInfo?.apply {
             text = stats
@@ -1943,11 +2057,11 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
-    override fun onTimestampSkipped(timestamp: EpisodeSkip.SkipStamp) {
+    override fun onTimestampSkipped(timestamp: VideoSkipStamp) {
         displayTimeStamp(false)
     }
 
-    override fun onTimestamp(timestamp: EpisodeSkip.SkipStamp?) {
+    override fun onTimestamp(timestamp: VideoSkipStamp?) {
         if (timestamp != null) {
             playerBinding?.skipChapterButton?.setText(timestamp.uiText)
             displayTimeStamp(true)

@@ -4,6 +4,7 @@ import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.api.Log
+import com.lagradost.cloudstream3.extractors.helper.JwPlayerHelper
 import com.lagradost.cloudstream3.network.WebViewResolver
 
 class Multimoviesshg : Filesim() {
@@ -78,17 +79,9 @@ open class Filesim : ExtractorApi() {
             pageResponse.document.selectFirst("script:containsData(sources:)")?.data()
         }
 
-        val m3u8Url = scriptData?.let {
-            Regex("""file:\s*"(.*?m3u8.*?)"""").find(it)?.groupValues?.getOrNull(1)
-        }
+        val linkFound = JwPlayerHelper.extractStreamLinks(scriptData.orEmpty(), name, mainUrl, callback, subtitleCallback)
 
-        if (!m3u8Url.isNullOrEmpty()) {
-            M3u8Helper.generateM3u8(
-                name,
-                m3u8Url,
-                mainUrl
-            ).forEach(callback)
-        } else {
+        if (!linkFound) {
             // Fallback using WebViewResolver
             val resolver = WebViewResolver(
                 interceptUrl = Regex("""(m3u8|master\.txt)"""),

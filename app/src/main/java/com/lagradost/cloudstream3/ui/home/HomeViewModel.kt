@@ -15,7 +15,6 @@ import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainActivity
-import com.lagradost.cloudstream3.MainActivity.Companion.lastError
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.mvvm.Resource
@@ -57,7 +56,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import java.util.EnumSet
 import java.util.concurrent.CopyOnWriteArrayList
-import kotlin.collections.set
 
 class HomeViewModel : ViewModel() {
     companion object {
@@ -517,9 +515,6 @@ class HomeViewModel : ViewModel() {
             if (!forceReload && (currentPage is Resource.Success && currentPage.value.isNotEmpty() || (currentLoading != null && currentLoading == preferredApiName))) {
                 return@ioSafe
             }
-
-            HomeChildItemAdapter.sharedPool.clear()
-            ParentItemAdapter.sharedPool.clear()
 
             val api = getApiFromNameNull(preferredApiName)
             if (preferredApiName == noneApi.name) {
