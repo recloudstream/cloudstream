@@ -65,6 +65,20 @@ class SettingsUI : BasePreferenceFragmentCompat() {
             true
         }
 
+        getPref(R.string.library_poster_size_key)?.setOnPreferenceChangeListener { _, newValue ->
+            context?.let { 
+                // Reload library to apply new poster size
+                (it.getActivity() as? MainActivity)?.let { activity ->
+                    activity.supportFragmentManager.findFragmentById(R.id.navigation_library)?.let { fragment ->
+                        if (fragment is com.lagradost.cloudstream3.ui.library.LibraryFragment) {
+                            activity.recreate()
+                        }
+                    }
+                }
+            }
+            true
+        }
+
         getPref(R.string.poster_ui_key)?.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.poster_ui_options)
             val keys = resources.getStringArray(R.array.poster_ui_options_values)
