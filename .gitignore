@@ -225,8 +225,4 @@ fabric.properties
 
 !/gradle/wrapper/gradle-wrapper.jar
 
-# Ignore release APK folders
-app/prerelease/
-app/stable/
-
 # End of https://www.toptal.com/developers/gitignore/api/kotlin,java,android,androidstudio,visualstudiocode

@@ -1,8 +1,8 @@
 package com.lagradost.cloudstream3.ui.library
 
 import android.content.Context
-import android.preference.PreferenceManager
 import android.view.LayoutInflater
+import androidx.preference.PreferenceManager
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
@@ -33,14 +33,9 @@ class PageAdapter(
 
     companion object {
         fun updatePosterSize(resView: AutofitRecyclerView, context: Context, value: Int? = null) {
-            val scale = value ?: PreferenceManager.getDefaultSharedPreferences(context)
-                ?.getInt(context.getString(R.string.library_poster_size_key), 0) ?: 0
-            // Adjust spanCount to control poster size
-            // Higher scale = fewer columns = larger posters
-            val baseSpanCount = context.getSpanCount()
-            val adjustedSpanCount = maxOf(1, (baseSpanCount / (1.0f + scale * 0.1f)).roundToInt())
-            // Update the RecyclerView's spanCount
-            resView.spanCount = adjustedSpanCount
+            val spanCount = value ?: PreferenceManager.getDefaultSharedPreferences(context)
+                .getInt(context.getString(R.string.library_poster_size_key), 3)
+            resView.spanCount = spanCount
         }
     }
 
