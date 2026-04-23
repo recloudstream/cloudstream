@@ -196,6 +196,16 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         activity?.setNavigationBarColorCompat(R.attr.primaryBlackBackground)
         afterPluginsLoadedEvent += ::reloadViewModel
         super.onResume()
+        val storedData = getStoredData()
+        if (storedData != null) {
+            binding?.root?.post {
+                TvModeHelper.consumePendingContinuation(
+                    activity,
+                    storedData.url,
+                    storedData.url
+                )
+            }
+        }
         binding?.resultTvMode?.isVisible =
             context?.let { TvModeHelper.isEnabled(it) } == true && viewModel.hasTvModeEpisodeContent()
     }

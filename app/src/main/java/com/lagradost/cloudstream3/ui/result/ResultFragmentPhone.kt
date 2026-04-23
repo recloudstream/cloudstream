@@ -329,6 +329,16 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         super.onResume()
         PanelsChildGestureRegionObserver.Provider.get()
             .addGestureRegionsUpdateListener(gestureRegionsListener)
+        val storedData = getStoredData()
+        if (storedData != null) {
+            binding?.root?.post {
+                TvModeHelper.consumePendingContinuation(
+                    activity,
+                    storedData.url,
+                    storedData.url
+                )
+            }
+        }
         resultBinding?.resultTvModeButton?.isVisible =
             context?.let { TvModeHelper.isEnabled(it) } == true && viewModel.hasTvModeEpisodeContent()
     }

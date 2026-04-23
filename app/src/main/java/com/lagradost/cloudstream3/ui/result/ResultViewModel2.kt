@@ -823,6 +823,9 @@ class ResultViewModel2 : ViewModel() {
             sourceTypes = LOADTYPE_CHROMECAST,
             isCasting = true
         ) { data ->
+            if (data.links.isEmpty() && continueTvModeAfterLinkFailure(result)) {
+                return@loadLinks
+            }
             startChromecast(activity, result, data.links, data.subs, 0)
         }
     }
@@ -1219,6 +1222,19 @@ class ResultViewModel2 : ViewModel() {
     }
 
     private var currentLoadLinkJob: Job? = null
+
+    private fun continueTvModeAfterLinkFailure(episode: ResultEpisode): Boolean {
+        val currentActivity = activity ?: return false
+        if (!TvModeHelper.hasActiveSession(currentActivity)) return false
+
+        val response = currentResponse ?: return false
+        val primaryUrl = response.uniqueUrl.ifBlank { response.url }
+        val fallbackUrl = response.url
+
+        TvModeHelper.rejectPlayback(primaryUrl, episode.id, fallbackUrl)
+        return TvModeHelper.playNextFromSession(currentActivity, replaceExisting = true)
+    }
+
     private fun acquireSingleLink(
         result: ResultEpisode,
         sourceTypes: Set<ExtractorLinkType>,
@@ -1228,6 +1244,9 @@ class ResultViewModel2 : ViewModel() {
     ) {
         // TODO Add skip loading here
         loadLinks(result, isVisible = true, sourceTypes, isCasting = isCasting) { links ->
+            if (links.links.isEmpty() && continueTvModeAfterLinkFailure(result)) {
+                return@loadLinks
+            }
             // Could not find a better way to do this
             //val context = CloudStreamApp.context
             postPopup(
@@ -1653,6 +1672,9 @@ class ResultViewModel2 : ViewModel() {
                     }
                 } else {
                     loadLinks(click.data, isVisible = true, action.sourceTypes) { links ->
+                        if (links.links.isEmpty() && continueTvModeAfterLinkFailure(click.data)) {
+                            return@loadLinks
+                        }
                         action.runActionSafe(
                             activity,
                             click.data,

@@ -294,7 +294,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     private fun markCurrentTvModeFailure() {
         val currentContext = context ?: return
-        if (!TvModeHelper.isManagedPlayback(currentContext)) return
+        if (!TvModeHelper.hasActiveSession(currentContext)) return
 
         val (primaryUrl, fallbackUrl, episodeId) = getCurrentTvModeSelection() ?: return
         TvModeHelper.rejectPlayback(primaryUrl, episodeId, fallbackUrl)
@@ -302,16 +302,19 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     private fun continueTvModeAfterFailure(): Boolean {
         val currentContext = context ?: return false
-        if (!TvModeHelper.isManagedPlayback(currentContext)) return false
+        if (!TvModeHelper.hasActiveSession(currentContext)) return false
 
         cancelTvModeWatchdogs()
         markCurrentTvModeFailure()
         player.release()
-        val didContinue = TvModeHelper.playNextFromSession(activity, replaceExisting = true)
-        if (!didContinue) {
+        val currentActivity = activity
+        if (currentActivity == null) {
             tvModeSkipInProgress = false
+            return false
         }
-        return didContinue
+        TvModeHelper.queueContinuationAfterExit()
+        currentActivity.popCurrentPage()
+        return true
     }
 
     private fun shouldUseTvModeStallProtection(): Boolean {

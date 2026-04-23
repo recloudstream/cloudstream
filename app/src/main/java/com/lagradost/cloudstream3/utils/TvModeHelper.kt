@@ -144,6 +144,7 @@ object TvModeHelper {
     private var currentSession: TvModeSession? = null
     private var cachedHomepageCandidates: List<SearchResponse> = emptyList()
     private var autoStartPending = false
+    private var pendingContinuationAfterExit = false
 
     fun hasSession(): Boolean {
         return currentSession != null
@@ -186,6 +187,10 @@ object TvModeHelper {
 
     fun isManagedPlayback(context: Context): Boolean {
         return isEnabled(context) && currentSession?.managedPlayback == true
+    }
+
+    fun hasActiveSession(context: Context): Boolean {
+        return isEnabled(context) && currentSession != null
     }
 
     fun isLoopEnabled(context: Context): Boolean {
@@ -371,6 +376,7 @@ object TvModeHelper {
 
         rememberHomepageCandidates(distinctCandidates)
         currentSession = TvModeSession.Global(candidates = distinctCandidates)
+        pendingContinuationAfterExit = false
         return true
     }
 
@@ -401,6 +407,47 @@ object TvModeHelper {
             selectedSeason = selectedSeason,
             seasonMode = getSeasonMode(activity),
         )
+        pendingContinuationAfterExit = false
+        return true
+    }
+
+    @Synchronized
+    fun queueContinuationAfterExit() {
+        if (currentSession != null) {
+            pendingContinuationAfterExit = true
+        }
+    }
+
+    @Synchronized
+    fun consumePendingContinuation(
+        activity: Activity?,
+        currentUrl: String?,
+        fallbackUrl: String? = currentUrl,
+    ): Boolean {
+        val validActivity = activity ?: return false
+        if (!pendingContinuationAfterExit) return false
+
+        val session = currentSession ?: run {
+            pendingContinuationAfterExit = false
+            return false
+        }
+
+        if (!isEnabled(validActivity)) {
+            stopSession()
+            return false
+        }
+
+        val shouldContinue = when (session) {
+            is TvModeSession.Global -> true
+            is TvModeSession.LocalShow -> session.matches(currentUrl, fallbackUrl)
+        }
+
+        if (!shouldContinue) return false
+
+        pendingContinuationAfterExit = false
+        validActivity.window?.decorView?.post {
+            playNextFromSession(validActivity, replaceExisting = true)
+        }
         return true
     }
 
@@ -500,6 +547,7 @@ object TvModeHelper {
     @Synchronized
     fun stopSession() {
         currentSession = null
+        pendingContinuationAfterExit = false
     }
 
     fun acceptsLoadedContent(

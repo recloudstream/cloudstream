@@ -295,11 +295,18 @@ abstract class AbstractPlayerFragment(
                 )
                 onPlaybackExhausted()
                 val continuedTvMode = context?.let { ctx ->
-                    if (!TvModeHelper.isManagedPlayback(ctx)) {
+                    if (!TvModeHelper.hasActiveSession(ctx)) {
                         false
                     } else {
+                        val currentActivity = activity
                         player.release()
-                        TvModeHelper.playNextFromSession(activity, replaceExisting = true)
+                        if (currentActivity == null) {
+                            false
+                        } else {
+                            TvModeHelper.queueContinuationAfterExit()
+                            currentActivity.popCurrentPage()
+                            true
+                        }
                     }
                 } == true
                 if (!continuedTvMode) {
