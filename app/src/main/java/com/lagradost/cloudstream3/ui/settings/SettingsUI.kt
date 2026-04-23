@@ -65,10 +65,6 @@ class SettingsUI : BasePreferenceFragmentCompat() {
             true
         }
 
-        getPref(R.string.library_poster_size_key)?.setOnPreferenceChangeListener { _, newValue ->
-            true
-        }
-
         getPref(R.string.poster_ui_key)?.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.poster_ui_options)
             val keys = resources.getStringArray(R.array.poster_ui_options_values)
