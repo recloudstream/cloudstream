@@ -298,7 +298,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
                 TvType.CustomMedia -> R.string.custom_media_singluar
                 TvType.Audio -> R.string.audio_singluar
                 TvType.Podcast -> R.string.podcast_singluar
-                TvType.Video -> R.string.video_singluar
+                TvType.Video -> R.string.video_singular
             }
         ),
         yearText = txt(year?.toString()),
