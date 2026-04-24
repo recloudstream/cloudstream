@@ -271,7 +271,7 @@
     <string name="example_email">hello@world.com</string>
     <string name="disable">無効化</string>
     <string name="subtitles_outline">概要</string>
-    <string name="music_singlar">音楽</string>
+    <string name="music_singular">音楽</string>
     <string name="double_tap_to_pause_settings_des">中央で２回タップして一時停止</string>
     <string name="episode_action_play_in_format">%s で再生</string>
     <string name="switch_account">アカウントを切り替え</string>
@@ -297,7 +297,7 @@
     <string name="repo_copy_label">リポジトリ名とURL</string>
     <string name="toast_copied">コピーされました！</string>
     <string name="audio_book_singular">オーディオブック</string>
-    <string name="custom_media_singluar">メディア</string>
+    <string name="custom_media_singular">メディア</string>
     <string name="limit_title_rez">プレイヤー情報を表示</string>
     <string name="speed_setting_summary">プレイヤーに速度オプションを追加</string>
     <string name="downloads_delete_select">削除する項目を選択</string>
@@ -651,8 +651,8 @@
     <string name="no_plugins_updated_manually">更新されたプラグインはありません。</string>
     <string name="player_notification_channel_name">プレーヤー通知</string>
     <string name="player_notification_channel_description">バックグラウンドから再生を制御するためのプレーヤー通知</string>
-    <string name="audio_singluar">オーディオ</string>
-    <string name="podcast_singluar">ポッドキャスト</string>
+    <string name="audio_singular">オーディオ</string>
+    <string name="podcast_singular">ポッドキャスト</string>
     <string name="android_tv_interface_off_seek_settings">プレーヤー非表示時 - シーク量</string>
     <string name="encoding_error">エンコーディングエラー</string>
     <string name="unsupported_error">サポートされていないエラー</string>

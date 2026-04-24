@@ -599,11 +599,11 @@
     <string name="battery_dialog_title">Inaktivera batterioptimering</string>
     <string name="app_unrestricted_toast">Appens batterianvändning är redan inställd på obegränsad</string>
     <string name="app_info_intent_error">Det gick inte att öppna CloudStreams appinformation.</string>
-    <string name="music_singlar">Musik</string>
+    <string name="music_singular">Musik</string>
     <string name="reset_btn">Återställ</string>
     <string name="episode_upcoming_format" formatted="true">Kommer ut om %s</string>
     <string name="clipboard_unknown_error">Fel vid kopiering, kopiera logcat och kontakta appsupport.</string>
-    <string name="custom_media_singluar">Media</string>
+    <string name="custom_media_singular">Media</string>
     <string name="episode_action_cast_mirror">Cast mirror</string>
     <string name="next_season_episode_format" formatted="true">Säsong %1$d Avsnitt %2$d kommer att släppas om</string>
     <string name="player_settings_select_cast_device">Välj cast-enhet</string>
@@ -653,8 +653,8 @@
     <string name="backup_path_title">Säkerhetskopieringsmapp</string>
     <string name="confirm_before_exiting_desc">Visa dialogruta innan stängning av appen</string>
     <string name="software_decoding_desc">Mjukvaruavkodning tillåter spelaren att spela upp videofiler som inte stöds av din enhet, men kan orsaka ostadig uppspelning vid hög upplösning.</string>
-    <string name="audio_singluar">Ljud</string>
-    <string name="podcast_singluar">Podcast</string>
+    <string name="audio_singular">Ljud</string>
+    <string name="podcast_singular">Podcast</string>
     <string name="software_decoding">Mjukvaruavkodning</string>
     <string name="torrent_not_accepted">Starta om appen och acceptera popup-fönstret för Stream Torrent för att fortsätta.</string>
     <string name="torrent_preferred_media">Aktivera torrent i Inställningar/Leverantörer/Föredragen media</string>
