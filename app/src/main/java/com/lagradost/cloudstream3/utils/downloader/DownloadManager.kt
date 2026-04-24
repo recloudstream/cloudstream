@@ -1039,14 +1039,7 @@ object VideoDownloadManager {
                 startByte = stream.startAt,
                 headers = link.headers.appendAndDontOverride(
                     mapOf(
-                        "Accept-Encoding" to "identity",
-                        "accept" to "*/*",
                         "user-agent" to USER_AGENT,
-                        "sec-ch-ua" to "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\"",
-                        "sec-fetch-mode" to "navigate",
-                        "sec-fetch-dest" to "video",
-                        "sec-fetch-user" to "?1",
-                        "sec-ch-ua-mobile" to "?0",
                     )
                 )
             )
@@ -1303,8 +1296,6 @@ object VideoDownloadManager {
             val m3u8 = M3u8Helper.M3u8Stream(
                 link.url, link.quality, link.headers.appendAndDontOverride(
                     mapOf(
-                        "Accept-Encoding" to "identity",
-                        "accept" to "*/*",
                         "user-agent" to USER_AGENT,
                     ) + if (link.referer.isNotBlank()) mapOf("referer" to link.referer) else emptyMap()
                 )
