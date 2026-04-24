@@ -279,11 +279,11 @@
     <string name="live_singular">Transmetim live</string>
     <string name="nsfw_singular">NSFW</string>
     <string name="other_singular">Video</string>
-    <string name="music_singlar">Muzikë</string>
+    <string name="music_singular">Muzikë</string>
     <string name="audio_book_singular">Libër audio</string>
-    <string name="custom_media_singluar">Media</string>
-    <string name="audio_singluar">Audio</string>
-    <string name="podcast_singluar">Podkast</string>
+    <string name="custom_media_singular">Media</string>
+    <string name="audio_singular">Audio</string>
+    <string name="podcast_singular">Podkast</string>
     <string name="source_error">Gabim në burim</string>
     <string name="remote_error">Gabim në distancë</string>
     <string name="render_error">Gabim në renderer</string>

@@ -295,11 +295,11 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
                 TvType.Live -> R.string.live_singular
                 TvType.Others -> R.string.other_singular
                 TvType.NSFW -> R.string.nsfw_singular
-                TvType.Music -> R.string.music_singlar
+                TvType.Music -> R.string.music_singular
                 TvType.AudioBook -> R.string.audio_book_singular
-                TvType.CustomMedia -> R.string.custom_media_singluar
-                TvType.Audio -> R.string.audio_singluar
-                TvType.Podcast -> R.string.podcast_singluar
+                TvType.CustomMedia -> R.string.custom_media_singular
+                TvType.Audio -> R.string.audio_singular
+                TvType.Podcast -> R.string.podcast_singular
             }
         ),
         yearText = txt(year?.toString()),

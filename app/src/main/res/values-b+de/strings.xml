@@ -596,9 +596,9 @@
     <string name="repo_copy_label">Repository Name und URL</string>
     <string name="ok">OK</string>
     <string name="battery_dialog_title">Akku-Optimierung deaktivieren</string>
-    <string name="music_singlar">Musik</string>
+    <string name="music_singular">Musik</string>
     <string name="audio_book_singular">Hörbuch</string>
-    <string name="custom_media_singluar">Medien</string>
+    <string name="custom_media_singular">Medien</string>
     <string name="reset_btn">Zurücksetzen</string>
     <string name="app_unrestricted_toast">Akkuverbrauch der App ist bereits auf unbeschränkt eingestellt</string>
     <string name="app_info_intent_error">CloudStreams App-Info kann nicht geöffnet werden.</string>
@@ -655,7 +655,7 @@
     <string name="dont_show">Nicht anzeigen</string>
     <string name="subs_edge_size">Kantengröße</string>
     <string name="torrent_info">Dieses Video ist ein Torrent, das bedeutet, dass Ihre Videoaktivitäten nachverfolgt werden könen.\nStellen Sie sicher, dass Sie die Grundlagen von Torrents verstehen, bevor Sie fortfahren.</string>
-    <string name="audio_singluar">Ton</string>
+    <string name="audio_singular">Ton</string>
     <string name="sort_episodes_number_desc">Episode (Absteigend)</string>
     <string name="sort_episodes_rating_high_low">Bewertung (Höchste)</string>
     <string name="sort_episodes_rating_low_high">Bewertung (Niedrigste)</string>
@@ -669,7 +669,7 @@
     <string name="update_plugins">Plugins aktualisieren</string>
     <string name="plugins_updated_manually">%d Plugin(s) erfolgreich aktualisiert!</string>
     <string name="update_plugins_manually">Plugins manuell aktualisieren</string>
-    <string name="podcast_singluar">Podcast</string>
+    <string name="podcast_singular">Podcast</string>
     <string name="unsupported_error">Nicht unterstützter Fehler</string>
     <string name="encoding_error">Kodierungsfehler</string>
     <string name="sort_button_episode">Ep %s</string>

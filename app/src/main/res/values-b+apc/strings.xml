@@ -603,9 +603,9 @@
     <string name="battery_dialog_title">وقف اپتميزايشن بطارية جهازك</string>
     <string name="app_unrestricted_toast">بطارية الآپ اصلًا محطوطة ع «غير مقيد» \"Unrestricted\"</string>
     <string name="app_info_intent_error">م قدرنا نفتح معلومات الآپ تبع \"كلود ستريم\".</string>
-    <string name="music_singlar">موسيقى</string>
+    <string name="music_singular">موسيقى</string>
     <string name="audio_book_singular">أوديو بوك</string>
-    <string name="custom_media_singluar">الميديا</string>
+    <string name="custom_media_singular">الميديا</string>
     <string name="battery_dialog_message">ت تضمن عدم انقطاع التنزيلات والنوتيفيكايشنات للبرامج التلفزيونية يللي مشتركلها، الآپ \"كلود ستريم\" بده إذن ليمشي ب الباكگراوند. ازا كبست أوكي، رح يفتح شباك إذن زغير، كبوس «سماح».\n\nملاحظة إنو هيدا الإذن ما بيعني إنو \"كلود ستريم 3\" رح تستنزف البطارية. ومش رح يشتغل الآپ بال باكگراوند إلّا عند الضرورة، متل لمّا تتلقا نوتيفيكايشن أو تنزل ڤيديو من الريپو الاصلي.</string>
     <string name="reset_btn">ريسات</string>
     <string name="episode_upcoming_format" formatted="true">رح ينزل ب %s</string>
@@ -660,8 +660,8 @@
     <string name="custom">حدد غير محل</string>
     <string name="torrent_info">هيدا الڤيديو تورينت. هيدا بيعني إنه فيه ينعمله تراك، يعني بينعرف شو عم تحضر.\nإزا م بتعرف شو التورينت، م تستعمله.</string>
     <string name="subs_edge_size">حجم الحفّة</string>
-    <string name="podcast_singluar">پودكاست</string>
-    <string name="audio_singluar">صوت</string>
+    <string name="podcast_singular">پودكاست</string>
+    <string name="audio_singular">صوت</string>
     <string name="unsupported_error">أرور، مش مدعوم</string>
     <string name="encoding_error">أرور بال إنكودينگ</string>
     <string name="player_load_one_subtitle_online">أفّي اللودينگ تلقائيًا</string>
