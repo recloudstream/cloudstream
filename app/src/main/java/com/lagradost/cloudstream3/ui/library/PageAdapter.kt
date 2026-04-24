@@ -32,10 +32,10 @@ class PageAdapter(
     private val coverHeight: Int get() = (resView.itemWidth / 0.68).roundToInt()
 
     companion object {
-        fun updatePosterSize(resView: AutofitRecyclerView, context: Context, value: Int? = null) {
+        fun updatePosterSize(resView: AutofitRecyclerView?, context: Context, value: Int? = null) {
             val spanCount = value ?: PreferenceManager.getDefaultSharedPreferences(context)
                 .getInt(context.getString(R.string.library_poster_size_key), 3)
-            resView.spanCount = spanCount
+            resView?.spanCount = spanCount
         }
     }
 
