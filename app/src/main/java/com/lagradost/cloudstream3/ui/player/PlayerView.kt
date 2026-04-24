@@ -36,6 +36,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.ui.AspectRatioFrameLayout
+import androidx.media3.ui.DefaultTimeBar
 import androidx.media3.ui.SubtitleView
 import androidx.media3.ui.TimeBar
 import androidx.preference.PreferenceManager
@@ -231,34 +232,34 @@ class PlayerView @JvmOverloads constructor(
      * remain null, all usage is null-safe.
      */
     fun bindViews(root: View) {
-        exoDuration                  = root.findViewById(androidx.media3.ui.R.id.exo_duration)
-        exoFfwdText                  = root.findViewById(R.id.exo_ffwd_text)
-        exoPlayerView                = root.findViewById(R.id.player_view)
-        exoPosition                  = root.findViewById(R.id.exo_position)
-        exoRewText                   = root.findViewById(R.id.exo_rew_text)
-        piphide                      = root.findViewById(R.id.piphide)
-        playerBuffering              = root.findViewById(R.id.player_buffering)
-        playerCenterMenu             = root.findViewById(R.id.player_center_menu)
-        playerFfwd                   = root.findViewById(R.id.player_ffwd)
-        playerFfwdHolder             = root.findViewById(R.id.player_ffwd_holder)
-        playerHolder                 = root.findViewById(R.id.player_holder)
-        playerPausePlay              = root.findViewById(R.id.player_pause_play)
-        playerPausePlayHolderHolder  = root.findViewById(R.id.player_pause_play_holder_holder)
-        playerProgressbarLeftHolder  = root.findViewById(R.id.player_progressbar_left_holder)
-        playerProgressbarLeftIcon    = root.findViewById(R.id.player_progressbar_left_icon)
-        playerProgressbarLeftLevel1  = root.findViewById(R.id.player_progressbar_left_level1)
-        playerProgressbarLeftLevel2  = root.findViewById(R.id.player_progressbar_left_level2)
+        exoDuration = root.findViewById(androidx.media3.ui.R.id.exo_duration)
+        exoFfwdText = root.findViewById(R.id.exo_ffwd_text)
+        exoPlayerView = root.findViewById(R.id.player_view)
+        exoPosition = root.findViewById(R.id.exo_position)
+        exoRewText = root.findViewById(R.id.exo_rew_text)
+        piphide = root.findViewById(R.id.piphide)
+        playerBuffering = root.findViewById(R.id.player_buffering)
+        playerCenterMenu = root.findViewById(R.id.player_center_menu)
+        playerFfwd = root.findViewById(R.id.player_ffwd)
+        playerFfwdHolder = root.findViewById(R.id.player_ffwd_holder)
+        playerHolde = root.findViewById(R.id.player_holder)
+        playerPausePlay = root.findViewById(R.id.player_pause_play)
+        playerPausePlayHolderHolder = root.findViewById(R.id.player_pause_play_holder_holder)
+        playerProgressbarLeftHolder = root.findViewById(R.id.player_progressbar_left_holder)
+        playerProgressbarLeftIcon = root.findViewById(R.id.player_progressbar_left_icon)
+        playerProgressbarLeftLevel1 = root.findViewById(R.id.player_progressbar_left_level1)
+        playerProgressbarLeftLevel2 = root.findViewById(R.id.player_progressbar_left_level2)
         playerProgressbarRightHolder = root.findViewById(R.id.player_progressbar_right_holder)
-        playerProgressbarRightIcon   = root.findViewById(R.id.player_progressbar_right_icon)
+        playerProgressbarRightIcon = root.findViewById(R.id.player_progressbar_right_icon)
         playerProgressbarRightLevel1 = root.findViewById(R.id.player_progressbar_right_level1)
         playerProgressbarRightLevel2 = root.findViewById(R.id.player_progressbar_right_level2)
-        playerRew                    = root.findViewById(R.id.player_rew)
-        playerRewHolder              = root.findViewById(R.id.player_rew_holder)
-        playerSpeedupButton          = root.findViewById(R.id.player_speedup_button)
-        playerVideoHolder            = root.findViewById(R.id.player_video_holder)
-        subtitleHolder               = root.findViewById(R.id.subtitle_holder)
-        timeLeft                     = root.findViewById(R.id.time_left)
-        timeLive                     = root.findViewById(R.id.time_live)
+        playerRew = root.findViewById(R.id.player_rew)
+        playerRewHolder = root.findViewById(R.id.player_rew_holder)
+        playerSpeedupButton = root.findViewById(R.id.player_speedup_button)
+        playerVideoHolder = root.findViewById(R.id.player_video_holder)
+        subtitleHolder = root.findViewById(R.id.subtitle_holder)
+        timeLeft = root.findViewById(R.id.time_left)
+        timeLive = root.findViewById(R.id.time_live)
     }
 
     /**
@@ -281,6 +282,7 @@ class PlayerView @JvmOverloads constructor(
         )
 
         if (player is CS3IPlayer) {
+            // Preview bar
             val progressBar: PreviewTimeBar? = exoPlayerView?.findViewById(R.id.exo_progress)
             exoProgress = progressBar as? LivePreviewTimeBar
             val previewImageView: ImageView? = exoPlayerView?.findViewById(R.id.previewImageView)
@@ -296,6 +298,7 @@ class PlayerView @JvmOverloads constructor(
                         progressBar.isPreviewEnabled = hasPreview
                         resume = cs3.getIsPlaying()
                         if (resume) cs3.handleEvent(CSPlayerEvent.Pause, PlayerEventSource.Player)
+                        // No clashing UI
                         if (hasPreview) subView?.isVisible = false
                     }
 
@@ -304,7 +307,9 @@ class PlayerView @JvmOverloads constructor(
                     override fun onScrubStop(previewBar: PreviewBar?) {
                         val cs3 = player as? CS3IPlayer ?: return
                         if (resume) cs3.handleEvent(CSPlayerEvent.Play, PlayerEventSource.Player)
+                        // Delay to prevent the small flicker of subtitle before seeking.
                         subView?.postDelayed({
+                            // If we are not scrubbing then show subtitles again.
                             if (previewBar == null || !previewBar.isPreviewEnabled || !previewBar.isShowingPreview) {
                                 subView?.isVisible = true
                             }
@@ -327,7 +332,11 @@ class PlayerView @JvmOverloads constructor(
                     ImageParams.new16by9(screenWidth)
             }
 
-            exoPlayerView?.findViewById<androidx.media3.ui.DefaultTimeBar>(R.id.exo_progress)
+            /**
+             * This might seam a bit fucky and that is because it is, the seek event is captured twice, once by the player
+             * and once by the UI even if it should only be registered once by the UI.
+             */
+            exoPlayerView?.findViewById<DefaultTimeBar>(R.id.exo_progress)
                 ?.addListener(object : TimeBar.OnScrubListener {
                     override fun onScrubStart(timeBar: TimeBar, position: Long) = Unit
                     override fun onScrubMove(timeBar: TimeBar, position: Long) = Unit
@@ -354,10 +363,11 @@ class PlayerView @JvmOverloads constructor(
                 autoPlayerRotateEnabled = sm.getBoolean(
                     context.getString(R.string.auto_rotate_video_key), true
                 )
-            } catch (_: Exception) { }
+            } catch (_: Exception) {
+            }
 
             val seekSecs = (seekTime / 1000).toInt()
-            exoRewText?.text  = context.getString(R.string.rew_text_regular_format).format(seekSecs)
+            exoRewText?.text = context.getString(R.string.rew_text_regular_format).format(seekSecs)
             exoFfwdText?.text = context.getString(R.string.ffw_text_regular_format).format(seekSecs)
 
             playerPausePlay?.setOnClickListener {
@@ -428,6 +438,7 @@ class PlayerView @JvmOverloads constructor(
         val activity = context as? Activity
         gestureHelper.resetZoomToDefault()
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
+        // Simply resets brightness and notch settings that might have been overridden.
         val lp = activity?.window?.attributes
         lp?.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -481,6 +492,7 @@ class PlayerView @JvmOverloads constructor(
         try {
             isInPIPMode = isInPictureInPictureMode
             if (isInPictureInPictureMode) {
+                // Hide the full-screen UI (controls, etc.) while in picture-in-picture mode.
                 piphide?.isVisible = false
                 pipReceiver = object : BroadcastReceiver() {
                     override fun onReceive(context: Context, intent: Intent) {
@@ -502,9 +514,13 @@ class PlayerView @JvmOverloads constructor(
                 val status = if (isPlaying) CSPlayerLoading.IsPlaying else CSPlayerLoading.IsPaused
                 updateIsPlaying(status, status)
             } else {
+                // Restore the full-screen UI.
                 piphide?.isVisible = true
                 callbacks?.exitedPipMode()
-                pipReceiver?.let { safe { activity?.unregisterReceiver(it) } }
+                pipReceiver?.let {
+                    // Prevents java.lang.IllegalArgumentException: Receiver not registered
+                    safe { activity?.unregisterReceiver(it) }
+                }
                 activity?.hideSystemUI()
                 hideKeyboard(this)
             }
@@ -548,6 +564,7 @@ class PlayerView @JvmOverloads constructor(
                 }
                 if (drawable is AnimatedVectorDrawable) { drawable.start(); startedAnimation = true }
                 if (drawable is AnimatedVectorDrawableCompat) { drawable.start(); startedAnimation = true }
+                // Somehow the phone is wacked
                 if (!startedAnimation) {
                     playerPausePlay?.setImageResource(
                         if (isPlayingRightNow) R.drawable.netflix_pause else R.drawable.netflix_play
@@ -578,9 +595,11 @@ class PlayerView @JvmOverloads constructor(
         if (player is ExoPlayer) {
             mMediaSession?.release()
             mMediaSession = MediaSession.Builder(context, player)
+                // Ensure unique ID for concurrent players.
                 .setId(System.currentTimeMillis().toString())
                 .build()
 
+            // Necessary for multiple combined videos.
             @Suppress("DEPRECATION")
             exoPlayerView?.setShowMultiWindowTimeBar(true)
             exoPlayerView?.player = player
@@ -591,6 +610,7 @@ class PlayerView @JvmOverloads constructor(
 
     private fun onSubStyleChanged(style: SaveCaptionStyle) {
         player.updateSubtitleStyle(style)
+        // Forcefully update the subtitle encoding in case the edge size is changed.
         player.seekTime(-1)
     }
 
@@ -654,10 +674,17 @@ class PlayerView @JvmOverloads constructor(
             is InvalidFileException ->
                 showErrorToast("${context.getString(R.string.source_error)}\n${exception.message}", gotoNext = true)
 
-            is SocketTimeoutException ->
+            is SocketTimeoutException -> {
+                /**
+                 * Ensures this is run on the UI thread to prevent issues
+                 * caused by SocketTimeoutException in torrents. Running
+                 * on another thread can break player interactions or
+                 * prevent switching to the next source.
+                 */
                 (context as? Activity)?.runOnUiThread {
                     showErrorToast("${context.getString(R.string.remote_error)}\n${exception.message}", gotoNext = true)
                 }
+            }
 
             is ErrorLoadingException ->
                 exception.message?.let { showErrorToast(it, gotoNext = true) }
@@ -686,7 +713,7 @@ class PlayerView @JvmOverloads constructor(
         DataStoreHelper.resizeMode = resize.ordinal
         val type = when (resize) {
             PlayerResize.Fill -> AspectRatioFrameLayout.RESIZE_MODE_FILL
-            PlayerResize.Fit  -> AspectRatioFrameLayout.RESIZE_MODE_FIT
+            PlayerResize.Fit -> AspectRatioFrameLayout.RESIZE_MODE_FIT
             PlayerResize.Zoom -> AspectRatioFrameLayout.RESIZE_MODE_ZOOM
         }
         exoPlayerView?.resizeMode = type
@@ -710,11 +737,18 @@ class PlayerView @JvmOverloads constructor(
 
     /** Event dispatch */
 
+    /**
+     * This receives the events from the player, if you want to append functionality
+     * you do it here, do note that this only receives events for UI changes,
+     * and returning early WON'T stop it from changing in e.g. the player time
+     * or pause status.
+     */
     fun mainCallback(event: PlayerEvent) {
+        // We don't want to spam DownloadEvent.
         if (event !is DownloadEvent) Log.i(TAG, "Handle event: $event")
         when (event) {
-            is DownloadEvent              -> callbacks?.onDownload(event)
-            is ResizedEvent               -> {
+            is DownloadEvent -> callbacks?.onDownload(event)
+            is ResizedEvent -> {
                 // Skip 0x0 dimensions that the player emits when going to STATE_IDLE
                 // to avoid incorrectly resetting the auto-detected orientation.
                 if (event.width > 0 && event.height > 0) {
@@ -723,13 +757,13 @@ class PlayerView @JvmOverloads constructor(
                 }
                 callbacks?.playerDimensionsLoaded(event.width, event.height)
             }
-            is PlayerAttachedEvent        -> playerUpdated(event.player)
-            is SubtitlesUpdatedEvent      -> callbacks?.subtitlesChanged()
-            is TimestampSkippedEvent      -> callbacks?.onTimestampSkipped(event.timestamp)
-            is TimestampInvokedEvent      -> callbacks?.onTimestamp(event.timestamp)
-            is TracksChangedEvent         -> callbacks?.onTracksInfoChanged()
+            is PlayerAttachedEvent -> playerUpdated(event.player)
+            is SubtitlesUpdatedEvent -> callbacks?.subtitlesChanged()
+            is TimestampSkippedEvent -> callbacks?.onTimestampSkipped(event.timestamp)
+            is TimestampInvokedEvent -> callbacks?.onTimestamp(event.timestamp)
+            is TracksChangedEvent -> callbacks?.onTracksInfoChanged()
             is EmbeddedSubtitlesFetchedEvent -> callbacks?.embeddedSubtitlesFetched(event.tracks)
-            is ErrorEvent                 -> {
+            is ErrorEvent -> {
                 val cb = callbacks
                 if (cb != null) cb.playerError(event.error)
                 else playerError(event.error)
@@ -737,7 +771,7 @@ class PlayerView @JvmOverloads constructor(
             is RequestAudioFocusEvent -> requestAudioFocus()
             is EpisodeSeekEvent -> when (event.offset) {
                 -1 -> callbacks?.prevEpisode()
-                1  -> callbacks?.nextEpisode()
+                1 -> callbacks?.nextEpisode()
             }
             is StatusEvent -> {
                 updateIsPlaying(wasPlaying = event.wasPlaying, isPlaying = event.isPlaying)
@@ -749,6 +783,7 @@ class PlayerView @JvmOverloads constructor(
                 duration = event.durationMs
             )
             is VideoEndedEvent -> {
+                // Only play next episode if autoplay is on (default).
                 val ctx = context
                 if (PreferenceManager.getDefaultSharedPreferences(ctx)
                         ?.getBoolean(ctx.getString(R.string.autoplay_next_key), true) == true
@@ -757,7 +792,7 @@ class PlayerView @JvmOverloads constructor(
                 }
             }
             is PauseEvent -> Unit
-            is PlayEvent  -> Unit
+            is PlayEvent -> Unit
         }
     }
 

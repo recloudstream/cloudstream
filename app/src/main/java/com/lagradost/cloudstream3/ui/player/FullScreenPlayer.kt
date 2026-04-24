@@ -438,6 +438,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                     lockOrientation(this)
                 } else {
                     if (ignoreDynamicOrientation || rotatedManually) {
+                        // Restore when lock is disabled.
                         restoreOrientationWithSensor(this)
                     } else {
                         this.requestedOrientation = playerHostView?.dynamicOrientation() ?: return@apply

@@ -77,16 +77,16 @@ abstract class AbstractPlayerFragment<T : ViewBinding>(
     // open so subclasses can override only what they need.  The ones below throw
     // to make it obvious when an implementation is missing.
 
-    override fun nextEpisode() { throw NotImplementedError() }
-    override fun prevEpisode() { throw NotImplementedError() }
-    override fun playerPositionChanged(position: Long, duration: Long) { throw NotImplementedError() }
-    override fun playerDimensionsLoaded(width: Int, height: Int) { throw NotImplementedError() }
-    override fun subtitlesChanged() { throw NotImplementedError() }
-    override fun embeddedSubtitlesFetched(subtitles: List<SubtitleData>) { throw NotImplementedError() }
-    override fun onTracksInfoChanged() { throw NotImplementedError() }
-    override fun exitedPipMode() { throw NotImplementedError() }
-    override fun hasNextMirror(): Boolean { throw NotImplementedError() }
-    override fun nextMirror() { throw NotImplementedError() }
+    override fun nextEpisode() = throw NotImplementedError()
+    override fun prevEpisode() = throw NotImplementedError()
+    override fun playerPositionChanged(position: Long, duration: Long) = throw NotImplementedError()
+    override fun playerDimensionsLoaded(width: Int, height: Int) = throw NotImplementedError()
+    override fun subtitlesChanged() = throw NotImplementedError()
+    override fun embeddedSubtitlesFetched(subtitles: List<SubtitleData>) = throw NotImplementedError()
+    override fun onTracksInfoChanged() = throw NotImplementedError()
+    override fun exitedPipMode() = throw NotImplementedError()
+    override fun hasNextMirror(): Boolean = throw NotImplementedError()
+    override fun nextMirror() = throw NotImplementedError()
 
     /** Delegates to [PlayerView.playerError] by default; override to customize. */
     override fun playerError(exception: Throwable) {

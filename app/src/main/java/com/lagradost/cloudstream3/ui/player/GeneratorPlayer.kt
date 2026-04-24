@@ -1974,6 +1974,11 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+    /**
+     * This is used instead of layout-television to follow the
+     * settings and some TV devices are not classified as TV
+     * for some reason.
+     */
     override fun pickLayout(): Int =
         if (isLayout(TV or EMULATOR)) R.layout.fragment_player_tv else R.layout.fragment_player
 
@@ -2138,10 +2143,10 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         context?.let { ctx ->
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
-            showName        = settingsManager.getBoolean(ctx.getString(R.string.show_name_key), true)
-            showResolution  = settingsManager.getBoolean(ctx.getString(R.string.show_resolution_key), true)
-            showMediaInfo   = settingsManager.getBoolean(ctx.getString(R.string.show_media_info_key), false)
-            limitTitle      = settingsManager.getInt(ctx.getString(R.string.prefer_title_limit_key), 0)
+            showName = settingsManager.getBoolean(ctx.getString(R.string.show_name_key), true)
+            showResolution = settingsManager.getBoolean(ctx.getString(R.string.show_resolution_key), true)
+            showMediaInfo = settingsManager.getBoolean(ctx.getString(R.string.show_media_info_key), false)
+            limitTitle = settingsManager.getInt(ctx.getString(R.string.prefer_title_limit_key), 0)
             updateForcedEncoding(ctx)
             filterSubByLang =
                 settingsManager.getBoolean(getString(R.string.filter_sub_lang_key), false)
