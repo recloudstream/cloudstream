@@ -242,7 +242,7 @@ class PlayerView @JvmOverloads constructor(
         playerCenterMenu = root.findViewById(R.id.player_center_menu)
         playerFfwd = root.findViewById(R.id.player_ffwd)
         playerFfwdHolder = root.findViewById(R.id.player_ffwd_holder)
-        playerHolde = root.findViewById(R.id.player_holder)
+        playerHolder = root.findViewById(R.id.player_holder)
         playerPausePlay = root.findViewById(R.id.player_pause_play)
         playerPausePlayHolderHolder = root.findViewById(R.id.player_pause_play_holder_holder)
         playerProgressbarLeftHolder = root.findViewById(R.id.player_progressbar_left_holder)
