@@ -113,12 +113,14 @@ import com.lagradost.cloudstream3.utils.newExtractorLink
 import com.lagradost.cloudstream3.utils.txt
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 
 /** This starts at 1 */
@@ -293,11 +295,11 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
                 TvType.Live -> R.string.live_singular
                 TvType.Others -> R.string.other_singular
                 TvType.NSFW -> R.string.nsfw_singular
-                TvType.Music -> R.string.music_singlar
+                TvType.Music -> R.string.music_singular
                 TvType.AudioBook -> R.string.audio_book_singular
-                TvType.CustomMedia -> R.string.custom_media_singluar
-                TvType.Audio -> R.string.audio_singluar
-                TvType.Podcast -> R.string.podcast_singluar
+                TvType.CustomMedia -> R.string.custom_media_singular
+                TvType.Audio -> R.string.audio_singular
+                TvType.Podcast -> R.string.podcast_singular
                 TvType.Video -> R.string.video_singular
             }
         ),
@@ -453,7 +455,7 @@ class ResultViewModel2 : ViewModel() {
     private var currentShowFillers: Boolean = false
     var currentRepo: APIRepository? = null
     private var currentId: Int? = null
-    private var fillers: Map<Int, Boolean> = emptyMap()
+    private var fillers: HashSet<Int> = hashSetOf()
     private var generator: IGenerator? = null
     private var preferDubStatus: DubStatus? = null
     private var preferStartEpisode: Int? = null
@@ -1807,11 +1809,11 @@ class ResultViewModel2 : ViewModel() {
     }
 
 
-    private suspend fun updateFillers(name: String) {
+    private suspend fun updateFillers(data : LoadResponse) {
         fillers =
-            ioWorkSafe {
-                FillerEpisodeCheck.getFillerEpisodes(name)
-            } ?: emptyMap()
+            withContext(Dispatchers.IO) {
+                safe { FillerEpisodeCheck.getFillerEpisodes(data) }
+            } ?: hashSetOf()
     }
 
     fun changeDubStatus(status: DubStatus) {
@@ -2148,8 +2150,8 @@ class ResultViewModel2 : ViewModel() {
     ) {
         _episodes.postValue(Resource.Loading())
 
-        if (updateFillers && loadResponse is AnimeLoadResponse) {
-            updateFillers(loadResponse.name)
+        if (updateFillers) {
+            updateFillers(loadResponse)
         }
 
         val allEpisodes = when (loadResponse) {
@@ -2190,7 +2192,7 @@ class ResultViewModel2 : ViewModel() {
                                     index,
                                     i.score,
                                     i.description,
-                                    fillers.getOrDefault(episode, false),
+                                    fillers.contains(episode),
                                     loadResponse.type,
                                     mainId,
                                     totalIndex,
