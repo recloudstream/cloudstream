@@ -459,12 +459,12 @@ class CS3IPlayer : IPlayer {
         )
     }
 
-    private var currentAudioTrack: AudioTrack? = null
     override fun getVideoTracks(): CurrentTracks {
         val allTrackGroups = exoPlayer?.currentTracks?.groups ?: emptyList()
         val videoTracks = allTrackGroups.filter { it.type == TRACK_TYPE_VIDEO }
             .getFormats()
             .map { it.first.toVideoTrack() }
+        var currentAudioTrack: AudioTrack? = null
         val audioTracks = allTrackGroups.filter { it.type == TRACK_TYPE_AUDIO }
             .flatMap { group ->
                 group.getFormats().map { (format, formatIndex) ->

@@ -52,7 +52,10 @@ class ResultTrailerPlayer : ResultFragmentPhone() {
 
     override fun isUIShowing(): Boolean = isShowing
 
-    override fun onAutoHideUI() = uiReset()
+    override fun onAutoHideUI() {
+        if (player.getIsPlaying()) uiReset()
+    }
+
     override fun onHidePlayerUI() = uiReset()
 
     override fun nextEpisode() {}

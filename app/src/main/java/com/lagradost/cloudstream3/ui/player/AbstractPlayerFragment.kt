@@ -52,18 +52,13 @@ abstract class AbstractPlayerFragment<T : ViewBinding>(
         get() = playerHostView?.subView
         set(value) { playerHostView?.subView = value }
 
-    protected open var hasPipModeSupport: Boolean
-        get() = playerHostView?.hasPipModeSupport ?: true
-        set(value) { playerHostView?.hasPipModeSupport = value }
-
     var playerPausePlay: ImageView?
         get() = playerHostView?.playerPausePlay
         set(value) { playerHostView?.playerPausePlay = value }
 
     /** The underlying [androidx.media3.ui.PlayerView] widget (named to avoid conflict with our [PlayerView]). */
-    var playerView: androidx.media3.ui.PlayerView?
-        get() = playerHostView?.exoPlayerView
-        set(value) { playerHostView?.exoPlayerView = value }
+    val playerView: androidx.media3.ui.PlayerView? =
+        playerHostView?.exoPlayerView
 
     var currentPlayerStatus: CSPlayerLoading
         get() = playerHostView?.currentPlayerStatus ?: CSPlayerLoading.IsBuffering
@@ -129,7 +124,6 @@ abstract class AbstractPlayerFragment<T : ViewBinding>(
         val ctx = context ?: return
         playerHostView = PlayerView(ctx)
         playerHostView?.player = _player
-        playerHostView?.hasPipModeSupport = hasPipModeSupport
         playerHostView?.callbacks = this
         playerHostView?.bindViews(binding.root)
         playerHostView?.initialize()
