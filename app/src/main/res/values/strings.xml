@@ -293,6 +293,7 @@
     <string name="custom_media_singular">Media</string>
     <string name="audio_singular">Audio</string>
     <string name="podcast_singular">Podcast</string>
+    <string name="video_singular">Video</string>
     <string name="source_error">Source error</string>
     <string name="remote_error">Remote error</string>
     <string name="render_error">Renderer error</string>
