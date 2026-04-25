@@ -48,17 +48,11 @@ abstract class AbstractPlayerFragment<T : ViewBinding>(
             playerHostView?.player = value
         }
 
-    var subView: SubtitleView?
-        get() = playerHostView?.subView
-        set(value) { playerHostView?.subView = value }
-
-    var playerPausePlay: ImageView?
-        get() = playerHostView?.playerPausePlay
-        set(value) { playerHostView?.playerPausePlay = value }
+    val subView: SubtitleView? = playerHostView?.subView
+    val playerPausePlay: ImageView? = playerHostView?.playerPausePlay
 
     /** The underlying [androidx.media3.ui.PlayerView] widget (named to avoid conflict with our [PlayerView]). */
-    val playerView: androidx.media3.ui.PlayerView? =
-        playerHostView?.exoPlayerView
+    val playerView: androidx.media3.ui.PlayerView? = playerHostView?.exoPlayerView
 
     var currentPlayerStatus: CSPlayerLoading
         get() = playerHostView?.currentPlayerStatus ?: CSPlayerLoading.IsBuffering
