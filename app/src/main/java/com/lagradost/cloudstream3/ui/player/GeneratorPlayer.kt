@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
+import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
 import android.text.Spanned
@@ -79,6 +80,7 @@ import com.lagradost.cloudstream3.ui.player.CS3IPlayer.Companion.preferredAudioT
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.updateForcedEncoding
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
 import com.lagradost.cloudstream3.ui.player.source_priority.LinkSource
+import com.lagradost.cloudstream3.ui.player.source_priority.ProfileSettings
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper.getLinkPriority
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
@@ -130,6 +132,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.io.Serializable
+import java.lang.ref.WeakReference
 import java.util.Calendar
 
 @OptIn(UnstableApi::class)
@@ -182,6 +185,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         isActive = false
         binding?.overlayLoadingSkipButton?.isVisible = false
         binding?.playerLoadingOverlay?.isVisible = true
+        erroredLinks.clear()
     }
 
     private fun setSubtitles(subtitle: SubtitleData?, userInitiated: Boolean): Boolean {
@@ -548,10 +552,32 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
-    private fun sortLinks(qualityProfile: Int): List<Pair<ExtractorLink?, ExtractorUri?>> {
-        return currentLinks.sortedBy {
+    class DisplayLink(
+        val link: Pair<ExtractorLink?, ExtractorUri?>,
+        // If the link should be displayed and used by the player
+        val shouldUseLink: Boolean,
+        val priority: Int
+    )
+
+    fun Pair<ExtractorLink?, ExtractorUri?>.toDisplayLink(hideNegativeSources: Boolean, hideErrorSources: Boolean): DisplayLink {
+        val currentProfile = currentQualityProfile
+
+        val priority = getLinkPriority(currentProfile, this.first)
+        val shouldHideLink = (hideNegativeSources && priority < 0) || (hideErrorSources && hasLinkErrored(this))
+        val displayLink = DisplayLink(this, !shouldHideLink, priority)
+
+        return displayLink
+    }
+
+    private fun sortLinks(qualityProfile: Int): List<DisplayLink> {
+        val hideNegativeSources = QualityDataHelper.getProfileSetting(qualityProfile, ProfileSettings.HideNegativeSources)
+        val hideErrorSources = QualityDataHelper.getProfileSetting(qualityProfile, ProfileSettings.HideErrorSources)
+
+        return currentLinks.map {
+            it.toDisplayLink(hideNegativeSources, hideErrorSources)
+        }.sortedBy {
             // negative because we want to sort highest quality first
-            -getLinkPriority(qualityProfile, it.first)
+            -it.priority
         }
     }
 
@@ -1112,21 +1138,32 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 var sourceIndex = 0
                 var startSource = 0
-                var sortedUrls = emptyList<Pair<ExtractorLink?, ExtractorUri?>>()
+                // Filtered and sorted links
+                var sortedLinks = emptyList<DisplayLink>()
+                // Unfiltered and sorted links
+                var fullSortedLinks = emptyList<DisplayLink>()
+
+                var currentHiddenFooter: View? = null
 
                 fun refreshLinks(qualityProfile: Int) {
-                    sortedUrls = sortLinks(qualityProfile)
-                    if (sortedUrls.isEmpty()) {
+                    val currentLinkUsed = currentSelectedLink
+                    // Always display current link
+                    fullSortedLinks = sortLinks(qualityProfile)
+                    sortedLinks =
+                        fullSortedLinks.filter { it.shouldUseLink || it.link == currentLinkUsed }
+
+                    if (sortedLinks.isEmpty()) {
                         sourceDialog.findViewById<LinearLayout>(R.id.sort_sources_holder)?.isGone =
                             true
                     } else {
-                        startSource = sortedUrls.indexOf(currentSelectedLink)
+                        startSource = sortedLinks.indexOfFirst { it.link == currentLinkUsed }
                         sourceIndex = startSource
 
                         val sourcesArrayAdapter =
                             ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
 
-                        sourcesArrayAdapter.addAll(sortedUrls.map { (link, uri) ->
+                        sourcesArrayAdapter.addAll(sortedLinks.map { displayLink ->
+                            val (link, uri) = displayLink.link
                             val name = link?.name ?: uri?.name ?: "NULL"
                             "$name ${Qualities.getStringByInt(link?.quality)}"
                         })
@@ -1142,13 +1179,32 @@ class GeneratorPlayer : FullScreenPlayer() {
                         }
 
                         providerList.setOnItemLongClickListener { _, _, position, _ ->
-                            sortedUrls.getOrNull(position)?.first?.url?.let {
+                            sortedLinks.getOrNull(position)?.link?.first?.url?.let {
                                 clipboardHelper(
                                     txt(R.string.video_source),
                                     it
                                 )
                             }
                             true
+                        }
+
+                        val hiddenLinks = fullSortedLinks.size - sortedLinks.size
+                        providerList.removeFooterView(currentHiddenFooter)
+
+                        if (hiddenLinks > 0) {
+                            val hiddenLinksFooter: TextView = layoutInflater.inflate(
+                                R.layout.sort_bottom_footer_add_choice, null
+                            ) as TextView
+
+                            providerList.addFooterView(hiddenLinksFooter, null, false)
+                            currentHiddenFooter = hiddenLinksFooter
+
+                            val hiddenLinksText =
+                                ctx.resources.getQuantityString(R.plurals.links_hidden, hiddenLinks)
+                                    .format(hiddenLinks)
+                            hiddenLinksFooter.text = hiddenLinksText
+                            hiddenLinksFooter.setCompoundDrawables(null, null, null, null)
+                            hiddenLinksFooter.setTypeface(null, Typeface.ITALIC)
                         }
                     }
                 }
@@ -1288,7 +1344,13 @@ class GeneratorPlayer : FullScreenPlayer() {
                     QualityProfileDialog(
                         activity,
                         R.style.DialogFullscreenPlayer,
-                        currentLinks.mapNotNull { it.first?.let { extractorLink -> LinkSource(extractorLink) } },
+                        currentLinks.mapNotNull {
+                            it.first?.let { extractorLink ->
+                                LinkSource(
+                                    extractorLink
+                                )
+                            }
+                        },
                         currentQualityProfile
                     ) { profile ->
                         currentQualityProfile = profile.id
@@ -1356,8 +1418,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                         }
                     }
                     if (init) {
-                        sortedUrls.getOrNull(sourceIndex)?.let {
-                            loadLink(it, true)
+                        sortedLinks.getOrNull(sourceIndex)?.let {
+                            loadLink(it.link, true)
                         }
                     }
                     sourceDialog.dismissSafe(activity)
@@ -1520,8 +1582,14 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+    var erroredLinks: MutableList<WeakReference< Pair<ExtractorLink?, ExtractorUri?> >> = mutableListOf()
+    fun hasLinkErrored(link: Pair<ExtractorLink?, ExtractorUri?>): Boolean {
+        return erroredLinks.any { it.get() == link }
+    }
 
     override fun playerError(exception: Throwable) {
+        erroredLinks.add(WeakReference(currentSelectedLink))
+
         val currentUrl =
             currentSelectedLink?.let { it.first?.url ?: it.second?.uri?.toString() } ?: "unknown"
         val headers = currentSelectedLink?.first?.headers?.toString() ?: "none"
@@ -1544,8 +1612,22 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     private fun noLinksFound() {
         viewModel.forceClearCache = true
+        val hiddenLinks = sortLinks(currentQualityProfile).count { !it.shouldUseLink }
 
-        showToast(R.string.no_links_found_toast, Toast.LENGTH_SHORT)
+        context?.let { ctx ->
+            // Display that there are hidden links to the user.
+            if (hiddenLinks > 0) {
+                val noLinksString = ctx.getString(R.string.no_links_found_toast)
+                val hiddenString =
+                    ctx.resources.getQuantityString(R.plurals.links_hidden, hiddenLinks)
+                        .format(hiddenLinks)
+                val toastText = "$noLinksString\n($hiddenString)"
+                showToast(toastText, Toast.LENGTH_SHORT)
+            } else {
+                showToast(R.string.no_links_found_toast, Toast.LENGTH_SHORT)
+            }
+        }
+
         activity?.popCurrentPage()
     }
 
@@ -1553,11 +1635,12 @@ class GeneratorPlayer : FullScreenPlayer() {
         if (isActive) return // we don't want double load when you skip loading
 
         val links = sortLinks(currentQualityProfile)
-        if (links.isEmpty()) {
+        val firstAvailableLink = links.firstOrNull { it.shouldUseLink }?.link
+        if (firstAvailableLink == null) {
             noLinksFound()
             return
         }
-        loadLink(links.first(), false)
+        loadLink(firstAvailableLink, false)
         showPlayerMetadata()
     }
 
@@ -1624,25 +1707,27 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
-    override fun hasNextMirror(): Boolean {
+    private fun getNextLink(): DisplayLink? {
         val links = sortLinks(currentQualityProfile)
-        return links.isNotEmpty() && links.indexOf(currentSelectedLink) + 1 < links.size
+
+        val currentIndex = links.indexOfFirst { it.link == currentSelectedLink }
+        val nextPotentialLink =
+            links.withIndex().firstOrNull { it.index > currentIndex && it.value.shouldUseLink }
+        return nextPotentialLink?.value
+    }
+
+    override fun hasNextMirror(): Boolean {
+        return getNextLink() != null
     }
 
     override fun nextMirror() {
-        val links = sortLinks(currentQualityProfile)
-        if (links.isEmpty()) {
+        val nextLink = getNextLink()
+        if (nextLink == null) {
             noLinksFound()
             return
         }
 
-        val newIndex = links.indexOf(currentSelectedLink) + 1
-        if (newIndex >= links.size) {
-            noLinksFound()
-            return
-        }
-
-        loadLink(links[newIndex], true)
+        loadLink(nextLink.link, true)
     }
 
     override fun onDestroy() {
@@ -2236,23 +2321,26 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         observe(viewModel.currentLinks) {
             currentLinks = it
-            val turnVisible = it.isNotEmpty() && lastUsedGenerator?.canSkipLoading == true
+
+            val displayLinks = sortLinks(currentQualityProfile)
+            val usableLinks = displayLinks.count { link -> link.shouldUseLink }
+
+            val turnVisible = usableLinks > 0 && lastUsedGenerator?.canSkipLoading == true
             val wasGone = binding?.overlayLoadingSkipButton?.isGone == true
 
             binding?.overlayLoadingSkipButton?.apply {
                 isVisible = turnVisible
-                val value = viewModel.currentLinks.value
-                if (value.isNullOrEmpty()) {
+
+                if (usableLinks == 0) {
                     setText(R.string.skip_loading)
                 } else {
-                    text = "${context.getString(R.string.skip_loading)} (${value.size})"
+                    text = "${context.getString(R.string.skip_loading)} (${usableLinks})"
                 }
             }
 
             safe {
-                if (currentLinks.any { link ->
-                        getLinkPriority(currentQualityProfile, link.first) >=
-                                QualityDataHelper.AUTO_SKIP_PRIORITY
+                if (displayLinks.any { link ->
+                        link.priority >= QualityDataHelper.AUTO_SKIP_PRIORITY
                     }
                 ) {
                     startPlayer()

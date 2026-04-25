@@ -12,12 +12,16 @@ import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
+import java.util.EnumMap
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.also
 import kotlin.math.abs
 
 object QualityDataHelper {
     private const val VIDEO_SOURCE_PRIORITY = "video_source_priority"
     private const val VIDEO_PROFILE_NAME = "video_profile_name"
     private const val VIDEO_QUALITY_PRIORITY = "video_quality_priority"
+    const val VIDEO_PROFILE_SETTINGS = "video_profile_settings"
 
     // Old key only supporting one type per profile
     @Deprecated("Changed to support multiple types per profile")
@@ -53,13 +57,21 @@ object QualityDataHelper {
         val types: Set<QualityProfileType>
     )
 
+
+    // Map profile and name to priority
+    val sourcePriorityCache: ConcurrentHashMap<Int, HashMap<String, Int>> = ConcurrentHashMap()
+
     fun getSourcePriority(profile: Int, name: String?): Int {
         if (name == null) return DEFAULT_SOURCE_PRIORITY
-        return getKey(
+
+        return sourcePriorityCache[profile]?.get(name) ?: (getKey(
             "$currentAccount/$VIDEO_SOURCE_PRIORITY/$profile",
             name,
             DEFAULT_SOURCE_PRIORITY
-        ) ?: DEFAULT_SOURCE_PRIORITY
+        ) ?: DEFAULT_SOURCE_PRIORITY).also {
+            sourcePriorityCache.getOrPut(profile) { hashMapOf() }
+            sourcePriorityCache[profile]?.set(name, it)
+        }
     }
 
     fun getAllSourcePriorityNames(profile: Int): List<String> {
@@ -77,6 +89,8 @@ object QualityDataHelper {
         } else {
             setKey(folder, name, priority)
         }
+
+        sourcePriorityCache[profile]?.set(name, priority)
     }
 
     fun setProfileName(profile: Int, name: String?) {
@@ -93,12 +107,17 @@ object QualityDataHelper {
             ?: txt(R.string.profile_number, profile)
     }
 
+    // Map profile and quality to priority
+    val qualityPriorityCache: ConcurrentHashMap<Int, EnumMap<Qualities, Int>> = ConcurrentHashMap()
     fun getQualityPriority(profile: Int, quality: Qualities): Int {
-        return getKey(
+        return qualityPriorityCache[profile]?.get(quality) ?: (getKey(
             "$currentAccount/$VIDEO_QUALITY_PRIORITY/$profile",
             quality.value.toString(),
             quality.defaultPriority
-        ) ?: quality.defaultPriority
+        )?.also {
+            qualityPriorityCache.getOrPut(profile) { EnumMap(Qualities::class.java) }
+            qualityPriorityCache[profile]?.set(quality, it)
+        }) ?: quality.defaultPriority
     }
 
     fun setQualityPriority(profile: Int, quality: Qualities, priority: Int) {
@@ -107,8 +126,24 @@ object QualityDataHelper {
             quality.value.toString(),
             priority
         )
+        qualityPriorityCache[profile]?.set(quality, priority)
     }
 
+    fun <T> setProfileSetting(profile: Int, setting: ProfileSettings<T>, value: T) {
+        val folder = "$currentAccount/$VIDEO_PROFILE_SETTINGS/$profile"
+        // Prevent unnecessary keys
+        if (value == setting.defaultValue) {
+            removeKey(folder, setting.key)
+        } else {
+            setKey(folder, setting.key, value)
+        }
+    }
+
+    inline fun <reified T : Any> getProfileSetting(profile: Int, setting: ProfileSettings<T>): T {
+        val folder = "$currentAccount/$VIDEO_PROFILE_SETTINGS/$profile"
+        val value = getKey<T>(folder, setting.key)
+        return value ?: setting.defaultValue
+    }
 
     @Suppress("DEPRECATION")
     fun getQualityProfileTypes(profile: Int): Set<QualityProfileType> {
@@ -223,4 +258,9 @@ object QualityDataHelper {
         if (target == null) return Qualities.Unknown
         return Qualities.entries.minBy { abs(it.value - target) }
     }
+}
+
+sealed class ProfileSettings<T>(val key: String, val defaultValue: T) {
+    object HideErrorSources : ProfileSettings<Boolean>("hide_error_sources", false)
+    object HideNegativeSources : ProfileSettings<Boolean>("hide_negative_sources", false)
 }
