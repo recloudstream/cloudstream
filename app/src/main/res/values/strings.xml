@@ -744,8 +744,10 @@
     </string>
     <string name="overscan_settings_des">Changes the bounds of the screen</string>
     <string name="overscan_settings">Overscan</string>
-    <string name="poster_size_settings_des">Changes size of posters</string>
-    <string name="poster_size_settings">Poster size</string>
+    <string name="poster_size_settings_des">Changes the number of poster columns</string>
+    <string name="poster_size_settings">Poster columns</string>
+    <string name="library_poster_size_settings_des">Changes the number of library poster columns</string>
+    <string name="library_poster_size_settings">Library poster columns</string>
     <string name="speedup_title">LongPress Speed Toggle</string>
     <string name="speedup_summary">Hold to get 2x speed</string>
     <string name="edit_profile_image_title">Edit Profile Image</string>
