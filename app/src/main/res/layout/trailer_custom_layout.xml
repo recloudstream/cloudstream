@@ -12,6 +12,7 @@
         android:layout_width="640dp"
         android:layout_height="match_parent"
         android:background="@drawable/bg_player_metadata_scrim_netflix"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
@@ -1129,6 +1130,4 @@
 
         </androidx.recyclerview.widget.RecyclerView>
     </LinearLayout>
-
-
 </FrameLayout>
