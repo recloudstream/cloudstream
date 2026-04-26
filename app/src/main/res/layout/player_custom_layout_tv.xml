@@ -323,10 +323,11 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/skip_chapter_button"
                 style="@style/NiceButton"
-                android:layout_width="150dp"
+                android:layout_width="190dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="100dp"
                 android:backgroundTint="@color/skipOpTransparent"
+                android:ellipsize="end"
                 android:maxLines="1"
                 android:nextFocusLeft="@id/player_pause_play"
                 android:nextFocusUp="@id/player_restart"
