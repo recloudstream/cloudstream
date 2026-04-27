@@ -106,8 +106,6 @@ android {
         versionCode = 68
         versionName = "4.7.0"
 
-        resValue("string", "commit_hash", getGitCommitHash())
-
         resourceConfigurations.addAll(
             listOf(
                 "en", "af", "am", "apc", "ar", "ars", "as", "az", "be", "bg", "bn", "ca", "ckb", "cs",
