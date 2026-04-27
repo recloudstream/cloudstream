@@ -74,7 +74,7 @@ class CloudStreamApp : Application(), SingletonImageLoader.Factory {
 
     override fun onCreate() {
         super.onCreate()
-        app.initClient(this)
+        app.initClient(this,true)
         CarStrings.init(this)
         // If we want to initialize Coil as early as possible, maybe when
         // loading an image or GIF in a splash screen activity.
@@ -93,7 +93,7 @@ class CloudStreamApp : Application(), SingletonImageLoader.Factory {
 
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(updateBaseContextLocale(base))
-        context = base
+        context = this
     }
 
     override fun newImageLoader(context: PlatformContext): ImageLoader {
