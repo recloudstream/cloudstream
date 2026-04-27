@@ -5,6 +5,7 @@ import androidx.car.app.Screen
 import androidx.car.app.model.Action
 import androidx.car.app.model.ActionStrip
 import androidx.car.app.model.CarIcon
+import androidx.car.app.model.Header
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
 import androidx.car.app.model.Row
@@ -16,6 +17,11 @@ import com.lagradost.cloudstream3.ui.result.getId
 import com.lagradost.cloudstream3.ui.result.VideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+import com.lagradost.cloudstream3.utils.FillerEpisodeCheck
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class EpisodeListScreen(
     carContext: CarContext,
@@ -26,11 +32,31 @@ class EpisodeListScreen(
     private val availableSeasons: List<Int> = details.episodes.mapNotNull { it.season }.distinct().sorted()
     private var currentSeasonIndex: Int = 0 // Index in availableSeasons list
 
+    private val scope = CoroutineScope(Dispatchers.IO + Job())
+    private var fillerEpisodes: HashSet<Int>? = null
+    private var isFillerLoaded = false
+
+    init {
+        scope.launch {
+            try {
+                fillerEpisodes = FillerEpisodeCheck.getFillerEpisodes(details)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            isFillerLoaded = true
+            invalidate()
+        }
+    }
+
     override fun onGetTemplate(): Template {
         if (availableSeasons.isEmpty()) {
              return ListTemplate.Builder()
-                .setTitle(details.name)
-                .setHeaderAction(Action.BACK)
+                .setHeader(
+                    Header.Builder()
+                        .setTitle(details.name)
+                        .setStartHeaderAction(Action.BACK)
+                        .build()
+                )
                 .setSingleList(ItemList.Builder().addItem(Row.Builder().setTitle(CarStrings.get(R.string.car_no_episodes_found)).build()).build())
                 .build()
         }
@@ -51,7 +77,10 @@ class EpisodeListScreen(
             val isWatched = watchState == VideoWatchState.Watched
 
             val titleBase = "${episode.episode}. ${episode.name ?: "${CarStrings.get(R.string.car_episode)} ${episode.episode}"}"
-            val title = if (isWatched) "✅ $titleBase" else titleBase
+            var title = if (isWatched) "✅ $titleBase" else titleBase
+            if (fillerEpisodes?.contains(episode.episode ?: (globalIndex + 1)) == true) {
+                title = "[Filler] $title"
+            }
 
             val rowBuilder = Row.Builder()
                 .setTitle(title)
@@ -99,14 +128,14 @@ class EpisodeListScreen(
             .build()
 
         return ListTemplate.Builder()
-            .setTitle("${details.name} - ${CarStrings.get(R.string.car_season)} $currentSeason")
-            .setHeaderAction(Action.BACK)
-            .setSingleList(listBuilder.build())
-            .setActionStrip(
-                ActionStrip.Builder()
-                    .addAction(seasonAction)
+            .setHeader(
+                Header.Builder()
+                    .setTitle("${details.name} - ${CarStrings.get(R.string.car_season)} $currentSeason")
+                    .setStartHeaderAction(Action.BACK)
+                    .addEndHeaderAction(seasonAction)
                     .build()
             )
+            .setSingleList(listBuilder.build())
             .build()
     }
 }

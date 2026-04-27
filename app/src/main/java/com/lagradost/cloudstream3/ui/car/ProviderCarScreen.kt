@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.car
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.Action
+import androidx.car.app.model.Header
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
 import androidx.car.app.model.Row
@@ -35,8 +36,12 @@ class ProviderCarScreen(carContext: CarContext) : Screen(carContext) {
 
         return ListTemplate.Builder()
             .setSingleList(listBuilder.build())
-            .setTitle(CarStrings.get(R.string.car_select_provider))
-            .setHeaderAction(Action.BACK)
+            .setHeader(
+                Header.Builder()
+                    .setTitle(CarStrings.get(R.string.car_select_provider))
+                    .setStartHeaderAction(Action.BACK)
+                    .build()
+            )
             .build()
     }
 }

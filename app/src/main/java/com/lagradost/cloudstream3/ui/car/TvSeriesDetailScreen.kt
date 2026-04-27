@@ -8,6 +8,7 @@ import androidx.car.app.model.Action
 import androidx.car.app.model.CarColor
 import androidx.car.app.model.CarIcon
 import androidx.car.app.model.ForegroundCarColorSpan
+import androidx.car.app.model.Header
 import androidx.car.app.model.Pane
 import androidx.car.app.model.PaneTemplate
 import androidx.car.app.model.Row
@@ -215,8 +216,12 @@ class TvSeriesDetailScreen(
         }
 
         return PaneTemplate.Builder(paneBuilder.build())
-            .setTitle(item.name)
-            .setHeaderAction(Action.BACK)
+            .setHeader(
+                Header.Builder()
+                    .setTitle(item.name)
+                    .setStartHeaderAction(Action.BACK)
+                    .build()
+            )
             .build()
     }
 }

@@ -5,6 +5,7 @@ import androidx.car.app.Screen
 import androidx.car.app.model.Action
 import androidx.car.app.model.ActionStrip
 import androidx.car.app.model.CarIcon
+import androidx.car.app.model.Header
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
 import androidx.car.app.model.Row
@@ -91,7 +92,27 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
 
     override fun onGetTemplate(): Template {
         return ListTemplate.Builder()
-            .setTitle(carContext.getString(R.string.app_name))
+            .setHeader(
+                Header.Builder()
+                    .setTitle(carContext.getString(R.string.app_name))
+                    .addEndHeaderAction(
+                        Action.Builder()
+                            .setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, android.R.drawable.ic_menu_search)).build())
+                            .setOnClickListener {
+                                screenManager.push(SearchCarScreen(carContext))
+                            }
+                            .build()
+                    )
+                    .addEndHeaderAction(
+                        Action.Builder()
+                            .setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_refresh)).build())
+                            .setOnClickListener {
+                                loadData()
+                            }
+                            .build()
+                    )
+                    .build()
+            )
             .addSectionedList(
                 SectionedItemList.create(
                     buildMenuSection(),
@@ -104,7 +125,6 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                     CarStrings.get(R.string.car_home_content)
                 )
             )
-            .setActionStrip(buildActionStrip())
             .build()
     }
 
@@ -205,24 +225,5 @@ class MainCarScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
         return contentListBuilder.build()
     }
 
-    private fun buildActionStrip(): ActionStrip {
-        return ActionStrip.Builder()
-            .addAction(
-                Action.Builder()
-                    .setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, android.R.drawable.ic_menu_search)).build())
-                    .setOnClickListener {
-                        screenManager.push(SearchCarScreen(carContext))
-                    }
-                    .build()
-            )
-            .addAction(
-                Action.Builder()
-                    .setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_refresh)).build())
-                    .setOnClickListener {
-                        loadData()
-                    }
-                    .build()
-            )
-            .build()
-    }
+
 }

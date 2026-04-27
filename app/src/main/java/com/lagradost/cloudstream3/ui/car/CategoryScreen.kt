@@ -7,6 +7,7 @@ import androidx.car.app.model.ActionStrip
 import androidx.car.app.model.CarIcon
 import androidx.car.app.model.GridItem
 import androidx.car.app.model.GridTemplate
+import androidx.car.app.model.Header
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
 import androidx.car.app.model.OnClickListener
@@ -117,17 +118,25 @@ class CategoryScreen(
 
         return if (currentViewMode == 0) {
             ListTemplate.Builder()
-                .setTitle(homePageList.name)
-                .setHeaderAction(Action.BACK)
+                .setHeader(
+                    Header.Builder()
+                        .setTitle(homePageList.name)
+                        .setStartHeaderAction(Action.BACK)
+                        .addEndHeaderAction(actionStrip.actions[0])
+                        .build()
+                )
                 .setSingleList(listBuilder.build())
-                .setActionStrip(actionStrip)
                 .build()
         } else {
             GridTemplate.Builder()
-                .setTitle(homePageList.name)
-                .setHeaderAction(Action.BACK)
+                .setHeader(
+                    Header.Builder()
+                        .setTitle(homePageList.name)
+                        .setStartHeaderAction(Action.BACK)
+                        .addEndHeaderAction(actionStrip.actions[0])
+                        .build()
+                )
                 .setSingleList(listBuilder.build())
-                .setActionStrip(actionStrip)
                 .build()
         }
     }

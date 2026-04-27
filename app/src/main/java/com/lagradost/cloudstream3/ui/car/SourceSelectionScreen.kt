@@ -6,6 +6,7 @@ import androidx.car.app.CarToast
 import androidx.car.app.Screen
 import androidx.car.app.model.Action
 import androidx.car.app.model.CarIcon
+import androidx.car.app.model.Header
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
 import androidx.car.app.model.Row
@@ -85,8 +86,12 @@ class SourceSelectionScreen(
 
     override fun onGetTemplate(): Template {
         val templateBuilder = ListTemplate.Builder()
-            .setTitle(CarStrings.get(R.string.car_sources))
-            .setHeaderAction(Action.BACK)
+            .setHeader(
+                Header.Builder()
+                    .setTitle(CarStrings.get(R.string.car_sources))
+                    .setStartHeaderAction(Action.BACK)
+                    .build()
+            )
 
         if (isLoading) {
             // When loading, just set loading state without any list
