@@ -68,6 +68,11 @@
     <string name="car_no_downloads_found">No completed downloads found</string>
     <string name="car_file_not_found">File not found</string>
     <string name="car_no_valid_episode">No valid episode found</string>
+    <string name="car_movies">Movies</string>
+    <string name="car_series">Series</string>
+
+    <!-- Browsing -->
+    <string name="car_see_all">See all</string>
 
     <!-- Provider -->
     <string name="car_select_provider">Select Provider</string>

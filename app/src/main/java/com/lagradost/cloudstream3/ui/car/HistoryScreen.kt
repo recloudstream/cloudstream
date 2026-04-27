@@ -4,6 +4,7 @@ import androidx.car.app.CarContext
 import android.util.Log
 import androidx.car.app.Screen
 import androidx.car.app.model.Action
+import androidx.car.app.model.Header
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
 import androidx.car.app.model.Row
@@ -35,6 +36,16 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
     private val scope = CoroutineScope(Dispatchers.IO)
     private var itemList: ItemList? = null
 
+    companion object {
+        private const val TAG = "HistoryScreen"
+        /**
+         * CarProgressBar requires Car API level 9.
+         * TODO: Verify CarProgressBar rendering on physical head units and DHU.
+         *       If problematic, remove the progress bar usage and this constant.
+         */
+        private const val CAR_PROGRESS_BAR_MIN_API = 9
+    }
+
     init {
         lifecycle.addObserver(this)
     }
@@ -50,6 +61,12 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                 invalidate()
             }
             try {
+                val supportsProgressBar = try {
+                    carContext.carAppApiLevel >= CAR_PROGRESS_BAR_MIN_API
+                } catch (e: Exception) {
+                    false
+                }
+
                 // Strict logic copied from HomeViewModel.getResumeWatching()
                 val resumeWatchingResult = withContext(Dispatchers.IO) {
                     val ids = getAllResumeStateIds()
@@ -84,15 +101,34 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                         cachedData.apiName
                      }
     
-                         builder.addItem(
-                             Row.Builder()
-                                 .setTitle(title)
-                                 .addText(subtitle)
-                                 .setOnClickListener { 
-                                     playResumeItem(resume, cachedData)
+                         val rowBuilder = Row.Builder()
+                             .setTitle(title)
+                             .addText(subtitle)
+                             .setOnClickListener { 
+                                 playResumeItem(resume, cachedData)
+                             }
+
+                         // TODO: Verify CarProgressBar rendering on real devices.
+                         //       Remove this block if it causes issues on any head unit.
+                         if (supportsProgressBar) {
+                             try {
+                                 val viewPos = getViewPos(resume.episodeId)
+                                 if (viewPos != null && viewPos.duration > 0) {
+                                     val progress = (viewPos.position.toFloat() / viewPos.duration.toFloat())
+                                         .coerceIn(0f, 1f)
+                                     @Suppress("NewApi")
+                                     val progressBar = androidx.car.app.model.CarProgressBar.Builder(progress)
+                                         .build()
+                                     @Suppress("NewApi")
+                                     rowBuilder.setProgressBar(progressBar)
                                  }
-                                 .build()
-                         )
+                             } catch (e: Exception) {
+                                 // Graceful fallback: just don't show progress bar
+                                 Log.w(TAG, "CarProgressBar not supported or failed", e)
+                             }
+                         }
+
+                         builder.addItem(rowBuilder.build())
                      }
                 }
     
@@ -210,8 +246,12 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
         val list = itemList ?: ItemList.Builder().setNoItemsMessage(CarStrings.get(R.string.car_loading)).build()
         
         return ListTemplate.Builder()
-            .setTitle(CarStrings.get(R.string.car_history))
-            .setHeaderAction(Action.BACK)
+            .setHeader(
+                Header.Builder()
+                    .setTitle(CarStrings.get(R.string.car_history))
+                    .setStartHeaderAction(Action.BACK)
+                    .build()
+            )
             .setSingleList(list)
             .build()
     }

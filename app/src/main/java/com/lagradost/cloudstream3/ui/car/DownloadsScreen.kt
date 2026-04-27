@@ -3,9 +3,11 @@ package com.lagradost.cloudstream3.ui.car
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.Action
+import androidx.car.app.model.Header
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
 import androidx.car.app.model.Row
+import androidx.car.app.model.SectionedItemList
 import androidx.car.app.model.Template
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
@@ -29,6 +31,16 @@ class DownloadsScreen(
 ) : Screen(carContext) {
     private val scope = CoroutineScope(Dispatchers.IO)
     private var itemList: ItemList? = null
+
+    // Sectioned data for Film vs Serie split (headers view only)
+    private var movieHeaders: List<DownloadObjects.DownloadHeaderCached> = emptyList()
+    private var seriesHeaders: List<DownloadObjects.DownloadHeaderCached> = emptyList()
+    private var isHeadersLoaded = false
+
+    companion object {
+        /** SectionedItemTemplate requires Car API level 8 */
+        private const val SECTIONED_ITEM_TEMPLATE_MIN_API = 8
+    }
 
     init {
         loadContent()
@@ -86,8 +98,6 @@ class DownloadsScreen(
                 .mapNotNull { carContext.getKey<DownloadObjects.DownloadHeaderCached>(it) }
                 .sortedBy { it.name }
 
-            val builder = ItemList.Builder()
-            
             // Filter and find valid items
             val validHeaders = headers.filter { header ->
                 val context = carContext
@@ -105,6 +115,13 @@ class DownloadsScreen(
                 }
             }
 
+            // Split into movies vs series
+            movieHeaders = validHeaders.filter { !it.type.isEpisodeBased() }
+            seriesHeaders = validHeaders.filter { it.type.isEpisodeBased() }
+            isHeadersLoaded = true
+
+            // Also build legacy flat list for fallback
+            val builder = ItemList.Builder()
             if (validHeaders.isEmpty()) {
                 builder.setNoItemsMessage(CarStrings.get(R.string.car_no_downloads_found))
             } else {
@@ -204,10 +221,111 @@ class DownloadsScreen(
     }
 
     override fun onGetTemplate(): Template {
+        // Episodes sub-screen or legacy fallback: use simple ListTemplate
+        if (parentId != null) {
+            return ListTemplate.Builder()
+                .setHeader(
+                    Header.Builder()
+                        .setTitle(headerName ?: CarStrings.get(R.string.car_downloads))
+                        .setStartHeaderAction(Action.BACK)
+                        .build()
+                )
+                .setSingleList(itemList ?: ItemList.Builder().setNoItemsMessage(CarStrings.get(R.string.car_loading)).build())
+                .build()
+        }
+
+        // Top-level downloads: use SectionedItemTemplate if supported
+        val hostApiLevel = carContext.carAppApiLevel
+        if (hostApiLevel >= SECTIONED_ITEM_TEMPLATE_MIN_API && isHeadersLoaded) {
+            return buildSectionedTemplate()
+        }
+
+        // Fallback to legacy flat ListTemplate
         return ListTemplate.Builder()
-            .setTitle(headerName ?: CarStrings.get(R.string.car_downloads))
-            .setHeaderAction(Action.BACK)
+            .setHeader(
+                Header.Builder()
+                    .setTitle(CarStrings.get(R.string.car_downloads))
+                    .setStartHeaderAction(Action.BACK)
+                    .build()
+            )
             .setSingleList(itemList ?: ItemList.Builder().setNoItemsMessage(CarStrings.get(R.string.car_loading)).build())
             .build()
+    }
+
+    // ──────────────────────────────────────────────────────
+    //  SectionedItemTemplate: Film vs Serie split (API >= 8)
+    // ──────────────────────────────────────────────────────
+
+    private fun buildSectionedTemplate(): Template {
+        // If both lists are empty, show a simple message
+        if (movieHeaders.isEmpty() && seriesHeaders.isEmpty()) {
+            return ListTemplate.Builder()
+                .setHeader(
+                    Header.Builder()
+                        .setTitle(CarStrings.get(R.string.car_downloads))
+                        .setStartHeaderAction(Action.BACK)
+                        .build()
+                )
+                .setSingleList(ItemList.Builder().setNoItemsMessage(CarStrings.get(R.string.car_no_downloads_found)).build())
+                .build()
+        }
+
+        val builder = androidx.car.app.model.SectionedItemTemplate.Builder()
+            .setHeader(
+                Header.Builder()
+                    .setTitle(CarStrings.get(R.string.car_downloads))
+                    .setStartHeaderAction(Action.BACK)
+                    .build()
+            )
+
+        // Movies section
+        if (movieHeaders.isNotEmpty()) {
+            builder.addSection(
+                androidx.car.app.model.RowSection.Builder()
+                    .setTitle(CarStrings.get(R.string.car_movies))
+                    .apply {
+                        movieHeaders.forEach { header ->
+                            addItem(buildHeaderRow(header))
+                        }
+                    }
+                    .build()
+            )
+        }
+
+        // Series section
+        if (seriesHeaders.isNotEmpty()) {
+            builder.addSection(
+                androidx.car.app.model.RowSection.Builder()
+                    .setTitle(CarStrings.get(R.string.car_series))
+                    .apply {
+                        seriesHeaders.forEach { header ->
+                            addItem(buildHeaderRow(header))
+                        }
+                    }
+                    .build()
+            )
+        }
+
+        return builder.build()
+    }
+
+    private fun buildHeaderRow(header: DownloadObjects.DownloadHeaderCached): Row {
+        val lastWatched = DataStoreHelper.getLastWatched(header.id)
+        val subtitle = if (lastWatched != null && lastWatched.season != null && lastWatched.episode != null) {
+            "S${lastWatched.season}E${lastWatched.episode}"
+        } else {
+            null
+        }
+
+        val rowBuilder = Row.Builder()
+            .setTitle(header.name)
+            .setOnClickListener { onHeaderClick(header) }
+            .setBrowsable(true)
+
+        if (subtitle != null) {
+            rowBuilder.addText(subtitle)
+        }
+
+        return rowBuilder.build()
     }
 }
