@@ -631,7 +631,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     override fun subtitlesChanged() {
         val tracks = player.getVideoTracks()
         val isBuiltinSubtitles = tracks.currentTextTracks.all { track ->
-            track.sampleMimeType  == MimeTypes.APPLICATION_MEDIA3_CUES
+            track.sampleMimeType == MimeTypes.APPLICATION_MEDIA3_CUES
         }
         // Subtitle offset is not possible on built-in media3 tracks
         playerBinding?.playerSubtitleOffsetBtt?.isGone =
@@ -738,6 +738,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         activity?.window?.attributes = lp
         activity?.showSystemUI()
     }
+
     private fun resetZoomToDefault() {
         if (zoomMatrix != null) resize(PlayerResize.Fit, false)
     }
@@ -1660,7 +1661,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         playerBinding?.playerIntroPlay?.isGone = true
 
         // Handle pan with two fingers
-        if (event.pointerCount == 2 && !isLocked && isFullScreenPlayer && !hasTriggeredSpeedUp && currentTouchAction == null) {
+        if ((event.pointerCount == 2 || lastPan != null) && !isLocked && isFullScreenPlayer && !hasTriggeredSpeedUp && currentTouchAction == null) {
             holdhandler.removeCallbacks(holdRunnable) // remove 2x speed
 
             // Gesture detectors for zoom & pan
@@ -1695,7 +1696,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     lastPan = newPan
                 }
 
-                MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_UP -> {
+                MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_UP -> {
                     // Reset touch
                     lastPan = null
                     currentTouchStart = null
@@ -1777,7 +1778,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     }
                 }
 
-                MotionEvent.ACTION_UP -> {
+                MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
                     holdhandler.removeCallbacks(holdRunnable)
                     if (hasTriggeredSpeedUp) {
                         player.setPlaybackSpeed(DataStoreHelper.playBackSpeed)
@@ -2648,6 +2649,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 }
             }
 
+            exoProgress.registerPlayerView(playerView)
+
             exoProgress.setOnTouchListener { _, event ->
                 // this makes the bar not disappear when sliding
                 when (event.action) {
@@ -2707,6 +2710,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     override fun playerDimensionsLoaded(width: Int, height: Int) {
+        // On TV, don't rotate for portrait videos; display with pillarbox (black bars on sides)
+        if (isLayout(TV or EMULATOR)) {
+            isVerticalOrientation = false
+            return
+        }
         isVerticalOrientation = height > width
         updateOrientation()
     }
@@ -2715,10 +2723,20 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         val duration = player.getDuration()
         val position = player.getPosition()
 
+        if (playerBinding?.exoProgress?.isAtLiveEdge() == true) {
+            // Hide using a parentView instead?
+            playerBinding?.timeLeft?.alpha = 0f
+            playerBinding?.exoDuration?.alpha = 0f
+            playerBinding?.timeLive?.isVisible = true
+        } else {
+            playerBinding?.timeLeft?.alpha = 1f
+            playerBinding?.exoDuration?.alpha = 1f
+            playerBinding?.timeLive?.isVisible = false
+        }
+
         if (duration != null && duration > 1 && position != null) {
             val remainingTimeSeconds = (duration - position + 500) / 1000
             val formattedTime = "-${DateUtils.formatElapsedTime(remainingTimeSeconds)}"
-
             playerBinding?.timeLeft?.text = formattedTime
         }
     }
@@ -2730,6 +2748,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     private fun dynamicOrientation(): Int {
+        // TV should always remain in landscape mode
+        if (isLayout(TV or EMULATOR)) {
+            return ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        }
         return if (autoPlayerRotateEnabled) {
             if (isVerticalOrientation) {
                 ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT

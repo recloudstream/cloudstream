@@ -303,7 +303,7 @@
     <string name="app_not_found_error">Приложение не найдено</string>
     <string name="all_languages_preference">Все языки</string>
     <string name="skip_type_op">Вступление</string>
-    <string name="skip_type_creddits">Титры</string>
+    <string name="skip_type_credits">Титры</string>
     <string name="action_mark_as_watched">Отметить как просмотренное</string>
     <string name="limit_title_rez">Показывать информацию про видеоплеер</string>
     <string name="watch_quality_pref">Предпочтительное качество видео (WiFi)</string>
@@ -582,9 +582,9 @@
     <string name="app_unrestricted_toast">Использование батареи приложением уже настроено на неограниченное</string>
     <string name="app_info_intent_error">Не удаётся открыть информацию о приложении CloudStream.</string>
     <string name="biometric_setting">Заблокировать биометрией</string>
-    <string name="music_singlar">Музыка</string>
+    <string name="music_singular">Музыка</string>
     <string name="audio_book_singular">Аудиокнига</string>
-    <string name="custom_media_singluar">Медиа</string>
+    <string name="custom_media_singular">Медиа</string>
     <string name="biometric_setting_summary">Разблокируйте приложение с помощью отпечатка пальца, Face ID, ПИН-кода, шаблона и пароля.</string>
     <string name="resume_remaining" formatted="true">%s
 \nосталось</string>
@@ -644,8 +644,8 @@
     <string name="encoding_error">Ошибка кодировки</string>
     <string name="unsupported_error">Не поддерживается</string>
     <string name="player_load_one_subtitle_online">Скачать первые доступные</string>
-    <string name="audio_singluar">Аудио</string>
-    <string name="podcast_singluar">Подкаст</string>
+    <string name="audio_singular">Аудио</string>
+    <string name="podcast_singular">Подкаст</string>
     <string name="sort_episodes_number_asc">Серия (по возрастанию)</string>
     <string name="subtitles_from_embedded">Встроенный</string>
     <string name="subtitles_from_online">Из сети</string>

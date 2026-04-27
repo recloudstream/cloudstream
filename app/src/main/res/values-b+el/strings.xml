@@ -389,7 +389,7 @@
     <string name="quality_webrip">Web</string>
     <string name="quality_hdr">HDR</string>
     <string name="skip_type_mixed_op">Ανάμεικτοι τίτλοι αρχής</string>
-    <string name="skip_type_creddits">Εύσημα</string>
+    <string name="skip_type_credits">Εύσημα</string>
     <string name="skip_type_intro">Εισαγωγή</string>
     <string name="go_forward_30">+30</string>
     <string name="status_completed">Ολοκληρώθηκε</string>
@@ -604,9 +604,9 @@
     <string name="biometric_prompt_description">Μετά από μερικές αποτυχημένες προσπάθειες, η άμεση θα κλείσει. Απλά επανεκκινήστε την εφαρμογή για να δοκιμάσετε ξανά.</string>
     <string name="edit_account">Επεξεργασία λογαριασμού</string>
     <string name="skip_startup_account_select_pref">Παράλειψη επιλογής λογαριασμού στην εκκίνηση της εφαρμογής</string>
-    <string name="music_singlar">Μουσική</string>
+    <string name="music_singular">Μουσική</string>
     <string name="audio_book_singular">Ακουστικό Βιβλίο</string>
-    <string name="custom_media_singluar">Μέσα</string>
+    <string name="custom_media_singular">Μέσα</string>
     <string name="reset_btn">Επαναφορά</string>
     <string name="biometric_warning">Τα δεδομένα σας στο CloudStream έχουν κάνει back up. Αν και η πιθανότητα είναι πολύ χαμηλή, όλες οι συσκευές συμπεριφέρονται διαφορετικά. Στη σπάνια περίπτωση, που απαγορευτεί η πρόσβασή σας από την εφαρμογή, διαγράψτε τα δεδομένα εφαρμογής και επαναφέρετέ τα από ένα ήδη υπάρχον backup. Συγνώμη για οποιαδήποτε ταλαιπωρία.</string>
     <string name="pref_category_accounts">Λογαριασμοί</string>
@@ -671,8 +671,8 @@
     <string name="open_local_video">Άνοιγμα τοπικού βίντεο</string>
     <string name="no_plugins_updated_manually">Κανένα πρόσθετο δεν ενημερώθηκε.</string>
     <string name="backup_path_title">Τοποθεσία φακέλου αντιγράφων</string>
-    <string name="audio_singluar">Ήχος</string>
-    <string name="podcast_singluar">Ποντκάστ</string>
+    <string name="audio_singular">Ήχος</string>
+    <string name="podcast_singular">Ποντκάστ</string>
     <string name="encoding_error">Σφάλμα κωδικοποίησης</string>
     <string name="unsupported_error">Σφάλμα που δεν υποστηρίζεται</string>
     <string name="player_load_one_subtitle_online">Φορτώστε το πρώτο διαθέσιμο</string>

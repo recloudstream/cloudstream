@@ -514,7 +514,7 @@
     <string name="safe_mode_title">Veilige mode aan</string>
     <string name="restart">Herstart</string>
     <string name="extension_description">Beschrijving</string>
-    <string name="skip_type_creddits">Waardering</string>
+    <string name="skip_type_credits">Waardering</string>
     <string name="clear_history">Wis geschiedenis</string>
     <string name="subscription_list_name">Ingeschreven</string>
     <string name="delete_repository">Wis repository</string>
@@ -616,11 +616,11 @@
     <string name="delete_message_series_section" formatted="true">Hiermee worden ook alle afleveringen van de volgende series permanent verwijderd:\n\n%s</string>
     <string name="delete_message_series_only" formatted="true">Weet je zeker dat je alle afleveringen van de volgende series permanent wil verwijderen?\n\n%s</string>
     <string name="resume_remaining" formatted="true">%s\nresterend</string>
-    <string name="music_singlar">Muziek</string>
+    <string name="music_singular">Muziek</string>
     <string name="audio_book_singular">Luisterboek</string>
-    <string name="custom_media_singluar">Media</string>
-    <string name="audio_singluar">Audio</string>
-    <string name="podcast_singluar">Podcast</string>
+    <string name="custom_media_singular">Media</string>
+    <string name="audio_singular">Audio</string>
+    <string name="podcast_singular">Podcast</string>
     <string name="encoding_error">Coderingsfout</string>
     <string name="unsupported_error">Fout: wordt niet ondersteund</string>
     <string name="pref_category_security">Beveiliging</string>

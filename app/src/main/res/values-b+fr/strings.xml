@@ -302,7 +302,7 @@
     <string name="skip_type_format" formatted="true">Ignorer %s</string>
     <string name="skip_type_op">Ouverture</string>
     <string name="skip_type_recap">Récap</string>
-    <string name="skip_type_creddits">Crédits</string>
+    <string name="skip_type_credits">Crédits</string>
     <string name="skip_type_intro">Intro</string>
     <string name="clear_history">Effacer l\'historique</string>
     <string name="yes">Oui</string>
@@ -587,7 +587,7 @@
     <string name="battery_dialog_title">Désactiver l\'optimisation de la batterie</string>
     <string name="app_info_intent_error">Impossible d\'ouvrir les informations de l\'application CloudStream.</string>
     <string name="biometric_authentication_title">Déverrouiller CloudStream</string>
-    <string name="music_singlar">Musique</string>
+    <string name="music_singular">Musique</string>
     <string name="resume_remaining" formatted="true">%s \nrestants</string>
     <string name="clipboard_permission_error">Erreur d\'accès au presse-papiers, veuillez réessayer.</string>
     <string name="ok">OK</string>
@@ -600,7 +600,7 @@
     <string name="battery_dialog_message">Pour garantir des téléchargements ininterrompus et des notifications pour les émissions de télévision auxquelles vous êtes abonné, CloudStream a besoin d\'une autorisation pour fonctionner en arrière-plan. En appuyant sur OK, une boite de dialogue sera affiché. Appuyé sur \'autoriser\'.\n\nVeuillez noter que cette autorisation ne signifie pas que CS3 épuisera votre batterie. Il ne fonctionnera en arrière-plan que lorsque cela sera nécessaire, par exemple lors de la réception de notifications ou du téléchargement de vidéos à partir d\'extensions officielles.</string>
     <string name="app_unrestricted_toast">L\'utilisation de la batterie de l\'application est déjà réglée sur illimitée</string>
     <string name="unfavorite">Supprimer des favoris</string>
-    <string name="custom_media_singluar">Média</string>
+    <string name="custom_media_singular">Média</string>
     <string name="reset_btn">Réinitialiser</string>
     <string name="episode_upcoming_format" formatted="true">À venir dans %s</string>
     <string name="biometric_setting">Verrouillage biométrique</string>
@@ -654,8 +654,8 @@
     <string name="torrent_preferred_media">Activer les torrents dans Paramètres/Sources/Média préféré</string>
     <string name="torrent_not_accepted">Redémarrez l\'application et acceptez la fenêtre contextuelle Stream Torrent pour continuer.</string>
     <string name="player_load_one_subtitle_online">Charger le premier disponible</string>
-    <string name="audio_singluar">Audio</string>
-    <string name="podcast_singluar">Podcast</string>
+    <string name="audio_singular">Audio</string>
+    <string name="podcast_singular">Podcast</string>
     <string name="sort_button_episode">Ép %s</string>
     <string name="sort_button_rating">Note %s</string>
     <string name="sort_button_date">Date %s</string>
@@ -753,4 +753,5 @@
         <item quantity="many">%d téléchargements en attente</item>
         <item quantity="other">%d téléchargements en attente</item>
     </plurals>
+    <string name="show_player_metadata_overlay">Afficher les métadata de l\'overlay du lecteur vidéo</string>
 </resources>

@@ -467,7 +467,7 @@
     <string name="skip_type_ed">Sesi Akhir</string>
     <string name="skip_type_recap">Sinopsis</string>
     <string name="skip_type_mixed_ed">Sesi akhir ganda</string>
-    <string name="skip_type_creddits">Sesi Kredit</string>
+    <string name="skip_type_credits">Sesi Kredit</string>
     <string name="skip_type_intro">Sesi Intro</string>
     <string name="clipboard_too_large">Terlalu banyak teks. Tidak dapat menyalin ke papan klip.</string>
     <string name="confirm_exit_dialog">Yakin ingin keluar?</string>
@@ -605,9 +605,9 @@
     <string name="battery_dialog_title">Nonaktifkan optimasi baterai</string>
     <string name="app_unrestricted_toast">Pemakaian baterai untuk aplikasi ini sudah diatur menjadi tidak dibatasi</string>
     <string name="app_info_intent_error">Gagal membuka info aplikasi CloudStream.</string>
-    <string name="music_singlar">Musik</string>
+    <string name="music_singular">Musik</string>
     <string name="audio_book_singular">Buku Audio</string>
-    <string name="custom_media_singluar">Media</string>
+    <string name="custom_media_singular">Media</string>
     <string name="battery_dialog_message">Untuk memastikan unduhan dan pemberitahuan tanpa gangguan untuk acara TV berlangganan, CloudStream memerlukan izin untuk berjalan di latar belakang. Dengan menekan OK, Anda akan diperlihatkan dialog permintaan. Silakan tekan ‘Izinkan’.\n\nHarap dicatat, izin ini tidak berarti CS3 akan menguras baterai Anda. Aplikasi ini hanya akan beroperasi di latar belakang jika diperlukan, misalnya saat menerima notifikasi atau mengunduh video dari ekstensi resmi.</string>
     <string name="reset_btn">Mengatur ulang</string>
     <string name="next_season_episode_format" formatted="true">Musim %1$d Episode %2$d akan dirilis pada</string>
@@ -662,8 +662,8 @@
     <string name="confirm_before_exiting_desc">Tampilkan dialog sebelum keluar dari aplikasi</string>
     <string name="dont_show">Jangan Tampilkan</string>
     <string name="show">Tampilkan</string>
-    <string name="audio_singluar">Audio</string>
-    <string name="podcast_singluar">Podcast</string>
+    <string name="audio_singular">Audio</string>
+    <string name="podcast_singular">Podcast</string>
     <string name="encoding_error">Pengkodean error</string>
     <string name="unsupported_error">Error yang tidak didukung</string>
     <string name="player_load_one_subtitle_online">Muat yang pertama tersedia</string>
@@ -764,4 +764,5 @@
     <string name="cancel_all">Batalkan semua</string>
     <string name="download_episode_range">Apakah kamu ingin mengunduh episode %s?</string>
     <string name="cancel_queue_message">Apakah kamu ingin membatalkan semua unduhan dalam antrean?</string>
+    <string name="show_player_metadata_overlay">Tampilkan overlay metadata pemutar</string>
 </resources>

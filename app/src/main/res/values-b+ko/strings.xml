@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="cast_format" formatted="true">출연: %s</string>
-    <string name="next_episode_format" formatted="true">에피소드 %d이(가) 공개 예정</string>
+    <string name="next_episode_format" formatted="true">에피소드 %d 공개 예정</string>
     <string name="search_poster_img_des">포스터</string>
     <string name="episode_poster_img_des">에피소드 포스터</string>
     <string name="home_main_poster_img_des">메인 포스터</string>
     <string name="home_next_random_img_des">다음 추천</string>
     <string name="go_back_img_des">뒤로가기</string>
     <string name="home_change_provider_img_des">소스 변경</string>
-    <string name="preview_background_img_des">미리보기 배경</string>
+    <string name="preview_background_img_des">배경 미리보기</string>
     <string name="player_speed_text_format" formatted="true">속도 (%.2fx)</string>
     <string name="rated_format" formatted="true">평점: %.1f</string>
     <string name="new_update_format" formatted="true">새로운 업데이트!
 \n%1$s -&gt; %2$s</string>
     <string name="duration_format" formatted="true">%d분</string>
     <string name="app_name">CloudStream</string>
-    <string name="play_with_app_name">CloudStream에서 재생</string>
+    <string name="play_with_app_name">CloudStream으로 재생</string>
     <string name="title_home">홈</string>
     <string name="title_downloads">다운로드</string>
     <string name="title_settings">설정</string>
@@ -26,7 +26,7 @@
     <string name="next_episode">다음 에피소드</string>
     <string name="result_tags">장르</string>
     <string name="result_share">공유</string>
-    <string name="result_open_in_browser">브라우저에서 열기</string>
+    <string name="result_open_in_browser">브라우저로 열기</string>
     <string name="browser">브라우저</string>
     <string name="skip_loading">로딩 건너뛰기</string>
     <string name="loading">로딩중…</string>
@@ -55,14 +55,14 @@
     <string name="action_add_to_bookmarks">시청 상태 설정</string>
     <string name="sort_save">저장</string>
     <string name="player_speed">재생 속도</string>
-    <string name="subs_text_color">글자 색깔</string>
-    <string name="subs_outline_color">외곽선 색깔</string>
-    <string name="subs_background_color">배경 색깔</string>
-    <string name="subs_window_color">창 색깔</string>
-    <string name="subs_edge_type">가장자리 타입</string>
+    <string name="subs_text_color">글자 색상</string>
+    <string name="subs_outline_color">윤곽선 색상</string>
+    <string name="subs_background_color">배경 색상</string>
+    <string name="subs_window_color">배경 색상</string>
+    <string name="subs_edge_type">윤곽선 유형</string>
     <string name="subs_subtitle_elevation">자막 높이</string>
     <string name="subs_font">폰트</string>
-    <string name="subs_font_size">폰트 크기</string>
+    <string name="subs_font_size">글자 크기</string>
     <string name="downloaded">다운로드됨</string>
     <string name="downloading">다운로드중</string>
     <string name="download_paused">다운로드 일시정지</string>
@@ -119,7 +119,7 @@
     <string name="double_tap_to_seek_settings">두 번 탭하여 탐색</string>
     <string name="double_tap_to_pause_settings">두 번 탭하여 일시정지</string>
     <string name="double_tap_to_seek_amount_settings">플레이어 탐색 시간 (초)</string>
-    <string name="double_tap_to_pause_settings_des">가운데를 두 번 탭하여 일시중지</string>
+    <string name="double_tap_to_pause_settings_des">가운데를 두 번 탭하여 일시정지</string>
     <string name="use_system_brightness_settings">시스템 밝기 사용</string>
     <string name="use_system_brightness_settings_des">어두운 오버레이 대신 앱 플레이어의 시스템 밝기를 사용합니다</string>
     <string name="episode_sync_settings">시청 진행 상황 업데이트</string>
@@ -135,14 +135,14 @@
     <string name="category_account">계정 및 보안</string>
     <string name="advanced_search_des">소스별로 구분된 검색 결과를 제공합니다</string>
     <string name="show_trailers_settings">예고편 보기</string>
-    <string name="kitsu_settings">Kitsu에서 포스터 보기</string>
+    <string name="kitsu_settings">Kitsu에서 포스터 가져오기</string>
     <string name="pref_filter_search_quality">검색 결과에서 선택한 동영상 품질 숨기기</string>
     <string name="automatic_plugin_download">플러그인 자동 다운로드</string>
     <string name="automatic_plugin_updates">플러그인 자동 업데이트</string>
     <string name="automatic_plugin_download_summary">추가된 저장소에서 아직 설치되지 않은 모든 플러그인을 자동으로 설치합니다.</string>
     <string name="updates_settings">앱 업데이트 표시</string>
     <string name="updates_settings_des">앱을 시작한 후 새 업데이트를 자동으로 검색합니다.</string>
-    <string name="apk_installer_settings_des">일부 장치는 새 패키지 설치 프로그램을 지원하지 않습니다. 업데이트가 설치되지 않으면 레거시 옵션을 사용해보십시오.</string>
+    <string name="apk_installer_settings_des">일부 기기에서는 최신 방식의 설치 프로그램이 작동하지 않을 수 있습니다. 업데이트가 안 된다면 \'기본 방식\' 설정을 사용해 보세요.</string>
     <string name="lightnovel">같은 개발자가 만든 라이트 노벨 앱</string>
     <string name="anim">같은 개발자가 만든 애니메이션 앱</string>
     <string name="discord">Discord에 참여하기</string>
@@ -180,30 +180,30 @@
     <string name="anime">애니</string>
     <string name="torrent">토렌트</string>
     <string name="episode_action_chromecast_mirror">Chromecast 미러링</string>
-    <string name="episode_action_play_in_app">앱에서 재생</string>
-    <string name="episode_action_play_in_format">%s에서 재생</string>
+    <string name="episode_action_play_in_app">앱으로 재생</string>
+    <string name="episode_action_play_in_format">%s로 재생</string>
     <string name="episode_action_auto_download">자동 다운로드</string>
-    <string name="episode_action_download_mirror">다운로드 가능 목록 보기</string>
+    <string name="episode_action_download_mirror">다운로드 소스 목록</string>
     <string name="episode_action_reload_links">링크 새로고침</string>
     <string name="episode_action_download_subtitle">자막 다운로드</string>
-    <string name="show_hd">화질 탭</string>
-    <string name="show_dub">더빙 탭</string>
-    <string name="show_sub">자막 탭</string>
+    <string name="show_hd">화질 라벨</string>
+    <string name="show_dub">더빙 라벨</string>
+    <string name="show_sub">자막 라벨</string>
     <string name="show_title">제목</string>
     <string name="check_for_update">업데이트 확인</string>
     <string name="video_lock">잠금</string>
     <string name="video_aspect_ratio_resize">크기 조정</string>
     <string name="video_source">소스</string>
-    <string name="video_skip_op">오프닝 건너뛰기</string>
+    <string name="video_skip_op">오프닝 스킵</string>
     <string name="skip_update">이 업데이트 건너뛰기</string>
     <string name="watch_quality_pref">선호하는 화질 (WiFi)</string>
     <string name="watch_quality_pref_data">선호하는 화질 (모바일 데이터)</string>
     <string name="limit_title_rez">플레이어 내 표시 정보</string>
     <string name="video_buffer_size_settings">동영상 버퍼 크기</string>
-    <string name="video_buffer_clear_settings">동영상 및 이미지 캐시 지우기</string>
+    <string name="video_buffer_clear_settings">비디오 및 이미지 캐시 삭제</string>
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="jsdelivr_enabled">GitHub에 연결할 수 없습니다. jsDelivr 프록시를 켜는 중…</string>
-    <string name="jsdelivr_proxy_summary">JsDelivr를 사용하여 원시 github URL 차단을 우회하십시오. 몇 일 지연 될 업데이트가 발생할 수 있습니다.</string>
+    <string name="jsdelivr_proxy_summary">jsDelivr를 사용하여 차단된 GitHub 주소를 우회합니다. 단, 업데이트 반영이 며칠 정도 늦어질 수 있습니다.</string>
     <string name="add_site_pref">복제 사이트</string>
     <string name="remove_site_pref">사이트 삭제</string>
     <string name="add_site_summary">다른 URL을 사용하여 기존 사이트의 복제본을 추가합니다</string>
@@ -251,7 +251,7 @@
     <string name="all">전부</string>
     <string name="max">최대</string>
     <string name="min">최소</string>
-    <string name="subtitles_outline">윤곽선</string>
+    <string name="subtitles_outline">윤곽선 효과</string>
     <string name="subtitles_shadow">그림자</string>
     <string name="subtitle_offset">자막 동기화</string>
     <string name="subtitle_offset_hint">1000 ms</string>
@@ -277,7 +277,7 @@
     <string name="error_invalid_data">잘못된 데이터</string>
     <string name="error_invalid_url">잘못된 URL</string>
     <string name="error">오류</string>
-    <string name="subtitles_remove_captions">자막에서 청각 장애인용 자막 요소 제거</string>
+    <string name="subtitles_remove_captions">청각 장애인용 자막 요소 제거</string>
     <string name="subtitles_filter_lang">선호하는 미디어 언어로 필터링</string>
     <string name="trailer">예고편</string>
     <string name="next">다음</string>
@@ -304,8 +304,8 @@
 \nDiscord에 가입하거나 온라인으로 검색해 보세요.</string>
     <string name="view_public_repositories_button">커뮤니티 저장소 보기</string>
     <string name="view_public_repositories_button_short">공개 목록</string>
-    <string name="uppercase_all_subtitles">모든 자막 대문자화</string>
-    <string name="download_all_plugins_from_repo">경고: CloudStream은 제3자 확장을 이용하여 어떠한 책임도 지지 않습니다!</string>
+    <string name="uppercase_all_subtitles">자막 대문자화 표시</string>
+    <string name="download_all_plugins_from_repo">경고: CloudStream은 외부 확장 프로그램 사용에 대해 어떠한 책임도 지지 않으며, 관련 기술 지원을 제공하지 않습니다!</string>
     <string name="single_plugin_disabled" formatted="true">%s (사용불가)</string>
     <string name="add_repository">저장소 추가</string>
     <string name="repository_name_hint">저장소 이름 (선택 사항)</string>
@@ -322,13 +322,13 @@
     <string name="safe_mode_crash_info">충돌 정보 보기</string>
     <string name="extension_language">언어</string>
     <string name="subscription_episode_released">에피소드 %d 공개!</string>
-    <string name="picture_in_picture">Picture-in-picture</string>
+    <string name="picture_in_picture">PIP 모드</string>
     <string name="player_size_settings">플레이어 크기 조정 버튼</string>
-    <string name="picture_in_picture_des">미니플레이어를 통해 다른 앱 상단에서 계속 재생됩니다</string>
-    <string name="player_size_settings_des">검은색 테두리 제거</string>
+    <string name="picture_in_picture_des">미니플레이어를 통해 다른 앱 상단에서 계속 재생합니다</string>
+    <string name="player_size_settings_des">레터박스 제거</string>
     <string name="double_tap_to_seek_settings_des">오른쪽 또는 왼쪽을 두 번 탭하여 앞뒤로 탐색하기</string>
     <string name="player_subtitles_settings">자막</string>
-    <string name="restore_success">로드된 백업 파일</string>
+    <string name="restore_success">백업 파일을 성공적으로 로드하였습니다</string>
     <string name="settings_info">정보</string>
     <string name="advanced_search">고급 검색</string>
     <string name="redo_setup_process">설정 프로세스 다시 실행</string>
@@ -374,7 +374,7 @@
     <string name="anime_singular">애니</string>
     <string name="ova_singular">OVA</string>
     <string name="remote_error">원격 오류</string>
-    <string name="storage_error">다운로드 오류, 저장 권한 확인</string>
+    <string name="storage_error">다운로드 오류, 저장소 권한을 확인하세요</string>
     <string name="episode_action_chromecast_episode">Chromecast 에피소드</string>
     <string name="unexpected_error">예기치 않은 플레이어 오류</string>
     <string name="dont_show_again">다시 표시하지 않음</string>
@@ -382,7 +382,7 @@
     <string name="update">업데이트</string>
     <string name="jsdelivr_proxy">GitHub 프록시</string>
     <string name="video_buffer_length_settings">동영상 버퍼 길이</string>
-    <string name="video_buffer_disk_settings">저장소에 동영상 캐시</string>
+    <string name="video_buffer_disk_settings">디스크 비디오 캐시</string>
     <string name="video_ram_description">Android TV와 같이 메모리가 부족한 디바이스에서 너무 높게 설정하면 충돌이 발생할 수 있습니다.</string>
     <string name="resize_fill">화면 크기에 맞춤</string>
     <string name="video_disk_description">Android TV와 같이 저장 공간이 부족한 기기에서 너무 높게 설정하면 문제가 발생할 수 있습니다.</string>
@@ -443,7 +443,7 @@
     <string name="skip_type_ed">엔딩</string>
     <string name="skip_type_mixed_ed">혼합 엔딩</string>
     <string name="skip_type_mixed_op">혼합 오프닝</string>
-    <string name="skip_type_creddits">크레딧</string>
+    <string name="skip_type_credits">크레딧</string>
     <string name="skip_type_intro">소개</string>
     <string name="clear_history">기록 삭제</string>
     <string name="history">기록</string>
@@ -456,7 +456,7 @@
     <string name="update_notification_downloading">앱 업데이트 다운로드 중…</string>
     <string name="update_notification_installing">앱 업데이트 설치 중…</string>
     <string name="update_notification_failed">새 버전의 앱을 설치할 수 없습니다</string>
-    <string name="apk_installer_legacy">레거시</string>
+    <string name="apk_installer_legacy">기본 방식</string>
     <string name="apk_installer_package_installer">패키지 인스톨러</string>
     <string name="delayed_update_notice">앱 종료시 업데이트됩니다</string>
     <string name="sort_by">정렬 기준</string>
@@ -489,26 +489,26 @@
     <string name="show_fillers_settings">애니메이션용 필러 에피소드 표시</string>
     <string name="test_passed">통과</string>
     <string name="resume">계속</string>
-    <string name="limit_title">동영상 플레이어 제목 최대 글자 수</string>
-    <string name="android_tv_interface_on_seek_settings">표시된 플레이어 - 빨리 감기 및 되감기 초</string>
-    <string name="android_tv_interface_on_seek_settings_summary">플레이어가 보일 때 사용되는 탐색량</string>
-    <string name="android_tv_interface_off_seek_settings">플레이어 숨김 - 빨리 감기 및 되감기 초</string>
-    <string name="android_tv_interface_off_seek_settings_summary">플레이어가 숨겨져 있을 때 사용되는 탐색량</string>
+    <string name="limit_title">플레이어 내 표시 제목의 최대 글자 수</string>
+    <string name="android_tv_interface_on_seek_settings">플레이어 표시 시 탐색 시간</string>
+    <string name="android_tv_interface_on_seek_settings_summary">플레이어 표시 중 탐색 간격</string>
+    <string name="android_tv_interface_off_seek_settings">플레이어 미표시 시 탐색 시간</string>
+    <string name="android_tv_interface_off_seek_settings_summary">플레이어 미표시 시 탐색 간격</string>
     <string name="pref_category_actions">동작</string>
     <string name="pref_category_looks">외형</string>
     <string name="random_button_settings">랜덤 버튼</string>
     <string name="random_button_settings_desc">홈페이지 및 라이브러리에서 랜덤 버튼 표시</string>
     <string name="bottom_title_settings_des">포스터 아래에 제목을 이동</string>
-    <string name="subtitles_depressed">내려감</string>
-    <string name="subtitles_raised">올라감</string>
+    <string name="subtitles_depressed">음각</string>
+    <string name="subtitles_raised">양각</string>
     <string name="subtitles_example_text">다람쥐 헌 쳇바퀴에 타고파</string>
-    <string name="subtitles_remove_bloat">자막에서 불필요한 요소/코드 제거</string>
+    <string name="subtitles_remove_bloat">불필요한 요소/코드 제거</string>
     <string name="extras">엑스트라</string>
     <string name="network_adress_example">https://example.com/example.mp4</string>
     <string name="tracks">트랙</string>
     <string name="referer">Referer (선택)</string>
     <string name="skip_type_recap">요약</string>
-    <string name="action_mark_as_watched">시청함으로 표시</string>
+    <string name="action_mark_as_watched">시청 완료로 표시</string>
     <string name="revert">되돌리기</string>
     <string name="subscription_in_progress_notification">구독한 프로그램 업데이트</string>
     <string name="subscription_list_name">구독중</string>
@@ -520,7 +520,7 @@
     <string name="toast_copied">복사됨!</string>
     <string name="repo_copy_label">레포지토리 이름 및 URL</string>
     <string name="test_extensions_summary">본 테스트는 개발자만을 대상으로 하며, 확장자의 작업을 확인하거나 거부하지 않습니다.</string>
-    <string name="cs3wiki">클라우스스트림 위키</string>
+    <string name="cs3wiki">CloudStream 위키</string>
     <string name="links_reloaded_toast">링크 새로고침 완료</string>
     <string name="backup_frequency">백업 빈도</string>
     <string name="favorites_list_name">즐겨찾기</string>
@@ -531,7 +531,7 @@
     <string name="dismiss">취소</string>
     <string name="open_downloaded_repo">저장소 열기</string>
     <string name="enter_current_pin">현재 PIN 입력</string>
-    <string name="auto_rotate_video_desc">비디오 방향에 따라 화면 방향을 자동으로 전환합니다</string>
+    <string name="auto_rotate_video_desc">비디오 방향에 따라 화면 방향을 자동으로 회전합니다</string>
     <string name="device_pin_error_message">장치 PIN 코드를 가져올 수 없습니다, 로컬 인증을 시도하세요</string>
     <string name="device_pin_expired_message">PIN 코드가 만료되었습니다!</string>
     <string name="device_pin_counter_text">코드 만료까지 남은 시간: %1$dm %2$ds</string>
@@ -546,7 +546,7 @@
     <string name="profiles">프로필</string>
     <string name="ok">확인</string>
     <string name="battery_dialog_title">배터리 최적화 사용 안 함</string>
-    <string name="app_unrestricted_toast">앱 배터리 사용량이 이미 무제한으로 설정되었습니다</string>
+    <string name="app_unrestricted_toast">배터리 사용량이 \'제한 없음\'으로 이미 설정되어 있습니다</string>
     <string name="app_info_intent_error">CloudStream의 App 정보를 열 수 없습니다.</string>
     <string name="favorite_added">즐겨찾기에 %s 추가</string>
     <string name="profile_number">프로필 %d</string>
@@ -561,13 +561,13 @@
     <string name="unfavorite">즐겨찾기 해제</string>
     <string name="biometric_authentication_title">잠금 해제</string>
     <string name="biometric_setting">생체 인식으로 잠금</string>
-    <string name="music_singlar">음악</string>
+    <string name="music_singular">음악</string>
     <string name="audio_book_singular">오디오책</string>
     <string name="auto_rotate_video">자동 회전</string>
     <string name="mobile_data">모바일 데이터</string>
     <string name="disable">사용 불가능</string>
     <string name="player_settings_select_cast_device">캐스트 장치 선택</string>
-    <string name="clipboard_unknown_error">복사하는 중 오류가 발생했습니다. 로그캣을 복사하고 문의하십시오.</string>
+    <string name="clipboard_unknown_error">복사하는 중 오류가 발생했습니다. 로그캣을 복사하고 개발자에게 문의하십시오.</string>
     <string name="action_unsubscribe">구독 취소</string>
     <string name="set_default">기본값 설정</string>
     <string name="action_subscribe">구독</string>
@@ -586,30 +586,24 @@
     <string name="select_an_account">계정 선택</string>
     <string name="use_default_account">기본 계정 사용</string>
     <string name="rotate_video">회전</string>
-    <string name="rotate_video_desc">화면 방향을 전환할 토글 버튼 표시</string>
+    <string name="rotate_video_desc">화면 방향 전환 버튼 표시</string>
     <string name="manage_accounts">계정 관리</string>
     <string name="lock_profile">프로필 잠금</string>
     <string name="pin_error_incorrect">잘못된 PIN입니다. 다시 시도하세요.</string>
     <string name="edit_account">계정 편집</string>
-    <string name="custom_media_singluar">미디어</string>
+    <string name="custom_media_singular">미디어</string>
     <string name="password_pin_authentication_title">비밀번호/PIN 인증</string>
     <string name="biometric_unsupported">이 장치에서는 생체 인식이 지원되지 않습니다</string>
     <string name="biometric_setting_summary">지문, 얼굴 ID, PIN, 패턴 또는 비밀번호로 앱을 잠급니다.</string>
     <string name="biometric_prompt_description">여러 번 실패하면 프롬프트가 닫힙니다. 다시 시도하려면 앱을 다시 시작하세요.</string>
     <string name="reset_btn">재설정</string>
     <string name="automatic_plugin_download_mode_title">플러그인 다운로드를 필터링할 모드 선택</string>
-    <string name="biometric_warning">데이터가 백업되었습니다. 장치에 따라 동작이 다를 수 있으며 앱 접근이 차단될 경우 앱 데이터를 완전히 지우고 백업에서 복원하세요. 이로 인해 발생하는 불편을 사과드립니다.</string>
+    <string name="biometric_warning">CloudStream 데이터 백업이 완료되었습니다. 드문 경우지만, 기기에 따라 앱 접속이 안 되는 오류가 발생할 수 있습니다. 만약 앱이 열리지 않는다면, 앱 데이터를 완전히 삭제(초기화)한 후 이 백업 파일로 복구해 주시기 바랍니다. 이용에 불편을 드려 대단히 죄송합니다.</string>
     <string name="device_pin_url_message">스마트폰이나 컴퓨터에서 <b>%s</b>를 방문하여 위의 코드를 입력하세요</string>
-    <string name="battery_dialog_message">구독 된 TV 프로그램에 대한 특이성 다운로드 및 알림을 보려면 클라우드 스트림은 배경에서 오른쪽으로 실행할 권리가 필요합니다. 확인을 눌러 요청 대화 상자를 표시하십시오. 필요한 경우 필요에 따라 CP3에 제한되지 않고 공식을 다운로드하거나 공식화에서 확대를 누릴 필요가 있습니다.</string>
-    <string name="quality_profile_help">여기서 소스의 순서를 변경할 수 있습니다. 비디오의 우선 순위가 높은 경우에는 소스 선택에 더 높게 나타납니다. 소스 우선 순위와 품질 우선 순위의 합이 비디오 우선 순위입니다.
-\n
-\n참고 A: 3
-\n품질 B: 7
-\n총 비디오 우선 순위는 10입니다.
-\n
-\n참고: 합이 10 이상이면 해당 링크가 로드되면 플레이어는 자동으로 로드를 건너뜁니다!</string>
-    <string name="next_season_episode_format" formatted="true">시즌 %1$d 에피소드 %2$d이(가) 공개 예정</string>
-    <string name="result_search_tooltip">다른 확장자에서 검색</string>
+    <string name="battery_dialog_message">구독 중인 TV 쇼의 알림을 받고 다운로드를 끊김 없이 완료하려면, CloudStream의 백그라운드 실행 권한이 필요합니다. \'확인\'을 누른 후 나타나는 요청 창에서 \'허용\'을 선택해 주세요.\n\n참고로, 이 권한을 허용한다고 해서 배터리가 계속 소모되는 것은 아닙니다. 알림을 받거나 공식 확장 프로그램에서 영상을 다운로드할 때처럼 꼭 필요한 상황에서만 백그라운드 작업을 수행합니다.</string>
+    <string name="quality_profile_help">여기서 소스의 순서를 변경할 수 있습니다. 비디오의 우선 순위가 높은 경우에는 소스 선택 화면에 더 높게 나타납니다. 소스 우선 순위와 품질 우선 순위의 합이 비디오 우선 순위입니다. \n \n참고 A: 3 \n품질 B: 7 \n총 비디오 우선 순위는 10입니다. \n \n참고: 합이 10 이상이면 해당 링크가 로드되면 플레이어는 자동으로 로드를 건너뜁니다!</string>
+    <string name="next_season_episode_format" formatted="true">시즌 %1$d 에피소드 %2$d 공개 예정</string>
+    <string name="result_search_tooltip">다른 확장프로그램에서 검색</string>
     <string name="subscribe_tooltip">새로운 에피소드 알림</string>
     <string name="recommendations_tooltip">추천목록 보기</string>
     <string name="speed_setting_summary">플레이어에 속도 옵션을 추가합니다</string>
@@ -619,7 +613,7 @@
     <string name="duplicate_title">잠재적 중복 발견</string>
     <string name="enter_pin_with_name" formatted="true">%s의 PIN 입력</string>
     <string name="action_remove_from_favorites">즐겨찾기에서 제거</string>
-    <string name="episode_action_cast_mirror">캐스트미러</string>
+    <string name="episode_action_cast_mirror">Cast 소스 목록</string>
     <string name="delete_plugin">플러그인 삭제</string>
     <string name="test_warning">경고</string>
     <string name="preview_seekbar">탐색바 미리보기</string>
@@ -627,7 +621,7 @@
     <string name="play_from_beginning_img_des">처음부터 재생</string>
     <string name="downloads_empty">현재 다운로드가 없습니다.</string>
     <string name="downloads_delete_select">삭제할 항목을 선택하십시오</string>
-    <string name="offline_file">오프라인 시청가능</string>
+    <string name="offline_file">오프라인 시청 가능</string>
     <string name="select_all">모두 선택</string>
     <string name="deselect_all">모두 선택해제</string>
     <string name="open_local_video">로컬 비디오 열기</string>
@@ -649,11 +643,11 @@
     <string name="sort_release_date_old">공개일 (오래된순)</string>
     <string name="hide_player_control_names">플레이어 내 버튼명 숨기기</string>
     <string name="torrent_info">이 동영상은 토렌트이므로 시청 활동이 추적될 수 있습니다.\n계속하기 전에 토렌트에 대해 충분히 이해했는지 확인하세요.</string>
-    <string name="audio_singluar">오디오</string>
-    <string name="podcast_singluar">팟캐스트</string>
+    <string name="audio_singular">오디오</string>
+    <string name="podcast_singular">팟캐스트</string>
     <string name="begin_speaking">시작하기 …</string>
     <string name="encoding_error">인코딩 오류</string>
-    <string name="unsupported_error">지원되지 않는 오류</string>
+    <string name="unsupported_error">미지원 오류</string>
     <string name="speech_recognition_unavailable">음성 인식 사용 불가</string>
     <string name="download_time_left_hour_min_sec_format" formatted="true">%1$d시간 %2$d분 %3$d초</string>
     <string name="download_time_left_min_sec_format" formatted="true">%1$d분 %2$d초</string>
@@ -662,7 +656,7 @@
     <string name="install_prerelease">출시 전 버전 설치</string>
     <string name="prerelease_already_installed">출시 전 버전이 이미 설치되어 있습니다.</string>
     <string name="prerelease_install_failed">출시 전 버전 설치 실패.</string>
-    <string name="episode_action_play_mirror">재생 가능 목록 보기</string>"
+    <string name="episode_action_play_mirror">재생 소스 목록</string>"
     <string name="show_rating">평가 라벨</string>
     <string name="show_episode_text">에피소드 본문</string>
     <string name="player_load_one_subtitle_online">사용 가능한 자막 불러오기</string>
@@ -684,7 +678,7 @@
     <string name="confirm_before_exiting_desc">이 알림을 앱 종료 전에 표시</string>
     <string name="show">보이기</string>
     <string name="dont_show">보이지 않기</string>
-    <string name="subs_edge_size">테두리 크기</string>
+    <string name="subs_edge_size">윤곽선 굵기</string>
     <string name="torrent_preferred_media">Settings/Providers/Preferred media 에서 토렌트 활성화</string>
     <string name="torrent_not_accepted">진행하려면 앱 재시작 후 토렌트 스트리밍 팝업란의 수락이 필요합니다.</string>
     <string name="software_decoding">소프트웨어 디코딩</string>
@@ -700,25 +694,25 @@
     <string name="player_notification_channel_description">백그라운드에서 재생을 제어하기 위한 플레이어 알림</string>
     <string name="subtitles_from_embedded">내장 자막</string>
     <string name="subtitles_from_online">온라인</string>
-    <string name="all_subtitles_bold">자막 글꼴 굵게 표시</string>
-    <string name="all_subtitles_italic">자막 글꼴 기울게 표시</string>
+    <string name="all_subtitles_bold">자막 굵게 표시</string>
+    <string name="all_subtitles_italic">자막 기울게 표시</string>
     <string name="download_parallel_settings_des">병렬로 다운로드 할 수 있는 아이템의 수</string>
     <string name="parallel_downloads">병렬 다운로드</string>
     <string name="concurrent_connections">동시 연결수</string>
     <string name="concurrent_connections_settings_des">다운로드 시 각 항목마다 사용할 수 있는 동시 연결의 수</string>
-    <string name="go_to_downloads">다운로드로 가기</string>
+    <string name="go_to_downloads">다운로드로 이동</string>
     <string name="no_internet_connection">인터넷 연결 없음.\n\n인터넷에 연결 한 후 재시도 하거나, 혹은 이미 다운로드 된 항목을 재생하십시오.</string>
     <string name="overscan_settings_des">화면의 잘림 현상을 방지하기 위해 경계를 조정합니다</string>
     <string name="poster_size_settings_des">포스터 크기 변경</string>
     <string name="poster_size_settings">포스터 크기</string>
     <string name="speedup_title">길게 눌러 배속 활성화</string>
-    <string name="speedup_summary">길게 눌러 2배속</string>
+    <string name="speedup_summary">길게 눌러 2배속 재생</string>
     <string name="edit_profile_image_title">프로필 사진 변경</string>
     <string name="edit_profile_image_hint">프로필 사진 URL 입력</string>
     <string name="edit_profile_image_error_empty">URL을 찾을 수 없습니다</string>
     <string name="edit_profile_image_error_invalid">잘못된 URL 혹은 이미지 입니다</string>
     <string name="edit_profile_image_success">이미지 업데이트 성공</string>
-    <string name="action_mark_watched_up_to_this_episode">이 에피소드까지 시청함으로 표시</string>
+    <string name="action_mark_watched_up_to_this_episode">이 에피소드까지 시청 완료로 표시</string>
     <string name="action_remove_mark_watched_up_to_this_episode">이 에피소드까지 시청함 표시 제거</string>
     <string name="name">이름</string>
     <string name="resolution_and_name">해상도 및 이름</string>
@@ -734,9 +728,9 @@
     <string name="top_right">오른쪽 위</string>
     <string name="source_priority_help">비디오 소스가 플레이어에서 정렬되는 순서 설정</string>
     <string name="extra_brightness_settings_des">디스플레이 밝기가 100%를 초과하면 밝기 필터를 활성화합니다</string>
-    <string name="cancel_queue_message">모든 다운로드 큐를 취소하시겠습니까?</string>
+    <string name="cancel_queue_message">모든 다운로드 작업을 취소하시겠습니까?</string>
     <string name="download_episode_range">에피소드를 다운로드 하시겠습니까 %s?</string>
-    <string name="queue_empty_message">현재 누락된 다운로드가 없습니다.</string>
+    <string name="queue_empty_message">다운로드 대기열이 비어 있습니다.</string>
     <plurals name="downloads_active">
         <item quantity="other">%d 활성 다운로드</item>
     </plurals>
@@ -745,18 +739,19 @@
     </plurals>
     <string name="search_suggestions_des">입력하는 동안 검색어 제안 표시</string>
     <string name="show_cast_in_details">출연진 정보 표시</string>
-    <string name="background_radius">배경 모서리 곡률</string>
+    <string name="background_radius">배경 테두리 곡률</string>
     <string name="reload_provider">공급자 새로고침</string>
     <string name="search_suggestions">검색어 제안</string>
     <string name="clear_suggestions">제안 삭제</string>
     <string name="video_info">미디어 정보</string>
     <string name="source_name">소스 이름</string>
     <string name="extra_brightness_settings">최대 밝기 확장</string>
-    <string name="download_queue">다운로드 큐</string>
+    <string name="download_queue">다운로드 작업</string>
     <string name="download_all">모두 다운로드</string>
     <string name="cancel_all">모두 취소</string>
     <string name="source_priority">소스 우선순위</string>
     <string name="overscan_settings">오버스캔(화면 경계) 설정</string>
     <string name="action_reload">새로고침</string>
     <string name="extra_brightness_key">최대 밝기 확장 활성화</string>
+    <string name="show_player_metadata_overlay">플레이어에 메타데이터 오버레이 표시</string>
 </resources>

@@ -346,7 +346,7 @@
     <string name="sync_score_format" formatted="true">%d / 10</string>
     <string name="subtitles_raised">اٹھایا</string>
     <string name="subtitle_offset_extra_hint_before_format">اگر سب ٹائٹلز %d ms بہت جلد دکھائے جائیں تو اسے استعمال کریں</string>
-    <string name="skip_type_creddits">کریڈٹس</string>
+    <string name="skip_type_credits">کریڈٹس</string>
     <string name="extras">اضافی</string>
     <string name="actor_main">مرکزی</string>
     <string name="sort">ترتیب</string>
@@ -591,9 +591,9 @@
     <string name="battery_dialog_title">Battery Optimization کو غیر فعال کریں</string>
     <string name="app_unrestricted_toast">اپپ battery usage پہلے سے ہی unrestricted ہے</string>
     <string name="favorite">پسندیدہ کریں</string>
-    <string name="music_singlar">موسیقی</string>
+    <string name="music_singular">موسیقی</string>
     <string name="audio_book_singular">آڈیو بک</string>
-    <string name="custom_media_singluar">میڈیا</string>
+    <string name="custom_media_singular">میڈیا</string>
     <string name="biometric_authentication_title">انلاک CloudStream</string>
     <string name="biometric_setting">بایومیٹرکس کے ساتھ لاک کریں</string>
     <string name="biometric_unsupported">بایومیٹرک تصدیق اس ڈیوائس پر سپپورٹڈ نہیں ہے</string>
@@ -617,7 +617,7 @@
     <string name="open_local_video">لوکل ویڈیو کھولیں</string>
     <string name="delete_files">فائلز حذف کریں</string>
     <string name="test_warning">انتباہ</string>
-    <string name="audio_singluar">آواز</string>
+    <string name="audio_singular">آواز</string>
     <string name="sort_button_date">تاریخ %s</string>
     <string name="device_pin_url_message">اپنے اسمارٹ فون یا کمپیوٹر پر یہ <b>%s</b> وزٹ کریں اور مندرجہ بالا کوڈ ڈالیں</string>
 </resources>

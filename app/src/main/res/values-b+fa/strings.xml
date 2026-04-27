@@ -263,7 +263,7 @@
     <string name="storage_error">خطای دانلود، دسترسی به حافظه را چک کنید</string>
     <string name="resolution">کیفیت</string>
     <string name="resolution_and_title">کیفیت و عنوان</string>
-    <string name="custom_media_singluar">محتوا</string>
+    <string name="custom_media_singular">محتوا</string>
     <string name="double_tap_to_seek_amount_settings">مقدار جلورفتن پخش‌کننده</string>
     <string name="no_repository_found_error">مخزن پیدا نشد، نشانی را چک کنید و فیلترشکن را امتحان کنید</string>
     <string name="example_lang_name">کد زبان (انگلیسی)</string>
@@ -320,10 +320,10 @@
     <string name="ova_singular">انیمه خانگی</string>
     <string name="live_singular">پخش زنده</string>
     <string name="nsfw_singular">مثبت ۱۸ سال</string>
-    <string name="music_singlar">موسیقی</string>
+    <string name="music_singular">موسیقی</string>
     <string name="audio_book_singular">کتاب صوتی</string>
-    <string name="audio_singluar">صدا</string>
-    <string name="podcast_singluar">پادکست</string>
+    <string name="audio_singular">صدا</string>
+    <string name="podcast_singular">پادکست</string>
     <string name="episode_action_play_in_app">پخش کردن در برنامه</string>
     <string name="episode_action_auto_download">دانلود اتوماتیک</string>
     <string name="no_update_found">هیچ آپدیتی پیدا نشد</string>

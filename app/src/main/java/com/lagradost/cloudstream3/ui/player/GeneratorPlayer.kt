@@ -106,7 +106,6 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
-import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
@@ -124,6 +123,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.downloader.DownloadUtils.getImageBitmapFromUrl
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.txt
+import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
 import com.lagradost.safefile.SafeFile
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -1163,7 +1163,6 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 val subsArrayAdapter =
                     ArrayAdapter<Spanned>(ctx, R.layout.sort_bottom_single_choice)
-                subsArrayAdapter.add(ctx.getString(R.string.no_subtitles).html())
 
                 val subtitlesGrouped =
                     currentSubtitles.groupBy { it.originalName }.map { (key, value) ->
@@ -1173,8 +1172,13 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 val subtitles = subtitlesGrouped.map { it.key.html() }
 
-                val subtitleGroupIndexStart =
-                    subtitlesGrouped.keys.indexOf(currentSelectedSubtitles?.originalName) + 1
+                val realIndex = subtitlesGrouped.keys.indexOf(currentSelectedSubtitles?.originalName)
+                val subtitleGroupIndexStart = if (realIndex == -1) {
+                    // The "No Subtitles" option is outside the subtitlesGrouped list.
+                    subtitlesGrouped.size
+                } else {
+                    realIndex
+                }
                 var subtitleGroupIndex = subtitleGroupIndexStart
 
                 val subtitleOptionIndexStart =
@@ -1183,6 +1187,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 var subtitleOptionIndex = subtitleOptionIndexStart
 
                 subsArrayAdapter.addAll(subtitles)
+                subsArrayAdapter.add(ctx.getString(R.string.no_subtitles).html())
 
                 subtitleList.adapter = subsArrayAdapter
                 subtitleList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
@@ -1201,7 +1206,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                     val subtitleOptions =
                         subtitlesGroupedList
-                            .getOrNull(subtitleGroupIndex - 1)?.value?.map { subtitle ->
+                            .getOrNull(subtitleGroupIndex)?.value?.map { subtitle ->
                                 val nameSuffix = subtitle.nameSuffix.html()
                                 nameSuffix.ifBlank {
                                     when (subtitle.origin) {
@@ -1253,7 +1258,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
 
                 subtitleOptionList.setOnItemClickListener { _, _, which, _ ->
-                    if (which >= (subtitlesGroupedList.getOrNull(subtitleGroupIndex - 1)?.value?.size
+                    if (which >= (subtitlesGroupedList.getOrNull(subtitleGroupIndex)?.value?.size
                             ?: -1)
                     ) {
                         val child = subtitleOptionList.adapter.getView(which, null, subtitleList)
@@ -1340,10 +1345,10 @@ class GeneratorPlayer : FullScreenPlayer() {
                 binding.applyBtt.setOnClickListener {
                     var init = sourceIndex != startSource
                     if (subtitleGroupIndex != subtitleGroupIndexStart || subtitleOptionIndex != subtitleOptionIndexStart) {
-                        init = init or if (subtitleGroupIndex <= 0) {
+                        init = init or if (subtitleGroupIndex >= subtitlesGrouped.size) {
                             noSubtitles()
                         } else {
-                            subtitlesGroupedList.getOrNull(subtitleGroupIndex - 1)?.value?.getOrNull(
+                            subtitlesGroupedList.getOrNull(subtitleGroupIndex)?.value?.getOrNull(
                                 subtitleOptionIndex
                             )?.let {
                                 setSubtitles(it, true)
@@ -2052,11 +2057,11 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
-    override fun onTimestampSkipped(timestamp: EpisodeSkip.SkipStamp) {
+    override fun onTimestampSkipped(timestamp: VideoSkipStamp) {
         displayTimeStamp(false)
     }
 
-    override fun onTimestamp(timestamp: EpisodeSkip.SkipStamp?) {
+    override fun onTimestamp(timestamp: VideoSkipStamp?) {
         if (timestamp != null) {
             playerBinding?.skipChapterButton?.setText(timestamp.uiText)
             displayTimeStamp(true)

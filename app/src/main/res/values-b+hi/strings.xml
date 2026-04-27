@@ -254,7 +254,7 @@
     <string name="episode_sync_settings_des">अपने वर्तमान प्रकरण की प्रगति को स्वचालित रूप से समकालीन बनाएं</string>
     <string name="show_fillers_settings">एनीमे के लिए पूरक प्रकरण दिखाएं</string>
     <string name="backup_success">आंकड़े संगृहीत हो गए</string>
-    <string name="music_singlar">संगीत</string>
+    <string name="music_singular">संगीत</string>
     <string name="torrent_info">यह वीडियो एक टॉरेंट है, इसका मतलब यह है कि आपकी वीडियो गतिविधि पर नजर रखी जा सकती है।\nजारी रखने से पहले सुनिश्चित करें कि आप टोरेंटिंग को समझते है।</string>
     <string name="double_tap_to_pause_settings_des">रोकने के लिए बीच में दो बार टैप करें</string>
     <string name="episode_sync_settings">देखा हुआ प्रोग्रेस अपडेट करें</string>
@@ -309,7 +309,7 @@
     <string name="episode_action_download_subtitle">उपशीर्षक डाउनलोड करें</string>
     <string name="show_title">शीर्षक</string>
     <string name="library">लाइब्रेरी</string>
-    <string name="custom_media_singluar">मीडिया</string>
+    <string name="custom_media_singular">मीडिया</string>
     <string name="pref_filter_search_quality">खोज परिणामों में चयनित वीडियो गुणवत्ता छुपाएं</string>
     <string name="episodes_range">%1$d-%2$d</string>
     <string name="action_open_play">@string/home_play</string>
@@ -326,8 +326,8 @@
     <string name="apk_installer_settings">APK इंस्टॉलर</string>
     <string name="apk_installer_settings_des">कुछ डिवाइस नए पैकेज इंस्टॉलर को सपोर्ट नहीं करते हैं। यदि अपडेट इंस्टॉल नहीं होते हैं, तो पुराने विकल्प को आज़माएं।</string>
     <string name="subs_default_reset_toast">डिफ़ॉल्ट मान पर रीसेट करें</string>
-    <string name="audio_singluar">ऑडियो</string>
-    <string name="podcast_singluar">पॉडकास्ट</string>
+    <string name="audio_singular">ऑडियो</string>
+    <string name="podcast_singular">पॉडकास्ट</string>
     <string name="render_error">रेंडरर त्रुटि</string>
     <string name="encoding_error">एन्कोडिंग त्रुटि</string>
     <string name="unsupported_error">एरर क्योंकि सपोर्टेड नहीं</string>
@@ -418,4 +418,8 @@
     <string name="added_sync_format" formatted="true">जोड़ा गया %s</string>
     <string name="upload_sync">Sync</string>
     <string name="sync_score">रेटेड</string>
+    <string name="download_queue">कतार डाउनलोड करें</string>
+    <string name="queue_empty_message">फिलहाल कोई डाउनलोड कतार में नहीं है।</string>
+    <string name="extra_brightness_settings">अतिरिक्त चमक</string>
+    <string name="extra_brightness_settings_des">डिस्प्ले की चमक 100% से अधिक होने पर ब्राइटनेस फ़िल्टर चालू करें</string>
 </resources>

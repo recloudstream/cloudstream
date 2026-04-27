@@ -174,11 +174,11 @@
     <string name="settings_info">Звесткі</string>
     <string name="advanced_search">Пашыраны пошук</string>
     <string name="advanced_search_des">Паказвае пошукавыя вынікі, падзеленыя па пастаўшчыкам</string>
-    <string name="show_fillers_settings">Паказваць серыі-запаўнялнікі для анімэ</string>
+    <string name="show_fillers_settings">Паказваць серыі-запаўняльнікі для анімэ</string>
     <string name="show_trailers_settings">Паказваць трэйлеры</string>
     <string name="kitsu_settings">Паказваць плакаты з Kitsu</string>
     <string name="pref_filter_search_quality">Схаваць выбраную якасць відэа з вынікаў пошуку</string>
-    <string name="automatic_plugin_updates">Аўтаматычнае абнаўленне пашырэнняў</string>
+    <string name="automatic_plugin_updates">Аўтаматычнае абнаўленне ўбудоў</string>
     <string name="automatic_plugin_download">Аўтаматычная спампоўка ўбудоў</string>
     <string name="apk_installer_settings_des">Некаторыя прылады не падтрымліваюць новы ўсталёўшчык пакетаў. Калі абнаўленні не ўсталёўваюцца, паспрабуйце ранейшую версію.</string>
     <string name="github">Github</string>
@@ -273,11 +273,11 @@
     <string name="live_singular">Прамая трансляцыя</string>
     <string name="nsfw_singular">NSFW</string>
     <string name="other_singular">Відэа</string>
-    <string name="music_singlar">Музыка</string>
+    <string name="music_singular">Музыка</string>
     <string name="audio_book_singular">Аўдыякніга</string>
-    <string name="custom_media_singluar">Медыя</string>
-    <string name="audio_singluar">Аўдыя</string>
-    <string name="podcast_singluar">Падкаст</string>
+    <string name="custom_media_singular">Медыя</string>
+    <string name="audio_singular">Аўдыя</string>
+    <string name="podcast_singular">Падкаст</string>
     <string name="source_error">Памылка крыніцы</string>
     <string name="remote_error">Памылка аддаленага элемента</string>
     <string name="render_error">Памылка паказу</string>
@@ -537,7 +537,7 @@
     <string name="skip_type_recap">Зводка</string>
     <string name="skip_type_mixed_ed">Змешанае заканчэнне</string>
     <string name="skip_type_mixed_op">Змешаны опенінг</string>
-    <string name="skip_type_creddits">Удзельнікі</string>
+    <string name="skip_type_credits">Удзельнікі</string>
     <string name="skip_type_intro">Застаўка</string>
     <string name="clear_history">Ачысціць гісторыю</string>
     <string name="history">Гісторыя</string>
@@ -735,4 +735,5 @@
         <item quantity="many">%d спампоўванняў у чарзе</item>
         <item quantity="other">%d спампоўванняў у чарзе</item>
     </plurals>
+    <string name="show_player_metadata_overlay">Паказваць накладанне з метаданымі ў прайгравальніку</string>
 </resources>

@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.WorkerThread
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -26,6 +27,7 @@ import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.InternalAPI
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainAPI.Companion.settingsForProvider
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
@@ -44,6 +46,7 @@ import com.lagradost.cloudstream3.plugins.RepositoryManager.ONLINE_PLUGINS_FOLDE
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.plugins.RepositoryManager.downloadPluginToFile
 import com.lagradost.cloudstream3.plugins.RepositoryManager.getRepoPlugins
+import com.lagradost.cloudstream3.plugins.RepositoryManager.sha256
 import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
@@ -77,6 +80,7 @@ data class PluginData(
     @JsonProperty("filePath") val filePath: String,
     @JsonProperty("version") val version: Int,
 ) {
+    @WorkerThread
     fun toSitePlugin(): SitePlugin {
         return SitePlugin(
             this.filePath,
@@ -91,7 +95,9 @@ data class PluginData(
             null,
             null,
             null,
-            File(this.filePath).length()
+            File(this.filePath).length(),
+            // No file hash for local plugins. Local plugins have no use for the hash, and it's expensive to compute.
+            null
         )
     }
 }
@@ -259,12 +265,8 @@ object PluginManager {
      * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
      * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
      */
-    @Suppress("FunctionName", "DEPRECATION_ERROR")
-    @Deprecated(
-        "Calling this function from a plugin will lead to crashes, use loadPlugin and unloadPlugin",
-        replaceWith = ReplaceWith("loadPlugin"),
-        level = DeprecationLevel.ERROR
-    )
+    @Suppress("FunctionName")
+    @InternalAPI
     @Throws
     suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_updateAllOnlinePluginsAndLoadThem(activity: Activity) {
         assertNonRecursiveCallstack()
@@ -305,6 +307,7 @@ object PluginManager {
                 downloadPlugin(
                     activity,
                     pluginData.onlineData.second.url,
+                    pluginData.onlineData.second.fileHash,
                     pluginData.savedData.internalName,
                     File(pluginData.savedData.filePath),
                     true
@@ -340,12 +343,8 @@ object PluginManager {
      * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
      * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
      */
-    @Suppress("FunctionName", "DEPRECATION_ERROR")
-    @Deprecated(
-        "Calling this function from a plugin will lead to crashes, use loadPlugin and unloadPlugin",
-        replaceWith = ReplaceWith("loadPlugin"),
-        level = DeprecationLevel.ERROR
-    )
+    @Suppress("FunctionName")
+    @InternalAPI
     @Throws
     suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_downloadNotExistingPluginsAndLoad(
         activity: Activity,
@@ -420,6 +419,7 @@ object PluginManager {
             downloadPlugin(
                 activity,
                 pluginData.onlineData.second.url,
+                pluginData.onlineData.second.fileHash,
                 pluginData.savedData.internalName,
                 pluginData.onlineData.first,
                 !pluginData.isDisabled
@@ -454,12 +454,8 @@ object PluginManager {
      * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
      * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
      */
-    @Suppress("FunctionName", "DEPRECATION_ERROR")
-    @Deprecated(
-        "Calling this function from a plugin will lead to crashes, use loadPlugin and unloadPlugin",
-        replaceWith = ReplaceWith("loadPlugin"),
-        level = DeprecationLevel.ERROR
-    )
+    @Suppress("FunctionName")
+    @InternalAPI
     @Throws
     suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(context: Context) {
         assertNonRecursiveCallstack()
@@ -480,13 +476,9 @@ object PluginManager {
      * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
      * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
      */
-    @Suppress("FunctionName", "DEPRECATION_ERROR")
+    @Suppress("FunctionName")
+    @InternalAPI
     @Throws
-    @Deprecated(
-        "Calling this function from a plugin will lead to crashes, use loadPlugin and unloadPlugin",
-        replaceWith = ReplaceWith("loadPlugin"),
-        level = DeprecationLevel.ERROR
-    )
     suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_hotReloadAllLocalPlugins(activity: FragmentActivity?) {
         assertNonRecursiveCallstack()
 
@@ -505,12 +497,8 @@ object PluginManager {
      * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
      * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
      */
-    @Suppress("FunctionName", "DEPRECATION_ERROR")
-    @Deprecated(
-        "Calling this function from a plugin will lead to crashes, use loadPlugin and unloadPlugin",
-        replaceWith = ReplaceWith("loadPlugin"),
-        level = DeprecationLevel.ERROR
-    )
+    @Suppress("FunctionName")
+    @InternalAPI
     @Throws
     suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(context: Context, forceReload: Boolean) {
         assertNonRecursiveCallstack()
@@ -710,16 +698,25 @@ object PluginManager {
             APIHolder.allProviders.removeIf { provider: MainAPI -> provider.sourcePlugin == plugin.filename }
         }
 
-        extractorApis.removeIf { provider: ExtractorApi -> provider.sourcePlugin == plugin.filename }
+        synchronized(extractorApis) {
+            extractorApis.removeIf { provider: ExtractorApi -> provider.sourcePlugin == plugin.filename }
+        }
 
         synchronized(VideoClickActionHolder.allVideoClickActions) {
             VideoClickActionHolder.allVideoClickActions.removeIf { action: VideoClickAction -> action.sourcePlugin == plugin.filename }
         }
 
-        classLoaders.values.removeIf { v -> v == plugin }
+        synchronized(classLoaders) {
+            classLoaders.values.removeIf { v -> v == plugin }
+        }
 
-        plugins.remove(absolutePath)
-        urlPlugins.values.removeIf { v -> v == plugin }
+        synchronized(plugins) {
+            plugins.remove(absolutePath)
+        }
+
+        synchronized(urlPlugins) {
+            urlPlugins.values.removeIf { v -> v == plugin }
+        }
     }
 
     /**
@@ -749,25 +746,27 @@ object PluginManager {
     suspend fun downloadPlugin(
         activity: Activity,
         pluginUrl: String,
+        pluginHash: String?,
         internalName: String,
         repositoryUrl: String,
         loadPlugin: Boolean
     ): Boolean {
         val file = getPluginPath(activity, internalName, repositoryUrl)
-        return downloadPlugin(activity, pluginUrl, internalName, file, loadPlugin)
+        return downloadPlugin(activity, pluginUrl, pluginHash, internalName, file, loadPlugin)
     }
 
     suspend fun downloadPlugin(
         activity: Activity,
         pluginUrl: String,
+        pluginHash: String?,
         internalName: String,
         file: File,
-        loadPlugin: Boolean
+        loadPlugin: Boolean,
     ): Boolean {
         try {
             Log.d(TAG, "Downloading plugin: $pluginUrl to ${file.absolutePath}")
             // The plugin file needs to be salted with the repository url hash as to allow multiple repositories with the same internal plugin names
-            val newFile = downloadPluginToFile(pluginUrl, file) ?: return false
+            val newFile = downloadPluginToFile(activity, pluginUrl, file, pluginHash) ?: return false
 
             val data = PluginData(
                 internalName,
@@ -814,13 +813,9 @@ object PluginManager {
      * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
      * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
      */
-    @Suppress("FunctionName", "DEPRECATION_ERROR")
+    @Suppress("FunctionName")
+    @InternalAPI
     @Throws
-    @Deprecated(
-        "Calling this function from a plugin will lead to crashes, use loadPlugin and unloadPlugin",
-        replaceWith = ReplaceWith("loadPlugin"),
-        level = DeprecationLevel.ERROR
-    )
     suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_manuallyReloadAndUpdatePlugins(activity: Activity) {
         assertNonRecursiveCallstack()
 
@@ -859,6 +854,7 @@ object PluginManager {
                 if (downloadPlugin(
                         activity,
                         pluginData.onlineData.second.url,
+                        pluginData.onlineData.second.fileHash,
                         pluginData.savedData.internalName,
                         existingFile,
                         true

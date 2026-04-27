@@ -469,7 +469,7 @@
     <string name="repository_url_hint">Repó URL</string>
     <string name="plugin_loaded">Bővítmény betöltve</string>
     <string name="plugin_downloaded">Bővítmény letöltve</string>
-    <string name="skip_type_creddits">Közreműködők</string>
+    <string name="skip_type_credits">Közreműködők</string>
     <string name="sort_alphabetical_z">Betűrendben (Z-től az A-ig)</string>
     <string name="select_library">Könyvtár kiválasztása</string>
     <string name="safe_mode_file">Biztonságos módú fájlba ütköztünk!
@@ -612,11 +612,11 @@
     <string name="delete_files">Fájlok törlése</string>
     <string name="delete_message_series_only" formatted="true">Biztosan törölni szeretné az alábbi sorozat összes megjelenését?\n\n%s</string>
     <string name="resume_remaining" formatted="true">%s \nmaradék</string>
-    <string name="music_singlar">Zene</string>
+    <string name="music_singular">Zene</string>
     <string name="audio_book_singular">Hangoskönyv</string>
-    <string name="custom_media_singluar">Média</string>
-    <string name="audio_singluar">Hang</string>
-    <string name="podcast_singluar">Podcast</string>
+    <string name="custom_media_singular">Média</string>
+    <string name="audio_singular">Hang</string>
+    <string name="podcast_singular">Podcast</string>
     <string name="encoding_error">Kódolási hiba</string>
     <string name="unsupported_error">Hiba nem támogatott</string>
     <string name="delete_format" formatted="true">Törlés (%1$d | %2$s)</string>

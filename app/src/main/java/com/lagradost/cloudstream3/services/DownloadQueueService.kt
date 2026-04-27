@@ -1,8 +1,10 @@
 package com.lagradost.cloudstream3.services
 
+import android.Manifest
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
 import android.os.Build.VERSION.SDK_INT
 import android.os.IBinder
@@ -104,6 +106,10 @@ class DownloadQueueService : Service() {
 
 
     private fun updateNotification(context: Context, downloads: Int, queued: Int) {
+        if (context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED
+        ) return
+
         val activeDownloads =
             resources.getQuantityString(R.plurals.downloads_active, downloads).format(downloads)
         val activeQueue =

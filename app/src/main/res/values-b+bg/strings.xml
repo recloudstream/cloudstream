@@ -451,7 +451,7 @@
     <string name="update_notification_downloading">Изтегля се актуализация на приложението…</string>
     <string name="skip_type_mixed_op">Смесено отваряне</string>
     <string name="skip_type_mixed_ed">Смесено затваряне</string>
-    <string name="skip_type_creddits">Кредити</string>
+    <string name="skip_type_credits">Кредити</string>
     <string name="skip_type_intro">въведение</string>
     <string name="clear_history">Изчистване на историята</string>
     <string name="automatic_plugin_download_summary">Автоматично инсталиране на всички все още неинсталирани добавки от добавени хранилища.</string>
@@ -645,8 +645,8 @@
     <string name="starting_plugin_update_manually">Започва процесът на актуализация на плъгините!</string>
     <string name="player_load_one_subtitle_online">Зареди първия наличен</string>
     <string name="no_subtitles_loaded">Няма заредени субтитри още</string>
-    <string name="audio_singluar">Звук</string>
-    <string name="podcast_singluar">Подкаст</string>
+    <string name="audio_singular">Звук</string>
+    <string name="podcast_singular">Подкаст</string>
     <string name="auth_locally">Автентикация локално</string>
     <string name="biometric_setting">Заключване с биометрия</string>
     <string name="open_downloaded_repo">Отвори хранилище</string>
@@ -654,7 +654,7 @@
     <string name="device_pin_expired_message">PIN кодът е изтекъл !</string>
     <string name="cs3wiki">CloudStream Уики</string>
     <string name="password_pin_authentication_title">Удостоверяване с парола/PIN</string>
-    <string name="custom_media_singluar">Медия</string>
+    <string name="custom_media_singular">Медия</string>
     <string name="audio_book_singular">Аудиокнига</string>
     <string name="dismiss">Отхвърли</string>
     <string name="biometric_setting_summary">Отключете приложението с отпечатък, Face ID, PIN, шаблон или парола.</string>
@@ -682,7 +682,7 @@
     <string name="device_pin_url_message">Посетете <b>%s</b> на вашия смартфон или компютър и въведете горния код</string>
     <string name="device_pin_counter_text">Кодът изтича след %1$dm %2$ds</string>
     <string name="player_settings_select_cast_device">Изберете устройство за излъчване</string>
-    <string name="music_singlar">Музика</string>
+    <string name="music_singular">Музика</string>
     <string name="favorite">Любим</string>
     <string name="battery_dialog_message">За да гарантираме непрекъснати изтегляния и известия за абонирани телевизионни шоута, CloudStream се нуждае от разрешение да работи в фонов режим. Като натиснете ДОБРЕ, ще видите диалогов прозорец с искане. Моля, натиснете \"Позволи\".\n\nМоля, имайте предвид, че това разрешение не означава, че CS3 ще изтощава батерията ви. То ще работи във фонов режим само когато е необходимо, като например при получаване на известия или изтегляне на видеоклипове от официални разширения.</string>
     <string name="qr_image">Изображение на QR код</string>

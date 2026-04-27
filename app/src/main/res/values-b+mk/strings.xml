@@ -260,7 +260,7 @@
     <string name="sort">Подреди</string>
     <string name="player_settings_play_in_app">Внатрешен плеер</string>
     <string name="resolution">Резолуција</string>
-    <string name="skip_type_creddits">Кредити</string>
+    <string name="skip_type_credits">Кредити</string>
     <string name="search_hint_site" formatted="true">Пребарај %s…</string>
     <string name="plugin_deleted">Приклучокот е избришан</string>
     <string name="extension_status">Статус</string>
@@ -567,7 +567,7 @@
     <string name="unfavorite">Неомилен</string>
     <string name="favorite">Омилен</string>
     <string name="biometric_setting">Заклучување со биометрика</string>
-    <string name="music_singlar">Музика</string>
+    <string name="music_singular">Музика</string>
     <string name="subscribe_tooltip">Известување за нова епизода</string>
     <string name="result_search_tooltip">Пребарај во други екстензии</string>
     <string name="recommendations_tooltip">Прикажи препораки</string>
@@ -585,7 +585,7 @@
     <string name="biometric_authentication_title">Отклучи CloudStream</string>
     <string name="biometric_unsupported">Биометриската автентикација не е поддржана на овој уред</string>
     <string name="biometric_prompt_description">По неколку неуспешни обиди, известувањето ќе се затвори. Едноставно вклучи ја апликацијата повторно за да се обидеш повторно.</string>
-    <string name="custom_media_singluar">Медиуми</string>
+    <string name="custom_media_singular">Медиуми</string>
     <string name="episode_upcoming_format" formatted="true">Претстои во %s</string>
     <string name="resume_remaining" formatted="true">%s
 \nпреостанати</string>
@@ -633,8 +633,8 @@
     <string name="cs3wiki">CloudStream Wiki</string>
     <string name="delete_message_series_episodes" formatted="true">Дали си сигурен дека сакаш трајно да ги избришеш следните епизоди во %1$s?\n\n%2$s</string>
     <string name="device_pin_counter_text">Кодот истекува за %1$d минута/и и %2$d секунда/и</string>
-    <string name="audio_singluar">Аудио</string>
-    <string name="podcast_singluar">Поткаст</string>
+    <string name="audio_singular">Аудио</string>
+    <string name="podcast_singular">Поткаст</string>
     <string name="encoding_error">Грешка при кодирање на преводот</string>
     <string name="unsupported_error">Неподдржана грешка</string>
     <string name="player_load_one_subtitle_online">Вчитај прво достапно</string>

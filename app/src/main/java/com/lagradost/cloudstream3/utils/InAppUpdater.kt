@@ -24,6 +24,7 @@ import com.lagradost.cloudstream3.services.PackageInstallerService
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.GitInfo.currentCommitHash
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okio.BufferedSink
@@ -170,7 +171,7 @@ object InAppUpdater {
         Log.d(LOG_TAG, "Fetched GitHub tag: $updateCommitHash")
 
         return Update(
-            getString(R.string.commit_hash) != updateCommitHash,
+            currentCommitHash() != updateCommitHash,
             foundAsset.browserDownloadUrl,
             updateCommitHash,
             found.body,
@@ -307,7 +308,7 @@ object InAppUpdater {
                         }
 
                         val currentInstaller = settingsManager.getInt(
-                            getString(R.string.apk_installer_key), 0
+                            getString(R.string.apk_installer_key), 1
                         )
 
                         when (currentInstaller) {

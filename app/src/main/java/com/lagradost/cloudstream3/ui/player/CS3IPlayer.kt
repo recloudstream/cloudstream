@@ -29,6 +29,7 @@ import androidx.media3.common.TrackGroup
 import androidx.media3.common.TrackSelectionOverride
 import androidx.media3.common.Tracks
 import androidx.media3.common.VideoSize
+// import androidx.media3.common.util.ExperimentalApi
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.database.StandaloneDatabaseProvider
 import androidx.media3.datasource.DataSource
@@ -42,6 +43,7 @@ import androidx.media3.datasource.cronet.CronetDataSource
 import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.DecoderCounters
 import androidx.media3.exoplayer.DecoderReuseEvaluation
+import androidx.media3.exoplayer.DefaultLivePlaybackSpeedControl
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
@@ -54,6 +56,7 @@ import androidx.media3.exoplayer.drm.DefaultDrmSessionManager
 import androidx.media3.exoplayer.drm.FrameworkMediaDrm
 import androidx.media3.exoplayer.drm.HttpMediaDrmCallback
 import androidx.media3.exoplayer.drm.LocalMediaDrmCallback
+import androidx.media3.exoplayer.hls.playlist.HlsPlaylistTracker
 import androidx.media3.exoplayer.source.ClippingMediaSource
 import androidx.media3.exoplayer.source.ConcatenatingMediaSource
 import androidx.media3.exoplayer.source.ConcatenatingMediaSource2
@@ -83,6 +86,8 @@ import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.fixSubtitleAlignment
+import com.lagradost.cloudstream3.ui.player.live.LiveHelper
+import com.lagradost.cloudstream3.ui.player.live.PREFERRED_LIVE_OFFSET
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
@@ -95,14 +100,13 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.DrmExtractorLink
-import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.PLAYREADY_UUID
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
 import com.lagradost.cloudstream3.utils.WIDEVINE_UUID
-import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
+import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
 import kotlinx.coroutines.delay
 import okhttp3.Interceptor
 import org.chromium.net.CronetEngine
@@ -273,6 +277,10 @@ class CS3IPlayer : IPlayer {
     }
 
     override fun hasPreview(): Boolean {
+        // No previews on livestreams because the previews get outdated
+        if (exoPlayer?.isCurrentMediaItemDynamic == true) {
+            return false
+        }
         return imageGenerator.hasPreview()
     }
 
@@ -400,7 +408,12 @@ class CS3IPlayer : IPlayer {
                 ?.let { group ->
                     exoPlayer?.trackSelectionParameters
                         ?.buildUpon()
-                        ?.setOverrideForType(TrackSelectionOverride(group.mediaTrackGroup, trackFormatIndex))
+                        ?.setOverrideForType(
+                            TrackSelectionOverride(
+                                group.mediaTrackGroup,
+                                trackFormatIndex
+                            )
+                        )
                         ?.build()
                 }
                 ?.let { newParams ->
@@ -517,10 +530,12 @@ class CS3IPlayer : IPlayer {
                 Log.i(TAG, "setPreferredSubtitles REQUIRES_RELOAD")
                 return true
             }
+
             SubtitleStatus.NOT_FOUND -> {
                 Log.i(TAG, "setPreferredSubtitles NOT_FOUND")
                 return true
             }
+
             SubtitleStatus.IS_ACTIVE -> {
                 Log.i(TAG, "setPreferredSubtitles IS_ACTIVE")
                 exoPlayer?.currentTracks?.groups
@@ -884,10 +899,10 @@ class CS3IPlayer : IPlayer {
         private var currentTextRenderer: TextRenderer? = null
     }
 
-    private fun getCurrentTimestamp(writePosition: Long? = null): EpisodeSkip.SkipStamp? {
+    private fun getCurrentTimestamp(writePosition: Long? = null): VideoSkipStamp? {
         val position = writePosition ?: this@CS3IPlayer.getPosition() ?: return null
         for (lastTimeStamp in lastTimeStamps) {
-            if (lastTimeStamp.startMs <= position && (position + (toleranceBeforeUs / 1000L) + 1) < lastTimeStamp.endMs) {
+            if (lastTimeStamp.timestamp.startMs <= position && (position + (toleranceBeforeUs / 1000L) + 1) < lastTimeStamp.timestamp.endMs) {
                 return lastTimeStamp
             }
         }
@@ -946,6 +961,22 @@ class CS3IPlayer : IPlayer {
                 when (event) {
                     CSPlayerEvent.Play -> {
                         event(PlayEvent(source))
+                        // If the player was stopped (e.g. notification dismissed) it lands in
+                        // STATE_IDLE. A bare play() call is a no-op in that state, re-prepare and
+                        // then resume to the current position once we are in STATE_READY again.
+                        if (playbackState == Player.STATE_IDLE) {
+                            val seekPosition = currentPosition
+                            exoPlayer?.addListener(object : Player.Listener {
+                                private var seekApplied = false
+                                override fun onPlaybackStateChanged(playbackState: Int) {
+                                    if (seekApplied || playbackState != Player.STATE_READY) return
+                                    seekApplied = true
+                                    exoPlayer?.seekTo(currentWindow, seekPosition)
+                                    exoPlayer?.removeListener(this)
+                                }
+                            })
+                            prepare()
+                        }
                         play()
                     }
 
@@ -999,7 +1030,7 @@ class CS3IPlayer : IPlayer {
                             if (lastTimeStamp.skipToNextEpisode) {
                                 handleEvent(CSPlayerEvent.NextEpisode, source)
                             } else {
-                                seekTo(lastTimeStamp.endMs + 1L)
+                                seekTo(lastTimeStamp.timestamp.endMs + 1L)
                             }
                             event(TimestampSkippedEvent(timestamp = lastTimeStamp, source = source))
                         }
@@ -1068,6 +1099,17 @@ class CS3IPlayer : IPlayer {
     ): ExoPlayer {
         val exoPlayerBuilder =
             ExoPlayer.Builder(context)
+                .setMediaSourceFactory(
+                    DefaultMediaSourceFactory(context).setLiveTargetOffsetMs(
+                        PREFERRED_LIVE_OFFSET
+                    )
+                )
+                .setLivePlaybackSpeedControl(
+                    DefaultLivePlaybackSpeedControl.Builder()
+                        .setFallbackMaxPlaybackSpeed(1.03f)
+                        .setFallbackMinPlaybackSpeed(0.97f)
+                        .build()
+                )
                 .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
                     val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
                     val current = settingsManager.getInt(
@@ -1170,6 +1212,7 @@ class CS3IPlayer : IPlayer {
                             CustomDecoder.subtitleOffset = subtitleOffset
                             val decoder = CustomSubtitleDecoderFactory()
 
+                            // @OptIn(ExperimentalApi::class)
                             val currentTextRenderer = TextRenderer(
                                 customTextOutput,
                                 eventHandler.looper,
@@ -1387,6 +1430,23 @@ class CS3IPlayer : IPlayer {
             event(PlayerAttachedEvent(exoPlayer))
             exoPlayer?.prepare()
 
+            // For offline fragmented MP4s, FLAG_MERGE_FRAGMENTED_SIDX builds the SIDX seek map
+            // incrementally as data is buffered. The initial seek resolves to the nearest merged
+            // entry (~first fragment, 3 s). On STATE_READY, re-seek to the actual saved position.
+            // This may only be reproducible on large and fairly long fragmented MP4 files with
+            // multiple sidx boxes.
+            if (onlineSource == null && playbackPosition > (exoPlayer?.duration ?: 0L)) {
+                exoPlayer?.addListener(object : Player.Listener {
+                    private var seekApplied = false
+                    override fun onPlaybackStateChanged(playbackState: Int) {
+                        if (seekApplied || playbackState != Player.STATE_READY) return
+                        seekApplied = true
+                        exoPlayer?.seekTo(currentWindow, playbackPosition)
+                        exoPlayer?.removeListener(this)
+                    }
+                })
+            }
+
             exoPlayer?.let { exo ->
                 event(StatusEvent(CSPlayerLoading.IsBuffering, CSPlayerLoading.IsBuffering))
                 isPlaying = exo.isPlaying
@@ -1398,6 +1458,8 @@ class CS3IPlayer : IPlayer {
             if (mediaSlices.isEmpty() && subSources.isEmpty()) {
                 return
             }
+
+            LiveHelper.registerPlayer(exoPlayer)
 
             exoPlayer?.addListener(object : Player.Listener {
                 override fun onTracksChanged(tracks: Tracks) {
@@ -1507,6 +1569,23 @@ class CS3IPlayer : IPlayer {
                             exoPlayer?.prepare()
                         }
 
+                        // PlaylistStuckException usually happens when the player position is ahead of the live window.
+                        // Seek to the default location in that case
+                        error.cause is HlsPlaylistTracker.PlaylistStuckException -> {
+                            val position = exoPlayer?.currentPosition ?: exoPlayer?.duration ?: 0
+
+                            // Seek to live head
+                            val aheadOfLive = LiveHelper.getLiveManager(exoPlayer)?.getTimeAheadOfLive(position) ?: 0
+
+                            if (aheadOfLive > 100) {
+                                exoPlayer?.seekTo(position - aheadOfLive)
+                            } else {
+                                exoPlayer?.seekToDefaultPosition()
+                            }
+                            exoPlayer?.prepare()
+                        }
+
+
                         else -> {
                             event(ErrorEvent(error))
                         }
@@ -1578,9 +1657,9 @@ class CS3IPlayer : IPlayer {
         }
     }
 
-    private var lastTimeStamps: List<EpisodeSkip.SkipStamp> = emptyList()
+    private var lastTimeStamps: List<VideoSkipStamp> = emptyList()
 
-    override fun addTimeStamps(timeStamps: List<EpisodeSkip.SkipStamp>) {
+    override fun addTimeStamps(timeStamps: List<VideoSkipStamp>) {
         lastTimeStamps = timeStamps
         timeStamps.forEach { timestamp ->
             exoPlayer?.createMessage { _, _ ->
@@ -1589,7 +1668,7 @@ class CS3IPlayer : IPlayer {
                 //    onTimestampInvoked?.invoke(payload)
             }
                 ?.setLooper(Looper.getMainLooper())
-                ?.setPosition(timestamp.startMs)
+                ?.setPosition(timestamp.timestamp.startMs)
                 //?.setPayload(timestamp)
                 ?.setDeleteAfterDelivery(false)
                 ?.send()

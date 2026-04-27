@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.extractors
 
+import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
@@ -85,6 +86,11 @@ class Vide0Net: DoodLaExtractor() {
 
 class MyVidPlay : DoodLaExtractor() {
     override var mainUrl = "https://myvidplay.com"
+}
+
+@Prerelease
+class Playmogo : DoodLaExtractor() {
+    override var mainUrl = "https://playmogo.com"
 }
 
 open class DoodLaExtractor : ExtractorApi() {

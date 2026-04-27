@@ -55,6 +55,13 @@ annotation class Prerelease
 )
 annotation class InternalAPI
 
+@Retention(AnnotationRetention.BINARY) // This is only an IDE hint, and will not be used in the runtime
+@RequiresOptIn(
+    message = "Only use this if you know what you are doing and you need to bypass the SSL certificate checks. Never use this for sensitive network requests such as logins.",
+    level = RequiresOptIn.Level.WARNING
+)
+annotation class UnsafeSSL
+
 /**
  * Defines the constant for the all languages preference, if this is set then it is
  * the equivalent of all languages being set
@@ -1057,6 +1064,8 @@ enum class TvType(value: Int?) {
 
     Audio(16),
     Podcast(17),
+    @Prerelease
+    Video(18),
 }
 
 enum class AutoDownloadMode(val value: Int) {
@@ -1072,14 +1081,15 @@ enum class AutoDownloadMode(val value: Int) {
 }
 
 /** Extension function of [TvType] to check if the type is Movie.
- * @return If the type is AnimeMovie, Live, Movie, Torrent returns true otherwise returns false.
+ * @return If the type is AnimeMovie, Live, Movie, Torrent, Video returns true otherwise returns false.
  * */
 fun TvType.isMovieType(): Boolean {
     return when (this) {
         TvType.AnimeMovie,
         TvType.Live,
         TvType.Movie,
-        TvType.Torrent -> true
+        TvType.Torrent,
+        TvType.Video -> true
 
         else -> false
     }
@@ -1159,7 +1169,6 @@ suspend fun newSubtitleFile(
  * @property headers Optional headers for the audio file request.
  * @see newAudioFile
  * */
-@Prerelease
 @ConsistentCopyVisibility
 data class AudioFile internal constructor(
     var url: String,
@@ -1171,7 +1180,6 @@ data class AudioFile internal constructor(
  * @param initializer Lambda to configure additional properties like headers.
  * @return Configured AudioFile instance.
  * */
-@Prerelease
 suspend fun newAudioFile(
     url: String,
     initializer: suspend AudioFile.() -> Unit = { }
@@ -1786,7 +1794,6 @@ interface LoadResponse {
     var posterHeaders: Map<String, String>?
     var backgroundPosterUrl: String?
 
-    @Prerelease
     var logoUrl: String?
     var contentRating: String?
 
@@ -1893,7 +1900,6 @@ interface LoadResponse {
             this.addSimklId(SimklSyncServices.Mal, id.toString())
         }
 
-        @Prerelease
         fun LoadResponse.addKitsuId(id: Int?) {
             this.syncData[kitsuIdPrefix] = (id ?: return).toString()
         }
@@ -2159,6 +2165,7 @@ fun TvType.getFolderPrefix(): String {
         TvType.Podcast -> "Podcasts"
         TvType.Torrent -> "Torrents"
         TvType.TvSeries -> "TVSeries"
+        TvType.Video -> "Videos"
     }
 }
 

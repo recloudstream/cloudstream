@@ -3,8 +3,11 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.utils.*
-import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
+import com.lagradost.cloudstream3.extractors.helper.JwPlayerHelper
+import com.lagradost.cloudstream3.utils.ExtractorApi
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.getAndUnpack
+import com.lagradost.cloudstream3.utils.getPacked
 
 class Ryderjet: VidHidePro() {
     override var mainUrl = "https://ryderjet.com"
@@ -74,24 +77,12 @@ open class VidHidePro : ExtractorApi() {
         
         val response = app.get(getEmbedUrl(url), referer = referer)
         val script = if (!getPacked(response.text).isNullOrEmpty()) {
-            var result = getAndUnpack(response.text)
-            if(result.contains("var links")){
-                result = result.substringAfter("var links")
-            }
-            result
+            getAndUnpack(response.text)
         } else {
             response.document.selectFirst("script:containsData(sources:)")?.data()
         } ?: return
 
-        // m3u8 urls could be prefixed by 'file:', 'hls2:' or 'hls4:', so we just match ':'
-        Regex(":\\s*\"(.*?m3u8.*?)\"").findAll(script).forEach { m3u8Match ->
-            generateM3u8(
-                name,
-                fixUrl(m3u8Match.groupValues[1]),
-                referer = "$mainUrl/",
-                headers = headers
-            ).forEach(callback)
-        }
+        JwPlayerHelper.extractStreamLinks(script, name, mainUrl, callback, subtitleCallback, headers)
     }
 
     private fun getEmbedUrl(url: String): String {
