@@ -16,11 +16,14 @@ import com.lagradost.api.setContext
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.mvvm.safeAsync
+import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.openBrowser
+import com.lagradost.cloudstream3.ui.car.CarStrings
 import com.lagradost.cloudstream3.utils.AppDebug
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DataStore.getKey
@@ -71,6 +74,8 @@ class CloudStreamApp : Application(), SingletonImageLoader.Factory {
 
     override fun onCreate() {
         super.onCreate()
+        app.initClient(this,true)
+        CarStrings.init(this)
         // If we want to initialize Coil as early as possible, maybe when
         // loading an image or GIF in a splash screen activity.
         // buildImageLoader(applicationContext)
@@ -87,8 +92,8 @@ class CloudStreamApp : Application(), SingletonImageLoader.Factory {
     }
 
     override fun attachBaseContext(base: Context?) {
-        super.attachBaseContext(base)
-        context = base
+        super.attachBaseContext(updateBaseContextLocale(base))
+        context = this
     }
 
     override fun newImageLoader(context: PlatformContext): ImageLoader {
@@ -98,6 +103,27 @@ class CloudStreamApp : Application(), SingletonImageLoader.Factory {
 
     companion object {
         var exceptionHandler: ExceptionHandler? = null
+
+        fun updateBaseContextLocale(context: Context?): Context? {
+            if (context == null) return null
+            val settingsManager = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context)
+            val localeCode = settingsManager.getString(context.getString(R.string.locale_key), null)
+
+            // DEBUG LOGGING
+            println("DEBUG: updateBaseContextLocale called. localeCode from prefs: '$localeCode'")
+
+            if (localeCode.isNullOrEmpty()) return context
+
+            // Use forLanguageTag to correctly parse BCP 47 tags (e.g. "es", "es-ES", "it")
+            val locale = Locale.forLanguageTag(localeCode)
+            println("DEBUG: parsed Locale: '$locale', language: '${locale.language}', country: '${locale.country}'")
+
+            Locale.setDefault(locale)
+            val config = android.content.res.Configuration(context.resources.configuration)
+            config.setLocale(locale)
+            config.setLayoutDirection(locale)
+            return context.createConfigurationContext(config)
+        }
 
         /** Use to get Activity from Context. */
         tailrec fun Context.getActivity(): Activity? {
