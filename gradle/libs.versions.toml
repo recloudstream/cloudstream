@@ -7,6 +7,7 @@ animeDb = "1.0.2"
 appcompat = "1.7.1"
 biometric = "1.4.0-alpha06"
 buildkonfigGradlePlugin = "0.18.0"
+carApp = "1.8.0-beta01"
 coil = { strictly = "3.3.0" } # Later versions require jvmTarget 11 or later
 colorpicker = "6b46b49"
 conscryptAndroid = { strictly = "2.5.2" } # 2.5.3 crashes everything
