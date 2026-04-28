@@ -13,16 +13,16 @@
         android:layout_width="680dp"
         android:layout_height="match_parent"
         android:background="@drawable/bg_player_metadata_scrim_netflix"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:id="@+id/player_metadata_overlay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_gravity="center_vertical"
+            android:orientation="vertical"
             android:paddingStart="64dp"
             android:paddingEnd="32dp"
             android:paddingBottom="32dp">
@@ -39,23 +39,23 @@
                     android:adjustViewBounds="true"
                     android:scaleType="fitStart"
                     android:visibility="gone"
-                    tools:visibility="visible"/>
+                    tools:visibility="visible" />
 
                 <TextView
                     android:id="@+id/player_movie_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:textColor="@android:color/white"
-                    android:textSize="30sp"
-                    android:textStyle="bold"
+                    android:ellipsize="end"
+                    android:maxLines="2"
                     android:shadowColor="@android:color/black"
                     android:shadowDx="2"
                     android:shadowDy="2"
                     android:shadowRadius="4"
-                    android:maxLines="2"
-                    android:ellipsize="end"
-                    tools:text="Zootopia 2"/>
+                    android:textColor="@android:color/white"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    tools:text="Zootopia 2" />
             </FrameLayout>
 
             <!-- GENRES / YEAR / RATING -->
@@ -64,10 +64,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
+                android:maxLines="2"
                 android:textColor="#B3FFFFFF"
                 android:textSize="14sp"
-                android:maxLines="2"
-                tools:text="Animation • Action • Adventure • 2025 • ⭐ 7.6"/>
+                tools:text="Animation • Action • Adventure • 2025 • ⭐ 7.6" />
 
             <!-- SYNOPSIS -->
             <TextView
@@ -75,23 +75,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:textColor="#E6FFFFFF"
-                android:textSize="16sp"
                 android:lineSpacingExtra="8dp"
+                android:maxLines="5"
                 android:shadowColor="@android:color/black"
                 android:shadowDx="2"
                 android:shadowDy="2"
                 android:shadowRadius="4"
-                android:maxLines="5"
-                tools:text="Brave rabbit cop Judy Hopps..."/>
+                android:textColor="#E6FFFFFF"
+                android:textSize="16sp"
+                tools:text="Brave rabbit cop Judy Hopps..." />
 
         </LinearLayout>
+
         <ImageView
             android:id="@+id/video_outline"
-            android:visibility="gone"
-            android:src="@drawable/video_outline"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:src="@drawable/video_outline"
+            android:visibility="gone" />
     </FrameLayout>
 
     <FrameLayout
@@ -172,6 +173,7 @@
 
                 <ProgressBar
                     android:id="@+id/player_progressbar_left_level1"
+                    style="@android:style/Widget.Material.ProgressBar.Horizontal"
                     android:layout_width="5dp"
                     android:layout_height="150dp"
                     android:layout_centerInParent="true"
@@ -183,11 +185,11 @@
                     android:progressDrawable="@drawable/progress_drawable_vertical"
                     android:progressTint="@color/white"
                     android:progressTintMode="src_in"
-                    tools:progress="30"
-                    style="@android:style/Widget.Material.ProgressBar.Horizontal" />
+                    tools:progress="30" />
 
                 <ProgressBar
                     android:id="@+id/player_progressbar_left_level2"
+                    style="@android:style/Widget.Material.ProgressBar.Horizontal"
                     android:layout_width="5dp"
                     android:layout_height="150dp"
                     android:layout_centerInParent="true"
@@ -199,8 +201,7 @@
                     android:progressDrawable="@drawable/progress_drawable_vertical"
                     android:progressTint="@color/colorPrimaryOrange"
                     android:progressTintMode="src_in"
-                    tools:progress="0"
-                    style="@android:style/Widget.Material.ProgressBar.Horizontal" />
+                    tools:progress="0" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -322,23 +323,18 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/skip_chapter_button"
-                style="@style/NiceButton"
+                style="@style/VideoButtonTV"
                 android:layout_width="150dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="100dp"
-                android:backgroundTint="@color/skipOpTransparent"
                 android:maxLines="1"
                 android:nextFocusLeft="@id/player_pause_play"
                 android:nextFocusUp="@id/player_restart"
                 android:nextFocusDown="@id/player_pause_play"
-                android:padding="10dp"
-                android:textColor="@color/white"
+                android:textSize="15sp"
                 android:visibility="gone"
-                app:cornerRadius="@dimen/rounded_button_radius"
                 app:layout_constraintBottom_toTopOf="@+id/bottom_player_bar"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:strokeColor="@color/white"
-                app:strokeWidth="1dp"
                 tools:text="Skip Opening"
                 tools:visibility="visible" />
 
@@ -360,28 +356,30 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end">
+
                         <TextView
-                            android:maxLines="2"
                             android:id="@+id/player_video_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="end"
                             android:gravity="end"
                             android:maxWidth="600dp"
+                            android:maxLines="2"
                             android:textAlignment="viewEnd"
                             android:textColor="@color/white"
                             android:textSize="16sp"
                             android:textStyle="bold"
                             tools:text="Hello world" />
+
                         <ImageView
                             android:id="@+id/offline_pin"
                             android:layout_width="18dp"
                             android:layout_height="18dp"
+                            android:layout_gravity="start"
                             android:layout_marginStart="2dp"
                             android:src="@drawable/ic_offline_pin_24"
                             android:visibility="gone"
-                            tools:visibility="visible"
-                            android:layout_gravity="start"/>
+                            tools:visibility="visible" />
                     </LinearLayout>
 
                     <TextView
@@ -400,9 +398,9 @@
                         android:id="@+id/player_video_info"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="end"
                         android:layout_marginStart="6dp"
                         android:layout_marginBottom="2.5dp"
-                        android:layout_gravity="end"
                         android:textColor="#B3FFFFFF"
                         android:textSize="16sp"
                         android:visibility="gone"
@@ -581,6 +579,7 @@
                             tools:visibility="visible" />
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:id="@+id/player_episodes_button_root"
                         android:layout_width="60dp"
@@ -964,19 +963,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="30dp"
                         android:layout_gravity="center|center_vertical"
-                        android:text="@string/player_is_live"
                         android:layout_marginEnd="20dp"
                         android:includeFontPadding="false"
                         android:minWidth="50dp"
                         android:paddingLeft="4dp"
                         android:paddingRight="4dp"
+                        android:text="@string/player_is_live"
                         android:textColor="@android:color/white"
                         android:textSize="14sp"
                         android:textStyle="normal"
                         android:visibility="gone"
                         app:layout_constraintBaseline_toBaselineOf="@id/exo_position"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        />
+                        app:layout_constraintEnd_toEndOf="parent" />
 
                     <TextView
                         android:id="@+id/time_left"
@@ -1129,11 +1127,11 @@
         android:layout_height="45dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="70dp"
-        app:iconGravity="top"
         android:clickable="false"
         android:textAllCaps="false"
         android:visibility="gone"
         app:icon="@drawable/speedup"
+        app:iconGravity="top"
         app:iconTint="@color/textColor"
         app:rippleColor="?attr/colorPrimary"
         tools:visibility="visible" />
@@ -1141,34 +1139,34 @@
 
     <LinearLayout
         android:id="@+id/player_episode_overlay"
-        android:visibility="gone"
-        android:padding="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
         android:background="?attr/primaryBlackBackground"
         android:orientation="vertical"
-        android:layout_gravity="end"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+        android:padding="5dp"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/player_episode_overlay_title"
-            android:padding="10dp"
             style="@style/WatchHeaderText"
-            android:textSize="15sp"
-            android:layout_marginEnd="0dp"
-            android:text="@string/episodes"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="0dp"
+            android:padding="10dp"
+            android:text="@string/episodes"
+            android:textSize="15sp" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:requiresFadingEdge="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:id="@+id/player_episode_list"
-            tools:listitem="@layout/player_episodes"
-            android:nextFocusLeft="@id/player_episodes_button"
             android:layout_width="400dp"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:descendantFocusability="afterDescendants">
+            android:descendantFocusability="afterDescendants"
+            android:nextFocusLeft="@id/player_episodes_button"
+            android:requiresFadingEdge="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/player_episodes">
 
         </androidx.recyclerview.widget.RecyclerView>
     </LinearLayout>

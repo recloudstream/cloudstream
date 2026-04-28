@@ -1996,6 +1996,12 @@ class GeneratorPlayer : FullScreenPlayer() {
             skipAnimator?.cancel()
             isVisible = true
 
+            /** Focus instantly to make the focus color appear instantly */
+            if (show && !isShowing) {
+                // Automatically request focus if the menu is not opened
+                playerBinding?.skipChapterButton?.requestFocus()
+            }
+
             // just in case
             val lay = layoutParams
             lay.width = from
@@ -2004,12 +2010,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 from, to
             ).apply {
                 addListener(onEnd = {
-                    if (show) {
-                        if (!isShowing) {
-                            // Automatically request focus if the menu is not opened
-                            playerBinding?.skipChapterButton?.requestFocus()
-                        }
-                    } else {
+                    if (!show) {
                         playerBinding?.skipChapterButton?.isVisible = false
                         if (!isShowing) {
                             // Automatically return focus to play pause

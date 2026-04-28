@@ -287,7 +287,13 @@ class PlayerView @JvmOverloads constructor(
             val previewFrameLayout: FrameLayout? =
                 exoPlayerView?.findViewById(R.id.previewFrameLayout)
 
-            if (progressBar != null && previewImageView != null && previewFrameLayout != null) {
+            /** Hide the previewFrameLayout on TV to make the skip op button not float,
+             * as previewFrameLayout is normally invisible */
+            if(isLayout(EMULATOR or TV)) {
+                previewFrameLayout?.isVisible = false
+            }
+
+            if (progressBar != null && previewImageView != null && previewFrameLayout != null && isLayout(PHONE)) {
                 var resume = false
                 progressBar.addOnScrubListener(object : PreviewBar.OnScrubListener {
                     override fun onScrubStart(previewBar: PreviewBar?) {
