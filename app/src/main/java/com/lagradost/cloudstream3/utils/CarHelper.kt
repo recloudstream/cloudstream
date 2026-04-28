@@ -90,6 +90,7 @@ object CarHelper {
         }
     }
 
+    @Suppress("NewApi") // HARDWARE config only exists on API 26+; on older APIs this branch is unreachable
     fun ensureSoftwareBitmap(bitmap: android.graphics.Bitmap): android.graphics.Bitmap {
         return if (bitmap.config == android.graphics.Bitmap.Config.HARDWARE) {
             bitmap.copy(android.graphics.Bitmap.Config.ARGB_8888, false)

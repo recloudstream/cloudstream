@@ -9,6 +9,7 @@ import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
 import androidx.car.app.model.Row
 import androidx.car.app.model.Template
+import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllResumeStateIds
@@ -54,6 +55,7 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
         loadHistory()
     }
 
+    @androidx.annotation.OptIn(androidx.car.app.annotations.ExperimentalCarApi::class)
     private fun loadHistory(retryCount: Int = 0) {
         scope.launch {
             withContext(Dispatchers.Main) {
@@ -116,10 +118,8 @@ class HistoryScreen(carContext: CarContext) : Screen(carContext), DefaultLifecyc
                                  if (viewPos != null && viewPos.duration > 0) {
                                      val progress = (viewPos.position.toFloat() / viewPos.duration.toFloat())
                                          .coerceIn(0f, 1f)
-                                     @Suppress("NewApi")
                                      val progressBar = androidx.car.app.model.CarProgressBar.Builder(progress)
                                          .build()
-                                     @Suppress("NewApi")
                                      rowBuilder.setProgressBar(progressBar)
                                  }
                              } catch (e: Exception) {

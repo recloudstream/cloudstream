@@ -304,6 +304,7 @@ class PlayerCarScreen(
         }
     }
 
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
     private fun setupMediaSession(p: ExoPlayer) {
         if (mediaSession != null) return
 

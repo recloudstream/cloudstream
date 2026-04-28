@@ -55,6 +55,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
+        tools:ignore="MissingIntentFilterForMediaSearch,MissingMediaBrowserServiceIntentFilter"
         tools:targetApi="${target_sdk_version}">
 
         <meta-data
