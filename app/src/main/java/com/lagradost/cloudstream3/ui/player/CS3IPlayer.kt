@@ -247,23 +247,6 @@ class CS3IPlayer : IPlayer {
         }
     }
 
-    // I know, this is not a perfect solution, however it works for fixing subs
-    private fun reloadSubs() {
-        exoPlayer?.applicationLooper?.let {
-            try {
-                Handler(it).post {
-                    try {
-                        seekTime(1L, source = PlayerEventSource.Player)
-                    } catch (e: Exception) {
-                        logError(e)
-                    }
-                }
-            } catch (e: Exception) {
-                logError(e)
-            }
-        }
-    }
-
     fun String.stripTrackId(): String {
         return this.replace(Regex("""^\d+:"""), "")
     }
@@ -432,9 +415,9 @@ class CS3IPlayer : IPlayer {
      * Gets all supported formats in a list
      * */
     private fun List<Tracks.Group>.getFormats(): List<Pair<Format, Int>> {
-        return this.map {
+        return this.flatMap {
             it.getFormats()
-        }.flatten()
+        }
     }
 
     private fun Tracks.Group.getFormats(): List<Pair<Format, Int>> {
@@ -1110,7 +1093,7 @@ class CS3IPlayer : IPlayer {
                         .setFallbackMinPlaybackSpeed(0.97f)
                         .build()
                 )
-                .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
+                .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, _, metadataRendererOutput ->
                     val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
                     val current = settingsManager.getInt(
                         context.getString(R.string.software_decoding_key),
@@ -1144,7 +1127,7 @@ class CS3IPlayer : IPlayer {
                     // Custom TextOutput to apply cue styling and rules to all subtitles
                     val customTextOutput = TextOutput { cue ->
                         // Do not remove filterNotNull as Java typesystem is fucked
-                        val (bitmapCues, textCues) = cue.cues.filterNotNull()
+                        val (bitmapCues, textCues) = cue.cues.toList()
                             .partition { it.bitmap != null }
 
                         val styledBitmapCues = bitmapCues.map { bitmapCue ->
@@ -1351,7 +1334,7 @@ class CS3IPlayer : IPlayer {
         } else {
             try {
                 val source = ConcatenatingMediaSource2.Builder()
-                mediaItemSlices.map { item ->
+                mediaItemSlices.forEach { item ->
                     source.add(
                         // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
                         ClippingMediaSource(
@@ -1365,7 +1348,7 @@ class CS3IPlayer : IPlayer {
                 @Suppress("DEPRECATION")
                 val source =
                     ConcatenatingMediaSource() // FIXME figure out why ConcatenatingMediaSource2 seems to fail with Torrents only
-                mediaItemSlices.map { item ->
+                mediaItemSlices.forEach { item ->
                     source.addMediaSource(
                         // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
                         ClippingMediaSource(
@@ -1837,7 +1820,7 @@ class CS3IPlayer : IPlayer {
                                 defaultSet
                             )
                             ?.mapNotNull { it.toIntOrNull() ?: return@mapNotNull null }
-                    } catch (e: Throwable) {
+                    } catch (_: Throwable) {
                         null
                     } ?: default
 
@@ -2038,4 +2021,3 @@ class CS3IPlayer : IPlayer {
     }
 
 }
-
