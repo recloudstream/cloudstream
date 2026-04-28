@@ -165,6 +165,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                 || selectTrackDialog?.isShowing == true
                 || selectSpeedDialog?.isShowing == true
                 || selectSubtitlesDialog?.isShowing == true
+                || isShowingEpisodeOverlay
 
     private fun scheduleMetadataVisibility() {
         val metadataScrim = playerBinding?.playerMetadataScrim ?: return
