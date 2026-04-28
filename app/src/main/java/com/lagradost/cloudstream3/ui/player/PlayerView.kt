@@ -289,11 +289,11 @@ class PlayerView @JvmOverloads constructor(
 
             /** Hide the previewFrameLayout on TV to make the skip op button not float,
              * as previewFrameLayout is normally invisible */
-            if(isLayout(EMULATOR or TV)) {
+            if(isLayout(TV)) {
                 previewFrameLayout?.isVisible = false
             }
 
-            if (progressBar != null && previewImageView != null && previewFrameLayout != null && isLayout(PHONE)) {
+            if (progressBar != null && previewImageView != null && previewFrameLayout != null && !isLayout(TV)) {
                 var resume = false
                 progressBar.addOnScrubListener(object : PreviewBar.OnScrubListener {
                     override fun onScrubStart(previewBar: PreviewBar?) {
