@@ -138,8 +138,6 @@ class PlayerView @JvmOverloads constructor(
 
         /** Touch event callbacks */
 
-        /** Called to validate a touch position; return false to discard nav-bar / status-bar touches. */
-        fun isValidTouch(rawX: Float, rawY: Float): Boolean = true
         /** Returns whether the player UI (controls overlay) is currently visible. */
         fun isUIShowing(): Boolean = false
         /** Called on a valid ACTION_DOWN; use for e.g. dismissing an episode overlay. */

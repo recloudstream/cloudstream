@@ -8,6 +8,7 @@ import android.content.res.ColorStateList
 import android.graphics.Matrix
 import android.media.AudioManager
 import android.media.audiofx.LoudnessEnhancer
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
@@ -17,6 +18,7 @@ import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -39,6 +41,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.UIHelper.getStatusBarHeight
 import com.lagradost.cloudstream3.utils.Vector2
 import kotlin.math.abs
 import kotlin.math.absoluteValue
@@ -1043,6 +1046,18 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
         holder.setOnTouchListener(::handleGesture)
     }
 
+    private fun isValidTouch(rawX: Float, rawY: Float): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val holder = playerView.playerHolder ?: return true
+            val insets = holder.rootWindowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            val validHeight = rawY > insets.top && rawY < screenHeightWithOrientation - insets.bottom
+            val validWidth = rawX > insets.left && rawX < screenWidthWithOrientation - insets.right
+            return validHeight && validWidth
+        }
+
+        return rawY > (context.getStatusBarHeight() ?: 0) && rawX < screenWidthWithOrientation
+    }
+
     private fun handleGesture(view: View, event: MotionEvent): Boolean {
         val currentTouch = Vector2(event.x, event.y)
         val startTouch = currentTouchStart
@@ -1072,7 +1087,7 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
 
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                isCurrentTouchValid = playerView.callbacks?.isValidTouch(event.rawX, event.rawY) ?: true
+                isCurrentTouchValid = isValidTouch(event.rawX, event.rawY)
                 if (isCurrentTouchValid) {
                     playerView.callbacks?.onTouchDown()
                     hasTriggeredSpeedUp = false
