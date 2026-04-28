@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Rect
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -23,6 +24,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.discord.panels.OverlappingPanelsLayout
 import com.discord.panels.PanelState
 import com.discord.panels.PanelsChildGestureRegionObserver
@@ -45,6 +47,7 @@ import com.lagradost.cloudstream3.databinding.ResultRecommendationsBinding
 import com.lagradost.cloudstream3.databinding.ResultSyncBinding
 import com.lagradost.cloudstream3.databinding.TrailerCustomLayoutBinding
 import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
@@ -68,6 +71,8 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.ui.setRecycledViewPool
+import com.lagradost.cloudstream3.ui.settings.SettingsGeneral.Companion.pickDownloadPath
+import com.lagradost.cloudstream3.ui.settings.utils.getChooseFolderLauncher
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppContextUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadCache
@@ -92,6 +97,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.setListViewHeightBasedOnItems
 import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.getBasePath
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
@@ -99,6 +105,7 @@ import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
 import com.lagradost.cloudstream3.utils.txt
 import java.net.URLEncoder
+import java.util.concurrent.ConcurrentLinkedDeque
 import kotlin.math.roundToInt
 
 open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
@@ -110,6 +117,72 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
                 binding?.resultOverlappingPanels?.setChildGestureRegions(gestureRegions)
             }
         }
+
+    /** Queue of pending actions that is deferred to after a custom path is set */
+    private val pendingPathActions = ConcurrentLinkedDeque<Pair<Int, ResultEpisode>>()
+
+    /**
+     * Appends all actions to a queue, and asks for a user to enter the download folder if not already set up.
+     *
+     * Then processes the queue in the given order, only after the user has selected a folder.
+     * This is to defer the download to after a file path is set, due to perms.
+     * */
+    private fun requirePathForActions(list: Collection<Pair<Int, ResultEpisode>>) {
+        pendingPathActions.addAll(list)
+        val (_, path) = context?.getBasePath() ?: return
+        if (path == null) {
+            /** If we have not set any download path, then ask the user for it before we download it */
+            try {
+                /** Give the user some info of what we are doing and why, even if it may be missed */
+                showToast(R.string.download_path_pref)
+                pathPicker.launch(Uri.EMPTY)
+            } catch (t: Throwable) {
+                logError(t)
+                /** Something went wrong, TV Device?
+                 * Use the fallback behavior of just downloading it even if no path is selected,
+                 * and hope it works */
+                processPendingActions()
+            }
+        } else {
+            /**
+             * Otherwise dispatch everything, as we already have a valid download path
+             * Even if this is "wrong", we do not care as the user has entered something
+             * */
+            processPendingActions()
+        }
+    }
+
+    /** Clear all the items in the queue and dispatch them to the viewmodel in order */
+    private fun processPendingActions() = viewModel.viewModelScope.launchSafe {
+        while (!pendingPathActions.isEmpty()) {
+            try {
+                val (action, data) = pendingPathActions.pop()
+                viewModel.handleAction(
+                    EpisodeClickEvent(
+                        action,
+                        data
+                    )
+                )
+            } catch (_: NoSuchElementException) {
+                /** In case of a race */
+            }
+        }
+    }
+
+    private val pathPicker = getChooseFolderLauncher { uri, path ->
+        if (uri == null) {
+            /** No path selected, clear the list without acting on it, canceling */
+            if (!pendingPathActions.isEmpty()) {
+                /** Only show on non-empty, just in case */
+                showToast(R.string.download_canceled)
+                pendingPathActions.clear()
+            }
+        } else {
+            /** Select the folder, and dispatch everything */
+            pickDownloadPath(uri, path)
+            processPendingActions()
+        }
+    }
 
     protected lateinit var viewModel: ResultViewModel2
     protected lateinit var syncModel: SyncViewModel
@@ -460,7 +533,13 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
                 EpisodeAdapter(
                     api?.hasDownloadSupport == true,
                     { episodeClick ->
-                        viewModel.handleAction(episodeClick)
+                        when (episodeClick.action) {
+                            ACTION_DOWNLOAD_EPISODE, ACTION_DOWNLOAD_MIRROR -> {
+                                requirePathForActions(listOf(episodeClick.action to episodeClick.data))
+                            }
+
+                            else -> viewModel.handleAction(episodeClick)
+                        }
                     },
                     { downloadClickEvent ->
                         DownloadButtonSetup.handleDownloadClick(downloadClickEvent)
@@ -780,30 +859,12 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
                             .setTitle(R.string.download_all)
                             .setMessage(rangeMessage)
                             .setPositiveButton(R.string.yes) { _, _ ->
-                                ioSafe {
-                                    episodes.value.forEach { episode ->
-                                        viewModel.handleAction(
-                                            EpisodeClickEvent(
-                                                ACTION_DOWNLOAD_EPISODE,
-                                                episode
-                                            )
-                                        )
-                                            // Join to make the episodes ordered
-                                            .join()
-                                    }
-                                }
+                                requirePathForActions(episodes.value.map { ACTION_DOWNLOAD_EPISODE to it })
                             }
-                            .setNegativeButton(R.string.cancel) { _, _ ->
-
-                            }.show()
-
+                            .setNegativeButton(R.string.cancel) { _, _ -> }.show()
                     }
-
                 }
-
-
             }
-
         }
 
         observeNullable(viewModel.movie) { data ->
@@ -852,18 +913,11 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
 
                         when (click.action) {
                             DOWNLOAD_ACTION_DOWNLOAD -> {
-                                viewModel.handleAction(
-                                    EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, ep)
-                                )
+                                requirePathForActions(listOf(ACTION_DOWNLOAD_EPISODE to ep))
                             }
 
                             DOWNLOAD_ACTION_LONG_CLICK -> {
-                                viewModel.handleAction(
-                                    EpisodeClickEvent(
-                                        ACTION_DOWNLOAD_MIRROR,
-                                        ep
-                                    )
-                                )
+                                requirePathForActions(listOf(ACTION_DOWNLOAD_MIRROR to ep))
                             }
 
                             else -> DownloadButtonSetup.handleDownloadClick(click)
