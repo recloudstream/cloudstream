@@ -615,8 +615,8 @@ class PlayerView @JvmOverloads constructor(
     /** Error handling */
 
     fun playerError(exception: Throwable) {
-        fun showErrorToast(message: String, gotoNext: Boolean = false) {
-            if (gotoNext && callbacks?.hasNextMirror() == true) {
+        fun showErrorToast(message: String) {
+            if (callbacks?.hasNextMirror() == true) {
                 showToast(message, Toast.LENGTH_SHORT)
                 callbacks?.nextMirror()
             } else {
@@ -638,7 +638,7 @@ class PlayerView @JvmOverloads constructor(
                     PlaybackException.ERROR_CODE_IO_READ_POSITION_OUT_OF_RANGE,
                     PlaybackException.ERROR_CODE_IO_UNSPECIFIED,
                     PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED ->
-                        showErrorToast("${context.getString(R.string.source_error)}\n$errorName ($code)\n$msg", gotoNext = true)
+                        showErrorToast("${context.getString(R.string.source_error)}\n$errorName ($code)\n$msg")
 
                     PlaybackException.ERROR_CODE_REMOTE_ERROR,
                     PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS,
@@ -646,7 +646,7 @@ class PlayerView @JvmOverloads constructor(
                     PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED,
                     PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT,
                     PlaybackException.ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE ->
-                        showErrorToast("${context.getString(R.string.remote_error)}\n$errorName ($code)\n$msg", gotoNext = true)
+                        showErrorToast("${context.getString(R.string.remote_error)}\n$errorName ($code)\n$msg")
 
                     PlaybackErrorEvent.ERROR_AUDIO_TRACK_INIT_FAILED,
                     PlaybackErrorEvent.ERROR_AUDIO_TRACK_OTHER,
@@ -654,23 +654,23 @@ class PlayerView @JvmOverloads constructor(
                     PlaybackException.ERROR_CODE_AUDIO_TRACK_WRITE_FAILED,
                     PlaybackException.ERROR_CODE_DECODER_INIT_FAILED,
                     PlaybackException.ERROR_CODE_DECODER_QUERY_FAILED ->
-                        showErrorToast("${context.getString(R.string.render_error)}\n$errorName ($code)\n$msg", gotoNext = true)
+                        showErrorToast("${context.getString(R.string.render_error)}\n$errorName ($code)\n$msg")
 
                     PlaybackException.ERROR_CODE_DECODING_FORMAT_UNSUPPORTED,
                     PlaybackException.ERROR_CODE_DECODING_FORMAT_EXCEEDS_CAPABILITIES ->
-                        showErrorToast("${context.getString(R.string.unsupported_error)}\n$errorName ($code)\n$msg", gotoNext = true)
+                        showErrorToast("${context.getString(R.string.unsupported_error)}\n$errorName ($code)\n$msg")
 
                     PlaybackException.ERROR_CODE_PARSING_CONTAINER_MALFORMED,
                     PlaybackException.ERROR_CODE_PARSING_MANIFEST_MALFORMED ->
-                        showErrorToast("${context.getString(R.string.encoding_error)}\n$errorName ($code)\n$msg", gotoNext = true)
+                        showErrorToast("${context.getString(R.string.encoding_error)}\n$errorName ($code)\n$msg")
 
                     else ->
-                        showErrorToast("${context.getString(R.string.unexpected_error)}\n$errorName ($code)\n$msg", gotoNext = false)
+                        showErrorToast("${context.getString(R.string.unexpected_error)}\n$errorName ($code)\n$msg")
                 }
             }
 
             is InvalidFileException ->
-                showErrorToast("${context.getString(R.string.source_error)}\n${exception.message}", gotoNext = true)
+                showErrorToast("${context.getString(R.string.source_error)}\n${exception.message}")
 
             is SocketTimeoutException -> {
                 /**
@@ -680,17 +680,17 @@ class PlayerView @JvmOverloads constructor(
                  * prevent switching to the next source.
                  */
                 (context as? Activity)?.runOnUiThread {
-                    showErrorToast("${context.getString(R.string.remote_error)}\n${exception.message}", gotoNext = true)
+                    showErrorToast("${context.getString(R.string.remote_error)}\n${exception.message}")
                 }
             }
 
             is ErrorLoadingException ->
-                exception.message?.let { showErrorToast(it, gotoNext = true) }
-                    ?: showErrorToast(exception.toString(), gotoNext = true)
+                exception.message?.let { showErrorToast(it) }
+                    ?: showErrorToast(exception.toString())
 
             else ->
-                exception.message?.let { showErrorToast(it, gotoNext = false) }
-                    ?: showErrorToast(exception.toString(), gotoNext = false)
+                exception.message?.let { showErrorToast(it) }
+                    ?: showErrorToast(exception.toString())
         }
     }
 
