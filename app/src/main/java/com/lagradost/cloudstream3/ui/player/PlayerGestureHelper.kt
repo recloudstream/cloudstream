@@ -1055,7 +1055,7 @@ class PlayerGestureHelper(private val playerView: PlayerView) {
             return validHeight && validWidth
         }
 
-        return rawY > (context.getStatusBarHeight() ?: 0) && rawX < screenWidthWithOrientation
+        return rawY > context.getStatusBarHeight() && rawX < screenWidthWithOrientation
     }
 
     private fun handleGesture(view: View, event: MotionEvent): Boolean {
