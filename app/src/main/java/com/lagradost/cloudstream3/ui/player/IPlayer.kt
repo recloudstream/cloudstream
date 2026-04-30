@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.player
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Rational
+import androidx.annotation.UiThread
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
@@ -79,6 +80,7 @@ data class PositionEvent(
 }
 
 /** player error when rendering or misc, used to display toast or log */
+@UiThread
 data class ErrorEvent(
     val error: Throwable,
     override val source: PlayerEventSource = PlayerEventSource.Player,
@@ -219,8 +221,6 @@ data class CurrentTracks(
     val allAudioTracks: List<AudioTrack>,
     val allTextTracks: List<TextTrack>,
 )
-
-class InvalidFileException(msg: String) : Exception(msg)
 
 //http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
 const val ACTION_MEDIA_CONTROL = "media_control"

@@ -1770,7 +1770,6 @@ class CS3IPlayer : IPlayer {
         return exoPlayer != null
     }
 
-
     @MainThread
     private fun loadTorrent(context: Context, link: ExtractorLink) {
         ioSafe {
@@ -1791,7 +1790,7 @@ class CS3IPlayer : IPlayer {
                     loadOnlinePlayer(context, newLink)
                 }
             } catch (t: Throwable) {
-                event(ErrorEvent(t))
+                runOnMainThread { event(ErrorEvent(t)) }
             }
         }
     }

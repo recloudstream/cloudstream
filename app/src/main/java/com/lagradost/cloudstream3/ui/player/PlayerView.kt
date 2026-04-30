@@ -26,6 +26,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.OptIn
+import androidx.annotation.UiThread
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -614,6 +615,7 @@ class PlayerView @JvmOverloads constructor(
 
     /** Error handling */
 
+    @UiThread
     fun playerError(exception: Throwable) {
         fun showErrorToast(message: String) {
             if (callbacks?.hasNextMirror() == true) {
@@ -669,20 +671,8 @@ class PlayerView @JvmOverloads constructor(
                 }
             }
 
-            is InvalidFileException ->
-                showErrorToast("${context.getString(R.string.source_error)}\n${exception.message}")
-
-            is SocketTimeoutException -> {
-                /**
-                 * Ensures this is run on the UI thread to prevent issues
-                 * caused by SocketTimeoutException in torrents. Running
-                 * on another thread can break player interactions or
-                 * prevent switching to the next source.
-                 */
-                (context as? Activity)?.runOnUiThread {
-                    showErrorToast("${context.getString(R.string.remote_error)}\n${exception.message}")
-                }
-            }
+            is SocketTimeoutException ->
+                showErrorToast("${context.getString(R.string.remote_error)}\n${exception.message}")
 
             is ErrorLoadingException ->
                 exception.message?.let { showErrorToast(it) }
@@ -729,8 +719,7 @@ class PlayerView @JvmOverloads constructor(
         if (isLayout(TV or EMULATOR)) return ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         return if (autoPlayerRotateEnabled && isVerticalOrientation)
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
-        else
-            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        else ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
     }
 
     /** Event dispatch */
@@ -761,11 +750,7 @@ class PlayerView @JvmOverloads constructor(
             is TimestampInvokedEvent -> callbacks?.onTimestamp(event.timestamp)
             is TracksChangedEvent -> callbacks?.onTracksInfoChanged()
             is EmbeddedSubtitlesFetchedEvent -> callbacks?.embeddedSubtitlesFetched(event.tracks)
-            is ErrorEvent -> {
-                val cb = callbacks
-                if (cb != null) cb.playerError(event.error)
-                else playerError(event.error)
-            }
+            is ErrorEvent -> callbacks?.playerError(event.error) ?: playerError(event.error)
             is RequestAudioFocusEvent -> requestAudioFocus()
             is EpisodeSeekEvent -> when (event.offset) {
                 -1 -> callbacks?.prevEpisode()
