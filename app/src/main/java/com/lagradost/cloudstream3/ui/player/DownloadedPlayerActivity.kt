@@ -31,9 +31,24 @@ class DownloadedPlayerActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        // Ignore same intent so the player doesnt totally
+        // reload if you are playing the same thing.
+        if (isSameIntent(intent)) return
         setIntent(intent)
         Log.i(TAG, "onNewIntent")
         handleIntent(intent)
+    }
+
+    private fun isSameIntent(newIntent: Intent): Boolean {
+        val old = intent ?: return false
+        // Compare URIs first
+        val oldUri = old.data ?: old.clipData?.getItemAt(0)?.uri
+        val newUri = newIntent.data ?: newIntent.clipData?.getItemAt(0)?.uri
+        if (oldUri != null && oldUri == newUri) return true
+        // Fall back to comparing EXTRA_TEXT links
+        val oldText = safe { old.getStringExtra(Intent.EXTRA_TEXT) }
+        val newText = safe { newIntent.getStringExtra(Intent.EXTRA_TEXT) }
+        return oldText != null && oldText == newText
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
