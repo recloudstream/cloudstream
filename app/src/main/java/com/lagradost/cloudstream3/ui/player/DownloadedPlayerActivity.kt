@@ -14,7 +14,9 @@ import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPres
 import com.lagradost.cloudstream3.utils.UIHelper.enableEdgeToEdgeCompat
 
 class DownloadedPlayerActivity : AppCompatActivity() {
-    private val dTAG = "DownloadedPlayerAct"
+    companion object {
+        const val TAG = "DownloadedPlayerActivity"
+    }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean =
         CommonActivity.dispatchKeyEvent(this, event) ?: super.dispatchKeyEvent(event)
@@ -27,49 +29,50 @@ class DownloadedPlayerActivity : AppCompatActivity() {
         CommonActivity.onUserLeaveHint(this)
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        Log.i(TAG, "onNewIntent")
+        handleIntent(intent)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         CommonActivity.loadThemes(this)
         CommonActivity.init(this)
         enableEdgeToEdgeCompat()
         setContentView(R.layout.empty_layout)
-        Log.i(dTAG, "onCreate")
+        Log.i(TAG, "onCreate")
 
+        handleIntent(intent)
+        attachBackPressedCallback("DownloadedPlayerActivity") { finish() }
+    }
+
+    private fun handleIntent(intent: Intent) {
         val data = intent.data
-
         if (OfflinePlaybackHelper.playIntent(activity = this, intent = intent)) {
             return
         }
 
-        if (intent?.action == Intent.ACTION_SEND || intent?.action == Intent.ACTION_OPEN_DOCUMENT || intent?.action == Intent.ACTION_VIEW) {
-            val extraText = safe { // I dont trust android
-                intent.getStringExtra(Intent.EXTRA_TEXT)
-            }
+        if (
+            intent.action == Intent.ACTION_SEND ||
+            intent.action == Intent.ACTION_OPEN_DOCUMENT ||
+            intent.action == Intent.ACTION_VIEW
+        ) {
+            val extraText = safe { intent.getStringExtra(Intent.EXTRA_TEXT) }
             val cd = intent.clipData
             val item = if (cd != null && cd.itemCount > 0) cd.getItemAt(0) else null
             val url = item?.text?.toString()
-
-            // idk what I am doing, just hope any of these work
-            if (item?.uri != null)
-                playUri(this, item.uri)
-            else if (url != null)
-                playLink(this, url)
-            else if (data != null)
-                playUri(this, data)
-            else if (extraText != null)
-                playLink(this, extraText)
-            else {
-                finish()
-                return
+            when {
+                item?.uri != null -> playUri(this, item.uri)
+                url != null -> playLink(this, url)
+                data != null -> playUri(this, data)
+                extraText != null -> playLink(this, extraText)
+                else -> { finish(); return }
             }
         } else if (data?.scheme == "content") {
             playUri(this, data)
-        } else {
-            finish()
-            return
-        }
-
-        attachBackPressedCallback("DownloadedPlayerActivity") { finish() }
+        } else finish()
     }
 
     override fun onResume() {
