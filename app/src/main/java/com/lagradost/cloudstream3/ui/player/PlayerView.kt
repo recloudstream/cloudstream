@@ -25,8 +25,8 @@ import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.MainThread
 import androidx.annotation.OptIn
-import androidx.annotation.UiThread
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -621,7 +621,7 @@ class PlayerView @JvmOverloads constructor(
 
     /** Error handling */
 
-    @UiThread
+    @MainThread
     fun playerError(exception: Throwable) {
         fun showErrorToast(message: String) {
             if (callbacks?.hasNextMirror() == true) {
@@ -736,6 +736,7 @@ class PlayerView @JvmOverloads constructor(
      * and returning early WON'T stop it from changing in e.g. the player time
      * or pause status.
      */
+    @MainThread
     fun mainCallback(event: PlayerEvent) {
         // We don't want to spam DownloadEvent.
         if (event !is DownloadEvent) Log.i(TAG, "Handle event: $event")

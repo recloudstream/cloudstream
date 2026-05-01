@@ -3,7 +3,8 @@ package com.lagradost.cloudstream3.ui.player
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Rational
-import androidx.annotation.UiThread
+import androidx.annotation.AnyThread
+import androidx.annotation.MainThread
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
@@ -80,7 +81,6 @@ data class PositionEvent(
 }
 
 /** player error when rendering or misc, used to display toast or log */
-@UiThread
 data class ErrorEvent(
     val error: Throwable,
     override val source: PlayerEventSource = PlayerEventSource.Player,
@@ -243,8 +243,9 @@ interface IPlayer {
     fun getSubtitleOffset(): Long // in ms
     fun setSubtitleOffset(offset: Long) // in ms
 
+    @AnyThread
     fun initCallbacks(
-        eventHandler: ((PlayerEvent) -> Unit),
+        @MainThread eventHandler: ((PlayerEvent) -> Unit),
         /** this is used to request when the player should report back view percentage */
         requestedListeningPercentages: List<Int>? = null,
     )
