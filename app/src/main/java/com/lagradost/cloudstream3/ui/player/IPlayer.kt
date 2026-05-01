@@ -7,27 +7,6 @@ import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
 
-enum class PlayerEventType(val value: Int) {
-    Pause(0),
-    Play(1),
-    SeekForward(2),
-    SeekBack(3),
-
-    SkipCurrentChapter(4),
-    NextEpisode(5),
-    PrevEpisode(6),
-    PlayPauseToggle(7),
-    ToggleMute(8),
-    Lock(9),
-    ToggleHide(10),
-    ShowSpeed(11),
-    ShowMirrors(12),
-    Resize(13),
-    SearchSubtitlesOnline(14),
-    SkipOp(15),
-    Restart(16),
-}
-
 enum class CSPlayerEvent(val value: Int) {
     Pause(0),
     Play(1),

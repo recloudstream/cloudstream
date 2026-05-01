@@ -117,7 +117,6 @@ object CommonActivity {
     val onColorSelectedEvent = Event<Pair<Int, Int>>()
     val onDialogDismissedEvent = Event<Int>()
 
-    var playerEventListener: ((PlayerEventType) -> Unit)? = null
     var keyEventListener: ((Pair<KeyEvent?, Boolean>) -> Boolean)? = null
     var appliedTheme: Int = 0
     var appliedColor: Int = 0
@@ -534,87 +533,7 @@ object CommonActivity {
 
 
     fun onKeyDown(act: Activity?, keyCode: Int, event: KeyEvent?): Boolean? {
-
-        // 149 keycode_numpad 5
-        val playerEvent = when (keyCode) {
-            KeyEvent.KEYCODE_FORWARD, KeyEvent.KEYCODE_D, KeyEvent.KEYCODE_MEDIA_SKIP_FORWARD, KeyEvent.KEYCODE_MEDIA_FAST_FORWARD -> {
-                PlayerEventType.SeekForward
-            }
-
-            KeyEvent.KEYCODE_A, KeyEvent.KEYCODE_MEDIA_SKIP_BACKWARD, KeyEvent.KEYCODE_MEDIA_REWIND -> {
-                PlayerEventType.SeekBack
-            }
-
-            KeyEvent.KEYCODE_MEDIA_NEXT, KeyEvent.KEYCODE_BUTTON_R1, KeyEvent.KEYCODE_N, KeyEvent.KEYCODE_NUMPAD_2, KeyEvent.KEYCODE_CHANNEL_UP -> {
-                PlayerEventType.NextEpisode
-            }
-
-            KeyEvent.KEYCODE_MEDIA_PREVIOUS, KeyEvent.KEYCODE_BUTTON_L1, KeyEvent.KEYCODE_B, KeyEvent.KEYCODE_NUMPAD_1, KeyEvent.KEYCODE_CHANNEL_DOWN -> {
-                PlayerEventType.PrevEpisode
-            }
-
-            KeyEvent.KEYCODE_MEDIA_PAUSE -> {
-                PlayerEventType.Pause
-            }
-
-            KeyEvent.KEYCODE_MEDIA_PLAY, KeyEvent.KEYCODE_BUTTON_START -> {
-                PlayerEventType.Play
-            }
-
-            KeyEvent.KEYCODE_L, KeyEvent.KEYCODE_NUMPAD_7, KeyEvent.KEYCODE_7 -> {
-                PlayerEventType.Lock
-            }
-
-            KeyEvent.KEYCODE_H, KeyEvent.KEYCODE_MENU -> {
-                PlayerEventType.ToggleHide
-            }
-
-            KeyEvent.KEYCODE_M, KeyEvent.KEYCODE_VOLUME_MUTE -> {
-                PlayerEventType.ToggleMute
-            }
-
-            KeyEvent.KEYCODE_S, KeyEvent.KEYCODE_NUMPAD_9, KeyEvent.KEYCODE_9 -> {
-                PlayerEventType.ShowMirrors
-            }
-            // OpenSubtitles shortcut
-            KeyEvent.KEYCODE_O, KeyEvent.KEYCODE_NUMPAD_8, KeyEvent.KEYCODE_8 -> {
-                PlayerEventType.SearchSubtitlesOnline
-            }
-
-            KeyEvent.KEYCODE_E, KeyEvent.KEYCODE_NUMPAD_3, KeyEvent.KEYCODE_3 -> {
-                PlayerEventType.ShowSpeed
-            }
-
-            KeyEvent.KEYCODE_R, KeyEvent.KEYCODE_NUMPAD_0, KeyEvent.KEYCODE_0 -> {
-                PlayerEventType.Resize
-            }
-
-            KeyEvent.KEYCODE_C, KeyEvent.KEYCODE_NUMPAD_4, KeyEvent.KEYCODE_4 -> {
-                PlayerEventType.SkipOp
-            }
-
-            KeyEvent.KEYCODE_V, KeyEvent.KEYCODE_NUMPAD_5, KeyEvent.KEYCODE_5 -> {
-                PlayerEventType.SkipCurrentChapter
-            }
-
-            KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_P, KeyEvent.KEYCODE_SPACE, KeyEvent.KEYCODE_NUMPAD_ENTER, KeyEvent.KEYCODE_ENTER -> { // space is not captured due to navigation
-                PlayerEventType.PlayPauseToggle
-            }
-
-            else -> return null
-        }
-        val listener = playerEventListener
-        if (listener != null) {
-            listener.invoke(playerEvent)
-            return true
-        }
         return null
-
-        //when (keyCode) {
-        //    KeyEvent.KEYCODE_DPAD_CENTER -> {
-        //        println("DPAD PRESSED")
-        //    }
-        //}
     }
 
     /** overrides focus and custom key events */

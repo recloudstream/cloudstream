@@ -39,7 +39,6 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.CommonActivity.keyEventListener
-import com.lagradost.cloudstream3.CommonActivity.playerEventListener
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentPlayerBinding
@@ -435,7 +434,8 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                         // Restore when lock is disabled.
                         restoreOrientationWithSensor(this)
                     } else {
-                        this.requestedOrientation = playerHostView?.dynamicOrientation() ?: return@apply
+                        this.requestedOrientation =
+                            playerHostView?.dynamicOrientation() ?: return@apply
                     }
                 }
             }
@@ -443,14 +443,14 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     }
 
     private fun setupKeyEventListener() {
-        keyEventListener = { eventNav ->
-            val (event, hasNavigated) = eventNav
+        keyEventListener = { (event, hasNavigated) ->
             when {
                 event == null -> false
                 event.action == KeyEvent.ACTION_DOWN &&
-                    (event.keyCode == KeyEvent.KEYCODE_VOLUME_UP ||
-                     event.keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) ->
+                        (event.keyCode == KeyEvent.KEYCODE_VOLUME_UP ||
+                                event.keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) ->
                     playerHostView?.handleVolumeKey(event.keyCode) ?: false
+
                 player.isActive() -> handleKeyEvent(event, hasNavigated)
                 else -> false
             }
@@ -880,6 +880,138 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         playerHostView?.requestUpdateBrightnessOverlayOnNextLayout()
     }
 
+    private fun handleKeyDownEvent(keyCode: Int): Boolean? {
+        // adb shell input keyevent [INT]
+        when (keyCode) {
+            KeyEvent.KEYCODE_FORWARD, KeyEvent.KEYCODE_D, KeyEvent.KEYCODE_MEDIA_SKIP_FORWARD, KeyEvent.KEYCODE_MEDIA_FAST_FORWARD -> {
+                player.handleEvent(CSPlayerEvent.SeekForward)
+            }
+
+            KeyEvent.KEYCODE_A, KeyEvent.KEYCODE_MEDIA_SKIP_BACKWARD, KeyEvent.KEYCODE_MEDIA_REWIND -> {
+                player.handleEvent(CSPlayerEvent.SeekBack)
+            }
+
+            KeyEvent.KEYCODE_MEDIA_NEXT, KeyEvent.KEYCODE_BUTTON_R1, KeyEvent.KEYCODE_N, KeyEvent.KEYCODE_NUMPAD_2, KeyEvent.KEYCODE_CHANNEL_UP -> {
+                player.handleEvent(CSPlayerEvent.NextEpisode)
+            }
+
+            KeyEvent.KEYCODE_MEDIA_PREVIOUS, KeyEvent.KEYCODE_BUTTON_L1, KeyEvent.KEYCODE_B, KeyEvent.KEYCODE_NUMPAD_1, KeyEvent.KEYCODE_CHANNEL_DOWN -> {
+                player.handleEvent(CSPlayerEvent.PrevEpisode)
+            }
+
+            KeyEvent.KEYCODE_MEDIA_PAUSE -> {
+                player.handleEvent(CSPlayerEvent.Pause)
+            }
+
+            KeyEvent.KEYCODE_MEDIA_PLAY, KeyEvent.KEYCODE_BUTTON_START -> {
+                player.handleEvent(CSPlayerEvent.Play)
+            }
+
+            KeyEvent.KEYCODE_L, KeyEvent.KEYCODE_NUMPAD_7, KeyEvent.KEYCODE_7 -> {
+                toggleLock()
+            }
+
+            KeyEvent.KEYCODE_H -> {
+                onClickChange()
+            }
+
+            KeyEvent.KEYCODE_M, KeyEvent.KEYCODE_VOLUME_MUTE -> {
+                player.handleEvent(CSPlayerEvent.ToggleMute)
+            }
+
+            KeyEvent.KEYCODE_S, KeyEvent.KEYCODE_NUMPAD_9, KeyEvent.KEYCODE_9 -> {
+                showMirrorsDialogue()
+            }
+            // OpenSubtitles shortcut
+            KeyEvent.KEYCODE_O, KeyEvent.KEYCODE_NUMPAD_8, KeyEvent.KEYCODE_8 -> {
+                val context = context
+                if (subsProvidersIsActive && context != null) {
+                    openOnlineSubPicker(context, null) {}
+                }
+            }
+
+            KeyEvent.KEYCODE_E, KeyEvent.KEYCODE_NUMPAD_3, KeyEvent.KEYCODE_3 -> {
+                showSpeedDialog()
+            }
+
+            KeyEvent.KEYCODE_R, KeyEvent.KEYCODE_NUMPAD_0, KeyEvent.KEYCODE_0 -> {
+                nextResize()
+            }
+
+            KeyEvent.KEYCODE_C, KeyEvent.KEYCODE_NUMPAD_4, KeyEvent.KEYCODE_4 -> {
+                skipOp()
+            }
+
+            KeyEvent.KEYCODE_V, KeyEvent.KEYCODE_NUMPAD_5, KeyEvent.KEYCODE_5 -> {
+                player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
+            }
+
+            KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_P, KeyEvent.KEYCODE_SPACE, KeyEvent.KEYCODE_NUMPAD_ENTER, KeyEvent.KEYCODE_ENTER -> { // space is not captured due to navigation
+                player.handleEvent(CSPlayerEvent.PlayPauseToggle)
+            }
+
+            KeyEvent.KEYCODE_DPAD_CENTER -> {
+                if (isShowing) {
+                    return null
+                }
+                // If UI is not shown make click instantly skip to next chapter even if locked
+                if (timestampShowState) {
+                    player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
+                } else if (!isLocked) {
+                    player.handleEvent(CSPlayerEvent.PlayPauseToggle)
+                }
+                onClickChange()
+            }
+
+            KeyEvent.KEYCODE_DPAD_DOWN,
+            KeyEvent.KEYCODE_DPAD_UP -> {
+                if (isShowing || isShowingEpisodeOverlay) {
+                    return null
+                }
+                onClickChange()
+            }
+
+            KeyEvent.KEYCODE_DPAD_LEFT -> {
+                if (!isShowing && !isLocked && !isShowingEpisodeOverlay) {
+                    player.seekTime(-androidTVInterfaceOffSeekTime)
+                    return true
+                } else if (playerBinding?.playerPausePlay?.isFocused == true) {
+                    player.seekTime(-androidTVInterfaceOnSeekTime)
+                    return true
+                } else {
+                    return null
+                }
+            }
+
+            KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                if (!isShowing && !isLocked && !isShowingEpisodeOverlay) {
+                    player.seekTime(androidTVInterfaceOffSeekTime)
+                } else if (playerBinding?.playerPausePlay?.isFocused == true) {
+                    player.seekTime(androidTVInterfaceOnSeekTime)
+                } else {
+                    return null
+                }
+            }
+
+            KeyEvent.KEYCODE_VOLUME_DOWN,
+            KeyEvent.KEYCODE_VOLUME_UP -> {
+                // Handled entirely by PlayerView.handleVolumeKey (checks PHONE/EMULATOR).
+                if (playerHostView?.handleVolumeKey(keyCode) != true) {
+                    return null
+                }
+            }
+
+            KeyEvent.KEYCODE_MENU,
+            KeyEvent.KEYCODE_SETTINGS -> {
+                if (isLocked || !isThereEpisodes()) {
+                    return null
+                }
+                toggleEpisodesOverlay(true)
+            }
+        }
+        return true
+    }
+
     private fun handleKeyEvent(event: KeyEvent, hasNavigated: Boolean): Boolean {
         if (hasNavigated) {
             autoHide()
@@ -888,53 +1020,9 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         val keyCode = event.keyCode
 
         if (event.action == KeyEvent.ACTION_DOWN) {
-            when (keyCode) {
-                KeyEvent.KEYCODE_DPAD_CENTER -> {
-                    if (!isShowing) {
-                        // If UI is not shown make click instantly skip to next chapter even if locked
-                        if (timestampShowState) {
-                            player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
-                        } else if (!isLocked) {
-                            player.handleEvent(CSPlayerEvent.PlayPauseToggle)
-                        }
-                        onClickChange()
-                        return true
-                    }
-                }
-
-                KeyEvent.KEYCODE_DPAD_DOWN,
-                KeyEvent.KEYCODE_DPAD_UP -> {
-                    if (!isShowing && !isShowingEpisodeOverlay) {
-                        onClickChange()
-                        return true
-                    }
-                }
-
-                KeyEvent.KEYCODE_DPAD_LEFT -> {
-                    if (!isShowing && !isLocked && !isShowingEpisodeOverlay) {
-                        player.seekTime(-androidTVInterfaceOffSeekTime)
-                        return true
-                    } else if (playerBinding?.playerPausePlay?.isFocused == true) {
-                        player.seekTime(-androidTVInterfaceOnSeekTime)
-                        return true
-                    }
-                }
-
-                KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                    if (!isShowing && !isLocked && !isShowingEpisodeOverlay) {
-                        player.seekTime(androidTVInterfaceOffSeekTime)
-                        return true
-                    } else if (playerBinding?.playerPausePlay?.isFocused == true) {
-                        player.seekTime(androidTVInterfaceOnSeekTime)
-                        return true
-                    }
-                }
-
-                KeyEvent.KEYCODE_VOLUME_DOWN,
-                KeyEvent.KEYCODE_VOLUME_UP -> {
-                    // Handled entirely by PlayerView.handleVolumeKey (checks PHONE/EMULATOR).
-                    if (playerHostView?.handleVolumeKey(keyCode) == true) return true
-                }
+            val value = handleKeyDownEvent(keyCode)
+            if (value != null) {
+                return value
             }
         }
 
@@ -1000,7 +1088,8 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
     override fun onBindingCreated(binding: FragmentPlayerBinding, savedInstanceState: Bundle?) {
         // Set up playerBinding before super initializes the player
         // (brightness overlay is now injected by PlayerView.initialize())
-        playerBinding = PlayerCustomLayoutBinding.bind(binding.root.findViewById(R.id.player_holder))
+        playerBinding =
+            PlayerCustomLayoutBinding.bind(binding.root.findViewById(R.id.player_holder))
 
         super.onBindingCreated(binding, savedInstanceState)
 
@@ -1016,81 +1105,6 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         setPlayBackSpeed(DataStoreHelper.playBackSpeed)
         savedInstanceState?.getLong(SUBTITLE_DELAY_BUNDLE_KEY)?.let {
             subtitleDelay = it
-        }
-
-        // handle tv controls
-        playerEventListener = { eventType ->
-            when (eventType) {
-                PlayerEventType.Lock -> {
-                    toggleLock()
-                }
-
-                PlayerEventType.NextEpisode -> {
-                    player.handleEvent(CSPlayerEvent.NextEpisode)
-                }
-
-                PlayerEventType.Pause -> {
-                    player.handleEvent(CSPlayerEvent.Pause)
-                }
-
-                PlayerEventType.PlayPauseToggle -> {
-                    player.handleEvent(CSPlayerEvent.PlayPauseToggle)
-                }
-
-                PlayerEventType.Play -> {
-                    player.handleEvent(CSPlayerEvent.Play)
-                }
-
-                PlayerEventType.SkipCurrentChapter -> {
-                    player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
-                }
-
-                PlayerEventType.Resize -> {
-                    nextResize()
-                }
-
-                PlayerEventType.PrevEpisode -> {
-                    player.handleEvent(CSPlayerEvent.PrevEpisode)
-                }
-
-                PlayerEventType.SeekForward -> {
-                    player.handleEvent(CSPlayerEvent.SeekForward)
-                }
-
-                PlayerEventType.ShowSpeed -> {
-                    showSpeedDialog()
-                }
-
-                PlayerEventType.SeekBack -> {
-                    player.handleEvent(CSPlayerEvent.SeekBack)
-                }
-
-                PlayerEventType.Restart -> {
-                    player.handleEvent(CSPlayerEvent.Restart)
-                }
-
-                PlayerEventType.ToggleMute -> {
-                    player.handleEvent(CSPlayerEvent.ToggleMute)
-                }
-
-                PlayerEventType.ToggleHide -> {
-                    onClickChange()
-                }
-
-                PlayerEventType.ShowMirrors -> {
-                    showMirrorsDialogue()
-                }
-
-                PlayerEventType.SearchSubtitlesOnline -> {
-                    if (subsProvidersIsActive) {
-                        openOnlineSubPicker(view.context, null) {}
-                    }
-                }
-
-                PlayerEventType.SkipOp -> {
-                    skipOp()
-                }
-            }
         }
 
         // handle tv controls directly based on player state
@@ -1137,8 +1151,9 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                 else QualityDataHelper.QualityProfileType.WiFi
 
                 currentQualityProfile =
-                    profiles.firstOrNull { it.types.contains(type) }?.id ?: profiles.firstOrNull()?.id
-                            ?: currentQualityProfile
+                    profiles.firstOrNull { it.types.contains(type) }?.id
+                        ?: profiles.firstOrNull()?.id
+                                ?: currentQualityProfile
             }
             playerBinding?.apply {
                 playerSpeedBtt.isVisible = playBackSpeedEnabled
