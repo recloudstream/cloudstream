@@ -11,6 +11,7 @@ import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.ui.player.OfflinePlaybackHelper.playLink
 import com.lagradost.cloudstream3.ui.player.OfflinePlaybackHelper.playUri
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
 import com.lagradost.cloudstream3.utils.UIHelper.enableEdgeToEdgeCompat
 
 class DownloadedPlayerActivity : AppCompatActivity() {
@@ -58,9 +59,7 @@ class DownloadedPlayerActivity : AppCompatActivity() {
         enableEdgeToEdgeCompat()
         setContentView(R.layout.empty_layout)
         Log.i(TAG, "onCreate")
-
         handleIntent(intent)
-        attachBackPressedCallback("DownloadedPlayerActivity") { finish() }
     }
 
     private fun handleIntent(intent: Intent) {
@@ -87,7 +86,14 @@ class DownloadedPlayerActivity : AppCompatActivity() {
             }
         } else if (data?.scheme == "content") {
             playUri(this, data)
-        } else finish()
+        } else {
+            finish()
+            return
+        }
+
+        // Detach before attaching a new one
+        detachBackPressedCallback("DownloadedPlayerActivity")
+        attachBackPressedCallback("DownloadedPlayerActivity") { finish() }
     }
 
     override fun onResume() {
