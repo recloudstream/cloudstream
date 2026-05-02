@@ -304,8 +304,8 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
     override fun setStatus(status: DownloadStatusTell?) {
         currentStatus = status
 
-        // Runs on the main thread, but also instant if it already is
-        if (Looper.myLooper() == Looper.getMainLooper()) {
+        // Runs on the main thread, but also instant if it already is.
+        if (Looper.getMainLooper().isCurrentThread) {
             try {
                 setStatusInternal(status)
             } catch (t: Throwable) {
