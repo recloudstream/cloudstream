@@ -131,6 +131,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.io.Serializable
 import java.util.Calendar
+import java.util.UUID
 
 @OptIn(UnstableApi::class)
 class GeneratorPlayer : FullScreenPlayer() {
@@ -139,11 +140,13 @@ class GeneratorPlayer : FullScreenPlayer() {
         const val CHANNEL_ID = 7340
         const val STOP_ACTION = "stopcs3"
 
-        private var lastUsedGenerator: IGenerator? = null
+        private var generatorMap = mutableMapOf<String, IGenerator>()
         fun newInstance(generator: IGenerator, syncData: HashMap<String, String>? = null): Bundle {
             Log.i(TAG, "newInstance = $syncData")
-            lastUsedGenerator = generator
+            val key = UUID.randomUUID().toString()
+            generatorMap[key] = generator
             return Bundle().apply {
+                putString("generatorKey", key)
                 if (syncData != null) putSerializable("syncData", syncData)
             }
         }
@@ -2125,13 +2128,17 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+    private var lastUsedGenerator: IGenerator? = null
     override fun onBindingCreated(binding: FragmentPlayerBinding, savedInstanceState: Bundle?) {
         viewModel = ViewModelProvider(this)[PlayerGeneratorViewModel::class.java]
         sync = ViewModelProvider(this)[SyncViewModel::class.java]
+
+        val key = arguments?.getString("generatorKey")
+        lastUsedGenerator = key?.let { generatorMap[it] }
         viewModel.attachGenerator(lastUsedGenerator)
+
         unwrapBundle(savedInstanceState)
         unwrapBundle(arguments)
-
         super.onBindingCreated(binding, savedInstanceState)
 
         var langFilterList = listOf<String>()
