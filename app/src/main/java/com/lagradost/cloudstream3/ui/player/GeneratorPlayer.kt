@@ -2125,6 +2125,24 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+    private var langFilterList = listOf<String>()
+    private var filterSubByLang = false
+
+    private fun updateCurrentSubs(set: Set<SubtitleData>) {
+        val setOfSub = mutableSetOf<SubtitleData>()
+        if (langFilterList.isNotEmpty() && filterSubByLang) {
+            Log.i("subfilter", "Filtering subtitle")
+            langFilterList.forEach { lang ->
+                Log.i("subfilter", "Lang: $lang")
+                setOfSub += set.filter {
+                    it.originalName.contains(lang, ignoreCase = true) ||
+                        it.origin != SubtitleOrigin.URL
+                }
+            }
+            currentSubs = setOfSub
+        } else currentSubs = set
+    }
+
     override fun onBindingCreated(binding: FragmentPlayerBinding, savedInstanceState: Bundle?) {
         viewModel = ViewModelProvider(this)[PlayerGeneratorViewModel::class.java]
         sync = ViewModelProvider(this)[SyncViewModel::class.java]
@@ -2133,9 +2151,6 @@ class GeneratorPlayer : FullScreenPlayer() {
         unwrapBundle(arguments)
 
         super.onBindingCreated(binding, savedInstanceState)
-
-        var langFilterList = listOf<String>()
-        var filterSubByLang = false
 
         context?.let { ctx ->
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
@@ -2203,7 +2218,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     //    showToast(activity, R.string.unexpected_error, Toast.LENGTH_SHORT)
                     //}
                     currentLinks = viewModel.currentLinks.value ?: emptySet()
-                    currentSubs = viewModel.currentSubs.value ?: emptySet()
+                    updateCurrentSubs(viewModel.currentSubs.value ?: emptySet())
                     startPlayer()
                 }
 
@@ -2246,20 +2261,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
 
         observe(viewModel.currentSubs) { set ->
-            val setOfSub = mutableSetOf<SubtitleData>()
-            if (langFilterList.isNotEmpty() && filterSubByLang) {
-                Log.i("subfilter", "Filtering subtitle")
-                langFilterList.forEach { lang ->
-                    Log.i("subfilter", "Lang: $lang")
-                    setOfSub += set.filter {
-                        it.originalName.contains(lang, ignoreCase = true) ||
-                                it.origin != SubtitleOrigin.URL
-                    }
-                }
-                currentSubs = setOfSub
-            } else {
-                currentSubs = set
-            }
+            updateCurrentSubs(set)
             player.setActiveSubtitles(set)
 
             // If the file is downloaded then do not select auto select the subtitles
