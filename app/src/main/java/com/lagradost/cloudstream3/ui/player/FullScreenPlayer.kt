@@ -780,11 +780,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             playerGoBackHolder.isGone = isGone
             playerSourcesBtt.isGone = isGone
             shadowOverlay.isGone = isGone
-
             playerSkipEpisode.isClickable = !isGone
-            playerPausePlay.isClickable = !isGone
-            playerRew.isClickable = !isGone
-            playerFfwd.isClickable = !isGone
         }
     }
 
