@@ -763,12 +763,10 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             }
         }
         playerBinding?.apply {
-
             playerLockHolder.isGone = isGone
             playerVideoBar.isGone = isGone
 
-            playerPausePlay.isGone = isGone
-            // player_buffering?.isGone = isGone
+            playerPausePlayHolderHolder.isGone = isGone
             playerTopHolder.isGone = isGone
             val showPlayerEpisodes = !isGone && isThereEpisodes()
             playerEpisodesButtonRoot.isVisible = showPlayerEpisodes
@@ -778,7 +776,6 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             playerEpisodeFiller.isGone = isGone
             playerCenterMenu.isGone = isGone
             playerLock.isGone = !isShowing
-            // player_media_route_button?.isClickable = !isGone
             playerGoBackHolder.isGone = isGone
             playerSourcesBtt.isGone = isGone
             playerSkipEpisode.isClickable = !isGone
@@ -1176,15 +1173,6 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                         text.isSelected = true
                         text.isVisible = true
                     }
-                }
-            }
-
-            playerPausePlay.setOnClickListener {
-                autoHide()
-                if (currentPlayerStatus == CSPlayerLoading.IsEnded && isLayout(PHONE)) {
-                    player.handleEvent(CSPlayerEvent.Restart)
-                } else {
-                    player.handleEvent(CSPlayerEvent.PlayPauseToggle)
                 }
             }
 

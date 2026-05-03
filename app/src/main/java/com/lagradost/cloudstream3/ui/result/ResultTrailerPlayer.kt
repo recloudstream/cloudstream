@@ -58,6 +58,12 @@ class ResultTrailerPlayer : ResultFragmentPhone() {
 
     override fun onHidePlayerUI() = uiReset()
 
+    // When the hold-speedup gesture fires, hide controls so the video is unobstructed.
+    // The speedup button show/hide and speed change are handled by PlayerView.
+    override fun onHoldSpeedUp(show: Boolean) {
+        if (show && isShowing) onSingleTap()
+    }
+
     override fun nextEpisode() {}
     override fun prevEpisode() {}
     override fun playerPositionChanged(position: Long, duration: Long) {}

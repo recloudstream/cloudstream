@@ -375,7 +375,8 @@ class PlayerView @JvmOverloads constructor(
             exoFfwdText?.text = context.getString(R.string.ffw_text_regular_format).format(seekSecs)
 
             playerPausePlay?.setOnClickListener {
-                if (currentPlayerStatus == CSPlayerLoading.IsEnded) {
+                scheduleAutoHide()
+                if (currentPlayerStatus == CSPlayerLoading.IsEnded && isLayout(PHONE)) {
                     player.handleEvent(CSPlayerEvent.Restart, PlayerEventSource.UI)
                 } else {
                     player.handleEvent(CSPlayerEvent.PlayPauseToggle, PlayerEventSource.UI)
