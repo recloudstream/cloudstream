@@ -218,6 +218,10 @@ class ResultTrailerPlayer : ResultFragmentPhone() {
             shadowOverlay.isVisible = controlsVisible
             playerPausePlayHolderHolder.isVisible =
                 controlsVisible && playerHostView?.currentPlayerStatus != CSPlayerLoading.IsBuffering
+
+            playerPausePlay.isClickable = controlsVisible
+            playerRew.isClickable = controlsVisible
+            playerFfwd.isClickable = controlsVisible
         }
         // Fade center controls in/out; also resets stale fillAfter alpha from seek animations.
         playerHostView?.gestureHelper?.animateCenterControls(if (isShowing && !introVisible) 1f else 0f)
