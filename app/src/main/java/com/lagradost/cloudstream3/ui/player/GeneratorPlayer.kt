@@ -2191,45 +2191,31 @@ class GeneratorPlayer : FullScreenPlayer() {
             player.addTimeStamps(stamps)
         }
 
-        observe(viewModel.loadingLinks) {
-            when (it) {
-                is Resource.Loading -> {
-                    startLoading()
-                }
-
-                is Resource.Success -> {
-                    // provider returned false
-                    //if (it.value != true) {
-                    //    showToast(activity, R.string.unexpected_error, Toast.LENGTH_SHORT)
-                    //}
-                    startPlayer()
-                }
-
-                is Resource.Failure -> {
-                    showToast(it.errorString, Toast.LENGTH_LONG)
-                    startPlayer()
-                }
-            }
-        }
-
-        observe(viewModel.currentLinks) {
-            currentLinks = it
-            val turnVisible = it.isNotEmpty() && lastUsedGenerator?.canSkipLoading == true
+        // currentLinks and currentSubs MUST be registered before loadingLinks.
+        // LiveData delivers to newly-active observers in registration (insertion) order.
+        // The loadingLinks observer calls startPlayer(), which reads the Fragment-local
+        // currentLinks field. If loadingLinks fires first (because it was registered first),
+        // currentLinks is still empty and startPlayer() calls noLinksFound().
+        // Registering currentLinks first guarantees its observer updates the field before
+        // the loadingLinks observer can call startPlayer(), both on initial delivery to a
+        // newly-started Fragment and on any subsequent setValue() call from the ViewModel.
+        observe(viewModel.currentLinks) { links ->
+            currentLinks = links
+            val turnVisible = links.isNotEmpty() && lastUsedGenerator?.canSkipLoading == true
             val wasGone = binding.overlayLoadingSkipButton.isGone
 
             binding.overlayLoadingSkipButton.apply {
                 isVisible = turnVisible
-                val value = viewModel.currentLinks.value
-                if (value.isNullOrEmpty()) {
+                if (links.isEmpty()) {
                     setText(R.string.skip_loading)
                 } else {
                     @SuppressLint("SetTextI18n")
-                    text = "${context.getString(R.string.skip_loading)} (${value.size})"
+                    text = "${context.getString(R.string.skip_loading)} (${links.size})"
                 }
             }
 
             safe {
-                if (currentLinks.any { link ->
+                if (links.any { link ->
                         getLinkPriority(currentQualityProfile, link.first) >=
                                 QualityDataHelper.AUTO_SKIP_PRIORITY
                     }
@@ -2268,8 +2254,28 @@ class GeneratorPlayer : FullScreenPlayer() {
                 autoSelectSubtitles()
             }
         }
-    }
 
+        observe(viewModel.loadingLinks) {
+            when (it) {
+                is Resource.Loading -> {
+                    startLoading()
+                }
+
+                is Resource.Success -> {
+                    // provider returned false
+                    //if (it.value != true) {
+                    //    showToast(activity, R.string.unexpected_error, Toast.LENGTH_SHORT)
+                    //}
+                    startPlayer()
+                }
+
+                is Resource.Failure -> {
+                    showToast(it.errorString, Toast.LENGTH_LONG)
+                    startPlayer()
+                }
+            }
+        }
+    }
 }
 
 @Suppress("DEPRECATION")
