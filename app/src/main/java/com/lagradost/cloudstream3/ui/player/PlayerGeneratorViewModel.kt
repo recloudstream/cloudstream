@@ -12,6 +12,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
+import com.lagradost.cloudstream3.utils.ConsistentLiveData
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
@@ -27,10 +28,10 @@ class PlayerGeneratorViewModel : ViewModel() {
 
     private var generator: IGenerator? = null
 
-    private val _currentLinks = MutableLiveData<Set<Pair<ExtractorLink?, ExtractorUri?>>>(setOf())
+    private val _currentLinks = ConsistentLiveData<Set<Pair<ExtractorLink?, ExtractorUri?>>>(setOf())
     val currentLinks: LiveData<Set<Pair<ExtractorLink?, ExtractorUri?>>> = _currentLinks
 
-    private val _currentSubs = MutableLiveData<Set<SubtitleData>>(setOf())
+    private val _currentSubs = ConsistentLiveData<Set<SubtitleData>>(setOf())
     val currentSubs: LiveData<Set<SubtitleData>> = _currentSubs
 
     private val _loadingLinks = MutableLiveData<Resource<Boolean?>>()
