@@ -7,8 +7,8 @@
     <string name="batch_download_finish_format" formatted="true">Descargado %1$d %2$s</string>
     <string name="delete_repository">Borrar repositorio</string>
     <string name="next_episode_format" formatted="true">El episodio %d se lanzará en</string>
-    <string name="next_episode_time_hour_format" formatted="true">%1$d h %2$d m</string>
-    <string name="next_episode_time_min_format" formatted="true">%d m</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$d h %2$d m</string>
+    <string name="next_episode_time_min_format" formatted="true">%d m</string>
     <string name="result_poster_img_des">Póster</string>
     <string name="extensions">Extensiones</string>
     <string name="downloaded_file">Archivo descargado</string>
@@ -80,8 +80,7 @@
     <string name="episode_action_reload_links">Recargar enlaces</string>
     <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
-    <string name="delete_message" formatted="true">Esto eliminará %s permanentemente
-\nEstá seguro?</string>
+    <string name="delete_message" formatted="true">Esto eliminará %s permanentemente \nEstá seguro?</string>
     <string name="confirm_exit_dialog">¿Seguro que quieres salir?</string>
     <string name="popup_resume_download">Continuar Descarga</string>
     <string name="example_lang_name">Código de idioma (es_ES)</string>
@@ -104,7 +103,7 @@
     <string name="player_speed_text_format" formatted="true">Velocidad (%.2f×)</string>
     <string name="skip_loading">Omitir carga</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep. %2$d</string>
-    <string name="next_episode_time_day_format" formatted="true">%1$d d %2$d h %3$d m</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$d d %2$d h %3$d m</string>
     <string name="cast_format" formatted="true">Reparto: %s</string>
     <string name="filler" formatted="true">Relleno</string>
     <string name="duration_format" formatted="true">%d min</string>
@@ -184,7 +183,7 @@
     <string name="continue_watching">Continuar Viendo</string>
     <string name="action_remove_watching">Eliminar</string>
     <string name="action_open_watching">Más info</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Tal vez se requiera una VPN para que este proveedor funcione correctamente</string>
     <string name="vpn_torrent">Este proveedor es un torrent, se recomienda una VPN</string>
     <string name="provider_info_meta">El sitio no proporciona los metadatos, la carga del video fallará si no existe en el sitio.</string>
@@ -249,8 +248,7 @@
     <string name="resume">Continuar</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="resume_time_left" formatted="true">%dm
-\nfaltante</string>
+    <string name="resume_time_left" formatted="true">%dm \nfaltante</string>
     <string name="status_ongoing">En curso</string>
     <string name="status_completed">Completado</string>
     <string name="status">Estado</string>
@@ -482,10 +480,8 @@
     <string name="sort_alphabetical_z">Alfabéticamente (Z a A)</string>
     <string name="select_library">Seleccionar biblioteca</string>
     <string name="open_with">Abrir con</string>
-    <string name="empty_library_no_accounts_message">Tu biblioteca está vacía :(
-\nInicia sesión en una cuenta de biblioteca o añade series desde tu biblioteca local.</string>
-    <string name="safe_mode_file">¡Se encontró un archivo en modo seguro!
-\nNo cargar ninguna extensión al inicio hasta que se elimine el archivo.</string>
+    <string name="empty_library_no_accounts_message">Tu biblioteca está vacía :( \nInicia sesión en una cuenta de biblioteca o añade series desde tu biblioteca local.</string>
+    <string name="safe_mode_file">¡Se encontró un archivo en modo seguro! \nNo cargar ninguna extensión al inicio hasta que se elimine el archivo.</string>
     <string name="android_tv_interface_on_seek_settings">Reproductor visible - buscar cantidad</string>
     <string name="android_tv_interface_off_seek_settings">Reproductor oculto - buscar cantidad</string>
     <string name="pref_category_android_tv">Android TV</string>
@@ -510,13 +506,7 @@
     <string name="pref_category_bypass">ISP Bypasses</string>
     <string name="watch_quality_pref_data">Calidad de visualización preferida (Datos móviles)</string>
     <string name="help">Ayuda</string>
-    <string name="quality_profile_help">Aquí puedes cambiar el orden de las fuentes. Si un vídeo tiene una prioridad más alta, aparecerá más arriba en la selección de las fuentes. La suma de la prioridad de la fuente y la prioridad de la calidad es la prioridad del vídeo.
-\n
-\nFuente A: 3
-\nCalidad B: 7
-\nTendrá una prioridad en el vídeo combinada de 10.
-\n
-\nNOTA: ¡Si la suma es 10 o más el reproductor saltará automáticamente la carga cuando se cargue ese enlace!</string>
+    <string name="quality_profile_help">Aquí puedes cambiar el orden de las fuentes. Si un vídeo tiene una prioridad más alta, aparecerá más arriba en la selección de las fuentes. La suma de la prioridad de la fuente y la prioridad de la calidad es la prioridad del vídeo. \n \nFuente A: 3 \nCalidad B: 7 \nTendrá una prioridad en el vídeo combinada de 10. \n \nNOTA: ¡Si la suma es 10 o más el reproductor saltará automáticamente la carga cuando se cargue ese enlace!</string>
     <string name="profile_number">Perfil %d</string>
     <string name="wifi">Wifi</string>
     <string name="edit">Editar</string>
@@ -536,11 +526,7 @@
     <string name="favorite_removed">%s eliminado de favoritos</string>
     <string name="favorites_list_name">Favoritos</string>
     <string name="favorite_added">%s añadido a favoritos</string>
-    <string name="duplicate_message_multiple" formatted="true">Se han encontrado posibles elementos duplicados en su biblioteca:
-\n
-\n%s
-\n
-\n¿Desea añadir este elemento de todos modos, sustituir los existentes o cancelar la acción?</string>
+    <string name="duplicate_message_multiple" formatted="true">Se han encontrado posibles elementos duplicados en su biblioteca: \n \n%s \n \n¿Desea añadir este elemento de todos modos, sustituir los existentes o cancelar la acción?</string>
     <string name="duplicate_title">Posible duplicado encontrado</string>
     <string name="lock_profile">Bloquear perfil</string>
     <string name="action_add_to_favorites">Añadido a favoritos</string>
@@ -583,8 +569,7 @@
     <string name="biometric_warning">Ahora se ha realizado una copia de seguridad de sus datos de CloudStream. Aunque la posibilidad de que esto ocurra es muy baja, todos los dispositivos pueden comportarse de forma diferente. En el raro caso de que no puedas acceder a la aplicación, borra completamente los datos de la aplicación y restaura desde una copia de seguridad. Sentimos mucho las molestias que esto pueda ocasionarte.</string>
     <string name="favorite">Favorito</string>
     <string name="unfavorite">Eliminar de favoritos</string>
-    <string name="resume_remaining" formatted="true">%s
-\nrestante</string>
+    <string name="resume_remaining" formatted="true">%s \nrestante</string>
     <string name="repo_copy_label">Nombre y URL del repositorio</string>
     <string name="toast_copied">¡Copiado!</string>
     <string name="clipboard_unknown_error">Error al copiar. Por favor, copie el logcat y comuníquese con el soporte de la aplicación.</string>
@@ -609,7 +594,7 @@
     <string name="qr_image">Imagen del código QR</string>
     <string name="dismiss">Descartar</string>
     <string name="open_downloaded_repo">Abrir repositorio</string>
-    <string name="device_pin_url_message">Visita <b> %s </b> en tu smartphone o ordenador e introduce el código anterior</string>
+    <string name="device_pin_url_message">Visita <b>%s</b> en tu smartphone o equipo e introduce el código anterior</string>
     <string name="device_pin_expired_message">¡El código PIN ya ha caducado!</string>
     <string name="device_pin_counter_text">El código caduca en %1$d mín y %2$d s</string>
     <string name="device_pin_error_message">No puedo obtener el código PIN del dispositivo; intente con la autenticación local</string>
@@ -621,24 +606,16 @@
     <string name="hide_player_control_names">Ocultar los nombres de los controles del reproductor</string>
     <string name="sort_release_date_old">Fecha de lanzamiento (antigua a nueva)</string>
     <string name="sort_release_date_new">Fecha de lanzamiento (de nueva a antigua)</string>
-    <string name="delete_message_series_only" formatted="true">¿Estás seguro de que quieres borrar permanentemente todos los episodios de la serie?
-\n
-\n%s</string>
+    <string name="delete_message_series_only" formatted="true">¿Estás seguro de que quieres borrar permanentemente todos los episodios de la serie? \n \n%s</string>
     <string name="downloads_delete_select">Seleccionar elementos para eliminar</string>
     <string name="offline_file">Disponible para visualizar sin conexión</string>
     <string name="select_all">Seleccionar todo</string>
     <string name="deselect_all">Deseleccionar todo</string>
     <string name="delete_files">Borrar archivos</string>
     <string name="delete_format" formatted="true">Borrar (%1$d | %2$s)</string>
-    <string name="delete_message_multiple" formatted="true">¿Seguro que quieres borrar de forma permanente los siguientes elementos?
-\n
-\n%s</string>
-    <string name="delete_message_series_episodes" formatted="true">¿Estás seguro de que deseas eliminar permanentemente los siguientes episodios en %1$s?
-\n
-\n%2$s</string>
-    <string name="delete_message_series_section" formatted="true">También borrará permanentemente todos los episodios de las siguientes series:
-\n
-\n%s</string>
+    <string name="delete_message_multiple" formatted="true">¿Seguro que quieres borrar de forma permanente los siguientes elementos? \n \n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">¿Estás seguro de que deseas eliminar permanentemente los siguientes episodios en %1$s? \n \n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">También borrará permanentemente todos los episodios de las siguientes series: \n \n%s</string>
     <string name="preview_seekbar_desc">Activar la previsualización para las miniaturas en la barra de búsqueda</string>
     <string name="preview_seekbar">Previsualización de Seekbar</string>
     <string name="no_subtitles_loaded">Aún no hay subtítulos cargados</string>
@@ -695,9 +672,9 @@
     <string name="overscan_settings">Sobreexploración</string>
     <string name="poster_size_settings_des">Cambios en el tamaño de los pósteres</string>
     <string name="poster_size_settings">Tamaño del póster</string>
-    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$d h %2$d m %3$d s</string>
-    <string name="download_time_left_min_sec_format" formatted="true">%1$d m %2$d s</string>
-    <string name="download_time_left_sec_format" formatted="true">%1$d s</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$d h %2$d m %3$d s</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$d m %2$d s</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$d s</string>
     <string name="show_rating">Etiqueta de valoración</string>
     <string name="speedup_summary">Mantenga presionado para duplicar la velocidad</string>
     <string name="no_account">Sin cuenta</string>
@@ -756,4 +733,8 @@
         <item quantity="many">%d descargas encoladas</item>
         <item quantity="other">%d descargas encoladas</item>
     </plurals>
+    <string name="show_player_metadata_overlay">Mostrar superposición de metadatos del jugador</string>
+    <string name="video_singular">Vídeo</string>
+    <string name="skip_type_preview">Vista previa</string>
+    <string name="player_is_live">En Vivo</string>
 </resources>

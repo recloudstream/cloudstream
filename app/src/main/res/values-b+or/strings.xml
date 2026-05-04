@@ -84,8 +84,7 @@
     <string name="pref_category_backup">ବ୍ୟାକଅପ୍</string>
     <string name="pref_category_android_tv">ଆଣ୍ଡ୍ରଏଡ୍ ଟିଵି</string>
     <string name="pref_category_gestures">ଅଙ୍ଗଭଙ୍ଗୀ</string>
-    <string name="new_update_format" formatted="true">ନୂଆ ଅଦ୍ୟତନ ମିଳିଲା!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">ନୂଆ ଅଦ୍ୟତନ ମିଳିଲା! \n%1$s -&gt; %2$s</string>
     <string name="duration">ଅଵଧି</string>
     <string name="app_storage">ଆପ୍</string>
     <string name="restore_success">ବ୍ୟାକଅପ୍ ଫାଇଲ୍ ଧାରଣ ହେଲା</string>

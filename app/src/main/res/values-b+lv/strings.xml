@@ -12,8 +12,7 @@
     <string name="preview_background_img_des">Apskatīt background</string>
     <string name="player_speed_text_format" formatted="true">Ātrums (%.2fx)</string>
     <string name="rated_format" formatted="true">Lidzīgi: %.1f</string>
-    <string name="new_update_format" formatted="true">Jauns atjauninājums atrasts!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Jauns atjauninājums atrasts! \n%1$s -&gt; %2$s</string>
     <string name="duration_format" formatted="true">%d galvenais</string>
     <string name="app_name">CloudStream</string>
     <string name="play_with_app_name">Atskaņo ar cloudstream</string>
@@ -105,7 +104,7 @@
     <string name="continue_watching">Turpini skatīties</string>
     <string name="action_remove_watching">Noņemt</string>
     <string name="action_open_watching">Vairāk informācijas</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">VPNs varētu būt vajadzīgs lai šis devējs strādātu pareizi</string>
     <string name="vpn_torrent">Šis devējs ir Torrents vpn ir rekomendēts</string>
     <string name="provider_info_meta">Dati nav doti no saites, video lādēšanas neizdosies ja neiksestē saitē.</string>
@@ -193,10 +192,8 @@
     <string name="resume">Atsākt</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">Šis pilnibā dzesīs %s
-\nEsat parliecināts?</string>
-    <string name="resume_time_left" formatted="true">%dm
-\natlikušas</string>
+    <string name="delete_message" formatted="true">Šis pilnibā dzesīs %s \nEsat parliecināts?</string>
+    <string name="resume_time_left" formatted="true">%dm \natlikušas</string>
     <string name="status_completed">Pabeigts</string>
     <string name="status">Statuss</string>
     <string name="year">Gads</string>
@@ -458,8 +455,7 @@
     <string name="sort_alphabetical_z">Alfabētiskā secībā (Z līdz A)</string>
     <string name="select_library">Atlasiet Bibliotēka</string>
     <string name="open_with">Atvērt ar</string>
-    <string name="empty_library_no_accounts_message">Šķiet, ka jūsu bibliotēka ir tukša :(
-\nPiesakieties bibliotēkas kontā vai pievienojiet pārraides savai vietējai bibliotēkai.</string>
+    <string name="empty_library_no_accounts_message">Šķiet, ka jūsu bibliotēka ir tukša :( \nPiesakieties bibliotēkas kontā vai pievienojiet pārraides savai vietējai bibliotēkai.</string>
     <string name="revert">Atgriest</string>
     <string name="subscription_deleted">Anulēts %s abonements</string>
     <string name="subscription_episode_released">%d sērija izlaista!</string>

@@ -6,7 +6,7 @@
     <string name="next_episode_format" formatted="true">L\'episodio %d uscirà in</string>
     <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
     <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
-    <string name="next_episode_time_min_format" formatted="true">%d min</string>
+    <string name="next_episode_time_min_format" formatted="true">%d min</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
     <string name="search_poster_img_des">Poster</string>
@@ -19,8 +19,7 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Velocità (%.2fx)</string>
     <string name="rated_format" formatted="true">Valutato: %.1f</string>
-    <string name="new_update_format" formatted="true">Nuovo aggiornamento trovato!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Nuovo aggiornamento trovato! \n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Filler</string>
     <string name="duration_format" formatted="true">%d min</string>
     <!-- <string name="app_name">CloudStream</string> -->
@@ -105,7 +104,7 @@
     <string name="continue_watching">Continua a guardare</string>
     <string name="action_remove_watching">Rimuovi</string>
     <string name="action_open_watching">Più info</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Potrebbe essere necessaria una VPN per far funzionare correttamente questo provider</string>
     <string name="vpn_torrent">Questo provider è un torrent, si raccomanda una VPN</string>
     <string name="provider_info_meta">I metadati non sono forniti dal sito, il caricamento del video fallirà se non esiste sul sito.</string>
@@ -186,10 +185,8 @@
     <string name="resume">Riprendi</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">Stai per eliminare permanentemente %s
-\nSei sicuro?</string>
-    <string name="resume_time_left" formatted="true">%dm
-\nrimanenti</string>
+    <string name="delete_message" formatted="true">Stai per eliminare permanentemente %s \nSei sicuro?</string>
+    <string name="resume_time_left" formatted="true">%dm \nrimanenti</string>
     <string name="status_ongoing">In corso</string>
     <string name="status_completed">Completato</string>
     <string name="status">Stato</string>
@@ -412,9 +409,7 @@
     <string name="plugins_disabled" formatted="true">Disabilitato: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Non scaricato: %d</string>
     <string name="plugins_updated" formatted="true">Aggiornati %d plugin</string>
-    <string name="blank_repo_message">CloudStream non ha siti installati per impostazione predefinita. È necessario installare i siti dai repository.
-\n
-\nUnisciti al nostro Discord o cerca online.</string>
+    <string name="blank_repo_message">CloudStream non ha siti installati per impostazione predefinita. È necessario installare i siti dai repository. \n \nUnisciti al nostro Discord o cerca online.</string>
     <string name="view_public_repositories_button">Visualizza i repository della comunità</string>
     <string name="view_public_repositories_button_short">Lista pubblica</string>
     <string name="uppercase_all_subtitles">Tutti i sottotitoli in maiuscolo</string>
@@ -502,15 +497,13 @@
     <string name="sort_updated_old">Aggiornato (Da vecchio a nuovo)</string>
     <string name="sort_alphabetical_a">Alfabetico (A - Z)</string>
     <string name="sort_alphabetical_z">Alfabetico (Z - A)</string>
-    <string name="empty_library_no_accounts_message">La tua libreria è vuota :(
-\nAccedi a un account di libreria o aggiungi degli show alla tua libreria locale.</string>
+    <string name="empty_library_no_accounts_message">La tua libreria è vuota :( \nAccedi a un account di libreria o aggiungi degli show alla tua libreria locale.</string>
     <string name="select_library">Seleziona libreria</string>
     <string name="open_with">Apri con</string>
     <string name="library">Libreria</string>
     <string name="sort">Ordina</string>
     <string name="empty_library_logged_in_message">Questo elenco è vuoto. Prova a passare a un altro.</string>
-    <string name="safe_mode_file">File \"safe mode\" trovato!
-\nAll\'avvio non sarà caricata alcuna estensione finchè il file non verrà rimosso.</string>
+    <string name="safe_mode_file">File \"safe mode\" trovato! \nAll\'avvio non sarà caricata alcuna estensione finchè il file non verrà rimosso.</string>
     <string name="android_tv_interface_off_seek_settings_summary">Intervallo di ricerca utilizzato quando il lettore è nascosto</string>
     <string name="pref_category_android_tv">TV Android</string>
     <string name="android_tv_interface_on_seek_settings_summary">Intervallo di ricerca utilizzato quando il lettore è visibile</string>
@@ -534,13 +527,7 @@
     <string name="subscription_in_progress_notification">Aggiornando shows a cui sei iscritto</string>
     <string name="subscription_episode_released">L\'episodio %d è stato rilasciato!</string>
     <string name="watch_quality_pref_data">Qualità di visualizzazione preferita (Dati mobili)</string>
-    <string name="quality_profile_help">Qui puoi cambiare l\'ordine delle fonti. Se un video ha una priorità maggiore, apparirà più in alto nella selezione delle fonti. La somma tra la priorità della fonte e la priorità della qualità è la priorità video.
-\n
-\nFonte A: 3
-\nQualità B: 7
-\nAvranno una priorità video combinata di 10.
-\n
-\nNOTA: se la somma è pari o superiore a 10, il lettore salterà automaticamente il caricamento quando viene caricato quel link!</string>
+    <string name="quality_profile_help">Qui puoi cambiare l\'ordine delle fonti. Se un video ha una priorità maggiore, apparirà più in alto nella selezione delle fonti. La somma tra la priorità della fonte e la priorità della qualità è la priorità video. \n \nFonte A: 3 \nQualità B: 7 \nAvranno una priorità video combinata di 10. \n \nNOTA: se la somma è pari o superiore a 10, il lettore salterà automaticamente il caricamento quando viene caricato quel link!</string>
     <string name="profile_number">Profilo %d</string>
     <string name="wifi">Wi-Fi</string>
     <string name="set_default">Imposta predefinito</string>
@@ -560,11 +547,7 @@
     <string name="favorite_removed">%s rimosso dai preferiti</string>
     <string name="favorites_list_name">Preferiti</string>
     <string name="favorite_added">%s aggiunto ai preferiti</string>
-    <string name="duplicate_message_multiple" formatted="true">Dei possibili duplicati sono stati trovati nella tua libreria:
-\n
-\n%s
-\n
-\nVorresti aggiungere l\'oggetto alla libreria comunque, rimpiazzare l\'esistente, o cancellare l\'azione?</string>
+    <string name="duplicate_message_multiple" formatted="true">Dei possibili duplicati sono stati trovati nella tua libreria: \n \n%s \n \nVorresti aggiungere l\'oggetto alla libreria comunque, rimpiazzare l\'esistente, o cancellare l\'azione?</string>
     <string name="backup_frequency">Frequenza di backup</string>
     <string name="duplicate_title">Trovato Possibile Duplicato</string>
     <string name="action_add_to_favorites">Aggiungi ai preferiti</string>
@@ -577,9 +560,7 @@
     <string name="action_subscribe">Iscriviti</string>
     <string name="action_remove_from_favorites">Rimuovi dai preferiti</string>
     <string name="select_an_account">Seleziona un account</string>
-    <string name="duplicate_message_single">Sembra che nella tua libreria esista già un elemento potenzialmente duplicato: \'%s.\'
-\n
-\nDesideri aggiungere comunque questo elemento, sostituire quello esistente o annullare l\'azione?</string>
+    <string name="duplicate_message_single">Sembra che nella tua libreria esista già un elemento potenzialmente duplicato: \'%s.\' \n \nDesideri aggiungere comunque questo elemento, sostituire quello esistente o annullare l\'azione?</string>
     <string name="enter_pin">Inserisci PIN</string>
     <string name="pin">PIN</string>
     <string name="enter_current_pin">Inserisci PIN corrente</string>
@@ -609,8 +590,7 @@
     <string name="biometric_prompt_description">Dopo alcuni tentativi falliti, il prompt si chiuderà. Riavvia semplicemente l\'app per riprovare.</string>
     <string name="biometric_warning">È stato eseguito il backup dei tuoi dati CloudStream. Sebbene questa possibilità sia molto bassa, tutti i dispositivi possono comportarsi in modo diverso. Nel raro caso in cui ti venga bloccato l\'accesso all\'app, cancella completamente i dati dell\'app e ripristina da un backup. Siamo molto spiacenti per qualsiasi inconveniente derivanti da questo.</string>
     <string name="unfavorite">Non preferito</string>
-    <string name="resume_remaining" formatted="true">%s
-\nresiduo</string>
+    <string name="resume_remaining" formatted="true">%s \nresiduo</string>
     <string name="favorite">Preferito</string>
     <string name="repo_copy_label">Nome e URL del repository</string>
     <string name="toast_copied">copiato!</string>
@@ -652,20 +632,12 @@
     <string name="select_all">Seleziona tutto</string>
     <string name="deselect_all">Deseleziona tutto</string>
     <string name="delete_format" formatted="true">Elimina (%1$d | %2$s)</string>
-    <string name="delete_message_series_episodes" formatted="true">Sei sicuro di voler eliminare definitivamente i seguenti episodi in %1$s?
-\n
-\n%2$s</string>
-    <string name="delete_message_series_section" formatted="true">Eliminerai definitivamente anche tutti gli episodi delle seguenti serie:
-\n
-\n%s</string>
-    <string name="delete_message_series_only" formatted="true">Sei sicuro di voler eliminare definitivamente tutti gli episodi delle seguenti serie?
-\n
-\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Sei sicuro di voler eliminare definitivamente i seguenti episodi in %1$s? \n \n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">Eliminerai definitivamente anche tutti gli episodi delle seguenti serie: \n \n%s</string>
+    <string name="delete_message_series_only" formatted="true">Sei sicuro di voler eliminare definitivamente tutti gli episodi delle seguenti serie? \n \n%s</string>
     <string name="sort_release_date_old">Data di rilascio (dal più vecchio)</string>
     <string name="delete_files">Elimina file</string>
-    <string name="delete_message_multiple" formatted="true">Sei sicuro di voler eliminare definitivamente i seguenti elementi?
-\n
-\n%s</string>
+    <string name="delete_message_multiple" formatted="true">Sei sicuro di voler eliminare definitivamente i seguenti elementi? \n \n%s</string>
     <string name="preview_seekbar">Anteprima barra di avanzamento</string>
     <string name="preview_seekbar_desc">Abilita miniatura di anteprima sulla barra di avanzamento</string>
     <string name="no_subtitles_loaded">Nessun sottotitolo caricato</string>
@@ -784,4 +756,7 @@
     <string name="source_priority">Priorità sorgente</string>
     <string name="source_priority_help">Decidi come le sorgenti video devono essere ordinate nel lettore</string>
     <string name="show_player_metadata_overlay">Mostra sovrapposizione metadati lettore</string>
+    <string name="video_singular">Video</string>
+    <string name="skip_type_preview">Anteprima</string>
+    <string name="player_is_live">Live</string>
 </resources>

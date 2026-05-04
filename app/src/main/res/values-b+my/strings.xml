@@ -11,8 +11,7 @@
     <string name="go_back_img_des">နောက်သို့</string>
     <string name="preview_background_img_des">နောက်ခံပုံရိပ်ကို အကြိုကြည့်ရန်</string>
     <string name="rated_format" formatted="true">အဆင့်: %.1f</string>
-    <string name="new_update_format" formatted="true">အပ်ဒိတ်အသစ်!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">အပ်ဒိတ်အသစ်! \n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">စစ်ထုတ်မှု</string>
     <string name="duration_format" formatted="true">%d မိနစ်</string>
     <string name="app_name">CloudStream</string>
@@ -57,7 +56,7 @@
     <string name="continue_watching">ဆက်လက်ကြည့်ရှုမည်</string>
     <string name="action_remove_watching">ဖယ်ရှားရန်</string>
     <string name="action_open_watching">ပိုမို၍</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_torrent">ဒီဟာကတောရပ်တစ်ခုပါ ဗီပီအန်တစ်ခုသုံးဖို့အကြံပြုပါတယ်</string>
     <string name="torrent_plot">ဖော်ပြချက်</string>
     <string name="normal_no_plot">ဇာတ်လမ်းသွား မတွေ့ပါ</string>
@@ -111,10 +110,8 @@
     <string name="episode">အပိုင်း</string>
     <string name="episodes">အပိုင်းများ</string>
     <string name="episodes_range">%1$d-%2$d</string>
-    <string name="delete_message" formatted="true">ဒါကအပြီးဖျက်ခြင်းဖြစ်ပါသည် %s
-\nသင်သေချာပါသလား။</string>
-    <string name="resume_time_left" formatted="true">%dမိနစ်
-\nကျန်ရိှသည်</string>
+    <string name="delete_message" formatted="true">ဒါကအပြီးဖျက်ခြင်းဖြစ်ပါသည် %s \nသင်သေချာပါသလား။</string>
+    <string name="resume_time_left" formatted="true">%dမိနစ် \nကျန်ရိှသည်</string>
     <string name="status_ongoing">ထုတ်လွှင့်နေဆဲ</string>
     <string name="status_completed">ထုတ်လွှင့်မှုပြီးဆုံး</string>
     <string name="status">အခြေအနေ</string>
@@ -342,11 +339,7 @@
     <string name="apk_installer_legacy">သမားရိုးကျ</string>
     <string name="apk_installer_package_installer">ထည့်သွင်းသူ</string>
     <string name="delayed_update_notice">ထွက်ချိန်တွင် အက်ပ်ကို အပ်ဒိတ်လုပ်ပါမည်</string>
-    <string name="blank_repo_message">CloudStream တွင် မူရင်းအတိုင်း ထည့်သွင်းထားသည့်ဆိုက်များ မရှိပါ။ ရီပိုစစ်ထရီများ မှ ဆိုဒ် များကို ထည့်သွင်းရန်လိုအပ်သည်။
-\n
-\nSky UK Limited မှ ဦးနှောက်မဲ့ DMCA ကို ဖယ်ရှားလိုက်ခြင်းကြောင့် 🤮 ကျွန်ုပ်တို့သည် ရီပိုစစ်ထရီဆိုဒ်ကို အက်ပ်တွင် ချိတ်ဆက်၍မရပါ။
-\n
-\nကျွန်ုပ်တို့၏ Discord တွင်ပါဝင်ပါ သို့မဟုတ် အွန်လိုင်းတွင်ရှာဖွေပါ။</string>
+    <string name="blank_repo_message">CloudStream တွင် မူရင်းအတိုင်း ထည့်သွင်းထားသည့်ဆိုက်များ မရှိပါ။ ရီပိုစစ်ထရီများ မှ ဆိုဒ် များကို ထည့်သွင်းရန်လိုအပ်သည်။ \n \nSky UK Limited မှ ဦးနှောက်မဲ့ DMCA ကို ဖယ်ရှားလိုက်ခြင်းကြောင့် 🤮 ကျွန်ုပ်တို့သည် ရီပိုစစ်ထရီဆိုဒ်ကို အက်ပ်တွင် ချိတ်ဆက်၍မရပါ။ \n \nကျွန်ုပ်တို့၏ Discord တွင်ပါဝင်ပါ သို့မဟုတ် အွန်လိုင်းတွင်ရှာဖွေပါ။</string>
     <string name="view_public_repositories_button">အခြားသူများ၏ရီပိုစစ်ထရီများကိုရှာဖွေမည်</string>
     <string name="tracks">အသံများ</string>
     <string name="audio_tracks">အသံဖိုင်များ</string>
@@ -422,8 +415,7 @@
     <string name="update_notification_downloading">အက်ပ်အပ်ဒိတ်အားဒေါင်းလုဒ်လုပ်နေသည်…</string>
     <string name="update_notification_installing">အက်ပ်အပ်ဒိတ်အားသွင်းနေသည်…</string>
     <string name="sort_updated_new">အပ်ဒိတ်ဖြစ်မှု (အသစ် မှ အဟောင်း)</string>
-    <string name="empty_library_no_accounts_message">သင့်လိုက်ဘရီသည် ဗလာဖြစ်နေသည် :(
-\nအကောင့်ဝင်ပါ သို့မဟုတ် သင့်ဖုန်းလိုက်ဘရီတွင် ကြည့်စရာများထည့်ပါ။</string>
+    <string name="empty_library_no_accounts_message">သင့်လိုက်ဘရီသည် ဗလာဖြစ်နေသည် :( \nအကောင့်ဝင်ပါ သို့မဟုတ် သင့်ဖုန်းလိုက်ဘရီတွင် ကြည့်စရာများထည့်ပါ။</string>
     <string name="use">သုံးရန်</string>
     <string name="edit">တည်းဖြတ်ရန်</string>
     <string name="qualities">အရည်အသွေးများ</string>
@@ -516,8 +508,7 @@
     <string name="subscription_new">စာရင်းသွင်းပြီး %s</string>
     <string name="subscription_deleted">စာရင်းသွင်းမှုပယ်ဖျက်ပြီး %s</string>
     <string name="empty_library_logged_in_message">ဤစာရင်းသည် ဗလာဖြစ်နေသည်။ အခြားတစ်ခုသို့ ပြောင်းကြည့်ပါ။</string>
-    <string name="safe_mode_file">Safe mode ဖိုင်ကို တွေ့ရှိခဲ့သည်။
-\nဖိုင်ကိုမဖယ်ရှားမချင်း စတင်ဖွင့်စတွင် မည်သည့် extension များကိုမျှ မတင်ပါ။</string>
+    <string name="safe_mode_file">Safe mode ဖိုင်ကို တွေ့ရှိခဲ့သည်။ \nဖိုင်ကိုမဖယ်ရှားမချင်း စတင်ဖွင့်စတွင် မည်သည့် extension များကိုမျှ မတင်ပါ။</string>
     <string name="subscription_episode_released">အပိုင်းသစ် %d ထွက်ပြီ</string>
     <string name="profile_number">ပရိုဖိုင် %d</string>
     <string name="wifi">ဝိုင်ဖိုင်</string>
@@ -525,13 +516,7 @@
     <string name="set_default">ပုံသေထားရန်</string>
     <string name="profiles">ပရိုဖိုင်များ</string>
     <string name="help">အကူအညီ</string>
-    <string name="quality_profile_help">ဤနေရာတွင် သင်သည် အရင်းအမြစ်များကို မည်ကဲ့သို့ အစီအစဥ်ချမည်ကို ပြောင်းလဲနိုင်သည်။ ဗီဒီယိုတစ်ခုတွင် ပိုမိုဦးစားပေးပါက ရင်းမြစ်ရွေးချယ်မှုတွင် ပိုမိုမြင့်မားလာမည်ဖြစ်သည်။ အရင်းအမြစ် ဦးစားပေးနှင့် အရည်အသွေး ဦးစားပေး၏ ပေါင်းစုသည် ဗီဒီယို ဦးစားပေးဖြစ်သည်။
-\n
-\nအရင်းအမြစ် A: 3
-\nအရည်အသွေး B: 7
-\nပေါင်းစပ်ဗီဒီယို ဦးစားပေး 10 ခု ရှိပါမည်။
-\n
-\nမှတ်ချက်- ပေါင်းလဒ်သည် 10 သို့မဟုတ် ထို့ထက်ပိုပါက ထိုလင့်ခ်ကို တင်သည့်အခါ ဗီဒီယိုဖွင့်စက်သည် အလိုအလျောက် ဒေါင်းလုဒ်ကို ကျော်သွားမည်ဖြစ်သည်</string>
+    <string name="quality_profile_help">ဤနေရာတွင် သင်သည် အရင်းအမြစ်များကို မည်ကဲ့သို့ အစီအစဥ်ချမည်ကို ပြောင်းလဲနိုင်သည်။ ဗီဒီယိုတစ်ခုတွင် ပိုမိုဦးစားပေးပါက ရင်းမြစ်ရွေးချယ်မှုတွင် ပိုမိုမြင့်မားလာမည်ဖြစ်သည်။ အရင်းအမြစ် ဦးစားပေးနှင့် အရည်အသွေး ဦးစားပေး၏ ပေါင်းစုသည် ဗီဒီယို ဦးစားပေးဖြစ်သည်။ \n \nအရင်းအမြစ် A: 3 \nအရည်အသွေး B: 7 \nပေါင်းစပ်ဗီဒီယို ဦးစားပေး 10 ခု ရှိပါမည်။ \n \nမှတ်ချက်- ပေါင်းလဒ်သည် 10 သို့မဟုတ် ထို့ထက်ပိုပါက ထိုလင့်ခ်ကို တင်သည့်အခါ ဗီဒီယိုဖွင့်စက်သည် အလိုအလျောက် ဒေါင်းလုဒ်ကို ကျော်သွားမည်ဖြစ်သည်</string>
     <string name="profile_background_des">ပရိုဖိုင်နောက်ခံ</string>
     <string name="unable_to_inflate">UI ကို မှန်ကန်စွာ ဖန်တီး၍မရပါ၊ ၎င်းသည် အဓိက ချို့ယွင်းချက်တစ်ခုဖြစ်ပြီး ချက်ချင်းသတင်းပို့သင့်သည်။ %s</string>
     <string name="already_voted">သင်နဂိုတည်းကသတ်မှတ်ပြီး</string>

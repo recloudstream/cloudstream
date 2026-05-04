@@ -104,7 +104,7 @@
     <string name="continue_watching">Continuar assistindo</string>
     <string name="action_remove_watching">Remover</string>
     <string name="action_open_watching">Mais detalhes</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Uma VPN pode ser necessária para esse fornecedor funcionar corretamente</string>
     <string name="vpn_torrent">Esse fornecedor é um torrent, uma VPN é recomendada</string>
     <string name="provider_info_meta">Metadados não são oferecidas pelo site, o carregamento do video pode falhar se ele não existir no site.</string>
@@ -180,8 +180,7 @@
     <string name="resume">Continuar</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">Isso apagará %s permanentemente
-\nVocê tem certeza?</string>
+    <string name="delete_message" formatted="true">Isso apagará %s permanentemente \nVocê tem certeza?</string>
     <string name="resume_time_left" formatted="true">%dm\nrestantes</string>
     <string name="status_ongoing">Em andamento</string>
     <string name="status_completed">Concluído</string>
@@ -396,9 +395,7 @@
     <string name="plugins_downloaded" formatted="true">Transferido: %d</string>
     <string name="plugins_disabled" formatted="true">Desativado: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Não transferido: %d</string>
-    <string name="blank_repo_message">CloudStream não tem fontes instaladas por padrão. Você precisa instalar um site de repositórios.
-\n
-\nEntre no nosso Discord ou pesquise online.</string>
+    <string name="blank_repo_message">CloudStream não tem fontes instaladas por padrão. Você precisa instalar um site de repositórios. \n \nEntre no nosso Discord ou pesquise online.</string>
     <string name="view_public_repositories_button">Ver repositórios da comunidade</string>
     <string name="view_public_repositories_button_short">Lista pública</string>
     <string name="uppercase_all_subtitles">Todas as legendas em maiúsculas</string>
@@ -441,8 +438,7 @@
     <string name="open_with">Abrir com</string>
     <string name="select_library">Selecionar Biblioteca</string>
     <string name="test_passed">Passou nos testes</string>
-    <string name="empty_library_no_accounts_message">Sua biblioteca está vazia :0
-\nEntre numa conta de biblioteca ou adicione Midias para sua biblioteca local.</string>
+    <string name="empty_library_no_accounts_message">Sua biblioteca está vazia :0 \nEntre numa conta de biblioteca ou adicione Midias para sua biblioteca local.</string>
     <string name="watch_quality_pref_data">Qualidade preferida de reprodução (Dados Móveis)</string>
     <string name="apk_installer_legacy">Legado</string>
     <string name="library">Biblioteca</string>
@@ -460,15 +456,8 @@
     <string name="sort_alphabetical_z">Alfabética(Z =&gt; A)</string>
     <string name="qualities">Qualidade</string>
     <string name="profile_background_des">Perfil de plano de fundo</string>
-    <string name="quality_profile_help">Aqui você pode alterar como as fontes são ordenadas. Se um vídeo tiver uma prioridade mais alta, aparecerá mais alto na seleção da fonte. A soma da prioridade da fonte e da prioridade da qualidade é a prioridade do vídeo.
-\n
-\nFonte A: 3
-\nQualidade B: 7
-\nTerá uma prioridade de vídeo combinada de 10.
-\n
-\nNOTA: Se a soma for 10 ou mais, o Player pulará automaticamente o carregamento quando o link for carregado!</string>
-    <string name="safe_mode_file">Arquivo de modo de segurança encontrado!
-\nNão carregar nenhuma extensão na inicialização até que o arquivo seja removido.</string>
+    <string name="quality_profile_help">Aqui você pode alterar como as fontes são ordenadas. Se um vídeo tiver uma prioridade mais alta, aparecerá mais alto na seleção da fonte. A soma da prioridade da fonte e da prioridade da qualidade é a prioridade do vídeo. \n \nFonte A: 3 \nQualidade B: 7 \nTerá uma prioridade de vídeo combinada de 10. \n \nNOTA: Se a soma for 10 ou mais, o Player pulará automaticamente o carregamento quando o link for carregado!</string>
+    <string name="safe_mode_file">Arquivo de modo de segurança encontrado! \nNão carregar nenhuma extensão na inicialização até que o arquivo seja removido.</string>
     <string name="subscription_new">Inscrito em %s</string>
     <string name="subscription_episode_released">Episódio %d lançado!</string>
     <string name="set_default">Selecionar padrão</string>
@@ -553,11 +542,7 @@
     <string name="duplicate_title">Duplicata em potencial encontrada</string>
     <string name="duplicate_add">Adicionar</string>
     <string name="duplicate_replace">Substituir</string>
-    <string name="duplicate_message_multiple" formatted="true">Possíveis itens duplicados foram encontrados em sua biblioteca:
-\n
-\n %s
-\n
-\nGostaria de adicionar este item mesmo assim, substituir os existentes ou cancelar a ação?</string>
+    <string name="duplicate_message_multiple" formatted="true">Possíveis itens duplicados foram encontrados em sua biblioteca: \n \n %s \n \nGostaria de adicionar este item mesmo assim, substituir os existentes ou cancelar a ação?</string>
     <string name="enter_pin">Insira o PIN</string>
     <string name="enter_pin_with_name" formatted="true">Insira o PIN para %s</string>
     <string name="enter_current_pin">Insira o PIN atual</string>
@@ -576,9 +561,7 @@
     <string name="links_reloaded_toast">Links recarregados</string>
     <string name="backup_frequency">Frequência de backup</string>
     <string name="duplicate_replace_all">Substitua tudo</string>
-    <string name="duplicate_message_single" formatted="true">Parece que já existe um item potencialmente duplicado na sua biblioteca: \'%s.\'
-\n
-\nGostaria de adicionar este item mesmo assim, substituir o existente ou cancelar a ação?</string>
+    <string name="duplicate_message_single" formatted="true">Parece que já existe um item potencialmente duplicado na sua biblioteca: \'%s.\' \n \nGostaria de adicionar este item mesmo assim, substituir o existente ou cancelar a ação?</string>
     <string name="action_subscribe">Inscrever-se</string>
     <string name="action_unsubscribe">Cancelar inscrição</string>
     <string name="use_default_account">Usar conta padrão</string>
@@ -599,8 +582,7 @@
     <string name="biometric_unsupported">A autenticação biométrica não é compatível com este dispositivo</string>
     <string name="biometric_setting_summary">Desbloquear o aplicativo com impressão digital, ID facial, PIN, padrão e senha.</string>
     <string name="biometric_prompt_description">Após algumas tentativas fracassadas, o prompt será fechado. Basta reiniciar o aplicativo para tentar novamente.</string>
-    <string name="resume_remaining" formatted="true">%s
-\nrestante(s)</string>
+    <string name="resume_remaining" formatted="true">%s \nrestante(s)</string>
     <string name="favorite">Favorito</string>
     <string name="unfavorite">Não favorito</string>
     <string name="toast_copied">copiado!</string>

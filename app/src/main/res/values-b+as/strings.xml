@@ -175,7 +175,7 @@
     <string name="vpn_torrent">এই প্ৰদানকাৰী এটা ট\'ৰেণ্ট, VPNৰ পৰামৰ্শ দিয়া হৈছে</string>
     <string name="subs_import_text" formatted="true">%s ত ফণ্টসমূহ ৰাখি সন্নিবিষ্ট কৰক</string>
     <string name="action_open_watching">অধিক তথ্য</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="provider_info_meta">সাইটে মেটাডাটা প্ৰদান কৰা নাই, যদি সাইটত নাথাকে তেন্তে ভিডিঅ\' মুকলি নহ\'ব পাৰে।</string>
     <string name="normal_no_plot">কোনো কাহিনী পোৱা নগ\'ল</string>
     <string name="torrent_no_plot">কোনো বিৱৰণ পোৱা নগ\'ল</string>
@@ -252,12 +252,9 @@
     <string name="resume">পুনৰ আৰম্ভ কৰক</string>
     <string name="go_back_30">-৩০</string>
     <string name="go_forward_30">+৩০</string>
-    <string name="delete_message" formatted="true">এইটো স্থায়ীভাৱে %s ডিলিট কৰিব।
-\nআপুনি নিশ্চিত নেকি?</string>
-    <string name="resume_time_left" formatted="true">%dm
-\nবাকী</string>
-    <string name="resume_remaining" formatted="true">%s
-\nবাকী</string>
+    <string name="delete_message" formatted="true">এইটো স্থায়ীভাৱে %s ডিলিট কৰিব। \nআপুনি নিশ্চিত নেকি?</string>
+    <string name="resume_time_left" formatted="true">%dm \nবাকী</string>
+    <string name="resume_remaining" formatted="true">%s \nবাকী</string>
     <string name="status_ongoing">চলমান</string>
     <string name="status_completed">সম্পূৰ্ণ</string>
     <string name="status">স্থিতি</string>
@@ -456,9 +453,7 @@
     <string name="plugins_updated" formatted="true">%d প্লাগইন আপডেট কৰা হ\'ল</string>
     <string name="plugins_disabled" formatted="true">নিষ্ক্ৰিয় কৰা: %d</string>
     <string name="plugins_not_downloaded" formatted="true">ডাউনলোড কৰা নহয়: %d</string>
-    <string name="blank_repo_message">CloudStreamত কোনো চাইট ডিফল্টভাৱে ইনষ্টল হোৱা নাই। আপুনিয়ে ৰিপ\'জিট\'ৰিবোৰৰ পৰা চাইটসমূহ ইনষ্টল কৰিব লাগিব।
-\n
-\nআমাৰ Discordত যোগদান কৰক বা অনলাইন বিচাৰক।</string>
+    <string name="blank_repo_message">CloudStreamত কোনো চাইট ডিফল্টভাৱে ইনষ্টল হোৱা নাই। আপুনিয়ে ৰিপ\'জিট\'ৰিবোৰৰ পৰা চাইটসমূহ ইনষ্টল কৰিব লাগিব। \n \nআমাৰ Discordত যোগদান কৰক বা অনলাইন বিচাৰক।</string>
     <string name="view_public_repositories_button">সম্প্ৰদায়ৰ ৰিপ\'জিট\'ৰিসমূহ চাওক</string>
     <string name="uppercase_all_subtitles">সকলো চাবটাইটল মুকলি আখৰত</string>
     <string name="download_all_plugins_from_repo">সতর্কতা: CloudStream 3 কোৱা নাই যে তৃতীয় পক্ষৰ বৃদ্ধিসমূহ ব্যৱহাৰ কৰিবলৈ আপুনি সম্পূৰ্ণ দায়িত্ব ল\'ব আৰু কোনো সহায় নাপাব!</string>
@@ -523,11 +518,9 @@
     <string name="sort_alphabetical_a">বৰ্ণানুক্ৰমিক (A ৰ পৰা Z)</string>
     <string name="select_library">পুথিভঁৰালী বাছক</string>
     <string name="open_with">ইয়াৰ সহায়ত খুলক</string>
-    <string name="empty_library_no_accounts_message">আপোনাৰ পুথিভঁৰালী খালি আছে :(
-\nএখন পুথিভঁৰালী একাউণ্টত লগ ইন কৰক বা স্থানীয় পুথিভঁৰালীত শ্ব\'সমূহ যোগ কৰক।</string>
+    <string name="empty_library_no_accounts_message">আপোনাৰ পুথিভঁৰালী খালি আছে :( \nএখন পুথিভঁৰালী একাউণ্টত লগ ইন কৰক বা স্থানীয় পুথিভঁৰালীত শ্ব\'সমূহ যোগ কৰক।</string>
     <string name="empty_library_logged_in_message">এই তালিকা খালি। অন্য এটি তালিকালৈ সলনি কৰি চাওক।</string>
-    <string name="safe_mode_file">নিরাপদ ম\'ড ফাইল পোৱা গৈছে!
-\nফাইল আঁতৰোৱা নোহোৱালৈকে কোনো এক্সটেনশ্যন আৰম্ভ নকৰা হৈছে।</string>
+    <string name="safe_mode_file">নিরাপদ ম\'ড ফাইল পোৱা গৈছে! \nফাইল আঁতৰোৱা নোহোৱালৈকে কোনো এক্সটেনশ্যন আৰম্ভ নকৰা হৈছে।</string>
     <string name="revert">ঘূৰাই দিয়া</string>
     <string name="subscription_in_progress_notification">সদস্যতা গ্ৰহণ কৰা শ্ব\'সমূহ আপডেট কৰিছে</string>
     <string name="subscription_new">%s-ত সদস্যতা গ্ৰহণ কৰা হৈছে</string>
@@ -539,13 +532,7 @@
     <string name="edit">সম্পাদনা কৰক</string>
     <string name="profiles">প্ৰ\'ফাইলসমূহ</string>
     <string name="help">সহায়</string>
-    <string name="quality_profile_help">ইয়াত আপুনি উৎসসমূহ কেনেকৈ ক্ৰম অনুযায়ী চিহ্নিত কৰিব সেই বিষয়ে সলনি কৰিব পাৰে। যদি এখন ভিডিঅ\'ৰ উচ্চ অগ্ৰাধিকাৰ থাকে তেন্তে সেইটো উৎস নিৰ্বাচনৰ সময়ত ওপৰত দেখা যাব। উৎস অগ্ৰাধিকাৰ আৰু গুণ অগ্ৰাধিকাৰৰ মুঠ যোগফল হৈছে ভিডিঅ\'ৰ অগ্ৰাধিকাৰ।
-\n
-\nউৎস A: 3
-\nগুণ B: 7
-\nসৰহযোগে ভিডিঅ\'ৰ অগ্ৰাধিকাৰ হ\'ব 10।
-\n
-\nদ্ৰষ্টব্য: যদি যোগফল 10 বা তাৰ ওপৰত থাকে তেন্তে প্লেয়াৰটো নিজেই লিংক ল\'ড কৰাৰ সময়ত ল\'ডিং এড়াই যাব!</string>
+    <string name="quality_profile_help">ইয়াত আপুনি উৎসসমূহ কেনেকৈ ক্ৰম অনুযায়ী চিহ্নিত কৰিব সেই বিষয়ে সলনি কৰিব পাৰে। যদি এখন ভিডিঅ\'ৰ উচ্চ অগ্ৰাধিকাৰ থাকে তেন্তে সেইটো উৎস নিৰ্বাচনৰ সময়ত ওপৰত দেখা যাব। উৎস অগ্ৰাধিকাৰ আৰু গুণ অগ্ৰাধিকাৰৰ মুঠ যোগফল হৈছে ভিডিঅ\'ৰ অগ্ৰাধিকাৰ। \n \nউৎস A: 3 \nগুণ B: 7 \nসৰহযোগে ভিডিঅ\'ৰ অগ্ৰাধিকাৰ হ\'ব 10। \n \nদ্ৰষ্টব্য: যদি যোগফল 10 বা তাৰ ওপৰত থাকে তেন্তে প্লেয়াৰটো নিজেই লিংক ল\'ড কৰাৰ সময়ত ল\'ডিং এড়াই যাব!</string>
     <string name="profile_background_des">প্ৰ\'ফাইলৰ পটভূমি</string>
     <string name="unable_to_inflate">UI সঠিকভাৱে সৃষ্টি কৰিব পৰা নগ\'ল, ই এটা গুৰুত্বপূৰ্ণ সমস্যা আৰু তাক অবিলম্বে জনোৱা উচিত %s</string>
     <string name="already_voted">আপুনি ইতিমধ্যে ভোট দিছে</string>
@@ -556,14 +543,8 @@
     <string name="action_remove_from_favorites">প্ৰিয় তালিকাৰ পৰা আঁতৰ কৰক</string>
     <string name="duplicate_title">সম্ভাৱ্য নকল বস্ত্ত পোৱা গৈছে</string>
     <string name="duplicate_replace_all">সকলো প্ৰতিস্থাপন কৰক</string>
-    <string name="duplicate_message_single" formatted="true">আপোনাৰ পুথিভঁৰালীতে সম্ভাৱ্য নকল বস্তু পোৱা গৈছে: \'%s.\'
-\n
-\nআপুনি এই বস্তু যিকোনো হ\'লে যোগ কৰিব বিচাৰেনে, বিদ্যমান বস্তু প্ৰতিস্থাপন কৰিব, বা কাৰ্য বাতিল কৰিব বিচাৰেনে?</string>
-    <string name="duplicate_message_multiple" formatted="true">আপোনাৰ পুথিভঁৰালীতে সম্ভাৱ্য নকল বস্তুসমূহ পোৱা গৈছে:
-\n
-\n%s
-\n
-\nআপুনি এই বস্তু যিকোনো হ\'লে যোগ কৰিব বিচাৰেনে, বিদ্যমানবোৰ প্ৰতিস্থাপন কৰিব, বা কাৰ্য বাতিল কৰিব বিচাৰেনে?</string>
+    <string name="duplicate_message_single" formatted="true">আপোনাৰ পুথিভঁৰালীতে সম্ভাৱ্য নকল বস্তু পোৱা গৈছে: \'%s.\' \n \nআপুনি এই বস্তু যিকোনো হ\'লে যোগ কৰিব বিচাৰেনে, বিদ্যমান বস্তু প্ৰতিস্থাপন কৰিব, বা কাৰ্য বাতিল কৰিব বিচাৰেনে?</string>
+    <string name="duplicate_message_multiple" formatted="true">আপোনাৰ পুথিভঁৰালীতে সম্ভাৱ্য নকল বস্তুসমূহ পোৱা গৈছে: \n \n%s \n \nআপুনি এই বস্তু যিকোনো হ\'লে যোগ কৰিব বিচাৰেনে, বিদ্যমানবোৰ প্ৰতিস্থাপন কৰিব, বা কাৰ্য বাতিল কৰিব বিচাৰেনে?</string>
     <string name="enter_pin_with_name" formatted="true">%s ৰ বাবে পিন সন্নিবিষ্ট কৰক</string>
     <string name="enter_current_pin">বৰ্তমান পিন সন্নিবিষ্ট কৰক</string>
     <string name="lock_profile">প্ৰফাইল লক কৰক</string>
@@ -588,8 +569,7 @@
     <string name="download">ডাউনলোড</string>
     <string name="updates_settings_des">এপ্‌ আৰম্ভণিৰ পিছত নতুন আপডেটৰ সন্ধান কৰক।</string>
     <string name="anim">একেই ডেভেলপাৰৰ দ্বাৰা এনিম এপ্‌</string>
-    <string name="new_update_format" formatted="true">নতুন আপডেট পোৱা গ’ল!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">নতুন আপডেট পোৱা গ’ল! \n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">ফিলাৰ</string>
     <string name="play_with_app_name">CloudStreamৰে প্লে কৰক</string>
     <string name="title_search">সন্ধান</string>
@@ -609,18 +589,10 @@
     <string name="sort_apply">প্ৰয়োগ কৰক</string>
     <string name="delete_files">ফাইলসমূহ ডিলিট কৰক</string>
     <string name="delete_format" formatted="true">ডিলিট (%1$d | %2$s)</string>
-    <string name="delete_message_multiple" formatted="true">আপুনি স্থায়ীভাৱে তলত দিয়া আইটেমসমূহ ডিলিট কৰিবলৈ নিশ্চিত নেকি?
-\n
-\n%s</string>
-    <string name="delete_message_series_episodes" formatted="true">%1$s ত তলত দিয়া এপিচ’ডসমূহ স্থায়ীভাৱে ডিলিট কৰিব নেকি?
-\n
-\n%2$s</string>
-    <string name="delete_message_series_section" formatted="true">আপুনি দিয়া ছিৰিজৰ সকলো এপিচ’ড স্থায়ীভাৱে ডিলিট কৰিব:
-\n
-\n%s</string>
-    <string name="delete_message_series_only" formatted="true">আপুনি দিয়া ছিৰিজৰ সকলো এপিচ’ড স্থায়ীভাৱে ডিলিট কৰিবলৈ নিশ্চিত নেকি?
-\n
-\n%s</string>
+    <string name="delete_message_multiple" formatted="true">আপুনি স্থায়ীভাৱে তলত দিয়া আইটেমসমূহ ডিলিট কৰিবলৈ নিশ্চিত নেকি? \n \n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">%1$s ত তলত দিয়া এপিচ’ডসমূহ স্থায়ীভাৱে ডিলিট কৰিব নেকি? \n \n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">আপুনি দিয়া ছিৰিজৰ সকলো এপিচ’ড স্থায়ীভাৱে ডিলিট কৰিব: \n \n%s</string>
+    <string name="delete_message_series_only" formatted="true">আপুনি দিয়া ছিৰিজৰ সকলো এপিচ’ড স্থায়ীভাৱে ডিলিট কৰিবলৈ নিশ্চিত নেকি? \n \n%s</string>
     <string name="sort_release_date_old">মুক্তিৰ তাৰিখ (পুৰণাৰ পৰা নতুন)</string>
     <string name="test_warning">সতৰ্কবাৰ্তা</string>
     <string name="auth_locally">স্থানীয়ভাৱে প্ৰমাণীকৰণ কৰক</string>

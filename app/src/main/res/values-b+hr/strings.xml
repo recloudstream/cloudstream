@@ -19,8 +19,7 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Brzina (%.2f×)</string>
     <string name="rated_format" formatted="true">Ocjena: %.1f</string>
-    <string name="new_update_format" formatted="true">Pronađeno je novo ažuriranje!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Pronađeno je novo ažuriranje! \n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Umetak</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="app_name">CloudStream</string>
@@ -106,7 +105,7 @@
     <string name="continue_watching">Nastavi gledati</string>
     <string name="action_remove_watching">Ukloni</string>
     <string name="action_open_watching">Više informacija</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Za ispravan rad ovog pružatelja usluga je možda potreban VPN</string>
     <string name="vpn_torrent">Ovaj pružatelj usluga je torrent, preporučuje se VPN</string>
     <string name="provider_info_meta">Stranica ne sadrži metapodatke. Učitavanje videa neće uspjeti ako ne postoje na stranici.</string>
@@ -186,10 +185,8 @@
     <string name="resume">Nastavi</string>
     <string name="go_back_30">−30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">Ovo će trajno izbrisati %s
-\nJeste li sigurni?</string>
-    <string name="resume_time_left" formatted="true">%dmin
-\npreostalo</string>
+    <string name="delete_message" formatted="true">Ovo će trajno izbrisati %s \nJeste li sigurni?</string>
+    <string name="resume_time_left" formatted="true">%dmin \npreostalo</string>
     <string name="status_ongoing">U tijeku</string>
     <string name="status_completed">Završeno</string>
     <string name="status">Status</string>
@@ -411,9 +408,7 @@
     <string name="plugins_downloaded" formatted="true">Preuzeto: %d</string>
     <string name="plugins_disabled" formatted="true">Onemogućeno: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Nepreuzeto: %d</string>
-    <string name="blank_repo_message">CloudStream standardno nema instalirane web stranice. Stranice morate instalirati iz repozitorija.
-\n
-\nPridružite se našem Discordu ili tražite online.</string>
+    <string name="blank_repo_message">CloudStream standardno nema instalirane web stranice. Stranice morate instalirati iz repozitorija. \n \nPridružite se našem Discordu ili tražite online.</string>
     <string name="view_public_repositories_button">Prikaži repozitorije zajednice</string>
     <string name="view_public_repositories_button_short">Javni popis</string>
     <string name="uppercase_all_subtitles">Koristi velika slova za sve titlove</string>
@@ -498,11 +493,9 @@
     <string name="sort_alphabetical_z">Abecedno (Ž do A)</string>
     <string name="select_library">Odaberite biblioteku</string>
     <string name="open_with">Otvori sa</string>
-    <string name="empty_library_no_accounts_message">Vaša je biblioteka prazna :(
-\nPrijavite se na račun biblioteke ili dodajte filmove / serije u svoju lokalnu biblioteku.</string>
+    <string name="empty_library_no_accounts_message">Vaša je biblioteka prazna :( \nPrijavite se na račun biblioteke ili dodajte filmove / serije u svoju lokalnu biblioteku.</string>
     <string name="empty_library_logged_in_message">Ova je lista prazna. Pokušajte se prebaciti na jednu drugu listu.</string>
-    <string name="safe_mode_file">Pronađena je datoteka sigurnog načina rada!
-\nProširenja se ne učitavaju tijekom pokretanja dok se datoteka ne ukloni.</string>
+    <string name="safe_mode_file">Pronađena je datoteka sigurnog načina rada! \nProširenja se ne učitavaju tijekom pokretanja dok se datoteka ne ukloni.</string>
     <string name="android_tv_interface_on_seek_settings">Prikazan player – Količina pomicanja</string>
     <string name="android_tv_interface_on_seek_settings_summary">Količina pomicanja koja se koristi kada je player vidljiv</string>
     <string name="android_tv_interface_off_seek_settings">Player skriven – Količina pomicanja</string>
@@ -541,23 +534,13 @@
     <string name="disable">Onemogući</string>
     <string name="no_plugins_found_error">U repozitoriju nisu pronađeni dodaci</string>
     <string name="no_repository_found_error">Repozitorij nije pronađen. Provjeri URL i pokušaj VPN</string>
-    <string name="quality_profile_help">Ovdje možete promijeniti način na koji su izvori poredani. Ako video ima viši prioritet, pojavit će se više u odabiru izvora. Zbroj prioriteta izvora i prioriteta kvalitete je prioritet videa.
-\n
-\nIzvor A: 3
-\nKvaliteta B: 7
-\nImat će kombinirani prioritet videa od 10.
-\n
-\nNAPOMENA: Ako je zbroj 10 ili više, video player će automatski preskočiti učitavanje kada se ta poveznica učita!</string>
+    <string name="quality_profile_help">Ovdje možete promijeniti način na koji su izvori poredani. Ako video ima viši prioritet, pojavit će se više u odabiru izvora. Zbroj prioriteta izvora i prioriteta kvalitete je prioritet videa. \n \nIzvor A: 3 \nKvaliteta B: 7 \nImat će kombinirani prioritet videa od 10. \n \nNAPOMENA: Ako je zbroj 10 ili više, video player će automatski preskočiti učitavanje kada se ta poveznica učita!</string>
     <string name="already_voted">Već si glasao/la</string>
     <string name="backup_frequency">Učestalost spremanja sigurnosne kopije</string>
     <string name="favorite_removed">%s uklonjeno iz favorita</string>
     <string name="favorites_list_name">Favoriti</string>
     <string name="favorite_added">%s dodano u favorite</string>
-    <string name="duplicate_message_multiple" formatted="true">Potencijalni duplikati pronađeni su u vašoj biblioteci:
-\n
-\n%s
-\n
-\nŽelite li ipak dodati ovu stavku koja zamjenjuje postojeće ili poništiti radnju?</string>
+    <string name="duplicate_message_multiple" formatted="true">Potencijalni duplikati pronađeni su u vašoj biblioteci: \n \n%s \n \nŽelite li ipak dodati ovu stavku koja zamjenjuje postojeće ili poništiti radnju?</string>
     <string name="duplicate_title">Pronađen potencijalni duplikat</string>
     <string name="lock_profile">Zaključaj profil</string>
     <string name="action_add_to_favorites">Dodaj u favorite</string>
@@ -570,9 +553,7 @@
     <string name="action_subscribe">Pretplata</string>
     <string name="action_remove_from_favorites">Ukloni iz favorita</string>
     <string name="select_an_account">Odaberite račun</string>
-    <string name="duplicate_message_single" formatted="true">Čini se da potencijalno duplicirana stavka već postoji u vašoj biblioteci: \'%s.\'
-\n
-\nŽelite li ipak dodati ovu stavku koja zamjenjuje postojeću ili poništiti radnju?</string>
+    <string name="duplicate_message_single" formatted="true">Čini se da potencijalno duplicirana stavka već postoji u vašoj biblioteci: \'%s.\' \n \nŽelite li ipak dodati ovu stavku koja zamjenjuje postojeću ili poništiti radnju?</string>
     <string name="enter_pin">Unesite PIN</string>
     <string name="pin">PIN</string>
     <string name="enter_current_pin">Unesite trenutni PIN</string>
@@ -596,8 +577,7 @@
     <string name="repo_copy_label">Ime repozitorija i URL</string>
     <string name="toast_copied">kopirano!</string>
     <string name="biometric_setting">Zaključaj s biometrijskim podatcima</string>
-    <string name="resume_remaining" formatted="true">%s
-\npreostalo</string>
+    <string name="resume_remaining" formatted="true">%s \npreostalo</string>
     <string name="clipboard_permission_error">Pogreška pri pristupanju međuspremnika. Pokušaj ponovo.</string>
     <string name="biometric_authentication_title">Otključaj CloudStream</string>
     <string name="password_pin_authentication_title">Lozinka/PIN autentifikacija</string>
@@ -616,7 +596,7 @@
     <string name="biometric_setting_summary">Otključaj aplikaciju pomoću otiska prsta, ID-a lica, PIN-a, uzorka i lozinke.</string>
     <string name="episode_upcoming_format" formatted="true">Sljedeća u %s</string>
     <string name="clipboard_unknown_error">Pogreška pri kopiranju. Kopirajte zapisnik i kontaktirajte podršku aplikacije.</string>
-    <string name="battery_dialog_message">Da biste osigurali neprekinuta preuzimanja i obavijesti za pretplaćene TV emisije, CloudStream treba dopuštenje za rad u pozadini. Pritiskom na \"U redu\" prikazat će vam se dijaloški okvir s zahtjevom. Molimo vas da pritisnete \"Dopusti\".  \n\nNapominjemo da ovo dopuštenje ne znači da će CS3 trošiti vašu bateriju. Aplikacija će raditi u pozadini samo kada je to potrebno, primjerice prilikom primanja obavijesti ili preuzimanja videozapisa iz službenih proširenja.</string>
+    <string name="battery_dialog_message">Da biste osigurali neprekinuta preuzimanja i obavijesti za pretplaćene TV emisije, CloudStream treba dopuštenje za rad u pozadini. Pritiskom na \"U redu\" prikazat će vam se dijaloški okvir s zahtjevom. Molimo vas da pritisnete \"Dopusti\". \n\nNapominjemo da ovo dopuštenje ne znači da će CS3 trošiti vašu bateriju. Aplikacija će raditi u pozadini samo kada je to potrebno, primjerice prilikom primanja obavijesti ili preuzimanja videozapisa iz službenih proširenja.</string>
     <string name="biometric_warning">Vaši CloudStream podaci su sada spremljeni u sigurnosnu kopiju. Iako je vjerojatnost mala, neki se uređaji mogu ponašati drugačije. Ako izgubite pristup aplikaciji, potpuno izbrišite podatke aplikacije i obnovite ih pomoću sigurnosne kopije. Ispričavamo se zbog mogućih neugodnosti.</string>
     <string name="next_season_episode_format" formatted="true">Sezona %1$d epizoda %2$d izlazi za</string>
     <string name="episode_action_cast_mirror">Cast duplikat</string>
@@ -642,22 +622,14 @@
     <string name="delete_plugin">Izbriši dodatak</string>
     <string name="offline_file">Dostupno za gledanje offline</string>
     <string name="select_all">Označi sve</string>
-    <string name="delete_message_multiple" formatted="true">Stvarno želite trajno izbrisati sljedeće stavke?
-\n
-\n%s</string>
-    <string name="delete_message_series_episodes" formatted="true">Stvarno želite trajno izbrisati sljedeće epizode u %1$s?
-\n
-\n%2$s</string>
-    <string name="delete_message_series_section" formatted="true">Trajno ćete izbrisati i sve epizode u sljedećim serijama:
-\n
-\n%s</string>
+    <string name="delete_message_multiple" formatted="true">Stvarno želite trajno izbrisati sljedeće stavke? \n \n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Stvarno želite trajno izbrisati sljedeće epizode u %1$s? \n \n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">Trajno ćete izbrisati i sve epizode u sljedećim serijama: \n \n%s</string>
     <string name="downloads_delete_select">Odaberi stavke za brisanje</string>
     <string name="deselect_all">Odznači sve</string>
     <string name="delete_format" formatted="true">Izbriši (%1$d | %2$s)</string>
     <string name="delete_files">Izbriši datoteke</string>
-    <string name="delete_message_series_only" formatted="true">Stvarno želite trajno izbrisati sve epizode u sljedećoj seriji?
-\n
-\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Stvarno želite trajno izbrisati sve epizode u sljedećoj seriji? \n \n%s</string>
     <string name="no_subtitles_loaded">Još nije učitan nijedan titl</string>
     <string name="preview_seekbar">Pretpregled trake za traženje</string>
     <string name="preview_seekbar_desc">Omogući minijaturu pregleda na traci za pretraživanje</string>
@@ -749,7 +721,7 @@
     <string name="top_center">Gore u sredini</string>
     <string name="top_right">Gore desno</string>
     <string name="extra_brightness_settings">Dodatna svjetlina</string>
-    <string name="extra_brightness_settings_des">Uključi filtar svjetline kada se prekorači 100 % svjetline ekrana</string>
+    <string name="extra_brightness_settings_des">Uključi filtar svjetline kada se prekorači 100 % svjetline ekrana</string>
     <string name="extra_brightness_key">dodatna_svjetlina_uključena</string>
     <string name="search_suggestions">Prijedlozi za pretraživanje</string>
     <string name="search_suggestions_des">Prikaži prijedloge za pretraživanje tijekom tipkanja</string>
