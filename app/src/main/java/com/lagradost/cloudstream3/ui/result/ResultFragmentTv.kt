@@ -37,7 +37,6 @@ import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.NEXT_WATCH_EPISODE_PERCENTAGE
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment.bindLogo
-import com.lagradost.cloudstream3.ui.result.ResultFragment.setupLogoTitleToggle
 import com.lagradost.cloudstream3.ui.result.ResultFragment.getStoredData
 import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_FOCUSED
@@ -920,13 +919,6 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                             headers = d.posterHeaders,
                             titleView = resultTitle,
                             logoView = backgroundPosterWatermarkBadgeHolder
-                        )
-
-                        setupLogoTitleToggle(
-                            logoView = backgroundPosterWatermarkBadgeHolder,
-                            fullTitleView = resultFullTitleText,
-                            title = d.title,
-                            hasLogo = !d.logoUrl.isNullOrBlank()
                         )
 
                         comingSoon = d.comingSoon
