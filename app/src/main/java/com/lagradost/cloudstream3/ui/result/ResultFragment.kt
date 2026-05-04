@@ -248,14 +248,70 @@ object ResultFragment {
         // Cancel it, as we want to remove the listener onSuccess race condition
         logoView.dispose()
 
+        // Clear any previous toggle listeners to ensure clean state on rebind
+        logoView.setOnClickListener(null)
+        titleView.setOnClickListener(null)
+
         if (url.isNullOrBlank()) {
             logoView.isVisible = false
             titleView.isVisible = true
             return
         }
 
+        // Reset to the default state: logo visible, title hidden
+        logoView.alpha = 1f
         logoView.isVisible = true
+        titleView.alpha = 0f
         titleView.isVisible = false
+        titleView.isClickable = true
+        titleView.isFocusable = true
+        titleView.isFocusableInTouchMode = true
+
+        // Toggle: logo -> title
+        logoView.setOnClickListener {
+            if (!logoView.isEnabled) return@setOnClickListener
+            logoView.isEnabled = false
+            titleView.isEnabled = false
+
+            titleView.isVisible = true
+            titleView.animate()
+                .alpha(1f)
+                .setDuration(200)
+                .withEndAction { titleView.isEnabled = true }
+                .start()
+
+            logoView.animate()
+                .alpha(0f)
+                .setDuration(200)
+                .withEndAction {
+                    logoView.isVisible = false
+                    logoView.isEnabled = true
+                }
+                .start()
+        }
+
+        // Toggle: title -> logo
+        titleView.setOnClickListener {
+            if (!titleView.isEnabled) return@setOnClickListener
+            titleView.isEnabled = false
+            logoView.isEnabled = false
+
+            logoView.isVisible = true
+            logoView.animate()
+                .alpha(1f)
+                .setDuration(200)
+                .withEndAction { logoView.isEnabled = true }
+                .start()
+
+            titleView.animate()
+                .alpha(0f)
+                .setDuration(200)
+                .withEndAction {
+                    titleView.isVisible = false
+                    titleView.isEnabled = true
+                }
+                .start()
+        }
 
         logoView.loadImage(
             imageData = UiImage.Image(url, headers = headers),

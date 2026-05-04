@@ -311,7 +311,8 @@
                             android:paddingBottom="4dp"
                             android:adjustViewBounds="true"
                             android:scaleType="fitStart"
-                            android:contentDescription="@null" />
+                            android:focusable="true"
+                            android:contentDescription="@string/result_logo_img_des" />
 
                     </FrameLayout>
                 </FrameLayout>
