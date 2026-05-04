@@ -17,7 +17,7 @@ dokkaGradlePlugin = "2.2.0"
 espressoCore = "3.7.0"
 fragmentKtx = "1.8.9"
 fuzzywuzzy = "1.4.0"
-jacksonModuleKotlin = { strictly = "2.13.1" } # Later versions don't support minSdk <26 (Crashes on Android TV's and FireSticks)
+jacksonModuleKotlin = { strictly = "2.13.5" } # Later versions don't support minSdk <26 (Crashes on Android TV's and FireSticks)
 json = "20251224"
 jsoup = "1.22.1"
 junit = "4.13.2"
