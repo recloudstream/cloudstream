@@ -1008,6 +1008,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                 }
                 toggleEpisodesOverlay(true)
             }
+            else -> return null // Avoid capturing all input
         }
         return true
     }
