@@ -51,7 +51,7 @@ zipline = "1.27.0"
 jvmTarget = "1.8"
 jdkToolchain = "17"
 minSdk = "23"
-compileSdk = "36"
+compileSdk = "37"
 targetSdk = "36"
 
 [libraries]
