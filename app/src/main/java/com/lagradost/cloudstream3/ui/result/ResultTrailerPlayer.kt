@@ -38,9 +38,8 @@ class ResultTrailerPlayer : ResultFragmentPhone() {
 
     // Single-tap on empty player area: toggle controls.
     override fun onSingleTap() {
-        if (!introVisible) {
-            if (isShowing) uiReset() else showControls()
-        }
+        if (introVisible) return
+        if (isShowing) uiReset() else showControls()
     }
 
     private fun showControls() {
@@ -57,6 +56,19 @@ class ResultTrailerPlayer : ResultFragmentPhone() {
     }
 
     override fun onHidePlayerUI() = uiReset()
+
+    // When the hold-speedup gesture fires, hide controls so the video is unobstructed.
+    // The speedup button show/hide and speed change are handled by PlayerView.
+    override fun onHoldSpeedUp(show: Boolean) {
+        if (show && isShowing) uiReset()
+    }
+
+    override fun onGestureEnd(hadSwipe: Boolean, wasUiShowing: Boolean) {
+        if (!player.getIsPlaying() && hadSwipe && wasUiShowing && !isShowing) {
+            isShowing = true
+            showControls()
+        } else playerHostView?.scheduleAutoHide()
+    }
 
     override fun nextEpisode() {}
     override fun prevEpisode() {}
