@@ -53,6 +53,7 @@ kotlin {
         }
 
         commonMain.dependencies {
+            implementation(libs.annotation) // Annotations
             implementation(libs.nicehttp) // HTTP Lib
             implementation(libs.jackson.module.kotlin) // JSON Parser
             implementation(libs.kotlinx.coroutines.core)

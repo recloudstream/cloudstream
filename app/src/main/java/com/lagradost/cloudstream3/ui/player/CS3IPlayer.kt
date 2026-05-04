@@ -12,6 +12,7 @@ import android.os.Looper
 import android.util.Log
 import android.util.Rational
 import android.widget.FrameLayout
+import androidx.annotation.AnyThread
 import androidx.annotation.MainThread
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AlertDialog
@@ -206,16 +207,14 @@ class CS3IPlayer : IPlayer {
     private var requestedListeningPercentages: List<Int>? = null
 
     private var eventHandler: ((PlayerEvent) -> Unit)? = null
-    private val mainHandler = Handler(Looper.getMainLooper())
 
+    @AnyThread
     fun event(event: PlayerEvent) {
-        // Ensure that all work is done on the main looper, aka main thread
-        if (Looper.myLooper() == mainHandler.looper) {
+        // Ensure that all work is done on the main thread.
+        if (Looper.getMainLooper().isCurrentThread) {
             eventHandler?.invoke(event)
-        } else {
-            mainHandler.post {
-                eventHandler?.invoke(event)
-            }
+        } else runOnMainThread {
+            eventHandler?.invoke(event)
         }
     }
 
@@ -235,8 +234,9 @@ class CS3IPlayer : IPlayer {
         }
     }
 
+    @AnyThread
     override fun initCallbacks(
-        eventHandler: ((PlayerEvent) -> Unit),
+        @MainThread eventHandler: ((PlayerEvent) -> Unit),
         requestedListeningPercentages: List<Int>?,
     ) {
         this.requestedListeningPercentages = requestedListeningPercentages
@@ -1769,7 +1769,6 @@ class CS3IPlayer : IPlayer {
     override fun isActive(): Boolean {
         return exoPlayer != null
     }
-
 
     @MainThread
     private fun loadTorrent(context: Context, link: ExtractorLink) {
