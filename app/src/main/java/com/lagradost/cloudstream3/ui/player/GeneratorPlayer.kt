@@ -2199,24 +2199,23 @@ class GeneratorPlayer : FullScreenPlayer() {
         // Registering currentLinks first guarantees its observer updates the field before
         // the loadingLinks observer can call startPlayer(), both on initial delivery to a
         // newly-started Fragment and on any subsequent setValue() call from the ViewModel.
-        observe(viewModel.currentLinks) {
-            currentLinks = it
-            val turnVisible = it.isNotEmpty() && lastUsedGenerator?.canSkipLoading == true
+        observe(viewModel.currentLinks) { links ->
+            currentLinks = links
+            val turnVisible = links.isNotEmpty() && lastUsedGenerator?.canSkipLoading == true
             val wasGone = binding.overlayLoadingSkipButton.isGone
 
             binding.overlayLoadingSkipButton.apply {
                 isVisible = turnVisible
-                val value = viewModel.currentLinks.value
-                if (value.isNullOrEmpty()) {
+                if (links.isEmpty()) {
                     setText(R.string.skip_loading)
                 } else {
                     @SuppressLint("SetTextI18n")
-                    text = "${context.getString(R.string.skip_loading)} (${value.size})"
+                    text = "${context.getString(R.string.skip_loading)} (${links.size})"
                 }
             }
 
             safe {
-                if (currentLinks.any { link ->
+                if (links.any { link ->
                         getLinkPriority(currentQualityProfile, link.first) >=
                                 QualityDataHelper.AUTO_SKIP_PRIORITY
                     }
