@@ -29,8 +29,7 @@
     <string name="show_log_cat">فرجي الـLogcat 🐈</string>
     <string name="go_forward_30">+30</string>
     <string name="continue_watching">كفي حضر</string>
-    <string name="new_update_format" formatted="true">في أپدايت جديدة!
-\n%1$s ← %2$s</string>
+    <string name="new_update_format" formatted="true">في أپدايت جديدة! \n%1$s ← %2$s</string>
     <string name="subs_download_languages">نزل الترجمات مع الڤيديو</string>
     <string name="search_provider_text_providers">عوزو المصادر لَ تنبّشو</string>
     <string name="go_back_img_des">رجاع</string>
@@ -96,8 +95,7 @@
     <string name="subs_text_color">لون الكتيبة</string>
     <string name="type_completed">مخلص</string>
     <string name="use_system_brightness_settings_des">عوز قوة ضوّ الشاشة تبع السيستام بدل من تغميئ الڤيديو</string>
-    <string name="restore_failed_format" formatted="true">فشل ترجيع النسخة الإحتياطية من ملف
-\n%s</string>
+    <string name="restore_failed_format" formatted="true">فشل ترجيع النسخة الإحتياطية من ملف \n%s</string>
     <string name="play_trailer_button">مشّي المقطع الدعائي</string>
     <string name="play_livestream_button">مشّي البث المباشر</string>
     <string name="no_episodes_found">م لقينا ولا حلقة</string>
@@ -166,8 +164,7 @@
     <string name="no_subtitles">طفي الترجمة</string>
     <string name="synopsis">القصة</string>
     <string name="used_storage">مستعمل</string>
-    <string name="resume_time_left" formatted="true">%dد
-\nباقي</string>
+    <string name="resume_time_left" formatted="true">%dد \nباقي</string>
     <string name="status_ongoing">عم ينعرض حاليًا</string>
     <string name="queued">بلايحة النَطر</string>
     <string name="status">حالة</string>
@@ -194,7 +191,7 @@
     <string name="render_error">في مشكلة بجهاز العرض (Renderer error)</string>
     <string name="show_title">العِنوان</string>
     <string name="jsdelivr_proxy">پروكسي \"گِت هَب\"</string>
-    <string name="limit_title_rez">جودة مشغل الڤيديو</string>
+    <string name="limit_title_rez">فرجي معلومات مشغل الڤيديو</string>
     <string name="show_sub">ملصق الترجمة</string>
     <string name="ova_singular">أوڤا</string>
     <string name="episode_action_download_mirror">نَزِل من مصادر وجودات مختلفة</string>
@@ -361,11 +358,7 @@
     <string name="home_next_random_img_des">العشوائي يللي بعده</string>
     <string name="subtitles_shadow">خيال</string>
     <string name="subscription_in_progress_notification">عم نجدِد المثلثلات يللي مشتركينلها</string>
-    <string name="duplicate_message_multiple" formatted="true">مبين إنو فيه عنصر متل هيدا موجود بال مكتبة عندكن:
-\n
-\n%s
-\n
-\nبدكن تزيدو هيدا العنصر بأيّ حال، أو تستبدلوه مع العنصر الموجود، أو تلغو الإجراء؟</string>
+    <string name="duplicate_message_multiple" formatted="true">مبين إنو فيه عنصر متل هيدا موجود بال مكتبة عندكن: \n \n%s \n \nبدكن تزيدو هيدا العنصر بأيّ حال، أو تستبدلوه مع العنصر الموجود، أو تلغو الإجراء؟</string>
     <string name="batch_download_finish_format" formatted="true">نزلت %1$d %2$s</string>
     <string name="error_invalid_id">معرف مش صالح</string>
     <string name="skip_type_format" formatted="true">أفّي %s</string>
@@ -373,9 +366,7 @@
     <string name="enter_pin_with_name" formatted="true">حطو الأرقام السرية لـ\"%s\"</string>
     <string name="apk_installer_legacy">الطريقة القديمة</string>
     <string name="subtitles_raised">معلى</string>
-    <string name="blank_repo_message">\"كلود ستريم\" م بتجي مع مصادر ڤيديوات. لازم تنزلو المصادر من ريپويات.
-\n
-\nفيه معلومات على الـ\"ديسكورد\" تبعنا، أو فيكن تنبشو ع معلومات على الإنترنت.</string>
+    <string name="blank_repo_message">\"كلود ستريم\" م بتجي مع مصادر ڤيديوات. لازم تنزلو المصادر من ريپويات. \n \nفيه معلومات على الـ\"ديسكورد\" تبعنا، أو فيكن تنبشو ع معلومات على الإنترنت.</string>
     <string name="add_sync">زبد تتبع</string>
     <string name="mobile_data">3G/4G…</string>
     <string name="player_loaded_subtitles" formatted="true">نفَتح %s</string>
@@ -388,8 +379,7 @@
     <string name="uppercase_all_subtitles">دايمًا كتوب ب أحرف كاپيتال، A بدل a</string>
     <string name="player_pref">مشغل الڤيديو المفضل</string>
     <string name="quality_4k">4K</string>
-    <string name="batch_download_start_format" formatted="true">بَلَش تنزيل %1$d %2$s
-\n…</string>
+    <string name="batch_download_start_format" formatted="true">بَلَش تنزيل %1$d %2$s \n…</string>
     <string name="extension_description">الوصف</string>
     <string name="view_public_repositories_button">شوف الريپويات تبع مجتمع \"كلاود ستريم\"</string>
     <string name="safe_mode_title">إنت هلّق بال وضع الآمن</string>
@@ -419,9 +409,7 @@
     <string name="skip_setup">أفّى الإعداد</string>
     <string name="authenticated_user" formatted="true">فتت ع أكونت \"%s\" تبعك</string>
     <string name="subtitles_outline">حدود خطية</string>
-    <string name="unable_to_inflate">في مشكلة بطعمير الـUI. هيدي مشكبة كبيرة. پليز بَلِغ عنّا
-\n(UI was unable to be created correctly)
-\n%s</string>
+    <string name="unable_to_inflate">في مشكلة بطعمير الـUI. هيدي مشكبة كبيرة. پليز بَلِغ عنّا \n(UI was unable to be created correctly) \n%s</string>
     <string name="edit">عَدِل</string>
     <string name="sort_updated_new">تجَدَد (من الجديد للقديم)</string>
     <string name="quality_tc">TC</string>
@@ -477,8 +465,7 @@
     <string name="quality_sd">SD</string>
     <string name="extensions">الإضافات</string>
     <string name="subtitles_remove_bloat">شيل الإعلانات من الترجمة</string>
-    <string name="empty_library_no_accounts_message">رفّكن فاضي ☹
-\nفوتو على أكونت فيها رفّ الڤيديوات يللي حضرينها أو زيدو ڤيديوات بال رفّ المحلي.</string>
+    <string name="empty_library_no_accounts_message">رفّكن فاضي ☹ \nفوتو على أكونت فيها رفّ الڤيديوات يللي حضرينها أو زيدو ڤيديوات بال رفّ المحلي.</string>
     <string name="repository_name_hint">اسم الريپو (مش ضروري)</string>
     <string name="qualities">الجودات</string>
     <string name="error_invalid_data">بيانات مش صالحة</string>
@@ -505,8 +492,7 @@
     <string name="sort_rating_asc">رايتينگ (من الواطي للعالي)</string>
     <string name="player_load_subtitles">فتاح من ملف</string>
     <string name="disable">طفي</string>
-    <string name="safe_mode_file">لقينا ملف الوضع الآمن!
-\nمش رح نعوز إضافيات وقت ما ينفَتَح الآپ حتّى ينشال الملف.</string>
+    <string name="safe_mode_file">لقينا ملف الوضع الآمن! \nمش رح نعوز إضافيات وقت ما ينفَتَح الآپ حتّى ينشال الملف.</string>
     <string name="subtitle_offset_extra_hint_none_format">مش مغير وقت الترجمة</string>
     <string name="error">مشكلة</string>
     <string name="home_source">مصدر</string>
@@ -531,7 +517,7 @@
     <string name="plugin">إضافات</string>
     <string name="plugin_load_fail" formatted="true">م قدرنا نفتح %s</string>
     <string name="extension_rating" formatted="true">رايتينگ: %s</string>
-    <string name="download_all_plugins_from_repo">تحزير: \"كلاود ستريم 3\" مش مسؤولة عن الإضافات المش رسمية، و م بتدعمن أبدًا!</string>
+    <string name="download_all_plugins_from_repo">تحزير: \"كلاود ستريم\" مش مسؤولة عن الإضافات المش رسمية، و م بتدعمن أبدًا!</string>
     <string name="extension_status">الحالة</string>
     <string name="delete_repository">محي الريپو</string>
     <string name="category_player">مشغل الڤيديو</string>
@@ -540,10 +526,7 @@
     <string name="already_voted">إنتو أصلًا مصوتين</string>
     <string name="quality_cam">كاميرا</string>
     <string name="no_plugins_found_error">م لقينا ولا إضافة بال ريپو</string>
-    <string name="duplicate_message_single" formatted="true">مبين إنو في عنصر متل هيدا موجود بالمكتبة عندكن:
-\n\"%s\"
-\n
-\nبدكن تزيدو هيدا العنصر بأيّ حال، أو تستبدلوّ مع العنصر الموجود، أو تلغو الإجراء؟</string>
+    <string name="duplicate_message_single" formatted="true">مبين إنو في عنصر متل هيدا موجود بالمكتبة عندكن: \n\"%s\" \n \nبدكن تزيدو هيدا العنصر بأيّ حال، أو تستبدلوّ مع العنصر الموجود، أو تلغو الإجراء؟</string>
     <string name="error_invalid_url">رايط مش صالح</string>
     <string name="subtitle_offset_hint">1000 مللي ثانية</string>
     <string name="extension_version">إصدار</string>
@@ -560,16 +543,10 @@
     <string name="subtitles_filter_lang">فَلتِر حسب اللغة المفضلة</string>
     <string name="confirm_exit_dialog">أكيد بدكون تطلعو؟</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="action_remove_from_watched">شيلو من لايحة المحتوى الحاضرينو</string>
     <string name="skip_type_credits">الإعتمادات</string>
-    <string name="quality_profile_help">فيكُن هون تغيرو طريقة ترتيب المصادر. المصدر يللي عنده أولوية أكتر بينحط أعلى بلايحت تنقايت المصدر. إنتو بتنقو الأولوية يإستعمال الأرقام. حطو الرقم الأعلى للمصادر والجودات يللي بتفضلوها.
-\n
-\nمتلًا:
-\nإزا المصدر \"أ\" بتفضلوه، بتعطوه كتير نقات (متلًا 8).
-\nإزا الجودة 480 ما بتحبوها، بتعطوها نقات قليلة (متلًا 1).
-\n
-\nعلامت المصدر وال جودة تبعه بينجمعو مع بعض (8 + 1 = 9). يللي علامته 10 أو أعلى، بينحط تلقائيًا، من دون ما ينعمل لود لكل المصادر!</string>
+    <string name="quality_profile_help">فيكُن هون تغيرو طريقة ترتيب المصادر. المصدر يللي عنده أولوية أكتر بينحط أعلى بلايحت تنقايت المصدر. إنتو بتنقو الأولوية يإستعمال الأرقام. حطو الرقم الأعلى للمصادر والجودات يللي بتفضلوها. \n \nمتلًا: \nإزا المصدر \"أ\" بتفضلوه، بتعطوه كتير نقات (متلًا 8). \nإزا الجودة 480 ما بتحبوها، بتعطوها نقات قليلة (متلًا 1). \n \nعلامت المصدر وال جودة تبعه بينجمعو مع بعض (8 + 1 = 9). يللي علامته 10 أو أعلى، بينحط تلقائيًا، من دون ما ينعمل لود لكل المصادر!</string>
     <string name="enter_current_pin">حطو الأرقام السرية الحالية</string>
     <string name="audio_tracks">صوت</string>
     <string name="rotate_video_desc">حط كبسة لبرم إتجاه الشاشة</string>
@@ -589,16 +566,14 @@
     <string name="password_pin_authentication_title">رمز/كلمة مرور للمصادقة</string>
     <string name="biometric_setting_summary">فتاح التطبيق باستعمال البصمة، آي دي الوج، پِن، النمط، أو الپاسورد.</string>
     <string name="biometric_prompt_description">بعد كذا محاولة فاشلة، هيدا الشباك رح يسكر. بكل بساطة، سكر الآپ ورجاع فتحه حتى تجرب بعد مرة.</string>
-    <string name="resume_remaining" formatted="true">%s
-\nباقي</string>
+    <string name="resume_remaining" formatted="true">%s \nباقي</string>
     <string name="biometric_unsupported">المصادقة البيومترية مش مدعومة ع هالجهاز</string>
     <string name="unfavorite">شيله من المفضل</string>
     <string name="repo_copy_label">اسم وعنوان الريپو</string>
     <string name="toast_copied">نتسخ!</string>
     <string name="clipboard_permission_error">فيه ارور بال وصول ل الكليپ-بورد. پليز جرب مرة أخرى.</string>
     <string name="clipboard_unknown_error">فيه ارور بال نسخ. پليز نسوخ الـLogcat 🐈 وبعته ل المسؤولين عن دعم الآپ.</string>
-    <string name="biometric_warning">هلّق نعمل نسخة احتياطية للداتا تبع \"كلود ستريم\". إذا مابق ينفتح ويمشي الآپ، فيك تعمل كلير للداتا تبعه وترَجع الداتا من النسخة الاحتياطية اللي هلّق عملنالك ياها.
-\nالاحتمال انو مابق ينفتح الآپ احتمالية زغيرة كتير، بس كل جهاز بيتصرف بشكل مختلف، ونحنا منعتذر إذا سببنا أي إزعاج.</string>
+    <string name="biometric_warning">هلّق نعمل نسخة احتياطية للداتا تبع \"كلود ستريم\". إذا مابق ينفتح ويمشي الآپ، فيك تعمل كلير للداتا تبعه وترَجع الداتا من النسخة الاحتياطية اللي هلّق عملنالك ياها. \nالاحتمال انو مابق ينفتح الآپ احتمالية زغيرة كتير، بس كل جهاز بيتصرف بشكل مختلف، ونحنا منعتذر إذا سببنا أي إزعاج.</string>
     <string name="ok">أوكي</string>
     <string name="battery_dialog_title">وقف اپتميزايشن بطارية جهازك</string>
     <string name="app_unrestricted_toast">بطارية الآپ اصلًا محطوطة ع «غير مقيد» \"Unrestricted\"</string>
@@ -634,21 +609,13 @@
     <string name="downloads_delete_select">نقي الإشيا اللي بدك تمحيها</string>
     <string name="offline_file">موجود لينحضر بلا إنترنت</string>
     <string name="delete_files">محي الفايلات</string>
-    <string name="delete_message_multiple" formatted="true">متأكد إنو بدك تمحي هيدي الإشيا ل الأبد؟
-\n
-\n%s</string>
-    <string name="delete_message_series_section" formatted="true">رح كمان تمحي ل الأبد كل الحلقات اللي ب هيدا المسلسل؟
-\n
-\n%s</string>
+    <string name="delete_message_multiple" formatted="true">متأكد إنو بدك تمحي هيدي الإشيا ل الأبد؟ \n \n%s</string>
+    <string name="delete_message_series_section" formatted="true">رح كمان تمحي ل الأبد كل الحلقات اللي ب هيدا المسلسل؟ \n \n%s</string>
     <string name="select_all">نقي كل شي</string>
     <string name="deselect_all">شيل التنقاية</string>
     <string name="delete_format" formatted="true">محي (%1$d | %2$s)</string>
-    <string name="delete_message_series_episodes" formatted="true">متأكد إنو بدك تمحي هيدي الحلقات من %1$s؟
-\n
-\n%2$s</string>
-    <string name="delete_message_series_only" formatted="true">متأكد إنو بدك تمحي كل الحلقات اللي بهيدا المسلسل؟
-\n
-\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">متأكد إنو بدك تمحي هيدي الحلقات من %1$s؟ \n \n%2$s</string>
+    <string name="delete_message_series_only" formatted="true">متأكد إنو بدك تمحي كل الحلقات اللي بهيدا المسلسل؟ \n \n%s</string>
     <string name="preview_seekbar">صورة زغيرة مع التقريب وال تبعيد</string>
     <string name="preview_seekbar_desc">بت حط صورة زغير من الڤيديو إنت و عم بت قرب أو ترجع بال ڤيديو</string>
     <string name="no_subtitles_loaded">بعد مش معمول لود لولا ترجمة</string>
@@ -739,4 +706,33 @@
     <string name="top_left">فوق، عال شمال</string>
     <string name="top_center">فوق، بال نُص</string>
     <string name="top_right">فوق، عال يمين</string>
+    <string name="download_queue">ليستة التنزيلات</string>
+    <string name="queue_empty_message">مافي شي عم يتنزّل هلّق.</string>
+    <string name="extra_brightness_settings">قوة ضو إضافية</string>
+    <string name="extra_brightness_settings_des">بت حط فلتر للبرايتنس لمّا تعلي قوة الضو ل أكتر من 100%</string>
+    <string name="extra_brightness_key">extra_brightness_enabled</string>
+    <string name="search_suggestions">اقتراحات التنبيش</string>
+    <string name="search_suggestions_des">بت فرجي اقتراحات إنتا و عم بت نَبّش</string>
+    <string name="clear_suggestions">مساح الاقتراحات</string>
+    <string name="show_player_metadata_overlay">فرجي ميتا-ديتا فوق الڤيديو</string>
+    <string name="show_cast_in_details">فرجي ليستة الممثلين</string>
+    <string name="video_singular">ڤيديو</string>
+    <string name="video_info">معلومات الڤيديو</string>
+    <string name="source_priority">أولوية المصدر</string>
+    <string name="source_priority_help">حدد ترتيب المصادر بال مشغل</string>
+    <string name="source_name">اسم المصدر</string>
+    <string name="download_all">نزلن كلن</string>
+    <string name="cancel_all">لغين كلن</string>
+    <string name="download_episode_range">بدك تنزل الحلقة %s؟</string>
+    <string name="cancel_queue_message">بدك تلغي كل شي عم يتنَزَّل؟</string>
+    <plurals name="downloads_active">
+        <item quantity="one">م شي عم يتنزل</item>
+        <item quantity="other">شي واحد عم يتنزل</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="one">مافي شي بعد بده يبلش يتنزل</item>
+        <item quantity="other">فيه شي واحد بعد بده يبلش يتنزل</item>
+    </plurals>
+    <string name="player_is_live">لايڤ</string>
+    <string name="skip_type_preview">پريڤيو</string>
 </resources>

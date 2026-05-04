@@ -2,8 +2,7 @@
 <resources>
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">स्पीड (%.2fx)</string>
-    <string name="new_update_format" formatted="true">नया अपडेट आया है!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">नया अपडेट आया है! \n%1$s -&gt; %2$s</string>
     <string name="title_home">होम</string>
     <string name="title_search">खोजें</string>
     <string name="title_downloads">डाउनलोडस</string>
@@ -87,8 +86,7 @@
     <string name="cancel">रद्द करें</string>
     <string name="pause">रोकें</string>
     <string name="resume">फिर से चलाएं</string>
-    <string name="delete_message">इससे %s स्थायी रूप से हट जाएगा
-\nक्या आपका निर्णय निश्चित है ?</string>
+    <string name="delete_message">इससे %s स्थायी रूप से हट जाएगा \nक्या आपका निर्णय निश्चित है ?</string>
     <string name="status_ongoing">अभी चालू है</string>
     <string name="status_completed">मुकम्मल हुया</string>
     <string name="status">स्थिति</string>
@@ -153,11 +151,7 @@
     <string name="duration_format" formatted="true">%d मिनट</string>
     <string name="app_name">क्लाउडस्ट्रीम</string>
     <string name="play_with_app_name">क्लाउडस्ट्रीम के साथ चलाएं</string>
-    <string name="duplicate_message_multiple" formatted="true">आपकी लाइब्रेरी में संभावित डुप्लिकेट आइटम पाए गए हैं:
-\n
-\n%s
-\n
-\nक्या आप किसी भी तरह इस आइटम को जोड़ना चाहेंगे, मौजूदा आइटम को बदलना चाहेंगे, या कार्रवाई रद्द करना चाहेंगे?</string>
+    <string name="duplicate_message_multiple" formatted="true">आपकी लाइब्रेरी में संभावित डुप्लिकेट आइटम पाए गए हैं: \n \n%s \n \nक्या आप किसी भी तरह इस आइटम को जोड़ना चाहेंगे, मौजूदा आइटम को बदलना चाहेंगे, या कार्रवाई रद्द करना चाहेंगे?</string>
     <string name="enter_pin_with_name" formatted="true">%s के लिए पिन दर्ज करें</string>
     <string name="duplicate_title">संभावित डुप्लिकेट मिला</string>
     <string name="update_started">अपडेट शुरू हुआ</string>
@@ -177,9 +171,7 @@
     <string name="select_an_account">अकाउंट चुनिये</string>
     <string name="skip_loading">लोडिंग स्किप करे</string>
     <string name="loading">लोडिंग…</string>
-    <string name="duplicate_message_single" formatted="true">ऐसा प्रतीत होता है कि संभावित रूप से डुप्लिकेट आइटम आपकी लाइब्रेरी में पहले से मौजूद है: \'%s.\'
-\n
-\nक्या आप किसी भी तरह इस आइटम को जोड़ना चाहेंगे, मौजूदा आइटम को बदलना चाहेंगे, या कार्रवाई रद्द करना चाहेंगे?</string>
+    <string name="duplicate_message_single" formatted="true">ऐसा प्रतीत होता है कि संभावित रूप से डुप्लिकेट आइटम आपकी लाइब्रेरी में पहले से मौजूद है: \'%s.\' \n \nक्या आप किसी भी तरह इस आइटम को जोड़ना चाहेंगे, मौजूदा आइटम को बदलना चाहेंगे, या कार्रवाई रद्द करना चाहेंगे?</string>
     <string name="enter_pin">पिन दर्ज करें</string>
     <string name="pin">पिन</string>
     <string name="links_reloaded_toast">लिंक पुन्ह खुली</string>
@@ -312,7 +304,7 @@
     <string name="custom_media_singular">मीडिया</string>
     <string name="pref_filter_search_quality">खोज परिणामों में चयनित वीडियो गुणवत्ता छुपाएं</string>
     <string name="episodes_range">%1$d-%2$d</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="double_tap_to_seek_amount_settings">प्लेयर में आगे पीछे जाने का समय (सेकंड्स)</string>
     <string name="automatic_plugin_download_summary">जोड़े गए रिपॉजिटरीज से अभी तक इंस्टॉल नहीं किए गए सभी प्लगइन्स को स्वचालित रूप से इंस्टॉल करें।</string>
     <string name="speech_recognition_unavailable">वाक् पहचान उपलब्ध नहीं है</string>

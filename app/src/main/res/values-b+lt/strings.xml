@@ -31,8 +31,7 @@
     <string name="go_forward_30">+30</string>
     <string name="download_done">Atsiuntimas baigtas</string>
     <string name="continue_watching">Tęsti žiūrėjimą</string>
-    <string name="new_update_format" formatted="true">Rastas atnaujinimas!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Rastas atnaujinimas! \n%1$s -&gt; %2$s</string>
     <string name="subs_download_languages">Atsisiųsti kalbas</string>
     <string name="search_provider_text_providers">Ieškoti naudojant tiekėjus</string>
     <string name="go_back_img_des">Grįžti atgal</string>
@@ -88,8 +87,7 @@
     <string name="popup_resume_download">Pratęsti siuntimą</string>
     <string name="asian_drama">Azijietiškos dramos</string>
     <string name="episode">Serija</string>
-    <string name="empty_library_no_accounts_message">Jūsų biblioteka tuščia :(
-\nPrisijunkite prie bibliotekos paskyros arba pridėkite laidas prie vietinės bibliotekos.</string>
+    <string name="empty_library_no_accounts_message">Jūsų biblioteka tuščia :( \nPrisijunkite prie bibliotekos paskyros arba pridėkite laidas prie vietinės bibliotekos.</string>
     <string name="autoplay_next_settings_des">Pradėti sekančia seriją, kai dabartinė baigsis</string>
     <string name="subs_text_color">Teksto spalva</string>
     <string name="type_completed">Užbaigta</string>
@@ -181,11 +179,7 @@
     <string name="example_ip">127.0.0.1</string>
     <string name="batch_download_finish_format" formatted="true">Atsiųsta %1$d %2$s</string>
     <string name="skip_type_format" formatted="true">Praleisti %s</string>
-    <string name="blank_repo_message">Pagal numatytuosius nustatymus „CloudStream“ neturi įdiegtų svetainių. Turite įdiegti svetaines iš saugyklų.
-\n
-\nDėl beprotiško DMCA reikalavimų, kurios atliko Sky UK Limited 🤮, negalime susieti saugyklos svetainės programoje.
-\n
-\nPrisijunkite prie mūsų Discord arba ieškokite internete.</string>
+    <string name="blank_repo_message">Pagal numatytuosius nustatymus „CloudStream“ neturi įdiegtų svetainių. Turite įdiegti svetaines iš saugyklų. \n \nDėl beprotiško DMCA reikalavimų, kurios atliko Sky UK Limited 🤮, negalime susieti saugyklos svetainės programoje. \n \nPrisijunkite prie mūsų Discord arba ieškokite internete.</string>
     <string name="mobile_data">Mobilūs duomenys</string>
     <string name="example_username">šaunusPrisijungimoVardas</string>
     <string name="extension_authors">Autoriai</string>

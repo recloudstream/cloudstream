@@ -113,8 +113,7 @@
     <string name="type_watching">در حال تماشا</string>
     <string name="title_downloads">بارگیری‌ها</string>
     <string name="player_speed_text_format" formatted="true">سرعت (%.2f برابر)</string>
-    <string name="new_update_format" formatted="true">بروزرسانی جدید پیدا شد!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">بروزرسانی جدید پیدا شد! \n%1$s -&gt; %2$s</string>
     <string name="play_movie_button">پخش فیلم</string>
     <string name="browser">مرورگر</string>
     <string name="play_episode">پخش قسمت</string>
@@ -130,8 +129,7 @@
     <string name="subs_hold_to_reset_to_default">برای بازنشانی به پیشفرض نگه‌دارید</string>
     <string name="library">کتابخانه</string>
     <string name="status_ongoing">در ادامه</string>
-    <string name="delete_message" formatted="true">این فرآیند بطور کامل %s را حذف می‌کند
-\nآیا از این کار اطمینان دارید؟</string>
+    <string name="delete_message" formatted="true">این فرآیند بطور کامل %s را حذف می‌کند \nآیا از این کار اطمینان دارید؟</string>
     <string name="repo_copy_label">نام مخزن و نشانی</string>
     <string name="toast_copied">کپی شد!</string>
     <string name="settings_info">درباره</string>
@@ -180,13 +178,11 @@
     <string name="delete_file">حذف پرونده</string>
     <string name="show_trailers_settings">نمایش تریلر ها</string>
     <string name="episodes">قسمت‌ها</string>
-    <string name="resume_time_left" formatted="true">%dد
-\nباقی‌مانده</string>
+    <string name="resume_time_left" formatted="true">%dد \nباقی‌مانده</string>
     <string name="github">گیتهاب</string>
     <string name="pref_filter_search_quality">پنهان کردن ویدیو مشخص شده از نتایج جستجو</string>
     <string name="cancel">لغو</string>
-    <string name="resume_remaining" formatted="true">%s
-\nباقی‌مانده</string>
+    <string name="resume_remaining" formatted="true">%s \nباقی‌مانده</string>
     <string name="action_default">پیش‌فرض</string>
     <string name="cartoons_singular">کارتون</string>
     <string name="torrent_singular">تورنت</string>
@@ -218,7 +214,7 @@
     <string name="status_completed">تمام‌شده</string>
     <string name="no_subtitles">بدون زیرنویس</string>
     <string name="test_passed">متوقف‌شده</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="open_local_video">باز کردن ویدیو محلی</string>
     <string name="provider_info_meta">متاداده توسط سایت ارائه نشده، اگه در سایت وجود نداشته باشد بارگیری به مشکل می‌خورد .</string>
     <string name="type_on_hold">در انتظار</string>

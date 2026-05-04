@@ -12,8 +12,7 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Avspillingshastighet (%.2fx)</string>
     <string name="rated_format" formatted="true">Vurdert: %.1f</string>
-    <string name="new_update_format" formatted="true">Ny oppdatering funnet!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Ny oppdatering funnet! \n%1$s -&gt; %2$s</string>
     <string name="app_name">CloudStream</string>
     <string name="title_home">Hjem</string>
     <string name="title_search">Søk</string>
@@ -135,8 +134,7 @@
     <string name="cancel">Avbryt</string>
     <string name="pause">Stopp</string>
     <string name="resume">Gjenoppta</string>
-    <string name="delete_message">Dette vil slette %s
-\nEr du sikker?</string>
+    <string name="delete_message">Dette vil slette %s \nEr du sikker?</string>
     <string name="status_ongoing">Pågående</string>
     <string name="status_completed">Fullført</string>
     <string name="status">Posisjon</string>
@@ -353,8 +351,7 @@
     <string name="episodes_range">%1$d-%2$d</string>
     <string name="view_public_repositories_button_short">Offentlig liste</string>
     <string name="plugin">programtillegg</string>
-    <string name="resume_time_left" formatted="true">%dm
-\nigjen</string>
+    <string name="resume_time_left" formatted="true">%dm \nigjen</string>
     <string name="limit_title_rez">Videooppløsning</string>
     <string name="subtitle_offset">Synkroniser undertekster</string>
     <string name="subtitle_offset_title">Undertekstforsinkelse</string>
@@ -373,11 +370,7 @@
     <string name="error_invalid_url">Ugyldig nettadresse</string>
     <string name="batch_download">Knippe-nedlasting</string>
     <string name="delete_repository">Slett pakkebrønn</string>
-    <string name="blank_repo_message">CloudStream har ingen sider installert som forvalg. Du må installere sidene fra pakkebrønner.
-\n
-\nSom følge av en hjernedød DMCA-forespørsel fra Sky UK Limited 🤮 kan vi ikke lenke til pakkebrønnssiden i programmet.
-\n
-\nTa del i vår Discord, eller søk på nett.</string>
+    <string name="blank_repo_message">CloudStream har ingen sider installert som forvalg. Du må installere sidene fra pakkebrønner. \n \nSom følge av en hjernedød DMCA-forespørsel fra Sky UK Limited 🤮 kan vi ikke lenke til pakkebrønnssiden i programmet. \n \nTa del i vår Discord, eller søk på nett.</string>
     <string name="subtitle_offset_extra_hint_before_format">Bruk dette hvis undertekster vises %d ms for sent</string>
     <string name="plugin_loaded">Programtillegg innlastet</string>
     <string name="audio_tracks">Lydspor</string>
@@ -397,7 +390,7 @@
     <string name="poster_ui_settings">Slå av/på grensesnittselementer på plakat</string>
     <string name="skip_update">Hopp over denne oppdateringen</string>
     <string name="video_ram_description">Kan forårsake krasj hvis satt for høyt på enheter med lite minne, for eksempel en Android TV.</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="backup_settings">Sikkerhetskopier data</string>
     <string name="backup_success">Data lagret</string>
     <string name="authenticated_user_fail" formatted="true">Kunne ikke logge inn på %s</string>
@@ -406,11 +399,11 @@
     <string name="nsfw">Sensurerbart</string>
     <string name="quality_webrip">Vev</string>
     <string name="network_adress_example">Lenke til strøm</string>
-    <string name="anime_singular">@string/anime</string>
+    <string name="anime_singular">\@string/anime</string>
     <string name="pref_filter_search_quality">Skjul valgt videokvalitet i søkeresultater</string>
     <string name="restore_success">Lastet inn sikkerhetkopifil</string>
     <string name="category_updates">Oppdateringer og sikkerhetskopier</string>
-    <string name="ova_singular">@string/ova</string>
+    <string name="ova_singular">\@string/ova</string>
     <string name="confirm_exit_dialog">Avslutt?</string>
     <string name="nsfw_singular">Sensurerbart</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Alle %s er allerede nedlastet</string>
@@ -512,10 +505,8 @@
     <string name="pref_category_bypass">ISP-omgåelser</string>
     <string name="empty_library_logged_in_message">Denne listen er tom. Prøv å bytte til en annen.</string>
     <string name="sort">Sorter</string>
-    <string name="safe_mode_file">Fant fil for trygt modus.
-\nLaster ikke inn noen utvidelser ved oppstart til filen er fjernet.</string>
-    <string name="empty_library_no_accounts_message">Biblioteket ditt er tomt :(
-\nLogg inn på en bibliotekkonto eller legg til programmer i ditt lokale bibliotek.</string>
+    <string name="safe_mode_file">Fant fil for trygt modus. \nLaster ikke inn noen utvidelser ved oppstart til filen er fjernet.</string>
+    <string name="empty_library_no_accounts_message">Biblioteket ditt er tomt :( \nLogg inn på en bibliotekkonto eller legg til programmer i ditt lokale bibliotek.</string>
     <string name="edit">Rediger</string>
     <string name="profiles">Profiler</string>
     <string name="favorites_list_name">Favoritter</string>

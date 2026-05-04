@@ -19,8 +19,7 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">速度（%.2fx）</string>
     <string name="rated_format" formatted="true">評分：%.1f</string>
-    <string name="new_update_format" formatted="true">發現新版本！
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">發現新版本！ \n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">填充</string>
     <string name="duration_format" formatted="true">%d 分鐘</string>
     <string name="app_name">CloudStream</string>
@@ -106,7 +105,7 @@
     <string name="continue_watching">繼續觀看</string>
     <string name="action_remove_watching">移除</string>
     <string name="action_open_watching">更多資訊</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">此片源可能需要 VPN 才能正常使用</string>
     <string name="vpn_torrent">此片源是種子，建議使用 VPN</string>
     <string name="provider_info_meta">站點不提供元數據，如果站點上不存在元數據，影片載入將失敗。</string>
@@ -187,10 +186,8 @@
     <string name="resume">繼續</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">這將永遠刪除 %s
-\n你確定嗎?</string>
-    <string name="resume_time_left" formatted="true">剩下
-\n%d 分鐘</string>
+    <string name="delete_message" formatted="true">這將永遠刪除 %s \n你確定嗎?</string>
+    <string name="resume_time_left" formatted="true">剩下 \n%d 分鐘</string>
     <string name="status_ongoing">連載中</string>
     <string name="status_completed">已完結</string>
     <string name="status">狀態</string>
@@ -413,9 +410,7 @@
     <string name="plugins_disabled" formatted="true">已停用：%d</string>
     <string name="plugins_not_downloaded" formatted="true">未下載：%d</string>
     <string name="plugins_updated" formatted="true">已更新 %d 外掛程式</string>
-    <string name="blank_repo_message">CloudStream 預設沒有安裝網站。你需要從儲存庫安裝網站。
-\n
-\n加入我們的 Discord 或在網路上搜尋。</string>
+    <string name="blank_repo_message">CloudStream 預設沒有安裝網站。你需要從儲存庫安裝網站。 \n \n加入我們的 Discord 或在網路上搜尋。</string>
     <string name="view_public_repositories_button">查看</string>
     <string name="view_public_repositories_button_short">公開清單</string>
     <string name="uppercase_all_subtitles">字幕全大寫</string>
@@ -503,8 +498,7 @@
     <string name="sort_alphabetical_a">按字母順序（A 到 Z）</string>
     <string name="sort_alphabetical_z">按字母順序（Z 到 A）</string>
     <string name="select_library">選擇媒體庫</string>
-    <string name="safe_mode_file">找到安全模式檔案！
-\n在刪除此檔案之前，將不會在啟動時載入任何擴充功能。</string>
+    <string name="safe_mode_file">找到安全模式檔案！ \n在刪除此檔案之前，將不會在啟動時載入任何擴充功能。</string>
     <string name="test_log">日誌</string>
     <string name="test_failed">失敗</string>
     <string name="test_passed">通過</string>
@@ -522,8 +516,7 @@
     <string name="revert">還原</string>
     <string name="jsdelivr_enabled">無法存取 GitHub。 正在開啟 jsDelivr proxy…</string>
     <string name="jsdelivr_proxy_summary">使用 jsDelivr 繞過直接使用 GitHub 網址時的存取封鎖。 可能導致更新延遲數天。</string>
-    <string name="empty_library_no_accounts_message">您的媒體庫是空的 :(
-\n登入媒體庫帳號或將節目新增到您本機的媒體庫。</string>
+    <string name="empty_library_no_accounts_message">您的媒體庫是空的 :( \n登入媒體庫帳號或將節目新增到您本機的媒體庫。</string>
     <string name="empty_library_logged_in_message">您的媒體庫是空的。可嘗試以不同的帳號登入。</string>
     <string name="subscription_in_progress_notification">正在更新訂閱節目</string>
     <string name="backup_frequency">備份頻率</string>
@@ -531,11 +524,7 @@
     <string name="favorites_list_name">我的最愛</string>
     <string name="favorite_added">%s 已加入我的最愛</string>
     <string name="logged_account" formatted="true">以 %s 的身分登入</string>
-    <string name="duplicate_message_multiple" formatted="true">您的媒體庫中似乎有多個重覆的項目：
-\n
-\n%s
-\n
-\n您要強制加入、取代已有項目、還是取消操作？</string>
+    <string name="duplicate_message_multiple" formatted="true">您的媒體庫中似乎有多個重覆的項目： \n \n%s \n \n您要強制加入、取代已有項目、還是取消操作？</string>
     <string name="enter_pin_with_name" formatted="true">輸入 %s 的 PIN 碼</string>
     <string name="mobile_data">行動數據</string>
     <string name="duplicate_title">找到可能重覆的項目</string>
@@ -567,19 +556,11 @@
     <string name="no_repository_found_error">找不到資源庫，請檢查網址與 VPN 設定</string>
     <string name="already_voted">您已完成投票</string>
     <string name="no_plugins_found_error">在資源庫中找不到外掛程式</string>
-    <string name="duplicate_message_single" formatted="true">您的媒體庫中似乎有重覆的項目：「%s」。
-\n
-\n您要強制加入、取代已有項目、還是取消操作？</string>
+    <string name="duplicate_message_single" formatted="true">您的媒體庫中似乎有重覆的項目：「%s」。 \n \n您要強制加入、取代已有項目、還是取消操作？</string>
     <string name="set_default">設回預設</string>
     <string name="enter_pin">輸入 PIN 碼</string>
     <string name="pin">PIN 碼</string>
-    <string name="quality_profile_help">您可在此調整來源的排序方式。具有愈小的優先值的影片，在來源選擇中顯示得愈前面。來源優先值與品質優先值的加總就是影片優先值。
-\n例如：
-\n來源 A：3
-\n品質 B： 7
-\n則該來源的影片優先值為 10。
-\n
-\n注意：如果加總達到 10 或更高，則載入該連結時播放器將自動跳過載入！</string>
+    <string name="quality_profile_help">您可在此調整來源的排序方式。具有愈小的優先值的影片，在來源選擇中顯示得愈前面。來源優先值與品質優先值的加總就是影片優先值。 \n例如： \n來源 A：3 \n品質 B： 7 \n則該來源的影片優先值為 10。 \n \n注意：如果加總達到 10 或更高，則載入該連結時播放器將自動跳過載入！</string>
     <string name="enter_current_pin">輸入目前的 PIN 碼</string>
     <string name="rotate_video_desc">顯示切換畫面方向的按鈕</string>
     <string name="automatic_plugin_download_mode_title">選擇篩選外掛程式下載的模式</string>
@@ -599,8 +580,7 @@
     <string name="recommendations_tooltip">顯示推薦</string>
     <string name="speed_setting_summary">在播放器中新增速度選項</string>
     <string name="episode_upcoming_format" formatted="true">即將在 %s 推出</string>
-    <string name="resume_remaining" formatted="true">%s
-\n剩餘</string>
+    <string name="resume_remaining" formatted="true">%s \n剩餘</string>
     <string name="test_extensions">測試所有擴充功能</string>
     <string name="battery_dialog_title">停用電池優化</string>
     <string name="audio_book_singular">有聲書</string>
