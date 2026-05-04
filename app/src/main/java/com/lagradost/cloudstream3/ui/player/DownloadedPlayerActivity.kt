@@ -59,8 +59,26 @@ class DownloadedPlayerActivity : AppCompatActivity() {
         setContentView(R.layout.empty_layout)
         Log.i(TAG, "onCreate")
 
-        handleIntent(intent)
-        attachBackPressedCallback("DownloadedPlayerActivity") { finish() }
+        // When savedInstanceState != null the system saved state before killing the
+        // backgrounded process the NavController restores the correct player fragment
+        // automatically. Do not replay the intent as it would push a duplicate player.
+        if (savedInstanceState == null) {
+            handleIntent(intent)
+        }
+
+        // Use moveTaskToBack instead of finish() so there is always exactly one task
+        // entry in recents, always reflecting the current file.
+        //
+        // finish() destroys the Activity but may leave the task in recents. Each new file
+        // open can create a new task entry, so recents accumulates stale entries for old
+        // files. The user then taps a stale entry and gets the wrong file.
+        //
+        // moveTaskToBack keeps the Activity alive in the background. There is only ever
+        // one task entry in recents. New files opened from the file manager arrive via
+        // onNewIntent on the live instance, updating the player immediately. The single
+        // recents entry always reflects the current state, ensuring we load the
+        // correct file.
+        attachBackPressedCallback("DownloadedPlayerActivity") { moveTaskToBack(true) }
     }
 
     private fun handleIntent(intent: Intent) {
@@ -83,11 +101,11 @@ class DownloadedPlayerActivity : AppCompatActivity() {
                 url != null -> playLink(this, url)
                 data != null -> playUri(this, data)
                 extraText != null -> playLink(this, extraText)
-                else -> { finish(); return }
+                else -> finishAndRemoveTask()
             }
         } else if (data?.scheme == "content") {
             playUri(this, data)
-        } else finish()
+        } else finishAndRemoveTask()
     }
 
     override fun onResume() {
