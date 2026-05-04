@@ -311,7 +311,31 @@
                             android:paddingBottom="4dp"
                             android:adjustViewBounds="true"
                             android:scaleType="fitStart"
-                            android:contentDescription="@null" />
+                            android:focusable="true"
+                            android:contentDescription="@string/result_logo_img_des" />
+
+                        <TextView
+                            android:id="@+id/result_full_title_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom|start"
+                            android:layout_marginStart="@dimen/result_padding"
+                            android:layout_marginEnd="@dimen/result_padding"
+                            android:layout_marginBottom="12dp"
+                            android:paddingBottom="4dp"
+                            android:maxLines="3"
+                            android:ellipsize="end"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/white"
+                            android:shadowColor="#80000000"
+                            android:shadowDx="1"
+                            android:shadowDy="1"
+                            android:shadowRadius="3"
+                            android:visibility="gone"
+                            android:focusable="true"
+                            android:contentDescription="@string/result_full_title_img_des"
+                            tools:text="The Perfect Run" />
 
                     </FrameLayout>
                 </FrameLayout>

@@ -66,6 +66,7 @@ import com.lagradost.cloudstream3.ui.player.PlayerView
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment.bindLogo
+import com.lagradost.cloudstream3.ui.result.ResultFragment.setupLogoTitleToggle
 import com.lagradost.cloudstream3.ui.result.ResultFragment.getStoredData
 import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
@@ -973,6 +974,13 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
                         headers = d.posterHeaders,
                         titleView = resultTitle,
                         logoView = backgroundPosterWatermarkBadge
+                    )
+
+                    setupLogoTitleToggle(
+                        logoView = backgroundPosterWatermarkBadge,
+                        fullTitleView = resultFullTitleText,
+                        title = d.title,
+                        hasLogo = !d.logoUrl.isNullOrBlank()
                     )
 
                     var isExpanded = false
