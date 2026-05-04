@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <!-- Video Surface: Using TextureView instead of SurfaceView because
+         SurfaceView creates a separate compositor layer which VirtualDisplay
+         cannot composite back to its output Surface (causing black screen).
+         TextureView renders INTO the view hierarchy, so it appears correctly. -->
+    <TextureView
+        android:id="@+id/texture_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
+
+    <!-- Controls Overlay -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/controls_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:padding="16dp"
+        android:visibility="visible">
+
+        <!-- Title / Episode Info -->
+        <TextView
+            android:id="@+id/player_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Movie Title / Episode Name" />
+
+        <TextView
+            android:id="@+id/player_subtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="#DDDDDD"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/player_title"
+            tools:text="Season 1 Episode 1" />
+
+        <!-- 
+           Center Controls Layout 
+           Large hit targets for car usage
+        -->
+        <LinearLayout
+            android:id="@+id/center_controls"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:id="@+id/btn_rewind"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginEnd="32dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="Rewind 30s"
+                android:scaleType="fitCenter"
+                android:src="@drawable/go_back_30"
+                app:tint="@android:color/white" />
+
+            <!-- Play/Pause Button (Largest) -->
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                
+                <ImageButton
+                    android:id="@+id/btn_play"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="Play"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_baseline_play_arrow_24"
+                    android:visibility="gone"
+                    app:tint="@android:color/white" />
+
+                <ImageButton
+                    android:id="@+id/btn_pause"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="Pause"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_baseline_pause_24"
+                    app:tint="@android:color/white" />
+            </FrameLayout>
+
+            <ImageButton
+                android:id="@+id/btn_forward"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginStart="32dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="Forward 30s"
+                android:scaleType="fitCenter"
+                android:src="@drawable/go_forward_30"
+                app:tint="@android:color/white" />
+
+        </LinearLayout>
+
+        <!-- Current Time -->
+        <TextView
+            android:id="@+id/text_current_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="00:00" />
+
+        <!-- Total Duration -->
+        <TextView
+            android:id="@+id/text_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="45:00" />
+
+        <!-- Progress Bar -->
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="0dp"
+            android:layout_height="8dp"
+            android:layout_marginHorizontal="12dp"
+            android:layout_marginBottom="24dp"
+            android:max="1000"
+            android:indeterminate="false"
+            android:background="#33FFFFFF"
+            android:progressDrawable="@android:drawable/progress_horizontal"
+            android:progressTint="@android:color/holo_red_light"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/text_duration"
+            app:layout_constraintStart_toEndOf="@id/text_current_time"
+            app:layout_constraintTop_toTopOf="@id/text_current_time" />
+            
+         <!-- Note: using standard progress tint, custom drawable might be overkill if not present -->
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

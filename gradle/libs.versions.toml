@@ -7,6 +7,7 @@ animeDb = "1.0.2"
 appcompat = "1.7.1"
 biometric = "1.4.0-alpha06"
 buildkonfigGradlePlugin = "0.18.0"
+carApp = "1.8.0-beta01"
 coil = { strictly = "3.3.0" } # Later versions require jvmTarget 11 or later
 colorpicker = "6b46b49"
 conscryptAndroid = { strictly = "2.5.2" } # 2.5.3 crashes everything
@@ -59,6 +60,7 @@ activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activ
 anime-db = { module = "com.github.recloudstream:anime-db", version.ref = "animeDb" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
+car-app = { module = "androidx.car.app:app", version.ref = "carApp" }
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 colorpicker = { module = "com.github.recloudstream:color-picker-android", version.ref = "colorpicker" }
