@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.utils
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.util.Log
 import android.widget.ImageView
@@ -35,14 +36,22 @@ import java.nio.ByteBuffer
 object ImageLoader {
 
     private const val TAG = "CoilImgLoader"
-
+    private fun hasPotentialBrokenHardware(): Boolean {
+        val hardware = Build.HARDWARE?.lowercase() ?: ""
+        val board = Build.BOARD?.lowercase() ?: ""
+        val model = Build.MODEL?.lowercase() ?: ""
+        val allwinnerPatterns = listOf("sun50iw9", "h713", "allwinner")
+        val problematicModels = listOf("hy320", "hy300", "a10plus", "magcubic", "sinoy")
+        return allwinnerPatterns.any { it in hardware || it in board } ||
+                problematicModels.any { it in model }
+    }
     internal fun buildImageLoader(context: PlatformContext): ImageLoader = ImageLoader.Builder(context)
             .crossfade(200)
-            .allowHardware(SDK_INT >= 28) // SDK_INT >= 28, cant use hardware bitmaps for Palette Builder
+            .allowHardware(SDK_INT >= 28 && !hasPotentialBrokenHardware()) // SDK_INT >= 28, cant use hardware bitmaps for Palette Builder
             .diskCachePolicy(CachePolicy.ENABLED)
             .networkCachePolicy(CachePolicy.ENABLED)
             .memoryCache {
-                MemoryCache.Builder().maxSizePercent(context, 0.1) // Use 10 % of the app's available memory for caching
+                MemoryCache.Builder().maxSizePercent(context, 0.1) // 10 % of memory for caching
                     .build()
             }
             .diskCache {
@@ -55,13 +64,12 @@ object ImageLoader {
             /** Pass interceptors with care, unnecessary passing tokens to servers
             or image hosting services causes unauthorized exceptions **/
             .components { add(OkHttpNetworkFetcherFactory(callFactory = { buildDefaultClient(context) })) }
-            .also {
-                it.setupCoilLogger()
-                Log.d(TAG, "buildImageLoader: Setting COIL Image Loader.")
+            .apply {
+                setupCoilLogger()
             }
             .build()
 
-    /** Use DebugLogger on debug builds which won't slow down release builds & use EventListener for
+    /** DebugLogger on debug builds which won't slow down release builds & use EventListener for
     Errors on release builds. **/
     internal fun ImageLoader.Builder.setupCoilLogger() {
         if (BuildConfig.DEBUG) {
@@ -71,33 +79,28 @@ object ImageLoader {
             eventListener(object : EventListener() {
                 override fun onError(request: ImageRequest, result: ErrorResult) {
                     super.onError(request, result)
-                    Log.e(TAG, "Error loading image: ${result.throwable}")
+                    Log.e(TAG, "Image load error: ${result.throwable.message ?: result.throwable}")
+                    Log.e(TAG, "  URL: ${request.data}")
+                    Log.e(TAG, "  allowHardware: ${request.allowHardware}")
+                    Log.e(TAG, "  hardware: ${Build.HARDWARE}, board: ${Build.BOARD}")
                 }
             })
-            Log.d(TAG, "setupCoilLogger: Activated EVENT_LISTENER FOR COIL")
         }
     }
 
-    /** we use coil's built in loader with our global synchronized instance, this way we achieve
-    latest and complete functionality as well as stability **/
+    /** coil's built in loader attached w/ global synchronized instance **/
     private fun ImageView.loadImageInternal(
         imageData: Any?,
         headers: Map<String, String>? = null,
         builder: ImageRequest.Builder.() -> Unit = {} // for placeholder, error & transformations
     ) {
-        // clear image to avoid loading & flickering issue at fast scrolling (e.g, an image recycler)
+        // clear image to avoid loading & flickering issue at fast scrolling (~recycler view/lazy column)
         this.dispose()
-
-        if(imageData == null) return // Just in case
-
+        if (imageData == null) return
         // setImageResource is better than coil3 on resources due to attr
-        if(imageData is Int) {
-            this.setImageResource(imageData)
-            return
-        }
+        if (imageData is Int) { this.setImageResource(imageData); return }
 
-        // Use Coil's built-in load method but with our custom module & a decent USER-AGENT always
-        // which can be overridden by extensions.
+        // headers can be overridden by extensions.
         this.load(imageData, SingletonImageLoader.get(context)) {
             this.httpHeaders(NetworkHeaders.Builder().also { headerBuilder ->
                 headerBuilder["User-Agent"] = USER_AGENT
@@ -105,7 +108,6 @@ object ImageLoader {
                     headerBuilder[key] = value
                 }
             }.build())
-
             builder() // if passed
         }
     }
