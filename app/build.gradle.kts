@@ -218,6 +218,7 @@ dependencies {
     implementation(libs.fragment.ktx)
     implementation(libs.bundles.lifecycle)
     implementation(libs.bundles.navigation)
+    implementation(libs.kotlinx.collections.immutable)
 
     // Design & UI
     implementation(libs.preference.ktx)

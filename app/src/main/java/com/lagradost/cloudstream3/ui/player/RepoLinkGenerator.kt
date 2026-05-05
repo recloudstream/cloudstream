@@ -23,9 +23,8 @@ data class Cache(
 
 class RepoLinkGenerator(
     episodes: List<ResultEpisode>,
-    currentIndex: Int = 0,
     val page: LoadResponse? = null,
-) : VideoGenerator<ResultEpisode>(episodes, currentIndex) {
+) : VideoGenerator<ResultEpisode>(episodes) {
     companion object {
         const val TAG = "RepoLink"
         val cache: HashMap<Pair<String, Int>, Cache> =
@@ -34,6 +33,7 @@ class RepoLinkGenerator(
 
     override val hasCache = true
     override val canSkipLoading = true
+    override fun getId(index: Int): Int? = videos.getOrNull(index)?.id
 
     // this is a simple array that is used to instantly load links if they are already loaded
     //var linkCache = Array<Set<ExtractorLink>>(size = episodes.size, init = { setOf() })
@@ -48,7 +48,7 @@ class RepoLinkGenerator(
         offset: Int,
         isCasting: Boolean,
     ): Boolean {
-        val current = getCurrent(offset) ?: return false
+        val current = videos.getOrNull(offset) ?: return false
 
         val currentCache = synchronized(cache) {
             cache[current.apiName to current.id] ?: Cache(

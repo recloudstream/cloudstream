@@ -2000,6 +2000,8 @@ object VideoDownloadManager {
 
             linkLoadingJob = ioSafe {
                 generator.generateLinks(
+                    offset = 0,
+                    isCasting = false,
                     clearCache = false,
                     sourceTypes = LOADTYPE_INAPP_DOWNLOAD,
                     callback = {

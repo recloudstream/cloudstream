@@ -1,7 +1,8 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.app.Activity
-import android.content.*
+import android.content.Context
+import android.content.DialogInterface
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.MainThread
@@ -10,24 +11,50 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.actions.AlwaysAskAction
-import com.lagradost.cloudstream3.actions.VideoClickActionHolder
+import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
+import com.lagradost.cloudstream3.ActorData
+import com.lagradost.cloudstream3.AnimeLoadResponse
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.context
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.getCastSession
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.DubStatus
+import com.lagradost.cloudstream3.EpisodeResponse
+import com.lagradost.cloudstream3.IDownloadableMinimum
+import com.lagradost.cloudstream3.LiveStreamLoadResponse
+import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getKitsuId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
 import com.lagradost.cloudstream3.LoadResponse.Companion.readIdFromString
+import com.lagradost.cloudstream3.MainActivity
+import com.lagradost.cloudstream3.MovieLoadResponse
+import com.lagradost.cloudstream3.ProviderType
+import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.Score
+import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.SeasonData
+import com.lagradost.cloudstream3.ShowStatus
+import com.lagradost.cloudstream3.SimklSyncServices
+import com.lagradost.cloudstream3.SubtitleFile
+import com.lagradost.cloudstream3.TorrentLoadResponse
+import com.lagradost.cloudstream3.TrackerType
+import com.lagradost.cloudstream3.TrailerData
+import com.lagradost.cloudstream3.TvSeriesLoadResponse
+import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.VPNStatus
+import com.lagradost.cloudstream3.actions.AlwaysAskAction
+import com.lagradost.cloudstream3.actions.VideoClickActionHolder
+import com.lagradost.cloudstream3.amap
+import com.lagradost.cloudstream3.isEpisodeBased
+import com.lagradost.cloudstream3.isLiveStream
 import com.lagradost.cloudstream3.metaproviders.SyncRedirector
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.debugAssert
@@ -44,9 +71,7 @@ import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.WatchType
-import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
-import com.lagradost.cloudstream3.ui.player.IGenerator
 import com.lagradost.cloudstream3.ui.player.LOADTYPE_ALL
 import com.lagradost.cloudstream3.ui.player.LOADTYPE_CHROMECAST
 import com.lagradost.cloudstream3.ui.player.LOADTYPE_INAPP
@@ -105,8 +130,8 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.utils.VIDEO_WATCH_STATE
 import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.sanitizeFilename
-import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDownloadEpisodeMetadata
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
+import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import com.lagradost.cloudstream3.utils.downloader.DownloadUtils.downloadSubtitle
 import com.lagradost.cloudstream3.utils.loadExtractor
 import com.lagradost.cloudstream3.utils.newExtractorLink
@@ -423,7 +448,7 @@ fun SelectPopup.getOptions(context: Context): List<String> {
 }
 
 data class ExtractedTrailerData(
-    var mirros: List<Pair<ExtractorLink,String>>,//Pair of extracted trailer link and original trailer link
+    var mirros: List<Pair<ExtractorLink, String>>,//Pair of extracted trailer link and original trailer link
     var subtitles: List<SubtitleFile> = emptyList(),
 )
 
@@ -454,7 +479,7 @@ class ResultViewModel2 : ViewModel() {
     var currentRepo: APIRepository? = null
     private var currentId: Int? = null
     private var fillers: HashSet<Int> = hashSetOf()
-    private var generator: IGenerator? = null
+    private var generator: RepoLinkGenerator? = null
     private var preferDubStatus: DubStatus? = null
     private var preferStartEpisode: Int? = null
     private var preferStartSeason: Int? = null
@@ -1267,9 +1292,10 @@ class ResultViewModel2 : ViewModel() {
                     subs += sub
                     updatePage()
                 },
-                isCasting = isCasting
+                isCasting = isCasting,
+                offset = 0
             )
-        } catch (e: CancellationException) {
+        } catch (_: CancellationException) {
             // Do nothing
         } catch (e: Exception) {
             logError(e)
@@ -1518,26 +1544,24 @@ class ResultViewModel2 : ViewModel() {
 
             ACTION_PLAY_EPISODE_IN_PLAYER -> {
                 val list = HashMap<String, String>(currentResponse?.syncData ?: emptyMap())
+                val generator = generator ?: return
 
-                generator?.also {
-                    it.getAll() // I know kinda shit to iterate all, but it is 100% sure to work
-                        ?.indexOfFirst { value -> value is ResultEpisode && value.id == click.data.id }
-                        ?.let { index ->
-                            if (index >= 0)
-                                it.goto(index)
-                        }
-                }
+                // I know kinda shit to iterate all, but it is 100% sure to work
+                val index = generator.videos.indexOfFirst { value -> value.id == click.data.id }
+
                 if (currentResponse?.type == TvType.CustomMedia) {
-                    generator?.generateLinks(
+                    generator.generateLinks(
+                        offset = index,
                         clearCache = true,
-                        LOADTYPE_ALL,
+                        isCasting = false,
+                        sourceTypes = LOADTYPE_ALL,
                         callback = {},
                         subtitleCallback = {})
                 } else {
                     activity?.navigate(
                         R.id.global_to_navigation_player,
                         GeneratorPlayer.newInstance(
-                            generator ?: return, list
+                            generator, index,list
                         )
                     )
                 }
@@ -1807,7 +1831,7 @@ class ResultViewModel2 : ViewModel() {
     }
 
 
-    private suspend fun updateFillers(data : LoadResponse) {
+    private suspend fun updateFillers(data: LoadResponse) {
         fillers = ioWorkSafe {
             FillerEpisodeCheck.getFillerEpisodes(data)
         } ?: hashSetOf()
@@ -2429,26 +2453,34 @@ class ResultViewModel2 : ViewModel() {
             loadResponse.trailers.windowed(limit, limit, true).takeWhile { list ->
                 list.amap { trailerData ->
                     try {
-                        val links = arrayListOf<Pair<ExtractorLink,String>>()
+                        val links = arrayListOf<Pair<ExtractorLink, String>>()
                         val subs = arrayListOf<SubtitleFile>()
                         if (!loadExtractor(
                                 trailerData.extractorUrl,
                                 trailerData.referer,
                                 { subs.add(it) },
-                                { links.add(Pair(it,trailerData.extractorUrl))}) && trailerData.raw
+                                {
+                                    links.add(
+                                        Pair(
+                                            it,
+                                            trailerData.extractorUrl
+                                        )
+                                    )
+                                }) && trailerData.raw
                         ) {
                             arrayListOf(
                                 Pair(
                                     newExtractorLink(
-                                    "",
-                                    "Trailer",
-                                    trailerData.extractorUrl,
-                                    type = INFER_TYPE
-                                ) {
-                                    this.referer = trailerData.referer ?: ""
-                                    this.quality = Qualities.Unknown.value
-                                    this.headers = trailerData.headers
-                                },trailerData.extractorUrl)
+                                        "",
+                                        "Trailer",
+                                        trailerData.extractorUrl,
+                                        type = INFER_TYPE
+                                    ) {
+                                        this.referer = trailerData.referer ?: ""
+                                        this.quality = Qualities.Unknown.value
+                                        this.headers = trailerData.headers
+                                    }, trailerData.extractorUrl
+                                )
                             ) to arrayListOf()
                         } else {
                             links to subs

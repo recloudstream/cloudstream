@@ -9,35 +9,170 @@ import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.mvvm.safeApiCall
+import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper.getLinkPriority
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.videoskip.SkipAPI
 import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.PersistentSet
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.collections.immutable.toPersistentList
+import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import org.jetbrains.annotations.Contract
+import java.util.concurrent.ConcurrentHashMap
+
+typealias VideoLink = Pair<ExtractorLink?, ExtractorUri?>
+
+data class GeneratorState(
+    val meta: Any?,
+    val nextMeta: Any?,
+    val allMeta: List<*>?,
+    val response: LoadResponse?,
+    val index: Int,
+    val id: Int?,
+)
+
+/** Immutable state of all current links relevant to displaying the video */
+// @MustUseReturnValues
+// @Immutable
+data class VideoState(
+    val subtitles: PersistentSet<SubtitleData> = persistentSetOf(),
+    val links: PersistentSet<VideoLink> = persistentSetOf(),
+    val stamps: PersistentList<VideoSkipStamp> = persistentListOf(),
+    val loading: Resource<Boolean?> = Resource.Loading(),
+    val generatorState: GeneratorState? = null,
+) {
+    /**
+     * This acts as a local cache for sorted links that are not copied over by the copy constructor.
+     *
+     * sortedBy is not exactly expensive, but each hasNextMirror does it again, so this alleviates unnecessary recomputation
+     * */
+    private val sortedLinks: ConcurrentHashMap<Int, List<VideoLink>> = ConcurrentHashMap()
+
+    // Modifying sortedLinks is not considered a "visible" side effect, and rerunning it does not change the result
+    // It is by all standards, idempotent and by extension also pure as it has no "visible" side effect
+    /** Returns .links in the sorted order according to the qualityProfile.
+     * Use .links if order is not needed */
+    @Contract(pure = true)
+    fun sortLinks(qualityProfile: Int): List<VideoLink> {
+        return sortedLinks[qualityProfile] ?: links.sortedBy { link ->
+            // negative because we want to sort highest quality first
+            -getLinkPriority(qualityProfile, link.first)
+        }.also { value -> sortedLinks[qualityProfile] = value }
+    }
+
+    @Contract(pure = true)
+    fun add(item: SubtitleData): VideoState = copy(subtitles = subtitles.add(item))
+
+    @Contract(pure = true)
+    fun add(item: VideoLink): VideoState = copy(links = links.add(item))
+
+    @Contract(pure = true)
+    fun add(item: VideoSkipStamp): VideoState = copy(stamps = stamps.add(item))
+
+    @JvmName("addSubtitleData")
+    @Contract(pure = true)
+    fun add(items: Collection<SubtitleData>): VideoState = copy(subtitles = subtitles.addAll(items))
+
+    @JvmName("addVideoLink")
+    @Contract(pure = true)
+    fun add(items: Collection<VideoLink>): VideoState = copy(links = links.addAll(items))
+
+    @JvmName("addVideoSkipStamp")
+    @Contract(pure = true)
+    fun add(items: Collection<VideoSkipStamp>): VideoState = copy(stamps = stamps.addAll(items))
+
+    @Contract(pure = true)
+    fun set(item: SubtitleData): VideoState = copy(subtitles = persistentSetOf(item))
+
+    @Contract(pure = true)
+    fun set(item: VideoLink): VideoState = copy(links = persistentSetOf(item))
+
+    @Contract(pure = true)
+    fun set(item: VideoSkipStamp): VideoState = copy(stamps = persistentListOf(item))
+
+    @JvmName("setSubtitleData")
+    @Contract(pure = true)
+    fun set(items: Collection<SubtitleData>): VideoState = copy(subtitles = items.toPersistentSet())
+
+    @JvmName("setVideoLink")
+    @Contract(pure = true)
+    fun set(items: Collection<VideoLink>): VideoState = copy(links = items.toPersistentSet())
+
+    @JvmName("setVideoSkipStamp")
+    @Contract(pure = true)
+    fun set(items: Collection<VideoSkipStamp>): VideoState = copy(stamps = items.toPersistentList())
+}
 
 class PlayerGeneratorViewModel : ViewModel() {
     companion object {
         const val TAG = "PlayViewGen"
     }
 
-    private var generator: IGenerator? = null
+    @Volatile
+    var generator: VideoGenerator<*>? = null
+
+    @Volatile
+    private var episodeIndex: Int = 0
+
+    /**
+     * The state of the video player, only modify it by modifyState to make sure observe is called,
+     * and avoid concurrency issues.
+     *
+     * This value can be used without Synchronized or locking when reading, as all fields are immutable.
+     * */
+    @Volatile
+    var state = VideoState()
+        private set
 
     private val _currentLinks = MutableLiveData<Set<Pair<ExtractorLink?, ExtractorUri?>>>(setOf())
     val currentLinks: LiveData<Set<Pair<ExtractorLink?, ExtractorUri?>>> = _currentLinks
 
-    private val _currentSubs = MutableLiveData<Set<SubtitleData>>(setOf())
-    val currentSubs: LiveData<Set<SubtitleData>> = _currentSubs
+    private val _currentSubtitles = MutableLiveData<Set<SubtitleData>>(setOf())
+    val currentSubtitles: LiveData<Set<SubtitleData>> = _currentSubtitles
 
     private val _loadingLinks = MutableLiveData<Resource<Boolean?>>()
     val loadingLinks: LiveData<Resource<Boolean?>> = _loadingLinks
 
     private val _currentStamps = MutableLiveData<List<VideoSkipStamp>>(emptyList())
     val currentStamps: LiveData<List<VideoSkipStamp>> = _currentStamps
+
+    /**
+     * Modifies the `state` variable safely, and with the correct observe behavior.
+     *
+     * Synchronized to avoid concurrency issues, and make this operation atomic.
+     * Otherwise, one update may be lost if they are done in parallel.
+     * */
+    @Synchronized
+    fun modifyState(op: VideoState.() -> VideoState) {
+        val oldState = state
+        state = op.invoke(oldState)
+
+        /**
+         * Only post the changed values, this makes sure we do not invoke the "observe"
+         *
+         * We do this by "Referential equality" https://kotlinlang.org/docs/equality.html#referential-equality
+         * to avoid comparing the entire set or list as "Persistent" classes will hold the same reference if they are unchanged.
+         * */
+        if (state.links !== oldState.links)
+            _currentLinks.postValue(state.links)
+        if (state.stamps !== oldState.stamps)
+            _currentStamps.postValue(state.stamps)
+        if (state.subtitles !== oldState.subtitles)
+            _currentSubtitles.postValue(state.subtitles)
+
+        /** Normal equality here as it is not a collection */
+        if (state.loading != oldState.loading)
+            _loadingLinks.postValue(state.loading)
+    }
 
     private val _currentSubtitleYear = MutableLiveData<Int?>(null)
     val currentSubtitleYear: LiveData<Int?> = _currentSubtitleYear
@@ -53,41 +188,32 @@ class PlayerGeneratorViewModel : ViewModel() {
         _currentSubtitleYear.postValue(year)
     }
 
-    fun getId(): Int? {
-        return generator?.getCurrentId()
-    }
-
-    fun loadLinks(episode: Int) {
-        generator?.goto(episode)
-        loadLinks()
-    }
-
     fun loadLinksPrev() {
         Log.i(TAG, "loadLinksPrev")
-        if (generator?.hasPrev() == true) {
-            generator?.prev()
+        if (generator?.hasPrev(episodeIndex) == true) {
+            episodeIndex += 1
             loadLinks()
         }
     }
 
     fun loadLinksNext() {
         Log.i(TAG, "loadLinksNext")
-        if (generator?.hasNext() == true) {
-            generator?.next()
+        if (generator?.hasNext(episodeIndex) == true) {
+            episodeIndex += 1
             loadLinks()
         }
     }
 
     fun hasNextEpisode(): Boolean? {
-        return generator?.hasNext()
+        return generator?.hasNext(episodeIndex)
     }
 
     fun hasPrevEpisode(): Boolean? {
-        return generator?.hasPrev()
+        return generator?.hasPrev(episodeIndex)
     }
 
     fun preLoadNextLinks() {
-        val id = getId()
+        val id = generator?.getId(episodeIndex)
         // Do not preload if already loading
         if (id == currentLoadingEpisodeId) return
 
@@ -97,14 +223,15 @@ class PlayerGeneratorViewModel : ViewModel() {
 
         currentJob = viewModelScope.launch {
             try {
-                if (generator?.hasCache == true && generator?.hasNext() == true) {
+                if (generator?.hasCache == true && generator?.hasNext(episodeIndex) == true) {
                     safeApiCall {
                         generator?.generateLinks(
                             sourceTypes = LOADTYPE_INAPP,
                             clearCache = false,
+                            isCasting = false,
                             callback = {},
                             subtitleCallback = {},
-                            offset = 1
+                            offset = episodeIndex + 1
                         )
                     }
                 }
@@ -118,129 +245,132 @@ class PlayerGeneratorViewModel : ViewModel() {
         }
     }
 
-    fun getLoadResponse(): LoadResponse? {
-        return safe { (generator as? RepoLinkGenerator?)?.page }
-    }
-
-    fun getMeta(): Any? {
-        return safe { generator?.getCurrent() }
-    }
-
-    fun getAllMeta(): List<Any>? {
-        return safe { generator?.getAll() }
-    }
-
-    fun getNextMeta(): Any? {
-        return safe {
-            if (generator?.hasNext() == false) return@safe null
-            generator?.getCurrent(offset = 1)
-        }
-    }
-
-    fun loadThisEpisode(index:Int) {
-        generator?.goto(index)
+    fun loadThisEpisode(index: Int) {
+        episodeIndex = index
         loadLinks()
     }
 
-    fun getCurrentIndex():Int?{
-        val repoGen = generator as? RepoLinkGenerator ?: return null
-        return repoGen.videoIndex
-    }
-
-    fun attachGenerator(newGenerator: IGenerator?) {
+    fun attachGenerator(newGenerator: VideoGenerator<*>?, index: Int?) {
         if (generator == null) {
             generator = newGenerator
+            if (index != null) {
+                episodeIndex = index
+            }
         }
     }
-
-    private var extraSubtitles : MutableSet<SubtitleData> = mutableSetOf()
 
     /**
      * If duplicate nothing will happen
      * */
-    fun addSubtitles(file: Set<SubtitleData>) = synchronized(extraSubtitles) {
-        extraSubtitles += file
-        val current = _currentSubs.value ?: emptySet()
-        val next = extraSubtitles + current
-
-        // if it is of a different size then we have added distinct items
-        if (next.size != current.size) {
-            // Posting will refresh subtitles which will in turn
-            // make the subs to english if previously unselected
-            _currentSubs.postValue(next)
-        }
+    fun addSubtitles(file: Set<SubtitleData>) {
+        val validFile = file.filter(::isValidSubtitle)
+        if (validFile.isNotEmpty())
+            modifyState {
+                add(validFile)
+            }
     }
 
     private var currentJob: Job? = null
     private var currentStampJob: Job? = null
 
     fun loadStamps(duration: Long) {
-        //currentStampJob?.cancel()
         currentStampJob = ioSafe {
-            val meta = generator?.getCurrent()
-            val page = (generator as? RepoLinkGenerator?)?.page
-            if (page != null && meta is ResultEpisode) {
-                _currentStamps.postValue(listOf())
-                _currentStamps.postValue(
-                    SkipAPI.videoStamps(
-                        page,
-                        meta,
-                        duration,
-                        hasNextEpisode() ?: false
-                    )
-                )
+            val genState = state.generatorState ?: return@ioSafe
+            val meta = genState.meta
+            val page = genState.response
+            val id = genState.id
+            if (page == null || meta !is ResultEpisode) {
+                return@ioSafe
             }
+            val stamps = SkipAPI.videoStamps(
+                page,
+                meta,
+                duration,
+                hasNextEpisode() ?: false
+            )
+
+            /** Avoid adding stamps to the wrong video */
+            modifyState {
+                if (id != this.generatorState?.id) {
+                    this
+                } else {
+                    set(stamps)
+                }
+            }
+        }
+    }
+
+    var langFilterList = listOf<String>()
+    var filterSubByLang = false
+
+    fun isValidSubtitle(subtitle: SubtitleData): Boolean {
+        if (langFilterList.isEmpty() || !filterSubByLang) {
+            return true
+        }
+
+        /** Only filter out subtitles fetched online */
+        if (subtitle.origin != SubtitleOrigin.URL) {
+            return true
+        }
+
+        return langFilterList.any { lang ->
+            subtitle.originalName.contains(lang, ignoreCase = true)
         }
     }
 
     fun loadLinks(sourceTypes: Set<ExtractorLinkType> = LOADTYPE_INAPP) {
         Log.i(TAG, "loadLinks")
         currentJob?.cancel()
+        val index = episodeIndex
 
         currentJob = viewModelScope.launchSafe {
-            // if we load links then we clear the prev loaded links
-            synchronized(extraSubtitles) {
-                extraSubtitles.clear()
+            // Clear old data and reset the state
+            modifyState {
+                VideoState(
+                    generatorState = generator?.let { gen ->
+                        GeneratorState(
+                            meta = gen.videos.getOrNull(index),
+                            nextMeta = gen.videos.getOrNull(index + 1),
+                            id = gen.getId(index),
+                            response = (gen as? RepoLinkGenerator)?.page,
+                            index = index,
+                            allMeta = gen.videos
+                        )
+                    }
+                )
             }
-            val currentLinks = mutableSetOf<Pair<ExtractorLink?, ExtractorUri?>>()
-            val currentSubs = mutableSetOf<SubtitleData>()
 
-            // clear old data
-            _currentSubs.postValue(emptySet())
-            _currentLinks.postValue(emptySet())
-
-            // load more data
-            _loadingLinks.postValue(Resource.Loading())
+            // Load more data
             val loadingState = safeApiCall {
                 generator?.generateLinks(
                     sourceTypes = sourceTypes,
                     clearCache = forceClearCache,
-                    callback = {
-                        synchronized(currentLinks) {
-                            currentLinks.add(it)
-                            // Clone to prevent ConcurrentModificationException
-                            safe {
-                                // Extra safe since .toSet() iterates.
-                                _currentLinks.postValue(currentLinks.toSet())
-                            }
+                    callback = { link ->
+                        modifyState {
+                            add(link)
                         }
                     },
-                    subtitleCallback = {
-                        synchronized(extraSubtitles) {
-                            currentSubs.add(it)
-                            safe {
-                                _currentSubs.postValue(currentSubs + extraSubtitles)
+                    isCasting = false,
+                    offset = index,
+                    subtitleCallback = { link ->
+                        if (isValidSubtitle(link))
+                            modifyState {
+                                add(link)
                             }
-                        }
                     })
             }
 
-            _loadingLinks.postValue(loadingState)
-            _currentLinks.postValue(currentLinks)
-            synchronized(extraSubtitles) {
-                _currentSubs.postValue(currentSubs + extraSubtitles)
+            if (!isActive) {
+                return@launchSafe
+            }
+
+            /** Only mark as success if we have not skipped loading */
+            modifyState {
+                when (loading) {
+                    is Resource.Loading -> copy(loading = loadingState)
+                    else -> this
+                }
             }
         }
-
     }
 }

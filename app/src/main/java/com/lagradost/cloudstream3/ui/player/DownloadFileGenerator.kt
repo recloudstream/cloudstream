@@ -14,11 +14,12 @@ import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.getFol
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDownloadFileInfo
 
 class DownloadFileGenerator(
-    episodes: List<ExtractorUri>,
-    currentIndex: Int = 0
-) : VideoGenerator<ExtractorUri>(episodes, currentIndex) {
+    episodes: List<ExtractorUri>
+) : VideoGenerator<ExtractorUri>(episodes) {
     override val hasCache = false
     override val canSkipLoading = false
+
+    override fun getId(index: Int): Int? = this.videos.getOrNull(index)?.id
 
     override suspend fun generateLinks(
         clearCache: Boolean,
@@ -28,7 +29,7 @@ class DownloadFileGenerator(
         offset: Int,
         isCasting: Boolean
     ): Boolean {
-        val meta = getCurrent(offset) ?: return false
+        val meta = videos.getOrNull(offset) ?: return false
 
         if (meta.uri == Uri.EMPTY) {
             // We do this here so that we only load it when
