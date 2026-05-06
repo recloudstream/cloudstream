@@ -1274,11 +1274,11 @@ class GeneratorPlayer : FullScreenPlayer() {
                     ) { profile ->
                         currentQualityProfile = profile.id
                         setProfileName(profile.id)
-                        refreshLinks(profile.id)
                     }
 
                     dialog.setOnDismissListener {
                         viewModel.state.clearSortedLinksCache()
+                        refreshLinks(currentQualityProfile)
                     }
 
                     dialog.show()
