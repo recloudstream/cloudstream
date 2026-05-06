@@ -57,6 +57,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
             android:scaleType="fitStart"
             android:focusable="true"
             android:focusableInTouchMode="true"
+            android:foreground="@drawable/outline_drawable"
             android:nextFocusDown="@id/result_title"
             android:contentDescription="@string/result_logo_img_des" />
 
@@ -196,6 +197,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                     android:textStyle="bold"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
+                    android:foreground="@drawable/outline_drawable"
                     android:nextFocusUp="@id/background_poster_watermark_badge_holder"
                     android:nextFocusDown="@id/result_play_parent"
                     tools:text="The Perfect Run The Perfect Run" />
