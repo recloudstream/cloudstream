@@ -2146,6 +2146,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     fun releasePlayer() {
         player.release()
         currentSelectedSubtitles = null
+        currentSelectedLink = null
         isPlayerActive.set(false)
         binding?.overlayLoadingSkipButton?.isVisible = false
         binding?.playerLoadingOverlay?.isVisible = true
@@ -2206,8 +2207,12 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         preferredAutoSelectSubtitles = getAutoSelectLanguageTagIETF()
 
-        if (currentSelectedLink == null) {
+        val selectedLink = currentSelectedLink
+        if (selectedLink == null) {
             viewModel.loadLinks()
+        } else {
+            // Recreated view, so we need to recreate the
+            loadLink(selectedLink, true)
         }
 
         binding.overlayLoadingSkipButton.setOnClickListener {
