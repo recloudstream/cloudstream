@@ -2159,6 +2159,11 @@ class GeneratorPlayer : FullScreenPlayer() {
         activity?.popCurrentPage()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putInt("index", viewModel.episodeIndex)
+        super.onSaveInstanceState(outState)
+    }
+
     override fun onBindingCreated(binding: FragmentPlayerBinding, savedInstanceState: Bundle?) {
         viewModel = ViewModelProvider(this)[PlayerGeneratorViewModel::class.java]
         sync = ViewModelProvider(this)[SyncViewModel::class.java]
