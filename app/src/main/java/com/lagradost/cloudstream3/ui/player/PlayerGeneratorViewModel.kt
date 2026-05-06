@@ -129,7 +129,7 @@ class PlayerGeneratorViewModel : ViewModel() {
     var generator: VideoGenerator<*>? = null
 
     @Volatile
-    private var episodeIndex: Int = 0
+    var episodeIndex: Int = 0
 
     /**
      * The state of the video player, only modify it by modifyState to make sure observe is called,
