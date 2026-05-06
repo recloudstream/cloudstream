@@ -341,6 +341,7 @@ class PlayerGeneratorViewModel : ViewModel() {
         // Clear old data and reset the state
         modifyState {
             VideoState(
+                loading = Resource.Loading(),
                 generatorState = generator?.let { gen ->
                     GeneratorState(
                         meta = gen.videos.getOrNull(index),
