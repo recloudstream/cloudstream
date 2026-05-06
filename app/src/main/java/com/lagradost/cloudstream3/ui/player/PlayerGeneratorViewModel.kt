@@ -47,8 +47,9 @@ data class VideoState(
     val subtitles: PersistentSet<SubtitleData> = persistentSetOf(),
     val links: PersistentSet<VideoLink> = persistentSetOf(),
     val stamps: PersistentList<VideoSkipStamp> = persistentListOf(),
-    val loading: Resource<Boolean?> = Resource.Loading(),
+    val loading: Resource<Unit> = Resource.Loading(),
     val generatorState: GeneratorState? = null,
+    val instance: Int,
 ) {
     /**
      * This acts as a local cache for sorted links that are not copied over by the copy constructor.
@@ -114,6 +115,11 @@ data class VideoState(
     fun set(items: Collection<VideoSkipStamp>): VideoState = copy(stamps = items.toPersistentList())
 }
 
+data class VideoLive<T>(
+    val value: T,
+    val instance: Int,
+)
+
 class PlayerGeneratorViewModel : ViewModel() {
     companion object {
         const val TAG = "PlayViewGen"
@@ -132,20 +138,21 @@ class PlayerGeneratorViewModel : ViewModel() {
      * This value can be used without Synchronized or locking when reading, as all fields are immutable.
      * */
     @Volatile
-    var state = VideoState()
+    var state = VideoState(instance = 0)
         private set
 
-    private val _currentLinks = MutableLiveData<Set<Pair<ExtractorLink?, ExtractorUri?>>>(setOf())
-    val currentLinks: LiveData<Set<Pair<ExtractorLink?, ExtractorUri?>>> = _currentLinks
+    private val _currentLinks =
+        MutableLiveData<VideoLive<Set<Pair<ExtractorLink?, ExtractorUri?>>>>(null)
+    val currentLinks: LiveData<VideoLive<Set<Pair<ExtractorLink?, ExtractorUri?>>>> = _currentLinks
 
-    private val _currentSubtitles = MutableLiveData<Set<SubtitleData>>(setOf())
-    val currentSubtitles: LiveData<Set<SubtitleData>> = _currentSubtitles
+    private val _currentSubtitles = MutableLiveData<VideoLive<Set<SubtitleData>>>(null)
+    val currentSubtitles: LiveData<VideoLive<Set<SubtitleData>>> = _currentSubtitles
 
-    private val _loadingLinks = MutableLiveData<Resource<Boolean?>>()
-    val loadingLinks: LiveData<Resource<Boolean?>> = _loadingLinks
+    private val _loadingLinks = MutableLiveData<VideoLive<Resource<Unit>>>()
+    val loadingLinks: LiveData<VideoLive<Resource<Unit>>> = _loadingLinks
 
-    private val _currentStamps = MutableLiveData<List<VideoSkipStamp>>(emptyList())
-    val currentStamps: LiveData<List<VideoSkipStamp>> = _currentStamps
+    private val _currentStamps = MutableLiveData<VideoLive<List<VideoSkipStamp>>>(null)
+    val currentStamps: LiveData<VideoLive<List<VideoSkipStamp>>> = _currentStamps
 
     /**
      * Modifies the `state` variable safely, and with the correct observe behavior.
@@ -158,6 +165,15 @@ class PlayerGeneratorViewModel : ViewModel() {
         val oldState = state
         state = op.invoke(oldState)
 
+        /** New instance, always push state */
+        if (state.instance != oldState.instance) {
+            _currentSubtitles.postValue(VideoLive(state.subtitles, state.instance))
+            _currentStamps.postValue(VideoLive(state.stamps, state.instance))
+            _currentLinks.postValue(VideoLive(state.links, state.instance))
+            _loadingLinks.postValue(VideoLive(state.loading, state.instance))
+            return
+        }
+
         /**
          * Only post the changed values, this makes sure we do not invoke the "observe"
          *
@@ -165,15 +181,15 @@ class PlayerGeneratorViewModel : ViewModel() {
          * to avoid comparing the entire set or list as "Persistent" classes will hold the same reference if they are unchanged.
          * */
         if (state.links !== oldState.links)
-            _currentLinks.postValue(state.links)
+            _currentLinks.postValue(VideoLive(state.links, state.instance))
         if (state.stamps !== oldState.stamps)
-            _currentStamps.postValue(state.stamps)
+            _currentStamps.postValue(VideoLive(state.stamps, state.instance))
         if (state.subtitles !== oldState.subtitles)
-            _currentSubtitles.postValue(state.subtitles)
+            _currentSubtitles.postValue(VideoLive(state.subtitles, state.instance))
 
         /** Normal equality here as it is not a collection */
         if (state.loading != oldState.loading)
-            _loadingLinks.postValue(state.loading)
+            _loadingLinks.postValue(VideoLive(state.loading, state.instance))
     }
 
     private val _currentSubtitleYear = MutableLiveData<Int?>(null)
@@ -253,6 +269,7 @@ class PlayerGeneratorViewModel : ViewModel() {
     }
 
     fun attachGenerator(newGenerator: VideoGenerator<*>?, index: Int?) {
+        Log.i(TAG, "attachGenerator with generator=$newGenerator and index=$index")
         if (generator == null) {
             generator = newGenerator
             if (index != null) {
@@ -321,45 +338,48 @@ class PlayerGeneratorViewModel : ViewModel() {
     }
 
     fun loadLinks(sourceTypes: Set<ExtractorLinkType> = LOADTYPE_INAPP) {
-        Log.i(TAG, "loadLinks")
+        Log.i(TAG, "loadLinks with generator=$generator and index=$episodeIndex")
         currentJob?.cancel()
         val index = episodeIndex
 
-        currentJob = viewModelScope.launchSafe {
-            // Clear old data and reset the state
-            modifyState {
-                VideoState(
-                    generatorState = generator?.let { gen ->
-                        GeneratorState(
-                            meta = gen.videos.getOrNull(index),
-                            nextMeta = gen.videos.getOrNull(index + 1),
-                            id = gen.getId(index),
-                            response = (gen as? RepoLinkGenerator)?.page,
-                            index = index,
-                            allMeta = gen.videos
-                        )
-                    }
-                )
-            }
+        // Clear old data and reset the state
+        modifyState {
+            VideoState(
+                generatorState = generator?.let { gen ->
+                    GeneratorState(
+                        meta = gen.videos.getOrNull(index),
+                        nextMeta = gen.videos.getOrNull(index + 1),
+                        id = gen.getId(index),
+                        response = (gen as? RepoLinkGenerator)?.page,
+                        index = index,
+                        allMeta = gen.videos
+                    )
+                },
+                instance = instance + 1
+            )
+        }
 
+        currentJob = viewModelScope.launchSafe {
             // Load more data
             val loadingState = safeApiCall {
                 generator?.generateLinks(
                     sourceTypes = sourceTypes,
                     clearCache = forceClearCache,
                     callback = { link ->
-                        modifyState {
-                            add(link)
-                        }
+                        if (isActive)
+                            modifyState {
+                                add(link)
+                            }
                     },
                     isCasting = false,
                     offset = index,
                     subtitleCallback = { link ->
-                        if (isValidSubtitle(link))
+                        if (isActive && isValidSubtitle(link))
                             modifyState {
                                 add(link)
                             }
                     })
+                Unit
             }
 
             if (!isActive) {
@@ -368,9 +388,13 @@ class PlayerGeneratorViewModel : ViewModel() {
 
             /** Only mark as success if we have not skipped loading */
             modifyState {
-                when (loading) {
-                    is Resource.Loading -> copy(loading = loadingState)
-                    else -> this
+                if (!isActive) {
+                    this
+                } else {
+                    when (loading) {
+                        is Resource.Loading -> copy(loading = loadingState)
+                        else -> this
+                    }
                 }
             }
         }
