@@ -44,23 +44,6 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
             android:layout_gravity="bottom"
             android:src="@drawable/background_shadow" />
 
-        <ImageView
-            android:id="@+id/background_poster_watermark_badge_holder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxWidth="220dp"
-            android:maxHeight="72dp"
-            android:layout_gravity="bottom|start"
-            android:layout_marginStart="@dimen/result_padding"
-            android:layout_marginBottom="56dp"
-            android:adjustViewBounds="true"
-            android:scaleType="fitStart"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:foreground="@drawable/outline_drawable"
-            android:nextFocusDown="@id/result_title"
-            android:contentDescription="@string/result_logo_img_des" />
-
     </FrameLayout>
 
     <com.facebook.shimmer.ShimmerFrameLayout
@@ -197,6 +180,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                     android:textStyle="bold"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
+                    android:clickable="true"
                     android:foreground="@drawable/outline_drawable"
                     android:nextFocusUp="@id/background_poster_watermark_badge_holder"
                     android:nextFocusDown="@id/result_play_parent"
@@ -1113,4 +1097,32 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+
+    <!-- Logo overlay: must be AFTER the NestedScrollView so it sits above it
+         in the Z-order and can receive touch events for the toggle -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="275dp"
+        android:clickable="false"
+        android:focusable="false">
+
+        <ImageView
+            android:id="@+id/background_poster_watermark_badge_holder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="220dp"
+            android:maxHeight="72dp"
+            android:layout_gravity="bottom|start"
+            android:layout_marginStart="@dimen/result_padding"
+            android:layout_marginBottom="56dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitStart"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:clickable="true"
+            android:foreground="@drawable/outline_drawable"
+            android:nextFocusDown="@id/result_title"
+            android:contentDescription="@string/result_logo_img_des" />
+    </FrameLayout>
+
 </FrameLayout>
