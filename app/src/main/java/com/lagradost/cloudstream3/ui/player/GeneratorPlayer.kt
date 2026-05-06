@@ -2298,7 +2298,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             }
 
             safe {
-                if (viewModel.state.links.any { link ->
+                if (!isPlayerActive.get() && viewModel.state.links.any { link ->
                         getLinkPriority(currentQualityProfile, link.first) >=
                                 QualityDataHelper.AUTO_SKIP_PRIORITY
                     }
