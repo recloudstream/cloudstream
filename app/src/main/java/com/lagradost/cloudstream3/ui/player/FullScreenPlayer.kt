@@ -773,7 +773,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             playerEpisodesButtonRoot.isVisible = showPlayerEpisodes
             playerEpisodesButton.isVisible = showPlayerEpisodes
             playerVideoTitleHolder.isGone = togglePlayerTitleGone
-            playerVideoTitleRez.isGone = isGone
+            playerVideoTitleRez.isGone = isGone || playerVideoTitleRez.text.isBlank()
             playerEpisodeFiller.isGone = isGone
             playerCenterMenu.isGone = isGone
             playerLock.isGone = !isShowing
