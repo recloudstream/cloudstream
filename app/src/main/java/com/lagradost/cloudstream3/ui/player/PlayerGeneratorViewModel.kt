@@ -268,14 +268,10 @@ class PlayerGeneratorViewModel : ViewModel() {
         loadLinks()
     }
 
-    fun attachGenerator(newGenerator: VideoGenerator<*>?, index: Int?) {
+    fun attachGenerator(newGenerator: VideoGenerator<*>, index: Int) {
         Log.i(TAG, "attachGenerator with generator=$newGenerator and index=$index")
-        if (generator == null) {
-            generator = newGenerator
-            if (index != null) {
-                episodeIndex = index
-            }
-        }
+        generator = newGenerator
+        episodeIndex = index
     }
 
     /**

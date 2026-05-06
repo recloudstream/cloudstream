@@ -2170,8 +2170,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         val uuid = savedInstanceState?.getString("uuid") ?: arguments?.getString("uuid")
         val index = savedInstanceState?.getInt("index") ?: arguments?.getInt("index")
-
-        viewModel.attachGenerator(generators[uuid], index)
+        val generator = generators[uuid]
 
         unwrapBundle(savedInstanceState)
         unwrapBundle(arguments)
@@ -2179,10 +2178,11 @@ class GeneratorPlayer : FullScreenPlayer() {
         super.onBindingCreated(binding, savedInstanceState)
 
         // Avoid showing no links found
-        if(viewModel.generator == null) {
+        if (generator == null || index == null) {
             exitPlayer()
             return
         }
+        viewModel.attachGenerator(generator, index)
 
         context?.let { ctx ->
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
