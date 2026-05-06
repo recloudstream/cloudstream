@@ -1260,7 +1260,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 binding.profilesClickSettings.setOnClickListener {
                     val activity = activity ?: return@setOnClickListener
-                    QualityProfileDialog(
+                    val dialog = QualityProfileDialog(
                         activity,
                         R.style.DialogFullscreenPlayer,
                         viewModel.state.links.mapNotNull {
@@ -1275,7 +1275,13 @@ class GeneratorPlayer : FullScreenPlayer() {
                         currentQualityProfile = profile.id
                         setProfileName(profile.id)
                         refreshLinks(profile.id)
-                    }.show()
+                    }
+
+                    dialog.setOnDismissListener {
+                        viewModel.state.clearSortedLinksCache()
+                    }
+
+                    dialog.show()
                 }
 
                 binding.subtitlesEncodingFormat.apply {

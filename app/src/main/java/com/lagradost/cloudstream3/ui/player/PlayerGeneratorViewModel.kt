@@ -57,6 +57,8 @@ data class VideoState(
      * */
     private val sortedLinks: ConcurrentHashMap<Int, List<VideoLink>> = ConcurrentHashMap()
 
+    fun clearSortedLinksCache() = sortedLinks.clear()
+
     // Modifying sortedLinks is not considered a "visible" side effect, and rerunning it does not change the result
     // It is by all standards, idempotent and by extension also pure as it has no "visible" side effect
     /** Returns .links in the sorted order according to the qualityProfile.
