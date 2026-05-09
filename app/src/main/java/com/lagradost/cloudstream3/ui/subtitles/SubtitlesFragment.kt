@@ -2,9 +2,11 @@ package com.lagradost.cloudstream3.ui.subtitles
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Typeface
+import android.net.Uri
 import android.os.Bundle
 import android.text.Layout
 import android.text.Spannable
@@ -15,6 +17,7 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.FontRes
 import androidx.annotation.OptIn
 import androidx.annotation.Px
@@ -27,6 +30,7 @@ import androidx.media3.ui.SubtitleView
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
+import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
@@ -54,11 +58,13 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import com.lagradost.safefile.SafeFile
 import java.io.File
 
 const val SUBTITLE_KEY = "subtitle_settings"
 const val SUBTITLE_AUTO_SELECT_KEY = "subs_auto_select"
 const val SUBTITLE_DOWNLOAD_KEY = "subs_auto_download"
+const val CUSTOM_FONT_DIR_URI_KEY = "custom_font_dir_uri"
 
 data class SaveCaptionStyle(
     @JsonProperty("foregroundColor") var foregroundColor: Int,
@@ -276,16 +282,40 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
         }
 
         private fun Context.getSavedFonts(): List<File> {
-            val externalFiles = getExternalFilesDir(null) ?: return emptyList()
-            val fontDir = File(externalFiles.absolutePath + "/Fonts").also {
-                it.mkdir()
+            val fontsList = mutableListOf<File>()
+            
+            // Get fonts from default internal directory
+            val externalFiles = getExternalFilesDir(null)
+            if (externalFiles != null) {
+                val fontDir = File(externalFiles.absolutePath + "/Fonts").also {
+                    it.mkdir()
+                }
+                fontDir.list()?.forEach {
+                    if (it.endsWith(".ttf") || it.endsWith(".otf")) {
+                        fontsList.add(File(fontDir.absolutePath + "/" + it))
+                    }
+                }
             }
-            return fontDir.list()?.mapNotNull {
-                // No idea which formats are supported, but these should be.
-                if (it.endsWith(".ttf") || it.endsWith(".otf")) {
-                    File(fontDir.absolutePath + "/" + it)
-                } else null
-            } ?: listOf()
+            
+            // Get fonts from custom directory if set
+            val customDirUri = getKey<String>(CUSTOM_FONT_DIR_URI_KEY)
+            if (customDirUri != null) {
+                try {
+                    val customDir = SafeFile.fromUri(this, Uri.parse(customDirUri))
+                    customDir?.listFiles()?.forEach { file ->
+                        val name = file.name() ?: return@forEach
+                        if (name.endsWith(".ttf") || name.endsWith(".otf")) {
+                            file.filePath()?.let { path ->
+                                fontsList.add(File(path))
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    println("Error loading fonts from custom directory: ${e.message}")
+                }
+            }
+            
+            return fontsList
         }
 
         private fun getPixels(unit: Int, size: Float): Int {
@@ -380,15 +410,45 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
         )
     }
 
+    private val fontFolderPicker = registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
+        if (uri == null) return@registerForActivityResult
+        val context = context ?: CloudStreamApp.context ?: return@registerForActivityResult
+        val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+
+        context.contentResolver.takePersistableUriPermission(uri, flags)
+        
+        // Store the URI for accessing the font directory
+        context.setKey(CUSTOM_FONT_DIR_URI_KEY, uri.toString())
+        
+        // Update the import text to reflect the custom directory
+        val customDirPath = SafeFile.fromUri(context, uri)?.filePath() ?: uri.toString()
+        if (binding != null) {
+            binding.subsImportText.text = getString(R.string.subs_custom_font_dir).format(customDirPath)
+        }
+    }
+
     override fun onBindingCreated(binding: SubtitleSettingsBinding) {
         hide = arguments?.getBoolean("hide") ?: true
         val popFragment = arguments?.getBoolean("popFragment") ?: false
         onColorSelectedEvent += ::onColorSelected
         onDialogDismissedEvent += ::onDialogDismissed
-        binding.subsImportText.text = getString(R.string.subs_import_text).format(
-            context?.getExternalFilesDir(null)?.absolutePath.toString() + "/Fonts"
-        )
-
+                
+        val context = context ?: return
+        val customDirUri = getKey<String>(CUSTOM_FONT_DIR_URI_KEY)
+        val defaultFontsPath = context.getExternalFilesDir(null)?.absolutePath.toString() + "/Fonts"
+        
+        binding.subsImportText.text = if (customDirUri != null) {
+            val customPath = SafeFile.fromUri(context, Uri.parse(customDirUri))?.filePath() ?: customDirUri
+            getString(R.string.subs_custom_font_dir).format(customPath)
+        } else {
+            getString(R.string.subs_import_text).format(defaultFontsPath)
+        }
+        
+        binding.subsImportText.setOnClickListener {
+            fontFolderPicker.launch(Uri.EMPTY)
+        }
+        
         state = getCurrentSavedStyle()
         context?.updateState()
 
