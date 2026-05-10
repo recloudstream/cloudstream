@@ -58,6 +58,8 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
     }
 
     private val pathPicker = getChooseFolderLauncher { uri, path ->
+        if(uri == null) return@getChooseFolderLauncher
+
         val context = context ?: CloudStreamApp.context ?: return@getChooseFolderLauncher
         (path ?: uri.toString()).let {
             PreferenceManager.getDefaultSharedPreferences(context).edit {

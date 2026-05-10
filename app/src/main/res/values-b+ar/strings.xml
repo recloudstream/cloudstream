@@ -613,8 +613,8 @@
     <string name="audio_book_singular">كتاب صوتي</string>
     <string name="ok">حسناً</string>
     <string name="battery_dialog_message">لضمان عدم انقطاع التنزيلات والإشعارات للعروض التلفزيونية التي اشتركت بها ، يحتاج CloudStream إلى إذن للتشغيل في الخلفية. بالضغط على \"موافق\"، سيظهر لك مربع حوار طلب. يُرجى الضغط على \"السماح\".\n\nيرجى ملاحظة أن هذا الإذن لا يعني أن CS3 سيستنزف بطاريتك. سيعمل في الخلفية فقط عند الضرورة، مثلا عند تلقي الإشعارات أو تنزيل مقاطع الفيديو من الإضافات الرسمية.</string>
-    <string name="music_singlar">موسيقى</string>
-    <string name="custom_media_singluar">الوسائط</string>
+    <string name="music_singular">موسيقى</string>
+    <string name="custom_media_singular">الوسائط</string>
     <string name="reset_btn">اعادة تعيين</string>
     <string name="episode_upcoming_format" formatted="true">قادم خلال %s</string>
     <string name="next_season_episode_format" formatted="true">سيتم إصدار الحلقة %1$d من الموسم %2$d في</string>
@@ -668,8 +668,8 @@
     <string name="custom">مخصص</string>
     <string name="torrent_info">هذا الفيديو موجود على شبكة تورنت، مما يعني ان الاستخدام يمكن تعقبه.\nتأكد من فهم شبكات التورنت قبل الاستكمال.</string>
     <string name="subs_edge_size">حجم الحافة</string>
-    <string name="audio_singluar">صوت</string>
-    <string name="podcast_singluar">بودكاست</string>
+    <string name="audio_singular">صوت</string>
+    <string name="podcast_singular">بودكاست</string>
     <string name="encoding_error">خطأ في التكويد</string>
     <string name="unsupported_error">خطأ في الدعم</string>
     <string name="player_load_one_subtitle_online">تحميل أول ترجمة متاحة</string>

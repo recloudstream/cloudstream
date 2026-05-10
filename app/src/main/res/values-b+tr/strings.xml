@@ -607,9 +607,9 @@
     <string name="ok">Tamam</string>
     <string name="battery_dialog_title">Pil optimizasyonunu devre dışı bırak</string>
     <string name="app_info_intent_error">CloudStream\'in Uygulama bilgileri açılamıyor.</string>
-    <string name="music_singlar">Müzik</string>
+    <string name="music_singular">Müzik</string>
     <string name="audio_book_singular">Sesli Kitap</string>
-    <string name="custom_media_singluar">Medya</string>
+    <string name="custom_media_singular">Medya</string>
     <string name="battery_dialog_message">Abone olunan TV programları için kesintisiz indirme ve bildirimler sağlamak için CloudStream\'in arka planda çalışma iznine ihtiyacı var. Tamam\'a basarak bir istek iletişim kutusu göreceksiniz. Lütfen \'İzin Ver\'e basın.\n\nLütfen unutmayın, bu izin CS3’ün pilinizi tüketeceği anlamına gelmez. Yalnızca gerektiğinde, örneğin bildirim alırken veya resmi uzantılardan video indirirken arka planda çalışır.</string>
     <string name="app_unrestricted_toast">Uygulama pil kullanımı zaten sınırsız olarak ayarlanmış</string>
     <string name="reset_btn">Sıfırla</string>
@@ -668,8 +668,8 @@
     <string name="unsupported_error">Desteklenmeyen hata</string>
     <string name="encoding_error">Kodlama hatası</string>
     <string name="player_load_one_subtitle_online">İlk kullanılabiliri yükle</string>
-    <string name="audio_singluar">Ses</string>
-    <string name="podcast_singluar">Podcast</string>
+    <string name="audio_singular">Ses</string>
+    <string name="podcast_singular">Podcast</string>
     <string name="torrent_preferred_media">Ayarlar/Sağlayıcılar/Tercih edilen medya bölümünden torrenti etkinleştirin</string>
     <string name="torrent_not_accepted">Uygulamayı yeniden başlatın ve devam etmek için Stream Torrent açılır penceresini kabul edin.</string>
     <string name="software_decoding">Yazılımsal çözücü</string>

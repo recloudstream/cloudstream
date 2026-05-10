@@ -61,7 +61,7 @@ abstract class SkipAPI {
     }
 
     companion object {
-        private val skipApis: List<SkipAPI> = listOf(AniSkip(), TheIntroDBSkip(), IntroDbSkip())
+        private val skipApis: List<SkipAPI> = listOf(AniSkip(), TheIntroDBSkip(), IntroDbSkip(), AnimeSkip())
         private val cachedStamps = ConcurrentHashMap<Int, List<VideoSkipStamp>>()
 
         /** Get all video timestamps from an episode */

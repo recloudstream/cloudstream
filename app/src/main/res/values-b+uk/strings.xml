@@ -580,8 +580,8 @@
     <string name="app_unrestricted_toast">Споживання батареї застосунком уже змінено на необмежене</string>
     <string name="app_info_intent_error">Не вдається відкрити подробиці про застосунок CloudStream.</string>
     <string name="audio_book_singular">Аудіокнига</string>
-    <string name="music_singlar">Музика</string>
-    <string name="custom_media_singluar">Медіа</string>
+    <string name="music_singular">Музика</string>
+    <string name="custom_media_singular">Медіа</string>
     <string name="reset_btn">Скинути</string>
     <string name="episode_upcoming_format" formatted="true">Наступний через %s</string>
     <string name="next_season_episode_format" formatted="true">Сезон %1$d Епізод %2$d вийде через</string>
@@ -627,8 +627,8 @@
     <string name="custom">Власний</string>
     <string name="torrent_info">Це відео – Торрент, це означає, що ваша відео діяльність може відстежуватися.\nПереконайтеся, що розумієте, що таке Торрент, перед тим як продовжити.</string>
     <string name="subs_edge_size">Розмір обведення</string>
-    <string name="audio_singluar">Аудіо</string>
-    <string name="podcast_singluar">Подкаст</string>
+    <string name="audio_singular">Аудіо</string>
+    <string name="podcast_singular">Подкаст</string>
     <string name="unsupported_error">Непідтримувана помилка</string>
     <string name="encoding_error">Помилка кодування</string>
     <string name="player_load_one_subtitle_online">Завантажити перший доступний</string>

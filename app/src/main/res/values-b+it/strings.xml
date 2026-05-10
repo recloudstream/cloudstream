@@ -619,10 +619,10 @@
     <string name="ok">OK</string>
     <string name="battery_dialog_title">Disabilita ottimizzazione della batteria</string>
     <string name="app_info_intent_error">Impossibile aprire le informazioni sull\'app CloudStream.</string>
-    <string name="custom_media_singluar">Media</string>
+    <string name="custom_media_singular">Media</string>
     <string name="battery_dialog_message">Per garantire download e notifiche ininterrotti per le serie TV a cui si è abbonati, CloudStream necessita dell\'autorizzazione per funzionare in background. Premendo OK, verrà mostrata una finestra di dialogo di richiesta. Premi \"Consenti\".\n\nNota che questa autorizzazione non significa che CS3 scaricherà la batteria. Funzionerà in background solo quando necessario, ad esempio quando si ricevono notifiche o si scaricano video da estensioni ufficiali.</string>
     <string name="app_unrestricted_toast">L\'utilizzo della batteria dell\'app è già impostato su \"Senza restrizioni\"</string>
-    <string name="music_singlar">Musica</string>
+    <string name="music_singular">Musica</string>
     <string name="audio_book_singular">Audiolibro</string>
     <string name="reset_btn">Reimposta</string>
     <string name="episode_upcoming_format" formatted="true">Prossimamente tra %s</string>
@@ -677,8 +677,8 @@
     <string name="custom">Personalizzato</string>
     <string name="torrent_info">Questo video è un Torrent, il che significa che la tua attività video può essere tracciata.\nAssicurati di aver capito il significato di scaricare tramite Torrent prima di continuare.</string>
     <string name="subs_edge_size">Dimensione bordo</string>
-    <string name="audio_singluar">Audio</string>
-    <string name="podcast_singluar">Podcast</string>
+    <string name="audio_singular">Audio</string>
+    <string name="podcast_singular">Podcast</string>
     <string name="unsupported_error">Errore non supportato</string>
     <string name="encoding_error">Errore di codifica</string>
     <string name="player_load_one_subtitle_online">Carica il primo disponibile</string>

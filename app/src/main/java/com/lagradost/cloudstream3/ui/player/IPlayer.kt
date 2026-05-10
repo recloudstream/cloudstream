@@ -3,30 +3,11 @@ package com.lagradost.cloudstream3.ui.player
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Rational
+import androidx.annotation.AnyThread
+import androidx.annotation.MainThread
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
-
-enum class PlayerEventType(val value: Int) {
-    Pause(0),
-    Play(1),
-    SeekForward(2),
-    SeekBack(3),
-
-    SkipCurrentChapter(4),
-    NextEpisode(5),
-    PrevEpisode(6),
-    PlayPauseToggle(7),
-    ToggleMute(8),
-    Lock(9),
-    ToggleHide(10),
-    ShowSpeed(11),
-    ShowMirrors(12),
-    Resize(13),
-    SearchSubtitlesOnline(14),
-    SkipOp(15),
-    Restart(16),
-}
 
 enum class CSPlayerEvent(val value: Int) {
     Pause(0),
@@ -220,8 +201,6 @@ data class CurrentTracks(
     val allTextTracks: List<TextTrack>,
 )
 
-class InvalidFileException(msg: String) : Exception(msg)
-
 //http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
 const val ACTION_MEDIA_CONTROL = "media_control"
 const val EXTRA_CONTROL_TYPE = "control_type"
@@ -243,8 +222,9 @@ interface IPlayer {
     fun getSubtitleOffset(): Long // in ms
     fun setSubtitleOffset(offset: Long) // in ms
 
+    @AnyThread
     fun initCallbacks(
-        eventHandler: ((PlayerEvent) -> Unit),
+        @MainThread eventHandler: ((PlayerEvent) -> Unit),
         /** this is used to request when the player should report back view percentage */
         requestedListeningPercentages: List<Int>? = null,
     )

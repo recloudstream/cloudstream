@@ -186,7 +186,7 @@
     <string name="delete_message_multiple" formatted="true">Está seguro de querer borrar permanentemente os seguintes elementos?\n\n%s</string>
     <string name="delete_message" formatted="true">Esto borrarase %s permanentemente\nEstás seguro?</string>
     <string name="cartoons_singular">Debuxo animado</string>
-    <string name="custom_media_singluar">Media</string>
+    <string name="custom_media_singular">Media</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="cartoons">Debuxos animados</string>
     <string name="render_error">Erro do renderizador</string>
@@ -204,7 +204,7 @@
     <string name="video_source">Fonte</string>
     <string name="unexpected_error">Erro inesperado do reproductor</string>
     <string name="episode">Capítulo</string>
-    <string name="music_singlar">Música</string>
+    <string name="music_singular">Música</string>
     <string name="episode_short">C</string>
     <string name="resume_time_left" formatted="true">%dm\nrestantes</string>
     <string name="status_ongoing">En curso</string>

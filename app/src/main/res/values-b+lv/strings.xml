@@ -538,14 +538,14 @@
     <string name="favorite">Pievienot iecienītajiem</string>
     <string name="toast_copied">nokopēts!</string>
     <string name="ok">Labi</string>
-    <string name="music_singlar">Mūzika</string>
+    <string name="music_singular">Mūzika</string>
     <string name="reset_btn">Atiestatīt</string>
     <string name="pref_category_security">Drošība</string>
     <string name="pref_category_accounts">Konti</string>
     <string name="test_warning">Brīdinājums</string>
     <string name="show">Rādīt</string>
-    <string name="audio_singluar">Audio</string>
-    <string name="podcast_singluar">Raidieraksts</string>
+    <string name="audio_singular">Audio</string>
+    <string name="podcast_singular">Raidieraksts</string>
     <string name="subtitles_from_embedded">Iegultie</string>
     <string name="subtitles_from_online">No interneta</string>
     <string name="name">Nosaukums</string>

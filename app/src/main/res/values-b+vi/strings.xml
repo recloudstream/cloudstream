@@ -601,7 +601,7 @@
     <string name="app_info_intent_error">Không thể mở thông tin ứng dụng CloudStream.</string>
     <string name="unfavorite">Bỏ yêu thích</string>
     <string name="biometric_authentication_title">Mở khóa Cloudstream</string>
-    <string name="music_singlar">Nhạc</string>
+    <string name="music_singular">Nhạc</string>
     <string name="audio_book_singular">Sách nói</string>
     <string name="biometric_setting">Khóa bằng sinh trắc học</string>
     <string name="resume_remaining" formatted="true">%s\ncòn lại</string>
@@ -612,7 +612,7 @@
     <string name="biometric_prompt_description">Sau vài lần thử thất bại, hộp thoại sẽ tự đóng. Chỉ cần khởi động lại ứng dụng để thử lại.</string>
     <string name="test_extensions_summary">Bài kiểm tra này chỉ dành cho các nhà phát triển và không xác nhận hay phủ nhận việc hoạt động của bất kỳ tiện ích mở rộng nào.</string>
     <string name="app_unrestricted_toast">Chế độ tiêu thụ pin của ứng dụng đã được đặt ở mức không giới hạn</string>
-    <string name="custom_media_singluar">Phương tiện</string>
+    <string name="custom_media_singular">Phương tiện</string>
     <string name="repo_copy_label">Tên và URL kho tiện ích</string>
     <string name="reset_btn">Đặt lại</string>
     <string name="battery_dialog_message">Để đảm bảo quá trình tải xuống và thông báo cho các chương trình truyền hình đã đăng ký không bị gián đoạn, CloudStream cần có quyền chạy ở chế độ nền. Bằng cách nhấn OK, một hộp thoại yêu cầu sẽ hiển thị. Vui lòng nhấn \"Cho phép\".\n\nXin lưu ý, quyền này không có nghĩa là CS3 sẽ làm hao pin của bạn. Nó sẽ chỉ hoạt động ở chế độ nền khi cần thiết, chẳng hạn như khi nhận được thông báo hoặc tải xuống video từ các tiện ích mở rộng chính thức.</string>
@@ -672,8 +672,8 @@
     <string name="torrent_not_accepted">Khởi động lại ứng dụng và chấp nhận cửa sổ Stream Torrent để tiếp tục.</string>
     <string name="torrent_preferred_media">Kích hoạt torrent trong Cài đặt/Nguồn phim/Thể loại ưu tiên</string>
     <string name="player_load_one_subtitle_online">Tải phụ đề đầu tiên có sẵn</string>
-    <string name="audio_singluar">Âm thanh</string>
-    <string name="podcast_singluar">Podcast</string>
+    <string name="audio_singular">Âm thanh</string>
+    <string name="podcast_singular">Podcast</string>
     <string name="unsupported_error">Lỗi không được hỗ trợ</string>
     <string name="sort_episodes_rating_low_high">Xếp hạng (Thấp nhất)</string>
     <string name="sort_episodes_number_asc">Tập (Tăng dần)</string>

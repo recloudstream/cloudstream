@@ -408,7 +408,7 @@
     <string name="help">uugg</string>
     <string name="qualities">oooogggoh</string>
     <string name="biometric_setting">uugg uuhh oooohhhoog</string>
-    <string name="music_singlar">aaahh</string>
+    <string name="music_singular">aaahh</string>
     <string name="biometric_prompt_description">uuugg g uug uuuuhh attempts, aah aaaagg uugg uuuhh aaaagg uuuuhhh aag uug ah uuh uuugg</string>
     <string name="min">oog</string>
     <string name="extension_install_first">aaaaggg uug oooohhhuh uuuuk</string>
@@ -500,7 +500,7 @@
     <string name="toast_copied">copied!</string>
     <string name="battery_dialog_title">aaaahhh ooooggg oooohhhooogg</string>
     <string name="episode_upcoming_format" formatted="true">uuuugggg og %s</string>
-    <string name="custom_media_singluar">uuugg</string>
+    <string name="custom_media_singular">uuugg</string>
     <string name="app_unrestricted_toast">ooh oooohhh uuuhh ak aaaaggg aak ag uuuugggaaaak</string>
     <string name="app_info_intent_error">uuuugg ah uuhh CloudStream uuh uuhh</string>
     <string name="pref_category_security">oooohhhg</string>

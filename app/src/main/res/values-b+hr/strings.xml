@@ -606,12 +606,12 @@
     <string name="ok">U redu</string>
     <string name="battery_dialog_title">Deaktiviraj optimizaciju baterije</string>
     <string name="audio_book_singular">Audio knjiga</string>
-    <string name="custom_media_singluar">Medij</string>
+    <string name="custom_media_singular">Medij</string>
     <string name="app_unrestricted_toast">Korištenje baterije aplikacije već je postavljeno na neograničeno</string>
     <string name="app_info_intent_error">Neuspjelo otvaranje podataka CloudStream aplikacije.</string>
     <string name="favorite">Favorit</string>
     <string name="unfavorite">Ukloni iz favorita</string>
-    <string name="music_singlar">Glazba</string>
+    <string name="music_singular">Glazba</string>
     <string name="reset_btn">Obnovi</string>
     <string name="biometric_setting_summary">Otključaj aplikaciju pomoću otiska prsta, ID-a lica, PIN-a, uzorka i lozinke.</string>
     <string name="episode_upcoming_format" formatted="true">Sljedeća u %s</string>
@@ -675,8 +675,8 @@
     <string name="torrent_info">Ovaj je video Torrent, što znači da se tvoja video aktivnost može pratiti.\nInformiraj se o korištenju Torrenta prije nego što nastaviš.</string>
     <string name="torrent_not_accepted">Ponovno pokrenite aplikaciju i prihvatite skočni prozor Stream Torrent za nastavak.</string>
     <string name="player_load_one_subtitle_online">Učitaj prvi dostupni</string>
-    <string name="audio_singluar">Audio</string>
-    <string name="podcast_singluar">Podcast</string>
+    <string name="audio_singular">Audio</string>
+    <string name="podcast_singular">Podcast</string>
     <string name="torrent_preferred_media">Aktiviraj torrent u Postavke/Pružatelji usluge/Preferirani mediji</string>
     <string name="sort_episodes_number_asc">Epizoda (Uzlazno)</string>
     <string name="sort_episodes_number_desc">Epizoda (Silazno)</string>

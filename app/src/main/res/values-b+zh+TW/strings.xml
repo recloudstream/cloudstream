@@ -594,7 +594,7 @@
     <string name="biometric_setting">使用生物辨識技術鎖定</string>
     <string name="app_unrestricted_toast">應用程式電池使用已設定為無限制</string>
     <string name="biometric_authentication_title">解除鎖定 CloudStream</string>
-    <string name="custom_media_singluar">媒體</string>
+    <string name="custom_media_singular">媒體</string>
     <string name="reset_btn">重置</string>
     <string name="recommendations_tooltip">顯示推薦</string>
     <string name="speed_setting_summary">在播放器中新增速度選項</string>
@@ -604,7 +604,7 @@
     <string name="test_extensions">測試所有擴充功能</string>
     <string name="battery_dialog_title">停用電池優化</string>
     <string name="audio_book_singular">有聲書</string>
-    <string name="music_singlar">音樂</string>
+    <string name="music_singular">音樂</string>
     <string name="next_season_episode_format" formatted="true">第 %1$d 季第 %2$d 集即將發佈於</string>
     <string name="result_search_tooltip">在其他擴充功能中搜尋</string>
     <string name="subscribe_tooltip">新集數通知</string>
@@ -661,10 +661,10 @@
     <string name="no_subtitles_loaded">尚未載入字幕</string>
     <string name="torrent_info">此影片是 Torrent，這意味著你的影片活動可以被追蹤。\n在繼續之前，請確保你瞭解 Torrenting。</string>
     <string name="subs_edge_size">subs_edge_size</string>
-    <string name="audio_singluar">音樂</string>
+    <string name="audio_singular">音樂</string>
     <string name="encoding_error">編碼錯誤</string>
     <string name="unsupported_error">因為不支援造成錯誤</string>
-    <string name="podcast_singluar">播客</string>
+    <string name="podcast_singular">播客</string>
     <string name="software_decoding">軟體解碼</string>
     <string name="torrent_not_accepted">重開程式並「同意」線上播放 Torrent 視窗。</string>
     <string name="player_load_one_subtitle_online">載入第一個可用的</string>

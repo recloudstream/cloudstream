@@ -285,7 +285,7 @@
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="subtitle_offset_extra_hint_later_format">Gunakan ini sekiranya sari kata yang dipaparkan awal sebanyak %d</string>
     <string name="quality_hdr">HDR</string>
-    <string name="custom_media_singluar">Media</string>
+    <string name="custom_media_singular">Media</string>
     <string name="tv_layout">Susun atur TV</string>
     <string name="tv_series">TV Bersiri</string>
     <string name="plugin_load_fail" formatted="true">Tidak dapat papar %s</string>
@@ -390,7 +390,7 @@
     <string name="stop">Berhenti</string>
     <string name="already_voted">Anda telah mengundi</string>
     <string name="action_remove_from_favorites">Alih keluar dari Kegemaran</string>
-    <string name="music_singlar">Musik</string>
+    <string name="music_singular">Musik</string>
     <string name="downloads_delete_select">Pilih benda untuk dibuang</string>
     <string name="player_size_settings_des">Buang sempadan hitam</string>
     <string name="category_account">Akaun dan Sekuriti</string>
@@ -532,6 +532,6 @@
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Dokumentari</string>
     <string name="live_singular">Siaran Langsung</string>
-    <string name="audio_singluar">Audio</string>
-    <string name="podcast_singluar">Podcast</string>
+    <string name="audio_singular">Audio</string>
+    <string name="podcast_singular">Podcast</string>
 </resources>
