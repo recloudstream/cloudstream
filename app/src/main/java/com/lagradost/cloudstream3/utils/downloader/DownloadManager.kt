@@ -1074,7 +1074,7 @@ object VideoDownloadManager {
             )
 
             val currentMutex = Mutex()
-            val current = (0 until items.size).iterator()
+            var currentIndex = 0
 
             val fileMutex = Mutex()
             // start to data
@@ -1169,8 +1169,20 @@ object VideoDownloadManager {
 
                         // mutex just in case, we never want this to fail due to multithreading
                         val index = currentMutex.withLock {
-                            if (!current.hasNext()) return@launch
-                            current.nextInt()
+                            if (currentIndex >= items.size) return@withLock -1
+                            val writtenIndex =
+                                (metadata.bytesWritten - stream.startAt) / items.chuckSize
+                            if (currentIndex > writtenIndex + (parallelConnections * 2).coerceAtLeast(5)) {
+                                -2
+                            } else {
+                                currentIndex++
+                            }
+                        }
+
+                        if (index == -1) return@launch
+                        if (index == -2) {
+                            delay(500)
+                            continue
                         }
 
                         // in case something has gone wrong set to failed if the fail is not caused by
@@ -1307,7 +1319,7 @@ object VideoDownloadManager {
             metadata.type = DownloadType.IsDownloading
 
             val currentMutex = Mutex()
-            val current = (startAt until items.size).iterator()
+            var currentIndex = startAt
 
             val fileMutex = Mutex()
             val pendingData: HashMap<Int, ByteArray> = hashMapOf()
@@ -1341,8 +1353,18 @@ object VideoDownloadManager {
 
                         // mutex just in case, we never want this to fail due to multithreading
                         val index = currentMutex.withLock {
-                            if (!current.hasNext()) return@launch
-                            current.nextInt()
+                            if (currentIndex >= items.size) return@withLock -1
+                            if (currentIndex > metadata.hlsWrittenProgress + (parallelConnections * 2).coerceAtLeast(5)) {
+                                -2
+                            } else {
+                                currentIndex++
+                            }
+                        }
+
+                        if (index == -1) return@launch
+                        if (index == -2) {
+                            delay(500)
+                            continue
                         }
 
                         // in case something has gone wrong set to failed if the fail is not caused by
