@@ -473,7 +473,7 @@
     <string name="benene_count_text">개발자에게 %d 바나나 줌</string>
     <string name="benene_count_text_none">바나나를 주지 않음</string>
     <string name="action_open_watching">상세 정보</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="normal_no_plot">플롯을 찾을 수 없음</string>
     <string name="torrent_no_plot">설명을 찾을 수 없음</string>
     <string name="show_log_cat">로그캣 🐈 보기</string>

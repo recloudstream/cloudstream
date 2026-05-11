@@ -543,7 +543,7 @@
     <string name="subtitles_filter_lang">فَلتِر حسب اللغة المفضلة</string>
     <string name="confirm_exit_dialog">أكيد بدكون تطلعو؟</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="action_remove_from_watched">شيلو من لايحة المحتوى الحاضرينو</string>
     <string name="skip_type_credits">الإعتمادات</string>
     <string name="quality_profile_help">فيكُن هون تغيرو طريقة ترتيب المصادر. المصدر يللي عنده أولوية أكتر بينحط أعلى بلايحت تنقايت المصدر. إنتو بتنقو الأولوية يإستعمال الأرقام. حطو الرقم الأعلى للمصادر والجودات يللي بتفضلوها. \n \nمتلًا: \nإزا المصدر \"أ\" بتفضلوه، بتعطوه كتير نقات (متلًا 8). \nإزا الجودة 480 ما بتحبوها، بتعطوها نقات قليلة (متلًا 1). \n \nعلامت المصدر وال جودة تبعه بينجمعو مع بعض (8 + 1 = 9). يللي علامته 10 أو أعلى، بينحط تلقائيًا، من دون ما ينعمل لود لكل المصادر!</string>

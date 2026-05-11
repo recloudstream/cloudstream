@@ -105,7 +105,7 @@
     <string name="continue_watching">İzlemeye Devam Et</string>
     <string name="action_remove_watching">Kaldır</string>
     <string name="action_open_watching">Daha Fazla Bilgi</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">Bu sağlayıcının düzgün çalışması için bir VPN gerekebilir</string>
     <string name="vpn_torrent">Bu sağlayıcı torrent kullanıyor, bir VPN önerilir</string>
     <string name="provider_info_meta">Metadata site tarafından sağlanmamış, veri site\'de bulunmuyorsa video yüklenmesi başarısız olacak.</string>
@@ -218,8 +218,8 @@
     <string name="movies_singular">Film</string>
     <string name="tv_series_singular">Dizi</string>
     <string name="cartoons_singular">Çizgi film</string>
-    <string name="anime_singular">\@string/anime</string>
-    <string name="ova_singular">\@string/ova</string>
+    <string name="anime_singular">@string/anime</string>
+    <string name="ova_singular">@string/ova</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Belgesel</string>
     <string name="asian_drama_singular">Asya dizisi</string>

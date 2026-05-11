@@ -175,7 +175,7 @@
     <string name="vpn_torrent">এই প্ৰদানকাৰী এটা ট\'ৰেণ্ট, VPNৰ পৰামৰ্শ দিয়া হৈছে</string>
     <string name="subs_import_text" formatted="true">%s ত ফণ্টসমূহ ৰাখি সন্নিবিষ্ট কৰক</string>
     <string name="action_open_watching">অধিক তথ্য</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="provider_info_meta">সাইটে মেটাডাটা প্ৰদান কৰা নাই, যদি সাইটত নাথাকে তেন্তে ভিডিঅ\' মুকলি নহ\'ব পাৰে।</string>
     <string name="normal_no_plot">কোনো কাহিনী পোৱা নগ\'ল</string>
     <string name="torrent_no_plot">কোনো বিৱৰণ পোৱা নগ\'ল</string>

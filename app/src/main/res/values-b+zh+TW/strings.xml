@@ -105,7 +105,7 @@
     <string name="continue_watching">繼續觀看</string>
     <string name="action_remove_watching">移除</string>
     <string name="action_open_watching">更多資訊</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">此片源可能需要 VPN 才能正常使用</string>
     <string name="vpn_torrent">此片源是種子，建議使用 VPN</string>
     <string name="provider_info_meta">站點不提供元數據，如果站點上不存在元數據，影片載入將失敗。</string>
