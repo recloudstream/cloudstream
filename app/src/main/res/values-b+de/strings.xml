@@ -27,8 +27,7 @@
     <string name="preview_background_img_des">Hintergrundbildvorschau</string>
     <string name="player_speed_text_format" formatted="true">Geschwindigkeit (%.2fx)</string>
     <string name="rated_format" formatted="true">Bewertung: %.1f</string>
-    <string name="new_update_format" formatted="true">Neues Update gefunden!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Neues Update gefunden! \n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Füller</string>
     <string name="duration_format" formatted="true">%d Min</string>
     <string name="app_name">CloudStream</string>
@@ -112,7 +111,7 @@
     <string name="continue_watching">Weiterschauen</string>
     <string name="action_remove_watching">Entfernen</string>
     <string name="action_open_watching">Mehr Infos</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Damit dieser Anbieter korrekt funktioniert, ist möglicherweise ein VPN erforderlich</string>
     <string name="vpn_torrent">Dieser Anbieter bietet Torrents an, ein VPN wird deswegen dringend empfohlen</string>
     <string name="provider_info_meta">Metadaten werden nicht von der Website bereitgestellt, das Laden des Videos schlägt fehl, wenn sie nicht auf der Website vorhanden sind.</string>
@@ -188,10 +187,8 @@
     <string name="resume">Fortsetzen</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">Dadurch wird %s permanent gelöscht
-\nBist du dir sicher?</string>
-    <string name="resume_time_left" formatted="true">%dm
-\nverbleibend</string>
+    <string name="delete_message" formatted="true">Dadurch wird %s permanent gelöscht \nBist du dir sicher?</string>
+    <string name="resume_time_left" formatted="true">%dm \nverbleibend</string>
     <string name="status_ongoing">Laufend</string>
     <string name="status_completed">Abgeschlossen</string>
     <string name="status">Status</string>
@@ -401,9 +398,7 @@
     <string name="plugins_downloaded" formatted="true">Heruntergeladen: %d</string>
     <string name="plugins_disabled" formatted="true">Deaktiviert: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Nicht heruntergeladen: %d</string>
-    <string name="blank_repo_message">CloudStream hat standardmäßig keine Websites installiert. Websites müssen aus Repositories installiert werden.
-\n
-\nTrete unserem Discord Server bei oder suche online.</string>
+    <string name="blank_repo_message">CloudStream hat standardmäßig keine Websites installiert. Websites müssen aus Repositories installiert werden. \n \nTrete unserem Discord Server bei oder suche online.</string>
     <string name="view_public_repositories_button">Community-Repositories anzeigen</string>
     <string name="view_public_repositories_button_short">Öffentliche Liste</string>
     <string name="uppercase_all_subtitles">Alle Untertitel in Großbuchstaben</string>
@@ -484,11 +479,9 @@
     <string name="sort_alphabetical_z">Alphabetisch (Z zu A)</string>
     <string name="select_library">Bibliothek auswählen</string>
     <string name="open_with">Öffnen mit</string>
-    <string name="empty_library_no_accounts_message">Deine Bibliothek ist leer :(
-\nMelde dich mit einem Bibliothekskonto an oder füge Titel zu deiner lokalen Bibliothek hinzu.</string>
+    <string name="empty_library_no_accounts_message">Deine Bibliothek ist leer :( \nMelde dich mit einem Bibliothekskonto an oder füge Titel zu deiner lokalen Bibliothek hinzu.</string>
     <string name="empty_library_logged_in_message">Diese Liste ist leer. Versuch zu einer anderen Liste zu wechseln.</string>
-    <string name="safe_mode_file">Datei für den abgesicherten Modus gefunden!
-\nBeim Start werden keine Erweiterungen geladen, bis die Datei entfernt wird.</string>
+    <string name="safe_mode_file">Datei für den abgesicherten Modus gefunden! \nBeim Start werden keine Erweiterungen geladen, bis die Datei entfernt wird.</string>
     <string name="android_tv_interface_off_seek_settings">Player ausgeblendet - Betrag zum vor- und zurückspulen</string>
     <string name="android_tv_interface_on_seek_settings_summary">Der Betrag, welcher verwendet wird, wenn der Player eingeblendet ist</string>
     <string name="android_tv_interface_off_seek_settings_summary">Der Betrag, welcher verwendet wird, wenn der Player ausgeblendet ist</string>
@@ -522,13 +515,7 @@
     <string name="help">Hilfe</string>
     <string name="qualities">Qualitäten</string>
     <string name="profile_background_des">Profil-Hintergrund</string>
-    <string name="quality_profile_help">Hier kannst du verändern, wie die Quellen geordnet werden. Wenn ein Video eine höhere Priorität hat, wird es höher in der Quellenauswahl erscheinen. Die Summe der Quellenpriorität und der Qualitätspriorität ist die Videopriorität.
-\n
-\nQuelle A: 3
-\nQualität B: 7
-\nWerden eine kombinierte Videopriorität von 10 haben.
-\n
-\nHINWEIS: Wenn die Summe 10 oder mehr beträgt, überspringt der Player automatisch das Laden, wenn der Link geladen wird!</string>
+    <string name="quality_profile_help">Hier kannst du verändern, wie die Quellen geordnet werden. Wenn ein Video eine höhere Priorität hat, wird es höher in der Quellenauswahl erscheinen. Die Summe der Quellenpriorität und der Qualitätspriorität ist die Videopriorität. \n \nQuelle A: 3 \nQualität B: 7 \nWerden eine kombinierte Videopriorität von 10 haben. \n \nHINWEIS: Wenn die Summe 10 oder mehr beträgt, überspringt der Player automatisch das Laden, wenn der Link geladen wird!</string>
     <string name="automatic_plugin_download_mode_title">Filtermodus für Plugin-Downloads auswählen</string>
     <string name="already_voted">Es wurde bereits abgestimmt</string>
     <string name="no_plugins_found_error">Keine Plugins im Repository gefunden</string>
@@ -560,14 +547,8 @@
     <string name="skip_startup_account_select_pref">Kontoauswahl beim Starten überspringen</string>
     <string name="manage_accounts">Konten verwalten</string>
     <string name="edit_account">Konto bearbeiten</string>
-    <string name="duplicate_message_multiple" formatted="true">Es wurden potentielle Duplikate in deiner Bibliothek gefunden:
-\n
-\n%s
-\n
-\nMöchtest du dieses Element dennoch hinzufügen, das existierende ersetzen oder diese Aktion abbrechen?</string>
-    <string name="duplicate_message_single" formatted="true">Deine Bibliothek enthält möglicherweise schon ein Duplikat dieses Elements: \'%s\'
-\n
-\nMöchtest du dieses Element dennoch hinzufügen, das existierende ersetzen oder diese Aktion abbrechen?</string>
+    <string name="duplicate_message_multiple" formatted="true">Es wurden potentielle Duplikate in deiner Bibliothek gefunden: \n \n%s \n \nMöchtest du dieses Element dennoch hinzufügen, das existierende ersetzen oder diese Aktion abbrechen?</string>
+    <string name="duplicate_message_single" formatted="true">Deine Bibliothek enthält möglicherweise schon ein Duplikat dieses Elements: \'%s\' \n \nMöchtest du dieses Element dennoch hinzufügen, das existierende ersetzen oder diese Aktion abbrechen?</string>
     <string name="links_reloaded_toast">Links wurden neu geladen</string>
     <string name="rotate_video">Drehen</string>
     <string name="rotate_video_desc">Zeige einen Umschalter für Bildschirmorientierung an</string>
@@ -587,8 +568,7 @@
     <string name="unfavorite">kein Favorit</string>
     <string name="biometric_prompt_description">Dieser Bildschirm wurde nach einigen Fehlversuchen geschlossen. Starte die App neu.</string>
     <string name="biometric_warning">Ihre CloudStream-Daten wurden gesichert. Obwohl die Wahrscheinlichkeit dieses seltenen Falles sehr gering ist, verhalten sich alle Geräte unterschiedlich. Falls Sie im schlimmsten Fall den Zugriff zur App verlieren, löschen Sie die App-Daten vollständig und stellen Sie die Sicherung wieder her. Jegliche Unannehmlichkeiten, die Ihnen dadurch entstehen, bedauern wir sehr.</string>
-    <string name="resume_remaining" formatted="true">%s
-\nausstehend</string>
+    <string name="resume_remaining" formatted="true">%s \nausstehend</string>
     <string name="favorite">Favorit</string>
     <string name="toast_copied">Kopiert!</string>
     <string name="clipboard_unknown_error">Beim kopieren ist ein Fehler aufgetreten, bitte kopieren sie logical und wenden sich an den Support.</string>
@@ -630,18 +610,10 @@
     <string name="play_from_beginning_img_des">Vom Beginn an spielen</string>
     <string name="downloads_delete_select">Elemente zum Löschen auswählen</string>
     <string name="offline_file">Zum Offline-Ansehen verfügbar</string>
-    <string name="delete_message_multiple" formatted="true">Bist du dir sicher, dass du die folgenden Elemente permanent löschen willst?
-\n
-\n%s</string>
-    <string name="delete_message_series_episodes" formatted="true">Bist du dir sicher, dass du die folgenden Episoden in %1$s permanent löschen willst?
-\n
-\n%2$s</string>
-    <string name="delete_message_series_section" formatted="true">Du wirst ebenfalls alle Episoden der folgenden Serien permanent löschen:
-\n
-\n%s</string>
-    <string name="delete_message_series_only" formatted="true">Bist du dir sicher, dass du alle Episoden der folgenden Serien permanent löschen willst?
-\n
-\n%s</string>
+    <string name="delete_message_multiple" formatted="true">Bist du dir sicher, dass du die folgenden Elemente permanent löschen willst? \n \n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Bist du dir sicher, dass du die folgenden Episoden in %1$s permanent löschen willst? \n \n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">Du wirst ebenfalls alle Episoden der folgenden Serien permanent löschen: \n \n%s</string>
+    <string name="delete_message_series_only" formatted="true">Bist du dir sicher, dass du alle Episoden der folgenden Serien permanent löschen willst? \n \n%s</string>
     <string name="sort_release_date_new">Veröffentlichungsdatum (von neu nach alt)</string>
     <string name="sort_release_date_old">Veröffentlichungsdatum (von alt nach neu)</string>
     <string name="preview_seekbar">Suchleisten Vorschau</string>

@@ -16,8 +16,7 @@
     <string name="preview_background_img_des">Визуализация на фона</string>
     <string formatted="true" name="player_speed_text_format">Скорост (%.2fx)</string>
     <string formatted="true" name="rated_format">Оценка: %.1f</string>
-    <string formatted="true" name="new_update_format">Намерена е нова актуализация!
-\n%1$s -&gt; %2$s</string>
+    <string formatted="true" name="new_update_format">Намерена е нова актуализация! \n%1$s -&gt; %2$s</string>
     <string formatted="true" name="filler">Шаблон</string>
     <string formatted="true" name="duration_format">%d мин</string>
     <string name="app_name">CloudStream</string>
@@ -102,7 +101,7 @@
     <string name="continue_watching">Продължете да гледате</string>
     <string name="action_remove_watching">Премахване</string>
     <string name="action_open_watching">Повече информация</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Може да е необходим VPN, за да работи правилно този доставчик</string>
     <string name="vpn_torrent">Този доставчик е торент, препоръчва се VPN</string>
     <string name="provider_info_meta">Метаданните не се предоставят от сайта, зареждането на видео ще бъде неуспешно, ако не съществува на сайта.</string>
@@ -183,10 +182,8 @@
     <string name="resume">Продължи</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">30</string>
-    <string formatted="true" name="delete_message">Това ще изтрие за постоянно %s
-\nСигурни ли сте?</string>
-    <string formatted="true" name="resume_time_left">%dm
-\nостава</string>
+    <string formatted="true" name="delete_message">Това ще изтрие за постоянно %s \nСигурни ли сте?</string>
+    <string formatted="true" name="resume_time_left">%dm \nостава</string>
     <string name="status_ongoing">Продължава</string>
     <string name="status_completed">Завършен</string>
     <string name="status">Статус</string>
@@ -405,9 +402,7 @@
     <string formatted="true" name="plugins_disabled">Деактивирано: %d</string>
     <string formatted="true" name="plugins_not_downloaded">Не е изтеглено: %d</string>
     <string formatted="true" name="plugins_updated">Актуализирани %d плъгини</string>
-    <string name="blank_repo_message">CloudStream няма инсталирани сайтове по подразбиране. Трябва да инсталирате сайтовете от хранилища.
-\n
-\nПрисъединете се към нашия Дискорд или потърсете онлайн.</string>
+    <string name="blank_repo_message">CloudStream няма инсталирани сайтове по подразбиране. Трябва да инсталирате сайтовете от хранилища. \n \nПрисъединете се към нашия Дискорд или потърсете онлайн.</string>
     <string name="view_public_repositories_button">Вижте хранилищата на общността</string>
     <string name="view_public_repositories_button_short">Публичен списък</string>
     <string name="uppercase_all_subtitles">Всички субтитри с главни букви</string>
@@ -519,12 +514,10 @@
     <string name="profile_number">Профил %d</string>
     <string name="sort_alphabetical_a">По азбучен ред (A до Z)</string>
     <string name="open_with">Отваряне с</string>
-    <string name="empty_library_no_accounts_message">Вашата библиотека е празна :(
-\nВпишете се в акаунт с библиотеки или добавете сериали в локалната Ви библиотека.</string>
+    <string name="empty_library_no_accounts_message">Вашата библиотека е празна :( \nВпишете се в акаунт с библиотеки или добавете сериали в локалната Ви библиотека.</string>
     <string name="use">Използване</string>
     <string name="subscription_episode_released">Епизод %d е публикуван!</string>
-    <string name="safe_mode_file">Намерен е файл за безопасен режим!
-\nНяма да се зареждат никакви разширения при стартиране, докато файлът не бъде премахнат.</string>
+    <string name="safe_mode_file">Намерен е файл за безопасен режим! \nНяма да се зареждат никакви разширения при стартиране, докато файлът не бъде премахнат.</string>
     <string name="already_voted">Вече сте гласували</string>
     <string name="set_default">Задаване по подразбиране</string>
     <string name="pin_error_length">ПИН трябва да е 4 символа</string>
@@ -551,23 +544,11 @@
     <string name="android_tv_interface_off_seek_settings">Скрит играч - сума за търсене</string>
     <string name="android_tv_interface_off_seek_settings_summary">Сумата за търсене, използвана, когато играчът е скрит</string>
     <string name="sort_updated_new">Актуализирано (от ново към старо)</string>
-    <string name="quality_profile_help">Тук можете да промените начина на подреждане на източниците. Ако даден видеоклип има по-висок приоритет, той ще се показва по-високо в избора на източник. Сборът от приоритета на източника и приоритета на качеството е приоритетът на видеото.
-\n
-\nИзточник A: 3
-\nКачество B: 7
-\nЩе има комбиниран видео приоритет от 10.
-\n
-\nЗАБЕЛЕЖКА: Ако сумата е 10 или повече, играчът автоматично ще пропусне зареждането, когато тази връзка се зареди!</string>
+    <string name="quality_profile_help">Тук можете да промените начина на подреждане на източниците. Ако даден видеоклип има по-висок приоритет, той ще се показва по-високо в избора на източник. Сборът от приоритета на източника и приоритета на качеството е приоритетът на видеото. \n \nИзточник A: 3 \nКачество B: 7 \nЩе има комбиниран видео приоритет от 10. \n \nЗАБЕЛЕЖКА: Ако сумата е 10 или повече, играчът автоматично ще пропусне зареждането, когато тази връзка се зареди!</string>
     <string name="duplicate_replace">Замени</string>
     <string name="duplicate_replace_all">Замени Всички</string>
-    <string name="duplicate_message_single" formatted="true">Изглежда, че потенциално дублиран елемент вече съществува във вашата библиотека: „%s“.
-\n
-\nИскате ли все пак да добавите този елемент, да замените съществуващия или да отмените действието?</string>
-    <string name="duplicate_message_multiple" formatted="true">Във вашата библиотека са намерени потенциални дублиращи се елементи:
-\n
-\n%s
-\n
-\nИскате ли все пак да добавите този елемент, да замените съществуващите или да отмените действието?</string>
+    <string name="duplicate_message_single" formatted="true">Изглежда, че потенциално дублиран елемент вече съществува във вашата библиотека: „%s“. \n \nИскате ли все пак да добавите този елемент, да замените съществуващия или да отмените действието?</string>
+    <string name="duplicate_message_multiple" formatted="true">Във вашата библиотека са намерени потенциални дублиращи се елементи: \n \n%s \n \nИскате ли все пак да добавите този елемент, да замените съществуващите или да отмените действието?</string>
     <string name="lock_profile">Заключи Профил</string>
     <string name="enter_current_pin">Вкарай Сегашен ПИН</string>
     <string name="manage_accounts">Управлявай Профили</string>

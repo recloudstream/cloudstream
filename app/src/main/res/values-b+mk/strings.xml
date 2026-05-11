@@ -126,8 +126,7 @@
     <string name="cancel">Откажи</string>
     <string name="pause">Паузирај</string>
     <string name="resume">Продолжи</string>
-    <string name="delete_message">Ова трајно ќе го избрише %s
-\nДали си сигурен?</string>
+    <string name="delete_message">Ова трајно ќе го избрише %s \nДали си сигурен?</string>
     <string name="status_ongoing">Во тек</string>
     <string name="status_completed">Изгледанo</string>
     <string name="status">Статус</string>
@@ -340,7 +339,7 @@
     <string name="enable_nsfw_on_providers">Овозможи NSFW на поддржаните екстензии</string>
     <string name="jsdelivr_enabled">Не успеа да стигне до GitHub. Вклучувам jsDelivr прокси…</string>
     <string name="subtitles_filter_lang">Филтрирај по претпочитан медиумски јазик</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="movies_singular">Филм</string>
     <string name="added_sync_format" formatted="true">Додаден %s</string>
     <string name="plugin">приклучоци</string>
@@ -417,8 +416,7 @@
     <string name="batch_download_start_format" formatted="true">Почна да презема %1$d %2$s…</string>
     <string name="automatic_plugin_updates">Автоматски ажурирања на приклучоци</string>
     <string name="go_back_30">-30</string>
-    <string name="resume_time_left" formatted="true">%dm
-\nпреостанува</string>
+    <string name="resume_time_left" formatted="true">%dm \nпреостанува</string>
     <string name="video_buffer_disk_settings">Видео кеш на дискот</string>
     <string name="network_adress_example">https://example.com/example.mp4</string>
     <string name="setup_done">Готово</string>
@@ -587,8 +585,7 @@
     <string name="biometric_prompt_description">По неколку неуспешни обиди, известувањето ќе се затвори. Едноставно вклучи ја апликацијата повторно за да се обидеш повторно.</string>
     <string name="custom_media_singular">Медиуми</string>
     <string name="episode_upcoming_format" formatted="true">Претстои во %s</string>
-    <string name="resume_remaining" formatted="true">%s
-\nпреостанати</string>
+    <string name="resume_remaining" formatted="true">%s \nпреостанати</string>
     <string name="battery_dialog_message">За да се обезбедат непрекинати преземања и известувања за претплатените ТВ серии, CloudStream треба дозвола за работа во позадина. Со притискање на „ОК“, ќе ви биде прикажан дијалог за барање дозвола. Ве молиме, притиснете „Дозволи“.\n\nИмајте предвид дека оваа дозвола не значи дека CS3 ќе ја троши вашата батерија. Ќе работи во позадина само кога е потребно, како на пример при примање известувања или преземање видеа од официјални екстензии.</string>
     <string name="clipboard_permission_error">Грешка при пристапот до таблата со исечоци, обиди се повторно.</string>
     <string name="clipboard_unknown_error">Грешка при копирање, молам копирај го логот и контактирај ја поддршката на апликацијата.</string>
