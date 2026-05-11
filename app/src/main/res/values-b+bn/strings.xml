@@ -15,8 +15,7 @@
     <string name="preview_background_img_des">ব্যাকগ্রাউন্ড দেখান</string>
     <string name="player_speed_text_format" formatted="true">গতি (%.2f গুণ)</string>
     <string name="rated_format" formatted="true">মূল্যায়নঃ %.1f</string>
-    <string name="new_update_format" formatted="true">নতুন আপডেট এসেছে!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">নতুন আপডেট এসেছে! \n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">ফিলার</string>
     <string name="duration_format" formatted="true">%d মিনিট</string>
     <string name="app_name">ক্লাউডস্ট্রিম</string>
@@ -139,7 +138,7 @@
     <string name="updates_settings">অ্যাপ এর হালনাগাদ দেখান</string>
     <string name="swipe_to_seek_settings">খুঁজতে সোয়াইপ করুন</string>
     <string name="search_poster_img_des">পোস্টার</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="double_tap_to_seek_settings">আগাতে ডবল ট্যাপ করুন</string>
     <string name="eigengraumode_settings">প্লেব্যাক এর গতি</string>
     <string name="update_started">আপডেট শুরু হয়েছে</string>
@@ -159,8 +158,7 @@
     <string name="movies">সিনেমা</string>
     <string name="discord">ডিসকর্ডে যোগ দিন</string>
     <string name="torrent">টরেন্টস</string>
-    <string name="delete_message" formatted="true">এটি স্থায়ীভাবে মুছে ফেলা হবে %s
-\nআপনি কি নিশ্চিত?</string>
+    <string name="delete_message" formatted="true">এটি স্থায়ীভাবে মুছে ফেলা হবে %s \nআপনি কি নিশ্চিত?</string>
     <string name="pause">থামুন</string>
     <string name="go_back_30">-৩০</string>
     <string name="github">গিটহাব</string>
@@ -184,8 +182,7 @@
     <string name="used_storage">ব্যবহৃত</string>
     <string name="library">লাইব্রেরী</string>
     <string name="lightnovel">আমাদের তৈরি ছোট উপন্যাস পড়ার অ্যাপ্লিকেশন</string>
-    <string name="resume_time_left" formatted="true">%d মি
-\nবাকি</string>
+    <string name="resume_time_left" formatted="true">%d মি \nবাকি</string>
     <string name="others">অন্যান্য</string>
     <string name="status_ongoing">চলমান</string>
     <string name="asian_drama">এশিয়ান নাটক</string>
@@ -308,8 +305,7 @@
     <string name="example_password">password123</string>
     <string name="episode_upcoming_format" formatted="true">আসছে %s সময়ের মধ্যে</string>
     <string name="cancel">বাতিল করুন</string>
-    <string name="resume_remaining" formatted="true">%s
-\nঅবশিষ্ট</string>
+    <string name="resume_remaining" formatted="true">%s \nঅবশিষ্ট</string>
     <string name="live_singular">লাইভ স্ট্রিম</string>
     <string name="source_error">সোর্স সমস্যা</string>
     <string name="remote_error">রিমোট সমস্যা</string>

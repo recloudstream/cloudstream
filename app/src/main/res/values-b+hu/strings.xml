@@ -10,8 +10,7 @@
     <string name="home_change_provider_img_des">Szolgáltató Váltás</string>
     <string name="player_speed_text_format" formatted="true">Sebesség (%.2fx)</string>
     <string name="rated_format" formatted="true">Értékelés: %.1f</string>
-    <string name="new_update_format" formatted="true">Új frissítés található!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Új frissítés található! \n%1$s -&gt; %2$s</string>
     <string name="duration_format" formatted="true">%d perc</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$sEp%2$d</string>
     <string name="app_name">CloudStream</string>
@@ -109,7 +108,7 @@
     <string name="subs_import_text" formatted="true">Betűtípusok importálása %s</string>
     <string name="action_remove_watching">Eltávolítás</string>
     <string name="action_open_watching">Több információ</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">VPN szükséges lehet ehhez a szolgáltató megfelelő működéséhez</string>
     <string name="vpn_torrent">Ez a szolgáltató torrent, VPN ajánlott</string>
     <string name="torrent_plot">Leírás</string>
@@ -149,8 +148,7 @@
     <string name="episode_short">Ep</string>
     <string name="no_episodes_found">Nem található epizód</string>
     <string name="delete_file">Fájl törlése</string>
-    <string name="resume_time_left" formatted="true">%dp
-\nhátra</string>
+    <string name="resume_time_left" formatted="true">%dp \nhátra</string>
     <string name="duration">Időtartam</string>
     <string name="free_storage">Elérhető</string>
     <string name="used_storage">Használatban</string>
@@ -206,8 +204,7 @@
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Nincs évad</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">Ezzel véglegesen törli a %s
-\nBiztosan törli?</string>
+    <string name="delete_message" formatted="true">Ezzel véglegesen törli a %s \nBiztosan törli?</string>
     <string name="status_ongoing">Folyamatban levő</string>
     <string name="year">Év</string>
     <string name="site">Webhely</string>
@@ -323,8 +320,7 @@
     <string name="extension_types">Támogatott</string>
     <string name="update_notification_downloading">Alkalmazásfrissítés letöltése…</string>
     <string name="sort_updated_new">Frissítve (újabbtól a régebbihez)</string>
-    <string name="empty_library_no_accounts_message">Úgy tűnik, a könyvtárad üres :(
-\nJelentkezz be egy könyvtár fiókba, vagy adj hozzá műsorokat a helyi könyvtárodhoz.</string>
+    <string name="empty_library_no_accounts_message">Úgy tűnik, a könyvtárad üres :( \nJelentkezz be egy könyvtár fiókba, vagy adj hozzá műsorokat a helyi könyvtárodhoz.</string>
     <string name="empty_library_logged_in_message">Úgy tűnik, ez a lista üres, próbálj meg egy másikra váltani.</string>
     <string name="max">Max</string>
     <string name="quality_4k">4K</string>
@@ -416,9 +412,7 @@
     <string name="subtitles_remove_captions">Zárt feliratok eltávolítása a feliratokból</string>
     <string name="is_adult">18+</string>
     <string name="delete_repository_plugins">Ez az összes tároló bővítményt is törli</string>
-    <string name="blank_repo_message">A CloudStream alapértelmezés szerint nem telepített webhelyeket. A webhelyeket a tárolókból kell telepítenie.
-\n
-\nCsatlakozz a Discord-unkhoz vagy keress online.</string>
+    <string name="blank_repo_message">A CloudStream alapértelmezés szerint nem telepített webhelyeket. A webhelyeket a tárolókból kell telepítenie. \n \nCsatlakozz a Discord-unkhoz vagy keress online.</string>
     <string name="extension_version">Verzió</string>
     <string name="action_mark_as_watched">Megjelölés megtekintettként</string>
     <string name="action_remove_from_watched">Eltávolítás a megnézettek közül</string>
@@ -472,8 +466,7 @@
     <string name="skip_type_credits">Közreműködők</string>
     <string name="sort_alphabetical_z">Betűrendben (Z-től az A-ig)</string>
     <string name="select_library">Könyvtár kiválasztása</string>
-    <string name="safe_mode_file">Biztonságos módú fájlba ütköztünk!
-\nNem töltődik be semmilyen kiegészítő indításkor, amíg a fájl nem kerül törlésre.</string>
+    <string name="safe_mode_file">Biztonságos módú fájlba ütköztünk! \nNem töltődik be semmilyen kiegészítő indításkor, amíg a fájl nem kerül törlésre.</string>
     <string name="normal">Normál</string>
     <string name="player_loaded_subtitles" formatted="true">%s betöltve</string>
     <string name="skip_setup">Beállítás kihagyása</string>
@@ -536,18 +529,8 @@
     <string name="profiles">Profilok</string>
     <string name="action_remove_from_favorites">Eltávolítás kedvencekből</string>
     <string name="enter_current_pin">Adja meg a jelenlegi PIN-t</string>
-    <string name="quality_profile_help">Itt beállíthatja hogyan rendezze el a forrásokat. Ha egy videónak nagyobb a prioritása, előbb fog megjelenni a listában. A forrás prioritás és a minőség prioritás együttes értéke adja ki a videó prioritást.
-\n
-\nForrás A: 3
-\nMinőség B: 7
-\nEzek összértéke egy 10-es videó prioritást eredményez.
-\n
-\nFIGYELEM: Ha az összeg több mint 10, a lejátszó nem tölt be mást ha már a link betöltésre került!</string>
-    <string name="duplicate_message_multiple" formatted="true">Potenciálisan dupla elemek a könyvtárjában:
-\n
-\n%s
-\n
-\nSzeretné hozzáadni ezt az elemet mindenképpen, ezzel felülírva a jelenlegit, vagy visszavonja a műveletet?</string>
+    <string name="quality_profile_help">Itt beállíthatja hogyan rendezze el a forrásokat. Ha egy videónak nagyobb a prioritása, előbb fog megjelenni a listában. A forrás prioritás és a minőség prioritás együttes értéke adja ki a videó prioritást. \n \nForrás A: 3 \nMinőség B: 7 \nEzek összértéke egy 10-es videó prioritást eredményez. \n \nFIGYELEM: Ha az összeg több mint 10, a lejátszó nem tölt be mást ha már a link betöltésre került!</string>
+    <string name="duplicate_message_multiple" formatted="true">Potenciálisan dupla elemek a könyvtárjában: \n \n%s \n \nSzeretné hozzáadni ezt az elemet mindenképpen, ezzel felülírva a jelenlegit, vagy visszavonja a műveletet?</string>
     <string name="skip_startup_account_select_pref">Fiók választás kihagyása belépéskor</string>
     <string name="use_default_account">Használjon alapértelmezett fiókot</string>
     <string name="rotate_video">Elforgatás</string>
@@ -556,9 +539,7 @@
     <string name="favorite_added">%s hozzáadva a kedvencekhez</string>
     <string name="favorite_removed">%s eltávolítva a kedvencekből</string>
     <string name="action_add_to_favorites">Hozzáadás a kedvencekhez</string>
-    <string name="duplicate_message_single" formatted="true">Úgy tűnik egy potenciálisan dupla elem már létezik a könyvtárjában: \'%s.\'
-\n
-\nMindenképpen hozzá akarja adni ezt az elemet, ezzel felülírva a régit, vagy visszavonja a műveletet?</string>
+    <string name="duplicate_message_single" formatted="true">Úgy tűnik egy potenciálisan dupla elem már létezik a könyvtárjában: \'%s.\' \n \nMindenképpen hozzá akarja adni ezt az elemet, ezzel felülírva a régit, vagy visszavonja a műveletet?</string>
     <string name="enter_pin">Adja meg a PIN-t</string>
     <string name="lock_profile">Profil Zárolása</string>
     <string name="select_an_account">Válasszon egy fiókot</string>

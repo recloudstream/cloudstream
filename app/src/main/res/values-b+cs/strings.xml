@@ -16,8 +16,7 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Rychlost (%.2fx)</string>
     <string name="rated_format" formatted="true">Hodnocení: %.1f</string>
-    <string name="new_update_format" formatted="true">Nalezena nová aktualizace!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Nalezena nová aktualizace! \n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Výplň</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="app_name">CloudStream</string>
@@ -100,7 +99,7 @@
     <string name="continue_watching">Pokračovat ve sledování</string>
     <string name="action_remove_watching">Odebrat</string>
     <string name="action_open_watching">Další informace</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Aby tento poskytovatel fungoval správně, budete možná potřebovat VPN</string>
     <string name="vpn_torrent">Tento poskytovatel je torrent, je doporučená VPN</string>
     <string name="provider_info_meta">Web neposkytnul žádná metadata, načítání videa selže, pokud na webu neexistuje.</string>
@@ -172,10 +171,8 @@
     <string name="resume">Pokračovat</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">Toto nevratně smaže %s
-\nJste si jisti?</string>
-    <string name="resume_time_left" formatted="true">%dm
-\nzbývá</string>
+    <string name="delete_message" formatted="true">Toto nevratně smaže %s \nJste si jisti?</string>
+    <string name="resume_time_left" formatted="true">%dm \nzbývá</string>
     <string name="status_ongoing">Probíhající</string>
     <string name="status_completed">Dokončena</string>
     <string name="status">Stav</string>
@@ -416,9 +413,7 @@
     <string name="plugin_downloaded">Doplněk stažen</string>
     <string name="is_adult">18+</string>
     <string name="batch_download_start_format" formatted="true">Spuštěno stahování %1$d %2$s…</string>
-    <string name="blank_repo_message">CloudStream nemá ve výchozím nastavení nainstalované žádné zdroje. Je třeba je nainstalovat z repozitářů.
-\n
-\nPřipojte se na náš Discord nebo hledejte na internetu.</string>
+    <string name="blank_repo_message">CloudStream nemá ve výchozím nastavení nainstalované žádné zdroje. Je třeba je nainstalovat z repozitářů. \n \nPřipojte se na náš Discord nebo hledejte na internetu.</string>
     <string name="plugins_disabled" formatted="true">Zakázáno: %d</string>
     <string name="plugins_updated" formatted="true">Aktualizováno %d doplňků</string>
     <string name="safe_mode_crash_info">Zobrazit informace o pádu</string>
@@ -446,8 +441,7 @@
     <string name="update_notification_failed">Nepodařilo se nainstalovat novou verzi aplikace</string>
     <string name="apk_installer_legacy">Původní</string>
     <string name="delayed_update_notice">Aplikace bude po ukončení aktualizována</string>
-    <string name="empty_library_no_accounts_message">Vaše knihovna je prázdná :(
-\nPřihlaste se k účtu v knihovně nebo přidejte pořady do místní knihovny.</string>
+    <string name="empty_library_no_accounts_message">Vaše knihovna je prázdná :( \nPřihlaste se k účtu v knihovně nebo přidejte pořady do místní knihovny.</string>
     <string name="select_library">Vybrat knihovnu</string>
     <string name="sort_rating_desc">Hodnocení (od nejvyššího)</string>
     <string name="sort_rating_asc">Hodnocení (od nejnižšího)</string>
@@ -455,8 +449,7 @@
     <string name="sort_by">Seřadit podle</string>
     <string name="sort">Řazení</string>
     <string name="empty_library_logged_in_message">Tento seznam je prázdný. Zkuste přepnout na jiný.</string>
-    <string name="safe_mode_file">Nalezen soubor bezpečného režimu!
-\nDo odebrání souboru nebudeme načítat žádná rozšíření.</string>
+    <string name="safe_mode_file">Nalezen soubor bezpečného režimu! \nDo odebrání souboru nebudeme načítat žádná rozšíření.</string>
     <string name="sort_updated_new">Aktualizováno (od nejnovějšího)</string>
     <string name="sort_updated_old">Aktualizováno (od nejstaršího)</string>
     <string name="sort_alphabetical_a">Abecedně (od A do Z)</string>
@@ -537,13 +530,7 @@
     <string name="help">Nápověda</string>
     <string name="qualities">Kvality</string>
     <string name="profile_background_des">Pozadí profilu</string>
-    <string name="quality_profile_help">Zde můžete změnit pořadí zdrojů. Pokud má video vyšší prioritu, objeví se ve výběru zdrojů výše. Součet priority zdroje a priority kvality je priorita videa.
-\n
-\nZdroj A: 3
-\nKvalita B: 7
-\nBudou mít celkovou prioritu videa 10.
-\n
-\nPOZNÁMKA: Pokud je součet 10 nebo vyšší, přehrávač automaticky přeskočí načítání při načtení daného odkazu!</string>
+    <string name="quality_profile_help">Zde můžete změnit pořadí zdrojů. Pokud má video vyšší prioritu, objeví se ve výběru zdrojů výše. Součet priority zdroje a priority kvality je priorita videa. \n \nZdroj A: 3 \nKvalita B: 7 \nBudou mít celkovou prioritu videa 10. \n \nPOZNÁMKA: Pokud je součet 10 nebo vyšší, přehrávač automaticky přeskočí načítání při načtení daného odkazu!</string>
     <string name="unable_to_inflate">Nepodařilo se správně vytvořit rozhraní. Toto je VÁŽNÁ CHYBA, kterou je potřeba ihned nahlásit %s</string>
     <string name="disable">Vypnout</string>
     <string name="automatic_plugin_download_mode_title">Výběr režimu pro filtrování stahování doplňků</string>
@@ -553,11 +540,7 @@
     <string name="favorite_removed">%s odebráno z oblíbených</string>
     <string name="favorites_list_name">Oblíbené</string>
     <string name="favorite_added">%s přidáno do oblíbených</string>
-    <string name="duplicate_message_multiple" formatted="true">Ve vaší knihovně byl nalezen potenciální duplikát:
-\n
-\n%s
-\n
-\nChcete přesto přidat tuto položku, nahradit existující nebo zrušit akci?</string>
+    <string name="duplicate_message_multiple" formatted="true">Ve vaší knihovně byl nalezen potenciální duplikát: \n \n%s \n \nChcete přesto přidat tuto položku, nahradit existující nebo zrušit akci?</string>
     <string name="backup_frequency">Frekvence záloh</string>
     <string name="duplicate_title">Nalezena potenciální duplicita</string>
     <string name="lock_profile">Zamknout profil</string>
@@ -571,9 +554,7 @@
     <string name="action_subscribe">Odebírat</string>
     <string name="action_remove_from_favorites">Odebrat z oblíbených</string>
     <string name="select_an_account">Vyberte účet</string>
-    <string name="duplicate_message_single">Vypadá to, že ve vaší knihovně již existuje potenciální duplikát: „%s“.
-\n
-\nChcete přesto přidat tuto položku, nahradit existující nebo zrušit akci?</string>
+    <string name="duplicate_message_single">Vypadá to, že ve vaší knihovně již existuje potenciální duplikát: „%s“. \n \nChcete přesto přidat tuto položku, nahradit existující nebo zrušit akci?</string>
     <string name="enter_pin">Zadejte PIN</string>
     <string name="pin">PIN</string>
     <string name="enter_current_pin">Zadejte současný PIN</string>
@@ -602,8 +583,7 @@
     <string name="biometric_prompt_description">Po několika nezdařilých pokusech se okno zavře. Pro opětovný pokus restartujte aplikaci.</string>
     <string name="biometric_warning">Vaše data z aplikace CloudStream byla nyní zálohována. Ačkoli je tato možnost velmi malá, různá zařízení se mohou chovat různě. Ve výjimečném případě, že se vám přístup k aplikaci zablokuje, data aplikace zcela vymažte a obnovte je ze zálohy. Velmi se omlouváme za případné nepříjemnosti z toho plynoucí.</string>
     <string name="unfavorite">Odebrat z oblíbených</string>
-    <string name="resume_remaining" formatted="true">%s
-\nzbývá</string>
+    <string name="resume_remaining" formatted="true">%s \nzbývá</string>
     <string name="favorite">Přidat do oblíbených</string>
     <string name="repo_copy_label">Název a adresa repozitáře</string>
     <string name="clipboard_unknown_error">Chyba při kopírování, zkopírujte prosím protokol a kontaktujte podporu aplikace.</string>
@@ -644,20 +624,12 @@
     <string name="downloads_delete_select">Zvolte položky k odstranění</string>
     <string name="offline_file">Dostupné pro sledování offline</string>
     <string name="select_all">Vybrat vše</string>
-    <string name="delete_message_multiple" formatted="true">Opravdu chcete trvale odstranit následující položky?
-\n
-\n%s</string>
-    <string name="delete_message_series_episodes" formatted="true">Opravdu chcete trvale odstranit následující epizody v %1$s?
-\n
-\n%2$s</string>
-    <string name="delete_message_series_only" formatted="true">Opravdu chcete trvale odstranit všechny epizody v následujících sériích?
-\n
-\n%s</string>
+    <string name="delete_message_multiple" formatted="true">Opravdu chcete trvale odstranit následující položky? \n \n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Opravdu chcete trvale odstranit následující epizody v %1$s? \n \n%2$s</string>
+    <string name="delete_message_series_only" formatted="true">Opravdu chcete trvale odstranit všechny epizody v následujících sériích? \n \n%s</string>
     <string name="deselect_all">Zrušit výběr všeho</string>
     <string name="delete_files">Odstranit soubory</string>
-    <string name="delete_message_series_section" formatted="true">Také trvale odstraníte všechny epizody v následujících sériích:
-\n
-\n%s</string>
+    <string name="delete_message_series_section" formatted="true">Také trvale odstraníte všechny epizody v následujících sériích: \n \n%s</string>
     <string name="delete_format" formatted="true">Odstranit (%1$d | %2$s)</string>
     <string name="preview_seekbar">Náhled v liště přehrávače</string>
     <string name="preview_seekbar_desc">Povolit náhled miniatur na liště přehrávače</string>
@@ -779,4 +751,7 @@
     <string name="source_priority">Priorita zdrojů</string>
     <string name="source_priority_help">Rozhodněte, jak mají být řazeny zdroje videí v přehrávači</string>
     <string name="show_player_metadata_overlay">Zobrazit překrytí metadat v přehrávači</string>
+    <string name="video_singular">Video</string>
+    <string name="skip_type_preview">Náhled</string>
+    <string name="player_is_live">Živě</string>
 </resources>

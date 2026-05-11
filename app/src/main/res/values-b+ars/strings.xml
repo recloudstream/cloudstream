@@ -35,8 +35,7 @@
     <string name="download_paused">توقف التنزيل</string>
     <string name="type_plan_to_watch">خطط للمشاهدة</string>
     <string name="type_re_watching">إعادة المشاهدة</string>
-    <string name="new_update_format" formatted="true">!تم العثور على تحديث جديد
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">!تم العثور على تحديث جديد \n%1$s -&gt; %2$s</string>
     <string name="rated_format" formatted="true">%.1f:قدر</string>
     <string name="duration_format" formatted="true">%dاقل</string>
     <string name="app_name">كلاودستريم</string>
@@ -157,23 +156,15 @@
     <string name="sort_updated_new">تم التحديث (من الجديد إلى القديم)</string>
     <string name="sort_updated_old">تم التحديث (القديم إلى الجديد)</string>
     <string name="sort_alphabetical_a">أبجديًا (من الألف إلى الياء)</string>
-    <string name="empty_library_no_accounts_message">مكتبتك فارغة :(
-\nقم بتسجيل الدخول إلى حساب المكتبة أو قم بإضافة العروض إلى مكتبتك المحلية.</string>
-    <string name="safe_mode_file">!تم العثور على ملف الوضع الآمن
-\n.عدم تحميل أي ملحقات عند بدء التشغيل حتى تتم إزالة الملف</string>
+    <string name="empty_library_no_accounts_message">مكتبتك فارغة :( \nقم بتسجيل الدخول إلى حساب المكتبة أو قم بإضافة العروض إلى مكتبتك المحلية.</string>
+    <string name="safe_mode_file">!تم العثور على ملف الوضع الآمن \n.عدم تحميل أي ملحقات عند بدء التشغيل حتى تتم إزالة الملف</string>
     <string name="revert">ارجع</string>
     <string name="subscription_in_progress_notification">تحديث العروض المشتركة</string>
     <string name="set_default">الوضع العادي</string>
     <string name="edit">حرر</string>
     <string name="profiles">ملفات تعريفية</string>
     <string name="help">مساعدة</string>
-    <string name="quality_profile_help">.هنا يمكنك تغيير كيفية ترتيب المصادر. إذا كان للفيديو أولوية أعلى، فسيظهر في مكان أعلى في تحديد المصدر. مجموع أولوية المصدر وأولوية الجودة هو أولوية الفيديو
-\n
-\nالمصدر أ: 3
-\nالجودة ب: 7
-\nستكون أولوية الفيديو المدمجة .10
-\n
-\n!ملاحظة: إذا كان المجموع 10 أو أكثر، فسيقوم اللاعب تلقائيًا بتخطي التحميل عند تحميل هذا الرابط</string>
+    <string name="quality_profile_help">.هنا يمكنك تغيير كيفية ترتيب المصادر. إذا كان للفيديو أولوية أعلى، فسيظهر في مكان أعلى في تحديد المصدر. مجموع أولوية المصدر وأولوية الجودة هو أولوية الفيديو \n \nالمصدر أ: 3 \nالجودة ب: 7 \nستكون أولوية الفيديو المدمجة .10 \n \n!ملاحظة: إذا كان المجموع 10 أو أكثر، فسيقوم اللاعب تلقائيًا بتخطي التحميل عند تحميل هذا الرابط</string>
     <string name="already_voted">لقد صوت بالفعل</string>
     <string name="sort_alphabetical_z">أبجديًا (ياء إلى ألف)</string>
     <string name="sort_by">ترتيب حسب</string>
@@ -227,8 +218,7 @@
     <string name="sort_apply">قدم</string>
     <string name="torrent_plot">وصف</string>
     <string name="picture_in_picture_des">يستمر التشغيل في مشغل مصغر فوق التطبيقات الأخرى</string>
-    <string name="delete_message" formatted="true">نهائيا %sسيؤدي هذا الى حذف
-\nهل أنت متأكد؟</string>
+    <string name="delete_message" formatted="true">نهائيا %sسيؤدي هذا الى حذف \nهل أنت متأكد؟</string>
     <string name="subs_font">الخط</string>
     <string name="subs_font_size">حجم الخط</string>
     <string name="action_remove_watching">زيل</string>
@@ -255,8 +245,7 @@
     <string name="show_log_cat">🐈عرض لوجكات</string>
     <string name="test_log">سجل</string>
     <string name="picture_in_picture">صور في صور</string>
-    <string name="resume_time_left" formatted="true">%d
-\nباقي</string>
+    <string name="resume_time_left" formatted="true">%d \nباقي</string>
     <string name="video_source">مصدر</string>
     <string name="android_tv_interface_off_seek_settings">اللاعب مخفي - ابحث عن المبلغ</string>
     <string name="backup_frequency">تكرار النسخ الاحتياطي</string>

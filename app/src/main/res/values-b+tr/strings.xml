@@ -19,8 +19,7 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Hız (%.2fx)</string>
     <string name="rated_format" formatted="true">Puan: %.1f</string>
-    <string name="new_update_format" formatted="true">Yeni güncelleme bulundu!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Yeni güncelleme bulundu! \n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Dolgu</string>
     <string name="duration_format" formatted="true">%d dakika</string>
     <string name="app_name">CloudStream</string>
@@ -106,7 +105,7 @@
     <string name="continue_watching">İzlemeye Devam Et</string>
     <string name="action_remove_watching">Kaldır</string>
     <string name="action_open_watching">Daha Fazla Bilgi</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Bu sağlayıcının düzgün çalışması için bir VPN gerekebilir</string>
     <string name="vpn_torrent">Bu sağlayıcı torrent kullanıyor, bir VPN önerilir</string>
     <string name="provider_info_meta">Metadata site tarafından sağlanmamış, veri site\'de bulunmuyorsa video yüklenmesi başarısız olacak.</string>
@@ -187,8 +186,7 @@
     <string name="resume">Sürdür</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">%s tamamen silinecek
-\nEmin misiniz?</string>
+    <string name="delete_message" formatted="true">%s tamamen silinecek \nEmin misiniz?</string>
     <string name="resume_time_left" formatted="true">%dd \nkaldı</string>
     <string name="status_ongoing">Devam ediyor</string>
     <string name="status_completed">Tamamlandı</string>
@@ -220,8 +218,8 @@
     <string name="movies_singular">Film</string>
     <string name="tv_series_singular">Dizi</string>
     <string name="cartoons_singular">Çizgi film</string>
-    <string name="anime_singular">@string/anime</string>
-    <string name="ova_singular">@string/ova</string>
+    <string name="anime_singular">\@string/anime</string>
+    <string name="ova_singular">\@string/ova</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Belgesel</string>
     <string name="asian_drama_singular">Asya dizisi</string>
@@ -485,10 +483,8 @@
     <string name="clipboard_too_large">Çok fazla metin. Panoya kaydedilemiyor.</string>
     <string name="library">Kütüphane</string>
     <string name="browser">Tarayıcı</string>
-    <string name="empty_library_no_accounts_message">Kütüphaneniz boş :(
-\nBir kütüphane hesabında oturum açın veya yerel kütüphanenize programlar ekleyin.</string>
-    <string name="safe_mode_file">Güvenli mod dosyası bulundu!
-\nDosya kaldırılana kadar başlangıçta herhangi bir uzantı yüklenmiyor.</string>
+    <string name="empty_library_no_accounts_message">Kütüphaneniz boş :( \nBir kütüphane hesabında oturum açın veya yerel kütüphanenize programlar ekleyin.</string>
+    <string name="safe_mode_file">Güvenli mod dosyası bulundu! \nDosya kaldırılana kadar başlangıçta herhangi bir uzantı yüklenmiyor.</string>
     <string name="sort_by">Şuna Göre Sırala</string>
     <string name="sort">Sırala</string>
     <string name="sort_updated_new">Güncellenme (Yeniden Eskiye)</string>
@@ -531,13 +527,7 @@
     <string name="mobile_data">Mobil veri</string>
     <string name="set_default">Varsayılanı ayarla</string>
     <string name="edit">Düzenle</string>
-    <string name="quality_profile_help">Burada kaynakların nasıl sıralandığını değiştirebilirsiniz. Bir video daha yüksek bir önceliğe sahipse, kaynak seçiminde daha yüksek görünecektir. Kaynak önceliği ve kalite önceliğinin toplamı video önceliğidir.
-\n
-\nKaynak A: 3
-\nKalite B: 7
-\nBirleştirilmiş video önceliği 10 olacaktır.
-\n
-\nNOT: Toplam 10 veya daha fazlaysa, bu bağlantı yüklendiğinde oynatıcı otomatik olarak yüklemeyi atlayacaktır!</string>
+    <string name="quality_profile_help">Burada kaynakların nasıl sıralandığını değiştirebilirsiniz. Bir video daha yüksek bir önceliğe sahipse, kaynak seçiminde daha yüksek görünecektir. Kaynak önceliği ve kalite önceliğinin toplamı video önceliğidir. \n \nKaynak A: 3 \nKalite B: 7 \nBirleştirilmiş video önceliği 10 olacaktır. \n \nNOT: Toplam 10 veya daha fazlaysa, bu bağlantı yüklendiğinde oynatıcı otomatik olarak yüklemeyi atlayacaktır!</string>
     <string name="qualities">Kaliteler</string>
     <string name="profile_background_des">Profil arkaplanı</string>
     <string name="unable_to_inflate">UI was unable to be created correctly, this is a MAJOR BUG and should be reported immediately %s</string>
@@ -546,11 +536,7 @@
     <string name="favorites_list_name">Favoriler</string>
     <string name="favorite_added">%s favorilere eklendi</string>
     <string name="logged_account" formatted="true">%s olarak giriş yapıldı</string>
-    <string name="duplicate_message_multiple" formatted="true">Kütüphanenizde potensiyel kopya ürünler bulundu:
-\n
-\n%s
-\n
-\nYine de ekleyerek var olanları değiştirmek mi istersiniz, yoksa iptal etmek mi?</string>
+    <string name="duplicate_message_multiple" formatted="true">Kütüphanenizde potensiyel kopya ürünler bulundu: \n \n%s \n \nYine de ekleyerek var olanları değiştirmek mi istersiniz, yoksa iptal etmek mi?</string>
     <string name="enter_pin_with_name" formatted="true">%s için PIN girin</string>
     <string name="backup_frequency">Yedekleme sıklığı</string>
     <string name="duplicate_title">Potensiyel Kopya Bulundu</string>
@@ -573,9 +559,7 @@
     <string name="no_repository_found_error">Depo bulunamadı, bağlantı adresini kontrol edin veya VPN ile deneyin</string>
     <string name="already_voted">Zaten oyladınız</string>
     <string name="no_plugins_found_error">Depoda eklenti bulunamadı</string>
-    <string name="duplicate_message_single" formatted="true">Görünüşe göre potansiyel bir kopya kütüphanenizde zaten bulunuyor: \'%s\'
-\n
-\nYine de ekleyerek var olanı değiştirmek mi istersiniz, yoksa iptal etmek mi?</string>
+    <string name="duplicate_message_single" formatted="true">Görünüşe göre potansiyel bir kopya kütüphanenizde zaten bulunuyor: \'%s\' \n \nYine de ekleyerek var olanı değiştirmek mi istersiniz, yoksa iptal etmek mi?</string>
     <string name="enter_pin">PIN girin</string>
     <string name="pin">PIN</string>
     <string name="enter_current_pin">Geçerli PIN\'i Giriniz</string>
@@ -637,20 +621,12 @@
     <string name="hide_player_control_names">Oynatıcı kontrolünün adlarını gizle</string>
     <string name="play_from_beginning_img_des">Baştan Oynat</string>
     <string name="select_all">Tümünü Seç</string>
-    <string name="delete_message_multiple" formatted="true">Aşağıdaki öğeleri kalıcı olarak silmek istediğinizden emin misiniz?
-\n
-\n%s</string>
-    <string name="delete_message_series_episodes" formatted="true">%1$s içindeki aşağıdaki bölümleri kalıcı olarak silmek istediğinizden emin misiniz?
-\n
-\n%2$s</string>
+    <string name="delete_message_multiple" formatted="true">Aşağıdaki öğeleri kalıcı olarak silmek istediğinizden emin misiniz? \n \n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">%1$s içindeki aşağıdaki bölümleri kalıcı olarak silmek istediğinizden emin misiniz? \n \n%2$s</string>
     <string name="delete_files">Dosyaları Silin</string>
     <string name="delete_format" formatted="true">Sil (%1$d | %2$s)</string>
-    <string name="delete_message_series_only" formatted="true">Aşağıdaki dizideki tüm bölümleri kalıcı olarak silmek istediğinizden emin misiniz?
-\n
-\n%s</string>
-    <string name="delete_message_series_section" formatted="true">Ayrıca aşağıdaki dizideki tüm bölümleri kalıcı olarak sileceksiniz:
-\n
-\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Aşağıdaki dizideki tüm bölümleri kalıcı olarak silmek istediğinizden emin misiniz? \n \n%s</string>
+    <string name="delete_message_series_section" formatted="true">Ayrıca aşağıdaki dizideki tüm bölümleri kalıcı olarak sileceksiniz: \n \n%s</string>
     <string name="downloads_delete_select">Silinecek Öğeleri Seçin</string>
     <string name="deselect_all">Tüm Seçimi Kaldır</string>
     <string name="offline_file">Çevrimdışı izlemek için kullanılabilir</string>
@@ -770,4 +746,7 @@
     <string name="source_priority">Öncelikli kaynak</string>
     <string name="source_priority_help">Oynatıcıda video kaynaklarının nasıl sıralanacağını belirleyin</string>
     <string name="show_player_metadata_overlay">Meta Verileri Katmanını Göster</string>
+    <string name="player_is_live">Canlı</string>
+    <string name="skip_type_preview">Ön Gösterim</string>
+    <string name="video_singular">Video</string>
 </resources>

@@ -19,8 +19,7 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Viteză (%.2fx)</string>
     <string name="rated_format" formatted="true">Evaluare: %.1f</string>
-    <string name="new_update_format" formatted="true">Actualizare nouă găsită!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Actualizare nouă găsită! \n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Filler</string>
     <string name="duration_format" formatted="true">%d min</string>
     <!-- <string name="app_name">CloudStream</string> -->
@@ -103,7 +102,7 @@
     <string name="continue_watching">Continuați să urmăriți</string>
     <string name="action_remove_watching">Eliminați</string>
     <string name="action_open_watching">Mai multe informații</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Există probabilitatea necesitații unui VPN pentru ca acest furnizor să funcționeze corespunzător</string>
     <string name="vpn_torrent">Acest furnizor este un torrent, se recomandă un VPN</string>
     <string name="provider_info_meta">Metadatele nu sunt furnizate de către site, există posibilitatea ca încărcarea videoclipului să eșueze.</string>
@@ -177,10 +176,8 @@
     <string name="resume">Continuă</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">Sunteți pe cale să ștergeți definitiv %s
-\nSunteți sigur?</string>
-    <string name="resume_time_left" formatted="true">%dm
-\nrămas</string>
+    <string name="delete_message" formatted="true">Sunteți pe cale să ștergeți definitiv %s \nSunteți sigur?</string>
+    <string name="resume_time_left" formatted="true">%dm \nrămas</string>
     <string name="status_ongoing">În curs de desfășurare</string>
     <string name="status_completed">Finalizat</string>
     <string name="status">Status</string>
@@ -430,8 +427,7 @@
     <string name="pref_category_ui_features">Funcții</string>
     <string name="extension_authors">Autori</string>
     <string name="add_repository">Adaugă depozit</string>
-    <string name="empty_library_no_accounts_message">Biblioteca ta este goală :(
-\nConectați-vă într-un cont de bibliotecă sau adăugați emisiuni la biblioteca locală.</string>
+    <string name="empty_library_no_accounts_message">Biblioteca ta este goală :( \nConectați-vă într-un cont de bibliotecă sau adăugați emisiuni la biblioteca locală.</string>
     <string name="subtitles_remove_captions">Eliminați subtitrările închise din subtitrări</string>
     <string name="setup_extensions_subtext">Descărcați lista de site-uri pe care doriți să le utilizați</string>
     <string name="sort_rating_desc">Evaluare (Ridicat la Scăzut)</string>
@@ -471,13 +467,10 @@
     <string name="error_invalid_url">URL invalid</string>
     <string name="safe_mode_description">Toate extensiile au fost dezactivate din cauza unei defecțiuni pentru a vă ajuta să o găsiți pe cea care cauzează probleme.</string>
     <string name="update_notification_downloading">Se descarcă actualizarea aplicației…</string>
-    <string name="blank_repo_message">CloudStream nu are niciun site instalat din start. Trebuie să instalați site-urile din depozite.
-\n
-\nAlăturați-vă Discord-ului nostru sau căutați online.</string>
+    <string name="blank_repo_message">CloudStream nu are niciun site instalat din start. Trebuie să instalați site-urile din depozite. \n \nAlăturați-vă Discord-ului nostru sau căutați online.</string>
     <string name="batch_download_start_format" formatted="true">A început să descarce %1$d %2$s…</string>
     <string name="safe_mode_title">Mod sigur pornit</string>
-    <string name="safe_mode_file">Fișier Mod Sigur găsit!
-\nNu încarcă nicio extensie la pornire până când fișierul nu este eliminat.</string>
+    <string name="safe_mode_file">Fișier Mod Sigur găsit! \nNu încarcă nicio extensie la pornire până când fișierul nu este eliminat.</string>
     <string name="action_remove_from_watched">Scoateți de la urmărit</string>
     <string name="sort_updated_old">Actualizat (Vechi la Nou)</string>
     <string name="apply_on_restart">Reporniți aplicația pentru a vedea schimbările.</string>
@@ -531,13 +524,7 @@
     <string name="pref_category_app_updates">Actualizări al aplicației</string>
     <string name="pref_category_subtitles">Subtitrări</string>
     <string name="disable">Dezactivați</string>
-    <string name="quality_profile_help">Aici puteți schimba modul în care sunt ordonate sursele. Dacă un videoclip are o prioritate mai mare, acesta va apărea mai sus în selecția surselor. Suma dintre prioritatea sursei și prioritatea calității reprezintă prioritatea video.
-\n
-\nSursa A: 3
-\nCalitate B: 7
-\nVa avea o prioritate video combinată de 10.
-\n
-\nNOTĂ: Dacă suma este 10 sau mai mare, playerul va sări automat peste încărcare atunci când este încărcat link-ul respectiv!</string>
+    <string name="quality_profile_help">Aici puteți schimba modul în care sunt ordonate sursele. Dacă un videoclip are o prioritate mai mare, acesta va apărea mai sus în selecția surselor. Suma dintre prioritatea sursei și prioritatea calității reprezintă prioritatea video. \n \nSursa A: 3 \nCalitate B: 7 \nVa avea o prioritate video combinată de 10. \n \nNOTĂ: Dacă suma este 10 sau mai mare, playerul va sări automat peste încărcare atunci când este încărcat link-ul respectiv!</string>
     <string name="no_plugins_found_error">Nu s-a găsit plugin-uri în depozit</string>
     <string name="no_repository_found_error">Nu s-a găsit depozitul, verificați URL-ul și încercați cu un VPN</string>
     <string name="edit">Editați</string>
@@ -553,18 +540,12 @@
     <string name="unable_to_inflate">UI nu a putut fi creată corect, acesta este un BUG MAJOR și trebuie raportat imediat %s</string>
     <string name="automatic_plugin_download_mode_title">Selectați modul de filtrare a descărcării plugin-urilor</string>
     <string name="already_voted">Ați votat deja</string>
-    <string name="duplicate_message_multiple" formatted="true">Elemente potențial duplicate au fost găsite în biblioteca ta:
-\n
-\n%s
-\n
-\nÎn ciuda acestui fapt, ai dori să adaugi acest alement, să le înlocuiești pe cele existente, sau să anulezi acțiunea?</string>
+    <string name="duplicate_message_multiple" formatted="true">Elemente potențial duplicate au fost găsite în biblioteca ta: \n \n%s \n \nÎn ciuda acestui fapt, ai dori să adaugi acest alement, să le înlocuiești pe cele existente, sau să anulezi acțiunea?</string>
     <string name="favorite_added">%s a fost adăugat la favoriți/te</string>
     <string name="favorite_removed">%s a fost eliminat din favoriți/te</string>
     <string name="action_add_to_favorites">Adaugă la favoriți/te</string>
     <string name="action_remove_from_favorites">Elimină din favoriți/te</string>
-    <string name="duplicate_message_single" formatted="true">Se pare că un element potențial duplicat deja există în biblioteca ta: \'%s.\'
-\n
-\nÎn ciuda aceasta, ai dori să adaugi acest element, să îl înlocuiești pe cel existent, sau să anulezi acțiunea?</string>
+    <string name="duplicate_message_single" formatted="true">Se pare că un element potențial duplicat deja există în biblioteca ta: \'%s.\' \n \nÎn ciuda aceasta, ai dori să adaugi acest element, să îl înlocuiești pe cel existent, sau să anulezi acțiunea?</string>
     <string name="enter_pin_with_name" formatted="true">Introduce PIN-ul pentru %s</string>
     <string name="enter_current_pin">Introduce PIN-ul actual</string>
     <string name="enter_pin">Introduce PIN-ul</string>
@@ -619,8 +600,7 @@
     <string name="reset_btn">Resetați</string>
     <string name="auto_rotate_video_desc">Activați comutarea automată a orientării ecranului pe baza orientării video</string>
     <string name="biometric_setting">Blocare cu biometrie</string>
-    <string name="resume_remaining" formatted="true">%s
-\nrămase</string>
+    <string name="resume_remaining" formatted="true">%s \nrămase</string>
     <string name="episode_upcoming_format" formatted="true">Următorul în %s</string>
     <string name="cs3wiki">CloudStream Wiki</string>
     <string name="next_season_episode_format" formatted="true">Sezonul %1$d Episod %2$d va fi lansat în</string>

@@ -11,8 +11,7 @@
     <string name="preview_background_img_des">배경 미리보기</string>
     <string name="player_speed_text_format" formatted="true">속도 (%.2fx)</string>
     <string name="rated_format" formatted="true">평점: %.1f</string>
-    <string name="new_update_format" formatted="true">새로운 업데이트!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">새로운 업데이트! \n%1$s -&gt; %2$s</string>
     <string name="duration_format" formatted="true">%d분</string>
     <string name="app_name">CloudStream</string>
     <string name="play_with_app_name">CloudStream으로 재생</string>
@@ -28,7 +27,7 @@
     <string name="result_share">공유</string>
     <string name="result_open_in_browser">브라우저로 열기</string>
     <string name="browser">브라우저</string>
-    <string name="skip_loading">로딩 건너뛰기</string>
+    <string name="skip_loading">로딩 스킵</string>
     <string name="loading">로딩중…</string>
     <string name="type_watching">시청</string>
     <string name="type_on_hold">보류</string>
@@ -124,7 +123,7 @@
     <string name="use_system_brightness_settings_des">어두운 오버레이 대신 앱 플레이어의 시스템 밝기를 사용합니다</string>
     <string name="episode_sync_settings">시청 진행 상황 업데이트</string>
     <string name="episode_sync_settings_des">현재 에피소드 진행 상황을 자동으로 동기화합니다</string>
-    <string name="restore_settings">백업에서 데이터 복원</string>
+    <string name="restore_settings">데이터 복원</string>
     <string name="backup_settings">데이터 백업</string>
     <string name="restore_failed_format" formatted="true">파일에서 데이터를 복원하지 못했습니다 %s</string>
     <string name="backup_success">저장된 데이터</string>
@@ -161,10 +160,8 @@
     <string name="year">년</string>
     <string name="rating">평점</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">%s가 영구 삭제됩니다
-\n정말 삭제하시겠습니까?</string>
-    <string name="resume_time_left" formatted="true">%d분
-\n남음</string>
+    <string name="delete_message" formatted="true">%s이(가) 영구적으로 삭제됩니다 \n정말 삭제하시겠습니까?</string>
+    <string name="resume_time_left" formatted="true">%d분 \n남음</string>
     <string name="site">사이트</string>
     <string name="duration">시간</string>
     <string name="synopsis">개요</string>
@@ -184,7 +181,7 @@
     <string name="episode_action_play_in_format">%s로 재생</string>
     <string name="episode_action_auto_download">자동 다운로드</string>
     <string name="episode_action_download_mirror">다운로드 소스 목록</string>
-    <string name="episode_action_reload_links">링크 새로고침</string>
+    <string name="episode_action_reload_links">링크 초기화</string>
     <string name="episode_action_download_subtitle">자막 다운로드</string>
     <string name="show_hd">화질 라벨</string>
     <string name="show_dub">더빙 라벨</string>
@@ -195,7 +192,7 @@
     <string name="video_aspect_ratio_resize">크기 조정</string>
     <string name="video_source">소스</string>
     <string name="video_skip_op">오프닝 스킵</string>
-    <string name="skip_update">이 업데이트 건너뛰기</string>
+    <string name="skip_update">다음에 업데이트</string>
     <string name="watch_quality_pref">선호하는 화질 (WiFi)</string>
     <string name="watch_quality_pref_data">선호하는 화질 (모바일 데이터)</string>
     <string name="limit_title_rez">플레이어 내 표시 정보</string>
@@ -297,11 +294,7 @@
     <string name="delete_repository">저장소 삭제</string>
     <string name="setup_extensions_subtext">사용하려는 사이트 목록 다운로드</string>
     <string name="plugins_downloaded" formatted="true">다운로드됨: %d</string>
-    <string name="blank_repo_message">CloudStream에는 기본적으로 설치된 사이트가 없습니다. 저장소에서 사이트를 설치해야 합니다.
-\n
-\nSky UK Limited의 무분별한 DMCA 게시 중단으로 인해 앱에서 저장소 사이트를 연결 할 수 없습니다.
-\n
-\nDiscord에 가입하거나 온라인으로 검색해 보세요.</string>
+    <string name="blank_repo_message">CloudStream에는 기본적으로 설치된 사이트가 없습니다. 저장소에서 사이트를 설치해야 합니다. \n \nDiscord에 가입하거나 온라인으로 검색해 보세요.</string>
     <string name="view_public_repositories_button">커뮤니티 저장소 보기</string>
     <string name="view_public_repositories_button_short">공개 목록</string>
     <string name="uppercase_all_subtitles">자막 대문자화 표시</string>
@@ -322,7 +315,7 @@
     <string name="safe_mode_crash_info">충돌 정보 보기</string>
     <string name="extension_language">언어</string>
     <string name="subscription_episode_released">에피소드 %d 공개!</string>
-    <string name="picture_in_picture">PIP 모드</string>
+    <string name="picture_in_picture">Picture-in-picture 모드</string>
     <string name="player_size_settings">플레이어 크기 조정 버튼</string>
     <string name="picture_in_picture_des">미니플레이어를 통해 다른 앱 상단에서 계속 재생합니다</string>
     <string name="player_size_settings_des">레터박스 제거</string>
@@ -331,7 +324,7 @@
     <string name="restore_success">백업 파일을 성공적으로 로드하였습니다</string>
     <string name="settings_info">정보</string>
     <string name="advanced_search">고급 검색</string>
-    <string name="redo_setup_process">설정 프로세스 다시 실행</string>
+    <string name="redo_setup_process">설정 프로세스 재실행</string>
     <string name="apk_installer_settings">APK 인스톨러</string>
     <string name="github">Github</string>
     <string name="source_error">소스 오류</string>
@@ -438,16 +431,16 @@
     <string name="extension_install_first">먼저 확장 프로그램을 설치하세요</string>
     <string name="app_not_found_error">앱을 찾을 수 없음</string>
     <string name="all_languages_preference">모든 언어</string>
-    <string name="skip_type_format" formatted="true">건너뛰기 %s</string>
+    <string name="skip_type_format" formatted="true">%s 스킵</string>
     <string name="skip_type_op">오프닝</string>
     <string name="skip_type_ed">엔딩</string>
     <string name="skip_type_mixed_ed">혼합 엔딩</string>
     <string name="skip_type_mixed_op">혼합 오프닝</string>
     <string name="skip_type_credits">크레딧</string>
-    <string name="skip_type_intro">소개</string>
+    <string name="skip_type_intro">인트로</string>
     <string name="clear_history">기록 삭제</string>
     <string name="history">기록</string>
-    <string name="enable_skip_op_from_database_des">오프닝/엔딩 시 건너뛰기 팝업 표시</string>
+    <string name="enable_skip_op_from_database_des">오프닝/엔딩 시 스킵 팝업 표시</string>
     <string name="clipboard_too_large">텍스트가 너무 많습니다. 클립보드에 저장할 수 없습니다.</string>
     <string name="action_remove_from_watched">시청에서 삭제</string>
     <string name="confirm_exit_dialog">정말 종료하시겠습니까?</string>
@@ -466,10 +459,8 @@
     <string name="sort_alphabetical_a">알파벳순 (A에서 Z)</string>
     <string name="sort_alphabetical_z">알파벳순 (Z에서 A)</string>
     <string name="open_with">다음으로 열기</string>
-    <string name="empty_library_no_accounts_message">라이브러리가 비어 있습니다 :(
-\n라이브러리 계정으로 로그인하거나 로컬 라이브러리에 프로그램을 추가하세요.</string>
-    <string name="safe_mode_file">안전 모드 파일을 찾았습니다!
-\n파일이 제거될 때까지 시작 시 확장 프로그램을 로드하지 않습니다.</string>
+    <string name="empty_library_no_accounts_message">라이브러리가 비어 있습니다 :( \n라이브러리 계정으로 로그인하거나 로컬 라이브러리에 프로그램을 추가하세요.</string>
+    <string name="safe_mode_file">안전 모드 파일을 찾았습니다! \n파일이 제거될 때까지 시작 시 확장 프로그램을 로드하지 않습니다.</string>
     <string name="hls_playlist">HLS 재생목록</string>
     <string name="player_settings_play_in_app">내부 플레이어</string>
     <string name="player_pref">선호하는 동영상 플레이어</string>
@@ -482,10 +473,10 @@
     <string name="benene_count_text">개발자에게 %d 바나나 줌</string>
     <string name="benene_count_text_none">바나나를 주지 않음</string>
     <string name="action_open_watching">상세 정보</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="normal_no_plot">플롯을 찾을 수 없음</string>
     <string name="torrent_no_plot">설명을 찾을 수 없음</string>
-    <string name="show_log_cat">Logcat 🐈 표시</string>
+    <string name="show_log_cat">로그캣 🐈 보기</string>
     <string name="show_fillers_settings">애니메이션용 필러 에피소드 표시</string>
     <string name="test_passed">통과</string>
     <string name="resume">계속</string>
@@ -517,11 +508,11 @@
     <string name="pref_category_security">보안</string>
     <string name="pref_category_accounts">계정</string>
     <string name="no_plugins_found_error">리포지토리에서 플러그인을 찾을 수 없습니다</string>
-    <string name="toast_copied">복사됨!</string>
+    <string name="toast_copied">복사 완료!</string>
     <string name="repo_copy_label">레포지토리 이름 및 URL</string>
     <string name="test_extensions_summary">본 테스트는 개발자만을 대상으로 하며, 확장자의 작업을 확인하거나 거부하지 않습니다.</string>
     <string name="cs3wiki">CloudStream 위키</string>
-    <string name="links_reloaded_toast">링크 새로고침 완료</string>
+    <string name="links_reloaded_toast">링크 초기화 완료</string>
     <string name="backup_frequency">백업 빈도</string>
     <string name="favorites_list_name">즐겨찾기</string>
     <string name="qr_image">QR 이미지</string>
@@ -572,17 +563,11 @@
     <string name="set_default">기본값 설정</string>
     <string name="action_subscribe">구독</string>
     <string name="use">사용</string>
-    <string name="duplicate_message_single" formatted="true">당신의 라이브러리에 이미 잠재적으로 중복된 항목이 존재합니다: \'%s\'.
-\n
-\n이 항목을 그래도 추가하시겠습니까, 기존 항목을 교체하시겠습니까, 아니면 작업을 취소하시겠습니까?</string>
+    <string name="duplicate_message_single" formatted="true">당신의 라이브러리에 이미 잠재적으로 중복된 항목이 존재합니다: \'%s\'. \n \n이 항목을 그래도 추가하시겠습니까, 기존 항목을 교체하시겠습니까, 아니면 작업을 취소하시겠습니까?</string>
     <string name="duplicate_replace_all">전부 대체</string>
     <string name="duplicate_add">추가</string>
     <string name="favorite_removed">즐겨찾기에서 %s 제거</string>
-    <string name="duplicate_message_multiple" formatted="true">당신의 라이브러리에 잠재적으로 중복된 항목이 발견되었습니다:
-\n
-\n%s
-\n
-\n이 항목을 그래도 추가하시겠습니까, 기존 항목을 교체하시겠습니까, 아니면 작업을 취소하시겠습니까?</string>
+    <string name="duplicate_message_multiple" formatted="true">당신의 라이브러리에 잠재적으로 중복된 항목이 발견되었습니다: \n \n%s \n \n이 항목을 그래도 추가하시겠습니까, 기존 항목을 교체하시겠습니까, 아니면 작업을 취소하시겠습니까?</string>
     <string name="select_an_account">계정 선택</string>
     <string name="use_default_account">기본 계정 사용</string>
     <string name="rotate_video">회전</string>
@@ -599,7 +584,7 @@
     <string name="reset_btn">재설정</string>
     <string name="automatic_plugin_download_mode_title">플러그인 다운로드를 필터링할 모드 선택</string>
     <string name="biometric_warning">CloudStream 데이터 백업이 완료되었습니다. 드문 경우지만, 기기에 따라 앱 접속이 안 되는 오류가 발생할 수 있습니다. 만약 앱이 열리지 않는다면, 앱 데이터를 완전히 삭제(초기화)한 후 이 백업 파일로 복구해 주시기 바랍니다. 이용에 불편을 드려 대단히 죄송합니다.</string>
-    <string name="device_pin_url_message">스마트폰이나 컴퓨터에서 <b>%s</b>를 방문하여 위의 코드를 입력하세요</string>
+    <string name="device_pin_url_message">스마트폰이나 컴퓨터에서 <b>%s</b> 위의 코드를 입력하세요</string>
     <string name="battery_dialog_message">구독 중인 TV 쇼의 알림을 받고 다운로드를 끊김 없이 완료하려면, CloudStream의 백그라운드 실행 권한이 필요합니다. \'확인\'을 누른 후 나타나는 요청 창에서 \'허용\'을 선택해 주세요.\n\n참고로, 이 권한을 허용한다고 해서 배터리가 계속 소모되는 것은 아닙니다. 알림을 받거나 공식 확장 프로그램에서 영상을 다운로드할 때처럼 꼭 필요한 상황에서만 백그라운드 작업을 수행합니다.</string>
     <string name="quality_profile_help">여기서 소스의 순서를 변경할 수 있습니다. 비디오의 우선 순위가 높은 경우에는 소스 선택 화면에 더 높게 나타납니다. 소스 우선 순위와 품질 우선 순위의 합이 비디오 우선 순위입니다. \n \n참고 A: 3 \n품질 B: 7 \n총 비디오 우선 순위는 10입니다. \n \n참고: 합이 10 이상이면 해당 링크가 로드되면 플레이어는 자동으로 로드를 건너뜁니다!</string>
     <string name="next_season_episode_format" formatted="true">시즌 %1$d 에피소드 %2$d 공개 예정</string>
@@ -608,8 +593,7 @@
     <string name="recommendations_tooltip">추천목록 보기</string>
     <string name="speed_setting_summary">플레이어에 속도 옵션을 추가합니다</string>
     <string name="episode_upcoming_format" formatted="true">%s 후 공개 예정</string>
-    <string name="resume_remaining" formatted="true">%s
-\n남음</string>
+    <string name="resume_remaining" formatted="true">%s \n남음</string>
     <string name="duplicate_title">잠재적 중복 발견</string>
     <string name="enter_pin_with_name" formatted="true">%s의 PIN 입력</string>
     <string name="action_remove_from_favorites">즐겨찾기에서 제거</string>
@@ -627,18 +611,10 @@
     <string name="open_local_video">로컬 비디오 열기</string>
     <string name="delete_files">파일 삭제</string>
     <string name="delete_format" formatted="true">삭제 (%1$d | %2$s)</string>
-    <string name="delete_message_multiple" formatted="true">다음 항목을 영구적으로 삭제 하시겠습니까??
-\n
-\n%s</string>
-    <string name="delete_message_series_episodes" formatted="true">다음 에피소드를 영구적으로 삭제 하시겠습니까? %1$s?
-\n
-\n%2$s</string>
-    <string name="delete_message_series_section" formatted="true">또한 다음 시리즈의 모든 에피소드를 영구적으로 삭제합니다:
-\n
-\n%s</string>
-    <string name="delete_message_series_only" formatted="true">다음 시리즈의 모든 에피소드를 영구적으로 삭제 하시겠습니까??
-\n
-\n%s</string>
+    <string name="delete_message_multiple" formatted="true">다음 항목을 영구적으로 삭제 하시겠습니까? \n \n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">다음 에피소드를 영구적으로 삭제 하시겠습니까? %1$s? \n \n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">또한 다음 시리즈의 모든 에피소드를 영구적으로 삭제합니다: \n \n%s</string>
+    <string name="delete_message_series_only" formatted="true">다음 시리즈의 모든 에피소드를 영구적으로 삭제 하시겠습니까? \n \n%s</string>
     <string name="sort_release_date_new">공개일 (최신순)</string>
     <string name="sort_release_date_old">공개일 (오래된순)</string>
     <string name="hide_player_control_names">플레이어 내 버튼명 숨기기</string>
@@ -754,4 +730,7 @@
     <string name="action_reload">새로고침</string>
     <string name="extra_brightness_key">최대 밝기 확장 활성화</string>
     <string name="show_player_metadata_overlay">플레이어에 메타데이터 오버레이 표시</string>
+    <string name="video_singular">비디오</string>
+    <string name="skip_type_preview">프리뷰</string>
+    <string name="player_is_live">라이브</string>
 </resources>
