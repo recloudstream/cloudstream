@@ -49,14 +49,14 @@
         <package android:name="org.videolan.vlc" />
         <package android:name="org.videolan.vlc.debug" />
         <package android:name="is.xyz.mpv" />
-        <package android:name="is.xyz.mpv.ext" />
         <package android:name="is.xyz.mpv.ytdl" />
         <package android:name="app.marlboroadvance.mpvex" />
         <package android:name="live.mehiz.mpvkt" />
         <package android:name="live.mehiz.mpvkt.preview" />
         <package android:name="com.brouken.player" />
-        <package android:name="com.nextplayer.pro" />
+        <package android:name="dev.anilbeesetti.nextplayer" />
         <package android:name="com.instantbits.cast.webvideo" />
+        <package android:name="com.gianlu.aria2android" />
         
         <!-- Torrent clients -->
         <package android:name="org.proninyaroslav.libretorrent" />
