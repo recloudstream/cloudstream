@@ -1161,10 +1161,23 @@ object VideoDownloadManager {
                     // this will take up the first available job and resolve
                     while (true) {
                         if (!isActive) return@launch
+
+                        var isTooFarAhead = false
                         fileMutex.withLock {
                             if (metadata.type == DownloadType.IsStopped
                                 || metadata.type == DownloadType.IsFailed
                             ) return@launch
+
+                            // Limit RAM usage by throttling if too much data is downloaded but not yet written to disk
+                            // 50MB limit
+                            if (metadata.bytesDownloaded - metadata.bytesWritten > 50_000_000) {
+                                isTooFarAhead = true
+                            }
+                        }
+
+                        if (isTooFarAhead) {
+                            delay(500)
+                            continue
                         }
 
                         // mutex just in case, we never want this to fail due to multithreading
@@ -1333,10 +1346,23 @@ object VideoDownloadManager {
                 launch(Dispatchers.IO) {
                     while (true) {
                         if (!isActive) return@launch
+
+                        var isTooFarAhead = false
                         fileMutex.withLock {
                             if (metadata.type == DownloadType.IsStopped
                                 || metadata.type == DownloadType.IsFailed
                             ) return@launch
+
+                            // Limit RAM usage by throttling if too much data is downloaded but not yet written to disk
+                            // 50MB limit
+                            if (metadata.bytesDownloaded - metadata.bytesWritten > 50_000_000) {
+                                isTooFarAhead = true
+                            }
+                        }
+
+                        if (isTooFarAhead) {
+                            delay(500)
+                            continue
                         }
 
                         // mutex just in case, we never want this to fail due to multithreading
