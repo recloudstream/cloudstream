@@ -1169,8 +1169,8 @@ object VideoDownloadManager {
                             ) return@launch
 
                             // Limit RAM usage by throttling if too much data is downloaded but not yet written to disk
-                            // 100MB limit
-                            if (metadata.bytesDownloaded - metadata.bytesWritten > 100_000_000) {
+                            // 50MB limit
+                            if (metadata.bytesDownloaded - metadata.bytesWritten > 50_000_000) {
                                 isTooFarAhead = true
                             }
                         }
@@ -1354,8 +1354,8 @@ object VideoDownloadManager {
                             ) return@launch
 
                             // Limit RAM usage by throttling if too much data is downloaded but not yet written to disk
-                            // 100MB limit
-                            if (metadata.bytesDownloaded - metadata.bytesWritten > 100_000_000) {
+                            // 50MB limit
+                            if (metadata.bytesDownloaded - metadata.bytesWritten > 50_000_000) {
                                 isTooFarAhead = true
                             }
                         }
