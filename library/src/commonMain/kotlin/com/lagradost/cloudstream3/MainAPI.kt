@@ -28,6 +28,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.net.URI
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlinx.serialization.json.Json
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.math.absoluteValue
@@ -74,6 +75,8 @@ const val USER_AGENT =
 class ErrorLoadingException(message: String? = null) : Exception(message)
 
 //val baseHeader = mapOf("User-Agent" to USER_AGENT)
+
+val json = Json { ignoreUnknownKeys = true }
 val mapper = JsonMapper.builder().addModule(kotlinModule())
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()!!
 

@@ -220,6 +220,7 @@ dependencies {
     implementation(libs.bundles.lifecycle)
     implementation(libs.bundles.navigation)
     implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.kotlinx.serialization.json) // JSON Parser
 
     // Design & UI
     implementation(libs.preference.ktx)
