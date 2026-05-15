@@ -8,6 +8,7 @@ annotation = "1.10.0"
 appcompat = "1.7.1"
 biometric = "1.4.0-alpha06"
 buildkonfigGradlePlugin = "0.18.0"
+classgraph = "4.8.184"
 coil = { strictly = "3.3.0" } # Later versions require jvmTarget 11 or later
 colorpicker = "6b46b49"
 conscryptAndroid = { strictly = "2.5.2" } # 2.5.3 crashes everything
@@ -18,6 +19,7 @@ dokkaGradlePlugin = "2.2.0"
 espressoCore = "3.7.0"
 fragmentKtx = "1.8.9"
 fuzzywuzzy = "1.4.0"
+instancioCore = "5.5.1"
 jacksonModuleKotlin = { strictly = "2.13.1" } # Later versions don't support minSdk <26 (Crashes on Android TV's and FireSticks)
 json = "20251224"
 jsoup = "1.22.1"
@@ -63,6 +65,7 @@ anime-db = { module = "com.github.recloudstream:anime-db", version.ref = "animeD
 annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
+classgraph = { group = "io.github.classgraph", name = "classgraph", version.ref = "classgraph" }
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 colorpicker = { module = "com.github.recloudstream:color-picker-android", version.ref = "colorpicker" }
@@ -76,12 +79,14 @@ espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref =
 ext-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
 fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
 fuzzywuzzy = { module = "me.xdrop:fuzzywuzzy", version.ref = "fuzzywuzzy" }
+instancio-core = { group = "org.instancio", name = "instancio-core", version.ref = "instancioCore" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jacksonModuleKotlin" }
 json = { module = "org.json:json", version.ref = "json" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 junit = { module = "junit:junit", version.ref = "junit" }
 junit-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "junitKtx" }
 juniversalchardet = { module = "com.github.albfernandez:juniversalchardet", version.ref = "juniversalchardet" }
+kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlinGradlePlugin" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
