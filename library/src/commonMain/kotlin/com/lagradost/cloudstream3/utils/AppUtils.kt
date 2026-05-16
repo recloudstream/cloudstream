@@ -1,13 +1,16 @@
 package com.lagradost.cloudstream3.utils
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.lagradost.cloudstream3.InternalAPI
 import com.lagradost.cloudstream3.json
 import com.lagradost.cloudstream3.mapper
+import com.lagradost.cloudstream3.mvvm.logError
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.serializer
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.serializerOrNull
+import kotlin.reflect.KClass
 
 @OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)
 object AppUtils {
@@ -19,8 +22,10 @@ object AppUtils {
         val serializer = this::class.serializerOrNull() ?: json.serializersModule.getContextual(this::class)
         return if (serializer != null) {
             try {
-                json.encodeToString(JsonElement.serializer(), json.parseToJsonElement(this.toString()))
-            } catch (_: Exception) {
+                @Suppress("UNCHECKED_CAST")
+                json.encodeToString(serializer as KSerializer<Any>, this)
+            } catch (e: SerializationException) {
+                logError(e)
                 mapper.writeValueAsString(this)
             }
         } else {
@@ -35,7 +40,8 @@ object AppUtils {
         return if (serializer != null) {
             try {
                 json.decodeFromString(serializer, value)
-            } catch (_: Exception) {
+            } catch (e: SerializationException) {
+                logError(e)
                 mapper.readValue(value)
             }
         } else {
@@ -59,6 +65,23 @@ object AppUtils {
             parseJson(value ?: return null)
         } catch (_: Exception) {
             null
+        }
+    }
+
+    @InternalAPI
+    fun <T : Any> parseJson(value: String, kClass: KClass<T>): T {
+        // @Serializable generates a serializer at compile time; contextual serializers are
+        // registered manually in serializersModule, we need both to support all cases
+        val serializer = kClass.serializerOrNull() ?: json.serializersModule.getContextual(kClass)
+        return if (serializer != null) {
+            try {
+                json.decodeFromString(serializer, value)
+            } catch (e: SerializationException) {
+                logError(e)
+                mapper.readValue(value, kClass.java)
+            }
+        } else {
+            mapper.readValue(value, kClass.java)
         }
     }
 }

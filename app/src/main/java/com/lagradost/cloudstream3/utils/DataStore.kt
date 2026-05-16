@@ -7,15 +7,9 @@ import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKeyClass
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKeyClass
-import com.lagradost.cloudstream3.InternalAPI
-import com.lagradost.cloudstream3.json
-import com.lagradost.cloudstream3.mapper
 import com.lagradost.cloudstream3.mvvm.logError
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.InternalSerializationApi
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.serializer
-import kotlinx.serialization.serializerOrNull
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
@@ -92,38 +86,19 @@ data class Editor(
     }
 }
 
-@OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)
 object DataStore {
-    @InternalAPI
-    fun <T : Any> String.parseToKotlinObject(kClass: KClass<T>): T {
-        // @Serializable generates a serializer at compile time; contextual serializers are
-        // registered manually in serializersModule, we need both to support all cases
-        val serializer = kClass.serializerOrNull() ?: json.serializersModule.getContextual(kClass)
-        return if (serializer != null) {
-            try {
-                json.decodeFromString(serializer, this)
-            } catch (_: Exception) {
-                mapper.readValue(this, kClass.java)
-            }
-        } else {
-            mapper.readValue(this, kClass.java)
-        }
-    }
-
-    private fun anyToJsonString(obj: Any): String {
-        // @Serializable generates a serializer at compile time; contextual serializers are
-        // registered manually in serializersModule, we need both to support all cases
-        val serializer = obj::class.serializerOrNull() ?: json.serializersModule.getContextual(obj::class)
-        return if (serializer != null) {
-            try {
-                json.encodeToString(JsonElement.serializer(), json.parseToJsonElement(obj.toString()))
-            } catch (_: Exception) {
-                mapper.writeValueAsString(obj)
-            }
-        } else {
-            mapper.writeValueAsString(obj)
-        }
-    }
+    // Extensions shouldn't have really been using this version of it, but it seems
+    // some have. Since there has always been a very easy alternative, we won't
+    // need to deprecate it that long, and should be able to fully remove it
+    // once extensions at least use the other version.
+    @Deprecated(
+        "Please do not use the mapper version from DataStore. Preferably use methods from AppUtils " +
+            "to parse JSON. However, you can use the stable-API version of the mapper at " +
+            "com.lagradost.cloudstream3.mapper to access the mapper directly if necessary.",
+        level = DeprecationLevel.ERROR,
+        replaceWith = ReplaceWith("com.lagradost.cloudstream3.mapper"),
+    )
+    val mapper = com.lagradost.cloudstream3.mapper
 
     private fun getPreferences(context: Context): SharedPreferences {
         return context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -198,7 +173,7 @@ object DataStore {
     fun <T> Context.setKey(path: String, value: T) {
         try {
             getSharedPrefs().edit {
-                putString(path, value?.let { anyToJsonString(it) })
+                putString(path, value?.let { it.toJson() })
             }
         } catch (e: Exception) {
             logError(e)
@@ -208,7 +183,7 @@ object DataStore {
     fun <T : Any> Context.getKey(path: String, valueType: Class<T>): T? {
         try {
             val json: String = getSharedPrefs().getString(path, null) ?: return null
-            return json.parseToKotlinObject(valueType.kotlin)
+            return parseJson(json, valueType.kotlin)
         } catch (e: Exception) {
             return null
         }
@@ -219,11 +194,11 @@ object DataStore {
     }
 
     inline fun <reified T : Any> String.toKotlinObject(): T {
-        return parseToKotlinObject(T::class)
+        return parseJson(this)
     }
 
     fun <T : Any> String.toKotlinObject(valueType: Class<T>): T {
-        return parseToKotlinObject(valueType.kotlin)
+        return parseJson(this, valueType.kotlin)
     }
 
     // GET KEY GIVEN PATH AND DEFAULT VALUE, NULL IF ERROR
