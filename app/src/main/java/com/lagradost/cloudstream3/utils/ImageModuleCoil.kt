@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
-import android.os.Build.VERSION.SDK_INT
 import android.util.Log
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
@@ -12,6 +11,7 @@ import coil3.EventListener
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
+import coil3.decode.BitmapFactoryDecoder
 import coil3.disk.DiskCache
 import coil3.dispose
 import coil3.load
@@ -23,6 +23,7 @@ import coil3.request.CachePolicy
 import coil3.request.ErrorResult
 import coil3.request.ImageRequest
 import coil3.request.allowHardware
+import coil3.request.bitmapConfig
 import coil3.request.crossfade
 import coil3.util.DebugLogger
 import com.lagradost.cloudstream3.BuildConfig
@@ -42,18 +43,22 @@ object ImageLoader {
         val model = Build.MODEL?.lowercase() ?: ""
         val allwinnerPatterns = listOf("sun50iw9", "h713", "allwinner")
         val problematicModels = listOf("hy320", "hy300", "a10plus", "magcubic", "sinoy")
+        Log.e(TAG, "Device signature - Hardware: $hardware, Board: $board, Model: $model")
         return allwinnerPatterns.any { it in hardware || it in board } ||
                 problematicModels.any { it in model }
     }
     internal fun buildImageLoader(context: PlatformContext): ImageLoader = ImageLoader.Builder(context)
             .crossfade(200)
-            .allowHardware(SDK_INT >= 28 && !hasPotentialBrokenHardware()) // SDK_INT >= 28, cant use hardware bitmaps for Palette Builder
+            .allowHardware(false) // SDK_INT >= 28, cant use hardware bitmaps for Palette Builder
             .diskCachePolicy(CachePolicy.ENABLED)
             .networkCachePolicy(CachePolicy.ENABLED)
             .memoryCache {
-                MemoryCache.Builder().maxSizePercent(context, 0.1) // 10 % of memory for caching
+                MemoryCache.Builder().maxSizePercent(context, 0.1)
+                    .strongReferencesEnabled(false)// 10 % of memory for caching
                     .build()
             }
+            .bitmapConfig(Bitmap.Config.ARGB_8888)
+            .logger(DebugLogger())
             .diskCache {
                 DiskCache.Builder()
                     .directory(context.cacheDir.resolve("cs3_image_cache").toOkioPath())
@@ -63,10 +68,23 @@ object ImageLoader {
             }
             /** Pass interceptors with care, unnecessary passing tokens to servers
             or image hosting services causes unauthorized exceptions **/
-            .components { add(OkHttpNetworkFetcherFactory(callFactory = { buildDefaultClient(context) })) }
-            .apply {
-                setupCoilLogger()
+            .components {
+                add { chain ->
+                    val request = chain.request
+                    Log.d(
+                        TAG,
+                        "Coil request: ${request.data}, allowHardware=${request.allowHardware}"
+                    )
+                    chain.proceed()
+                }
+                add(OkHttpNetworkFetcherFactory(callFactory = { buildDefaultClient(context) }))
+                //if (hasPotentialBrokenHardware()) {
+                add(BitmapFactoryDecoder.Factory()) // sw decoder
+                //}
             }
+           /* .apply {
+                setupCoilLogger()
+            }*/
             .build()
 
     /** DebugLogger on debug builds which won't slow down release builds & use EventListener for
@@ -108,6 +126,7 @@ object ImageLoader {
                     headerBuilder[key] = value
                 }
             }.build())
+            allowHardware(Build.VERSION.SDK_INT >= 28 && !hasPotentialBrokenHardware())
             builder() // if passed
         }
     }
