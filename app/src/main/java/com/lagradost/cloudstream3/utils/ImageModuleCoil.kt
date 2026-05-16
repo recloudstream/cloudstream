@@ -126,7 +126,7 @@ object ImageLoader {
                     headerBuilder[key] = value
                 }
             }.build())
-            allowHardware(Build.VERSION.SDK_INT >= 28 && !hasPotentialBrokenHardware())
+            //allowHardware(Build.VERSION.SDK_INT >= 28 && !hasPotentialBrokenHardware())
             builder() // if passed
         }
     }
