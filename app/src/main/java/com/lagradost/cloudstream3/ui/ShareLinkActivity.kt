@@ -4,8 +4,9 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import com.lagradost.cloudstream3.MainActivity.Companion.EXTRA_SHARED_URL
-import com.lagradost.cloudstream3.MainActivity.Companion.EXTRA_SHARED_URL_HANDLED
+import com.lagradost.cloudstream3.MainActivity.Companion.EXTRA_SHARED_URL_ID
 import com.lagradost.cloudstream3.ui.account.AccountSelectActivity
+import java.util.UUID
 
 class ShareLinkActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,7 +26,7 @@ class ShareLinkActivity : Activity() {
         val targetIntent = Intent(sourceIntent).apply {
             setClass(this@ShareLinkActivity, AccountSelectActivity::class.java)
             putExtra(EXTRA_SHARED_URL, url)
-            putExtra(EXTRA_SHARED_URL_HANDLED, false)
+            putExtra(EXTRA_SHARED_URL_ID, sourceIntent.getStringExtra(EXTRA_SHARED_URL_ID) ?: UUID.randomUUID().toString())
         }
         startActivity(targetIntent)
     }
@@ -43,6 +44,7 @@ class ShareLinkActivity : Activity() {
             value
                 .lineSequence()
                 .flatMap { it.splitToSequence(Regex("\\s+")) }
+                .map { it.trimEnd('.', ',', ';', ':', '!', '?', ')', ']', '}', '>', '\'', '"') }
                 .firstOrNull { it.startsWith("http://") || it.startsWith("https://") }
         }
     }

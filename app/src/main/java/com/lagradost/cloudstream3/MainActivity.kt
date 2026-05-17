@@ -222,7 +222,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         private const val FILE_DELETE_KEY = "FILES_TO_DELETE_KEY"
         const val API_NAME_EXTRA_KEY = "API_NAME_EXTRA_KEY"
         const val EXTRA_SHARED_URL = "EXTRA_SHARED_URL"
-        const val EXTRA_SHARED_URL_HANDLED = "EXTRA_SHARED_URL_HANDLED"
+        const val EXTRA_SHARED_URL_ID = "EXTRA_SHARED_URL_ID"
 
         /**
          * Transient files to delete on application exit.
@@ -752,14 +752,15 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
     private fun handleSharedUrlIntent(intent: Intent): Boolean {
         val sharedUrl = intent.getStringExtra(EXTRA_SHARED_URL) ?: return false
-        if (intent.getBooleanExtra(EXTRA_SHARED_URL_HANDLED, false)) return true
-
-        intent.putExtra(EXTRA_SHARED_URL_HANDLED, true)
+        val sharedUrlId = intent.getStringExtra(EXTRA_SHARED_URL_ID) ?: sharedUrl
+        if (!handledSharedUrlIds.add(sharedUrlId)) return true
 
         var hasHandledSharedUrl = false
+        var timeoutRunnable: Runnable? = null
         fun tryRouteSharedUrl(showUnsupported: Boolean): Boolean {
             if (hasHandledSharedUrl) return true
             hasHandledSharedUrl = routeSharedUrl(sharedUrl, showUnsupported)
+            if (hasHandledSharedUrl) timeoutRunnable?.let(sharedUrlHandler::removeCallbacks)
             return hasHandledSharedUrl
         }
 
@@ -781,13 +782,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         sharedUrlPluginObserver = observer
         afterPluginsLoadedEvent += observer
 
-        sharedUrlHandler.postDelayed({
+        timeoutRunnable = Runnable {
             afterPluginsLoadedEvent -= observer
             sharedUrlPluginObserver = null
             if (!tryRouteSharedUrl(showUnsupported = false)) {
                 tryRouteSharedUrl(showUnsupported = true)
             }
-        }, 2500)
+        }
+        sharedUrlHandler.postDelayed(timeoutRunnable, 2500)
 
         return true
     }
@@ -795,15 +797,15 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     private fun routeSharedUrl(sharedUrl: String, showUnsupported: Boolean): Boolean {
         val normalizedUrl = normalizeSharedUrl(sharedUrl)
         val provider = synchronized(allProviders) {
-            apis.firstOrNull { normalizedUrl.startsWith(normalizeSharedUrl(it.mainUrl)) }
-                ?: allProviders.firstOrNull { normalizedUrl.startsWith(normalizeSharedUrl(it.mainUrl)) }
+            apis.firstOrNull { normalizedUrl.matchesSharedUrlBase(normalizeSharedUrl(it.mainUrl)) }
+                ?: allProviders.firstOrNull { normalizedUrl.matchesSharedUrlBase(normalizeSharedUrl(it.mainUrl)) }
         }
 
         if (provider != null) {
             sharedUrlHandler.post {
                 navigate(
                     getSharedResultsId(),
-                    ResultFragment.newInstance(sharedUrl, provider.name, sharedUrl)
+                    ResultFragment.newInstance(sharedUrl, provider.name, provider.name)
                 )
             }
             return true
@@ -811,7 +813,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
         val extractor = synchronized(extractorApis) {
             extractorApis.asReversed()
-                .firstOrNull { normalizedUrl.startsWith(normalizeSharedUrl(it.mainUrl)) }
+                .firstOrNull { normalizedUrl.matchesSharedUrlBase(normalizeSharedUrl(it.mainUrl)) }
         }
 
         if (extractor != null) {
@@ -843,6 +845,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         return url.lowercase()
             .replace(Regex("""^(https?:)?//(www\.)?"""), "")
             .trimEnd('/')
+    }
+
+    private fun String.matchesSharedUrlBase(baseUrl: String): Boolean {
+        return this == baseUrl || startsWith("$baseUrl/")
     }
 
     private fun getSharedResultsId(): Int {
@@ -962,6 +968,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     private var libraryViewModel: LibraryViewModel? = null
     private var sharedUrlPluginObserver: ((Boolean) -> Unit)? = null
     private val sharedUrlHandler = Handler(Looper.getMainLooper())
+    private val handledSharedUrlIds = mutableSetOf<String>()
 
     /** kinda dirty, however it signals that we should use the watch status as sync or not*/
     var isLocalList: Boolean = false
