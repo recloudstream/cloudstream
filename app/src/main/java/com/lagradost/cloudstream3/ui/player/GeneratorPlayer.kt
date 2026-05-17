@@ -1732,11 +1732,11 @@ class GeneratorPlayer : FullScreenPlayer() {
     ): SubtitleData? {
         val langCode = preferredAutoSelectSubtitles ?: return null
         if (downloads) {
-            return sortSubs(subtitles).firstOrNull {
+            sortSubs(subtitles).firstOrNull {
                 it.origin == SubtitleOrigin.DOWNLOADED_FILE && it.matchesLanguageCode(
                     langCode
                 )
-            }
+            }?.let { return it }
         }
 
         if (!settings) return null
