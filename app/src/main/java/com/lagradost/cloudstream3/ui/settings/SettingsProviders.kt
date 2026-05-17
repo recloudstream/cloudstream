@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setTool
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiDubstatusSettings
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
+import com.lagradost.cloudstream3.utils.AppContextUtils.getSearchAllProviderSourceNames
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
@@ -104,6 +105,38 @@ class SettingsProviders : BasePreferenceFragmentCompat() {
                 }
                 DataStoreHelper.currentHomePage = null
                 //(context ?: CloudStreamApp.context)?.let { ctx -> app.initClient(ctx) }
+            }
+
+            return@setOnPreferenceClickListener true
+        }
+
+        getPref(R.string.search_all_provider_sources_list_key)?.setOnPreferenceClickListener {
+            val providers = synchronized(APIHolder.apis) {
+                APIHolder.apis.filter { api -> api.providerType != ProviderType.MetaProvider }
+                    .sortedBy { api -> api.name.lowercase() }
+            }
+            val selectedProviderNames = requireContext().getSearchAllProviderSourceNames()
+            val currentList = providers.mapIndexedNotNull { index, api ->
+                if (selectedProviderNames.contains(api.name)) index else null
+            }
+
+            activity?.showMultiDialog(
+                providers.map { api -> "${api.name} (${api.lang})" },
+                currentList,
+                getString(R.string.search_all_provider_sources_list),
+                {}
+            ) { selectedList ->
+                val limitedSelection = selectedList.take(5)
+                if (selectedList.size > limitedSelection.size) {
+                    CommonActivity.showToast(R.string.search_all_provider_sources_limit)
+                }
+
+                settingsManager.edit {
+                    putStringSet(
+                        getString(R.string.search_all_provider_sources_list_key),
+                        limitedSelection.map { providers[it].name }.toSet()
+                    )
+                }
             }
 
             return@setOnPreferenceClickListener true

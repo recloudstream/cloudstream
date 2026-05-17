@@ -22,6 +22,20 @@
         android:title="@string/enable_nsfw_on_providers"
         app:defaultValue="false" />
 
+    <SwitchPreference
+        android:defaultValue="false"
+        android:icon="@drawable/search_icon"
+        android:key="@string/search_all_provider_sources_key"
+        android:summary="@string/search_all_provider_sources_summary"
+        android:title="@string/search_all_provider_sources" />
+
+    <Preference
+        android:dependency="@string/search_all_provider_sources_key"
+        android:icon="@drawable/ic_baseline_extension_24"
+        android:key="@string/search_all_provider_sources_list_key"
+        android:summary="@string/search_all_provider_sources_list_summary"
+        android:title="@string/search_all_provider_sources_list" />
+
     <Preference
         android:icon="@drawable/baseline_network_ping_24"
         android:key="@string/test_providers_key"

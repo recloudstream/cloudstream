@@ -380,6 +380,11 @@
     <string name="app_layout">App Layout</string>
     <string name="preferred_media_settings">Preferred media</string>
     <string name="enable_nsfw_on_providers">Enable NSFW on supported Extensions</string>
+    <string name="search_all_provider_sources">Search sources in all extensions</string>
+    <string name="search_all_provider_sources_summary">When loading a movie or episode, also list matching sources from selected extensions.</string>
+    <string name="search_all_provider_sources_list">Extensions to merge sources from</string>
+    <string name="search_all_provider_sources_list_summary">Select up to 5 extensions. Up to 5 sources are added from each selected extension.</string>
+    <string name="search_all_provider_sources_limit">You can select up to 5 extensions.</string>
     <string name="subtitles_encoding">Subtitle encoding</string>
     <string name="category_providers">Providers</string>
     <string name="category_provider_test">Provider test</string>

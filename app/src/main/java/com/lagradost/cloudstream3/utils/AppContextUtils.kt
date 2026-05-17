@@ -422,6 +422,19 @@ object AppContextUtils {
         return list.toHashSet()
     }
 
+    fun Context.shouldSearchAllProviderSources(): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(this)
+            .getBoolean(getString(R.string.search_all_provider_sources_key), false)
+    }
+
+    fun Context.getSearchAllProviderSourceNames(): Set<String> {
+        return PreferenceManager.getDefaultSharedPreferences(this)
+            .getStringSet(getString(R.string.search_all_provider_sources_list_key), emptySet())
+            ?.take(5)
+            ?.toSet()
+            ?: emptySet()
+    }
+
     fun Context.getApiTypeSettings(): HashSet<TvType> {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
         val hashSet = HashSet<TvType>()

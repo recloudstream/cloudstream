@@ -80,8 +80,10 @@ import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.result.EpisodeAdapter.Companion.getPlayerAction
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
+import com.lagradost.cloudstream3.utils.AppContextUtils.getSearchAllProviderSourceNames
 import com.lagradost.cloudstream3.utils.AppContextUtils.isConnectedToChromecast
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
+import com.lagradost.cloudstream3.utils.AppContextUtils.shouldSearchAllProviderSources
 import com.lagradost.cloudstream3.utils.AppContextUtils.sortSubs
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -1268,7 +1270,12 @@ class ResultViewModel2 : ViewModel() {
         clearCache: Boolean = false,
         isCasting: Boolean = false
     ): LinkLoadingResult {
-        val tempGenerator = RepoLinkGenerator(listOf(result))
+        val tempGenerator = RepoLinkGenerator(
+            listOf(result),
+            page = currentResponse,
+            includeAllProviderSources = context?.shouldSearchAllProviderSources() == true,
+            allProviderSourceNames = context?.getSearchAllProviderSourceNames().orEmpty()
+        )
 
         val links: MutableSet<ExtractorLink> = mutableSetOf()
         val subs: MutableSet<SubtitleData> = mutableSetOf()
@@ -2074,14 +2081,26 @@ class ResultViewModel2 : ViewModel() {
         preferDubStatus = indexer.dubStatus
 
         generator = if (isMovie) {
-            getMovie()?.let { RepoLinkGenerator(listOf(it), page = currentResponse) }
+            getMovie()?.let {
+                RepoLinkGenerator(
+                    listOf(it),
+                    page = currentResponse,
+                    includeAllProviderSources = context?.shouldSearchAllProviderSources() == true,
+                    allProviderSourceNames = context?.getSearchAllProviderSourceNames().orEmpty()
+                )
+            }
         } else {
             val episodes = currentEpisodes.filter { it.key.dubStatus == indexer.dubStatus }
                 .toList()
                 .sortedBy { it.first.season }
                 .flatMap { it.second }
 
-            RepoLinkGenerator(episodes, page = currentResponse)
+            RepoLinkGenerator(
+                episodes,
+                page = currentResponse,
+                includeAllProviderSources = context?.shouldSearchAllProviderSources() == true,
+                allProviderSourceNames = context?.getSearchAllProviderSourceNames().orEmpty()
+            )
         }
 
         if (isMovie) {

@@ -281,6 +281,11 @@
     <string name="app_layout">Uygulama düzeni</string>
     <string name="preferred_media_settings">Tercih edilen medya</string>
     <string name="enable_nsfw_on_providers">Desteklenen uzantılarda NSFW etkinleştir</string>
+    <string name="search_all_provider_sources">Tüm uzantılarda kaynak ara</string>
+    <string name="search_all_provider_sources_summary">Film veya bölüm kaynakları yüklenirken seçili uzantılardaki eşleşen kaynakları da listele.</string>
+    <string name="search_all_provider_sources_list">Kaynağı birleştirilecek uzantılar</string>
+    <string name="search_all_provider_sources_list_summary">En fazla 5 uzantı seç. Her seçili uzantıdan en fazla 5 kaynak eklenir.</string>
+    <string name="search_all_provider_sources_limit">En fazla 5 uzantı seçebilirsin.</string>
     <string name="subtitles_encoding">Altyazı kodlaması</string>
     <string name="category_providers">Sağlayıcılar</string>
     <string name="category_ui">Düzen</string>
