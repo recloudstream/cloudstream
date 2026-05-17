@@ -22,6 +22,7 @@ import com.lagradost.cloudstream3.ShowStatus
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.addDate
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.isUpcoming
 import com.lagradost.cloudstream3.mainPageOf
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.newEpisode
@@ -33,8 +34,7 @@ import com.lagradost.cloudstream3.newTvSeriesLoadResponse
 import com.lagradost.cloudstream3.newTvSeriesSearchResponse
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
-import java.text.SimpleDateFormat
-import java.util.Locale
+import kotlin.time.Instant
 
 open class TraktProvider : MainAPI() {
     override var name = "Trakt"
@@ -237,7 +237,7 @@ open class TraktProvider : MainAPI() {
                             //this.rating = episode.rating?.times(10)?.roundToInt()
                             this.score = Score.from10(episode.rating)
 
-                            this.addDate(episode.firstAired, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+                            this.addDate(episode.firstAired?.let { Instant.parse(it) })
                             if (nextAir == null && this.date != null && this.date!! > unixTimeMS && this.season != 0) {
                                 nextAir = NextAiring(
                                     episode = this.episode!!,
@@ -290,17 +290,6 @@ open class TraktProvider : MainAPI() {
                 "trakt-api-key" to traktClientId,
             )
         ).toString()
-    }
-
-    private fun isUpcoming(dateString: String?): Boolean {
-        return try {
-            val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val dateTime = dateString?.let { format.parse(it)?.time } ?: return false
-            unixTimeMS < dateTime
-        } catch (t: Throwable) {
-            logError(t)
-            false
-        }
     }
 
     private fun getStatus(t: String?): ShowStatus {
