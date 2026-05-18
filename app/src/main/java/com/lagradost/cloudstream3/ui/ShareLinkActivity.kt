@@ -34,7 +34,6 @@ class ShareLinkActivity : Activity() {
     private fun Intent.extractSharedUrl(): String? {
         val candidates = listOfNotNull(
             dataString,
-            getStringExtra(Intent.EXTRA_TEXT),
             getCharSequenceExtra(Intent.EXTRA_TEXT)?.toString(),
             @Suppress("DEPRECATION")
             getParcelableExtra<android.net.Uri>(Intent.EXTRA_STREAM)?.toString(),

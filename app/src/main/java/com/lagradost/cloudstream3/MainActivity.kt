@@ -113,7 +113,6 @@ import com.lagradost.cloudstream3.ui.player.BasicLink
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.LinkGenerator
 import com.lagradost.cloudstream3.ui.result.LinearListLayout
-import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.result.SyncViewModel
@@ -732,6 +731,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         broadcastIntent.setClass(this, VideoDownloadRestartReceiver::class.java)
         this.sendBroadcast(broadcastIntent)
         afterPluginsLoadedEvent -= ::onAllPluginsLoaded
+        sharedUrlPluginObserver?.let { afterPluginsLoadedEvent -= it }
+        sharedUrlPluginObserver = null
+        sharedUrlHandler.removeCallbacksAndMessages(null)
         detachBackPressedCallback("MainActivityDefault")
         super.onDestroy()
     }
@@ -796,18 +798,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
     private fun routeSharedUrl(sharedUrl: String, showUnsupported: Boolean): Boolean {
         val normalizedUrl = normalizeSharedUrl(sharedUrl)
-        val provider = synchronized(allProviders) {
-            apis.firstOrNull { normalizedUrl.matchesSharedUrlBase(normalizeSharedUrl(it.mainUrl)) }
-                ?: allProviders.firstOrNull { normalizedUrl.matchesSharedUrlBase(normalizeSharedUrl(it.mainUrl)) }
-        }
+        val provider = APIHolder.getApiFromUrlNull(sharedUrl)
 
         if (provider != null) {
-            sharedUrlHandler.post {
-                navigate(
-                    getSharedResultsId(),
-                    ResultFragment.newInstance(sharedUrl, provider.name, provider.name)
-                )
-            }
+            loadResult(sharedUrl, provider.name, "")
             return true
         }
 
@@ -849,14 +843,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
     private fun String.matchesSharedUrlBase(baseUrl: String): Boolean {
         return this == baseUrl || startsWith("$baseUrl/")
-    }
-
-    private fun getSharedResultsId(): Int {
-        return if (isLayout(TV or EMULATOR)) {
-            R.id.global_to_navigation_results_tv
-        } else {
-            R.id.global_to_navigation_results_phone
-        }
     }
 
     private fun NavDestination.matchDestination(@IdRes destId: Int): Boolean =
