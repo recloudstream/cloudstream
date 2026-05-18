@@ -72,8 +72,9 @@ class SettingsUI : BasePreferenceFragmentCompat() {
             val typedFont = binding.appFontInput.text?.toString()?.trim().orEmpty()
             val selectedSuggestion = binding.appFontSuggestions.text?.toString()?.trim().orEmpty()
             val selectedFont = when {
-                typedFont.isNotEmpty() -> typedFont
                 selectedSuggestion == defaultValue -> null
+                selectedSuggestion.isNotEmpty() && selectedSuggestion != typedFont -> selectedSuggestion
+                typedFont.isNotEmpty() -> typedFont
                 selectedSuggestion.isNotEmpty() -> selectedSuggestion
                 else -> null
             }
