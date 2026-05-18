@@ -17,7 +17,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
-import androidx.media3.ui.SubtitleView
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.khoben.woff2android.Woff2Typeface
@@ -160,7 +159,7 @@ object AppFontManager {
     }
 
     private fun applyInternal(view: View, baseTypeface: Typeface, key: String) {
-        if (view is SubtitleView) {
+        if (view.isSubtitleView()) {
             return
         }
 
@@ -229,7 +228,7 @@ object AppFontManager {
                 downloadUrl,
                 cacheTime = 30,
                 cacheUnit = TimeUnit.DAYS
-            ).okhttpResponse.body?.bytes() ?: return null
+            ).okhttpResponse.body.bytes()
             file.writeBytes(fontBytes)
         }
         return runCatching {
@@ -320,5 +319,16 @@ object AppFontManager {
 
     private fun encodeFamily(fontName: String): String {
         return Uri.encode(fontName.trim())
+    }
+
+    private fun View.isSubtitleView(): Boolean {
+        var currentClass: Class<*>? = javaClass
+        while (currentClass != null) {
+            if (currentClass.name == "androidx.media3.ui.SubtitleView") {
+                return true
+            }
+            currentClass = currentClass.superclass
+        }
+        return false
     }
 }
