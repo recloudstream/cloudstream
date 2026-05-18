@@ -46,9 +46,9 @@ object CryptoJS {
         // Create CryptoJS-like encrypted!
         val sBytes     = APPEND.toByteArray()
         val b          = ByteArray(sBytes.size + saltBytes.size + cipherText.size)
-        System.arraycopy(sBytes, 0, b, 0, sBytes.size)
-        System.arraycopy(saltBytes, 0, b, sBytes.size, saltBytes.size)
-        System.arraycopy(cipherText, 0, b, sBytes.size + saltBytes.size, cipherText.size)
+        sBytes.copyInto(destination = b, destinationOffset = 0)
+        saltBytes.copyInto(destination = b, destinationOffset = sBytes.size)
+        cipherText.copyInto(destination = b, destinationOffset = sBytes.size + saltBytes.size)
 
         return base64Encode(b)
     }
@@ -105,16 +105,18 @@ object CryptoJS {
                 hash.reset()
             }
 
-            System.arraycopy(
-                block!!, 0, derivedBytes, numberOfDerivedWords * 4,
-                min(block.size, (targetKeySize - numberOfDerivedWords) * 4)
+            block!!.copyInto(
+                destination = derivedBytes,
+                destinationOffset = numberOfDerivedWords * 4,
+                startIndex = 0,
+                endIndex = min(block.size, (targetKeySize - numberOfDerivedWords) * 4)
             )
 
             numberOfDerivedWords += block.size / 4
         }
 
-        System.arraycopy(derivedBytes, 0, resultKey, 0, keySize * 4)
-        System.arraycopy(derivedBytes, keySize * 4, resultIv, 0, ivSize * 4)
+        derivedBytes.copyInto(destination = resultKey, destinationOffset = 0, startIndex = 0, endIndex = keySize * 4)
+        derivedBytes.copyInto(destination = resultIv, destinationOffset = 0, startIndex = keySize * 4, endIndex = (keySize * 4) + (ivSize * 4))
 
         return derivedBytes // key + iv
     }
