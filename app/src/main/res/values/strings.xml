@@ -198,6 +198,10 @@
     <string name="app_font_summary">Use a custom font across the app UI</string>
     <string name="app_font_default">Default</string>
     <string name="app_font_invalid">This font could not be loaded</string>
+    <string name="app_font_picker_title">App font</string>
+    <string name="app_font_suggestions_label">Suggested fonts</string>
+    <string name="app_font_name_label">Font family</string>
+    <string name="app_font_helper">Pick a suggestion or type any family from coolLabs</string>
     <string name="pref_filter_search_quality">Hide selected video quality in search results</string>
     <string name="automatic_plugin_updates">Automatic plugin updates</string>
     <string name="automatic_plugin_download">Automatically download plugins</string>

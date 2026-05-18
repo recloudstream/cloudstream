@@ -3,13 +3,18 @@ package com.lagradost.cloudstream3.ui.settings
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.ArrayAdapter
 import androidx.core.content.edit
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.preference.SeekBarPreference
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getActivity
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchQuality
+import com.lagradost.cloudstream3.databinding.BottomAppFontDialogBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.BasePreferenceFragmentCompat
 import com.lagradost.cloudstream3.ui.clear
@@ -25,6 +30,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.hideOn
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
+import com.lagradost.cloudstream3.utils.AppFontManager
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
@@ -32,6 +38,71 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 
 class SettingsUI : BasePreferenceFragmentCompat() {
+    private fun updateAppFontSummary() {
+        context?.let {
+            getPref(R.string.app_font_key)?.summary = AppFontManager.getSummary(it)
+        }
+    }
+
+    private fun showAppFontDialog() {
+        val activity = activity ?: return
+        val binding = BottomAppFontDialogBinding.inflate(layoutInflater)
+        val dialog = BottomSheetDialog(activity)
+        val defaultValue = getString(R.string.app_font_default)
+        val currentFont = AppFontManager.getSelectedFont(activity)
+        val suggestions = listOf(defaultValue) + AppFontManager.getSuggestedFonts(activity)
+
+        dialog.setContentView(binding.root)
+
+        binding.text1.text = getString(R.string.app_font_picker_title)
+        binding.appFontSuggestions.setAdapter(
+            ArrayAdapter(
+                activity,
+                R.layout.sort_bottom_single_choice_no_checkmark,
+                suggestions
+            )
+        )
+        binding.appFontSuggestions.setText(currentFont ?: defaultValue, false)
+        binding.appFontInput.setText(currentFont.orEmpty())
+        binding.appFontSuggestions.setOnItemClickListener { _, _, position, _ ->
+            val selected = suggestions.getOrNull(position) ?: return@setOnItemClickListener
+            binding.appFontInput.setText(if (selected == defaultValue) "" else selected)
+        }
+        binding.applyBtt.setOnClickListener {
+            val typedFont = binding.appFontInput.text?.toString()?.trim().orEmpty()
+            val selectedSuggestion = binding.appFontSuggestions.text?.toString()?.trim().orEmpty()
+            val selectedFont = when {
+                typedFont.isNotEmpty() -> typedFont
+                selectedSuggestion == defaultValue -> null
+                selectedSuggestion.isNotEmpty() -> selectedSuggestion
+                else -> null
+            }
+
+            binding.applyBtt.isEnabled = false
+            binding.cancelBtt.isEnabled = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                val result = AppFontManager.setSelectedFont(activity, selectedFont)
+                binding.applyBtt.isEnabled = true
+                binding.cancelBtt.isEnabled = true
+                result.onSuccess {
+                    updateAppFontSummary()
+                    dialog.dismiss()
+                    this@SettingsUI.activity?.recreate()
+                }.onFailure {
+                    showToast(activity, it.message ?: getString(R.string.app_font_invalid))
+                }
+            }
+        }
+        binding.cancelBtt.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.setOnShowListener {
+            AppFontManager.applyToViewTree(binding.root)
+        }
+        dialog.show()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar(R.string.category_ui)
@@ -43,6 +114,7 @@ class SettingsUI : BasePreferenceFragmentCompat() {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_ui, rootKey)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        updateAppFontSummary()
 
         (getPref(R.string.overscan_key)?.hideOn(PHONE or EMULATOR) as? SeekBarPreference)?.setOnPreferenceChangeListener { pref, newValue ->
             val padding = (newValue as? Int)?.toPx ?: return@setOnPreferenceChangeListener true
@@ -119,6 +191,11 @@ class SettingsUI : BasePreferenceFragmentCompat() {
                 }
             )
             return@setOnPreferenceClickListener true
+        }
+
+        getPref(R.string.app_font_key)?.setOnPreferenceClickListener {
+            showAppFontDialog()
+            true
         }
 
         getPref(R.string.app_theme_key)?.setOnPreferenceClickListener {
