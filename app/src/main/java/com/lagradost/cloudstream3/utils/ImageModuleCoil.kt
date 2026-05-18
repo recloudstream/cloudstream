@@ -27,7 +27,6 @@ import coil3.util.DebugLogger
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.network.buildDefaultClient
-import okhttp3.HttpUrl
 import okio.Path.Companion.toOkioPath
 import java.io.File
 import java.nio.ByteBuffer
@@ -134,12 +133,6 @@ object ImageLoader {
 
     fun ImageView.loadImage(
         imageData: Uri?,
-        headers: Map<String, String>? = null,
-        builder: ImageRequest.Builder.() -> Unit = {}
-    ) = loadImageInternal(imageData = imageData, headers = headers, builder = builder)
-
-    fun ImageView.loadImage(
-        imageData: HttpUrl?,
         headers: Map<String, String>? = null,
         builder: ImageRequest.Builder.() -> Unit = {}
     ) = loadImageInternal(imageData = imageData, headers = headers, builder = builder)
