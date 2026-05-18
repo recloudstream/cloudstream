@@ -1,15 +1,13 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.google.gson.Gson
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.newSubtitleFile
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
 import java.net.URI
-
-
 
 class Geodailymotion : Dailymotion() {
     override val name = "GeoDailymotion"
@@ -35,8 +33,7 @@ open class Dailymotion : ExtractorApi() {
         val metaDataUrl = "$baseUrl/player/metadata/video/$id"
 
         val response = app.get(metaDataUrl, referer = embedUrl).text
-        val gson = Gson()
-        val meta = gson.fromJson(response, MetaData::class.java)
+        val meta = parseJson<MetaData>(response)
 
         meta.qualities?.get("auto")?.forEach { quality ->
             val videoUrl = quality.url
@@ -57,7 +54,6 @@ open class Dailymotion : ExtractorApi() {
         }
     }
 
-
     private fun getEmbedUrl(url: String): String? {
         if (url.contains("/embed/") || url.contains("/video/")) return url
         if (url.contains("geo.dailymotion.com")) {
@@ -66,7 +62,6 @@ open class Dailymotion : ExtractorApi() {
         }
         return null
     }
-
 
     private fun getVideoId(url: String): String? {
         val path = URI(url).path
@@ -81,7 +76,6 @@ open class Dailymotion : ExtractorApi() {
     ) {
         return generateM3u8(name, streamLink, "").forEach(callback)
     }
-
 
     data class MetaData(
         val qualities: Map<String, List<Quality>>?,
@@ -102,5 +96,4 @@ open class Dailymotion : ExtractorApi() {
         val label: String,
         val urls: List<String>
     )
-
 }

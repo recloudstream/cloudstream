@@ -43,7 +43,6 @@ qrcodeKotlin = "4.5.0"
 rhino = { strictly = "1.8.1" } # Requires minSdk 26 or later beginning at version 1.9.0
 safefile = "0.0.8"
 shimmer = "0.5.0"
-tmdbJava = "2.13.0"
 torrentserver = "7861970"
 tvprovider = "1.1.0"
 video = "1.0.0"
@@ -110,7 +109,6 @@ qrcode-kotlin = { module = "io.github.g0dkar:qrcode-kotlin", version.ref = "qrco
 rhino = { module = "org.mozilla:rhino", version.ref = "rhino" }
 safefile = { module = "com.github.LagradOst:SafeFile", version.ref = "safefile" }
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
-tmdb-java = { module = "com.uwetrottmann.tmdb2:tmdb-java", version.ref = "tmdbJava" }
 torrentserver = { module = "com.github.recloudstream:torrentserver", version.ref = "torrentserver" }
 tvprovider = { module = "androidx.tvprovider:tvprovider", version.ref = "tvprovider" }
 video = { module = "com.google.android.mediahome:video", version.ref = "video" }
