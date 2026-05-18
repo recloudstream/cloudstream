@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.dokka)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
@@ -206,9 +207,12 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.json)
     androidTestImplementation(libs.core)
-    implementation(libs.junit.ktx)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.kotlin.test)
+    androidTestImplementation(libs.classgraph)
+    androidTestImplementation(libs.instancio.core)
+    implementation(libs.junit.ktx)
 
     // Android Core & Lifecycle
     implementation(libs.core.ktx)
@@ -219,6 +223,7 @@ dependencies {
     implementation(libs.bundles.lifecycle)
     implementation(libs.bundles.navigation)
     implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.kotlinx.serialization.json) // JSON Parser
 
     // Design & UI
     implementation(libs.preference.ktx)
