@@ -61,8 +61,9 @@ object AppFontManager {
                     refresh(activity)
                 }
             } else {
-                activity.window?.decorView?.post {
-                    applyToViewTree(it)
+                val decorView = activity.window?.decorView
+                decorView?.post {
+                    applyToViewTree(decorView)
                 }
             }
         }
@@ -145,8 +146,9 @@ object AppFontManager {
     }
 
     fun refresh(activity: Activity) {
-        activity.window?.decorView?.post {
-            applyToViewTree(it)
+        val decorView = activity.window?.decorView
+        decorView?.post {
+            applyToViewTree(decorView)
         }
     }
 

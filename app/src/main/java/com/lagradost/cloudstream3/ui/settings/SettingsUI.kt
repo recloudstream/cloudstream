@@ -36,6 +36,7 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import kotlinx.coroutines.launch
 
 class SettingsUI : BasePreferenceFragmentCompat() {
     private fun updateAppFontSummary() {
