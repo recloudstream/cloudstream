@@ -40,7 +40,6 @@ import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.utils.txt
-import me.xdrop.fuzzywuzzy.FuzzySearch
 import java.net.URL
 import java.security.SecureRandom
 import java.util.Date

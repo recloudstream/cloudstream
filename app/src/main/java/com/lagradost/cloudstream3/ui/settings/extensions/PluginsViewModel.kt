@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
+import com.github.terrakok.fuzzykot.Levenshtein
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
 import com.lagradost.cloudstream3.R
@@ -23,7 +24,6 @@ import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
-import me.xdrop.fuzzywuzzy.FuzzySearch
 import java.io.File
 
 // String => repository url
@@ -246,7 +246,7 @@ class PluginsViewModel : ViewModel() {
             this.sortedBy { it.plugin.second.name }
         } else {
             this.sortedBy {
-                -FuzzySearch.partialRatio(
+                -Levenshtein.partialRatio(
                     it.plugin.second.name.lowercase(),
                     query.lowercase()
                 )

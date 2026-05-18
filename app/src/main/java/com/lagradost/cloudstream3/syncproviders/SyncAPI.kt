@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.syncproviders
 
 import androidx.annotation.WorkerThread
+import com.github.terrakok.fuzzykot.Levenshtein
 import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.NextAiring
 import com.lagradost.cloudstream3.Score
@@ -11,7 +12,6 @@ import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.utils.UiText
-import me.xdrop.fuzzywuzzy.FuzzySearch
 import java.util.Date
 
 /**
@@ -138,7 +138,7 @@ abstract class SyncAPI : AuthAPI() {
                 ListSorting.Query ->
                     if (query != null) {
                         items.sortedBy {
-                            -FuzzySearch.partialRatio(
+                            -Levenshtein.partialRatio(
                                 query.lowercase(), it.name.lowercase()
                             )
                         }
