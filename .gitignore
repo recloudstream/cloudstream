@@ -11,6 +11,8 @@
 /captures
 .cxx
 .kotlin/*
+.jdks/ 
+# local jdk17 for compilation
 
 # Created by https://www.toptal.com/developers/gitignore/api/kotlin,java,android,androidstudio,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=kotlin,java,android,androidstudio,visualstudiocode

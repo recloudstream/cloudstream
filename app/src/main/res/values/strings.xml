@@ -200,8 +200,9 @@
     <string name="app_font_invalid">This font could not be loaded</string>
     <string name="app_font_picker_title">App font</string>
     <string name="app_font_suggestions_label">Suggested fonts</string>
-    <string name="app_font_name_label">Font family</string>
-    <string name="app_font_helper">Pick a suggestion or type any family from coolLabs</string>
+    <string name="app_font_custom_option">Custom font family</string>
+    <string name="app_font_name_label">Custom font family</string>
+    <string name="app_font_helper">Select a suggestion or choose Custom and type any Google Fonts family from CoolLabs</string>
     <string name="pref_filter_search_quality">Hide selected video quality in search results</string>
     <string name="automatic_plugin_updates">Automatic plugin updates</string>
     <string name="automatic_plugin_download">Automatically download plugins</string>

@@ -68,7 +68,9 @@ object AppFontManager {
         }
 
         override fun onActivityStarted(activity: Activity) = Unit
-        override fun onActivityResumed(activity: Activity) = Unit
+        override fun onActivityResumed(activity: Activity) {
+            refresh(activity)
+        }
         override fun onActivityPaused(activity: Activity) = Unit
         override fun onActivityStopped(activity: Activity) = Unit
         override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
@@ -156,6 +158,19 @@ object AppFontManager {
         val selectedFont = getSelectedFont(root.context) ?: return
         val key = cacheKey(selectedFont, currentLocale(root.context.resources.configuration))
         applyInternal(root, baseTypeface, key)
+    }
+
+    fun getPreviewTypeface(context: Context, fontName: String): Typeface? {
+        val locale = currentLocale(context.resources.configuration)
+        val key = cacheKey(fontName, locale)
+        synchronized(lock) {
+            cachedFont?.takeIf { it.first == key }?.let { return it.second }
+        }
+        val file = getFontFile(context, fontName, preferredSubset(locale))
+        if (!file.exists()) {
+            return null
+        }
+        return runCatching { createTypeface(file) }.getOrNull()
     }
 
     private fun applyInternal(view: View, baseTypeface: Typeface, key: String) {
@@ -295,6 +310,11 @@ object AppFontManager {
     }
 
     private fun updatedRecentFonts(context: Context, fontName: String): List<String> {
+        val suggested = context.resources.getStringArray(R.array.app_font_suggestions)
+        val shouldStore = suggested.any { it.equals(fontName, true) }
+        if (!shouldStore) {
+            return getRecentFonts(context)
+        }
         return buildList {
             add(fontName)
             addAll(getRecentFonts(context))
@@ -322,9 +342,13 @@ object AppFontManager {
     }
 
     private fun View.isSubtitleView(): Boolean {
+        val subtitleClasses = setOf(
+            "androidx.media3.ui.SubtitleView",
+            "com.google.android.exoplayer2.ui.SubtitleView"
+        )
         var currentClass: Class<*>? = javaClass
         while (currentClass != null) {
-            if (currentClass.name == "androidx.media3.ui.SubtitleView") {
+            if (subtitleClasses.contains(currentClass.name)) {
                 return true
             }
             currentClass = currentClass.superclass

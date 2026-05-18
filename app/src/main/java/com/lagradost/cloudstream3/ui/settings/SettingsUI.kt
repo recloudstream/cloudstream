@@ -1,8 +1,11 @@
 package com.lagradost.cloudstream3.ui.settings
 
+import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.ArrayAdapter
 import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
@@ -50,33 +53,90 @@ class SettingsUI : BasePreferenceFragmentCompat() {
         val binding = BottomAppFontDialogBinding.inflate(layoutInflater)
         val dialog = BottomSheetDialog(activity)
         val defaultValue = getString(R.string.app_font_default)
+        val customOption = getString(R.string.app_font_custom_option)
         val currentFont = AppFontManager.getSelectedFont(activity)
-        val suggestions = listOf(defaultValue) + AppFontManager.getSuggestedFonts(activity)
+        val suggestedFonts = AppFontManager.getSuggestedFonts(activity)
+        val suggestions = listOf(defaultValue, customOption) + suggestedFonts
 
         dialog.setContentView(binding.root)
 
         binding.text1.text = getString(R.string.app_font_picker_title)
-        binding.appFontSuggestions.setAdapter(
-            ArrayAdapter(
-                activity,
-                R.layout.sort_bottom_single_choice_no_checkmark,
-                suggestions
-            )
-        )
-        binding.appFontSuggestions.setText(currentFont ?: defaultValue, false)
-        binding.appFontInput.setText(currentFont.orEmpty())
+        val previewCache = mutableMapOf<String, Typeface?>()
+        val adapter = object : ArrayAdapter<String>(
+            activity,
+            R.layout.app_font_dropdown_item,
+            suggestions
+        ) {
+            private fun applyPreview(textView: TextView, fontName: String) {
+                val isSpecial = fontName == defaultValue || fontName == customOption
+                val typeface = if (isSpecial) {
+                    Typeface.DEFAULT
+                } else {
+                    previewCache.getOrPut(fontName) {
+                        AppFontManager.getPreviewTypeface(activity, fontName)
+                    } ?: Typeface.DEFAULT
+                }
+                textView.typeface = typeface
+            }
+
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getView(position, convertView, parent)
+                (view as? TextView)?.let { applyPreview(it, getItem(position).orEmpty()) }
+                return view
+            }
+
+            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getDropDownView(position, convertView, parent)
+                (view as? TextView)?.let { applyPreview(it, getItem(position).orEmpty()) }
+                return view
+            }
+        }
+
+        binding.appFontSuggestions.setAdapter(adapter)
+
+        val initialSuggestion = when {
+            currentFont == null -> defaultValue
+            suggestedFonts.any { it.equals(currentFont, true) } -> currentFont
+            else -> customOption
+        }
+        val initialInput = currentFont.orEmpty()
+        binding.appFontSuggestions.setText(initialSuggestion, false)
+        binding.appFontInput.setText(if (initialSuggestion == defaultValue) "" else initialInput)
+
+        fun updateCustomState(isCustom: Boolean) {
+            binding.appFontInputLayout.isEnabled = isCustom
+            binding.appFontInputLayout.alpha = if (isCustom) 1f else 0.7f
+        }
+        updateCustomState(initialSuggestion == customOption)
+
         binding.appFontSuggestions.setOnItemClickListener { _, _, position, _ ->
             val selected = suggestions.getOrNull(position) ?: return@setOnItemClickListener
-            binding.appFontInput.setText(if (selected == defaultValue) "" else selected)
+            when (selected) {
+                defaultValue -> {
+                    updateCustomState(false)
+                    binding.appFontInput.setText("")
+                }
+                customOption -> {
+                    updateCustomState(true)
+                    if (binding.appFontInput.text.isNullOrBlank()) {
+                        binding.appFontInput.setText(currentFont.orEmpty())
+                    }
+                    binding.appFontInput.requestFocus()
+                }
+                else -> {
+                    updateCustomState(false)
+                    binding.appFontInput.setText(selected)
+                }
+            }
         }
         binding.applyBtt.setOnClickListener {
             val typedFont = binding.appFontInput.text?.toString()?.trim().orEmpty()
             val selectedSuggestion = binding.appFontSuggestions.text?.toString()?.trim().orEmpty()
             val selectedFont = when {
                 selectedSuggestion == defaultValue -> null
-                selectedSuggestion.isNotEmpty() && selectedSuggestion != typedFont -> selectedSuggestion
-                typedFont.isNotEmpty() -> typedFont
+                selectedSuggestion == customOption -> typedFont.takeIf { it.isNotEmpty() }
                 selectedSuggestion.isNotEmpty() -> selectedSuggestion
+                typedFont.isNotEmpty() -> typedFont
                 else -> null
             }
 
@@ -88,8 +148,8 @@ class SettingsUI : BasePreferenceFragmentCompat() {
                 binding.cancelBtt.isEnabled = true
                 result.onSuccess {
                     updateAppFontSummary()
+                    AppFontManager.refresh(activity)
                     dialog.dismiss()
-                    this@SettingsUI.activity?.recreate()
                 }.onFailure {
                     showToast(activity, it.message ?: getString(R.string.app_font_invalid))
                 }

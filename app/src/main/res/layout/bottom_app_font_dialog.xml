@@ -23,31 +23,44 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:hint="@string/app_font_suggestions_label"
+        app:hintEnabled="false"
+        app:boxBackgroundMode="outline"
+        app:boxStrokeWidth="1dp"
+        app:boxStrokeWidthFocused="2dp"
         app:endIconMode="dropdown_menu">
 
-        <AutoCompleteTextView
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
             android:id="@+id/app_font_suggestions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:hint="@string/app_font_suggestions_label"
+            android:textAlignment="center"
             android:inputType="none"
             tools:text="Roboto" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/app_font_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="12dp"
-        android:hint="@string/app_font_name_label"
+        app:hintEnabled="false"
+        app:boxBackgroundMode="outline"
+        app:boxStrokeWidth="1dp"
+        app:boxStrokeWidthFocused="2dp"
         app:helperText="@string/app_font_helper">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/app_font_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:hint="@string/app_font_name_label"
             android:imeOptions="actionDone"
             android:inputType="textCapWords"
+            android:textAlignment="center"
             tools:text="Inter" />
     </com.google.android.material.textfield.TextInputLayout>
 
