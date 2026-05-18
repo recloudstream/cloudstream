@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setSystemBarsPadding
+import com.lagradost.cloudstream3.utils.AppFontManager
 import com.lagradost.cloudstream3.utils.txt
 
 /**
@@ -75,6 +76,7 @@ private interface BaseFragmentHelper<T : ViewBinding> {
      */
     fun onViewReady(view: View, savedInstanceState: Bundle?) {
         fixLayout(view)
+        AppFontManager.applyToViewTree(view)
         binding?.let { onBindingCreated(it, savedInstanceState) }
     }
 
@@ -269,6 +271,7 @@ abstract class BasePreferenceFragmentCompat() : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setSystemBarsPadding()
+        AppFontManager.applyToViewTree(view)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
