@@ -804,6 +804,7 @@ object VideoDownloadManager {
         private suspend fun resolve(
             startByte: Long,
             endByte: Long?,
+            buffer: ByteArray,
             callback: (suspend CoroutineScope.(LazyStreamDownloadResponse) -> Unit)
         ): Long = withContext(Dispatchers.IO) {
             var currentByte: Long = startByte
@@ -822,7 +823,6 @@ object VideoDownloadManager {
             )
             val requestStream = request.body.byteStream()
 
-            val buffer = ByteArray(bufferSize)
             var read: Int
 
             try {
@@ -853,6 +853,7 @@ object VideoDownloadManager {
         suspend fun resolveSafe(
             index: Int,
             retries: Int = 3,
+            buffer: ByteArray,
             callback: (suspend CoroutineScope.(LazyStreamDownloadResponse) -> Unit)
         ): Boolean {
             var start = chuckStartByte.getOrNull(index) ?: return false
@@ -861,7 +862,7 @@ object VideoDownloadManager {
             for (i in 0 until retries) {
                 try {
                     // in case
-                    start = resolve(start, end, callback)
+                    start = resolve(start, end, buffer, callback)
                     // no end defined, so we don't care exactly where it ended
                     if (end == null) return true
                     // we have download more or exactly what we needed
@@ -1158,7 +1159,10 @@ object VideoDownloadManager {
                             }
                         }
 
-                    // this will take up the first available job and resolve
+                    // Reuse a download buffer to decrease unnecessary alloc
+                    val buffer = ByteArray(items.bufferSize)
+
+                    // This will take up the first available job and resolve
                     while (true) {
                         if (!isActive) return@launch
 
@@ -1188,7 +1192,7 @@ object VideoDownloadManager {
 
                         // in case something has gone wrong set to failed if the fail is not caused by
                         // user cancellation
-                        if (!items.resolveSafe(index, callback = callback)) {
+                        if (!items.resolveSafe(index, buffer = buffer, callback = callback)) {
                             fileMutex.withLock {
                                 if (metadata.type != DownloadType.IsStopped) {
                                     metadata.type = DownloadType.IsFailed
