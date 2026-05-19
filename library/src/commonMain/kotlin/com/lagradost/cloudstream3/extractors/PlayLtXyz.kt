@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.api.Log
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 
@@ -21,7 +22,7 @@ open class PlayLtXyz: ExtractorApi() {
         var idUser = ""
         var idFile = ""
         var bodyText = ""
-        val doc = app.get(url, referer = referer).document
+        val doc = app.get(url, referer = referer).ksoupDocument
         //Log.i(this.name, "Result => (url, script) $url / ${doc.select("script")}")
         bodyText = doc.select("script").firstOrNull {
             val text = it.toString()

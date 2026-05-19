@@ -4,6 +4,7 @@ import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.extractors.helper.JwPlayerHelper
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getAndUnpack
@@ -30,9 +31,9 @@ open class Fastream : ExtractorApi() {
                     "file_code" to id,
                     "auto" to "1"
                 )
-            ).document
+            ).ksoupDocument
         } else {
-            app.get(url, referer = url).document
+            app.get(url, referer = url).ksoupDocument
         }
         response.select("script").amap { script ->
             if (getPacked(script.data()) != null) {

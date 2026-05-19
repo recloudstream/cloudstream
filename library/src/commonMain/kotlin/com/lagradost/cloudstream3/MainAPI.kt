@@ -177,7 +177,7 @@ object APIHolder {
                     .substringBefore("/")
             val recapToken =
                 app.get("https://www.google.com/recaptcha/api2/anchor?ar=1&hl=en&size=invisible&cb=cs3&k=$key&co=$domain&v=$vToken")
-                    .document
+                    .ksoupDocument
                     .selectFirst("#recaptcha-token")?.attr("value")
             if (recapToken != null) {
                 return app.post(

@@ -4,6 +4,7 @@ import com.lagradost.api.Log
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.extractors.helper.JwPlayerHelper
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.network.WebViewResolver
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -47,10 +48,10 @@ open class FilemoonV2 : ExtractorApi() {
         )
 
         val initialResponse = app.get(url, defaultHeaders)
-        val iframeSrcUrl = initialResponse.document.selectFirst("iframe")?.attr("src")
+        val iframeSrcUrl = initialResponse.ksoupDocument.selectFirst("iframe")?.attr("src")
 
         if (iframeSrcUrl.isNullOrEmpty()) {
-            val fallbackScriptData = initialResponse.document
+            val fallbackScriptData = initialResponse.ksoupDocument
                 .selectFirst("script:containsData(function(p,a,c,k,e,d))")
                 ?.data().orEmpty()
             val unpackedScript = JsUnpacker(fallbackScriptData).unpack()
@@ -74,7 +75,7 @@ open class FilemoonV2 : ExtractorApi() {
         val iframeHeaders = defaultHeaders + ("Accept-Language" to "en-US,en;q=0.5")
         val iframeResponse = app.get(iframeSrcUrl, headers = iframeHeaders)
 
-        val iframeScriptData = iframeResponse.document
+        val iframeScriptData = iframeResponse.ksoupDocument
             .selectFirst("script:containsData(function(p,a,c,k,e,d))")
             ?.data().orEmpty()
 

@@ -5,6 +5,7 @@ import com.google.gson.JsonParser
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.base64Decode
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.INFER_TYPE
@@ -62,11 +63,11 @@ open class Voe : ExtractorApi() {
         callback: (ExtractorLink) -> Unit
     ) {
         var res = app.get(url, referer = referer)
-        val redirectUrl = redirectRegex.find(res.document.data())?.groupValues?.get(1)
+        val redirectUrl = redirectRegex.find(res.ksoupDocument.data())?.groupValues?.get(1)
         if (redirectUrl != null) {
             res = app.get(redirectUrl, referer = referer)
         }
-        val encodedString = res.document.selectFirst("script[type=application/json]")?.data()?.trim()?.substringAfter("[\"")?.substringBeforeLast("\"]")
+        val encodedString = res.ksoupDocument.selectFirst("script[type=application/json]")?.data()?.trim()?.substringAfter("[\"")?.substringBeforeLast("\"]")
         if (encodedString == null) {
             println("encoded string not found.")
             return

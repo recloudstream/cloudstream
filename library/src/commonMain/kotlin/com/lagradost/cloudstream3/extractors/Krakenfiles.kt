@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
@@ -20,7 +21,7 @@ open class Krakenfiles : ExtractorApi() {
         callback: (ExtractorLink) -> Unit
     ) {
         val id = Regex("/(?:view|embed-video)/([\\da-zA-Z]+)").find(url)?.groupValues?.get(1)
-        val doc = app.get("$mainUrl/embed-video/$id").document
+        val doc = app.get("$mainUrl/embed-video/$id").ksoupDocument
         val link = doc.selectFirst("source")?.attr("src")
 
         callback.invoke(

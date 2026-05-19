@@ -5,6 +5,7 @@ import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.extractors.helper.JwPlayerHelper
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
@@ -173,11 +174,11 @@ open class StreamWishExtractor : ExtractorApi() {
 
         val playerScriptData = when {
             !getPacked(pageResponse.text).isNullOrEmpty() -> getAndUnpack(pageResponse.text)
-            pageResponse.document.select("script").any { it.html().contains("jwplayer(\"vplayer\").setup(") } ->
-                pageResponse.document.select("script").firstOrNull {
+            pageResponse.ksoupDocument.select("script").any { it.html().contains("jwplayer(\"vplayer\").setup(") } ->
+                pageResponse.ksoupDocument.select("script").firstOrNull {
                     it.html().contains("jwplayer(\"vplayer\").setup(")
                 }?.html()
-            else -> pageResponse.document.selectFirst("script:containsData(sources:)")?.data()
+            else -> pageResponse.ksoupDocument.selectFirst("script:containsData(sources:)")?.data()
         }
 
         val linkFound = JwPlayerHelper.extractStreamLinks(playerScriptData.orEmpty(), name, mainUrl, callback, subtitleCallback, headers)

@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -25,7 +26,7 @@ open class Cda : ExtractorApi() {
                 "User-Agent" to USER_AGENT,
                 "Cookie" to "cda.player=html5"
             )
-        ).document
+        ).ksoupDocument
         val dataRaw = doc.selectFirst("[player_data]")?.attr("player_data") ?: return null
         val playerData = tryParseJson<PlayerData>(dataRaw) ?: return null
         return listOf(

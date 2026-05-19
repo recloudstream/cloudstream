@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.extractors.helper.JwPlayerHelper
@@ -60,7 +61,7 @@ open class Filesim : ExtractorApi() {
         val embedUrl = url.replace("/download/", "/e/")
         var pageResponse = app.get(embedUrl, referer = referer)
 
-        val iframeElement = pageResponse.document.selectFirst("iframe")
+        val iframeElement = pageResponse.ksoupDocument.selectFirst("iframe")
         if (iframeElement != null) {
             val iframeUrl = iframeElement.attr("src")
             pageResponse = app.get(
@@ -76,7 +77,7 @@ open class Filesim : ExtractorApi() {
         val scriptData = if (!getPacked(pageResponse.text).isNullOrEmpty()) {
             getAndUnpack(pageResponse.text)
         } else {
-            pageResponse.document.selectFirst("script:containsData(sources:)")?.data()
+            pageResponse.ksoupDocument.selectFirst("script:containsData(sources:)")?.data()
         }
 
         val linkFound = JwPlayerHelper.extractStreamLinks(scriptData.orEmpty(), name, mainUrl, callback, subtitleCallback)

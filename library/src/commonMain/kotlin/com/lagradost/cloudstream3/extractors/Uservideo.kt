@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.extractors
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -20,7 +21,7 @@ open class Uservideo : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        val script = app.get(url).document.selectFirst("script:containsData(hosts =)")?.data()
+        val script = app.get(url).ksoupDocument.selectFirst("script:containsData(hosts =)")?.data()
         val host = script?.substringAfter("hosts = [\"")?.substringBefore("\"];")
         val servers = script?.substringAfter("servers = \"")?.substringBefore("\";")
 

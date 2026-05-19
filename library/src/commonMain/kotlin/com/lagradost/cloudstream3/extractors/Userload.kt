@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.*
 import org.mozilla.javascript.Context
 import org.mozilla.javascript.EvaluatorException
@@ -101,7 +102,7 @@ open class Userload : ExtractorApi() {
             "mycountry" to mycountry
         ))
         val videoLink = videoLinkPage.text
-        val nameSource = app.get(url).document.head().selectFirst("title")!!.text()
+        val nameSource = app.get(url).ksoupDocument.head().selectFirst("title")!!.text()
         extractedLinksList.add(
             newExtractorLink(
                 name,

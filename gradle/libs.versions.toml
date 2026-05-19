@@ -28,6 +28,7 @@ juniversalchardet = "2.5.0"
 kotlinGradlePlugin = "2.3.20"
 kotlinxCollectionsImmutable = "0.4.0"
 kotlinxCoroutinesCore = "1.10.2"
+ksoup = "0.2.6"
 lifecycleKtx = "2.10.0"
 material = "1.14.0-beta01"
 media3 = "1.9.3"
@@ -83,6 +84,7 @@ junit-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "junitKtx" }
 juniversalchardet = { module = "com.github.albfernandez:juniversalchardet", version.ref = "juniversalchardet" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
+ksoup = { module = "com.fleeksoft.ksoup:ksoup", version.ref = "ksoup" }
 lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleKtx" }
 lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleKtx" }
 material = { module = "com.google.android.material:material", version.ref = "material" }

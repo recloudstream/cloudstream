@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.extractors.helper
 
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
@@ -20,7 +21,7 @@ class VstreamhubHelper {
         ) {
             if (url.startsWith(baseUrl)) {
                 // Fetch links
-                val doc = app.get(url).document.select("script")
+                val doc = app.get(url).ksoupDocument.select("script")
                 doc.forEach {
                     val innerText = it.toString()
                     if (!innerText.isNullOrEmpty()) {
