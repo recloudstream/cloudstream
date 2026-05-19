@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.util.Log
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
@@ -35,56 +36,34 @@ import java.io.File
 import java.nio.ByteBuffer
 
 object ImageLoader {
-
     private const val TAG = "CoilImgLoader"
-    private fun hasPotentialBrokenHardware(): Boolean {
-        val hardware = Build.HARDWARE?.lowercase() ?: ""
-        val board = Build.BOARD?.lowercase() ?: ""
-        val model = Build.MODEL?.lowercase() ?: ""
-        val allwinnerPatterns = listOf("sun50iw9", "h713", "allwinner")
-        val problematicModels = listOf("hy320", "hy300", "a10plus", "magcubic", "sinoy")
-        Log.e(TAG, "Device signature - Hardware: $hardware, Board: $board, Model: $model")
-        return allwinnerPatterns.any { it in hardware || it in board } ||
-                problematicModels.any { it in model }
-    }
     internal fun buildImageLoader(context: PlatformContext): ImageLoader = ImageLoader.Builder(context)
             .crossfade(200)
-            .allowHardware(false) // SDK_INT >= 28, cant use hardware bitmaps for Palette Builder
+            .allowHardware(SDK_INT >= 28)
             .diskCachePolicy(CachePolicy.ENABLED)
             .networkCachePolicy(CachePolicy.ENABLED)
             .memoryCache {
                 MemoryCache.Builder().maxSizePercent(context, 0.1)
-                    .strongReferencesEnabled(false)// 10 % of memory for caching
+                    .strongReferencesEnabled(false)// 10 % of memory for mem-cache
                     .build()
             }
             .bitmapConfig(Bitmap.Config.ARGB_8888)
-            .logger(DebugLogger())
             .diskCache {
                 DiskCache.Builder()
                     .directory(context.cacheDir.resolve("cs3_image_cache").toOkioPath())
                     .maxSizeBytes(512L * 1024 * 1024) // 512 MB
-                    .maxSizePercent(0.04) // Use 4 % of the device's storage space for disk caching
+                    .maxSizePercent(0.04) // max 4% of storage for disk caching
                     .build()
             }
             /** Pass interceptors with care, unnecessary passing tokens to servers
             or image hosting services causes unauthorized exceptions **/
             .components {
-                add { chain ->
-                    val request = chain.request
-                    Log.d(
-                        TAG,
-                        "Coil request: ${request.data}, allowHardware=${request.allowHardware}"
-                    )
-                    chain.proceed()
-                }
                 add(OkHttpNetworkFetcherFactory(callFactory = { buildDefaultClient(context) }))
-                //if (hasPotentialBrokenHardware()) {
                 add(BitmapFactoryDecoder.Factory()) // sw decoder
-                //}
             }
-           /* .apply {
+            .apply {
                 setupCoilLogger()
-            }*/
+            }
             .build()
 
     /** DebugLogger on debug builds which won't slow down release builds & use EventListener for
@@ -92,7 +71,6 @@ object ImageLoader {
     internal fun ImageLoader.Builder.setupCoilLogger() {
         if (BuildConfig.DEBUG) {
             logger(DebugLogger())
-            Log.d(TAG, "setupCoilLogger: Activated DEBUG_LOGGER FOR COIL")
         } else {
             eventListener(object : EventListener() {
                 override fun onError(request: ImageRequest, result: ErrorResult) {
@@ -117,7 +95,6 @@ object ImageLoader {
         if (imageData == null) return
         // setImageResource is better than coil3 on resources due to attr
         if (imageData is Int) { this.setImageResource(imageData); return }
-
         // headers can be overridden by extensions.
         this.load(imageData, SingletonImageLoader.get(context)) {
             this.httpHeaders(NetworkHeaders.Builder().also { headerBuilder ->
@@ -126,7 +103,6 @@ object ImageLoader {
                     headerBuilder[key] = value
                 }
             }.build())
-            //allowHardware(Build.VERSION.SDK_INT >= 28 && !hasPotentialBrokenHardware())
             builder() // if passed
         }
     }
