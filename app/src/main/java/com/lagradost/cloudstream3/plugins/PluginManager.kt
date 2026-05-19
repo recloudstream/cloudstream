@@ -689,22 +689,13 @@ object PluginManager {
         }
 
         // remove all registered apis
-        synchronized(APIHolder.apis) {
-            APIHolder.apis.filter { api -> api.sourcePlugin == plugin.filename }.forEach {
-                removePluginMapping(it)
-            }
-        }
-        synchronized(APIHolder.allProviders) {
-            APIHolder.allProviders.removeIf { provider: MainAPI -> provider.sourcePlugin == plugin.filename }
+        APIHolder.apis.filter { api -> api.sourcePlugin == plugin.filename }.forEach {
+            removePluginMapping(it)
         }
 
-        synchronized(extractorApis) {
-            extractorApis.removeIf { provider: ExtractorApi -> provider.sourcePlugin == plugin.filename }
-        }
-
-        synchronized(VideoClickActionHolder.allVideoClickActions) {
-            VideoClickActionHolder.allVideoClickActions.removeIf { action: VideoClickAction -> action.sourcePlugin == plugin.filename }
-        }
+        APIHolder.allProviders.removeAll { provider -> provider.sourcePlugin == plugin.filename }
+        extractorApis.removeAll { provider -> provider.sourcePlugin == plugin.filename }
+        VideoClickActionHolder.allVideoClickActions.removeAll { action -> action.sourcePlugin == plugin.filename }
 
         synchronized(classLoaders) {
             classLoaders.values.removeIf { v -> v == plugin }
