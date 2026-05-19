@@ -114,40 +114,4 @@ class JsUnpacker(packedJS: String?) {
     init {
         this.packedJS = packedJS
     }
-
-    companion object {
-        val c = listOf(
-            0x63, 0x6f, 0x6d, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x61, 0x6e, 0x64,
-            0x72, 0x6f, 0x69, 0x64, 0x2e, 0x67, 0x6d, 0x73, 0x2e, 0x61, 0x64, 0x73, 0x2e, 0x4d,
-            0x6f, 0x62, 0x69, 0x6c, 0x65, 0x41, 0x64, 0x73
-        )
-        val z = listOf(
-            0x63, 0x6f, 0x6d, 0x2e, 0x66, 0x61, 0x63, 0x65, 0x62, 0x6f, 0x6f, 0x6b, 0x2e, 0x61,
-            0x64, 0x73, 0x2e, 0x41, 0x64
-        )
-
-        fun String.load(): String? {
-            return try {
-                var load = this
-                for (q in c.indices) {
-                    if (c[q % 4] > 270) {
-                        load += c[q % 3]
-                    } else {
-                        load += c[q].toChar()
-                    }
-                }
-                Class.forName(load.substring(load.length - c.size, load.length)).name
-            } catch (_: Exception) {
-                try {
-                    var f = c[2].toChar().toString()
-                    for (w in z.indices) {
-                        f += z[w].toChar()
-                    }
-                    Class.forName(f.substring(0b001, f.length)).name
-                } catch (_: Exception) {
-                    null
-                }
-            }
-        }
-    }
 }
