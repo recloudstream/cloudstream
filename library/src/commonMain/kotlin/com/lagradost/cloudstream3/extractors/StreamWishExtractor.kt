@@ -13,7 +13,6 @@ import com.lagradost.cloudstream3.utils.getAndUnpack
 import com.lagradost.cloudstream3.utils.getPacked
 import com.lagradost.cloudstream3.network.WebViewResolver
 
-@Prerelease
 class Mwish : StreamWishExtractor() {
     override val name = "Mwish"
     override val mainUrl = "https://mwish.pro"
@@ -29,6 +28,7 @@ class Ewish : StreamWishExtractor() {
     override val mainUrl = "https://embedwish.com"
 }
 
+@Prerelease
 class Hgcloudto : StreamWishExtractor() {
     override val name = "Hgcloud"
     override val mainUrl = "https://Hgcloud.to"
