@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.github.terrakok.fuzzykot.Levenshtein
 import com.lagradost.cloudstream3.AudioFile
 import com.lagradost.cloudstream3.IDownloadableMinimum
 import com.lagradost.cloudstream3.SubtitleFile
@@ -311,7 +312,6 @@ import com.lagradost.cloudstream3.mvvm.logError
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
-import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.jsoup.Jsoup
 import java.net.URI
 import java.util.UUID
@@ -883,7 +883,7 @@ suspend fun loadExtractor(
     // this is to match mirror domains - like example.com, example.net
     for (index in extractorApis.lastIndex downTo 0) {
         val extractor = extractorApis[index]
-        if (FuzzySearch.partialRatio(
+        if (Levenshtein.partialRatio(
                 extractor.mainUrl,
                 currentUrl
             ) > 80
