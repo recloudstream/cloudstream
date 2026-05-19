@@ -559,7 +559,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                             ExtractorLinkGenerator(
                                 extractedTrailerLinks,
                                 emptyList()
-                            )
+                            ), 0
                         )
                     )
                 }
@@ -925,8 +925,12 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         resultTvComingSoon.isVisible = d.comingSoon
 
                         populateChips(resultTag, d.tags)
-                        val prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(root.context)
-                        val showCast = prefs.getBoolean(root.context.getString(R.string.show_cast_in_details_key), true)
+                        val prefs =
+                            androidx.preference.PreferenceManager.getDefaultSharedPreferences(root.context)
+                        val showCast = prefs.getBoolean(
+                            root.context.getString(R.string.show_cast_in_details_key),
+                            true
+                        )
 
                         resultCastItems.isGone = !showCast || d.actors.isNullOrEmpty()
                         (resultCastItems.adapter as? ActorAdaptor)?.submitList(if (showCast) d.actors else emptyList())

@@ -189,6 +189,8 @@ import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.system.exitProcess
 import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
     override fun attachBaseContext(base: Context?) {
@@ -364,7 +366,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                                 LinkGenerator(
                                     listOf(BasicLink(url, name)),
                                     extract = true,
-                                )
+                                    id = url.hashCode()
+                                ), 0
                             )
                         )
                     } else if (safeURI(str)?.scheme == APP_STRING_RESUME_WATCHING) {
@@ -444,6 +447,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
 
     var lastPopup: SearchResponse? = null
+    var lastPopupJob: Job? = null
     fun loadPopup(result: SearchResponse, load: Boolean = true) {
         lastPopup = result
         val syncName = syncViewModel.syncName(result.apiName)
@@ -459,7 +463,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             syncViewModel.clear()
         }
 
-        if (load) {
+        lastPopupJob?.cancel()
+        lastPopupJob = if (load) {
             viewModel.load(
                 this, result.url, result.apiName, false, if (getApiDubstatusSettings()
                         .contains(DubStatus.Dubbed)
@@ -559,9 +564,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             navView.isVisible = isNavVisible && !isLandscape()
             navHostFragment.apply {
                 val marginPx = resources.getDimensionPixelSize(R.dimen.nav_rail_view_width)
-                layoutParams = (navHostFragment.layoutParams as ViewGroup.MarginLayoutParams).apply {
-                    marginStart = if (isNavVisible && isLandscape() && isLayout(TV or EMULATOR)) marginPx else 0
-                }
+                layoutParams =
+                    (navHostFragment.layoutParams as ViewGroup.MarginLayoutParams).apply {
+                        marginStart =
+                            if (isNavVisible && isLandscape() && isLayout(TV or EMULATOR)) marginPx else 0
+                    }
             }
 
             /**
@@ -570,7 +577,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
              * highlight the wrong one in UI.
              */
             when (destination.id) {
-                in listOf(R.id.navigation_downloads, R.id.navigation_download_child, R.id.navigation_download_queue) -> {
+                in listOf(
+                    R.id.navigation_downloads,
+                    R.id.navigation_download_child,
+                    R.id.navigation_download_queue
+                ) -> {
                     navRailView.menu.findItem(R.id.navigation_downloads).isChecked = true
                     navView.menu.findItem(R.id.navigation_downloads).isChecked = true
                 }
@@ -853,6 +864,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
     private fun hidePreviewPopupDialog() {
         bottomPreviewPopup.dismissSafe(this)
+        lastPopupJob?.cancel()
+        lastPopupJob = null
         bottomPreviewPopup = null
         bottomPreviewBinding = null
     }
@@ -2041,7 +2054,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             updateLocale()
             runDefault()
         }
-        
+
         // Start the download queue
         DownloadQueueManager.init(this)
     }

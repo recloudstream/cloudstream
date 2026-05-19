@@ -76,10 +76,10 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
         currentMetaData.id = id
 
         if (!doSetProgress) return
+        val appContext = context.applicationContext
 
         ioSafe {
-            val savedData = VideoDownloadManager.getDownloadFileInfo(context, id)
-
+            val savedData = VideoDownloadManager.getDownloadFileInfo(appContext, id)
             mainWork {
                 if (savedData != null) {
                     val downloadedBytes = savedData.fileLength

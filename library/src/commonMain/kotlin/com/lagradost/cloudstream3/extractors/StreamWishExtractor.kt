@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.api.Log
+import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
@@ -11,7 +12,6 @@ import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.getAndUnpack
 import com.lagradost.cloudstream3.utils.getPacked
 import com.lagradost.cloudstream3.network.WebViewResolver
-
 
 class Mwish : StreamWishExtractor() {
     override val name = "Mwish"
@@ -26,6 +26,12 @@ class Dwish : StreamWishExtractor() {
 class Ewish : StreamWishExtractor() {
     override val name = "Embedwish"
     override val mainUrl = "https://embedwish.com"
+}
+
+@Prerelease
+class Hgcloudto : StreamWishExtractor() {
+    override val name = "Hgcloud"
+    override val mainUrl = "https://Hgcloud.to"
 }
 
 class WishembedPro : StreamWishExtractor() {

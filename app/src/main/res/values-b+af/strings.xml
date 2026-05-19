@@ -24,8 +24,7 @@
     <string name="subs_edge_type">Rand tipe</string>
     <string name="download_done">Klaar Afgelaai</string>
     <string name="continue_watching">Kyk verder</string>
-    <string name="new_update_format" formatted="true">Nuwe opdatering gevind!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Nuwe opdatering gevind! \n%1$s -&gt; %2$s</string>
     <string name="subs_download_languages">Laai Tale af</string>
     <string name="search_provider_text_providers">Soek deur verskaffers te gebruik</string>
     <string name="go_back_img_des">Gaan terug</string>

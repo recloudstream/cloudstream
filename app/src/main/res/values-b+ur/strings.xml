@@ -10,8 +10,7 @@
     <string name="home_change_provider_img_des">ذریعہ تبدیل کریں</string>
     <string name="preview_background_img_des">پس منظر کا دیکھنا</string>
     <string name="rated_format" formatted="true">درجہ بندی: %.1f</string>
-    <string name="new_update_format" formatted="true">نیا update آگیا ہے!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">نیا update آگیا ہے! \n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">بھرنے والا</string>
     <string name="duration_format" formatted="true">%d منٹ</string>
     <string name="next_episode_time_day_format" formatted="true">%1$d دن %2$d گھنٹے %3$d منٹ</string>
@@ -189,10 +188,8 @@
     <string name="resume">از سر نو شروع کریں</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">یہ مستقل طور پر حذف ہوجائے گا %s
-\nتمھيں يقين ہے?</string>
-    <string name="resume_time_left" formatted="true">%dm
-\nباقی</string>
+    <string name="delete_message" formatted="true">یہ مستقل طور پر حذف ہوجائے گا %s \nتمھيں يقين ہے?</string>
+    <string name="resume_time_left" formatted="true">%dm \nباقی</string>
     <string name="status_ongoing">احوال</string>
     <string name="status_completed">مکمل</string>
     <string name="status">حالت</string>
@@ -441,8 +438,7 @@
     <string name="android_tv_interface_on_seek_settings">پلیئردکھایا گیا - Seek Amount</string>
     <string name="android_tv_interface_on_seek_settings_summary">پلیئر کے نظر آنے پر استعمال کی جانے والی Seek Amount</string>
     <string name="android_tv_interface_off_seek_settings_summary">پلیئر کے چھپنے پر استعمال ہونے والی seek amount</string>
-    <string name="safe_mode_file">سیف موڈ فائل مل گئی!
-\nفائل کو ہٹانے تک اسٹارٹ اپ پر کوئی ایکسٹینشن لوڈ نہیں کرنا۔</string>
+    <string name="safe_mode_file">سیف موڈ فائل مل گئی! \nفائل کو ہٹانے تک اسٹارٹ اپ پر کوئی ایکسٹینشن لوڈ نہیں کرنا۔</string>
     <string name="start">شروع کریں</string>
     <string name="test_failed">ناکام</string>
     <string name="test_passed">کامیاب ہو گیا</string>
@@ -454,8 +450,7 @@
     <string name="pref_category_bypass">آئی ایس پی بائی پاسز</string>
     <string name="subscription_new">%s کو سبسکرائب کیا</string>
     <string name="jsdelivr_proxy_summary">Bypass blocking of raw github URLs using jsDelivr. اپ ڈیٹس میں کچھ دنوں کی تاخیر ہو سکتی ہے</string>
-    <string name="empty_library_no_accounts_message">آپ کی لائبریری خالی ہے:(
-\nلائبریری اکاؤنٹ میں لاگ ان کریں یا اپنی مقامی لائبریری میں شوز شامل کریں۔</string>
+    <string name="empty_library_no_accounts_message">آپ کی لائبریری خالی ہے:( \nلائبریری اکاؤنٹ میں لاگ ان کریں یا اپنی مقامی لائبریری میں شوز شامل کریں۔</string>
     <string name="error_invalid_url">غلط URL</string>
     <string name="browser">براؤزر</string>
     <string name="quality_webrip">ویب</string>
@@ -504,9 +499,7 @@
     <string name="subtitles_remove_captions">سب ٹائٹلز سے بند کیپشنز کو ہٹا دیں</string>
     <string name="app_layout_subtext">اپنے آلے کے مطابق ایپ کی شکل تبدیل کریں</string>
     <string name="next">اگلے</string>
-    <string name="blank_repo_message">CloudStream میں بذریعہ ڈیفالٹ کوئی سائٹ انسٹال نہیں ہے۔ آپ کو ریپوزٹری سے سائٹس انسٹال کرنے کی ضرورت ہے۔
-\n
-\nہمارے Discord میں شامل ہوں یا آن لائن تلاش کریں۔</string>
+    <string name="blank_repo_message">CloudStream میں بذریعہ ڈیفالٹ کوئی سائٹ انسٹال نہیں ہے۔ آپ کو ریپوزٹری سے سائٹس انسٹال کرنے کی ضرورت ہے۔ \n \nہمارے Discord میں شامل ہوں یا آن لائن تلاش کریں۔</string>
     <string name="safe_mode_description">تمام ایکسٹینشنز کریش کی وجہ سے آف کر دی گئیں تاکہ آپ کو پریشانی کا باعث تلاش کرنے میں مدد مل سکے۔</string>
     <string name="extension_install_first">پہلے ایکسٹینشن انسٹال کریں</string>
     <string name="clipboard_too_large">بہت زیادہ متن۔ کلپ بورڈ میں محفوظ کرنے سے قاصر۔</string>
@@ -528,13 +521,7 @@
     <string name="already_voted">آپ نے پہلے ہی ووٹ دیا ہے</string>
     <string name="no_plugins_found_error">مخزن میں کوئی پلگ انز نہیں ملا</string>
     <string name="set_default">ترجیحی تعین کریں</string>
-    <string name="quality_profile_help">یہاں آپ تبدیلی کرسکتے ہیں کہ سورسز کو کس طرح کی ترتیب دی جائے۔ اگر ایک ویڈیو کی زیادہ پرائیورٹی ہوتی ہے تو یہ سورس کی انتخاب میں زیادہ اوپر آئے گی۔ سورس کی پرائیورٹی اور کوالٹی کی پرائیورٹی کا مجموعہ ویڈیو کی پرائیورٹی ہوتی ہے۔
-\n
-\nسورس A: 3
-\nکوالٹی B: 7
-\nاس کا مجموعی ویڈیو پرائیورٹی 10 ہوتی ہے۔
-\n
-\nنوٹ: اگر مجموعہ 10 یا اس سے زیادہ ہو تو پلیر وہ لنک لوڈ کرنے کو خود بخود چھوڑ دے گا!</string>
+    <string name="quality_profile_help">یہاں آپ تبدیلی کرسکتے ہیں کہ سورسز کو کس طرح کی ترتیب دی جائے۔ اگر ایک ویڈیو کی زیادہ پرائیورٹی ہوتی ہے تو یہ سورس کی انتخاب میں زیادہ اوپر آئے گی۔ سورس کی پرائیورٹی اور کوالٹی کی پرائیورٹی کا مجموعہ ویڈیو کی پرائیورٹی ہوتی ہے۔ \n \nسورس A: 3 \nکوالٹی B: 7 \nاس کا مجموعی ویڈیو پرائیورٹی 10 ہوتی ہے۔ \n \nنوٹ: اگر مجموعہ 10 یا اس سے زیادہ ہو تو پلیر وہ لنک لوڈ کرنے کو خود بخود چھوڑ دے گا!</string>
     <string name="favorites_list_name">پسندیدہ</string>
     <string name="favorite_added">%s کو پسندیدہ میں شامل کیا گیا</string>
     <string name="favorite_removed">%s کو پسندیدہ سے ختم کیا گیا</string>
@@ -561,14 +548,8 @@
     <string name="duplicate_add">جمع کریں</string>
     <string name="duplicate_replace_all">سب کو بدل دیں</string>
     <string name="duplicate_replace">بدل دیں</string>
-    <string name="duplicate_message_multiple" formatted="true">آپ کی لائبریری میں ممکنہ ڈپلیکیٹ آئٹمز مل گئے ہیں:
-\n
-\n%s
-\n
-\nکیا آپ بہرحال اس آئٹم کو شامل کرنا چاہیں گے، موجودہ کو تبدیل کرنا چاہیں گے، یا کارروائی کو منسوخ کریں گے؟</string>
-    <string name="duplicate_message_single" formatted="true">ایسا معلوم ہوتا ہے کہ آپ کی لائبریری میں ممکنہ طور پر ڈپلیکیٹ آئٹم پہلے سے موجود ہے: \'%s۔\'
-\n
-\nکیا آپ بہرحال اس آئٹم کو شامل کرنا چاہیں گے، موجودہ کو تبدیل کرنا چاہیں گے، یا کارروائی کو منسوخ کریں گے؟</string>
+    <string name="duplicate_message_multiple" formatted="true">آپ کی لائبریری میں ممکنہ ڈپلیکیٹ آئٹمز مل گئے ہیں: \n \n%s \n \nکیا آپ بہرحال اس آئٹم کو شامل کرنا چاہیں گے، موجودہ کو تبدیل کرنا چاہیں گے، یا کارروائی کو منسوخ کریں گے؟</string>
+    <string name="duplicate_message_single" formatted="true">ایسا معلوم ہوتا ہے کہ آپ کی لائبریری میں ممکنہ طور پر ڈپلیکیٹ آئٹم پہلے سے موجود ہے: \'%s۔\' \n \nکیا آپ بہرحال اس آئٹم کو شامل کرنا چاہیں گے، موجودہ کو تبدیل کرنا چاہیں گے، یا کارروائی کو منسوخ کریں گے؟</string>
     <string name="lock_profile">پروفائل لاک کریں</string>
     <string name="skip_startup_account_select_pref">آغاز پر اکاؤنٹ کا انتخاب چھوڑ دیں</string>
     <string name="auto_rotate_video_desc">ویڈیو واقفیت کی بنیاد پر اسکرین کی سمت بندی کی خودکار سوئچنگ کو فعال کریں</string>
@@ -576,8 +557,7 @@
     <string name="toast_copied">کاپی کر لیا!</string>
     <string name="repo_copy_label">ذخیرہ کا نام اور URL</string>
     <string name="episode_upcoming_format" formatted="true">%s میں آنے والا ہے</string>
-    <string name="resume_remaining" formatted="true">%s
-\nباقی</string>
+    <string name="resume_remaining" formatted="true">%s \nباقی</string>
     <string name="clipboard_permission_error">کلپ بورڈ تک رسائی میں خرابی، براہ کرم دوبارہ کوشش کریں۔</string>
     <string name="clipboard_unknown_error">کاپی کرنے میں خرابی، براہ کرم logcat کاپی کریں اور ایپ سپورٹ سے رابطہ کریں۔</string>
     <string name="battery_dialog_message">سبسکرائب شدہ ٹی وی شوز کے لیے بلاتعطل ڈاؤن لوڈز اور اطلاعات کو یقینی بنانے کے لیے، CloudStream کو پس منظر میں چلنے کی اجازت درکار ہے۔ OK دبانے سے، آپ کو App info پر بھیج دیا جائے گا۔ وہاں اسکرول کریں 𝘼𝙥𝙥 𝙗𝙖𝙩𝙩𝙚𝙧𝙮 𝙪𝙨𝙖𝙜𝙚 اور battery usage کو 𝙐𝙣𝙧𝙚𝙨𝙩𝙧𝙞𝙘𝙩𝙚𝙙 کردیں، اس اجازت کا مطلب یہ نہیں ہے کہ CS3 آپ کی بیٹری ختم کردے گا۔ یہ صرف ضرورت پڑنے پر پس منظر میں کام کرے گا، جیسے کہ جب اطلاعات موصول ہوں یا آفیشل ایکسٹینشنز سے ویڈیوز ڈاؤن لوڈ کریں۔ اگر آپ منسوخ کرنے کا انتخاب کرتے ہیں، تو آپ اس ترتیب کو بعد میں 𝙂𝙚𝙣𝙚𝙧𝙖𝙡 𝙎𝙚𝙩𝙩𝙞𝙣𝙜𝙨 میں ایڈجسٹ کر سکتے ہیں۔</string>

@@ -13,8 +13,7 @@
     <string name="episode_poster_img_des">Póster do Episodio</string>
     <string name="go_back_img_des">Regresar</string>
     <string name="home_change_provider_img_des">Cambiar provedor</string>
-    <string name="new_update_format" formatted="true">Nova actualización atopada!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Nova actualización atopada! \n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Recheo</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="title_settings">Configuración</string>

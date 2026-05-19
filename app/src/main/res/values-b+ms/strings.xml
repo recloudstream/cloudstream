@@ -56,8 +56,7 @@
     <string name="sort_close">Tutup</string>
     <string name="preview_background_img_des">Pratonton</string>
     <string name="rated_format" formatted="true">Resensi:%.1f</string>
-    <string name="new_update_format" formatted="true">Kemas kini baru dijumpai!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Kemas kini baru dijumpai! \n%1$s -&gt; %2$s</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="play_from_beginning_img_des">Main dari mula</string>
     <string name="next_season_episode_format" formatted="true">Musim %1$d Episod %2$d akan dikeluarkan di</string>
