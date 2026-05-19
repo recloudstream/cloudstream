@@ -65,6 +65,8 @@
     <string name="show_logcat_key">show_logcat_key</string>
     <string name="bottom_title_key">bottom_title_key</string>
     <string name="poster_ui_key">poster_ui_key</string>
+    <string name="app_font_key">app_font_key</string>
+    <string name="app_font_recent_key">app_font_recent_key</string>
     <string name="overscan_key">overscan_key</string>
     <string name="poster_size_key">poster_size_key</string>
     <string name="subtitles_encoding_key">subtitles_encoding_key</string>

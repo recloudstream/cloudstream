@@ -229,6 +229,35 @@
         <item>2</item>
     </array>
 
+    <string-array name="app_font_suggestions">
+        <item>Roboto</item>
+        <item>Inter</item>
+        <item>Open Sans</item>
+        <item>Lato</item>
+        <item>Montserrat</item>
+        <item>Poppins</item>
+        <item>Nunito Sans</item>
+        <item>Noto Sans</item>
+        <item>Oswald</item>
+        <item>Playfair Display</item>
+        <item>Roboto Condensed</item>
+        <item>Source Sans 3</item>
+        <item>Work Sans</item>
+        <item>Fira Sans</item>
+        <item>Rubik</item>
+        <item>Raleway</item>
+        <item>Quicksand</item>
+        <item>Manrope</item>
+        <item>DM Sans</item>
+        <item>PT Sans</item>
+        <item>Ubuntu</item>
+        <item>Nunito</item>
+        <item>Merriweather</item>
+        <item>Libre Baskerville</item>
+        <item>Cabin</item>
+        <item>Mukta</item>
+    </string-array>
+
     <array name="software_decoding_switch">
         <item>@string/automatic</item>
         <item>HW+SW</item>
