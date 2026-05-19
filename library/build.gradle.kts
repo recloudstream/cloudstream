@@ -61,6 +61,9 @@ kotlin {
             implementation(libs.jsoup) // HTML Parser
             implementation(libs.rhino) // Run JavaScript
             implementation(libs.newpipeextractor)
+
+            // Temp; will be removed once extensions have time to migrate from using it
+            implementation("com.google.code.gson:gson:2.14.0")
         }
     }
 }
