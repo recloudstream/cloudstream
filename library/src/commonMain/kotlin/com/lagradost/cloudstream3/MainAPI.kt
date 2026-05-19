@@ -27,7 +27,9 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.net.URI
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.EnumSet
+import java.util.Locale
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.math.absoluteValue
@@ -97,7 +99,7 @@ object APIHolder {
 
     /** String extension function to Capitalize first char of string.*/
     fun String.capitalize(): String {
-        return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
     }
 
     var apis: List<MainAPI> = threadSafeListOf()
