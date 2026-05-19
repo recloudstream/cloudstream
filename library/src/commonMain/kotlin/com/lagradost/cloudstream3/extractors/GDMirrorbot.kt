@@ -1,16 +1,17 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.google.gson.JsonParser
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.base64Decode
+import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 import java.net.URI
 
-class Techinmind: GDMirrorbot() {
+class Techinmind : GDMirrorbot() {
     override var name = "Techinmind Cloud AIO"
     override var mainUrl = "https://stream.techinmind.space"
     override var requiresReferer = true
@@ -20,6 +21,20 @@ open class GDMirrorbot : ExtractorApi() {
     override var name = "GDMirrorbot"
     override var mainUrl = "https://gdmirrorbot.nl"
     override val requiresReferer = true
+
+    private data class EmbedData(
+        @JsonProperty("data") val data: List<FileSlug>? = null,
+    )
+
+    private data class FileSlug(
+        @JsonProperty("fileslug") val fileslug: String? = null,
+    )
+
+    private data class EmbedHelper(
+        @JsonProperty("siteUrls") val siteUrls: Map<String, String>? = null,
+        @JsonProperty("siteFriendlyNames") val siteFriendlyNames: Map<String, String>? = null,
+        @JsonProperty("mresult") val mresult: Any? = null,
+    )
 
     override suspend fun getUrl(
         url: String,
@@ -48,15 +63,9 @@ open class GDMirrorbot : ExtractorApi() {
                 pageText = app.get(apiUrl).text
             }
 
-            val jsonElement = JsonParser.parseString(pageText)
-            if (!jsonElement.isJsonObject) return
-            val jsonObject = jsonElement.asJsonObject
-
+            val embedData = tryParseJson<EmbedData>(pageText)
             val embedId = url.substringAfterLast("/")
-            val sidValue = jsonObject["data"]?.asJsonArray
-                ?.takeIf { it.size() > 0 }
-                ?.get(0)?.asJsonObject
-                ?.get("fileslug")?.asString
+            val sidValue = embedData?.data?.firstOrNull()?.fileslug
                 ?.takeIf { it.isNotBlank() } ?: embedId
 
             Pair(sidValue, hostUrl)
@@ -65,34 +74,40 @@ open class GDMirrorbot : ExtractorApi() {
         val postData = mapOf("sid" to sid)
         val responseText = app.post("$host/embedhelper.php", data = postData).text
 
-        val rootElement = JsonParser.parseString(responseText)
-        if (!rootElement.isJsonObject) return
-        val root = rootElement.asJsonObject
+        val root = tryParseJson<EmbedHelper>(responseText) ?: return
+        val siteUrls = root.siteUrls ?: return
+        val siteFriendlyNames = root.siteFriendlyNames
 
-        val siteUrls = root["siteUrls"]?.asJsonObject ?: return
-        val siteFriendlyNames = root["siteFriendlyNames"]?.asJsonObject
-
-        val decodedMresult = when {
-            root["mresult"]?.isJsonObject == true -> root["mresult"]!!.asJsonObject
-            root["mresult"]?.isJsonPrimitive == true -> try {
-                base64Decode(root["mresult"]!!.asString)
-                    .let { JsonParser.parseString(it).asJsonObject }
-            } catch (e: Exception) {
-                Log.e("GDMirrorbot", "Failed to decode mresult: $e")
-                return
+        // mresult can arrive as a JSON object or a base64-encoded string
+        val mresult: Map<String, String>? = run {
+            val raw = responseText
+                .substringAfter("\"mresult\":")
+                .trimStart()
+            when {
+                raw.startsWith("\"") -> {
+                    // base64-encoded string
+                    tryParseJson<Map<String, String>>(
+                        try { base64Decode(raw.trim('"')) } catch (_: Exception) { return }
+                    )
+                }
+                raw.startsWith("{") -> tryParseJson<Map<String, String>>(
+                    raw.substringBefore("\n}").substringBefore(",\n\"").let { "{$it}" }
+                        .let { responseText.substringAfter("\"mresult\":").trimStart() }
+                )
+                else -> null
             }
-            else -> return
         }
+        if (mresult == null) return
 
-        siteUrls.keySet().intersect(decodedMresult.keySet()).forEach { key ->
-            val base = siteUrls[key]?.asString?.trimEnd('/') ?: return@forEach
-            val path = decodedMresult[key]?.asString?.trimStart('/') ?: return@forEach
+        siteUrls.keys.intersect(mresult.keys).forEach { key ->
+            val base = siteUrls[key]?.trimEnd('/') ?: return@forEach
+            val path = mresult[key]?.trimStart('/') ?: return@forEach
             val fullUrl = "$base/$path"
-            val friendlyName = siteFriendlyNames?.get(key)?.asString ?: key
+            val friendlyName = siteFriendlyNames?.get(key) ?: key
 
             try {
                 when (friendlyName) {
-                    "StreamHG","EarnVids" -> VidHidePro().getUrl(fullUrl, referer, subtitleCallback, callback)
+                    "StreamHG", "EarnVids" -> VidHidePro().getUrl(fullUrl, referer, subtitleCallback, callback)
                     "RpmShare", "UpnShare", "StreamP2p" -> VidStack().getUrl(fullUrl, referer, subtitleCallback, callback)
                     else -> loadExtractor(fullUrl, referer ?: mainUrl, subtitleCallback, callback)
                 }
@@ -106,4 +121,3 @@ open class GDMirrorbot : ExtractorApi() {
         return URI(url).let { "${it.scheme}://${it.host}" }
     }
 }
-

@@ -1,10 +1,9 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.base64Decode
+import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.INFER_TYPE
@@ -66,14 +65,17 @@ open class Voe : ExtractorApi() {
         if (redirectUrl != null) {
             res = app.get(redirectUrl, referer = referer)
         }
-        val encodedString = res.document.selectFirst("script[type=application/json]")?.data()?.trim()?.substringAfter("[\"")?.substringBeforeLast("\"]")
+        val encodedString = res.document.selectFirst("script[type=application/json]")
+            ?.data()?.trim()
+            ?.substringAfter("[\"")
+            ?.substringBeforeLast("\"]")
         if (encodedString == null) {
             println("encoded string not found.")
             return
         }
         val decryptedJson = decryptF7(encodedString)
-        val m3u8 = decryptedJson.get("source")?.asString
-        val mp4 = decryptedJson.get("direct_access_url")?.asString
+        val m3u8 = decryptedJson?.source
+        val mp4 = decryptedJson?.directAccessUrl
 
         if (m3u8 != null) {
             M3u8Helper.generateM3u8(
@@ -83,8 +85,7 @@ open class Voe : ExtractorApi() {
                 headers = mapOf("Origin" to "$mainUrl/")
             ).forEach(callback)
         }
-        if (mp4!=null)
-        {
+        if (mp4 != null) {
             callback.invoke(
                 newExtractorLink(
                     source = "$name MP4",
@@ -99,7 +100,12 @@ open class Voe : ExtractorApi() {
         }
     }
 
-    private fun decryptF7(p8: String): JsonObject {
+    private data class VoeDecrypted(
+        val source: String? = null,
+        val directAccessUrl: String? = null,
+    )
+
+    private fun decryptF7(p8: String): VoeDecrypted? {
         return try {
             val vF = rot13(p8)
             val vF2 = replacePatterns(vF)
@@ -108,11 +114,10 @@ open class Voe : ExtractorApi() {
             val vF5 = charShift(vF4, 3)
             val vF6 = reverse(vF5)
             val vAtob = base64Decode(vF6)
-
-            JsonParser.parseString(vAtob).asJsonObject
+            tryParseJson<VoeDecrypted>(vAtob)
         } catch (e: Exception) {
             println("Decryption error: ${e.message}")
-            JsonObject()
+            null
         }
     }
 
@@ -140,5 +145,4 @@ open class Voe : ExtractorApi() {
     }
 
     private fun reverse(input: String): String = input.reversed()
-
 }
