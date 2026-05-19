@@ -21,20 +21,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Generate access token
-      id: generate_token
-      uses: tibdex/github-app-token@v2
+      id: app-token
+      uses: actions/create-github-app-token@v3
       with:
-        app_id: ${{ secrets.GH_APP_ID }}
-        private_key: ${{ secrets.GH_APP_KEY }}
-        repository: "recloudstream/secrets"
+        client-id: ${{ vars.APP_CLIENT_ID }}
+        private-key: ${{ secrets.APP_PRIVATE_KEY }}
+        owner: ${{ github.repository_owner }}
+        permission-contents: write
+        repositories: |
+          cloudstream-archive
+          secrets
 
-    - name: Generate access token (archive)
-      id: generate_archive_token
-      uses: tibdex/github-app-token@v2
-      with:
-        app_id: ${{ secrets.GH_APP_ID }}
-        private_key: ${{ secrets.GH_APP_KEY }}
-        repository: "recloudstream/cloudstream-archive"
+    - name: Get GitHub App User ID
+      id: get-user-id
+      run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+      env:
+        GH_TOKEN: ${{ steps.app-token.outputs.token }}
 
     - uses: actions/checkout@v6
 
@@ -52,8 +54,8 @@ jobs:
       run: |
         TMP_KEYSTORE_FILE_PATH="${RUNNER_TEMP}"/keystore
         mkdir -p "${TMP_KEYSTORE_FILE_PATH}"
-        curl -H "Authorization: token ${{ steps.generate_token.outputs.token }}" -o "${TMP_KEYSTORE_FILE_PATH}/prerelease_keystore.keystore" "https://raw.githubusercontent.com/recloudstream/secrets/master/keystore.jks"
-        curl -H "Authorization: token ${{ steps.generate_token.outputs.token }}" -o "keystore_password.txt" "https://raw.githubusercontent.com/recloudstream/secrets/master/keystore_password.txt"
+        curl -H "Authorization: token ${{ steps.app-token.outputs.token }}" -o "${TMP_KEYSTORE_FILE_PATH}/prerelease_keystore.keystore" "https://raw.githubusercontent.com/${GITHUB_REPOSITORY_OWNER}/secrets/HEAD/keystore.jks"
+        curl -H "Authorization: token ${{ steps.app-token.outputs.token }}" -o "keystore_password.txt" "https://raw.githubusercontent.com/${GITHUB_REPOSITORY_OWNER}/secrets/HEAD/keystore_password.txt"
         KEY_PWD="$(cat keystore_password.txt)"
         echo "::add-mask::${KEY_PWD}"
         echo "key_pwd=$KEY_PWD" >> $GITHUB_OUTPUT
@@ -75,9 +77,9 @@ jobs:
 
     - uses: actions/checkout@v6
       with:
-        repository: "recloudstream/cloudstream-archive"
-        token: ${{ steps.generate_archive_token.outputs.token }}
-        path: "archive"
+        repository: ${{ github.repository_owner }}/cloudstream-archive
+        token: ${{ steps.app-token.outputs.token }}
+        path: archive
 
     - name: Move build
       run: cp app/build/outputs/apk/prerelease/release/*.apk "archive/$(git rev-parse --short HEAD).apk"
@@ -85,8 +87,8 @@ jobs:
     - name: Push archive
       run: |
         cd $GITHUB_WORKSPACE/archive
-        git config --local user.email "actions@github.com"
-        git config --local user.name "GitHub Actions"
+        git config --local user.email '${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com'
+        git config --local user.name '${{ steps.app-token.outputs.app-slug }}[bot]'
         git add .
-        git commit --amend -m "Build $GITHUB_SHA" || exit 0   # do not error if nothing to commit
+        git commit -m "Build $GITHUB_SHA" || exit 0   # do not error if nothing to commit
         git push --force
