@@ -8,6 +8,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.newExtractorLink
+import kotlin.math.round
 
 open class Gofile : ExtractorApi() {
     override val name = "Gofile"
@@ -68,9 +69,11 @@ open class Gofile : ExtractorApi() {
     }
 
     private fun formatBytes(bytes: Long): String {
+        val mb = 1024L * 1024
+        val gb = mb * 1024
         return when {
-            bytes < 1024L * 1024 * 1024 -> "%.2f MB".format(bytes.toDouble() / (1024 * 1024))
-            else -> "%.2f GB".format(bytes.toDouble() / (1024 * 1024 * 1024))
+            bytes < gb -> "${round(bytes.toDouble() / mb * 100) / 100.0} MB"
+            else -> "${round(bytes.toDouble() / gb * 100) / 100.0} GB"
         }
     }
 
