@@ -288,7 +288,7 @@ open class TraktProvider : MainAPI() {
                 "trakt-api-version" to "2",
                 "trakt-api-key" to traktClientId,
             )
-        ).toString()
+        ).text
     }
 
     private fun getStatus(t: String?): ShowStatus {
