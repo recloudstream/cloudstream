@@ -34,7 +34,6 @@ import com.lagradost.cloudstream3.newTvSeriesLoadResponse
 import com.lagradost.cloudstream3.newTvSeriesSearchResponse
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
-import kotlin.time.Instant
 
 open class TraktProvider : MainAPI() {
     override var name = "Trakt"
@@ -237,7 +236,7 @@ open class TraktProvider : MainAPI() {
                             //this.rating = episode.rating?.times(10)?.roundToInt()
                             this.score = Score.from10(episode.rating)
 
-                            this.addDate(episode.firstAired?.let { Instant.parse(it) })
+                            this.addDate(episode.firstAired, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
                             if (nextAir == null && this.date != null && this.date!! > unixTimeMS && this.season != 0) {
                                 nextAir = NextAiring(
                                     episode = this.episode!!,
