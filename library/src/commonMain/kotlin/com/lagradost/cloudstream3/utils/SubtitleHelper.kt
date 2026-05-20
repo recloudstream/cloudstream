@@ -315,10 +315,17 @@ object SubtitleHelper {
         val flagOffset = 0x1F1E6  // regional indicator "[A]"
         val offset = flagOffset - asciiOffset
 
-        val firstChar: Int = Character.codePointAt(countryLetters, 0) + offset
-        val secondChar: Int = Character.codePointAt(countryLetters, 1) + offset
+        fun toSurrogatePair(codePoint: Int): String {
+            val high = ((codePoint - 0x10000) shr 10) + 0xD800
+            val low  = ((codePoint - 0x10000) and 0x3FF) + 0xDC00
+            return "${high.toChar()}${low.toChar()}"
+        }
 
-        return String(Character.toChars(firstChar)) + String(Character.toChars(secondChar))
+        val upperLetters = countryLetters.uppercase()
+        val first  = upperLetters[0].code + offset
+        val second = upperLetters[1].code + offset
+
+        return toSurrogatePair(first) + toSurrogatePair(second)
     }
 
     // when (langTag = country) or (langTag contains country)
