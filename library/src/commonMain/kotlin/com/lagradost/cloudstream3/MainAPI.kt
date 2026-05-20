@@ -2552,6 +2552,13 @@ fun Episode.addDate(date: String?, format: String = "yyyy-MM-dd") {
     this.date = runCatching {
         val fmt = DateTimeComponents.Format { byUnicodePattern(format) }
         val components = DateTimeComponents.parse(date, fmt)
+        /**
+         * Try multiple conversions in order of precision, since the date string format
+         * may or may not include time and/or timezone offset information:
+         * 1. If the string has a UTC offset (e.g. "2026-05-17T14:35+02:00"), use it directly
+         * 2. If it has time but no offset (e.g. "2026-05-17T14:35"), fall back to device timezone
+         * 3. If it's date-only (e.g. "2026-05-17"), use start of day in device timezone
+         */
         runCatching { components.toInstantUsingOffset().toEpochMilliseconds() }
             .recoverCatching { components.toLocalDateTime().toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds() }
             .getOrElse { components.toLocalDate().atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds() }
@@ -2717,6 +2724,13 @@ fun isUpcoming(dateString: String?): Boolean {
             year(); char('-'); monthNumber(); char('-'); day()
         }
         val components = DateTimeComponents.parse(dateString ?: return false, fmt)
+        /**
+         * Try multiple conversions in order of precision, since the date string format
+         * may or may not include time and/or timezone offset information:
+         * 1. If the string has a UTC offset (e.g. "2026-05-17T14:35+02:00"), use it directly
+         * 2. If it has time but no offset (e.g. "2026-05-17T14:35"), fall back to device timezone
+         * 3. If it's date-only (e.g. "2026-05-17"), use start of day in device timezone
+         */
         val instant = runCatching { components.toInstantUsingOffset() }
             .recoverCatching { components.toLocalDateTime().toInstant(TimeZone.currentSystemDefault()) }
             .getOrElse { components.toLocalDate().atStartOfDayIn(TimeZone.currentSystemDefault()) }
