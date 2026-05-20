@@ -62,6 +62,7 @@ kotlin {
             implementation(libs.rhino) // Run JavaScript
             implementation(libs.newpipeextractor)
             implementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
+            implementation(libs.bundles.cryptography) // Cryptography
         }
     }
 }

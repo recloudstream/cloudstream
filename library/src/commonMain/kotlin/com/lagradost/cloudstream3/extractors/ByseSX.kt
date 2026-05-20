@@ -8,13 +8,13 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
+import dev.whyoleg.cryptography.CryptographyProvider
+import dev.whyoleg.cryptography.DelicateCryptographyApi
+import dev.whyoleg.cryptography.algorithms.AES
 import java.net.URI
 import java.nio.charset.StandardCharsets
-import javax.crypto.Cipher
-import javax.crypto.spec.GCMParameterSpec
-import javax.crypto.spec.SecretKeySpec
 
-class Bysezejataos  : ByseSX() {
+class Bysezejataos : ByseSX() {
     override var name = "Bysezejataos"
     override var mainUrl = "https://bysezejataos.com"
 }
@@ -38,6 +38,8 @@ open class ByseSX : ExtractorApi() {
     override var name = "Byse"
     override var mainUrl = "https://byse.sx"
     override val requiresReferer = true
+
+    private val aesGcm = CryptographyProvider.Default.get(AES.GCM)
 
     private fun b64UrlDecode(s: String): ByteArray {
         val fixed = s.replace('-', '+').replace('_', '/')
@@ -83,30 +85,28 @@ open class ByseSX : ExtractorApi() {
         return p1 + p2
     }
 
+    @OptIn(DelicateCryptographyApi::class)
     private fun decryptPlayback(playback: Playback): String? {
         val keyBytes = buildAesKey(playback)
         val ivBytes = b64UrlDecode(playback.iv)
         val cipherBytes = b64UrlDecode(playback.payload)
 
-        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-        val spec = GCMParameterSpec(128, ivBytes)
-        val secretKey = SecretKeySpec(keyBytes, "AES")
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, spec)
+        val aesKey = aesGcm.keyDecoder().decodeFromByteArrayBlocking(AES.Key.Format.RAW, keyBytes)
+        // 128-bit GCM tag (default)
+        val cipher = aesKey.cipher()
+        val plainBytes = cipher.decryptWithIvBlocking(ivBytes, cipherBytes)
 
-        val plainBytes = cipher.doFinal(cipherBytes)
         var jsonStr = String(plainBytes, StandardCharsets.UTF_8)
-
         if (jsonStr.startsWith("\uFEFF")) jsonStr = jsonStr.substring(1)
 
         val root = try {
-            tryParseJson<PlaybackDecrypt>((jsonStr))
+            tryParseJson<PlaybackDecrypt>(jsonStr)
         } catch (_: Exception) {
             return null
         }
 
         return root?.sources?.firstOrNull()?.url
     }
-
 
     override suspend fun getUrl(
         url: String,
@@ -116,8 +116,7 @@ open class ByseSX : ExtractorApi() {
     ) {
         val refererUrl = getBaseUrl(url)
         val playbackRoot = getPlayback(url) ?: return
-        val streamUrl  = decryptPlayback(playbackRoot.playback) ?: return
-
+        val streamUrl = decryptPlayback(playbackRoot.playback) ?: return
 
         val headers = mapOf("Referer" to refererUrl)
         M3u8Helper.generateM3u8(

@@ -10,10 +10,10 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.fixUrl
 import com.lagradost.cloudstream3.utils.newExtractorLink
+import dev.whyoleg.cryptography.CryptographyProvider
+import dev.whyoleg.cryptography.DelicateCryptographyApi
+import dev.whyoleg.cryptography.algorithms.AES
 import java.net.URI
-import javax.crypto.Cipher
-import javax.crypto.spec.IvParameterSpec
-import javax.crypto.spec.SecretKeySpec
 
 class Server1uns : VidStack() {
     override var name = "Vidstack"
@@ -32,8 +32,7 @@ open class VidStack : ExtractorApi() {
         referer: String?,
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
-    )
-    {
+    ) {
         val headers = mapOf("User-Agent" to "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0")
         val hash = url.substringAfterLast("#").substringAfter("/")
         val baseurl = getBaseUrl(url)
@@ -93,16 +92,16 @@ open class VidStack : ExtractorApi() {
 }
 
 object AesHelper {
-    private const val TRANSFORMATION = "AES/CBC/PKCS5PADDING"
+    private val aesCbc = CryptographyProvider.Default.get(AES.CBC)
 
+    @OptIn(DelicateCryptographyApi::class)
     fun decryptAES(inputHex: String, key: String, iv: String): String {
-        val cipher = Cipher.getInstance(TRANSFORMATION)
-        val secretKey = SecretKeySpec(key.toByteArray(Charsets.UTF_8), "AES")
-        val ivSpec = IvParameterSpec(iv.toByteArray(Charsets.UTF_8))
-
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec)
-        val decryptedBytes = cipher.doFinal(inputHex.hexToByteArray())
-        return String(decryptedBytes, Charsets.UTF_8)
+        val keyBytes = key.toByteArray(Charsets.UTF_8)
+        val ivBytes = iv.toByteArray(Charsets.UTF_8)
+        val aesKey = aesCbc.keyDecoder().decodeFromByteArrayBlocking(AES.Key.Format.RAW, keyBytes)
+        val cipher = aesKey.cipher(padding = true)
+        val decrypted = cipher.decryptWithIvBlocking(ivBytes, inputHex.hexToByteArray())
+        return String(decrypted, Charsets.UTF_8)
     }
 
     private fun String.hexToByteArray(): ByteArray {
