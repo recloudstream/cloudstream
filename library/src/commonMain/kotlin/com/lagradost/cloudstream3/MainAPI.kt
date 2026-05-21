@@ -36,7 +36,7 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.format.parse
 import kotlinx.datetime.toInstant
 import java.net.URI
-import java.util.*
+import java.util.EnumSet
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.math.absoluteValue
@@ -108,7 +108,7 @@ object APIHolder {
 
     /** String extension function to Capitalize first char of string.*/
     fun String.capitalize(): String {
-        return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
     }
 
     var apis: List<MainAPI> = threadSafeListOf()
@@ -483,7 +483,7 @@ abstract class MainAPI {
     }
 
     fun init() {
-        overrideData?.get(this.javaClass.simpleName)?.let { data ->
+        overrideData?.get(this::class.simpleName)?.let { data ->
             overrideWithNewData(data)
         }
     }
@@ -2580,7 +2580,7 @@ fun Episode.addDate(date: Instant?) {
     message = "Use addDate with LocalDate, Instant, or String instead.",
     level = DeprecationLevel.WARNING,
 ) */
-fun Episode.addDate(date: Date?) {
+fun Episode.addDate(date: java.util.Date?) {
     this.date = date?.time
 }
 
