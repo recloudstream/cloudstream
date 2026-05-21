@@ -13,6 +13,14 @@ import androidx.car.app.model.ListTemplate
 import androidx.car.app.model.OnClickListener
 import androidx.car.app.model.Row
 import androidx.car.app.model.Template
+import androidx.car.app.annotations.ExperimentalCarApi
+import androidx.car.app.model.SectionedItemTemplate
+import androidx.car.app.model.RowSection
+import androidx.car.app.model.GridSection
+import androidx.car.app.model.ChipSection
+import androidx.car.app.model.Chip
+import androidx.car.app.model.ChipStyle
+import androidx.car.app.model.Shape
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.graphics.drawable.toBitmap
 import coil3.asDrawable
@@ -62,11 +70,134 @@ class CategoryScreen(
         }
     }
 
+    @androidx.annotation.OptIn(ExperimentalCarApi::class)
     override fun onGetTemplate(): Template {
         val currentViewMode = DataStoreHelper.carCategoryViewMode // 0 = List, 1 = Grid
+        val hostApiLevel = carContext.carAppApiLevel
+
+        if (hostApiLevel >= 9) {
+            @OptIn(ExperimentalCarApi::class)
+            val templateBuilder = SectionedItemTemplate.Builder()
+                .setHeader(
+                    Header.Builder()
+                        .setTitle(homePageList.name)
+                        .setStartHeaderAction(Action.BACK)
+                        .build()
+                )
+
+            // Add layout preference ChipSection
+            val chipSectionBuilder = ChipSection.Builder()
+
+            chipSectionBuilder.addItem(
+                Chip.Builder()
+                    .setTitle("List")
+                    .setSelected(currentViewMode == 0)
+                    .setStyle(ChipStyle.Builder().setShape(Shape.CORNER_FULL).build())
+                    .setOnClickListener {
+                        if (currentViewMode != 0) {
+                            DataStoreHelper.carCategoryViewMode = 0
+                            invalidate()
+                        }
+                    }
+                    .build()
+            )
+
+            chipSectionBuilder.addItem(
+                Chip.Builder()
+                    .setTitle("Grid")
+                    .setSelected(currentViewMode == 1)
+                    .setStyle(ChipStyle.Builder().setShape(Shape.CORNER_FULL).build())
+                    .setOnClickListener {
+                        if (currentViewMode != 1) {
+                            DataStoreHelper.carCategoryViewMode = 1
+                            invalidate()
+                        }
+                    }
+                    .build()
+            )
+
+            templateBuilder.addSection(chipSectionBuilder.build())
+
+            if (currentViewMode == 0) {
+                val rowSectionBuilder = RowSection.Builder()
+                homePageList.list.forEach { item ->
+                    val imageUrl = item.posterUrl
+                    val icon = if (!imageUrl.isNullOrEmpty()) {
+                        iconCache[imageUrl] ?: run {
+                            loadIcon(imageUrl)
+                            CarIcon.Builder(IconCompat.createWithResource(carContext, R.mipmap.ic_launcher)).build()
+                        }
+                    } else {
+                         CarIcon.Builder(IconCompat.createWithResource(carContext, R.mipmap.ic_launcher)).build()
+                    }
+
+                    val onClick = OnClickListener {
+                         val type = item.type
+                         if (type == com.lagradost.cloudstream3.TvType.TvSeries ||
+                             type == com.lagradost.cloudstream3.TvType.Anime ||
+                             type == com.lagradost.cloudstream3.TvType.Cartoon ||
+                             type == com.lagradost.cloudstream3.TvType.OVA ||
+                             type == com.lagradost.cloudstream3.TvType.AsianDrama ||
+                             type == com.lagradost.cloudstream3.TvType.Documentary) {
+                             screenManager.push(TvSeriesDetailScreen(carContext, item))
+                         } else if (type == com.lagradost.cloudstream3.TvType.Live) {
+                             screenManager.push(PlayerCarScreen(carContext, item = item))
+                         } else {
+                             screenManager.push(DetailsScreen(carContext, item))
+                         }
+                    }
+
+                    val row = Row.Builder()
+                        .setTitle(item.name.ifEmpty { "Untitled" })
+                        .setImage(icon, Row.IMAGE_TYPE_LARGE)
+                        .setOnClickListener(onClick)
+                        .build()
+                    rowSectionBuilder.addItem(row)
+                }
+                templateBuilder.addSection(rowSectionBuilder.build())
+            } else {
+                val gridSectionBuilder = GridSection.Builder()
+                homePageList.list.forEach { item ->
+                    val imageUrl = item.posterUrl
+                    val icon = if (!imageUrl.isNullOrEmpty()) {
+                        iconCache[imageUrl] ?: run {
+                            loadIcon(imageUrl)
+                            CarIcon.Builder(IconCompat.createWithResource(carContext, R.mipmap.ic_launcher)).build()
+                        }
+                    } else {
+                         CarIcon.Builder(IconCompat.createWithResource(carContext, R.mipmap.ic_launcher)).build()
+                    }
+
+                    val onClick = OnClickListener {
+                         val type = item.type
+                         if (type == com.lagradost.cloudstream3.TvType.TvSeries ||
+                             type == com.lagradost.cloudstream3.TvType.Anime ||
+                             type == com.lagradost.cloudstream3.TvType.Cartoon ||
+                             type == com.lagradost.cloudstream3.TvType.OVA ||
+                             type == com.lagradost.cloudstream3.TvType.AsianDrama ||
+                             type == com.lagradost.cloudstream3.TvType.Documentary) {
+                             screenManager.push(TvSeriesDetailScreen(carContext, item))
+                         } else if (type == com.lagradost.cloudstream3.TvType.Live) {
+                             screenManager.push(PlayerCarScreen(carContext, item = item))
+                         } else {
+                             screenManager.push(DetailsScreen(carContext, item))
+                         }
+                    }
+
+                    val gridItem = GridItem.Builder()
+                        .setTitle(item.name.ifEmpty { "Untitled" })
+                        .setImage(icon, GridItem.IMAGE_TYPE_LARGE)
+                        .setOnClickListener(onClick)
+                        .build()
+                    gridSectionBuilder.addItem(gridItem)
+                }
+                templateBuilder.addSection(gridSectionBuilder.build())
+            }
+
+            return templateBuilder.build()
+        }
 
         val actionStrip = buildActionStrip(currentViewMode)
-
         val listBuilder = ItemList.Builder()
 
         homePageList.list.forEach { item ->
@@ -101,14 +232,14 @@ class CategoryScreen(
             if (currentViewMode == 0) {
                 // Use Row with LARGE image for maximum visibility in a list
                 val row = Row.Builder()
-                    .setTitle(if (item.name.isNullOrEmpty()) "Untitled" else item.name)
+                    .setTitle(item.name.ifEmpty { "Untitled" })
                     .setImage(icon, Row.IMAGE_TYPE_LARGE)
                     .setOnClickListener(onClick)
                     .build()
                 listBuilder.addItem(row)
             } else {
                 val gridItem = GridItem.Builder()
-                    .setTitle(if (item.name.isNullOrEmpty()) "Untitled" else item.name)
+                    .setTitle(item.name.ifEmpty { "Untitled" })
                     .setImage(icon, GridItem.IMAGE_TYPE_LARGE)
                     .setOnClickListener(onClick)
                     .build()
