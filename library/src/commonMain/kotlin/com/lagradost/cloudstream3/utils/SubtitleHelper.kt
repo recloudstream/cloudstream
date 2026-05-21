@@ -315,6 +315,12 @@ object SubtitleHelper {
         val flagOffset = 0x1F1E6  // regional indicator "[A]"
         val offset = flagOffset - asciiOffset
 
+        /**
+         * Unicode surrogate pairs encode code points above U+FFFF (outside the Basic Multilingual Plane).
+         * The code point is offset by 0x10000, then split into two 10-bit halves:
+         * high surrogate: upper 10 bits, biased into the range 0xD800-0xDBFF
+         * low surrogate: lower 10 bits (masked with 0x3FF), biased into the range 0xDC00-0xDFFF
+         */
         fun toSurrogatePair(codePoint: Int): String {
             val high = ((codePoint - 0x10000) shr 10) + 0xD800
             val low  = ((codePoint - 0x10000) and 0x3FF) + 0xDC00
