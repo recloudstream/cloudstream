@@ -474,7 +474,7 @@ abstract class MainAPI {
     }
 
     fun init() {
-        overrideData?.get(this.javaClass.simpleName)?.let { data ->
+        overrideData?.get(this::class.simpleName)?.let { data ->
             overrideWithNewData(data)
         }
     }
