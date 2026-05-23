@@ -8,6 +8,7 @@ SETTINGS_PATH = "app/src/main/java/com/lagradost/cloudstream3/ui/settings/Settin
 START_MARKER = "/* begin language list */"
 END_MARKER = "/* end language list */"
 XML_NAME = "app/src/main/res/values-b+"
+COMPOSE_XML_NAME = "composeApp/src/commonMain/composeResources/values-"
 ISO_MAP_URL = "https://raw.githubusercontent.com/haliaeetus/iso-639/master/data/iso_639-1.min.json"
 INDENT = " "*4
 
@@ -24,12 +25,19 @@ for lang in re.finditer(r'Pair\("(.*)", "(.*)"\)', rest):
     name, iso = lang.groups()
     languages[iso] = name
 
-# Add not yet added langs
+# Add not yet added langs from app/src/main/res (BCP 47 format: values-b+xx)
 for folder in glob.glob(f"{XML_NAME}*"):
     iso = folder[len(XML_NAME):].replace("+", "-")
     if iso not in languages.keys():
-        entry = iso_map.get(iso.lower(), {'nativeName':iso}) # fallback to iso code if not found
+        entry = iso_map.get(iso.lower(), {'nativeName': iso}) # fallback to iso code if not found
         languages[iso] = entry['nativeName'].split(',')[0] # first name if there are multiple
+
+# Add not yet added langs from composeResources (simple ISO 639-1 format: values-xx)
+for folder in glob.glob(f"{COMPOSE_XML_NAME}*"):
+    iso = folder[len(COMPOSE_XML_NAME):]
+    if iso not in languages.keys():
+        entry = iso_map.get(iso.lower(), {'nativeName': iso})
+        languages[iso] = entry['nativeName'].split(',')[0]
 
 # Create pairs
 pairs = []
@@ -38,7 +46,7 @@ for iso in sorted(languages, key=lambda iso: languages[iso].lower()): # sort by 
     pairs.append(f'{INDENT}Pair("{name}", "{iso}"),')
 
 # Update settings file
-open(SETTINGS_PATH, "w+",encoding='utf-8').write(
+open(SETTINGS_PATH, "w+", encoding='utf-8').write(
     before_src +
     START_MARKER +
     "\n" +
@@ -48,7 +56,7 @@ open(SETTINGS_PATH, "w+",encoding='utf-8').write(
     after_src
 )
 
-# Go through each values.xml file and fix escaped \@string
+# Fix escaped \@string in app/src/main/res only (Android-specific pattern)
 for file in glob.glob(f"{XML_NAME}*/strings.xml"):
     try:
         tree = ET.parse(file)

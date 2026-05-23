@@ -1,7 +1,7 @@
 # https://docs.gradle.org/current/userguide/plugins.html#sec:version_catalog_plugin_application
 # https://docs.gradle.org/current/userguide/dependency_versions.html#sec:strict-version
 [versions]
-activityKtx = "1.13.0"
+activity = "1.13.0"
 androidGradlePlugin = "9.1.1"
 animeDb = "1.0.2"
 annotation = "1.10.0"
@@ -10,6 +10,8 @@ biometric = "1.4.0-alpha06"
 buildkonfigGradlePlugin = "0.18.0"
 coil = { strictly = "3.3.0" } # Later versions require jvmTarget 11 or later
 colorpicker = "6b46b49"
+composeMaterial3 = "1.11.0-alpha07"
+composeMultiplatform = "1.11.0"
 conscryptAndroid = { strictly = "2.5.2" } # 2.5.3 crashes everything
 constraintlayout = "2.2.1"
 coreKtx = "1.18.0"
@@ -57,14 +59,21 @@ compileSdk = "36"
 targetSdk = "36"
 
 [libraries]
-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity" }
+activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
 anime-db = { module = "com.github.recloudstream:anime-db", version.ref = "animeDb" }
 annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 colorpicker = { module = "com.github.recloudstream:color-picker-android", version.ref = "colorpicker" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composeMultiplatform" }
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMaterial3" }
+compose-resources  = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
 conscrypt-android = { module = "org.conscrypt:conscrypt-android", version.ref = "conscryptAndroid" }
 constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
 core = { module = "androidx.test:core" }
@@ -122,6 +131,8 @@ android-application = { id = "com.android.application", version.ref = "androidGr
 android-lint = { id = "com.android.lint", version.ref = "androidGradlePlugin" }
 android-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "androidGradlePlugin" }
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfigGradlePlugin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlinGradlePlugin" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokkaGradlePlugin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm" , version.ref = "kotlinGradlePlugin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlinGradlePlugin" }

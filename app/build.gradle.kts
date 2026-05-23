@@ -7,11 +7,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.dokka)
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
 
+// TODO: Move to composeApp, into composeResources
 abstract class GenerateGitHashTask : DefaultTask() {
 
     @get:InputFile
@@ -111,6 +113,7 @@ android {
         // Reads local.properties
         val localProperties = gradleLocalProperties(rootDir, project.providers)
 
+        // TODO: Move BUILD_DATE to composeApp via buildkonfig
         buildConfigField(
             "long",
             "BUILD_DATE",
@@ -188,6 +191,7 @@ android {
     buildFeatures {
         buildConfig = true
         viewBinding = true
+        compose = true
     }
 
     packaging {
@@ -270,6 +274,15 @@ dependencies {
     implementation(libs.nicehttp) // HTTP Lib
 
     implementation(project(":library"))
+
+    implementation(project(":composeApp"))
+    implementation(libs.activity.compose)
+    implementation(libs.coil.compose)
+    implementation(libs.compose.runtime)
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.resources)
 }
 
 tasks.register<Jar>("androidSourcesJar") {
