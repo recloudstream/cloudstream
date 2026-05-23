@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.utils
 
-import com.github.terrakok.fuzzykot.Levenshtein
 import java.util.Locale
 
 // If you find a way to use SettingsGeneral getCurrentLocale()

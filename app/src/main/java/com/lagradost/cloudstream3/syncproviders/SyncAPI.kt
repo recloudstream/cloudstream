@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.syncproviders
 
 import androidx.annotation.WorkerThread
-import com.github.terrakok.fuzzykot.Levenshtein
 import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.NextAiring
 import com.lagradost.cloudstream3.Score
@@ -11,6 +10,7 @@ import com.lagradost.cloudstream3.ShowStatus
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
+import com.lagradost.cloudstream3.utils.Levenshtein
 import com.lagradost.cloudstream3.utils.UiText
 import java.util.Date
 
