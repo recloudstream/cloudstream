@@ -57,6 +57,7 @@ kotlin {
             implementation(libs.nicehttp) // HTTP Lib
             implementation(libs.jackson.module.kotlin) // JSON Parser
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.io.core)
             implementation(libs.fuzzywuzzy) // Match Extractors
             implementation(libs.jsoup) // HTML Parser
             implementation(libs.rhino) // Run JavaScript
