@@ -690,7 +690,12 @@ fun base64Decode(string: String): String {
     // ISO-8859-1 decoding: each byte maps directly to its Unicode code point (0-255),
     // so we mask each byte to unsigned and convert to the corresponding Char manually.
     // decodeToString() can't be used here as it assumes UTF-8.
-    return base64DecodeArray(string).map { it.toInt() and 0xFF }.joinToString("") { it.toChar().toString() }
+    val bytes = base64DecodeArray(string)
+    return buildString(bytes.size) {
+        for (b in bytes) {
+            append((b.toInt() and 0xFF).toChar())
+        }
+    }
 }
 
 @OptIn(ExperimentalEncodingApi::class)
