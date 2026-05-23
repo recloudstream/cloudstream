@@ -693,9 +693,17 @@ object PluginManager {
             removePluginMapping(it)
         }
 
-        APIHolder.allProviders.removeAll { provider -> provider.sourcePlugin == plugin.filename }
-        extractorApis.removeAll { provider -> provider.sourcePlugin == plugin.filename }
-        VideoClickActionHolder.allVideoClickActions.removeAll { action -> action.sourcePlugin == plugin.filename }
+        APIHolder.allProviders.withLock {
+            APIHolder.allProviders.removeAll { provider -> provider.sourcePlugin == plugin.filename }
+        }
+
+        extractorApis.withLock {
+            extractorApis.removeAll { provider -> provider.sourcePlugin == plugin.filename }
+        }
+
+        VideoClickActionHolder.allVideoClickActions.withLock {
+            VideoClickActionHolder.allVideoClickActions.removeAll { action -> action.sourcePlugin == plugin.filename }
+        }
 
         synchronized(classLoaders) {
             classLoaders.values.removeIf { v -> v == plugin }
