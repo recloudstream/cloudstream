@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.utils
 
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.base64Decode
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.nicehttp.NiceResponse
 import java.net.URI
 import java.net.URLDecoder
@@ -172,7 +173,7 @@ object ShortLink {
     }
 
     suspend fun unshortenNuovoLink(uri: String): String {
-        return app.get(uri, allowRedirects = true).document.selectFirst("a")!!.attr("href")
+        return app.get(uri, allowRedirects = true).ksoupDocument.selectFirst("a")!!.attr("href")
 
     }
 
@@ -193,7 +194,7 @@ object ShortLink {
     }
 
     suspend fun unshortenIsecure(uri: String): String {
-        val doc = app.get(uri).document
+        val doc = app.get(uri).ksoupDocument
         return doc.selectFirst("iframe")?.attr("src")?.trim() ?: uri
     }
 }

@@ -4,6 +4,7 @@ import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.extractors.helper.JwPlayerHelper
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getAndUnpack
@@ -79,7 +80,7 @@ open class VidHidePro : ExtractorApi() {
         val script = if (!getPacked(response.text).isNullOrEmpty()) {
             getAndUnpack(response.text)
         } else {
-            response.document.selectFirst("script:containsData(sources:)")?.data()
+            response.ksoupDocument.selectFirst("script:containsData(sources:)")?.data()
         } ?: return
 
         JwPlayerHelper.extractStreamLinks(script, name, mainUrl, callback, subtitleCallback, headers)

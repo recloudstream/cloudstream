@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.extractors.helper.JwPlayerHelper
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 
@@ -42,7 +43,7 @@ open class LuluStream : ExtractorApi() {
                 "auto" to "1",
                 "referer" to (referer ?: "")
             )
-        ).document
+        ).ksoupDocument
         post.selectFirst("script:containsData(vplayer)")?.data()
             ?.let { script ->
                 JwPlayerHelper.extractStreamLinks(script, name, mainUrl, callback, subtitleCallback)

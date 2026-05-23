@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
@@ -18,7 +19,7 @@ open class Userscloud : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        val res = app.get(url).document
+        val res = app.get(url).ksoupDocument
         val video = res.selectFirst("video#vjsplayer source")?.attr("src")
         val quality = res.selectFirst("div.innerTB h2 b")?.text()
         callback.invoke(

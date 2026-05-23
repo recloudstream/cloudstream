@@ -4,6 +4,7 @@ import com.lagradost.api.Log
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.extractors.helper.JwPlayerHelper
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.JsUnpacker
@@ -29,7 +30,7 @@ open class Up4Stream : ExtractorApi() {
 
         // redirect from "wait 5 seconds" page to actual movie page
         val redirectResponse = app.get(url, cookies = mapOf("id" to movieId))
-        val redirectForm = redirectResponse.document.selectFirst("form[method=POST]") ?: return
+        val redirectForm = redirectResponse.ksoupDocument.selectFirst("form[method=POST]") ?: return
         val redirectUrl = fixUrl(redirectForm.attr("action"))
         val redirectParams = redirectForm.select("input[type=hidden]").associate { input ->
             input.attr("name") to input.attr("value")
@@ -37,7 +38,7 @@ open class Up4Stream : ExtractorApi() {
 
         // wait for 5 seconds, otherwise the below md5 hash is invalid
         delay(5000)
-        val response = app.post(redirectUrl, data = redirectParams).document
+        val response = app.post(redirectUrl, data = redirectParams).ksoupDocument
 
         // starting here, this works similar to many other extractors like StreamWish
         val extractedpack =

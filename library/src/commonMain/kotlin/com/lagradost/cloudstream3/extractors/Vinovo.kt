@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
@@ -28,7 +29,7 @@ open class VinovoTo : ExtractorApi() {
         val fixedUrl = url.replace("/d/", "/e/")
 
         val resp = app.get(fixedUrl, referer = referer)
-        val doc = resp.document
+        val doc = resp.ksoupDocument
 
         val videoBaseUrl = doc.selectFirst("video")?.attr("data-base") ?: return
         val videoToken = doc.selectFirst("meta[name=token]")?.attr("content") ?: return

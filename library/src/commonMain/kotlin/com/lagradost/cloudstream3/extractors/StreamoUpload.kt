@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.extractors.helper.JwPlayerHelper
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getAndUnpack
@@ -20,7 +21,7 @@ open class StreamoUpload : ExtractorApi() {
         callback: (ExtractorLink) -> Unit
     ) {
         val response = app.get(url, referer = referer)
-        response.document.select("script").map { script ->
+        response.ksoupDocument.select("script").map { script ->
             if (getPacked(script.data()) != null) {
                 val data = getAndUnpack(script.data())
                 JwPlayerHelper.extractStreamLinks(data, name, mainUrl, callback, subtitleCallback)

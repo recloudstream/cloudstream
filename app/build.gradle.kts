@@ -253,7 +253,8 @@ dependencies {
     implementation(libs.qrcode.kotlin) // QR Code for PIN Auth on TV
 
     // Extensions & Other Libs
-    implementation(libs.jsoup) // HTML Parser
+    implementation(libs.jsoup) // HTML Parser (Deprecated usage)
+    implementation(libs.ksoup) // HTML Parser (KMP support)
     implementation(libs.rhino) // Run JavaScript
     implementation(libs.fuzzywuzzy) // Library/Ext Searching with Levenshtein Distance
     implementation(libs.safefile) // To Prevent the URI File Fu*kery

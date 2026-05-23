@@ -1,13 +1,14 @@
 package com.lagradost.cloudstream3.extractors
 
+import com.fleeksoft.ksoup.nodes.Element
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.extractors.helper.JwPlayerHelper
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getAndUnpack
-import org.jsoup.nodes.Element
 
 open class Filegram : ExtractorApi() {
     override val name = "Filegram"
@@ -32,7 +33,7 @@ open class Filegram : ExtractorApi() {
             "user-agent" to USER_AGENT,
         )
 
-        val doc = app.get(getEmbedUrl(url), referer = referer).document
+        val doc = app.get(getEmbedUrl(url), referer = referer).ksoupDocument
         val unpackedJs = unpackJs(doc).toString()
 
         JwPlayerHelper.extractStreamLinks(unpackedJs, name, mainUrl, callback, subtitleCallback, headers = header)

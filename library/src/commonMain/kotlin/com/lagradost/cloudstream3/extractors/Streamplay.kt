@@ -5,6 +5,7 @@ import com.lagradost.cloudstream3.APIHolder.getCaptchaToken
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import java.net.URI
@@ -27,7 +28,7 @@ open class Streamplay : ExtractorApi() {
         }
         val key = redirectUrl.substringAfter("embed-").substringBefore(".html")
         val token =
-            request.document.select("script").find { it.data().contains("sitekey:") }?.data()
+            request.ksoupDocument.select("script").find { it.data().contains("sitekey:") }?.data()
                 ?.substringAfterLast("sitekey: '")?.substringBefore("',")?.let { captchaKey ->
                     getCaptchaToken(
                         redirectUrl,
@@ -45,7 +46,7 @@ open class Streamplay : ExtractorApi() {
                 "Accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
                 "Content-Type" to "application/x-www-form-urlencoded"
             )
-        ).document.select("script").find { script ->
+        ).ksoupDocument.select("script").find { script ->
             script.data().contains("eval(function(p,a,c,k,e,d)")
         }?.let {
             val data = getAndUnpack(it.data()).substringAfter("sources=[").substringBefore(",desc")

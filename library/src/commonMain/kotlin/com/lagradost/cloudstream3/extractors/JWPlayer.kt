@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.extractors.helper.JwPlayerHelper
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 
@@ -60,7 +61,7 @@ open class JWPlayer : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        val script = app.get(url).document.selectFirst("script:containsData(sources:)") ?: return
+        val script = app.get(url).ksoupDocument.selectFirst("script:containsData(sources:)") ?: return
         JwPlayerHelper.extractStreamLinks(script.data(), name, mainUrl, callback, subtitleCallback)
     }
 }

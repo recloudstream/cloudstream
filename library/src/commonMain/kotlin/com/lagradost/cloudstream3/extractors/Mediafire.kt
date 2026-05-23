@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.INFER_TYPE
@@ -19,7 +20,7 @@ open class Mediafire : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        val res = app.get(url, referer = referer).document
+        val res = app.get(url, referer = referer).ksoupDocument
         val title = res.select("div.dl-btn-label").text()
         val video = res.selectFirst("a#downloadButton")?.attr("href")
 

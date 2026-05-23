@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.extractors.helper.JwPlayerHelper
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.*
 
 class Neonime7n : Hxfile() {
@@ -45,7 +46,7 @@ open class Hxfile : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        val document = app.get(url, allowRedirects = redirect, referer = referer).document
+        val document = app.get(url, allowRedirects = redirect, referer = referer).ksoupDocument
         with(document) {
             this.select("script").map { script ->
                 if (getPacked(script.data()) != null) {

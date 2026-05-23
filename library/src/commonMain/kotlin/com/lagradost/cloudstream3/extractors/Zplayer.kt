@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
@@ -28,7 +29,7 @@ open class ZplayerV2 : ExtractorApi() {
     override val requiresReferer = false
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
-        val doc = app.get(url).document
+        val doc = app.get(url).ksoupDocument
         val sources = mutableListOf<ExtractorLink>()
         doc.select("script").map { script ->
             if (script.data().contains("eval(function(p,a,c,k,e,d)")) {

@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.ksoupDocument
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 
@@ -12,7 +13,7 @@ open class Blogger : ExtractorApi() {
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val sources = mutableListOf<ExtractorLink>()
-        with(app.get(url).document) {
+        with(app.get(url).ksoupDocument) {
             this.select("script").map { script ->
                 if (script.data().contains("\"streams\":[")) {
                     val data = script.data().substringAfter("\"streams\":[")
