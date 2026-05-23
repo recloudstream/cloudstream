@@ -27,7 +27,9 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.net.URI
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.EnumSet
+import java.util.Locale
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.math.absoluteValue
@@ -97,7 +99,7 @@ object APIHolder {
 
     /** String extension function to Capitalize first char of string.*/
     fun String.capitalize(): String {
-        return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
     }
 
     var apis: List<MainAPI> = threadSafeListOf()
@@ -472,7 +474,7 @@ abstract class MainAPI {
     }
 
     fun init() {
-        overrideData?.get(this.javaClass.simpleName)?.let { data ->
+        overrideData?.get(this::class.simpleName)?.let { data ->
             overrideWithNewData(data)
         }
     }
@@ -686,9 +688,16 @@ abstract class MainAPI {
     }
 }
 
-/** Might need a different implementation for desktop*/
 fun base64Decode(string: String): String {
-    return String(base64DecodeArray(string), Charsets.ISO_8859_1)
+    // ISO-8859-1 decoding: each byte maps directly to its Unicode code point (0-255),
+    // so we mask each byte to unsigned and convert to the corresponding Char manually.
+    // decodeToString() can't be used here as it assumes UTF-8.
+    val bytes = base64DecodeArray(string)
+    return buildString(bytes.size) {
+        for (b in bytes) {
+            append((b.toInt() and 0xFF).toChar())
+        }
+    }
 }
 
 @OptIn(ExperimentalEncodingApi::class)

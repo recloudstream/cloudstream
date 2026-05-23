@@ -16,7 +16,6 @@ import dev.whyoleg.cryptography.CryptographyProvider
 import dev.whyoleg.cryptography.DelicateCryptographyApi
 import dev.whyoleg.cryptography.algorithms.AES
 import dev.whyoleg.cryptography.algorithms.MD5
-import java.nio.charset.StandardCharsets
 
 class Megacloud : Rabbitstream() {
     override val name = "Megacloud"
@@ -170,7 +169,7 @@ open class Rabbitstream : ExtractorApi() {
 
         val aesKey = aesCbc.keyDecoder().decodeFromByteArrayBlocking(AES.Key.Format.RAW, keyBytes)
         val decryptedData = aesKey.cipher(padding = true).decryptWithIvBlocking(ivBytes, encrypted)
-        return String(decryptedData, StandardCharsets.UTF_8)
+        return decryptedData.decodeToString()
     }
 
     data class Tracks(

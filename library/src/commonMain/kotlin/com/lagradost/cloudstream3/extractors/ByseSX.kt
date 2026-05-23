@@ -12,7 +12,6 @@ import dev.whyoleg.cryptography.CryptographyProvider
 import dev.whyoleg.cryptography.DelicateCryptographyApi
 import dev.whyoleg.cryptography.algorithms.AES
 import java.net.URI
-import java.nio.charset.StandardCharsets
 
 class Bysezejataos : ByseSX() {
     override var name = "Bysezejataos"
@@ -96,7 +95,7 @@ open class ByseSX : ExtractorApi() {
         val cipher = aesKey.cipher()
         val plainBytes = cipher.decryptWithIvBlocking(ivBytes, cipherBytes)
 
-        var jsonStr = String(plainBytes, StandardCharsets.UTF_8)
+        var jsonStr = plainBytes.decodeToString()
         if (jsonStr.startsWith("\uFEFF")) jsonStr = jsonStr.substring(1)
 
         val root = try {
