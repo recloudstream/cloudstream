@@ -2,6 +2,7 @@
 
 **⚠️ Warning: By default, this app doesn't provide any video sources; you have to install extensions to add functionality to the app.**
 <p align="center"><a href="https://github.com/recloudstream/cloudstream/releases/download/pre-release/app-prerelease-release.apk"><img src="https://i.imgur.com/4nd8JQF.jpeg" alt="Download Cloudstream Pre-Release" width=206/></a></p>
+
 [![Discord](https://invidget.switchblade.xyz/5Hus6fM)](https://discord.gg/5Hus6fM)
 
 
