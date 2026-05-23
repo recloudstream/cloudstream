@@ -96,12 +96,12 @@ object AesHelper {
 
     @OptIn(DelicateCryptographyApi::class)
     fun decryptAES(inputHex: String, key: String, iv: String): String {
-        val keyBytes = key.toByteArray(Charsets.UTF_8)
-        val ivBytes = iv.toByteArray(Charsets.UTF_8)
+        val keyBytes = key.encodeToByteArray()
+        val ivBytes = iv.encodeToByteArray()
         val aesKey = aesCbc.keyDecoder().decodeFromByteArrayBlocking(AES.Key.Format.RAW, keyBytes)
         val cipher = aesKey.cipher(padding = true)
         val decrypted = cipher.decryptWithIvBlocking(ivBytes, inputHex.hexToByteArray())
-        return String(decrypted, Charsets.UTF_8)
+        return decrypted.decodeToString()
     }
 
     private fun String.hexToByteArray(): ByteArray {
