@@ -14,7 +14,6 @@ open class Cda : ExtractorApi() {
     override var name = "Cda"
     override val requiresReferer = false
 
-
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
         val mediaId = url
             .split("/").last()
@@ -68,7 +67,7 @@ open class Cda : ExtractorApi() {
         a = URLDecoder.decode(a, "UTF-8")
         a = a.map { char ->
             if (char.code in 33..126) {
-                return@map String.format("%c", 33 + (char.code + 14) % 94)
+                return@map (33 + (char.code + 14) % 94).toChar().toString()
             } else {
                 return@map char
             }
