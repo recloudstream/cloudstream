@@ -6,8 +6,8 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.StringUtils.decodeUri
 import com.lagradost.cloudstream3.utils.newExtractorLink
-import java.net.URLDecoder
 
 open class Cda : ExtractorApi() {
     override var mainUrl = "https://ebd.cda.pl"
@@ -64,7 +64,7 @@ open class Cda : ExtractorApi() {
             .replace("_QWE", "")
             .replace("_Q5", "")
             .replace("_IKSDE", "")
-        a = URLDecoder.decode(a, "UTF-8")
+        a = a.decodeUri()
         a = a.map { char ->
             if (char.code in 33..126) {
                 return@map (33 + (char.code + 14) % 94).toChar().toString()
