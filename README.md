@@ -1,5 +1,13 @@
 # CloudStream
 
+⚠️ **DISCLAIMER: This application is an EXPERIMENT.**  
+**The developer is NOT responsible for any improper or dangerous use of this application.**  
+⛔ **Usage while driving is STRICTLY PROHIBITED.**  
+
+**Always prioritize safe driving and adhere to local traffic laws.**  
+**This software is provided "as is", without warranty of any kind.**
+
+
 **⚠️ Warning: By default, this app doesn't provide any video sources; you have to install extensions to add functionality to the app.**
 
 [![Discord](https://invidget.switchblade.xyz/5Hus6fM)](https://discord.gg/5Hus6fM)

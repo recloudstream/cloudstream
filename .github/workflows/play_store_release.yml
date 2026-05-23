@@ -1,0 +1,151 @@
+name: Play Store Release
+
+# Trigger: manuale, così hai il controllo completo su quando rilasciare
+on:
+  workflow_dispatch:
+    inputs:
+      release_notes:
+        description: 'Note di release (es: "Merge branch master 2026-03-08")'
+        required: true
+        default: 'Merge branch master'
+      track:
+        description: 'Track di destinazione su Play Store'
+        required: true
+        default: 'internal'
+        type: choice
+        options:
+          - internal
+          - alpha
+          - beta
+
+concurrency:
+  group: "play-store-release"
+  cancel-in-progress: false  # Non cancellare una release in corso
+
+jobs:
+  build-and-deploy:
+    name: Build AAB & Deploy to Play Store
+    runs-on: ubuntu-latest
+
+    steps:
+      # ------------------------------------------------------------------ #
+      # 1. Checkout del codice
+      # ------------------------------------------------------------------ #
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          ref: android-auto
+
+      # ------------------------------------------------------------------ #
+      # 2. JDK 17 — stessa versione usata dal progetto (jdkToolchain = 17)
+      # ------------------------------------------------------------------ #
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      # ------------------------------------------------------------------ #
+      # 3. Prepara il keystore nella path attesa dal build.gradle.kts
+      #    Il codice legge: System.getProperty("user.home") + "/work/_temp/keystore/"
+      #    Su GitHub Actions user.home = /root  →  /root/work/_temp/keystore/
+      # ------------------------------------------------------------------ #
+      - name: Prepare signing keystore
+        run: |
+          TMP_KEYSTORE_DIR="${HOME}/work/_temp/keystore"
+          mkdir -p "${TMP_KEYSTORE_DIR}"
+          # Decodifica il keystore (base64) e lo scrive nella directory attesa
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > "${TMP_KEYSTORE_DIR}/fauto-keystore.keystore"
+          # Verifica che il file esista (senza esporre il contenuto)
+          ls -la "${TMP_KEYSTORE_DIR}/"
+
+      # ------------------------------------------------------------------ #
+      # 4. Cache Gradle per build più veloci
+      # ------------------------------------------------------------------ #
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # ------------------------------------------------------------------ #
+      # 5. Build AAB variante prereleaseRelease
+      #    Equivalente a: Build > Generate Signed Bundle > prereleaseRelease
+      # ------------------------------------------------------------------ #
+      - name: Build AAB (prereleaseRelease)
+        run: ./gradlew bundlePrereleaseRelease
+        env:
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIMKL_CLIENT_ID: ${{ secrets.SIMKL_CLIENT_ID }}
+          SIMKL_CLIENT_SECRET: ${{ secrets.SIMKL_CLIENT_SECRET }}
+
+      # ------------------------------------------------------------------ #
+      # 6. Trova il file AAB generato e rinominalo in modo leggibile
+      # ------------------------------------------------------------------ #
+      - name: Locate and rename AAB
+        id: find_aab
+        run: |
+          AAB_PATH=$(find app/build/outputs/bundle/prereleaseRelease -name "*.aab" | head -1)
+          if [ -z "$AAB_PATH" ]; then
+            echo "ERROR: AAB not found!"
+            exit 1
+          fi
+          echo "Found AAB: $AAB_PATH"
+          echo "aab_path=$AAB_PATH" >> $GITHUB_OUTPUT
+
+          # Leggi versionName e versionCode dal build output (o dal file gradle)
+          VERSION_NAME=$(grep -m1 'versionName' app/build.gradle.kts | sed 's/.*versionName = "\(.*\)".*/\1/')
+          VERSION_CODE=$(grep -m1 'versionCode' app/build.gradle.kts | sed 's/.*versionCode = \([0-9]*\).*/\1/')
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "Build: v$VERSION_NAME ($VERSION_CODE)"
+
+      # ------------------------------------------------------------------ #
+      # 7. Salva l'AAB come artifact del workflow (utile per debug)
+      # ------------------------------------------------------------------ #
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: app-prereleaseRelease-${{ steps.find_aab.outputs.version_name }}
+          path: ${{ steps.find_aab.outputs.aab_path }}
+          retention-days: 7
+
+      # ------------------------------------------------------------------ #
+      # 8. Prepara il JSON delle credenziali Google Play (Service Account)
+      # ------------------------------------------------------------------ #
+      - name: Prepare Google Play credentials
+        run: |
+          echo '${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}' > /tmp/gp_service_account.json
+          # Verifica che il JSON sia valido (senza stamparlo)
+          python3 -c "import json,sys; json.load(open('/tmp/gp_service_account.json')); print('Service account JSON is valid')"
+
+      # ------------------------------------------------------------------ #
+      # 9. Upload su Google Play Console (track interno/alpha/beta)
+      # ------------------------------------------------------------------ #
+      - name: Upload to Google Play (${{ github.event.inputs.track }})
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: /tmp/gp_service_account.json
+          packageName: com.lagradost.cloudstream3.prerelease
+          releaseFiles: ${{ steps.find_aab.outputs.aab_path }}
+          track: ${{ github.event.inputs.track }}
+          status: completed
+          whatsNewDirectory: fastlane/metadata/android/en-US/changelogs/
+          # La release note viene scritta dinamicamente nel passo seguente,
+          # ma il campo whatsNewDirectory sovrascrive se vuoi usare fastlane.
+          # Se preferisci solo l'input manuale, rimuovi whatsNewDirectory
+          # e usa invece il campo 'releaseName' e un file temporaneo.
+
+      # ------------------------------------------------------------------ #
+      # 10. Pulizia: credenziali sensibili + file AAB
+      # ------------------------------------------------------------------ #
+      - name: Cleanup
+        if: always()
+        run: |
+          rm -f /tmp/gp_service_account.json
+          rm -rf "${HOME}/work/_temp/keystore"
+          rm -f "${{ steps.find_aab.outputs.aab_path }}"

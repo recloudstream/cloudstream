@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<automotiveApp xmlns:tools="http://schemas.android.com/tools">
+    <uses name="media" />
+    <uses name="template" tools:ignore="InvalidUsesTagAttribute" />
+</automotiveApp>
