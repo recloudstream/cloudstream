@@ -170,7 +170,7 @@ open class Rabbitstream : ExtractorApi() {
             IvParameterSpec(decryptionKey.copyOfRange(32, decryptionKey.size))
         )
         val decryptedData = aesCBC?.doFinal(encrypted) ?: throw ErrorLoadingException("Cipher not found")
-        return String(decryptedData, Charsets.UTF_8)
+        return decryptedData.decodeToString()
     }
 
     data class Tracks(

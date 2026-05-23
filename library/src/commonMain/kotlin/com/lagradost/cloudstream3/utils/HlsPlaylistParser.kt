@@ -1187,7 +1187,7 @@ object HlsPlaylistParser {
             return SchemeData(
                 uuid = C.WIDEVINE_UUID,
                 mimeType = "hls",
-                data = line.toByteArray(charset = Charsets.UTF_8)
+                data = line.encodeToByteArray()
             )
         } else if (KEYFORMAT_PLAYREADY == keyFormat && "1" == keyFormatVersions) {
             val uriString = parseStringAttr(line, REGEX_URI, variableDefinitions)
