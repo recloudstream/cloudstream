@@ -234,7 +234,7 @@ object HlsPlaylistParser {
             if (codecArray.isEmpty()) {
                 return null
             }
-            val builder = java.lang.StringBuilder()
+            val builder = StringBuilder()
             for (codec in codecArray) {
                 if (trackType == MimeTypes.getTrackTypeOfCodec(codec)) {
                     if (builder.isNotEmpty()) {
@@ -263,7 +263,7 @@ object HlsPlaylistParser {
             if (codecArray.isEmpty()) {
                 return null
             }
-            val builder = java.lang.StringBuilder()
+            val builder = StringBuilder()
             for (codec in codecArray) {
                 if (trackType != MimeTypes.getTrackTypeOfCodec(codec)) {
                     if (builder.isNotEmpty()) {
@@ -425,7 +425,7 @@ object HlsPlaylistParser {
          * @param limit The limit (exclusive) of the path in `uri`.
          */
         private fun removeDotSegments(
-            uri: java.lang.StringBuilder,
+            uri: StringBuilder,
             offset: Int,
             limit: Int
         ): String {
