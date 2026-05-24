@@ -651,9 +651,15 @@ object PluginManager {
                     context.resources.configuration
                 )
             }
-            plugins[filePath] = pluginInstance
-            classLoaders[loader] = pluginInstance
-            urlPlugins[data.url ?: filePath] = pluginInstance
+            synchronized(plugins) {
+                plugins[filePath] = pluginInstance
+            }
+            synchronized(classLoaders) {
+                classLoaders[loader] = pluginInstance
+            }
+            synchronized(urlPlugins) {
+                urlPlugins[data.url ?: filePath] = pluginInstance
+            }
             if (pluginInstance is Plugin) {
                 pluginInstance.load(context)
             } else {
