@@ -96,10 +96,8 @@ object SyncUtil {
                 .mapNotNull { it.url }.toMutableList()
 
         if (type == "anilist") { // TODO MAKE BETTER
-            synchronized(apis) {
-                apis.filter { it.name.contains("Aniflix", ignoreCase = true) }.forEach {
-                    current.add("${it.mainUrl}/anime/$id")
-                }
+            apis.filter { it.name.contains("Aniflix", ignoreCase = true) }.forEach {
+                current.add("${it.mainUrl}/anime/$id")
             }
         }
         return current

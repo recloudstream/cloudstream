@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.MainAPI
-import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
+import com.lagradost.cloudstream3.utils.Coroutines.atomicListOf
 import com.lagradost.cloudstream3.utils.TestingUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +40,7 @@ class TestViewModel : ViewModel() {
         get() = scope != null
 
     private var filter = ProviderFilter.All
-    private val providers = threadSafeListOf<Pair<MainAPI, TestingUtils.TestResultProvider>>()
+    private val providers = atomicListOf<Pair<MainAPI, TestingUtils.TestResultProvider>>()
     private var passed = 0
     private var failed = 0
     private var total = 0
@@ -51,9 +51,9 @@ class TestViewModel : ViewModel() {
     }
 
     private fun postProviders() {
-        synchronized(providers) {
+        providers.withLock {
             val filtered = when (filter) {
-                ProviderFilter.All -> providers
+                ProviderFilter.All -> providers.toList()
                 ProviderFilter.Passed -> providers.filter { it.second.success }
                 ProviderFilter.Failed -> providers.filter { !it.second.success }
             }
@@ -68,7 +68,7 @@ class TestViewModel : ViewModel() {
     }
 
     private fun addProvider(api: MainAPI, results: TestingUtils.TestResultProvider) {
-        synchronized(providers) {
+        providers.withLock {
             val index = providers.indexOfFirst { it.first == api }
             if (index == -1) {
                 providers.add(api to results)
@@ -81,14 +81,14 @@ class TestViewModel : ViewModel() {
     }
 
     fun init() {
-        total = synchronized(APIHolder.allProviders) { APIHolder.allProviders.size }
+        total = APIHolder.allProviders.withLock { APIHolder.allProviders.size }
         updateProgress()
     }
 
     fun startTest() {
         scope = CoroutineScope(Dispatchers.Default)
 
-        val apis = synchronized(APIHolder.allProviders) { APIHolder.allProviders.toTypedArray() }
+        val apis = APIHolder.allProviders.withLock { APIHolder.allProviders.toTypedArray() }
         total = apis.size
         failed = 0
         passed = 0
