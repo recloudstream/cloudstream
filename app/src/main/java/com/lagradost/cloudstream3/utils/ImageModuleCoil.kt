@@ -37,17 +37,18 @@ import java.nio.ByteBuffer
 
 object ImageLoader {
     private const val TAG = "CoilImgLoader"
-    internal fun buildImageLoader(context: PlatformContext): ImageLoader = ImageLoader.Builder(context)
+    internal fun buildImageLoader(context: PlatformContext): ImageLoader {
+        val isBrokenHardware = hasPotentialBrokenHardware()
+        return ImageLoader.Builder(context)
             .crossfade(200)
-            .allowHardware(SDK_INT >= 28)
+            .allowHardware(SDK_INT >= 28 && !isBrokenHardware)
             .diskCachePolicy(CachePolicy.ENABLED)
             .networkCachePolicy(CachePolicy.ENABLED)
             .memoryCache {
-                MemoryCache.Builder().maxSizePercent(context, 0.1)
-                    .strongReferencesEnabled(false)// 10 % of memory for mem-cache
+                MemoryCache.Builder().maxSizePercent(context, 0.1)//10 % of heap for mem-cache
+                    .strongReferencesEnabled(false)
                     .build()
             }
-            .bitmapConfig(Bitmap.Config.ARGB_8888)
             .diskCache {
                 DiskCache.Builder()
                     .directory(context.cacheDir.resolve("cs3_image_cache").toOkioPath())
@@ -59,12 +60,18 @@ object ImageLoader {
             or image hosting services causes unauthorized exceptions **/
             .components {
                 add(OkHttpNetworkFetcherFactory(callFactory = { buildDefaultClient(context) }))
-                add(BitmapFactoryDecoder.Factory()) // sw decoder
+                if (isBrokenHardware) {
+                    add(BitmapFactoryDecoder.Factory())
+                } // sw decoder
             }
             .apply {
+                if (isBrokenHardware) { // coil will auto choose optimal config on modern device
+                    bitmapConfig(Bitmap.Config.ARGB_8888)
+                }
                 setupCoilLogger()
             }
             .build()
+    }
 
     /** DebugLogger on debug builds which won't slow down release builds & use EventListener for
     Errors on release builds. **/
@@ -94,7 +101,9 @@ object ImageLoader {
         this.dispose()
         if (imageData == null) return
         // setImageResource is better than coil3 on resources due to attr
-        if (imageData is Int) { this.setImageResource(imageData); return }
+        if (imageData is Int) {
+            this.setImageResource(imageData); return
+        }
         // headers can be overridden by extensions.
         this.load(imageData, SingletonImageLoader.get(context)) {
             this.httpHeaders(NetworkHeaders.Builder().also { headerBuilder ->
@@ -105,6 +114,18 @@ object ImageLoader {
             }.build())
             builder() // if passed
         }
+    }
+
+    private fun hasPotentialBrokenHardware(): Boolean {
+        val hardware = Build.HARDWARE?.lowercase() ?: ""
+        val board = Build.BOARD?.lowercase() ?: ""
+        val model = Build.MODEL?.lowercase() ?: ""
+        val manufacturer = Build.MANUFACTURER?.lowercase() ?: ""
+        val allwinnerPatterns = listOf("sun50iw9", "h713", "allwinner", "sunxi")
+        val problematicModels =
+            listOf("hy320", "hy300", "a10plus", "magcubic", "sinoy", "android tv box")
+        return allwinnerPatterns.any { it in hardware || it in board || it in manufacturer } ||
+                problematicModels.any { it in model }
     }
 
     /** TYPE_SAFE_LOADERS **/
