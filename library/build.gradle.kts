@@ -72,6 +72,7 @@ kotlin {
         this.filters {
             exclude {
                 annotatedWith.add("com.lagradost.cloudstream3.Prerelease")
+                annotatedWith.add("com.lagradost.cloudstream3.InternalAPI")
             }
         }
     }
