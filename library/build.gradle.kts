@@ -64,6 +64,17 @@ kotlin {
             implementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
         }
     }
+
+    @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
+    // https://kotlinlang.org/docs/gradle-binary-compatibility-validation.html
+    abiValidation {
+        enabled.set(true)
+        this.filters {
+            exclude {
+                annotatedWith.add("com.lagradost.cloudstream3.Prerelease")
+            }
+        }
+    }
 }
 
 tasks.withType<KotlinJvmCompile> {
