@@ -968,6 +968,15 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
                             )
                         }
                     }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        resultPosterBackground.setRenderEffect(
+                            android.graphics.RenderEffect.createBlurEffect(
+                                50f,
+                                50f,
+                                android.graphics.Shader.TileMode.CLAMP
+                            )
+                        )
+                    }
 
                     bindLogo(
                         url = d.logoUrl,

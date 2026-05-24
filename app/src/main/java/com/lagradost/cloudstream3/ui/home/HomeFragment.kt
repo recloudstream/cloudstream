@@ -83,6 +83,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import com.lagradost.cloudstream3.utils.InAppUpdater.runAutoUpdate
 
 private const val TAG = "HomeFragment"
 
@@ -880,6 +881,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         homeViewModel.reloadStored()
         homeViewModel.loadAndCancel(DataStoreHelper.currentHomePage, false)
         //loadHomePage(false)
+
+        ioSafe {
+            activity?.runAutoUpdate()
+        }
 
         // nice profile pic on homepage
         //home_profile_picture_holder?.isVisible = false

@@ -301,8 +301,23 @@ object AccountHelper {
 
         val dialog = builder.create()
 
-        binding.pinEditText.doOnTextChanged { text, _, _, _ ->
+        var previousLength = 0
+        binding.pinEditText.doOnTextChanged { text, start, before, count ->
             val enteredPin = text.toString()
+            if (enteredPin.length > previousLength) {
+                binding.pinEditText.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY)
+                val anim = android.view.animation.ScaleAnimation(
+                    1.05f, 1f, 1.05f, 1f,
+                    android.view.animation.Animation.RELATIVE_TO_SELF, 0.5f,
+                    android.view.animation.Animation.RELATIVE_TO_SELF, 0.5f
+                )
+                anim.duration = 100
+                binding.pinEditText.startAnimation(anim)
+            } else if (enteredPin.length < previousLength) {
+                binding.pinEditText.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY)
+            }
+            previousLength = enteredPin.length
+            
             val isEnteredPinValid = enteredPin.length == 4
 
             if (isEnteredPinValid) {

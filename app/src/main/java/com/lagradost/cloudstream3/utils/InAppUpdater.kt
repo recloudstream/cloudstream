@@ -275,18 +275,8 @@ object InAppUpdater {
                 }
 
                 val builder = AlertDialog.Builder(this, R.style.AlertDialogCustom)
-                builder.setTitle(
-                    getString(R.string.new_update_format).format(
-                        currentVersion?.versionName, update.updateVersion
-                    )
-                )
-
-                val logRegex = Regex("\\[(.*?)]\\((.*?)\\)")
-                val sanitizedChangelog = update.changelog?.replace(logRegex) { matchResult ->
-                    matchResult.groupValues[1]
-                } // Sanitized because it looks cluttered
-
-                builder.setMessage(sanitizedChangelog)
+                builder.setTitle(R.string.update)
+                builder.setMessage("There is an update available, version ${update.updateVersion}")
                 builder.apply {
                     setPositiveButton(R.string.update) { _, _ ->
                         // Forcefully start any delayed installations
@@ -338,15 +328,7 @@ object InAppUpdater {
 
                     setNegativeButton(R.string.cancel) { _, _ -> }
 
-                    if (checkAutoUpdate) {
-                        setNeutralButton(R.string.skip_update) { _, _ ->
-                            settingsManager.edit {
-                                putString(
-                                    getString(R.string.skip_update_key), update.updateNodeId ?: ""
-                                )
-                            }
-                        }
-                    }
+
                 }
                 builder.show().setDefaultFocus()
             }
