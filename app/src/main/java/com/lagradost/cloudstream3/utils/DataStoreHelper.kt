@@ -681,6 +681,21 @@ object DataStoreHelper {
      * */
     fun setViewPosAndResume(id: Int?, position: Long, duration: Long, currentEpisode: Any?, nextEpisode: Any?) {
         setViewPos(id, position, duration)
+        
+        if (position >= 300_000) {
+            val parentId = when (currentEpisode) {
+                is ResultEpisode -> currentEpisode.parentId
+                is ExtractorUri -> currentEpisode.parentId
+                else -> null
+            }
+            if (parentId != null) {
+                val currentState = getResultWatchState(parentId)
+                if (currentState == WatchType.NONE) {
+                    setResultWatchState(parentId, WatchType.WATCHING.internalId)
+                }
+            }
+        }
+
         if (id != null) {
             when (val meta = currentEpisode) {
                 is ResultEpisode -> {

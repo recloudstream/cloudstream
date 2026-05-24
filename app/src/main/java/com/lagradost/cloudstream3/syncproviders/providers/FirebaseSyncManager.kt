@@ -221,10 +221,9 @@ class FirebaseSyncManager : AuthAPI() {
 
                     withContext(Dispatchers.Main) {
                         com.lagradost.cloudstream3.CommonActivity.activity?.findViewById<android.view.View>(android.R.id.content)?.let { view ->
-                            com.google.android.material.snackbar.Snackbar.make(view, "Sync Complete", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
+                            // com.google.android.material.snackbar.Snackbar.make(view, "Sync Complete", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
                         }
                     }
-
                     true
                 } catch (e: Exception) {
                     logError(e)

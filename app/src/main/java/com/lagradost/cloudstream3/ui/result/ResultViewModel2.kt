@@ -2160,11 +2160,7 @@ class ResultViewModel2 : ViewModel() {
         postFavorites(loadResponse)
 
         val currentState = getResultWatchState(mainId)
-        if (currentState == WatchType.NONE) {
-            updateWatchStatus(WatchType.HISTORY, null)
-        } else {
-            _watchStatus.postValue(currentState)
-        }
+        _watchStatus.postValue(currentState)
 
         if (updateEpisodes)
             postEpisodes(loadResponse, mainId, updateFillers)
