@@ -84,7 +84,7 @@ class SetupFragmentExtensions : BaseFragment<FragmentSetupExtensionsBinding>(
                     if (isSetup)
                         if (
                         // If any available languages
-                            synchronized(apis) { apis.distinctBy { it.lang }.size > 1 }
+                            apis.distinctBy { it.lang }.size > 1
                         ) {
                             findNavController().navigate(R.id.action_navigation_setup_extensions_to_navigation_setup_provider_languages)
                         } else {
