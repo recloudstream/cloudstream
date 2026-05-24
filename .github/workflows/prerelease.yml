@@ -41,11 +41,22 @@ jobs:
       uses: gradle/actions/setup-gradle@v5
 
     - name: Run Gradle
-      run: ./gradlew assemblePrereleaseRelease androidSourcesJar makeJar
+      run: ./gradlew assemblePrereleaseRelease androidSourcesJar makeJar > gradle.log 2>&1 || (cat gradle.log ; exit 1)
       env:
         SIGNING_KEY_ALIAS: "key0"
         SIGNING_KEY_PASSWORD: "cloudstream"
         SIGNING_STORE_PASSWORD: "cloudstream"
+
+    - name: Push Logs
+      if: failure()
+      run: |
+        git config --global user.email "bot@example.com"
+        git config --global user.name "Bot"
+        git fetch
+        git checkout -b build-logs
+        git add gradle.log
+        git commit -m "Add build logs"
+        git push origin build-logs -f
 
     - name: Create pre-release
       uses: marvinpinto/action-automatic-releases@latest
