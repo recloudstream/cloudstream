@@ -9,7 +9,7 @@ plugins {
 kotlin {
     android {
         // Must be unique
-        namespace = "com.lagradost.cloudstream3.compose"
+        namespace = "com.lagradost.cloudstream4"
         compileSdk = libs.versions.compileSdk.get().toInt()
         minSdk = libs.versions.minSdk.get().toInt()
 
@@ -44,6 +44,6 @@ kotlin {
 
 compose.resources {
     publicResClass = false
-    packageOfResClass = "com.lagradost.cloudstream3.generated.resources"
+    packageOfResClass = "com.lagradost.cloudstream4.generated.resources"
     generateResClass = auto
 }

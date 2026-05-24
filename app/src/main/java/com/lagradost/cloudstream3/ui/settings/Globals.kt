@@ -1,7 +1,7 @@
 package com.lagradost.cloudstream3.ui.settings
 
 import android.content.Context
-import com.lagradost.cloudstream3.DeviceLayout
+import com.lagradost.cloudstream4.utils.DeviceLayout
 
 object Globals {
     var beneneCount = 0

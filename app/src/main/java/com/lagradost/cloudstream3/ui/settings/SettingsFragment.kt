@@ -22,7 +22,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import java.io.File
 
-// Moved to SettingsComposeFragment
+// Moved to com.lagradost.cloudstream3.ui.compose.settings.SettingsFragment
 // TODO: Move companion methods to helpers and remove this class entirely
 class SettingsFragment {
     companion object {
