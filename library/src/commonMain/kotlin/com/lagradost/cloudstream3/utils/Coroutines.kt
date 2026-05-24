@@ -10,6 +10,9 @@ import java.util.Collections.synchronizedList
 
 @AnyThread
 expect fun runOnMainThreadNative(@MainThread work: (() -> Unit))
+
+expect val workerDispatcher: CoroutineDispatcher
+
 object Coroutines {
     @AnyThread
     fun <T> T.main(@MainThread work: suspend ((T) -> Unit)): Job {
@@ -22,7 +25,7 @@ object Coroutines {
     @AnyThread
     fun <T> T.ioSafe(@WorkerThread work: suspend (CoroutineScope.(T) -> Unit)): Job {
         val value = this
-        return CoroutineScope(Dispatchers.IO).launchSafe {
+        return CoroutineScope(workerDispatcher).launchSafe {
             work(value)
         }
     }
@@ -30,7 +33,7 @@ object Coroutines {
     @AnyThread
     suspend fun <T, V> V.ioWorkSafe(@WorkerThread work: suspend (CoroutineScope.(V) -> T)): T? {
         val value = this
-        return withContext(Dispatchers.IO) {
+        return withContext(workerDispatcher) {
             try {
                 work(value)
             } catch (e: Exception) {
@@ -43,7 +46,7 @@ object Coroutines {
     @AnyThread
     suspend fun <T, V> V.ioWork(@WorkerThread work: suspend (CoroutineScope.(V) -> T)): T {
         val value = this
-        return withContext(Dispatchers.IO) {
+        return withContext(workerDispatcher) {
             work(value)
         }
     }
