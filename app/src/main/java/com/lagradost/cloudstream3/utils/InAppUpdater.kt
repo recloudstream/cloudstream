@@ -298,7 +298,7 @@ object InAppUpdater {
                         }
 
                         val currentInstaller = settingsManager.getInt(
-                            getString(R.string.apk_installer_key), 1
+                            getString(R.string.apk_installer_key), 0
                         )
 
                         when (currentInstaller) {
