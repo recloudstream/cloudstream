@@ -1685,14 +1685,13 @@ class ResultViewModel2 : ViewModel() {
                 }
 
                 val realRecommendations = ArrayList<SearchResponse>()
-                val apiNames = synchronized(apis) {
-                    apis.filter {
-                        it.name.contains("gogoanime", true) ||
-                                it.name.contains("9anime", true)
-                    }.map {
-                        it.name
-                    }
+                val apiNames = apis.filter {
+                    it.name.contains("gogoanime", true) ||
+                        it.name.contains("9anime", true)
+                }.map {
+                    it.name
                 }
+
                 meta.recommendations?.forEach { rec ->
                     apiNames.forEach { name ->
                         realRecommendations.add(rec.copy(apiName = name))
