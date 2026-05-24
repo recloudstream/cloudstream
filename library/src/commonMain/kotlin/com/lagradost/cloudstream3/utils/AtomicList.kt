@@ -10,7 +10,7 @@ import kotlinx.atomicfu.locks.synchronized
  *   list.withLock { list.forEach { ... } }
  */
 open class AtomicList<T>(
-    protected val delegate: List<T> = emptyList(),
+    private val delegate: List<T> = emptyList(),
 ) : List<T>, SynchronizedObject() {
 
     fun <R> withLock(block: () -> R): R = synchronized(this) { block() }
