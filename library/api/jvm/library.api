@@ -5707,12 +5707,6 @@ public final class com/lagradost/cloudstream3/syncproviders/SyncIdName : java/la
 	public static fun values ()[Lcom/lagradost/cloudstream3/syncproviders/SyncIdName;
 }
 
-public final class com/lagradost/cloudstream3/utils/AppDebug {
-	public static final field INSTANCE Lcom/lagradost/cloudstream3/utils/AppDebug;
-	public final fun isDebug ()Z
-	public final fun setDebug (Z)V
-}
-
 public final class com/lagradost/cloudstream3/utils/AppUtils {
 	public static final field INSTANCE Lcom/lagradost/cloudstream3/utils/AppUtils;
 	public final fun toJson (Ljava/lang/Object;)Ljava/lang/String;
