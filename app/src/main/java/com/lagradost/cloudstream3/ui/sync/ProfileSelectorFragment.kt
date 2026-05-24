@@ -98,7 +98,7 @@ class ProfileSelectorFragment : Fragment() {
     }
 
     private fun loadProfiles() {
-        binding.profileSelectorLoading.isVisible = true
+        _binding?.profileSelectorLoading?.isVisible = true
         lifecycleScope.launch {
             try {
                 val profiles = AccountManager.firebaseApi.getProfiles()
@@ -118,7 +118,7 @@ class ProfileSelectorFragment : Fragment() {
                 logError(e)
                 Toast.makeText(context, "Failed to load profiles", Toast.LENGTH_SHORT).show()
             } finally {
-                binding.profileSelectorLoading.isVisible = false
+                _binding?.profileSelectorLoading?.isVisible = false
             }
         }
     }
