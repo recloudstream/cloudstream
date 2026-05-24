@@ -10,12 +10,11 @@ import kotlinx.atomicfu.locks.synchronized
  *   list.withLock { list.forEach { ... } }
  */
 open class AtomicList<T>(
-    protected var delegate: List<T> = emptyList()
+    protected val delegate: List<T> = emptyList(),
 ) : List<T>, SynchronizedObject() {
 
     fun <R> withLock(block: () -> R): R = synchronized(this) { block() }
 
-    fun set(newList: List<T>) = synchronized(this) { delegate = newList }
     fun filter(predicate: (T) -> Boolean): AtomicList<T> = synchronized(this) { AtomicList(delegate.filter(predicate)) }
     fun distinctBy(selector: (T) -> Any?): AtomicList<T> = synchronized(this) { AtomicList(delegate.distinctBy(selector)) }
 
@@ -38,10 +37,8 @@ open class AtomicList<T>(
 }
 
 class AtomicMutableList<T>(
-    delegate: MutableList<T> = mutableListOf()
-) : AtomicList<T>(delegate), MutableList<T> {
-
-    private val mutableDelegate get() = delegate as MutableList<T>
+    private val mutableDelegate: MutableList<T> = mutableListOf(),
+) : AtomicList<T>(mutableDelegate), MutableList<T> {
 
     override fun add(element: T): Boolean = synchronized(this) { mutableDelegate.add(element) }
     override fun add(index: Int, element: T) = synchronized(this) { mutableDelegate.add(index, element) }
