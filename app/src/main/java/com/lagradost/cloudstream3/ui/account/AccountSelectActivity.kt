@@ -228,6 +228,7 @@ class AccountSelectActivity : FragmentActivity(), BiometricCallback {
         }
     }
 
+    @SuppressLint("GestureBackNavigation")
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         val isEditingFromMainActivity = intent.getBooleanExtra(
