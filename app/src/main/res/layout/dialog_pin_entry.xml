@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#121212"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- Avatar & Profile Details -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/pin_avatar_card"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="8dp"
+        app:cardBackgroundColor="@color/transparent"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/white"
+        app:strokeWidth="2dp">
+
+        <ImageView
+            android:id="@+id/pin_avatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/avatar_1" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/pin_profile_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:text="Guest Profile" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Profile Lock is on."
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Enter your PIN to access this profile."
+        android:textColor="?attr/grayTextColor"
+        android:textSize="14sp" />
+
+    <!-- PIN Dot Indicators -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:layout_marginBottom="12dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/pin_dot_1"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_margin="8dp"
+            android:src="@drawable/pin_dot_empty" />
+
+        <ImageView
+            android:id="@+id/pin_dot_2"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_margin="8dp"
+            android:src="@drawable/pin_dot_empty" />
+
+        <ImageView
+            android:id="@+id/pin_dot_3"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_margin="8dp"
+            android:src="@drawable/pin_dot_empty" />
+
+        <ImageView
+            android:id="@+id/pin_dot_4"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_margin="8dp"
+            android:src="@drawable/pin_dot_empty" />
+
+    </LinearLayout>
+
+    <!-- Error Text -->
+    <TextView
+        android:id="@+id/pin_error_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="Incorrect PIN."
+        android:textColor="#E50914"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:visibility="invisible" />
+
+    <!-- Numeric Keypad Grid -->
+    <TableLayout
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:stretchColumns="0,1,2">
+
+        <!-- Row 1: 1, 2, 3 -->
+        <TableRow android:layout_marginBottom="16dp">
+            <TextView
+                android:id="@+id/key_1"
+                style="@style/PinKeyStyle"
+                android:text="1" />
+            <TextView
+                android:id="@+id/key_2"
+                style="@style/PinKeyStyle"
+                android:text="2" />
+            <TextView
+                android:id="@+id/key_3"
+                style="@style/PinKeyStyle"
+                android:text="3" />
+        </TableRow>
+
+        <!-- Row 2: 4, 5, 6 -->
+        <TableRow android:layout_marginBottom="16dp">
+            <TextView
+                android:id="@+id/key_4"
+                style="@style/PinKeyStyle"
+                android:text="4" />
+            <TextView
+                android:id="@+id/key_5"
+                style="@style/PinKeyStyle"
+                android:text="5" />
+            <TextView
+                android:id="@+id/key_6"
+                style="@style/PinKeyStyle"
+                android:text="6" />
+        </TableRow>
+
+        <!-- Row 3: 7, 8, 9 -->
+        <TableRow android:layout_marginBottom="16dp">
+            <TextView
+                android:id="@+id/key_7"
+                style="@style/PinKeyStyle"
+                android:text="7" />
+            <TextView
+                android:id="@+id/key_8"
+                style="@style/PinKeyStyle"
+                android:text="8" />
+            <TextView
+                android:id="@+id/key_9"
+                style="@style/PinKeyStyle"
+                android:text="9" />
+        </TableRow>
+
+        <!-- Row 4: Cancel, 0, Backspace -->
+        <TableRow>
+            <TextView
+                android:id="@+id/key_cancel"
+                style="@style/PinKeyStyle"
+                android:text="CANCEL"
+                android:textColor="?attr/grayTextColor"
+                android:textSize="14sp"
+                android:textStyle="normal" />
+            <TextView
+                android:id="@+id/key_0"
+                style="@style/PinKeyStyle"
+                android:text="0" />
+            <FrameLayout
+                android:id="@+id/key_backspace"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="center"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_backspace" />
+            </FrameLayout>
+        </TableRow>
+
+    </TableLayout>
+
+</LinearLayout>

@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
@@ -12,6 +13,7 @@ import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.HomePageList
+import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainActivity
@@ -126,6 +128,8 @@ class HomeViewModel : ViewModel() {
 
     private val _currentAccount = MutableLiveData<DataStoreHelper.Account?>()
     val currentAccount: MutableLiveData<DataStoreHelper.Account?> = _currentAccount
+
+    val currentSyncProfile = AccountManager.firebaseApi.currentProfile.asLiveData(viewModelScope.coroutineContext)
 
     private val _randomItems = MutableLiveData<List<SearchResponse>?>(null)
     val randomItems: LiveData<List<SearchResponse>?> = _randomItems

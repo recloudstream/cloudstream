@@ -1,0 +1,52 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <!-- Background Circle -->
+    <path
+        android:pathData="M50,50m-45,0a45,45 0,1 1,90,0a45,45 0,1 1,-90,0"
+        android:fillColor="#E0F2F1"/>
+    <!-- Left Eye Outer -->
+    <path
+        android:pathData="M35,46m-9,0a9,9 0,1 1,18,0a9,9 0,1 1,-9,0"
+        android:fillColor="#66BB6A"/>
+    <!-- Right Eye Outer -->
+    <path
+        android:pathData="M65,46m-9,0a9,9 0,1 1,18,0a9,9 0,1 1,-9,0"
+        android:fillColor="#66BB6A"/>
+    <!-- Head -->
+    <path
+        android:pathData="M50,62m-28,0a28,21 0,1 1,56,0a28,21 0,1 1,-56,0"
+        android:fillColor="#66BB6A"/>
+    <!-- Left Eye Inner White -->
+    <path
+        android:pathData="M35,46m-6,0a6,6 0,1 1,12,0a6,6 0,1 1,-6,0"
+        android:fillColor="#FFFFFF"/>
+    <!-- Left Pupil -->
+    <path
+        android:pathData="M35,46m-3,0a3,3 0,1 1,6,0a3,3 0,1 1,-6,0"
+        android:fillColor="#2D3139"/>
+    <!-- Right Eye Inner White -->
+    <path
+        android:pathData="M65,46m-6,0a6,6 0,1 1,12,0a6,6 0,1 1,-6,0"
+        android:fillColor="#FFFFFF"/>
+    <!-- Right Pupil -->
+    <path
+        android:pathData="M65,46m-3,0a3,3 0,1 1,6,0a3,3 0,1 1,-6,0"
+        android:fillColor="#2D3139"/>
+    <!-- Cute Smile -->
+    <path
+        android:pathData="M43,62 Q50,68 57,62"
+        android:strokeColor="#2D3139"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"/>
+    <!-- Blush Left -->
+    <path
+        android:pathData="M28,63m-3,0a3,3 0,1 1,6,0a3,3 0,1 1,-6,0"
+        android:fillColor="#FF8A80"/>
+    <!-- Blush Right -->
+    <path
+        android:pathData="M72,63m-3,0a3,3 0,1 1,6,0a3,3 0,1 1,-6,0"
+        android:fillColor="#FF8A80"/>
+</vector>

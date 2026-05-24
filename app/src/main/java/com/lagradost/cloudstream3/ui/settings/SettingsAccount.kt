@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreference
 import androidx.recyclerview.widget.RecyclerView
+import androidx.navigation.fragment.findNavController
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.openBrowser
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
 import com.lagradost.cloudstream3.CommonActivity.showToast
@@ -443,6 +444,15 @@ class SettingsAccount : BasePreferenceFragmentCompat(), BiometricCallback {
 
         //Hides the security  category on TV as it's only Biometric for now
         getPref(R.string.pref_category_security_key)?.hideOn(TV or EMULATOR)
+
+        getPref(R.string.pair_tv_key)?.hideOn(TV or EMULATOR)?.setOnPreferenceClickListener {
+            try {
+                findNavController().navigate(R.id.navigation_pair_tv)
+            } catch (e: Exception) {
+                logError(e)
+            }
+            true
+        }
 
         getPref(R.string.biometric_key)?.hideOn(TV or EMULATOR)?.setOnPreferenceClickListener {
             val ctx = context ?: return@setOnPreferenceClickListener false

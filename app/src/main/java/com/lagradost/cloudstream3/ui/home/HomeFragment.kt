@@ -21,7 +21,9 @@ import androidx.core.net.toUri
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -48,6 +50,7 @@ import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
 import com.lagradost.cloudstream3.ui.account.AccountViewModel
+import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_PLAY_FILE
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
@@ -647,7 +650,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             }
             homeChangeApi.setOnClickListener(apiChangeClickListener)
             homeSwitchAccount.setOnClickListener {
-                activity?.showAccountSelectLinear()
+                if (AccountManager.firebaseApi.auth.currentUser != null) {
+                    findNavController().navigate(R.id.global_to_navigation_profile_selector)
+                } else {
+                    activity?.showAccountSelectLinear()
+                }
             }
 
             homeMasterAdapter = HomeParentItemAdapterPreview(

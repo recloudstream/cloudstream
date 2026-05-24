@@ -8,6 +8,15 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.edit
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
+import androidx.preference.Preference
+import androidx.preference.SwitchPreference
+import com.lagradost.cloudstream3.syncproviders.AccountManager
+import com.lagradost.cloudstream3.syncproviders.PlainAuthRepo
+import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import android.widget.EditText
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lagradost.cloudstream3.AutoDownloadMode
 import com.lagradost.cloudstream3.BuildConfig
@@ -281,6 +290,90 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
                 PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_manuallyReloadAndUpdatePlugins(activity ?: return@ioSafe)
             }
             return@setOnPreferenceClickListener true // Return true for the listener
+        }
+
+        // --- Firebase Sync Handlers ---
+        val firebaseLoginPref = findPreference<Preference>("firebase_login_key")
+
+        firebaseLoginPref?.setOnPreferenceClickListener {
+            val isUserLoggedIn = AccountManager.firebaseApi.auth.currentUser != null
+            if (isUserLoggedIn) {
+                AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
+                    .setTitle("Logout")
+                    .setMessage("Are you sure you want to logout from Firebase Sync?")
+                    .setPositiveButton("Logout") { dialog, _ ->
+                        ioSafe {
+                            AccountManager.firebaseApi.auth.signOut()
+                            withContext(Dispatchers.Main) {
+                                updateFirebasePrefs()
+                                showToast("Logged out of Firebase")
+                            }
+                        }
+                        dialog.dismiss()
+                    }
+                    .setNegativeButton("Cancel") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .show()
+            } else {
+                findNavController().navigate(R.id.navigation_login)
+            }
+            return@setOnPreferenceClickListener true
+        }
+
+        findPreference<Preference>("firebase_sync_now_key")?.setOnPreferenceClickListener {
+            showToast("Syncing with Firebase...")
+            ioSafe {
+                val isSuccess = AccountManager.firebaseApi.syncLocalToFirestore(requireContext())
+                withContext(Dispatchers.Main) {
+                    if (isSuccess) {
+                        showToast("Sync completed successfully")
+                    } else {
+                        showToast("Sync failed")
+                    }
+                    updateFirebasePrefs()
+                }
+            }
+            return@setOnPreferenceClickListener true
+        }
+
+        // Advanced Google Drive Settings removed
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateFirebasePrefs()
+    }
+
+    private fun updateFirebasePrefs() {
+        val user = AccountManager.firebaseApi.auth.currentUser
+        
+        val loginPref = findPreference<Preference>("firebase_login_key")
+        val syncNowPref = findPreference<Preference>("firebase_sync_now_key")
+        val autoSyncPref = findPreference<SwitchPreference>("firebase_auto_sync_key")
+
+        if (user != null) {
+            loginPref?.title = "Manage Firebase Sync"
+            val name = user.displayName ?: user.email ?: "Firebase User"
+            loginPref?.summary = "Logged in as $name"
+            syncNowPref?.isEnabled = true
+            autoSyncPref?.isEnabled = true
+            
+            // Set the summary of "Sync Now" to show the last synced timestamp
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
+            val lastSynced = settingsManager.getLong("firebase_last_synced_time", 0L)
+            if (lastSynced > 0L) {
+                val dateStr = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(lastSynced))
+                syncNowPref?.summary = "Last synced: $dateStr"
+            } else {
+                syncNowPref?.summary = "Never synced"
+            }
+        } else {
+            loginPref?.title = "Login to Firebase Sync"
+            loginPref?.summary = "Sync your settings, watch progress, and library"
+            syncNowPref?.isEnabled = false
+            autoSyncPref?.isEnabled = false
+            syncNowPref?.summary = "Manually perform bidirectional synchronization (Login required)"
         }
     }
 

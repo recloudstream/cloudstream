@@ -54,10 +54,13 @@ class AccountSelectActivity : FragmentActivity(), BiometricCallback {
             false
         )
 
+        val isLauncherIntent = intent?.action == android.content.Intent.ACTION_MAIN && 
+                intent?.hasCategory(android.content.Intent.CATEGORY_LAUNCHER) == true
+
         // Sometimes we start this activity when we have already logged in
         // For example when using cloudstreamsearch://
         // In those cases we want to just go to the main activity instantly
-        if (hasLoggedIn && !isEditingFromMainActivity) {
+        if (hasLoggedIn && !isEditingFromMainActivity && !isLauncherIntent) {
             navigateToMainActivity()
             return
         }
@@ -67,27 +70,28 @@ class AccountSelectActivity : FragmentActivity(), BiometricCallback {
         enableEdgeToEdgeCompat()
         setNavigationBarColorCompat(R.attr.primaryBlackBackground)
 
+        val isBiometricEnabled = isLayout(PHONE) && isAuthEnabled(this) && deviceHasPasswordPinLock(this)
+
+        if (isBiometricEnabled) {
+            startBiometricAuthentication(this, R.string.biometric_authentication_title, false)
+            promptInfo?.let { prompt ->
+                biometricPrompt?.authenticate(prompt)
+            }
+        } else {
+            proceedAfterAuth()
+        }
+    }
+
+    private fun proceedAfterAuth() {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
         val skipStartup = settingsManager.getBoolean(
             getString(R.string.skip_startup_account_select_key), false
         ) || accounts.count() <= 1
 
-        fun askBiometricAuth() {
-
-            if (isLayout(PHONE) && isAuthEnabled(this)) {
-                if (deviceHasPasswordPinLock(this)) {
-                    startBiometricAuthentication(
-                        this,
-                        R.string.biometric_authentication_title,
-                        false
-                    )
-
-                    promptInfo?.let { prompt ->
-                        biometricPrompt?.authenticate(prompt)
-                    }
-                }
-            }
-        }
+        val isEditingFromMainActivity = intent.getBooleanExtra(
+            "isEditingFromMainActivity",
+            false
+        )
 
         observe(accountViewModel.isAllowedLogin) { isAllowedLogin ->
             if (isAllowedLogin) {
@@ -197,8 +201,6 @@ class AccountSelectActivity : FragmentActivity(), BiometricCallback {
                 } else 6
             }
         }
-
-        askBiometricAuth()
     }
 
     @SuppressLint("UnsafeIntentLaunch")
@@ -211,9 +213,32 @@ class AccountSelectActivity : FragmentActivity(), BiometricCallback {
 
     override fun onAuthenticationSuccess() {
         Log.i(BiometricAuthenticator.TAG, "Authentication successful in AccountSelectActivity")
+        proceedAfterAuth()
     }
 
     override fun onAuthenticationError() {
-        finish()
+        val isEditingFromMainActivity = intent.getBooleanExtra(
+            "isEditingFromMainActivity",
+            false
+        )
+        if (!isEditingFromMainActivity) {
+            finishAffinity()
+        } else {
+            finish()
+        }
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        val isEditingFromMainActivity = intent.getBooleanExtra(
+            "isEditingFromMainActivity",
+            false
+        )
+        if (!isEditingFromMainActivity) {
+            finishAffinity()
+        } else {
+            @Suppress("DEPRECATION")
+            super.onBackPressed()
+        }
     }
 }

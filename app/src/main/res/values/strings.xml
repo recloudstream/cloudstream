@@ -47,6 +47,7 @@
     <string name="browser">Browser</string>
     <string name="skip_loading">Skip Loading</string>
     <string name="loading">Loading…</string>
+    <string name="type_history">History</string>
     <string name="type_watching">Watching</string>
     <string name="type_on_hold">On-Hold</string>
     <string name="type_completed">Completed</string>
@@ -679,6 +680,8 @@
     <string name="logged_account" formatted="true">Logged in as %s</string>
     <string name="skip_startup_account_select_pref">Skip account selection at startup</string>
     <string name="use_default_account">Use Default Account</string>
+    <string name="pair_tv_title">Pair Android TV</string>
+    <string name="pair_tv_summary">Scan or enter the pairing code displayed on your TV</string>
     <string name="rotate_video">Rotate</string>
     <string name="rotate_video_desc">Display a toggle button for screen orientation</string>
     <string name="auto_rotate_video_desc">Enable automatic switching of screen orientation based on video orientation</string>

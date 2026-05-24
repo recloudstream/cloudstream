@@ -31,7 +31,7 @@ abstract class AuthRepo(open val api: AuthAPI) {
     }
 
     @Throws
-    protected suspend fun freshAuth(): AuthData? {
+    suspend fun freshAuth(): AuthData? {
         val data = authData() ?: return null
         if (data.token.isAccessTokenExpired()) {
             val newToken = api.refreshToken(data.token) ?: return null

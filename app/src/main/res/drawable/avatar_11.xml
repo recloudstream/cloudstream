@@ -1,0 +1,50 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <!-- Background Circle -->
+    <path
+        android:pathData="M50,50m-45,0a45,45 0,1 1,90,0a45,45 0,1 1,-90,0"
+        android:fillColor="#E1F5FE"/>
+    <!-- Left Ear Outer -->
+    <path
+        android:pathData="M36,44 C26,12 42,12 42,44 Z"
+        android:fillColor="#FFFFFF"/>
+    <!-- Left Ear Inner -->
+    <path
+        android:pathData="M36,40 C30,18 40,18 40,40 Z"
+        android:fillColor="#FF8A80"/>
+    <!-- Right Ear Outer -->
+    <path
+        android:pathData="M64,44 C74,12 58,12 58,44 Z"
+        android:fillColor="#FFFFFF"/>
+    <!-- Right Ear Inner -->
+    <path
+        android:pathData="M64,40 C70,18 60,18 60,40 Z"
+        android:fillColor="#FF8A80"/>
+    <!-- Head -->
+    <path
+        android:pathData="M50,62m-26,0a26,26 0,1 1,52,0a26,26 0,1 1,-52,0"
+        android:fillColor="#FFFFFF"/>
+    <!-- Left Eye -->
+    <path
+        android:pathData="M39,56m-2.5,0a2.5,2.5 0,1 1,5,0a2.5,2.5 0,1 1,-5,0"
+        android:fillColor="#2D3139"/>
+    <!-- Right Eye -->
+    <path
+        android:pathData="M61,56m-2.5,0a2.5,2.5 0,1 1,5,0a2.5,2.5 0,1 1,-5,0"
+        android:fillColor="#2D3139"/>
+    <!-- Nose -->
+    <path
+        android:pathData="M50,62m-1.5,0a1.5,1.5 0,1 1,3,0a1.5,1.5 0,1 1,-3,0"
+        android:fillColor="#FF8A80"/>
+    <!-- Blush Left -->
+    <path
+        android:pathData="M29,64m-3.5,0a3.5,3.5 0,1 1,7,0a3.5,3.5 0,1 1,-7,0"
+        android:fillColor="#FFCDD2"/>
+    <!-- Blush Right -->
+    <path
+        android:pathData="M71,64m-3.5,0a3.5,3.5 0,1 1,7,0a3.5,3.5 0,1 1,-7,0"
+        android:fillColor="#FFCDD2"/>
+</vector>

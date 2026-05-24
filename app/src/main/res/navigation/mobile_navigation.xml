@@ -89,6 +89,23 @@
         app:popExitAnim="@anim/exit_anim" />
 
     <action
+        android:id="@+id/global_to_navigation_login"
+        app:destination="@id/navigation_login"
+        app:enterAnim="@anim/enter_anim"
+        app:exitAnim="@anim/exit_anim"
+        app:popEnterAnim="@anim/enter_anim"
+        app:popExitAnim="@anim/exit_anim" />
+
+    <action
+        android:id="@+id/global_to_navigation_profile_selector"
+        app:destination="@id/navigation_profile_selector"
+        app:enterAnim="@anim/enter_anim"
+        app:exitAnim="@anim/exit_anim"
+        app:popEnterAnim="@anim/enter_anim"
+        app:popExitAnim="@anim/exit_anim" />
+
+
+    <action
         android:id="@+id/global_to_navigation_subtitles"
         app:destination="@id/navigation_subtitles"
         app:enterAnim="@anim/enter_anim"
@@ -588,21 +605,55 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_setup_language"
-        android:name="com.lagradost.cloudstream3.ui.setup.SetupFragmentLanguage"
+        android:id="@+id/navigation_welcome"
+        android:name="com.lagradost.cloudstream3.ui.setup.WelcomeFragment"
         android:layout_height="match_parent"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"
         app:popEnterAnim="@anim/enter_anim"
         app:popExitAnim="@anim/exit_anim"
-        tools:layout="@layout/fragment_setup_language">
+        tools:layout="@layout/fragment_welcome">
         <action
-            android:id="@+id/action_navigation_setup_language_to_navigation_setup_provider_languages"
-            app:destination="@id/navigation_setup_provider_languages"
+            android:id="@+id/action_navigation_welcome_to_navigation_setup_language"
+            app:destination="@id/navigation_setup_language"
             app:enterAnim="@anim/enter_anim"
             app:exitAnim="@anim/exit_anim"
             app:popEnterAnim="@anim/enter_anim"
             app:popExitAnim="@anim/exit_anim" />
+        <action
+            android:id="@+id/action_navigation_welcome_to_navigation_login"
+            app:destination="@id/navigation_login"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_setup_language"
+        android:name="com.lagradost.cloudstream3.ui.setup.LanguageSetupFragment"
+        android:layout_height="match_parent"
+        app:enterAnim="@anim/enter_anim"
+        app:exitAnim="@anim/exit_anim"
+        app:popEnterAnim="@anim/enter_anim"
+        app:popExitAnim="@anim/exit_anim"
+        tools:layout="@layout/fragment_language_setup">
+        <action
+            android:id="@+id/action_navigation_setup_language_to_navigation_profile_selector"
+            app:destination="@id/navigation_profile_selector"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim" />
+        <action
+            android:id="@+id/action_navigation_setup_language_to_navigation_home"
+            app:destination="@id/navigation_home"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim"
+            app:popUpTo="@id/mobile_navigation"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <action
@@ -700,4 +751,51 @@
         android:name="com.lagradost.cloudstream3.ui.EasterEggMonkeFragment"
         android:label="EasterEggMonkeFragment"
         tools:layout="@layout/fragment_easter_egg_monke" />
+
+    <fragment
+        android:id="@+id/navigation_login"
+        android:name="com.lagradost.cloudstream3.ui.sync.LoginFragment"
+        android:label="Login"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_navigation_login_to_navigation_profile_selector"
+            app:destination="@id/navigation_profile_selector"
+            app:popUpTo="@id/navigation_login"
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim" />
+        <action
+            android:id="@+id/action_navigation_login_to_navigation_setup_language"
+            app:destination="@id/navigation_setup_language"
+            app:popUpTo="@id/navigation_login"
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_profile_selector"
+        android:name="com.lagradost.cloudstream3.ui.sync.ProfileSelectorFragment"
+        android:label="Who's Watching?"
+        tools:layout="@layout/fragment_profile_selector">
+        <action
+            android:id="@+id/action_navigation_profile_selector_to_navigation_home"
+            app:destination="@id/navigation_home"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim"
+            app:popUpTo="@id/mobile_navigation"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_pair_tv"
+        android:name="com.lagradost.cloudstream3.ui.sync.FragmentPairTv"
+        android:label="Pair Android TV"
+        tools:layout="@layout/fragment_pair_tv" />
 </navigation>

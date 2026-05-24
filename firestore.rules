@@ -1,0 +1,27 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can only read/write their own data
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Rules for TV pairing codes bridging mechanism
+    match /pairing_codes/{code} {
+      allow create: if request.resource.data.status == 'pending'
+                    && request.resource.data.createdAt == request.time.toMillis();
+      allow read: if resource.data.createdAt > request.time.toMillis() - 5 * 60 * 1000;
+      allow update: if request.auth != null
+                    && resource.data.status == 'pending'
+                    && request.resource.data.status == 'authorized'
+                    && resource.data.createdAt > request.time.toMillis() - 5 * 60 * 1000;
+      allow delete: if true;
+    }
+    
+    // Deny everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

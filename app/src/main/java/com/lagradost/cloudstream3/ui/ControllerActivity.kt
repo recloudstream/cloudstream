@@ -449,4 +449,11 @@ class ControllerActivity : ExpandedControllerActivity() {
             SkipNextEpisodeController(skipOpButton)
         )
     }
+
+    override fun onResume() {
+        super.onResume()
+        if (!com.lagradost.cloudstream3.ui.account.AccountSelectActivity.hasLoggedIn) {
+            finish()
+        }
+    }
 }

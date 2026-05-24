@@ -84,6 +84,39 @@ class CloudStreamApp : Application(), SingletonImageLoader.Factory {
         }
 
         AppDebug.isDebug = BuildConfig.DEBUG
+
+        registerActivityLifecycleCallbacks(object : android.app.Application.ActivityLifecycleCallbacks {
+            private var startedActivities = 0
+            private var isChangingConfiguration = false
+
+            override fun onActivityCreated(activity: android.app.Activity, savedInstanceState: android.os.Bundle?) {}
+
+            override fun onActivityStarted(activity: android.app.Activity) {
+                if (startedActivities == 0) {
+                    isChangingConfiguration = false
+                }
+                startedActivities++
+            }
+
+            override fun onActivityResumed(activity: android.app.Activity) {}
+            override fun onActivityPaused(activity: android.app.Activity) {}
+
+            override fun onActivityStopped(activity: android.app.Activity) {
+                startedActivities--
+                if (startedActivities == 0) {
+                    if (!activity.isChangingConfigurations) {
+                        // App went to background, lock it instantly
+                        com.lagradost.cloudstream3.ui.account.AccountSelectActivity.hasLoggedIn = false
+                        com.lagradost.cloudstream3.ui.sync.ProfileSelectorFragment.hasFirebaseLoggedIn = false
+                    } else {
+                        isChangingConfiguration = true
+                    }
+                }
+            }
+
+            override fun onActivitySaveInstanceState(activity: android.app.Activity, outState: android.os.Bundle) {}
+            override fun onActivityDestroyed(activity: android.app.Activity) {}
+        })
     }
 
     override fun attachBaseContext(base: Context?) {

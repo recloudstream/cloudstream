@@ -1,0 +1,54 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <!-- Background Circle -->
+    <path
+        android:pathData="M50,50m-45,0a45,45 0,1 1,90,0a45,45 0,1 1,-90,0"
+        android:fillColor="#FFEAD2"/>
+    <!-- Left Ear Outer -->
+    <path
+        android:pathData="M24,48 L14,22 L40,36 Z"
+        android:fillColor="#E07A5F"/>
+    <!-- Left Ear Inner -->
+    <path
+        android:pathData="M25,44 L18,28 L35,37 Z"
+        android:fillColor="#F4A261"/>
+    <!-- Right Ear Outer -->
+    <path
+        android:pathData="M76,48 L86,22 L60,36 Z"
+        android:fillColor="#E07A5F"/>
+    <!-- Right Ear Inner -->
+    <path
+        android:pathData="M75,44 L82,28 L65,37 Z"
+        android:fillColor="#F4A261"/>
+    <!-- Head Outer -->
+    <path
+        android:pathData="M50,60m-26,0a26,26 0,1 1,52,0a26,26 0,1 1,-52,0"
+        android:fillColor="#E07A5F"/>
+    <!-- White Snout Left -->
+    <path
+        android:pathData="M38,66m-11,0a11,11 0,1 1,22,0a11,11 0,1 1,-22,0"
+        android:fillColor="#FFFFFF"/>
+    <!-- White Snout Right -->
+    <path
+        android:pathData="M62,66m-11,0a11,11 0,1 1,22,0a11,11 0,1 1,-22,0"
+        android:fillColor="#FFFFFF"/>
+    <!-- Left Eye Arc (Closed) -->
+    <path
+        android:pathData="M33,55 C35,59 39,59 41,55"
+        android:strokeColor="#2D3139"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"/>
+    <!-- Right Eye Arc (Closed) -->
+    <path
+        android:pathData="M59,55 C61,59 65,59 67,55"
+        android:strokeColor="#2D3139"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"/>
+    <!-- Nose -->
+    <path
+        android:pathData="M50,64m-3.5,0a3.5,2.5 0,1 1,7,0a3.5,2.5 0,1 1,-7,0"
+        android:fillColor="#2D3139"/>
+</vector>

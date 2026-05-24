@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.dokka)
+    alias(libs.plugins.google.services)
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
@@ -269,8 +270,26 @@ dependencies {
     implementation(libs.work.runtime.ktx)
     implementation(libs.nicehttp) // HTTP Lib
 
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.bundles.firebase)
+
+    // Google Sign-In (Credential Manager)
+    implementation(libs.credentials)
+    implementation(libs.credentials.play.services.auth)
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
     implementation(project(":library"))
 }
+
+configurations.all {
+    resolutionStrategy {
+        force("com.google.protobuf:protobuf-javalite:3.25.5")
+    }
+}
+
+// configurations.all {
+//     exclude(group = "com.google.firebase", module = "protolite-well-known-types")
+// }
 
 tasks.register<Jar>("androidSourcesJar") {
     archiveClassifier.set("sources")

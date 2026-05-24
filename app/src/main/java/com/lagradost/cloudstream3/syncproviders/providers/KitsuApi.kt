@@ -651,6 +651,7 @@ class KitsuApi: SyncAPI() {
                 SyncWatchType.DROPPED ->  KitsuStatusType.Dropped
                 SyncWatchType.PLANTOWATCH ->  KitsuStatusType.PlanToWatch
                 SyncWatchType.REWATCHING ->  KitsuStatusType.Watching
+                SyncWatchType.HISTORY ->  KitsuStatusType.None
             }
         }
 

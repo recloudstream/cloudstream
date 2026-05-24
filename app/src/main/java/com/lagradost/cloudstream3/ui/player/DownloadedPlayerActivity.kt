@@ -93,5 +93,8 @@ class DownloadedPlayerActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         CommonActivity.setActivityInstance(this)
+        if (!com.lagradost.cloudstream3.ui.account.AccountSelectActivity.hasLoggedIn) {
+            finish()
+        }
     }
 }

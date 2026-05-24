@@ -52,6 +52,28 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:title="Firebase Sync">
+        <Preference
+            android:icon="@drawable/avatar_1"
+            android:key="firebase_login_key"
+            android:title="Manage Profiles"
+            android:summary="Sync your settings, watch progress, and library" />
+
+        <Preference
+            android:icon="@drawable/baseline_sync_24"
+            android:key="firebase_sync_now_key"
+            android:title="Sync Now"
+            android:summary="Manually perform bidirectional synchronization" />
+
+        <SwitchPreference
+            android:icon="@drawable/ic_baseline_autorenew_24"
+            android:key="firebase_auto_sync_key"
+            android:title="Auto Sync"
+            android:summary="Sync automatically on app start and video updates"
+            android:defaultValue="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:title="@string/pref_category_extensions">
         <SwitchPreference
             android:defaultValue="true"

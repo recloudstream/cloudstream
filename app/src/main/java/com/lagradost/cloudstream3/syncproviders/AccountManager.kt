@@ -5,6 +5,7 @@ import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.syncproviders.providers.Addic7ed
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi
+import com.lagradost.cloudstream3.syncproviders.providers.FirebaseSyncManager
 import com.lagradost.cloudstream3.syncproviders.providers.KitsuApi
 import com.lagradost.cloudstream3.syncproviders.providers.LocalList
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi
@@ -24,6 +25,7 @@ abstract class AccountManager {
         val aniListApi = AniListApi()
         val simklApi = SimklApi()
         val localListApi = LocalList()
+        val firebaseApi = FirebaseSyncManager()
 
         val openSubtitlesApi = OpenSubtitlesApi()
         val addic7ed = Addic7ed()
@@ -70,7 +72,8 @@ abstract class AccountManager {
             SubtitleRepo(openSubtitlesApi),
             SubtitleRepo(addic7ed),
             SubtitleRepo(subDlApi),
-            PlainAuthRepo(animeSkipApi)
+            PlainAuthRepo(animeSkipApi),
+            PlainAuthRepo(firebaseApi)
         )
 
         fun updateAccountIds() {

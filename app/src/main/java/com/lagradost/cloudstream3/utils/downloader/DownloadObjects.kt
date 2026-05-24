@@ -57,19 +57,19 @@ object DownloadObjects {
 
 
     abstract class DownloadCached(
-        @JsonProperty("id") open val id: Int,
+        @JsonProperty("id") open val id: Int = 0,
     )
 
     data class DownloadEpisodeCached(
-        @JsonProperty("name") val name: String?,
-        @JsonProperty("poster") val poster: String?,
-        @JsonProperty("episode") val episode: Int,
-        @JsonProperty("season") val season: Int?,
-        @JsonProperty("parentId") val parentId: Int,
+        @JsonProperty("name") val name: String? = null,
+        @JsonProperty("poster") val poster: String? = null,
+        @JsonProperty("episode") val episode: Int = 0,
+        @JsonProperty("season") val season: Int? = null,
+        @JsonProperty("parentId") val parentId: Int = 0,
         @JsonProperty("score") var score: Score? = null,
-        @JsonProperty("description") val description: String?,
-        @JsonProperty("cacheTime") val cacheTime: Long,
-        override val id: Int,
+        @JsonProperty("description") val description: String? = null,
+        @JsonProperty("cacheTime") val cacheTime: Long = 0L,
+        override val id: Int = 0,
     ) : DownloadCached(id) {
         @JsonProperty("rating", access = JsonProperty.Access.WRITE_ONLY)
         @Deprecated(
@@ -88,13 +88,13 @@ object DownloadObjects {
 
     /** What to display to the user for a downloaded show/movie. Includes info such as name, poster and url */
     data class DownloadHeaderCached(
-        @JsonProperty("apiName") val apiName: String,
-        @JsonProperty("url") val url: String,
-        @JsonProperty("type") val type: TvType,
-        @JsonProperty("name") val name: String,
-        @JsonProperty("poster") val poster: String?,
-        @JsonProperty("cacheTime") val cacheTime: Long,
-        override val id: Int,
+        @JsonProperty("apiName") val apiName: String = "",
+        @JsonProperty("url") val url: String = "",
+        @JsonProperty("type") val type: TvType = TvType.Others,
+        @JsonProperty("name") val name: String = "",
+        @JsonProperty("poster") val poster: String? = null,
+        @JsonProperty("cacheTime") val cacheTime: Long = 0L,
+        override val id: Int = 0,
     ) : DownloadCached(id)
 
     data class DownloadResumePackage(
@@ -146,12 +146,12 @@ object DownloadObjects {
 
 
     data class ResumeWatching(
-        @JsonProperty("parentId") val parentId: Int,
-        @JsonProperty("episodeId") val episodeId: Int?,
-        @JsonProperty("episode") val episode: Int?,
-        @JsonProperty("season") val season: Int?,
-        @JsonProperty("updateTime") val updateTime: Long,
-        @JsonProperty("isFromDownload") val isFromDownload: Boolean,
+        @JsonProperty("parentId") val parentId: Int = 0,
+        @JsonProperty("episodeId") val episodeId: Int? = null,
+        @JsonProperty("episode") val episode: Int? = null,
+        @JsonProperty("season") val season: Int? = null,
+        @JsonProperty("updateTime") val updateTime: Long = 0L,
+        @JsonProperty("isFromDownload") val isFromDownload: Boolean = false,
     )
 
 

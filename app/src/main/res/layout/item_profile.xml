@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="12dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <!-- Avatar Card Container -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/item_profile_card"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:cardBackgroundColor="@color/transparent"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="?attr/grayTextColor"
+        app:strokeWidth="1dp">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- Profile Avatar -->
+            <ImageView
+                android:id="@+id/item_profile_avatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/avatar_1" />
+
+            <!-- Dynamic Background Color Accent Overlay (Slightly visible or solid boundary) -->
+            <View
+                android:id="@+id/item_profile_accent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#15FFFFFF" />
+
+            <!-- Edit/Pencil Mode Overlay (shown in edit mode) -->
+            <FrameLayout
+                android:id="@+id/item_profile_edit_overlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#A0000000"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/circle_shape"
+                    android:backgroundTint="#80000000"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_baseline_edit_24"
+                    app:tint="@color/white" />
+            </FrameLayout>
+
+            <!-- Locked PIN Badge Overlay -->
+            <ImageView
+                android:id="@+id/item_profile_lock"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="6dp"
+                android:background="@drawable/circle_shape"
+                android:backgroundTint="#B0000000"
+                android:padding="4dp"
+                android:src="@drawable/pin_ic"
+                android:visibility="gone"
+                app:tint="@color/white"
+                tools:visibility="visible" />
+
+        </FrameLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Profile Name -->
+    <TextView
+        android:id="@+id/item_profile_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="?attr/textColor"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/item_profile_card"
+        app:layout_constraintStart_toStartOf="@id/item_profile_card"
+        app:layout_constraintTop_toBottomOf="@id/item_profile_card"
+        tools:text="Panda Profile" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,42 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <!-- Background Circle -->
+    <path
+        android:pathData="M50,50m-45,0a45,45 0,1 1,90,0a45,45 0,1 1,-90,0"
+        android:fillColor="#E0F7FA"/>
+    <!-- Penguin Head (Black Body) -->
+    <path
+        android:pathData="M50,58m-26,0a26,26 0,1 1,52,0a26,26 0,1 1,-52,0"
+        android:fillColor="#2D3139"/>
+    <!-- White Face Patch Left -->
+    <path
+        android:pathData="M44,56m-13,0a13,15 0,1 1,26,0a13,15 0,1 1,-26,0"
+        android:fillColor="#FFFFFF"/>
+    <!-- White Face Patch Right -->
+    <path
+        android:pathData="M56,56m-13,0a13,15 0,1 1,26,0a13,15 0,1 1,-26,0"
+        android:fillColor="#FFFFFF"/>
+    <!-- Left Eye (Winking or simple dot) -->
+    <path
+        android:pathData="M40,54m-3,0a3,3 0,1 1,6,0a3,3 0,1 1,-6,0"
+        android:fillColor="#2D3139"/>
+    <!-- Right Eye -->
+    <path
+        android:pathData="M60,54m-3,0a3,3 0,1 1,6,0a3,3 0,1 1,-6,0"
+        android:fillColor="#2D3139"/>
+    <!-- Beak -->
+    <path
+        android:pathData="M50,60 L44,57 C44,57 50,66 50,66 C50,66 56,57 56,57 Z"
+        android:fillColor="#FFB74D"/>
+    <!-- Blush Left -->
+    <path
+        android:pathData="M31,63m-3,0a3,3 0,1 1,6,0a3,3 0,1 1,-6,0"
+        android:fillColor="#FFCDD2"/>
+    <!-- Blush Right -->
+    <path
+        android:pathData="M69,63m-3,0a3,3 0,1 1,6,0a3,3 0,1 1,-6,0"
+        android:fillColor="#FFCDD2"/>
+</vector>

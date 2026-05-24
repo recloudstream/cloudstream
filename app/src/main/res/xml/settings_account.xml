@@ -38,6 +38,12 @@
             android:key="@string/skip_startup_account_select_key"
             android:title="@string/skip_startup_account_select_pref" />
 
+        <Preference
+            android:icon="@drawable/ic_baseline_tv_24"
+            android:key="@string/pair_tv_key"
+            android:title="@string/pair_tv_title"
+            android:summary="@string/pair_tv_summary" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

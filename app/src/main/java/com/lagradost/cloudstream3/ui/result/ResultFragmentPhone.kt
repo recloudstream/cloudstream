@@ -340,6 +340,7 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
         }
 
         updateUIEvent -= ::updateUI
+        playerHostView?.exitFullscreen()
         playerHostView?.release()
         playerBinding = null
         resultBinding?.resultScroll?.setOnClickListener(null)

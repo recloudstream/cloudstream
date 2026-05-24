@@ -1,0 +1,52 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <!-- Background Circle -->
+    <path
+        android:pathData="M50,50m-45,0a45,45 0,1 1,90,0a45,45 0,1 1,-90,0"
+        android:fillColor="#E8F5E9"/>
+    <!-- Left Ear Outer -->
+    <path
+        android:pathData="M28,36m-10,0a10,10 0,1 1,20,0a10,10 0,1 1,-20,0"
+        android:fillColor="#8D6E63"/>
+    <!-- Left Ear Inner -->
+    <path
+        android:pathData="M28,36m-6,0a6,6 0,1 1,12,0a6,6 0,1 1,-6,0"
+        android:fillColor="#D7CCC8"/>
+    <!-- Right Ear Outer -->
+    <path
+        android:pathData="M72,36m-10,0a10,10 0,1 1,20,0a10,10 0,1 1,-20,0"
+        android:fillColor="#8D6E63"/>
+    <!-- Right Ear Inner -->
+    <path
+        android:pathData="M72,36m-6,0a6,6 0,1 1,12,0a6,6 0,1 1,-6,0"
+        android:fillColor="#D7CCC8"/>
+    <!-- Head -->
+    <path
+        android:pathData="M50,58m-26,0a26,26 0,1 1,52,0a26,26 0,1 1,-52,0"
+        android:fillColor="#8D6E63"/>
+    <!-- Snout White -->
+    <path
+        android:pathData="M50,64m-9,0a9,8 0,1 1,18,0a9,8 0,1 1,-18,0"
+        android:fillColor="#F5F5F5"/>
+    <!-- Left Eye -->
+    <path
+        android:pathData="M39,52m-3,0a3,3 0,1 1,6,0a3,3 0,1 1,-6,0"
+        android:fillColor="#2D3139"/>
+    <!-- Right Eye -->
+    <path
+        android:pathData="M61,52m-3,0a3,3 0,1 1,6,0a3,3 0,1 1,-6,0"
+        android:fillColor="#2D3139"/>
+    <!-- Tiny Bear Nose -->
+    <path
+        android:pathData="M50,60m-3.5,0a3.5,2.5 0,1 1,7,0a3.5,2.5 0,1 1,-7,0"
+        android:fillColor="#2D3139"/>
+    <!-- Mouth Line (Bear smile) -->
+    <path
+        android:pathData="M50,62.5 L50,66.5"
+        android:strokeColor="#2D3139"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"/>
+</vector>

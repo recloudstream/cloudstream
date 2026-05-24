@@ -191,6 +191,8 @@ import kotlin.system.exitProcess
 import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
     companion object {
@@ -640,6 +642,25 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
     override fun onResume() {
         super.onResume()
+        if (!com.lagradost.cloudstream3.ui.account.AccountSelectActivity.hasLoggedIn) {
+            val intent = Intent(this, com.lagradost.cloudstream3.ui.account.AccountSelectActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
+            return
+        }
+        
+        // --- Firebase Profile Background Check ---
+        val firebaseRepo = com.lagradost.cloudstream3.syncproviders.AccountManager.firebaseApi
+        if (firebaseRepo.auth.currentUser != null && !com.lagradost.cloudstream3.ui.sync.ProfileSelectorFragment.hasFirebaseLoggedIn) {
+            binding?.navHostFragment?.post {
+                try {
+                    navigate(R.id.navigation_profile_selector)
+                } catch (e: Exception) {
+                    logError(e)
+                }
+            }
+        }
+        
         afterPluginsLoadedEvent += ::onAllPluginsLoaded
         setActivityInstance(this)
         try {
@@ -648,6 +669,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             }
         } catch (e: Exception) {
             logError(e)
+        }
+        val sp = PreferenceManager.getDefaultSharedPreferences(this)
+        if (sp.getBoolean("firebase_auto_sync_key", true)) {
+            ioSafe {
+                AccountManager.firebaseApi.syncLocalToFirestore(this@MainActivity)
+            }
         }
     }
 
@@ -1322,6 +1349,24 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
                 // hide background while authenticating, Sorry moms & dads 🙏
                 binding?.navHostFragment?.isInvisible = true
+            }
+        }
+
+        // --- Firebase Profile Check ---
+        val firebaseRepo = com.lagradost.cloudstream3.syncproviders.AccountManager.firebaseApi
+        if (firebaseRepo.auth.currentUser != null && getKey(HAS_DONE_SETUP_KEY, false) == true) {
+            ioSafe {
+                val profiles = firebaseRepo.getProfiles()
+                if (profiles.isNotEmpty()) {
+                    if (profiles.size == 1 && !profiles.first().isLocked) {
+                        val profile = profiles.first()
+                        profile.lastUsed = System.currentTimeMillis()
+                        firebaseRepo.saveProfile(profile)
+                        firebaseRepo.selectProfile(profile)
+                        firebaseRepo.syncLocalToFirestore(this@MainActivity)
+                        com.lagradost.cloudstream3.ui.sync.ProfileSelectorFragment.hasFirebaseLoggedIn = true
+                    }
+                }
             }
         }
 
@@ -2021,16 +2066,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
         try {
             if (getKey(HAS_DONE_SETUP_KEY, false) != true) {
-                navController.navigate(R.id.navigation_setup_language)
-                // If no plugins bring up extensions screen
-            } else if (PluginManager.getPluginsOnline().isEmpty()
-                && PluginManager.getPluginsLocal().isEmpty()
-//                && PREBUILT_REPOSITORIES.isNotEmpty()
-            ) {
-                navController.navigate(
-                    R.id.navigation_setup_extensions,
-                    SetupFragmentExtensions.newInstance(false)
-                )
+                navController.navigate(R.id.navigation_welcome)
             }
         } catch (e: Exception) {
             logError(e)

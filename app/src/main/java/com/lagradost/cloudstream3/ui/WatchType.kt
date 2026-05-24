@@ -10,7 +10,8 @@ enum class WatchType(val internalId: Int, @StringRes val stringRes: Int, @Drawab
     ONHOLD(2, R.string.type_on_hold, R.drawable.ic_baseline_bookmark_24),
     DROPPED(3, R.string.type_dropped, R.drawable.ic_baseline_bookmark_24),
     PLANTOWATCH(4, R.string.type_plan_to_watch, R.drawable.ic_baseline_bookmark_24),
-    NONE(5, R.string.type_none, R.drawable.ic_baseline_add_24);
+    NONE(5, R.string.type_none, R.drawable.ic_baseline_add_24),
+    HISTORY(6, R.string.type_history, R.drawable.ic_baseline_bookmark_24);
 
     companion object {
         fun fromInternalId(id: Int?) = entries.find { value -> value.internalId == id } ?: NONE
@@ -24,7 +25,8 @@ enum class SyncWatchType(val internalId: Int, @StringRes val stringRes: Int, @Dr
     ONHOLD(2, R.string.type_on_hold, R.drawable.ic_baseline_bookmark_24),
     DROPPED(3, R.string.type_dropped, R.drawable.ic_baseline_bookmark_24),
     PLANTOWATCH(4, R.string.type_plan_to_watch, R.drawable.ic_baseline_bookmark_24),
-    REWATCHING(5, R.string.type_re_watching, R.drawable.ic_baseline_bookmark_24);
+    REWATCHING(5, R.string.type_re_watching, R.drawable.ic_baseline_bookmark_24),
+    HISTORY(6, R.string.type_history, R.drawable.ic_baseline_bookmark_24);
 
     companion object {
         fun fromInternalId(id: Int?) = entries.find { value -> value.internalId == id } ?: NONE

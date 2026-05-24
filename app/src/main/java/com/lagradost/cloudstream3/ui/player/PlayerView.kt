@@ -87,6 +87,8 @@ class PlayerView @JvmOverloads constructor(
     /** All gesture, volume, brightness and key-event logic lives here. */
     val gestureHelper = PlayerGestureHelper(this)
 
+    private var originalOrientation: Int? = null
+
     /** Delegate properties (forwarded to gestureHelper for external callers to have easier access) */
     var isFullScreen: Boolean
         get() = gestureHelper.isFullScreen
@@ -428,6 +430,9 @@ class PlayerView @JvmOverloads constructor(
 
     fun enterFullscreen(updateOrientation: () -> Unit = {}) {
         val activity = context as? Activity
+        if (originalOrientation == null) {
+            originalOrientation = activity?.resources?.configuration?.orientation
+        }
         if (isFullScreen) {
             activity?.hideSystemUI()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && fullscreenNotch) {
@@ -442,7 +447,23 @@ class PlayerView @JvmOverloads constructor(
     fun exitFullscreen() {
         val activity = context as? Activity
         gestureHelper.resetZoomToDefault()
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
+        val targetOrientation = when (originalOrientation) {
+            android.content.res.Configuration.ORIENTATION_PORTRAIT -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+            android.content.res.Configuration.ORIENTATION_LANDSCAPE -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+            else -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        }
+        activity?.requestedOrientation = targetOrientation
+        
+        if (targetOrientation != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                safe {
+                    val act = context as? Activity
+                    if (act != null && !act.isFinishing && !act.isDestroyed) {
+                        act.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                    }
+                }
+            }, 1000)
+        }
         // Simply resets brightness and notch settings that might have been overridden.
         val lp = activity?.window?.attributes
         lp?.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE

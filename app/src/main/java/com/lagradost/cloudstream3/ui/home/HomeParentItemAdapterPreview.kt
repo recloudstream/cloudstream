@@ -61,6 +61,9 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarView
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import androidx.core.graphics.toColorInt
 import com.lagradost.cloudstream3.ui.setRecycledViewPool
+import com.lagradost.cloudstream3.syncproviders.AccountManager
+import com.lagradost.cloudstream3.syncproviders.SyncProfile
+import androidx.navigation.findNavController
 
 class HomeParentItemAdapterPreview(
     private val viewModel: HomeViewModel,
@@ -543,12 +546,46 @@ class HomeParentItemAdapterPreview(
             alternateHeadProfilePicCard?.isGone = isLayout(TV or EMULATOR)
 
             (headProfilePic ?: alternateHeadProfilePic)?.observe(viewModel.currentAccount) { currentAccount ->
-                headProfilePic?.loadImage(currentAccount?.image)
-                alternateHeadProfilePic?.loadImage(currentAccount?.image)
+                if (AccountManager.firebaseApi.auth.currentUser == null) {
+                    headProfilePic?.loadImage(currentAccount?.image)
+                    alternateHeadProfilePic?.loadImage(currentAccount?.image)
+                }
+            }
+
+            (headProfilePic ?: alternateHeadProfilePic)?.observe(viewModel.currentSyncProfile) { currentSyncProfile ->
+                if (AccountManager.firebaseApi.auth.currentUser != null) {
+                    val fallbackPhotoUrl = AccountManager.firebaseApi.auth.currentUser?.photoUrl?.toString()
+                    val avatarUrl = currentSyncProfile?.avatarUrl ?: fallbackPhotoUrl
+                    if (avatarUrl != null) {
+                        if (avatarUrl.startsWith("avatar_")) {
+                            val context = (headProfilePic ?: alternateHeadProfilePic)?.context
+                            if (context != null) {
+                                val resId = context.resources.getIdentifier(avatarUrl, "drawable", context.packageName)
+                                if (resId != 0) {
+                                    headProfilePic?.setImageResource(resId)
+                                    alternateHeadProfilePic?.setImageResource(resId)
+                                } else {
+                                    headProfilePic?.loadImage(avatarUrl)
+                                    alternateHeadProfilePic?.loadImage(avatarUrl)
+                                }
+                            }
+                        } else {
+                            headProfilePic?.loadImage(avatarUrl)
+                            alternateHeadProfilePic?.loadImage(avatarUrl)
+                        }
+                    } else {
+                        headProfilePic?.setImageResource(R.drawable.profile_bg_dark_blue)
+                        alternateHeadProfilePic?.setImageResource(R.drawable.profile_bg_dark_blue)
+                    }
+                }
             }
 
             headProfilePicCard?.setOnClickListener {
-                activity?.showAccountSelectLinear()
+                if (AccountManager.firebaseApi.auth.currentUser != null) {
+                    activity?.findNavController(R.id.nav_host_fragment)?.navigate(R.id.global_to_navigation_profile_selector)
+                } else {
+                    activity?.showAccountSelectLinear()
+                }
             }
 
             fun showAccountEditBox(context: Context): Boolean {
@@ -578,7 +615,11 @@ class HomeParentItemAdapterPreview(
             }
 
             alternateHeadProfilePicCard?.setOnClickListener {
-                activity?.showAccountSelectLinear()
+                if (AccountManager.firebaseApi.auth.currentUser != null) {
+                    activity?.findNavController(R.id.nav_host_fragment)?.navigate(R.id.global_to_navigation_profile_selector)
+                } else {
+                    activity?.showAccountSelectLinear()
+                }
             }
 
             (binding as? FragmentHomeHeadTvBinding)?.apply {

@@ -108,8 +108,9 @@ object AccountHelper {
 
         // Handle applying changes
         binding.applyBtt.setOnClickListener {
-            if (currentEditAccount.lockPin != null) {
-                // Ask for the current PIN
+            if (currentEditAccount.lockPin != null && currentEditAccount.lockPin == account.lockPin) {
+                // The account was already locked, and the PIN wasn't removed.
+                // We ask for the current PIN to authorize saving other changes (like name/image).
                 showPinInputDialog(context, currentEditAccount.lockPin, false) { pin ->
                     if (pin == null) return@showPinInputDialog
                     // PIN is correct, proceed to update the account
@@ -117,7 +118,8 @@ object AccountHelper {
                     dialog.dismissSafe()
                 }
             } else {
-                // No lock PIN set, proceed to update the account
+                // The account was NOT locked, OR the PIN was just changed/added (which already required verification).
+                // proceed to update the account without asking for the PIN again.
                 accountEditCallback.invoke(currentEditAccount)
                 dialog.dismissSafe()
             }

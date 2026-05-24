@@ -31,6 +31,12 @@ import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.VideoWatchState
 import com.lagradost.cloudstream3.utils.AppContextUtils.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
 import java.util.GregorianCalendar
@@ -74,6 +80,22 @@ class UserPreferenceDelegate<T : Any>(
 }
 
 object DataStoreHelper {
+    private var syncJob: Job? = null
+
+    private fun triggerGoogleDriveSync() {
+        val ctx = context
+        if (ctx != null && !AccountManager.firebaseApi.isSyncActive) {
+            val sp = androidx.preference.PreferenceManager.getDefaultSharedPreferences(ctx)
+            if (sp.getBoolean("firebase_auto_sync_key", true)) {
+                syncJob?.cancel()
+                syncJob = GlobalScope.launch(Dispatchers.IO) {
+                    delay(5000L) // 5 second debounce
+                    AccountManager.firebaseApi.syncLocalToFirestore(ctx)
+                }
+            }
+        }
+    }
+
     // be aware, don't change the index of these as Account uses the index for the art
     val profileImages = arrayOf(
         R.drawable.profile_bg_dark_blue,
@@ -233,8 +255,8 @@ object DataStoreHelper {
     }
 
     data class PosDur(
-        @JsonProperty("position") val position: Long,
-        @JsonProperty("duration") val duration: Long
+        @JsonProperty("position") val position: Long = 0L,
+        @JsonProperty("duration") val duration: Long = 0L
     )
 
     fun PosDur.fixVisual(): PosDur {
@@ -284,16 +306,16 @@ object DataStoreHelper {
     }
 
     data class SubscribedData(
-        @JsonProperty("subscribedTime") val subscribedTime: Long,
-        @JsonProperty("lastSeenEpisodeCount") val lastSeenEpisodeCount: Map<DubStatus, Int?>,
-        override var id: Int?,
-        override val latestUpdatedTime: Long,
-        override val name: String,
-        override val url: String,
-        override val apiName: String,
-        override var type: TvType?,
-        override var posterUrl: String?,
-        override val year: Int?,
+        @JsonProperty("subscribedTime") val subscribedTime: Long = 0L,
+        @JsonProperty("lastSeenEpisodeCount") val lastSeenEpisodeCount: Map<DubStatus, Int?> = emptyMap(),
+        override var id: Int? = null,
+        override val latestUpdatedTime: Long = 0L,
+        override val name: String = "",
+        override val url: String = "",
+        override val apiName: String = "",
+        override var type: TvType? = null,
+        override var posterUrl: String? = null,
+        override val year: Int? = null,
         override val syncData: Map<String, String>? = null,
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null,
@@ -340,15 +362,15 @@ object DataStoreHelper {
     }
 
     data class BookmarkedData(
-        @JsonProperty("bookmarkedTime") val bookmarkedTime: Long,
-        override var id: Int?,
-        override val latestUpdatedTime: Long,
-        override val name: String,
-        override val url: String,
-        override val apiName: String,
-        override var type: TvType?,
-        override var posterUrl: String?,
-        override val year: Int?,
+        @JsonProperty("bookmarkedTime") val bookmarkedTime: Long = 0L,
+        override var id: Int? = null,
+        override val latestUpdatedTime: Long = 0L,
+        override val name: String = "",
+        override val url: String = "",
+        override val apiName: String = "",
+        override var type: TvType? = null,
+        override var posterUrl: String? = null,
+        override val year: Int? = null,
         override val syncData: Map<String, String>? = null,
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null,
@@ -393,15 +415,15 @@ object DataStoreHelper {
     }
 
     data class FavoritesData(
-        @JsonProperty("favoritesTime") val favoritesTime: Long,
-        override var id: Int?,
-        override val latestUpdatedTime: Long,
-        override val name: String,
-        override val url: String,
-        override val apiName: String,
-        override var type: TvType?,
-        override var posterUrl: String?,
-        override val year: Int?,
+        @JsonProperty("favoritesTime") val favoritesTime: Long = 0L,
+        override var id: Int? = null,
+        override val latestUpdatedTime: Long = 0L,
+        override val name: String = "",
+        override val url: String = "",
+        override val apiName: String = "",
+        override var type: TvType? = null,
+        override var posterUrl: String? = null,
+        override val year: Int? = null,
         override val syncData: Map<String, String>? = null,
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null,
@@ -446,17 +468,17 @@ object DataStoreHelper {
     }
 
     data class ResumeWatchingResult(
-        @JsonProperty("name") override val name: String,
-        @JsonProperty("url") override val url: String,
-        @JsonProperty("apiName") override val apiName: String,
+        @JsonProperty("name") override val name: String = "",
+        @JsonProperty("url") override val url: String = "",
+        @JsonProperty("apiName") override val apiName: String = "",
         @JsonProperty("type") override var type: TvType? = null,
-        @JsonProperty("posterUrl") override var posterUrl: String?,
-        @JsonProperty("watchPos") val watchPos: PosDur?,
-        @JsonProperty("id") override var id: Int?,
-        @JsonProperty("parentId") val parentId: Int?,
-        @JsonProperty("episode") val episode: Int?,
-        @JsonProperty("season") val season: Int?,
-        @JsonProperty("isFromDownload") val isFromDownload: Boolean,
+        @JsonProperty("posterUrl") override var posterUrl: String? = null,
+        @JsonProperty("watchPos") val watchPos: PosDur? = null,
+        @JsonProperty("id") override var id: Int? = null,
+        @JsonProperty("parentId") val parentId: Int? = null,
+        @JsonProperty("episode") val episode: Int? = null,
+        @JsonProperty("season") val season: Int? = null,
+        @JsonProperty("isFromDownload") val isFromDownload: Boolean = false,
         @JsonProperty("quality") override var quality: SearchQuality? = null,
         @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
         @JsonProperty("score") override var score: Score? = null,
@@ -476,6 +498,7 @@ object DataStoreHelper {
     fun deleteAllResumeStateIds() {
         val folder = "$currentAccount/$RESULT_RESUME_WATCHING"
         removeKeys(folder)
+        triggerGoogleDriveSync()
     }
 
     fun deleteBookmarkedData(id: Int?) {
@@ -483,6 +506,7 @@ object DataStoreHelper {
         AccountManager.localListApi.requireLibraryRefresh = true
         removeKey("$currentAccount/$RESULT_WATCH_STATE", id.toString())
         removeKey("$currentAccount/$RESULT_WATCH_STATE_DATA", id.toString())
+        triggerGoogleDriveSync()
     }
 
     fun getAllResumeStateIds(): List<Int>? {
@@ -539,6 +563,7 @@ object DataStoreHelper {
                 isFromDownload
             )
         )
+        triggerGoogleDriveSync()
     }
 
     private fun removeLastWatchedOld(parentId: Int?) {
@@ -549,6 +574,7 @@ object DataStoreHelper {
     fun removeLastWatched(parentId: Int?) {
         if (parentId == null) return
         removeKey("$currentAccount/$RESULT_RESUME_WATCHING", parentId.toString())
+        triggerGoogleDriveSync()
     }
 
     fun getLastWatched(id: Int?): DownloadObjects.ResumeWatching? {
@@ -571,6 +597,7 @@ object DataStoreHelper {
         if (id == null) return
         setKey("$currentAccount/$RESULT_WATCH_STATE_DATA", id.toString(), data)
         AccountManager.localListApi.requireLibraryRefresh = true
+        triggerGoogleDriveSync()
     }
 
     fun getBookmarkedData(id: Int?): BookmarkedData? {
@@ -672,10 +699,12 @@ object DataStoreHelper {
             when (val newMeta = currentEpisode) {
                 is ResultEpisode -> {
                     removeLastWatched(newMeta.parentId)
+                    setResultWatchState(newMeta.parentId, WatchType.COMPLETED.internalId)
                 }
 
                 is ExtractorUri -> {
                     removeLastWatched(newMeta.parentId)
+                    setResultWatchState(newMeta.parentId, WatchType.COMPLETED.internalId)
                 }
             }
         } else {

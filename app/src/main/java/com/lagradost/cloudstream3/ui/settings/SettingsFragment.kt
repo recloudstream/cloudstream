@@ -19,6 +19,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthRepo
+import com.lagradost.cloudstream3.syncproviders.providers.FirebaseSyncManager
 import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.errorProfilePic
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
@@ -187,8 +188,38 @@ class SettingsFragment : BaseFragment<MainSettingsBinding>(
         ${VideoDownloadManager.downloadProgressEvent.size}") **/
 
         fun hasProfilePictureFromAccountManagers(accountManagers: Array<AuthRepo>): Boolean {
-            for (syncApi in accountManagers) {
-                val login = syncApi.authUser()
+            for (syncRepo in accountManagers) {
+                if (syncRepo.api is FirebaseSyncManager) {
+                    val firebaseApi = syncRepo.api as FirebaseSyncManager
+                    val profile = firebaseApi.currentProfile.value
+                    if (profile != null) {
+                        val fallback = firebaseApi.auth.currentUser?.photoUrl?.toString()
+                        val pic = profile.avatarUrl.takeIf { !it.isNullOrBlank() } ?: fallback
+                        if (pic != null) {
+                            binding.settingsProfilePic.let { imageView ->
+                                if (pic.startsWith("avatar_")) {
+                                    val ctx = imageView.context
+                                    val resId = ctx.resources.getIdentifier(pic, "drawable", ctx.packageName)
+                                    if (resId != 0) {
+                                        imageView.setImageResource(resId)
+                                    } else {
+                                        imageView.loadImage(pic) {
+                                            error { getImageFromDrawable(context ?: return@error null, errorProfilePic) }
+                                        }
+                                    }
+                                } else {
+                                    imageView.loadImage(pic) {
+                                        error { getImageFromDrawable(context ?: return@error null, errorProfilePic) }
+                                    }
+                                }
+                            }
+                            binding.settingsProfileText.text = profile.name
+                            return true
+                        }
+                    }
+                }
+                
+                val login = syncRepo.authUser()
                 val pic = login?.profilePicture ?: continue
 
                 binding.settingsProfilePic.let { imageView ->

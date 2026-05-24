@@ -1,0 +1,62 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <!-- Background Circle -->
+    <path
+        android:pathData="M50,50m-45,0a45,45 0,1 1,90,0a45,45 0,1 1,-90,0"
+        android:fillColor="#FCE4EC"/>
+    <!-- Left Ear Outer -->
+    <path
+        android:pathData="M24,48 L14,20 L40,36 Z"
+        android:fillColor="#454B54"/>
+    <!-- Left Ear Inner -->
+    <path
+        android:pathData="M25,44 L18,26 L35,37 Z"
+        android:fillColor="#FF8A80"/>
+    <!-- Right Ear Outer -->
+    <path
+        android:pathData="M76,48 L86,20 L60,36 Z"
+        android:fillColor="#454B54"/>
+    <!-- Right Ear Inner -->
+    <path
+        android:pathData="M75,44 L82,26 L65,37 Z"
+        android:fillColor="#FF8A80"/>
+    <!-- Head -->
+    <path
+        android:pathData="M50,58m-26,0a26,26 0,1 1,52,0a26,26 0,1 1,-52,0"
+        android:fillColor="#454B54"/>
+    <!-- Left Eye -->
+    <path
+        android:pathData="M39,54m-3.5,0a3.5,3.5 0,1 1,7,0a3.5,3.5 0,1 1,-7,0"
+        android:fillColor="#FFFFFF"/>
+    <!-- Left Pupil -->
+    <path
+        android:pathData="M39,54m-1.5,0a1.5,1.5 0,1 1,3,0a1.5,1.5 0,1 1,-3,0"
+        android:fillColor="#2D3139"/>
+    <!-- Right Eye -->
+    <path
+        android:pathData="M61,54m-3.5,0a3.5,3.5 0,1 1,7,0a3.5,3.5 0,1 1,-7,0"
+        android:fillColor="#FFFFFF"/>
+    <!-- Right Pupil -->
+    <path
+        android:pathData="M61,54m-1.5,0a1.5,1.5 0,1 1,3,0a1.5,1.5 0,1 1,-3,0"
+        android:fillColor="#2D3139"/>
+    <!-- Snout White -->
+    <path
+        android:pathData="M47,63 C47,61 49,60 50,60 C51,60 53,61 53,63 C53,64 51,65 50,65 C49,65 47,64 47,63 Z"
+        android:fillColor="#FFFFFF"/>
+    <!-- Tiny Pink Nose -->
+    <path
+        android:pathData="M50,61m-1.5,0a1.5,1 0,1 1,3,0a1.5,1 0,1 1,-3,0"
+        android:fillColor="#FF8A80"/>
+    <!-- Blush Left -->
+    <path
+        android:pathData="M29,62m-2.5,0a2.5,2.5 0,1 1,5,0a2.5,2.5 0,1 1,-5,0"
+        android:fillColor="#FF8A80"/>
+    <!-- Blush Right -->
+    <path
+        android:pathData="M71,62m-2.5,0a2.5,2.5 0,1 1,5,0a2.5,2.5 0,1 1,-5,0"
+        android:fillColor="#FF8A80"/>
+</vector>
