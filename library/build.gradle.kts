@@ -56,6 +56,7 @@ kotlin {
             implementation(libs.annotation) // Annotations
             implementation(libs.nicehttp) // HTTP Lib
             implementation(libs.jackson.module.kotlin) // JSON Parser
+            implementation(libs.kotlinx.atomicfu)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.fuzzywuzzy) // Match Extractors
             implementation(libs.jsoup) // HTML Parser

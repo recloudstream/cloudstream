@@ -219,7 +219,7 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
         }
 
         fun showAdd() {
-            val providers = synchronized(allProviders) { allProviders.distinctBy { it.javaClass }.sortedBy { it.name } }
+            val providers = allProviders.distinctBy { it::class }.sortedBy { it.name }
             activity?.showDialog(
                 providers.map { "${it.name} (${it.mainUrl})" },
                 -1,
