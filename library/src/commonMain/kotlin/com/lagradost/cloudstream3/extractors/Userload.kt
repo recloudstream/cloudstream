@@ -3,9 +3,6 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
-import org.mozilla.javascript.Context
-import org.mozilla.javascript.EvaluatorException
-import org.mozilla.javascript.Scriptable
 
 open class Userload : ExtractorApi() {
     override var name = "Userload"
@@ -32,17 +29,8 @@ open class Userload : ExtractorApi() {
         return array
     }
 
-    private fun evaluateMath(mathExpression : String): String {
-        val rhino = Context.enter()
-        rhino.initStandardObjects()
-        rhino.setInterpretedMode(true)
-        val scope: Scriptable = rhino.initStandardObjects()
-        return try {
-            rhino.evaluateString(scope, "eval($mathExpression)", "JavaScript", 1, null).toString()
-        }
-        catch (e: EvaluatorException){
-            ""
-        }
+    private fun evaluateMath(mathExpression: String): String {
+        return jsValueToString(evalJs("eval($mathExpression)"))
     }
 
     private fun decodeVideoJs(text: String): List<String> {
@@ -68,22 +56,16 @@ open class Userload : ExtractorApi() {
             subchar.add(splitInput(v).map { evaluateMath(it).substringBefore(".") }.toString().filter { it.isDigit() })
         }
         var txtresult = ""
-        subchar.forEach{
+        subchar.forEach {
             txtresult = txtresult.plus(Char(it.toInt(8)))
         }
         val val1 = Regex(""""morocco="((.|\\n)*?)"&mycountry="""").find(txtresult)?.groups?.get(1)?.value.toString().drop(1).dropLast(1)
         val val2 = txtresult.substringAfter("""&mycountry="+""").substringBefore(")")
 
-        return listOf(
-            val1,
-            val2
-        )
-
-
+        return listOf(val1, val2)
     }
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
-
         val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()
 
         val response = app.get(url).text
