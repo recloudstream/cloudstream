@@ -17,17 +17,17 @@ CC_HEADER_RE = re.compile(r'^([a-z]+)(\([^)]*\))?(!)?:(.*)$')
 BREAKING_BODY_RE = re.compile(r'^BREAKING\s+CHANGES?:\s+', re.MULTILINE)
 
 CC_TYPES: dict[str, str] = {
-    'feat':     'Features',
-    'fix':      'Bug Fixes',
-    'docs':     'Documentation',
-    'style':    'Styles',
+    'feat': 'Features',
+    'fix': 'Bug Fixes',
+    'docs': 'Documentation',
+    'style': 'Styles',
     'refactor': 'Code Refactoring',
-    'perf':     'Performance Improvements',
-    'test':     'Tests',
-    'build':    'Builds',
-    'ci':       'Continuous Integration',
-    'chore':    'Chores',
-    'revert':   'Reverts',
+    'perf': 'Performance Improvements',
+    'test': 'Tests',
+    'build': 'Builds',
+    'ci': 'Continuous Integration',
+    'chore': 'Chores',
+    'revert': 'Reverts',
 }
 
 
