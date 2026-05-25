@@ -439,8 +439,8 @@
     <!--
     Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
     see: 
-	https://en.wikipedia.org/w/index.php?title=Pangram&oldid=225849300
-	https://en.wikipedia.org/wiki/The_quick_brown_fox_jumps_over_the_lazy_dog
+        https://en.wikipedia.org/w/index.php?title=Pangram&oldid=225849300
+        https://en.wikipedia.org/wiki/The_quick_brown_fox_jumps_over_the_lazy_dog
     -->
     <string name="subtitles_example_text">The quick brown fox jumps over the lazy dog</string>
     <string name="recommended">Recommended</string>
@@ -572,6 +572,8 @@
     <string name="action_mark_as_watched">Mark as watched</string>
     <string name="action_remove_from_watched">Remove from watched</string>
     <string name="confirm_exit_dialog">Are you sure you want to exit\?</string>
+    <string name="exit_player_confirm_title">Exit Player?</string>
+    <string name="exit_player_confirm_message">Your buffered stream will be lost. Are you sure you want to exit?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="ok">OK</string>

@@ -442,6 +442,26 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         }
     }
 
+    private var exitConfirmDialog: AlertDialog? = null
+
+    private fun showExitConfirmDialog() {
+        val act = activity ?: return
+        if (exitConfirmDialog?.isShowing == true) return
+        if (act.isFinishing || act.isDestroyed) return
+        exitConfirmDialog = AlertDialog.Builder(act, R.style.AlertDialogCustom)
+            .setTitle(R.string.exit_player_confirm_title)
+            .setMessage(R.string.exit_player_confirm_message)
+            .setPositiveButton(R.string.yes) { _, _ ->
+                activity?.popCurrentPage("FullScreenPlayer")
+            }
+            .setNegativeButton(R.string.no, null)
+            .setOnDismissListener {
+                exitConfirmDialog = null
+                activity?.hideSystemUI()
+            }
+            .show()
+    }
+
     private fun setupKeyEventListener() {
         keyEventListener = { (event, hasNavigated) ->
             when {
@@ -473,7 +493,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                 // netflix capture back and hide ~monke
                 onClickChange()
             } else {
-                activity?.popCurrentPage("FullScreenPlayer")
+                showExitConfirmDialog()
             }
         }
         playerHostView?.requestUpdateBrightnessOverlayOnNextLayout()

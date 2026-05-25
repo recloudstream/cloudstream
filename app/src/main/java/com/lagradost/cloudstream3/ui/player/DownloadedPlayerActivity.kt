@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
@@ -60,7 +61,28 @@ class DownloadedPlayerActivity : AppCompatActivity() {
         Log.i(TAG, "onCreate")
 
         handleIntent(intent)
-        attachBackPressedCallback("DownloadedPlayerActivity") { finish() }
+        attachBackPressedCallback("DownloadedPlayerActivity") {
+            if (exitDialog?.isShowing == true) {
+                exitDialog?.dismiss()
+                return@attachBackPressedCallback
+            }
+            showExitConfirmDialog()
+        }
+    }
+
+    private var exitDialog: AlertDialog? = null
+
+    private fun showExitConfirmDialog() {
+        if (isFinishing || isDestroyed) return
+        exitDialog = AlertDialog.Builder(this, R.style.AlertDialogCustom)
+            .setTitle(R.string.exit_player_confirm_title)
+            .setMessage(R.string.exit_player_confirm_message)
+            .setPositiveButton(R.string.yes) { _, _ ->
+                finish()
+            }
+            .setNegativeButton(R.string.no, null)
+            .setOnDismissListener { exitDialog = null }
+            .show()
     }
 
     private fun handleIntent(intent: Intent) {
