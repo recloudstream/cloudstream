@@ -529,7 +529,12 @@ private class Parser(private val lex: Lexer) {
         return when (tok.type) {
             TT.NUMBER -> {
                 lex.consume()
-                NumLit(tok.raw.toDoubleOrNull() ?: tok.raw.toLong(16).toDouble())
+                NumLit(
+                    tok.raw.toDoubleOrNull()
+                        ?: if (tok.raw.startsWith("0x") || tok.raw.startsWith("0X"))
+                            tok.raw.drop(2).toLong(16).toDouble()
+                    else Double.NaN
+                )
             }
             TT.STRING -> { lex.consume(); StrLit(tok.raw) }
             TT.LPAREN -> {
@@ -1155,7 +1160,9 @@ class JsInterpreter {
                     else JsList(result.groupValues.map { it as Any? }.toMutableList())
                 } catch (_: Exception) { null }
             }
-            else -> Unit
+            else -> key.toIntOrNull()?.let {
+                if (it >= 0 && it < obj.length) obj[it].toString() else Unit 
+            } ?: Unit
         }
         is Double -> when (key) {
             "toString" -> nativeFn { args ->
