@@ -315,10 +315,23 @@ object SubtitleHelper {
         val flagOffset = 0x1F1E6  // regional indicator "[A]"
         val offset = flagOffset - asciiOffset
 
-        val firstChar: Int = Character.codePointAt(countryLetters, 0) + offset
-        val secondChar: Int = Character.codePointAt(countryLetters, 1) + offset
+        /**
+         * Unicode surrogate pairs encode code points above U+FFFF (outside the Basic Multilingual Plane).
+         * The code point is offset by 0x10000, then split into two 10-bit halves:
+         * high surrogate: upper 10 bits, biased into the range 0xD800-0xDBFF
+         * low surrogate: lower 10 bits (masked with 0x3FF), biased into the range 0xDC00-0xDFFF
+         */
+        fun toSurrogatePair(codePoint: Int): String {
+            val high = ((codePoint - 0x10000) shr 10) + 0xD800
+            val low  = ((codePoint - 0x10000) and 0x3FF) + 0xDC00
+            return "${high.toChar()}${low.toChar()}"
+        }
 
-        return String(Character.toChars(firstChar)) + String(Character.toChars(secondChar))
+        val upperLetters = countryLetters.uppercase()
+        val first  = upperLetters[0].code + offset
+        val second = upperLetters[1].code + offset
+
+        return toSurrogatePair(first) + toSurrogatePair(second)
     }
 
     // when (langTag = country) or (langTag contains country)

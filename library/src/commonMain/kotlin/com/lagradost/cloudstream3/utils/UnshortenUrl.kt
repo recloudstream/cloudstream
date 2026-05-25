@@ -2,9 +2,9 @@ package com.lagradost.cloudstream3.utils
 
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.base64Decode
+import com.lagradost.cloudstream3.utils.StringUtils.decodeUri
 import com.lagradost.nicehttp.NiceResponse
 import java.net.URI
-import java.net.URLDecoder
 
 // Code heavily based on unshortenit.py form kodiondemand /addon
 
@@ -189,7 +189,7 @@ object ShortLink {
     }
 
     fun unshortenDavisonbarker(uri: String): String {
-        return URLDecoder.decode(uri.substringAfter("dest="), "UTF-8")
+        return uri.substringAfter("dest=").decodeUri()
     }
 
     suspend fun unshortenIsecure(uri: String): String {
