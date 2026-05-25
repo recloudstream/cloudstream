@@ -79,8 +79,12 @@ class DownloadedPlayerActivity : AppCompatActivity() {
             val item = if (cd != null && cd.itemCount > 0) cd.getItemAt(0) else null
             val url = item?.text?.toString()
             when {
+                item?.uri != null && item.uri.scheme in listOf("http", "https") ->
+                    playLink(this, item.uri.toString())
                 item?.uri != null -> playUri(this, item.uri)
                 url != null -> playLink(this, url)
+                data != null && data.scheme in listOf("http", "https") ->
+                    playLink(this, data.toString())
                 data != null -> playUri(this, data)
                 extraText != null -> playLink(this, extraText)
                 else -> { finish(); return }
