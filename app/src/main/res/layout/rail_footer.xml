@@ -5,6 +5,7 @@
     android:id="@+id/nav_footer_root"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:layout_gravity="bottom|center_horizontal"
     android:layout_marginBottom="10dp"
     android:padding="1dp"
