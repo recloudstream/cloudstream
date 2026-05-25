@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
+import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.mvvm.logError
 import kotlin.math.*
 
@@ -41,12 +42,14 @@ import kotlin.math.*
  * Convert any JS runtime value to its JavaScript string representation.
  * Mirrors what JS `String(value)` would produce.
  */
+@Prerelease
 fun jsValueToString(v: Any?): String = toJsString(v)
 
 /**
  * Stateful JS execution context.  Keeps variables alive between [eval] calls,
  * mimicking the Rhino "scope" object that extensions used to hold on to.
  */
+@Prerelease
 class JsContext {
     private val interpreter = JsInterpreter()
 
@@ -64,6 +67,7 @@ class JsContext {
  * Evaluate [js] and return its last value.  Convenience wrapper for one-shot
  * evaluations, equivalent to the old `rhino.evaluateString(scope, js, ...)`.
  */
+@Prerelease
 fun evalJs(js: String): Any? = JsInterpreter().eval(js)
 
 private enum class TT {
