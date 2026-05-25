@@ -221,6 +221,8 @@ interface IPlayer {
 
     fun getSubtitleOffset(): Long // in ms
     fun setSubtitleOffset(offset: Long) // in ms
+    fun getSubtitleMultiplier(): Float
+    fun setSubtitleMultiplier(multiplier: Float)
 
     @AnyThread
     fun initCallbacks(
@@ -269,6 +271,7 @@ interface IPlayer {
     fun isActive(): Boolean
 
     fun getVideoTracks(): CurrentTracks
+    fun getVideoFrameRate(): Float?
 
     /**
      * Original video aspect ratio used for PiP mode

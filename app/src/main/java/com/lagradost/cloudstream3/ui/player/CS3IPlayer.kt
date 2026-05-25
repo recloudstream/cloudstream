@@ -459,6 +459,10 @@ class CS3IPlayer : IPlayer {
         )
     }
 
+    override fun getVideoFrameRate(): Float? {
+        return exoPlayer?.videoFormat?.frameRate
+    }
+
     override fun getVideoTracks(): CurrentTracks {
         val allTrackGroups = exoPlayer?.currentTracks?.groups ?: emptyList()
         val videoTracks = allTrackGroups.filter { it.type == TRACK_TYPE_VIDEO }
@@ -552,6 +556,19 @@ class CS3IPlayer : IPlayer {
 
     override fun getSubtitleOffset(): Long {
         return currentSubtitleOffset
+    }
+
+    override fun setSubtitleMultiplier(multiplier: Float) {
+        CustomDecoder.subtitleMultiplier = multiplier
+        if (currentTextRenderer?.state == STATE_ENABLED || currentTextRenderer?.state == STATE_STARTED) {
+            exoPlayer?.currentPosition?.also { pos ->
+                currentTextRenderer?.resetPosition(pos, false)
+            }
+        }
+    }
+
+    override fun getSubtitleMultiplier(): Float {
+        return CustomDecoder.subtitleMultiplier
     }
 
     override fun getSubtitleCues(): List<SubtitleCue> {

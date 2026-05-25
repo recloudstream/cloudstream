@@ -598,6 +598,33 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                 changeBy(-buttonChangeMore)
             }
 
+            // Framerate Multiplier & Online Subs
+            val videoFps = player.getVideoFrameRate() ?: 24.0f
+            subtitleMultiplierInput?.text = Editable.Factory.getInstance()?.newEditable(player.getSubtitleMultiplier().toString())
+            
+            subtitleMultiplierInput?.doOnTextChanged { text, _, _, _ ->
+                text?.toString()?.toFloatOrNull()?.let { mult ->
+                    player.setSubtitleMultiplier(mult)
+                }
+            }
+            
+            subtitleMultiplierAuto25?.setOnClickListener {
+                val newMult = videoFps / 25.0f
+                subtitleMultiplierInput?.text = Editable.Factory.getInstance()?.newEditable(newMult.toString())
+            }
+
+            subtitleMultiplierAuto24?.setOnClickListener {
+                val newMult = videoFps / 24.0f
+                subtitleMultiplierInput?.text = Editable.Factory.getInstance()?.newEditable(newMult.toString())
+            }
+
+            subtitleOnlineBtt?.setOnClickListener {
+                dialog.dismissSafe(activity)
+                if (subsProvidersIsActive) {
+                    openOnlineSubPicker(ctx, null) {}
+                }
+            }
+
             dialog.setOnDismissListener {
                 selectSubtitlesDialog = null
                 activity?.hideSystemUI()

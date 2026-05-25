@@ -143,6 +143,51 @@
                     tools:ignore="ContentDescription" />
             </LinearLayout>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:text="Framerate Multiplier"
+                android:textColor="?attr/grayTextColor" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/subtitle_multiplier_auto_25"
+                    style="@style/BlackButton"
+                    android:layout_width="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:text="Fix 25fps -> Video" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/subtitle_multiplier_auto_24"
+                    style="@style/BlackButton"
+                    android:layout_width="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:text="Fix 24fps -> Video" />
+
+                <EditText
+                    android:id="@+id/subtitle_multiplier_input"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="1.0"
+                    android:inputType="numberDecimal" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/subtitle_online_btt"
+                style="@style/WhiteButton"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:text="Search Online Subtitles" />
 
         </LinearLayout>
 

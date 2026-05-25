@@ -64,6 +64,7 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
 
         /** Subtitle offset in milliseconds */
         var subtitleOffset: Long = 0
+        var subtitleMultiplier: Float = 1.0f
         private const val UTF_8 = "UTF-8"
         private const val TAG = "CustomDecoder"
         private var overrideEncoding: String? = null
@@ -308,8 +309,8 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
             val updatedCues =
                 CuesWithTiming(
                     newCue.cues,
-                    newCue.startTimeUs - subtitleOffset.times(1000),
-                    newCue.durationUs
+                    (newCue.startTimeUs * subtitleMultiplier).toLong() - subtitleOffset.times(1000),
+                    (newCue.durationUs * subtitleMultiplier).toLong()
                 )
 
             output.accept(updatedCues)
