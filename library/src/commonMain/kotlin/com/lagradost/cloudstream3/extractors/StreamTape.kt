@@ -3,8 +3,8 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.JsContext
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.evalJs
 import com.lagradost.cloudstream3.utils.newExtractorLink
 
 class Watchadsontape : StreamTape() {
@@ -33,11 +33,8 @@ open class StreamTape : ExtractorApi() {
             val result =
                 this.document.select("script").firstOrNull { it.html().contains("botlink').innerHTML") }
                     ?.html()?.lines()?.firstOrNull { it.contains("botlink').innerHTML") }?.let {
-                        val scriptContent =
-                            it.substringAfter(").innerHTML").replaceFirst("=", "var url =")
-                        val ctx = JsContext()
-                        ctx.eval(scriptContent)
-                        ctx["url"]?.toString() ?: ""
+                        val scriptContent = it.substringAfter(").innerHTML").replaceFirst("=", "var url =")
+                        evalJs(scriptContent, "url")?.toString()
                     }
 
             if (!result.isNullOrEmpty()) {

@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
+import kotlin.math.abs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -8,12 +9,12 @@ import kotlin.test.assertFalse
 
 class JsInterpreterTest {
 
-    private fun num(code: String) = (evalJs(code) as? Double) ?: Double.NaN
-    private fun str(code: String) = jsValueToString(evalJs(code))
-    private fun bool(code: String) = evalJs(code) as? Boolean ?: false
+    private fun num(code: String, variable: String? = null) = (evalJs(code, variable) as? Double) ?: Double.NaN
+    private fun str(code: String, variable: String? = null) = jsValueToString(evalJs(code, variable))
+    private fun bool(code: String, variable: String? = null) = evalJs(code, variable) as? Boolean ?: false
 
     private fun assertApprox(expected: Double, actual: Double, tol: Double = 1e-9) {
-        assertTrue(kotlin.math.abs(actual - expected) <= tol, "Expected $expected ± $tol but was $actual")
+        assertTrue(abs(actual - expected) <= tol, "Expected $expected ± $tol but was $actual")
     }
 
     @Test
@@ -726,7 +727,7 @@ class JsInterpreterTest {
     }
 
     @Test
-    fun urlExtraction() {
+    fun jsContextUrlExtractionPattern() {
         val scriptContent = "var url = '/e/abc123?t=' + (1000+337) + '&s=xyz'"
         val ctx = JsContext()
         ctx.eval(scriptContent)
@@ -747,6 +748,41 @@ class JsInterpreterTest {
     fun evaluateMathProducesCharCode() {
         val code = "eval(1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)"
         assertEquals(65.0, (evalJs(code) as? Double) ?: 0.0)
+    }
+
+    @Test
+    fun evalJsWithVariableReturnsNamedVar() {
+        assertEquals(42.0, num("var x = 42", "x"))
+    }
+
+    @Test
+    fun evalJsWithVariableAfterComputation() {
+        assertEquals(7.0, num("var x = 1 + 2 * 3", "x"))
+    }
+
+    @Test
+    fun evalJsWithVariableStringValue() {
+        assertEquals("https://example.com", str("var url = 'https://example.com'", "url"))
+    }
+
+    @Test
+    fun evalJsWithVariableNullValue() {
+        assertNull(evalJs("var x = null", "x"))
+    }
+
+    @Test
+    fun evalJsWithVariableReturnsNullForUndefined() {
+        assertNull(evalJs("var x = 42", "y"))
+    }
+
+    @Test
+    fun evalJsWithVariableUnitWhenNoVariable() {
+        assertEquals(Unit, evalJs("var x = 42"))
+    }
+
+    @Test
+    fun evalJsWithVariableAfterMultipleStatements() {
+        assertEquals(15.0, num("var x = 0; for(var i=1;i<=5;i++){x+=i}", "x"))
     }
 
     @Test
