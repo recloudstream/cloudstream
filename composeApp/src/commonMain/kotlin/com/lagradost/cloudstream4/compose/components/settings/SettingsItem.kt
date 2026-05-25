@@ -8,11 +8,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.lagradost.cloudstream4.compose.components.cloudStreamRipple
 import com.lagradost.cloudstream4.compose.components.tvFocusable
+import com.lagradost.cloudstream4.compose.icons.tune
 import com.lagradost.cloudstream4.compose.theme.CloudStreamTheme
+import com.lagradost.cloudstream4.generated.resources.Res
+import com.lagradost.cloudstream4.generated.resources.category_general
+import com.lagradost.cloudstream4.generated.resources.category_general_subtitle
 import com.lagradost.cloudstream4.utils.DeviceLayout
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun SettingsItem(
@@ -63,5 +69,42 @@ fun SettingsItem(
                 )
             }
         }
+    }
+}
+
+@Preview(name = "With icon and subtitle", showBackground = true, backgroundColor = 0xFF111111)
+@Composable
+private fun SettingsItemPreview() {
+    CloudStreamTheme {
+        SettingsItem(
+            title = stringResource(Res.string.category_general),
+            subtitle = stringResource(Res.string.category_general_subtitle),
+            icon = tune,
+            onClick = {},
+        )
+    }
+}
+
+@Preview(name = "Without icon", showBackground = true, backgroundColor = 0xFF111111)
+@Composable
+private fun SettingsItemNoIconPreview() {
+    CloudStreamTheme {
+        SettingsItem(
+            title = stringResource(Res.string.category_general),
+            subtitle = stringResource(Res.string.category_general_subtitle),
+            onClick = {},
+        )
+    }
+}
+
+@Preview(name = "Without subtitle", showBackground = true, backgroundColor = 0xFF111111)
+@Composable
+private fun SettingsItemNoSubtitlePreview() {
+    CloudStreamTheme {
+        SettingsItem(
+            title = stringResource(Res.string.category_general),
+            icon = tune,
+            onClick = {},
+        )
     }
 }

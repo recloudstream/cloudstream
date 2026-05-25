@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -80,5 +81,16 @@ fun ProfilePicture(
                 modifier = Modifier.fillMaxSize(),
             )
         }
+    }
+}
+
+@Preview(name = "Dark Blue", showBackground = true, backgroundColor = 0xFF111111)
+@Composable
+private fun ProfilePictureDarkBluePreview() {
+    CloudStreamTheme {
+        ProfilePicture(
+            profileImage = ProfileImage.DARK_BLUE,
+            size = 50.dp,
+        )
     }
 }

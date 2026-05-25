@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.lagradost.cloudstream4.compose.components.ProfileImage
 import com.lagradost.cloudstream4.compose.components.ProfilePicture
@@ -225,4 +226,25 @@ private fun VersionDot() {
         color = CloudStreamTheme.colors.onBackground.copy(alpha = 0.6f),
         style = MaterialTheme.typography.bodySmall,
     )
+}
+
+@Preview(name = "Dark", showBackground = true, backgroundColor = 0xFF111111) // Dark background
+@Preview(name = "Light", showBackground = true, backgroundColor = 0xFFFFFFFF) // Light background
+@Composable
+private fun SettingsScreenPreview() {
+    CloudStreamTheme {
+        SettingsScreen(
+            profile = SettingsProfileState(
+                name = "Default",
+                profileImage = ProfileImage.DARK_BLUE,
+            ),
+            version = SettingsVersionState(
+                appVersion = "1.0.0-PRE",
+                commitHash = "abc1234",
+                buildDate = "May 25, 2026 12:00:00 AM",
+            ),
+            onNavigate = {},
+            onVersionLongClick = {},
+        )
+    }
 }
