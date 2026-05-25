@@ -775,6 +775,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                     homeUpdateProgressBar.isIndeterminate = !isDownloading
                     if (isDownloading) {
                         homeUpdateProgressBar.progress = (percentage * 10000).toInt()
+                        homeUpdateProgressPercentage.isVisible = true
+                        homeUpdateProgressPercentage.text = "${(percentage * 100f).toInt()}%"
+                    } else {
+                        homeUpdateProgressPercentage.isVisible = false
                     }
                     homeUpdateProgressText.text = getString(
                         when (status) {

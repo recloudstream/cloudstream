@@ -305,12 +305,25 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
                     newCue.cues.map { it.text.toString() })
             )
 
+            // Fix precision loss bug for C.TIME_UNSET sentinel values
+            val scaledStartTimeUs = if (newCue.startTimeUs == C.TIME_UNSET) {
+                C.TIME_UNSET
+            } else {
+                (newCue.startTimeUs * subtitleMultiplier).toLong() - subtitleOffset.times(1000)
+            }
+
+            val scaledDurationUs = if (newCue.durationUs == C.TIME_UNSET) {
+                C.TIME_UNSET
+            } else {
+                (newCue.durationUs * subtitleMultiplier).toLong()
+            }
+
             // offset timing for the final
             val updatedCues =
                 CuesWithTiming(
                     newCue.cues,
-                    (newCue.startTimeUs * subtitleMultiplier).toLong() - subtitleOffset.times(1000),
-                    (newCue.durationUs * subtitleMultiplier).toLong()
+                    scaledStartTimeUs,
+                    scaledDurationUs
                 )
 
             output.accept(updatedCues)

@@ -260,27 +260,43 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:visibility="gone"
-        android:padding="10dp"
-        android:elevation="4dp"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
+        android:elevation="8dp"
+        android:gravity="center_vertical"
         android:layout_gravity="top"
         tools:visibility="visible">
+
         <TextView
             android:id="@+id/home_update_progress_text"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:text="@string/update_notification_downloading"
             android:textStyle="bold"
-            android:gravity="center"
-            android:paddingBottom="5dp" />
-        <ProgressBar
+            android:textSize="14sp"
+            android:layout_marginEnd="12dp" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/home_update_progress_bar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:max="10000"
-            android:progress="0" />
+            app:trackCornerRadius="4dp"
+            app:indicatorColor="@color/white"
+            app:trackColor="#40FFFFFF" />
+
+        <TextView
+            android:id="@+id/home_update_progress_percentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            tools:text="45%"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginStart="12dp" />
     </LinearLayout>
 </FrameLayout>
