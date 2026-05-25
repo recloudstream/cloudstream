@@ -724,25 +724,29 @@ object DataStoreHelper {
             }
         } else {
             // save resume
-            when (resumeMeta) {
-                is ResultEpisode -> {
-                    setLastWatched(
-                        resumeMeta.parentId,
-                        resumeMeta.id,
-                        resumeMeta.episode,
-                        resumeMeta.season,
-                        isFromDownload = false
-                    )
-                }
+            val shouldSaveResume = nextEp || position >= 300_000
+            
+            if (shouldSaveResume) {
+                when (resumeMeta) {
+                    is ResultEpisode -> {
+                        setLastWatched(
+                            resumeMeta.parentId,
+                            resumeMeta.id,
+                            resumeMeta.episode,
+                            resumeMeta.season,
+                            isFromDownload = false
+                        )
+                    }
 
-                is ExtractorUri -> {
-                    setLastWatched(
-                        resumeMeta.parentId,
-                        resumeMeta.id,
-                        resumeMeta.episode,
-                        resumeMeta.season,
-                        isFromDownload = true
-                    )
+                    is ExtractorUri -> {
+                        setLastWatched(
+                            resumeMeta.parentId,
+                            resumeMeta.id,
+                            resumeMeta.episode,
+                            resumeMeta.season,
+                            isFromDownload = true
+                        )
+                    }
                 }
             }
         }

@@ -23,6 +23,8 @@ import androidx.core.net.toUri
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.delay
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -760,6 +762,35 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             homeMasterRecycler.adapter = homeMasterAdapter
 
             homeApiFab.isVisible = isLayout(PHONE)
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                com.lagradost.cloudstream3.services.PackageInstallerService.updateProgressFlow.collect { progress ->
+                    if (progress == null) {
+                        homeUpdateProgressContainer.isVisible = false
+                        return@collect
+                    }
+                    val (percentage, status) = progress
+                    homeUpdateProgressContainer.isVisible = true
+                    val isDownloading = status == com.lagradost.cloudstream3.utils.ApkInstaller.InstallProgressStatus.Downloading
+                    homeUpdateProgressBar.isIndeterminate = !isDownloading
+                    if (isDownloading) {
+                        homeUpdateProgressBar.progress = (percentage * 10000).toInt()
+                    }
+                    homeUpdateProgressText.text = getString(
+                        when (status) {
+                            com.lagradost.cloudstream3.utils.ApkInstaller.InstallProgressStatus.Preparing,
+                            com.lagradost.cloudstream3.utils.ApkInstaller.InstallProgressStatus.Downloading -> R.string.update_notification_downloading
+                            com.lagradost.cloudstream3.utils.ApkInstaller.InstallProgressStatus.Installing -> R.string.update_notification_installing
+                            com.lagradost.cloudstream3.utils.ApkInstaller.InstallProgressStatus.Failed -> R.string.update_notification_failed
+                        }
+                    )
+                    
+                    if (status == com.lagradost.cloudstream3.utils.ApkInstaller.InstallProgressStatus.Failed) {
+                        delay(5000)
+                        com.lagradost.cloudstream3.services.PackageInstallerService.updateProgressFlow.value = null
+                    }
+                }
+            }
 
             homePreviewReloadProvider.setOnClickListener {
                 homeViewModel.loadAndCancel(

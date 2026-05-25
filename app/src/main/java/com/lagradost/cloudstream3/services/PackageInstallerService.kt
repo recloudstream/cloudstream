@@ -22,6 +22,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.math.roundToInt
 
 class PackageInstallerService : Service() {
@@ -64,7 +65,7 @@ class PackageInstallerService : Service() {
 
             // Delete all old updates
             ioSafe {
-                val appUpdateName = "CloudStream"
+                val appUpdateName = "CloudStream Plus"
                 val appUpdateSuffix = "apk"
 
                 this@PackageInstallerService.cacheDir.listFiles()?.filter {
@@ -141,6 +142,8 @@ class PackageInstallerService : Service() {
         val id =
             if (state == ApkInstaller.InstallProgressStatus.Failed) UPDATE_NOTIFICATION_ID + 1 else UPDATE_NOTIFICATION_ID
         notificationManager.notify(id, newNotification)
+        
+        updateProgressFlow.value = Pair(percentage, state)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -177,6 +180,8 @@ class PackageInstallerService : Service() {
         const val UPDATE_CHANNEL_NAME = "App Updates"
         const val UPDATE_CHANNEL_DESCRIPTION = "App updates notification channel"
         const val UPDATE_NOTIFICATION_ID = -68454136 // Random unique
+        
+        val updateProgressFlow = MutableStateFlow<Pair<Float, ApkInstaller.InstallProgressStatus>?>(null)
 
         fun getIntent(
             context: Context,

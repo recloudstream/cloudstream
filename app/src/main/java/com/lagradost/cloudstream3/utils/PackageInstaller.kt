@@ -126,22 +126,8 @@ class ApkInstaller(private val service: PackageInstallerService) {
                 service, activeSession, installIntent, installFlags
             ).intentSender
 
-            // Use delayed installations on android 13 and only if "allow from unknown sources" is enabled
-            // if the app lacks installation permission it cannot ask for the permission when it's closed.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
-                context.packageManager.canRequestPackageInstalls()
-            ) {
-                // Save for later installation since it's more jarring to have the app exit abruptly
-                delayedInstaller = DelayedInstaller(session, intentSender)
-                main {
-                    // Use real toast since it should show even if app is exited
-                    Toast.makeText(context, R.string.delayed_update_notice, Toast.LENGTH_LONG)
-                        .show()
-                }
-            } else {
-                installProgressStatus.invoke(InstallProgressStatus.Installing)
-                session.commit(intentSender)
-            }
+            installProgressStatus.invoke(InstallProgressStatus.Installing)
+            session.commit(intentSender)
         } catch (e: Exception) {
             logError(e)
 

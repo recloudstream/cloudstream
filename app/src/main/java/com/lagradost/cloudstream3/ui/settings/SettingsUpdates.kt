@@ -327,7 +327,7 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
                 val isSuccess = AccountManager.firebaseApi.syncLocalToFirestore(requireContext())
                 withContext(Dispatchers.Main) {
                     if (isSuccess) {
-                        showToast("Sync completed successfully")
+                        // showToast("Sync completed successfully")
                     } else {
                         showToast("Sync failed")
                     }

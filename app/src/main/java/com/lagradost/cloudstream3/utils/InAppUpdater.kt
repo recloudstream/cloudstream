@@ -184,7 +184,7 @@ object InAppUpdater {
     private suspend fun Activity.downloadUpdate(url: String): Boolean {
         try {
             Log.d(LOG_TAG, "Downloading update: $url")
-            val appUpdateName = "CloudStream"
+            val appUpdateName = "CloudStream Plus"
             val appUpdateSuffix = "apk"
 
             // Delete all old updates
@@ -276,7 +276,7 @@ object InAppUpdater {
 
                 val builder = AlertDialog.Builder(this, R.style.AlertDialogCustom)
                 builder.setTitle(R.string.update)
-                builder.setMessage("There is an update available, version ${update.updateVersion}")
+                builder.setMessage("Update available: ${update.updateVersion}")
                 builder.apply {
                     setPositiveButton(R.string.update) { _, _ ->
                         // Forcefully start any delayed installations
@@ -326,7 +326,11 @@ object InAppUpdater {
                         }
                     }
 
-                    setNegativeButton(R.string.cancel) { _, _ -> }
+                    setNegativeButton(R.string.cancel) { _, _ -> 
+                        settingsManager.edit {
+                            putString(getString(R.string.skip_update_key), update.updateNodeId)
+                        }
+                    }
 
 
                 }
