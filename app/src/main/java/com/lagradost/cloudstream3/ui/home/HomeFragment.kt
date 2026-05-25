@@ -1,5 +1,7 @@
 package com.lagradost.cloudstream3.ui.home
 
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
@@ -29,6 +31,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
+import com.journeyapps.barcodescanner.ScanContract
+import com.journeyapps.barcodescanner.ScanIntentResult
+import com.journeyapps.barcodescanner.ScanOptions
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.AllLanguagesName
@@ -596,6 +601,89 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     private var currentApiName: String? = null
     private var toggleRandomButton = false
 
+    private val barcodeLauncher = registerForActivityResult(
+        ScanContract()
+    ) { result: ScanIntentResult ->
+        if (result.contents != null) {
+            submitPairingCode(result.contents)
+        }
+    }
+
+    private fun submitPairingCode(code: String) {
+        val ctx = context ?: return
+        var email = com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey<String>("firebase_email")
+        var password = com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey<String>("firebase_password")
+
+        kotlinx.coroutines.GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            try {
+                val user = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
+                if (password.isNullOrBlank() && user != null && user.email != null) {
+                    val generatedPassword = java.util.UUID.randomUUID().toString().replace("-", "") + "A1!"
+                    try {
+                        com.google.android.gms.tasks.Tasks.await(user.updatePassword(generatedPassword))
+                        com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey("firebase_password", generatedPassword)
+                        com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey("firebase_email", user.email)
+                        email = user.email
+                        password = generatedPassword
+                    } catch (e: Exception) {
+                        logError(e)
+                        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                            Toast.makeText(ctx, "Please log out and log back in to pair TV (Recent login required).", Toast.LENGTH_LONG).show()
+                        }
+                        return@launch
+                    }
+                }
+
+                if (email.isNullOrBlank() || password.isNullOrBlank()) {
+                    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                        Toast.makeText(ctx, "Please log in using email/password first to pair TV.", Toast.LENGTH_LONG).show()
+                    }
+                    return@launch
+                }
+
+                val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                val docRef = firestore.collection("pairing_codes").document(code)
+                val snapshot = com.google.android.gms.tasks.Tasks.await(docRef.get())
+
+                if (!snapshot.exists()) {
+                    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                        Toast.makeText(ctx, "Invalid or expired pairing code.", Toast.LENGTH_SHORT).show()
+                    }
+                    return@launch
+                }
+
+                val createdAt = snapshot.getLong("createdAt") ?: 0L
+                val status = snapshot.getString("status")
+
+                if (status != "pending" || System.currentTimeMillis() - createdAt > 5 * 60 * 1000) {
+                    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                        Toast.makeText(ctx, "Pairing code has expired or is already paired.", Toast.LENGTH_SHORT).show()
+                    }
+                    return@launch
+                }
+
+                val finalEmail = email
+                val finalPassword = password
+                val updateData = hashMapOf(
+                    "status" to "authorized",
+                    "email" to finalEmail,
+                    "password" to finalPassword
+                )
+                com.google.android.gms.tasks.Tasks.await(docRef.update(updateData as Map<String, Any>))
+
+                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                    Toast.makeText(ctx, "TV paired successfully!", Toast.LENGTH_LONG).show()
+                }
+
+            } catch (e: Exception) {
+                logError(e)
+                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                    Toast.makeText(ctx, "An error occurred during pairing.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var homeMasterAdapter: HomeParentItemAdapterPreview? = null
 
@@ -659,7 +747,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             }
 
             homeMasterAdapter = HomeParentItemAdapterPreview(
-                homeViewModel, accountViewModel
+                homeViewModel, accountViewModel, qrScannerCallback = {
+                    barcodeLauncher.launch(ScanOptions().apply {
+                        setDesiredBarcodeFormats(ScanOptions.QR_CODE)
+                        setPrompt("Scan TV QR Code")
+                        setBeepEnabled(false)
+                        setOrientationLocked(false)
+                    })
+                }
             )
             homeMasterRecycler.setRecycledViewPool(ParentItemAdapter.sharedPool)
             homeMasterRecycler.adapter = homeMasterAdapter

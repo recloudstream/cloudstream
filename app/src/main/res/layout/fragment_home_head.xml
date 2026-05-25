@@ -44,7 +44,7 @@
                 android:editTextColor="@color/white"
                 android:gravity="center_vertical"
                 android:iconifiedByDefault="true"
-                android:nextFocusRight="@id/home_head_profile_padding"
+                android:nextFocusRight="@id/home_qr_scanner_btn"
                 android:padding="0dp"
                 android:textColor="@color/white"
                 android:textColorHint="@color/white"
@@ -55,6 +55,19 @@
                 app:searchIcon="@drawable/search_icon"
                 tools:ignore="RtlSymmetry" />
 
+            <ImageView
+                android:id="@+id/home_qr_scanner_btn"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="@drawable/rounded_select_ripple"
+                android:padding="12dp"
+                android:src="@drawable/ic_baseline_qr_code_scanner_24"
+                android:contentDescription="Scan TV QR Code"
+                app:tint="@color/white" />
+
             <LinearLayout
                 android:id="@+id/home_head_profile_padding"
                 android:layout_width="50dp"
@@ -63,7 +76,7 @@
                 android:focusable="true"
                 android:foreground="@drawable/rounded_select_ripple"
                 android:gravity="center"
-                android:nextFocusLeft="@id/home_search"
+                android:nextFocusLeft="@id/home_qr_scanner_btn"
                 android:orientation="horizontal">
 
                 <androidx.cardview.widget.CardView

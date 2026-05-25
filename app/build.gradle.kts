@@ -248,6 +248,7 @@ dependencies {
     implementation(libs.palette.ktx) // Palette for Images -> Colors
     implementation(libs.tvprovider)
     implementation(libs.overlappingpanels) // Gestures
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0") // QR Scanner
     implementation(libs.biometric) // Fingerprint Authentication
     implementation(libs.previewseekbar.media3) // SeekBar Preview
     implementation(libs.qrcode.kotlin) // QR Code for PIN Auth on TV

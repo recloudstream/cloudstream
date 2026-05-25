@@ -302,7 +302,9 @@ class FirebaseSyncManager : AuthAPI() {
         // 2.5 Plugins
         val localPlugins = (PluginManager.getPluginsLocal() + PluginManager.getPluginsOnline()).map { it.internalName }
         val remotePlugins = remote.plugins
-        val mergedPlugins = (localPlugins + remotePlugins).distinct()
+        val deletedPlugins = getKey<Array<String>>("firebase_deleted_plugins")?.toList() ?: emptyList()
+        val mergedPlugins = (localPlugins + remotePlugins).distinct().filter { !deletedPlugins.contains(it) }
+        com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey("firebase_deleted_plugins")
 
         // 3. Bookmarks
         val localBookmarks = DataStoreHelper.getAllBookmarkedData()

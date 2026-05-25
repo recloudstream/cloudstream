@@ -800,7 +800,13 @@ object PluginManager {
         return try {
             if (File(file.absolutePath).delete()) {
                 unloadPlugin(file.absolutePath)
-                list.forEach { deletePluginData(it) }
+                list.forEach { 
+                    deletePluginData(it) 
+                    val deletedArray = getKey<Array<String>>("firebase_deleted_plugins") ?: emptyArray()
+                    if (!deletedArray.contains(it.internalName)) {
+                        setKey("firebase_deleted_plugins", deletedArray + it.internalName)
+                    }
+                }
                 return true
             }
             false

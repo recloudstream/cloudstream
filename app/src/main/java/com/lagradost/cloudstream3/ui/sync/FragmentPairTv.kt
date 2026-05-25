@@ -8,11 +8,14 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentPairTvBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.DataStore.getKey
+import kotlinx.coroutines.tasks.await
+import com.lagradost.cloudstream3.utils.DataStore.setKey
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.launch
 
@@ -48,18 +51,36 @@ class FragmentPairTv : Fragment() {
 
     private fun submitPairingCode(code: String) {
         val ctx = context ?: return
-        val email = ctx.getKey<String>("firebase_email")
-        val password = ctx.getKey<String>("firebase_password")
-
-        if (email.isNullOrBlank() || password.isNullOrBlank()) {
-            Toast.makeText(ctx, "Please log in using email/password first to pair TV.", Toast.LENGTH_LONG).show()
-            return
-        }
+        var email = ctx.getKey<String>("firebase_email")
+        var password = ctx.getKey<String>("firebase_password")
 
         setLoading(true)
 
         lifecycleScope.launch {
             try {
+                val user = FirebaseAuth.getInstance().currentUser
+                if (password.isNullOrBlank() && user != null && user.email != null) {
+                    val generatedPassword = java.util.UUID.randomUUID().toString().replace("-", "") + "A1!"
+                    try {
+                        user.updatePassword(generatedPassword).await()
+                        ctx.setKey("firebase_password", generatedPassword)
+                        ctx.setKey("firebase_email", user.email)
+                        email = user.email
+                        password = generatedPassword
+                    } catch (e: Exception) {
+                        logError(e)
+                        Toast.makeText(ctx, "Please log out and log back in to pair TV (Recent login required).", Toast.LENGTH_LONG).show()
+                        setLoading(false)
+                        return@launch
+                    }
+                }
+
+                if (email.isNullOrBlank() || password.isNullOrBlank()) {
+                    Toast.makeText(ctx, "Please log in using email/password first to pair TV.", Toast.LENGTH_LONG).show()
+                    setLoading(false)
+                    return@launch
+                }
+
                 val firestore = FirebaseFirestore.getInstance()
                 val docRef = firestore.collection("pairing_codes").document(code)
                 val snapshot = docRef.get().await()

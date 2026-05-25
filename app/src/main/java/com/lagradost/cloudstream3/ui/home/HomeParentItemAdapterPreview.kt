@@ -67,7 +67,8 @@ import androidx.navigation.findNavController
 
 class HomeParentItemAdapterPreview(
     private val viewModel: HomeViewModel,
-    private val accountViewModel: AccountViewModel
+    private val accountViewModel: AccountViewModel,
+    private val qrScannerCallback: (() -> Unit)? = null
 ) : ParentItemAdapter(
     id = "HomeParentItemAdapterPreview".hashCode(),
     clickCallback = {
@@ -107,7 +108,7 @@ class HomeParentItemAdapterPreview(
             )
         }
 
-        return HeaderViewHolder(binding, viewModel, accountViewModel)
+        return HeaderViewHolder(binding, viewModel, accountViewModel, qrScannerCallback)
     }
 
     override fun onBindHeader(holder: ViewHolderState<Bundle>) {
@@ -134,6 +135,7 @@ class HomeParentItemAdapterPreview(
         val binding: ViewBinding,
         val viewModel: HomeViewModel,
         accountViewModel: AccountViewModel,
+        val qrScannerCallback: (() -> Unit)? = null
     ) :
         ViewHolderState<Bundle>(binding) {
 
@@ -327,6 +329,8 @@ class HomeParentItemAdapterPreview(
         private val headProfilePic: ImageView? = itemView.findViewById(R.id.home_head_profile_pic)
         private val headProfilePicCard: View? =
             itemView.findViewById(R.id.home_head_profile_padding)
+
+        private val homeQrScannerBtn: View? = itemView.findViewById(R.id.home_qr_scanner_btn)
 
         private val alternateHeadProfilePic: ImageView? =
             itemView.findViewById(R.id.alternate_home_head_profile_pic)
@@ -586,6 +590,10 @@ class HomeParentItemAdapterPreview(
                 } else {
                     activity?.showAccountSelectLinear()
                 }
+            }
+
+            homeQrScannerBtn?.setOnClickListener {
+                qrScannerCallback?.invoke()
             }
 
             fun showAccountEditBox(context: Context): Boolean {
