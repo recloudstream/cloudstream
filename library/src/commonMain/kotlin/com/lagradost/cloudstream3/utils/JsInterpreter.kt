@@ -695,6 +695,7 @@ private class Scope(val parent: Scope? = null) {
         if (vars.containsKey(name)) this else parent?.findOwner(name)
 }
 
+@Prerelease
 class JsInterpreter {
     private val globalScope = Scope()
 
