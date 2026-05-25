@@ -34,7 +34,7 @@
     <string name="search_hint_site" formatted="true">Шукаць па %s…</string>
     <string name="speech_recognition_unavailable">Распазнаванне маўлення недаступна</string>
     <string name="begin_speaking">Пачніце размаўляць…</string>
-    <string name="no_data">Няма даных</string>
+    <string name="no_data">Няма дадзеных</string>
     <string name="episode_more_options_des">Больш параметраў</string>
     <string name="next_episode">Наступная серыя</string>
     <string name="result_tags">Жанры</string>
@@ -128,7 +128,7 @@
     <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Для карэктнай працы гэтага пастаўшчыка можа спатрэбіцца VPN</string>
     <string name="vpn_torrent">Гэты пастаўшчык — Torrent, рэкамендуецца VPN</string>
-    <string name="provider_info_meta">Вэб-сайт не пастаўляе метаданых, загрузіць відэа не ўдасца, калі на сайце яго няма.</string>
+    <string name="provider_info_meta">Вэб-сайт не пастаўляе метададзеных, загрузіць відэа не ўдасца, калі на сайце яго няма.</string>
     <string name="torrent_plot">Апісанне</string>
     <string name="normal_no_plot">Сюжэту не знойдзена</string>
     <string name="torrent_no_plot">Апісання не знойдзена</string>
@@ -159,12 +159,12 @@
     <string name="use_system_brightness_settings_des">Выкарыстоўваць сістэмную яркасць у прайгравальніку замест цёмнага накладання</string>
     <string name="episode_sync_settings">Абнаўляць працэс прагляду</string>
     <string name="episode_sync_settings_des">Аўтаматычна сінхранізаваць прагрэс бягучай серыі</string>
-    <string name="restore_settings">Аднавіць даныя з рэзервовай копіі</string>
-    <string name="backup_settings">Рэзервовае капіраванне даных</string>
+    <string name="restore_settings">Аднавіць дадзеныя з рэзервовай копіі</string>
+    <string name="backup_settings">Рэзервовае капіраванне дадзеных</string>
     <string name="backup_frequency">Частата рэзервовага капіравання</string>
     <string name="restore_success">Загружаны файл рэзервовай копіі</string>
-    <string name="restore_failed_format" formatted="true">Не ўдалося аднавіць даныя з файла %s</string>
-    <string name="backup_success">Даныя захаваны</string>
+    <string name="restore_failed_format" formatted="true">Не ўдалося аднавіць дадзеныя з файла %s</string>
+    <string name="backup_success">Дадзеныя захаваны</string>
     <string name="backup_failed">Няма дазволу да сховішча. Паспрабуйце ізноў.</string>
     <string name="backup_failed_error_format">Памылка пры рэзервовым капіраванні %s</string>
     <string name="search">Пошук</string>
@@ -247,7 +247,7 @@
     <string name="synopsis">Сціслы агляд</string>
     <string name="queued">у чарзе</string>
     <string name="no_subtitles">Субцітраў няма</string>
-    <string name="action_default">Прадвызначанае</string>
+    <string name="action_default">Прадвызначаны</string>
     <string name="free_storage">Свабодна</string>
     <string name="used_storage">Ужыта</string>
     <string name="app_storage">Праграма</string>
@@ -315,7 +315,7 @@
     <string name="skip_update">Прапусціць гэта абнаўленне</string>
     <string name="update">Абнавіць</string>
     <string name="watch_quality_pref">Прыярытэтная якасць прагляду (WiFi)</string>
-    <string name="watch_quality_pref_data">Прыярытэтная якасць прагляду (Мабільная перадача даных)</string>
+    <string name="watch_quality_pref_data">Прыярытэтная якасць прагляду (Мабільная перадача дадзеных)</string>
     <string name="limit_title">Максімальная колькасць сімвалаў у загалоўку праглядальніка</string>
     <string name="limit_title_rez">Паказваць інфармацыю ў прайгравальніку</string>
     <string name="video_buffer_size_settings">Памер буфера відэа</string>
@@ -458,7 +458,7 @@
     <string name="resolution">Раздзяляльнасць</string>
     <string name="video_info">Звесткі пра медыя</string>
     <string name="error_invalid_id">Памылковы ID</string>
-    <string name="error_invalid_data">Памылковыя даныя</string>
+    <string name="error_invalid_data">Памылковыя дадзеныя</string>
     <string name="error_invalid_url">Памылковы URL-адрэс</string>
     <string name="error">Памылка</string>
     <string name="subtitles_remove_captions">Прыбраць схаваныя цітры з субцітраў</string>
@@ -480,7 +480,7 @@
     <string name="repository_name_hint">Назва рэпазіторыя (неабавязкова)</string>
     <string name="repository_url_hint">URL-адрас рэпазіторыя або кароткі код</string>
     <string name="plugin_loaded">Убудова загружана</string>
-    <string name="plugin_downloaded">Убудава спампавана</string>
+    <string name="plugin_downloaded">Убудова спампавана</string>
     <string name="plugin_deleted">Убудова выдалена</string>
     <string name="plugin_load_fail" formatted="true">Не ўдалося загрузіць %s</string>
     <string name="is_adult">18+</string>
@@ -499,7 +499,7 @@
     <string name="plugins_downloaded" formatted="true">Спампавана: %d</string>
     <string name="plugins_disabled" formatted="true">Выключана: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Не спампавана: %d</string>
-    <string name="plugins_updated" formatted="true">Абноўлена %d плагіна(ў)</string>
+    <string name="plugins_updated" formatted="true">Абноўлена %d убудоў</string>
     <string name="blank_repo_message">Прадвызначана на CloudStream няма ўсталяваных вэб-сайтаў. Вам трэба ўсталяваць вэб-сайты з рэпазіторыяў. \n \nДалучыцеся да нашага сервера Discord або пашукайце ў сетцы.</string>
     <string name="view_public_repositories_button">Праглядзець рэпазіторыі ад супольнасці</string>
     <string name="view_public_repositories_button_short">Публічны спіс</string>
@@ -595,7 +595,7 @@
     <string name="action_unsubscribe">Адпісацца</string>
     <string name="profile_number">Профіль %d</string>
     <string name="wifi">Wi-Fi</string>
-    <string name="mobile_data">Мабільная перадача даных</string>
+    <string name="mobile_data">Мабільная перадача дадзеных</string>
     <string name="set_default">Выбраць як прадвызначаны</string>
     <string name="use">Выкарыстоўваць</string>
     <string name="edit">Рэдагаваць</string>
@@ -643,7 +643,7 @@
     <string name="biometric_unsupported">Праверка сапраўднасці біяметрыяй не падтрымліваецца на гэтай прыладзе</string>
     <string name="biometric_setting_summary">Разблакіруйце праграму адбіткам пальца, Face ID, PIN-кодам, узорам разблакіроўкі або паролем.</string>
     <string name="biometric_prompt_description">Праз некалькі няўдалых спроб акно з запытам закрыецца. Проста перазапусціце праграму, каб паўтарыць спробу.</string>
-    <string name="biometric_warning">Вашы даныя CloudStream былі зарэзерваваныя. Нягледзячы на тое, што магчымасць вельмі маленькая, усе прылады могуць паводзіць сябе па-рознаму. У рэдкасным выпадку, калі вы страціце доступ да праграмы, поўнасцю ачысціце даныя і аднавіце іх праз рэзервовую копію. Выбачайце за любую нязручнасць, якая можа з гэтага атрымацца.</string>
+    <string name="biometric_warning">Вашы дадзеныя CloudStream былібылі толькі што зарэзерваваныя. Нягледзячы на тое, што магчымасць вельмі маленькая, усе прылады могуць паводзіць сябе па-рознаму. У рэдкасным выпадку, калі вы страціце доступ да праграмы, поўнасцю ачысціце даныя і аднавіце іх праз рэзервовую копію. Выбачайце за любую нязручнасць, якая можа з гэтага атрымацца.</string>
     <string name="reset_btn">Скінуць</string>
     <string name="cs3wiki">CloudStream-Вікі</string>
     <string name="device_pin_url_message">Наведайце <b>%s</b> на вашым смартфоне або камп\'ютары і ўвядзіце код вышэй</string>
@@ -735,5 +735,8 @@
         <item quantity="many">%d спампоўванняў у чарзе</item>
         <item quantity="other">%d спампоўванняў у чарзе</item>
     </plurals>
-    <string name="show_player_metadata_overlay">Паказваць накладанне з метаданымі ў прайгравальніку</string>
+    <string name="show_player_metadata_overlay">Паказваць накладанне з метададзенымі ў прайгравальніку</string>
+    <string name="video_singular">Відэа</string>
+    <string name="skip_type_preview">Перадпрагляд</string>
+    <string name="player_is_live">Ужывую</string>
 </resources>
