@@ -309,12 +309,12 @@ import com.lagradost.cloudstream3.extractors.ZplayerV2
 import com.lagradost.cloudstream3.extractors.Ztreamhub
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.Coroutines.atomicListOf
+import io.ktor.http.Url
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.jsoup.Jsoup
-import java.net.URI
 import java.util.UUID
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -415,7 +415,7 @@ enum class ExtractorLinkType {
 
 private fun inferTypeFromUrl(url: String): ExtractorLinkType {
     val path = try {
-        URI(url).path
+        Url(url).encodedPath
     } catch (_: Throwable) {
         // don't log magnet links as errors
         null
@@ -765,7 +765,7 @@ constructor(
 
 /**
  * Removes https:// and www.
- * To match urls regardless of schema, perhaps Uri() can be used?
+ * To match urls regardless of schema, perhaps Url() can be used?
  */
 val schemaStripRegex = Regex("""^(https:|)//(www\.|)""")
 

@@ -10,7 +10,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.fixUrl
 import com.lagradost.cloudstream3.utils.newExtractorLink
-import java.net.URI
+import io.ktor.http.Url
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -84,7 +84,7 @@ open class VidStack : ExtractorApi() {
 
     private fun getBaseUrl(url: String): String {
         return try {
-            URI(url).let { "${it.scheme}://${it.host}" }
+            Url(url).let { "${it.protocol.name}://${it.host}" }
         } catch (e: Exception) {
             Log.e("Vidstack", "getBaseUrl fallback: ${e.message}")
             mainUrl
