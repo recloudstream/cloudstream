@@ -49,24 +49,42 @@ class FragmentPairTv : Fragment() {
         }
     }
 
-    private fun submitPairingCode(code: String) {
+    private fun submitPairingCode(rawCode: String) {
         val ctx = context ?: return
+        
+        // Parse URI if it's a deep link
+        val code = try {
+            val uri = android.net.Uri.parse(rawCode)
+            uri.getQueryParameter("code") ?: rawCode
+        } catch (e: Exception) {
+            rawCode
+        }
+
         var email = ctx.getKey<String>("firebase_email")
         var password = ctx.getKey<String>("firebase_password")
+        var googleIdToken: String? = null
 
         setLoading(true)
 
         lifecycleScope.launch {
             try {
                 val user = FirebaseAuth.getInstance().currentUser
-                if (password.isNullOrBlank() && user != null && user.email != null) {
-                    val generatedPassword = java.util.UUID.randomUUID().toString().replace("-", "") + "A1!"
+                if (user == null) {
+                    Toast.makeText(ctx, "Please log in first to pair TV.", Toast.LENGTH_LONG).show()
+                    setLoading(false)
+                    return@launch
+                }
+
+                if (password.isNullOrBlank() && user.email != null) {
                     try {
-                        user.updatePassword(generatedPassword).await()
-                        ctx.setKey("firebase_password", generatedPassword)
-                        ctx.setKey("firebase_email", user.email)
-                        email = user.email
-                        password = generatedPassword
+                        val gso = com.google.android.gms.auth.api.signin.GoogleSignInOptions.Builder(com.google.android.gms.auth.api.signin.GoogleSignInOptions.DEFAULT_SIGN_IN)
+                            .requestIdToken(ctx.getString(R.string.default_web_client_id))
+                            .requestEmail()
+                            .build()
+                        val googleSignInClient = com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(ctx, gso)
+                        val account = com.google.android.gms.tasks.Tasks.await(googleSignInClient.silentSignIn())
+                        googleIdToken = account.idToken
+                        email = account.email
                     } catch (e: Exception) {
                         logError(e)
                         Toast.makeText(ctx, "Please log out and log back in to pair TV (Recent login required).", Toast.LENGTH_LONG).show()
@@ -75,7 +93,7 @@ class FragmentPairTv : Fragment() {
                     }
                 }
 
-                if (email.isNullOrBlank() || password.isNullOrBlank()) {
+                if (googleIdToken.isNullOrBlank() && (email.isNullOrBlank() || password.isNullOrBlank())) {
                     Toast.makeText(ctx, "Please log in using email/password first to pair TV.", Toast.LENGTH_LONG).show()
                     setLoading(false)
                     return@launch
@@ -100,13 +118,17 @@ class FragmentPairTv : Fragment() {
                     return@launch
                 }
 
-                // Update the document to authorize the TV
-                val updateData = hashMapOf(
-                    "status" to "authorized",
-                    "email" to email,
-                    "password" to password
+                val updateData = hashMapOf<String, Any>(
+                    "status" to "authorized"
                 )
-                docRef.update(updateData as Map<String, Any>).await()
+                if (!googleIdToken.isNullOrBlank()) {
+                    updateData["googleIdToken"] = googleIdToken!!
+                } else {
+                    updateData["email"] = email!!
+                    updateData["password"] = password!!
+                }
+
+                docRef.update(updateData).await()
 
                 Toast.makeText(ctx, "TV paired successfully!", Toast.LENGTH_LONG).show()
                 activity?.onBackPressed()

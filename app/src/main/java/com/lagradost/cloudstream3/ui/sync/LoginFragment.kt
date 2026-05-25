@@ -231,7 +231,12 @@ class LoginFragment : Fragment() {
                     if (status == "authorized") {
                         val email = snapshot.getString("email")
                         val password = snapshot.getString("password")
-                        if (!email.isNullOrBlank() && !password.isNullOrBlank()) {
+                        val googleIdToken = snapshot.getString("googleIdToken")
+                        
+                        if (!googleIdToken.isNullOrBlank()) {
+                            stopPairingListener()
+                            loginWithGoogleIdToken(googleIdToken, code)
+                        } else if (!email.isNullOrBlank() && !password.isNullOrBlank()) {
                             stopPairingListener()
                             loginWithCredentials(email, password, code)
                         }
@@ -243,6 +248,23 @@ class LoginFragment : Fragment() {
     private fun stopPairingListener() {
         pairingListener?.remove()
         pairingListener = null
+    }
+
+    private fun loginWithGoogleIdToken(idToken: String, code: String) {
+        val act = activity ?: return
+        setLoading(true)
+        val credential = com.google.firebase.auth.GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(act) { task ->
+                if (task.isSuccessful) {
+                    val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    firestore.collection("pairing_codes").document(code).delete()
+                    onLoginSuccess()
+                } else {
+                    Toast.makeText(context, "Pairing Google login failed.", Toast.LENGTH_SHORT).show()
+                    setLoading(false)
+                }
+            }
     }
 
     private fun loginWithCredentials(email: String, password: String, code: String) {

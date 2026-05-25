@@ -611,22 +611,41 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         }
     }
 
-    private fun submitPairingCode(code: String) {
+    private fun submitPairingCode(rawCode: String) {
         val ctx = context ?: return
+
+        // Parse URI if it's a deep link
+        val code = try {
+            val uri = android.net.Uri.parse(rawCode)
+            uri.getQueryParameter("code") ?: rawCode
+        } catch (e: Exception) {
+            rawCode
+        }
+
         var email = com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey<String>("firebase_email")
         var password = com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey<String>("firebase_password")
+        var googleIdToken: String? = null
 
         kotlinx.coroutines.GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
             try {
                 val user = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
-                if (password.isNullOrBlank() && user != null && user.email != null) {
-                    val generatedPassword = java.util.UUID.randomUUID().toString().replace("-", "") + "A1!"
+                if (user == null) {
+                    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                        Toast.makeText(ctx, "Please log in first to pair TV.", Toast.LENGTH_LONG).show()
+                    }
+                    return@launch
+                }
+
+                if (password.isNullOrBlank() && user.email != null) {
                     try {
-                        com.google.android.gms.tasks.Tasks.await(user.updatePassword(generatedPassword))
-                        com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey("firebase_password", generatedPassword)
-                        com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey("firebase_email", user.email)
-                        email = user.email
-                        password = generatedPassword
+                        val gso = com.google.android.gms.auth.api.signin.GoogleSignInOptions.Builder(com.google.android.gms.auth.api.signin.GoogleSignInOptions.DEFAULT_SIGN_IN)
+                            .requestIdToken(ctx.getString(R.string.default_web_client_id))
+                            .requestEmail()
+                            .build()
+                        val googleSignInClient = com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(ctx, gso)
+                        val account = com.google.android.gms.tasks.Tasks.await(googleSignInClient.silentSignIn())
+                        googleIdToken = account.idToken
+                        email = account.email
                     } catch (e: Exception) {
                         logError(e)
                         kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
@@ -636,7 +655,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                     }
                 }
 
-                if (email.isNullOrBlank() || password.isNullOrBlank()) {
+                if (googleIdToken.isNullOrBlank() && (email.isNullOrBlank() || password.isNullOrBlank())) {
                     kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
                         Toast.makeText(ctx, "Please log in using email/password first to pair TV.", Toast.LENGTH_LONG).show()
                     }
@@ -664,14 +683,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                     return@launch
                 }
 
-                val finalEmail = email
-                val finalPassword = password
-                val updateData = hashMapOf(
-                    "status" to "authorized",
-                    "email" to finalEmail,
-                    "password" to finalPassword
+                val updateData = hashMapOf<String, Any>(
+                    "status" to "authorized"
                 )
-                com.google.android.gms.tasks.Tasks.await(docRef.update(updateData as Map<String, Any>))
+                if (!googleIdToken.isNullOrBlank()) {
+                    updateData["googleIdToken"] = googleIdToken!!
+                } else {
+                    updateData["email"] = email!!
+                    updateData["password"] = password!!
+                }
+
+                com.google.android.gms.tasks.Tasks.await(docRef.update(updateData))
 
                 kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
                     Toast.makeText(ctx, "TV paired successfully!", Toast.LENGTH_LONG).show()
@@ -754,7 +776,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                         setDesiredBarcodeFormats(ScanOptions.QR_CODE)
                         setPrompt("Scan TV QR Code")
                         setBeepEnabled(false)
-                        setOrientationLocked(false)
+                        setOrientationLocked(true)
+                        setCaptureActivity(com.lagradost.cloudstream3.ui.sync.CustomScannerActivity::class.java)
                     })
                 }
             )
