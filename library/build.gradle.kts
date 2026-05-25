@@ -61,8 +61,17 @@ kotlin {
             implementation(libs.fuzzywuzzy) // Match Extractors
             implementation(libs.jsoup) // HTML Parser
             implementation(libs.rhino) // Run JavaScript
-            implementation(libs.newpipeextractor)
             implementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
+        }
+
+        // We will eventually add a new jvmCommonMain source set
+        // for things shared between Android and JVM.
+        androidMain.dependencies {
+            implementation(libs.newpipeextractor)
+        }
+
+        jvmMain.dependencies {
+            implementation(libs.newpipeextractor)
         }
     }
 }
