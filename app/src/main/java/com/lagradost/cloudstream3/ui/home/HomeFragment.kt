@@ -670,7 +670,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                             .requestEmail()
                             .build()
                         val googleSignInClient = com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(ctx, gso)
-                        val account = com.google.android.gms.tasks.Tasks.await(googleSignInClient.silentSignIn())
+                        val account = kotlinx.coroutines.tasks.await(googleSignInClient.silentSignIn())
                         completePairingWithToken(code, account.idToken!!)
                     } catch (e: Exception) {
                         // Silent sign-in failed — launch interactive sign-in on UI thread
@@ -694,7 +694,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             } catch (e: Exception) {
                 logError(e)
                 kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
-                    Toast.makeText(ctx, "An error occurred during pairing.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(ctx, "Pairing error: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -707,7 +707,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 val ctx = context ?: return@launch
                 val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
                 val docRef = firestore.collection("pairing_codes").document(code)
-                val snapshot = com.google.android.gms.tasks.Tasks.await(docRef.get())
+                val snapshot = kotlinx.coroutines.tasks.await(docRef.get())
 
                 if (!snapshot.exists()) {
                     kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
@@ -731,7 +731,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                     "googleIdToken" to googleIdToken
                 )
 
-                com.google.android.gms.tasks.Tasks.await(docRef.update(updateData))
+                kotlinx.coroutines.tasks.await(docRef.update(updateData))
 
                 kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
                     Toast.makeText(ctx, "TV paired successfully!", Toast.LENGTH_LONG).show()
@@ -753,7 +753,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 val ctx = context ?: return@launch
                 val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
                 val docRef = firestore.collection("pairing_codes").document(code)
-                val snapshot = com.google.android.gms.tasks.Tasks.await(docRef.get())
+                val snapshot = kotlinx.coroutines.tasks.await(docRef.get())
 
                 if (!snapshot.exists()) {
                     kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
@@ -778,7 +778,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                     "password" to password
                 )
 
-                com.google.android.gms.tasks.Tasks.await(docRef.update(updateData))
+                kotlinx.coroutines.tasks.await(docRef.update(updateData))
 
                 kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
                     Toast.makeText(ctx, "TV paired successfully!", Toast.LENGTH_LONG).show()
@@ -787,7 +787,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             } catch (e: Exception) {
                 logError(e)
                 kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
-                    Toast.makeText(context, "An error occurred during pairing.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Pairing error: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
                 }
             }
         }

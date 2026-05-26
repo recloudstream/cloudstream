@@ -115,7 +115,7 @@ class FragmentPairTv : Fragment() {
                             .requestEmail()
                             .build()
                         val googleSignInClient = GoogleSignIn.getClient(ctx, gso)
-                        val account = com.google.android.gms.tasks.Tasks.await(googleSignInClient.silentSignIn())
+                        val account = kotlinx.coroutines.tasks.await(googleSignInClient.silentSignIn())
                         completePairing(code, account.idToken!!, account.email)
                     } catch (e: Exception) {
                         // Silent sign-in failed — launch interactive sign-in
@@ -135,7 +135,7 @@ class FragmentPairTv : Fragment() {
 
             } catch (e: Exception) {
                 logError(e)
-                Toast.makeText(ctx, "An error occurred during pairing.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(ctx, "Pairing error: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
                 setLoading(false)
             }
         }
@@ -221,7 +221,7 @@ class FragmentPairTv : Fragment() {
 
             } catch (e: Exception) {
                 logError(e)
-                Toast.makeText(context, "An error occurred during pairing.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Pairing error: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
             } finally {
                 setLoading(false)
             }
