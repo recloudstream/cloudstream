@@ -603,6 +603,27 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     private var currentApiName: String? = null
     private var toggleRandomButton = false
 
+    // Stores the pairing code so we can use it after interactive sign-in completes
+    private var pendingPairingCode: String? = null
+
+    // Interactive Google Sign-In launcher (fallback when silentSignIn fails)
+    private val googleSignInForPairingLauncher =
+        registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()) { result ->
+            val task = com.google.android.gms.auth.api.signin.GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            try {
+                val account = task.getResult(com.google.android.gms.common.api.ApiException::class.java)!!
+                val code = pendingPairingCode
+                if (code != null && account.idToken != null) {
+                    completePairingWithToken(code, account.idToken!!)
+                } else {
+                    Toast.makeText(context, "Google sign in did not return a token.", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: com.google.android.gms.common.api.ApiException) {
+                logError(e)
+                Toast.makeText(context, "Google sign in was cancelled or failed.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
     private val barcodeLauncher = registerForActivityResult(
         ScanContract()
     ) { result: ScanIntentResult ->
@@ -622,11 +643,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             rawCode
         }
 
-        var email = com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey<String>("firebase_email")
-        var password = com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey<String>("firebase_password")
-        var googleIdToken: String? = null
+        val email = com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey<String>("firebase_email")
+        val password = com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey<String>("firebase_password")
 
-        kotlinx.coroutines.GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+        viewLifecycleOwner.lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
             try {
                 val user = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
                 if (user == null) {
@@ -636,7 +656,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                     return@launch
                 }
 
-                if (password.isNullOrBlank() && user.email != null) {
+                // If we have email/password credentials, use those directly
+                if (!email.isNullOrBlank() && !password.isNullOrBlank()) {
+                    completePairingWithCredentials(code, email, password)
+                    return@launch
+                }
+
+                // Otherwise try to get a Google ID token
+                if (user.email != null) {
                     try {
                         val gso = com.google.android.gms.auth.api.signin.GoogleSignInOptions.Builder(com.google.android.gms.auth.api.signin.GoogleSignInOptions.DEFAULT_SIGN_IN)
                             .requestIdToken(ctx.getString(R.string.default_web_client_id))
@@ -644,24 +671,40 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                             .build()
                         val googleSignInClient = com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(ctx, gso)
                         val account = com.google.android.gms.tasks.Tasks.await(googleSignInClient.silentSignIn())
-                        googleIdToken = account.idToken
-                        email = account.email
+                        completePairingWithToken(code, account.idToken!!)
                     } catch (e: Exception) {
+                        // Silent sign-in failed — launch interactive sign-in on UI thread
                         logError(e)
+                        pendingPairingCode = code
                         kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
-                            Toast.makeText(ctx, "Please log out and log back in to pair TV (Recent login required).", Toast.LENGTH_LONG).show()
+                            val gso = com.google.android.gms.auth.api.signin.GoogleSignInOptions.Builder(com.google.android.gms.auth.api.signin.GoogleSignInOptions.DEFAULT_SIGN_IN)
+                                .requestIdToken(ctx.getString(R.string.default_web_client_id))
+                                .requestEmail()
+                                .build()
+                            val googleSignInClient = com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(ctx, gso)
+                            googleSignInForPairingLauncher.launch(googleSignInClient.signInIntent)
                         }
-                        return@launch
                     }
-                }
-
-                if (googleIdToken.isNullOrBlank() && (email.isNullOrBlank() || password.isNullOrBlank())) {
+                } else {
                     kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
                         Toast.makeText(ctx, "Please log in using email/password first to pair TV.", Toast.LENGTH_LONG).show()
                     }
-                    return@launch
                 }
 
+            } catch (e: Exception) {
+                logError(e)
+                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                    Toast.makeText(ctx, "An error occurred during pairing.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    /** Complete pairing using a Google ID token */
+    private fun completePairingWithToken(code: String, googleIdToken: String) {
+        viewLifecycleOwner.lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            try {
+                val ctx = context ?: return@launch
                 val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
                 val docRef = firestore.collection("pairing_codes").document(code)
                 val snapshot = com.google.android.gms.tasks.Tasks.await(docRef.get())
@@ -684,14 +727,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 }
 
                 val updateData = hashMapOf<String, Any>(
-                    "status" to "authorized"
+                    "status" to "authorized",
+                    "googleIdToken" to googleIdToken
                 )
-                if (!googleIdToken.isNullOrBlank()) {
-                    updateData["googleIdToken"] = googleIdToken!!
-                } else {
-                    updateData["email"] = email!!
-                    updateData["password"] = password!!
-                }
 
                 com.google.android.gms.tasks.Tasks.await(docRef.update(updateData))
 
@@ -702,7 +740,54 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             } catch (e: Exception) {
                 logError(e)
                 kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
-                    Toast.makeText(ctx, "An error occurred during pairing.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "An error occurred during pairing.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    /** Complete pairing using email/password credentials */
+    private fun completePairingWithCredentials(code: String, email: String, password: String) {
+        viewLifecycleOwner.lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            try {
+                val ctx = context ?: return@launch
+                val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                val docRef = firestore.collection("pairing_codes").document(code)
+                val snapshot = com.google.android.gms.tasks.Tasks.await(docRef.get())
+
+                if (!snapshot.exists()) {
+                    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                        Toast.makeText(ctx, "Invalid or expired pairing code.", Toast.LENGTH_SHORT).show()
+                    }
+                    return@launch
+                }
+
+                val createdAt = snapshot.getLong("createdAt") ?: 0L
+                val status = snapshot.getString("status")
+
+                if (status != "pending" || System.currentTimeMillis() - createdAt > 5 * 60 * 1000) {
+                    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                        Toast.makeText(ctx, "Pairing code has expired or is already paired.", Toast.LENGTH_SHORT).show()
+                    }
+                    return@launch
+                }
+
+                val updateData = hashMapOf<String, Any>(
+                    "status" to "authorized",
+                    "email" to email,
+                    "password" to password
+                )
+
+                com.google.android.gms.tasks.Tasks.await(docRef.update(updateData))
+
+                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                    Toast.makeText(ctx, "TV paired successfully!", Toast.LENGTH_LONG).show()
+                }
+
+            } catch (e: Exception) {
+                logError(e)
+                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                    Toast.makeText(context, "An error occurred during pairing.", Toast.LENGTH_SHORT).show()
                 }
             }
         }

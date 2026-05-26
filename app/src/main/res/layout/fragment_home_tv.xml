@@ -279,4 +279,48 @@
         app:icon="@drawable/ic_baseline_play_arrow_24"
         tools:ignore="ContentDescription"
         tools:visibility="visible" />
+    <LinearLayout
+        android:id="@+id/home_update_progress_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
+        android:elevation="8dp"
+        android:gravity="center_vertical"
+        android:layout_gravity="top"
+        tools:visibility="gone">
+
+        <TextView
+            android:id="@+id/home_update_progress_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:text="@string/update_notification_downloading"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:layout_marginEnd="12dp" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/home_update_progress_bar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="10000"
+            app:trackCornerRadius="4dp"
+            app:indicatorColor="@color/white"
+            app:trackColor="#40FFFFFF" />
+
+        <TextView
+            android:id="@+id/home_update_progress_percentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            tools:text="45%"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginStart="12dp" />
+    </LinearLayout>
 </FrameLayout>
