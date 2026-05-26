@@ -5,7 +5,7 @@
     <string name="history">Sejarah</string>
     <string name="clear_history">Kosongkan sejarah</string>
     <string name="skip_type_intro">Pengenalan</string>
-    <string name="skip_type_creddits">Kredit</string>
+    <string name="skip_type_credits">Kredit</string>
     <string name="skip_type_mixed_op">Pembukaan bercampur</string>
     <string name="skip_type_ed">Penamat</string>
     <string name="skip_type_op">Pembukaan</string>
@@ -56,8 +56,7 @@
     <string name="sort_close">Tutup</string>
     <string name="preview_background_img_des">Pratonton</string>
     <string name="rated_format" formatted="true">Resensi:%.1f</string>
-    <string name="new_update_format" formatted="true">Kemas kini baru dijumpai!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Kemas kini baru dijumpai! \n%1$s -&gt; %2$s</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="play_from_beginning_img_des">Main dari mula</string>
     <string name="next_season_episode_format" formatted="true">Musim %1$d Episod %2$d akan dikeluarkan di</string>
@@ -285,7 +284,7 @@
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="subtitle_offset_extra_hint_later_format">Gunakan ini sekiranya sari kata yang dipaparkan awal sebanyak %d</string>
     <string name="quality_hdr">HDR</string>
-    <string name="custom_media_singluar">Media</string>
+    <string name="custom_media_singular">Media</string>
     <string name="tv_layout">Susun atur TV</string>
     <string name="tv_series">TV Bersiri</string>
     <string name="plugin_load_fail" formatted="true">Tidak dapat papar %s</string>
@@ -390,7 +389,7 @@
     <string name="stop">Berhenti</string>
     <string name="already_voted">Anda telah mengundi</string>
     <string name="action_remove_from_favorites">Alih keluar dari Kegemaran</string>
-    <string name="music_singlar">Musik</string>
+    <string name="music_singular">Musik</string>
     <string name="downloads_delete_select">Pilih benda untuk dibuang</string>
     <string name="player_size_settings_des">Buang sempadan hitam</string>
     <string name="category_account">Akaun dan Sekuriti</string>
@@ -532,6 +531,6 @@
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Dokumentari</string>
     <string name="live_singular">Siaran Langsung</string>
-    <string name="audio_singluar">Audio</string>
-    <string name="podcast_singluar">Podcast</string>
+    <string name="audio_singular">Audio</string>
+    <string name="podcast_singular">Podcast</string>
 </resources>

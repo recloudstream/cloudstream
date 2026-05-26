@@ -28,6 +28,9 @@
         <Preference
             android:icon="@drawable/subdl_logo_big"
             android:key="@string/subdl_key" />
+        <Preference
+            android:icon="@drawable/animeskip"
+            android:key="@string/animeskip_key" />
 
         <SwitchPreference
             android:defaultValue="false"

@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.base64DecodeArray
@@ -10,36 +9,30 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import java.net.URI
-import java.nio.charset.StandardCharsets
 import javax.crypto.Cipher
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-@Prerelease
 class Bysezejataos  : ByseSX() {
     override var name = "Bysezejataos"
     override var mainUrl = "https://bysezejataos.com"
 }
 
-@Prerelease
 class ByseBuho : ByseSX() {
     override var name = "ByseBuho"
     override var mainUrl = "https://bysebuho.com"
 }
 
-@Prerelease
 class ByseVepoin : ByseSX() {
     override var name = "ByseVepoin"
     override var mainUrl = "https://bysevepoin.com"
 }
 
-@Prerelease
 class ByseQekaho : ByseSX() {
     override var name = "ByseQekaho"
     override var mainUrl = "https://byseqekaho.com"
 }
 
-@Prerelease
 open class ByseSX : ExtractorApi() {
     override var name = "Byse"
     override var mainUrl = "https://byse.sx"
@@ -100,7 +93,7 @@ open class ByseSX : ExtractorApi() {
         cipher.init(Cipher.DECRYPT_MODE, secretKey, spec)
 
         val plainBytes = cipher.doFinal(cipherBytes)
-        var jsonStr = String(plainBytes, StandardCharsets.UTF_8)
+        var jsonStr = plainBytes.decodeToString()
 
         if (jsonStr.startsWith("\uFEFF")) jsonStr = jsonStr.substring(1)
 

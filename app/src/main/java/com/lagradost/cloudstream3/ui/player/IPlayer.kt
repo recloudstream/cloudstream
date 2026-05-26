@@ -3,30 +3,11 @@ package com.lagradost.cloudstream3.ui.player
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Rational
+import androidx.annotation.AnyThread
+import androidx.annotation.MainThread
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
-import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
-
-enum class PlayerEventType(val value: Int) {
-    Pause(0),
-    Play(1),
-    SeekForward(2),
-    SeekBack(3),
-
-    SkipCurrentChapter(4),
-    NextEpisode(5),
-    PrevEpisode(6),
-    PlayPauseToggle(7),
-    ToggleMute(8),
-    Lock(9),
-    ToggleHide(10),
-    ShowSpeed(11),
-    ShowMirrors(12),
-    Resize(13),
-    SearchSubtitlesOnline(14),
-    SkipOp(15),
-    Restart(16),
-}
+import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
 
 enum class CSPlayerEvent(val value: Int) {
     Pause(0),
@@ -86,13 +67,13 @@ data class ErrorEvent(
 
 /** Event when timestamps appear, null when it should disappear */
 data class TimestampInvokedEvent(
-    val timestamp: EpisodeSkip.SkipStamp,
+    val timestamp: VideoSkipStamp,
     override val source: PlayerEventSource = PlayerEventSource.Player,
 ) : PlayerEvent()
 
 /** Event for when a chapter is skipped, aka when event is handled (or for future use when skip automatically ads/sponsor) */
 data class TimestampSkippedEvent(
-    val timestamp: EpisodeSkip.SkipStamp,
+    val timestamp: VideoSkipStamp,
     override val source: PlayerEventSource = PlayerEventSource.Player,
 ) : PlayerEvent()
 
@@ -220,8 +201,6 @@ data class CurrentTracks(
     val allTextTracks: List<TextTrack>,
 )
 
-class InvalidFileException(msg: String) : Exception(msg)
-
 //http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
 const val ACTION_MEDIA_CONTROL = "media_control"
 const val EXTRA_CONTROL_TYPE = "control_type"
@@ -243,8 +222,9 @@ interface IPlayer {
     fun getSubtitleOffset(): Long // in ms
     fun setSubtitleOffset(offset: Long) // in ms
 
+    @AnyThread
     fun initCallbacks(
-        eventHandler: ((PlayerEvent) -> Unit),
+        @MainThread eventHandler: ((PlayerEvent) -> Unit),
         /** this is used to request when the player should report back view percentage */
         requestedListeningPercentages: List<Int>? = null,
     )
@@ -254,7 +234,7 @@ interface IPlayer {
     fun updateSubtitleStyle(style: SaveCaptionStyle)
     fun saveData()
 
-    fun addTimeStamps(timeStamps: List<EpisodeSkip.SkipStamp>)
+    fun addTimeStamps(timeStamps: List<VideoSkipStamp>)
 
     fun loadPlayer(
         context: Context,
@@ -307,7 +287,7 @@ interface IPlayer {
     fun setMaxVideoSize(width: Int = Int.MAX_VALUE, height: Int = Int.MAX_VALUE, id: String? = null)
 
     /** If no trackLanguage is set it'll default to first track. Specifying the id allows for track overrides as the language can be identical. */
-    fun setPreferredAudioTrack(trackLanguage: String?, id: String? = null, trackIndex: Int? = null)
+    fun setPreferredAudioTrack(trackLanguage: String?, id: String? = null, formatIndex: Int? = null)
 
     /** Get the current subtitle cues, for use with syncing */
     fun getSubtitleCues(): List<SubtitleCue>

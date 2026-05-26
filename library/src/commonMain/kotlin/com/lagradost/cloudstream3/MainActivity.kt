@@ -8,8 +8,7 @@ import com.lagradost.nicehttp.ResponseParser
 import kotlin.reflect.KClass
 
 // Short name for requests client to make it nicer to use
-
-var app = Requests(responseParser = object : ResponseParser {
+private val jacksonResponseParser = object : ResponseParser {
     val mapper: ObjectMapper = jacksonObjectMapper().configure(
         DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
         false
@@ -30,6 +29,18 @@ var app = Requests(responseParser = object : ResponseParser {
     override fun writeValueAsString(obj: Any): String {
         return mapper.writeValueAsString(obj)
     }
-}).apply {
+}
+
+/** The default networking helper. This helper performs SSL checks.
+ * If you need to make requests to websites with invalid SSL certificates use insecureApp instead. */
+var app = Requests(responseParser = jacksonResponseParser).apply {
+    defaultHeaders = mapOf("user-agent" to USER_AGENT)
+}
+
+/** Same as the default app networking helper, but this instance ignores SSL certificates.
+ * This should NEVER be used for sensitive networking operations such as logins. Only use this when required. */
+@Prerelease
+@UnsafeSSL
+var insecureApp = Requests(responseParser = jacksonResponseParser).apply {
     defaultHeaders = mapOf("user-agent" to USER_AGENT)
 }

@@ -12,7 +12,6 @@ import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
-import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
@@ -171,7 +170,7 @@ open class Rabbitstream : ExtractorApi() {
             IvParameterSpec(decryptionKey.copyOfRange(32, decryptionKey.size))
         )
         val decryptedData = aesCBC?.doFinal(encrypted) ?: throw ErrorLoadingException("Cipher not found")
-        return String(decryptedData, StandardCharsets.UTF_8)
+        return decryptedData.decodeToString()
     }
 
     data class Tracks(

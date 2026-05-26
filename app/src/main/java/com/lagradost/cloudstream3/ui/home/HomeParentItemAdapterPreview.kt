@@ -60,9 +60,9 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarMargin
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarView
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import androidx.core.graphics.toColorInt
+import com.lagradost.cloudstream3.ui.setRecycledViewPool
 
 class HomeParentItemAdapterPreview(
-    val fragment: LifecycleOwner,
     private val viewModel: HomeViewModel,
     private val accountViewModel: AccountViewModel
 ) : ParentItemAdapter(
@@ -104,7 +104,7 @@ class HomeParentItemAdapterPreview(
             )
         }
 
-        return HeaderViewHolder(binding, viewModel, accountViewModel, fragment)
+        return HeaderViewHolder(binding, viewModel, accountViewModel)
     }
 
     override fun onBindHeader(holder: ViewHolderState<Bundle>) {
@@ -131,7 +131,6 @@ class HomeParentItemAdapterPreview(
         val binding: ViewBinding,
         val viewModel: HomeViewModel,
         accountViewModel: AccountViewModel,
-        fragment: LifecycleOwner,
     ) :
         ViewHolderState<Bundle>(binding) {
 
@@ -543,7 +542,7 @@ class HomeParentItemAdapterPreview(
             headProfilePicCard?.isGone = isLayout(TV or EMULATOR)
             alternateHeadProfilePicCard?.isGone = isLayout(TV or EMULATOR)
 
-            fragment.observe(viewModel.currentAccount) { currentAccount ->
+            (headProfilePic ?: alternateHeadProfilePic)?.observe(viewModel.currentAccount) { currentAccount ->
                 headProfilePic?.loadImage(currentAccount?.image)
                 alternateHeadProfilePic?.loadImage(currentAccount?.image)
             }
@@ -774,7 +773,7 @@ class HomeParentItemAdapterPreview(
         fun onViewAttachedToWindow() {
             previewViewpager.registerOnPageChangeCallback(previewCallback)
 
-            binding.root.findViewTreeLifecycleOwner()?.apply {
+            previewViewpager.apply {
                 observe(viewModel.preview) {
                     updatePreview(it)
                 }
@@ -799,7 +798,7 @@ class HomeParentItemAdapterPreview(
                     }
                     toggleListHolder?.isGone = visible.isEmpty()
                 }
-            } ?: debugException { "Expected findViewTreeLifecycleOwner" }
+            }
         }
     }
 }

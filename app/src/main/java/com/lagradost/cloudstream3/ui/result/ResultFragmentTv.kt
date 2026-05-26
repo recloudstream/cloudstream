@@ -42,6 +42,7 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_FOCUSED
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
+import com.lagradost.cloudstream3.ui.setRecycledViewPool
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
@@ -61,7 +62,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
-import com.lagradost.cloudstream3.utils.UiImage
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
@@ -559,7 +559,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                             ExtractorLinkGenerator(
                                 extractedTrailerLinks,
                                 emptyList()
-                            )
+                            ), 0
                         )
                     )
                 }
@@ -925,8 +925,12 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         resultTvComingSoon.isVisible = d.comingSoon
 
                         populateChips(resultTag, d.tags)
-                        val prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(root.context)
-                        val showCast = prefs.getBoolean(root.context.getString(R.string.show_cast_in_details_key), true)
+                        val prefs =
+                            androidx.preference.PreferenceManager.getDefaultSharedPreferences(root.context)
+                        val showCast = prefs.getBoolean(
+                            root.context.getString(R.string.show_cast_in_details_key),
+                            true
+                        )
 
                         resultCastItems.isGone = !showCast || d.actors.isNullOrEmpty()
                         (resultCastItems.adapter as? ActorAdaptor)?.submitList(if (showCast) d.actors else emptyList())

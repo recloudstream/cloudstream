@@ -29,7 +29,6 @@ import androidx.media3.common.Format
 import androidx.media3.common.Format.CueReplacementBehavior
 import androidx.media3.common.text.Cue
 import androidx.media3.common.text.Cue.AnchorType
-import androidx.media3.common.util.Assertions
 import androidx.media3.common.util.Consumer
 import androidx.media3.common.util.Log
 import androidx.media3.common.util.ParsableByteArray
@@ -37,6 +36,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.extractor.text.CuesWithTiming
 import androidx.media3.extractor.text.SubtitleParser
 import androidx.media3.extractor.text.SubtitleParser.OutputOptions
+import com.google.common.base.Preconditions.checkNotNull
 import com.google.common.collect.ImmutableList
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
@@ -115,6 +115,7 @@ class CustomSubripParser : SubtitleParser {
                 currentLine = parsableByteArray.readLine(charset)
             }
 
+            @Suppress("DEPRECATION")
             val text = Html.fromHtml(textBuilder.toString())
 
             var alignmentTag: String? = null
@@ -259,10 +260,9 @@ class CustomSubripParser : SubtitleParser {
         private fun parseTimecode(matcher: Matcher, groupOffset: Int): Long {
             val hours = matcher.group(groupOffset + 1)
             var timestampMs = if (hours != null) hours.toLong() * 60 * 60 * 1000 else 0
-            timestampMs +=
-                Assertions.checkNotNull<String?>(matcher.group(groupOffset + 2))
-                    .toLong() * 60 * 1000
-            timestampMs += Assertions.checkNotNull<String?>(matcher.group(groupOffset + 3))
+            timestampMs += checkNotNull(matcher.group(groupOffset + 2))
+                .toLong() * 60 * 1000
+            timestampMs += checkNotNull(matcher.group(groupOffset + 3))
                 .toLong() * 1000
             val millis = matcher.group(groupOffset + 4)
 

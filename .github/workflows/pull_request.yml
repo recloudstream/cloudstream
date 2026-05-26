@@ -2,6 +2,9 @@ name: Artifact Build
 
 on: [pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,7 +30,7 @@ jobs:
       run: ./gradlew assemblePrereleaseDebug lint
 
     - name: Upload Artifact
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: pull-request-build
         path: "app/build/outputs/apk/prerelease/debug/*.apk"

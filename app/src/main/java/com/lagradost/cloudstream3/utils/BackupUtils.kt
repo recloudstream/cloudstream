@@ -62,6 +62,7 @@ object BackupUtils {
         AccountManager.ACCOUNT_TOKEN,
         AccountManager.ACCOUNT_IDS,
 
+        // TODO proper getter for string res keys to ensure that they are updated
         "biometric_key", // can lock down users if backup is shared on a incompatible device
         "nginx_user", // Nginx user key
 
@@ -88,10 +89,14 @@ object BackupUtils {
         // The download path URI can not be transferred.
         // In the future we may potentially write metadata to files in the download directory
         // and make it possible to restore download folders using that metadata.
-        DOWNLOAD_HEADER_CACHE_BACKUP,
-        DOWNLOAD_HEADER_CACHE,
         DOWNLOAD_EPISODE_CACHE_BACKUP,
         DOWNLOAD_EPISODE_CACHE,
+        
+        // Download headers are unintuitively used in the resume watching system.
+        // We can therefore not prune download headers in backups.
+        //DOWNLOAD_HEADER_CACHE_BACKUP,
+        //DOWNLOAD_HEADER_CACHE,
+        
 
         // This may overwrite valid local data with invalid data
         KEY_DOWNLOAD_INFO,
@@ -99,7 +104,10 @@ object BackupUtils {
         // Prevent backups from automatically starting downloads
         KEY_RESUME_IN_QUEUE,
         KEY_RESUME_PACKAGES,
-        QUEUE_KEY
+        QUEUE_KEY,
+
+        // Prevent automatic plugin download after restoring backup
+        "auto_download_plugins_key2"
     )
 
     /** false if key should not be contained in backup */

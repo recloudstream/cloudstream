@@ -13,6 +13,7 @@ package com.lagradost.cloudstream3.ui.player
 
 import android.net.Uri
 import androidx.annotation.GuardedBy
+import androidx.media3.common.C
 import androidx.media3.common.FileTypes
 import androidx.media3.common.Format
 import androidx.media3.common.util.TimestampAdjuster
@@ -47,7 +48,6 @@ import com.google.common.collect.ImmutableList
 import java.lang.reflect.Constructor
 import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.atomic.AtomicBoolean
-
 
 /**
  * An [ExtractorsFactory] that provides an array of extractors for the following formats:
@@ -103,13 +103,16 @@ class UpdatedDefaultExtractorsFactory : ExtractorsFactory {
     private var tsTimestampSearchBytes: Int
     private var textTrackTranscodingEnabled: Boolean
     private var subtitleParserFactory: SubtitleParser.Factory
+    private var codecsToParseWithinGopSampleDependencies: @C.VideoCodecFlags Int
     private var jpegFlags: @JpegExtractor.Flags Int = 0
+    private var heifFlags: @HeifExtractor.Flags Int = 0
 
     init {
         tsMode = TsExtractor.MODE_SINGLE_PMT
         tsTimestampSearchBytes = TsExtractor.DEFAULT_TIMESTAMP_SEARCH_BYTES
         subtitleParserFactory = DefaultSubtitleParserFactory()
         textTrackTranscodingEnabled = true
+        codecsToParseWithinGopSampleDependencies = C.VIDEO_CODEC_FLAG_H264 or C.VIDEO_CODEC_FLAG_H265
     }
 
     /**
@@ -346,6 +349,14 @@ class UpdatedDefaultExtractorsFactory : ExtractorsFactory {
         return this
     }
 
+    @Synchronized
+    override fun experimentalSetCodecsToParseWithinGopSampleDependencies(
+        codecsToParseWithinGopSampleDependencies: @C.VideoCodecFlags Int
+    ): UpdatedDefaultExtractorsFactory {
+        this.codecsToParseWithinGopSampleDependencies = codecsToParseWithinGopSampleDependencies
+        return this
+    }
+
     /**
      * Sets flags for [JpegExtractor] instances created by the factory.
      *
@@ -358,6 +369,21 @@ class UpdatedDefaultExtractorsFactory : ExtractorsFactory {
         flags: @JpegExtractor.Flags Int
     ): UpdatedDefaultExtractorsFactory {
         this.jpegFlags = flags
+        return this
+    }
+
+    /**
+     * Sets flags for [HeifExtractor] instances created by the factory.
+     *
+     * @see HeifExtractor.HeifExtractor
+     * @param flags The flags to use.
+     * @return The factory, for convenience.
+     */
+    @Synchronized
+    fun setHeifExtractorFlags(
+        flags: @HeifExtractor.Flags Int
+    ): UpdatedDefaultExtractorsFactory {
+        this.heifFlags = flags
         return this
     }
 
@@ -468,21 +494,26 @@ class UpdatedDefaultExtractorsFactory : ExtractorsFactory {
                 extractors.add(
                     FragmentedMp4Extractor(
                         subtitleParserFactory,
-                        fragmentedMp4Flags
-                                or (if (textTrackTranscodingEnabled)
-                            0
-                        else
-                            FragmentedMp4Extractor.FLAG_EMIT_RAW_SUBTITLE_DATA)
+                        fragmentedMp4Flags or
+                            FragmentedMp4Extractor
+                                .codecsToParseWithinGopSampleDependenciesAsFlags(
+                                    codecsToParseWithinGopSampleDependencies
+                                ) or
+                        if (textTrackTranscodingEnabled) 0
+                        else FragmentedMp4Extractor.FLAG_EMIT_RAW_SUBTITLE_DATA
                     )
                 )
+
                 extractors.add(
                     Mp4Extractor(
                         subtitleParserFactory,
-                        mp4Flags
-                                or (if (textTrackTranscodingEnabled)
-                            0
-                        else
-                            Mp4Extractor.FLAG_EMIT_RAW_SUBTITLE_DATA)
+                        mp4Flags or
+                            Mp4Extractor
+                                .codecsToParseWithinGopSampleDependenciesAsFlags(
+                                    codecsToParseWithinGopSampleDependencies
+                                ) or
+                        if (textTrackTranscodingEnabled) 0
+                        else Mp4Extractor.FLAG_EMIT_RAW_SUBTITLE_DATA
                     )
                 )
             }
@@ -524,12 +555,7 @@ class UpdatedDefaultExtractorsFactory : ExtractorsFactory {
             FileTypes.PNG -> extractors.add(PngExtractor())
             FileTypes.WEBP -> extractors.add(WebpExtractor())
             FileTypes.BMP -> extractors.add(BmpExtractor())
-            FileTypes.HEIF -> if ((mp4Flags and Mp4Extractor.FLAG_READ_MOTION_PHOTO_METADATA) == 0
-                && (mp4Flags and Mp4Extractor.FLAG_READ_SEF_DATA) == 0
-            ) {
-                extractors.add(HeifExtractor())
-            }
-
+            FileTypes.HEIF -> extractors.add(HeifExtractor(heifFlags))
             FileTypes.AVIF -> extractors.add(AvifExtractor())
             FileTypes.WEBVTT, FileTypes.UNKNOWN -> {}
             else -> {}

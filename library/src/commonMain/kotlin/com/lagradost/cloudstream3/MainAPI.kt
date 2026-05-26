@@ -17,8 +17,8 @@ import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
+import com.lagradost.cloudstream3.utils.Coroutines.atomicListOf
 import com.lagradost.cloudstream3.utils.Coroutines.mainWork
-import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToLangTagIETF
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromLanguageToTagIETF
 import com.lagradost.nicehttp.RequestBodyTypes
@@ -27,7 +27,9 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.net.URI
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.EnumSet
+import java.util.Locale
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.math.absoluteValue
@@ -45,6 +47,22 @@ import kotlin.math.roundToInt
     level = RequiresOptIn.Level.ERROR
 )
 annotation class Prerelease
+
+@Retention(AnnotationRetention.BINARY) // This is only an IDE hint, and will not be used in the runtime
+@RequiresOptIn(
+    message = "This API is marked as internal and should not be used by extensions. " +
+              "Using it could cause catastrophic build or runtime errors and may " +
+              "be changed or removed at any time.",
+    level = RequiresOptIn.Level.ERROR
+)
+annotation class InternalAPI
+
+@Retention(AnnotationRetention.BINARY) // This is only an IDE hint, and will not be used in the runtime
+@RequiresOptIn(
+    message = "Only use this if you know what you are doing and you need to bypass the SSL certificate checks. Never use this for sensitive network requests such as logins.",
+    level = RequiresOptIn.Level.WARNING
+)
+annotation class UnsafeSSL
 
 /**
  * Defines the constant for the all languages preference, if this is set then it is
@@ -67,11 +85,10 @@ object APIHolder {
     val unixTimeMS: Long
         get() = System.currentTimeMillis()
 
-    // ConcurrentModificationException is possible!!!
-    val allProviders = threadSafeListOf<MainAPI>()
+    val allProviders = atomicListOf<MainAPI>()
 
     fun initAll() {
-        synchronized(allProviders) {
+        allProviders.withLock {
             for (api in allProviders) {
                 api.init()
             }
@@ -81,28 +98,28 @@ object APIHolder {
 
     /** String extension function to Capitalize first char of string.*/
     fun String.capitalize(): String {
-        return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
     }
 
-    var apis: List<MainAPI> = threadSafeListOf()
+    var apis: AtomicList<MainAPI> = atomicListOf()
     var apiMap: Map<String, Int>? = null
 
     fun addPluginMapping(plugin: MainAPI) {
-        synchronized(apis) {
+        apis.withLock {
             apis = apis + plugin
         }
         initMap(true)
     }
 
     fun removePluginMapping(plugin: MainAPI) {
-        synchronized(apis) {
+        apis.withLock {
             apis = apis.filter { it != plugin }
         }
         initMap(true)
     }
 
     private fun initMap(forcedUpdate: Boolean = false) {
-        synchronized(apis) {
+        apis.withLock {
             if (apiMap == null || forcedUpdate)
                 apiMap = apis.mapIndexed { index, api -> api.name to index }.toMap()
         }
@@ -110,24 +127,21 @@ object APIHolder {
 
     fun getApiFromNameNull(apiName: String?): MainAPI? {
         if (apiName == null) return null
-        synchronized(allProviders) {
+        return allProviders.withLock {
             initMap()
-            synchronized(apis) {
-                return apiMap?.get(apiName)?.let { apis.getOrNull(it) }
+            apis.withLock {
+                apiMap?.get(apiName)?.let { apis.getOrNull(it) }
                 // Leave the ?. null check, it can crash regardless
-                    ?: allProviders.firstOrNull { it.name == apiName }
+                ?: allProviders.firstOrNull { it.name == apiName }
             }
         }
     }
 
     fun getApiFromUrlNull(url: String?): MainAPI? {
         if (url == null) return null
-        synchronized(allProviders) {
-            allProviders.forEach { api ->
-                if (url.startsWith(api.mainUrl)) return api
-            }
+        return allProviders.withLock {
+            allProviders.firstOrNull { url.startsWith(it.mainUrl) }
         }
-        return null
     }
 
     /**
@@ -456,7 +470,7 @@ abstract class MainAPI {
     }
 
     fun init() {
-        overrideData?.get(this.javaClass.simpleName)?.let { data ->
+        overrideData?.get(this::class.simpleName)?.let { data ->
             overrideWithNewData(data)
         }
     }
@@ -670,9 +684,16 @@ abstract class MainAPI {
     }
 }
 
-/** Might need a different implementation for desktop*/
 fun base64Decode(string: String): String {
-    return String(base64DecodeArray(string), Charsets.ISO_8859_1)
+    // ISO-8859-1 decoding: each byte maps directly to its Unicode code point (0-255),
+    // so we mask each byte to unsigned and convert to the corresponding Char manually.
+    // decodeToString() can't be used here as it assumes UTF-8.
+    val bytes = base64DecodeArray(string)
+    return buildString(bytes.size) {
+        for (b in bytes) {
+            append((b.toInt() and 0xFF).toChar())
+        }
+    }
 }
 
 @OptIn(ExperimentalEncodingApi::class)
@@ -1048,6 +1069,8 @@ enum class TvType(value: Int?) {
 
     Audio(16),
     Podcast(17),
+    @Prerelease
+    Video(18),
 }
 
 enum class AutoDownloadMode(val value: Int) {
@@ -1063,14 +1086,15 @@ enum class AutoDownloadMode(val value: Int) {
 }
 
 /** Extension function of [TvType] to check if the type is Movie.
- * @return If the type is AnimeMovie, Live, Movie, Torrent returns true otherwise returns false.
+ * @return If the type is AnimeMovie, Live, Movie, Torrent, Video returns true otherwise returns false.
  * */
 fun TvType.isMovieType(): Boolean {
     return when (this) {
         TvType.AnimeMovie,
         TvType.Live,
         TvType.Movie,
-        TvType.Torrent -> true
+        TvType.Torrent,
+        TvType.Video -> true
 
         else -> false
     }
@@ -1150,7 +1174,6 @@ suspend fun newSubtitleFile(
  * @property headers Optional headers for the audio file request.
  * @see newAudioFile
  * */
-@Prerelease
 @ConsistentCopyVisibility
 data class AudioFile internal constructor(
     var url: String,
@@ -1162,7 +1185,6 @@ data class AudioFile internal constructor(
  * @param initializer Lambda to configure additional properties like headers.
  * @return Configured AudioFile instance.
  * */
-@Prerelease
 suspend fun newAudioFile(
     url: String,
     initializer: suspend AudioFile.() -> Unit = { }
@@ -1480,43 +1502,7 @@ constructor(
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
     override var score: Score? = null,
-) : SearchResponse {
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(
-        "Use newAnimeSearchResponse",
-        level = DeprecationLevel.ERROR
-    )
-    constructor(
-        name: String,
-        url: String,
-        apiName: String,
-        type: TvType? = null,
-
-        posterUrl: String? = null,
-        year: Int? = null,
-        dubStatus: EnumSet<DubStatus>? = null,
-
-        otherName: String? = null,
-        episodes: MutableMap<DubStatus, Int> = mutableMapOf(),
-
-        id: Int? = null,
-        quality: SearchQuality? = null,
-        posterHeaders: Map<String, String>? = null,
-    ) : this(
-        name,
-        url,
-        apiName,
-        type,
-        posterUrl,
-        year,
-        dubStatus,
-        otherName,
-        episodes,
-        id,
-        quality,
-        posterHeaders, null
-    )
-}
+) : SearchResponse
 
 fun AnimeSearchResponse.addDubStatus(status: DubStatus, episodes: Int? = null) {
     this.dubStatus = dubStatus?.also { it.add(status) } ?: EnumSet.of(status)
@@ -1777,7 +1763,6 @@ interface LoadResponse {
     var posterHeaders: Map<String, String>?
     var backgroundPosterUrl: String?
 
-    @Prerelease
     var logoUrl: String?
     var contentRating: String?
 
@@ -1884,7 +1869,6 @@ interface LoadResponse {
             this.addSimklId(SimklSyncServices.Mal, id.toString())
         }
 
-        @Prerelease
         fun LoadResponse.addKitsuId(id: Int?) {
             this.syncData[kitsuIdPrefix] = (id ?: return).toString()
         }
@@ -2150,6 +2134,7 @@ fun TvType.getFolderPrefix(): String {
         TvType.Podcast -> "Podcasts"
         TvType.Torrent -> "Torrents"
         TvType.TvSeries -> "TVSeries"
+        TvType.Video -> "Videos"
     }
 }
 

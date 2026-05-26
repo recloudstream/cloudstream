@@ -334,6 +334,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                 }, subtitleCallback = {
                                     currentSubs.add(it)
                                 },
+                                offset = 0,
                                 isCasting = true
                             )
                         }

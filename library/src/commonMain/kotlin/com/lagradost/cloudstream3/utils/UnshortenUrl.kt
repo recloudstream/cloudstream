@@ -2,9 +2,9 @@ package com.lagradost.cloudstream3.utils
 
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.base64Decode
+import com.lagradost.cloudstream3.utils.StringUtils.decodeUri
 import com.lagradost.nicehttp.NiceResponse
 import java.net.URI
-import java.net.URLDecoder
 
 // Code heavily based on unshortenit.py form kodiondemand /addon
 
@@ -51,16 +51,18 @@ object ShortLink {
     suspend fun unshorten(uri: String, type: String? = null): String {
         var currentUrl = uri
 
-        while (true) {
-            val oldurl = currentUrl
+        val visitedUrls = mutableSetOf<String>()
+        var count = 10
+        while (!visitedUrls.contains(currentUrl) && count > 0) {
+            visitedUrls += currentUrl
+            count -= 1
+
             val domain =
-                URI(currentUrl.trim()).host ?: throw IllegalArgumentException("No domain found in URI!")
+                URI(currentUrl.trim()).host
+                    ?: throw IllegalArgumentException("No domain found in URI!")
             currentUrl = shortList.firstOrNull {
                 it.regex.find(domain) != null || type == it.type
             }?.function?.let { it(currentUrl) } ?: break
-            if (oldurl == currentUrl) {
-                break
-            }
         }
         return currentUrl.trim()
     }
@@ -112,8 +114,10 @@ object ShortLink {
             uri.contains("delta") -> uri = uri.replace("/delta/", "/adelta/")
             (uri.contains("/ga/") || uri.contains("/ga2/")) -> uri =
                 base64Decode(uri.split('/').last()).trim()
+
             uri.contains("/speedx/") -> uri =
                 uri.replace("http://linkup.pro/speedx", "http://speedvideo.net")
+
             else -> {
                 r = app.get(uri, allowRedirects = true)
                 uri = r.url
@@ -185,10 +189,11 @@ object ShortLink {
     }
 
     fun unshortenDavisonbarker(uri: String): String {
-        return URLDecoder.decode(uri.substringAfter("dest="), "UTF-8")
+        return uri.substringAfter("dest=").decodeUri()
     }
+
     suspend fun unshortenIsecure(uri: String): String {
         val doc = app.get(uri).document
-        return doc.selectFirst("iframe")?.attr("src")?.trim()?: uri
+        return doc.selectFirst("iframe")?.attr("src")?.trim() ?: uri
     }
 }
