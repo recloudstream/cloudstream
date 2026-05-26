@@ -15,7 +15,7 @@ object DeviceLayout {
     val EMULATOR = Layout(0b00100)
     val COMPUTER = Layout(0b01000)
 
-    private var layoutId = Layout(PreferenceDefaults.APP_LAYOUT)
+    private var layoutId = Layout(-1)
     // TODO when fully on Compose
     // private val layoutId: Int get() = resolveLayout()
 
