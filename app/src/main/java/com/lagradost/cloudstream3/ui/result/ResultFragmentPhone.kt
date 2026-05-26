@@ -1082,7 +1082,28 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
         }
 
         observeNullable(viewModel.episodesCountText) { count ->
-            resultBinding?.resultEpisodesText.setText(count)
+            resultBinding?.resultEpisodesText?.setText(count)
+        }
+
+        observeNullable(viewModel.ratingsData) { ratings ->
+            resultBinding?.apply {
+                val imdb = ratings?.imdbScore
+                val rt = ratings?.rottenTomatoesScore
+                
+                if (imdb != null && imdb > 0.0) {
+                    resultMetaImdb.text = "⭐ $imdb"
+                    resultMetaImdb.isVisible = true
+                } else {
+                    resultMetaImdb.isGone = true
+                }
+
+                if (rt != null && rt > 0) {
+                    resultMetaRottenTomatoes.text = "🍅 $rt%"
+                    resultMetaRottenTomatoes.isVisible = true
+                } else {
+                    resultMetaRottenTomatoes.isGone = true
+                }
+            }
         }
 
         observeNullable(viewModel.selectPopup) { popup ->

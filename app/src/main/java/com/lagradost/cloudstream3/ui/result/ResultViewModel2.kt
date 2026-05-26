@@ -507,6 +507,10 @@ class ResultViewModel2 : ViewModel() {
         MutableLiveData(mutableListOf())
     val trailers: LiveData<List<ExtractedTrailerData>> = _trailers
 
+    private val _ratingsData: MutableLiveData<com.lagradost.cloudstream3.metadataproviders.MdbListResponse?> =
+        MutableLiveData(null)
+    val ratingsData: LiveData<com.lagradost.cloudstream3.metadataproviders.MdbListResponse?> = _ratingsData
+
     private val _dubSubSelections: MutableLiveData<List<Pair<UiText?, DubStatus>>> =
         MutableLiveData(emptyList())
     val dubSubSelections: LiveData<List<Pair<UiText?, DubStatus>>> = _dubSubSelections
@@ -2158,6 +2162,7 @@ class ResultViewModel2 : ViewModel() {
         postPage(loadResponse, apiRepository)
         postSubscription(loadResponse)
         postFavorites(loadResponse)
+        loadRatings(loadResponse)
 
         val currentState = getResultWatchState(mainId)
         _watchStatus.postValue(currentState)
@@ -2444,6 +2449,17 @@ class ResultViewModel2 : ViewModel() {
                 3
             )
         ) // we dont want to fetch too many trailers
+    }
+
+    private fun loadRatings(loadResponse: LoadResponse) = ioSafe {
+        _ratingsData.postValue(null)
+        val imdbId = getImdbIdFromSyncData(loadResponse.syncData)
+        val title = loadResponse.name
+        val year = loadResponse.year
+        val ratings = com.lagradost.cloudstream3.metadataproviders.MetadataRepository.getRatings(title, year, imdbId)
+        if (ratings != null) {
+            _ratingsData.postValue(ratings)
+        }
     }
 
     private suspend fun getTrailers(

@@ -127,6 +127,11 @@ android {
             "SIMKL_CLIENT_SECRET",
             "\"" + (System.getenv("SIMKL_CLIENT_SECRET") ?: localProperties["simkl.secret"]) + "\""
         )
+        buildConfigField(
+            "String",
+            "MDBLIST_API_KEY",
+            "\"" + (System.getenv("MDBLIST_API_KEY") ?: localProperties["MDBLIST_API_KEY"] ?: "") + "\""
+        )
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

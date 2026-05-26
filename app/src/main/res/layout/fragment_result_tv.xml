@@ -603,6 +603,20 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                             android:id="@+id/result_meta_duration"
                             style="@style/ResultInfoText"
                             tools:text="121min" />
+                            
+                        <TextView
+                            android:id="@+id/result_meta_imdb"
+                            style="@style/ResultInfoText"
+                            android:visibility="gone"
+                            tools:visibility="visible"
+                            tools:text="⭐ 8.8" />
+                            
+                        <TextView
+                            android:id="@+id/result_meta_rotten_tomatoes"
+                            style="@style/ResultInfoText"
+                            android:visibility="gone"
+                            tools:visibility="visible"
+                            tools:text="🍅 87%" />
                     </com.lagradost.cloudstream3.widget.FlowLayout>
 
 
