@@ -188,4 +188,14 @@
     <string name="picture_in_picture">Bilde i bilde</string>
     <string name="continue_watching">Fortsett å sjå</string>
     <string name="reload_error">Prøv tilkopling på nytt…</string>
+    <string name="next_season_episode_format" formatted="true">Sesong %1$d Episode %2$d blir sleppt om</string>
+    <string name="play_from_beginning_img_des">Spel av frå start</string>
+    <string name="download_queue">Nedlastingskø</string>
+    <string name="speech_recognition_unavailable">Semmegjenkjenning er ikkje tilgjengeleg</string>
+    <string name="begin_speaking">Snakk no…</string>
+    <string name="browser">Nettlesar</string>
+    <string name="type_dropped">Fjerna</string>
+    <string name="play_torrent_button">Strøm Torrent</string>
+    <string name="play_full_series_button">Spel heile serien</string>
+    <string name="torrent_info">Denne filmen er ein Torrent, som betyr at bruken din kan bli spora\nSett deg inn i bruk av Torrent-resursar før du fortsetter.</string>
 </resources>
