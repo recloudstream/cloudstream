@@ -37,6 +37,12 @@ jobs:
         mkdir -p "${TMP_KEYSTORE_FILE_PATH}"
         cp keystore.jks "${TMP_KEYSTORE_FILE_PATH}/prerelease_keystore.keystore"
 
+    - name: Setup Google Services
+      run: |
+        if [ -n "${{ secrets.GOOGLE_SERVICES_JSON }}" ]; then
+          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" > app/google-services.json
+        fi
+
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v5
 
@@ -46,7 +52,7 @@ jobs:
         SIGNING_KEY_ALIAS: "key0"
         SIGNING_KEY_PASSWORD: "cloudstream"
         SIGNING_STORE_PASSWORD: "cloudstream"
-        MDBLIST_API_KEY: "aorzuy9py52y89nl78oaoskad"
+        MDBLIST_API_KEY: ${{ secrets.MDBLIST_API_KEY }}
 
     - name: Push Logs
       if: failure()

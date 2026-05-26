@@ -58,6 +58,12 @@ jobs:
         echo "::add-mask::${KEY_PWD}"
         echo "key_pwd=$KEY_PWD" >> $GITHUB_OUTPUT
 
+    - name: Setup Google Services
+      run: |
+        if [ -n "${{ secrets.GOOGLE_SERVICES_JSON }}" ]; then
+          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" > app/google-services.json
+        fi
+
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v5
       with:
@@ -72,7 +78,7 @@ jobs:
         SIMKL_CLIENT_ID: ${{ secrets.SIMKL_CLIENT_ID }}
         SIMKL_CLIENT_SECRET: ${{ secrets.SIMKL_CLIENT_SECRET }}
         MDL_API_KEY: ${{ secrets.MDL_API_KEY }}
-        MDBLIST_API_KEY: "aorzuy9py52y89nl78oaoskad"
+        MDBLIST_API_KEY: ${{ secrets.MDBLIST_API_KEY }}
 
     - uses: actions/checkout@v6
       with:
