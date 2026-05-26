@@ -10,7 +10,10 @@ data class MdbListResponse(
     @JsonProperty("score") val score: Int? = null, // average MDBList score
     @JsonProperty("score_average") val scoreAverage: Double? = null,
     @JsonProperty("ratings") val ratings: List<MdbListRating>? = null
-)
+) {
+    val imdbScore: Double? get() = ratings?.find { it.source == "imdb" }?.value
+    val rottenTomatoesScore: Int? get() = ratings?.find { it.source == "tomatoes" }?.value?.toInt()
+}
 
 data class MdbListRating(
     @JsonProperty("source") val source: String? = null, // "imdb", "tomatoes", "tomatoesaudience", "metacritic"

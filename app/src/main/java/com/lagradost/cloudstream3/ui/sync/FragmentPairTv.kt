@@ -109,29 +109,28 @@ class FragmentPairTv : Fragment() {
 
                 // Otherwise try to get a Google ID token
                 if (user.email != null) {
-                    try {
-                        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                            .requestIdToken(ctx.getString(R.string.default_web_client_id))
-                            .requestEmail()
-                            .build()
-                        val googleSignInClient = GoogleSignIn.getClient(ctx, gso)
-                        val account = kotlinx.coroutines.tasks.await(googleSignInClient.silentSignIn())
+                    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken(ctx.getString(R.string.default_web_client_id))
+                        .requestEmail()
+                        .build()
+                    val googleSignInClient = GoogleSignIn.getClient(ctx, gso)
+                    
+                    googleSignInClient.silentSignIn().addOnSuccessListener { account ->
                         completePairing(code, account.idToken!!, account.email)
-                    } catch (e: Exception) {
-                        // Silent sign-in failed — launch interactive sign-in
+                    }.addOnFailureListener { e ->
                         logError(e)
                         pendingPairingCode = code
-                        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        val interactiveGso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                             .requestIdToken(ctx.getString(R.string.default_web_client_id))
                             .requestEmail()
                             .build()
-                        val googleSignInClient = GoogleSignIn.getClient(ctx, gso)
-                        googleSignInLauncher.launch(googleSignInClient.signInIntent)
+                        val interactiveClient = GoogleSignIn.getClient(ctx, interactiveGso)
+                        googleSignInLauncher.launch(interactiveClient.signInIntent)
                     }
                 } else {
                     Toast.makeText(ctx, "Please log in using email/password first to pair TV.", Toast.LENGTH_LONG).show()
-                    setLoading(false)
                 }
+                setLoading(false)
 
             } catch (e: Exception) {
                 logError(e)

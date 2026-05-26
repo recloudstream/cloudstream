@@ -664,31 +664,26 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
                 // Otherwise try to get a Google ID token
                 if (user.email != null) {
-                    try {
-                        val gso = com.google.android.gms.auth.api.signin.GoogleSignInOptions.Builder(com.google.android.gms.auth.api.signin.GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    val gso = com.google.android.gms.auth.api.signin.GoogleSignInOptions.Builder(com.google.android.gms.auth.api.signin.GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken(ctx.getString(R.string.default_web_client_id))
+                        .requestEmail()
+                        .build()
+                    val googleSignInClient = com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(ctx, gso)
+                    
+                    googleSignInClient.silentSignIn().addOnSuccessListener { account ->
+                        completePairingWithToken(code, account.idToken!!)
+                    }.addOnFailureListener { e ->
+                        logError(e)
+                        pendingPairingCode = code
+                        val interactiveGso = com.google.android.gms.auth.api.signin.GoogleSignInOptions.Builder(com.google.android.gms.auth.api.signin.GoogleSignInOptions.DEFAULT_SIGN_IN)
                             .requestIdToken(ctx.getString(R.string.default_web_client_id))
                             .requestEmail()
                             .build()
-                        val googleSignInClient = com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(ctx, gso)
-                        val account = kotlinx.coroutines.tasks.await(googleSignInClient.silentSignIn())
-                        completePairingWithToken(code, account.idToken!!)
-                    } catch (e: Exception) {
-                        // Silent sign-in failed — launch interactive sign-in on UI thread
-                        logError(e)
-                        pendingPairingCode = code
-                        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
-                            val gso = com.google.android.gms.auth.api.signin.GoogleSignInOptions.Builder(com.google.android.gms.auth.api.signin.GoogleSignInOptions.DEFAULT_SIGN_IN)
-                                .requestIdToken(ctx.getString(R.string.default_web_client_id))
-                                .requestEmail()
-                                .build()
-                            val googleSignInClient = com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(ctx, gso)
-                            googleSignInForPairingLauncher.launch(googleSignInClient.signInIntent)
-                        }
+                        val interactiveClient = com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(ctx, interactiveGso)
+                        googleSignInForPairingLauncher.launch(interactiveClient.signInIntent)
                     }
                 } else {
-                    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
-                        Toast.makeText(ctx, "Please log in using email/password first to pair TV.", Toast.LENGTH_LONG).show()
-                    }
+                    Toast.makeText(ctx, "Please log in using email/password first to pair TV.", Toast.LENGTH_LONG).show()
                 }
 
             } catch (e: Exception) {
@@ -702,94 +697,76 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     /** Complete pairing using a Google ID token */
     private fun completePairingWithToken(code: String, googleIdToken: String) {
-        viewLifecycleOwner.lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
-            try {
-                val ctx = context ?: return@launch
-                val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
-                val docRef = firestore.collection("pairing_codes").document(code)
-                val snapshot = kotlinx.coroutines.tasks.await(docRef.get())
-
-                if (!snapshot.exists()) {
-                    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
-                        Toast.makeText(ctx, "Invalid or expired pairing code.", Toast.LENGTH_SHORT).show()
-                    }
-                    return@launch
-                }
-
-                val createdAt = snapshot.getLong("createdAt") ?: 0L
-                val status = snapshot.getString("status")
-
-                if (status != "pending" || System.currentTimeMillis() - createdAt > 5 * 60 * 1000) {
-                    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
-                        Toast.makeText(ctx, "Pairing code has expired or is already paired.", Toast.LENGTH_SHORT).show()
-                    }
-                    return@launch
-                }
-
-                val updateData = hashMapOf<String, Any>(
-                    "status" to "authorized",
-                    "googleIdToken" to googleIdToken
-                )
-
-                kotlinx.coroutines.tasks.await(docRef.update(updateData))
-
-                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
-                    Toast.makeText(ctx, "TV paired successfully!", Toast.LENGTH_LONG).show()
-                }
-
-            } catch (e: Exception) {
-                logError(e)
-                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
-                    Toast.makeText(context, "An error occurred during pairing.", Toast.LENGTH_SHORT).show()
-                }
+        val ctx = context ?: return
+        val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+        val docRef = firestore.collection("pairing_codes").document(code)
+        
+        docRef.get().addOnSuccessListener { snapshot ->
+            if (!snapshot.exists()) {
+                Toast.makeText(ctx, "Invalid or expired pairing code.", Toast.LENGTH_SHORT).show()
+                return@addOnSuccessListener
             }
+
+            val createdAt = snapshot.getLong("createdAt") ?: 0L
+            val status = snapshot.getString("status")
+
+            if (status != "pending" || System.currentTimeMillis() - createdAt > 5 * 60 * 1000) {
+                Toast.makeText(ctx, "Pairing code has expired or is already paired.", Toast.LENGTH_SHORT).show()
+                return@addOnSuccessListener
+            }
+
+            val updateData = hashMapOf<String, Any>(
+                "status" to "authorized",
+                "googleIdToken" to googleIdToken
+            )
+
+            docRef.update(updateData).addOnSuccessListener {
+                Toast.makeText(ctx, "TV paired successfully!", Toast.LENGTH_LONG).show()
+            }.addOnFailureListener { e ->
+                logError(e)
+                Toast.makeText(ctx, "Pairing error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+            }
+        }.addOnFailureListener { e ->
+            logError(e)
+            Toast.makeText(ctx, "Pairing error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
         }
     }
 
     /** Complete pairing using email/password credentials */
     private fun completePairingWithCredentials(code: String, email: String, password: String) {
-        viewLifecycleOwner.lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
-            try {
-                val ctx = context ?: return@launch
-                val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
-                val docRef = firestore.collection("pairing_codes").document(code)
-                val snapshot = kotlinx.coroutines.tasks.await(docRef.get())
-
-                if (!snapshot.exists()) {
-                    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
-                        Toast.makeText(ctx, "Invalid or expired pairing code.", Toast.LENGTH_SHORT).show()
-                    }
-                    return@launch
-                }
-
-                val createdAt = snapshot.getLong("createdAt") ?: 0L
-                val status = snapshot.getString("status")
-
-                if (status != "pending" || System.currentTimeMillis() - createdAt > 5 * 60 * 1000) {
-                    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
-                        Toast.makeText(ctx, "Pairing code has expired or is already paired.", Toast.LENGTH_SHORT).show()
-                    }
-                    return@launch
-                }
-
-                val updateData = hashMapOf<String, Any>(
-                    "status" to "authorized",
-                    "email" to email,
-                    "password" to password
-                )
-
-                kotlinx.coroutines.tasks.await(docRef.update(updateData))
-
-                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
-                    Toast.makeText(ctx, "TV paired successfully!", Toast.LENGTH_LONG).show()
-                }
-
-            } catch (e: Exception) {
-                logError(e)
-                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
-                    Toast.makeText(context, "Pairing error: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
-                }
+        val ctx = context ?: return
+        val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+        val docRef = firestore.collection("pairing_codes").document(code)
+        
+        docRef.get().addOnSuccessListener { snapshot ->
+            if (!snapshot.exists()) {
+                Toast.makeText(ctx, "Invalid or expired pairing code.", Toast.LENGTH_SHORT).show()
+                return@addOnSuccessListener
             }
+
+            val createdAt = snapshot.getLong("createdAt") ?: 0L
+            val status = snapshot.getString("status")
+
+            if (status != "pending" || System.currentTimeMillis() - createdAt > 5 * 60 * 1000) {
+                Toast.makeText(ctx, "Pairing code has expired or is already paired.", Toast.LENGTH_SHORT).show()
+                return@addOnSuccessListener
+            }
+
+            val updateData = hashMapOf<String, Any>(
+                "status" to "authorized",
+                "email" to email,
+                "password" to password
+            )
+
+            docRef.update(updateData).addOnSuccessListener {
+                Toast.makeText(ctx, "TV paired successfully!", Toast.LENGTH_LONG).show()
+            }.addOnFailureListener { e ->
+                logError(e)
+                Toast.makeText(ctx, "Pairing error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+            }
+        }.addOnFailureListener { e ->
+            logError(e)
+            Toast.makeText(ctx, "Pairing error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
         }
     }
 

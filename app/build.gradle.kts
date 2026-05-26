@@ -87,10 +87,9 @@ android {
         // so won't kill the configuration cache.
         if (System.getenv("SIGNING_KEY_ALIAS") != null) {
             create("prerelease") {
-                val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
-                val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
+                val prereleaseStoreFile = System.getenv("SIGNING_STORE_FILE")?.let { File(it) } ?: File(rootDir, "keystore.jks")
 
-                storeFile = prereleaseStoreFile?.let { file(it) }
+                storeFile = prereleaseStoreFile
                 storePassword = System.getenv("SIGNING_STORE_PASSWORD")
                 keyAlias = System.getenv("SIGNING_KEY_ALIAS")
                 keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
@@ -104,8 +103,8 @@ android {
         applicationId = "com.lagradost.cloudstream3"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 69
-        versionName = "4.7.1"
+        versionCode = 70
+        versionName = "4.7.2"
 
         manifestPlaceholders["target_sdk_version"] = libs.versions.targetSdk.get()
 
