@@ -5,6 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/search_prioritize_subs_toggle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Prioritize Subtitles"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     <ListView
         android:id="@+id/listview1"

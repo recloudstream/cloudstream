@@ -311,6 +311,15 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
 
                     val cancelBtt = dialog.findViewById<MaterialButton>(R.id.cancel_btt)
                     val applyBtt = dialog.findViewById<MaterialButton>(R.id.apply_btt)
+                    
+                    val prioritizeSubsToggle = dialog.findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.search_prioritize_subs_toggle)
+                    val prefManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+                    var prioritizeSubs = prefManager.getBoolean("prioritize_subtitles", false)
+                    prioritizeSubsToggle?.isChecked = prioritizeSubs
+                    
+                    prioritizeSubsToggle?.setOnCheckedChangeListener { _, isChecked ->
+                        prioritizeSubs = isChecked
+                    }
 
                     val listView = dialog.findViewById<ListView>(R.id.listview1)
                     val arrayAdapter = ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
@@ -392,11 +401,16 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
                     }
 
                     dialog.setOnDismissListener {
+                        val oldPrioritizeSubs = prefManager.getBoolean("prioritize_subtitles", false)
+                        if (prioritizeSubs != oldPrioritizeSubs) {
+                            prefManager.edit().putBoolean("prioritize_subtitles", prioritizeSubs).apply()
+                        }
+                        
                         DataStoreHelper.searchPreferenceProviders = currentSelectedApis.toList()
                         selectedApis = currentSelectedApis
 
                         // run search when dialog is close
-                        if (previousSelectedApis != selectedApis.toSet() || previousSelectedSearchTypes != selectedSearchTypes.toSet()) {
+                        if (previousSelectedApis != selectedApis.toSet() || previousSelectedSearchTypes != selectedSearchTypes.toSet() || prioritizeSubs != oldPrioritizeSubs) {
                             search(binding.mainSearch.query.toString())
                         }
                     }

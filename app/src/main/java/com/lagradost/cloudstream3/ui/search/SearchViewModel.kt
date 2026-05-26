@@ -170,26 +170,50 @@ class SearchViewModel : ViewModel() {
     }
 
     private fun bundleSearch(lists: MutableMap<String, ExpandableSearchList>): ExpandableSearchList {
+        var list = ArrayList<SearchResponse>()
         if (lists.size == 1) {
-            return lists.values.first()
+            list.addAll(lists.values.first().list)
+        } else {
+            val nestedList = lists.map { it.value.list }
+
+            // I do it this way to move the relevant search results to the top
+            var index = 0
+            while (true) {
+                var added = 0
+                for (sublist in nestedList) {
+                    if (sublist.size > index) {
+                        list.add(sublist[index])
+                        added++
+                    }
+                }
+                if (added == 0) break
+                index++
+            }
         }
 
-        val list = ArrayList<SearchResponse>()
-        val nestedList =
-            lists.map { it.value.list }
+        val prioritizeSubs = com.lagradost.cloudstream3.CloudStreamApp.context?.let {
+            androidx.preference.PreferenceManager.getDefaultSharedPreferences(it).getBoolean("prioritize_subtitles", false)
+        } ?: false
 
-        // I do it this way to move the relevant search results to the top
-        var index = 0
-        while (true) {
-            var added = 0
-            for (sublist in nestedList) {
-                if (sublist.size > index) {
-                    list.add(sublist[index])
-                    added++
-                }
-            }
-            if (added == 0) break
-            index++
+        if (prioritizeSubs) {
+            val subbedKeywords = listOf("[SUB]", "(SUB)", "SUBBED", "MULTI-SUB", "SUBTITLE")
+            val dubbedKeywords = listOf("[DUB]", "(DUB)", "DUBBED")
+
+            list = ArrayList(list.sortedWith(Comparator { a, b ->
+                val aName = a.name.uppercase()
+                val bName = b.name.uppercase()
+
+                val aHasSub = subbedKeywords.any { aName.contains(it) }
+                val aHasDub = dubbedKeywords.any { aName.contains(it) }
+                
+                val bHasSub = subbedKeywords.any { bName.contains(it) }
+                val bHasDub = dubbedKeywords.any { bName.contains(it) }
+
+                val aScore = if (aHasSub) 1 else if (aHasDub) -1 else 0
+                val bScore = if (bHasSub) 1 else if (bHasDub) -1 else 0
+
+                bScore.compareTo(aScore)
+            }))
         }
 
         return ExpandableSearchList(list, 1, false)
