@@ -1,12 +1,21 @@
 package com.lagradost.cloudstream4.utils
 
-object DeviceLayout {
-    const val PHONE: Int = 0b00001
-    const val TV: Int = 0b00010
-    const val EMULATOR: Int = 0b00100
-    const val COMPUTER: Int = 0b01000
+import com.lagradost.cloudstream4.preferences.PreferenceDefaults
+import kotlin.jvm.JvmInline
 
-    private var layoutId = -1
+object DeviceLayout {
+    @JvmInline // This still works but has no affect on non-JVM targets
+    value class Layout(private val value: Int) {
+        infix fun or(other: Layout) = Layout(value or other.value)
+        internal fun and(other: Layout) = (value and other.value) != 0
+    }
+
+    val PHONE = Layout(0b00001)
+    val TV = Layout(0b00010)
+    val EMULATOR = Layout(0b00100)
+    val COMPUTER = Layout(0b01000)
+
+    private var layoutId = Layout(PreferenceDefaults.APP_LAYOUT)
     // TODO when fully on Compose
     // private val layoutId: Int get() = resolveLayout()
 
@@ -19,7 +28,7 @@ object DeviceLayout {
      *
      * Valid flags are: PHONE, TV, EMULATOR, or COMPUTER
      */
-    fun isLayout(flags: Int): Boolean = (layoutId and flags) != 0
+    fun isLayout(flags: Layout): Boolean = layoutId.and(flags)
 
     /** Returns true if the current orientation is landscape. */
     fun isLandscape(): Boolean =
@@ -36,14 +45,9 @@ object DeviceLayout {
         layoutId = resolveLayout()
     }
 
-    private fun resolveLayout(): Int {
+    private fun resolveLayout(): Layout {
         return when (DeviceInfo.getLayoutPreference()) {
-            -1 -> when (DeviceInfo.getDeviceType()) {
-                DeviceType.COMPUTER -> COMPUTER
-                DeviceType.EMULATOR -> EMULATOR
-                DeviceType.PHONE -> PHONE
-                DeviceType.TV -> TV
-            }
+            PreferenceDefaults.APP_LAYOUT -> DeviceInfo.getDetectedLayout()
             0 -> PHONE
             1 -> TV
             2 -> EMULATOR

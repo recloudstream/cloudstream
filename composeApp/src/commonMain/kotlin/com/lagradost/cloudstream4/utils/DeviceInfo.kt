@@ -1,11 +1,7 @@
 package com.lagradost.cloudstream4.utils
 
 internal expect object DeviceInfo {
-    fun getDeviceType(): DeviceType
+    fun getDetectedLayout(): DeviceLayout.Layout
     fun isLandscape(): Boolean
     fun getLayoutPreference(): Int
-}
-
-enum class DeviceType {
-    PHONE, TV, EMULATOR, COMPUTER
 }

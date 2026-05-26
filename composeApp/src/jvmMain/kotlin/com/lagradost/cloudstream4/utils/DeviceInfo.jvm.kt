@@ -1,9 +1,10 @@
 package com.lagradost.cloudstream4.utils
 
+import com.lagradost.cloudstream4.preferences.PreferenceDefaults
 import java.awt.Toolkit
 
 internal actual object DeviceInfo {
-    actual fun getDeviceType(): DeviceType = DeviceType.COMPUTER
+    actual fun getDetectedLayout(): DeviceLayout.Layout = DeviceLayout.COMPUTER
 
     actual fun isLandscape(): Boolean {
         return try {
@@ -14,5 +15,5 @@ internal actual object DeviceInfo {
         }
     }
 
-    actual fun getLayoutPreference(): Int = -1
+    actual fun getLayoutPreference(): Int = PreferenceDefaults.APP_LAYOUT
 }
