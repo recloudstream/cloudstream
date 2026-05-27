@@ -9,7 +9,6 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import java.net.URI
-import java.nio.charset.StandardCharsets
 import javax.crypto.Cipher
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -94,7 +93,7 @@ open class ByseSX : ExtractorApi() {
         cipher.init(Cipher.DECRYPT_MODE, secretKey, spec)
 
         val plainBytes = cipher.doFinal(cipherBytes)
-        var jsonStr = String(plainBytes, StandardCharsets.UTF_8)
+        var jsonStr = plainBytes.decodeToString()
 
         if (jsonStr.startsWith("\uFEFF")) jsonStr = jsonStr.substring(1)
 

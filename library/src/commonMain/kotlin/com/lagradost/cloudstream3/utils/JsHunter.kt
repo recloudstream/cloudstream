@@ -1,11 +1,9 @@
 package com.lagradost.cloudstream3.utils
 
 import com.lagradost.cloudstream3.mvvm.logError
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 import kotlin.math.pow
 
-//author: https://github.com/daarkdemon
+// author: https://github.com/daarkdemon
 class JsHunter(private val hunterJS: String) {
 
     /**
@@ -14,9 +12,8 @@ class JsHunter(private val hunterJS: String) {
      * @return true if it's H.U.N.T.E.R coded.
      */
     fun detect(): Boolean {
-        val p = Pattern.compile("eval\\(function\\(h,u,n,t,e,r\\)")
-        val searchResults = p.matcher(hunterJS)
-        return searchResults.find()
+        val regex = Regex("eval\\(function\\(h,u,n,t,e,r\\)")
+        return regex.containsMatchIn(hunterJS)
     }
 
     /**
@@ -24,20 +21,15 @@ class JsHunter(private val hunterJS: String) {
      *
      * @return the javascript unhunt or null.
      */
-
     fun dehunt(): String? {
         try {
-            val p: Pattern =
-                Pattern.compile(
-                    """\}\("([^"]+)",[^,]+,\s*"([^"]+)",\s*(\d+),\s*(\d+)""",
-                    Pattern.DOTALL
-                )
-            val searchResults: Matcher = p.matcher(hunterJS)
-            if (searchResults.find() && searchResults.groupCount() == 4) {
-                val h = searchResults.group(1)!!
-                val n = searchResults.group(2)!!
-                val t = searchResults.group(3)!!.toInt()
-                val e = searchResults.group(4)!!.toInt()
+            val regex = Regex("""\}\("([^"]+)",[^,]+,\s*"([^"]+)",\s*(\d+),\s*(\d+)""", RegexOption.DOT_MATCHES_ALL)
+            val match = regex.find(hunterJS)
+            if (match != null && match.groupValues.size == 5) {
+                val h = match.groupValues[1]
+                val n = match.groupValues[2]
+                val t = match.groupValues[3].toInt()
+                val e = match.groupValues[4].toInt()
                 return hunter(h, n, t, e)
             }
         } catch (e: Exception) {

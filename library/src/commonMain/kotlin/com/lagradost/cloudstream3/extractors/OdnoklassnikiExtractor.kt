@@ -32,7 +32,7 @@ open class Odnoklassniki : ExtractorApi() {
         val embedUrl = url.replace("/video/","/videoembed/")
         val videoReq  = app.get(embedUrl, headers=headers).text.replace("\\&quot;", "\"").replace("\\\\", "\\")
             .replace(Regex("\\\\u([0-9A-Fa-f]{4})")) { matchResult ->
-                Integer.parseInt(matchResult.groupValues[1], 16).toChar().toString()
+                matchResult.groupValues[1].toInt(16).toChar().toString()
             }
         val videosStr = Regex(""""videos":(\[[^]]*])""").find(videoReq)?.groupValues?.get(1) ?: throw ErrorLoadingException("Video not found")
         val videos    = AppUtils.tryParseJson<List<OkRuVideo>>(videosStr) ?: throw ErrorLoadingException("Video not found")

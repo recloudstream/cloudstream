@@ -17,10 +17,7 @@ abstract class BasePlugin {
     fun registerMainAPI(element: MainAPI) {
         Log.i(PLUGIN_TAG, "Adding ${element.name} (${element.mainUrl}) MainAPI")
         element.sourcePlugin = this.filename
-        // Race condition causing which would case duplicates if not for distinctBy
-        synchronized(APIHolder.allProviders) {
-            APIHolder.allProviders.add(element)
-        }
+        APIHolder.allProviders.add(element)
         APIHolder.addPluginMapping(element)
     }
 
@@ -31,9 +28,7 @@ abstract class BasePlugin {
     fun registerExtractorAPI(element: ExtractorApi) {
         Log.i(PLUGIN_TAG, "Adding ${element.name} (${element.mainUrl}) ExtractorApi")
         element.sourcePlugin = this.filename
-        synchronized(extractorApis) {
-            extractorApis.add(element)
-        }
+        extractorApis.add(element)
     }
 
     /**

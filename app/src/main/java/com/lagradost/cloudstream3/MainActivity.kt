@@ -408,13 +408,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                                 return true
                             }
 
-                            synchronized(apis) {
-                                for (api in apis) {
-                                    if (str.startsWith(api.mainUrl)) {
-                                        loadResult(str, api.name, "")
-                                        return true
-                                    }
-                                }
+                            val matchedApi = apis.filter { str.startsWith(it.mainUrl) }.firstOrNull()
+                            if (matchedApi != null) {
+                                loadResult(str, matchedApi.name, "")
+                                return true
                             }
                         }
                     }
@@ -809,12 +806,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
     }
 
-
     private val pluginsLock = Mutex()
     private fun onAllPluginsLoaded(success: Boolean = false) {
         ioSafe {
             pluginsLock.withLock {
-                synchronized(allProviders) {
+                allProviders.withLock {
                     // Load cloned sites after plugins have been loaded since clones depend on plugins.
                     try {
                         getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
@@ -1657,9 +1653,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         ioSafe {
             initAll()
             // No duplicates (which can happen by registerMainAPI)
-            apis = synchronized(allProviders) {
-                allProviders.distinctBy { it }
-            }
+            apis = allProviders.distinctBy { it }
         }
 
         //  val navView: BottomNavigationView = findViewById(R.id.nav_view)
@@ -1967,7 +1961,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
         if (BuildConfig.DEBUG) {
             var providersAndroidManifestString = "Current androidmanifest should be:\n"
-            synchronized(allProviders) {
+            allProviders.withLock {
                 for (api in allProviders) {
                     providersAndroidManifestString += "<data android:scheme=\"https\" android:host=\"${
                         api.mainUrl.removePrefix(
