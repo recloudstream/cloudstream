@@ -14,23 +14,10 @@ import kotlin.reflect.KClass
 
 @OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)
 object AppUtils {
-    /** Any object as json string */
+    /** Any object as a JSON string */
     fun Any.toJson(): String {
         if (this is String) return this
-        // @Serializable generates a serializer at compile time; contextual serializers are
-        // registered manually in serializersModule, we need both to support all cases
-        val serializer = this::class.serializerOrNull() ?: json.serializersModule.getContextual(this::class)
-        return if (serializer != null) {
-            try {
-                @Suppress("UNCHECKED_CAST")
-                json.encodeToString(serializer as KSerializer<Any>, this)
-            } catch (e: SerializationException) {
-                logError(e)
-                mapper.writeValueAsString(this)
-            }
-        } else {
-            mapper.writeValueAsString(this)
-        }
+        return toJsonLiteral()
     }
 
     inline fun <reified T : Any> parseJson(value: String): T {
@@ -65,6 +52,25 @@ object AppUtils {
             parseJson(value ?: return null)
         } catch (_: Exception) {
             null
+        }
+    }
+
+    /** Sometimes we want to encode as JSON even if it is already a String. */
+    @InternalAPI
+    fun Any.toJsonLiteral(): String {
+        // @Serializable generates a serializer at compile time; contextual serializers are
+        // registered manually in serializersModule, we need both to support all cases
+        val serializer = this::class.serializerOrNull() ?: json.serializersModule.getContextual(this::class)
+        return if (serializer != null) {
+            try {
+                @Suppress("UNCHECKED_CAST")
+                json.encodeToString(serializer as KSerializer<Any>, this)
+            } catch (e: SerializationException) {
+                logError(e)
+                mapper.writeValueAsString(this)
+            }
+        } else {
+            mapper.writeValueAsString(this)
         }
     }
 

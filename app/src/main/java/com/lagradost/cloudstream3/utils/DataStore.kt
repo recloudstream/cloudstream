@@ -9,7 +9,7 @@ import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKeyClass
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
-import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import com.lagradost.cloudstream3.utils.AppUtils.toJsonLiteral
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
@@ -173,7 +173,7 @@ object DataStore {
     fun <T> Context.setKey(path: String, value: T) {
         try {
             getSharedPrefs().edit {
-                putString(path, value?.let { it.toJson() })
+                putString(path, value?.toJsonLiteral())
             }
         } catch (e: Exception) {
             logError(e)
