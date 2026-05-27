@@ -260,7 +260,7 @@ dependencies {
     implementation(libs.conscrypt.android) // To Fix SSL Fu*kery on Android 9
     implementation(libs.jackson.module.kotlin) // JSON Parser
     implementation(libs.zipline)
-b
+
     // Temp/deprecated; will be removed once extensions have time to migrate from using it
     implementation("com.google.code.gson:gson:2.14.0")
     // Deprecated; will be removed once extensions have time to migrate from using it
