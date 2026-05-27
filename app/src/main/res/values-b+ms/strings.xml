@@ -25,8 +25,8 @@
     <string name="next_episode_format" formatted="true">Episod %d akan disiarkan dalam</string>
     <string name="cast_format" formatted="true">Pelakon:%s</string>
     <string name="safe_mode_title">Mod Selamat Hidup</string>
-    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
-    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dh %2$dj %3$dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dj %2$dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <string name="episode_poster_img_des">Poster Episod</string>
     <string name="home_main_poster_img_des">Poster Utama</string>
@@ -485,7 +485,7 @@
     <string name="category_updates">Kemaskini dan sandaran</string>
     <string name="double_tap_to_seek_settings">Ketik dua kali untuk mencari</string>
     <string name="use_system_brightness_settings_des">Gunakan kecerahan sistem dalam pemain apl dan bukannya tindanan gelap</string>
-    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dh %2$dm %3$ds</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dj %2$dm %3$ds</string>
     <string name="download_time_left_min_sec_format" formatted="true">%1$dm %2$ds</string>
     <string name="download_time_left_sec_format" formatted="true">%1$ds</string>
     <string name="speech_recognition_unavailable">Pengecaman pertuturan tidak tersedia</string>

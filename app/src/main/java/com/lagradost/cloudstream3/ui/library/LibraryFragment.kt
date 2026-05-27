@@ -210,14 +210,13 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>(
             syncId: SyncIdName,
             apiName: String? = null,
         ) {
-            val availableProviders = synchronized(allProviders) {
-                allProviders.filter {
-                    it.supportedSyncNames.contains(syncId)
-                }.map { it.name } +
-                        // Add the api if it exists
-                        (APIHolder.getApiFromNameNull(apiName)?.let { listOf(it.name) }
-                            ?: emptyList())
-            }
+            val availableProviders = allProviders.filter {
+                it.supportedSyncNames.contains(syncId)
+            }.map { it.name } +
+                // Add the api if it exists
+                (APIHolder.getApiFromNameNull(apiName)?.let { listOf(it.name) }
+                    ?: emptyList())
+
             val baseOptions = listOf(
                 LibraryOpenerType.Default,
                 LibraryOpenerType.None,

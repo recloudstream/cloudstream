@@ -308,10 +308,10 @@ import com.lagradost.cloudstream3.extractors.Zplayer
 import com.lagradost.cloudstream3.extractors.ZplayerV2
 import com.lagradost.cloudstream3.extractors.Ztreamhub
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.utils.Coroutines.atomicListOf
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
-import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.jsoup.Jsoup
 import java.net.URI
 import java.util.UUID
@@ -883,7 +883,7 @@ suspend fun loadExtractor(
     // this is to match mirror domains - like example.com, example.net
     for (index in extractorApis.lastIndex downTo 0) {
         val extractor = extractorApis[index]
-        if (FuzzySearch.partialRatio(
+        if (Levenshtein.partialRatio(
                 extractor.mainUrl,
                 currentUrl
             ) > 80
@@ -904,7 +904,7 @@ suspend fun loadExtractor(
     return false
 }
 
-val extractorApis: MutableList<ExtractorApi> = arrayListOf(
+val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     //AllProvider(),
     Mp4Upload(),
     StreamTape(),
