@@ -1,15 +1,23 @@
 package com.lagradost.cloudstream3.ui.settings
 
+import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.ArrayAdapter
 import androidx.core.content.edit
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.preference.SeekBarPreference
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getActivity
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchQuality
+import com.lagradost.cloudstream3.databinding.BottomAppFontDialogBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.BasePreferenceFragmentCompat
 import com.lagradost.cloudstream3.ui.clear
@@ -25,13 +33,138 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.hideOn
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
+import com.lagradost.cloudstream3.utils.AppFontManager
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import kotlinx.coroutines.launch
 
 class SettingsUI : BasePreferenceFragmentCompat() {
+    private fun updateAppFontSummary() {
+        context?.let {
+            getPref(R.string.app_font_key)?.summary = AppFontManager.getSummary(it)
+        }
+    }
+
+    private fun showAppFontDialog() {
+        val activity = activity ?: return
+        val binding = BottomAppFontDialogBinding.inflate(layoutInflater)
+        val dialog = BottomSheetDialog(activity)
+        val defaultValue = getString(R.string.app_font_default)
+        val customOption = getString(R.string.app_font_custom_option)
+        val currentFont = AppFontManager.getSelectedFont(activity)
+        val suggestedFonts = AppFontManager.getSuggestedFonts(activity)
+        val suggestions = listOf(defaultValue, customOption) + suggestedFonts
+
+        dialog.setContentView(binding.root)
+
+        binding.text1.text = getString(R.string.app_font_picker_title)
+        val previewCache = mutableMapOf<String, Typeface?>()
+        val adapter = object : ArrayAdapter<String>(
+            activity,
+            R.layout.app_font_dropdown_item,
+            suggestions
+        ) {
+            private fun applyPreview(textView: TextView, fontName: String) {
+                val isSpecial = fontName == defaultValue || fontName == customOption
+                val typeface = if (isSpecial) {
+                    Typeface.DEFAULT
+                } else {
+                    previewCache.getOrPut(fontName) {
+                        AppFontManager.getPreviewTypeface(activity, fontName)
+                    } ?: Typeface.DEFAULT
+                }
+                textView.typeface = typeface
+            }
+
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getView(position, convertView, parent)
+                (view as? TextView)?.let { applyPreview(it, getItem(position).orEmpty()) }
+                return view
+            }
+
+            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getDropDownView(position, convertView, parent)
+                (view as? TextView)?.let { applyPreview(it, getItem(position).orEmpty()) }
+                return view
+            }
+        }
+
+        binding.appFontSuggestions.setAdapter(adapter)
+
+        val initialSuggestion = when {
+            currentFont == null -> defaultValue
+            suggestedFonts.any { it.equals(currentFont, true) } -> currentFont
+            else -> customOption
+        }
+        val initialInput = currentFont.orEmpty()
+        binding.appFontSuggestions.setText(initialSuggestion, false)
+        binding.appFontInput.setText(if (initialSuggestion == defaultValue) "" else initialInput)
+
+        fun updateCustomState(isCustom: Boolean) {
+            binding.appFontInputLayout.isEnabled = isCustom
+            binding.appFontInputLayout.alpha = if (isCustom) 1f else 0.7f
+        }
+        updateCustomState(initialSuggestion == customOption)
+
+        binding.appFontSuggestions.setOnItemClickListener { _, _, position, _ ->
+            val selected = suggestions.getOrNull(position) ?: return@setOnItemClickListener
+            when (selected) {
+                defaultValue -> {
+                    updateCustomState(false)
+                    binding.appFontInput.setText("")
+                }
+                customOption -> {
+                    updateCustomState(true)
+                    if (binding.appFontInput.text.isNullOrBlank()) {
+                        binding.appFontInput.setText(currentFont.orEmpty())
+                    }
+                    binding.appFontInput.requestFocus()
+                }
+                else -> {
+                    updateCustomState(false)
+                    binding.appFontInput.setText(selected)
+                }
+            }
+        }
+        binding.applyBtt.setOnClickListener {
+            val typedFont = binding.appFontInput.text?.toString()?.trim().orEmpty()
+            val selectedSuggestion = binding.appFontSuggestions.text?.toString()?.trim().orEmpty()
+            val selectedFont = when {
+                selectedSuggestion == defaultValue -> null
+                selectedSuggestion == customOption -> typedFont.takeIf { it.isNotEmpty() }
+                selectedSuggestion.isNotEmpty() -> selectedSuggestion
+                typedFont.isNotEmpty() -> typedFont
+                else -> null
+            }
+
+            binding.applyBtt.isEnabled = false
+            binding.cancelBtt.isEnabled = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                val result = AppFontManager.setSelectedFont(activity, selectedFont)
+                binding.applyBtt.isEnabled = true
+                binding.cancelBtt.isEnabled = true
+                result.onSuccess {
+                    updateAppFontSummary()
+                    AppFontManager.refresh(activity)
+                    dialog.dismiss()
+                }.onFailure {
+                    showToast(activity, it.message ?: getString(R.string.app_font_invalid))
+                }
+            }
+        }
+        binding.cancelBtt.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.setOnShowListener {
+            AppFontManager.applyToViewTree(binding.root)
+        }
+        dialog.show()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar(R.string.category_ui)
@@ -43,6 +176,7 @@ class SettingsUI : BasePreferenceFragmentCompat() {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_ui, rootKey)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        updateAppFontSummary()
 
         (getPref(R.string.overscan_key)?.hideOn(PHONE or EMULATOR) as? SeekBarPreference)?.setOnPreferenceChangeListener { pref, newValue ->
             val padding = (newValue as? Int)?.toPx ?: return@setOnPreferenceChangeListener true
@@ -119,6 +253,11 @@ class SettingsUI : BasePreferenceFragmentCompat() {
                 }
             )
             return@setOnPreferenceClickListener true
+        }
+
+        getPref(R.string.app_font_key)?.setOnPreferenceClickListener {
+            showAppFontDialog()
+            true
         }
 
         getPref(R.string.app_theme_key)?.setOnPreferenceClickListener {

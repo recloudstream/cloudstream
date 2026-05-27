@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="app_font_tag" type="id" />
+    <item name="app_font_recycler_listener_tag" type="id" />
+</resources>
