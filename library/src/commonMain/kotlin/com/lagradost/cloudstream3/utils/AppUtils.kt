@@ -21,19 +21,7 @@ object AppUtils {
     }
 
     inline fun <reified T : Any> parseJson(value: String): T {
-        // @Serializable generates a serializer at compile time; contextual serializers are
-        // registered manually in serializersModule, we need both to support all cases
-        val serializer = T::class.serializerOrNull() ?: json.serializersModule.getContextual(T::class)
-        return if (serializer != null) {
-            try {
-                json.decodeFromString(serializer, value)
-            } catch (e: SerializationException) {
-                logError(e)
-                mapper.readValue(value)
-            }
-        } else {
-            mapper.readValue(value)
-        }
+        return parseJson(value, T::class)
     }
 
     @Deprecated(

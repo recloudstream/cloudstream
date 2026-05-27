@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils.serializers
 
+import com.lagradost.cloudstream3.Prerelease
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -24,6 +25,7 @@ import kotlinx.serialization.json.JsonTransformingSerializer
  *       )
  *   }
  */
+@Prerelease
 abstract class WriteOnlySerializer<T : Any>(
     tSerializer: KSerializer<T>,
     private val keysToIgnore: Set<String>,
