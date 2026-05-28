@@ -661,4 +661,20 @@
     <string name="clipboard_permission_error">Fout bij toegang tot het Klembord, Probeer het opnieuw.</string>
     <string name="clipboard_unknown_error">Fout bij het kopiëren. Kopieer alsjeblieft de logcat en neem contact op met de app-ondersteuning.</string>
     <string name="dismiss">Afwijzen</string>
+    <string name="video_singular">Video</string>
+    <string name="skip_type_preview">Voorbeeld</string>
+    <string name="source_priority">Bron Prioriteit</string>
+    <string name="source_priority_help">Bepaal hoe de videobronnen worden gesorteerd in de speler</string>
+    <string name="biometric_authentication_title">Ontgrendel CloudStream</string>
+    <string name="biometric_setting">Versleutel met Biometrie</string>
+    <string name="reset_btn">Reset</string>
+    <string name="sort_release_date_new">verschijningsdatum (Nieuw naar Oud)</string>
+    <string name="sort_release_date_old">verschijningsdatum (Oud naar Nieuw)</string>
+    <string name="hide_player_control_names">Verberg de namen van de besturingselementen van de speler</string>
+    <string name="no_subtitles_loaded">Ondertiteling nog niet geladen</string>
+    <string name="backup_path_title">Back-up folder locatie</string>
+    <string name="custom">Aangepast</string>
+    <string name="confirm_before_exiting_title">Bevestig voor afsluiten</string>
+    <string name="confirm_before_exiting_desc">Toon dialoogvenster voordat de app wordt afgesloten</string>
+    <string name="subs_edge_size">Randgrote</string>
 </resources>
