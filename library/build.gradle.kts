@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.android.multiplatform.library)
     alias(libs.plugins.buildkonfig)
     alias(libs.plugins.dokka)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
@@ -58,6 +59,7 @@ kotlin {
             implementation(libs.jackson.module.kotlin) // JSON Parser
             implementation(libs.kotlinx.atomicfu)
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.serialization.json) // JSON Parser
             implementation(libs.ktor.http)
             implementation(libs.jsoup) // HTML Parser
             implementation(libs.rhino) // Run JavaScript
