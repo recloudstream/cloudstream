@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.metaproviders
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.Actor
 import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.Episode
@@ -33,17 +32,20 @@ import com.lagradost.cloudstream3.runAllAsync
 import com.lagradost.cloudstream3.toNewSearchResponseList
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 /**
  * episode and season starting from 1
  * they are null if movie
  */
+@Serializable
 data class TmdbLink(
-    @JsonProperty("imdbID") val imdbID: String?,
-    @JsonProperty("tmdbID") val tmdbID: Int?,
-    @JsonProperty("episode") val episode: Int?,
-    @JsonProperty("season") val season: Int?,
-    @JsonProperty("movieName") val movieName: String? = null,
+    @SerialName("imdbID") val imdbID: String?,
+    @SerialName("tmdbID") val tmdbID: Int?,
+    @SerialName("episode") val episode: Int?,
+    @SerialName("season") val season: Int?,
+    @SerialName("movieName") val movieName: String? = null,
 )
 
 open class TmdbProvider : MainAPI() {
@@ -63,148 +65,167 @@ open class TmdbProvider : MainAPI() {
     private val tmdbApiKey = "e6333b32409e02a4a6eba6fb7ff866bb"
     private val tmdbApiUrl = "https://api.themoviedb.org/3"
 
+    @Serializable
     data class TmdbIds(
-        @JsonProperty("imdb_id") val imdbId: String? = null,
-        @JsonProperty("tvdb_id") val tvdbId: Int? = null,
+        @SerialName("imdb_id") val imdbId: String? = null,
+        @SerialName("tvdb_id") val tvdbId: Int? = null,
     )
 
+    @Serializable
     data class TmdbGenre(
-        @JsonProperty("id") val id: Int? = null,
-        @JsonProperty("name") val name: String? = null,
+        @SerialName("id") val id: Int? = null,
+        @SerialName("name") val name: String? = null,
     )
 
+    @Serializable
     data class TmdbCastMember(
-        @JsonProperty("name") val name: String? = null,
-        @JsonProperty("character") val character: String? = null,
-        @JsonProperty("profile_path") val profilePath: String? = null,
+        @SerialName("name") val name: String? = null,
+        @SerialName("character") val character: String? = null,
+        @SerialName("profile_path") val profilePath: String? = null,
     )
 
+    @Serializable
     data class TmdbCredits(
-        @JsonProperty("cast") val cast: List<TmdbCastMember>? = null,
+        @SerialName("cast") val cast: List<TmdbCastMember>? = null,
     )
 
+    @Serializable
     data class TmdbVideo(
-        @JsonProperty("key") val key: String? = null,
-        @JsonProperty("site") val site: String? = null,
-        @JsonProperty("type") val type: String? = null,
+        @SerialName("key") val key: String? = null,
+        @SerialName("site") val site: String? = null,
+        @SerialName("type") val type: String? = null,
     )
 
+    @Serializable
     data class TmdbVideos(
-        @JsonProperty("results") val results: List<TmdbVideo>? = null,
+        @SerialName("results") val results: List<TmdbVideo>? = null,
     )
 
     // Shared between movie and tv search results
+    @Serializable
     data class TmdbSearchResult(
-        @JsonProperty("id") val id: Int? = null,
-        @JsonProperty("title") val title: String? = null,           // movies
-        @JsonProperty("original_title") val originalTitle: String? = null,
-        @JsonProperty("name") val name: String? = null,             // tv
-        @JsonProperty("original_name") val originalName: String? = null,
-        @JsonProperty("poster_path") val posterPath: String? = null,
-        @JsonProperty("vote_average") val voteAverage: Double? = null,
-        @JsonProperty("release_date") val releaseDate: String? = null,
-        @JsonProperty("first_air_date") val firstAirDate: String? = null,
-        @JsonProperty("media_type") val mediaType: String? = null,  // for multi-search
+        @SerialName("id") val id: Int? = null,
+        @SerialName("title") val title: String? = null,           // movies
+        @SerialName("original_title") val originalTitle: String? = null,
+        @SerialName("name") val name: String? = null,             // tv
+        @SerialName("original_name") val originalName: String? = null,
+        @SerialName("poster_path") val posterPath: String? = null,
+        @SerialName("vote_average") val voteAverage: Double? = null,
+        @SerialName("release_date") val releaseDate: String? = null,
+        @SerialName("first_air_date") val firstAirDate: String? = null,
+        @SerialName("media_type") val mediaType: String? = null,  // for multi-search
     ) {
         val isTv get() = name != null || mediaType == "tv"
         val displayTitle get() = title ?: originalTitle ?: name ?: originalName ?: ""
         val year get() = (releaseDate ?: firstAirDate)?.take(4)?.toIntOrNull()
     }
 
+    @Serializable
     data class TmdbPageResult<T>(
-        @JsonProperty("results") val results: List<T>? = null,
-        @JsonProperty("total_pages") val totalPages: Int? = null,
-        @JsonProperty("total_results") val totalResults: Int? = null,
+        @SerialName("results") val results: List<T>? = null,
+        @SerialName("total_pages") val totalPages: Int? = null,
+        @SerialName("total_results") val totalResults: Int? = null,
     )
 
+    @Serializable
     data class TmdbMultiResult(
-        @JsonProperty("results") val results: List<TmdbSearchResult>? = null,
+        @SerialName("results") val results: List<TmdbSearchResult>? = null,
     )
 
+    @Serializable
     data class TmdbEpisode(
-        @JsonProperty("id") val id: Int? = null,
-        @JsonProperty("name") val name: String? = null,
-        @JsonProperty("overview") val overview: String? = null,
-        @JsonProperty("episode_number") val episodeNumber: Int? = null,
-        @JsonProperty("season_number") val seasonNumber: Int? = null,
-        @JsonProperty("still_path") val stillPath: String? = null,
-        @JsonProperty("air_date") val airDate: String? = null,
-        @JsonProperty("vote_average") val voteAverage: Double? = null,
-        @JsonProperty("external_ids") val externalIds: TmdbIds? = null,
+        @SerialName("id") val id: Int? = null,
+        @SerialName("name") val name: String? = null,
+        @SerialName("overview") val overview: String? = null,
+        @SerialName("episode_number") val episodeNumber: Int? = null,
+        @SerialName("season_number") val seasonNumber: Int? = null,
+        @SerialName("still_path") val stillPath: String? = null,
+        @SerialName("air_date") val airDate: String? = null,
+        @SerialName("vote_average") val voteAverage: Double? = null,
+        @SerialName("external_ids") val externalIds: TmdbIds? = null,
     )
 
+    @Serializable
     data class TmdbSeasonDetail(
-        @JsonProperty("season_number") val seasonNumber: Int? = null,
-        @JsonProperty("episodes") val episodes: List<TmdbEpisode>? = null,
+        @SerialName("season_number") val seasonNumber: Int? = null,
+        @SerialName("episodes") val episodes: List<TmdbEpisode>? = null,
     )
 
+    @Serializable
     data class TmdbSeasonSummary(
-        @JsonProperty("season_number") val seasonNumber: Int? = null,
-        @JsonProperty("episode_count") val episodeCount: Int? = null,
+        @SerialName("season_number") val seasonNumber: Int? = null,
+        @SerialName("episode_count") val episodeCount: Int? = null,
     )
 
+    @Serializable
     data class TmdbContentRating(
-        @JsonProperty("iso_3166_1") val country: String? = null,
-        @JsonProperty("rating") val rating: String? = null,
+        @SerialName("iso_3166_1") val country: String? = null,
+        @SerialName("rating") val rating: String? = null,
     )
 
+    @Serializable
     data class TmdbContentRatings(
-        @JsonProperty("results") val results: List<TmdbContentRating>? = null,
+        @SerialName("results") val results: List<TmdbContentRating>? = null,
     )
 
+    @Serializable
     data class TmdbReleaseDateEntry(
-        @JsonProperty("certification") val certification: String? = null,
-        @JsonProperty("type") val type: Int? = null,
+        @SerialName("certification") val certification: String? = null,
+        @SerialName("type") val type: Int? = null,
     )
 
+    @Serializable
     data class TmdbReleaseDateResult(
-        @JsonProperty("iso_3166_1") val country: String? = null,
-        @JsonProperty("release_dates") val releaseDates: List<TmdbReleaseDateEntry>? = null,
+        @SerialName("iso_3166_1") val country: String? = null,
+        @SerialName("release_dates") val releaseDates: List<TmdbReleaseDateEntry>? = null,
     )
 
+    @Serializable
     data class TmdbReleaseDates(
-        @JsonProperty("results") val results: List<TmdbReleaseDateResult>? = null,
+        @SerialName("results") val results: List<TmdbReleaseDateResult>? = null,
     )
 
+    @Serializable
     data class TmdbTvDetail(
-        @JsonProperty("id") val id: Int? = null,
-        @JsonProperty("name") val name: String? = null,
-        @JsonProperty("original_name") val originalName: String? = null,
-        @JsonProperty("overview") val overview: String? = null,
-        @JsonProperty("poster_path") val posterPath: String? = null,
-        @JsonProperty("first_air_date") val firstAirDate: String? = null,
-        @JsonProperty("vote_average") val voteAverage: Double? = null,
-        @JsonProperty("genres") val genres: List<TmdbGenre>? = null,
-        @JsonProperty("episode_run_time") val episodeRunTime: List<Int>? = null,
-        @JsonProperty("seasons") val seasons: List<TmdbSeasonSummary>? = null,
-        @JsonProperty("external_ids") val externalIds: TmdbIds? = null,
-        @JsonProperty("videos") val videos: TmdbVideos? = null,
-        @JsonProperty("credits") val credits: TmdbCredits? = null,
-        @JsonProperty("recommendations") val recommendations: TmdbPageResult<TmdbSearchResult>? = null,
-        @JsonProperty("similar") val similar: TmdbPageResult<TmdbSearchResult>? = null,
-        @JsonProperty("content_ratings") val contentRatings: TmdbContentRatings? = null,
+        @SerialName("id") val id: Int? = null,
+        @SerialName("name") val name: String? = null,
+        @SerialName("original_name") val originalName: String? = null,
+        @SerialName("overview") val overview: String? = null,
+        @SerialName("poster_path") val posterPath: String? = null,
+        @SerialName("first_air_date") val firstAirDate: String? = null,
+        @SerialName("vote_average") val voteAverage: Double? = null,
+        @SerialName("genres") val genres: List<TmdbGenre>? = null,
+        @SerialName("episode_run_time") val episodeRunTime: List<Int>? = null,
+        @SerialName("seasons") val seasons: List<TmdbSeasonSummary>? = null,
+        @SerialName("external_ids") val externalIds: TmdbIds? = null,
+        @SerialName("videos") val videos: TmdbVideos? = null,
+        @SerialName("credits") val credits: TmdbCredits? = null,
+        @SerialName("recommendations") val recommendations: TmdbPageResult<TmdbSearchResult>? = null,
+        @SerialName("similar") val similar: TmdbPageResult<TmdbSearchResult>? = null,
+        @SerialName("content_ratings") val contentRatings: TmdbContentRatings? = null,
     ) {
         val displayTitle get() = name ?: originalName ?: ""
         val year get() = firstAirDate?.take(4)?.toIntOrNull()
     }
 
+    @Serializable
     data class TmdbMovieDetail(
-        @JsonProperty("id") val id: Int? = null,
-        @JsonProperty("title") val title: String? = null,
-        @JsonProperty("original_title") val originalTitle: String? = null,
-        @JsonProperty("overview") val overview: String? = null,
-        @JsonProperty("poster_path") val posterPath: String? = null,
-        @JsonProperty("release_date") val releaseDate: String? = null,
-        @JsonProperty("vote_average") val voteAverage: Double? = null,
-        @JsonProperty("genres") val genres: List<TmdbGenre>? = null,
-        @JsonProperty("runtime") val runtime: Int? = null,
-        @JsonProperty("imdb_id") val imdbId: String? = null,
-        @JsonProperty("external_ids") val externalIds: TmdbIds? = null,
-        @JsonProperty("videos") val videos: TmdbVideos? = null,
-        @JsonProperty("credits") val credits: TmdbCredits? = null,
-        @JsonProperty("recommendations") val recommendations: TmdbPageResult<TmdbSearchResult>? = null,
-        @JsonProperty("similar") val similar: TmdbPageResult<TmdbSearchResult>? = null,
-        @JsonProperty("release_dates") val releaseDates: TmdbReleaseDates? = null,
+        @SerialName("id") val id: Int? = null,
+        @SerialName("title") val title: String? = null,
+        @SerialName("original_title") val originalTitle: String? = null,
+        @SerialName("overview") val overview: String? = null,
+        @SerialName("poster_path") val posterPath: String? = null,
+        @SerialName("release_date") val releaseDate: String? = null,
+        @SerialName("vote_average") val voteAverage: Double? = null,
+        @SerialName("genres") val genres: List<TmdbGenre>? = null,
+        @SerialName("runtime") val runtime: Int? = null,
+        @SerialName("imdb_id") val imdbId: String? = null,
+        @SerialName("external_ids") val externalIds: TmdbIds? = null,
+        @SerialName("videos") val videos: TmdbVideos? = null,
+        @SerialName("credits") val credits: TmdbCredits? = null,
+        @SerialName("recommendations") val recommendations: TmdbPageResult<TmdbSearchResult>? = null,
+        @SerialName("similar") val similar: TmdbPageResult<TmdbSearchResult>? = null,
+        @SerialName("release_dates") val releaseDates: TmdbReleaseDates? = null,
     ) {
         val displayTitle get() = title ?: originalTitle ?: ""
         val year get() = releaseDate?.take(4)?.toIntOrNull()
