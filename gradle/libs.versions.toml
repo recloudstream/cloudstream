@@ -19,7 +19,6 @@ desugar_jdk_libs_nio = "2.1.5"
 dokkaGradlePlugin = "2.2.0"
 espressoCore = "3.7.0"
 fragmentKtx = "1.8.9"
-fuzzywuzzy = "1.4.0"
 jacksonModuleKotlin = { strictly = "2.13.1" } # Later versions don't support minSdk <26 (Crashes on Android TV's and FireSticks)
 json = "20251224"
 jsoup = "1.22.1"
@@ -59,6 +58,9 @@ minSdk = "23"
 compileSdk = "36"
 targetSdk = "36"
 
+versionCode = "68"
+versionName = "4.7.0"
+
 [libraries]
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity" }
 activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
@@ -86,7 +88,6 @@ desugar_jdk_libs_nio = { module = "com.android.tools:desugar_jdk_libs_nio", vers
 espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
 ext-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
 fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
-fuzzywuzzy = { module = "me.xdrop:fuzzywuzzy", version.ref = "fuzzywuzzy" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jacksonModuleKotlin" }
 json = { module = "org.json:json", version.ref = "json" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
