@@ -10,7 +10,6 @@ import androidx.core.net.toUri
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getActivity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
@@ -21,11 +20,12 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_CACHED_LIST
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_CACHED_LIST
 import com.lagradost.cloudstream3.syncproviders.providers.KitsuApi.Companion.KITSU_CACHED_LIST
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getDefaultSharedPrefs
 import com.lagradost.cloudstream3.utils.DataStore.getSharedPrefs
-import com.lagradost.cloudstream3.utils.DataStore.mapper
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.setupStream
@@ -133,9 +133,7 @@ object BackupUtils {
     )
 
     @Suppress("UNCHECKED_CAST")
-    private fun getBackup(context: Context?): BackupFile? {
-        if (context == null) return null
-
+    private fun getBackup(context: Context): BackupFile {
         val allData = context.getSharedPrefs().all.filter { it.key.isTransferable() }
         val allSettings = context.getDefaultSharedPrefs().all.filter { it.key.isTransferable() }
 
@@ -214,7 +212,7 @@ object BackupUtils {
 
             fileStream = stream.openNew()
             printStream = PrintWriter(fileStream)
-            printStream.print(mapper.writeValueAsString(backupFile))
+            printStream.print(backupFile.toJson())
 
             showToast(
                 R.string.backup_success,
@@ -259,8 +257,8 @@ object BackupUtils {
                             val input = activity.contentResolver.openInputStream(uri)
                                 ?: return@ioSafe
 
-                            val restoredValue =
-                                mapper.readValue<BackupFile>(input)
+                            val text = input.bufferedReader().readText()
+                            val restoredValue = parseJson<BackupFile>(text)
 
                             restore(
                                 activity,
