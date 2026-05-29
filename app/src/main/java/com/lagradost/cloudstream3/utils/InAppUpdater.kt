@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity.Companion.deleteFileOnExit
@@ -27,6 +26,8 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.GitInfo.currentCommitHash
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import okio.BufferedSink
 import okio.buffer
 import okio.sink
@@ -42,45 +43,50 @@ object InAppUpdater {
     private const val PRERELEASE_PACKAGE_NAME = "com.lagradost.cloudstream3.prerelease"
     private const val LOG_TAG = "InAppUpdater"
 
+    @Serializable
     private data class GithubAsset(
-        @JsonProperty("name") val name: String,
-        @JsonProperty("size") val size: Int, // Size in bytes
-        @JsonProperty("browser_download_url") val browserDownloadUrl: String,
-        @JsonProperty("content_type") val contentType: String, // application/vnd.android.package-archive
+        @SerialName("name") val name: String,
+        @SerialName("size") val size: Int, // Size in bytes
+        @SerialName("browser_download_url") val browserDownloadUrl: String,
+        @SerialName("content_type") val contentType: String, // application/vnd.android.package-archive
     )
 
+    @Serializable
     private data class GithubRelease(
-        @JsonProperty("tag_name") val tagName: String, // Version code
-        @JsonProperty("body") val body: String, // Description
-        @JsonProperty("assets") val assets: List<GithubAsset>,
-        @JsonProperty("target_commitish") val targetCommitish: String, // Branch
-        @JsonProperty("prerelease") val prerelease: Boolean,
-        @JsonProperty("node_id") val nodeId: String,
+        @SerialName("tag_name") val tagName: String, // Version code
+        @SerialName("body") val body: String, // Description
+        @SerialName("assets") val assets: List<GithubAsset>,
+        @SerialName("target_commitish") val targetCommitish: String, // Branch
+        @SerialName("prerelease") val prerelease: Boolean,
+        @SerialName("node_id") val nodeId: String,
     )
 
+    @Serializable
     private data class GithubObject(
-        @JsonProperty("sha") val sha: String, // SHA-256 hash
-        @JsonProperty("type") val type: String,
-        @JsonProperty("url") val url: String,
+        @SerialName("sha") val sha: String, // SHA-256 hash
+        @SerialName("type") val type: String,
+        @SerialName("url") val url: String,
     )
 
+    @Serializable
     private data class GithubTag(
-        @JsonProperty("object") val githubObject: GithubObject,
+        @SerialName("object") val githubObject: GithubObject,
     )
 
+    @Serializable
     private data class Update(
-        @JsonProperty("shouldUpdate") val shouldUpdate: Boolean,
-        @JsonProperty("updateURL") val updateURL: String?,
-        @JsonProperty("updateVersion") val updateVersion: String?,
-        @JsonProperty("changelog") val changelog: String?,
-        @JsonProperty("updateNodeId") val updateNodeId: String?,
+        @SerialName("shouldUpdate") val shouldUpdate: Boolean,
+        @SerialName("updateURL") val updateURL: String?,
+        @SerialName("updateVersion") val updateVersion: String?,
+        @SerialName("changelog") val changelog: String?,
+        @SerialName("updateNodeId") val updateNodeId: String?,
     )
 
     private suspend fun Activity.getAppUpdate(installPrerelease: Boolean): Update {
         return try {
             when {
                 // No updates on debug version
-                BuildConfig.DEBUG -> Update(false, null, null, null, null)
+                BuildConfig.DEBUG -> getPreReleaseUpdate()
                 BuildConfig.FLAVOR == "prerelease" || installPrerelease -> getPreReleaseUpdate()
                 else -> getReleaseUpdate()
             }
@@ -93,7 +99,7 @@ object InAppUpdater {
     private suspend fun Activity.getReleaseUpdate(): Update {
         val url = "https://api.github.com/repos/$GITHUB_USER_NAME/$GITHUB_REPO/releases"
         val headers = mapOf("Accept" to "application/vnd.github.v3+json")
-        val response = parseJson<Array<GithubRelease>>(
+        val response = parseJson<List<GithubRelease>>(
             app.get(url, headers = headers).text
         ).toList()
 
@@ -103,9 +109,7 @@ object InAppUpdater {
             !rel.prerelease
         }.sortedWith(compareBy { release ->
             release.assets.firstOrNull { it.contentType == "application/vnd.android.package-archive" }?.name?.let { it1 ->
-                versionRegex.find(
-                    it1
-                )?.groupValues?.let {
+                versionRegex.find(it1)?.groupValues?.let {
                     it[3].toInt() * 100_000_000 + it[4].toInt() * 10_000 + it[5].toInt()
                 }
             }
@@ -150,7 +154,7 @@ object InAppUpdater {
             "https://api.github.com/repos/$GITHUB_USER_NAME/$GITHUB_REPO/git/ref/tags/pre-release"
         val releaseUrl = "https://api.github.com/repos/$GITHUB_USER_NAME/$GITHUB_REPO/releases"
         val headers = mapOf("Accept" to "application/vnd.github.v3+json")
-        val response = parseJson<Array<GithubRelease>>(
+        val response = parseJson<List<GithubRelease>>(
             app.get(releaseUrl, headers = headers).text
         ).toList()
 
