@@ -16,7 +16,6 @@ import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.SimklSyncServices
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.mapper
 import com.lagradost.cloudstream3.mvvm.debugPrint
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING
@@ -30,6 +29,7 @@ import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.DataStoreHelper.toYear
 import com.lagradost.cloudstream3.utils.txt
 import java.math.BigInteger
@@ -117,13 +117,8 @@ class SimklApi : SyncAPI() {
          * Gets cached object, if object is not fresh returns null and removes it from cache
          */
         inline fun <reified T : Any> getKey(path: String): T? {
-            // Required for generic otherwise "LinkedHashMap cannot be cast to MediaObject"
-            val type = mapper.typeFactory.constructParametricType(
-                SimklCacheWrapper::class.java,
-                T::class.java
-            )
             val cache = getKey<String>(SIMKL_CACHE_KEY, path)?.let {
-                mapper.readValue<SimklCacheWrapper<T>>(it, type)
+                tryParseJson<SimklCacheWrapper<T>>(it)
             }
 
             return if (cache?.isFresh() == true) {

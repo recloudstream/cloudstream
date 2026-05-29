@@ -166,7 +166,7 @@
     <string name="app_language">Ngôn ngữ ứng dụng</string>
     <string name="no_chromecast_support_toast">Nguồn phim này chưa hỗ trợ Chromecast</string>
     <string name="no_links_found_toast">Không tìm thấy liên kết</string>
-    <string name="copy_link_toast">Đã sao chép liên kết vào bộ nhớ tạm</string>
+    <string name="copy_link_toast">Đã sao chép liên kết vào bảng nhớ tạm</string>
     <string name="play_episode_toast">Phát Tập phim</string>
     <string name="subs_default_reset_toast">Đặt lại giá trị mặc định</string>
     <string name="season">Mùa</string>
@@ -254,7 +254,7 @@
     <string name="update">Cập nhật</string>
     <string name="watch_quality_pref">Chất lượng xem ưu tiên (WiFi)</string>
     <string name="limit_title">Số ký tự tối đa tiêu đề trình phát</string>
-    <string name="limit_title_rez">Hiện thông tin trình phát</string>
+    <string name="limit_title_rez">Hiển thị thông tin trình phát</string>
     <string name="video_buffer_size_settings">Kích thước bộ nhớ đệm video</string>
     <string name="video_buffer_length_settings">Thời lượng bộ nhớ đệm</string>
     <string name="video_buffer_disk_settings">Bộ nhớ đệm video trên thiết bị</string>
@@ -417,7 +417,7 @@
     <string name="tracks">Âm thanh &amp; video</string>
     <string name="audio_tracks">Âm thanh</string>
     <string name="video_tracks">Video</string>
-    <string name="apply_on_restart">Khởi động lại ứng dụng để thấy câc thay đổi.</string>
+    <string name="apply_on_restart">Khởi động lại ứng dụng để thấy các thay đổi.</string>
     <string name="safe_mode_title">Chế độ an toàn được bật</string>
     <string name="safe_mode_description">Tất cả tiện ích mở rộng đã được tắt do ứng dụng bị ngừng bất thường để giúp bạn tìm ra vấn đề gây lỗi.</string>
     <string name="safe_mode_crash_info">Xem thông tin sự cố</string>
@@ -469,8 +469,8 @@
     <string name="skip_type_credits">Danh đề</string>
     <string name="skip_type_intro">Giới thiệu</string>
     <string name="clear_history">Xoá lịch sử</string>
-    <string name="enable_skip_op_from_database_des">Hiện các popup bỏ qua cho mở đầu/kết thúc</string>
-    <string name="clipboard_too_large">Văn bản quá dài. Không thể lưu vào bộ nhớ tạm.</string>
+    <string name="enable_skip_op_from_database_des">Hiển thị cửa sổ bật lên của bỏ qua giới thiệu cho mở đầu/kết thúc</string>
+    <string name="clipboard_too_large">Văn bản quá dài. Không thể lưu vào bảng nhớ tạm.</string>
     <string name="action_remove_from_watched">Xoá khỏi đã xem</string>
     <string name="confirm_exit_dialog">Bạn có chắc muốn thoát?</string>
     <string name="yes">Có</string>
@@ -575,7 +575,7 @@
     <string name="auto_rotate_video_desc">Bật tự động xoay màn hình theo hướng của video</string>
     <string name="auto_rotate_video">Tự động xoay</string>
     <string name="toast_copied">đã sao chép!</string>
-    <string name="clipboard_permission_error">Lỗi truy cập Bộ nhớ tạm, Vui lòng thử lại.</string>
+    <string name="clipboard_permission_error">Lỗi truy cập Bảng nhớ tạm, Vui lòng thử lại.</string>
     <string name="clipboard_unknown_error">Lỗi sao chép, Vui lòng sao chép logcat và liên hệ hỗ trợ ứng dụng.</string>
     <string name="favorite">Yêu thích</string>
     <string name="ok">OK</string>
@@ -635,7 +635,7 @@
     <string name="preview_seekbar">Xem trước trên thanh tua</string>
     <string name="no_subtitles_loaded">Chưa tải phụ đề nào</string>
     <string name="confirm_before_exiting_title">Xác nhận trước khi thoát</string>
-    <string name="confirm_before_exiting_desc">Hiện hộp thoại xác nhận trước khi thoát ứng dụng</string>
+    <string name="confirm_before_exiting_desc">Hiển thị hộp thoại xác nhận trước khi thoát ứng dụng</string>
     <string name="dont_show">Không hiển thị</string>
     <string name="show">Hiển thị</string>
     <string name="backup_path_title">Vị trí thư mục sao lưu</string>
@@ -644,7 +644,7 @@
     <string name="torrent_info">Video này là Torrent, điều này có nghĩa là hoạt động video của bạn có thể được theo dõi.\nHãy đảm bảo rằng bạn hiểu về Torrent trước khi tiếp tục.</string>
     <string name="encoding_error">Lỗi mã hóa</string>
     <string name="software_decoding_desc">Giải mã phần mềm cho phép phát các tệp video không được thiết bị của bạn hỗ trợ, nhưng có thể gây ra phản hồi chậm hoặc phát lại không ổn định ở độ phân giải cao.</string>
-    <string name="software_decoding">Bộ giải mã ứng dụng</string>
+    <string name="software_decoding">Giải mã phần mềm</string>
     <string name="torrent_not_accepted">Khởi động lại ứng dụng và chấp nhận cửa sổ bật lên của Stream Torrent để tiếp tục.</string>
     <string name="torrent_preferred_media">Kích hoạt torrent trong Cài đặt/Nguồn phim/Thể loại ưu tiên</string>
     <string name="player_load_one_subtitle_online">Tải phụ đề đầu tiên có sẵn</string>
@@ -731,7 +731,7 @@
     <string name="source_name">Tên nguồn</string>
     <string name="download_queue">Hàng đợi tải xuống</string>
     <string name="queue_empty_message">Không có tải xuống đang chờ nào.</string>
-    <string name="source_priority_help">Quyết định cách sắp xếp các nguồn video trong trình phát.</string>
+    <string name="source_priority_help">Quyết định cách sắp xếp các nguồn video trong trình phát</string>
     <string name="source_priority">Ưu tiên nguồn</string>
     <string name="download_all">Tải xuống tất cả</string>
     <string name="cancel_all">Hủy tất cả</string>
