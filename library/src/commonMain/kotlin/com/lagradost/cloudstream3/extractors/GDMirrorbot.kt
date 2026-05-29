@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
@@ -9,6 +8,8 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import java.net.URI
 
 class Techinmind : GDMirrorbot() {
@@ -22,18 +23,20 @@ open class GDMirrorbot : ExtractorApi() {
     override var mainUrl = "https://gdmirrorbot.nl"
     override val requiresReferer = true
 
+    @Serializable
     private data class EmbedData(
-        @JsonProperty("data") val data: List<FileSlug>? = null,
+        @SerialName("data") val data: List<FileSlug>? = null,
     )
 
+    @Serializable
     private data class FileSlug(
-        @JsonProperty("fileslug") val fileslug: String? = null,
+        @SerialName("fileslug") val fileslug: String? = null,
     )
 
+    @Serializable
     private data class EmbedHelper(
-        @JsonProperty("siteUrls") val siteUrls: Map<String, String>? = null,
-        @JsonProperty("siteFriendlyNames") val siteFriendlyNames: Map<String, String>? = null,
-        @JsonProperty("mresult") val mresult: Any? = null,
+        @SerialName("siteUrls") val siteUrls: Map<String, String>? = null,
+        @SerialName("siteFriendlyNames") val siteFriendlyNames: Map<String, String>? = null,
     )
 
     override suspend fun getUrl(
