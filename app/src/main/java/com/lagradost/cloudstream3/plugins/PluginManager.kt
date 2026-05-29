@@ -610,7 +610,7 @@ object PluginManager {
                     return false
                 }
                 InputStreamReader(stream).use { reader ->
-                    manifest = parseJson(reader, BasePlugin.Manifest::class.java)
+                    manifest = parseJson<BasePlugin.Manifest>(reader.readText())
                 }
             }
 
@@ -651,9 +651,15 @@ object PluginManager {
                     context.resources.configuration
                 )
             }
-            plugins[filePath] = pluginInstance
-            classLoaders[loader] = pluginInstance
-            urlPlugins[data.url ?: filePath] = pluginInstance
+            synchronized(plugins) {
+                plugins[filePath] = pluginInstance
+            }
+            synchronized(classLoaders) {
+                classLoaders[loader] = pluginInstance
+            }
+            synchronized(urlPlugins) {
+                urlPlugins[data.url ?: filePath] = pluginInstance
+            }
             if (pluginInstance is Plugin) {
                 pluginInstance.load(context)
             } else {
@@ -689,21 +695,20 @@ object PluginManager {
         }
 
         // remove all registered apis
-        synchronized(APIHolder.apis) {
-            APIHolder.apis.filter { api -> api.sourcePlugin == plugin.filename }.forEach {
-                removePluginMapping(it)
-            }
-        }
-        synchronized(APIHolder.allProviders) {
-            APIHolder.allProviders.removeIf { provider: MainAPI -> provider.sourcePlugin == plugin.filename }
+        APIHolder.apis.filter { api -> api.sourcePlugin == plugin.filename }.forEach {
+            removePluginMapping(it)
         }
 
-        synchronized(extractorApis) {
-            extractorApis.removeIf { provider: ExtractorApi -> provider.sourcePlugin == plugin.filename }
+        APIHolder.allProviders.withLock {
+            APIHolder.allProviders.removeAll { provider -> provider.sourcePlugin == plugin.filename }
         }
 
-        synchronized(VideoClickActionHolder.allVideoClickActions) {
-            VideoClickActionHolder.allVideoClickActions.removeIf { action: VideoClickAction -> action.sourcePlugin == plugin.filename }
+        extractorApis.withLock {
+            extractorApis.removeAll { provider -> provider.sourcePlugin == plugin.filename }
+        }
+
+        VideoClickActionHolder.allVideoClickActions.withLock {
+            VideoClickActionHolder.allVideoClickActions.removeAll { action -> action.sourcePlugin == plugin.filename }
         }
 
         synchronized(classLoaders) {

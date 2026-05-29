@@ -735,4 +735,8 @@
     <string name="cancel_all">Отменить всё</string>
     <string name="download_episode_range">Вы хотите загрузить эпизод %s?</string>
     <string name="cancel_queue_message">Вы хотите отменить всё запланированные загрузки?</string>
+    <string name="show_player_metadata_overlay">Показывать наложения метаданных проигрывателя</string>
+    <string name="video_singular">Видео</string>
+    <string name="skip_type_preview">Предпросмотр</string>
+    <string name="player_is_live">Прямой эфир</string>
 </resources>

@@ -369,28 +369,10 @@ object AppContextUtils {
     }
 
     fun Context.getApiSettings(): HashSet<String> {
-        //val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-
         val hashSet = HashSet<String>()
         val activeLangs = getApiProviderLangSettings()
         val hasUniversal = activeLangs.contains(AllLanguagesName)
-        hashSet.addAll(synchronized(apis) { apis.filter { hasUniversal || activeLangs.contains(it.lang) } }
-            .map { it.name })
-
-        /*val set = settingsManager.getStringSet(
-            this.getString(R.string.search_providers_list_key),
-            hashSet
-        )?.toHashSet() ?: hashSet
-
-        val list = HashSet<String>()
-        for (name in set) {
-            val api = getApiFromNameNull(name) ?: continue
-            if (activeLangs.contains(api.lang)) {
-                list.add(name)
-            }
-        }*/
-        //if (list.isEmpty()) return hashSet
-        //return list
+        hashSet.addAll(apis.filter { hasUniversal || activeLangs.contains(it.lang) }.map { it.name })
         return hashSet
     }
 
@@ -481,9 +463,7 @@ object AppContextUtils {
         } ?: default
         val langs = this.getApiProviderLangSettings()
         val hasUniversal = langs.contains(AllLanguagesName)
-        val allApis = synchronized(apis) {
-            apis.filter { api -> (hasUniversal || langs.contains(api.lang)) && (api.hasMainPage || !hasHomePageIsRequired) }
-        }
+        val allApis = apis.filter { api -> (hasUniversal || langs.contains(api.lang)) && (api.hasMainPage || !hasHomePageIsRequired) }
         return if (currentPrefMedia.isEmpty()) {
             allApis
         } else {

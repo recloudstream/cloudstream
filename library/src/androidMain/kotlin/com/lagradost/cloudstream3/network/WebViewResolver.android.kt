@@ -10,10 +10,10 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.debugException
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
+import com.lagradost.cloudstream3.utils.Coroutines.atomicListOf
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.Coroutines.mainWork
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
-import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
 import com.lagradost.nicehttp.requestCreator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -119,7 +119,7 @@ actual class WebViewResolver actual constructor(
         }
 
         var fixedRequest: Request? = null
-        val extraRequestList = threadSafeListOf<Request>()
+        val extraRequestList = atomicListOf<Request>()
 
         main {
             try {
