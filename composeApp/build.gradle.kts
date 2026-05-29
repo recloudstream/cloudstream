@@ -25,6 +25,13 @@ kotlin {
     }
 
     sourceSets {
+        all {
+            languageSettings {
+                optIn("com.lagradost.cloudstream3.InternalAPI")
+                optIn("com.lagradost.cloudstream3.Prerelease")
+            }
+        }
+
         commonMain.dependencies {
             implementation(libs.coil.compose)
             implementation(libs.compose.foundation)
