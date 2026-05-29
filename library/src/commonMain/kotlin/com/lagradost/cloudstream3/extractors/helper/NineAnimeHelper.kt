@@ -108,8 +108,6 @@ object NineAnimeHelper {
         }
     }
 
-    fun encode(input: String): String =
-        input.encodeUrl().replace("+", "%20")
-
+    fun encode(input: String): String = input.encodeUrl()
     private fun decode(input: String): String = input.decodeUrl()
 }

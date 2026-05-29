@@ -1340,6 +1340,7 @@ fun MainAPI.updateUrl(url: String): String {
         URLBuilder().apply {
             takeFrom(updated)
             user = original.user
+            password = original.password
             encodedPath = original.encodedPath
             fragment = original.fragment
 

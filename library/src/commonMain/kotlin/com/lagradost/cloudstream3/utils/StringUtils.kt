@@ -1,33 +1,15 @@
 package com.lagradost.cloudstream3.utils
 
-import io.ktor.http.Url
-import io.ktor.http.URLBuilder
-import io.ktor.http.path
+import io.ktor.http.decodeURLQueryComponent
+import io.ktor.http.encodeURLParameter
 
 object StringUtils {
     fun String.decodeUrl(): String {
-        return try {
-            val parsed = Url(this)
-            URLBuilder().apply {
-                protocol = parsed.protocol
-                host = parsed.host
-                port = parsed.port
-                path(*parsed.segments.toTypedArray())
-                parameters.appendAll(parsed.parameters)
-                fragment = parsed.fragment
-            }.buildString()
-        } catch (_: Exception) {
-            this
-        }
+        return this.decodeURLQueryComponent()
     }
 
     fun String.encodeUrl(): String {
-        return try {
-            URLBuilder(Url(this)).buildString()
-        } catch (_: Exception) {
-            // Fallback for malformed URLs
-            this 
-        }
+        return this.encodeURLParameter()
     }
 
     // Deprecate after next stable

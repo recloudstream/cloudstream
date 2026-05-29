@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.mainWork
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.nicehttp.requestCreator
 import io.ktor.http.Url
+import io.ktor.http.decodeURLPart
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
@@ -211,7 +212,7 @@ actual class WebViewResolver actual constructor(
                          * */
                         return@runBlocking try {
                             when {
-                                blacklistedFiles.any { Url(webViewUrl).encodedPath.contains(it) } || webViewUrl.endsWith(
+                                blacklistedFiles.any { Url(webViewUrl).encodedPath.decodeURLPart().contains(it) } || webViewUrl.endsWith(
                                     "/favicon.ico"
                                 ) -> WebResourceResponse(
                                     "image/png",
