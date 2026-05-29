@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.utils
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.util.Log
 import android.widget.ImageView
@@ -11,6 +12,7 @@ import coil3.EventListener
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
+import coil3.decode.BitmapFactoryDecoder
 import coil3.disk.DiskCache
 import coil3.dispose
 import coil3.load
@@ -22,6 +24,7 @@ import coil3.request.CachePolicy
 import coil3.request.ErrorResult
 import coil3.request.ImageRequest
 import coil3.request.allowHardware
+import coil3.request.bitmapConfig
 import coil3.request.crossfade
 import coil3.util.DebugLogger
 import com.lagradost.cloudstream3.BuildConfig
@@ -32,71 +35,75 @@ import java.io.File
 import java.nio.ByteBuffer
 
 object ImageLoader {
-
     private const val TAG = "CoilImgLoader"
-
-    internal fun buildImageLoader(context: PlatformContext): ImageLoader = ImageLoader.Builder(context)
+    internal fun buildImageLoader(context: PlatformContext): ImageLoader {
+        val isBrokenHardware = hasPotentialBrokenHardware()
+        return ImageLoader.Builder(context)
             .crossfade(200)
-            .allowHardware(SDK_INT >= 28) // SDK_INT >= 28, cant use hardware bitmaps for Palette Builder
+            .allowHardware(SDK_INT >= 28 && !isBrokenHardware)
             .diskCachePolicy(CachePolicy.ENABLED)
             .networkCachePolicy(CachePolicy.ENABLED)
             .memoryCache {
-                MemoryCache.Builder().maxSizePercent(context, 0.1) // Use 10 % of the app's available memory for caching
+                MemoryCache.Builder().maxSizePercent(context, 0.1)//10 % of heap for mem-cache
+                    .strongReferencesEnabled(false)
                     .build()
             }
             .diskCache {
                 DiskCache.Builder()
                     .directory(context.cacheDir.resolve("cs3_image_cache").toOkioPath())
                     .maxSizeBytes(512L * 1024 * 1024) // 512 MB
-                    .maxSizePercent(0.04) // Use 4 % of the device's storage space for disk caching
+                    .maxSizePercent(0.04) // max 4% of storage for disk caching
                     .build()
             }
             /** Pass interceptors with care, unnecessary passing tokens to servers
             or image hosting services causes unauthorized exceptions **/
-            .components { add(OkHttpNetworkFetcherFactory(callFactory = { buildDefaultClient(context) })) }
-            .also {
-                it.setupCoilLogger()
-                Log.d(TAG, "buildImageLoader: Setting COIL Image Loader.")
+            .components {
+                add(OkHttpNetworkFetcherFactory(callFactory = { buildDefaultClient(context) }))
+                if (isBrokenHardware) {
+                    add(BitmapFactoryDecoder.Factory())
+                } // sw decoder
+            }
+            .apply {
+                if (isBrokenHardware) { // coil will auto choose optimal config on modern device
+                    bitmapConfig(Bitmap.Config.ARGB_8888)
+                }
+                setupCoilLogger()
             }
             .build()
+    }
 
-    /** Use DebugLogger on debug builds which won't slow down release builds & use EventListener for
+    /** DebugLogger on debug builds which won't slow down release builds & use EventListener for
     Errors on release builds. **/
     internal fun ImageLoader.Builder.setupCoilLogger() {
         if (BuildConfig.DEBUG) {
             logger(DebugLogger())
-            Log.d(TAG, "setupCoilLogger: Activated DEBUG_LOGGER FOR COIL")
         } else {
             eventListener(object : EventListener() {
                 override fun onError(request: ImageRequest, result: ErrorResult) {
                     super.onError(request, result)
-                    Log.e(TAG, "Error loading image: ${result.throwable}")
+                    Log.e(TAG, "Image load error: ${result.throwable.message ?: result.throwable}")
+                    Log.e(TAG, "  URL: ${request.data}")
+                    Log.e(TAG, "  allowHardware: ${request.allowHardware}")
+                    Log.e(TAG, "  hardware: ${Build.HARDWARE}, board: ${Build.BOARD}")
                 }
             })
-            Log.d(TAG, "setupCoilLogger: Activated EVENT_LISTENER FOR COIL")
         }
     }
 
-    /** we use coil's built in loader with our global synchronized instance, this way we achieve
-    latest and complete functionality as well as stability **/
+    /** coil's built in loader attached w/ global synchronized instance **/
     private fun ImageView.loadImageInternal(
         imageData: Any?,
         headers: Map<String, String>? = null,
         builder: ImageRequest.Builder.() -> Unit = {} // for placeholder, error & transformations
     ) {
-        // clear image to avoid loading & flickering issue at fast scrolling (e.g, an image recycler)
+        // clear image to avoid loading & flickering issue at fast scrolling (~recycler view/lazy column)
         this.dispose()
-
-        if(imageData == null) return // Just in case
-
+        if (imageData == null) return
         // setImageResource is better than coil3 on resources due to attr
-        if(imageData is Int) {
-            this.setImageResource(imageData)
-            return
+        if (imageData is Int) {
+            this.setImageResource(imageData); return
         }
-
-        // Use Coil's built-in load method but with our custom module & a decent USER-AGENT always
-        // which can be overridden by extensions.
+        // headers can be overridden by extensions.
         this.load(imageData, SingletonImageLoader.get(context)) {
             this.httpHeaders(NetworkHeaders.Builder().also { headerBuilder ->
                 headerBuilder["User-Agent"] = USER_AGENT
@@ -104,9 +111,20 @@ object ImageLoader {
                     headerBuilder[key] = value
                 }
             }.build())
-
             builder() // if passed
         }
+    }
+
+    private fun hasPotentialBrokenHardware(): Boolean {
+        val hardware = Build.HARDWARE?.lowercase() ?: ""
+        val board = Build.BOARD?.lowercase() ?: ""
+        val model = Build.MODEL?.lowercase() ?: ""
+        val manufacturer = Build.MANUFACTURER?.lowercase() ?: ""
+        val allwinnerPatterns = listOf("sun50iw9", "h713", "allwinner", "sunxi")
+        val problematicModels =
+            listOf("hy320", "hy300", "a10plus", "magcubic", "sinoy", "android tv box")
+        return allwinnerPatterns.any { it in hardware || it in board || it in manufacturer } ||
+                problematicModels.any { it in model }
     }
 
     /** TYPE_SAFE_LOADERS **/

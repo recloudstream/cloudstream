@@ -27,9 +27,8 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.text.SimpleDateFormat
-import java.time.Instant
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.time.ZoneId
 import java.util.Date
 import java.util.Locale
 
@@ -202,7 +201,7 @@ class KitsuApi: SyncAPI() {
             id = id,
             totalEpisodes = anime.episodeCount,
             title = anime.canonicalTitle ?: anime.titles?.enJp ?: anime.titles?.jaJp.orEmpty(),
-            publicScore =  Score.from(anime.ratingTwenty.toString(), 20),
+            publicScore =  Score.from(anime.ratingTwenty, 20),
             duration = anime.episodeLength,
             synopsis = anime.synopsis,
             airStatus = when(anime.status) {
@@ -250,7 +249,7 @@ class KitsuApi: SyncAPI() {
         }
 
         return SyncStatus(
-            score = Score.from(anime.ratingTwenty.toString(), 20),
+            score = Score.from(anime.ratingTwenty, 20),
             status = SyncWatchType.fromInternalId(kitsuStatusAsString.indexOf(anime.status)),
             isFavorite = null,
             watchedEpisodes = anime.progress,
@@ -454,8 +453,8 @@ class KitsuApi: SyncAPI() {
 
     private suspend fun getKitsuAnimeList(token: AuthToken, userId: Int): Array<KitsuNode> {
 
-        val animeSelectedFields = arrayOf("titles","canonicalTitle","posterImage","synopsis","startDate","episodeCount")
-        val libraryEntriesSelectedFields = arrayOf("progress","rating","updatedAt", "status")
+        val animeSelectedFields = arrayOf("titles","canonicalTitle","posterImage","synopsis","startDate","endDate","episodeCount")
+        val libraryEntriesSelectedFields = arrayOf("progress","ratingTwenty","updatedAt", "status")
         val limit = 500
         var url = "$apiUrl/library-entries?filter[userId]=$userId&filter[kind]=anime&include=anime&page[limit]=$limit&page[offset]=0&fields[anime]=${animeSelectedFields.joinToString(",")}&fields[libraryEntries]=${libraryEntriesSelectedFields.joinToString(",")}"
 
@@ -526,7 +525,7 @@ class KitsuApi: SyncAPI() {
                 this.id,
                 this.attributes.progress,
                 numEpisodes,
-                Score.from(this.attributes.ratingTwenty.toString(), 20),
+                Score.from(this.attributes.ratingTwenty, 20),
                 parseDateLong(this.attributes.updatedAt),
                 "Kitsu",
                 TvType.Anime,
@@ -535,12 +534,9 @@ class KitsuApi: SyncAPI() {
                 null,
                 plot = synopsis,
                 releaseDate = if (startDate == null) null else try {
-                    Date.from(
-                        Instant.from(
-                            DateTimeFormatter.ofPattern(if (startDate.length == 4) "yyyy" else if (startDate.length == 7) "yyyy-MM" else "yyyy-MM-dd")
-                                .parse(startDate)
-                        )
-                    )
+                    Date.from(LocalDate.parse(startDate).atStartOfDay()
+                        .atZone(ZoneId.systemDefault())
+                        .toInstant())
                 } catch (_: RuntimeException) {
                     null
                 }
@@ -583,7 +579,7 @@ class KitsuApi: SyncAPI() {
         @JsonProperty("avatar") val avatar: KitsuUserAvatar?,
         /* User list anime attributes */
         @JsonProperty("progress") val progress: Int?,
-        @JsonProperty("ratingTwenty") val ratingTwenty: Float?,
+        @JsonProperty("ratingTwenty") val ratingTwenty: Int?,
         @JsonProperty("updatedAt") val updatedAt: String?,
         @JsonProperty("status") val status: String?,
     )
@@ -632,7 +628,7 @@ class KitsuApi: SyncAPI() {
         const val KITSU_CACHED_LIST: String = "kitsu_cached_list"
         private fun parseDateLong(string: String?): Long? {
             return try {
-                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault()).parse(
+                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).parse(
                     string ?: return null
                 )?.time?.div(1000)
             } catch (e: Exception) {
