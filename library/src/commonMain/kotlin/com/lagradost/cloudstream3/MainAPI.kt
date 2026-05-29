@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.EnumSet
 import java.util.Locale
+import kotlinx.serialization.json.Json
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.math.absoluteValue
@@ -76,6 +77,13 @@ const val USER_AGENT =
 class ErrorLoadingException(message: String? = null) : Exception(message)
 
 //val baseHeader = mapOf("User-Agent" to USER_AGENT)
+
+@Prerelease
+val json = Json {
+    encodeDefaults = true
+    ignoreUnknownKeys = true
+}
+
 val mapper = JsonMapper.builder().addModule(kotlinModule())
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()!!
 
@@ -1502,43 +1510,7 @@ constructor(
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
     override var score: Score? = null,
-) : SearchResponse {
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(
-        "Use newAnimeSearchResponse",
-        level = DeprecationLevel.ERROR
-    )
-    constructor(
-        name: String,
-        url: String,
-        apiName: String,
-        type: TvType? = null,
-
-        posterUrl: String? = null,
-        year: Int? = null,
-        dubStatus: EnumSet<DubStatus>? = null,
-
-        otherName: String? = null,
-        episodes: MutableMap<DubStatus, Int> = mutableMapOf(),
-
-        id: Int? = null,
-        quality: SearchQuality? = null,
-        posterHeaders: Map<String, String>? = null,
-    ) : this(
-        name,
-        url,
-        apiName,
-        type,
-        posterUrl,
-        year,
-        dubStatus,
-        otherName,
-        episodes,
-        id,
-        quality,
-        posterHeaders, null
-    )
-}
+) : SearchResponse
 
 fun AnimeSearchResponse.addDubStatus(status: DubStatus, episodes: Int? = null) {
     this.dubStatus = dubStatus?.also { it.add(status) } ?: EnumSet.of(status)

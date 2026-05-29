@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.android.multiplatform.library)
     alias(libs.plugins.buildkonfig)
     alias(libs.plugins.dokka)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
@@ -58,11 +59,14 @@ kotlin {
             implementation(libs.jackson.module.kotlin) // JSON Parser
             implementation(libs.kotlinx.atomicfu)
             implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.fuzzywuzzy) // Match Extractors
+            implementation(libs.kotlinx.serialization.json) // JSON Parser
             implementation(libs.jsoup) // HTML Parser
             implementation(libs.rhino) // Run JavaScript
             implementation(libs.newpipeextractor)
             implementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
+
+            // Deprecated; will be removed once extensions have time to migrate from using it
+            implementation("me.xdrop:fuzzywuzzy:1.4.0")
         }
     }
 }
