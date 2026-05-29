@@ -29,13 +29,16 @@ import kotlin.math.*
  *  - typeof
  *
  * Usage:
- *   val result = JsInterpreter().eval("var x = 1+2; x")
+ *   val result = evalJs("var x = 1+2; x")
  *   // result == 3.0 (numbers are always Double internally)
  *
  *   // Drop-in replacement for the old Rhino-based evaluateString pattern:
  *   val ctx = JsContext()
  *   ctx.eval("var url = 'https:' + computeSuffix()")
  *   val url = ctx["url"]   // retrieves the variable as a String
+ *
+ *   // Or simpler:
+ *   val url = evalJs("var url = 'https:' + computeSuffix()", "url")
  */
 
 /**
@@ -695,8 +698,7 @@ private class Scope(val parent: Scope? = null) {
         if (vars.containsKey(name)) this else parent?.findOwner(name)
 }
 
-@Prerelease
-class JsInterpreter {
+private class JsInterpreter {
     private val globalScope = Scope()
 
     init { installGlobals() }

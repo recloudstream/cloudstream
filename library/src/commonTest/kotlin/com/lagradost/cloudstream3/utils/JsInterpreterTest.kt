@@ -9,9 +9,9 @@ import kotlin.test.assertFalse
 
 class JsInterpreterTest {
 
-    private fun num(code: String, variable: String? = null) = (evalJs(code, variable) as? Double) ?: Double.NaN
-    private fun str(code: String, variable: String? = null) = jsValueToString(evalJs(code, variable))
     private fun bool(code: String, variable: String? = null) = evalJs(code, variable) as? Boolean ?: false
+    private fun num(code: String, variable: String? = null) = evalJs(code, variable) as? Double ?: Double.NaN
+    private fun str(code: String, variable: String? = null) = jsValueToString(evalJs(code, variable))
 
     private fun assertApprox(expected: Double, actual: Double, tol: Double = 1e-9) {
         assertTrue(abs(actual - expected) <= tol, "Expected $expected ± $tol but was $actual")
