@@ -1,5 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
+import kotlin.math.E
+import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -423,6 +425,41 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun toFixedZeroDigits() {
+        assertEquals("4", str("(3.6).toFixed(0)"))
+    }
+
+    @Test
+    fun toFixedTwoDigits() {
+        assertEquals("3.14", str("(3.14159).toFixed(2)"))
+    }
+
+    @Test
+    fun toFixedPadsWithZeroes() {
+        assertEquals("3.10", str("(3.1).toFixed(2)"))
+    }
+
+    @Test
+    fun toFixedNegativeNumber() {
+        assertEquals("-3.14", str("(-3.14159).toFixed(2)"))
+    }
+
+    @Test
+    fun toFixedNegativeBetweenZeroAndMinusOne() {
+        assertEquals("-0.50", str("(-0.5).toFixed(2)"))
+    }
+
+    @Test
+    fun toFixedWholeNumber() {
+        assertEquals("5.00", str("(5).toFixed(2)"))
+    }
+
+    @Test
+    fun toFixedZeroValue() {
+        assertEquals("0.00", str("(0).toFixed(2)"))
+    }
+
+    @Test
     fun arrayLiteralAndLength() {
         assertEquals(3.0, num("[1,2,3].length"))
     }
@@ -629,12 +666,44 @@ class JsInterpreterTest {
 
     @Test
     fun mathPi() {
-        assertApprox(Math.PI, num("Math.PI"))
+        assertApprox(PI, num("Math.PI"))
+    }
+
+    @Test
+    fun mathE() {
+        assertApprox(E, num("Math.E"))
     }
 
     @Test
     fun mathLog() {
         assertApprox(0.0, num("Math.log(1)"))
+    }
+
+    @Test
+    fun mathTruncPositive() {
+        assertEquals(3.0, num("Math.trunc(3.9)"))
+    }
+
+    @Test
+    fun mathTruncNegative() {
+        assertEquals(-3.0, num("Math.trunc(-3.9)"))
+    }
+
+    @Test
+    fun mathTruncZero() {
+        assertEquals(0.0, num("Math.trunc(0.5)"))
+    }
+
+    @Test
+    fun mathRandomInRange() {
+        val r = num("Math.random()")
+        assertTrue(r >= 0.0 && r < 1.0, "Math.random() should be in [0,1) but was $r")
+    }
+
+    @Test
+    fun mathRandomProducesDifferentValues() {
+        val results = (1..20).map { num("Math.random()") }.toSet()
+        assertTrue(results.size > 1, "Math.random() produced identical values across 20 calls")
     }
 
     @Test

@@ -2,7 +2,10 @@ package com.lagradost.cloudstream3.utils
 
 import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.utils.StringUtils.decodeUri
+import com.lagradost.cloudstream3.utils.StringUtils.encodeUri
 import kotlin.math.*
+import kotlin.random.Random
 
 /**
  * Lightweight pure-Kotlin JavaScript interpreter designed to replace Rhino for
@@ -705,7 +708,7 @@ private class JsInterpreter {
 
     private fun installGlobals() {
         val mathObj = JsObject(mutableMapOf(
-            "PI" to Math.PI, "E" to Math.E,
+            "PI" to PI, "E" to E,
             "floor" to nativeFn { args -> floor(toNumber(args.getOrNull(0))) },
             "ceil" to nativeFn { args -> ceil(toNumber(args.getOrNull(0))) },
             "round" to nativeFn { args -> round(toNumber(args.getOrNull(0))) },
@@ -718,7 +721,7 @@ private class JsInterpreter {
             "tan" to nativeFn { args -> tan(toNumber(args.getOrNull(0))) },
             "max" to nativeFn { args -> args.maxOfOrNull { toNumber(it) } ?: Double.NEGATIVE_INFINITY },
             "min" to nativeFn { args -> args.minOfOrNull { toNumber(it) } ?: Double.POSITIVE_INFINITY },
-            "random" to nativeFn { _ -> Math.random() },
+            "random" to nativeFn { _ -> Random.nextDouble() },
             "trunc" to nativeFn { args -> truncate(toNumber(args.getOrNull(0))) },
             "log2" to nativeFn { args -> log2(toNumber(args.getOrNull(0))) },
             "log10" to nativeFn { args -> log10(toNumber(args.getOrNull(0))) },
@@ -739,10 +742,10 @@ private class JsInterpreter {
         globalScope.define("parseFloat", nativeFn { args -> toNumber(args.getOrNull(0)) })
         globalScope.define("isNaN", nativeFn { args -> toNumber(args.getOrNull(0)).isNaN() })
         globalScope.define("isFinite", nativeFn { args -> toNumber(args.getOrNull(0)).isFinite() })
-        globalScope.define("decodeURIComponent", nativeFn { args -> java.net.URLDecoder.decode(toJsString(args.getOrNull(0)), "UTF-8") })
-        globalScope.define("encodeURIComponent", nativeFn { args -> java.net.URLEncoder.encode(toJsString(args.getOrNull(0)), "UTF-8") })
-        globalScope.define("escape", nativeFn { args -> java.net.URLEncoder.encode(toJsString(args.getOrNull(0)), "UTF-8") })
-        globalScope.define("unescape", nativeFn { args -> java.net.URLDecoder.decode(toJsString(args.getOrNull(0)), "UTF-8") })
+        globalScope.define("decodeURIComponent", nativeFn { args -> toJsString(args.getOrNull(0)).decodeUri() })
+        globalScope.define("encodeURIComponent", nativeFn { args -> toJsString(args.getOrNull(0)).encodeUri() })
+        globalScope.define("escape", nativeFn { args -> toJsString(args.getOrNull(0)).encodeUri() })
+        globalScope.define("unescape", nativeFn { args -> toJsString(args.getOrNull(0)).decodeUri() })
         globalScope.define("eval", nativeFn { args -> eval(toJsString(args.getOrNull(0))) })
         globalScope.define("undefined", Unit)
         globalScope.define("NaN", Double.NaN)
@@ -1188,8 +1191,15 @@ private class JsInterpreter {
                 if (radix == 10) toJsString(obj) else obj.toLong().toString(radix)
             }
             "toFixed" -> nativeFn { args ->
-                val digits = args.getOrNull(0)?.let { toNumber(it).toInt() } ?: 0
-                "%.${digits}f".format(obj)
+                val digits = (args.getOrNull(0)?.let { toNumber(it).toInt() } ?: 0).coerceIn(0, 20)
+                val factor = 10.0.pow(digits)
+                val rounded = round(obj * factor) / factor
+                val sign = if (rounded < 0) "-" else ""
+                val absVal = abs(rounded)
+                val intPart = absVal.toLong()
+                val fracPart = round((absVal - intPart) * factor).toLong()
+                val fracStr = fracPart.toString().padStart(digits, '0')
+                if (digits == 0) "$sign$intPart" else "$sign$intPart.$fracStr"
             }
             else -> Unit
         }
