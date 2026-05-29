@@ -95,7 +95,7 @@ object InAppUpdater {
         val headers = mapOf("Accept" to "application/vnd.github.v3+json")
         val response = parseJson<List<GithubRelease>>(
             app.get(url, headers = headers).text
-        ).toList()
+        )
 
         val versionRegex = Regex("""(.*?((\d+)\.(\d+)\.(\d+))\.apk)""")
         val versionRegexLocal = Regex("""(.*?((\d+)\.(\d+)\.(\d+)).*)""")
@@ -150,7 +150,7 @@ object InAppUpdater {
         val headers = mapOf("Accept" to "application/vnd.github.v3+json")
         val response = parseJson<List<GithubRelease>>(
             app.get(releaseUrl, headers = headers).text
-        ).toList()
+        )
 
         val found = response.lastOrNull { rel ->
             rel.prerelease || rel.tagName == "pre-release"
