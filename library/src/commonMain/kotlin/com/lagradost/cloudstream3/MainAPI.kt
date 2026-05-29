@@ -25,16 +25,25 @@ import com.lagradost.nicehttp.RequestBodyTypes
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.format.DateTimeComponents
+import kotlinx.datetime.format.FormatStringsInDatetimeFormats
+import kotlinx.datetime.format.byUnicodePattern
+import kotlinx.datetime.format.char
+import kotlinx.datetime.format.parse
+import kotlinx.datetime.toInstant
 import java.net.URI
-import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.EnumSet
-import java.util.Locale
 import kotlinx.serialization.json.Json
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 /**
  * API available only on prerelease builds.
@@ -88,10 +97,10 @@ val mapper = JsonMapper.builder().addModule(kotlinModule())
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()!!
 
 object APIHolder {
-    val unixTime: Long
-        get() = System.currentTimeMillis() / 1000L
     val unixTimeMS: Long
-        get() = System.currentTimeMillis()
+        get() = Clock.System.now().toEpochMilliseconds()
+    val unixTime: Long
+        get() = unixTimeMS / 1000L
 
     val allProviders = atomicListOf<MainAPI>()
 
@@ -2512,15 +2521,45 @@ constructor(
         get() = score?.toInt(100)
 }
 
+@OptIn(FormatStringsInDatetimeFormats::class)
 fun Episode.addDate(date: String?, format: String = "yyyy-MM-dd") {
-    try {
-        this.date = SimpleDateFormat(format, Locale.getDefault()).parse(date ?: return)?.time
-    } catch (e: Exception) {
-        logError(e)
-    }
+    if (date == null) return
+    this.date = runCatching {
+        // First try standard ISO 8601 (e.g. "2026-01-01T12:30:00.000Z", "2026-05-17T14:35+02:00")
+        runCatching { Instant.parse(date).toEpochMilliseconds() }
+            .getOrElse {
+                val fmt = DateTimeComponents.Format { byUnicodePattern(format) }
+                val components = DateTimeComponents.parse(date, fmt)
+                /**
+                 * Try multiple conversions in order of precision for non-ISO-8601 formats,
+                 * since the date string may or may not include time and/or timezone offset:
+                 * 1. If the custom format produced a UTC offset (e.g. "2026-05-17 14:35+02:00"), use it directly
+                 * 2. If it has time but no offset (e.g. "2026-05-17 14:35"), fall back to device timezone
+                 * 3. If it's date-only (e.g. "2026-05-17"), use start of day in device timezone
+                 */
+                runCatching { components.toInstantUsingOffset().toEpochMilliseconds() }
+                    .recoverCatching { components.toLocalDateTime().toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds() }
+                    .getOrElse { components.toLocalDate().atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds() }
+            }
+    }.onFailure { logError(it) }.getOrNull()
 }
 
-fun Episode.addDate(date: Date?) {
+@Prerelease
+fun Episode.addDate(date: LocalDate?) {
+    this.date = date?.atStartOfDayIn(TimeZone.currentSystemDefault())?.toEpochMilliseconds()
+}
+
+@Prerelease
+fun Episode.addDate(date: Instant?) {
+    this.date = date?.toEpochMilliseconds()
+}
+
+// Deprecate after next stable
+/* @Deprecated(
+    message = "Use addDate with LocalDate, Instant, or String instead.",
+    level = DeprecationLevel.WARNING,
+) */
+fun Episode.addDate(date: java.util.Date?) {
     this.date = date?.time
 }
 
@@ -2655,6 +2694,27 @@ fun fetchUrls(text: String?): List<String> {
     val linkRegex =
         Regex("""(https?://(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*))""")
     return linkRegex.findAll(text).map { it.value.trim().removeSurrounding("\"") }.toList()
+}
+
+@Prerelease
+fun isUpcoming(dateString: String?): Boolean {
+    return runCatching {
+        val fmt = DateTimeComponents.Format {
+            year(); char('-'); monthNumber(); char('-'); day()
+        }
+        val components = DateTimeComponents.parse(dateString ?: return false, fmt)
+        /**
+         * Try multiple conversions in order of precision, since the date string format
+         * may or may not include time and/or timezone offset information:
+         * 1. If the string has a UTC offset (e.g. "2026-05-17T14:35+02:00"), use it directly
+         * 2. If it has time but no offset (e.g. "2026-05-17T14:35"), fall back to device timezone
+         * 3. If it's date-only (e.g. "2026-05-17"), use start of day in device timezone
+         */
+        val instant = runCatching { components.toInstantUsingOffset() }
+            .recoverCatching { components.toLocalDateTime().toInstant(TimeZone.currentSystemDefault()) }
+            .getOrElse { components.toLocalDate().atStartOfDayIn(TimeZone.currentSystemDefault()) }
+        Clock.System.now() < instant
+    }.onFailure { logError(it) }.getOrElse { false }
 }
 
 @Deprecated(
