@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.utils
 
-import me.xdrop.fuzzywuzzy.FuzzySearch
 import java.util.Locale
 
 // If you find a way to use SettingsGeneral getCurrentLocale()
@@ -112,8 +111,8 @@ object SubtitleHelper {
 
             for (lang in languages) {
                 val score = maxOf(
-                    FuzzySearch.ratio(lowLangName, lang.languageName.lowercase()),
-                    FuzzySearch.ratio(
+                    Levenshtein.ratio(lowLangName, lang.languageName.lowercase()),
+                    Levenshtein.ratio(
                         lowLangName, lang.nativeName.lowercase()
                     )
                 )
