@@ -23,6 +23,8 @@ object AppUtils {
     }
 
     inline fun <reified T : Any> parseJson(value: String): T {
+        // serializer<T>() preserves full generic type info (e.g. List<DataClass>)
+        // and must be resolved here while T is still reified, same for TypeReference
         val serializer = try { serializer<T>() } catch (_: SerializationException) { null }
         return parseJson(value, T::class, serializer, object : TypeReference<T>() {})
     }
