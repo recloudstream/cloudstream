@@ -59,6 +59,7 @@ kotlin {
             implementation(libs.jackson.module.kotlin) // JSON Parser
             implementation(libs.kotlinx.atomicfu)
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.io.core)
             implementation(libs.kotlinx.serialization.json) // JSON Parser
             implementation(libs.jsoup) // HTML Parser
@@ -68,6 +69,10 @@ kotlin {
 
             // Deprecated; will be removed once extensions have time to migrate from using it
             implementation("me.xdrop:fuzzywuzzy:1.4.0")
+        }
+
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
         }
     }
 }
