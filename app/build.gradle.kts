@@ -271,7 +271,6 @@ dependencies {
     // Deprecated; will be removed once extensions have time to migrate from using it
     implementation("me.xdrop:fuzzywuzzy:1.4.0")
 
-
     // Torrent Support
     implementation(libs.torrentserver)
 
