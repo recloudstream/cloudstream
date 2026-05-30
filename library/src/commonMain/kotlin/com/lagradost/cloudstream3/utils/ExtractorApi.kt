@@ -652,6 +652,14 @@ open class DrmExtractorLink private constructor(
         kty = kty,
         licenseUrl = licenseUrl,
     )
+
+    @Deprecated(level = DeprecationLevel.HIDDEN)
+    fun setUuid(uuid: java.util.UUID) {
+        this.uuid = uuid.toKotlinUuid()
+    }
+
+    @Deprecated(level = DeprecationLevel.HIDDEN)
+    fun getUuid(): java.util.UUID = this.uuid.toJavaUuid()
 }
 
 /** Class holds extracted media info to be passed to the player.
