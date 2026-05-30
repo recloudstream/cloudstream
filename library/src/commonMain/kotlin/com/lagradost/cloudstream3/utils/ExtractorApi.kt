@@ -653,12 +653,12 @@ open class DrmExtractorLink private constructor(
         licenseUrl = licenseUrl,
     )
 
-    @Deprecated(level = DeprecationLevel.HIDDEN)
+    @Deprecated(message = "Use Kotlin Uuid", level = DeprecationLevel.HIDDEN)
     fun setUuid(uuid: java.util.UUID) {
         this.uuid = uuid.toKotlinUuid()
     }
 
-    @Deprecated(level = DeprecationLevel.HIDDEN)
+    @Deprecated(message = "Use Kotlin Uuid", level = DeprecationLevel.HIDDEN)
     fun getUuid(): java.util.UUID = this.uuid.toJavaUuid()
 }
 
