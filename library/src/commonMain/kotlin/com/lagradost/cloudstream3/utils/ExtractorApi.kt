@@ -1,8 +1,11 @@
+@file:OptIn(ExperimentalUuidApi::class)
+
 package com.lagradost.cloudstream3.utils
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.lagradost.cloudstream3.AudioFile
 import com.lagradost.cloudstream3.IDownloadableMinimum
+import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
@@ -316,6 +319,8 @@ import org.jsoup.Jsoup
 import java.net.URI
 import java.util.UUID
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 /**
  * For use in the ConcatenatingMediaSource.
@@ -431,29 +436,29 @@ private fun inferTypeFromUrl(url: String): ExtractorLinkType {
 val INFER_TYPE: ExtractorLinkType? = null
 
 /**
- * UUID for the ClearKey DRM scheme.
+ * [Uuid] for the ClearKey DRM scheme.
  *
  *
  * ClearKey is supported on Android devices running Android 5.0 (API Level 21) and up.
  */
-val CLEARKEY_UUID = UUID(-0x1d8e62a7567a4c37L, 0x781AB030AF78D30EL)
+val CLEARKEY_UUID = Uuid.fromLongs(-0x1d8e62a7567a4c37L, 0x781AB030AF78D30EL)
 
 /**
- * UUID for the Widevine DRM scheme.
+ * [Uuid] for the Widevine DRM scheme.
  *
  *
  * Widevine is supported on Android devices running Android 4.3 (API Level 18) and up.
  */
-val WIDEVINE_UUID = UUID(-0x121074568629b532L, -0x5c37d8232ae2de13L)
+val WIDEVINE_UUID = Uuid.fromLongs(-0x121074568629b532L, -0x5c37d8232ae2de13L)
 
 /**
- * UUID for the PlayReady DRM scheme.
+ * [Uuid] for the PlayReady DRM scheme.
  *
  *
  * PlayReady is supported on all AndroidTV devices. Note that most other Android devices do not
  * provide PlayReady support.
  */
-val PLAYREADY_UUID = UUID(-0x65fb0f8667bfbd7aL, -0x546d19a41f77a06bL)
+val PLAYREADY_UUID = Uuid.fromLongs(-0x65fb0f8667bfbd7aL, -0x546d19a41f77a06bL)
 
 suspend fun newExtractorLink(
     source: String,
@@ -476,6 +481,11 @@ suspend fun newExtractorLink(
     return builder
 }
 
+// Deprecate after next stable
+/* @Deprecated(
+    message = "Use Kotlin Uuid (kotlin.uuid.Uuid) instead of Java UUID.",
+    level = DeprecationLevel.WARNING,
+) */
 suspend fun newDrmExtractorLink(
     source: String,
     name: String,
@@ -484,7 +494,33 @@ suspend fun newDrmExtractorLink(
     uuid: UUID,
     initializer: suspend DrmExtractorLink.() -> Unit = { }
 ): DrmExtractorLink {
+    fun UUID.toKotlinUuid(): Uuid {
+        return Uuid.fromLongs(mostSignificantBits, leastSignificantBits)
+    }
 
+    @Suppress("DEPRECATION_ERROR")
+    val builder =
+        DrmExtractorLink(
+            source = source,
+            name = name,
+            url = url,
+            uuid = uuid.toKotlinUuid(),
+            type = type ?: INFER_TYPE
+        )
+
+    builder.initializer()
+    return builder
+}
+
+@Prerelease
+suspend fun newDrmExtractorLink(
+    source: String,
+    name: String,
+    url: String,
+    type: ExtractorLinkType? = null,
+    uuid: Uuid,
+    initializer: suspend DrmExtractorLink.() -> Unit = { }
+): DrmExtractorLink {
     @Suppress("DEPRECATION_ERROR")
     val builder =
         DrmExtractorLink(
@@ -510,7 +546,7 @@ suspend fun newDrmExtractorLink(
  * @property type the type of the media, use [INFER_TYPE] if you want to auto infer the type from the url
  * @property kid  Base64 value of The KID element (Key Id) contains the identifier of the key associated with a license.
  * @property key Base64 value of Key to be used to decrypt the media file.
- * @property uuid Drm UUID [WIDEVINE_UUID], [PLAYREADY_UUID], [CLEARKEY_UUID] (by default) .. etc
+ * @property uuid Drm [Uuid] [WIDEVINE_UUID], [PLAYREADY_UUID], [CLEARKEY_UUID] (by default) .. etc
  * @property kty Key type "oct" (octet sequence) by default
  * @property keyRequestParameters Parameters that will used to request the key.
  * @see newDrmExtractorLink
@@ -528,7 +564,7 @@ open class DrmExtractorLink private constructor(
     override var type: ExtractorLinkType,
     open var kid: String? = null,
     open var key: String? = null,
-    open var uuid: UUID,
+    open var uuid: Uuid,
     open var kty: String? = null,
     open var keyRequestParameters: HashMap<String, String>,
     open var licenseUrl: String? = null,
@@ -550,7 +586,7 @@ open class DrmExtractorLink private constructor(
         extractorData: String? = null,
         kid: String? = null,
         key: String? = null,
-        uuid: UUID = CLEARKEY_UUID,
+        uuid: Uuid = CLEARKEY_UUID,
         kty: String? = "oct",
         keyRequestParameters: HashMap<String, String> = hashMapOf(),
         licenseUrl: String? = null,
@@ -585,7 +621,7 @@ open class DrmExtractorLink private constructor(
         extractorData: String? = null,
         kid: String? = null,
         key: String? = null,
-        uuid: UUID = CLEARKEY_UUID,
+        uuid: Uuid = CLEARKEY_UUID,
         kty: String? = "oct",
         keyRequestParameters: HashMap<String, String> = hashMapOf(),
         licenseUrl: String? = null,
