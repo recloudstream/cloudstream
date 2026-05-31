@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.InternalAPI
 import com.lagradost.cloudstream3.json
@@ -9,6 +10,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.serializer
 import kotlinx.serialization.serializerOrNull
 import kotlin.reflect.KClass
 
@@ -21,7 +23,10 @@ object AppUtils {
     }
 
     inline fun <reified T : Any> parseJson(value: String): T {
-        return parseJson(value, T::class)
+        // serializer<T>() preserves full generic type info (e.g. List<DataClass>)
+        // and must be resolved here while T is still reified, same for TypeReference
+        val serializer = try { serializer<T>() } catch (_: Exception) { null }
+        return parseJson(value, T::class, serializer, object : TypeReference<T>() {})
     }
 
     @Deprecated(
@@ -63,17 +68,28 @@ object AppUtils {
     }
 
     @InternalAPI
-    fun <T : Any> parseJson(value: String, kClass: KClass<T>): T {
+    fun <T : Any> parseJson(
+        value: String,
+        kClass: KClass<T>,
+        serializer: KSerializer<T>? = null,
+        typeReference: TypeReference<T>? = null,
+    ): T {
         // @Serializable generates a serializer at compile time; contextual serializers are
         // registered manually in serializersModule, we need both to support all cases
-        val serializer = kClass.serializerOrNull() ?: json.serializersModule.getContextual(kClass)
-        return if (serializer != null) {
+        val s =
+            serializer ?: kClass.serializerOrNull() ?: json.serializersModule.getContextual(kClass)
+
+        // Prefer Kotlin Serialization over Jackson
+        if (s != null) {
             try {
-                json.decodeFromString(serializer, value)
+                return json.decodeFromString(s, value)
             } catch (e: SerializationException) {
                 logError(e)
-                mapper.readValue(value, kClass.java)
             }
+        }
+
+        return if (typeReference != null) {
+            mapper.readValue(value, typeReference)
         } else {
             mapper.readValue(value, kClass.java)
         }
