@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.metaproviders
 
 import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.api.BuildConfig
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.Actor
 import com.lagradost.cloudstream3.ActorData
@@ -45,9 +46,9 @@ open class TraktProvider : MainAPI() {
         TvType.Anime,
     )
 
-    private val traktClientId =
-        "d9f434f48b55683a279ffe88ddc68351cc04c9dc9372bd95af5de780b794e770"
     private val traktApiUrl = "https://api.trakt.tv"
+
+    val traktClientId: String = BuildConfig.TRAKT_CLIENT_ID
 
     override val mainPage = mainPageOf(
         "$traktApiUrl/movies/trending" to "Trending Movies", //Most watched movies right now

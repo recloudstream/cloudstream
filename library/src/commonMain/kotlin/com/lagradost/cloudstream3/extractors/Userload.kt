@@ -69,7 +69,7 @@ open class Userload : ExtractorApi() {
         }
         var txtresult = ""
         subchar.forEach{
-            txtresult = txtresult.plus(Char(it.toInt(8)))
+            txtresult = txtresult.plus(it.toInt(8).toChar())
         }
         val val1 = Regex(""""morocco="((.|\\n)*?)"&mycountry="""").find(txtresult)?.groups?.get(1)?.value.toString().drop(1).dropLast(1)
         val val2 = txtresult.substringAfter("""&mycountry="+""").substringBefore(")")

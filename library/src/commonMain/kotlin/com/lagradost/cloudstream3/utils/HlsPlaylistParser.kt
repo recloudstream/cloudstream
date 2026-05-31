@@ -1179,7 +1179,7 @@ object HlsPlaylistParser {
         if (KEYFORMAT_WIDEVINE_PSSH_BINARY == keyFormat) {
             val urlString = parseStringAttr(line, REGEX_URI, variableDefinitions)
             return SchemeData(
-                uuid = WIDEVINE_UUID,
+                uuid = C.WIDEVINE_UUID,
                 mimeType = MimeTypes.VIDEO_MP4,
                 data = Base64.Default.decode(urlString.substring(urlString.indexOf(',')))
             )
