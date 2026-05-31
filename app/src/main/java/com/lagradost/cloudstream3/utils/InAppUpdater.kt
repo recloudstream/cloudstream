@@ -93,9 +93,9 @@ object InAppUpdater {
     private suspend fun Activity.getReleaseUpdate(): Update {
         val url = "https://api.github.com/repos/$GITHUB_USER_NAME/$GITHUB_REPO/releases"
         val headers = mapOf("Accept" to "application/vnd.github.v3+json")
-        val response = parseJson<List<GithubRelease>>(
+        val response = parseJson<Array<GithubRelease>>(
             app.get(url, headers = headers).text
-        )
+        ).toList()
 
         val versionRegex = Regex("""(.*?((\d+)\.(\d+)\.(\d+))\.apk)""")
         val versionRegexLocal = Regex("""(.*?((\d+)\.(\d+)\.(\d+)).*)""")
@@ -103,9 +103,7 @@ object InAppUpdater {
             !rel.prerelease
         }.sortedWith(compareBy { release ->
             release.assets.firstOrNull { it.contentType == "application/vnd.android.package-archive" }?.name?.let { it1 ->
-                versionRegex.find(
-                    it1
-                )?.groupValues?.let {
+                versionRegex.find(it1)?.groupValues?.let {
                     it[3].toInt() * 100_000_000 + it[4].toInt() * 10_000 + it[5].toInt()
                 }
             }
@@ -150,9 +148,9 @@ object InAppUpdater {
             "https://api.github.com/repos/$GITHUB_USER_NAME/$GITHUB_REPO/git/ref/tags/pre-release"
         val releaseUrl = "https://api.github.com/repos/$GITHUB_USER_NAME/$GITHUB_REPO/releases"
         val headers = mapOf("Accept" to "application/vnd.github.v3+json")
-        val response = parseJson<List<GithubRelease>>(
+        val response = parseJson<Array<GithubRelease>>(
             app.get(releaseUrl, headers = headers).text
-        )
+        ).toList()
 
         val found = response.lastOrNull { rel ->
             rel.prerelease || rel.tagName == "pre-release"
