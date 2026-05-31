@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.PictureInPictureParams
 import android.content.Context
@@ -8,6 +9,8 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.Manifest
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Gravity
@@ -24,28 +27,34 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
+import androidx.core.view.isNotEmpty
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.CastSession
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.navigationrail.NavigationRailView
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
 import com.lagradost.cloudstream3.actions.OpenInAppAction
 import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.databinding.ToastBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
-import com.lagradost.cloudstream3.ui.player.PlayerEventType
+import com.lagradost.cloudstream3.ui.home.HomeChildItemAdapter
+import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
+import com.lagradost.cloudstream3.ui.player.PlayerPipHelper.isPIPPossible
 import com.lagradost.cloudstream3.ui.player.Torrent
+import com.lagradost.cloudstream3.ui.result.ActorAdaptor
+import com.lagradost.cloudstream3.ui.result.EpisodeAdapter
+import com.lagradost.cloudstream3.ui.result.ImageAdapter
+import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
+import com.lagradost.cloudstream3.ui.settings.extensions.PluginAdapter
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRtl
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Event
-import com.lagradost.cloudstream3.utils.UIHelper
-import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
-import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
+import com.lagradost.cloudstream3.utils.UIHelper.showInputMethod
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.UiText
 import java.lang.ref.WeakReference
@@ -101,15 +110,15 @@ object CommonActivity {
             return displayMetrics.heightPixels
         }
 
-    var canEnterPipMode: Boolean = false
-    var canShowPipMode: Boolean = false
+    var isPipDesired: Boolean = false
     var isInPIPMode: Boolean = false
 
     val onColorSelectedEvent = Event<Pair<Int, Int>>()
     val onDialogDismissedEvent = Event<Int>()
 
-    var playerEventListener: ((PlayerEventType) -> Unit)? = null
     var keyEventListener: ((Pair<KeyEvent?, Boolean>) -> Boolean)? = null
+    var appliedTheme: Int = 0
+    var appliedColor: Int = 0
 
     private var currentToast: Toast? = null
 
@@ -182,6 +191,16 @@ object CommonActivity {
             currentToast = toast
             toast.show()
 
+            val handler = Handler(Looper.getMainLooper())
+            val ref = WeakReference(toast)
+
+            /* Clean up activity leak */
+            handler.postDelayed({
+                if (ref.get() == currentToast) {
+                    currentToast = null
+                }
+            }, 10_000)
+
         } catch (e: Exception) {
             logError(e)
         }
@@ -197,7 +216,7 @@ object CommonActivity {
      * https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
      * https://android.googlesource.com/platform/frameworks/base/+/android-16.0.0_r2/core/res/res/values/locale_config.xml
      * https://iso639-3.sil.org/code_tables/639/data/all
-    */
+     */
     fun setLocale(context: Context?, languageTag: String?) {
         if (context == null || languageTag == null) return
         val locale = Locale.forLanguageTag(languageTag)
@@ -225,15 +244,7 @@ object CommonActivity {
     fun init(act: Activity) {
         setActivityInstance(act)
         ioSafe { Torrent.deleteAllFiles() }
-
         val componentActivity = activity as? ComponentActivity ?: return
-
-        //https://stackoverflow.com/questions/52594181/how-to-know-if-user-has-disabled-picture-in-picture-feature-permission
-        //https://developer.android.com/guide/topics/ui/picture-in-picture
-        canShowPipMode =
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && // OS SUPPORT
-                    componentActivity.packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE) && // HAS FEATURE, MIGHT BE BLOCKED DUE TO POWER DRAIN
-                    componentActivity.hasPIPPermission() // CHECK IF FEATURE IS ENABLED IN SETTINGS
 
         componentActivity.updateLocale()
         componentActivity.updateTv()
@@ -250,7 +261,7 @@ object CommonActivity {
                         ?: return@registerForActivityResult
                     action.onResultSafe(act, result.data)
                     removeKey("last_click_action")
-                    removeKey("last_opened_id")
+                    removeKey("last_opened")
                 }
             }
 
@@ -272,13 +283,15 @@ object CommonActivity {
         }
     }
 
+    /** Enters pip mode if it is both possible and desired to do so*/
     private fun Activity.enterPIPMode() {
-        if (!shouldShowPIPMode(canEnterPipMode) || !canShowPipMode) return
+        if (!isPipDesired || !this.isPIPPossible()) return
+
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 try {
                     enterPictureInPictureMode(PictureInPictureParams.Builder().build())
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     // Use fallback just in case
                     @Suppress("DEPRECATION")
                     enterPictureInPictureMode()
@@ -294,10 +307,10 @@ object CommonActivity {
         }
     }
 
-    fun onUserLeaveHint(act: Activity?) {
-        if (canEnterPipMode && canShowPipMode) {
-            act?.enterPIPMode()
-        }
+    fun onUserLeaveHint(act: Activity) {
+        // On Android 12 and later we use setAutoEnterEnabled() instead.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) return
+        act.enterPIPMode()
     }
 
     fun updateTheme(act: Activity) {
@@ -336,8 +349,10 @@ object CommonActivity {
                 "AmoledLight" -> R.style.AmoledModeLight
                 "Monet" -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                     R.style.MonetMode else R.style.AppTheme
+
                 "Dracula" -> R.style.DraculaMode
                 "Lavender" -> R.style.LavenderMode
+                "SilentBlue" -> R.style.SilentBlueMode
 
                 else -> R.style.AppTheme
             }
@@ -374,6 +389,8 @@ object CommonActivity {
 
         act.theme.applyStyle(currentTheme, true)
         act.theme.applyStyle(currentOverlayTheme, true)
+        appliedTheme = currentTheme
+        appliedColor = currentOverlayTheme
         act.updateTv()
         if (isLayout(TV)) act.theme.applyStyle(R.style.AppThemeTvOverlay, true)
         act.theme.applyStyle(
@@ -406,8 +423,7 @@ object CommonActivity {
 
     private fun View.hasContent(): Boolean {
         return isShown && when (this) {
-            //is RecyclerView -> this.childCount > 0
-            is ViewGroup -> this.childCount > 0
+            is ViewGroup -> this.isNotEmpty()
             else -> true
         }
     }
@@ -437,7 +453,7 @@ object CommonActivity {
         // if cant focus but visible then break and let android decide
         // the exception if is the view is a parent and has children that wants focus
         val hasChildrenThatWantsFocus = (next as? ViewGroup)?.let { parent ->
-            parent.descendantFocusability == ViewGroup.FOCUS_AFTER_DESCENDANTS && parent.childCount > 0
+            parent.descendantFocusability == ViewGroup.FOCUS_AFTER_DESCENDANTS && parent.isNotEmpty()
         } ?: false
         if (!next.isFocusable && shown && !hasChildrenThatWantsFocus) return null
 
@@ -516,87 +532,7 @@ object CommonActivity {
 
 
     fun onKeyDown(act: Activity?, keyCode: Int, event: KeyEvent?): Boolean? {
-
-        // 149 keycode_numpad 5
-        val playerEvent = when (keyCode) {
-            KeyEvent.KEYCODE_FORWARD, KeyEvent.KEYCODE_D, KeyEvent.KEYCODE_MEDIA_SKIP_FORWARD, KeyEvent.KEYCODE_MEDIA_FAST_FORWARD -> {
-                PlayerEventType.SeekForward
-            }
-
-            KeyEvent.KEYCODE_A, KeyEvent.KEYCODE_MEDIA_SKIP_BACKWARD, KeyEvent.KEYCODE_MEDIA_REWIND -> {
-                PlayerEventType.SeekBack
-            }
-
-            KeyEvent.KEYCODE_MEDIA_NEXT, KeyEvent.KEYCODE_BUTTON_R1, KeyEvent.KEYCODE_N, KeyEvent.KEYCODE_NUMPAD_2, KeyEvent.KEYCODE_CHANNEL_UP -> {
-                PlayerEventType.NextEpisode
-            }
-
-            KeyEvent.KEYCODE_MEDIA_PREVIOUS, KeyEvent.KEYCODE_BUTTON_L1, KeyEvent.KEYCODE_B, KeyEvent.KEYCODE_NUMPAD_1, KeyEvent.KEYCODE_CHANNEL_DOWN -> {
-                PlayerEventType.PrevEpisode
-            }
-
-            KeyEvent.KEYCODE_MEDIA_PAUSE -> {
-                PlayerEventType.Pause
-            }
-
-            KeyEvent.KEYCODE_MEDIA_PLAY, KeyEvent.KEYCODE_BUTTON_START -> {
-                PlayerEventType.Play
-            }
-
-            KeyEvent.KEYCODE_L, KeyEvent.KEYCODE_NUMPAD_7, KeyEvent.KEYCODE_7 -> {
-                PlayerEventType.Lock
-            }
-
-            KeyEvent.KEYCODE_H, KeyEvent.KEYCODE_MENU -> {
-                PlayerEventType.ToggleHide
-            }
-
-            KeyEvent.KEYCODE_M, KeyEvent.KEYCODE_VOLUME_MUTE -> {
-                PlayerEventType.ToggleMute
-            }
-
-            KeyEvent.KEYCODE_S, KeyEvent.KEYCODE_NUMPAD_9, KeyEvent.KEYCODE_9 -> {
-                PlayerEventType.ShowMirrors
-            }
-            // OpenSubtitles shortcut
-            KeyEvent.KEYCODE_O, KeyEvent.KEYCODE_NUMPAD_8, KeyEvent.KEYCODE_8 -> {
-                PlayerEventType.SearchSubtitlesOnline
-            }
-
-            KeyEvent.KEYCODE_E, KeyEvent.KEYCODE_NUMPAD_3, KeyEvent.KEYCODE_3 -> {
-                PlayerEventType.ShowSpeed
-            }
-
-            KeyEvent.KEYCODE_R, KeyEvent.KEYCODE_NUMPAD_0, KeyEvent.KEYCODE_0 -> {
-                PlayerEventType.Resize
-            }
-
-            KeyEvent.KEYCODE_C, KeyEvent.KEYCODE_NUMPAD_4, KeyEvent.KEYCODE_4 -> {
-                PlayerEventType.SkipOp
-            }
-
-            KeyEvent.KEYCODE_V, KeyEvent.KEYCODE_NUMPAD_5, KeyEvent.KEYCODE_5 -> {
-                PlayerEventType.SkipCurrentChapter
-            }
-
-            KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_P, KeyEvent.KEYCODE_SPACE, KeyEvent.KEYCODE_NUMPAD_ENTER, KeyEvent.KEYCODE_ENTER -> { // space is not captured due to navigation
-                PlayerEventType.PlayPauseToggle
-            }
-
-            else -> return null
-        }
-        val listener = playerEventListener
-        if (listener != null) {
-            listener.invoke(playerEvent)
-            return true
-        }
         return null
-
-        //when (keyCode) {
-        //    KeyEvent.KEYCODE_DPAD_CENTER -> {
-        //        println("DPAD PRESSED")
-        //    }
-        //}
     }
 
     /** overrides focus and custom key events */
@@ -633,6 +569,7 @@ object CommonActivity {
 
                 else -> null
             }
+
             // println("NEXT FOCUS : $nextView")
             if (nextView != null) {
                 nextView.requestFocus()
@@ -640,10 +577,13 @@ object CommonActivity {
                 return true
             }
 
+            // TODO: Figure out why removing the check for SearchAutoComplete seems
+            // to break focus on TV as it shouldn't need to be used.
+            @SuppressLint("RestrictedApi")
             if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER &&
                 (act.currentFocus is SearchView || act.currentFocus is SearchView.SearchAutoComplete)
             ) {
-                UIHelper.showInputMethod(act.currentFocus?.findFocus())
+                showInputMethod(act.currentFocus?.findFocus())
             }
 
             //println("Keycode: $keyCode")
@@ -652,7 +592,6 @@ object CommonActivity {
             //    "Got Keycode $keyCode | ${KeyEvent.keyCodeToString(keyCode)} \n ${event?.action}",
             //    Toast.LENGTH_LONG
             //)
-
         }
 
         // if someone else want to override the focus then don't handle the event as it is already

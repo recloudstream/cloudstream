@@ -6,8 +6,6 @@ import com.lagradost.cloudstream3.utils.*
 import org.mozilla.javascript.Context
 import org.mozilla.javascript.EvaluatorException
 import org.mozilla.javascript.Scriptable
-import java.util.*
-
 
 open class Userload : ExtractorApi() {
     override var name = "Userload"
@@ -16,7 +14,7 @@ open class Userload : ExtractorApi() {
 
     private fun splitInput(input: String): List<String> {
         var counter = 0
-        val array = ArrayList<String>()
+        val array = mutableListOf<String>()
         var buffer = ""
         for (c in input) {
             when (c) {
@@ -71,7 +69,7 @@ open class Userload : ExtractorApi() {
         }
         var txtresult = ""
         subchar.forEach{
-            txtresult = txtresult.plus(Char(it.toInt(8)))
+            txtresult = txtresult.plus(it.toInt(8).toChar())
         }
         val val1 = Regex(""""morocco="((.|\\n)*?)"&mycountry="""").find(txtresult)?.groups?.get(1)?.value.toString().drop(1).dropLast(1)
         val val2 = txtresult.substringAfter("""&mycountry="+""").substringBefore(")")

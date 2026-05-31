@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.utils
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.widget.Toast
@@ -11,8 +10,7 @@ import androidx.core.net.toUri
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.readValue
-import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getActivity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
@@ -21,16 +19,21 @@ import com.lagradost.cloudstream3.plugins.PLUGINS_KEY_LOCAL
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_CACHED_LIST
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_CACHED_LIST
+import com.lagradost.cloudstream3.syncproviders.providers.KitsuApi.Companion.KITSU_CACHED_LIST
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getDefaultSharedPrefs
 import com.lagradost.cloudstream3.utils.DataStore.getSharedPrefs
-import com.lagradost.cloudstream3.utils.DataStore.mapper
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.StreamData
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.setupStream
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.setupStream
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
+import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager.QUEUE_KEY
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.KEY_DOWNLOAD_INFO
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.KEY_RESUME_IN_QUEUE
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.KEY_RESUME_PACKAGES
 import com.lagradost.safefile.MediaFileContentType
 import com.lagradost.safefile.SafeFile
 import okhttp3.internal.closeQuietly
@@ -40,6 +43,7 @@ import java.io.PrintWriter
 import java.lang.System.currentTimeMillis
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 object BackupUtils {
 
@@ -49,6 +53,7 @@ object BackupUtils {
     private val nonTransferableKeys = listOf(
         ANILIST_CACHED_LIST,
         MAL_CACHED_LIST,
+        KITSU_CACHED_LIST,
 
         // The plugins themselves are not backed up
         PLUGINS_KEY,
@@ -57,6 +62,7 @@ object BackupUtils {
         AccountManager.ACCOUNT_TOKEN,
         AccountManager.ACCOUNT_IDS,
 
+        // TODO proper getter for string res keys to ensure that they are updated
         "biometric_key", // can lock down users if backup is shared on a incompatible device
         "nginx_user", // Nginx user key
 
@@ -77,6 +83,31 @@ object BackupUtils {
         "open_subtitles_user",
         "subdl_user",
         "simkl_token",
+
+
+        // Downloads can not be restored from backups.
+        // The download path URI can not be transferred.
+        // In the future we may potentially write metadata to files in the download directory
+        // and make it possible to restore download folders using that metadata.
+        DOWNLOAD_EPISODE_CACHE_BACKUP,
+        DOWNLOAD_EPISODE_CACHE,
+        
+        // Download headers are unintuitively used in the resume watching system.
+        // We can therefore not prune download headers in backups.
+        //DOWNLOAD_HEADER_CACHE_BACKUP,
+        //DOWNLOAD_HEADER_CACHE,
+        
+
+        // This may overwrite valid local data with invalid data
+        KEY_DOWNLOAD_INFO,
+
+        // Prevent backups from automatically starting downloads
+        KEY_RESUME_IN_QUEUE,
+        KEY_RESUME_PACKAGES,
+        QUEUE_KEY,
+
+        // Prevent automatic plugin download after restoring backup
+        "auto_download_plugins_key2"
     )
 
     /** false if key should not be contained in backup */
@@ -102,9 +133,7 @@ object BackupUtils {
     )
 
     @Suppress("UNCHECKED_CAST")
-    private fun getBackup(context: Context?): BackupFile? {
-        if (context == null) return null
-
+    private fun getBackup(context: Context): BackupFile {
         val allData = context.getSharedPrefs().all.filter { it.key.isTransferable() }
         val allSettings = context.getDefaultSharedPrefs().all.filter { it.key.isTransferable() }
 
@@ -157,9 +186,13 @@ object BackupUtils {
             context.restoreMap(backupFile.datastore.long)
             context.restoreMap(backupFile.datastore.stringSet)
         }
+
+        // Make sure the library is fresh
+        for(api in AccountManager.syncApis) {
+            api.requireLibraryRefresh = true
+        }
     }
 
-    @SuppressLint("SimpleDateFormat")
     fun backup(context: Context?) = ioSafe {
         if (context == null) return@ioSafe
 
@@ -172,14 +205,14 @@ object BackupUtils {
                 return@ioSafe
             }
 
-            val date = SimpleDateFormat("yyyy_MM_dd_HH_mm").format(Date(currentTimeMillis()))
+            val date = SimpleDateFormat("yyyy_MM_dd_HH_mm", Locale.getDefault()).format(Date(currentTimeMillis()))
             val displayName = "CS3_Backup_${date}"
             val backupFile = getBackup(context)
             val stream = setupBackupStream(context, displayName)
 
             fileStream = stream.openNew()
             printStream = PrintWriter(fileStream)
-            printStream.print(mapper.writeValueAsString(backupFile))
+            printStream.print(backupFile.toJson())
 
             showToast(
                 R.string.backup_success,
@@ -202,7 +235,7 @@ object BackupUtils {
     }
 
     @Throws(IOException::class)
-    private fun setupBackupStream(context: Context, name: String, ext: String = "txt"): StreamData {
+    private fun setupBackupStream(context: Context, name: String, ext: String = "txt"): DownloadObjects.StreamData {
         return setupStream(
             baseFile = getCurrentBackupDir(context).first ?: getDefaultBackupDir(context)
             ?: throw IOException("Bad config"),
@@ -224,8 +257,8 @@ object BackupUtils {
                             val input = activity.contentResolver.openInputStream(uri)
                                 ?: return@ioSafe
 
-                            val restoredValue =
-                                mapper.readValue<BackupFile>(input)
+                            val text = input.bufferedReader().readText()
+                            val restoredValue = parseJson<BackupFile>(text)
 
                             restore(
                                 activity,
@@ -284,7 +317,7 @@ object BackupUtils {
     }
 
     /**
-     * Copy of [VideoDownloadManager.basePathToFile], [VideoDownloadManager.getDefaultDir] and [VideoDownloadManager.getBasePath]
+     * Copy of [com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.basePathToFile], [com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDefaultDir] and [com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getBasePath]
      * modded for backup specific paths
      * */
 

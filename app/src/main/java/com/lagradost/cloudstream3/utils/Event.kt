@@ -24,3 +24,28 @@ class Event<T> {
         }
     }
 }
+
+class EmptyEvent {
+    private val observers = mutableSetOf<Runnable>()
+
+    val size: Int get() = observers.size
+
+    operator fun plusAssign(observer: Runnable) {
+        synchronized(observers) {
+            observers.add(observer)
+        }
+    }
+
+    operator fun minusAssign(observer: Runnable) {
+        synchronized(observers) {
+            observers.remove(observer)
+        }
+    }
+
+    operator fun invoke() {
+        synchronized(observers) {
+            for (observer in observers)
+                observer.run()
+        }
+    }
+}

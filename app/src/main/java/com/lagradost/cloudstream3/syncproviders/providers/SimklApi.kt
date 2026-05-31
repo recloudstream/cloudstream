@@ -4,19 +4,18 @@ import androidx.annotation.StringRes
 import androidx.core.net.toUri
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lagradost.cloudstream3.AcraApplication
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
-import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.BuildConfig
+import com.lagradost.cloudstream3.CloudStreamApp
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKeys
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.LoadResponse.Companion.readIdFromString
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.SimklSyncServices
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.mapper
 import com.lagradost.cloudstream3.mvvm.debugPrint
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING
@@ -30,6 +29,7 @@ import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.DataStoreHelper.toYear
 import com.lagradost.cloudstream3.utils.txt
 import java.math.BigInteger
@@ -96,7 +96,7 @@ class SimklApi : SyncAPI() {
 
         fun cleanOldCache() {
             getKeys(SIMKL_CACHE_KEY)?.forEach {
-                val isOld = AcraApplication.getKey<SimklCacheWrapper<Any>>(it)?.isFresh() == false
+                val isOld = CloudStreamApp.getKey<SimklCacheWrapper<Any>>(it)?.isFresh() == false
                 if (isOld) {
                     removeKey(it)
                 }
@@ -117,13 +117,8 @@ class SimklApi : SyncAPI() {
          * Gets cached object, if object is not fresh returns null and removes it from cache
          */
         inline fun <reified T : Any> getKey(path: String): T? {
-            // Required for generic otherwise "LinkedHashMap cannot be cast to MediaObject"
-            val type = mapper.typeFactory.constructParametricType(
-                SimklCacheWrapper::class.java,
-                T::class.java
-            )
             val cache = getKey<String>(SIMKL_CACHE_KEY, path)?.let {
-                mapper.readValue<SimklCacheWrapper<T>>(it, type)
+                tryParseJson<SimklCacheWrapper<T>>(it)
             }
 
             return if (cache?.isFresh() == true) {

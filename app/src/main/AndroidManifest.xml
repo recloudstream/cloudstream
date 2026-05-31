@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-sdk tools:overrideLibrary="go.torrServer.gojni" /> <!-- torrServer has a different api level -->
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- I dont remember, probs has to do with downloads -->
     <uses-permission android:name="android.permission.INTERNET" /> <!-- unless you only use cs3 as a player for downloaded stuff, you need this -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- Downloads -->
@@ -24,6 +22,47 @@
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
 
+    <queries>
+        <!-- 
+            QUERY_ALL_PACKAGES does not work on some devices running Android 11+ (like Google TV 14), 
+            so we must explicitly specify the packages and intent patterns we query to ensure visibility.
+        -->
+        <!-- For external video players -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:mimeType="video/*" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:mimeType="application/x-mpegURL" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:mimeType="application/vnd.apple.mpegurl" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="magnet" />
+        </intent>
+
+        <!-- Common players supported in actions/temp -->
+        <package android:name="org.videolan.vlc" />
+        <package android:name="org.videolan.vlc.debug" />
+        <package android:name="is.xyz.mpv" />
+        <package android:name="is.xyz.mpv.ytdl" />
+        <package android:name="app.marlboroadvance.mpvex" />
+        <package android:name="live.mehiz.mpvkt" />
+        <package android:name="live.mehiz.mpvkt.preview" />
+        <package android:name="com.brouken.player" />
+        <package android:name="dev.anilbeesetti.nextplayer" />
+        <package android:name="com.instantbits.cast.webvideo" />
+        <package android:name="com.gianlu.aria2android" />
+        
+        <!-- Torrent clients -->
+        <package android:name="org.proninyaroslav.libretorrent" />
+        <package android:name="com.biglybt.android.client" />
+    </queries>
+
     <!-- Fixes android tv fuckery -->
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -35,9 +74,8 @@
     <!-- Without the large heap Exoplayer buffering gets reset due to OOM. -->
     <!--TODO https://stackoverflow.com/questions/41799732/chromecast-button-not-visible-in-android-->
     <application
-        android:name=".AcraApplication"
+        android:name=".CloudStreamApp"
         android:allowBackup="true"
-        android:enableOnBackInvokedCallback="true"
         android:appCategory="video"
         android:banner="@mipmap/ic_banner"
         android:fullBackupContent="@xml/backup_descriptor"
@@ -45,11 +83,12 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
+        android:pageSizeCompat="enabled"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        tools:targetApi="35">
+        tools:targetApi="${target_sdk_version}">
 
         <meta-data
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
@@ -110,14 +149,31 @@
         android:launchMode="singleTask"
         is a bit experimental, it makes loading repositories from browser still stay on the same page
         no idea about side effects
+
+        Not exported to prevent bypassing the AccountSelectActivity
         -->
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation|uiMode"
-            android:exported="true"
+            android:exported="false"
             android:launchMode="singleTask"
             android:resizeableActivity="true"
-            android:supportsPictureInPicture="true">
+            android:supportsPictureInPicture="true" />
+
+        <activity
+            android:name=".ui.account.AccountSelectActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden"
+            android:exported="true">
+            <intent-filter android:exported="true">
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
 
             <!-- cloudstreamplayer://encodedUrl?name=Dune -->
             <intent-filter>
@@ -175,7 +231,7 @@
                 <data android:scheme="cloudstreamcontinuewatching" />
             </intent-filter>
 
-            <intent-filter>
+            <intent-filter android:autoVerify="false">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -185,21 +241,6 @@
                     android:host="cs.repo"
                     android:pathPrefix="/"
                     android:scheme="https" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".ui.account.AccountSelectActivity"
-            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden"
-            android:exported="true">
-            <intent-filter android:exported="true">
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
@@ -214,6 +255,12 @@
 
         <service
             android:name=".services.VideoDownloadService"
+            android:enabled="true"
+            android:foregroundServiceType="dataSync"
+            android:exported="false" />
+
+        <service
+            android:name=".services.DownloadQueueService"
             android:enabled="true"
             android:foregroundServiceType="dataSync"
             android:exported="false" />

@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.extractors
 import com.google.gson.Gson
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
@@ -46,7 +47,12 @@ open class Dailymotion : ExtractorApi() {
 
         meta.subtitles?.data?.forEach { (_, subData) ->
             subData.urls.forEach { subUrl ->
-                subtitleCallback(SubtitleFile(subData.label, subUrl))
+                subtitleCallback(
+                    newSubtitleFile(
+                        subData.label,
+                        subUrl
+                    )
+                )
             }
         }
     }

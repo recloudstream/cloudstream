@@ -3,13 +3,14 @@ package com.lagradost.cloudstream3.utils
 import android.content.Context
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
-import com.lagradost.cloudstream3.AcraApplication
-import com.lagradost.cloudstream3.AcraApplication.Companion.context
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
-import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.context
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKeyClass
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKeys
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKeys
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKeyClass
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.EpisodeResponse
@@ -23,9 +24,13 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
+import com.lagradost.cloudstream3.ui.player.ExtractorUri
+import com.lagradost.cloudstream3.ui.player.NEXT_WATCH_EPISODE_PERCENTAGE
 import com.lagradost.cloudstream3.ui.result.EpisodeSortType
+import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.VideoWatchState
 import com.lagradost.cloudstream3.utils.AppContextUtils.filterProviderByPreferredMedia
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import java.util.Calendar
 import java.util.Date
 import java.util.GregorianCalendar
@@ -53,7 +58,7 @@ class UserPreferenceDelegate<T : Any>(
     private val klass: KClass<out T> = default::class
     private val realKey get() = "${DataStoreHelper.currentAccount}/$key"
     operator fun getValue(self: Any?, property: KProperty<*>) =
-        AcraApplication.getKeyClass(realKey, klass.java) ?: default
+        getKeyClass(realKey, klass.java) ?: default
 
     operator fun setValue(
         self: Any?,
@@ -63,7 +68,7 @@ class UserPreferenceDelegate<T : Any>(
         if (t == null) {
             removeKey(realKey)
         } else {
-            AcraApplication.setKeyClass(realKey, t)
+            setKeyClass(realKey, t)
         }
     }
 }
@@ -272,6 +277,7 @@ object DataStoreHelper {
         var rating: Int? = null
             set(value) {
                 if (value != null) {
+                    @Suppress("DEPRECATION_ERROR")
                     score = Score.fromOld(value)
                 }
             }
@@ -524,7 +530,7 @@ object DataStoreHelper {
         setKey(
             "$currentAccount/$RESULT_RESUME_WATCHING",
             parentId.toString(),
-            VideoDownloadHelper.ResumeWatching(
+            DownloadObjects.ResumeWatching(
                 parentId,
                 episodeId,
                 episode,
@@ -545,7 +551,7 @@ object DataStoreHelper {
         removeKey("$currentAccount/$RESULT_RESUME_WATCHING", parentId.toString())
     }
 
-    fun getLastWatched(id: Int?): VideoDownloadHelper.ResumeWatching? {
+    fun getLastWatched(id: Int?): DownloadObjects.ResumeWatching? {
         if (id == null) return null
         return getKey(
             "$currentAccount/$RESULT_RESUME_WATCHING",
@@ -553,7 +559,7 @@ object DataStoreHelper {
         )
     }
 
-    private fun getLastWatchedOld(id: Int?): VideoDownloadHelper.ResumeWatching? {
+    private fun getLastWatchedOld(id: Int?): DownloadObjects.ResumeWatching? {
         if (id == null) return null
         return getKey(
             "$currentAccount/$RESULT_RESUME_WATCHING_OLD",
@@ -642,6 +648,62 @@ object DataStoreHelper {
         setKey("$currentAccount/$VIDEO_POS_DUR", id.toString(), PosDur(pos, dur))
     }
 
+    /** Sets the position, duration, and resume data of an episode/movie,
+     *
+     * if nextEpisode is not specified it will not be able to set the next episode as resumable if progress > NEXT_WATCH_EPISODE_PERCENTAGE
+     * */
+    fun setViewPosAndResume(id: Int?, position: Long, duration: Long, currentEpisode: Any?, nextEpisode: Any?) {
+        setViewPos(id, position, duration)
+        if (id != null) {
+            when (val meta = currentEpisode) {
+                is ResultEpisode -> {
+                    if (meta.videoWatchState == VideoWatchState.Watched) {
+                        setVideoWatchState(id, VideoWatchState.None)
+                    }
+                }
+            }
+        }
+
+        val percentage = position * 100L / duration
+        val nextEp = percentage >= NEXT_WATCH_EPISODE_PERCENTAGE
+        val resumeMeta = if (nextEp) nextEpisode else currentEpisode
+        if (resumeMeta == null && nextEp) {
+            // remove last watched as it is the last episode and you have watched too much
+            when (val newMeta = currentEpisode) {
+                is ResultEpisode -> {
+                    removeLastWatched(newMeta.parentId)
+                }
+
+                is ExtractorUri -> {
+                    removeLastWatched(newMeta.parentId)
+                }
+            }
+        } else {
+            // save resume
+            when (resumeMeta) {
+                is ResultEpisode -> {
+                    setLastWatched(
+                        resumeMeta.parentId,
+                        resumeMeta.id,
+                        resumeMeta.episode,
+                        resumeMeta.season,
+                        isFromDownload = false
+                    )
+                }
+
+                is ExtractorUri -> {
+                    setLastWatched(
+                        resumeMeta.parentId,
+                        resumeMeta.id,
+                        resumeMeta.episode,
+                        resumeMeta.season,
+                        isFromDownload = true
+                    )
+                }
+            }
+        }
+    }
+
     fun getViewPos(id: Int?): PosDur? {
         if (id == null) return null
         return getKey("$currentAccount/$VIDEO_POS_DUR", id.toString(), null)
@@ -664,7 +726,7 @@ object DataStoreHelper {
     }
 
     fun getDub(id: Int): DubStatus? {
-        return DubStatus.values()
+        return DubStatus.entries
             .getOrNull(getKey("$currentAccount/$RESULT_DUB", id.toString(), -1) ?: -1)
     }
 
@@ -716,7 +778,8 @@ object DataStoreHelper {
             getKey("${idPrefix}_sync", id.toString())
         }
     }
-   var pinnedProviders:Array<String>
+
+    var pinnedProviders: Array<String>
         get() = getKey(USER_PINNED_PROVIDERS) ?: emptyArray<String>()
         set(value) = setKey(USER_PINNED_PROVIDERS, value)
 

@@ -222,7 +222,7 @@ object HlsPlaylistParser {
             if (codecs.isNullOrEmpty()) {
                 return arrayOf()
             }
-            return split(codecs.trim { it <= ' ' }, "(\\s*,\\s*)")
+            return split(codecs.trim(), "(\\s*,\\s*)")
         }
 
         fun getCodecsOfType(
@@ -234,7 +234,7 @@ object HlsPlaylistParser {
             if (codecArray.isEmpty()) {
                 return null
             }
-            val builder = java.lang.StringBuilder()
+            val builder = StringBuilder()
             for (codec in codecArray) {
                 if (trackType == MimeTypes.getTrackTypeOfCodec(codec)) {
                     if (builder.isNotEmpty()) {
@@ -263,7 +263,7 @@ object HlsPlaylistParser {
             if (codecArray.isEmpty()) {
                 return null
             }
-            val builder = java.lang.StringBuilder()
+            val builder = StringBuilder()
             for (codec in codecArray) {
                 if (trackType != MimeTypes.getTrackTypeOfCodec(codec)) {
                     if (builder.isNotEmpty()) {
@@ -425,7 +425,7 @@ object HlsPlaylistParser {
          * @param limit The limit (exclusive) of the path in `uri`.
          */
         private fun removeDotSegments(
-            uri: java.lang.StringBuilder,
+            uri: StringBuilder,
             offset: Int,
             limit: Int
         ): String {
@@ -788,12 +788,6 @@ object HlsPlaylistParser {
         const val APPLICATION_MP4CEA608: String = "$BASE_TYPE_APPLICATION/x-mp4-cea-608"
 
 
-        @Deprecated(
-            """RawCC is a Google-internal subtitle format that isn't supported by this version of
-        Media3. There is no replacement for this value."""
-        )
-        const val APPLICATION_RAWCC: String = "$BASE_TYPE_APPLICATION/x-rawcc"
-
         const val APPLICATION_VOBSUB: String = "$BASE_TYPE_APPLICATION/vobsub"
         const val APPLICATION_PGS: String = "$BASE_TYPE_APPLICATION/pgs"
         const val APPLICATION_SCTE35: String = "$BASE_TYPE_APPLICATION/x-scte35"
@@ -934,7 +928,7 @@ object HlsPlaylistParser {
 
         fun getMediaMimeType(codecOrNull: String?): String? {
             var codec = codecOrNull ?: return null
-            codec = codec.trim { it <= ' ' }.lowercase()
+            codec = codec.trim().lowercase()
             if (codec.startsWith("avc1") || codec.startsWith("avc3")) {
                 return MimeTypes.VIDEO_H264
             } else if (codec.startsWith("hev1") || codec.startsWith("hvc1")) {
@@ -1025,7 +1019,6 @@ object HlsPlaylistParser {
                 || APPLICATION_TTML == mimeType
                 || APPLICATION_TX3G == mimeType
                 || APPLICATION_MP4VTT == mimeType
-                || APPLICATION_RAWCC == mimeType
                 || APPLICATION_VOBSUB == mimeType
                 || APPLICATION_PGS == mimeType
                 || APPLICATION_DVBSUBS == mimeType;
@@ -1194,7 +1187,7 @@ object HlsPlaylistParser {
             return SchemeData(
                 uuid = C.WIDEVINE_UUID,
                 mimeType = "hls",
-                data = line.toByteArray(charset = Charsets.UTF_8)
+                data = line.encodeToByteArray()
             )
         } else if (KEYFORMAT_PLAYREADY == keyFormat && "1" == keyFormatVersions) {
             val uriString = parseStringAttr(line, REGEX_URI, variableDefinitions)
@@ -1247,7 +1240,7 @@ object HlsPlaylistParser {
         if (concatenatedCharacteristics.isNullOrEmpty()) {
             return 0
         }
-        val characteristics = Util.split(concatenatedCharacteristics!!, ",")
+        val characteristics = Util.split(concatenatedCharacteristics, ",")
         //@RoleFlags
         var roleFlags = 0
         if (characteristics.contains("public.accessibility.describes-video")) {

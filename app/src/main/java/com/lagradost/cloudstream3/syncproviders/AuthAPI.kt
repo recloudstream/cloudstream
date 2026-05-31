@@ -4,10 +4,10 @@ import android.util.Base64
 import androidx.annotation.WorkerThread
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder.unixTime
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.ActorData
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.openBrowser
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.LoadResponse
@@ -28,6 +28,7 @@ import com.lagradost.cloudstream3.syncproviders.providers.Addic7ed
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi
 import com.lagradost.cloudstream3.syncproviders.providers.LocalList
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi
+import com.lagradost.cloudstream3.syncproviders.providers.KitsuApi
 import com.lagradost.cloudstream3.syncproviders.providers.OpenSubtitlesApi
 import com.lagradost.cloudstream3.syncproviders.providers.SimklApi
 import com.lagradost.cloudstream3.syncproviders.providers.SubDlApi
@@ -35,11 +36,9 @@ import com.lagradost.cloudstream3.syncproviders.providers.SubSourceApi
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.utils.AppContextUtils.splitQuery
-import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.utils.txt
-import me.xdrop.fuzzywuzzy.FuzzySearch
 import java.net.URL
 import java.security.SecureRandom
 import java.util.Date
@@ -247,14 +246,15 @@ abstract class AuthAPI {
     open suspend fun invalidateToken(token: AuthToken): Nothing = throw NotImplementedError()
 
     @Throws
-    @Deprecated("Please the the new api for AuthAPI", level = DeprecationLevel.WARNING)
+    @Deprecated("Please use the new API for AuthAPI", level = DeprecationLevel.ERROR)
     fun toRepo(): AuthRepo = when (this) {
         is SubtitleAPI -> SubtitleRepo(this)
         is SyncAPI -> SyncRepo(this)
         else -> throw NotImplementedError("Unknown inheritance from AuthAPI")
     }
 
-    @Deprecated("Please the the new api for AuthAPI", level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated("Please use the new API for AuthAPI", level = DeprecationLevel.ERROR)
     fun loginInfo(): LoginInfo? {
         return this.toRepo().authUser()?.let { user ->
             LoginInfo(
@@ -265,19 +265,16 @@ abstract class AuthAPI {
         }
     }
 
-    @Deprecated("Please the the new api for AuthAPI", level = DeprecationLevel.WARNING)
+    @Deprecated("Please use the new API for AuthAPI", level = DeprecationLevel.ERROR)
     suspend fun getPersonalLibrary(): SyncAPI.LibraryMetadata? {
+        @Suppress("DEPRECATION_ERROR")
         return (this.toRepo() as? SyncRepo)?.library()?.getOrThrow()
     }
 
-    @Deprecated("Please the the new api for AuthAPI", level = DeprecationLevel.WARNING)
+    @Deprecated("Please use the new API for AuthAPI", level = DeprecationLevel.ERROR)
     class LoginInfo(
         val profilePicture: String? = null,
         val name: String?,
         val accountIndex: Int,
     )
 }
-
-
-
-

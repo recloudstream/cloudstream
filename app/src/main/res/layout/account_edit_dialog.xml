@@ -40,28 +40,28 @@
         <androidx.cardview.widget.CardView
             android:layout_width="@dimen/account_select_linear_item_size"
             android:layout_height="@dimen/account_select_linear_item_size"
-            app:cardCornerRadius="@dimen/rounded_image_radius"
             android:layout_gravity="center"
-            >
+            app:cardCornerRadius="@dimen/rounded_image_radius">
+
             <ImageView
                 android:id="@+id/account_image"
-                android:src="@drawable/profile_bg_blue"
-                android:focusable="true"
-                android:contentDescription="@string/preview_background_img_des"
-                android:scaleType="centerCrop"
-                android:foreground="@drawable/outline_drawable_forced_round"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="center" />
+                android:layout_gravity="center"
+                android:contentDescription="@string/preview_background_img_des"
+                android:focusable="true"
+                android:foreground="@drawable/outline_drawable_forced_round"
+                android:scaleType="centerCrop"
+                android:src="@drawable/profile_bg_blue" />
+
             <ImageView
                 android:id="@+id/edit_profile_photo_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_baseline_edit_24"
                 android:layout_gravity="bottom|end"
-                android:padding="5dp"
                 android:background="@color/skipOpTransparent"
-                />
+                android:padding="5dp"
+                android:src="@drawable/ic_baseline_edit_24" />
         </androidx.cardview.widget.CardView>
 
         <EditText
@@ -82,47 +82,49 @@
             android:id="@+id/lockProfileCheckbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/lock_profile" />
+            android:buttonTint="?attr/textColor"
+            android:text="@string/lock_profile"
+            android:textColor="?attr/grayTextColor" />
 
 
     </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/apply_btt_holder"
-        android:orientation="horizontal"
-        android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_gravity="bottom"
-        android:layout_marginTop="-60dp">
+        android:layout_marginTop="-60dp"
+        android:orientation="horizontal"
+        android:padding="10dp">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/delete_btt"
-            android:text="@string/delete"
+            style="@style/BlackButton"
             android:layout_width="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_gravity="center_vertical"
             android:nextFocusRight="@id/apply_btt"
-            style="@style/BlackButton" />
+            android:text="@string/delete" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/apply_btt"
-            android:text="@string/sort_apply"
+            style="@style/WhiteButton"
             android:layout_width="wrap_content"
             android:layout_gravity="center_vertical|end"
             android:layout_toStartOf="@+id/cancel_btt"
             android:nextFocusLeft="@id/delete_btt"
             android:nextFocusRight="@id/cancel_btt"
-            style="@style/WhiteButton" />
+            android:text="@string/sort_apply" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/cancel_btt"
-            android:text="@string/sort_cancel"
+            style="@style/BlackButton"
             android:layout_width="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_gravity="center_vertical|end"
             android:nextFocusLeft="@id/apply_btt"
-            style="@style/BlackButton" />
+            android:text="@string/sort_cancel" />
 
     </RelativeLayout>
 </LinearLayout>

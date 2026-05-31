@@ -6,7 +6,7 @@
     android:id="@+id/home_header"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/primaryBlackBackground"
+    android:layout_marginTop="60dp"
     android:orientation="vertical">
 
     <View
@@ -21,7 +21,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            tools:ignore="UselessParent">
 
             <View
                 android:id="@+id/home_preview_hidden_prev_focus"
@@ -33,9 +34,9 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/home_preview_info_btt"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="400dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="60dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
 
                 android:backgroundTint="@color/transparent"
@@ -43,7 +44,7 @@
                 android:foreground="@drawable/outline_drawable"
                 android:nextFocusLeft="@id/home_preview_hidden_prev_focus"
                 android:nextFocusRight="@id/home_preview_hidden_next_focus"
-                android:nextFocusUp="@id/home_preview_change_api"
+                android:nextFocusUp="@id/home_change_api"
                 android:nextFocusDown="@id/home_watch_child_recyclerview"
 
                 app:cardCornerRadius="@dimen/rounded_image_radius">
@@ -61,22 +62,78 @@
                     android:id="@+id/home_preview_viewpager_text"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:background="@drawable/player_gradient_tv"
                     android:layout_gravity="bottom"
                     android:layout_marginStart="@dimen/navbar_width"
                     android:gravity="bottom"
                     android:orientation="vertical"
-                    android:padding="10dp">
+                    android:padding="20dp">
+
+                    <ImageView
+                        android:id="@+id/home_background_poster_watermark_badge_holder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="72dp"
+                        android:contentDescription="LogoURL"
+                        android:minHeight="72dp"
+                        android:maxWidth="220dp"
+                        android:scaleType="fitStart"
+                        android:adjustViewBounds="true" />
 
 
                     <TextView
+                        android:textColor="@color/textColor"
                         android:id="@+id/home_preview_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:textSize="25sp"
                         android:textStyle="bold"
+                        android:shadowColor="#B0000000"
+                        android:shadowDx="0"
+                        android:shadowDy="2"
+                        android:shadowRadius="4"
                         tools:text="The Perfect Run" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="4dp"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/home_preview_score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/rating_bg_color"
+                            android:textColor="@color/white"
+                            android:textStyle="bold"
+                            android:paddingStart="6dp"
+                            android:paddingEnd="6dp"
+                            android:paddingTop="2dp"
+                            android:paddingBottom="2dp"
+                            android:layout_marginEnd="12dp"
+                            tools:text="IMDb : 8.5" />
+
+                        <TextView
+                            android:id="@+id/home_preview_year"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/gray_200"
+                            android:layout_marginEnd="12dp"
+                            tools:text="2021" />
+
+                        <TextView
+                            android:id="@+id/home_preview_duration"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/gray_200"
+                            tools:text="120m" />
+
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/home_preview_description"
@@ -86,7 +143,23 @@
                         android:maxLines="3"
                         android:paddingBottom="5dp"
                         android:textSize="15sp"
+                        android:textColor="@color/textColor"
+                        android:shadowColor="#B0000000"
+                        android:shadowDx="0"
+                        android:shadowDy="2"
+                        android:shadowRadius="4"
                         tools:text="very nice tv series" />
+
+                    <TextView
+                        android:id="@+id/home_preview_cast"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textSize="13sp"
+                        android:textColor="@color/gray_400"
+                        android:paddingBottom="5dp"
+                        tools:text="Cast: Actor One, Actor Two" />
 
                     <com.google.android.material.chip.ChipGroup
                         android:id="@+id/home_preview_tags"
@@ -106,6 +179,7 @@
 
         </LinearLayout>
 
+        <!--
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="40dp"
@@ -183,7 +257,7 @@
                 android:visibility="gone"
                 app:tint="@color/player_on_button_tv_attr" />
         </LinearLayout>
-
+        -->
         <!--<FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -266,7 +340,7 @@
             android:nextFocusUp="@id/home_preview_info_btt"
             android:nextFocusDown="@id/home_type_holder"
             android:orientation="horizontal"
-            android:paddingStart="@dimen/navbar_width"
+            android:paddingStart="8dp"
             android:paddingEnd="5dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/home_result_grid" />
@@ -399,7 +473,7 @@
 
             android:nextFocusDown="@id/home_child_recyclerview"
             android:orientation="horizontal"
-            android:paddingStart="@dimen/navbar_width"
+            android:paddingStart="8dp"
             android:paddingEnd="5dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/home_result_grid" />

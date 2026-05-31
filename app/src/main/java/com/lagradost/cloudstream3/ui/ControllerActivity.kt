@@ -12,9 +12,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ListView
 import androidx.appcompat.app.AlertDialog
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.google.android.gms.cast.MediaLoadOptions
 import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.cast.MediaSeekOptions
@@ -105,9 +102,6 @@ data class MetadataHolder(
 
 class SelectSourceController(val view: ImageView, val activity: ControllerActivity) :
     UIController() {
-    private val mapper: JsonMapper = JsonMapper.builder().addModule(kotlinModule())
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()
-
     init {
         view.setImageResource(R.drawable.ic_baseline_playlist_play_24)
         view.setOnClickListener {
@@ -245,7 +239,12 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                             .setPlayPosition(startAt)
                                             .setAutoplay(true)
                                             .build()
-                                    awaitLinks(remoteMediaClient?.load(mediaItem, mediaLoadOptions)) {
+                                    awaitLinks(
+                                        remoteMediaClient?.load(
+                                            mediaItem,
+                                            mediaLoadOptions
+                                        )
+                                    ) {
                                         loadMirror(index + 1)
                                     }
                                 }
@@ -299,7 +298,13 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                     val currentDuration = remoteMediaClient?.streamDuration
                     val currentPosition = remoteMediaClient?.approximateStreamPosition
                     if (currentDuration != null && currentPosition != null)
-                        DataStoreHelper.setViewPos(epData.id, currentPosition, currentDuration)
+                        DataStoreHelper.setViewPosAndResume(
+                            epData.id,
+                            currentPosition,
+                            currentDuration,
+                            epData,
+                            meta.episodes.getOrNull(index + 1)
+                        )
                 } catch (t: Throwable) {
                     logError(t)
                 }
@@ -323,7 +328,9 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                 }, subtitleCallback = {
                                     currentSubs.add(it)
                                 },
-                                isCasting = true)
+                                offset = 0,
+                                isCasting = true
+                            )
                         }
 
                         val sortedLinks = sortUrls(currentLinks)

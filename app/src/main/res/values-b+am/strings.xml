@@ -8,8 +8,7 @@
     <string name="next_episode_time_hour_format" formatted="true">%1$dሰዓት %2$dደቂቃ</string>
     <string name="search_poster_img_des">ፖስተር</string>
     <string name="title_downloads">የወረዱ</string>
-    <string name="new_update_format" formatted="true">አዲስ ማሻሻያ ተገኝቷል!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">አዲስ ማሻሻያ ተገኝቷል! \n%1$s -&gt; %2$s</string>
     <string name="go_back_img_des">ተመለስ</string>
     <string name="episode_more_options_des">ተጨማሪ አማራጮች</string>
     <string name="type_watching">በማየት ላይ</string>
@@ -108,6 +107,4 @@
     <string name="action_open_watching">ተጨማሪ መረጃ</string>
     <string name="search_provider_text_types">ዓይነቶችን በመጠቀም ይፈልጉ</string>
     <string name="subs_import_text" formatted="true">ቅርጸ-ቁምፊዎችን በ%s ውስጥ በማስቀመጥ ያጫኑ</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
-    <string name="pref_disable_acra">አውቶማቲክ የሳንካ ሪፖርት ማድረግን አሰናክል</string>
 </resources>

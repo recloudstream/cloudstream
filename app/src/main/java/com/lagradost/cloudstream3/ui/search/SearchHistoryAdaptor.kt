@@ -2,11 +2,17 @@ package com.lagradost.cloudstream3.ui.search
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
+import androidx.core.view.isGone
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.databinding.SearchHistoryFooterBinding
 import com.lagradost.cloudstream3.databinding.SearchHistoryItemBinding
+import com.lagradost.cloudstream3.ui.BaseDiffCallback
+import com.lagradost.cloudstream3.ui.NoStateAdapter
+import com.lagradost.cloudstream3.ui.ViewHolderState
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 
 data class SearchHistoryItem(
     @JsonProperty("searchedAt") val searchedAt: Long,
@@ -16,84 +22,73 @@ data class SearchHistoryItem(
 )
 
 data class SearchHistoryCallback(
-    val item: SearchHistoryItem,
+    val item: SearchHistoryItem?,
     val clickAction: Int,
 )
 
 const val SEARCH_HISTORY_OPEN = 0
 const val SEARCH_HISTORY_REMOVE = 1
+const val SEARCH_HISTORY_CLEAR = 2
 
 class SearchHistoryAdaptor(
-    private val cardList: MutableList<SearchHistoryItem>,
     private val clickCallback: (SearchHistoryCallback) -> Unit,
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return CardViewHolder(
+) : NoStateAdapter<SearchHistoryItem>(diffCallback = BaseDiffCallback(itemSame = { a,b ->
+    a.searchedAt == b.searchedAt && a.searchText == b.searchText
+})) {
+    
+    // Add footer for all layouts
+    override val footers = 1
+    
+    override fun submitList(list: Collection<SearchHistoryItem>?, commitCallback: Runnable?) {
+        super.submitList(list, commitCallback)
+        // Notify footer to rebind when list changes to update visibility
+        if (footers > 0) {
+            notifyItemChanged(itemCount - 1)
+        }
+    }
+    
+    override fun onCreateContent(parent: ViewGroup): ViewHolderState<Any> {
+        return ViewHolderState(
             SearchHistoryItemBinding.inflate(LayoutInflater.from(parent.context), parent, false),
-            clickCallback,
         )
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (holder) {
-            is CardViewHolder -> {
-                holder.bind(cardList[position])
+    override fun onBindContent(
+        holder: ViewHolderState<Any>,
+        item: SearchHistoryItem,
+        position: Int
+    ) {
+        val binding = holder.view as? SearchHistoryItemBinding ?: return
+        binding.apply {
+            homeHistoryTitle.text = item.searchText
+
+            homeHistoryRemove.setOnClickListener {
+                clickCallback.invoke(SearchHistoryCallback(item, SEARCH_HISTORY_REMOVE))
+            }
+            homeHistoryTab.setOnClickListener {
+                clickCallback.invoke(SearchHistoryCallback(item, SEARCH_HISTORY_OPEN))
             }
         }
     }
-
-    override fun getItemCount(): Int {
-        return cardList.size
-    }
-
-    fun updateList(newList: List<SearchHistoryItem>) {
-        val diffResult = DiffUtil.calculateDiff(
-            SearchHistoryDiffCallback(this.cardList, newList)
+    
+    override fun onCreateFooter(parent: ViewGroup): ViewHolderState<Any> {
+        return ViewHolderState(
+            SearchHistoryFooterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
-
-        cardList.clear()
-        cardList.addAll(newList)
-
-        diffResult.dispatchUpdatesTo(this)
     }
-
-    class CardViewHolder(
-        val binding: SearchHistoryItemBinding,
-        private val clickCallback: (SearchHistoryCallback) -> Unit,
-    ) :
-        RecyclerView.ViewHolder(binding.root) {
-        //  private val removeButton: ImageView = itemView.home_history_remove
-        //  private val openButton: View = itemView.home_history_tab
-        // private val title: TextView = itemView.home_history_title
-
-        fun bind(card: SearchHistoryItem) {
-            binding.apply {
-                homeHistoryTitle.text = card.searchText
-
-                homeHistoryRemove.setOnClickListener {
-                    clickCallback.invoke(SearchHistoryCallback(card, SEARCH_HISTORY_REMOVE))
-                }
-                homeHistoryTab.setOnClickListener {
-                    clickCallback.invoke(SearchHistoryCallback(card, SEARCH_HISTORY_OPEN))
-                }
+    
+    override fun onBindFooter(holder: ViewHolderState<Any>) {
+        val binding = holder.view as? SearchHistoryFooterBinding ?: return
+        // Hide footer when list is empty
+        binding.searchClearCallHistory.apply {
+            isGone = immutableCurrentList.isEmpty()
+            if (isLayout(TV or EMULATOR)) {
+                isFocusable = true
+                isFocusableInTouchMode = true
+            }
+            setOnClickListener {
+                clickCallback.invoke(SearchHistoryCallback(null, SEARCH_HISTORY_CLEAR))
             }
         }
     }
-}
-
-class SearchHistoryDiffCallback(
-    private val oldList: List<SearchHistoryItem>,
-    private val newList: List<SearchHistoryItem>
-) :
-    DiffUtil.Callback() {
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-        oldList[oldItemPosition].searchText == newList[newItemPosition].searchText
-
-    override fun getOldListSize() = oldList.size
-
-    override fun getNewListSize() = newList.size
-
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-        oldList[oldItemPosition] == newList[newItemPosition]
 }

@@ -184,7 +184,7 @@
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"
         app:popEnterAnim="@anim/enter_anim"
-        app:popExitAnim="@anim/exit_anim" >
+        app:popExitAnim="@anim/exit_anim">
         <action
             android:id="@+id/action_navigation_settings_general_to_easterEggMonkeFragment"
             app:destination="@id/easterEggMonkeFragment"
@@ -466,6 +466,25 @@
     </fragment>
 
     <fragment
+        android:id="@+id/navigation_download_queue"
+        android:name="com.lagradost.cloudstream3.ui.download.queue.DownloadQueueFragment"
+        android:layout_height="match_parent"
+        app:enterAnim="@anim/enter_anim"
+        app:exitAnim="@anim/exit_anim"
+        app:popEnterAnim="@anim/enter_anim"
+        app:popExitAnim="@anim/exit_anim"
+        tools:layout="@layout/fragment_download_queue" />
+
+    <action
+        android:id="@+id/action_navigation_global_to_navigation_download_queue"
+        app:destination="@id/navigation_download_queue"
+        app:enterAnim="@anim/enter_anim"
+        app:exitAnim="@anim/exit_anim"
+        app:popEnterAnim="@anim/enter_anim"
+        app:popExitAnim="@anim/exit_anim">
+    </action>
+
+    <fragment
         android:id="@+id/navigation_results_phone"
         android:name="com.lagradost.cloudstream3.ui.result.ResultTrailerPlayer"
         android:layout_height="match_parent"
@@ -679,6 +698,6 @@
     <fragment
         android:id="@+id/easterEggMonkeFragment"
         android:name="com.lagradost.cloudstream3.ui.EasterEggMonkeFragment"
-        tools:layout="@layout/fragment_easter_egg_monke"
-        android:label="EasterEggMonkeFragment" />
+        android:label="EasterEggMonkeFragment"
+        tools:layout="@layout/fragment_easter_egg_monke" />
 </navigation>

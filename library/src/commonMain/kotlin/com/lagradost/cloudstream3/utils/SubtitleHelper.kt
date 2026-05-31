@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.utils
 
-import com.lagradost.cloudstream3.Prerelease
 import java.util.Locale
 
 // If you find a way to use SettingsGeneral getCurrentLocale()
@@ -16,7 +15,9 @@ fun getCurrentLocale(): String {
 object SubtitleHelper {
     @Deprecated(
         "Default language code changed to IETF BCP 47 tag",
-        ReplaceWith("LanguageMetadata(languageName, nativeName, ISO_639_1.ifBlank { ISO_639_2_B }), ISO_639_1, ISO_639_2_B, ISO_639_3, ISO_639_1"))
+        replaceWith = ReplaceWith("LanguageMetadata(languageName, nativeName, ISO_639_1.ifBlank { ISO_639_2_B }), ISO_639_1, ISO_639_2_B, ISO_639_3, ISO_639_1"),
+        level = DeprecationLevel.WARNING
+    )
     data class Language639(
         val languageName: String,
         val nativeName: String,
@@ -36,7 +37,7 @@ object SubtitleHelper {
      * https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
      * https://android.googlesource.com/platform/frameworks/base/+/android-16.0.0_r2/core/res/res/values/locale_config.xml
      * https://iso639-3.sil.org/code_tables/639/data/all
-    */
+     */
     data class LanguageMetadata(
         val languageName: String,
         val nativeName: String,
@@ -46,7 +47,6 @@ object SubtitleHelper {
         val ISO_639_3: String,      // ISO 639-6 missing as it's intended to differentiate specific dialects and variants
         val openSubtitles: String, // inconsistent codes that do not conform ISO 639
     ) {
-        @Prerelease
         fun localizedName(localizedTo: String? = null): String {
             // Use system locale to localize language name
             val localeOfLangCode = Locale.forLanguageTag(this.IETF_tag)
@@ -65,7 +65,6 @@ object SubtitleHelper {
                 sysLocalizedName
         }
 
-        @Prerelease
         fun nameNextToFlagEmoji(localizedTo: String? = null): String {
             // fallback to [A][A] -> [?] question mak flag
             val flag = getFlagFromIso(this.IETF_tag) ?: "\ud83c\udde6\ud83c\udde6"
@@ -76,37 +75,72 @@ object SubtitleHelper {
 
     /**
      * Language name (english or native) -> [LanguageMetadata]
-     * @param languageName language name
-     * @param halfMatch match with `contains()` instead of `equals()`
-    */
-    private fun getLanguageDataFromName(languageName: String?, halfMatch: Boolean? = false): LanguageMetadata? {
+     * @param languageName language name or language tag
+     * @param halfMatch match with `contains()` instead of `equals()`. Also uses fuzzy matching to get approximate matches.
+     */
+    private fun getLanguageDataFromName(
+        languageName: String?,
+        halfMatch: Boolean? = false
+    ): LanguageMetadata? {
         if (languageName.isNullOrBlank() || languageName.length < 2) return null
         // Workaround to avoid junk like "English (original audio)" or "Spanish 123"
         // or "اَلْعَرَبِيَّةُ (Original Audio) 1" or "English (hindi sub)"…
+        // Will still keep "-" to be compatible with language tags such as pr-bt
         val garbage = Regex(
             "\\([^)]*(?:dub|sub|original|audio|code)[^)]*\\)|" + // junk words in parenthesis
-            "[\\u064B-\\u065B]|" + // arabic diacritics
-            "\\d|" +  // numbers
-            "[^\\p{L}\\p{Mn}\\p{Mc}\\p{Me} ()]" // non-letter (from any language)
+                    "[\\u064B-\\u065B]|" + // arabic diacritics
+                    "\\d|" +  // numbers
+                    "[^\\p{L}\\p{Mn}\\p{Mc}\\p{Me} ()-]" // non-letter (from any language)
         )
+
+
         val lowLangName = languageName.lowercase().replace(garbage, "").trim()
-        val index =
-            indexMapLanguageName[lowLangName] ?:
-            indexMapNativeName[lowLangName] ?: -1
+
+        val index = indexMapLanguageName[lowLangName]
+            ?: indexMapNativeName[lowLangName]
+            ?: indexMapIETF_tag[lowLangName]
+            ?: -1
+
         val langMetadata = languages.getOrNull(index)
 
-        if (halfMatch == true && langMetadata == null) {
-            for (lang in languages)
-                if (lang.languageName.contains(lowLangName, ignoreCase = true) ||
-                    lang.nativeName.contains(lowLangName, ignoreCase = true))
-                    return lang
+        if (langMetadata != null) {
+            return langMetadata
+        } else if (halfMatch == true) {
+            // Go for partial matches but only use the best match
+            var closestMatch: Pair<LanguageMetadata?, Int> = null to 0
+
+            for (lang in languages) {
+                val score = maxOf(
+                    Levenshtein.ratio(lowLangName, lang.languageName.lowercase()),
+                    Levenshtein.ratio(
+                        lowLangName, lang.nativeName.lowercase()
+                    )
+                )
+
+                // Usually the languageName or nativeName is a substring of the entered name, for example in "English Subtitle"
+                if (lowLangName.contains(lang.languageName, ignoreCase = true) ||
+                    lowLangName.contains(lang.nativeName, ignoreCase = true) ||
+                    // Arbitrary cutoff at 80.
+                    score > 80
+                ) {
+                    // First detected language gets priority in equal scores.
+                    if (score > closestMatch.second) {
+                        closestMatch = lang to score
+                    }
+                }
+            }
+
+            return closestMatch.first
         }
-        return langMetadata
+
+        return null
     }
 
-    // @Deprecated(
-    //     "Default language code changed to IETF BCP 47 tag",
-    //     ReplaceWith("fromLanguageToTagIETF(input, looseCheck)"))
+    @Deprecated(
+        "Default language code changed to IETF BCP 47 tag",
+        replaceWith = ReplaceWith("fromLanguageToTagIETF(input, looseCheck)"),
+        level = DeprecationLevel.WARNING
+    )
     /**
      * Language name (english or native) -> ISO_639_1
      * @param input language name
@@ -116,10 +150,11 @@ object SubtitleHelper {
         return getLanguageDataFromName(input, looseCheck)?.ISO_639_1
     }
 
-
-    // @Deprecated(
-    //     "Default language code changed to IETF BCP 47 tag",
-    //     ReplaceWith("fromLanguageToTagIETF(input)"))
+    @Deprecated(
+        "Default language code changed to IETF BCP 47 tag",
+        replaceWith = ReplaceWith("fromLanguageToTagIETF(input)"),
+        level = DeprecationLevel.WARNING
+    )
     /**
      * Language name (english or native) -> ISO_639_3
     */
@@ -155,9 +190,11 @@ object SubtitleHelper {
         return languages.getOrNull(index)
     }
 
-    // @Deprecated(
-    //     "Default language code changed to IETF BCP 47 tag",
-    //     ReplaceWith("fromTagToLanguageName(input)"))
+    @Deprecated(
+        "Default language code changed to IETF BCP 47 tag",
+        replaceWith = ReplaceWith("fromTagToEnglishLanguageName(input)"),
+        level = DeprecationLevel.WARNING
+    )
     /**
      * Language code -> language english name
     */
@@ -165,9 +202,11 @@ object SubtitleHelper {
         return getLanguageDataFromCode(input)?.languageName
     }
 
-    // @Deprecated(
-    //     "Default language code changed to IETF BCP 47 tag",
-    //     ReplaceWith("fromTagToLanguageName(input)"))
+    @Deprecated(
+        "Default language code changed to IETF BCP 47 tag",
+        replaceWith = ReplaceWith("fromTagToEnglishLanguageName(input)"),
+        level = DeprecationLevel.WARNING
+    )
     /**
      * Language code -> language english name
     */
@@ -180,7 +219,6 @@ object SubtitleHelper {
      * @param languageCode IETF BCP 47, ISO 639-1, ISO 639-2B/T, ISO 639-3, OpenSubtitles
      * @param localizedTo IETF BCP 47 tag to localize the language name to. Default: app current language
     */
-    @Prerelease
     fun fromTagToLanguageName(languageCode: String?, localizedTo: String? = null): String? {
         return getLanguageDataFromCode(languageCode)?.localizedName(localizedTo)
     }
@@ -189,7 +227,6 @@ object SubtitleHelper {
      * Language code -> language english name
      * @param languageCode IETF BCP 47, ISO 639-1, ISO 639-2B/T, ISO 639-3, OpenSubtitles
     */
-    @Prerelease
     fun fromTagToEnglishLanguageName(languageCode: String?): String? {
         return getLanguageDataFromCode(languageCode)?.languageName
     }
@@ -198,13 +235,11 @@ object SubtitleHelper {
      * Language code -> openSubtitles inconsistent language tag
      * @param languageCode IETF BCP 47, ISO 639-1, ISO 639-2B/T, ISO 639-3, OpenSubtitles
     */
-    @Prerelease
     fun fromCodeToOpenSubtitlesTag(languageCode: String?): String? {
         return getLanguageDataFromCode(languageCode)?.openSubtitles
     }
 
     /** openSubtitles -> IETF_tag */
-    @Prerelease
     fun fromCodeToLangTagIETF(languageCode: String?): String? {
         return getLanguageDataFromCode(languageCode)?.IETF_tag
     }
@@ -217,7 +252,6 @@ object SubtitleHelper {
      * https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
      * https://android.googlesource.com/platform/frameworks/base/+/android-16.0.0_r2/core/res/res/values/locale_config.xml
     */
-    @Prerelease
     fun isWellFormedTagIETF(langTagIETF: String?): Boolean {
         if (langTagIETF.isNullOrBlank() || langTagIETF.length < 2) return false
 
@@ -268,7 +302,6 @@ object SubtitleHelper {
      * @param languageCode IETF BCP 47, ISO 639-1, ISO 639-2B/T, ISO 639-3, OpenSubtitles
      * @param localizedTo IETF BCP 47 tag to localize the language name to. Default: app current language
     */
-    @Prerelease
     fun getNameNextToFlagEmoji(languageCode: String?, localizedTo: String? = null): String? {
         return getLanguageDataFromCode(languageCode)?.nameNextToFlagEmoji(localizedTo)
     }
@@ -281,10 +314,23 @@ object SubtitleHelper {
         val flagOffset = 0x1F1E6  // regional indicator "[A]"
         val offset = flagOffset - asciiOffset
 
-        val firstChar: Int = Character.codePointAt(countryLetters, 0) + offset
-        val secondChar: Int = Character.codePointAt(countryLetters, 1) + offset
+        /**
+         * Unicode surrogate pairs encode code points above U+FFFF (outside the Basic Multilingual Plane).
+         * The code point is offset by 0x10000, then split into two 10-bit halves:
+         * high surrogate: upper 10 bits, biased into the range 0xD800-0xDBFF
+         * low surrogate: lower 10 bits (masked with 0x3FF), biased into the range 0xDC00-0xDFFF
+         */
+        fun toSurrogatePair(codePoint: Int): String {
+            val high = ((codePoint - 0x10000) shr 10) + 0xD800
+            val low  = ((codePoint - 0x10000) and 0x3FF) + 0xDC00
+            return "${high.toChar()}${low.toChar()}"
+        }
 
-        return String(Character.toChars(firstChar)) + String(Character.toChars(secondChar))
+        val upperLetters = countryLetters.uppercase()
+        val first  = upperLetters[0].code + offset
+        val second = upperLetters[1].code + offset
+
+        return toSurrogatePair(first) + toSurrogatePair(second)
     }
 
     // when (langTag = country) or (langTag contains country)

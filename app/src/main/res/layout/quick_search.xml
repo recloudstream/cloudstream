@@ -1,73 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        style="@style/DarkFragment"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
 
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/quick_search_root"
-        android:background="?attr/primaryGrayBackground"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+    android:id="@+id/quick_search_root"
+    style="@style/DarkFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/primaryGrayBackground"
+    android:orientation="vertical">
 
     <LinearLayout
-            android:visibility="visible"
-            android:layout_margin="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:visibility="visible">
 
         <ImageView
             android:id="@+id/quick_search_back"
-            android:layout_gravity="center"
-            android:foregroundGravity="center"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_baseline_arrow_back_24"
-            app:tint="@android:color/white"
-            android:visibility="gone"
             android:layout_width="25dp"
             android:layout_height="wrap_content"
-            tools:visibility="visible">
-        </ImageView>
+            android:layout_gravity="center"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:foregroundGravity="center"
+            android:src="@drawable/ic_baseline_arrow_back_24"
+            android:visibility="gone"
+            app:tint="?attr/white"
+            tools:visibility="visible" />
 
         <FrameLayout
-                android:layout_marginStart="10dp"
-                android:background="@drawable/search_background"
-                android:layout_gravity="center_vertical"
-                android:layout_width="match_parent"
-                android:layout_height="40dp">
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/search_background">
 
             <androidx.appcompat.widget.SearchView
-                    android:nextFocusRight="@id/search_filter"
-                    android:nextFocusLeft="@id/search_filter"
-                    android:nextFocusDown="@id/search_autofit_results"
+                android:id="@+id/quick_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
 
-                    android:imeOptions="actionSearch"
-                    android:inputType="text"
+                android:layout_gravity="center_vertical"
+                android:iconifiedByDefault="false"
 
-                    android:id="@+id/quick_search"
-                    app:queryBackground="@color/transparent"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
 
-                    app:searchIcon="@drawable/search_icon"
-                    app:closeIcon="@drawable/ic_baseline_close_24"
+                android:nextFocusLeft="@id/search_filter"
+                android:nextFocusRight="@id/search_filter"
 
-                    android:paddingStart="-10dp"
-                    android:iconifiedByDefault="false"
-                    app:queryHint="@string/search_hint"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    app:iconifiedByDefault="false"
-                    tools:ignore="RtlSymmetry">
+                android:nextFocusDown="@id/search_autofit_results"
+                android:paddingStart="-10dp"
+                app:closeIcon="@drawable/ic_baseline_close_24"
+                app:iconifiedByDefault="false"
+                app:queryBackground="@color/transparent"
+                app:queryHint="@string/search_hint"
+                app:searchIcon="@drawable/search_icon"
+                tools:ignore="RtlSymmetry">
 
                 <androidx.core.widget.ContentLoadingProgressBar
-                        android:id="@+id/quick_search_loading_bar"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginStart="-35dp"
-                        style="@style/Widget.AppCompat.ProgressBar"
-                        android:foregroundTint="@color/white"
-                        android:progressTint="@color/white"
-                        android:layout_gravity="center">
+                    android:id="@+id/quick_search_loading_bar"
+                    style="@style/Widget.AppCompat.ProgressBar"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="-35dp"
+                    android:foregroundTint="@color/white"
+                    android:progressTint="@color/white">
 
                 </androidx.core.widget.ContentLoadingProgressBar>
                 <!--app:queryHint="@string/search_hint"
@@ -79,28 +78,28 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-            android:descendantFocusability="afterDescendants"
+        android:id="@+id/quick_search_master_recycler"
 
-            android:background="?attr/primaryBlackBackground"
-            android:id="@+id/quick_search_master_recycler"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:listitem="@layout/homepage_parent" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/primaryBlackBackground"
+        android:descendantFocusability="afterDescendants"
+        tools:listitem="@layout/homepage_parent" />
 
     <com.lagradost.cloudstream3.ui.AutofitRecyclerView
-            android:visibility="gone"
-            android:nextFocusLeft="@id/nav_rail_view"
-            android:descendantFocusability="afterDescendants"
+        android:id="@+id/quick_search_autofit_results"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
 
-            android:background="?attr/primaryBlackBackground"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingStart="8dp"
-            android:paddingTop="5dp"
-            app:spanCount="3"
-            android:paddingEnd="8dp"
-            android:id="@+id/quick_search_autofit_results"
-            tools:listitem="@layout/search_result_grid"
-            android:orientation="vertical" />
+        android:background="?attr/primaryBlackBackground"
+        android:clipToPadding="false"
+        android:descendantFocusability="afterDescendants"
+        android:nextFocusLeft="@id/nav_rail_view"
+        android:orientation="vertical"
+        android:paddingStart="8dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="8dp"
+        android:visibility="gone"
+        app:spanCount="3"
+        tools:listitem="@layout/search_result_grid" />
 </LinearLayout>

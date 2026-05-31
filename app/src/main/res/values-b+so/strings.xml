@@ -27,8 +27,7 @@
     <string name="duration_format" formatted="true">%d dqq</string>
     <string name="title_home">Kadinka</string>
     <string name="rated_format" formatted="true">Qiimaysan: %.1f</string>
-    <string name="new_update_format" formatted="true">App cusub baa soo baxay!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">App cusub baa soo baxay! \n%1$s -&gt; %2$s</string>
     <string name="title_downloads">Soo dejinta</string>
     <string name="title_search">Raadi</string>
     <string name="episode_more_options_des">Dookhyo kale</string>
@@ -67,7 +66,6 @@
     <string name="app_dubbed_text">Trj</string>
     <string name="download_started">Way bilaabmatay soo dejintu</string>
     <string name="stream">Daalaco</string>
-    <string name="pref_disable_acra">Jooji cillad gudbinta iskeed ah</string>
     <string name="download_canceled">Waa la joojiyey dejintan</string>
     <string name="update_started">Way bilaabantay cuaboonaysiintu</string>
     <string name="error_loading_links_toast">Soo raridda lifaaqyadu way fashilantay</string>
@@ -96,7 +94,6 @@
     <string name="category_updates">Gurmadka iyo cusbooneysiinta</string>
     <string name="restore_success">Waa la kaydiyet xogta gurmadka</string>
     <string name="advanced_search_des">Raadinta waxay kuugu kala qaybinaysaa mid kasta iyo qaybiyihiisa</string>
-    <string name="bug_report_settings_on">Ma jirto xog la dirayo</string>
     <string name="restore_failed_format" formatted="true">Way fashilantay in xogta laga soo celiyo faylka gurmadka%s</string>
     <string name="apk_installer_settings_des">Moobillada qaar ayaa awoodin iney Rakibaha cusub een isticmaalnay, kan ku day haddii cusbooneysiintu kuu shaqayn weydo.</string>
     <string name="go_forward_30">+30</string>
@@ -108,7 +105,6 @@
     <string name="automatic_plugin_download">Si iskii ah usoo deji sidkanaha</string>
     <string name="pref_filter_search_quality">Qari tayada muqaalka aad dooratay natiijada waxa aad raadiso</string>
     <string name="advanced_search">Raadin heer-sare ah</string>
-    <string name="bug_report_settings_off">Keliya xogta waxaa ka dirayaa marka appku duqeeyo</string>
     <string name="show_fillers_settings">Xalqad buuxis ah tusi anemiga</string>
     <string name="benene">Dhiseyaasha appka sii beniin</string>
     <string name="storage_error">Way fashilantay dejintu, hubi ogolaanshaha isticmaalka kaydka</string>
@@ -155,7 +151,6 @@
     <string name="action_remove_watching">Ka saar</string>
     <string name="action_open_watching">Xog dheeri ah</string>
     <string name="kitsu_settings">Tusi Boodhka Kitsu</string>
-    <string name="uprereleases_settings_des">Waxa laa raadinayaa haddii ay wax jiraan baahin-horaad ah, halkii la sugi lahaa baahin buuxda</string>
     <string name="automatic_plugin_updates">Si iskii ah u cusbooneysii sidkanaha</string>
     <string name="automatic_plugin_download_summary">Si iskii ah usoo deji dhamaan sidkanayaasha aan weli lasoo dejin ee ku jira kaydka aad keentay.</string>
     <string name="updates_settings_des">Marka ugu horreysa ee aad appka furto ayaad arkaysaa haddii wax cusub yihiin</string>
@@ -163,7 +158,6 @@
     <string name="updates_settings">Tus wixii appka ku cusub</string>
     <string name="redo_setup_process">Dib uso bilow fadhiisinta appka</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
-    <string name="uprereleases_settings">Ku cusbooneysii baahinta ugu horreysa</string>
     <string name="apk_installer_settings">Rakibaha APKga</string>
     <string name="status_ongoing">Socda</string>
     <string name="github">Github</string>
@@ -176,7 +170,6 @@
     <string name="no_chromecast_support_toast">Bixiyahan kuma shaqeeyo koromakaastiga</string>
     <string name="subs_default_reset_toast">Asalkiisii hore kusoo celi</string>
     <string name="synopsis">Dulucuda</string>
-    <string name="acra_report_toast">Raalliahow, wuu duqeeyey appku, waxa warbixin cillad-saarka ka caawisa loo direy dhiseyaasha</string>
     <string name="season">Kalka</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="episode">Xalqad</string>
@@ -189,11 +182,9 @@
     <string name="delete_file">Tirtir faylka</string>
     <string name="resume">Sii wado</string>
     <string name="go_back_30">-30</string>
-    <string name="delete_message" formatted="true">Dhamaantii waa la saari doona %s
-\nSow ma hubtid?</string>
+    <string name="delete_message" formatted="true">Dhamaantii waa la saari doona %s \nSow ma hubtid?</string>
     <string name="source_error">Fashil ka yimi xigashada</string>
-    <string name="resume_time_left" formatted="true">%ddq
-\nAyaa hadhsan</string>
+    <string name="resume_time_left" formatted="true">%ddq \nAyaa hadhsan</string>
     <string name="status_completed">Dhamaystirmay</string>
     <string name="year">Sannadka</string>
     <string name="rating">Qiimaynta</string>
@@ -433,11 +424,7 @@
     <string name="plugins_disabled" formatted="true">Xayiran: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Aan dejinayn: %d</string>
     <string name="plugins_updated" formatted="true">Waxa la cusbooneysiiyey %d sidkane</string>
-    <string name="blank_repo_message">Ugu horreyn cloudstream ma laha wax websaydyo uu filimaanta kasoo xigto, waxay noqonaysaa inaad adigu rakibato reboositarradooda...
-\n
-\nSababtuna waa in mar dhexdaas ah na dacweeyeen shirkadda Sky UK Limited🤮, markaa si aan mar dambe taasi u dhicin anagu kuma rakibi karno...
-\n
-\nDiscord naga soo qabo ama internetka ka baadh.</string>
+    <string name="blank_repo_message">Ugu horreyn cloudstream ma laha wax websaydyo uu filimaanta kasoo xigto, waxay noqonaysaa inaad adigu rakibato reboositarradooda... \n \nSababtuna waa in mar dhexdaas ah na dacweeyeen shirkadda Sky UK Limited🤮, markaa si aan mar dambe taasi u dhicin anagu kuma rakibi karno... \n \nDiscord naga soo qabo ama internetka ka baadh.</string>
     <string name="download_all_plugins_from_repo">Soo deji dhamaan sidkanayaasha reboositarkan?</string>
     <string name="result_poster_img_des">Boodhka</string>
     <string name="episode_poster_img_des">Boodhka xalqadda</string>
@@ -453,7 +440,6 @@
     <string name="previous">Kii hore</string>
     <string name="skip_setup">Is dhaafi fadhiisintan</string>
     <string name="app_layout_subtext">Beddel sida appku u muuqdo si uu ugu habboonaado moobilekaaga</string>
-    <string name="crash_reporting_title">Warbixinra cillad-saarka</string>
     <string name="preferred_media_subtext">Maxaad rabtaa inaad daawato</string>
     <string name="setup_done">Dhan</string>
     <string name="add_repository">Ku dar kayd-weyne</string>
@@ -478,6 +464,5 @@
     <string name="skip_type_mixed_ed">Dhamaad isku qasan</string>
     <string name="skip_type_op">Bilowga</string>
     <string name="skip_type_mixed_op">Bilow isku qasan</string>
-    <string name="skip_type_creddits">Qoraalka dhamaadka</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="skip_type_credits">Qoraalka dhamaadka</string>
 </resources>

@@ -55,7 +55,6 @@
     <string name="player_subtitles_settings">زیرنویس‌ها</string>
     <string name="action_remove_from_bookmarks">حذف</string>
     <string name="download_started">دانلود آغاز شد</string>
-    <string name="pref_disable_acra">غیرفعال کردن گذارش باگ خودکار</string>
     <string name="sort_clear">پاک کردن</string>
     <string name="update_started">به‌روزرسانی آغاز شد</string>
     <string name="sort_copy">کپی</string>
@@ -114,8 +113,7 @@
     <string name="type_watching">در حال تماشا</string>
     <string name="title_downloads">بارگیری‌ها</string>
     <string name="player_speed_text_format" formatted="true">سرعت (%.2f برابر)</string>
-    <string name="new_update_format" formatted="true">بروزرسانی جدید پیدا شد!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">بروزرسانی جدید پیدا شد! \n%1$s -&gt; %2$s</string>
     <string name="play_movie_button">پخش فیلم</string>
     <string name="browser">مرورگر</string>
     <string name="play_episode">پخش قسمت</string>
@@ -131,8 +129,7 @@
     <string name="subs_hold_to_reset_to_default">برای بازنشانی به پیشفرض نگه‌دارید</string>
     <string name="library">کتابخانه</string>
     <string name="status_ongoing">در ادامه</string>
-    <string name="delete_message" formatted="true">این فرآیند بطور کامل %s را حذف می‌کند
-\nآیا از این کار اطمینان دارید؟</string>
+    <string name="delete_message" formatted="true">این فرآیند بطور کامل %s را حذف می‌کند \nآیا از این کار اطمینان دارید؟</string>
     <string name="repo_copy_label">نام مخزن و نشانی</string>
     <string name="toast_copied">کپی شد!</string>
     <string name="settings_info">درباره</string>
@@ -181,17 +178,14 @@
     <string name="delete_file">حذف پرونده</string>
     <string name="show_trailers_settings">نمایش تریلر ها</string>
     <string name="episodes">قسمت‌ها</string>
-    <string name="resume_time_left" formatted="true">%dد
-\nباقی‌مانده</string>
+    <string name="resume_time_left" formatted="true">%dد \nباقی‌مانده</string>
     <string name="github">گیتهاب</string>
     <string name="pref_filter_search_quality">پنهان کردن ویدیو مشخص شده از نتایج جستجو</string>
     <string name="cancel">لغو</string>
-    <string name="resume_remaining" formatted="true">%s
-\nباقی‌مانده</string>
+    <string name="resume_remaining" formatted="true">%s \nباقی‌مانده</string>
     <string name="action_default">پیش‌فرض</string>
     <string name="cartoons_singular">کارتون</string>
     <string name="torrent_singular">تورنت</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="vpn_torrent">این ارائه‌دهنده تورنتی است، استفاده از VPN توصیه می‌شود</string>
     <string name="restore_success">بارگزاری پرونده پشتیبانی‌</string>
     <string name="subs_subtitle_elevation">ارتفاع زیرنویس</string>
@@ -265,7 +259,7 @@
     <string name="storage_error">خطای دانلود، دسترسی به حافظه را چک کنید</string>
     <string name="resolution">کیفیت</string>
     <string name="resolution_and_title">کیفیت و عنوان</string>
-    <string name="custom_media_singluar">محتوا</string>
+    <string name="custom_media_singular">محتوا</string>
     <string name="double_tap_to_seek_amount_settings">مقدار جلورفتن پخش‌کننده</string>
     <string name="no_repository_found_error">مخزن پیدا نشد، نشانی را چک کنید و فیلترشکن را امتحان کنید</string>
     <string name="example_lang_name">کد زبان (انگلیسی)</string>
@@ -308,16 +302,12 @@
     <string name="episode_sync_settings">به‌روزرسانی پیشرفت ساعت</string>
     <string name="begin_speaking">شروع کنید به صحبت کردن…</string>
     <string name="advanced_search_des">جواب سرچ های شما با تامین کننده</string>
-    <string name="bug_report_settings_off">فقط درصورت کرش اطلاعات فرستاده می شوند</string>
-    <string name="bug_report_settings_on">هیچ اطلاعاتی (دیتایی) فرستاده نمی شود</string>
     <string name="updates_settings">نشان دادن آپدیت های برنامه</string>
     <string name="redo_setup_process">دوباره پروسه راه اندازی را انجام بده</string>
-    <string name="uprereleases_settings">نسخه های پیشین را آپدیت کن</string>
     <string name="apk_installer_settings">نصب کننده APK</string>
     <string name="lightnovel">برنامه سبک رمان از توسعه دهندگان یکسان</string>
     <string name="anim">برنامه انیمه از توسعه دهندگان یکسان</string>
     <string name="no_chromecast_support_toast">این ارائه دهنده هیچ پشتیبانی از کروم کست ندارد</string>
-    <string name="acra_report_toast">متأسفیم، برنامه کرش کرد. یک گزارش از این باگ بطور ناشناس به توسعه دهندگان فرستاده می‌شود</string>
     <string name="test_failed">با شکست مواجه شد</string>
     <string name="test_warning">اخطار</string>
     <string name="rating">امتیاز</string>
@@ -326,10 +316,10 @@
     <string name="ova_singular">انیمه خانگی</string>
     <string name="live_singular">پخش زنده</string>
     <string name="nsfw_singular">مثبت ۱۸ سال</string>
-    <string name="music_singlar">موسیقی</string>
+    <string name="music_singular">موسیقی</string>
     <string name="audio_book_singular">کتاب صوتی</string>
-    <string name="audio_singluar">صدا</string>
-    <string name="podcast_singluar">پادکست</string>
+    <string name="audio_singular">صدا</string>
+    <string name="podcast_singular">پادکست</string>
     <string name="episode_action_play_in_app">پخش کردن در برنامه</string>
     <string name="episode_action_auto_download">دانلود اتوماتیک</string>
     <string name="no_update_found">هیچ آپدیتی پیدا نشد</string>

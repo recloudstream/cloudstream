@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
@@ -51,7 +52,7 @@ open class InternetArchive : ExtractorApi() {
         subtitleLinks.forEach {
             val subtitleUrl = mainUrl + it.attr("href")
             val fileName = subtitleUrl.substringAfterLast('/')
-            val subtitleFile = SubtitleFile(
+            val subtitleFile = newSubtitleFile(
                 lang = fileName.substringBeforeLast(".")
                     .substringAfterLast("."),
                 url = subtitleUrl

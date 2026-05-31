@@ -15,8 +15,7 @@
     <string name="filler" formatted="true">Fyllstoff</string>
     <string name="preview_background_img_des">Forhandsvis bakgrunnsbilete</string>
     <string name="rated_format" formatted="true">Vurdert: %.1f</string>
-    <string name="new_update_format" formatted="true">Ny oppdatering tilgjengeleg!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Ny oppdatering tilgjengeleg! \n%1$s -&gt; %2$s</string>
     <string name="duration_format" formatted="true">%d minutt</string>
     <string name="result_poster_img_des">Miniatyrbilete</string>
     <string name="next_episode_format" formatted="true">Episode %d vil bli sleppt om</string>
@@ -54,7 +53,6 @@
     <string name="popup_delete_file">Slett fil</string>
     <string name="popup_play_file">Spel av fil</string>
     <string name="popup_pause_download">Sett nedlasting på vent</string>
-    <string name="pref_disable_acra">Deaktiver automatisk feilrapportering</string>
     <string name="home_expanded_hide">Gøym</string>
     <string name="home_play">Spel(e) av</string>
     <string name="home_info">Informasjon</string>
@@ -103,7 +101,6 @@
     <string name="copy_link_toast">Kopiert lenke til utklipptavle</string>
     <string name="play_episode_toast">Spel av episode</string>
     <string name="subs_default_reset_toast">Tilbakestill til standardverdi</string>
-    <string name="acra_report_toast">Beklager, programmet har krasjet. Ein anonymisert feilrapport vil bli sendt til utviklarane</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Ingen sesong</string>
     <string name="episode">Episode</string>
@@ -117,10 +114,8 @@
     <string name="resume">Gjenoppta</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">Dette vil slette %s permanent.
-\nEr du sikker på dette?</string>
-    <string name="resume_time_left" formatted="true">%dm
-\ngjenstår</string>
+    <string name="delete_message" formatted="true">Dette vil slette %s permanent. \nEr du sikker på dette?</string>
+    <string name="resume_time_left" formatted="true">%dm \ngjenstår</string>
     <string name="status_ongoing">Pågåande</string>
     <string name="status_completed">Fullført</string>
     <string name="year">År</string>
@@ -193,5 +188,14 @@
     <string name="picture_in_picture">Bilde i bilde</string>
     <string name="continue_watching">Fortsett å sjå</string>
     <string name="reload_error">Prøv tilkopling på nytt…</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="next_season_episode_format" formatted="true">Sesong %1$d Episode %2$d blir sleppt om</string>
+    <string name="play_from_beginning_img_des">Spel av frå start</string>
+    <string name="download_queue">Nedlastingskø</string>
+    <string name="speech_recognition_unavailable">Semmegjenkjenning er ikkje tilgjengeleg</string>
+    <string name="begin_speaking">Snakk no…</string>
+    <string name="browser">Nettlesar</string>
+    <string name="type_dropped">Fjerna</string>
+    <string name="play_torrent_button">Strøm Torrent</string>
+    <string name="play_full_series_button">Spel heile serien</string>
+    <string name="torrent_info">Denne filmen er ein Torrent, som betyr at bruken din kan bli spora\nSett deg inn i bruk av Torrent-resursar før du fortsetter.</string>
 </resources>

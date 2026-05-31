@@ -12,16 +12,14 @@ import android.text.SpannableString
 import android.text.style.StyleSpan
 import android.util.DisplayMetrics
 import android.util.TypedValue
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.FontRes
 import androidx.annotation.OptIn
 import androidx.annotation.Px
+import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
-import androidx.fragment.app.DialogFragment
 import androidx.media3.common.text.Cue
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.CaptionStyleCompat
@@ -29,25 +27,29 @@ import androidx.media3.ui.SubtitleView
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
 import com.lagradost.cloudstream3.CommonActivity.showToast
-import com.lagradost.cloudstream3.databinding.SubtitleSettingsBinding
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.databinding.SubtitleSettingsBinding
+import com.lagradost.cloudstream3.ui.BaseDialogFragment
+import com.lagradost.cloudstream3.ui.BaseFragment
+import com.lagradost.cloudstream3.ui.player.CustomDecoder
+import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.setSubtitleAlignment
 import com.lagradost.cloudstream3.ui.player.OutlineSpan
 import com.lagradost.cloudstream3.ui.player.RoundedBackgroundColorSpan
-import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
-import com.lagradost.cloudstream3.ui.settings.nameNextToFlagEmoji
+import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
-import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToLangTagIETF
 import com.lagradost.cloudstream3.utils.SubtitleHelper.languages
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
@@ -58,10 +60,11 @@ const val SUBTITLE_KEY = "subtitle_settings"
 const val SUBTITLE_AUTO_SELECT_KEY = "subs_auto_select"
 const val SUBTITLE_DOWNLOAD_KEY = "subs_auto_download"
 
-data class SaveCaptionStyle @OptIn(UnstableApi::class) constructor(
+data class SaveCaptionStyle(
     @JsonProperty("foregroundColor") var foregroundColor: Int,
     @JsonProperty("backgroundColor") var backgroundColor: Int,
     @JsonProperty("windowColor") var windowColor: Int,
+    @OptIn(UnstableApi::class)
     @JsonProperty("edgeType") var edgeType: @CaptionStyleCompat.EdgeType Int,
     @JsonProperty("edgeColor") var edgeColor: Int,
     @FontRes
@@ -83,24 +86,35 @@ data class SaveCaptionStyle @OptIn(UnstableApi::class) constructor(
     @JsonProperty("italic") var italic: Boolean = false,
     /** in px, background radius, aka how round the background (backgroundColor) on each row is **/
     @JsonProperty("backgroundRadius") var backgroundRadius: Float? = null,
+    /** The SSA_ALIGNMENT */
+    @JsonProperty("alignment") var alignment: Int? = null,
 )
 
 const val DEF_SUBS_ELEVATION = 20
 
-@OptIn(androidx.media3.common.util.UnstableApi::class)
-class SubtitlesFragment : DialogFragment() {
+@OptIn(UnstableApi::class)
+class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
+    BaseFragment.BindingCreator.Inflate(SubtitleSettingsBinding::inflate)
+) {
     companion object {
         val applyStyleEvent = Event<SaveCaptionStyle>()
         private val captionRegex = Regex("""(-\s?|)[\[({][\S\s]*?[])}]\s*""")
 
-        fun setSubtitleViewStyle(view: SubtitleView?, data: SaveCaptionStyle) {
+        fun setSubtitleViewStyle(
+            view: SubtitleView?,
+            data: SaveCaptionStyle,
+            applyElevation: Boolean
+        ) {
             if (view == null) return
             val ctx = view.context ?: return
             val style = ctx.fromSaveToStyle(data)
             view.setStyle(style)
-            view.setPadding(
-                view.paddingLeft, data.elevation.toPx, view.paddingRight, view.paddingBottom
-            )
+
+            if (applyElevation) {
+                view.setPadding(
+                    view.paddingLeft, data.elevation.toPx, view.paddingRight, view.paddingBottom
+                )
+            }
 
             // we default to 25sp, this is needed as RoundedBackgroundColorSpan breaks on override sizes
             val size = data.fixedTextSize ?: 25.0f
@@ -194,7 +208,8 @@ class SubtitlesFragment : DialogFragment() {
                 }
             }
 
-            return this
+            // 6. set alignment
+            return this.setSubtitleAlignment(style.alignment)
         }
 
         private fun Context.fromSaveToStyle(data: SaveCaptionStyle): CaptionStyleCompat {
@@ -314,7 +329,7 @@ class SubtitlesFragment : DialogFragment() {
     private fun Context.updateState() {
         val text = getString(R.string.subtitles_example_text)
         val fixedText = SpannableString.valueOf(if (state.upperCase) text.uppercase() else text)
-        setSubtitleViewStyle(binding?.subtitleText, state)
+        setSubtitleViewStyle(binding?.subtitleText, state, false)
 
         binding?.subtitleText?.setCues(
             listOf(
@@ -339,23 +354,6 @@ class SubtitlesFragment : DialogFragment() {
         return if (color == Color.TRANSPARENT) Color.BLACK else color
     }
 
-    override fun onDestroyView() {
-        binding = null
-        super.onDestroyView()
-    }
-
-    var binding: SubtitleSettingsBinding? = null
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val localBinding = SubtitleSettingsBinding.inflate(inflater, container, false)
-        binding = localBinding
-        return localBinding.root
-        //return inflater.inflate(R.layout.subtitle_settings, container, false)
-    }
-
     private lateinit var state: SaveCaptionStyle
     private var hide: Boolean = true
 
@@ -366,30 +364,35 @@ class SubtitlesFragment : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.setWindowAnimations(R.style.DialogFullscreen)
+        dialog?.window?.setWindowAnimations(R.style.DialogFullscreenPlayer)
     }
 
     override fun getTheme(): Int {
-        return R.style.DialogFullscreen
+        return R.style.DialogFullscreenPlayer
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    var systemBarsAddPadding = isLayout(TV or EMULATOR)
+    override fun fixLayout(view: View) {
+        fixSystemBarsPadding(
+            view,
+            padBottom = systemBarsAddPadding || isLandscape(),
+            padLeft = systemBarsAddPadding
+        )
+    }
+
+    override fun onBindingCreated(binding: SubtitleSettingsBinding) {
         hide = arguments?.getBoolean("hide") ?: true
         val popFragment = arguments?.getBoolean("popFragment") ?: false
         onColorSelectedEvent += ::onColorSelected
         onDialogDismissedEvent += ::onDialogDismissed
-        binding?.subsImportText?.text = getString(R.string.subs_import_text).format(
+        binding.subsImportText.text = getString(R.string.subs_import_text).format(
             context?.getExternalFilesDir(null)?.absolutePath.toString() + "/Fonts"
         )
-
-        fixPaddingStatusbar(binding?.subsRoot)
 
         state = getCurrentSavedStyle()
         context?.updateState()
 
         val isTvTrueSettings = isLayout(TV)
-
         fun View.setFocusableInTv() {
             this.isFocusableInTouchMode = isTvTrueSettings
         }
@@ -413,7 +416,7 @@ class SubtitlesFragment : DialogFragment() {
                 return@setOnLongClickListener true
             }
         }
-        binding?.apply {
+        binding.apply {
             subsTextColor.setup(0)
             subsOutlineColor.setup(1)
             subsBackgroundColor.setup(2)
@@ -429,7 +432,7 @@ class SubtitlesFragment : DialogFragment() {
                 // tbh this should not be a dialog if it has so many values
                 val elevationTypes = listOf(
                     0 to textView.context.getString(R.string.none)
-                ) + (1..30).map { x ->
+                ) + (1..40).map { x ->
                     val i = x * 10
                     i to "${i}dp"
                 }
@@ -483,6 +486,33 @@ class SubtitlesFragment : DialogFragment() {
                 it.context.updateState()
                 showToast(R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
                 return@setOnLongClickListener true
+            }
+
+            subsSubtitleAlignment.setFocusableInTv()
+            subsSubtitleAlignment.setOnClickListener { textView ->
+                val alignmentTypes = listOf(
+                    null to R.string.automatic,
+                    CustomDecoder.SSA_ALIGNMENT_BOTTOM_LEFT to R.string.bottom_left,
+                    CustomDecoder.SSA_ALIGNMENT_BOTTOM_CENTER to R.string.bottom_center,
+                    CustomDecoder.SSA_ALIGNMENT_BOTTOM_RIGHT to R.string.bottom_right,
+                    CustomDecoder.SSA_ALIGNMENT_MIDDLE_LEFT to R.string.middle_left,
+                    CustomDecoder.SSA_ALIGNMENT_MIDDLE_CENTER to R.string.middle_center,
+                    CustomDecoder.SSA_ALIGNMENT_MIDDLE_RIGHT to R.string.middle_right,
+                    CustomDecoder.SSA_ALIGNMENT_TOP_LEFT to R.string.top_left,
+                    CustomDecoder.SSA_ALIGNMENT_TOP_CENTER to R.string.top_center,
+                    CustomDecoder.SSA_ALIGNMENT_TOP_RIGHT to R.string.top_right,
+                )
+
+                activity?.showDialog(
+                    alignmentTypes.map { textView.context.getString(it.second) },
+                    alignmentTypes.map { it.first }.indexOf(state.alignment),
+                    (textView as TextView).text.toString(),
+                    false,
+                    dismissCallback
+                ) { index ->
+                    state.alignment = alignmentTypes.map { it.first }[index]
+                    textView.context.updateState()
+                }
             }
 
             subsEdgeType.setFocusableInTv()
@@ -608,10 +638,9 @@ class SubtitlesFragment : DialogFragment() {
 
             subtitlesFilterSubLang.setOnCheckedChangeListener { _, b ->
                 context?.let { ctx ->
-                    PreferenceManager.getDefaultSharedPreferences(ctx)
-                        .edit()
-                        .putBoolean(getString(R.string.filter_sub_lang_key), b)
-                        .apply()
+                    PreferenceManager.getDefaultSharedPreferences(ctx).edit {
+                        putBoolean(getString(R.string.filter_sub_lang_key), b)
+                    }
                 }
             }
 
@@ -674,11 +703,17 @@ class SubtitlesFragment : DialogFragment() {
             subsAutoSelectLanguage.setFocusableInTv()
             subsAutoSelectLanguage.setOnClickListener { textView ->
                 val languagesTagName =
-                    listOf( Pair(textView.context.getString(R.string.none),
-                                 textView.context.getString(R.string.none))) +
-                    languages
-                        .map { Pair(it.IETF_tag, it.nameNextToFlagEmoji()) }
-                        .sortedBy { it.second.substringAfter("\u00a0").lowercase() } // name ignoring flag emoji
+                    listOf(
+                        Pair(
+                            textView.context.getString(R.string.none),
+                            textView.context.getString(R.string.none)
+                        )
+                    ) +
+                            languages
+                                .map { Pair(it.IETF_tag, it.nameNextToFlagEmoji()) }
+                                .sortedBy {
+                                    it.second.substringAfter("\u00a0").lowercase()
+                                } // name ignoring flag emoji
 
                 val (langTagsIETF, langNames) = languagesTagName.unzip()
 
@@ -704,13 +739,15 @@ class SubtitlesFragment : DialogFragment() {
                 val languagesTagName =
                     languages
                         .map { Pair(it.IETF_tag, it.nameNextToFlagEmoji()) }
-                        .sortedBy { it.second.substringAfter("\u00a0").lowercase() } // name ignoring flag emoji
+                        .sortedBy {
+                            it.second.substringAfter("\u00a0").lowercase()
+                        } // name ignoring flag emoji
 
                 val (langTagsIETF, langNames) = languagesTagName.unzip()
 
                 val selectedLanguages = getDownloadSubsLanguageTagIETF()
-                                        .map { langTagsIETF.indexOf(it) }
-                                        .filter { it >= 0 }
+                    .map { langTagsIETF.indexOf(it) }
+                    .filter { it >= 0 }
 
                 activity?.showMultiDialog(
                     langNames,

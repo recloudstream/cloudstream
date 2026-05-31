@@ -7,9 +7,9 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
+    android:focusable="true"
     android:foreground="@drawable/outline_drawable"
     app:cardBackgroundColor="@color/transparent"
-    android:focusable="true"
     app:cardCornerRadius="@dimen/rounded_image_radius"
     app:cardElevation="0dp">
 
@@ -25,29 +25,15 @@
             android:layout_gravity="center_horizontal">
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/voice_actor_image_holder"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
+                android:layout_gravity="end|bottom"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:alpha="0.2"
                 android:foreground="@drawable/outline_drawable"
                 app:cardCornerRadius="35dp">
-
-                <ImageView
-
-                    android:id="@+id/actor_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:contentDescription="@string/episode_poster_img_des"
-                    android:scaleType="centerCrop"
-                    tools:src="@drawable/example_poster" />
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/voice_actor_image_holder"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="end|bottom"
-                android:foreground="@drawable/outline_drawable"
-                app:cardCornerRadius="20dp">
 
                 <ImageView
                     android:id="@+id/voice_actor_image"
@@ -55,8 +41,26 @@
 
                     android:layout_height="match_parent"
                     android:contentDescription="@string/episode_poster_img_des"
+                    android:foreground="@drawable/outline_big_35_gray"
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/profile_bg_blue" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:foreground="@drawable/outline_drawable"
+                app:cardCornerRadius="35dp">
+
+                <ImageView
+                    android:id="@+id/actor_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/episode_poster_img_des"
+                    android:foreground="@drawable/outline_big_35_gray"
                     android:scaleType="centerCrop"
                     tools:src="@drawable/example_poster" />
+
             </androidx.cardview.widget.CardView>
         </FrameLayout>
 

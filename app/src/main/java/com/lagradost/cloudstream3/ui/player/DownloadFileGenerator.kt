@@ -1,7 +1,7 @@
 package com.lagradost.cloudstream3.ui.player
 
 import android.net.Uri
-import com.lagradost.cloudstream3.AcraApplication.Companion.context
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.context
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
@@ -10,15 +10,16 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromLanguageToTagIETF
 import com.lagradost.cloudstream3.utils.SubtitleUtils.cleanDisplayName
 import com.lagradost.cloudstream3.utils.SubtitleUtils.isMatchingSubtitle
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.getDownloadFileInfoAndUpdateSettings
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.getFolder
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.getFolder
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDownloadFileInfo
 
 class DownloadFileGenerator(
-    episodes: List<ExtractorUri>,
-    currentIndex: Int = 0
-) : VideoGenerator<ExtractorUri>(episodes, currentIndex) {
+    episodes: List<ExtractorUri>
+) : VideoGenerator<ExtractorUri>(episodes) {
     override val hasCache = false
     override val canSkipLoading = false
+
+    override fun getId(index: Int): Int? = this.videos.getOrNull(index)?.id
 
     override suspend fun generateLinks(
         clearCache: Boolean,
@@ -28,14 +29,14 @@ class DownloadFileGenerator(
         offset: Int,
         isCasting: Boolean
     ): Boolean {
-        val meta = getCurrent(offset) ?: return false
+        val meta = videos.getOrNull(offset) ?: return false
 
         if (meta.uri == Uri.EMPTY) {
             // We do this here so that we only load it when
             // we actually need it as it can be more expensive.
             val info = meta.id?.let { id ->
                 activity?.let { act ->
-                    getDownloadFileInfoAndUpdateSettings(act, id)
+                    getDownloadFileInfo(act, id)
                 }
             }
 

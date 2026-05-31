@@ -2,9 +2,7 @@ package com.lagradost.cloudstream3.ui.settings
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.StringRes
 import androidx.core.view.children
@@ -18,17 +16,21 @@ import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.MainSettingsBinding
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthRepo
+import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.errorProfilePic
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.GitInfo.currentCommitHash
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
-import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
@@ -40,7 +42,9 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-class SettingsFragment : Fragment() {
+class SettingsFragment : BaseFragment<MainSettingsBinding>(
+    BaseFragment.BindingCreator.Inflate(MainSettingsBinding::inflate)
+) {
     companion object {
         fun PreferenceFragmentCompat?.getPref(id: Int): Preference? {
             if (this == null) return null
@@ -122,7 +126,6 @@ class SettingsFragment : Fragment() {
                     }
                 }
             }
-            UIHelper.fixPaddingStatusbar(settingsToolbar)
         }
 
         fun Fragment?.setUpToolbar(@StringRes title: Int) {
@@ -135,11 +138,20 @@ class SettingsFragment : Fragment() {
                     setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
                     children.firstOrNull { it is ImageView }?.tag = getString(R.string.tv_no_focus_tag)
                     setNavigationOnClickListener {
-                        activity?.onBackPressedDispatcher?.onBackPressed()
+                        safe { activity?.onBackPressedDispatcher?.onBackPressed() }
                     }
                 }
             }
-            UIHelper.fixPaddingStatusbar(settingsToolbar)
+        }
+
+        fun Fragment.setSystemBarsPadding() {
+            view?.let {
+                fixSystemBarsPadding(
+                    it,
+                    padLeft = isLayout(TV or EMULATOR),
+                    padBottom = isLandscape()
+                )
+            }
         }
 
         fun getFolderSize(dir: File): Long {
@@ -157,24 +169,15 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        binding = null
-        super.onDestroyView()
+    override fun fixLayout(view: View) {
+        fixSystemBarsPadding(
+            view,
+            padBottom = isLandscape(),
+            padLeft = isLayout(TV or EMULATOR)
+        )
     }
 
-    var binding: MainSettingsBinding? = null
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        val localBinding = MainSettingsBinding.inflate(inflater, container, false)
-        binding = localBinding
-        return localBinding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onBindingCreated(binding: MainSettingsBinding) {
         fun navigate(id: Int) {
             activity?.navigate(id, Bundle())
         }
@@ -188,13 +191,13 @@ class SettingsFragment : Fragment() {
                 val login = syncApi.authUser()
                 val pic = login?.profilePicture ?: continue
 
-                binding?.settingsProfilePic?.let { imageView ->
+                binding.settingsProfilePic.let { imageView ->
                     imageView.loadImage(pic) {
                         // Fallback to random error drawable
                         error { getImageFromDrawable(context ?: return@error null, errorProfilePic) }
                     }
                 }
-                binding?.settingsProfileText?.text = login.name
+                binding.settingsProfileText.text = login.name
                 return true // sync profile exists
             }
             return false // not syncing
@@ -213,11 +216,11 @@ class SettingsFragment : Fragment() {
                 null
             }
 
-            binding?.settingsProfilePic?.loadImage(currentAccount?.image)
-            binding?.settingsProfileText?.text = currentAccount?.name
+            binding.settingsProfilePic.loadImage(currentAccount?.image)
+            binding.settingsProfileText.text = currentAccount?.name
         }
 
-        binding?.apply {
+        binding.apply {
             listOf(
                 settingsGeneral to R.id.action_navigation_global_to_navigation_settings_general,
                 settingsPlayer to R.id.action_navigation_global_to_navigation_settings_player,
@@ -244,16 +247,18 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        val appVersion = getString(R.string.app_version)
-        val commitInfo = getString(R.string.commit_hash)
+        val appVersion = BuildConfig.VERSION_NAME
+        val commitHash = activity?.currentCommitHash() ?: ""
         val buildTimestamp = SimpleDateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG,
             Locale.getDefault()
         ).apply { timeZone = TimeZone.getTimeZone("UTC")
         }.format(Date(BuildConfig.BUILD_DATE)).replace("UTC", "")
 
-        binding?.buildDate?.text = buildTimestamp
-        binding?.appVersionInfo?.setOnLongClickListener {
-            clipboardHelper(txt(R.string.extension_version), "$appVersion $commitInfo $buildTimestamp")
+        binding.appVersion.text = appVersion
+        binding.buildDate.text = buildTimestamp
+        binding.commitHash.text = commitHash
+        binding.appVersionInfo.setOnLongClickListener {
+            clipboardHelper(txt(R.string.extension_version), "$appVersion $commitHash $buildTimestamp")
             true
         }
     }

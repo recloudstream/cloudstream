@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/root_holder"
+    android:layout_marginVertical="2.5dp"
+    android:orientation="vertical">
+
+    <androidx.cardview.widget.CardView
+        tools:visibility="visible"
+        android:id="@+id/download_child_episode_holder"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:focusable="true"
+        android:foreground="@drawable/outline_drawable"
+        android:nextFocusLeft="@id/nav_rail_view"
+        android:nextFocusRight="@id/download_button"
+        app:cardBackgroundColor="@color/transparent"
+        app:cardCornerRadius="@dimen/rounded_image_radius"
+        app:cardElevation="0dp">
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless">
+
+            <ImageView
+                android:id="@+id/download_child_episode_play"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:contentDescription="@string/episode_play_img_des"
+                android:src="@drawable/ic_baseline_play_arrow_24"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="50dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/download_child_episode_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:singleLine="true"
+                    android:textColor="?attr/textColor"
+                    tools:text="Episode 1 Episode 1 Episode 1 Episode 1 Episode 1 Episode 1 Episode 1" />
+
+                <TextView
+                    android:id="@+id/download_child_episode_text_extra"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center_vertical"
+                    android:textColor="?attr/grayTextColor"
+                    tools:text="One piece" />
+            </LinearLayout>
+
+            <com.lagradost.cloudstream3.ui.download.button.PieFetchButton
+                android:id="@+id/download_button"
+                android:layout_width="@dimen/download_size"
+                android:layout_height="@dimen/download_size"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginStart="-50dp"
+                android:focusable="true"
+                app:download_animate_waiting="true"
+                android:foreground="@drawable/outline_drawable"
+                android:nextFocusLeft="@id/download_child_episode_holder"
+                android:padding="10dp" />
+
+            <CheckBox
+                android:id="@+id/delete_checkbox"
+                android:layout_width="@dimen/download_size"
+                android:layout_height="@dimen/download_size"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginStart="-50dp"
+                android:focusable="true"
+                android:nextFocusLeft="@id/download_child_episode_holder"
+                android:padding="10dp"
+                android:visibility="gone" />
+        </GridLayout>
+    </androidx.cardview.widget.CardView>
+
+    <LinearLayout
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:id="@+id/separator_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="5dp"
+            android:text="@string/parallel_downloads">
+
+        </TextView>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:src="@drawable/dashed_line_horizontal" />
+    </LinearLayout>
+
+
+</LinearLayout>

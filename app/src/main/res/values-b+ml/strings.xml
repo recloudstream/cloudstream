@@ -3,8 +3,7 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">വേഗം (%.2fx)</string>
     <string name="rated_format" formatted="true">റേറ്റിംഗ്: %.1f</string>
-    <string name="new_update_format" formatted="true">പുതിയ അപ്ഡേറ്റ്!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">പുതിയ അപ്ഡേറ്റ്! \n%1$s -&gt; %2$s</string>
     <string name="app_name">ക്ലൗഡ് സ്ട്രീം</string>
     <string name="title_home">ഹോം</string>
     <string name="title_search">തിരയുക</string>
@@ -45,7 +44,6 @@
     <string name="popup_play_file">ഫയൽ പ്ലേയ് ചെയ്യുക</string>
     <string name="popup_resume_download">ഡൌൺലോഡ് തുടരുക</string>
     <string name="popup_pause_download">ഡൌൺലോഡ് നിർത്തുക</string>
-    <string name="pref_disable_acra">ഓട്ടോമാറ്റിക് ബഗ് റിപ്പോർട്ടിംഗ് പ്രവർത്തനരഹിതമാക്കുക</string>
     <string name="home_more_info">കൂടുതൽ വിവരം</string>
     <string name="home_expanded_hide">ഒളിക്കുക</string>
     <string name="home_play">പ്ലേയ്</string>
@@ -94,12 +92,8 @@
     <string name="settings_info">വിവരം</string>
     <!-- <string name="advanced_search">Advanced Search</string> -->
     <string name="advanced_search_des">സ്ട്രോതസായി തിരിച്ച ഫലം തരുക</string>
-    <string name="bug_report_settings_off">ക്രാഷാകുമ്പോൾ മാത്രം അയക്കുക</string>
-    <string name="bug_report_settings_on">ടാറ്റ അയക്കാതിരിക്കുക</string>
     <string name="updates_settings">അപ്ഡേറ്റുകൾ അറിയിക്കുക</string>
     <string name="updates_settings_des">ആരംഭത്തിൽ അപ്ഡേറ്റുകൾ തിരയുക</string>
-    <string name="uprereleases_settings">പരീക്ഷണാത്മക അപ്ഡേറ്</string>
-    <string name="uprereleases_settings_des">പരീക്ഷണാത്മക അപ്ഡേറ്റുകൾ മാത്രം സ്വീകരിക്കുക</string>
     <string name="github">ഗിറ്റ്ഹബ്</string>
     <string name="lightnovel">നമ്മുടെ ലൈറ്റ് നോവൽ ആപ്പ്</string>
     <string name="anim">നമ്മുടെ ആനിമേ ആപ്പ്</string>
@@ -111,7 +105,6 @@
     <string name="no_links_found_toast">ലിങ്കുകൾ ലഭ്യമല്ല</string>
     <string name="copy_link_toast">ലിങ്ക് പകർത്തിയിരിക്കുന്നു</string>
     <string name="play_episode_toast">എപ്പിസോഡ് പ്ലേയ് ചെയ്യുക</string>
-    <string name="acra_report_toast">ആപ്പ് നിശ്ചലമായിരിക്കുന്നതിന് ക്ഷമിക്കണം</string>
     <string name="season">സീസൺ</string>
     <string name="no_season">സീസണില്ല</string>
     <string name="episode">എപ്പിസോഡ്</string>
@@ -121,8 +114,7 @@
     <string name="cancel">റദ്ദാക്കുക</string>
     <string name="pause">നിർത്തുക</string>
     <string name="resume">തുടരുക</string>
-    <string name="delete_message">സ്ഥിരമായി %sനെ ഡിലീറ്റ് ചെയ്യുക
-\nഉറപ്പാണോ?</string>
+    <string name="delete_message">സ്ഥിരമായി %sനെ ഡിലീറ്റ് ചെയ്യുക \nഉറപ്പാണോ?</string>
     <string name="status_ongoing">തുടരുന്നു</string>
     <string name="status_completed">പൂർത്തിയായി</string>
     <string name="status">അവസ്ഥ</string>
@@ -198,9 +190,7 @@
     <string name="subs_import_text" formatted="true">%s ൽ ഫോൻ്റ്‌സ് വെച്ചു കൊണ്ട് ഇംപോർട്ട് ചെയ്യുക</string>
     <string name="safe_mode_description">പ്രശ്‌നമുണ്ടാക്കുന്ന ഒന്ന് കണ്ടെത്താൻ നിങ്ങളെ സഹായിക്കുന്നതിന് ഒരു ക്രാഷ് കാരണം എല്ലാ വിപുലീകരണങ്ങളും ഓഫാക്കി.</string>
     <string name="view_public_repositories_button_short">പൊതു പട്ടിക</string>
-    <string name="blank_repo_message">CloudStream-ന് സ്ഥിരസ്ഥിതിയായി സൈറ്റുകളൊന്നും ഇൻസ്റ്റാൾ ചെയ്തിട്ടില്ല. നിങ്ങൾ റിപ്പോസിറ്ററികളിൽ നിന്ന് സൈറ്റുകൾ ഇൻസ്റ്റാൾ ചെയ്യേണ്ടതുണ്ട്.
-\n
-\nഞങ്ങളുടെ ഡിസ്കോർഡിൽ ചേരുക അല്ലെങ്കിൽ ഓൺലൈനിൽ തിരയുക.</string>
+    <string name="blank_repo_message">CloudStream-ന് സ്ഥിരസ്ഥിതിയായി സൈറ്റുകളൊന്നും ഇൻസ്റ്റാൾ ചെയ്തിട്ടില്ല. നിങ്ങൾ റിപ്പോസിറ്ററികളിൽ നിന്ന് സൈറ്റുകൾ ഇൻസ്റ്റാൾ ചെയ്യേണ്ടതുണ്ട്. \n \nഞങ്ങളുടെ ഡിസ്കോർഡിൽ ചേരുക അല്ലെങ്കിൽ ഓൺലൈനിൽ തിരയുക.</string>
     <string name="sort_copy">പകർത്തുക</string>
     <string name="uppercase_all_subtitles">എല്ലാ സബ്‌ടൈറ്റിലുകളും വലിയക്ഷരമാക്കുക</string>
     <string name="render_error">റെൻഡറർ പിശക്</string>
@@ -267,8 +257,7 @@
     <string name="empty_library_logged_in_message">ഈ ലിസ്റ്റ് ശൂന്യമാണ്. മറ്റൊന്നിലേക്ക് മാറാൻ ശ്രമിക്കുക.</string>
     <string name="clear_history">ചരിത്രം മായ്ക്കുക</string>
     <string name="show_log_cat">ലോഗ്കാറ്റ് കാണിക്കുക 🐈</string>
-    <string name="empty_library_no_accounts_message">നിങ്ങളുടെ ലൈബ്രറി ശൂന്യമാണ് :(
-\nഒരു ലൈബ്രറി അക്കൗണ്ടിൽ ലോഗിൻ ചെയ്യുക അല്ലെങ്കിൽ നിങ്ങളുടെ പ്രാദേശിക ലൈബ്രറിയിലേക്ക് ഷോകൾ ചേർക്കുക.</string>
+    <string name="empty_library_no_accounts_message">നിങ്ങളുടെ ലൈബ്രറി ശൂന്യമാണ് :( \nഒരു ലൈബ്രറി അക്കൗണ്ടിൽ ലോഗിൻ ചെയ്യുക അല്ലെങ്കിൽ നിങ്ങളുടെ പ്രാദേശിക ലൈബ്രറിയിലേക്ക് ഷോകൾ ചേർക്കുക.</string>
     <string name="other_singular">വീഡിയോ</string>
     <string name="repo_copy_label">റിപ്പോസിറ്ററി നാമവും URL ഉം</string>
     <string name="toast_copied">പകർത്തി!</string>
@@ -278,5 +267,4 @@
     <string name="subs_edge_type">എഡ്ജ് തരം</string>
     <string name="subs_outline_color">ഔട്ട്ലൈൻ നിറം</string>
     <string name="subs_background_color">പശ്ചാത്തല നിറം</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>

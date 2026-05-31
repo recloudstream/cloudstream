@@ -2,9 +2,9 @@ package com.lagradost.cloudstream3.ui.player.source_priority
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.databinding.PlayerPrioritizeItemBinding
-import com.lagradost.cloudstream3.utils.AppContextUtils
+import com.lagradost.cloudstream3.ui.NoStateAdapter
+import com.lagradost.cloudstream3.ui.ViewHolderState
 
 data class SourcePriority<T>(
     val data: T,
@@ -12,41 +12,41 @@ data class SourcePriority<T>(
     var priority: Int
 )
 
-class PriorityAdapter<T>(override val items: MutableList<SourcePriority<T>>) :
-    AppContextUtils.DiffAdapter<SourcePriority<T>>(items) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return PriorityViewHolder(
-            PlayerPrioritizeItemBinding.inflate(LayoutInflater.from(parent.context),parent,false),
+class PriorityAdapter<T>() :
+    NoStateAdapter<SourcePriority<T>>() {
+
+    override fun onCreateContent(parent: ViewGroup): ViewHolderState<Any> {
+        return ViewHolderState(
+            PlayerPrioritizeItemBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
         )
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (holder) {
-            is PriorityViewHolder -> holder.bind(items[position])
+    override fun onBindContent(
+        holder: ViewHolderState<Any>,
+        item: SourcePriority<T>,
+        position: Int
+    ) {
+        val binding = holder.view as? PlayerPrioritizeItemBinding ?: return
+        binding.priorityText.text = item.name
+
+        fun updatePriority() {
+            binding.priorityNumber.text = item.priority.toString()
         }
-    }
 
-    class PriorityViewHolder(
-        val binding: PlayerPrioritizeItemBinding,
-    ) : RecyclerView.ViewHolder(binding.root) {
-        fun <T> bind(item: SourcePriority<T>) {
-            binding.priorityText.text = item.name
-
-            fun updatePriority() {
-                binding.priorityNumber.text = item.priority.toString()
-            }
-
+        updatePriority()
+        binding.addButton.setOnClickListener {
+            // If someone clicks til the integer limit then they deserve to crash.
+            item.priority++
             updatePriority()
-            binding.addButton.setOnClickListener {
-                // If someone clicks til the integer limit then they deserve to crash.
-                item.priority++
-                updatePriority()
-            }
+        }
 
-            binding.subtractButton.setOnClickListener {
-                item.priority--
-                updatePriority()
-            }
+        binding.subtractButton.setOnClickListener {
+            item.priority--
+            updatePriority()
         }
     }
 }

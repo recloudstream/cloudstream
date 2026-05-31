@@ -29,6 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="20"
+            android:autofillHints="no"
             android:hint="@string/network_adress_example"
             android:inputType="textUri"
             tools:ignore="LabelFor" />
@@ -38,6 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="20"
+            android:autofillHints="no"
             android:hint="@string/referer"
             android:inputType="textUri"
             tools:ignore="LabelFor" />

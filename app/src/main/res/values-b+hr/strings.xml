@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
-    <string name="extra_info_format" formatted="true" translatable="false">%d %s | %s</string>
-    <string name="storage_size_format" formatted="true" translatable="false">%s • %s</string>
-    <string name="download_size_format" formatted="true" translatable="false">%s / %s</string>
-    <string name="episode_name_format" formatted="true" translatable="false">%s %s</string>
-    <string name="ffw_text_format" formatted="true" translatable="false">+%d</string>
-    <string name="rew_text_format" formatted="true" translatable="false">-%d</string>
-    <string name="ffw_text_regular_format" formatted="true" translatable="false">%d</string>
-    <string name="rew_text_regular_format" formatted="true" translatable="false">%d</string>
-    <string name="year_format" formatted="true" translatable="false">%d</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s epizoda %2$d</string>
     <string name="cast_format" formatted="true">Glumačka postava: %s</string>
     <string name="next_episode_format" formatted="true">Epizoda %d će izaći za</string>
@@ -28,8 +19,7 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Brzina (%.2f×)</string>
     <string name="rated_format" formatted="true">Ocjena: %.1f</string>
-    <string name="new_update_format" formatted="true">Pronađeno je novo ažuriranje!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Pronađeno je novo ažuriranje! \n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Umetak</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="app_name">CloudStream</string>
@@ -80,7 +70,6 @@
     <string name="popup_play_file">Pokreni datoteku</string>
     <string name="popup_resume_download">Nastavi preuzimanje</string>
     <string name="popup_pause_download">Pauziraj preuzimanje</string>
-    <string name="pref_disable_acra">Onemogući automatsko izvješćivanje o greškama</string>
     <string name="home_more_info">Više informacija</string>
     <string name="home_expanded_hide">Sakrij</string>
     <string name="home_play">Pokreni</string>
@@ -144,7 +133,7 @@
     <string name="double_tap_to_seek_amount_settings">Količina pomicanja u playeru (sekunde)</string>
     <string name="double_tap_to_seek_settings_des">Dodirni dvaput desnu ili lijevu stranu za pomicanje prema naprijed ili natrag</string>
     <string name="double_tap_to_pause_settings_des">Dodirni dvaput u sredinu za pauziranje</string>
-    <string name="use_system_brightness_settings">Koristi svijetlinu sustava</string>
+    <string name="use_system_brightness_settings">Koristi svjetlinu sustava</string>
     <string name="use_system_brightness_settings_des">Koristi svjetlinu sustava u playeru aplikacija umjesto tamnog preklopa</string>
     <string name="episode_sync_settings">Ažuriraj napredak gledanja</string>
     <string name="episode_sync_settings_des">Automatski sinkronizira vaš trenutni napredak u filmu ili epizodi</string>
@@ -161,8 +150,6 @@
     <string name="settings_info">Informacije</string>
     <string name="advanced_search">Napredna pretraga</string>
     <string name="advanced_search_des">Daje rezultate pretrage odvojene prema pružatelju usluga</string>
-    <string name="bug_report_settings_off">Šalje samo podatke o padovima aplikacije</string>
-    <string name="bug_report_settings_on">Ne šalje podatke</string>
     <string name="show_fillers_settings">Prikaži dodatnu epizodu za anime</string>
     <string name="show_trailers_settings">Prikaži trailere</string>
     <string name="kitsu_settings">Prikaži postere iz Kitsua</string>
@@ -170,8 +157,6 @@
     <string name="automatic_plugin_updates">Automatsko ažuriranje dodataka</string>
     <string name="updates_settings">Prikaži ažuriranja aplikacije</string>
     <string name="updates_settings_des">Automatski traži nova ažuriranja nakon pokretanja aplikacije.</string>
-    <string name="uprereleases_settings">Ažuriranje na predizdanja</string>
-    <string name="uprereleases_settings_des">Tražite ažuriranja predizdanja umjesto samo potpunih izdanja</string>
     <string name="github">Github</string>
     <string name="lightnovel">Aplikacija za romane od istih programera</string>
     <string name="anim">Anime aplikacija od istih programera</string>
@@ -184,7 +169,6 @@
     <string name="copy_link_toast">Poveznica je kopirana u međuspremnik</string>
     <string name="play_episode_toast">Pokreni epizodu</string>
     <string name="subs_default_reset_toast">Vrati na zadanu vrijednost</string>
-    <string name="acra_report_toast">Nažalost se aplikacija srušila. Anonimno izvješće o grešci će se poslati programerima</string>
     <string name="season">Sezona</string>
     <string name="no_season">Nema sezone</string>
     <string name="episode">Epizoda</string>
@@ -201,10 +185,8 @@
     <string name="resume">Nastavi</string>
     <string name="go_back_30">−30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">Ovo će trajno izbrisati %s
-\nJeste li sigurni?</string>
-    <string name="resume_time_left" formatted="true">%dmin
-\npreostalo</string>
+    <string name="delete_message" formatted="true">Ovo će trajno izbrisati %s \nJeste li sigurni?</string>
+    <string name="resume_time_left" formatted="true">%dmin \npreostalo</string>
     <string name="status_ongoing">U tijeku</string>
     <string name="status_completed">Završeno</string>
     <string name="status">Status</string>
@@ -249,7 +231,7 @@
     <string name="unexpected_error">Neočekivana pogreška playera</string>
     <string name="storage_error">Pogreška tijekom preuzimanja, provjeri dozvole za pohranu</string>
     <string name="episode_action_chromecast_episode">Chromecast epizoda</string>
-    <string name="episode_action_chromecast_mirror">Chromecast mirror</string>
+    <string name="episode_action_chromecast_mirror">Chromecast duplikat</string>
     <string name="episode_action_play_in_app">Pokreni u aplikaciji</string>
     <string name="episode_action_play_in_format">Pokreni u %s</string>
     <string name="episode_action_auto_download">Automatsko preuzimanje</string>
@@ -272,7 +254,7 @@
     <string name="update">Ažuriraj</string>
     <string name="watch_quality_pref">Preferirana kvaliteta gledanja (WiFi)</string>
     <string name="limit_title">Maksimalni broj znakova u naslovu video playera</string>
-    <string name="limit_title_rez">Rezolucija video playera</string>
+    <string name="limit_title_rez">Prikaži podatke playera</string>
     <string name="video_buffer_size_settings">Veličina međuspremnika videa</string>
     <string name="video_buffer_length_settings">Duljina međuspremnika videa</string>
     <string name="video_buffer_disk_settings">Predmemorija videa na disku</string>
@@ -291,7 +273,6 @@
     <string name="resize_fill">Rastegni</string>
     <string name="resize_zoom">Zoom</string>
     <string name="legal_notice">Pravna obavijest</string>
-    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">Općenito</string>
     <string name="random_button_settings">Gumb za slučajni odabir</string>
     <string name="random_button_settings_desc">Prikaži gumb za slučajni odabir na početnoj stranici i biblioteci</string>
@@ -405,7 +386,6 @@
     <string name="previous">Prethodno</string>
     <string name="skip_setup">Preskoči postavljanje</string>
     <string name="app_layout_subtext">Promijeni izgled aplikacije kako bi odgovarao tvom uređaju</string>
-    <string name="crash_reporting_title">Izvještavanje o rušenju</string>
     <string name="preferred_media_subtext">Što želiš vidjeti</string>
     <string name="setup_done">Gotovo</string>
     <string name="extensions">Proširenja</string>
@@ -428,13 +408,11 @@
     <string name="plugins_downloaded" formatted="true">Preuzeto: %d</string>
     <string name="plugins_disabled" formatted="true">Onemogućeno: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Nepreuzeto: %d</string>
-    <string name="blank_repo_message">CloudStream standardno nema instalirane web stranice. Stranice morate instalirati iz repozitorija.
-\n
-\nPridružite se našem Discordu ili tražite online.</string>
+    <string name="blank_repo_message">CloudStream standardno nema instalirane web stranice. Stranice morate instalirati iz repozitorija. \n \nPridružite se našem Discordu ili tražite online.</string>
     <string name="view_public_repositories_button">Prikaži repozitorije zajednice</string>
     <string name="view_public_repositories_button_short">Javni popis</string>
     <string name="uppercase_all_subtitles">Koristi velika slova za sve titlove</string>
-    <string name="download_all_plugins_from_repo">Upozorenje: CloudStream 3 ne preuzima odgovornost za korištenje proširenja trećih strana i ne pruža podršku za njih!</string>
+    <string name="download_all_plugins_from_repo">Upozorenje: CloudStream ne preuzima odgovornost za korištenje proširenja trećih strana i ne pruža podršku za njih!</string>
     <string name="single_plugin_disabled" formatted="true">%s (onemogućeno)</string>
     <string name="tracks">Zapisi</string>
     <string name="audio_tracks">Audio zapis</string>
@@ -453,7 +431,7 @@
     <string name="extension_language">Jezik</string>
     <string name="hls_playlist">HLS playlista</string>
     <string name="automatic_plugin_download">Automatski instaliraj dodatke</string>
-    <string name="skip_type_creddits">Zasluge</string>
+    <string name="skip_type_credits">Zasluge</string>
     <string name="automatic_plugin_download_summary">Automatski instaliraj sve neinstalirane dodatke iz dodanih repozitorija.</string>
     <string name="player_pref">Preferirani video player</string>
     <string name="player_settings_play_in_app">Interni player</string>
@@ -475,7 +453,7 @@
     <string name="pref_category_links">Poveznice</string>
     <string name="play_trailer_button">Pokreni trailer</string>
     <string name="redo_setup_process">Ponovi postupak postavljanja</string>
-    <string name="apk_installer_settings_des">Neki telefoni ne podržavaju novi program za instaliranje paketa. Pokušaj sa starijom opcijom ako se ažuriranja ne instaliraju.</string>
+    <string name="apk_installer_settings_des">Neki uređaji ne podržavaju novi program za instaliranje paketa. Pokušaj sa starijom opcijom ako se ažuriranja ne instaliraju.</string>
     <string name="apk_installer_settings">Instalator APK-a</string>
     <string name="pref_category_app_updates">Ažuriranja aplikacije</string>
     <string name="pref_category_backup">Sigurnosna kopija</string>
@@ -500,7 +478,7 @@
     <string name="apk_installer_package_installer">PackageInstaller</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="update_started">Aktualiziranje započeto</string>
-    <string name="delayed_update_notice">Aplikacija će se aktualizirati tijekom zatvaranja</string>
+    <string name="delayed_update_notice">Aplikacija će se ažurirati tijekom zatvaranja</string>
     <string name="plugin_downloaded">Dodatak preuzet</string>
     <string name="action_remove_from_watched">Ukloni iz pogledanog</string>
     <string name="browser">Preglednik</string>
@@ -509,17 +487,15 @@
     <string name="sort_by">Sortiraj prema</string>
     <string name="sort">Sortiraj</string>
     <string name="sort_rating_asc">Ocjena (Manja do veće)</string>
-    <string name="sort_updated_new">Ažurirano (Od novog do starog)</string>
-    <string name="sort_updated_old">Ažurirano (Od starog do novog)</string>
+    <string name="sort_updated_new">Ažurirano (od novog prema starom)</string>
+    <string name="sort_updated_old">Ažurirano (od starog prema novom)</string>
     <string name="sort_alphabetical_a">Abecedno (A do Ž)</string>
     <string name="sort_alphabetical_z">Abecedno (Ž do A)</string>
     <string name="select_library">Odaberite biblioteku</string>
     <string name="open_with">Otvori sa</string>
-    <string name="empty_library_no_accounts_message">Vaša je biblioteka prazna :(
-\nPrijavite se na račun biblioteke ili dodajte filmove / serije u svoju lokalnu biblioteku.</string>
+    <string name="empty_library_no_accounts_message">Vaša je biblioteka prazna :( \nPrijavite se na račun biblioteke ili dodajte filmove / serije u svoju lokalnu biblioteku.</string>
     <string name="empty_library_logged_in_message">Ova je lista prazna. Pokušajte se prebaciti na jednu drugu listu.</string>
-    <string name="safe_mode_file">Pronađena je datoteka sigurnog načina rada!
-\nProširenja se ne učitavaju tijekom pokretanja dok se datoteka ne ukloni.</string>
+    <string name="safe_mode_file">Pronađena je datoteka sigurnog načina rada! \nProširenja se ne učitavaju tijekom pokretanja dok se datoteka ne ukloni.</string>
     <string name="android_tv_interface_on_seek_settings">Prikazan player – Količina pomicanja</string>
     <string name="android_tv_interface_on_seek_settings_summary">Količina pomicanja koja se koristi kada je player vidljiv</string>
     <string name="android_tv_interface_off_seek_settings">Player skriven – Količina pomicanja</string>
@@ -558,23 +534,13 @@
     <string name="disable">Onemogući</string>
     <string name="no_plugins_found_error">U repozitoriju nisu pronađeni dodaci</string>
     <string name="no_repository_found_error">Repozitorij nije pronađen. Provjeri URL i pokušaj VPN</string>
-    <string name="quality_profile_help">Ovdje možete promijeniti način na koji su izvori poredani. Ako video ima viši prioritet, pojavit će se više u odabiru izvora. Zbroj prioriteta izvora i prioriteta kvalitete je prioritet videa.
-\n
-\nIzvor A: 3
-\nKvaliteta B: 7
-\nImat će kombinirani prioritet videa od 10.
-\n
-\nNAPOMENA: Ako je zbroj 10 ili više, video player će automatski preskočiti učitavanje kada se ta poveznica učita!</string>
+    <string name="quality_profile_help">Ovdje možete promijeniti način na koji su izvori poredani. Ako video ima viši prioritet, pojavit će se više u odabiru izvora. Zbroj prioriteta izvora i prioriteta kvalitete je prioritet videa. \n \nIzvor A: 3 \nKvaliteta B: 7 \nImat će kombinirani prioritet videa od 10. \n \nNAPOMENA: Ako je zbroj 10 ili više, video player će automatski preskočiti učitavanje kada se ta poveznica učita!</string>
     <string name="already_voted">Već si glasao/la</string>
     <string name="backup_frequency">Učestalost spremanja sigurnosne kopije</string>
     <string name="favorite_removed">%s uklonjeno iz favorita</string>
     <string name="favorites_list_name">Favoriti</string>
     <string name="favorite_added">%s dodano u favorite</string>
-    <string name="duplicate_message_multiple" formatted="true">Potencijalni duplikati pronađeni su u vašoj biblioteci:
-\n
-\n%s
-\n
-\nŽelite li ipak dodati ovu stavku koja zamjenjuje postojeće ili poništiti radnju?</string>
+    <string name="duplicate_message_multiple" formatted="true">Potencijalni duplikati pronađeni su u vašoj biblioteci: \n \n%s \n \nŽelite li ipak dodati ovu stavku koja zamjenjuje postojeće ili poništiti radnju?</string>
     <string name="duplicate_title">Pronađen potencijalni duplikat</string>
     <string name="lock_profile">Zaključaj profil</string>
     <string name="action_add_to_favorites">Dodaj u favorite</string>
@@ -587,9 +553,7 @@
     <string name="action_subscribe">Pretplata</string>
     <string name="action_remove_from_favorites">Ukloni iz favorita</string>
     <string name="select_an_account">Odaberite račun</string>
-    <string name="duplicate_message_single" formatted="true">Čini se da potencijalno duplicirana stavka već postoji u vašoj biblioteci: \'%s.\'
-\n
-\nŽelite li ipak dodati ovu stavku koja zamjenjuje postojeću ili poništiti radnju?</string>
+    <string name="duplicate_message_single" formatted="true">Čini se da potencijalno duplicirana stavka već postoji u vašoj biblioteci: \'%s.\' \n \nŽelite li ipak dodati ovu stavku koja zamjenjuje postojeću ili poništiti radnju?</string>
     <string name="enter_pin">Unesite PIN</string>
     <string name="pin">PIN</string>
     <string name="enter_current_pin">Unesite trenutni PIN</string>
@@ -604,8 +568,6 @@
     <string name="rotate_video_desc">Prikaži gumb za prebacivanje orijentacije zaslona</string>
     <string name="auto_rotate_video_desc">Omogućuje automatsko mijenjanje orijentacije zaslona na temelju orijentacije videa</string>
     <string name="auto_rotate_video">Automatsko rotiranje</string>
-    <string name="rotate_video_key">rotiraj_video_tipka</string>
-    <string name="auto_rotate_video_key">automatski_rotiraj_video_tipka</string>
     <string name="subscribe_tooltip">Obavijest za novu epizodu</string>
     <string name="result_search_tooltip">Traži u drugim proširenjima</string>
     <string name="speed_setting_summary">Dodaje opciju za brzinu u playeru</string>
@@ -615,8 +577,7 @@
     <string name="repo_copy_label">Ime repozitorija i URL</string>
     <string name="toast_copied">kopirano!</string>
     <string name="biometric_setting">Zaključaj s biometrijskim podatcima</string>
-    <string name="resume_remaining" formatted="true">%s
-\npreostalo</string>
+    <string name="resume_remaining" formatted="true">%s \npreostalo</string>
     <string name="clipboard_permission_error">Pogreška pri pristupanju međuspremnika. Pokušaj ponovo.</string>
     <string name="biometric_authentication_title">Otključaj CloudStream</string>
     <string name="password_pin_authentication_title">Lozinka/PIN autentifikacija</string>
@@ -625,25 +586,24 @@
     <string name="ok">U redu</string>
     <string name="battery_dialog_title">Deaktiviraj optimizaciju baterije</string>
     <string name="audio_book_singular">Audio knjiga</string>
-    <string name="custom_media_singluar">Medij</string>
+    <string name="custom_media_singular">Medij</string>
     <string name="app_unrestricted_toast">Korištenje baterije aplikacije već je postavljeno na neograničeno</string>
     <string name="app_info_intent_error">Neuspjelo otvaranje podataka CloudStream aplikacije.</string>
     <string name="favorite">Favorit</string>
     <string name="unfavorite">Ukloni iz favorita</string>
-    <string name="music_singlar">Glazba</string>
+    <string name="music_singular">Glazba</string>
     <string name="reset_btn">Obnovi</string>
     <string name="biometric_setting_summary">Otključaj aplikaciju pomoću otiska prsta, ID-a lica, PIN-a, uzorka i lozinke.</string>
     <string name="episode_upcoming_format" formatted="true">Sljedeća u %s</string>
     <string name="clipboard_unknown_error">Pogreška pri kopiranju. Kopirajte zapisnik i kontaktirajte podršku aplikacije.</string>
-    <string name="battery_dialog_message">Da biste osigurali neprekinuta preuzimanja i obavijesti za pretplaćene TV emisije, CloudStream treba dopuštenje za rad u pozadini. Pritiskom na \"U redu\" prikazat će vam se dijaloški okvir s zahtjevom. Molimo vas da pritisnete \"Dopusti\".  \n\nNapominjemo da ovo dopuštenje ne znači da će CS3 trošiti vašu bateriju. Aplikacija će raditi u pozadini samo kada je to potrebno, primjerice prilikom primanja obavijesti ili preuzimanja videozapisa iz službenih proširenja.</string>
+    <string name="battery_dialog_message">Da biste osigurali neprekinuta preuzimanja i obavijesti za pretplaćene TV emisije, CloudStream treba dopuštenje za rad u pozadini. Pritiskom na \"U redu\" prikazat će vam se dijaloški okvir s zahtjevom. Molimo vas da pritisnete \"Dopusti\". \n\nNapominjemo da ovo dopuštenje ne znači da će CS3 trošiti vašu bateriju. Aplikacija će raditi u pozadini samo kada je to potrebno, primjerice prilikom primanja obavijesti ili preuzimanja videozapisa iz službenih proširenja.</string>
     <string name="biometric_warning">Vaši CloudStream podaci su sada spremljeni u sigurnosnu kopiju. Iako je vjerojatnost mala, neki se uređaji mogu ponašati drugačije. Ako izgubite pristup aplikaciji, potpuno izbrišite podatke aplikacije i obnovite ih pomoću sigurnosne kopije. Ispričavamo se zbog mogućih neugodnosti.</string>
     <string name="next_season_episode_format" formatted="true">Sezona %1$d epizoda %2$d izlazi za</string>
-    <string name="episode_action_cast_mirror">Cast mirror</string>
+    <string name="episode_action_cast_mirror">Cast duplikat</string>
     <string name="player_settings_select_cast_device">Odaberi uređaj za emitiranje</string>
     <string name="cs3wiki">CloudStream Wiki</string>
     <string name="pref_category_accounts">Računi</string>
     <string name="pref_category_security">Sigurnost</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="auth_locally">Lokalna autentifikacija</string>
     <string name="open_local_video">Otvori lokalni video</string>
     <string name="device_pin_url_message">Posjeti <b>%s</b> na svom mobitelu ili računalu i unesi gore navedeni kod</string>
@@ -662,22 +622,14 @@
     <string name="delete_plugin">Izbriši dodatak</string>
     <string name="offline_file">Dostupno za gledanje offline</string>
     <string name="select_all">Označi sve</string>
-    <string name="delete_message_multiple" formatted="true">Stvarno želite trajno izbrisati sljedeće stavke?
-\n
-\n%s</string>
-    <string name="delete_message_series_episodes" formatted="true">Stvarno želite trajno izbrisati sljedeće epizode u %1$s?
-\n
-\n%2$s</string>
-    <string name="delete_message_series_section" formatted="true">Trajno ćete izbrisati i sve epizode u sljedećim serijama:
-\n
-\n%s</string>
+    <string name="delete_message_multiple" formatted="true">Stvarno želite trajno izbrisati sljedeće stavke? \n \n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Stvarno želite trajno izbrisati sljedeće epizode u %1$s? \n \n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">Trajno ćete izbrisati i sve epizode u sljedećim serijama: \n \n%s</string>
     <string name="downloads_delete_select">Odaberi stavke za brisanje</string>
     <string name="deselect_all">Odznači sve</string>
     <string name="delete_format" formatted="true">Izbriši (%1$d | %2$s)</string>
     <string name="delete_files">Izbriši datoteke</string>
-    <string name="delete_message_series_only" formatted="true">Stvarno želite trajno izbrisati sve epizode u sljedećoj seriji?
-\n
-\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Stvarno želite trajno izbrisati sve epizode u sljedećoj seriji? \n \n%s</string>
     <string name="no_subtitles_loaded">Još nije učitan nijedan titl</string>
     <string name="preview_seekbar">Pretpregled trake za traženje</string>
     <string name="preview_seekbar_desc">Omogući minijaturu pregleda na traci za pretraživanje</string>
@@ -691,12 +643,12 @@
     <string name="encoding_error">Pogreška u kodiranju</string>
     <string name="unsupported_error">Nepodržana pogreška</string>
     <string name="software_decoding">Dekodiranje softvera</string>
-    <string name="software_decoding_desc">Softversko dekodiranje omogućuje playeru reprodukciju video datoteka koje tvoj mobitel ne podržava, ali može uzrokovati kašnjenja ili nestabilnu reprodukciju pri visokoj rezoluciji</string>
+    <string name="software_decoding_desc">Softversko dekodiranje omogućuje playeru reprodukciju video datoteka koje tvoj mobitel ne podržava, ali može uzrokovati kašnjenja ili nestabilnu reprodukciju pri visokoj rezoluciji.</string>
     <string name="torrent_info">Ovaj je video Torrent, što znači da se tvoja video aktivnost može pratiti.\nInformiraj se o korištenju Torrenta prije nego što nastaviš.</string>
     <string name="torrent_not_accepted">Ponovno pokrenite aplikaciju i prihvatite skočni prozor Stream Torrent za nastavak.</string>
     <string name="player_load_one_subtitle_online">Učitaj prvi dostupni</string>
-    <string name="audio_singluar">Audio</string>
-    <string name="podcast_singluar">Podcast</string>
+    <string name="audio_singular">Audio</string>
+    <string name="podcast_singular">Podcast</string>
     <string name="torrent_preferred_media">Aktiviraj torrent u Postavke/Pružatelji usluge/Preferirani mediji</string>
     <string name="sort_episodes_number_asc">Epizoda (Uzlazno)</string>
     <string name="sort_episodes_number_desc">Epizoda (Silazno)</string>
@@ -712,7 +664,7 @@
     <string name="update_plugins_manually">Ažuriraj podatke ručno</string>
     <string name="starting_plugin_update_manually">Pokreće se postupak ažuriranja dodataka!</string>
     <string name="player_notification_channel_name">Obavijesti reproduktora</string>
-    <string name="plugins_updated_manually">Uspješno ažuriran(o) %d dodatak(a)!</string>
+    <string name="plugins_updated_manually">Uspješno ažuriranih dodataka: %d!</string>
     <string name="player_notification_channel_description">Obavijest reproduktora za upravljanje reprodukcijom iz pozadine</string>
     <string name="all_subtitles_italic">Ukosite sve titlove</string>
     <string name="all_subtitles_bold">Podebljajte sve titlove</string>
@@ -745,9 +697,58 @@
     <string name="edit_profile_image_hint">Unesite URL slike profila</string>
     <string name="edit_profile_image_error_empty">Nijedan URL nije pronađen</string>
     <string name="edit_profile_image_error_invalid">Nevaljan URL ili slika</string>
-    <string name="edit_profile_image_success">Slika uspješno aktualizirana</string>
+    <string name="edit_profile_image_success">Slika uspješno ažurirana</string>
     <string name="action_mark_watched_up_to_this_episode">Označi kao gledano do ove epizode</string>
     <string name="action_remove_mark_watched_up_to_this_episode">Ukloni gledano do ove epizode</string>
     <string name="action_reload">Ponovo učitano</string>
     <string name="reload_provider">Usluga ponovnog učitavanja</string>
+    <string name="play_full_series_button">Reproduciraj cijelu seriju</string>
+    <string name="install_prerelease">Instaliraj predizdanje</string>
+    <string name="prerelease_already_installed">Predizdanje je već instalirano.</string>
+    <string name="prerelease_install_failed">Instalacija predizdanja nije uspjela.</string>
+    <string name="episode_action_play_mirror">Pokreni duplikat</string>"
+    <string name="show_episode_text">Tekst epizode</string>
+    <string name="name">Ime</string>
+    <string name="resolution_and_name">Rezolucija i ime</string>
+    <string name="subs_subtitle_alignment">Poravnanje titlova</string>
+    <string name="bottom_left">Dolje lijevo</string>
+    <string name="bottom_center">Dolje u sredini</string>
+    <string name="bottom_right">Dolje desno</string>
+    <string name="middle_left">Sredina lijevo</string>
+    <string name="middle_center">U sredini</string>
+    <string name="middle_right">Desno u sredini</string>
+    <string name="top_left">Gore lijevo</string>
+    <string name="top_center">Gore u sredini</string>
+    <string name="top_right">Gore desno</string>
+    <string name="extra_brightness_settings">Dodatna svjetlina</string>
+    <string name="extra_brightness_settings_des">Uključi filtar svjetline kada se prekorači 100 % svjetline ekrana</string>
+    <string name="extra_brightness_key">dodatna_svjetlina_uključena</string>
+    <string name="search_suggestions">Prijedlozi za pretraživanje</string>
+    <string name="search_suggestions_des">Prikaži prijedloge za pretraživanje tijekom tipkanja</string>
+    <string name="clear_suggestions">Izbriši prijedloge</string>
+    <string name="video_info">Podaci medija</string>
+    <string name="source_name">Ime izvora</string>
+    <string name="download_all">Preuzmi sve</string>
+    <string name="cancel_all">Odustani od svega</string>
+    <string name="download_queue">Red preuzimanja</string>
+    <string name="queue_empty_message">Sada nema preuzimanja u redu.</string>
+    <plurals name="downloads_active">
+        <item quantity="one">%d aktivno preuzimanje</item>
+        <item quantity="few">%d aktivna preuzimanja</item>
+        <item quantity="other">%d aktivnih preuzimanja</item>
+    </plurals>
+    <plurals name="downloads_queued">
+        <item quantity="one">%d preuzimanje u redu čekanja</item>
+        <item quantity="few">%d preuzimanja u redu čekanja</item>
+        <item quantity="other">%d preuzimanja u redu čekanja</item>
+    </plurals>
+    <string name="source_priority">Prioritet izvora</string>
+    <string name="source_priority_help">Odluči kako razvrstati izvor videa u playeru</string>
+    <string name="download_episode_range">Želiš li preuzeti epizodu %s?</string>
+    <string name="cancel_queue_message">Želiš li otkazati sva preuzimanja u redu čekanja?</string>
+    <string name="show_cast_in_details">Prikaži ploču glumačke postave</string>
+    <string name="video_singular">Video</string>
+    <string name="skip_type_preview">Pregled</string>
+    <string name="player_is_live">Uživo</string>
+    <string name="show_player_metadata_overlay">Prikaži sloj metapodataka playera</string>
 </resources>

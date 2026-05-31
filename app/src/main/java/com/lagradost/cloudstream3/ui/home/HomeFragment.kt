@@ -5,26 +5,36 @@ import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.res.Configuration
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AbsListView
+import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.ListView
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AlertDialog
+import androidx.core.net.toUri
 import androidx.core.view.isGone
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
-import com.lagradost.cloudstream3.*
+import com.lagradost.api.Log
 import com.lagradost.cloudstream3.APIHolder.apis
+import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.MainAPI
+import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.databinding.FragmentHomeBinding
 import com.lagradost.cloudstream3.databinding.HomeEpisodesExpandedBinding
 import com.lagradost.cloudstream3.databinding.HomeSelectMainpageBinding
@@ -35,13 +45,18 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
+import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
-import com.lagradost.cloudstream3.utils.txt
-import com.lagradost.cloudstream3.ui.search.*
+import com.lagradost.cloudstream3.ui.account.AccountViewModel
+import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
+import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_PLAY_FILE
+import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
+import com.lagradost.cloudstream3.ui.setRecycledViewPool
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
@@ -51,38 +66,30 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppContextUtils.ownHide
 import com.lagradost.cloudstream3.utils.AppContextUtils.ownShow
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStoreHelper
-import com.lagradost.cloudstream3.utils.Event
+import com.lagradost.cloudstream3.utils.EmptyEvent
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
+import com.lagradost.cloudstream3.utils.TvChannelUtils
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
-import java.util.*
-import androidx.tvprovider.media.tv.TvContractCompat
-import androidx.tvprovider.media.tv.PreviewProgram
-import com.lagradost.api.Log
-import android.content.ContentUris
-import com.lagradost.cloudstream3.utils.AppContextUtils
-import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.withTimeout
-import org.schabi.newpipe.extractor.timeago.patterns.de
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import android.os.Parcelable
-import com.lagradost.cloudstream3.ui.account.AccountViewModel
-import com.lagradost.cloudstream3.utils.TvChannelUtils
-
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
 
 private const val TAG = "HomeFragment"
 
-class HomeFragment : Fragment() {
+class HomeFragment : BaseFragment<FragmentHomeBinding>(
+    BindingCreator.Bind(FragmentHomeBinding::bind)
+) {
     companion object {
-        val configEvent = Event<Int>()
+        // Used for configuration changed events to fix any popups that are not attached to a fragment
+        val configEvent = EmptyEvent()
         var currentSpan = 1
-        val listHomepageItems = mutableListOf<SearchResponse>()
 
         private val errorProfilePics = listOf(
             R.drawable.monke_benene,
@@ -111,6 +118,7 @@ class HomeFragment : Fragment() {
         //}
 
         // returns a BottomSheetDialog that will be hidden with OwnHidden upon hide, and must be saved to be able call ownShow in onCreateView
+
         fun Activity.loadHomepageList(
             expand: HomeViewModel.ExpandableHomepageList,
             deleteCallback: (() -> Unit)? = null,
@@ -192,16 +200,17 @@ class HomeFragment : Fragment() {
 
 
             // Span settings
-            binding.homeExpandedRecycler.spanCount = currentSpan
-
+            binding.homeExpandedRecycler.spanCount = context.getSpanCount(item.isHorizontalImages)
+            binding.homeExpandedRecycler.setRecycledViewPool(SearchAdapter.sharedPool)
             binding.homeExpandedRecycler.adapter =
-                SearchAdapter(item.list.toMutableList(), binding.homeExpandedRecycler) { callback ->
+                SearchAdapter(binding.homeExpandedRecycler,item.isHorizontalImages) { callback ->
                     handleSearchClickCallback(callback)
                     if (callback.action == SEARCH_ACTION_LOAD || callback.action == SEARCH_ACTION_PLAY_FILE) {
                         bottomSheetDialogBuilder.ownHide() // we hide here because we want to resume it later
                         //bottomSheetDialogBuilder.dismissSafe(this)
                     }
                 }.apply {
+                    submitList(item.list)
                     hasNext = expand.hasNext
                 }
 
@@ -225,7 +234,7 @@ class HomeFragment : Fragment() {
                             expandCallback?.invoke(name)?.let { newExpand ->
                                 (recyclerView.adapter as? SearchAdapter?)?.apply {
                                     hasNext = newExpand.hasNext
-                                    updateList(newExpand.list.list)
+                                    submitList(newExpand.list.list)
                                 }
                             }
                         }
@@ -233,9 +242,12 @@ class HomeFragment : Fragment() {
                 }
             })
 
-            val spanListener = { span: Int ->
-                binding.homeExpandedRecycler.spanCount = span
-                //(recycle.adapter as SearchAdapter).notifyDataSetChanged()
+            val spanListener = Runnable {
+                binding.homeExpandedRecycler.spanCount = context.getSpanCount(item.isHorizontalImages)
+                // We want to rebind everything to update the UI, however we also want to avoid
+                // any animations ect, this is the easiest way to do this, and the most correct
+                @SuppressLint("NotifyDataSetChanged")
+                binding.homeExpandedRecycler.adapter?.notifyDataSetChanged()
             }
 
             configEvent += spanListener
@@ -305,7 +317,7 @@ class HomeFragment : Fragment() {
             val pairList = getPairList(header)
             for ((button, types) in pairList) {
                 button?.isChecked =
-                    button?.isVisible == true && selectedTypes.any { types.contains(it) }
+                    button.isVisible && selectedTypes.any { types.contains(it) }
             }
         }
 
@@ -415,7 +427,7 @@ class HomeFragment : Fragment() {
                         val name = getItem(position)
                         titleText?.text = name
                         val isPinned =
-                            pinnedphashset.contains(currentValidApis[position].name ?: "")
+                            pinnedphashset.contains(currentValidApis[position].name)
                         pinIcon.visibility = if (isPinned) View.VISIBLE else View.GONE
                         return view
                     }
@@ -546,44 +558,22 @@ class HomeFragment : Fragment() {
         }
     }
 
-    var binding: FragmentHomeBinding? = null
-
+    override fun pickLayout(): Int? =
+        if (isLayout(PHONE)) R.layout.fragment_home else R.layout.fragment_home_tv
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        //homeViewModel =
-        //     ViewModelProvider(this).get(HomeViewModel::class.java)
-
         bottomSheetDialog?.ownShow()
-        val layout =
-            if (isLayout(TV or EMULATOR)) R.layout.fragment_home_tv else R.layout.fragment_home
-        val root = inflater.inflate(layout, container, false)
-        binding = try {
-            FragmentHomeBinding.bind(root)
-        } catch (t: Throwable) {
-            showToast(txt(R.string.unable_to_inflate, t.message ?: ""), Toast.LENGTH_LONG)
-            logError(t)
-            null
-        }
-
-        return root
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onDestroyView() {
-
+        (activity as? ComponentActivity)?.detachBackPressedCallback("HomeFragment_BackPress")
         bottomSheetDialog?.ownHide()
-        binding = null
         super.onDestroyView()
-    }
-
-    private fun fixGrid() {
-        activity?.getSpanCount()?.let {
-            currentSpan = it
-        }
-        configEvent.invoke(currentSpan)
     }
 
     private val apiChangeClickListener = View.OnClickListener { view ->
@@ -599,12 +589,6 @@ class HomeFragment : Fragment() {
         }*/
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        //(home_preview_viewpager?.adapter as? HomeScrollAdapter)?.notifyDataSetChanged()
-        fixGrid()
-    }
-
     private var currentApiName: String? = null
     private var toggleRandomButton = false
 
@@ -613,14 +597,14 @@ class HomeFragment : Fragment() {
 
     var lastSavedHomepage: String? = null
 
-    fun saveHomepageToTV(page :  Map<String, HomeViewModel.ExpandableHomepageList>) {
+    fun saveHomepageToTV(page: Map<String, HomeViewModel.ExpandableHomepageList>) {
         // No need to update for phone
-        if(isLayout(PHONE)) {
+        if (isLayout(PHONE)) {
             return
         }
         val (name, data) = page.entries.firstOrNull() ?: return
         // Modifying homepage is an expensive operation, and therefore we avoid it at all cost
-        if(name == lastSavedHomepage) {
+        if (name == lastSavedHomepage) {
             return
         }
         Log.i(TAG, "Adding programs $name to TV")
@@ -633,14 +617,25 @@ class HomeFragment : Fragment() {
         }
     }
 
+    override fun fixLayout(view: View) {
+        fixSystemBarsPadding(
+            view,
+            padTop = false,
+            padBottom = isLandscape(),
+            padLeft = isLayout(TV or EMULATOR)
+        )
+
+        // Fix grid
+        configEvent.invoke()
+    }
+
     @SuppressLint("SetTextI18n")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        fixGrid()
-
+    override fun onBindingCreated(binding: FragmentHomeBinding) {
         context?.let { HomeChildItemAdapter.updatePosterSize(it) }
-
-        binding?.apply {
+        (activity as? ComponentActivity)?.attachBackPressedCallback("HomeFragment_BackPress") {
+            handleTvBackPress(this)
+        }
+        binding.apply {
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
             homeApiFab.setOnClickListener(apiChangeClickListener)
@@ -655,29 +650,68 @@ class HomeFragment : Fragment() {
                 activity?.showAccountSelectLinear()
             }
 
-            homeRandom.setOnClickListener {
-                if (listHomepageItems.isNotEmpty()) {
-                    activity.loadSearchResult(listHomepageItems.random())
-                }
-            }
             homeMasterAdapter = HomeParentItemAdapterPreview(
-                fragment = this@HomeFragment,
                 homeViewModel, accountViewModel
             )
+            homeMasterRecycler.setRecycledViewPool(ParentItemAdapter.sharedPool)
             homeMasterRecycler.adapter = homeMasterAdapter
-            //fixPaddingStatusbar(homeLoadingStatusbar)
 
             homeApiFab.isVisible = isLayout(PHONE)
 
+            homePreviewReloadProvider.setOnClickListener {
+                homeViewModel.loadAndCancel(
+                    homeViewModel.apiName.value ?: noneApi.name,
+                    forceReload = true,
+                    fromUI = true
+                )
+                showToast(R.string.action_reload, Toast.LENGTH_SHORT)
+                true
+            }
+
+            homePreviewSearchButton.setOnClickListener { _ ->
+                // Open blank screen.
+                homeViewModel.queryTextSubmit("")
+            }
+
             homeMasterRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (dy > 0) { //check for scroll down
-                        homeApiFab.shrink() // hide
-                        homeRandom.shrink()
-                    } else if (dy < -5) {
-                        if (isLayout(PHONE)) {
-                            homeApiFab.extend() // show
-                            homeRandom.extend()
+                    if (isLayout(PHONE)) {
+                        // Fab is only relevant to Phone
+                        if (dy > 0) { //check for scroll down
+                            homeApiFab.shrink() // hide
+                            homeRandom.shrink()
+                        } else if (dy < -5) {
+                            if (isLayout(PHONE)) {
+                                homeApiFab.extend() // show
+                                homeRandom.extend()
+                            }
+                        }
+                    } else {
+                        // Header scrolling is only relevant to TV/Emulator
+
+                        val view = recyclerView.findViewHolderForAdapterPosition(0)?.itemView
+                        val scrollParent = binding.homeApiHolder
+
+                        if (view == null) {
+                            // The first view is not visible, so we can assume we have scrolled past it
+                            scrollParent.isVisible = false
+                        } else {
+                            // A bit weird, but this is a major limitation we are working around here
+                            // 1. We cant have a real parent to the recyclerview as android cant layout that without lagging
+                            // 2. We cant put the view in the recyclerview, as it should always be shown
+                            // 3. We cant mirror the view in the recyclerview as then it causes focus issues when swaping out the mirror view
+                            //
+                            // This means that if we want to have a parent view to the recyclerview we are out of luck
+                            // Instead this uses getLocationInWindow to calculate how much the view should be scrolled
+                            // as recyclerView has no scrollY (always 0)
+                            //
+                            // Then it manually "scrolls" it to the correct position
+                            //
+                            // Hopefully getLocationInWindow acts correctly on all devices
+                            val rect = IntArray(2)
+                            view.getLocationInWindow(rect)
+                            scrollParent.isVisible = true
+                            scrollParent.translationY = rect[1].toFloat() - 60.toPx
                         }
                     }
                     super.onScrolled(recyclerView, dx, dy)
@@ -693,49 +727,56 @@ class HomeFragment : Fragment() {
                 settingsManager.getBoolean(
                     getString(R.string.random_button_key),
                     false
-                ) && isLayout(PHONE)
-            binding?.homeRandom?.visibility = View.GONE
+                )
+            binding.homeRandom.visibility = View.GONE
+            binding.homeRandomButtonTv.visibility = View.GONE
         }
 
         observe(homeViewModel.apiName) { apiName ->
             currentApiName = apiName
-            binding?.homeApiFab?.text = apiName
-            binding?.homeChangeApi?.text = apiName
+            binding.apply {
+                homeApiFab.text = apiName
+                homeChangeApi.text = apiName
+                homePreviewReloadProvider.isGone = (apiName == noneApi.name)
+                homePreviewSearchButton.isGone = (apiName == noneApi.name)
+            }
         }
 
         observe(homeViewModel.page) { data ->
-            binding?.apply {
+            binding.apply {
                 when (data) {
                     is Resource.Success -> {
-                        homeLoadingShimmer.stopShimmer()
-
                         val d = data.value
-                        saveHomepageToTV(d)
-
-                        val mutableListOfResponse = mutableListOf<SearchResponse>()
-                        listHomepageItems.clear()
-
                         (homeMasterRecycler.adapter as? ParentItemAdapter)?.submitList(d.values.map {
-
                             it.copy(
                                 list = it.list.copy(list = it.list.list.toMutableList())
                             )
-                        }.toMutableList())
+                        })
+
+                        saveHomepageToTV(d)
 
                         homeLoading.isVisible = false
                         homeLoadingError.isVisible = false
                         homeMasterRecycler.isVisible = true
+                        homeLoadingShimmer.stopShimmer()
                         //home_loaded?.isVisible = true
                         if (toggleRandomButton) {
-                            //Flatten list
-                            d.values.forEach { dlist ->
-                                mutableListOfResponse.addAll(dlist.list.list)
+                            val distinct = d.values
+                                .flatMap { it.list.list }
+                                .distinctBy { it.url }
+                            val hasItems = distinct.isNotEmpty()
+                            val isPhone = isLayout(PHONE)
+                            val randomClickListener = View.OnClickListener {
+                                distinct.randomOrNull()?.let { activity.loadSearchResult(it) }
                             }
-                            listHomepageItems.addAll(mutableListOfResponse.distinctBy { it.url })
 
-                            homeRandom.isVisible = listHomepageItems.isNotEmpty()
+                            homeRandom.isVisible = isPhone && hasItems
+                            homeRandom.setOnClickListener(randomClickListener)
+                            homeRandomButtonTv.isVisible = !isPhone && hasItems
+                            homeRandomButtonTv.setOnClickListener(randomClickListener)
                         } else {
                             homeRandom.isGone = true
+                            homeRandomButtonTv.isGone = true
                         }
                     }
 
@@ -753,7 +794,7 @@ class HomeFragment : Fragment() {
                             }) {
                                 try {
                                     val i = Intent(Intent.ACTION_VIEW)
-                                    i.data = Uri.parse(validAPIs[itemId].mainUrl)
+                                    i.data = validAPIs[itemId].mainUrl.toUri()
                                     startActivity(i)
                                 } catch (e: Exception) {
                                     logError(e)
@@ -763,7 +804,7 @@ class HomeFragment : Fragment() {
 
                         homeLoading.isVisible = false
                         homeLoadingError.isVisible = true
-                        homeMasterRecycler.isVisible = false
+                        homeMasterRecycler.isInvisible = true
 
                         // Based on https://github.com/recloudstream/cloudstream/pull/1438
                         val hasNoNetworkConnection = context?.isNetworkAvailable() == false
@@ -785,23 +826,27 @@ class HomeFragment : Fragment() {
                         homeReloadConnectionGoToDownloads.setOnClickListener {
                             activity.navigate(R.id.navigation_downloads)
                         }
+
+                        (homeMasterRecycler.adapter as? ParentItemAdapter)?.apply {
+                            submitList(null)
+                            clearState()
+                        }
                     }
 
                     is Resource.Loading -> {
-                        (homeMasterRecycler.adapter as? ParentItemAdapter)?.submitList(listOf())
                         homeLoadingShimmer.startShimmer()
                         homeLoading.isVisible = true
                         homeLoadingError.isVisible = false
-                        homeMasterRecycler.isVisible = false
+                        homeMasterRecycler.isInvisible = true
+                        (homeMasterRecycler.adapter as? ParentItemAdapter)?.apply {
+                            submitList(null)
+                            clearState()
+                        }
                         //home_loaded?.isVisible = false
                     }
                 }
             }
         }
-
-
-        //context?.fixPaddingStatusbarView(home_statusbar)
-        //context?.fixPaddingStatusbar(home_padding)
 
         observeNullable(homeViewModel.popup) { item ->
             if (item == null) {
@@ -846,5 +891,45 @@ class HomeFragment : Fragment() {
                 break
             }
         }*/
+    }
+
+    private fun handleTvBackPress(helper: BackPressedCallbackHelper.CallbackHelper) {
+        // Only apply custom behavior on TV interface
+        if (!isLayout(TV)) {
+            helper.runDefault()
+            return
+        }
+        val currentFocus = activity?.currentFocus ?: run {
+            helper.runDefault()
+            return
+        }
+        // isInsideRecycle is true when focus is inside home_master_recycler
+        var parent = currentFocus.parent
+        var isInsideRecycler = false
+        while (parent != null) {
+            if (parent is View && parent.id == R.id.home_master_recycler) {
+                isInsideRecycler = true
+                break
+            }
+            parent = parent.parent
+        }
+        when {
+            // Case 1: Focus is within plugin content -> Move to plugin selector
+            isInsideRecycler -> {
+                binding?.homeMasterRecycler?.scrollToPosition(0)
+                // Defer focus request until after scroll ends
+                binding?.homeChangeApi?.post {
+                    binding?.homeChangeApi?.requestFocus()
+                }
+            }
+            // Case 2: Focus is on plugin selector or nearby buttons -> Move to home navigation
+            currentFocus.id == R.id.home_change_api ||
+            currentFocus.id == R.id.home_preview_reload_provider ||
+            currentFocus.id == R.id.home_preview_search_button -> {
+                activity?.findViewById<View>(R.id.navigation_home)?.requestFocus()
+            }
+            // Case 3: Any other location -> Use default back behavior
+            else -> helper.runDefault()
+        }
     }
 }

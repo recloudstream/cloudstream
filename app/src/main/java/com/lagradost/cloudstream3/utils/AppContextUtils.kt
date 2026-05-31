@@ -6,9 +6,9 @@ import android.app.Activity
 import android.app.Activity.RESULT_CANCELED
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.ContentValues
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.media.AudioAttributes
@@ -19,12 +19,10 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.os.Build
-import android.os.Environment
 import android.os.Handler
 import android.os.Looper
-import android.os.ParcelFileDescriptor
-import android.provider.MediaStore
 import android.text.Spanned
+import android.util.Log
 import android.view.View
 import android.view.View.LAYOUT_DIRECTION_LTR
 import android.view.View.LAYOUT_DIRECTION_RTL
@@ -34,6 +32,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AlertDialog
+import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import androidx.core.text.toSpanned
 import androidx.core.widget.ContentLoadingProgressBar
@@ -41,10 +40,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.tvprovider.media.tv.PreviewChannelHelper
+import androidx.tvprovider.media.tv.TvContractCompat
 import androidx.tvprovider.media.tv.WatchNextProgram
 import androidx.tvprovider.media.tv.WatchNextProgram.fromCursor
 import androidx.viewpager2.widget.ViewPager2
@@ -55,8 +54,8 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.wrappers.Wrappers
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.APIHolder.apis
-import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.AllLanguagesName
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getActivity
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.DubStatus
@@ -65,6 +64,7 @@ import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEvent
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.logError
@@ -85,36 +85,18 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
 import com.lagradost.cloudstream3.utils.FillerEpisodeCheck.toClassDir
 import com.lagradost.cloudstream3.utils.JsUnpacker.Companion.load
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okhttp3.Cache
 import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.InputStream
-import java.io.OutputStream
 import java.net.URL
 import java.net.URLDecoder
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
-import android.net.Uri
-import android.util.Log
-import androidx.biometric.AuthenticationResult
-import androidx.tvprovider.media.tv.PreviewProgram
-import androidx.tvprovider.media.tv.TvContractCompat
-import com.lagradost.cloudstream3.SearchResponse
-import android.content.ContentUris
-import android.content.Intent
-
-
 
 
 object AppContextUtils {
-    fun RecyclerView.setMaxViewPoolSize(maxViewTypeId: Int, maxPoolSize: Int) {
-        for (i in 0..maxViewTypeId)
-            recycledViewPool.setMaxRecycledViews(i, maxPoolSize)
-    }
-
     fun RecyclerView.isRecyclerScrollable(): Boolean {
         val layoutManager =
             this.layoutManager as? LinearLayoutManager?
@@ -170,7 +152,7 @@ object AppContextUtils {
     private fun buildWatchNextProgramUri(
         context: Context,
         card: DataStoreHelper.ResumeWatchingResult,
-        resumeWatching: VideoDownloadHelper.ResumeWatching?
+        resumeWatching: DownloadObjects.ResumeWatching?
     ): WatchNextProgram {
         val isSeries = card.type?.isMovieType() == false
         val title = if (isSeries) {
@@ -188,10 +170,10 @@ object AppContextUtils {
             )
             .setWatchNextType(TvContractCompat.WatchNextPrograms.WATCH_NEXT_TYPE_CONTINUE)
             .setTitle(title)
-            .setPosterArtUri(Uri.parse(card.posterUrl))
-            .setIntentUri(Uri.parse(card.id?.let {
+            .setPosterArtUri(card.posterUrl?.toUri())
+            .setIntentUri((card.id?.let {
                 "$APP_STRING_RESUME_WATCHING://$it"
-            } ?: card.url))
+            } ?: card.url).toUri())
             .setInternalProviderId(card.url)
             .setLastEngagementTimeUtcMillis(
                 resumeWatching?.updateTime ?: System.currentTimeMillis()
@@ -337,7 +319,7 @@ object AppContextUtils {
         val context = this
         continueWatchingLock.withLock {
             // A way to get all last watched timestamps
-            val timeStampHashMap = HashMap<Int, VideoDownloadHelper.ResumeWatching>()
+            val timeStampHashMap = HashMap<Int, DownloadObjects.ResumeWatching>()
             getAllResumeStateIds()?.forEach { id ->
                 val lastWatched = getLastWatched(id) ?: return@forEach
                 timeStampHashMap[lastWatched.parentId] = lastWatched
@@ -387,28 +369,10 @@ object AppContextUtils {
     }
 
     fun Context.getApiSettings(): HashSet<String> {
-        //val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-
         val hashSet = HashSet<String>()
         val activeLangs = getApiProviderLangSettings()
         val hasUniversal = activeLangs.contains(AllLanguagesName)
-        hashSet.addAll(synchronized(apis) { apis.filter { hasUniversal || activeLangs.contains(it.lang) } }
-            .map { it.name })
-
-        /*val set = settingsManager.getStringSet(
-            this.getString(R.string.search_providers_list_key),
-            hashSet
-        )?.toHashSet() ?: hashSet
-
-        val list = HashSet<String>()
-        for (name in set) {
-            val api = getApiFromNameNull(name) ?: continue
-            if (activeLangs.contains(api.lang)) {
-                list.add(name)
-            }
-        }*/
-        //if (list.isEmpty()) return hashSet
-        //return list
+        hashSet.addAll(apis.filter { hasUniversal || activeLangs.contains(it.lang) }.map { it.name })
         return hashSet
     }
 
@@ -467,6 +431,14 @@ object AppContextUtils {
         return settingsManager.getBoolean(this.getString(R.string.show_trailers_key), true)
     }
 
+    fun Context.shouldShowPlayerMetadata(): Boolean {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        return prefs.getBoolean(
+            getString(R.string.show_player_metadata_key),
+            true
+        )
+    }
+
     fun Context.filterProviderByPreferredMedia(hasHomePageIsRequired: Boolean = true): List<MainAPI> {
         // We are getting the weirdest crash ever done:
         // java.lang.ClassCastException: com.lagradost.cloudstream3.TvType cannot be cast to com.lagradost.cloudstream3.TvType
@@ -491,9 +463,7 @@ object AppContextUtils {
         } ?: default
         val langs = this.getApiProviderLangSettings()
         val hasUniversal = langs.contains(AllLanguagesName)
-        val allApis = synchronized(apis) {
-            apis.filter { api -> (hasUniversal || langs.contains(api.lang)) && (api.hasMainPage || !hasHomePageIsRequired) }
-        }
+        val allApis = apis.filter { api -> (hasUniversal || langs.contains(api.lang)) && (api.hasMainPage || !hasHomePageIsRequired) }
         return if (currentPrefMedia.isEmpty()) {
             allApis
         } else {
@@ -565,45 +535,6 @@ object AppContextUtils {
         }
     }
 
-    abstract class DiffAdapter<T>(
-        open val items: MutableList<T>,
-        val comparison: (first: T, second: T) -> Boolean = { first, second ->
-            first.hashCode() == second.hashCode()
-        }
-    ) :
-        RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-        override fun getItemCount(): Int {
-            return items.size
-        }
-
-        fun updateList(newList: List<T>) {
-            val diffResult = DiffUtil.calculateDiff(
-                GenericDiffCallback(this.items, newList)
-            )
-
-            items.clear()
-            items.addAll(newList)
-
-            diffResult.dispatchUpdatesTo(this)
-        }
-
-        inner class GenericDiffCallback(
-            private val oldList: List<T>,
-            private val newList: List<T>
-        ) :
-            DiffUtil.Callback() {
-            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-                comparison(oldList[oldItemPosition], newList[newItemPosition])
-
-            override fun getOldListSize() = oldList.size
-
-            override fun getNewListSize() = newList.size
-
-            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-                oldList[oldItemPosition] == newList[newItemPosition]
-        }
-    }
-
     fun Activity.addRepositoryDialog(
         repositoryName: String,
         repositoryURL: String,
@@ -660,7 +591,7 @@ object AppContextUtils {
     ) = (this.getActivity() ?: activity)?.runOnUiThread {
         try {
             val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(url)
+            intent.data = url.toUri()
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
             // activityResultRegistry is used to fall back to webview if a browser is missing
@@ -742,6 +673,18 @@ object AppContextUtils {
             }
         }
         return ""
+    }
+
+    fun Context.getShortSeasonText(episode: Int?, season: Int?): String? {
+        val rEpisode = if (episode == 0) null else episode
+        val rSeason = if (season == 0) null else season
+        val seasonNameShort = getString(R.string.season_short)
+        val episodeNameShort = getString(R.string.episode_short)
+        return if (rEpisode != null && rSeason != null) {
+            "$seasonNameShort${rSeason}:$episodeNameShort${rEpisode}"
+        } else if (rEpisode != null) {
+            "$episodeNameShort$rEpisode"
+        }else null
     }
 
     fun Activity?.loadCache() {

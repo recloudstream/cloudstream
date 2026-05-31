@@ -72,7 +72,6 @@
     <string name="popup_delete_file">سڕینەوەی فایل</string>
     <string name="popup_resume_download">دووبارە دەستپێکردنەوەی دابەزاندن</string>
     <string name="popup_pause_download">وەستاندنی دابەزاندن</string>
-    <string name="pref_disable_acra">ڕاپۆرتکردنی هەڵە بە شێوەیەکی ئۆتۆماتیکی لەکاربخە</string>
     <string name="home_more_info">زانیاری زیاتر</string>
     <string name="home_expanded_hide">شاردنەوە</string>
     <string name="home_info">زانیاری</string>

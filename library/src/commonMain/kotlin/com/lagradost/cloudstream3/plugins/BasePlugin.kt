@@ -17,10 +17,7 @@ abstract class BasePlugin {
     fun registerMainAPI(element: MainAPI) {
         Log.i(PLUGIN_TAG, "Adding ${element.name} (${element.mainUrl}) MainAPI")
         element.sourcePlugin = this.filename
-        // Race condition causing which would case duplicates if not for distinctBy
-        synchronized(APIHolder.allProviders) {
-            APIHolder.allProviders.add(element)
-        }
+        APIHolder.allProviders.add(element)
         APIHolder.addPluginMapping(element)
     }
 
@@ -51,7 +48,8 @@ abstract class BasePlugin {
     /** Full file path to the plugin. */
     @Deprecated(
         "Renamed to `filename` to follow conventions",
-        replaceWith = ReplaceWith("filename")
+        replaceWith = ReplaceWith("filename"),
+        level = DeprecationLevel.ERROR
     )
     var __filename: String?
         get() = filename

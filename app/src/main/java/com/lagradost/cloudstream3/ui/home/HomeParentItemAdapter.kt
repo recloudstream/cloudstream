@@ -6,10 +6,8 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.HomepageParentBinding
@@ -17,15 +15,16 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.BaseAdapter
 import com.lagradost.cloudstream3.ui.BaseDiffCallback
 import com.lagradost.cloudstream3.ui.ViewHolderState
+import com.lagradost.cloudstream3.ui.newSharedPool
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
+import com.lagradost.cloudstream3.ui.setRecycledViewPool
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRecyclerScrollable
-import com.lagradost.cloudstream3.utils.AppContextUtils.setMaxViewPoolSize
 
 class LoadClickCallback(
     val action: Int = 0,
@@ -35,13 +34,11 @@ class LoadClickCallback(
 )
 
 open class ParentItemAdapter(
-    open val fragment: Fragment,
     id: Int,
     private val clickCallback: (SearchClickCallback) -> Unit,
     private val moreInfoClickCallback: (HomeViewModel.ExpandableHomepageList) -> Unit,
     private val expandCallback: ((String) -> Unit)? = null,
 ) : BaseAdapter<HomeViewModel.ExpandableHomepageList, Bundle>(
-    fragment,
     id,
     diffCallback = BaseDiffCallback(
         itemSame = { a, b -> a.list.name == b.list.name },
@@ -50,10 +47,8 @@ open class ParentItemAdapter(
         })
 ) {
     companion object {
-        // The vast majority of the lag comes from creating the view
-        // This simply shares the views between all HomeChildItemAdapter
-        private val sharedPool =
-            RecyclerView.RecycledViewPool().apply { this.setMaxRecycledViews(0, 20) }
+        val sharedPool =
+            newSharedPool { setMaxRecycledViews(CONTENT, 4) }
     }
 
     data class ParentItemHolder(val binding: ViewBinding) : ViewHolderState<Bundle>(binding) {
@@ -73,8 +68,11 @@ open class ParentItemAdapter(
         }
     }
 
-    override fun submitList(list: List<HomeViewModel.ExpandableHomepageList>?) {
-        super.submitList(list?.sortedBy { it.list.list.isEmpty() })
+    override fun submitList(
+        list: Collection<HomeViewModel.ExpandableHomepageList>?,
+        commitCallback: Runnable?
+    ) {
+        super.submitList(list?.sortedBy { it.list.list.isEmpty() }, commitCallback)
     }
 
     override fun onUpdateContent(
@@ -100,9 +98,8 @@ open class ParentItemAdapter(
         binding.apply {
             val currentAdapter = homeChildRecyclerview.adapter as? HomeChildItemAdapter
             if (currentAdapter == null) {
-                homeChildRecyclerview.setRecycledViewPool(sharedPool)
+                homeChildRecyclerview.setRecycledViewPool(HomeChildItemAdapter.sharedPool)
                 homeChildRecyclerview.adapter = HomeChildItemAdapter(
-                    fragment = fragment,
                     id = id + position + 100,
                     clickCallback = clickCallback,
                     nextFocusUp = homeChildRecyclerview.nextFocusUpId,
@@ -187,11 +184,6 @@ open class ParentItemAdapter(
         }
 
         return ParentItemHolder(binding)
-    }
-
-    fun updateList(newList: List<HomePageList>) {
-        submitList(newList.map { HomeViewModel.ExpandableHomepageList(it, 1, false) }
-            .toMutableList())
     }
 }
 

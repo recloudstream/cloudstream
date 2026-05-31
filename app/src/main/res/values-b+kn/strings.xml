@@ -26,7 +26,6 @@
     <string name="download_storage_text">ಇಂಟರ್ನಲ್ ಸ್ಟೋರೇಜ್</string>
     <string name="app_dubbed_text">ಡಬ್</string>
     <string name="app_subbed_text">ಸಬ್</string>
-    <string name="pref_disable_acra">ಸ್ವಯಂಚಾಲಿತ ದೋಷ ವರದಿಯನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ</string>
     <string name="home_expanded_hide">ಹೈಡ್</string>
     <string name="home_play">ಪ್ಲೇ</string>
     <string name="home_info">ಮಾಹಿತಿ</string>
@@ -84,8 +83,7 @@
     <string name="result_share">ಶೇರ್</string>
     <string name="popup_delete_file">ಫೈಲ್ ಅಳಿಸಿ</string>
     <string name="home_more_info">ಹೆಚ್ಚಿನ ಮಾಹಿತಿ</string>
-    <string name="new_update_format" formatted="true">ಹೊಸ ಅಪ್ಡೇಟ್ ಬಂದಿದೆ
-\n%1$s-%2$s</string>
+    <string name="new_update_format" formatted="true">ಹೊಸ ಅಪ್ಡೇಟ್ ಬಂದಿದೆ \n%1$s-%2$s</string>
     <string name="loading">ಲೋಡಿಂಗ್…</string>
     <string name="subs_download_languages">ಡೌನ್‌ಲೋಡ್ ಭಾಷೆಗಳನ್ನು ಮಾಡಿ</string>
     <string name="play_livestream_button">ಲೈವ್‌ಸ್ಟ್ರೀಮ್ ಪ್ಲೇ ಮಾಡಿ</string>
@@ -130,5 +128,4 @@
     <string name="swipe_to_change_settings_des">Brightness ಅಥವಾ volume ಬದಲಾಯಿಸಲು ಎಡ ಅಥವಾ ಬಲಭಾಗದಲ್ಲಿ ಮೇಲಕ್ಕೆ ಅಥವಾ ಕೆಳಕ್ಕೆ ಸ್ಲೈಡ್ ಮಾಡಿ</string>
     <string name="autoplay_next_settings_des">ಈಗಿನ ಎಪಿಸೋಡ್ ಮುಗಿದಾಗ ಮುಂದಿನ ಎಪಿಸೋಡ್ ಅನ್ನು ಪ್ರಾರಂಭಿಸಿ</string>
     <string name="swipe_to_change_settings">ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಬದಲಾಯಿಸಲು ಸ್ವೈಪ್ ಮಾಡಿ</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>

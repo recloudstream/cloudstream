@@ -1,13 +1,10 @@
 package com.lagradost.cloudstream3.ui.setup
 
-import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
+import androidx.core.content.edit
 import androidx.core.util.forEach
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.AllLanguagesName
@@ -15,33 +12,20 @@ import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.databinding.FragmentSetupProviderLanguagesBinding
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 
-class SetupFragmentProviderLanguage : Fragment() {
-    var binding: FragmentSetupProviderLanguagesBinding? = null
+class SetupFragmentProviderLanguage : BaseFragment<FragmentSetupProviderLanguagesBinding>(
+    BaseFragment.BindingCreator.Inflate(FragmentSetupProviderLanguagesBinding::inflate)
+) {
 
-    override fun onDestroyView() {
-        binding = null
-        super.onDestroyView()
+    override fun fixLayout(view: View) {
+        fixSystemBarsPadding(view)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val localBinding = FragmentSetupProviderLanguagesBinding.inflate(inflater, container, false)
-        binding = localBinding
-        return localBinding.root
-        //return inflater.inflate(R.layout.fragment_setup_provider_languages, container, false)
-    }
-
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        fixPaddingStatusbar(binding?.setupRoot)
-
+    override fun onBindingCreated(binding: FragmentSetupProviderLanguagesBinding) {
         safe {
             val ctx = context ?: return@safe
 
@@ -52,10 +36,10 @@ class SetupFragmentProviderLanguage : Fragment() {
 
             val currentLangTags = ctx.getApiProviderLangSettings()
 
-            val languagesTagName = synchronized(APIHolder.apis) {
-                listOf( Pair(AllLanguagesName, getString(R.string.all_languages_preference)) ) +
+            val languagesTagName = APIHolder.apis.withLock {
+                listOf(Pair(AllLanguagesName, getString(R.string.all_languages_preference))) +
                 APIHolder.apis.map { Pair(it.lang, getNameNextToFlagEmoji(it.lang) ?: it.lang) }
-                    .toSet().sortedBy { it.second.substringAfter("\u00a0").lowercase() } // name ignoring flag emoji
+                    .toSet().sortedBy { it.second.substringAfter("\u00a0").lowercase() } // name ignoring flag emoji
             }
 
             val currentIndexList = currentLangTags.map { langTag ->
@@ -63,7 +47,7 @@ class SetupFragmentProviderLanguage : Fragment() {
             }.filter { it > -1 }
 
             arrayAdapter.addAll(languagesTagName.map { it.second })
-            binding?.apply {
+            binding.apply {
                 listview1.adapter = arrayAdapter
                 listview1.choiceMode = AbsListView.CHOICE_MODE_MULTIPLE
                 currentIndexList.forEach {
@@ -75,10 +59,12 @@ class SetupFragmentProviderLanguage : Fragment() {
                     listview1.checkedItemPositions?.forEach { key, value ->
                         if (value) selectedLanguages.add(languagesTagName[key].first)
                     }
-                    settingsManager.edit().putStringSet(
-                        ctx.getString(R.string.provider_lang_key),
-                        selectedLanguages.toSet()
-                    ).apply()
+                    settingsManager.edit {
+                        putStringSet(
+                            ctx.getString(R.string.provider_lang_key),
+                            selectedLanguages.toSet()
+                        )
+                    }
                 }
 
                 nextBtt.setOnClickListener {

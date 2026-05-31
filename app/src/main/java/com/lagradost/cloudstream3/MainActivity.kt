@@ -9,7 +9,6 @@ import android.content.SharedPreferences
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Rect
-import android.net.Uri
 import android.os.Bundle
 import android.util.AttributeSet
 import android.util.Log
@@ -24,14 +23,14 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.IdRes
 import androidx.annotation.MainThread
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.edit
+import androidx.core.net.toUri
 import androidx.core.view.children
 import androidx.core.view.get
 import androidx.core.view.isGone
@@ -65,9 +64,9 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.lagradost.cloudstream3.APIHolder.allProviders
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.initAll
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
 import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
@@ -120,6 +119,7 @@ import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
 import com.lagradost.cloudstream3.ui.settings.SettingsGeneral
@@ -157,17 +157,20 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.accounts
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
-import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
+import com.lagradost.cloudstream3.utils.InAppUpdater.runAutoUpdate
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SnackbarHelper.showSnackbar
+import com.lagradost.cloudstream3.utils.TvChannelUtils
 import com.lagradost.cloudstream3.utils.UIHelper.changeStatusBarState
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
-import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.enableEdgeToEdgeCompat
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
+import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
@@ -185,14 +188,9 @@ import java.nio.charset.Charset
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.system.exitProcess
-import androidx.core.net.toUri
-import androidx.tvprovider.media.tv.Channel
-import androidx.tvprovider.media.tv.TvContractCompat
-import android.content.ComponentName
-import android.content.ContentUris
-
-import com.lagradost.cloudstream3.ui.home.HomeFragment
-import com.lagradost.cloudstream3.utils.TvChannelUtils
+import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
     companion object {
@@ -201,6 +199,21 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         const val TAG = "MAINACT"
         const val ANIMATED_OUTLINE: Boolean = false
         var lastError: String? = null
+
+        /** Update lastError variable based on error file, to check if app crashed.
+         * Can be called multiple times without changing the lastError variable changing.
+         **/
+        fun setLastError(context: Context) {
+            if (lastError != null) return
+
+            val errorFile = context.filesDir.resolve("last_error")
+            if (errorFile.exists() && errorFile.isFile) {
+                lastError = errorFile.readText(Charset.defaultCharset())
+                errorFile.delete()
+            } else {
+                lastError = null
+            }
+        }
 
         private const val FILE_DELETE_KEY = "FILES_TO_DELETE_KEY"
         const val API_NAME_EXTRA_KEY = "API_NAME_EXTRA_KEY"
@@ -263,7 +276,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
          * @return true if the str has launched an app task (be it successful or not)
          * @param isWebview does not handle providers and opening download page if true. Can still add repos and login.
          * */
-        @Suppress("DEPRECATION_ERROR")
         fun handleAppIntentUrl(
             activity: FragmentActivity?,
             str: String?,
@@ -340,7 +352,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         activity?.findViewById<NavigationRailView>(R.id.nav_rail_view)?.selectedItemId =
                             R.id.navigation_search
                     } else if (safeURI(str)?.scheme == APP_STRING_PLAYER) {
-                        val uri = Uri.parse(str)
+                        val uri = str.toUri()
                         val name = uri.getQueryParameter("name")
                         val url = URLDecoder.decode(uri.authority, "UTF-8")
 
@@ -350,7 +362,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                                 LinkGenerator(
                                     listOf(BasicLink(url, name)),
                                     extract = true,
-                                )
+                                    id = url.hashCode()
+                                ), 0
                             )
                         )
                     } else if (safeURI(str)?.scheme == APP_STRING_RESUME_WATCHING) {
@@ -366,17 +379,21 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                                 START_ACTION_RESUME_LATEST
                             )
                         }
-                    } else if(str.startsWith(APP_STRING_SHARE)){
-                        try{
+                    } else if (str.startsWith(APP_STRING_SHARE)) {
+                        try {
                             val data = str.substringAfter("$APP_STRING_SHARE:")
-                            val parts = data.split("?",limit=2)
-                            loadResult(String(base64DecodeArray(parts[1]), Charsets.UTF_8),String(base64DecodeArray(parts[0]), Charsets.UTF_8),"")
+                            val parts = data.split("?", limit = 2)
+                            loadResult(
+                                String(base64DecodeArray(parts[1]), Charsets.UTF_8),
+                                String(base64DecodeArray(parts[0]), Charsets.UTF_8),
+                                ""
+                            )
                             return true
-                        }catch (e: Exception) {
-                            showToast("Invalid Uri",Toast.LENGTH_SHORT)
+                        } catch (e: Exception) {
+                            showToast("Invalid Uri", Toast.LENGTH_SHORT)
                             return false
                         }
-                    }else if (!isWebview) {
+                    } else if (!isWebview) {
                         if (str.startsWith(DOWNLOAD_NAVIGATE_TO)) {
                             this.navigate(R.id.navigation_downloads)
                             return true
@@ -391,13 +408,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                                 return true
                             }
 
-                            synchronized(apis) {
-                                for (api in apis) {
-                                    if (str.startsWith(api.mainUrl)) {
-                                        loadResult(str, api.name, "")
-                                        return true
-                                    }
-                                }
+                            val matchedApi = apis.filter { str.startsWith(it.mainUrl) }.firstOrNull()
+                            if (matchedApi != null) {
+                                loadResult(str, matchedApi.name, "")
+                                return true
                             }
                         }
                     }
@@ -426,6 +440,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
 
     var lastPopup: SearchResponse? = null
+    var lastPopupJob: Job? = null
     fun loadPopup(result: SearchResponse, load: Boolean = true) {
         lastPopup = result
         val syncName = syncViewModel.syncName(result.apiName)
@@ -441,7 +456,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             syncViewModel.clear()
         }
 
-        if (load) {
+        lastPopupJob?.cancel()
+        lastPopupJob = if (load) {
             viewModel.load(
                 this, result.url, result.apiName, false, if (getApiDubstatusSettings()
                         .contains(DubStatus.Dubbed)
@@ -488,6 +504,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             R.id.navigation_downloads,
             R.id.navigation_settings,
             R.id.navigation_download_child,
+            R.id.navigation_download_queue,
             R.id.navigation_subtitles,
             R.id.navigation_chrome_subtitles,
             R.id.navigation_settings_player,
@@ -535,23 +552,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             layoutParams = params
         }*/
 
-        val landscape = when (resources.configuration.orientation) {
-            Configuration.ORIENTATION_LANDSCAPE -> {
-                true
-            }
-
-            Configuration.ORIENTATION_PORTRAIT -> {
-                isLayout(TV or EMULATOR)
-            }
-
-            else -> {
-                false
-            }
-        }
-
         binding?.apply {
-            navRailView.isVisible = isNavVisible && landscape
-            navView.isVisible = isNavVisible && !landscape
+            navRailView.isVisible = isNavVisible && isLandscape()
+            navView.isVisible = isNavVisible && !isLandscape()
+            navHostFragment.apply {
+                val marginPx = resources.getDimensionPixelSize(R.dimen.nav_rail_view_width)
+                layoutParams =
+                    (navHostFragment.layoutParams as ViewGroup.MarginLayoutParams).apply {
+                        marginStart =
+                            if (isNavVisible && isLandscape() && isLayout(TV or EMULATOR)) marginPx else 0
+                    }
+            }
 
             /**
              * We need to make sure if we return to a sub-fragment,
@@ -559,7 +570,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
              * highlight the wrong one in UI.
              */
             when (destination.id) {
-                in listOf(R.id.navigation_downloads, R.id.navigation_download_child) -> {
+                in listOf(
+                    R.id.navigation_downloads,
+                    R.id.navigation_download_child,
+                    R.id.navigation_download_queue
+                ) -> {
                     navRailView.menu.findItem(R.id.navigation_downloads).isChecked = true
                     navView.menu.findItem(R.id.navigation_downloads).isChecked = true
                 }
@@ -681,7 +696,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             .setNegativeButton(R.string.no) { _, _ -> /*NO-OP*/ }
             .setPositiveButton(R.string.yes) { _, _ ->
                 if (dontShowAgainCheck.isChecked) {
-                    settingsManager.edit().putInt(getString(R.string.confirm_exit_key), 1).commit()
+                    settingsManager.edit(commit = true) {
+                        putInt(getString(R.string.confirm_exit_key), 1)
+                    }
                 }
                 // finish() causes a bug on some TVs where player
                 // may keep playing after closing the app.
@@ -706,10 +723,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         broadcastIntent.setClass(this, VideoDownloadRestartReceiver::class.java)
         this.sendBroadcast(broadcastIntent)
         afterPluginsLoadedEvent -= ::onAllPluginsLoaded
+        detachBackPressedCallback("MainActivityDefault")
         super.onDestroy()
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         handleAppIntent(intent)
         super.onNewIntent(intent)
     }
@@ -788,12 +806,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
     }
 
-
     private val pluginsLock = Mutex()
     private fun onAllPluginsLoaded(success: Boolean = false) {
         ioSafe {
             pluginsLock.withLock {
-                synchronized(allProviders) {
+                allProviders.withLock {
                     // Load cloned sites after plugins have been loaded since clones depend on plugins.
                     try {
                         getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
@@ -839,6 +856,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
     private fun hidePreviewPopupDialog() {
         bottomPreviewPopup.dismissSafe(this)
+        lastPopupJob?.cancel()
+        lastPopupJob = null
         bottomPreviewPopup = null
         bottomPreviewBinding = null
     }
@@ -1158,18 +1177,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
     }
 
-    @Suppress("DEPRECATION_ERROR")
     override fun onCreate(savedInstanceState: Bundle?) {
-        app.initClient(this)
+        app.initClient(this, ignoreSSL = false)
+        @OptIn(UnsafeSSL::class)
+        insecureApp.initClient(this, ignoreSSL = true)
+
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
-        val errorFile = filesDir.resolve("last_error")
-        if (errorFile.exists() && errorFile.isFile) {
-            lastError = errorFile.readText(Charset.defaultCharset())
-            errorFile.delete()
-        } else {
-            lastError = null
-        }
+        setLastError(this)
 
         val settingsForProvider = SettingsJson()
         settingsForProvider.enableAdult =
@@ -1178,6 +1193,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         MainAPI.settingsForProvider = settingsForProvider
 
         loadThemes(this)
+        enableEdgeToEdgeCompat()
+        setNavigationBarColorCompat(R.attr.primaryGrayBackground)
         updateLocale()
         super.onCreate(savedInstanceState)
         try {
@@ -1198,6 +1215,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             val lastAppAutoBackup: String = getKey("VERSION_NAME") ?: ""
             if (appVer != lastAppAutoBackup) {
                 setKey("VERSION_NAME", BuildConfig.VERSION_NAME)
+                if (lastAppAutoBackup.isEmpty()) return@safe
+
                 safe {
                     backup(this)
                 }
@@ -1259,6 +1278,22 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         } catch (t: Throwable) {
             showToast(txt(R.string.unable_to_inflate, t.message ?: ""), Toast.LENGTH_LONG)
             null
+        }
+
+        binding?.apply {
+            fixSystemBarsPadding(
+                navView,
+                heightResId = R.dimen.nav_view_height,
+                padTop = false,
+                overlayCutout = false
+            )
+
+            fixSystemBarsPadding(
+                navRailView,
+                widthResId = R.dimen.nav_rail_view_width,
+                padRight = false,
+                padTop = false
+            )
         }
 
         // overscan
@@ -1618,9 +1653,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         ioSafe {
             initAll()
             // No duplicates (which can happen by registerMainAPI)
-            apis = synchronized(allProviders) {
-                allProviders.distinctBy { it }
-            }
+            apis = allProviders.distinctBy { it }
         }
 
         //  val navView: BottomNavigationView = findViewById(R.id.nav_view)
@@ -1643,10 +1676,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             if (navDestination.matchDestination(R.id.navigation_home)) {
                 attachBackPressedCallback("MainActivity") {
                     showConfirmExitDialog(settingsManager)
-                    @Suppress("DEPRECATION")
-                    window?.navigationBarColor =
-                        colorFromAttribute(R.attr.primaryGrayBackground)
-                    updateLocale()
                 }
             } else detachBackPressedCallback("MainActivity")
         }
@@ -1678,14 +1707,23 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
 
         binding?.navRailView?.apply {
-            itemRippleColor = rippleColor
-            itemActiveIndicatorColor = rippleColor
+            if (isLayout(PHONE)) {
+                itemRippleColor = rippleColor
+                itemActiveIndicatorColor = rippleColor
+            } else {
+                val rippleColor = ColorStateList.valueOf(getResourceColor(R.attr.textColor, 1.0f))
+                val rippleColorTransparent =
+                    ColorStateList.valueOf(getResourceColor(R.attr.textColor, 0.2f))
+                itemSpacing = 12.toPx // expandedItemSpacing does not have an attr
+                itemRippleColor = rippleColorTransparent
+                itemActiveIndicatorColor = rippleColor
+            }
             setupWithNavController(navController)
-            if (isLayout(TV or EMULATOR)) {
+            /*if (isLayout(TV or EMULATOR)) {
                 background?.alpha = 200
             } else {
                 background?.alpha = 255
-            }
+            }*/
 
             setOnItemSelectedListener { item ->
                 onNavDestinationSelected(
@@ -1730,6 +1768,58 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
             } else {
                 navProfileRoot.isGone = true
+            }
+        }
+
+        val rail = binding?.navRailView
+        if (rail != null) {
+            binding?.navRailView?.labelVisibilityMode =
+                NavigationRailView.LABEL_VISIBILITY_UNLABELED
+            //val focus = mutableSetOf<Int>()
+
+            var prevId: Int? = null
+            var prevView: View? = null
+
+            // The genius engineers at google did not actually 
+            // write a nextFocus for the navrail
+            rail.findViewById<View?>(R.id.navigation_settings)?.nextFocusDownId =
+                R.id.nav_footer_profile_card
+            for (id in arrayOf(
+                R.id.navigation_home,
+                R.id.navigation_search,
+                R.id.navigation_library,
+                R.id.navigation_downloads,
+                R.id.navigation_settings
+            )) {
+                val view = rail.findViewById<View?>(id) ?: continue
+                prevId?.let { view.nextFocusUpId = it }
+                prevView?.nextFocusDownId = id
+
+                prevView = view
+                prevId = id
+                // Uncomment for focus expand
+                /*if (!isLayout(TV)) {
+                    view.onFocusChangeListener = null
+                } else {
+                    view.onFocusChangeListener =
+                        View.OnFocusChangeListener { v, hasFocus ->
+                            if (hasFocus) {
+                                focus += id
+                                binding?.navRailView?.labelVisibilityMode =
+                                    NavigationRailView.LABEL_VISIBILITY_LABELED
+                                binding?.navRailView?.expand()
+                            } else {
+                                focus -= id
+                                v.post {
+                                    if (focus.isEmpty()) {
+                                        binding?.navRailView?.labelVisibilityMode =
+                                            NavigationRailView.LABEL_VISIBILITY_UNLABELED
+                                        binding?.navRailView?.collapse()
+                                    }
+                                }
+                            }
+                        }
+                }*/
             }
         }
 
@@ -1845,7 +1935,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
          fun buildMediaQueueItem(video: String): MediaQueueItem {
            // val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_PHOTO)
             //movieMetadata.putString(MediaMetadata.KEY_TITLE, "CloudStream")
-            val mediaInfo = MediaInfo.Builder(Uri.parse(video).toString())
+            val mediaInfo = MediaInfo.Builder(video.toUri().toString())
                 .setStreamType(MediaInfo.STREAM_TYPE_NONE)
                 .setContentType(MimeTypes.IMAGE_JPEG)
                // .setMetadata(movieMetadata).build()
@@ -1871,7 +1961,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
         if (BuildConfig.DEBUG) {
             var providersAndroidManifestString = "Current androidmanifest should be:\n"
-            synchronized(allProviders) {
+            allProviders.withLock {
                 for (api in allProviders) {
                     providersAndroidManifestString += "<data android:scheme=\"https\" android:host=\"${
                         api.mainUrl.removePrefix(
@@ -1908,7 +1998,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
 
         main {
-            val channelId = TvChannelUtils.getChannelId(this@MainActivity, getString(R.string.app_name))
+            val channelId =
+                TvChannelUtils.getChannelId(this@MainActivity, getString(R.string.app_name))
             if (channelId == null) {
                 Log.d("TvChannel", "Channel not found, creating")
                 TvChannelUtils.createTvChannel(this@MainActivity)
@@ -1948,26 +2039,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 //            }
 //        }
 
-        onBackPressedDispatcher.addCallback(
-            this,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    @Suppress("DEPRECATION")
-                    window?.navigationBarColor = colorFromAttribute(R.attr.primaryGrayBackground)
-                    updateLocale()
+        attachBackPressedCallback("MainActivityDefault") {
+            setNavigationBarColorCompat(R.attr.primaryGrayBackground)
+            updateLocale()
+            runDefault()
+        }
 
-                    // If we don't disable we end up in a loop with default behavior calling
-                    // this callback as well, so we disable it, run default behavior,
-                    // then re-enable this callback so it can be used for next back press.
-                    isEnabled = false
-                    onBackPressedDispatcher.onBackPressed()
-                    isEnabled = true
-                }
-            }
-        )
+        // Start the download queue
+        DownloadQueueManager.init(this)
+    }
 
-
-    }  /** Biometric stuff **/
+    /** Biometric stuff **/
     override fun onAuthenticationSuccess() {
         // make background (nav host fragment) visible again
         binding?.navHostFragment?.isInvisible = false

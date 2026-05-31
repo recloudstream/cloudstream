@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.button.MaterialButton 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/clear_suggestions_button"
+    style="@style/BlackButton"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_gravity="bottom"
+    android:layout_margin="0dp"
+    android:padding="0dp"
+    android:text="@string/clear_suggestions"
+    app:cornerRadius="0dp"
+    app:icon="@drawable/ic_baseline_close_24" />

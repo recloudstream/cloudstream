@@ -81,6 +81,7 @@
             android:id="@+id/repo_url_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:autofillHints="no"
             android:hint="@string/repository_url_hint"
             android:inputType="textUri"
             android:nextFocusLeft="@id/apply_btt"

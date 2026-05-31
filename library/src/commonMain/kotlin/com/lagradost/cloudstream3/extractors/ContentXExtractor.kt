@@ -17,15 +17,15 @@ open class ContentX : ExtractorApi() {
         val iSource  = app.get(url, referer=extRef).text
         val iExtract = Regex("""window\.openPlayer\('([^']+)'""").find(iSource)!!.groups[1]?.value ?: throw ErrorLoadingException("iExtract is null")
 
-		val subUrls = mutableSetOf<String>()
+        val subUrls = mutableSetOf<String>()
         Regex("""\"file\":\"([^\"]+)\",\"label\":\"([^\"]+)\"""").findAll(iSource).forEach {
             val (subUrl, subLang) = it.destructured
 
-			if (subUrl in subUrls) { return@forEach }
- 			subUrls.add(subUrl)
+            if (subUrl in subUrls) { return@forEach }
+            subUrls.add(subUrl)
 
             subtitleCallback.invoke(
-                SubtitleFile(
+                newSubtitleFile(
                     lang = subLang.replace("\\u0131", "ı").replace("\\u0130", "İ").replace("\\u00fc", "ü").replace("\\u00e7", "ç"),
                     url  = fixUrl(subUrl.replace("\\", ""))
                 )

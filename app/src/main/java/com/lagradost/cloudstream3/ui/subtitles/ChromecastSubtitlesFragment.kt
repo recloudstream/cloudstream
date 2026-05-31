@@ -7,13 +7,12 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.TypedValue
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.Fragment
+import androidx.annotation.OptIn
 import androidx.media3.common.text.Cue
+import androidx.media3.common.util.UnstableApi
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.android.gms.cast.TextTrackStyle.EDGE_TYPE_DEPRESSED
 import com.google.android.gms.cast.TextTrackStyle.EDGE_TYPE_DROP_SHADOW
@@ -21,19 +20,21 @@ import com.google.android.gms.cast.TextTrackStyle.EDGE_TYPE_NONE
 import com.google.android.gms.cast.TextTrackStyle.EDGE_TYPE_OUTLINE
 import com.google.android.gms.cast.TextTrackStyle.EDGE_TYPE_RAISED
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.ChromecastSubtitleSettingsBinding
+import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
@@ -50,8 +51,10 @@ data class SaveChromeCaptionStyle(
     @JsonProperty("fontScale") var fontScale: Float = 1.05f,
     @JsonProperty("windowColor") var windowColor: Int = Color.TRANSPARENT,
 )
-@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
-class ChromecastSubtitlesFragment : Fragment() {
+
+class ChromecastSubtitlesFragment : BaseFragment<ChromecastSubtitleSettingsBinding>(
+    BaseFragment.BindingCreator.Inflate(ChromecastSubtitleSettingsBinding::inflate)
+) {
     companion object {
         val applyStyleEvent = Event<SaveChromeCaptionStyle>()
 
@@ -142,23 +145,6 @@ class ChromecastSubtitlesFragment : Fragment() {
         //subtitle_text?.setStyle(fromSaveToStyle(state))
     }
 
-    var binding : ChromecastSubtitleSettingsBinding? = null
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        val localBinding = ChromecastSubtitleSettingsBinding.inflate(inflater, container, false)
-        binding = localBinding
-        return localBinding.root//inflater.inflate(R.layout.chromecast_subtitle_settings, container, false)
-    }
-
-    override fun onDestroyView() {
-        binding = null
-        super.onDestroyView()
-    }
-
     private lateinit var state: SaveChromeCaptionStyle
     private var hide: Boolean = true
 
@@ -167,26 +153,29 @@ class ChromecastSubtitlesFragment : Fragment() {
         onColorSelectedEvent -= ::onColorSelected
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun fixLayout(view: View) {
+        fixSystemBarsPadding(
+            view,
+            padBottom = isLandscape(),
+            padLeft = isLayout(TV or EMULATOR)
+        )
+    }
+
+    override fun onBindingCreated(binding: ChromecastSubtitleSettingsBinding) {
         hide = arguments?.getBoolean("hide") ?: true
         onColorSelectedEvent += ::onColorSelected
         onDialogDismissedEvent += ::onDialogDismissed
-
-        fixPaddingStatusbar(binding?.subsRoot)
 
         state = getCurrentSavedStyle()
         updateState()
 
         val isTvSettings = isLayout(TV or EMULATOR)
-
         fun View.setFocusableInTv() {
             this.isFocusableInTouchMode = isTvSettings
         }
 
         fun View.setup(id: Int) {
             setFocusableInTv()
-
             this.setOnClickListener {
                 activity?.let {
                     ColorPickerDialog.newBuilder()
@@ -204,20 +193,19 @@ class ChromecastSubtitlesFragment : Fragment() {
             }
         }
 
-        binding?.apply {
+        binding.apply {
             subsTextColor.setup(0)
             subsOutlineColor.setup(1)
             subsBackgroundColor.setup(2)
         }
-
 
         val dismissCallback = {
             if (hide)
                 activity?.hideSystemUI()
         }
 
-        binding?.subsEdgeType?.setFocusableInTv()
-        binding?.subsEdgeType?.setOnClickListener { textView ->
+        binding.subsEdgeType.setFocusableInTv()
+        binding.subsEdgeType.setOnClickListener { textView ->
             val edgeTypes = listOf(
                 Pair(
                     EDGE_TYPE_NONE,
@@ -254,15 +242,15 @@ class ChromecastSubtitlesFragment : Fragment() {
             }
         }
 
-        binding?.subsEdgeType?.setOnLongClickListener {
+        binding.subsEdgeType.setOnLongClickListener {
             state.edgeType = defaultState.edgeType
             updateState()
             showToast(R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
             return@setOnLongClickListener true
         }
 
-        binding?.subsFontSize?.setFocusableInTv()
-        binding?.subsFontSize?.setOnClickListener { textView ->
+        binding.subsFontSize.setFocusableInTv()
+        binding.subsFontSize.setOnClickListener { textView ->
             val fontSizes = listOf(
                 Pair(0.75f, "75%"),
                 Pair(0.80f, "80%"),
@@ -295,17 +283,15 @@ class ChromecastSubtitlesFragment : Fragment() {
             }
         }
 
-        binding?.subsFontSize?.setOnLongClickListener { _ ->
+        binding.subsFontSize.setOnLongClickListener { _ ->
             state.fontScale = defaultState.fontScale
             //textView.context.updateState() // font size not changed
             showToast(R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
             return@setOnLongClickListener true
         }
 
-
-
-        binding?.subsFont?.setFocusableInTv()
-        binding?.subsFont?.setOnClickListener { textView ->
+        binding.subsFont.setFocusableInTv()
+        binding.subsFont.setOnClickListener { textView ->
             val fontTypes = listOf(
                 null to textView.context.getString(R.string.normal),
                 "Droid Sans" to "Droid Sans",
@@ -329,24 +315,30 @@ class ChromecastSubtitlesFragment : Fragment() {
                 updateState()
             }
         }
-        binding?.subsFont?.setOnLongClickListener { _ ->
+        binding.subsFont.setOnLongClickListener { _ ->
             state.fontFamily = defaultState.fontFamily
             updateState()
             showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
             return@setOnLongClickListener true
         }
 
-        binding?.cancelBtt?.setOnClickListener {
+        binding.cancelBtt.setOnClickListener {
             activity?.popCurrentPage()
         }
 
-        binding?.applyBtt?.setOnClickListener {
+        binding.applyBtt.setOnClickListener {
             it.context.saveStyle(state)
             applyStyleEvent.invoke(state)
             //it.context.fromSaveToStyle(state)
             activity?.popCurrentPage()
         }
-        binding?.subtitleText?.apply {
+
+        setSubtitleCues(binding)
+    }
+
+    @OptIn(UnstableApi::class)
+    private fun setSubtitleCues(binding: ChromecastSubtitleSettingsBinding) {
+        binding.subtitleText.apply {
             setCues(
                 listOf(
                     Cue.Builder()

@@ -2,7 +2,7 @@ package com.lagradost.cloudstream3.actions.temp
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import androidx.core.net.toUri
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.actions.VideoClickAction
 import com.lagradost.cloudstream3.ui.result.LinkLoadingResult
@@ -33,7 +33,7 @@ class PlayInBrowserAction: VideoClickAction() {
     ) {
         val link = result.links.getOrNull(index ?: 0) ?: return
         val i = Intent(Intent.ACTION_VIEW)
-        i.data = Uri.parse(link.url)
+        i.data = link.url.toUri()
         launch(i)
     }
 }

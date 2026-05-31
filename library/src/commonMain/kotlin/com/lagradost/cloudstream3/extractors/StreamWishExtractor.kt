@@ -1,17 +1,17 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.api.Log
+import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.extractors.helper.JwPlayerHelper
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.getAndUnpack
 import com.lagradost.cloudstream3.utils.getPacked
 import com.lagradost.cloudstream3.network.WebViewResolver
-
-
 
 class Mwish : StreamWishExtractor() {
     override val name = "Mwish"
@@ -26,6 +26,12 @@ class Dwish : StreamWishExtractor() {
 class Ewish : StreamWishExtractor() {
     override val name = "Embedwish"
     override val mainUrl = "https://embedwish.com"
+}
+
+@Prerelease
+class Hgcloudto : StreamWishExtractor() {
+    override val name = "Hgcloud"
+    override val mainUrl = "https://Hgcloud.to"
 }
 
 class WishembedPro : StreamWishExtractor() {
@@ -137,6 +143,16 @@ class Playerwish : StreamWishExtractor() {
     override val mainUrl = "https://playerwish.com"
 }
 
+class StreamHLS : StreamWishExtractor() {
+    override val name = "StreamHLS"
+    override val mainUrl = "https://streamhls.to"
+}
+
+class HlsWish : StreamWishExtractor() {
+    override val name = "HlsWish"
+    override val mainUrl = "https://hlswish.com"
+}
+
 open class StreamWishExtractor : ExtractorApi() {
     override val name = "Streamwish"
     override val mainUrl = "https://streamwish.to"
@@ -170,18 +186,9 @@ open class StreamWishExtractor : ExtractorApi() {
             else -> pageResponse.document.selectFirst("script:containsData(sources:)")?.data()
         }
 
-        val directStreamUrl = playerScriptData?.let {
-            Regex("""file:\s*"(.*?m3u8.*?)"""").find(it)?.groupValues?.getOrNull(1)
-        }
+        val linkFound = JwPlayerHelper.extractStreamLinks(playerScriptData.orEmpty(), name, mainUrl, callback, subtitleCallback, headers)
 
-        if (!directStreamUrl.isNullOrEmpty()) {
-            M3u8Helper.generateM3u8(
-                name,
-                directStreamUrl,
-                mainUrl,
-                headers = headers
-            ).forEach(callback)
-        } else {
+        if (!linkFound) {
             val webViewM3u8Resolver = WebViewResolver(
                 interceptUrl = Regex("""txt|m3u8"""),
                 additionalUrls = listOf(Regex("""txt|m3u8""")),
@@ -211,6 +218,9 @@ open class StreamWishExtractor : ExtractorApi() {
     private fun resolveEmbedUrl(inputUrl: String): String {
         return if (inputUrl.contains("/f/")) {
             val videoId = inputUrl.substringAfter("/f/")
+            "$mainUrl/$videoId"
+        } else if (inputUrl.contains("/e/")) {
+            val videoId = inputUrl.substringAfter("/e/")
             "$mainUrl/$videoId"
         } else {
             inputUrl

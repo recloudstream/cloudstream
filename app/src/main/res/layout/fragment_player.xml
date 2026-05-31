@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     android:background="@android:color/black"
     android:orientation="horizontal"
-    android:screenOrientation="sensorLandscape"
     app:backgroundTint="@android:color/black"
     app:surface_type="texture_view">
     <!--
@@ -51,11 +50,11 @@
 
             android:text="@string/skip_loading"
             android:textAllCaps="false"
-            android:textColor="?attr/textColor"
+            android:textColor="@color/textColor"
             android:visibility="gone"
             app:cornerRadius="4dp"
             app:icon="@drawable/ic_baseline_skip_next_24"
-            app:iconTint="?attr/textColor"
+            app:iconTint="@color/textColor"
             app:rippleColor="?attr/colorPrimary"
             tools:visibility="visible" />
 

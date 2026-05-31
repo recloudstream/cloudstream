@@ -9,6 +9,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.content.withStyledAttributes
 import androidx.core.view.isVisible
 import androidx.core.widget.ContentLoadingProgressBar
 import com.google.android.material.button.MaterialButton
@@ -59,10 +60,9 @@ class TestView @JvmOverloads constructor(
         playPauseButton = findViewById(R.id.tests_play_pause)
 
         attrs?.let {
-            val typedArray = context.obtainStyledAttributes(it, R.styleable.TestView)
-            val headerText = typedArray.getString(R.styleable.TestView_header_text)
-            mainSectionHeader?.text = headerText
-            typedArray.recycle()
+            context.withStyledAttributes(it, R.styleable.TestView) {
+                mainSectionHeader?.text = getString(R.styleable.TestView_header_text)
+            }
         }
 
         playPauseButton?.setOnClickListener {

@@ -1,47 +1,30 @@
 package com.lagradost.cloudstream3.ui.setup
 
-import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
+import androidx.core.content.edit
 import androidx.core.util.forEach
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.databinding.FragmentSetupMediaBinding
 import com.lagradost.cloudstream3.mvvm.safe
+import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.utils.DataStoreHelper
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 
+class SetupFragmentMedia : BaseFragment<FragmentSetupMediaBinding>(
+    BaseFragment.BindingCreator.Inflate(FragmentSetupMediaBinding::inflate)
+) {
 
-class SetupFragmentMedia : Fragment() {
-    var binding: FragmentSetupMediaBinding? = null
-
-    override fun onDestroyView() {
-        binding = null
-        super.onDestroyView()
+    override fun fixLayout(view: View) {
+        fixSystemBarsPadding(view)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val localBinding = FragmentSetupMediaBinding.inflate(inflater, container, false)
-        binding = localBinding
-        return localBinding.root
-        //return inflater.inflate(R.layout.fragment_setup_media, container, false)
-    }
-
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onBindingCreated(binding: FragmentSetupMediaBinding) {
         safe {
-            fixPaddingStatusbar(binding?.setupRoot)
-
             val ctx = context ?: return@safe
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
 
@@ -52,7 +35,7 @@ class SetupFragmentMedia : Fragment() {
             val selected = mutableListOf<Int>()
 
             arrayAdapter.addAll(names)
-            binding?.apply {
+            binding.apply {
                 listview1.let {
                     it.adapter = arrayAdapter
                     it.choiceMode = AbsListView.CHOICE_MODE_MULTIPLE
@@ -71,9 +54,9 @@ class SetupFragmentMedia : Fragment() {
                             val itemVal = TvType.valueOf(item)
                             itemVal.ordinal.toString()
                         }.toSet()
-                        settingsManager.edit()
-                            .putStringSet(getString(R.string.prefer_media_type_key), prefValues)
-                            .apply()
+                        settingsManager.edit {
+                            putStringSet(getString(R.string.prefer_media_type_key), prefValues)
+                        }
 
                         // Regenerate set homepage
                         DataStoreHelper.currentHomePage = null

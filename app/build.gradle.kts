@@ -1,38 +1,62 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.dokka.gradle.engine.parameters.KotlinPlatform
 import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
-    id("com.android.application")
-    id("kotlin-android")
-    id("org.jetbrains.dokka")
-
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
-val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
-val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
 
-fun getGitCommitHash(): String {
-    return try {
-        val headFile = file("${project.rootDir}/.git/HEAD")
+abstract class GenerateGitHashTask : DefaultTask() {
 
-        // Read the commit hash from .git/HEAD
-        if (headFile.exists()) {
-            val headContent = headFile.readText().trim()
-            if (headContent.startsWith("ref:")) {
-                val refPath = headContent.substring(5) // e.g., refs/heads/main
-                val commitFile = file("${project.rootDir}/.git/$refPath")
-                if (commitFile.exists()) commitFile.readText().trim() else ""
-            } else headContent // If it's a detached HEAD (commit hash directly)
-        } else {
-            "" // If .git/HEAD doesn't exist
-        }.take(7) // Return the short commit hash
-    } catch (_: Throwable) {
-        "" // Just return an empty string if any exception occurs
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val headFile: RegularFileProperty
+
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val headsDir: DirectoryProperty
+
+    @get:OutputDirectory
+    abstract val outputDir: DirectoryProperty
+
+    @TaskAction
+    fun generate() {
+        val head = headFile.get().asFile
+
+        val hash = try {
+            if (head.exists()) {
+                // Read the commit hash from .git/HEAD
+                val headContent = head.readText().trim()
+                if (headContent.startsWith("ref:")) {
+                    val refPath = headContent.substring(5) // e.g., refs/heads/main
+                    val commitFile = File(head.parentFile, refPath)
+                    if (commitFile.exists()) commitFile.readText().trim() else ""
+                } else headContent // If it's a detached HEAD (commit hash directly)
+            } else "" // If .git/HEAD doesn't exist
+        } catch (_: Throwable) {
+            "" // Just set to an empty string if any exception occurs
+        }.take(7) // Get the short commit hash
+
+        val outFile = outputDir.file("git-hash.txt").get().asFile
+        outFile.parentFile.mkdirs()
+        outFile.writeText(hash)
     }
+}
+
+val generateGitHash = tasks.register<GenerateGitHashTask>("generateGitHash") {
+    val gitDir = layout.projectDirectory.dir("../.git")
+
+    headFile.set(gitDir.file("HEAD"))
+    headsDir.set(gitDir.dir("refs/heads"))
+
+    outputDir.set(layout.buildDirectory.dir("generated/git"))
 }
 
 android {
@@ -41,14 +65,32 @@ android {
         unitTests.isReturnDefaultValues = true
     }
 
-    viewBinding {
-        enable = true
+    // Looks like google likes to add metadata only they can read https://gitlab.com/IzzyOnDroid/repo/-/work_items/491
+    dependenciesInfo {
+        // Disables dependency metadata when building APKs.
+        includeInApk = false
+        // Disables dependency metadata when building Android App Bundles.
+        includeInBundle = false
+    }
+
+    androidComponents {
+        onVariants { variant ->
+            variant.sources.assets?.addGeneratedSourceDirectory(
+                generateGitHash,
+                GenerateGitHashTask::outputDir
+            )
+        }
     }
 
     signingConfigs {
-        if (prereleaseStoreFile != null) {
+        // We just use SIGNING_KEY_ALIAS here since it won't change
+        // so won't kill the configuration cache.
+        if (System.getenv("SIGNING_KEY_ALIAS") != null) {
             create("prerelease") {
-                storeFile = file(prereleaseStoreFile)
+                val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
+                val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
+
+                storeFile = prereleaseStoreFile?.let { file(it) }
                 storePassword = System.getenv("SIGNING_STORE_PASSWORD")
                 keyAlias = System.getenv("SIGNING_KEY_ALIAS")
                 keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
@@ -62,12 +104,10 @@ android {
         applicationId = "com.lagradost.cloudstream3"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 66
-        versionName = "4.5.6"
+        versionCode = libs.versions.versionCode.get().toInt()
+        versionName = libs.versions.versionName.get()
 
-        resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
-        resValue("string", "commit_hash", getGitCommitHash())
-        resValue("bool", "is_prerelease", "false")
+        manifestPlaceholders["target_sdk_version"] = libs.versions.targetSdk.get()
 
         // Reads local.properties
         val localProperties = gradleLocalProperties(rootDir, project.providers)
@@ -114,12 +154,9 @@ android {
     productFlavors {
         create("stable") {
             dimension = "state"
-            resValue("bool", "is_prerelease", "false")
         }
         create("prerelease") {
             dimension = "state"
-            resValue("bool", "is_prerelease", "true")
-            buildConfigField("boolean", "BETA", "true")
             applicationIdSuffix = ".prerelease"
             if (signingConfigs.names.contains("prerelease")) {
                 signingConfig = signingConfigs.getByName("prerelease")
@@ -137,13 +174,29 @@ android {
         targetCompatibility = JavaVersion.toVersion(javaTarget.target)
     }
 
+    java {
+        // Use Java 17 toolchain even if a higher JDK runs the build.
+        // We still use Java 8 for now which higher JDKs have deprecated.
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(libs.versions.jdkToolchain.get()))
+        }
+    }
+
     lint {
-        abortOnError = false
         checkReleaseBuilds = false
     }
 
     buildFeatures {
         buildConfig = true
+        viewBinding = true
+    }
+
+    packaging {
+        jniLibs {
+            // Enables legacy JNI packaging to reduce APK size (similar to builds before minSdk 23).
+            // Note: This may increase app startup time slightly.
+            useLegacyPackaging = true
+        }
     }
 
     namespace = "com.lagradost.cloudstream3"
@@ -154,42 +207,46 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.json)
     androidTestImplementation(libs.core)
-    implementation(libs.junit.ktx)
-    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.classgraph)
     androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.instancio.core)
+    androidTestImplementation(libs.junit.ktx)
+    androidTestImplementation(libs.kotlin.test)
 
     // Android Core & Lifecycle
     implementation(libs.core.ktx)
+    implementation(libs.activity.ktx)
+    implementation(libs.annotation)
     implementation(libs.appcompat)
-    implementation(libs.bundles.navigationKtx)
-    implementation(libs.lifecycle.livedata.ktx)
-    implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.fragment.ktx)
+    implementation(libs.bundles.lifecycle)
+    implementation(libs.bundles.navigation)
+    implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.kotlinx.serialization.json) // JSON Parser
 
     // Design & UI
     implementation(libs.preference.ktx)
     implementation(libs.material)
     implementation(libs.constraintlayout)
-    implementation(libs.swiperefreshlayout)
 
     // Coil Image Loading
-    implementation(libs.coil)
-    implementation(libs.coil.network.okhttp)
+    implementation(libs.bundles.coil)
 
     // Media 3 (ExoPlayer)
     implementation(libs.bundles.media3)
     implementation(libs.video)
 
+    // FFmpeg Decoding
+    implementation(libs.bundles.nextlib)
+
+    // Anime-db for filler
+    implementation(libs.anime.db)
+
     // PlayBack
     implementation(libs.colorpicker) // Subtitle Color Picker
     implementation(libs.newpipeextractor) // For Trailers
     implementation(libs.juniversalchardet) // Subtitle Decoding
-
-    // FFmpeg Decoding
-    implementation(libs.bundles.nextlibMedia3)
-
-    // Crash Reports (AcraApplication.kt)
-    implementation(libs.acra.core)
-    implementation(libs.acra.toast)
 
     // UI Stuff
     implementation(libs.shimmer) // Shimmering Effect (Loading Skeleton)
@@ -201,50 +258,34 @@ dependencies {
     implementation(libs.qrcode.kotlin) // QR Code for PIN Auth on TV
 
     // Extensions & Other Libs
+    implementation(libs.jsoup) // HTML Parser
     implementation(libs.rhino) // Run JavaScript
-    implementation(libs.quickjs)
-    implementation(libs.fuzzywuzzy) // Library/Ext Searching with Levenshtein Distance
     implementation(libs.safefile) // To Prevent the URI File Fu*kery
     coreLibraryDesugaring(libs.desugar.jdk.libs.nio) // NIO Flavor Needed for NewPipeExtractor
-    implementation(libs.conscrypt.android) {
-        version {
-            strictly("2.5.2")
-        }
-        because("2.5.3 crashes everything for everyone.")
-    } // To Fix SSL Fu*kery on Android 9
-    implementation(libs.jackson.module.kotlin) {
-        version {
-            strictly("2.13.1")
-        }
-        because("Don't Bump Jackson above 2.13.1, Crashes on Android TV's and FireSticks that have Min API Level 25 or Less.")
-    } // JSON Parser
+    implementation(libs.conscrypt.android) // To Fix SSL Fu*kery on Android 9
+    implementation(libs.jackson.module.kotlin) // JSON Parser
+    implementation(libs.zipline)
+
+    // Deprecated; will be removed once extensions have time to migrate from using it
+    implementation("me.xdrop:fuzzywuzzy:1.4.0")
 
     // Torrent Support
     implementation(libs.torrentserver)
 
     // Downloading & Networking
-    implementation(libs.work.runtime)
     implementation(libs.work.runtime.ktx)
     implementation(libs.nicehttp) // HTTP Lib
 
-    implementation(project(":library") {
-        // There does not seem to be a good way of getting the android flavor.
-        val isDebug = gradle.startParameter.taskRequests.any { task ->
-            task.args.any { arg ->
-                arg.contains("debug", true)
-            }
-        }
-
-        this.extra.set("isDebug", isDebug)
-    })
+    implementation(project(":library"))
 }
 
 tasks.register<Jar>("androidSourcesJar") {
     archiveClassifier.set("sources")
-    from(android.sourceSets.getByName("main").java.srcDirs) // Full Sources
+    from(android.sourceSets.getByName("main").java.directories) // Full Sources
 }
 
 tasks.register<Copy>("copyJar") {
+    dependsOn("build", ":library:jvmJar")
     from(
         "build/intermediates/compile_app_classes_jar/prereleaseDebug/bundlePrereleaseDebugClassesToCompileJar",
         "../library/build/libs"
@@ -271,15 +312,22 @@ tasks.register<Jar>("makeJar") {
 tasks.withType<KotlinJvmCompile> {
     compilerOptions {
         jvmTarget.set(javaTarget)
-        freeCompilerArgs.add("-Xjvm-default=all-compatibility")
+        jvmDefault.set(JvmDefaultMode.ENABLE)
+        freeCompilerArgs.add("-Xannotation-default-target=param-property")
+        optIn.addAll(
+            "com.lagradost.cloudstream3.InternalAPI",
+            "com.lagradost.cloudstream3.Prerelease",
+        )
     }
 }
 
 dokka {
     moduleName = "App"
     dokkaSourceSets {
-        main {
+        configureEach {
+            suppress = name != "prereleaseDebug"
             analysisPlatform = KotlinPlatform.JVM
+            displayName = "JVM"
             documentedVisibilities(
                 VisibilityModifier.Public,
                 VisibilityModifier.Protected

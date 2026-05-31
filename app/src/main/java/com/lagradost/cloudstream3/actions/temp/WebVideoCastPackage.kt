@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.actions.temp
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.core.net.toUri
 import com.lagradost.cloudstream3.USER_AGENT
@@ -38,7 +37,7 @@ class WebVideoCastPackage: OpenInAppAction(
         val link = result.links[index ?: 0]
 
         intent.apply {
-            setDataAndType(Uri.parse(link.url), "video/*")
+            setDataAndType(link.url.toUri(), "video/*")
 
             val title = video.name ?: video.headerName
 

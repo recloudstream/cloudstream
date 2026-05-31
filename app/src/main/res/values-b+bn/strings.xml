@@ -15,8 +15,7 @@
     <string name="preview_background_img_des">ব্যাকগ্রাউন্ড দেখান</string>
     <string name="player_speed_text_format" formatted="true">গতি (%.2f গুণ)</string>
     <string name="rated_format" formatted="true">মূল্যায়নঃ %.1f</string>
-    <string name="new_update_format" formatted="true">নতুন আপডেট এসেছে!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">নতুন আপডেট এসেছে! \n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">ফিলার</string>
     <string name="duration_format" formatted="true">%d মিনিট</string>
     <string name="app_name">ক্লাউডস্ট্রিম</string>
@@ -62,7 +61,6 @@
     <string name="app_subbed_text">সাব</string>
     <string name="popup_play_file">ফাইল চালান</string>
     <string name="popup_pause_download">ডাউনলোড থামান</string>
-    <string name="pref_disable_acra">আটো বাগ রিপোর্ট বন্ধ করুন</string>
     <string name="home_more_info">আরো তথ্য</string>
     <string name="home_expanded_hide">বন্ধ করুন</string>
     <string name="home_play">চালান</string>
@@ -120,7 +118,6 @@
     <string name="player_size_settings_des">কালো প্রান্ত অপসারণ করুন</string>
     <string name="search">অনুসন্ধান করুন</string>
     <string name="category_account">অ্যাকাউন্টসমূহ এবং নিরাপত্তা</string>
-    <string name="bug_report_settings_on">কোনো উপাত্ত পাঠাবে না</string>
     <string name="double_tap_to_pause_settings_des">বিরতি দিতে মাঝে দুইবার চাপুন</string>
     <string name="use_system_brightness_settings">সিস্টেম এর উজ্জ্বলতা ব্যবহার করুন</string>
     <string name="play_trailer_button">ট্রেইলার চালু করুন</string>
@@ -150,10 +147,7 @@
     <string name="double_tap_to_seek_amount_settings">প্লেয়ারে এগিয়ে যাওয়ার পরিমাণ (সেকেন্ডে)</string>
     <string name="double_tap_to_seek_settings_des">সামনে বা পিছনের দিকে যেতে ডান বা বাম দিকে দুবার আলতো চাপুন</string>
     <string name="delete_file">ফাইল ডিলিট</string>
-    <string name="acra_report_toast">দুঃখিত, অ্যাপ্লিকেশন ক্র্যাশ হয়েছে। ডেভেলপারদের কাছে একটি বেনামী বাগ রিপোর্ট পাঠানো হবে</string>
-    <string name="bug_report_settings_off">শুধুমাত্র ক্র্যাশ এর তথ্য পাঠায়</string>
     <string name="subs_default_reset_toast">মান ডিফল্ট এ রিসেট করুন</string>
-    <string name="uprereleases_settings_des">ফুল রিলিজের পরিবর্তে শুধুমাত্র প্রি-রিলিজ আপডেটের জন্য অনুসন্ধান করুন</string>
     <string name="updates_settings_des">স্টার্টআপে নতুন আপডেটের জন্য স্বয়ংক্রিয়ভাবে অনুসন্ধান করুন</string>
     <string name="movies_singular">সিনেমা</string>
     <string name="show_fillers_settings">এনিমে এর ফিলার পর্ব দেখায়</string>
@@ -164,8 +158,7 @@
     <string name="movies">সিনেমা</string>
     <string name="discord">ডিসকর্ডে যোগ দিন</string>
     <string name="torrent">টরেন্টস</string>
-    <string name="delete_message" formatted="true">এটি স্থায়ীভাবে মুছে ফেলা হবে %s
-\nআপনি কি নিশ্চিত?</string>
+    <string name="delete_message" formatted="true">এটি স্থায়ীভাবে মুছে ফেলা হবে %s \nআপনি কি নিশ্চিত?</string>
     <string name="pause">থামুন</string>
     <string name="go_back_30">-৩০</string>
     <string name="github">গিটহাব</string>
@@ -189,8 +182,7 @@
     <string name="used_storage">ব্যবহৃত</string>
     <string name="library">লাইব্রেরী</string>
     <string name="lightnovel">আমাদের তৈরি ছোট উপন্যাস পড়ার অ্যাপ্লিকেশন</string>
-    <string name="resume_time_left" formatted="true">%d মি
-\nবাকি</string>
+    <string name="resume_time_left" formatted="true">%d মি \nবাকি</string>
     <string name="others">অন্যান্য</string>
     <string name="status_ongoing">চলমান</string>
     <string name="asian_drama">এশিয়ান নাটক</string>
@@ -204,7 +196,6 @@
     <string name="advanced_search_des">প্রোভাইডার অনুযায়ী আপনাকে পৃথক অনুসন্ধান ফলাফল দেয়</string>
     <string name="tv_series_singular">সিরিজ</string>
     <string name="rating">রেটিং</string>
-    <string name="uprereleases_settings">প্রি-রিলিজে আপডেট করুন</string>
     <string name="redo_setup_process">সেটআপ প্রক্রিয়া পুনরায় করুন</string>
     <string name="benene">ভাই এক কাপ চা খাওয়াও ☕</string>
     <string name="restore_settings">ব্যাকআপ থেকে ডেটা পুনরুদ্ধার করুন</string>
@@ -244,7 +235,6 @@
     <string name="video_disk_description">অ্যান্ড্রয়েড টিভির মতো, কম মেমরির ডিভাইসে খুব বেশি সেট করা হলে সমস্যা করবে।</string>
     <string name="add_site_pref">ক্লোন সাইট</string>
     <string name="pref_category_player_features">প্লেয়ারের ফিচার</string>
-    <string name="login_format" formatted="true"><string name="mal_account_settings" translatable="false">MAL</string> <string name="anilist_account_settings" translatable="false">AniList</string> <string name="tmdb_account_settings" translatable="false">TMDB</string> <string name="imdb_account_settings" translatable="false">IMDB</string> <string name="kitsu_account_settings" translatable="false">Kitsu</string> <string name="trakt_account_settings" translatable="false">Trakt</string> %1$s%2$s</string>
     <string name="app_theme_settings">অ্যাপ থিম</string>
     <string name="recommendations_tooltip">রিকমেন্ডেশনগুলো দেখাও</string>
     <string name="speed_setting_summary">প্লেয়ারে গতির বিকল্প যোগ কর</string>
@@ -315,8 +305,7 @@
     <string name="example_password">password123</string>
     <string name="episode_upcoming_format" formatted="true">আসছে %s সময়ের মধ্যে</string>
     <string name="cancel">বাতিল করুন</string>
-    <string name="resume_remaining" formatted="true">%s
-\nঅবশিষ্ট</string>
+    <string name="resume_remaining" formatted="true">%s \nঅবশিষ্ট</string>
     <string name="live_singular">লাইভ স্ট্রিম</string>
     <string name="source_error">সোর্স সমস্যা</string>
     <string name="remote_error">রিমোট সমস্যা</string>
@@ -357,5 +346,11 @@
     <string name="account">অ্যাকাউন্ট</string>
     <string name="logout">প্রস্থান</string>
     <string name="episode_format" formatted="true">%1$d%2$s</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="next_season_episode_format" formatted="true">সিজন %1$d পর্ব %2$d প্রকাশিত হবে</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dঘন্টা %2$dমিনিট %3$dসেকেন্ড</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$dমিনিট %2$dসেকেন্ড</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$dসেকেন্ড</string>
+    <string name="play_from_beginning_img_des">শুরু থেকে চালু করুন</string>
+    <string name="speech_recognition_unavailable">স্পিচ রিকগনিশন উপলব্ধ নেই</string>
+    <string name="begin_speaking">কথা বলা শুরু করুন…</string>
 </resources>

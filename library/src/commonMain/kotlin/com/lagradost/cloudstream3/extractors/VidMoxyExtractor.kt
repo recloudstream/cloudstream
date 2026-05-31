@@ -15,15 +15,15 @@ open class VidMoxy : ExtractorApi() {
         val extRef   = referer ?: ""
         val videoReq = app.get(url, referer=extRef).text
 
-		val subUrls = mutableSetOf<String>()
+        val subUrls = mutableSetOf<String>()
         Regex("""captions\",\"file\":\"([^\"]+)\",\"label\":\"([^\"]+)\"""").findAll(videoReq).forEach {
             val (subUrl, subLang) = it.destructured
 
-			if (subUrl in subUrls) { return@forEach }
- 			subUrls.add(subUrl)
+            if (subUrl in subUrls) { return@forEach }
+            subUrls.add(subUrl)
 
             subtitleCallback.invoke(
-                SubtitleFile(
+                newSubtitleFile(
                     lang = subLang.replace("\\u0131", "ı").replace("\\u0130", "İ").replace("\\u00fc", "ü").replace("\\u00e7", "ç"),
                     url  = fixUrl(subUrl.replace("\\", ""))
                 )
@@ -35,14 +35,14 @@ open class VidMoxy : ExtractorApi() {
 
         if (extractedValue != null) {
             val bytes = extractedValue.split("\\x").filter { it.isNotEmpty() }.map { it.toInt(16).toByte() }.toByteArray()
-            decoded   = String(bytes, Charsets.UTF_8) ?: throw ErrorLoadingException("File not found")
+            decoded   = bytes.decodeToString()
         } else {
             val evaljwSetup = Regex("""\};\s*(eval\(function[\s\S]*?)var played = \d+;""").find(videoReq)?.groupValues?.get(1) ?: throw ErrorLoadingException("File not found")
             val jwSetup     = getAndUnpack(getAndUnpack(evaljwSetup)).replace("\\\\", "\\")
             extractedValue  = Regex("""file":"(.*)","label""").find(jwSetup)?.groupValues?.get(1)?.replace("\\\\x", "")
 
             val bytes = extractedValue?.chunked(2)?.map { it.toInt(16).toByte() }?.toByteArray()
-            decoded   = bytes?.toString(Charsets.UTF_8) ?: throw ErrorLoadingException("File not found")
+            decoded   = bytes?.decodeToString() ?: throw ErrorLoadingException("File not found")
         }
 
         callback.invoke(

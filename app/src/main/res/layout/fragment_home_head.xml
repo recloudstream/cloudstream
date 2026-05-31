@@ -30,8 +30,8 @@
             android:id="@+id/home_padding"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
+            android:orientation="horizontal"
             android:paddingHorizontal="0dp">
 
 
@@ -39,8 +39,8 @@
                 android:id="@+id/home_search"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:layout_marginEnd="8dp"
+                android:layout_weight="1"
                 android:editTextColor="@color/white"
                 android:gravity="center_vertical"
                 android:iconifiedByDefault="true"
@@ -59,12 +59,12 @@
                 android:id="@+id/home_head_profile_padding"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:gravity="center"
-                android:orientation="horizontal"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="@drawable/rounded_select_ripple"
-                android:nextFocusLeft="@id/home_search">
+                android:gravity="center"
+                android:nextFocusLeft="@id/home_search"
+                android:orientation="horizontal">
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/home_head_profile_card"
@@ -72,17 +72,16 @@
                     android:layout_height="30dp"
                     android:layout_gravity="center"
                     android:background="@color/transparent"
-                    app:cardCornerRadius="20dp"
-                    android:foreground="@drawable/outline_drawable_round_20"
-                    android:focusable="true">
+                    android:focusable="true"
+                    android:foreground="@drawable/outline_big_15_gray"
+                    app:cardCornerRadius="20dp">
 
                     <ImageView
                         android:id="@+id/home_head_profile_pic"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
                         android:contentDescription="@string/account"
-                        android:foreground="@drawable/rounded_outline"
+                        android:scaleType="centerCrop"
                         tools:src="@drawable/profile_bg_orange" />
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
@@ -114,43 +113,43 @@
             android:gravity="center"
             android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/home_preview_bookmark"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginEnd="25dp"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:gravity="center"
-                    android:text="@string/none"
-                    android:textColor="?attr/white"
-                    app:drawableTint="?attr/white"
-                    app:drawableTopCompat="@drawable/ic_baseline_add_24"
-                    app:tint="?attr/white" />
+            <TextView
+                android:id="@+id/home_preview_bookmark"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="25dp"
+                android:layout_marginEnd="25dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:text="@string/none"
+                android:textColor="?attr/white"
+                app:drawableTint="?attr/white"
+                app:drawableTopCompat="@drawable/ic_baseline_add_24"
+                app:tint="?attr/white" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/home_preview_play"
-                    style="@style/WhiteButton"
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/home_play"
-                    app:icon="@drawable/ic_baseline_play_arrow_24" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/home_preview_play"
+                style="@style/WhiteButton"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/home_play"
+                app:icon="@drawable/ic_baseline_play_arrow_24" />
 
-                <TextView
-                    android:id="@+id/home_preview_info"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginEnd="25dp"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:gravity="center"
-                    android:text="@string/home_info"
-                    android:textColor="?attr/white"
-                    app:drawableTint="?attr/white"
-                    app:drawableTopCompat="@drawable/ic_outline_info_24"
-                    app:tint="?attr/white" />
+            <TextView
+                android:id="@+id/home_preview_info"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="25dp"
+                android:layout_marginEnd="25dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:text="@string/home_info"
+                android:textColor="?attr/white"
+                app:drawableTint="?attr/white"
+                app:drawableTopCompat="@drawable/ic_outline_info_24"
+                app:tint="?attr/white" />
 
         </LinearLayout>
 
@@ -160,20 +159,20 @@
         android:id="@+id/alternative_account_padding"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:orientation="horizontal"
         android:gravity="end"
+        android:orientation="horizontal"
         android:paddingHorizontal="0dp">
 
         <LinearLayout
             android:id="@+id/alternate_home_head_profile_padding"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:gravity="center"
-            android:orientation="horizontal"
             android:clickable="true"
             android:focusable="true"
             android:foreground="@drawable/rounded_select_ripple"
-            android:nextFocusLeft="@id/home_search">
+            android:gravity="center"
+            android:nextFocusLeft="@id/home_search"
+            android:orientation="horizontal">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/alternate_home_head_profile_card"
@@ -182,16 +181,15 @@
                 android:layout_gravity="center"
                 android:background="@color/transparent"
                 android:focusable="true"
-                android:foreground="@drawable/outline_drawable_round_20"
+                android:foreground="@drawable/outline_big_15_gray"
                 app:cardCornerRadius="20dp">
 
                 <ImageView
                     android:id="@+id/alternate_home_head_profile_pic"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
                     android:contentDescription="@string/account"
-                    android:foreground="@drawable/rounded_outline"
+                    android:scaleType="centerCrop"
                     tools:src="@drawable/profile_bg_orange" />
             </androidx.cardview.widget.CardView>
         </LinearLayout>

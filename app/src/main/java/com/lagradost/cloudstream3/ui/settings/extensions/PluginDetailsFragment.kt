@@ -1,15 +1,11 @@
 package com.lagradost.cloudstream3.ui.settings.extensions
 
 import android.content.res.ColorStateList
-import android.os.Bundle
 import android.text.format.Formatter.formatFileSize
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.view.isVisible
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.openBrowser
 import com.lagradost.cloudstream3.databinding.FragmentPluginDetailsBinding
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.VotingApi.canVote
@@ -17,16 +13,24 @@ import com.lagradost.cloudstream3.plugins.VotingApi.getVotes
 import com.lagradost.cloudstream3.plugins.VotingApi.hasVoted
 import com.lagradost.cloudstream3.plugins.VotingApi.vote
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ui.BaseBottomSheetDialogFragment
+import com.lagradost.cloudstream3.ui.BaseFragment
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLandscape
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 
-
-class PluginDetailsFragment(val data: PluginViewData) : BottomSheetDialogFragment() {
+class PluginDetailsFragment(val data: PluginViewData) : BaseBottomSheetDialogFragment<FragmentPluginDetailsBinding>(
+    BaseFragment.BindingCreator.Inflate(FragmentPluginDetailsBinding::inflate)
+) {
 
     companion object {
         private tailrec fun findClosestBase2(target: Int, current: Int = 16, max: Int = 512): Int {
@@ -41,26 +45,17 @@ class PluginDetailsFragment(val data: PluginViewData) : BottomSheetDialogFragmen
         }
     }
 
-    override fun onDestroyView() {
-        binding = null
-        super.onDestroyView()
+    override fun fixLayout(view: View) {
+        fixSystemBarsPadding(
+            view,
+            padBottom = isLandscape(),
+            padLeft = isLayout(TV or EMULATOR)
+        )
     }
 
-    var binding: FragmentPluginDetailsBinding? = null
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val localBinding = FragmentPluginDetailsBinding.inflate(inflater, container, false)
-        binding = localBinding
-        return localBinding.root
-        //return inflater.inflate(R.layout.fragment_plugin_details, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onBindingCreated(binding: FragmentPluginDetailsBinding) {
         val metadata = data.plugin.second
-        binding?.apply {
+        binding.apply {
             pluginIcon.loadImage(metadata.iconUrl?.replace("%size%", "$iconSize")
                 ?.replace("%exact_size%", "$iconSizeExact")) {
                 error { getImageFromDrawable(context ?: return@error null , R.drawable.ic_baseline_extension_24) }

@@ -13,8 +13,7 @@
     <string name="episode_poster_img_des">Póster do Episodio</string>
     <string name="go_back_img_des">Regresar</string>
     <string name="home_change_provider_img_des">Cambiar provedor</string>
-    <string name="new_update_format" formatted="true">Nova actualización atopada!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Nova actualización atopada! \n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Recheo</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="title_settings">Configuración</string>
@@ -76,7 +75,6 @@
     <string name="popup_play_file">Reproducir Arquivo</string>
     <string name="popup_resume_download">Continuar Descarga</string>
     <string name="popup_pause_download">Pausar Descarga</string>
-    <string name="pref_disable_acra">Desactivar reporte automático de bugs</string>
     <string name="home_more_info">Máis información</string>
     <string name="home_expanded_hide">Agochar</string>
     <string name="home_play">Reproducir</string>
@@ -153,8 +151,6 @@
     <string name="player_subtitles_settings">Subtítulos</string>
     <string name="episode_sync_settings_des">Sincronizar automáticamente o progreso do episodio actual</string>
     <string name="use_system_brightness_settings_des">Use o brillo do sistema no reprodutor da aplicación en lugar dunha superposición oscura</string>
-    <string name="bug_report_settings_off">Só envía datos se a aplicacción falla inesperadamente</string>
-    <string name="bug_report_settings_on">Non enviar datos</string>
     <string name="show_fillers_settings">Mostrar episodio de recheo para Anime</string>
     <string name="show_trailers_settings">Mostrar Trailers</string>
     <string name="kitsu_settings">Mostrar pósters de Kitsu</string>
@@ -164,7 +160,6 @@
     <string name="automatic_plugin_download_mode_title">Selecciona o modo para filtrar a descarga dos complementos</string>
     <string name="automatic_plugin_download_summary">Instala automáticamente todos os complementos aínda non instalados dos repositorios engadidos.</string>
     <string name="updates_settings">Mostrar actualizacións da aplicación</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="subs_default_reset_toast">Reiniciar aos valores predefinidos</string>
     <string name="go_back_30">-30</string>
     <string name="audio_book_singular">Audiolibro</string>
@@ -174,7 +169,6 @@
     <string name="anim">Aplicativo de Anime dos mesmos desenvolvedores</string>
     <string name="discord">Únete o Discord</string>
     <string name="speed_setting_summary">Engade unha opción de velocidade no reproductor</string>
-    <string name="uprereleases_settings">Actualizar as versións preliminares</string>
     <string name="lightnovel">Aplicativo de novela lixeira dos mesmos desenvolvedores</string>
     <string name="no_episodes_found">Non se atoparon capítulos</string>
     <string name="delete">Borrar</string>
@@ -191,7 +185,7 @@
     <string name="delete_message_multiple" formatted="true">Está seguro de querer borrar permanentemente os seguintes elementos?\n\n%s</string>
     <string name="delete_message" formatted="true">Esto borrarase %s permanentemente\nEstás seguro?</string>
     <string name="cartoons_singular">Debuxo animado</string>
-    <string name="custom_media_singluar">Media</string>
+    <string name="custom_media_singular">Media</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="cartoons">Debuxos animados</string>
     <string name="render_error">Erro do renderizador</string>
@@ -209,7 +203,7 @@
     <string name="video_source">Fonte</string>
     <string name="unexpected_error">Erro inesperado do reproductor</string>
     <string name="episode">Capítulo</string>
-    <string name="music_singlar">Música</string>
+    <string name="music_singular">Música</string>
     <string name="episode_short">C</string>
     <string name="resume_time_left" formatted="true">%dm\nrestantes</string>
     <string name="status_ongoing">En curso</string>
@@ -271,19 +265,13 @@
     <string name="resume_remaining" formatted="true">%s\nrestante</string>
     <string name="nsfw_singular">NSFW</string>
     <string name="episode_action_play_in_format">Reproducir en %s</string>
-    <string name="uprereleases_settings_des">Buscar actualizacións preliminares no lugar de só versións completas</string>
     <string name="github">Github</string>
     <string name="benene">Dalle unha banana ós desenvolvedores</string>
     <string name="no_chromecast_support_toast">Este provedor non ten soporte para Chromecast</string>
     <string name="no_links_found_toast">Ligazóns non atopadas</string>
     <string name="copy_link_toast">Ligazón copiada ó portapapeis</string>
     <string name="play_episode_toast">Reproducir capítulo</string>
-    <string name="acra_report_toast">O sentimos, o aplicativo bloqueouse. Enviarase un informe de error anónimo aos desenvolvedores</string>
     <string name="season">Temporada</string>
-    <plurals name="episodes" translatable="false">
-        <item quantity="one">Capítulos</item>
-        <item quantity="other"/>
-    </plurals>
     <string name="episodes_range">%1$d-%2$d</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="season_short">T</string>

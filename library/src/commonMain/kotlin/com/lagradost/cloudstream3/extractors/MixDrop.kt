@@ -3,6 +3,22 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 
+class MixDropPs : MixDrop() {
+    override var mainUrl = "https://mixdrop.ps"
+}
+
+class Mdy : MixDrop() {
+    override var mainUrl = "https://mdy48tn97.com"
+}
+
+class MxDropTo : MixDrop() {
+    override var mainUrl = "https://mxdrop.to"
+}
+
+class MixDropSi : MixDrop() {
+    override var mainUrl = "https://mixdrop.si"
+}
+
 class MixDropBz : MixDrop(){
     override var mainUrl = "https://mixdrop.bz"
 }

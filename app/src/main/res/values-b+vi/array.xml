@@ -15,23 +15,18 @@
     </array>
 
 
-    <array name="limit_title_rez_pref_names">
-        <item>@string/resolution_and_name</item>
-        <item>@string/name</item>
-        <item>@string/resolution_and_title</item>
-        <item>@string/title</item>
+    <array name="title_info_pref_names">
+        <item>@string/source_name</item>
         <item>@string/resolution</item>
-        <item>@string/none</item>
+        <item>@string/video_info</item>
     </array>
 
-    <array name="limit_title_rez_pref_values">
-        <item>5</item>
-        <item>4</item>
-        <item>3</item>
-        <item>2</item>
-        <item>1</item>
-        <item>0</item>
+    <array name="title_info_pref_values">
+        <item>@string/show_name_key</item>
+        <item>@string/show_resolution_key</item>
+        <item>@string/show_media_info_key</item>
     </array>
+
 
     <array name="limit_title_pref_names">
         <item>@string/none</item>
@@ -149,6 +144,7 @@
         <item>@string/show_sub</item>
         <item>@string/show_rating</item>
         <item>@string/show_title</item>
+        <item>@string/show_episode_text</item>
     </array>
 
     <array name="poster_ui_options_values">
@@ -157,6 +153,7 @@
         <item>@string/show_sub_key</item>
         <item>@string/show_rating_key</item>
         <item>@string/show_title_key</item>
+        <item>@string/show_episode_text_key</item>
     </array>
 
     <array name="app_layout">
@@ -232,6 +229,7 @@
         <item>Material You</item>
         <item>Dracula</item>
         <item>Giấc Mơ Oải Hương</item>
+        <item>Xanh Lam Tĩnh Lặng</item>
     </string-array>
     <string-array name="themes_names_values">
         <item>AmoledLight</item>
@@ -242,6 +240,7 @@
         <item>Monet</item>
         <item>Dracula</item>
         <item>Lavender</item>
+        <item>SilentBlue</item>
     </string-array>
 
     <!--https://github.com/videolan/vlc-android/blob/72ccfb93db027b49855760001d1a930fa657c5a8/application/resources/src/main/res/values/arrays.xml#L266-->
@@ -288,49 +287,5 @@
         <item>Hong-Kong Supplementary (HKSCS)</item>
         <item>Vietnamese (VISCII)</item>
         <item>Vietnamese (Windows-1258)</item>
-    </string-array>
-    <string-array name="subtitles_encoding_values" translatable="false" tools:ignore="TypographyDashes">
-        <item></item>
-        <item>UTF-8</item>
-        <item>UTF-16</item>
-        <item>UTF-16BE</item>
-        <item>UTF-16LE</item>
-        <item>GB18030</item>
-        <item>ISO-8859-15</item>
-        <item>Windows-1252</item>
-        <item>IBM850</item>
-        <item>ISO-8859-2</item>
-        <item>Windows-1250</item>
-        <item>ISO-8859-3</item>
-        <item>ISO-8859-10</item>
-        <item>Windows-1251</item>
-        <item>KOI8-R</item>
-        <item>KOI8-U</item>
-        <item>ISO-8859-6</item>
-        <item>Windows-1256</item>
-        <item>ISO-8859-7</item>
-        <item>Windows-1253</item>
-        <item>ISO-8859-8</item>
-        <item>Windows-1255</item>
-        <item>ISO-8859-9</item>
-        <item>Windows-1254</item>
-        <item>ISO-8859-11</item>
-        <item>Windows-874</item>
-        <item>ISO-8859-13</item>
-        <item>Windows-1257</item>
-        <item>ISO-8859-14</item>
-        <item>ISO-8859-16</item>
-        <item>ISO-2022-CN-EXT</item>
-        <item>EUC-CN</item>
-        <item>ISO-2022-JP-2</item>
-        <item>EUC-JP</item>
-        <item>Shift_JIS</item>
-        <item>CP949</item>
-        <item>ISO-2022-KR</item>
-        <item>Big5</item>
-        <item>ISO-2022-TW</item>
-        <item>Big5-HKSCS</item>
-        <item>VISCII</item>
-        <item>Windows-1258</item>
     </string-array>
 </resources>

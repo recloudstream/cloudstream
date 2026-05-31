@@ -2,12 +2,13 @@ package com.lagradost.cloudstream3.ui.settings
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.edit
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.NavOptions
-import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.ui.APIRepository
+import com.lagradost.cloudstream3.ui.BasePreferenceFragmentCompat
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
@@ -19,7 +20,7 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 
-class SettingsProviders : PreferenceFragmentCompat() {
+class SettingsProviders : BasePreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar(R.string.category_providers)
@@ -46,13 +47,15 @@ class SettingsProviders : PreferenceFragmentCompat() {
                     names,
                     currentList,
                     getString(R.string.display_subbed_dubbed_settings),
-                    {}) { selectedList ->
+                    {}
+                ) { selectedList ->
                     APIRepository.dubStatusActive = selectedList.map { dublist[it] }.toHashSet()
-
-                    settingsManager.edit().putStringSet(
-                        this.getString(R.string.display_sub_key),
-                        selectedList.map { names[it] }.toMutableSet()
-                    ).apply()
+                    settingsManager.edit {
+                        putStringSet(
+                            getString(R.string.display_sub_key),
+                            selectedList.map { names[it] }.toMutableSet()
+                        )
+                    }
                 }
             }
 
@@ -91,13 +94,16 @@ class SettingsProviders : PreferenceFragmentCompat() {
                 names,
                 currentList,
                 getString(R.string.preferred_media_settings),
-                {}) { selectedList ->
-                settingsManager.edit().putStringSet(
-                    this.getString(R.string.prefer_media_type_key),
-                    selectedList.map { it.toString() }.toMutableSet()
-                ).apply()
+                {}
+            ) { selectedList ->
+                settingsManager.edit {
+                    putStringSet(
+                        getString(R.string.prefer_media_type_key),
+                        selectedList.map { it.toString() }.toMutableSet()
+                    )
+                }
                 DataStoreHelper.currentHomePage = null
-                //(context ?: AcraApplication.context)?.let { ctx -> app.initClient(ctx) }
+                //(context ?: CloudStreamApp.context)?.let { ctx -> app.initClient(ctx) }
             }
 
             return@setOnPreferenceClickListener true
@@ -105,10 +111,10 @@ class SettingsProviders : PreferenceFragmentCompat() {
 
         getPref(R.string.provider_lang_key)?.setOnPreferenceClickListener {
             activity?.getApiProviderLangSettings()?.let { currentLangTags ->
-                val languagesTagName = synchronized(APIHolder.apis) {
-                    listOf( Pair(AllLanguagesName, getString(R.string.all_languages_preference)) ) +
-                    APIHolder.apis.map { Pair(it.lang, getNameNextToFlagEmoji(it.lang) ?: it.lang) }
-                        .toSet().sortedBy { it.second.substringAfter("\u00a0").lowercase() } // name ignoring flag emoji
+                val languagesTagName = APIHolder.apis.withLock {
+                    listOf(Pair(AllLanguagesName, getString(R.string.all_languages_preference))) +
+                        APIHolder.apis.map { Pair(it.lang, getNameNextToFlagEmoji(it.lang) ?: it.lang) }
+                            .toSet().sortedBy { it.second.substringAfter("\u00a0").lowercase() }
                 }
 
                 val currentIndexList = currentLangTags.map { langTag ->
@@ -119,12 +125,15 @@ class SettingsProviders : PreferenceFragmentCompat() {
                     languagesTagName.map { it.second },
                     currentIndexList,
                     getString(R.string.provider_lang_settings),
-                    {}) { selectedList ->
-                    settingsManager.edit().putStringSet(
-                        this.getString(R.string.provider_lang_key),
-                        selectedList.map { languagesTagName[it].first }.toSet()
-                    ).apply()
-                    //APIRepository.providersActive = it.context.getApiSettings()
+                    {}
+                ) { selectedList ->
+                    settingsManager.edit {
+                        putStringSet(
+                            getString(R.string.provider_lang_key),
+                            selectedList.map { languagesTagName[it].first }.toSet()
+                        )
+                    }
+                    // APIRepository.providersActive = it.context.getApiSettings()
                 }
             }
 

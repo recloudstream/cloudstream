@@ -7,21 +7,19 @@
         <Preference
             android:title="@string/check_for_update"
             app:icon="@drawable/ic_baseline_system_update_24"
-            app:key="@string/manual_check_update_key"
-            app:summary="@string/app_version" />
-        <SwitchPreference
+            app:key="@string/manual_check_update_key" />
+
+        <Preference
             android:icon="@drawable/ic_baseline_developer_mode_24"
-            android:summary="@string/uprereleases_settings_des"
-            android:title="@string/uprereleases_settings"
-            app:defaultValue="@bool/is_prerelease"
-            app:key="@string/prerelease_update_key" />
+            android:title="@string/install_prerelease"
+            app:key="@string/install_prerelease_key" />
 
         <Preference
             android:icon="@drawable/netflix_download"
             android:key="@string/apk_installer_key"
             android:title="@string/apk_installer_settings"
-            android:summary="@string/apk_installer_settings_des"
-            />
+            android:summary="@string/apk_installer_settings_des" />
+
         <SwitchPreference
             android:icon="@drawable/ic_baseline_notifications_active_24"
             android:summary="@string/updates_settings_des"
@@ -84,12 +82,5 @@
             android:icon="@drawable/ic_baseline_construction_24"
             android:title="@string/redo_setup_process"
             app:key="@string/redo_setup_key" />
-        <!--<SwitchPreference
-            android:defaultValue="true"
-            android:icon="@drawable/ic_baseline_bug_report_24"
-            android:key="acra.disable"
-            android:summaryOff="@string/bug_report_settings_off"
-            android:summaryOn="@string/bug_report_settings_on"
-            android:title="@string/pref_disable_acra" />-->
     </PreferenceCategory>
 </PreferenceScreen>

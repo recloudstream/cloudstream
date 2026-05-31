@@ -11,7 +11,7 @@ import com.lagradost.cloudstream3.ui.download.DownloadClickEvent
 import com.lagradost.cloudstream3.ui.result.START_ACTION_LOAD_EP
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.DataStoreHelper
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 
 object SearchHelper {
     fun handleSearchClickCallback(callback: SearchClickCallback) {
@@ -31,7 +31,7 @@ object SearchHelper {
                             handleDownloadClick(
                                 DownloadClickEvent(
                                     DOWNLOAD_ACTION_PLAY_FILE,
-                                    VideoDownloadHelper.DownloadEpisodeCached(
+                                    DownloadObjects.DownloadEpisodeCached(
                                         name = card.name,
                                         poster = card.posterUrl,
                                         episode = card.episode ?: 0,

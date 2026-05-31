@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.APIHolder.apis
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKeys
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.amap
@@ -21,6 +21,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -43,7 +44,12 @@ class SearchViewModel : ViewModel() {
     private val _currentHistory: MutableLiveData<List<SearchHistoryItem>> = MutableLiveData()
     val currentHistory: LiveData<List<SearchHistoryItem>> get() = _currentHistory
 
-    private var repos = synchronized(apis) { apis.map { APIRepository(it) } }
+    private val _searchSuggestions: MutableLiveData<List<String>> = MutableLiveData()
+    val searchSuggestions: LiveData<List<String>> get() = _searchSuggestions
+
+    private var suggestionJob: Job? = null
+
+    private var repos = apis.withLock { apis.map { APIRepository(it) } }
 
     fun clearSearch() {
         _searchResponse.postValue(Resource.Success(ExpandableSearchList(emptyList(), 0, false)))
@@ -62,7 +68,7 @@ class SearchViewModel : ViewModel() {
     private var onGoingSearch: Job? = null
 
     fun reloadRepos() {
-        repos = synchronized(apis) { apis.map { APIRepository(it) } }
+        repos = apis.withLock { apis.map { APIRepository(it) } }
     }
 
     fun searchAndCancel(
@@ -76,13 +82,40 @@ class SearchViewModel : ViewModel() {
         onGoingSearch = search(query, providersActive, ignoreSettings, isQuickSearch)
     }
 
-    fun updateHistory() = viewModelScope.launch {
-        ioSafe {
-            val items = getKeys("$currentAccount/$SEARCH_HISTORY_KEY")?.mapNotNull {
-                getKey<SearchHistoryItem>(it)
-            }?.sortedByDescending { it.searchedAt } ?: emptyList()
-            _currentHistory.postValue(items)
+    fun updateHistory() = ioSafe {
+        val items = getKeys("$currentAccount/$SEARCH_HISTORY_KEY")?.mapNotNull {
+            getKey<SearchHistoryItem>(it)
+        }?.sortedByDescending { it.searchedAt } ?: emptyList()
+        _currentHistory.postValue(items)
+    }
+
+    /**
+     * Fetches search suggestions with debouncing.
+     * Waits 300ms before making the API call to avoid too many requests.
+     * 
+     * @param query The search query to get suggestions for
+     */
+    fun fetchSuggestions(query: String) {
+        suggestionJob?.cancel()
+        
+        if (query.isBlank() || query.length < 2) {
+            _searchSuggestions.postValue(emptyList())
+            return
         }
+        
+        suggestionJob = ioSafe {
+            delay(300) // Debounce
+            val suggestions = SearchSuggestionApi.getSuggestions(query)
+            _searchSuggestions.postValue(suggestions)
+        }
+    }
+
+    /**
+     * Clears the current search suggestions.
+     */
+    fun clearSuggestions() {
+        suggestionJob?.cancel()
+        _searchSuggestions.postValue(emptyList())
     }
 
     private val lock: MutableSet<String> = mutableSetOf()

@@ -1,7 +1,8 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.app.Activity
-import android.content.*
+import android.content.Context
+import android.content.DialogInterface
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.MainThread
@@ -10,33 +11,67 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.AcraApplication.Companion.context
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
-import com.lagradost.cloudstream3.actions.AlwaysAskAction
-import com.lagradost.cloudstream3.actions.VideoClickActionHolder
+import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
+import com.lagradost.cloudstream3.ActorData
+import com.lagradost.cloudstream3.AnimeLoadResponse
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.context
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.getCastSession
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.DubStatus
+import com.lagradost.cloudstream3.EpisodeResponse
+import com.lagradost.cloudstream3.IDownloadableMinimum
+import com.lagradost.cloudstream3.LiveStreamLoadResponse
+import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
+import com.lagradost.cloudstream3.LoadResponse.Companion.getKitsuId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
 import com.lagradost.cloudstream3.LoadResponse.Companion.readIdFromString
+import com.lagradost.cloudstream3.MainActivity
+import com.lagradost.cloudstream3.MovieLoadResponse
+import com.lagradost.cloudstream3.ProviderType
+import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.Score
+import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.SeasonData
+import com.lagradost.cloudstream3.ShowStatus
+import com.lagradost.cloudstream3.SimklSyncServices
+import com.lagradost.cloudstream3.SubtitleFile
+import com.lagradost.cloudstream3.TorrentLoadResponse
+import com.lagradost.cloudstream3.TrackerType
+import com.lagradost.cloudstream3.TrailerData
+import com.lagradost.cloudstream3.TvSeriesLoadResponse
+import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.VPNStatus
+import com.lagradost.cloudstream3.actions.AlwaysAskAction
+import com.lagradost.cloudstream3.actions.VideoClickActionHolder
+import com.lagradost.cloudstream3.amap
+import com.lagradost.cloudstream3.isEpisodeBased
+import com.lagradost.cloudstream3.isLiveStream
 import com.lagradost.cloudstream3.metaproviders.SyncRedirector
-import com.lagradost.cloudstream3.mvvm.*
+import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.debugAssert
+import com.lagradost.cloudstream3.mvvm.debugException
+import com.lagradost.cloudstream3.mvvm.launchSafe
+import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.safe
+import com.lagradost.cloudstream3.mvvm.safeApiCall
+import com.lagradost.cloudstream3.runAllAsync
+import com.lagradost.cloudstream3.sortUrls
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.secondsToReadable
-import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
+import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.APIRepository
-import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
+import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
-import com.lagradost.cloudstream3.ui.player.IGenerator
 import com.lagradost.cloudstream3.ui.player.LOADTYPE_ALL
 import com.lagradost.cloudstream3.ui.player.LOADTYPE_CHROMECAST
 import com.lagradost.cloudstream3.ui.player.LOADTYPE_INAPP
@@ -44,21 +79,22 @@ import com.lagradost.cloudstream3.ui.player.LOADTYPE_INAPP_DOWNLOAD
 import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.result.EpisodeAdapter.Companion.getPlayerAction
-import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
-import com.lagradost.cloudstream3.ui.WatchType
-import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppContextUtils.isConnectedToChromecast
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.AppContextUtils.sortSubs
+import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.Coroutines.ioWorkSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
+import com.lagradost.cloudstream3.utils.DataStore
 import com.lagradost.cloudstream3.utils.DataStore.editor
 import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllBookmarkedData
@@ -85,10 +121,31 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setSubscribedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.updateSubscribedData
-import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToEnglishLanguageName
+import com.lagradost.cloudstream3.utils.Editor
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import com.lagradost.cloudstream3.utils.FillerEpisodeCheck
+import com.lagradost.cloudstream3.utils.INFER_TYPE
+import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
+import com.lagradost.cloudstream3.utils.UiText
+import com.lagradost.cloudstream3.utils.VIDEO_WATCH_STATE
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.sanitizeFilename
+import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
+import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
+import com.lagradost.cloudstream3.utils.downloader.DownloadUtils.downloadSubtitle
+import com.lagradost.cloudstream3.utils.loadExtractor
+import com.lagradost.cloudstream3.utils.newExtractorLink
+import com.lagradost.cloudstream3.utils.txt
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.*
 
 /** This starts at 1 */
 data class EpisodeRange(
@@ -120,6 +177,7 @@ data class ResultData(
 
     val posterImage: String?,
     val posterBackgroundImage: String?,
+    val logoUrl: String?,
     val plotText: UiText,
     val apiName: UiText,
     val ratingText: UiText?,
@@ -245,6 +303,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
                 plot!!
             ),
         backgroundPosterUrl = backgroundPosterUrl,
+        logoUrl = logoUrl,
         title = name,
         typeText = txt(
             when (type) {
@@ -260,11 +319,12 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
                 TvType.Live -> R.string.live_singular
                 TvType.Others -> R.string.other_singular
                 TvType.NSFW -> R.string.nsfw_singular
-                TvType.Music -> R.string.music_singlar
+                TvType.Music -> R.string.music_singular
                 TvType.AudioBook -> R.string.audio_book_singular
-                TvType.CustomMedia -> R.string.custom_media_singluar
-                TvType.Audio -> R.string.audio_singluar
-                TvType.Podcast -> R.string.podcast_singluar
+                TvType.CustomMedia -> R.string.custom_media_singular
+                TvType.Audio -> R.string.audio_singular
+                TvType.Podcast -> R.string.podcast_singular
+                TvType.Video -> R.string.video_singular
             }
         ),
         yearText = txt(year?.toString()),
@@ -389,7 +449,7 @@ fun SelectPopup.getOptions(context: Context): List<String> {
 }
 
 data class ExtractedTrailerData(
-    var mirros: List<ExtractorLink>,
+    var mirros: List<Pair<ExtractorLink, String>>,//Pair of extracted trailer link and original trailer link
     var subtitles: List<SubtitleFile> = emptyList(),
 )
 
@@ -419,8 +479,8 @@ class ResultViewModel2 : ViewModel() {
     private var currentShowFillers: Boolean = false
     var currentRepo: APIRepository? = null
     private var currentId: Int? = null
-    private var fillers: Map<Int, Boolean> = emptyMap()
-    private var generator: IGenerator? = null
+    private var fillers: HashSet<Int> = hashSetOf()
+    private var generator: RepoLinkGenerator? = null
     private var preferDubStatus: DubStatus? = null
     private var preferStartEpisode: Int? = null
     private var preferStartSeason: Int? = null
@@ -523,6 +583,29 @@ class ResultViewModel2 : ViewModel() {
             if (season == null) return null
             return this?.firstOrNull { it.season == season }
         }
+
+        fun seasonToTxt(seasonData: SeasonData?, season: Int?): UiText? {
+            if (season == 0) {
+                return txt(R.string.no_season)
+            }
+
+            // If displaySeason is null then only show the name!
+            return if (seasonData?.name != null && seasonData.displaySeason == null) {
+                txt(seasonData.name)
+            } else {
+                val suffix = seasonData?.name?.let { " $it" } ?: ""
+                txt(
+                    R.string.season_format,
+                    txt(R.string.season),
+                    seasonData?.displaySeason ?: season,
+                    suffix
+                )
+            }
+        }
+
+        private fun List<SeasonData>?.getSeasonTxt(season: Int?): UiText? =
+            seasonToTxt(getSeason(season), season)
+
 
         private fun filterName(name: String?): String? {
             if (name == null) return null
@@ -641,228 +724,6 @@ class ResultViewModel2 : ViewModel() {
 
                 index to list
             }.toMap()
-        }
-
-        private fun downloadSubtitle(
-            context: Context?,
-            link: ExtractorSubtitleLink,
-            fileName: String,
-            folder: String
-        ) {
-            ioSafe {
-                VideoDownloadManager.downloadThing(
-                    context ?: return@ioSafe,
-                    link,
-                    "$fileName ${link.name}",
-                    folder,
-                    if (link.url.contains(".srt")) "srt" else "vtt",
-                    false,
-                    null, createNotificationCallback = {}
-                )
-            }
-        }
-
-        private fun getFolder(currentType: TvType, titleName: String): String {
-            return if (currentType.isEpisodeBased()) {
-                val sanitizedFileName = VideoDownloadManager.sanitizeFilename(titleName)
-                "${currentType.getFolderPrefix()}/$sanitizedFileName"
-            } else currentType.getFolderPrefix()
-        }
-
-        private fun downloadSubtitle(
-            context: Context?,
-            link: SubtitleData,
-            meta: VideoDownloadManager.DownloadEpisodeMetadata,
-        ) {
-            context?.let { ctx ->
-                val fileName = VideoDownloadManager.getFileName(ctx, meta)
-                val folder = getFolder(meta.type ?: return, meta.mainName)
-                downloadSubtitle(
-                    ctx,
-                    ExtractorSubtitleLink(link.name, link.url, "", link.headers),
-                    fileName,
-                    folder
-                )
-            }
-        }
-
-        fun startDownload(
-            context: Context?,
-            episode: ResultEpisode,
-            currentIsMovie: Boolean,
-            currentHeaderName: String,
-            currentType: TvType,
-            currentPoster: String?,
-            apiName: String,
-            parentId: Int,
-            url: String,
-            links: List<ExtractorLink>,
-            subs: List<SubtitleData>?
-        ) {
-            try {
-                if (context == null) return
-
-                val meta =
-                    getMeta(
-                        episode,
-                        currentHeaderName,
-                        apiName,
-                        currentPoster,
-                        currentIsMovie,
-                        currentType
-                    )
-
-                val folder = getFolder(currentType, currentHeaderName)
-
-                val src = "$DOWNLOAD_NAVIGATE_TO/$parentId" // url ?: return@let
-
-                // SET VISUAL KEYS
-                setKey(
-                    DOWNLOAD_HEADER_CACHE,
-                    parentId.toString(),
-                    VideoDownloadHelper.DownloadHeaderCached(
-                        apiName = apiName,
-                        url = url,
-                        type = currentType,
-                        name = currentHeaderName,
-                        poster = currentPoster,
-                        id = parentId,
-                        cacheTime = System.currentTimeMillis(),
-                    )
-                )
-
-                setKey(
-                    DataStore.getFolderName(
-                        DOWNLOAD_EPISODE_CACHE,
-                        parentId.toString()
-                    ), // 3 deep folder for faster acess
-                    episode.id.toString(),
-                    VideoDownloadHelper.DownloadEpisodeCached(
-                        name = episode.name,
-                        poster = episode.poster,
-                        episode = episode.episode,
-                        season = episode.season,
-                        id = episode.id,
-                        parentId = parentId,
-                        score = episode.score,
-                        description = episode.description,
-                        cacheTime = System.currentTimeMillis(),
-                    )
-                )
-
-                // DOWNLOAD VIDEO
-                VideoDownloadManager.downloadEpisodeUsingWorker(
-                    context,
-                    src,//url ?: return,
-                    folder,
-                    meta,
-                    links
-                )
-
-                // 1. Checks if the lang should be downloaded
-                // 2. Makes it into the download format
-                // 3. Downloads it as a .vtt file
-                val downloadList = SubtitlesFragment.getDownloadSubsLanguageTagIETF()
-
-                subs?.filter { subtitle ->
-                    downloadList.any { langTagIETF ->
-                        subtitle.languageCode == langTagIETF ||
-                                subtitle.originalName.contains(
-                                    fromTagToEnglishLanguageName(
-                                        langTagIETF
-                                    ) ?: langTagIETF
-                                )
-                    }
-                }
-                    ?.map { ExtractorSubtitleLink(it.name, it.url, "", it.headers) }
-                    ?.take(3) // max subtitles download hardcoded (?_?)
-                    ?.forEach { link ->
-                        val fileName = VideoDownloadManager.getFileName(context, meta)
-                        downloadSubtitle(context, link, fileName, folder)
-                    }
-            } catch (e: Exception) {
-                logError(e)
-            }
-        }
-
-        suspend fun downloadEpisode(
-            activity: Activity?,
-            episode: ResultEpisode,
-            currentIsMovie: Boolean,
-            currentHeaderName: String,
-            currentType: TvType,
-            currentPoster: String?,
-            apiName: String,
-            parentId: Int,
-            url: String,
-        ) {
-            ioSafe {
-                val generator = RepoLinkGenerator(listOf(episode))
-                val currentLinks = mutableSetOf<ExtractorLink>()
-                val currentSubs = mutableSetOf<SubtitleData>()
-                generator.generateLinks(
-                    clearCache = false,
-                    sourceTypes = LOADTYPE_INAPP_DOWNLOAD,
-                    callback = {
-                        it.first?.let { link ->
-                            currentLinks.add(link)
-                        }
-                    },
-                    subtitleCallback = { sub ->
-                        currentSubs.add(sub)
-                    })
-
-                if (currentLinks.isEmpty()) {
-                    main {
-                        showToast(
-                            R.string.no_links_found_toast,
-                            Toast.LENGTH_SHORT
-                        )
-                    }
-                    return@ioSafe
-                } else {
-                    main {
-                        showToast(
-                            R.string.download_started,
-                            Toast.LENGTH_SHORT
-                        )
-                    }
-                }
-
-                startDownload(
-                    activity,
-                    episode,
-                    currentIsMovie,
-                    currentHeaderName,
-                    currentType,
-                    currentPoster,
-                    apiName,
-                    parentId,
-                    url,
-                    sortUrls(currentLinks),
-                    sortSubs(currentSubs),
-                )
-            }
-        }
-
-        private fun getMeta(
-            episode: ResultEpisode,
-            titleName: String,
-            apiName: String,
-            currentPoster: String?,
-            currentIsMovie: Boolean,
-            tvType: TvType,
-        ): VideoDownloadManager.DownloadEpisodeMetadata {
-            return VideoDownloadManager.DownloadEpisodeMetadata(
-                episode.id,
-                VideoDownloadManager.sanitizeFilename(titleName),
-                apiName,
-                episode.poster ?: currentPoster,
-                episode.name,
-                if (currentIsMovie) null else episode.season,
-                if (currentIsMovie) null else episode.episode,
-                tvType,
-            )
         }
     }
 
@@ -1041,6 +902,28 @@ class ResultViewModel2 : ViewModel() {
             }
         }
     }
+
+    private fun getMeta(
+        episode: ResultEpisode,
+        titleName: String,
+        apiName: String,
+        currentPoster: String?,
+        currentIsMovie: Boolean,
+        tvType: TvType,
+    ): DownloadObjects.DownloadEpisodeMetadata {
+        return DownloadObjects.DownloadEpisodeMetadata(
+            episode.id,
+            episode.parentId,
+            sanitizeFilename(titleName),
+            apiName,
+            episode.poster ?: currentPoster,
+            episode.name,
+            if (currentIsMovie) null else episode.season,
+            if (currentIsMovie) null else episode.episode,
+            tvType,
+        )
+    }
+
 
     /**
      * Toggles the favorite status of an item.
@@ -1345,7 +1228,7 @@ class ResultViewModel2 : ViewModel() {
         // TODO Add skip loading here
         loadLinks(result, isVisible = true, sourceTypes, isCasting = isCasting) { links ->
             // Could not find a better way to do this
-            //val context = AcraApplication.context
+            //val context = CloudStreamApp.context
             postPopup(
                 text,
                 links.links.map { txt("${it.name} ${Qualities.getStringByInt(it.quality)}") }
@@ -1410,9 +1293,10 @@ class ResultViewModel2 : ViewModel() {
                     subs += sub
                     updatePage()
                 },
-                isCasting = isCasting
+                isCasting = isCasting,
+                offset = 0
             )
-        } catch (e: CancellationException) {
+        } catch (_: CancellationException) {
             // Do nothing
         } catch (e: Exception) {
             logError(e)
@@ -1441,7 +1325,7 @@ class ResultViewModel2 : ViewModel() {
         episodeIds: Array<String>,
         watchState: VideoWatchState
     ) {
-        val watchStateString = DataStore.mapper.writeValueAsString(watchState)
+        val watchStateString = watchState.toJson()
         episodeIds.forEach {
             if (getVideoWatchState(it.toInt()) != watchState) {
                 editor.setKeyRaw(
@@ -1587,16 +1471,17 @@ class ResultViewModel2 : ViewModel() {
 
             ACTION_DOWNLOAD_EPISODE -> {
                 val response = currentResponse ?: return
-                downloadEpisode(
-                    activity,
-                    click.data,
-                    response.isMovie(),
-                    response.name,
-                    response.type,
-                    response.posterUrl,
-                    response.apiName,
-                    response.getId(),
-                    response.url
+                DownloadQueueManager.addToQueue(
+                    DownloadObjects.DownloadQueueItem(
+                        click.data,
+                        response.isMovie(),
+                        response.name,
+                        response.type,
+                        response.posterUrl,
+                        response.apiName,
+                        response.getId(),
+                        response.url,
+                    ).toWrapper()
                 )
             }
 
@@ -1607,9 +1492,8 @@ class ResultViewModel2 : ViewModel() {
                     LOADTYPE_INAPP_DOWNLOAD,
                     txt(R.string.episode_action_download_mirror)
                 ) { (result, index) ->
-                    ioSafe {
-                        startDownload(
-                            activity,
+                    DownloadQueueManager.addToQueue(
+                        DownloadObjects.DownloadQueueItem(
                             click.data,
                             response.isMovie(),
                             response.name,
@@ -1620,8 +1504,8 @@ class ResultViewModel2 : ViewModel() {
                             response.url,
                             listOf(result.links[index]),
                             result.subs,
-                        )
-                    }
+                        ).toWrapper()
+                    )
                     showToast(
                         R.string.download_started,
                         Toast.LENGTH_SHORT
@@ -1661,26 +1545,24 @@ class ResultViewModel2 : ViewModel() {
 
             ACTION_PLAY_EPISODE_IN_PLAYER -> {
                 val list = HashMap<String, String>(currentResponse?.syncData ?: emptyMap())
+                val generator = generator ?: return
 
-                generator?.also {
-                    it.getAll() // I know kinda shit to iterate all, but it is 100% sure to work
-                        ?.indexOfFirst { value -> value is ResultEpisode && value.id == click.data.id }
-                        ?.let { index ->
-                            if (index >= 0)
-                                it.goto(index)
-                        }
-                }
+                // I know kinda shit to iterate all, but it is 100% sure to work
+                val index = generator.videos.indexOfFirst { value -> value.id == click.data.id }
+
                 if (currentResponse?.type == TvType.CustomMedia) {
-                    generator?.generateLinks(
+                    generator.generateLinks(
+                        offset = index,
                         clearCache = true,
-                        LOADTYPE_ALL,
+                        isCasting = false,
+                        sourceTypes = LOADTYPE_ALL,
                         callback = {},
                         subtitleCallback = {})
                 } else {
                     activity?.navigate(
                         R.id.global_to_navigation_player,
                         GeneratorPlayer.newInstance(
-                            generator ?: return, list
+                            generator, index,list
                         )
                     )
                 }
@@ -1804,14 +1686,13 @@ class ResultViewModel2 : ViewModel() {
                 }
 
                 val realRecommendations = ArrayList<SearchResponse>()
-                val apiNames = synchronized(apis) {
-                    apis.filter {
-                        it.name.contains("gogoanime", true) ||
-                                it.name.contains("9anime", true)
-                    }.map {
-                        it.name
-                    }
+                val apiNames = apis.filter {
+                    it.name.contains("gogoanime", true) ||
+                        it.name.contains("9anime", true)
+                }.map {
+                    it.name
                 }
+
                 meta.recommendations?.forEach { rec ->
                     apiNames.forEach { name ->
                         realRecommendations.add(rec.copy(apiName = name))
@@ -1830,7 +1711,7 @@ class ResultViewModel2 : ViewModel() {
                 {
                     if (this !is AnimeLoadResponse) return@runAllAsync
                     // already exist, no need to run getTracker
-                    if (this.getAniListId() != null && this.getMalId() != null) return@runAllAsync
+                    if (this.getAniListId() != null && this.getKitsuId() != null && this.getMalId() != null) return@runAllAsync
 
                     val res = APIHolder.getTracker(
                         listOfNotNull(
@@ -1848,9 +1729,12 @@ class ResultViewModel2 : ViewModel() {
                         this.year
                     )
 
+                    val kitsuId = AccountManager.kitsuApi.getAnimeIdByTitle(this.name)
+
                     val ids = arrayOf(
                         AccountManager.malApi.idPrefix to res?.malId?.toString(),
-                        AccountManager.aniListApi.idPrefix to res?.aniId
+                        AccountManager.aniListApi.idPrefix to res?.aniId,
+                        AccountManager.kitsuApi.idPrefix to kitsuId
                     )
 
                     if (ids.any { (id, new) ->
@@ -1872,6 +1756,7 @@ class ResultViewModel2 : ViewModel() {
                     // set posters, might fuck up due to headers idk
                     posterUrl = posterUrl ?: res?.image
                     backgroundPosterUrl = backgroundPosterUrl ?: res?.cover
+                    logoUrl = logoUrl
                 },
                 {
                     if (meta == null) return@runAllAsync
@@ -1946,11 +1831,10 @@ class ResultViewModel2 : ViewModel() {
     }
 
 
-    private suspend fun updateFillers(name: String) {
-        fillers =
-            ioWorkSafe {
-                FillerEpisodeCheck.getFillerEpisodes(name)
-            } ?: emptyMap()
+    private suspend fun updateFillers(data: LoadResponse) {
+        fillers = ioWorkSafe {
+            FillerEpisodeCheck.getFillerEpisodes(data)
+        } ?: hashSetOf()
     }
 
     fun changeDubStatus(status: DubStatus) {
@@ -2034,6 +1918,7 @@ class ResultViewModel2 : ViewModel() {
         val text = txt(
             when (response.type) {
                 TvType.Torrent -> R.string.play_torrent_button
+                TvType.TvSeries -> R.string.play_full_series_button
                 else -> {
                     if (response.type.isLiveStream())
                         R.string.play_livestream_button
@@ -2149,29 +2034,8 @@ class ResultViewModel2 : ViewModel() {
         )
 
         _selectedSeason.postValue(
-
             if (isMovie || currentSeasons.size <= 1) null else
-                when (indexer.season) {
-                    0 -> txt(R.string.no_season)
-                    else -> {
-                        val seasonNames = (currentResponse as? EpisodeResponse)?.seasonNames
-                        val seasonData = seasonNames.getSeason(indexer.season)
-
-                        // If displaySeason is null then only show the name!
-                        if (seasonData?.name != null && seasonData.displaySeason == null) {
-                            txt(seasonData.name)
-                        } else {
-                            val suffix = seasonData?.name?.let { " $it" } ?: ""
-                            txt(
-                                R.string.season_format,
-                                txt(R.string.season),
-                                seasonData?.displaySeason ?: indexer.season,
-                                suffix
-                            )
-                        }
-                    }
-                }
-
+                (currentResponse as? EpisodeResponse)?.seasonNames.getSeasonTxt(indexer.season)
         )
 
         _selectedRangeIndex.postValue(
@@ -2307,8 +2171,8 @@ class ResultViewModel2 : ViewModel() {
     ) {
         _episodes.postValue(Resource.Loading())
 
-        if (updateFillers && loadResponse is AnimeLoadResponse) {
-            updateFillers(loadResponse.name)
+        if (updateFillers) {
+            updateFillers(loadResponse)
         }
 
         val allEpisodes = when (loadResponse) {
@@ -2341,7 +2205,7 @@ class ResultViewModel2 : ViewModel() {
                                     filterName(i.name),
                                     i.posterUrl,
                                     episode,
-                                    seasonData?.season ?: i.season,
+                                    i.season,
                                     if (seasonData != null) seasonData.displaySeason else i.season,
                                     i.data,
                                     loadResponse.apiName,
@@ -2349,12 +2213,13 @@ class ResultViewModel2 : ViewModel() {
                                     index,
                                     i.score,
                                     i.description,
-                                    fillers.getOrDefault(episode, false),
+                                    fillers.contains(episode),
                                     loadResponse.type,
                                     mainId,
                                     totalIndex,
                                     airDate = i.date,
                                     runTime = i.runTime,
+                                    seasonData = seasonData,
                                 )
 
                             val season = eps.seasonIndex ?: 0
@@ -2397,7 +2262,7 @@ class ResultViewModel2 : ViewModel() {
                                 filterName(episode.name),
                                 episode.posterUrl,
                                 episodeIndex,
-                                seasonData?.season ?: episode.season,
+                                episode.season,
                                 if (seasonData != null) seasonData.displaySeason else episode.season,
                                 episode.data,
                                 loadResponse.apiName,
@@ -2411,6 +2276,7 @@ class ResultViewModel2 : ViewModel() {
                                 totalIndex,
                                 airDate = episode.date,
                                 runTime = episode.runTime,
+                                seasonData = seasonData,
                             )
 
                         val season = ep.seasonIndex ?: 0
@@ -2509,21 +2375,7 @@ class ResultViewModel2 : ViewModel() {
         _dubSubSelections.postValue(dubSelection.map { txt(it) to it })
         if (loadResponse is EpisodeResponse) {
             _seasonSelections.postValue(seasonsSelection.map { seasonNumber ->
-                val seasonData = loadResponse.seasonNames.getSeason(seasonNumber)
-                val fixedSeasonNumber = seasonData?.displaySeason ?: seasonNumber
-                val suffix = seasonData?.name?.let { " $it" } ?: ""
-                // If displaySeason is null then only show the name!
-                val name = if (seasonData?.name != null && seasonData.displaySeason == null) {
-                    txt(seasonData.name)
-                } else {
-                    txt(
-                        R.string.season_format,
-                        txt(R.string.season),
-                        fixedSeasonNumber,
-                        suffix
-                    )
-                }
-                name to seasonNumber
+                loadResponse.seasonNames.getSeasonTxt(seasonNumber) to seasonNumber
             })
         }
 
@@ -2601,25 +2453,34 @@ class ResultViewModel2 : ViewModel() {
             loadResponse.trailers.windowed(limit, limit, true).takeWhile { list ->
                 list.amap { trailerData ->
                     try {
-                        val links = arrayListOf<ExtractorLink>()
+                        val links = arrayListOf<Pair<ExtractorLink, String>>()
                         val subs = arrayListOf<SubtitleFile>()
                         if (!loadExtractor(
                                 trailerData.extractorUrl,
                                 trailerData.referer,
                                 { subs.add(it) },
-                                { links.add(it) }) && trailerData.raw
+                                {
+                                    links.add(
+                                        Pair(
+                                            it,
+                                            trailerData.extractorUrl
+                                        )
+                                    )
+                                }) && trailerData.raw
                         ) {
                             arrayListOf(
-                                newExtractorLink(
-                                    "",
-                                    "Trailer",
-                                    trailerData.extractorUrl,
-                                    type = INFER_TYPE
-                                ) {
-                                    this.referer = trailerData.referer ?: ""
-                                    this.quality = Qualities.Unknown.value
-                                    this.headers = trailerData.headers
-                                }
+                                Pair(
+                                    newExtractorLink(
+                                        "",
+                                        "Trailer",
+                                        trailerData.extractorUrl,
+                                        type = INFER_TYPE
+                                    ) {
+                                        this.referer = trailerData.referer ?: ""
+                                        this.quality = Qualities.Unknown.value
+                                        this.headers = trailerData.headers
+                                    }, trailerData.extractorUrl
+                                )
                             ) to arrayListOf()
                         } else {
                             links to subs
@@ -2703,6 +2564,7 @@ class ResultViewModel2 : ViewModel() {
         override var syncData: MutableMap<String, String> = mutableMapOf(),
         override var posterHeaders: Map<String, String>? = null,
         override var backgroundPosterUrl: String? = null,
+        override var logoUrl: String? = null,
         override var contentRating: String? = null,
         override var uniqueUrl: String = url,
         val id: Int?,
@@ -2816,7 +2678,7 @@ class ResultViewModel2 : ViewModel() {
                     setKey(
                         DOWNLOAD_HEADER_CACHE,
                         mainId.toString(),
-                        VideoDownloadHelper.DownloadHeaderCached(
+                        DownloadObjects.DownloadHeaderCached(
                             apiName = apiName,
                             url = validUrl,
                             type = loadResponse.type,

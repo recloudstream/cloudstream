@@ -23,7 +23,7 @@ import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
-import me.xdrop.fuzzywuzzy.FuzzySearch
+import com.lagradost.cloudstream3.utils.Levenshtein
 import java.io.File
 
 // String => repository url
@@ -39,14 +39,15 @@ class PluginsViewModel : ViewModel() {
     private var plugins: List<PluginViewData> = emptyList()
         set(value) {
             // Also set all the plugin languages for easier filtering
-            value.map{ pluginViewData ->
+            value.map { pluginViewData ->
                 val language = pluginViewData.plugin.second.language?.lowercase()
                 pluginLanguages.add(
                     when {
                         language.isNullOrBlank() -> "none"
                         else -> language.lowercase()
-                    })
-                    // not sorting as most likely this is a language tag instead of name
+                    }
+                )
+                // not sorting as most likely this is a language tag instead of name
             }
             field = value
         }
@@ -127,6 +128,7 @@ class PluginsViewModel : ViewModel() {
                     PluginManager.downloadPlugin(
                         activity,
                         metadata.url,
+                        metadata.fileHash,
                         metadata.internalName,
                         repo,
                         metadata.status != PROVIDER_STATUS_DOWN
@@ -178,6 +180,7 @@ class PluginsViewModel : ViewModel() {
             PluginManager.downloadPlugin(
                 activity,
                 metadata.url,
+                metadata.fileHash,
                 metadata.internalName,
                 repo,
                 isEnabled
@@ -243,7 +246,7 @@ class PluginsViewModel : ViewModel() {
             this.sortedBy { it.plugin.second.name }
         } else {
             this.sortedBy {
-                -FuzzySearch.partialRatio(
+                -Levenshtein.partialRatio(
                     it.plugin.second.name.lowercase(),
                     query.lowercase()
                 )
@@ -254,6 +257,13 @@ class PluginsViewModel : ViewModel() {
     fun updateFilteredPlugins() {
         _filteredPlugins.postValue(
             false to plugins.filterTvTypes().filterLang().sortByQuery(currentQuery)
+        )
+    }
+
+    fun clear() {
+        currentQuery = null
+        _filteredPlugins.postValue(
+            false to emptyList()
         )
     }
 

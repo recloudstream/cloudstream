@@ -6,14 +6,15 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.edit
 import androidx.core.os.ConfigurationCompat
-import androidx.preference.PreferenceFragmentCompat
+import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder.allProviders
-import com.lagradost.cloudstream3.AcraApplication
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CloudStreamApp
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity
@@ -24,6 +25,7 @@ import com.lagradost.cloudstream3.databinding.AddSiteInputBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.network.initClient
+import com.lagradost.cloudstream3.ui.BasePreferenceFragmentCompat
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.beneneCount
@@ -43,15 +45,15 @@ import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
-import com.lagradost.cloudstream3.utils.VideoDownloadManager
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement
+import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.getBasePath
+import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import java.util.Locale
 
 // Change local language settings in the app.
 fun getCurrentLocale(context: Context): String {
     val conf = context.resources.configuration
-
-    return ConfigurationCompat.getLocales(conf)?.get(0)?.toLanguageTag() ?: "en"
+    return ConfigurationCompat.getLocales(conf).get(0)?.toLanguageTag() ?: "en"
 }
 
 /**
@@ -135,7 +137,7 @@ fun Pair<String, String>.nameNextToFlagEmoji(): String {
     return "$flag\u00a0${this.first}" // \u00a0 non-breaking space
 }
 
-class SettingsGeneral : PreferenceFragmentCompat() {
+class SettingsGeneral : BasePreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar(R.string.category_general)
@@ -154,14 +156,21 @@ class SettingsGeneral : PreferenceFragmentCompat() {
         val lang: String,
     )
 
-    private val pathPicker = getChooseFolderLauncher { uri, path ->
-        val context = context ?: AcraApplication.context ?: return@getChooseFolderLauncher
-        (path ?: uri.toString()).let {
-            PreferenceManager.getDefaultSharedPreferences(context).edit()
-                .putString(getString(R.string.download_path_key), uri.toString())
-                .putString(getString(R.string.download_path_key_visual), it)
-                .apply()
+    companion object {
+        fun Fragment.pickDownloadPath(uri: Uri?, path: String?) {
+            if (uri == null) return
+
+            val context = context ?: CloudStreamApp.context ?: return
+            val visual = path ?: uri.toString()
+            PreferenceManager.getDefaultSharedPreferences(context).edit {
+                putString(getString(R.string.download_path_key), uri.toString())
+                putString(context.getString(R.string.download_path_key_visual), visual)
+            }
         }
+    }
+
+    private val pathPicker = getChooseFolderLauncher { uri, path ->
+        pickDownloadPath(uri, path)
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -186,7 +195,9 @@ class SettingsGeneral : PreferenceFragmentCompat() {
                 try {
                     val langTagIETF = languageTagsIETF[selectedLangIndex]
                     CommonActivity.setLocale(activity, langTagIETF)
-                    settingsManager.edit().putString(getString(R.string.locale_key), langTagIETF).apply()
+                    settingsManager.edit {
+                        putString(getString(R.string.locale_key), langTagIETF)
+                    }
                     activity?.recreate()
                 } catch (e: Exception) {
                     logError(e)
@@ -208,7 +219,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
         }
 
         fun showAdd() {
-            val providers = synchronized(allProviders) { allProviders.distinctBy { it.javaClass }.sortedBy { it.name } }
+            val providers = allProviders.distinctBy { it::class }.sortedBy { it.name }
             activity?.showDialog(
                 providers.map { "${it.name} (${it.mainUrl})" },
                 -1,
@@ -317,8 +328,8 @@ class SettingsGeneral : PreferenceFragmentCompat() {
                 getString(R.string.dns_pref),
                 true,
                 {}) {
-                settingsManager.edit().putInt(getString(R.string.dns_pref), prefValues[it]).apply()
-                (context ?: AcraApplication.context)?.let { ctx -> app.initClient(ctx) }
+                settingsManager.edit { putInt(getString(R.string.dns_pref), prefValues[it]) }
+                (context ?: CloudStreamApp.context)?.let { ctx -> app.initClient(ctx) }
             }
             return@setOnPreferenceClickListener true
         }
@@ -326,7 +337,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
         fun getDownloadDirs(): List<String> {
             return safe {
                 context?.let { ctx ->
-                    val defaultDir = VideoDownloadManager.getDefaultDir(ctx)?.filePath()
+                    val defaultDir = DownloadFileManagement.getDefaultDir(ctx)?.filePath()
 
                     val first = listOf(defaultDir)
                     (try {
@@ -342,9 +353,15 @@ class SettingsGeneral : PreferenceFragmentCompat() {
             } ?: emptyList()
         }
 
-        settingsManager.edit().putBoolean(getString(R.string.jsdelivr_proxy_key), getKey(getString(R.string.jsdelivr_proxy_key), false) ?: false).apply()
+        settingsManager.edit { putBoolean(getString(R.string.jsdelivr_proxy_key), getKey(getString(R.string.jsdelivr_proxy_key), false) ?: false) }
         getPref(R.string.jsdelivr_proxy_key)?.setOnPreferenceChangeListener { _, newValue ->
             setKey(getString(R.string.jsdelivr_proxy_key), newValue)
+            return@setOnPreferenceChangeListener true
+        }
+
+        getPref(R.string.download_parallel_key)?.setOnPreferenceChangeListener { _, _ ->
+            // Notify that the queue logic has been changed
+            DownloadQueueManager.forceRefreshQueue()
             return@setOnPreferenceChangeListener true
         }
 
@@ -353,7 +370,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
 
             val currentDir =
                 settingsManager.getString(getString(R.string.download_path_key_visual), null)
-                    ?: context?.let { ctx -> VideoDownloadManager.getDefaultDir(ctx)?.filePath() }
+                    ?: context?.let { ctx -> DownloadFileManagement.getDefaultDir(ctx)?.filePath() }
 
             activity?.showBottomDialog(
                 dirs + listOf(getString(R.string.custom)),
@@ -372,10 +389,10 @@ class SettingsGeneral : PreferenceFragmentCompat() {
                     // Sets both visual and actual paths.
                     // key = used path
                     // visual = visual path
-                    settingsManager.edit()
-                        .putString(getString(R.string.download_path_key), dirs[it])
-                        .putString(getString(R.string.download_path_key_visual), dirs[it])
-                        .apply()
+                    settingsManager.edit {
+                        putString(getString(R.string.download_path_key), dirs[it])
+                        putString(getString(R.string.download_path_key_visual), dirs[it])
+                    }
                 }
             }
             return@setOnPreferenceClickListener true
@@ -398,10 +415,12 @@ class SettingsGeneral : PreferenceFragmentCompat() {
                         if (beneneCount%20 == 0) {
                             activity?.navigate(R.id.action_navigation_settings_general_to_easterEggMonkeFragment)
                         }
-                        settingsManager.edit().putInt(
-                            getString(R.string.benene_count),
-                            beneneCount
-                        ).apply()
+                        settingsManager.edit {
+                            putInt(
+                                getString(R.string.benene_count),
+                                beneneCount
+                            )
+                        }
                         it.summary = getString(R.string.benene_count_text).format(beneneCount)
                     } catch (e: Exception) {
                         logError(e)

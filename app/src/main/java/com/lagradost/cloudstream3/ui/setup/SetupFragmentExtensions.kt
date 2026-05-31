@@ -1,11 +1,8 @@
 package com.lagradost.cloudstream3.ui.setup
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEvent
@@ -14,13 +11,15 @@ import com.lagradost.cloudstream3.databinding.FragmentSetupExtensionsBinding
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
+import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.settings.extensions.PluginsViewModel
 import com.lagradost.cloudstream3.ui.settings.extensions.RepoAdapter
 import com.lagradost.cloudstream3.utils.Coroutines.main
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 
-
-class SetupFragmentExtensions : Fragment() {
+class SetupFragmentExtensions : BaseFragment<FragmentSetupExtensionsBinding>(
+    BaseFragment.BindingCreator.Inflate(FragmentSetupExtensionsBinding::inflate)
+) {
     companion object {
         const val SETUP_EXTENSION_BUNDLE_IS_SETUP = "isSetup"
 
@@ -34,24 +33,6 @@ class SetupFragmentExtensions : Fragment() {
         }
     }
 
-    var binding: FragmentSetupExtensionsBinding? = null
-
-    override fun onDestroyView() {
-        binding = null
-        super.onDestroyView()
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val localBinding = FragmentSetupExtensionsBinding.inflate(inflater, container, false)
-        binding = localBinding
-        return localBinding.root
-        //return inflater.inflate(R.layout.fragment_setup_extensions, container, false)
-    }
-
-
     override fun onResume() {
         super.onResume()
         afterRepositoryLoadedEvent += ::setRepositories
@@ -62,18 +43,21 @@ class SetupFragmentExtensions : Fragment() {
         afterRepositoryLoadedEvent -= ::setRepositories
     }
 
+    override fun fixLayout(view: View) {
+        fixSystemBarsPadding(view)
+    }
+
     private fun setRepositories(success: Boolean = true) {
         main {
             val repositories = RepositoryManager.getRepositories() + PREBUILT_REPOSITORIES
             val hasRepos = repositories.isNotEmpty()
             binding?.repoRecyclerView?.isVisible = hasRepos
             binding?.blankRepoScreen?.isVisible = !hasRepos
-//            view_public_repositories_button?.isVisible = hasRepos
 
             if (hasRepos) {
                 binding?.repoRecyclerView?.adapter = RepoAdapter(true, {}, {
                     PluginsViewModel.downloadAll(activity, it.url, null)
-                }).apply { updateList(repositories) }
+                }).apply { submitList(repositories.toList()) }
             }
 //            else {
 //                list_repositories?.setOnClickListener {
@@ -84,19 +68,12 @@ class SetupFragmentExtensions : Fragment() {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        fixPaddingStatusbar(binding?.setupRoot)
+    override fun onBindingCreated(binding: FragmentSetupExtensionsBinding) {
         val isSetup = arguments?.getBoolean(SETUP_EXTENSION_BUNDLE_IS_SETUP) ?: false
 
-//        view_public_repositories_button?.setOnClickListener {
-//            openBrowser(PUBLIC_REPOSITORIES_LIST, isTvSettings(), this)
-//        }
-
         safe {
-           // val ctx = context ?: return@safe
             setRepositories()
-            binding?.apply {
+            binding.apply {
                 if (!isSetup) {
                     nextBtt.setText(R.string.setup_done)
                 }
@@ -107,7 +84,7 @@ class SetupFragmentExtensions : Fragment() {
                     if (isSetup)
                         if (
                         // If any available languages
-                            synchronized(apis) { apis.distinctBy { it.lang }.size > 1 }
+                            apis.distinctBy { it.lang }.size > 1
                         ) {
                             findNavController().navigate(R.id.action_navigation_setup_extensions_to_navigation_setup_provider_languages)
                         } else {
@@ -123,6 +100,4 @@ class SetupFragmentExtensions : Fragment() {
             }
         }
     }
-
-
 }

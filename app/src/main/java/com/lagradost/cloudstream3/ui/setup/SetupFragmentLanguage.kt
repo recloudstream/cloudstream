@@ -1,62 +1,45 @@
 package com.lagradost.cloudstream3.ui.setup
 
-import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
+import androidx.core.content.edit
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.BuildConfig
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.databinding.FragmentSetupLanguageBinding
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.settings.appLanguages
 import com.lagradost.cloudstream3.ui.settings.getCurrentLocale
 import com.lagradost.cloudstream3.ui.settings.nameNextToFlagEmoji
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.fixSystemBarsPadding
 
 const val HAS_DONE_SETUP_KEY = "HAS_DONE_SETUP"
 
-class SetupFragmentLanguage : Fragment() {
-    var binding: FragmentSetupLanguageBinding? = null
+class SetupFragmentLanguage : BaseFragment<FragmentSetupLanguageBinding>(
+    BaseFragment.BindingCreator.Inflate(FragmentSetupLanguageBinding::inflate)
+) {
 
-    override fun onDestroyView() {
-        binding = null
-        super.onDestroyView()
+    override fun fixLayout(view: View) {
+        fixSystemBarsPadding(view)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val localBinding = FragmentSetupLanguageBinding.inflate(inflater, container, false)
-        binding = localBinding
-        return localBinding.root
-        //return inflater.inflate(R.layout.fragment_setup_language, container, false)
-    }
-
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+    override fun onBindingCreated(binding: FragmentSetupLanguageBinding) {
         // We don't want a crash for all users
         safe {
-            fixPaddingStatusbar(binding?.setupRoot)
-
             val ctx = context ?: return@safe
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
 
             val arrayAdapter =
                 ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
 
-            binding?.apply {
+            binding.apply {
                 // Icons may crash on some weird android versions?
                 safe {
                     val drawable = when {
@@ -80,8 +63,9 @@ class SetupFragmentLanguage : Fragment() {
                 listview1.setOnItemClickListener { _, _, selectedLangIndex, _ ->
                     val langTagIETF = languageTagsIETF[selectedLangIndex]
                     CommonActivity.setLocale(activity, langTagIETF)
-                    settingsManager.edit().putString(getString(R.string.locale_key), langTagIETF)
-                        .apply()
+                    settingsManager.edit {
+                        putString(getString(R.string.locale_key), langTagIETF)
+                    }
                 }
 
                 nextBtt.setOnClickListener {

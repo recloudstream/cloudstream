@@ -19,8 +19,7 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Snelheid (%.2fx)</string>
     <string name="rated_format" formatted="true">Beoordeeld: %.1fAls</string>
-    <string name="new_update_format" formatted="true">Nieuwe update gevonden!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Nieuwe update gevonden! \n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Filler</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="app_name">CloudStream</string>
@@ -71,7 +70,6 @@
     <string name="popup_play_file">Bestand afspelen</string>
     <string name="popup_resume_download">Download hervatten</string>
     <string name="popup_pause_download">Download pauzeren</string>
-    <string name="pref_disable_acra">Automatische bugrapportage uitschakelen</string>
     <string name="home_more_info">Meer info</string>
     <string name="home_expanded_hide">Verberg</string>
     <string name="home_play">Speel</string>
@@ -145,20 +143,16 @@
     <string name="backup_failed">Opslagrechten ontbreken. Probeer het opnieuw.</string>
     <string name="backup_failed_error_format">Fout bij het maken van een back-up %s</string>
     <string name="search">Zoeken</string>
-    <string name="category_account">Accounts</string>
+    <string name="category_account">Accounts en Beveiliging</string>
     <string name="category_updates">Updates en back-up</string>
     <string name="settings_info">Info</string>
     <string name="advanced_search">Geavanceerd zoeken</string>
     <string name="advanced_search_des">Geeft u de zoekresultaten gescheiden door provider</string>
-    <string name="bug_report_settings_off">Stuurt alleen gegevens bij crashes</string>
-    <string name="bug_report_settings_on">Verstuurt geen gegevens</string>
     <string name="show_fillers_settings">Toon filler episode voor anime</string>
     <string name="show_trailers_settings">Toon trailers</string>
     <string name="kitsu_settings">Toon posters van Kitsu</string>
     <string name="updates_settings">App-updates tonen</string>
     <string name="updates_settings_des">Automatisch zoeken naar nieuwe updates na het starten van de app.</string>
-    <string name="uprereleases_settings">Update naar pre-releases</string>
-    <string name="uprereleases_settings_des">Zoeken naar pre-release updates in plaats van alleen volledige releases</string>
     <string name="github">Github</string>
     <string name="lightnovel">Light novel app van dezelfde ontwikkelaars</string>
     <string name="anim">Anime app by the same devs</string>
@@ -171,7 +165,6 @@
     <string name="copy_link_toast">Link gekopieerd naar klembord</string>
     <string name="play_episode_toast">Aflevering afspelen</string>
     <string name="subs_default_reset_toast">Reset naar standaardwaarde</string>
-    <string name="acra_report_toast">Sorry, de applicatie is gecrasht. Er wordt een anoniem bugrapport naar de ontwikkelaars gestuurd</string>
     <string name="season">Seizoen</string>
     <string name="no_season">Geen seizoen</string>
     <string name="episode">Aflevering</string>
@@ -188,10 +181,8 @@
     <string name="resume">Hervatten</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">Dit wordt zeker permanent verwijderd %s
-\nWeet u het zeker?</string>
-    <string name="resume_time_left" formatted="true">%dm
-\nremaining</string>
+    <string name="delete_message" formatted="true">Dit wordt zeker permanent verwijderd %s \nWeet u het zeker?</string>
+    <string name="resume_time_left" formatted="true">%dm \nremaining</string>
     <string name="status_ongoing">Voortdurende</string>
     <string name="status_completed">Voltooid</string>
     <string name="status">Status</string>
@@ -255,7 +246,7 @@
     <string name="update">Update</string>
     <string name="watch_quality_pref">Voorkeurskwaliteit voor kijken (WiFi)</string>
     <string name="limit_title">Maximaal aantal tekens voor titel van videospeler</string>
-    <string name="limit_title_rez">Videospeler Resolutie</string>
+    <string name="limit_title_rez">Toon spelerinformatie</string>
     <string name="video_buffer_size_settings">Grootte videobuffer</string>
     <string name="video_buffer_length_settings">Lengte videobuffer</string>
     <string name="video_buffer_disk_settings">Video cache op schijf</string>
@@ -276,8 +267,8 @@
     <string name="legal_notice">Disclaimer</string>
     <string name="category_general">Algemeen</string>
     <string name="random_button_settings">Willekeurige knop</string>
-    <string name="random_button_settings_desc">Toon willekeurige knop op Homepage</string>
-    <string name="provider_lang_settings">Provider talen</string>
+    <string name="random_button_settings_desc">Toon willekeurige knop op Homepage en Bibliotheek</string>
+    <string name="provider_lang_settings">Extensietalen</string>
     <string name="app_layout">App Layout</string>
     <string name="preferred_media_settings">Preferred media</string>
     <string name="subtitles_encoding">Subtitle encoding</string>
@@ -292,20 +283,12 @@
     <string name="bottom_title_settings_des">Zet de titel onder de poster</string>
     <!-- account stuff -->
     <string name="example_password">wachtwoord123</string>
-    <string name="example_username">MijnCoolGebruikersnaam</string>
+    <string name="example_username">Gebruikersnaam</string>
     <string name="example_email">hello@Wereld.com</string>
     <string name="example_ip">127.0.0.1</string>
-    <string name="example_site_name">MyCoolSite</string>
-    <string name="example_site_url">voorbeeld.com</string>
+    <string name="example_site_name">NieuweSiteNaam</string>
+    <string name="example_site_url">https://voorbeeld.com</string>
     <string name="example_lang_name">Taalcode (nl)</string>
-    <!--
-    <string name="mal_account_settings" translatable="false">MAL</string>
-    <string name="anilist_account_settings" translatable="false">AniList</string>
-    <string name="tmdb_account_settings" translatable="false">TMDB</string>
-    <string name="imdb_account_settings" translatable="false">IMDB</string>
-    <string name="kitsu_account_settings" translatable="false">Kitsu</string>
-    <string name="trakt_account_settings" translatable="false">Trakt</string>
-    -->
     <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">account</string>
     <string name="logout">Log uit</string>
@@ -385,14 +368,13 @@
     <string name="subtitles_remove_bloat">Opgeblazen ondertitels verwijderen</string>
     <string name="extras">Extra\'s</string>
     <string name="trailer">Trailer</string>
-    <string name="network_adress_example">Link naar stream</string>
-    <string name="referer">Referer</string>
+    <string name="network_adress_example">https://voorbeeld.com/voorbeeld.mp4</string>
+    <string name="referer">Verwijzer (optioneel)</string>
     <string name="next">Volgende</string>
     <string name="provider_languages_tip">Bekijk video\'s in deze talen</string>
     <string name="previous">Vorige</string>
     <string name="skip_setup">Instelling overslaan</string>
     <string name="app_layout_subtext">Pas het uiterlijk van de app aan uw apparaat aan</string>
-    <string name="crash_reporting_title">Crashrapportage</string>
     <string name="preferred_media_subtext">Wat wil je zien</string>
     <string name="setup_done">Klaar</string>
     <string name="action_mark_as_watched">Markeer als bekeken</string>
@@ -417,7 +399,7 @@
     <string name="add_repository">Repository toevoegen</string>
     <string name="extension_version">Versie</string>
     <string name="is_adult">18+</string>
-    <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
+    <string name="jsdelivr_proxy">GitHub Proxy</string>
     <string name="pref_category_bypass">ISP Omleidingen</string>
     <string name="pref_category_defaults">Standaardinstellingen</string>
     <string name="app_not_found_error">App niet gevonden</string>
@@ -444,11 +426,11 @@
     <string name="watch_quality_pref_data">Voorkeurskwaliteit voor kijken (Mobiele Data)</string>
     <string name="android_tv_interface_on_seek_settings">Speler Weergegeven - Zoekhoeveelheid</string>
     <string name="pref_category_actions">Acties</string>
-    <string name="repository_name_hint">Repository naam</string>
+    <string name="repository_name_hint">Repository naam (Optioneel)</string>
     <string name="plugin_downloaded">Plugin Gedownload</string>
     <string name="test_failed">Mislukt</string>
-    <string name="jsdelivr_proxy_summary">Omzeilt de blokkering van GitHub met behulp van jsDelivr, waardoor updates enkele dagen vertraging kunnen oplopen.</string>
-    <string name="repository_url_hint">Repository URL</string>
+    <string name="jsdelivr_proxy_summary">Omzeil de blokkering van ruwe GitHub-URL’s via jsDelivr. Hierdoor kunnen updates enkele dagen vertraagd zijn.</string>
+    <string name="repository_url_hint">Repository URL of Shortcode</string>
     <string name="batch_download_finish_format" formatted="true">Download %1$d %2$s voltooid</string>
     <string name="hls_playlist">HLS Afspeellijst</string>
     <string name="pref_category_player_features">Speler eigenschappen</string>
@@ -460,11 +442,11 @@
     <string name="batch_download_start_format" formatted="true">Gestart met downloaden van %1$d %2$s…</string>
     <string name="player_pref">Gewenste videospeler</string>
     <string name="pref_category_looks">Lijkt</string>
-    <string name="enable_nsfw_on_providers">NSFW inschakelen op ondersteunde aanbieders</string>
+    <string name="enable_nsfw_on_providers">NSFW inschakelen op ondersteunde extensies</string>
     <string name="others">Andere</string>
     <string name="redo_setup_process">Herhaal installatieproces</string>
     <string name="automatic_plugin_updates">Automatisch bijwerken plugin</string>
-    <string name="apk_installer_settings_des">Sommige telefoons ondersteunen het nieuwe installatieprogramma niet. Probeer de oude optie als de updates niet worden geïnstalleerd.</string>
+    <string name="apk_installer_settings_des">Sommige apparaten ondersteunen het nieuwe installatieprogramma niet. Probeer de oude optie als de updates niet worden geïnstalleerd.</string>
     <string name="player_settings_play_in_app">Interne speler</string>
     <string name="skip_type_mixed_ed">Gemengd einde</string>
     <string name="skip_type_recap">Herhaling</string>
@@ -499,8 +481,7 @@
     <string name="action_remove_from_watched">Verwijderen uit bekeken</string>
     <string name="delayed_update_notice">App wordt bijgewerkt bij afsluiten</string>
     <string name="sort">Gesorteerd</string>
-    <string name="empty_library_no_accounts_message">Je bibliotheek is leeg :(
-\nLog in op een bibliotheekaccount of voeg voorstellingen toe aan uw lokale bibliotheek.</string>
+    <string name="empty_library_no_accounts_message">Je bibliotheek is leeg :( \nLog in op een bibliotheekaccount of voeg voorstellingen toe aan uw lokale bibliotheek.</string>
     <string name="plugins_disabled" formatted="true">Uitgeschakeld: %d</string>
     <string name="stop">Stop</string>
     <string name="plugins_not_downloaded" formatted="true">Niet gedownload: %d</string>
@@ -520,26 +501,21 @@
     <string name="skip_type_mixed_op">Gemengde opening</string>
     <string name="open_with">Open met</string>
     <string name="single_plugin_disabled" formatted="true">%s ( Uitgeschakeld)</string>
-    <string name="apply_on_restart">Toepassen bij Herstart</string>
+    <string name="apply_on_restart">Herstart de app om veranderingen te zien.</string>
     <string name="plugins_downloaded" formatted="true">Gedownload: %d</string>
-    <string name="safe_mode_file">Veilige mode bestand gevonden!
-\nGeen extensies laden bij het opstarten totdat het bestand is verwijderd.</string>
+    <string name="safe_mode_file">Veilige mode bestand gevonden! \nGeen extensies laden bij het opstarten totdat het bestand is verwijderd.</string>
     <string name="no">Nee</string>
     <string name="sort_rating_asc">Beoordeling ( Hoog naar Laag)</string>
     <string name="safe_mode_title">Veilige mode aan</string>
     <string name="restart">Herstart</string>
     <string name="extension_description">Beschrijving</string>
-    <string name="skip_type_creddits">Waardering</string>
+    <string name="skip_type_credits">Waardering</string>
     <string name="clear_history">Wis geschiedenis</string>
     <string name="subscription_list_name">Ingeschreven</string>
     <string name="delete_repository">Wis repository</string>
     <string name="subscription_deleted">Uitgeschreven bij %s</string>
     <string name="revert">Terugkeren</string>
-    <string name="blank_repo_message">CloudStream heeft standaard geen sites geïnstalleerd. U moet de sites uit repositories installeren.
-\n
-\nVanwege een hersenloze DMCA verwijdering door Sky UK Limited 🤮 kunnen we de repository site niet linken in de app.
-\n
-\nWord lid van onze Discord of zoek online.</string>
+    <string name="blank_repo_message">CloudStream heeft standaard geen sites geïnstalleerd. U moet de sites uit repositories installeren. \n \nVanwege een hersenloze DMCA verwijdering door Sky UK Limited 🤮 kunnen we de repository site niet linken in de app. \n \nWord lid van onze Discord of zoek online.</string>
     <string name="audio_tracks">Audiosporen</string>
     <string name="sort_by">Gesorteerd op</string>
     <string name="wifi">Wifi</string>
@@ -551,13 +527,7 @@
     <string name="qualities">Kwaliteiten</string>
     <string name="profile_background_des">Profiel achtergrond</string>
     <string name="use">Gebruik</string>
-    <string name="quality_profile_help">Hier kan je de volgorde van de bronnen veranderen. Als een video een hogere prioriteit heeft zal het hoger in de bronnenlijst staan. De som van de prioriteit van de bron en de prioriteit van de kwaliteit is de prioriteit van de video.
-\n
-\nBron A: 3
-\nKwaliteit B: 7
-\nHeeft een totale prioriteit van de video van 10.
-\n
-\nNOTITIE: Als de som 10 of hoger is zal de speler automatisch het laden overslaan wanneer die link is geladen!</string>
+    <string name="quality_profile_help">Hier kan je de volgorde van de bronnen veranderen. Als een video een hogere prioriteit heeft zal het hoger in de bronnenlijst staan. De som van de prioriteit van de bron en de prioriteit van de kwaliteit is de prioriteit van de video. \n \nBron A: 3 \nKwaliteit B: 7 \nHeeft een totale prioriteit van de video van 10. \n \nNOTITIE: Als de som 10 of hoger is zal de speler automatisch het laden overslaan wanneer die link is geladen!</string>
     <string name="profile_number">Profiel %d</string>
     <string name="no_repository_found_error">Repository niet gevonden, controleer de URL en probeer een VPN</string>
     <string name="no_plugins_found_error">Geen plug-ins gevonden in de repository</string>
@@ -569,11 +539,7 @@
     <string name="favorites_list_name">Favorieten</string>
     <string name="favorite_added">%s toegevoegd aan favorieten</string>
     <string name="logged_account" formatted="true">Aangemeld als %s</string>
-    <string name="duplicate_message_multiple" formatted="true">Er zijn mogelijk dubbele items gevonden in uw bibliotheek:
-\n
-\n%s
-\n
-\nWilt u dit item toch toevoegen, de bestaande vervangen of de actie annuleren?</string>
+    <string name="duplicate_message_multiple" formatted="true">Er zijn mogelijk dubbele items gevonden in uw bibliotheek: \n \n%s \n \nWilt u dit item toch toevoegen, de bestaande vervangen of de actie annuleren?</string>
     <string name="enter_pin_with_name" formatted="true">Voer PIN in voor %s</string>
     <string name="backup_frequency">Backupfrequentie</string>
     <string name="duplicate_title">Mogelijk Duplicaat Gevonden</string>
@@ -592,16 +558,13 @@
     <string name="action_subscribe">Abonneer</string>
     <string name="action_remove_from_favorites">Verwijder uit favorieten</string>
     <string name="select_an_account">Selecteer een Account</string>
-    <string name="duplicate_message_single" formatted="true">Het lijkt erop dat er al een mogelijk duplicaat bestaat in uw bibliotheek: \'%s.\'
-\n
-\nWilt u dit item toch toevoegen, het bestaande item vervangen of de actie annuleren?</string>
+    <string name="duplicate_message_single" formatted="true">Het lijkt erop dat er al een mogelijk duplicaat bestaat in uw bibliotheek: \'%s.\' \n \nWilt u dit item toch toevoegen, het bestaande item vervangen of de actie annuleren?</string>
     <string name="enter_pin">PIN invoeren</string>
     <string name="pin">PIN</string>
     <string name="enter_current_pin">Huidige PIN invoeren</string>
     <string name="links_reloaded_toast">Link opnieuw geladen</string>
     <string name="auto_rotate_video">Autoroteer</string>
     <string name="rotate_video">Roteer</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="downloads_empty">Er zijn momenteel geen downloads beschikbaar.</string>
     <string name="toast_copied">Gekopieerd!</string>
     <string name="dont_show">Verbergen</string>
@@ -620,4 +583,98 @@
     <string name="select_all">Selecteer alles</string>
     <string name="deselect_all">Deselecteer alles</string>
     <string name="subscribe_tooltip">Bericht voor nieuwe afleveringen</string>
+    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$d u %2$d m %3$d s</string>
+    <string name="download_time_left_min_sec_format" formatted="true">%1$d m %2$d s</string>
+    <string name="download_time_left_sec_format" formatted="true">%1$d s</string>
+    <string name="episode_upcoming_format" formatted="true">Binnenkort beschikbaar in %s</string>
+    <string name="delete_files">Verwijder bestanden</string>
+    <string name="delete_format" formatted="true">Verwijder (%1$d | %2$s)</string>
+    <string name="test_warning">Waarschuwing</string>
+    <string name="delete_message_multiple" formatted="true">Weet je zeker dat je de volgende items permanent wil verwijderen?\n\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Weet je zeker dat je de volgende afleveringen in %1$s permanent wilt verwijderen?\n\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">Hiermee worden ook alle afleveringen van de volgende series permanent verwijderd:\n\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Weet je zeker dat je alle afleveringen van de volgende series permanent wil verwijderen?\n\n%s</string>
+    <string name="resume_remaining" formatted="true">%s\nresterend</string>
+    <string name="music_singular">Muziek</string>
+    <string name="audio_book_singular">Luisterboek</string>
+    <string name="custom_media_singular">Media</string>
+    <string name="audio_singular">Audio</string>
+    <string name="podcast_singular">Podcast</string>
+    <string name="encoding_error">Coderingsfout</string>
+    <string name="unsupported_error">Fout: wordt niet ondersteund</string>
+    <string name="pref_category_security">Beveiliging</string>
+    <string name="pref_category_accounts">Accounts</string>
+    <string name="play_full_series_button">Speel Gehele Serie</string>
+    <string name="result_search_tooltip">Zoek in andere extensies</string>
+    <string name="test_extensions">Test alle Extensies</string>
+    <string name="player_load_one_subtitle_online">Laad eerst beschikbare</string>
+    <string name="qr_image">QR-code Afbeelding</string>
+    <string name="delete_plugin">Verwijder plug-in</string>
+    <string name="player_settings_always_ask">Vraag altijd</string>
+    <string name="ok">OKÉ</string>
+    <string name="open_downloaded_repo">Open repository</string>
+    <string name="battery_dialog_title">Batterij-optimalisatie uitschakelen</string>
+    <string name="app_unrestricted_toast">Batterijgebruik van app is reeds ingesteld als onbegrensd</string>
+    <string name="app_info_intent_error">Niet in staat Cloudstreams App-info te openen.</string>
+    <string name="sort_episodes_number_asc">Aflevering (Oplopend)</string>
+    <string name="sort_episodes_number_desc">Aflevering (Aflopend)</string>
+    <string name="sort_episodes_rating_high_low">Beoordeling (Hoogste)</string>
+    <string name="sort_episodes_rating_low_high">Beoordeling (Laagste)</string>
+    <string name="sort_episodes_date_newest">Uitzenddatum (Nieuwste)</string>
+    <string name="sort_episodes_date_oldest">Uitzenddatum (Oudste)</string>
+    <string name="sort_button_episode">Afl %s</string>
+    <string name="sort_button_rating">Beoordeling %s</string>
+    <string name="sort_button_date">Datum %s</string>
+    <string name="no_account">Geen account</string>
+    <string name="rotate_video_desc">Toon een schakelknop voor schermoriëntatie</string>
+    <string name="auto_rotate_video_desc">Activeer automatisch wisselen van schermoriëntatie gebaseerd op video oriëntatie</string>
+    <string name="favorite">Favoriet</string>
+    <string name="unfavorite">Verwijder favoriet</string>
+    <string name="password_pin_authentication_title">Wachtwoord/PIN-authenticatie</string>
+    <string name="biometric_unsupported">Biometrische authenticatie is niet ondersteund op dit apparaat</string>
+    <string name="biometric_prompt_description">Na enige mislukte pogingen zal de prompt sluiten. Herstart de app om het opnieuw te proberen.</string>
+    <string name="cs3wiki">CloudStream Wiki</string>
+    <string name="device_pin_url_message">Ga naar <b>%s</b> op je smartphone of computer en voeren de bovenstaande code in</string>
+    <string name="device_pin_expired_message">PIN-code is nu verlopen!</string>
+    <string name="device_pin_counter_text">Code verloopt in %1$dm %2$ds</string>
+    <string name="download_queue">Downloadwachtrij</string>
+    <string name="queue_empty_message">Er staan momenteel geen downloads in de wachtrij.</string>
+    <string name="extra_brightness_settings">Extra helderheid</string>
+    <string name="extra_brightness_settings_des">Schakel het helderheidsfilter in zodra de schermhelderheid boven 100% komt</string>
+    <string name="extra_brightness_key">extra_helderheid_ingeschakeld</string>
+    <string name="search_suggestions">Zoeksuggesties</string>
+    <string name="search_suggestions_des">Zoeksuggesties laten zien tijdens het typen</string>
+    <string name="clear_suggestions">Suggesties verwijderen</string>
+    <string name="show_cast_in_details">Castpaneel weergeven</string>
+    <string name="install_prerelease">Pre-releaseversie installeren</string>
+    <string name="prerelease_already_installed">Pre-releaseversie is al geïnstaleerd.</string>
+    <string name="prerelease_install_failed">Installatie van de pre-release is mislukt.</string>
+    <string name="episode_action_cast_mirror">Schermspiegeling</string>
+    <string name="episode_action_play_mirror">Spiegeling spelen</string>"
+    <string name="show_rating">Beoordelingslabel</string>
+    <string name="show_episode_text">Afleveringstekst</string>
+    <string name="test_extensions_summary">Deze test is alleen bedoeld voor ontwikkelaars en bevestigt noch ontkent de werking van een extensie.</string>
+    <string name="auth_locally">Lokale authenticatie</string>
+    <string name="video_info">Media info</string>
+    <string name="download_all_plugins_from_repo">Waarschuwing: Cloudstream is niet verandwoordelijk voor het gebruik van extensies van derden en biedt hier ook geen ondersteuning voor!</string>
+    <string name="player_settings_select_cast_device">Cast apparaat selecteren</string>
+    <string name="clipboard_permission_error">Fout bij toegang tot het Klembord, Probeer het opnieuw.</string>
+    <string name="clipboard_unknown_error">Fout bij het kopiëren. Kopieer alsjeblieft de logcat en neem contact op met de app-ondersteuning.</string>
+    <string name="dismiss">Afwijzen</string>
+    <string name="video_singular">Video</string>
+    <string name="skip_type_preview">Voorbeeld</string>
+    <string name="source_priority">Bron Prioriteit</string>
+    <string name="source_priority_help">Bepaal hoe de videobronnen worden gesorteerd in de speler</string>
+    <string name="biometric_authentication_title">Ontgrendel CloudStream</string>
+    <string name="biometric_setting">Versleutel met Biometrie</string>
+    <string name="reset_btn">Reset</string>
+    <string name="sort_release_date_new">verschijningsdatum (Nieuw naar Oud)</string>
+    <string name="sort_release_date_old">verschijningsdatum (Oud naar Nieuw)</string>
+    <string name="hide_player_control_names">Verberg de namen van de besturingselementen van de speler</string>
+    <string name="no_subtitles_loaded">Ondertiteling nog niet geladen</string>
+    <string name="backup_path_title">Back-up folder locatie</string>
+    <string name="custom">Aangepast</string>
+    <string name="confirm_before_exiting_title">Bevestig voor afsluiten</string>
+    <string name="confirm_before_exiting_desc">Toon dialoogvenster voordat de app wordt afgesloten</string>
+    <string name="subs_edge_size">Randgrote</string>
 </resources>

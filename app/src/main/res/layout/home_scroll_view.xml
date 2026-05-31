@@ -36,6 +36,15 @@
         android:layout_marginBottom="100dp"
         android:orientation="vertical">
 
+        <ImageView
+            android:id="@+id/home_preview_logo"
+            android:layout_width="260dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center_horizontal|bottom"
+            android:scaleType="fitCenter"
+            android:paddingBottom="10dp"
+            android:contentDescription="@null" />
+
         <TextView
             android:id="@+id/home_scroll_preview_title"
             android:layout_width="wrap_content"

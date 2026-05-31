@@ -38,7 +38,13 @@ open class GDMirrorbot : ExtractorApi() {
             val hostUrl = baseUrl?.let { getBaseUrl(it) }
 
             if (finalId != null && myKey != null) {
-                val apiUrl = "$mainUrl/mymovieapi?$idType=$finalId&key=$myKey"
+                val apiUrl = if (url.contains("/tv/")) {
+                    val season = Regex("""/tv/\d+/(\d+)/""").find(url)?.groupValues?.get(1) ?: "1"
+                    val episode = Regex("""/tv/\d+/\d+/(\d+)""").find(url)?.groupValues?.get(1) ?: "1"
+                    "$mainUrl/myseriesapi?tmdbid=$finalId&season=$season&epname=$episode&key=$myKey"
+                } else {
+                    "$mainUrl/mymovieapi?$idType=$finalId&key=$myKey"
+                }
                 pageText = app.get(apiUrl).text
             }
 

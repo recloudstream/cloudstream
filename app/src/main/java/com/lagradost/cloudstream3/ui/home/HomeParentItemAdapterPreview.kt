@@ -7,13 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
@@ -21,9 +20,8 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.navigation.NavigationBarItemView
-import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getActivity
 import com.lagradost.cloudstream3.CommonActivity.activity
-import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainActivity
@@ -35,14 +33,13 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.debugException
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
-import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.ViewHolderState
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountEditDialog
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
 import com.lagradost.cloudstream3.ui.account.AccountViewModel
-import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.selectHomepage
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
+import com.lagradost.cloudstream3.ui.result.ResultFragment.bindLogo
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.result.getId
@@ -62,13 +59,14 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectSt
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarMargin
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarView
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
+import androidx.core.graphics.toColorInt
+import com.lagradost.cloudstream3.ui.setRecycledViewPool
 
 class HomeParentItemAdapterPreview(
-    override val fragment: Fragment,
     private val viewModel: HomeViewModel,
     private val accountViewModel: AccountViewModel
 ) : ParentItemAdapter(
-    fragment, id = "HomeParentItemAdapterPreview".hashCode(),
+    id = "HomeParentItemAdapterPreview".hashCode(),
     clickCallback = {
         viewModel.click(it)
     }, moreInfoClickCallback = {
@@ -106,18 +104,33 @@ class HomeParentItemAdapterPreview(
             )
         }
 
-        return HeaderViewHolder(binding, viewModel, accountViewModel, fragment = fragment)
+        return HeaderViewHolder(binding, viewModel, accountViewModel)
     }
 
     override fun onBindHeader(holder: ViewHolderState<Bundle>) {
         (holder as? HeaderViewHolder)?.bind()
     }
 
+    override fun onViewDetachedFromWindow(holder: ViewHolderState<Bundle>) {
+        when (holder) {
+            is HeaderViewHolder -> {
+                holder.onViewDetachedFromWindow()
+            }
+        }
+    }
+
+    override fun onViewAttachedToWindow(holder: ViewHolderState<Bundle>) {
+        when (holder) {
+            is HeaderViewHolder -> {
+                holder.onViewAttachedToWindow()
+            }
+        }
+    }
+
     private class HeaderViewHolder(
         val binding: ViewBinding,
         val viewModel: HomeViewModel,
         accountViewModel: AccountViewModel,
-        fragment: Fragment,
     ) :
         ViewHolderState<Bundle>(binding) {
 
@@ -143,14 +156,13 @@ class HomeParentItemAdapterPreview(
             }
         }
 
-        val previewAdapter = HomeScrollAdapter(fragment = fragment) { view, position, item ->
+        val previewAdapter = HomeScrollAdapter { view, position, item ->
             viewModel.click(
                 LoadClickCallback(0, view, position, item)
             )
         }
 
         private val resumeAdapter = ResumeItemAdapter(
-            fragment,
             nextFocusUp = itemView.nextFocusUpId,
             nextFocusDown = itemView.nextFocusDownId,
             removeCallback = { v ->
@@ -233,7 +245,6 @@ class HomeParentItemAdapterPreview(
                 }
             })
         private val bookmarkAdapter = HomeChildItemAdapter(
-            fragment,
             id = "bookmarkAdapter".hashCode(),
             nextFocusUp = itemView.nextFocusUpId,
             nextFocusDown = itemView.nextFocusDownId
@@ -328,16 +339,63 @@ class HomeParentItemAdapterPreview(
 
         fun onSelect(item: LoadResponse, position: Int) {
             (binding as? FragmentHomeHeadTvBinding)?.apply {
-                homePreviewDescription.isGone =
-                    item.plot.isNullOrBlank()
-                homePreviewDescription.text =
-                    item.plot?.html() ?: ""
+                homePreviewDescription.isGone = item.plot.isNullOrBlank()
+                homePreviewDescription.text = item.plot?.html() ?: ""
+
+                val scoreText = item.score?.toStringNull(0.1, 10, 1, false)
+
+                scoreText?.let { score ->
+                    homePreviewScore.text =
+                        homePreviewScore.context.getString(R.string.extension_rating, score)
+
+                    // while it should never fail, we do this just in case
+                    val rating = score.toDoubleOrNull() ?: item.score?.toDouble() ?: 0.0
+
+                    val color = when {
+                        rating < 5.0 -> "#eb2f2f".toColorInt() // Red
+                        rating < 8.0 -> "#eda009".toColorInt() // Yellow
+                        else -> "#3bb33b".toColorInt() // Green
+                    }
+                    homePreviewScore.backgroundTintList =
+                        android.content.res.ColorStateList.valueOf(color)
+                }
+                homePreviewScore.isGone = scoreText == null
+
+                item.year?.let { year ->
+                    homePreviewYear.text = year.toString()
+                }
+                homePreviewYear.isGone = item.year == null
+
+                val duration = item.duration
+                duration?.let { min ->
+                    homePreviewDuration.text =
+                        homePreviewDuration.context.getString(R.string.duration_format, min)
+                }
+                homePreviewDuration.isGone = duration == null || duration <= 0
+
+                val castText = item.actors?.take(3)?.joinToString(", ") { it.actor.name }
+                if (!castText.isNullOrBlank()) {
+                    homePreviewCast.text =
+                        homePreviewCast.context.getString(R.string.cast_format, castText)
+                    homePreviewCast.isVisible = true
+                } else {
+                    homePreviewCast.isVisible = false
+                }
 
                 homePreviewText.text = item.name.html()
                 populateChips(
                     homePreviewTags,
                     item.tags?.take(6) ?: emptyList(),
-                    R.style.ChipFilledSemiTransparent
+                    R.style.ChipFilledSemiTransparent,
+                    null
+                )
+
+
+                bindLogo(
+                    url = item.logoUrl,
+                    headers = item.posterHeaders,
+                    titleView = homePreviewText,
+                    logoView = homeBackgroundPosterWatermarkBadgeHolder
                 )
 
                 homePreviewTags.isGone =
@@ -432,7 +490,7 @@ class HomeParentItemAdapterPreview(
                 }
             }
 
-        override fun onViewDetachedFromWindow() {
+        fun onViewDetachedFromWindow() {
             previewViewpager.unregisterOnPageChangeCallback(previewCallback)
         }
 
@@ -453,12 +511,14 @@ class HomeParentItemAdapterPreview(
 
             previewViewpager.adapter = previewAdapter
             resumeRecyclerView.adapter = resumeAdapter
+            bookmarkRecyclerView.setRecycledViewPool(HomeChildItemAdapter.sharedPool)
             bookmarkRecyclerView.adapter = bookmarkAdapter
 
             resumeRecyclerView.setLinearListLayout(
                 nextLeft = R.id.nav_rail_view,
                 nextRight = FOCUS_SELF
             )
+
             bookmarkRecyclerView.setLinearListLayout(
                 nextLeft = R.id.nav_rail_view,
                 nextRight = FOCUS_SELF
@@ -482,7 +542,7 @@ class HomeParentItemAdapterPreview(
             headProfilePicCard?.isGone = isLayout(TV or EMULATOR)
             alternateHeadProfilePicCard?.isGone = isLayout(TV or EMULATOR)
 
-            viewModel.currentAccount.observe(fragment.viewLifecycleOwner) { currentAccount ->
+            (headProfilePic ?: alternateHeadProfilePic)?.observe(viewModel.currentAccount) { currentAccount ->
                 headProfilePic?.loadImage(currentAccount?.image)
                 alternateHeadProfilePic?.loadImage(currentAccount?.image)
             }
@@ -522,7 +582,7 @@ class HomeParentItemAdapterPreview(
             }
 
             (binding as? FragmentHomeHeadTvBinding)?.apply {
-                homePreviewChangeApi.setOnClickListener { view ->
+                /*homePreviewChangeApi.setOnClickListener { view ->
                     view.context.selectHomepage(viewModel.repo?.name) { api ->
                         viewModel.loadAndCancel(api, forceReload = true, fromUI = true)
                     }
@@ -539,7 +599,7 @@ class HomeParentItemAdapterPreview(
                 homePreviewSearchButton.setOnClickListener { _ ->
                     // Open blank screen.
                     viewModel.queryTextSubmit("")
-                }
+                }*/
 
                 // A workaround to the focus problem of always centering the view on focus
                 // as that causes higher android versions to stretch the ui when switching between shows
@@ -598,9 +658,7 @@ class HomeParentItemAdapterPreview(
                     params.height = 0
                     layoutParams = params
                 }
-            } else {
-                fixPaddingStatusbarView(homeNonePadding)
-            }
+            } else fixPaddingStatusbarView(homeNonePadding)
 
             when (preview) {
                 is Resource.Success -> {
@@ -626,6 +684,12 @@ class HomeParentItemAdapterPreview(
                     alternativeAccountPadding?.isVisible = false
                     (binding as? FragmentHomeHeadTvBinding)?.apply {
                         homePreviewInfoBtt.isVisible = true
+                    }
+                    // Explicitly bind the current item to ensure instant loading
+                    val currentPos = previewViewpager.currentItem
+                    val item = preview.value.second.getOrNull(currentPos)
+                    if (item != null) {
+                        onSelect(item, currentPos)
                     }
                 }
 
@@ -706,19 +770,19 @@ class HomeParentItemAdapterPreview(
             }
         }
 
-        override fun onViewAttachedToWindow() {
+        fun onViewAttachedToWindow() {
             previewViewpager.registerOnPageChangeCallback(previewCallback)
 
-            binding.root.findViewTreeLifecycleOwner()?.apply {
+            previewViewpager.apply {
                 observe(viewModel.preview) {
                     updatePreview(it)
                 }
-                if (binding is FragmentHomeHeadTvBinding) {
+                /*if (binding is FragmentHomeHeadTvBinding) {
                     observe(viewModel.apiName) { name ->
                         binding.homePreviewChangeApi.text = name
                         binding.homePreviewReloadProvider.isGone = (name == noneApi.name)
                     }
-                }
+                }*/
                 observe(viewModel.resumeWatching) {
                     updateResume(it)
                 }
@@ -734,7 +798,7 @@ class HomeParentItemAdapterPreview(
                     }
                     toggleListHolder?.isGone = visible.isEmpty()
                 }
-            } ?: debugException { "Expected findViewTreeLifecycleOwner" }
+            }
         }
     }
 }

@@ -2,25 +2,30 @@ package com.lagradost.cloudstream3.ui.settings
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.databinding.ItemLogcatBinding
+import com.lagradost.cloudstream3.ui.BaseDiffCallback
+import com.lagradost.cloudstream3.ui.NoStateAdapter
+import com.lagradost.cloudstream3.ui.ViewHolderState
 
-class LogcatAdapter(
-    private val logs: List<String>
-) : RecyclerView.Adapter<LogcatAdapter.LogViewHolder>() {
-
-    inner class LogViewHolder(
-        val binding: ItemLogcatBinding
-    ) : RecyclerView.ViewHolder(binding.root)
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LogViewHolder {
-        val binding = ItemLogcatBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return LogViewHolder(binding)
+class LogcatAdapter() : NoStateAdapter<String>(
+    diffCallback = BaseDiffCallback(
+        itemSame = String::equals,
+        contentSame = String::equals
+    )
+) {
+    override fun onCreateContent(parent: ViewGroup): ViewHolderState<Any> {
+        return ViewHolderState(
+            ItemLogcatBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
     }
 
-    override fun onBindViewHolder(holder: LogViewHolder, position: Int) {
-        holder.binding.logText.text = logs[position]
+    override fun onBindContent(holder: ViewHolderState<Any>, item: String, position: Int) {
+        (holder.view as? ItemLogcatBinding)?.apply {
+            logText.text = item
+        }
     }
-
-    override fun getItemCount(): Int = logs.count()
 }

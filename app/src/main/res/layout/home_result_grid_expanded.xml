@@ -167,6 +167,18 @@
                     tools:text="🇸🇪"
                     tools:visibility="visible" />
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:orientation="vertical"
+                android:paddingBottom="3dp">
+                <TextView
+                    android:id="@+id/episode_text"
+                    android:layout_width="wrap_content"
+                    style="@style/EpisodeTextButton"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <TextView

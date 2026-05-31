@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.search
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -21,10 +22,12 @@ import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
+import com.lagradost.cloudstream3.utils.AppContextUtils.getShortSeasonText
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SubtitleHelper
+import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 
 object SearchResultBuilder {
@@ -64,6 +67,7 @@ object SearchResultBuilder {
 
         val bar: ProgressBar? = itemView.findViewById(R.id.watchProgress)
         val playImg: ImageView? = itemView.findViewById(R.id.search_item_download_play)
+        val episodeText: TextView? = itemView.findViewById(R.id.episode_text)
 
         // Do logic
 
@@ -73,10 +77,12 @@ object SearchResultBuilder {
         textIsSub?.isVisible = false
         textFlag?.isVisible = false
         rating?.isVisible = false
+        episodeText?.isVisible = false
 
         val showSub = showCache[textIsDub?.context?.getString(R.string.show_sub_key)] ?: false
         val showDub = showCache[textIsDub?.context?.getString(R.string.show_dub_key)] ?: false
         val showTitle = showCache[cardText?.context?.getString(R.string.show_title_key)] ?: false
+        val showEpisodeText = showCache[cardText?.context?.getString(R.string.show_episode_text_key)] ?: false
         val showHd = showCache[textQuality?.context?.getString(R.string.show_hd_key)] ?: false
         val showRatingView =
             showCache[textQuality?.context?.getString(R.string.show_rating_key)] ?: false
@@ -126,18 +132,11 @@ object SearchResultBuilder {
         cardText?.text = card.name
         cardText?.isVisible = showTitle
         cardView.isVisible = true
-        cardView.loadImage(card.posterUrl, card.posterHeaders) {
-            error { getImageFromDrawable(itemView.context, R.drawable.default_cover) }
-            /*
-            createPaletteAsync is currently disabled as we use hardware acceleration on images
-            val posterUrl = card.posterUrl
-            if (posterUrl != null && colorCallback != null) {
-                this.listener(onSuccess = { _,success ->
-                    val bitmap = success.image.toBitmap()
-                    createPaletteAsync(posterUrl, bitmap, colorCallback)
-                })
-            }*/
-        }
+        if (!card.posterUrl.isNullOrEmpty()) {
+            cardView.loadImage(card.posterUrl, card.posterHeaders) {
+                error { getImageFromDrawable(itemView.context, R.drawable.default_cover) }
+            }
+        } else cardView.loadImage(R.drawable.default_cover)
 
         fun click(view: View?) {
             clickCallback.invoke(
@@ -259,12 +258,12 @@ object SearchResultBuilder {
                     bar?.progress = (pos.position / 1000).toInt()
                     bar?.visibility = View.VISIBLE
                 }
-
                 playImg?.visibility = View.VISIBLE
-
-                if (card.type?.isMovieType() == false) {
-                    cardText?.text =
-                        cardText?.context?.getNameFull(card.name, card.episode, card.season)
+                if (card.type?.isMovieType() == false && showEpisodeText) {
+                    episodeText?.context?.getShortSeasonText(card.episode, card.season)?.let {text->
+                        episodeText.text = text
+                        episodeText.isVisible = true
+                    }
                 }
             }
 
@@ -323,6 +322,9 @@ object SearchResultBuilder {
                 boxes[i].setBackgroundResource(R.drawable.bg_color_center)
             }
             boxes[boxes.size - 1].setBackgroundResource(R.drawable.bg_color_bottom)
+        }
+        textIsDub?.apply {
+            backgroundTintList = ColorStateList.valueOf(context.colorFromAttribute(R.attr.textColor))
         }
     }
 }
