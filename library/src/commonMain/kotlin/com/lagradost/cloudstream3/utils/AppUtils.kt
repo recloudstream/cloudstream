@@ -25,7 +25,7 @@ object AppUtils {
     inline fun <reified T : Any> parseJson(value: String): T {
         // serializer<T>() preserves full generic type info (e.g. List<DataClass>)
         // and must be resolved here while T is still reified, same for TypeReference
-        val serializer = try { serializer<T>() } catch (_: SerializationException) { null }
+        val serializer = try { serializer<T>() } catch (_: Exception) { null }
         return parseJson(value, T::class, serializer, object : TypeReference<T>() {})
     }
 
@@ -76,18 +76,22 @@ object AppUtils {
     ): T {
         // @Serializable generates a serializer at compile time; contextual serializers are
         // registered manually in serializersModule, we need both to support all cases
-        val s = serializer ?: kClass.serializerOrNull() ?: json.serializersModule.getContextual(kClass)
-        return if (s != null) {
+        val s =
+            serializer ?: kClass.serializerOrNull() ?: json.serializersModule.getContextual(kClass)
+
+        // Prefer Kotlin Serialization over Jackson
+        if (s != null) {
             try {
-                json.decodeFromString(s, value)
+                return json.decodeFromString(s, value)
             } catch (e: SerializationException) {
                 logError(e)
-                if (typeReference != null) mapper.readValue(value, typeReference)
-                else mapper.readValue(value, kClass.java)
             }
+        }
+
+        return if (typeReference != null) {
+            mapper.readValue(value, typeReference)
         } else {
-            if (typeReference != null) mapper.readValue(value, typeReference)
-            else mapper.readValue(value, kClass.java)
+            mapper.readValue(value, kClass.java)
         }
     }
 }
