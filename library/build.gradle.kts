@@ -63,7 +63,6 @@ kotlin {
             implementation(libs.kotlinx.serialization.json) // JSON Parser
             implementation(libs.jsoup) // HTML Parser
             implementation(libs.rhino) // Run JavaScript
-            implementation(libs.newpipeextractor)
             implementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
 
             // Deprecated; will be removed once extensions have time to migrate from using it
@@ -72,6 +71,16 @@ kotlin {
 
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+        }
+
+        // We will eventually add a new jvmCommonMain source set
+        // for things shared between Android and JVM.
+        androidMain.dependencies {
+            implementation(libs.newpipeextractor)
+        }
+
+        jvmMain.dependencies {
+            implementation(libs.newpipeextractor)
         }
     }
 }
