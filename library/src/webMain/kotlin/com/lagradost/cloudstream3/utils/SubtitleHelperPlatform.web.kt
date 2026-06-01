@@ -1,9 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
 @OptIn(ExperimentalWasmJsInterop::class)
-external object Intl : JsAny
-
-@OptIn(ExperimentalWasmJsInterop::class)
 external class IntlDisplayNames(locale: String, options: JsAny) : JsAny {
     fun of(code: String): String?
 }
