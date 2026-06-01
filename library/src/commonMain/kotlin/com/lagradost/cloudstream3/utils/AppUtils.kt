@@ -70,6 +70,12 @@ object AppUtils {
     @InternalAPI
     fun <T : Any> parseJson(
         value: String,
+        kClass: KClass<T>
+    ): T = parseJson(value, kClass, null, null)
+
+    @InternalAPI
+    fun <T : Any> parseJson(
+        value: String,
         kClass: KClass<T>,
         serializer: KSerializer<T>? = null,
         typeReference: TypeReference<T>? = null,
