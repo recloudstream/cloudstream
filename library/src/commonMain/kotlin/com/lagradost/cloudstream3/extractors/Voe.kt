@@ -105,7 +105,7 @@ open class Voe : ExtractorApi() {
     @Serializable
     private data class VoeDecrypted(
         @SerialName("source") val source: String? = null,
-        @SerialName("directAccessUrl") val directAccessUrl: String? = null,
+        @SerialName("direct_access_url") val directAccessUrl: String? = null,
     )
 
     private fun decryptF7(p8: String): VoeDecrypted? {
