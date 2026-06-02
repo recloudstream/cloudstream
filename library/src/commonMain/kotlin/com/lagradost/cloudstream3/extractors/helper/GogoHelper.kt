@@ -43,16 +43,16 @@ object GogoHelper {
         secretKeyString: String,
         encrypt: Boolean = true
     ): String {
-        val ivBytes = iv.toByteArray()
-        val keyBytes = secretKeyString.toByteArray()
+        val ivBytes = iv.encodeToByteArray()
+        val keyBytes = secretKeyString.encodeToByteArray()
         val aesKey = aesCbc.keyDecoder().decodeFromByteArrayBlocking(AES.Key.Format.RAW, keyBytes)
         val cipher = aesKey.cipher(padding = true)
 
         return if (!encrypt) {
             val plainBytes = cipher.decryptWithIvBlocking(ivBytes, base64DecodeArray(string))
-            String(plainBytes)
+            plainBytes.decodeToString()
         } else {
-            base64Encode(cipher.encryptWithIvBlocking(ivBytes, string.toByteArray()))
+            base64Encode(cipher.encryptWithIvBlocking(ivBytes, string.encodeToByteArray()))
         }
     }
 

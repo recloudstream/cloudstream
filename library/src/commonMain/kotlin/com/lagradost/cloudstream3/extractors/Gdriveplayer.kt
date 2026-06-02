@@ -83,7 +83,7 @@ open class Gdriveplayer : ExtractorApi() {
             ?.split(Regex("\\D+"))
             ?.joinToString("") {
                 it.toInt().toChar().toString()
-            }.let { Regex("var pass = \"(\\S+?)\"").first(it ?: return)?.toByteArray() }
+            }.let { Regex("var pass = \"(\\S+?)\"").first(it ?: return)?.encodeToByteArray() }
             ?: throw ErrorLoadingException("can't find password")
         val decryptedData = cryptoAESHandler(data, password, false, false)?.let { getAndUnpack(it) }?.replace("\\", "")
 

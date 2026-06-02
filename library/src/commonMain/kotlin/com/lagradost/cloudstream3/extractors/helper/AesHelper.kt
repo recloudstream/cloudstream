@@ -38,9 +38,9 @@ object AesHelper {
 
         return if (!encrypt) {
             val plainBytes = cipher.decryptWithIvBlocking(iv, base64DecodeArray(parse.ct))
-            String(plainBytes)
+            plainBytes.decodeToString()
         } else {
-            base64Encode(cipher.encryptWithIvBlocking(iv, parse.ct.toByteArray()))
+            base64Encode(cipher.encryptWithIvBlocking(iv, parse.ct.encodeToByteArray()))
         }
     }
 

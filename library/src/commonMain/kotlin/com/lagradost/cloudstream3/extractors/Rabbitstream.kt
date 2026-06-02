@@ -142,7 +142,7 @@ open class Rabbitstream : ExtractorApi() {
         return decryptSourceUrl(
             generateKey(
                 salt = base64DecodeArray(input).copyOfRange(8, 16),
-                secret = key.toByteArray()
+                secret = key.encodeToByteArray()
             ), input
         )
     }
