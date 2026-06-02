@@ -12,7 +12,7 @@ classgraph = "4.8.184"
 coil = { strictly = "3.3.0" } # Later versions require jvmTarget 11 or later
 colorpicker = "6b46b49"
 composeMaterial3 = "1.11.0-alpha07"
-composeMultiplatform = "1.11.0"
+composeMultiplatform = "1.11.1"
 conscryptAndroid = { strictly = "2.5.2" } # 2.5.3 crashes everything
 constraintlayout = "2.2.1"
 coreKtx = "1.18.0"
