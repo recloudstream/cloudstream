@@ -17,21 +17,33 @@ import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
+import com.lagradost.cloudstream3.utils.Coroutines.atomicListOf
 import com.lagradost.cloudstream3.utils.Coroutines.mainWork
-import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToLangTagIETF
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromLanguageToTagIETF
 import com.lagradost.nicehttp.RequestBodyTypes
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.format.DateTimeComponents
+import kotlinx.datetime.format.FormatStringsInDatetimeFormats
+import kotlinx.datetime.format.byUnicodePattern
+import kotlinx.datetime.format.char
+import kotlinx.datetime.format.parse
+import kotlinx.datetime.toInstant
 import java.net.URI
-import java.text.SimpleDateFormat
-import java.util.*
+import java.util.EnumSet
+import kotlinx.serialization.json.Json
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 /**
  * API available only on prerelease builds.
@@ -74,20 +86,26 @@ const val USER_AGENT =
 class ErrorLoadingException(message: String? = null) : Exception(message)
 
 //val baseHeader = mapOf("User-Agent" to USER_AGENT)
+
+@Prerelease
+val json = Json {
+    encodeDefaults = true
+    ignoreUnknownKeys = true
+}
+
 val mapper = JsonMapper.builder().addModule(kotlinModule())
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()!!
 
 object APIHolder {
-    val unixTime: Long
-        get() = System.currentTimeMillis() / 1000L
     val unixTimeMS: Long
-        get() = System.currentTimeMillis()
+        get() = Clock.System.now().toEpochMilliseconds()
+    val unixTime: Long
+        get() = unixTimeMS / 1000L
 
-    // ConcurrentModificationException is possible!!!
-    val allProviders = threadSafeListOf<MainAPI>()
+    val allProviders = atomicListOf<MainAPI>()
 
     fun initAll() {
-        synchronized(allProviders) {
+        allProviders.withLock {
             for (api in allProviders) {
                 api.init()
             }
@@ -97,28 +115,28 @@ object APIHolder {
 
     /** String extension function to Capitalize first char of string.*/
     fun String.capitalize(): String {
-        return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
     }
 
-    var apis: List<MainAPI> = threadSafeListOf()
+    var apis: AtomicList<MainAPI> = atomicListOf()
     var apiMap: Map<String, Int>? = null
 
     fun addPluginMapping(plugin: MainAPI) {
-        synchronized(apis) {
+        apis.withLock {
             apis = apis + plugin
         }
         initMap(true)
     }
 
     fun removePluginMapping(plugin: MainAPI) {
-        synchronized(apis) {
+        apis.withLock {
             apis = apis.filter { it != plugin }
         }
         initMap(true)
     }
 
     private fun initMap(forcedUpdate: Boolean = false) {
-        synchronized(apis) {
+        apis.withLock {
             if (apiMap == null || forcedUpdate)
                 apiMap = apis.mapIndexed { index, api -> api.name to index }.toMap()
         }
@@ -126,24 +144,21 @@ object APIHolder {
 
     fun getApiFromNameNull(apiName: String?): MainAPI? {
         if (apiName == null) return null
-        synchronized(allProviders) {
+        return allProviders.withLock {
             initMap()
-            synchronized(apis) {
-                return apiMap?.get(apiName)?.let { apis.getOrNull(it) }
+            apis.withLock {
+                apiMap?.get(apiName)?.let { apis.getOrNull(it) }
                 // Leave the ?. null check, it can crash regardless
-                    ?: allProviders.firstOrNull { it.name == apiName }
+                ?: allProviders.firstOrNull { it.name == apiName }
             }
         }
     }
 
     fun getApiFromUrlNull(url: String?): MainAPI? {
         if (url == null) return null
-        synchronized(allProviders) {
-            allProviders.forEach { api ->
-                if (url.startsWith(api.mainUrl)) return api
-            }
+        return allProviders.withLock {
+            allProviders.firstOrNull { url.startsWith(it.mainUrl) }
         }
-        return null
     }
 
     /**
@@ -472,7 +487,7 @@ abstract class MainAPI {
     }
 
     fun init() {
-        overrideData?.get(this.javaClass.simpleName)?.let { data ->
+        overrideData?.get(this::class.simpleName)?.let { data ->
             overrideWithNewData(data)
         }
     }
@@ -686,9 +701,16 @@ abstract class MainAPI {
     }
 }
 
-/** Might need a different implementation for desktop*/
 fun base64Decode(string: String): String {
-    return String(base64DecodeArray(string), Charsets.ISO_8859_1)
+    // ISO-8859-1 decoding: each byte maps directly to its Unicode code point (0-255),
+    // so we mask each byte to unsigned and convert to the corresponding Char manually.
+    // decodeToString() can't be used here as it assumes UTF-8.
+    val bytes = base64DecodeArray(string)
+    return buildString(bytes.size) {
+        for (b in bytes) {
+            append((b.toInt() and 0xFF).toChar())
+        }
+    }
 }
 
 @OptIn(ExperimentalEncodingApi::class)
@@ -1497,43 +1519,7 @@ constructor(
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
     override var score: Score? = null,
-) : SearchResponse {
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(
-        "Use newAnimeSearchResponse",
-        level = DeprecationLevel.ERROR
-    )
-    constructor(
-        name: String,
-        url: String,
-        apiName: String,
-        type: TvType? = null,
-
-        posterUrl: String? = null,
-        year: Int? = null,
-        dubStatus: EnumSet<DubStatus>? = null,
-
-        otherName: String? = null,
-        episodes: MutableMap<DubStatus, Int> = mutableMapOf(),
-
-        id: Int? = null,
-        quality: SearchQuality? = null,
-        posterHeaders: Map<String, String>? = null,
-    ) : this(
-        name,
-        url,
-        apiName,
-        type,
-        posterUrl,
-        year,
-        dubStatus,
-        otherName,
-        episodes,
-        id,
-        quality,
-        posterHeaders, null
-    )
-}
+) : SearchResponse
 
 fun AnimeSearchResponse.addDubStatus(status: DubStatus, episodes: Int? = null) {
     this.dubStatus = dubStatus?.also { it.add(status) } ?: EnumSet.of(status)
@@ -2535,15 +2521,45 @@ constructor(
         get() = score?.toInt(100)
 }
 
+@OptIn(FormatStringsInDatetimeFormats::class)
 fun Episode.addDate(date: String?, format: String = "yyyy-MM-dd") {
-    try {
-        this.date = SimpleDateFormat(format, Locale.getDefault()).parse(date ?: return)?.time
-    } catch (e: Exception) {
-        logError(e)
-    }
+    if (date == null) return
+    this.date = runCatching {
+        // First try standard ISO 8601 (e.g. "2026-01-01T12:30:00.000Z", "2026-05-17T14:35+02:00")
+        runCatching { Instant.parse(date).toEpochMilliseconds() }
+            .getOrElse {
+                val fmt = DateTimeComponents.Format { byUnicodePattern(format) }
+                val components = DateTimeComponents.parse(date, fmt)
+                /**
+                 * Try multiple conversions in order of precision for non-ISO-8601 formats,
+                 * since the date string may or may not include time and/or timezone offset:
+                 * 1. If the custom format produced a UTC offset (e.g. "2026-05-17 14:35+02:00"), use it directly
+                 * 2. If it has time but no offset (e.g. "2026-05-17 14:35"), fall back to device timezone
+                 * 3. If it's date-only (e.g. "2026-05-17"), use start of day in device timezone
+                 */
+                runCatching { components.toInstantUsingOffset().toEpochMilliseconds() }
+                    .recoverCatching { components.toLocalDateTime().toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds() }
+                    .getOrElse { components.toLocalDate().atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds() }
+            }
+    }.onFailure { logError(it) }.getOrNull()
 }
 
-fun Episode.addDate(date: Date?) {
+@Prerelease
+fun Episode.addDate(date: LocalDate?) {
+    this.date = date?.atStartOfDayIn(TimeZone.currentSystemDefault())?.toEpochMilliseconds()
+}
+
+@Prerelease
+fun Episode.addDate(date: Instant?) {
+    this.date = date?.toEpochMilliseconds()
+}
+
+// Deprecate after next stable
+/* @Deprecated(
+    message = "Use addDate with LocalDate, Instant, or String instead.",
+    level = DeprecationLevel.WARNING,
+) */
+fun Episode.addDate(date: java.util.Date?) {
     this.date = date?.time
 }
 
@@ -2678,6 +2694,27 @@ fun fetchUrls(text: String?): List<String> {
     val linkRegex =
         Regex("""(https?://(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*))""")
     return linkRegex.findAll(text).map { it.value.trim().removeSurrounding("\"") }.toList()
+}
+
+@Prerelease
+fun isUpcoming(dateString: String?): Boolean {
+    return runCatching {
+        val fmt = DateTimeComponents.Format {
+            year(); char('-'); monthNumber(); char('-'); day()
+        }
+        val components = DateTimeComponents.parse(dateString ?: return false, fmt)
+        /**
+         * Try multiple conversions in order of precision, since the date string format
+         * may or may not include time and/or timezone offset information:
+         * 1. If the string has a UTC offset (e.g. "2026-05-17T14:35+02:00"), use it directly
+         * 2. If it has time but no offset (e.g. "2026-05-17T14:35"), fall back to device timezone
+         * 3. If it's date-only (e.g. "2026-05-17"), use start of day in device timezone
+         */
+        val instant = runCatching { components.toInstantUsingOffset() }
+            .recoverCatching { components.toLocalDateTime().toInstant(TimeZone.currentSystemDefault()) }
+            .getOrElse { components.toLocalDate().atStartOfDayIn(TimeZone.currentSystemDefault()) }
+        Clock.System.now() < instant
+    }.onFailure { logError(it) }.getOrElse { false }
 }
 
 @Deprecated(

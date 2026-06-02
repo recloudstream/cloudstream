@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.metaproviders
 
 import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.api.BuildConfig
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.Actor
 import com.lagradost.cloudstream3.ActorData
@@ -22,6 +23,7 @@ import com.lagradost.cloudstream3.ShowStatus
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.addDate
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.isUpcoming
 import com.lagradost.cloudstream3.mainPageOf
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.newEpisode
@@ -33,8 +35,6 @@ import com.lagradost.cloudstream3.newTvSeriesLoadResponse
 import com.lagradost.cloudstream3.newTvSeriesSearchResponse
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 open class TraktProvider : MainAPI() {
     override var name = "Trakt"
@@ -46,9 +46,9 @@ open class TraktProvider : MainAPI() {
         TvType.Anime,
     )
 
-    private val traktClientId =
-        "d9f434f48b55683a279ffe88ddc68351cc04c9dc9372bd95af5de780b794e770"
     private val traktApiUrl = "https://api.trakt.tv"
+
+    val traktClientId: String = BuildConfig.TRAKT_CLIENT_ID
 
     override val mainPage = mainPageOf(
         "$traktApiUrl/movies/trending" to "Trending Movies", //Most watched movies right now
@@ -290,17 +290,6 @@ open class TraktProvider : MainAPI() {
                 "trakt-api-key" to traktClientId,
             )
         ).text
-    }
-
-    private fun isUpcoming(dateString: String?): Boolean {
-        return try {
-            val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val dateTime = dateString?.let { format.parse(it)?.time } ?: return false
-            unixTimeMS < dateTime
-        } catch (t: Throwable) {
-            logError(t)
-            false
-        }
     }
 
     private fun getStatus(t: String?): ShowStatus {

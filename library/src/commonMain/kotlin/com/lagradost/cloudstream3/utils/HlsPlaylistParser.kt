@@ -234,7 +234,7 @@ object HlsPlaylistParser {
             if (codecArray.isEmpty()) {
                 return null
             }
-            val builder = java.lang.StringBuilder()
+            val builder = StringBuilder()
             for (codec in codecArray) {
                 if (trackType == MimeTypes.getTrackTypeOfCodec(codec)) {
                     if (builder.isNotEmpty()) {
@@ -263,7 +263,7 @@ object HlsPlaylistParser {
             if (codecArray.isEmpty()) {
                 return null
             }
-            val builder = java.lang.StringBuilder()
+            val builder = StringBuilder()
             for (codec in codecArray) {
                 if (trackType != MimeTypes.getTrackTypeOfCodec(codec)) {
                     if (builder.isNotEmpty()) {
@@ -425,7 +425,7 @@ object HlsPlaylistParser {
          * @param limit The limit (exclusive) of the path in `uri`.
          */
         private fun removeDotSegments(
-            uri: java.lang.StringBuilder,
+            uri: StringBuilder,
             offset: Int,
             limit: Int
         ): String {
@@ -1179,7 +1179,7 @@ object HlsPlaylistParser {
         if (KEYFORMAT_WIDEVINE_PSSH_BINARY == keyFormat) {
             val uriString = parseStringAttr(line, REGEX_URI, variableDefinitions)
             return SchemeData(
-                uuid = WIDEVINE_UUID,
+                uuid = C.WIDEVINE_UUID,
                 mimeType = MimeTypes.VIDEO_MP4,
                 data = Base64.Default.decode(uriString.substring(uriString.indexOf(',')))
             )
@@ -1187,7 +1187,7 @@ object HlsPlaylistParser {
             return SchemeData(
                 uuid = C.WIDEVINE_UUID,
                 mimeType = "hls",
-                data = line.toByteArray(charset = Charsets.UTF_8)
+                data = line.encodeToByteArray()
             )
         } else if (KEYFORMAT_PLAYREADY == keyFormat && "1" == keyFormatVersions) {
             val uriString = parseStringAttr(line, REGEX_URI, variableDefinitions)
