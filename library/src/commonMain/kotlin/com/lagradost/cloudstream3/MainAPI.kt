@@ -35,9 +35,11 @@ import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.format.char
 import kotlinx.datetime.format.parse
 import kotlinx.datetime.toInstant
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import java.net.URI
 import java.util.EnumSet
-import kotlinx.serialization.json.Json
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.math.absoluteValue
@@ -384,17 +386,18 @@ const val PROVIDER_STATUS_SLOW = 2
 const val PROVIDER_STATUS_OK = 1
 const val PROVIDER_STATUS_DOWN = 0
 
+@Serializable
 data class ProvidersInfoJson(
-    @JsonProperty("name") var name: String,
-    @JsonProperty("url") var url: String,
-    @JsonProperty("credentials") var credentials: String? = null,
-    @JsonProperty("status") var status: Int,
+    @SerialName("name") var name: String,
+    @SerialName("url") var url: String,
+    @SerialName("credentials") var credentials: String? = null,
+    @SerialName("status") var status: Int,
 )
 
+@Serializable
 data class SettingsJson(
-    @JsonProperty("enableAdult") var enableAdult: Boolean = false,
+    @SerialName("enableAdult") var enableAdult: Boolean = false,
 )
-
 
 data class MainPageData(
     val name: String,
@@ -863,9 +866,10 @@ enum class DubStatus(val id: Int) {
  * of this as a decimal class specifically for ratings.
  * */
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@Serializable
 class Score private constructor(
     /** Decimal between [0, 10^9] representing the min score and max score respectively */
-    @JsonProperty("data")
+    @SerialName("data")
     private val data: Int,
 ) {
     override fun hashCode(): Int = this.data.hashCode()
@@ -1192,9 +1196,10 @@ suspend fun newSubtitleFile(
  * @see newAudioFile
  * */
 @ConsistentCopyVisibility
+@Serializable
 data class AudioFile internal constructor(
-    var url: String,
-    var headers: Map<String, String>? = null
+    @SerialName("url") var url: String,
+    @SerialName("headers") var headers: Map<String, String>? = null
 )
 
 /** Creates an AudioFile with optional initializer for setting additional properties.
@@ -2171,6 +2176,7 @@ data class NextAiring(
  * @param name To be shown next to the season like "Season $displaySeason $name" but if displaySeason is null then "$name"
  * @param displaySeason What to be displayed next to the season name, if null then the name is the only thing shown.
  * */
+@Serializable
 data class SeasonData(
     val season: Int,
     val name: String? = null,
@@ -2732,32 +2738,38 @@ data class Tracker(
     val cover: String? = null,
 )
 
+@Serializable
 data class AniSearch(
-    @JsonProperty("data") var data: Data? = Data()
+    @SerialName("data") var data: Data? = Data()
 ) {
+    @Serializable
     data class Data(
-        @JsonProperty("Page") var page: Page? = Page()
+        @SerialName("Page") @JsonProperty("Page") var page: Page? = Page()
     ) {
+        @Serializable
         data class Page(
-            @JsonProperty("media") var media: ArrayList<Media> = arrayListOf()
+            @SerialName("media") var media: ArrayList<Media> = arrayListOf()
         ) {
+            @Serializable
             data class Media(
-                @JsonProperty("title") var title: Title? = null,
-                @JsonProperty("id") var id: Int? = null,
-                @JsonProperty("idMal") var idMal: Int? = null,
-                @JsonProperty("seasonYear") var seasonYear: Int? = null,
-                @JsonProperty("format") var format: String? = null,
-                @JsonProperty("coverImage") var coverImage: CoverImage? = null,
-                @JsonProperty("bannerImage") var bannerImage: String? = null,
+                @SerialName("title") var title: Title? = null,
+                @SerialName("id") var id: Int? = null,
+                @SerialName("idMal") var idMal: Int? = null,
+                @SerialName("seasonYear") var seasonYear: Int? = null,
+                @SerialName("format") var format: String? = null,
+                @SerialName("coverImage") var coverImage: CoverImage? = null,
+                @SerialName("bannerImage") var bannerImage: String? = null,
             ) {
+                @Serializable
                 data class CoverImage(
-                    @JsonProperty("extraLarge") var extraLarge: String? = null,
-                    @JsonProperty("large") var large: String? = null,
+                    @SerialName("extraLarge") var extraLarge: String? = null,
+                    @SerialName("large") var large: String? = null,
                 )
 
+                @Serializable
                 data class Title(
-                    @JsonProperty("romaji") var romaji: String? = null,
-                    @JsonProperty("english") var english: String? = null,
+                    @SerialName("romaji") var romaji: String? = null,
+                    @SerialName("english") var english: String? = null,
                 ) {
                     fun isMatchingTitles(title: String?): Boolean {
                         if (title == null) return false
