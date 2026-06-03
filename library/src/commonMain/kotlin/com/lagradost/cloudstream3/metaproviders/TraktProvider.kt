@@ -1,7 +1,5 @@
 package com.lagradost.cloudstream3.metaproviders
 
-import com.fasterxml.jackson.annotation.JsonAlias
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.api.BuildConfig
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.Actor
@@ -35,6 +33,9 @@ import com.lagradost.cloudstream3.newTvSeriesLoadResponse
 import com.lagradost.cloudstream3.newTvSeriesSearchResponse
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 
 open class TraktProvider : MainAPI() {
     override var name = "Trakt"
@@ -47,8 +48,7 @@ open class TraktProvider : MainAPI() {
     )
 
     private val traktApiUrl = "https://api.trakt.tv"
-
-    val traktClientId: String = BuildConfig.TRAKT_CLIENT_ID
+    private val traktClientId: String = BuildConfig.TRAKT_CLIENT_ID
 
     override val mainPage = mainPageOf(
         "$traktApiUrl/movies/trending" to "Trending Movies", //Most watched movies right now
@@ -234,7 +234,6 @@ open class TraktProvider : MainAPI() {
                             this.description = episode.overview
                             this.runTime = episode.runtime
                             this.posterUrl = fixPath( episode.images?.screenshot?.firstOrNull())
-                            //this.rating = episode.rating?.times(10)?.roundToInt()
                             this.score = Score.from10(episode.rating)
 
                             this.addDate(episode.firstAired, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
@@ -305,143 +304,154 @@ open class TraktProvider : MainAPI() {
         return "https://$url"
     }
 
+    @Serializable
     data class Data(
-        val type: TvType? = null,
-        val mediaDetails: MediaDetails? = null,
+        @SerialName("type") val type: TvType? = null,
+        @SerialName("mediaDetails") val mediaDetails: MediaDetails? = null,
     )
 
+    @Serializable
     data class MediaDetails(
-        @JsonProperty("title") val title: String? = null,
-        @JsonProperty("year") val year: Int? = null,
-        @JsonProperty("ids") val ids: Ids? = null,
-        @JsonProperty("tagline") val tagline: String? = null,
-        @JsonProperty("overview") val overview: String? = null,
-        @JsonProperty("released") val released: String? = null,
-        @JsonProperty("runtime") val runtime: Int? = null,
-        @JsonProperty("country") val country: String? = null,
-        @JsonProperty("updatedAt") val updatedAt: String? = null,
-        @JsonProperty("trailer") val trailer: String? = null,
-        @JsonProperty("homepage") val homepage: String? = null,
-        @JsonProperty("status") val status: String? = null,
-        @JsonProperty("rating") val rating: Double? = null,
-        @JsonProperty("votes") val votes: Long? = null,
-        @JsonProperty("comment_count") val commentCount: Long? = null,
-        @JsonProperty("language") val language: String? = null,
-        @JsonProperty("languages") val languages: List<String>? = null,
-        @JsonProperty("available_translations") val availableTranslations: List<String>? = null,
-        @JsonProperty("genres") val genres: List<String>? = null,
-        @JsonProperty("certification") val certification: String? = null,
-        @JsonProperty("aired_episodes") val airedEpisodes: Int? = null,
-        @JsonProperty("first_aired") val firstAired: String? = null,
-        @JsonProperty("airs") val airs: Airs? = null,
-        @JsonProperty("network") val network: String? = null,
-        @JsonProperty("images") val images: Images? = null,
-        @JsonProperty("movie") @JsonAlias("show") val media: MediaDetails? = null
+        @SerialName("title") val title: String? = null,
+        @SerialName("year") val year: Int? = null,
+        @SerialName("ids") val ids: Ids? = null,
+        @SerialName("tagline") val tagline: String? = null,
+        @SerialName("overview") val overview: String? = null,
+        @SerialName("released") val released: String? = null,
+        @SerialName("runtime") val runtime: Int? = null,
+        @SerialName("country") val country: String? = null,
+        @SerialName("updatedAt") val updatedAt: String? = null,
+        @SerialName("trailer") val trailer: String? = null,
+        @SerialName("homepage") val homepage: String? = null,
+        @SerialName("status") val status: String? = null,
+        @SerialName("rating") val rating: Double? = null,
+        @SerialName("votes") val votes: Long? = null,
+        @SerialName("comment_count") val commentCount: Long? = null,
+        @SerialName("language") val language: String? = null,
+        @SerialName("languages") val languages: List<String>? = null,
+        @SerialName("available_translations") val availableTranslations: List<String>? = null,
+        @SerialName("genres") val genres: List<String>? = null,
+        @SerialName("certification") val certification: String? = null,
+        @SerialName("aired_episodes") val airedEpisodes: Int? = null,
+        @SerialName("first_aired") val firstAired: String? = null,
+        @SerialName("airs") val airs: Airs? = null,
+        @SerialName("network") val network: String? = null,
+        @SerialName("images") val images: Images? = null,
+        @SerialName("movie") @JsonNames("show") val media: MediaDetails? = null
     )
 
+    @Serializable
     data class Airs(
-        @JsonProperty("day") val day: String? = null,
-        @JsonProperty("time") val time: String? = null,
-        @JsonProperty("timezone") val timezone: String? = null,
+        @SerialName("day") val day: String? = null,
+        @SerialName("time") val time: String? = null,
+        @SerialName("timezone") val timezone: String? = null,
     )
 
+    @Serializable
     data class Ids(
-        @JsonProperty("trakt") val trakt: Int? = null,
-        @JsonProperty("slug") val slug: String? = null,
-        @JsonProperty("tvdb") val tvdb: Int? = null,
-        @JsonProperty("imdb") val imdb: String? = null,
-        @JsonProperty("tmdb") val tmdb: Int? = null,
-        @JsonProperty("tvrage") val tvrage: String? = null,
+        @SerialName("trakt") val trakt: Int? = null,
+        @SerialName("slug") val slug: String? = null,
+        @SerialName("tvdb") val tvdb: Int? = null,
+        @SerialName("imdb") val imdb: String? = null,
+        @SerialName("tmdb") val tmdb: Int? = null,
+        @SerialName("tvrage") val tvrage: String? = null,
     )
 
+    @Serializable
     data class Images(
-        @JsonProperty("poster") val poster: List<String>? = null,
-        @JsonProperty("fanart") val fanart: List<String>? = null,
-        @JsonProperty("logo") val logo: List<String>? = null,
-        @JsonProperty("clearart") val clearArt: List<String>? = null,
-        @JsonProperty("banner") val banner: List<String>? = null,
-        @JsonProperty("thumb") val thumb: List<String>? = null,
-        @JsonProperty("screenshot") val screenshot: List<String>? = null,
-        @JsonProperty("headshot") val headshot: List<String>? = null,
+        @SerialName("poster") val poster: List<String>? = null,
+        @SerialName("fanart") val fanart: List<String>? = null,
+        @SerialName("logo") val logo: List<String>? = null,
+        @SerialName("clearart") val clearArt: List<String>? = null,
+        @SerialName("banner") val banner: List<String>? = null,
+        @SerialName("thumb") val thumb: List<String>? = null,
+        @SerialName("screenshot") val screenshot: List<String>? = null,
+        @SerialName("headshot") val headshot: List<String>? = null,
     )
 
+    @Serializable
     data class People(
-        @JsonProperty("cast") val cast: List<Cast>? = null,
+        @SerialName("cast") val cast: List<Cast>? = null,
     )
 
+    @Serializable
     data class Cast(
-        @JsonProperty("character") val character: String? = null,
-        @JsonProperty("characters") val characters: List<String>? = null,
-        @JsonProperty("episode_count") val episodeCount: Long? = null,
-        @JsonProperty("person") val person: Person? = null,
-        @JsonProperty("images") val images: Images? = null,
+        @SerialName("character") val character: String? = null,
+        @SerialName("characters") val characters: List<String>? = null,
+        @SerialName("episode_count") val episodeCount: Long? = null,
+        @SerialName("person") val person: Person? = null,
+        @SerialName("images") val images: Images? = null,
     )
 
+    @Serializable
     data class Person(
-        @JsonProperty("name") val name: String? = null,
-        @JsonProperty("ids") val ids: Ids? = null,
-        @JsonProperty("images") val images: Images? = null,
+        @SerialName("name") val name: String? = null,
+        @SerialName("ids") val ids: Ids? = null,
+        @SerialName("images") val images: Images? = null,
     )
 
+    @Serializable
     data class Seasons(
-        @JsonProperty("aired_episodes") val airedEpisodes: Int? = null,
-        @JsonProperty("episode_count") val episodeCount: Int? = null,
-        @JsonProperty("episodes") val episodes: List<TraktEpisode>? = null,
-        @JsonProperty("first_aired") val firstAired: String? = null,
-        @JsonProperty("ids") val ids: Ids? = null,
-        @JsonProperty("images") val images: Images? = null,
-        @JsonProperty("network") val network: String? = null,
-        @JsonProperty("number") val number: Int? = null,
-        @JsonProperty("overview") val overview: String? = null,
-        @JsonProperty("rating") val rating: Double? = null,
-        @JsonProperty("title") val title: String? = null,
-        @JsonProperty("updated_at") val updatedAt: String? = null,
-        @JsonProperty("votes") val votes: Int? = null,
+        @SerialName("aired_episodes") val airedEpisodes: Int? = null,
+        @SerialName("episode_count") val episodeCount: Int? = null,
+        @SerialName("episodes") val episodes: List<TraktEpisode>? = null,
+        @SerialName("first_aired") val firstAired: String? = null,
+        @SerialName("ids") val ids: Ids? = null,
+        @SerialName("images") val images: Images? = null,
+        @SerialName("network") val network: String? = null,
+        @SerialName("number") val number: Int? = null,
+        @SerialName("overview") val overview: String? = null,
+        @SerialName("rating") val rating: Double? = null,
+        @SerialName("title") val title: String? = null,
+        @SerialName("updated_at") val updatedAt: String? = null,
+        @SerialName("votes") val votes: Int? = null,
     )
 
+    @Serializable
     data class TraktEpisode(
-        @JsonProperty("available_translations") val availableTranslations: List<String>? = null,
-        @JsonProperty("comment_count") val commentCount: Int? = null,
-        @JsonProperty("episode_type") val episodeType: String? = null,
-        @JsonProperty("first_aired") val firstAired: String? = null,
-        @JsonProperty("ids") val ids: Ids? = null,
-        @JsonProperty("images") val images: Images? = null,
-        @JsonProperty("number") val number: Int? = null,
-        @JsonProperty("number_abs") val numberAbs: Int? = null,
-        @JsonProperty("overview") val overview: String? = null,
-        @JsonProperty("rating") val rating: Double? = null,
-        @JsonProperty("runtime") val runtime: Int? = null,
-        @JsonProperty("season") val season: Int? = null,
-        @JsonProperty("title") val title: String? = null,
-        @JsonProperty("updated_at") val updatedAt: String? = null,
-        @JsonProperty("votes") val votes: Int? = null,
+        @SerialName("available_translations") val availableTranslations: List<String>? = null,
+        @SerialName("comment_count") val commentCount: Int? = null,
+        @SerialName("episode_type") val episodeType: String? = null,
+        @SerialName("first_aired") val firstAired: String? = null,
+        @SerialName("ids") val ids: Ids? = null,
+        @SerialName("images") val images: Images? = null,
+        @SerialName("number") val number: Int? = null,
+        @SerialName("number_abs") val numberAbs: Int? = null,
+        @SerialName("overview") val overview: String? = null,
+        @SerialName("rating") val rating: Double? = null,
+        @SerialName("runtime") val runtime: Int? = null,
+        @SerialName("season") val season: Int? = null,
+        @SerialName("title") val title: String? = null,
+        @SerialName("updated_at") val updatedAt: String? = null,
+        @SerialName("votes") val votes: Int? = null,
     )
 
+    @Serializable
     data class LinkData(
-        @JsonProperty("id") val id: Int? = null,
-        @JsonProperty("trakt_id") val traktId: Int? = null,
-        @JsonProperty("trakt_slug") val traktSlug: String? = null,
-        @JsonProperty("tmdb_id") val tmdbId: Int? = null,
-        @JsonProperty("imdb_id") val imdbId: String? = null,
-        @JsonProperty("tvdb_id") val tvdbId: Int? = null,
-        @JsonProperty("tvrage_id") val tvrageId: String? = null,
-        @JsonProperty("type") val type: String? = null,
-        @JsonProperty("season") val season: Int? = null,
-        @JsonProperty("episode") val episode: Int? = null,
-        @JsonProperty("ani_id") val aniId: String? = null,
-        @JsonProperty("anime_id") val animeId: String? = null,
-        @JsonProperty("title") val title: String? = null,
-        @JsonProperty("year") val year: Int? = null,
-        @JsonProperty("org_title") val orgTitle: String? = null,
-        @JsonProperty("is_anime") val isAnime: Boolean = false,
-        @JsonProperty("aired_year") val airedYear: Int? = null,
-        @JsonProperty("last_season") val lastSeason: Int? = null,
-        @JsonProperty("eps_title") val epsTitle: String? = null,
-        @JsonProperty("jp_title") val jpTitle: String? = null,
-        @JsonProperty("date") val date: String? = null,
-        @JsonProperty("aired_date") val airedDate: String? = null,
-        @JsonProperty("is_asian") val isAsian: Boolean = false,
-        @JsonProperty("is_bollywood") val isBollywood: Boolean = false,
-        @JsonProperty("is_cartoon") val isCartoon: Boolean = false,
+        @SerialName("id") val id: Int? = null,
+        @SerialName("trakt_id") val traktId: Int? = null,
+        @SerialName("trakt_slug") val traktSlug: String? = null,
+        @SerialName("tmdb_id") val tmdbId: Int? = null,
+        @SerialName("imdb_id") val imdbId: String? = null,
+        @SerialName("tvdb_id") val tvdbId: Int? = null,
+        @SerialName("tvrage_id") val tvrageId: String? = null,
+        @SerialName("type") val type: String? = null,
+        @SerialName("season") val season: Int? = null,
+        @SerialName("episode") val episode: Int? = null,
+        @SerialName("ani_id") val aniId: String? = null,
+        @SerialName("anime_id") val animeId: String? = null,
+        @SerialName("title") val title: String? = null,
+        @SerialName("year") val year: Int? = null,
+        @SerialName("org_title") val orgTitle: String? = null,
+        @SerialName("is_anime") val isAnime: Boolean = false,
+        @SerialName("aired_year") val airedYear: Int? = null,
+        @SerialName("last_season") val lastSeason: Int? = null,
+        @SerialName("eps_title") val epsTitle: String? = null,
+        @SerialName("jp_title") val jpTitle: String? = null,
+        @SerialName("date") val date: String? = null,
+        @SerialName("aired_date") val airedDate: String? = null,
+        @SerialName("is_asian") val isAsian: Boolean = false,
+        @SerialName("is_bollywood") val isBollywood: Boolean = false,
+        @SerialName("is_cartoon") val isCartoon: Boolean = false,
     )
 }
