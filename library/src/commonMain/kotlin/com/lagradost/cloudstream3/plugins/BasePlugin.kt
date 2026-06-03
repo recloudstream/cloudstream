@@ -61,9 +61,16 @@ abstract class BasePlugin {
 
     @Serializable
     class Manifest {
-        @SerialName("name") var name: String? = null
-        @SerialName("pluginClassName") var pluginClassName: String? = null
-        @SerialName("version") var version: Int? = null
-        @SerialName("requiresResources") var requiresResources: Boolean = false
+        @SerialName("name")
+        var name: String? = null
+
+        @SerialName("pluginClassName")
+        var pluginClassName: String? = null
+
+        @SerialName("version")
+        var version: Int? = null
+
+        @SerialName("requiresResources")
+        var requiresResources: Boolean = false
     }
 }
