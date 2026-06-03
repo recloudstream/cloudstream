@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.google.android.material.appbar.MaterialToolbar
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.marginBottom
@@ -35,6 +36,7 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.addRepositoryDialog
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.setText
 
@@ -75,6 +77,39 @@ class ExtensionsFragment : BaseFragment<FragmentExtensionsBinding>(
     override fun onBindingCreated(binding: FragmentExtensionsBinding) {
         setUpToolbar(R.string.extensions)
         setToolBarScrollFlags()
+
+        val settingsToolbar = view?.findViewById<MaterialToolbar>(R.id.settings_toolbar)
+        settingsToolbar?.inflateMenu(R.menu.extensions_menu)
+        settingsToolbar?.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.action_sync_all -> {
+                    extensionViewModel.syncAllRepositories()
+                    showToast(R.string.sync_all_repos_success, Toast.LENGTH_SHORT)
+                    true
+                }
+                R.id.action_add_folder -> {
+                    val ctx = context ?: return@setOnMenuItemClickListener false
+                    val builder = AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
+                    builder.setTitle(R.string.add_folder)
+                    val input = android.widget.EditText(ctx)
+                    input.hint = ctx.getString(R.string.folder_name)
+                    builder.setView(input)
+                    builder.setPositiveButton(R.string.ok) { _, _ ->
+                        val name = input.text.toString()
+                        if (name.isNotBlank()) {
+                            val folders = DataStoreHelper.getExtensionFolders().toMutableMap()
+                            folders[name] = emptyList()
+                            DataStoreHelper.setExtensionFolders(folders)
+                            showToast("Folder $name created", Toast.LENGTH_SHORT)
+                        }
+                    }
+                    builder.setNegativeButton(R.string.cancel, null)
+                    builder.show().setDefaultFocus()
+                    true
+                }
+                else -> false
+            }
+        }
 
         binding.repoRecyclerView.apply {
             setLinearListLayout(
@@ -180,6 +215,17 @@ class ExtensionsFragment : BaseFragment<FragmentExtensionsBinding>(
                 PluginsFragment.newInstance(
                     getString(R.string.extensions),
                     "",
+                    true
+                )
+            )
+        }
+
+        binding.pluginDisabledHolder.setOnClickListener {
+            findNavController().navigate(
+                R.id.navigation_settings_extensions_to_navigation_settings_plugins,
+                PluginsFragment.newInstance(
+                    getString(R.string.plugins_disabled_title),
+                    "disabled",
                     true
                 )
             )

@@ -91,6 +91,7 @@ import com.lagradost.cloudstream3.plugins.PluginManager.___DO_NOT_CALL_FROM_A_PL
 import com.lagradost.cloudstream3.plugins.PluginManager.loadSinglePlugin
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.services.SubscriptionWorkManager
+import com.lagradost.cloudstream3.services.MaintenanceWorkManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_PLAYER
@@ -1197,6 +1198,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         setNavigationBarColorCompat(R.attr.primaryGrayBackground)
         updateLocale()
         super.onCreate(savedInstanceState)
+        MaintenanceWorkManager.enqueuePeriodicWork(this)
         try {
             if (isCastApiAvailable()) {
                 CastContext.getSharedInstance(this) { it.run() }

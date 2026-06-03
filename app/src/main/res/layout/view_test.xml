@@ -110,15 +110,62 @@
 
         </androidx.cardview.widget.CardView>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/tests_play_pause"
-            style="@style/WhiteButton"
-            android:layout_width="wrap_content"
-            android:layout_margin="10dp"
-            android:text="@string/start"
-            app:icon="@drawable/ic_baseline_play_arrow_24">
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
 
-        </com.google.android.material.button.MaterialButton>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/tests_play_pause"
+                    style="@style/WhiteButton"
+                    android:layout_width="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="@string/start"
+                    app:icon="@drawable/ic_baseline_play_arrow_24">
+
+                </com.google.android.material.button.MaterialButton>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/tests_retry_failed"
+                    style="@style/WhiteButton"
+                    android:layout_width="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="@string/retry_failed"
+                    android:visibility="gone"
+                    app:icon="@drawable/ic_baseline_play_arrow_24">
+
+                </com.google.android.material.button.MaterialButton>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/tests_disable_failed"
+                    style="@style/WhiteButton"
+                    android:layout_width="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="@string/disable_failed"
+                    android:visibility="gone"
+                    app:icon="@drawable/ic_baseline_close_24">
+
+                </com.google.android.material.button.MaterialButton>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/tests_delete_failed"
+                    style="@style/WhiteButton"
+                    android:layout_width="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="@string/delete_failed"
+                    android:visibility="gone"
+                    app:icon="@drawable/ic_baseline_delete_outline_24"
+                    app:iconTint="@color/colorTestFail">
+
+                </com.google.android.material.button.MaterialButton>
+            </LinearLayout>
+        </HorizontalScrollView>
+
 
     </LinearLayout>
 

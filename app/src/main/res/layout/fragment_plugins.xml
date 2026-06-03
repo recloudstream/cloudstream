@@ -10,6 +10,7 @@
     android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/plugins_appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/primaryGrayBackground">
@@ -25,6 +26,19 @@
             app:navigationIconTint="?attr/iconColor"
             app:titleTextColor="?attr/textColor"
             tools:title="Overlord" />
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/selection_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/primaryGrayBackground"
+            android:paddingTop="@dimen/navbar_height"
+            android:visibility="gone"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:navigationIcon="@drawable/ic_baseline_close_24"
+            app:navigationIconTint="?attr/iconColor"
+            app:titleTextColor="?attr/textColor"
+            tools:title="3 Selected" />
 
         <FrameLayout
             android:layout_width="match_parent"

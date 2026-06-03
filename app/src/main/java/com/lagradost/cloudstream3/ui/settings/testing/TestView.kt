@@ -40,9 +40,13 @@ class TestView @JvmOverloads constructor(
     var totalProgressBar: ContentLoadingProgressBar? = null
 
     var playPauseButton: MaterialButton? = null
+    var retryFailedButton: MaterialButton? = null
+    var disableFailedButton: MaterialButton? = null
+    var deleteFailedButton: MaterialButton? = null
     var stateListener: (TestState) -> Unit = {}
 
     private var state = TestState.None
+    private var failedCount = 0
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_test, this, true)
@@ -58,6 +62,9 @@ class TestView @JvmOverloads constructor(
 
         totalProgressBar = findViewById(R.id.test_total_progress)
         playPauseButton = findViewById(R.id.tests_play_pause)
+        retryFailedButton = findViewById(R.id.tests_retry_failed)
+        disableFailedButton = findViewById(R.id.tests_disable_failed)
+        deleteFailedButton = findViewById(R.id.tests_delete_failed)
 
         attrs?.let {
             context.withStyledAttributes(it, R.styleable.TestView) {
@@ -84,9 +91,18 @@ class TestView @JvmOverloads constructor(
         stateListener.invoke(newState)
         playPauseButton?.setText(newState.stringRes)
         playPauseButton?.icon = ContextCompat.getDrawable(context, newState.icon)
+        updateExtraButtonsVisibility()
+    }
+
+    private fun updateExtraButtonsVisibility() {
+        val showExtraButtons = failedCount > 0 && state != TestState.Running
+        retryFailedButton?.isVisible = showExtraButtons
+        disableFailedButton?.isVisible = showExtraButtons
+        deleteFailedButton?.isVisible = showExtraButtons
     }
 
     fun setProgress(passed: Int, failed: Int, total: Int?) {
+        failedCount = failed
         val totalProgress = passed + failed
         mainSectionText?.text = "$totalProgress / ${total?.toString() ?: "?"}"
         testsPassedSectionText?.text = passed.toString()
@@ -96,8 +112,11 @@ class TestView @JvmOverloads constructor(
         totalProgressBar?.animateProgressTo(totalProgress * 1000)
 
         totalProgressBar?.isVisible = !(totalProgress == 0 || (total ?: 0) == 0)
-        if (totalProgress == total) {
+
+        if (totalProgress == total && total != 0) {
             setState(TestState.Stopped)
+        } else {
+            updateExtraButtonsVisibility()
         }
     }
 
@@ -115,5 +134,17 @@ class TestView @JvmOverloads constructor(
 
     fun setOnFailedClick(listener: OnClickListener) {
         testsFailedSection?.setOnClickListener(listener)
+    }
+
+    fun setOnDeleteFailedClick(listener: OnClickListener) {
+        deleteFailedButton?.setOnClickListener(listener)
+    }
+
+    fun setOnRetryFailedClick(listener: OnClickListener) {
+        retryFailedButton?.setOnClickListener(listener)
+    }
+
+    fun setOnDisableFailedClick(listener: OnClickListener) {
+        disableFailedButton?.setOnClickListener(listener)
     }
 }

@@ -1,7 +1,9 @@
 package com.lagradost.cloudstream3.ui.settings.testing
 
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentTestingBinding
 import com.lagradost.cloudstream3.mvvm.safe
@@ -13,6 +15,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setSystemBarsPadding
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 
 class TestFragment : BaseFragment<FragmentTestingBinding>(
     BaseFragment.BindingCreator.Inflate(FragmentTestingBinding::inflate)
@@ -87,6 +90,45 @@ class TestFragment : BaseFragment<FragmentTestingBinding>(
             providerTest.setOnPassedClick {
                 testViewModel.setFilterMethod(TestViewModel.ProviderFilter.Passed)
                 focusRecyclerView()
+            }
+            providerTest.setOnDeleteFailedClick {
+                val failed = testViewModel.getFailedExtensions()
+                if (failed.isEmpty()) {
+                    showToast(R.string.no_data)
+                    return@setOnDeleteFailedClick
+                }
+
+                activity?.showMultiDialog(
+                    failed.map { it.first },
+                    failed.indices.toList(),
+                    getString(R.string.delete_failed),
+                    {}
+                ) { selectedIndices: List<Int> ->
+                    val pathsToDelete = selectedIndices.map { index -> failed[index].second }
+                    testViewModel.deleteExtensions(pathsToDelete)
+                }
+            }
+
+            providerTest.setOnRetryFailedClick {
+                testViewModel.retryFailed()
+            }
+
+            providerTest.setOnDisableFailedClick {
+                val failed = testViewModel.getFailedExtensions()
+                if (failed.isEmpty()) {
+                    showToast(R.string.no_data)
+                    return@setOnDisableFailedClick
+                }
+
+                activity?.showMultiDialog(
+                    failed.map { it.first },
+                    failed.indices.toList(),
+                    getString(R.string.disable_failed),
+                    {}
+                ) { selectedIndices: List<Int> ->
+                    val pathsToDisable = selectedIndices.map { index -> failed[index].second }
+                    testViewModel.disableExtensions(pathsToDisable)
+                }
             }
         }
     }

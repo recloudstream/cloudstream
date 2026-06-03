@@ -23,6 +23,9 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setSyst
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
+import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
@@ -160,14 +163,18 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
             )
             setRecycledViewPool(PluginAdapter.sharedPool)
             adapter =
-                PluginAdapter {
-                    pluginViewModel.handlePluginAction(activity, url, it, isLocal)
-                }
-        }
-
-        if (isLayout(TV or EMULATOR)) {
-            // Scrolling down does not reveal the whole RecyclerView on TV, add to bypass that.
-            binding.pluginRecyclerView.setPadding(0, 0, 0, 200.toPx)
+                PluginAdapter(
+                    iconClickCallback = {
+                        pluginViewModel.handlePluginAction(activity, url, it, isLocal)
+                    },
+                    longClickCallback = {
+                        pluginViewModel.toggleSelectionMode(true)
+                        pluginViewModel.toggleSelection(it.second.url)
+                    },
+                    clickCallback = {
+                        pluginViewModel.toggleSelection(it.second.url)
+                    }
+                )
         }
 
         observe(pluginViewModel.filteredPlugins) { (scrollToTop, list) ->
@@ -175,13 +182,69 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
             if (scrollToTop) {
                 binding.pluginRecyclerView.scrollToPosition(0)
             }
+            
+            val selectedCount = list.count { it.isSelected && it.isInSelectionMode }
+            binding.selectionToolbar.apply {
+                isVisible = list.any { it.isInSelectionMode }
+                binding.settingsToolbar.isVisible = !isVisible
+                title = "$selectedCount Selected"
+            }
+        }
+
+        binding.selectionToolbar.apply {
+            inflateMenu(R.menu.plugin_selection)
+            setNavigationOnClickListener {
+                pluginViewModel.toggleSelectionMode(false)
+            }
+            setOnMenuItemClickListener { menuItem ->
+                val action = when (menuItem.itemId) {
+                    R.id.action_batch_download -> PluginsViewModel.BatchAction.Download
+                    R.id.action_batch_enable -> PluginsViewModel.BatchAction.Enable
+                    R.id.action_batch_disable -> PluginsViewModel.BatchAction.Disable
+                    R.id.action_batch_delete -> PluginsViewModel.BatchAction.Delete
+                    R.id.action_batch_move -> {
+                        val folders = DataStoreHelper.getExtensionFolders()
+                        if (folders.isEmpty()) {
+                            showToast("Create a folder first in the Extensions screen")
+                        } else {
+                            val names = folders.keys.toList()
+                            activity?.showDialog(
+                                names,
+                                -1,
+                                "Move to Folder",
+                                true,
+                                {}
+                            ) { index: Int ->
+                                val folderName = names[index]
+                                val selected = pluginViewModel.selectedPlugins.toList()
+                                val currentFolders = DataStoreHelper.getExtensionFolders().toMutableMap()
+                                val currentList = currentFolders[folderName]?.toMutableList() ?: mutableListOf<String>()
+                                currentList.addAll(selected)
+                                currentFolders[folderName] = currentList.distinct()
+                                DataStoreHelper.setExtensionFolders(currentFolders)
+                                showToast("Moved to $folderName")
+                                pluginViewModel.toggleSelectionMode(false)
+                            }
+                        }
+                        null
+                    }
+                    else -> null
+                }
+                action?.let { 
+                    pluginViewModel.batchAction(activity, it)
+                }
+                true
+            }
         }
 
         if (isLocal) {
             // No download button and no categories on local
             downloadAllButton?.isVisible = false
             binding.settingsToolbar.menu?.findItem(R.id.lang_filter)?.isVisible = false
-            pluginViewModel.updatePluginListLocal()
+            pluginViewModel.updatePluginListLocal(
+                filterDisabled = url == "disabled",
+                folderName = if (url.startsWith("folder://")) url.removePrefix("folder://") else null
+            )
 
             binding.tvtypesChipsScroll.root.isVisible = false
         } else {
