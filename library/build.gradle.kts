@@ -39,10 +39,7 @@ kotlin {
     jvm()
 
     compilerOptions {
-        freeCompilerArgs.addAll(
-            "-Xexpect-actual-classes",
-            "-Xannotation-default-target=param-property"
-        )
+        freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 
     sourceSets {
