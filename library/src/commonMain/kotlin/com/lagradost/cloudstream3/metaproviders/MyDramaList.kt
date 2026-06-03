@@ -218,8 +218,10 @@ abstract class MyDramaListAPI : MainAPI() {
         @SerialName("media") val media: MediaSummary? = null,
     )
 
+    @Serializable
     class SearchResult : ArrayList<MediaSummary>()
 
+    @Serializable
     class Recommendations : ArrayList<MediaSummary>()
 
     @Serializable
@@ -409,6 +411,7 @@ abstract class MyDramaListAPI : MainAPI() {
         @SerialName("job") val job: String,
     )
 
+    @Serializable
     class ShowEpisodes : ArrayList<ShowEpisodesItem>()
 
     @Serializable
