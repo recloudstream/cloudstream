@@ -21,7 +21,7 @@ import com.lagradost.cloudstream3.utils.newExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToLangTagIETF
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromLanguageToTagIETF
-import com.lagradost.cloudstream3.utils.serializer.UriSerializer
+import com.lagradost.cloudstream3.utils.serializers.UriSerializer
 import com.lagradost.cloudstream3.utils.txt
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
