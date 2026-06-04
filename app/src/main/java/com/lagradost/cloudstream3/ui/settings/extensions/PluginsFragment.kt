@@ -7,10 +7,11 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.BuildConfig
-import com.lagradost.cloudstream3.databinding.FragmentPluginsBinding
-import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.databinding.FragmentPluginsBinding
+import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.bindChips
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
@@ -23,11 +24,9 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setTool
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
 import com.lagradost.cloudstream3.utils.DataStoreHelper
-import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getNameNextToFlagEmoji
-import com.lagradost.cloudstream3.utils.UIHelper.toPx
 
 const val PLUGINS_BUNDLE_NAME = "name"
 const val PLUGINS_BUNDLE_URL = "url"
@@ -65,8 +64,6 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
         val name = arguments?.getString(PLUGINS_BUNDLE_NAME)
         val url = arguments?.getString(PLUGINS_BUNDLE_URL)
         val isLocal = arguments?.getBoolean(PLUGINS_BUNDLE_LOCAL) == true
-        // download all extensions button
-        val downloadAllButton = binding.settingsToolbar.menu?.findItem(R.id.download_all)
 
         if ((url == null) || (name == null)) {
             dispatchBackPressed()
@@ -75,6 +72,18 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
 
         setToolBarScrollFlags()
         setUpToolbar(name)
+        setupToolbar(binding, url)
+        setupRecyclerView(binding, url, isLocal)
+        setupSelectionToolbar(binding)
+
+        if (isLocal) {
+            setupLocalMode(binding, url)
+        } else {
+            setupRemoteMode(binding, url)
+        }
+    }
+
+    private fun setupToolbar(binding: FragmentPluginsBinding, url: String) {
         binding.settingsToolbar.apply {
             setOnMenuItemClickListener { menuItem ->
                 when (menuItem?.itemId) {
@@ -83,37 +92,7 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
                     }
 
                     R.id.lang_filter -> {
-                        val languagesTagName = pluginViewModel.pluginLanguages
-                            .map { langTag ->
-                                Pair(
-                                    langTag,
-                                    getNameNextToFlagEmoji(langTag) ?: langTag
-                                )
-                            }
-                            .sortedBy {
-                                it.second.substringAfter("\u00a0").lowercase()
-                            } // name ignoring flag emoji
-                            .toMutableList()
-
-                        // Move "none" to 1st position as it's special code to indicate unknown/missing language
-                        if (languagesTagName.remove(Pair("none", "none"))) {
-                            languagesTagName.add(0, Pair("none", getString(R.string.no_data)))
-                        }
-
-                        val currentIndexList = pluginViewModel.selectedLanguages.map { langTag ->
-                            languagesTagName.indexOfFirst { lang -> lang.first == langTag }
-                        }
-
-                        activity?.showMultiDialog(
-                            languagesTagName.map { it.second },
-                            currentIndexList,
-                            getString(R.string.provider_lang_settings),
-                            {}
-                        ) { selectedList ->
-                            pluginViewModel.selectedLanguages =
-                                selectedList.map { languagesTagName[it].first }
-                            pluginViewModel.updateFilteredPlugins()
-                        }
+                        showLanguageFilter()
                     }
 
                     else -> {}
@@ -121,10 +100,7 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
                 return@setOnMenuItemClickListener true
             }
 
-            val searchView =
-                menu?.findItem(R.id.search_button)?.actionView as? SearchView
-
-            // Don't go back if active query
+            val searchView = menu?.findItem(R.id.search_button)?.actionView as? SearchView
             setNavigationOnClickListener {
                 if (searchView?.isIconified == false) {
                     searchView.isIconified = true
@@ -150,12 +126,42 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
                 }
             )
         }
-//        searchView?.onActionViewCollapsed = {
-//            pluginViewModel.search(null)
-//        }
+    }
 
-        // Because onActionViewCollapsed doesn't wanna work we need this workaround :(
+    private fun showLanguageFilter() {
+        val languagesTagName = pluginViewModel.pluginLanguages
+            .map { langTag ->
+                Pair(
+                    langTag,
+                    getNameNextToFlagEmoji(langTag) ?: langTag
+                )
+            }
+            .sortedBy {
+                it.second.substringAfter("\u00a0").lowercase()
+            }
+            .toMutableList()
 
+        if (languagesTagName.remove(Pair("none", "none"))) {
+            languagesTagName.add(0, Pair("none", getString(R.string.no_data)))
+        }
+
+        val currentIndexList = pluginViewModel.selectedLanguages.map { langTag ->
+            languagesTagName.indexOfFirst { lang -> lang.first == langTag }
+        }
+
+        activity?.showMultiDialog(
+            languagesTagName.map { it.second },
+            currentIndexList,
+            getString(R.string.provider_lang_settings),
+            {}
+        ) { selectedList ->
+            pluginViewModel.selectedLanguages =
+                selectedList.map { languagesTagName[it].first }
+            pluginViewModel.updateFilteredPlugins()
+        }
+    }
+
+    private fun setupRecyclerView(binding: FragmentPluginsBinding, url: String, isLocal: Boolean) {
         binding.pluginRecyclerView.apply {
             setLinearListLayout(
                 isHorizontal = false,
@@ -163,19 +169,18 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
                 nextRight = FOCUS_SELF,
             )
             setRecycledViewPool(PluginAdapter.sharedPool)
-            adapter =
-                PluginAdapter(
-                    iconClickCallback = {
-                        pluginViewModel.handlePluginAction(activity, url, it, isLocal)
-                    },
-                    longClickCallback = {
-                        pluginViewModel.toggleSelectionMode(true)
-                        pluginViewModel.toggleSelection(it.second.url)
-                    },
-                    clickCallback = {
-                        pluginViewModel.toggleSelection(it.second.url)
-                    },
-                )
+            adapter = PluginAdapter(
+                iconClickCallback = {
+                    pluginViewModel.handlePluginAction(activity, url, it, isLocal)
+                },
+                longClickCallback = {
+                    pluginViewModel.toggleSelectionMode(enabled = true)
+                    pluginViewModel.toggleSelection(it.second.url)
+                },
+                clickCallback = {
+                    pluginViewModel.toggleSelection(it.second.url)
+                },
+            )
         }
 
         observe(pluginViewModel.filteredPlugins) { (scrollToTop, list) ->
@@ -183,7 +188,7 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
             if (scrollToTop) {
                 binding.pluginRecyclerView.scrollToPosition(0)
             }
-            
+
             val selectedCount = list.count { it.isSelected && it.isInSelectionMode }
             binding.selectionToolbar.apply {
                 isVisible = list.any { it.isInSelectionMode }
@@ -191,84 +196,93 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
                 title = "$selectedCount Selected"
             }
         }
+    }
 
+    private fun setupSelectionToolbar(binding: FragmentPluginsBinding) {
         binding.selectionToolbar.apply {
             inflateMenu(R.menu.plugin_selection)
             setNavigationOnClickListener {
-                pluginViewModel.toggleSelectionMode(false)
+                pluginViewModel.toggleSelectionMode(enabled = false)
             }
             setOnMenuItemClickListener { menuItem ->
-                val action = when (menuItem.itemId) {
-                    R.id.action_batch_download -> PluginsViewModel.BatchAction.Download
-                    R.id.action_batch_enable -> PluginsViewModel.BatchAction.Enable
-                    R.id.action_batch_disable -> PluginsViewModel.BatchAction.Disable
-                    R.id.action_batch_delete -> PluginsViewModel.BatchAction.Delete
-                    R.id.action_batch_move -> {
-                        val folders = DataStoreHelper.getExtensionFolders()
-                        if (folders.isEmpty()) {
-                            showToast("Create a folder first in the Extensions screen")
-                        } else {
-                            val names = folders.keys.toList()
-                            activity?.showDialog(
-                                names,
-                                -1,
-                                "Move to Folder",
-                                true,
-                                {}
-                            ) { index: Int ->
-                                val folderName = names[index]
-                                val selected = pluginViewModel.selectedPlugins.toList()
-                                val currentFolders = DataStoreHelper.getExtensionFolders().toMutableMap()
-                                val currentList =
-                                    currentFolders[folderName]?.toMutableList()
-                                        ?: mutableListOf()
-                                currentList.addAll(selected)
-                                currentFolders[folderName] = currentList.distinct()
-                                DataStoreHelper.setExtensionFolders(currentFolders)
-                                showToast("Moved to $folderName")
-                                pluginViewModel.toggleSelectionMode(false)
-                            }
-                        }
-                        null
-                    }
-                    else -> null
-                }
-                action?.let { 
-                    pluginViewModel.batchAction(activity, it)
-                }
+                handleBatchAction(menuItem.itemId)
                 true
             }
         }
+    }
 
-        if (isLocal) {
-            // No download button and no categories on local
-            downloadAllButton?.isVisible = false
-            binding.settingsToolbar.menu?.findItem(R.id.lang_filter)?.isVisible = false
-            pluginViewModel.updatePluginListLocal(
-                filterDisabled = url == "disabled",
-                folderName = if (url.startsWith("folder://")) url.removePrefix("folder://") else null
-            )
-
-            binding.tvtypesChipsScroll.root.isVisible = false
-        } else {
-            pluginViewModel.updatePluginList(context, url)
-            binding.tvtypesChipsScroll.root.isVisible = true
-            // not needed for users but may be useful for devs
-            downloadAllButton?.isVisible = BuildConfig.DEBUG
-
-            bindChips(
-                binding.tvtypesChipsScroll.tvtypesChips,
-                emptyList(),
-                TvType.entries.toList(),
-                callback = { list ->
-                    pluginViewModel.tvTypes.clear()
-                    pluginViewModel.tvTypes.addAll(list.map { it.name })
-                    pluginViewModel.updateFilteredPlugins()
-                },
-                nextFocusDown = R.id.plugin_recycler_view,
-                nextFocusUp = null,
-            )
+    private fun handleBatchAction(itemId: Int) {
+        val action = when (itemId) {
+            R.id.action_batch_download -> PluginsViewModel.BatchAction.Download
+            R.id.action_batch_enable -> PluginsViewModel.BatchAction.Enable
+            R.id.action_batch_disable -> PluginsViewModel.BatchAction.Disable
+            R.id.action_batch_delete -> PluginsViewModel.BatchAction.Delete
+            R.id.action_batch_move -> {
+                showMoveToFolderDialog()
+                null
+            }
+            else -> null
         }
+        action?.let {
+            pluginViewModel.batchAction(activity, it)
+        }
+    }
+
+    private fun showMoveToFolderDialog() {
+        val folders = DataStoreHelper.getExtensionFolders()
+        if (folders.isEmpty()) {
+            showToast("Create a folder first in the Extensions screen")
+        } else {
+            val names = folders.keys.toList()
+            activity?.showDialog(
+                names,
+                -1,
+                "Move to Folder",
+                showApply = true,
+                dismissCallback = {}
+            ) { index: Int ->
+                val folderName = names[index]
+                val selected = pluginViewModel.selectedPlugins.toList()
+                val currentFolders = DataStoreHelper.getExtensionFolders().toMutableMap()
+                val currentList =
+                    currentFolders[folderName]?.toMutableList()
+                        ?: mutableListOf()
+                currentList.addAll(selected)
+                currentFolders[folderName] = currentList.distinct()
+                DataStoreHelper.setExtensionFolders(currentFolders)
+                showToast("Moved to $folderName")
+                pluginViewModel.toggleSelectionMode(enabled = false)
+            }
+        }
+    }
+
+    private fun setupLocalMode(binding: FragmentPluginsBinding, url: String) {
+        binding.settingsToolbar.menu?.findItem(R.id.download_all)?.isVisible = false
+        binding.settingsToolbar.menu?.findItem(R.id.lang_filter)?.isVisible = false
+        pluginViewModel.updatePluginListLocal(
+            filterDisabled = url == "disabled",
+            folderName = if (url.startsWith("folder://")) url.removePrefix("folder://") else null
+        )
+        binding.tvtypesChipsScroll.root.isVisible = false
+    }
+
+    private fun setupRemoteMode(binding: FragmentPluginsBinding, url: String) {
+        pluginViewModel.updatePluginList(context, url)
+        binding.tvtypesChipsScroll.root.isVisible = true
+        binding.settingsToolbar.menu?.findItem(R.id.download_all)?.isVisible = BuildConfig.DEBUG
+
+        bindChips(
+            binding.tvtypesChipsScroll.tvtypesChips,
+            emptyList(),
+            TvType.entries.toList(),
+            callback = { list ->
+                pluginViewModel.tvTypes.clear()
+                pluginViewModel.tvTypes.addAll(list.map { it.name })
+                pluginViewModel.updateFilteredPlugins()
+            },
+            nextFocusDown = R.id.plugin_recycler_view,
+            nextFocusUp = null,
+        )
     }
 
     companion object {
@@ -279,14 +293,5 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
                 putBoolean(PLUGINS_BUNDLE_LOCAL, isLocal)
             }
         }
-
-//        class RepoSearchView(context: Context) : android.widget.SearchView(context) {
-//            var onActionViewCollapsed = {}
-//
-//            override fun onActionViewCollapsed() {
-//                onActionViewCollapsed()
-//            }
-//        }
-
     }
 }
