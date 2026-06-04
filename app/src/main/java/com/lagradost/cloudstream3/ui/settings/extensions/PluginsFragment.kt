@@ -65,7 +65,7 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
         val url = arguments?.getString(PLUGINS_BUNDLE_URL)
         val isLocal = arguments?.getBoolean(PLUGINS_BUNDLE_LOCAL) == true
 
-        if ((url == null) || (name == null)) {
+        if (url == null || name == null) {
             dispatchBackPressed()
             return
         }

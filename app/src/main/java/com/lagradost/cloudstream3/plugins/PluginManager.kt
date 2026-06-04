@@ -164,7 +164,7 @@ object PluginManager {
      */
     fun deleteAllOatFiles(context: Context) {
         File("${context.filesDir}/$ONLINE_PLUGINS_FOLDER").listFiles()?.forEach { repo ->
-            repo.listFiles { file -> (file.name == "oat") && file.isDirectory }?.forEach { file ->
+            repo.listFiles { file -> file.name == "oat" && file.isDirectory }?.forEach { file ->
                 val success = file.deleteRecursively()
                 Log.i(TAG, "Deleted oat directory: ${file.absolutePath} Success=$success")
             }

@@ -309,7 +309,7 @@ class PluginsViewModel : ViewModel() {
 
         val list = plugins.filter {
             // Show all non-nsfw plugins or all if nsfw is enabled
-            (it.second.tvTypes?.contains(TvType.NSFW.name) != true) || isAdult
+            it.second.tvTypes?.contains(TvType.NSFW.name) != true || isAdult
         }.map { plugin ->
             PluginViewData(
                 plugin,
