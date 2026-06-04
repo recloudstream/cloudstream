@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.ui.player
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.ErrorLoadingException
@@ -9,6 +8,8 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.newExtractorLink
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import torrServer.TorrServer
 import java.io.File
 import java.net.ConnectException
@@ -278,93 +279,95 @@ object Torrent {
 
     // https://github.com/Diegopyl1209/torrentserver-aniyomi/blob/c18f58e51b6738f053261bc863177078aa9c1c98/web/api/torrents.go#L18
     // https://github.com/Diegopyl1209/torrentserver-aniyomi/blob/main/web/api/route.go#L7
+    @Serializable
     data class TorrentRequest(
-        @JsonProperty("action")
+        @SerialName("action")
         val action: String,
-        @JsonProperty("hash")
+        @SerialName("hash")
         val hash: String = "",
-        @JsonProperty("link")
+        @SerialName("link")
         val link: String = "",
-        @JsonProperty("title")
+        @SerialName("title")
         val title: String = "",
-        @JsonProperty("poster")
+        @SerialName("poster")
         val poster: String = "",
-        @JsonProperty("data")
+        @SerialName("data")
         val data: String = "",
-        @JsonProperty("save_to_db")
+        @SerialName("save_to_db")
         val saveToDB: Boolean = false,
     )
 
     // https://github.com/Diegopyl1209/torrentserver-aniyomi/blob/c18f58e51b6738f053261bc863177078aa9c1c98/torr/state/state.go#L33
     // omitempty = nullable
+    @Serializable
     data class TorrentStatus(
-        @JsonProperty("title")
+        @SerialName("title")
         var title: String,
-        @JsonProperty("poster")
+        @SerialName("poster")
         var poster: String,
-        @JsonProperty("data")
+        @SerialName("data")
         var data: String?,
-        @JsonProperty("timestamp")
+        @SerialName("timestamp")
         var timestamp: Long,
-        @JsonProperty("name")
+        @SerialName("name")
         var name: String?,
-        @JsonProperty("hash")
+        @SerialName("hash")
         var hash: String?,
-        @JsonProperty("stat")
+        @SerialName("stat")
         var stat: Int,
-        @JsonProperty("stat_string")
+        @SerialName("stat_string")
         var statString: String,
-        @JsonProperty("loaded_size")
+        @SerialName("loaded_size")
         var loadedSize: Long?,
-        @JsonProperty("torrent_size")
+        @SerialName("torrent_size")
         var torrentSize: Long?,
-        @JsonProperty("preloaded_bytes")
+        @SerialName("preloaded_bytes")
         var preloadedBytes: Long?,
-        @JsonProperty("preload_size")
+        @SerialName("preload_size")
         var preloadSize: Long?,
-        @JsonProperty("download_speed")
+        @SerialName("download_speed")
         var downloadSpeed: Double?,
-        @JsonProperty("upload_speed")
+        @SerialName("upload_speed")
         var uploadSpeed: Double?,
-        @JsonProperty("total_peers")
+        @SerialName("total_peers")
         var totalPeers: Int?,
-        @JsonProperty("pending_peers")
+        @SerialName("pending_peers")
         var pendingPeers: Int?,
-        @JsonProperty("active_peers")
+        @SerialName("active_peers")
         var activePeers: Int?,
-        @JsonProperty("connected_seeders")
+        @SerialName("connected_seeders")
         var connectedSeeders: Int?,
-        @JsonProperty("half_open_peers")
+        @SerialName("half_open_peers")
         var halfOpenPeers: Int?,
-        @JsonProperty("bytes_written")
+        @SerialName("bytes_written")
         var bytesWritten: Long?,
-        @JsonProperty("bytes_written_data")
+        @SerialName("bytes_written_data")
         var bytesWrittenData: Long?,
-        @JsonProperty("bytes_read")
+        @SerialName("bytes_read")
         var bytesRead: Long?,
-        @JsonProperty("bytes_read_data")
+        @SerialName("bytes_read_data")
         var bytesReadData: Long?,
-        @JsonProperty("bytes_read_useful_data")
+        @SerialName("bytes_read_useful_data")
         var bytesReadUsefulData: Long?,
-        @JsonProperty("chunks_written")
+        @SerialName("chunks_written")
         var chunksWritten: Long?,
-        @JsonProperty("chunks_read")
+        @SerialName("chunks_read")
         var chunksRead: Long?,
-        @JsonProperty("chunks_read_useful")
+        @SerialName("chunks_read_useful")
         var chunksReadUseful: Long?,
-        @JsonProperty("chunks_read_wasted")
+        @SerialName("chunks_read_wasted")
         var chunksReadWasted: Long?,
-        @JsonProperty("pieces_dirtied_good")
+        @SerialName("pieces_dirtied_good")
         var piecesDirtiedGood: Long?,
-        @JsonProperty("pieces_dirtied_bad")
+        @SerialName("pieces_dirtied_bad")
         var piecesDirtiedBad: Long?,
-        @JsonProperty("duration_seconds")
+        @SerialName("duration_seconds")
         var durationSeconds: Double?,
-        @JsonProperty("bit_rate")
+        @SerialName("bit_rate")
         var bitRate: String?,
-        @JsonProperty("file_stats")
+        @SerialName("file_stats")
         var fileStats: List<TorrentFileStat>?,
-        @JsonProperty("trackers")
+        @SerialName("trackers")
         var trackers: List<String>?,
     ) {
         fun streamUrl(url: String): String {
@@ -381,12 +384,13 @@ object Torrent {
         }
     }
 
+    @Serializable
     data class TorrentFileStat(
-        @JsonProperty("id")
+        @SerialName("id")
         val id: Int?,
-        @JsonProperty("path")
+        @SerialName("path")
         val path: String?,
-        @JsonProperty("length")
+        @SerialName("length")
         val length: Long?,
     )
 }
