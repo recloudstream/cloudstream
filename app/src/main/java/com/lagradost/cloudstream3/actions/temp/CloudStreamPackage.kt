@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.actions.OpenInAppAction
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.ui.player.ExtractorUri
@@ -22,7 +21,10 @@ import com.lagradost.cloudstream3.utils.newExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToLangTagIETF
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromLanguageToTagIETF
+import com.lagradost.cloudstream3.utils.serializer.UriSerializer
 import com.lagradost.cloudstream3.utils.txt
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 /**
  * If you want to support CloudStream 3 as an external player, then this shows how to play any video link
@@ -49,18 +51,20 @@ class CloudStreamPackage : OpenInAppAction(
         const val DURATION_EXTRA: String = "dur" // Duration time in MS (Long)
     }
 
+    @Serializable
     data class MinimalVideoLink(
-        @JsonProperty("uri")
+        @SerialName("uri")
+        @Serializable(with = UriSerializer::class)
         val uri: Uri?,
-        @JsonProperty("url")
+        @SerialName("url")
         val url: String?,
-        @JsonProperty("mimeType")
+        @SerialName("mimeType")
         val mimeType: String = "video/mp4",
-        @JsonProperty("name")
+        @SerialName("name")
         val name: String?,
-        @JsonProperty("headers")
+        @SerialName("headers")
         var headers: Map<String, String> = mapOf(),
-        @JsonProperty("quality")
+        @SerialName("quality")
         val quality: Int?,
     ) {
         companion object {
@@ -97,15 +101,15 @@ class CloudStreamPackage : OpenInAppAction(
             }
     }
 
-
+    @Serializable
     data class MinimalSubtitleLink(
-        @JsonProperty("url")
+        @SerialName("url")
         val url: String,
-        @JsonProperty("mimeType")
+        @SerialName("mimeType")
         val mimeType: String = "text/vtt",
-        @JsonProperty("name")
+        @SerialName("name")
         val name: String?,
-        @JsonProperty("headers")
+        @SerialName("headers")
         var headers: Map<String, String> = mapOf(),
     ) {
         companion object {
