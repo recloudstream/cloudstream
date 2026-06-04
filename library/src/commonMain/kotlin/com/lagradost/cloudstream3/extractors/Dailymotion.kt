@@ -7,6 +7,8 @@ import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import java.net.URI
 
 class Geodailymotion : Dailymotion() {
@@ -77,23 +79,27 @@ open class Dailymotion : ExtractorApi() {
         return generateM3u8(name, streamLink, "").forEach(callback)
     }
 
+    @Serializable
     data class MetaData(
-        val qualities: Map<String, List<Quality>>?,
-        val subtitles: SubtitlesWrapper?
+        @SerialName("qualities") val qualities: Map<String, List<Quality>>?,
+        @SerialName("subtitles") val subtitles: SubtitlesWrapper?,
     )
 
+    @Serializable
     data class Quality(
-        val type: String?,
-        val url: String?
+        @SerialName("type") val type: String?,
+        @SerialName("url") val url: String?,
     )
 
+    @Serializable
     data class SubtitlesWrapper(
-        val enable: Boolean,
-        val data: Map<String, SubtitleData>?
+        @SerialName("enable") val enable: Boolean,
+        @SerialName("data") val data: Map<String, SubtitleData>?,
     )
 
+    @Serializable
     data class SubtitleData(
-        val label: String,
-        val urls: List<String>
+        @SerialName("label") val label: String,
+        @SerialName("urls") val urls: List<String>,
     )
 }
