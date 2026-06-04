@@ -1,9 +1,10 @@
 package com.lagradost.cloudstream3.ui.search
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.nicehttp.NiceResponse
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 /**
  * API for fetching search suggestions from external sources.
@@ -13,16 +14,18 @@ object SearchSuggestionApi {
     private const val TMDB_API_URL = "https://api.themoviedb.org/3/search/multi"
     private const val TMDB_API_KEY = "e6333b32409e02a4a6eba6fb7ff866bb"
     
+    @Serializable
     data class TmdbSearchResult(
-        @JsonProperty("results") val results: List<TmdbSearchItem>?
+        @SerialName("results") val results: List<TmdbSearchItem>?,
     )
     
+    @Serializable
     data class TmdbSearchItem(
-        @JsonProperty("media_type") val mediaType: String?,
-        @JsonProperty("title") val title: String?,
-        @JsonProperty("name") val name: String?,
-        @JsonProperty("original_title") val originalTitle: String?,
-        @JsonProperty("original_name") val originalName: String?
+        @SerialName("media_type") val mediaType: String?,
+        @SerialName("title") val title: String?,
+        @SerialName("name") val name: String?,
+        @SerialName("original_title") val originalTitle: String?,
+        @SerialName("original_name") val originalName: String?,
     )
     
     /**
@@ -57,7 +60,7 @@ object SearchSuggestionApi {
      * Parses the TMDB search response and extracts movie/TV show titles.
      * Filters to only include movies, TV shows, and anime.
      */
-    private fun parseSuggestions(response: NiceResponse): List<String> {
+    private suspend fun parseSuggestions(response: NiceResponse): List<String> {
         return try {
             val parsed = response.parsed<TmdbSearchResult>()
             parsed.results
