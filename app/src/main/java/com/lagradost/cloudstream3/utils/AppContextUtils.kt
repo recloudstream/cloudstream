@@ -594,20 +594,26 @@ object AppContextUtils {
             intent.data = url.toUri()
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
-            // activityResultRegistry is used to fall back to webview if a browser is missing
-            // On older versions the startActivity just crashes, but on newer android versions
-            // You need to check the result to make sure it failed
-            val activityResultRegistry = fragment?.activity?.activityResultRegistry
-            if (activityResultRegistry != null) {
-                activityResultRegistry.register(
-                    url,
-                    ActivityResultContracts.StartActivityForResult()
-                ) { result ->
-                    if (result.resultCode == RESULT_CANCELED && fallbackWebview) {
-                        openWebView(fragment, url)
-                    }
-                }.launch(intent)
-            } else this.startActivity(intent)
+            // Feature Fix: Exclude CloudStream from the browser intent to avoid loop (#2376)
+            val resolveInfo = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+            val filteredIntents = resolveInfo.filter { it.activityInfo.packageName != packageName }
+                .map { info ->
+                    val finalIntent = Intent(intent)
+                    finalIntent.setPackage(info.activityInfo.packageName)
+                    finalIntent
+                }
+
+            if (filteredIntents.isNotEmpty()) {
+                val chooser = Intent.createChooser(filteredIntents.first(), getString(R.string.browser))
+                if (filteredIntents.size > 1) {
+                    chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, filteredIntents.drop(1).toTypedArray())
+                }
+                this.startActivity(chooser)
+            } else if (fallbackWebview) {
+                openWebView(fragment, url)
+            } else {
+                this.startActivity(intent) // Fallback to normal behavior
+            }
         } catch (e: Exception) {
             logError(e)
             if (fallbackWebview) {

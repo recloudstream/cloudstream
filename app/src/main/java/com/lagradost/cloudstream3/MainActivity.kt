@@ -638,7 +638,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
     override fun onResume() {
         super.onResume()
-        afterPluginsLoadedEvent += ::onAllPluginsLoaded
         setActivityInstance(this)
         try {
             if (isCastApiAvailable()) {
@@ -723,7 +722,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         broadcastIntent.action = "restart_service"
         broadcastIntent.setClass(this, VideoDownloadRestartReceiver::class.java)
         this.sendBroadcast(broadcastIntent)
-        afterPluginsLoadedEvent -= ::onAllPluginsLoaded
         detachBackPressedCallback("MainActivityDefault")
         super.onDestroy()
     }
@@ -1198,6 +1196,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         setNavigationBarColorCompat(R.attr.primaryGrayBackground)
         updateLocale()
         super.onCreate(savedInstanceState)
+        afterPluginsLoadedEvent += ::onAllPluginsLoaded
         MaintenanceWorkManager.enqueuePeriodicWork(this)
         try {
             if (isCastApiAvailable()) {
