@@ -16,7 +16,6 @@ import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.bindChips
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.setRecycledViewPool
-import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setSystemBarsPadding
@@ -35,7 +34,7 @@ const val PLUGINS_BUNDLE_URL = "url"
 const val PLUGINS_BUNDLE_LOCAL = "isLocal"
 
 class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
-    BaseFragment.BindingCreator.Inflate(FragmentPluginsBinding::inflate)
+    BindingCreator.Inflate(FragmentPluginsBinding::inflate),
 ) {
 
     private val pluginViewModel: PluginsViewModel by activityViewModels()
@@ -69,7 +68,7 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
         // download all extensions button
         val downloadAllButton = binding.settingsToolbar.menu?.findItem(R.id.download_all)
 
-        if (url == null || name == null) {
+        if ((url == null) || (name == null)) {
             dispatchBackPressed()
             return
         }
@@ -137,17 +136,19 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
                 if (!hasFocus) pluginViewModel.search(null)
             }
 
-            searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    pluginViewModel.search(query)
-                    return true
-                }
+            searchView?.setOnQueryTextListener(
+                object : SearchView.OnQueryTextListener {
+                    override fun onQueryTextSubmit(query: String?): Boolean {
+                        pluginViewModel.search(query)
+                        return true
+                    }
 
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    pluginViewModel.search(newText)
-                    return true
+                    override fun onQueryTextChange(newText: String?): Boolean {
+                        pluginViewModel.search(newText)
+                        return true
+                    }
                 }
-            })
+            )
         }
 //        searchView?.onActionViewCollapsed = {
 //            pluginViewModel.search(null)
@@ -173,7 +174,7 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
                     },
                     clickCallback = {
                         pluginViewModel.toggleSelection(it.second.url)
-                    }
+                    },
                 )
         }
 
@@ -218,7 +219,9 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
                                 val folderName = names[index]
                                 val selected = pluginViewModel.selectedPlugins.toList()
                                 val currentFolders = DataStoreHelper.getExtensionFolders().toMutableMap()
-                                val currentList = currentFolders[folderName]?.toMutableList() ?: mutableListOf<String>()
+                                val currentList =
+                                    currentFolders[folderName]?.toMutableList()
+                                        ?: mutableListOf()
                                 currentList.addAll(selected)
                                 currentFolders[folderName] = currentList.distinct()
                                 DataStoreHelper.setExtensionFolders(currentFolders)

@@ -28,11 +28,10 @@ import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.InternalAPI
-import com.lagradost.cloudstream3.MainAPI
+import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
 import com.lagradost.cloudstream3.MainAPI.Companion.settingsForProvider
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.MainActivity.Companion.lastError
-import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
 import com.lagradost.cloudstream3.PROVIDER_STATUS_OK
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
@@ -164,8 +163,8 @@ object PluginManager {
      * This might fix unrecoverable SIGSEGV exceptions when old oat files are loaded in a new app update.
      */
     fun deleteAllOatFiles(context: Context) {
-        File("${context.filesDir}/${ONLINE_PLUGINS_FOLDER}").listFiles()?.forEach { repo ->
-            repo.listFiles { file -> file.name == "oat" && file.isDirectory }?.forEach { file ->
+        File("${context.filesDir}/$ONLINE_PLUGINS_FOLDER").listFiles()?.forEach { repo ->
+            repo.listFiles { file -> (file.name == "oat") && file.isDirectory }?.forEach { file ->
                 val success = file.deleteRecursively()
                 Log.i(TAG, "Deleted oat directory: ${file.absolutePath} Success=$success")
             }
@@ -207,11 +206,11 @@ object PluginManager {
 
     // Maps filepath to plugin
     val plugins: MutableMap<String, BasePlugin> =
-        LinkedHashMap<String, BasePlugin>()
+        LinkedHashMap()
 
     // Maps urls to plugin
     val urlPlugins: MutableMap<String, BasePlugin> =
-        LinkedHashMap<String, BasePlugin>()
+        LinkedHashMap()
 
     private val classLoaders: MutableMap<PathClassLoader, BasePlugin> =
         HashMap<PathClassLoader, BasePlugin>()
@@ -226,9 +225,15 @@ object PluginManager {
         val name = file.name
         if (file.extension == "zip" || file.extension == "cs3") {
             loadPlugin(
-                context,
-                file,
-                PluginData(name, null, false, file.absolutePath, PLUGIN_VERSION_NOT_SET)
+                context = context,
+                file = file,
+                data = PluginData(
+                    internalName = name,
+                    url = null,
+                    isOnline = false,
+                    filePath = file.absolutePath,
+                    version = PLUGIN_VERSION_NOT_SET
+                )
             )
         } else {
             Log.i(TAG, "Skipping invalid plugin file: $file")

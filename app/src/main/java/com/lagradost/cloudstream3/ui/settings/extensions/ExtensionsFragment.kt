@@ -41,7 +41,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.setText
 
 class ExtensionsFragment : BaseFragment<FragmentExtensionsBinding>(
-    BaseFragment.BindingCreator.Inflate(FragmentExtensionsBinding::inflate)
+    BindingCreator.Inflate(FragmentExtensionsBinding::inflate),
 ) {
 
     private val extensionViewModel: ExtensionsViewModel by activityViewModels()
@@ -65,7 +65,7 @@ class ExtensionsFragment : BaseFragment<FragmentExtensionsBinding>(
         afterRepositoryLoadedEvent -= ::reloadRepositories
     }
 
-    private fun reloadRepositories(success: Boolean = true) {
+    private fun reloadRepositories(@Suppress("UNUSED_PARAMETER") success: Boolean = true) {
         extensionViewModel.loadStats()
         extensionViewModel.loadRepositories()
     }
@@ -132,52 +132,57 @@ class ExtensionsFragment : BaseFragment<FragmentExtensionsBinding>(
                     }
                 }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
-                    val dy = scrollY - oldScrollY
-                    if (dy > 0) { // check for scroll down
-                        binding.addRepoButton.shrink() // hide
-                    } else if (dy < -5) {
-                        binding.addRepoButton.extend() // show
-                    }
+            setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+                val dy = scrollY - oldScrollY
+                if (dy > 0) { // check for scroll down
+                    binding.addRepoButton.shrink() // hide
+                } else if (dy < -5) {
+                    binding.addRepoButton.extend() // show
                 }
             }
-            adapter = RepoAdapter(false, {
-                findNavController().navigate(
-                    R.id.navigation_settings_extensions_to_navigation_settings_plugins,
-                    PluginsFragment.newInstance(
-                        it.name,
-                        it.url,
-                        false
+            adapter = RepoAdapter(
+                isSetup = false,
+                clickCallback = {
+                    findNavController().navigate(
+                        R.id.navigation_settings_extensions_to_navigation_settings_plugins,
+                        PluginsFragment.newInstance(
+                            it.name,
+                            it.url,
+                            false
+                        )
                     )
-                )
-            }, { repo ->
-                // Prompt user before deleting repo
-                main {
-                    val uiContext = context ?: binding.root.context
-                    val builder = AlertDialog.Builder(uiContext)
-                    val dialogClickListener =
-                        DialogInterface.OnClickListener { _, which ->
-                            when (which) {
-                                DialogInterface.BUTTON_POSITIVE -> {
-                                    ioSafe {
-                                        RepositoryManager.removeRepository(uiContext.applicationContext, repo)
-                                        extensionViewModel.loadStats()
-                                        extensionViewModel.loadRepositories()
+                },
+                imageClickCallback = { repo ->
+                    // Prompt user before deleting repo
+                    main {
+                        val uiContext = context ?: binding.root.context
+                        val builder = AlertDialog.Builder(uiContext)
+                        val dialogClickListener =
+                            DialogInterface.OnClickListener { _, which ->
+                                when (which) {
+                                    DialogInterface.BUTTON_POSITIVE -> {
+                                        ioSafe {
+                                            RepositoryManager.removeRepository(
+                                                uiContext.applicationContext,
+                                                repo
+                                            )
+                                            extensionViewModel.loadStats()
+                                            extensionViewModel.loadRepositories()
+                                        }
                                     }
+
+                                    DialogInterface.BUTTON_NEGATIVE -> {}
                                 }
-
-                                DialogInterface.BUTTON_NEGATIVE -> {}
                             }
-                        }
 
-                    builder.setTitle(R.string.delete_repository)
-                        .setMessage(uiContext.getString(R.string.delete_repository_plugins))
-                        .setPositiveButton(R.string.delete, dialogClickListener)
-                        .setNegativeButton(R.string.cancel, dialogClickListener)
-                        .show().setDefaultFocus()
+                        builder.setTitle(R.string.delete_repository)
+                            .setMessage(uiContext.getString(R.string.delete_repository_plugins))
+                            .setPositiveButton(R.string.delete, dialogClickListener)
+                            .setNegativeButton(R.string.cancel, dialogClickListener)
+                            .show().setDefaultFocus()
+                    }
                 }
-            })
+            )
         }
 
         observe(extensionViewModel.repositories) {

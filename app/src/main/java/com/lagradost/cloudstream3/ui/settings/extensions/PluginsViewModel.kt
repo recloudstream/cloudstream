@@ -40,7 +40,7 @@ class PluginsViewModel : ViewModel() {
     private var plugins: List<PluginViewData> = emptyList()
         set(value) {
             // Also set all the plugin languages for easier filtering
-            value.map { pluginViewData ->
+            value.forEach { pluginViewData ->
                 val language = pluginViewData.plugin.second.language?.lowercase()
                 pluginLanguages.add(
                     when {
@@ -92,7 +92,14 @@ class PluginsViewModel : ViewModel() {
             when (action) {
                 BatchAction.Download -> {
                     if (!exists) {
-                        PluginManager.downloadPlugin(activity, metadata.url, metadata.fileHash, metadata.internalName, repo, true)
+                        PluginManager.downloadPlugin(
+                            activity = activity,
+                            pluginUrl = metadata.url,
+                            pluginHash = metadata.fileHash,
+                            internalName = metadata.internalName,
+                            repositoryUrl = repo,
+                            loadPlugin = true
+                        )
                     }
                 }
                 BatchAction.Delete -> {
@@ -292,7 +299,7 @@ class PluginsViewModel : ViewModel() {
 
         val plugins = if (repositoryUrl.startsWith("folder://")) {
             val folderName = repositoryUrl.removePrefix("folder://")
-            val pluginNames = DataStoreHelper.getExtensionFolders()[folderName] ?: emptyList<String>()
+            val pluginNames = DataStoreHelper.getExtensionFolders()[folderName] ?: emptyList()
             (PluginManager.getPluginsOnline() + PluginManager.getPluginsLocal())
                 .filter { pluginNames.contains(it.internalName) }
                 .map { "" to it.toSitePlugin() }
@@ -302,7 +309,7 @@ class PluginsViewModel : ViewModel() {
 
         val list = plugins.filter {
             // Show all non-nsfw plugins or all if nsfw is enabled
-            it.second.tvTypes?.contains(TvType.NSFW.name) != true || isAdult
+            (it.second.tvTypes?.contains(TvType.NSFW.name) != true) || isAdult
         }.map { plugin ->
             PluginViewData(
                 plugin,

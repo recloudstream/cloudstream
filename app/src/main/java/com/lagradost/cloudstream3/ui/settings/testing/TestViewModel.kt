@@ -19,7 +19,7 @@ class TestViewModel : ViewModel() {
     data class TestProgress(
         val passed: Int,
         val failed: Int,
-        val total: Int
+        val total: Int,
     )
 
     enum class ProviderFilter {
@@ -127,7 +127,7 @@ class TestViewModel : ViewModel() {
     fun disableExtensions(paths: List<String>) {
         viewModelScope.launch {
             paths.forEach { path ->
-                PluginManager.setPluginDisabled(path, true)
+                PluginManager.setPluginDisabled(path = path, disabled = true)
             }
             providers.withLock {
                 providers.removeAll { it.first.sourcePlugin in paths }

@@ -19,7 +19,7 @@ class MaintenanceWorkManager(val context: Context, workerParams: WorkerParameter
 
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
-                .setRequiresBatteryNotLow(true)
+                .setRequiresBatteryNotLow(requiresBatteryNotLow = true)
                 .build()
 
             val periodicWork =
@@ -40,7 +40,10 @@ class MaintenanceWorkManager(val context: Context, workerParams: WorkerParameter
         try {
             // Load all plugins
             PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(context)
-            PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(context, false)
+            PluginManager.___DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(
+                context = context,
+                forceReload = false
+            )
 
             val apis = APIHolder.allProviders.withLock { APIHolder.allProviders.toTypedArray() }
             
@@ -63,12 +66,12 @@ class MaintenanceWorkManager(val context: Context, workerParams: WorkerParameter
             pluginSuccess.forEach { (path, success) ->
                 if (!success) {
                     // All providers in this plugin failed
-                    PluginManager.setPluginDisabled(path, true)
+                    PluginManager.setPluginDisabled(path = path, disabled = true)
                 }
             }
 
             return Result.success()
-        } catch (t: Throwable) {
+        } catch (ignored: Throwable) {
             return Result.failure()
         }
     }
