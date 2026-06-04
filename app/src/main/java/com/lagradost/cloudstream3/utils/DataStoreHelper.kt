@@ -51,6 +51,7 @@ const val RESULT_SEASON = "result_season"
 const val RESULT_DUB = "result_dub"
 const val KEY_RESULT_SORT = "result_sort"
 const val USER_PINNED_PROVIDERS = "user_pinned_providers" //key for pinned user set
+const val SEARCH_SORT_METHOD = "search_sort_method"
 const val SOURCE_PREFERENCE = "source_preference"
 const val EXTENSION_FOLDERS = "extension_folders"
 const val GLOBAL_PROGRESS = "global_progress"
@@ -136,6 +137,7 @@ object DataStoreHelper {
         IntArray(0)
     )
     var playBackSpeed: Float by UserPreferenceDelegate("playback_speed", 1.0f)
+    var searchSortMethod: Int by UserPreferenceDelegate(SEARCH_SORT_METHOD, 0)
     var resizeMode: Int by UserPreferenceDelegate("resize_mode", 0)
     var librarySortingMode: Int by UserPreferenceDelegate(
         "library_sorting_mode",

@@ -74,6 +74,8 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
@@ -273,6 +275,21 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(
                     // launch may throw
                     showToast(R.string.speech_recognition_unavailable)
                 }
+            }
+        }
+
+        binding.searchSort.setOnClickListener {
+            val methods = SearchSortMethod.entries
+            val names = methods.map { getString(it.stringRes) }
+            activity?.showDialog(
+                names,
+                DataStoreHelper.searchSortMethod,
+                getString(R.string.sort),
+                false,
+                {}
+            ) { index ->
+                DataStoreHelper.searchSortMethod = index
+                search(binding.mainSearch.query?.toString())
             }
         }
 

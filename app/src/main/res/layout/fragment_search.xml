@@ -38,6 +38,17 @@
                 android:src="@drawable/ic_mic"
                 app:tint="?attr/textColor" />
 
+            <ImageView
+                android:id="@+id/search_sort"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginStart="10dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:contentDescription="@string/sort"
+                android:src="@drawable/ic_baseline_sort_24"
+                app:tint="?attr/textColor" />
+
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="40dp"

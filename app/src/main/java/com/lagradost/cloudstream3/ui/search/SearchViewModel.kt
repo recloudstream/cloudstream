@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKeys
@@ -18,6 +19,7 @@ import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.home.HomeViewModel
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -29,6 +31,11 @@ import kotlinx.coroutines.withContext
 data class ExpandableSearchList(
     var list: List<SearchResponse>, var currentPage: Int, var hasNext: Boolean,
 )
+
+enum class SearchSortMethod(val stringRes: Int) {
+    Interlaced(R.string.search_sort_interlaced),
+    ByProvider(R.string.search_sort_by_provider)
+}
 
 const val SEARCH_HISTORY_KEY = "search_history"
 
@@ -174,22 +181,40 @@ class SearchViewModel : ViewModel() {
             return lists.values.first()
         }
 
-        val list = ArrayList<SearchResponse>()
-        val nestedList =
-            lists.map { it.value.list }
+        val sortMethod = try {
+            SearchSortMethod.entries[DataStoreHelper.searchSortMethod]
+        } catch (e: Exception) {
+            SearchSortMethod.Interlaced
+        }
 
-        // I do it this way to move the relevant search results to the top
-        var index = 0
-        while (true) {
-            var added = 0
-            for (sublist in nestedList) {
-                if (sublist.size > index) {
-                    list.add(sublist[index])
-                    added++
-                }
+        val list = ArrayList<SearchResponse>()
+
+        if (sortMethod == SearchSortMethod.ByProvider) {
+            val pinnedOrder = DataStoreHelper.pinnedProviders.reversedArray()
+            val sortedKeys = lists.keys.sortedWith(compareBy { providerName ->
+                val index = pinnedOrder.indexOf(providerName)
+                if (index == -1) Int.MAX_VALUE else index
+            })
+            for (key in sortedKeys) {
+                lists[key]?.list?.let { list.addAll(it) }
             }
-            if (added == 0) break
-            index++
+        } else {
+            val nestedList =
+                lists.map { it.value.list }
+
+            // I do it this way to move the relevant search results to the top
+            var index = 0
+            while (true) {
+                var added = 0
+                for (sublist in nestedList) {
+                    if (sublist.size > index) {
+                        list.add(sublist[index])
+                        added++
+                    }
+                }
+                if (added == 0) break
+                index++
+            }
         }
 
         return ExpandableSearchList(list, 1, false)

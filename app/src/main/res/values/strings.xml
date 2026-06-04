@@ -180,6 +180,8 @@
     <string name="backup_failed">Storage permissions missing. Please try again.</string>
     <string name="backup_failed_error_format">Error backing up %s</string>
     <string name="search">Search</string>
+    <string name="search_sort_interlaced">Default (Interlaced)</string>
+    <string name="search_sort_by_provider">By Provider</string>
     <string name="library">Library</string>
     <string name="category_account">Accounts and Security</string>
     <string name="category_updates">Updates and Backup</string>
