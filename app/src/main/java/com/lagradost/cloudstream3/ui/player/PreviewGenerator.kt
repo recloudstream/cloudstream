@@ -6,7 +6,6 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
 import android.util.Log
-import androidx.annotation.WorkerThread
 import androidx.core.graphics.scale
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.CloudStreamApp
@@ -378,6 +377,7 @@ private class M3u8PreviewGenerator(override var params: ImageParams) : IPreviewG
                             continue
                         }
                         Log.i(TAG, "Generating preview for $index")
+                        kotlinx.coroutines.delay(10) // Give UI time to breathe
 
                         val ts = hsl.allTsLinks[index]
                         try {
@@ -506,8 +506,7 @@ private class Mp4PreviewGenerator(override var params: ImageParams) : IPreviewGe
     override var durationMs: Long = 0L
 
     @Throws
-    @WorkerThread
-    private fun start(scope: CoroutineScope) {
+    private suspend fun start(scope: CoroutineScope) {
         Log.i(TAG, "Started loading preview")
 
         val durationMs =
@@ -528,6 +527,7 @@ private class Mp4PreviewGenerator(override var params: ImageParams) : IPreviewGe
                 // frame = 100 / 2^lod + i * 100 / 2^(lod-1) = duration % where lod is one indexed
                 val fraction = (1.0f.div((1 shl l).toFloat()) + i * 1.0f.div(items.toFloat()))
                 Log.i(TAG, "Generating preview for ${fraction * 100}%")
+                kotlinx.coroutines.delay(10) // Give UI time to breathe
                 val frame = durationUs * fraction
                 val img = retriever.image(frame.toLong(), params)
                 if (!scope.isActive) return

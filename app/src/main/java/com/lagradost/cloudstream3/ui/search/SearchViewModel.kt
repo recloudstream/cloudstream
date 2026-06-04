@@ -26,6 +26,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.concurrent.ConcurrentHashMap
 
 
 data class ExpandableSearchList(
@@ -69,7 +70,7 @@ class SearchViewModel : ViewModel() {
     /** Save which providers can searched again and which search result page they are on.
      * Maps provider name to search list.
      * @see [HomeViewModel.expandable] */
-    private val expandableSearches: MutableMap<String, ExpandableSearchList> = mutableMapOf()
+    private val expandableSearches: ConcurrentHashMap<String, ExpandableSearchList> = ConcurrentHashMap()
 
     private var currentSearchIndex = 0
     private var onGoingSearch: Job? = null
@@ -176,31 +177,32 @@ class SearchViewModel : ViewModel() {
         )
     }
 
-    private fun bundleSearch(lists: MutableMap<String, ExpandableSearchList>): ExpandableSearchList {
+    private fun bundleSearch(lists: Map<String, ExpandableSearchList>): ExpandableSearchList {
         if (lists.size == 1) {
             return lists.values.first()
         }
 
         val sortMethod = try {
             SearchSortMethod.entries[DataStoreHelper.searchSortMethod]
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             SearchSortMethod.Interlaced
         }
 
         val list = ArrayList<SearchResponse>()
+        val currentLists = lists.toMap() // Snapshot for thread safety
 
         if (sortMethod == SearchSortMethod.ByProvider) {
             val pinnedOrder = DataStoreHelper.pinnedProviders.reversedArray()
-            val sortedKeys = lists.keys.sortedWith(compareBy { providerName ->
+            val sortedKeys = currentLists.keys.sortedWith(compareBy { providerName ->
                 val index = pinnedOrder.indexOf(providerName)
                 if (index == -1) Int.MAX_VALUE else index
             })
             for (key in sortedKeys) {
-                lists[key]?.list?.let { list.addAll(it) }
+                currentLists[key]?.list?.let { list.addAll(it) }
             }
         } else {
             val nestedList =
-                lists.map { it.value.list }
+                currentLists.map { it.value.list }
 
             // I do it this way to move the relevant search results to the top
             var index = 0

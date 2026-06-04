@@ -1224,7 +1224,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
                 safe {
                     // Recompile oat on new version
-                    PluginManager.deleteAllOatFiles(this)
+                    ioSafe {
+                        PluginManager.deleteAllOatFiles(this@MainActivity)
+                    }
                 }
             }
         }
