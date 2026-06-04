@@ -319,6 +319,7 @@ tasks.withType<KotlinJvmCompile> {
         optIn.addAll(
             "com.lagradost.cloudstream3.InternalAPI",
             "com.lagradost.cloudstream3.Prerelease",
+            "kotlin.uuid.ExperimentalUuidApi",
         )
     }
 }
