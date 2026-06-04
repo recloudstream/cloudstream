@@ -11,6 +11,8 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 object VotingApi {
 
@@ -91,8 +93,9 @@ object VotingApi {
         }
     }
 
+    @Serializable
     private data class CountifyResult(
-        val id: String? = null,
-        val count: Int? = null
+        @SerialName("id") val id: String? = null,
+        @SerialName("count") val count: Int? = null,
     )
 }
