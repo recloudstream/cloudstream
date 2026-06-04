@@ -869,8 +869,7 @@ enum class DubStatus(val id: Int) {
 @Serializable
 class Score private constructor(
     /** Decimal between [0, 10^9] representing the min score and max score respectively */
-    @SerialName("data")
-    private val data: Int,
+    @SerialName("data") private val data: Int,
 ) {
     override fun hashCode(): Int = this.data.hashCode()
     override fun equals(other: Any?): Boolean = other is Score && this.data == other.data
@@ -2178,9 +2177,9 @@ data class NextAiring(
  * */
 @Serializable
 data class SeasonData(
-    val season: Int,
-    val name: String? = null,
-    val displaySeason: Int? = null, // will use season if null
+    @SerialName("season") val season: Int,
+    @SerialName("name") val name: String? = null,
+    @SerialName("displaySeason") val displaySeason: Int? = null, // will use season if null
 )
 
 /** Abstract interface of EpisodeResponse */
