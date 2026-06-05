@@ -1198,7 +1198,7 @@ suspend fun newSubtitleFile(
 @Serializable
 data class AudioFile internal constructor(
     @SerialName("url") var url: String,
-    @SerialName("headers") var headers: Map<String, String>? = null
+    @SerialName("headers") var headers: Map<String, String>? = null,
 )
 
 /** Creates an AudioFile with optional initializer for setting additional properties.
@@ -2739,15 +2739,15 @@ data class Tracker(
 
 @Serializable
 data class AniSearch(
-    @SerialName("data") var data: Data? = Data()
+    @SerialName("data") var data: Data? = Data(),
 ) {
     @Serializable
     data class Data(
-        @SerialName("Page") @JsonProperty("Page") var page: Page? = Page()
+        @SerialName("Page") @JsonProperty("Page") var page: Page? = Page(),
     ) {
         @Serializable
         data class Page(
-            @SerialName("media") var media: ArrayList<Media> = arrayListOf()
+            @SerialName("media") var media: ArrayList<Media> = arrayListOf(),
         ) {
             @Serializable
             data class Media(
