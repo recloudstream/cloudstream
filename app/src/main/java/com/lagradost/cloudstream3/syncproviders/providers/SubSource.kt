@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
@@ -10,6 +9,8 @@ import com.lagradost.cloudstream3.syncproviders.SubtitleAPI
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.SubtitleHelper
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 class SubSourceApi : SubtitleAPI() {
     override val name = "SubSource"
@@ -115,53 +116,61 @@ class SubSourceApi : SubtitleAPI() {
         }
     }
 
+    @Serializable
     data class ApiSearch(
-        @JsonProperty("success") val success: Boolean,
-        @JsonProperty("found") val found: List<Found>,
+        @SerialName("success") val success: Boolean,
+        @SerialName("found") val found: List<Found>,
     )
 
+    @Serializable
     data class Found(
-        @JsonProperty("id") val id: Long,
-        @JsonProperty("title") val title: String,
-        @JsonProperty("seasons") val seasons: Long,
-        @JsonProperty("type") val type: String,
-        @JsonProperty("releaseYear") val releaseYear: Long,
-        @JsonProperty("linkName") val linkName: String,
+        @SerialName("id") val id: Long,
+        @SerialName("title") val title: String,
+        @SerialName("seasons") val seasons: Long,
+        @SerialName("type") val type: String,
+        @SerialName("releaseYear") val releaseYear: Long,
+        @SerialName("linkName") val linkName: String,
     )
 
+    @Serializable
     data class ApiResponse(
-        @JsonProperty("success") val success: Boolean,
-        @JsonProperty("movie") val movie: Movie,
-        @JsonProperty("subs") val subs: List<Sub>,
+        @SerialName("success") val success: Boolean,
+        @SerialName("movie") val movie: Movie,
+        @SerialName("subs") val subs: List<Sub>,
     )
 
+    @Serializable
     data class Movie(
-        @JsonProperty("id") val id: Long? = null,
-        @JsonProperty("type") val type: String? = null,
-        @JsonProperty("year") val year: Long? = null,
-        @JsonProperty("fullName") val fullName: String? = null,
+        @SerialName("id") val id: Long? = null,
+        @SerialName("type") val type: String? = null,
+        @SerialName("year") val year: Long? = null,
+        @SerialName("fullName") val fullName: String? = null,
     )
 
+    @Serializable
     data class Sub(
-        @JsonProperty("hi") val hi: Int? = null,
-        @JsonProperty("fullLink") val fullLink: String? = null,
-        @JsonProperty("linkName") val linkName: String? = null,
-        @JsonProperty("lang") val lang: String? = null,
-        @JsonProperty("releaseName") val releaseName: String? = null,
-        @JsonProperty("subId") val subId: Long? = null,
+        @SerialName("hi") val hi: Int? = null,
+        @SerialName("fullLink") val fullLink: String? = null,
+        @SerialName("linkName") val linkName: String? = null,
+        @SerialName("lang") val lang: String? = null,
+        @SerialName("releaseName") val releaseName: String? = null,
+        @SerialName("subId") val subId: Long? = null,
     )
 
+    @Serializable
     data class SubData(
-        @JsonProperty("movie") val movie: String,
-        @JsonProperty("lang") val lang: String,
-        @JsonProperty("id") val id: String,
+        @SerialName("movie") val movie: String,
+        @SerialName("lang") val lang: String,
+        @SerialName("id") val id: String,
     )
 
+    @Serializable
     data class SubTitleLink(
-        @JsonProperty("sub") val sub: SubToken,
+        @SerialName("sub") val sub: SubToken,
     )
 
+    @Serializable
     data class SubToken(
-        @JsonProperty("downloadToken") val downloadToken: String,
+        @SerialName("downloadToken") val downloadToken: String,
     )
 }
