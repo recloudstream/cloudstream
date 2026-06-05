@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@Serializable
 data class SearchHistoryItem(
     @SerialName("searchedAt") val searchedAt: Long,
     @SerialName("searchText") val searchText: String,
