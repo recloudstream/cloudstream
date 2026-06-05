@@ -10,7 +10,6 @@ import androidx.core.content.edit
 import androidx.core.os.ConfigurationCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder.allProviders
 import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
@@ -48,6 +47,8 @@ import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement
 import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.getBasePath
 import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import java.util.Locale
 
 // Change local language settings in the app.
@@ -145,15 +146,12 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
         setToolBarScrollFlags()
     }
 
+    @Serializable
     data class CustomSite(
-        @JsonProperty("parentJavaClass") // javaClass.simpleName
-        val parentJavaClass: String,
-        @JsonProperty("name")
-        val name: String,
-        @JsonProperty("url")
-        val url: String,
-        @JsonProperty("lang")
-        val lang: String,
+        @SerialName("parentJavaClass") val parentJavaClass: String, // javaClass.simpleName
+        @SerialName("name") val name: String,
+        @SerialName("url") val url: String,
+        @SerialName("lang") val lang: String,
     )
 
     companion object {
