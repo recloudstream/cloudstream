@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
@@ -12,6 +11,8 @@ import com.lagradost.cloudstream3.syncproviders.AuthToken
 import com.lagradost.cloudstream3.syncproviders.AuthUser
 import com.lagradost.cloudstream3.syncproviders.SubtitleAPI
 import com.lagradost.cloudstream3.TvType
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 class SubDlApi : SubtitleAPI() {
     override val name = "SubDL"
@@ -122,69 +123,77 @@ class SubDlApi : SubtitleAPI() {
         }
     }
 
+    @Serializable
     data class SubtitleOAuthEntity(
-        @JsonProperty("userEmail") var userEmail: String,
-        @JsonProperty("pass") var pass: String,
-        @JsonProperty("name") var name: String? = null,
-        @JsonProperty("accessToken") var accessToken: String? = null,
-        @JsonProperty("apiKey") var apiKey: String? = null,
+        @SerialName("userEmail") var userEmail: String,
+        @SerialName("pass") var pass: String,
+        @SerialName("name") var name: String? = null,
+        @SerialName("accessToken") var accessToken: String? = null,
+        @SerialName("apiKey") var apiKey: String? = null,
     )
 
+    @Serializable
     data class OAuthTokenResponse(
-        @JsonProperty("token") val token: String,
-        @JsonProperty("userData") val userData: UserData? = null,
-        @JsonProperty("status") val status: Boolean? = null,
-        @JsonProperty("message") val message: String? = null,
+        @SerialName("token") val token: String,
+        @SerialName("userData") val userData: UserData? = null,
+        @SerialName("status") val status: Boolean? = null,
+        @SerialName("message") val message: String? = null,
     )
 
+    @Serializable
     data class UserData(
-        @JsonProperty("email") val email: String,
-        @JsonProperty("name") val name: String,
-        @JsonProperty("country") val country: String,
-        @JsonProperty("scStepCode") val scStepCode: String,
-        @JsonProperty("scVerified") val scVerified: Boolean,
-        @JsonProperty("username") val username: String? = null,
-        @JsonProperty("scUsername") val scUsername: String,
+        @SerialName("email") val email: String,
+        @SerialName("name") val name: String,
+        @SerialName("country") val country: String,
+        @SerialName("scStepCode") val scStepCode: String,
+        @SerialName("scVerified") val scVerified: Boolean,
+        @SerialName("username") val username: String? = null,
+        @SerialName("scUsername") val scUsername: String,
     )
 
+    @Serializable
     data class ApiKeyResponse(
-        @JsonProperty("ok") val ok: Boolean? = false,
-        @JsonProperty("api_key") val apiKey: String,
-        @JsonProperty("usage") val usage: Usage? = null,
+        @SerialName("ok") val ok: Boolean? = false,
+        @SerialName("api_key") val apiKey: String,
+        @SerialName("usage") val usage: Usage? = null,
     )
 
+    @Serializable
     data class Usage(
-        @JsonProperty("total") val total: Long? = 0,
-        @JsonProperty("today") val today: Long? = 0,
+        @SerialName("total") val total: Long? = 0,
+        @SerialName("today") val today: Long? = 0,
     )
 
+    @Serializable
     data class ApiResponse(
-        @JsonProperty("status") val status: Boolean? = null,
-        @JsonProperty("results") val results: List<Result>? = null,
-        @JsonProperty("subtitles") val subtitles: List<Subtitle>? = null,
+        @SerialName("status") val status: Boolean? = null,
+        @SerialName("results") val results: List<Result>? = null,
+        @SerialName("subtitles") val subtitles: List<Subtitle>? = null,
     )
 
+    @Serializable
     data class Result(
-        @JsonProperty("sd_id") val sdId: Int? = null,
-        @JsonProperty("type") val type: String? = null,
-        @JsonProperty("name") val name: String? = null,
-        @JsonProperty("imdb_id") val imdbId: String? = null,
-        @JsonProperty("tmdb_id") val tmdbId: Long? = null,
-        @JsonProperty("first_air_date") val firstAirDate: String? = null,
-        @JsonProperty("year") val year: Int? = null,
+        @SerialName("sd_id") val sdId: Int? = null,
+        @SerialName("type") val type: String? = null,
+        @SerialName("name") val name: String? = null,
+        @SerialName("imdb_id") val imdbId: String? = null,
+        @SerialName("tmdb_id") val tmdbId: Long? = null,
+        @SerialName("first_air_date") val firstAirDate: String? = null,
+        @SerialName("year") val year: Int? = null,
     )
 
+    @Serializable
     data class Subtitle(
-        @JsonProperty("release_name") val releaseName: String,
-        @JsonProperty("name") val name: String,
-        @JsonProperty("lang") val lang: String, // subdl language code
-        @JsonProperty("author") val author: String? = null,
-        @JsonProperty("url") val url: String? = null,
-        @JsonProperty("subtitlePage") val subtitlePage: String? = null,
-        @JsonProperty("season") val season: Int? = null,
-        @JsonProperty("episode") val episode: Int? = null,
-        @JsonProperty("language") val language: String? = null, // full language name
-        @JsonProperty("hi") val hearingImpaired: Boolean? = null,
+        @SerialName("release_name") val releaseName: String,
+        @SerialName("name") val name: String,
+        @SerialName("lang") val lang: String, // subdl language code
+        @SerialName("author") val author: String? = null,
+        @SerialName("url") val url: String? = null,
+        @SerialName("subtitlePage") val subtitlePage: String? = null,
+        @SerialName("season") val season: Int? = null,
+        @SerialName("episode") val episode: Int? = null,
+        @SerialName("language") val language: String? = null, // full language name
+        @SerialName("hi") val hearingImpaired: Boolean? = null,
     )
 
     // https://subdl.com/api-files/language_list.json
