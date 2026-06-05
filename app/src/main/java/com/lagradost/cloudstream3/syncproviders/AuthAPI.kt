@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.syncproviders
 
 import android.util.Base64
 import androidx.annotation.WorkerThread
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
@@ -39,6 +38,8 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.splitQuery
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.utils.txt
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import java.net.URL
 import java.security.SecureRandom
 import java.util.Date
@@ -50,32 +51,32 @@ data class AuthLoginPage(
     /**
      * State/control code to verify against the redirectUrl to make sure the request is valid.
      * This parameter will be saved, and then used in AuthAPI::login.
-     * */
+     */
     val payload: String? = null,
 )
 
+@Serializable
 data class AuthToken(
     /**
      * This is the general access tokens/api token representing a logged in user.
-     *
-     * `Access tokens are the thing that applications use to make API requests on behalf of a user.`
-     * */
-    @JsonProperty("accessToken")
+     * Access tokens are the thing that applications use to make API requests on behalf of a user.
+     */
+    @SerialName("accessToken")
     val accessToken: String? = null,
-    /**
-     * For OAuth a special refresh token is issues to refresh the access token.
-     * */
-    @JsonProperty("refreshToken")
+    /** For OAuth a special refresh token is issues to refresh the access token. */
+    @SerialName("refreshToken")
     val refreshToken: String? = null,
     /** In UnixTime (sec) when it expires */
-    @JsonProperty("accessTokenLifetime")
+    @SerialName("accessTokenLifetime")
     val accessTokenLifetime: Long? = null,
     /** In UnixTime (sec) when it expires */
-    @JsonProperty("refreshTokenLifetime")
+    @SerialName("refreshTokenLifetime")
     val refreshTokenLifetime: Long? = null,
-    /** Sometimes AuthToken needs to be customized to store e.g. username/password,
-     * this acts as a catch all to store text or JSON data. */
-    @JsonProperty("payload")
+    /**
+     * Sometimes AuthToken needs to be customized to store e.g. username/password,
+     * this acts as a catch all to store text or JSON data.
+     */
+    @SerialName("payload")
     val payload: String? = null,
 ) {
     fun isAccessTokenExpired(marginSec: Long = 10L) =
@@ -85,20 +86,23 @@ data class AuthToken(
         refreshTokenLifetime != null && (System.currentTimeMillis() / 1000) + marginSec >= refreshTokenLifetime
 }
 
+@Serializable
 data class AuthUser(
     /** Account display-name, can also be email if name does not exist */
-    @JsonProperty("name")
+    @SerialName("name")
     val name: String?,
-    /** Unique account identifier,
-     * if a subsequent login is done then it will be refused if another account with the same id exists*/
-    @JsonProperty("id")
+    /**
+     * Unique account identifier. If a subsequent login is done then it
+     * will be refused if another account with the same id exists.
+     */
+    @SerialName("id")
     val id: Int,
     /** Profile picture URL */
-    @JsonProperty("profilePicture")
+    @SerialName("profilePicture")
     val profilePicture: String? = null,
     /** Profile picture Headers of the URL */
-    @JsonProperty("profilePictureHeader")
-    val profilePictureHeaders: Map<String, String>? = null
+    @SerialName("profilePictureHeader")
+    val profilePictureHeaders: Map<String, String>? = null,
 )
 
 /**
@@ -108,12 +112,11 @@ data class AuthUser(
  *
  * Any local set/get key should use user.id.toString(),
  * as token.accessToken (even hashed) is unsecure, and will rotate.
- * */
+ */
+@Serializable
 data class AuthData(
-    @JsonProperty("user")
-    val user: AuthUser,
-    @JsonProperty("token")
-    val token: AuthToken,
+    @SerialName("user") val user: AuthUser,
+    @SerialName("token") val token: AuthToken,
 )
 
 data class AuthPinData(
@@ -136,15 +139,12 @@ data class AuthLoginRequirement(
 )
 
 /** What the user responds to the AuthLoginRequirement */
+@Serializable
 data class AuthLoginResponse(
-    @JsonProperty("password")
-    val password: String?,
-    @JsonProperty("username")
-    val username: String?,
-    @JsonProperty("email")
-    val email: String?,
-    @JsonProperty("server")
-    val server: String?,
+    @SerialName("password") val password: String?,
+    @SerialName("username") val username: String?,
+    @SerialName("email") val email: String?,
+    @SerialName("server") val server: String?,
 )
 
 /** Stateless Authentication class used for all personalized content */
@@ -241,7 +241,7 @@ abstract class AuthAPI {
      *
      * Note that this will currently only be called *once* on logout,
      * and as such any network issues it will fail silently, and the token will not be revoked.
-     **/
+     */
     @Throws
     open suspend fun invalidateToken(token: AuthToken): Nothing = throw NotImplementedError()
 
