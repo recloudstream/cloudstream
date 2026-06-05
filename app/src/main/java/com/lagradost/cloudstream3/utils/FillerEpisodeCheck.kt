@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
 import androidx.annotation.WorkerThread
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
@@ -10,12 +9,14 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getTMDbId
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.ui.result.getId
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import java.io.InputStream
 import java.lang.Thread.sleep
 import java.util.*
 import kotlin.concurrent.thread
-import com.lagradost.cloudstream3.utils.AppUtils.parseJson
-import java.io.InputStream
 import kotlin.let
 
 object FillerEpisodeCheck {
@@ -25,66 +26,45 @@ object FillerEpisodeCheck {
         return q + "cache" + z
     }
 
+    @Serializable
     data class Show(
-        @JsonProperty("slug")
-        val slug: String,
-        @JsonProperty("title")
-        val title: String,
-        @JsonProperty("filler")
-        val filler: ArrayList<Int>,
-        @JsonProperty("mixedCanon")
-        val mixedCanon: ArrayList<Int>,
-        @JsonProperty("mangaCanon")
-        val mangaCanon: ArrayList<Int>,
-        @JsonProperty("animeCanon")
-        val animeCanon: ArrayList<Int>,
+        @SerialName("slug") val slug: String,
+        @SerialName("title") val title: String,
+        @SerialName("filler") val filler: ArrayList<Int>,
+        @SerialName("mixedCanon") val mixedCanon: ArrayList<Int>,
+        @SerialName("mangaCanon") val mangaCanon: ArrayList<Int>,
+        @SerialName("animeCanon") val animeCanon: ArrayList<Int>,
     )
 
+    @Serializable
     data class MappingRoot(
-        @JsonProperty("type")
-        val type: String?,
-        @JsonProperty("anidb_id")
-        val anidbId: Long?,
-        @JsonProperty("anilist_id")
-        val anilistId: Long?,
-        @JsonProperty("animecountdown_id")
-        val animecountdownId: Long?,
-        @JsonProperty("animenewsnetwork_id")
-        val animenewsnetworkId: Long?,
-        @JsonProperty("anime-planet_id")
-        val animePlanetId: String?,
-        @JsonProperty("anisearch_id")
-        val anisearchId: Long?,
-        @JsonProperty("imdb_id")
-        val imdbId: String?,
-        @JsonProperty("kitsu_id")
-        val kitsuId: Long?,
-        @JsonProperty("livechart_id")
-        val livechartId: Long?,
-        @JsonProperty("mal_id")
-        val malId: Long?,
-        @JsonProperty("simkl_id")
-        val simklId: Long?,
-        @JsonProperty("themoviedb_id")
-        val themoviedbId: Long?,
-        @JsonProperty("tvdb_id")
-        val tvdbId: Long?,
-        @JsonProperty("season")
-        val season: Season?,
+        @SerialName("type") val type: String?,
+        @SerialName("anidb_id") val anidbId: Long?,
+        @SerialName("anilist_id") val anilistId: Long?,
+        @SerialName("animecountdown_id") val animecountdownId: Long?,
+        @SerialName("animenewsnetwork_id") val animenewsnetworkId: Long?,
+        @SerialName("anime-planet_id") val animePlanetId: String?,
+        @SerialName("anisearch_id") val anisearchId: Long?,
+        @SerialName("imdb_id") val imdbId: String?,
+        @SerialName("kitsu_id") val kitsuId: Long?,
+        @SerialName("livechart_id") val livechartId: Long?,
+        @SerialName("mal_id") val malId: Long?,
+        @SerialName("simkl_id") val simklId: Long?,
+        @SerialName("themoviedb_id") val themoviedbId: Long?,
+        @SerialName("tvdb_id") val tvdbId: Long?,
+        @SerialName("season") val season: Season?,
     )
 
+    @Serializable
     data class Season(
-        @JsonProperty("tvdb")
-        val tvdb: Long?,
-        @JsonProperty("tmdb")
-        val tmdb: Long?,
+        @SerialName("tvdb") val tvdb: Long?,
+        @SerialName("tmdb") val tmdb: Long?,
     )
 
+    @Serializable
     data class CombinedMedia(
-        @JsonProperty("mapping")
-        val mapping: MappingRoot?,
-        @JsonProperty("show")
-        val show: Show
+        @SerialName("mapping") val mapping: MappingRoot?,
+        @SerialName("show") val show: Show,
     )
 
     data class Database(
