@@ -1,8 +1,6 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
-
 import androidx.annotation.StringRes
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.R
@@ -22,6 +20,8 @@ import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.txt
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -182,9 +182,9 @@ class KitsuApi: SyncAPI() {
             return null
         }
 
+        @Serializable
         data class KitsuResponse(
-            @field:JsonProperty(value = "data")
-            val data: KitsuNode,
+            @SerialName("data") val data: KitsuNode,
         )
 
         val url =
@@ -487,23 +487,23 @@ class KitsuApi: SyncAPI() {
         return res
     }
 
-
+    @Serializable
     data class ResponseToken(
-        @JsonProperty("token_type") val tokenType: String,
-        @JsonProperty("expires_in") val expiresIn: Int,
-        @JsonProperty("access_token") val accessToken: String,
-        @JsonProperty("refresh_token") val refreshToken: String,
+        @SerialName("token_type") val tokenType: String,
+        @SerialName("expires_in") val expiresIn: Int,
+        @SerialName("access_token") val accessToken: String,
+        @SerialName("refresh_token") val refreshToken: String,
     )
 
+    @Serializable
     data class KitsuNode(
-        @JsonProperty("id") val id: String,
-        @JsonProperty("attributes") val attributes: KitsuNodeAttributes,
+        @SerialName("id") val id: String,
+        @SerialName("attributes") val attributes: KitsuNodeAttributes,
         /* User list anime node */
-        @JsonProperty("relationships") val relationships: KitsuRelationships?,
-        var anime: KitsuAnimeData?
+        @SerialName("relationships") val relationships: KitsuRelationships?,
+        @SerialName("anime") var anime: KitsuAnimeData?,
     ) {
         fun toLibraryItem(): LibraryItem {
-
             val animeItem = this.anime
 
             val numEpisodes = animeItem?.attributes?.episodeCount
@@ -545,86 +545,94 @@ class KitsuApi: SyncAPI() {
 
     }
 
+    @Serializable
     data class KitsuAnimeAttributes(
-        @JsonProperty("titles") val titles: KitsuTitles?,
-        @JsonProperty("canonicalTitle") val canonicalTitle: String?,
-        @JsonProperty("posterImage") val posterImage: KitsuPosterImage?,
-        @JsonProperty("synopsis") val synopsis: String?,
-        @JsonProperty("startDate") val startDate: String?,
-        @JsonProperty("endDate") val endDate: String?,
-        @JsonProperty("episodeCount") val episodeCount: Int?,
-        @JsonProperty("episodeLength") val episodeLength: Int?,
+        @SerialName("titles") val titles: KitsuTitles?,
+        @SerialName("canonicalTitle") val canonicalTitle: String?,
+        @SerialName("posterImage") val posterImage: KitsuPosterImage?,
+        @SerialName("synopsis") val synopsis: String?,
+        @SerialName("startDate") val startDate: String?,
+        @SerialName("endDate") val endDate: String?,
+        @SerialName("episodeCount") val episodeCount: Int?,
+        @SerialName("episodeLength") val episodeLength: Int?,
     )
 
+    @Serializable
     data class KitsuAnimeData(
-        @JsonProperty("id") val id: String,
-        @JsonProperty("attributes") val attributes: KitsuAnimeAttributes,
+        @SerialName("id") val id: String,
+        @SerialName("attributes") val attributes: KitsuAnimeAttributes,
     )
 
-
+    @Serializable
     data class KitsuNodeAttributes(
         /* General attributes */
-        @JsonProperty("titles") val titles: KitsuTitles?,
-        @JsonProperty("canonicalTitle") val canonicalTitle: String?,
-        @JsonProperty("posterImage") val posterImage: KitsuPosterImage?,
-        @JsonProperty("synopsis") val synopsis: String?,
-        @JsonProperty("startDate") val startDate: String?,
-        @JsonProperty("endDate") val endDate: String?,
-        @JsonProperty("episodeCount") val episodeCount: Int?,
-        @JsonProperty("episodeLength") val episodeLength: Int?,
+        @SerialName("titles") val titles: KitsuTitles?,
+        @SerialName("canonicalTitle") val canonicalTitle: String?,
+        @SerialName("posterImage") val posterImage: KitsuPosterImage?,
+        @SerialName("synopsis") val synopsis: String?,
+        @SerialName("startDate") val startDate: String?,
+        @SerialName("endDate") val endDate: String?,
+        @SerialName("episodeCount") val episodeCount: Int?,
+        @SerialName("episodeLength") val episodeLength: Int?,
         /* User attributes */
-        @JsonProperty("name") val name: String?,
-        @JsonProperty("location") val location: String?,
-        @JsonProperty("createdAt") val createdAt: String?,
-        @JsonProperty("avatar") val avatar: KitsuUserAvatar?,
+        @SerialName("name") val name: String?,
+        @SerialName("location") val location: String?,
+        @SerialName("createdAt") val createdAt: String?,
+        @SerialName("avatar") val avatar: KitsuUserAvatar?,
         /* User list anime attributes */
-        @JsonProperty("progress") val progress: Int?,
-        @JsonProperty("ratingTwenty") val ratingTwenty: Int?,
-        @JsonProperty("updatedAt") val updatedAt: String?,
-        @JsonProperty("status") val status: String?,
+        @SerialName("progress") val progress: Int?,
+        @SerialName("ratingTwenty") val ratingTwenty: Int?,
+        @SerialName("updatedAt") val updatedAt: String?,
+        @SerialName("status") val status: String?,
     )
 
+    @Serializable
     data class KitsuRelationships(
-        @JsonProperty("anime") val anime: KitsuRelationshipsAnime?
+        @SerialName("anime") val anime: KitsuRelationshipsAnime?,
     )
 
+    @Serializable
     data class KitsuRelationshipsAnime(
-        @JsonProperty("links") val links: KitsuLinks?
+        @SerialName("links") val links: KitsuLinks?,
     )
 
+    @Serializable
     data class KitsuPosterImage(
-        @JsonProperty("large") val large: String?,
-        @JsonProperty("medium") val medium: String?,
+        @SerialName("large") val large: String?,
+        @SerialName("medium") val medium: String?,
     )
 
+    @Serializable
     data class KitsuTitles(
-        @JsonProperty("en_jp") val enJp: String?,
-        @JsonProperty("ja_jp") val jaJp: String?
+        @SerialName("en_jp") val enJp: String?,
+        @SerialName("ja_jp") val jaJp: String?,
     )
 
+    @Serializable
     data class KitsuUserAvatar(
-        @JsonProperty("original") val original: String?
+        @SerialName("original") val original: String?,
     )
 
+    @Serializable
     data class KitsuLinks(
         /* Pagination */
-        @JsonProperty("first") val first: String?,
-        @JsonProperty("next") val next: String?,
-        @JsonProperty("last") val last: String?,
+        @SerialName("first") val first: String?,
+        @SerialName("next") val next: String?,
+        @SerialName("last") val last: String?,
         /* Relationships */
-        @JsonProperty("related") val related: String?
+        @SerialName("related") val related: String?,
     )
 
+    @Serializable
     data class KitsuResponse(
-        @JsonProperty("links") val links: KitsuLinks?,
-        @JsonProperty("data") val data: List<KitsuNode>,
+        @SerialName("links") val links: KitsuLinks?,
+        @SerialName("data") val data: List<KitsuNode>,
         /* When requesting related info (User library entry -> anime) */
-        @JsonProperty("included") val included: List<KitsuAnimeData>?,
+        @SerialName("included") val included: List<KitsuAnimeData>?,
     )
 
 
     companion object {
-
         const val KITSU_CACHED_LIST: String = "kitsu_cached_list"
         private fun parseDateLong(string: String?): Long? {
             return try {
@@ -770,44 +778,52 @@ query {
         return map
     }
 
+    @Serializable
     data class KitsuResponse(
-        val data: Data? = null
+        @SerialName("data") val data: Data? = null,
     ) {
+        @Serializable
         data class Data(
-            val lookupMapping: LookupMapping? = null
+            @SerialName("lookupMapping") val lookupMapping: LookupMapping? = null,
         )
 
+        @Serializable
         data class LookupMapping(
-            val id: String? = null,
-            val episodes: Episodes? = null
+            @SerialName("id") val id: String? = null,
+            @SerialName("episodes") val episodes: Episodes? = null,
         )
 
+        @Serializable
         data class Episodes(
-            val nodes: List<Node?>? = null
+            @SerialName("nodes") val nodes: List<Node?>? = null,
         )
 
+        @Serializable
         data class Node(
-            @JsonProperty("number")
-            val num: Int? = null,
-            val titles: Titles? = null,
-            val description: Description? = null,
-            val thumbnail: Thumbnail? = null
+            @SerialName("number") val num: Int? = null,
+            @SerialName("titles") val titles: Titles? = null,
+            @SerialName("description") val description: Description? = null,
+            @SerialName("thumbnail") val thumbnail: Thumbnail? = null,
         )
 
+        @Serializable
         data class Description(
-            val en: String? = null
+            @SerialName("en") val en: String? = null,
         )
 
+        @Serializable
         data class Thumbnail(
-            val original: Original? = null
+            @SerialName("original") val original: Original? = null,
         )
 
+        @Serializable
         data class Original(
-            val url: String? = null
+            @SerialName("url") val url: String? = null,
         )
 
+        @Serializable
         data class Titles(
-            val canonical: String? = null
+            @SerialName("canonical") val canonical: String? = null,
         )
     }
 }
