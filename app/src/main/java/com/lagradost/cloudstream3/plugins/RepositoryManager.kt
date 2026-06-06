@@ -135,7 +135,7 @@ object RepositoryManager {
     suspend fun parseRepository(url: String): Repository? {
         return safeAsync {
             // Take manifestVersion and such into account later
-            app.get(convertRawGitUrl(url)).parsedSafe()
+            app.get(convertRawGitUrl(url)).parsedSafe<Repository>()
         }
     }
 
