@@ -33,7 +33,6 @@ import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.TestingUtils
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
-import org.junit.Assume
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -54,22 +53,6 @@ class ExampleInstrumentedTest {
     private fun getAllProviders(): Array<MainAPI> {
         println("Providers: ${APIHolder.allProviders.size}")
         return APIHolder.allProviders.toTypedArray() //.filter { !it.usesWebView }
-    }
-
-    private fun skipIfNoProviders() {
-        Assume.assumeTrue(
-            "Skipping: no providers loaded",
-            getAllProviders().isNotEmpty()
-        )
-    }
-
-    @Test
-    fun providersExist() {
-        skipIfNoProviders()
-        // Very redundant since we skip when no providers
-        // but maybe this is useful someday.
-        Assert.assertTrue(getAllProviders().isNotEmpty())
-        println("Done providersExist")
     }
 
     @Throws
