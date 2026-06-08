@@ -60,9 +60,8 @@ object AppUtils {
     inline fun <reified T : Any> parseJson(value: String): T {
         // @Serializable generates a serializer at compile time; contextual serializers are
         // registered manually in serializersModule, we need both to support all cases
-        val serializer = runCatching { serializer<T>() }.runCatching {
-            json.serializersModule.getContextual(T::class)
-        }.getOrNull()
+        val serializer = runCatching { serializer<T>() }.getOrNull()
+            ?: json.serializersModule.getContextual(T::class)
 
         // Prefer Kotlin Serialization over Jackson
         if (serializer != null) {
