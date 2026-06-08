@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity.Companion.deleteFileOnExit
@@ -47,18 +48,18 @@ object InAppUpdater {
     private data class GithubAsset(
         @SerialName("name") val name: String,
         @SerialName("size") val size: Int, // Size in bytes
-        @SerialName("browser_download_url") val browserDownloadUrl: String,
-        @SerialName("content_type") val contentType: String, // application/vnd.android.package-archive
+        @JsonProperty("browser_download_url") @SerialName("browser_download_url") val browserDownloadUrl: String,
+        @JsonProperty("content_type") @SerialName("content_type") val contentType: String, // application/vnd.android.package-archive
     )
 
     @Serializable
     private data class GithubRelease(
-        @SerialName("tag_name") val tagName: String, // Version code
+        @JsonProperty("tag_name") @SerialName("tag_name") val tagName: String, // Version code
         @SerialName("body") val body: String, // Description
         @SerialName("assets") val assets: List<GithubAsset>,
-        @SerialName("target_commitish") val targetCommitish: String, // Branch
+        @JsonProperty("target_commitish") @SerialName("target_commitish") val targetCommitish: String, // Branch
         @SerialName("prerelease") val prerelease: Boolean,
-        @SerialName("node_id") val nodeId: String,
+        @JsonProperty("node_id") @SerialName("node_id") val nodeId: String,
     )
 
     @Serializable
@@ -70,7 +71,7 @@ object InAppUpdater {
 
     @Serializable
     private data class GithubTag(
-        @SerialName("object") val githubObject: GithubObject,
+        @JsonProperty("object") @SerialName("object") val githubObject: GithubObject,
     )
 
     @Serializable
