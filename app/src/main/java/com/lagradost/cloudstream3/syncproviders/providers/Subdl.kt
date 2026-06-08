@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
@@ -154,7 +155,7 @@ class SubDlApi : SubtitleAPI() {
     @Serializable
     data class ApiKeyResponse(
         @SerialName("ok") val ok: Boolean? = false,
-        @SerialName("api_key") val apiKey: String,
+        @JsonProperty("api_key") @SerialName("api_key") val apiKey: String,
         @SerialName("usage") val usage: Usage? = null,
     )
 
@@ -173,18 +174,18 @@ class SubDlApi : SubtitleAPI() {
 
     @Serializable
     data class Result(
-        @SerialName("sd_id") val sdId: Int? = null,
+        @JsonProperty("sd_id") @SerialName("sd_id") val sdId: Int? = null,
         @SerialName("type") val type: String? = null,
         @SerialName("name") val name: String? = null,
-        @SerialName("imdb_id") val imdbId: String? = null,
-        @SerialName("tmdb_id") val tmdbId: Long? = null,
-        @SerialName("first_air_date") val firstAirDate: String? = null,
+        @JsonProperty("imdb_id") @SerialName("imdb_id") val imdbId: String? = null,
+        @JsonProperty("tmdb_id") @SerialName("tmdb_id") val tmdbId: Long? = null,
+        @JsonProperty("first_air_date") @SerialName("first_air_date") val firstAirDate: String? = null,
         @SerialName("year") val year: Int? = null,
     )
 
     @Serializable
     data class Subtitle(
-        @SerialName("release_name") val releaseName: String,
+        @JsonProperty("release_name") @SerialName("release_name") val releaseName: String,
         @SerialName("name") val name: String,
         @SerialName("lang") val lang: String, // subdl language code
         @SerialName("author") val author: String? = null,
@@ -193,7 +194,7 @@ class SubDlApi : SubtitleAPI() {
         @SerialName("season") val season: Int? = null,
         @SerialName("episode") val episode: Int? = null,
         @SerialName("language") val language: String? = null, // full language name
-        @SerialName("hi") val hearingImpaired: Boolean? = null,
+        @JsonProperty("hi") @SerialName("hi") val hearingImpaired: Boolean? = null,
     )
 
     // https://subdl.com/api-files/language_list.json
