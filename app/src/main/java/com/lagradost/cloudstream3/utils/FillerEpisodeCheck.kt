@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
 import androidx.annotation.WorkerThread
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
@@ -39,19 +40,19 @@ object FillerEpisodeCheck {
     @Serializable
     data class MappingRoot(
         @SerialName("type") val type: String?,
-        @SerialName("anidb_id") val anidbId: Long?,
-        @SerialName("anilist_id") val anilistId: Long?,
-        @SerialName("animecountdown_id") val animecountdownId: Long?,
-        @SerialName("animenewsnetwork_id") val animenewsnetworkId: Long?,
-        @SerialName("anime-planet_id") val animePlanetId: String?,
-        @SerialName("anisearch_id") val anisearchId: Long?,
-        @SerialName("imdb_id") val imdbId: String?,
-        @SerialName("kitsu_id") val kitsuId: Long?,
-        @SerialName("livechart_id") val livechartId: Long?,
-        @SerialName("mal_id") val malId: Long?,
-        @SerialName("simkl_id") val simklId: Long?,
-        @SerialName("themoviedb_id") val themoviedbId: Long?,
-        @SerialName("tvdb_id") val tvdbId: Long?,
+        @JsonProperty("anidb_id") @SerialName("anidb_id") val anidbId: Long?,
+        @JsonProperty("anilist_id") @SerialName("anilist_id") val anilistId: Long?,
+        @JsonProperty("animecountdown_id") @SerialName("animecountdown_id") val animecountdownId: Long?,
+        @JsonProperty("animenewsnetwork_id") @SerialName("animenewsnetwork_id") val animenewsnetworkId: Long?,
+        @JsonProperty("anime-planet_id") @SerialName("anime-planet_id") val animePlanetId: String?,
+        @JsonProperty("anisearch_id") @SerialName("anisearch_id") val anisearchId: Long?,
+        @JsonProperty("imdb_id") @SerialName("imdb_id") val imdbId: String?,
+        @JsonProperty("kitsu_id") @SerialName("kitsu_id") val kitsuId: Long?,
+        @JsonProperty("livechart_id") @SerialName("livechart_id") val livechartId: Long?,
+        @JsonProperty("mal_id") @SerialName("mal_id") val malId: Long?,
+        @JsonProperty("simkl_id") @SerialName("simkl_id") val simklId: Long?,
+        @JsonProperty("themoviedb_id") @SerialName("themoviedb_id") val themoviedbId: Long?,
+        @JsonProperty("tvdb_id") @SerialName("tvdb_id") val tvdbId: Long?,
         @SerialName("season") val season: Season?,
     )
 
