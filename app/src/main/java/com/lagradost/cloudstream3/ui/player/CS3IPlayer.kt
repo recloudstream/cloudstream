@@ -96,7 +96,7 @@ import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.applyStyle
 import com.lagradost.cloudstream3.utils.AppContextUtils.isUsingMobileData
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
-import com.lagradost.cloudstream3.utils.CLEARKEY_UUID
+import com.lagradost.cloudstream3.utils.CLEARKEY_DRM_UUID
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
@@ -104,9 +104,9 @@ import com.lagradost.cloudstream3.utils.DrmExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
-import com.lagradost.cloudstream3.utils.PLAYREADY_UUID
+import com.lagradost.cloudstream3.utils.PLAYREADY_DRM_UUID
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTagToLanguageName
-import com.lagradost.cloudstream3.utils.WIDEVINE_UUID
+import com.lagradost.cloudstream3.utils.WIDEVINE_DRM_UUID
 import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
 import kotlinx.coroutines.delay
 import okhttp3.Interceptor
@@ -118,6 +118,7 @@ import java.util.concurrent.Executors
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
+import kotlin.uuid.toJavaUuid
 
 const val TAG = "CS3ExoPlayer"
 const val PREFERRED_AUDIO_LANGUAGE_KEY = "preferred_audio_language"
@@ -1278,7 +1279,7 @@ class CS3IPlayer : IPlayer {
 
             item.drm?.let { drm ->
                 when (drm.uuid) {
-                    CLEARKEY_UUID -> {
+                    CLEARKEY_DRM_UUID.toJavaUuid() -> {
                         // Use headers from DrmMetadata for media requests
                         val client = dataSourceFactory
                             ?: throw IllegalArgumentException("Must supply onlineSource")
@@ -1299,8 +1300,8 @@ class CS3IPlayer : IPlayer {
                             .createMediaSource(item.mediaItem)
                     }
 
-                    WIDEVINE_UUID,
-                    PLAYREADY_UUID -> {
+                    WIDEVINE_DRM_UUID.toJavaUuid(),
+                    PLAYREADY_DRM_UUID.toJavaUuid() -> {
                         // Use headers from DrmMetadata for media requests
                         val client = dataSourceFactory
                             ?: throw IllegalArgumentException("Must supply onlineSource")
@@ -1914,7 +1915,7 @@ class CS3IPlayer : IPlayer {
                             drm = DrmMetadata(
                                 kid = link.kid,
                                 key = link.key,
-                                uuid = link.uuid,
+                                uuid = link.uuid.toJavaUuid(),
                                 kty = link.kty,
                                 licenseUrl = link.licenseUrl,
                                 keyRequestParameters = link.keyRequestParameters,
