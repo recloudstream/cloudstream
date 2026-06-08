@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.metaproviders
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.api.BuildConfig
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.Actor
@@ -228,12 +229,12 @@ abstract class MyDramaListAPI : MainAPI() {
     data class MediaSummary(
         @SerialName("id") val id: Long,
         @SerialName("title") val title: String,
-        @SerialName("original_title") val originalTitle: String,
+        @JsonProperty("original_title") @SerialName("original_title") val originalTitle: String,
         @SerialName("year") val year: Int? = null,
         @SerialName("rating") val rating: Double? = null,
         @SerialName("permalink") val permalink: String? = null,
         @SerialName("type") val type: String,
-        @SerialName("media_type") val mediaType: String? = null,
+        @JsonProperty("media_type") @SerialName("media_type") val mediaType: String? = null,
         @SerialName("country") val country: String? = null,
         @SerialName("language") val language: String? = null,
         @SerialName("images") val images: Images,
@@ -251,36 +252,36 @@ abstract class MyDramaListAPI : MainAPI() {
         @SerialName("id") val id: Long,
         @SerialName("slug") val slug: String,
         @SerialName("title") val title: String,
-        @SerialName("original_title") val originalTitle: String,
-        @SerialName("year") val mediaYear: Int,
+        @JsonProperty("original_title") @SerialName("original_title") val originalTitle: String,
+        @JsonProperty("year") @SerialName("year") val mediaYear: Int,
         @SerialName("episodes") val episodes: Long,
-        @SerialName("rating") val mediaRating: Double,
+        @JsonProperty("rating") @SerialName("rating") val mediaRating: Double,
         @SerialName("permalink") val permalink: String? = null,
         @SerialName("synopsis") val synopsis: String? = null,
         @SerialName("type") val type: String? = null,
-        @SerialName("media_type") val mediaType: String? = null,
+        @JsonProperty("media_type") @SerialName("media_type") val mediaType: String? = null,
         @SerialName("country") val country: String? = null,
         @SerialName("language") val language: String? = null,
         @SerialName("images") val images: Images,
-        @SerialName("alt_titles") val altTitles: List<String>? = null,
+        @JsonProperty("alt_titles") @SerialName("alt_titles") val altTitles: List<String>? = null,
         @SerialName("votes") val votes: Long? = null,
-        @SerialName("aired_start") val airedStart: String? = null,
+        @JsonProperty("aired_start") @SerialName("aired_start") val airedStart: String? = null,
         @SerialName("released") val released: String? = null,
-        @SerialName("release_dates_fmt") val releaseDatesFmt: String,
+        @JsonProperty("release_dates_fmt") @SerialName("release_dates_fmt") val releaseDatesFmt: String,
         @SerialName("genres") val genres: List<JsonElement>? = null,
         @SerialName("trailer") val trailer: Trailer?,
         @SerialName("watchers") val watchers: Long,
         @SerialName("ranked") val ranked: Long,
         @SerialName("popularity") val popularity: Long,
         @SerialName("runtime") val runtime: Long,
-        @SerialName("reviews_count") val reviewsCount: Long,
-        @SerialName("recs_count") val recsCount: Long,
-        @SerialName("comments_count") val commentsCount: Long,
+        @JsonProperty("reviews_count") @SerialName("reviews_count") val reviewsCount: Long,
+        @JsonProperty("recs_count") @SerialName("recs_count") val recsCount: Long,
+        @JsonProperty("comments_count") @SerialName("comments_count") val commentsCount: Long,
         @SerialName("certification") val certification: String,
         @SerialName("status") val status: String,
-        @SerialName("enable_ads") val enableAds: Boolean,
+        @JsonProperty("enable_ads") @SerialName("enable_ads") val enableAds: Boolean,
         @SerialName("sources") val sources: List<Source>,
-        @SerialName("updated_at") val updatedAt: Long,
+        @JsonProperty("updated_at") @SerialName("updated_at") val updatedAt: Long,
     ) {
         suspend fun fetchCredits(): List<ActorData> {
             val actors = app.get(
@@ -375,7 +376,7 @@ abstract class MyDramaListAPI : MainAPI() {
         @SerialName("xid") val xid: String,
         @SerialName("name") val name: String,
         @SerialName("source") val source: String,
-        @SerialName("source_type") val sourceType: String,
+        @JsonProperty("source_type") @SerialName("source_type") val sourceType: String,
         @SerialName("link") val link: String,
         @SerialName("image") val image: String,
     )
@@ -398,7 +399,7 @@ abstract class MyDramaListAPI : MainAPI() {
         @SerialName("url") val url: String,
         @SerialName("slug") val slug: String,
         @SerialName("images") val images: Images,
-        @SerialName("character_name") val characterName: String,
+        @JsonProperty("character_name") @SerialName("character_name") val characterName: String,
         @SerialName("role") val role: String,
     )
 
@@ -417,7 +418,7 @@ abstract class MyDramaListAPI : MainAPI() {
     @Serializable
     data class ShowEpisodesItem(
         @SerialName("name") val name: String,
-        @SerialName("release_date") val releaseDate: String,
+        @JsonProperty("release_date") @SerialName("release_date") val releaseDate: String,
         @SerialName("episodes") val episodes: List<ShowEpisode>,
         @SerialName("timezone") val timezone: String,
         @SerialName("total") val total: Int,
@@ -426,10 +427,10 @@ abstract class MyDramaListAPI : MainAPI() {
     @Serializable
     data class ShowEpisode(
         @SerialName("id") val id: Int,
-        @SerialName("episode_number") val episodeNumber: Int,
+        @JsonProperty("episode_number") @SerialName("episode_number") val episodeNumber: Int,
         @SerialName("rating") val rating: Double,
         @SerialName("votes") val votes: Int,
-        @SerialName("released_at") val releasedAt: String,
+        @JsonProperty("released_at") @SerialName("released_at") val releasedAt: String,
     )
 
     @Serializable
@@ -439,7 +440,7 @@ abstract class MyDramaListAPI : MainAPI() {
 
     @Serializable
     data class TrailerNode(
-        @SerialName("trailer") val trailerDetails: TrailerDetails,
+        @JsonProperty("trailer") @SerialName("trailer") val trailerDetails: TrailerDetails,
     )
 
     @Serializable
