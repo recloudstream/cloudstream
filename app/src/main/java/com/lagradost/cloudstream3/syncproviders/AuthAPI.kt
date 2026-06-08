@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.syncproviders
 
 import android.util.Base64
 import androidx.annotation.WorkerThread
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
@@ -104,6 +105,7 @@ data class AuthUser(
     @SerialName("profilePicture")
     val profilePicture: String? = null,
     /** Profile picture Headers of the URL */
+    @JsonProperty("profilePictureHeader")
     @SerialName("profilePictureHeaders") @JsonNames("profilePictureHeader")
     val profilePictureHeaders: Map<String, String>? = null,
 )
