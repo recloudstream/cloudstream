@@ -38,8 +38,10 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.splitQuery
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.utils.txt
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 import java.net.URL
 import java.security.SecureRandom
 import java.util.Date
@@ -86,6 +88,7 @@ data class AuthToken(
         refreshTokenLifetime != null && (System.currentTimeMillis() / 1000) + marginSec >= refreshTokenLifetime
 }
 
+@OptIn(ExperimentalSerializationApi::class) // JsonNames is an experimental annotation for now
 @Serializable
 data class AuthUser(
     /** Account display-name, can also be email if name does not exist */
@@ -101,7 +104,7 @@ data class AuthUser(
     @SerialName("profilePicture")
     val profilePicture: String? = null,
     /** Profile picture Headers of the URL */
-    @SerialName("profilePictureHeader")
+    @SerialName("profilePictureHeaders") @JsonNames("profilePictureHeader")
     val profilePictureHeaders: Map<String, String>? = null,
 )
 
