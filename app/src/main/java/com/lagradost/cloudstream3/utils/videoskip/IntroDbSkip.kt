@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils.videoskip
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
 import com.lagradost.cloudstream3.TvType
@@ -58,7 +59,7 @@ class IntroDbSkip : SkipAPI() {
 
     @Serializable
     data class IntroDbResponse(
-        @SerialName("imdb_id") val imdbId: String?,
+        @JsonProperty("imdb_id") @SerialName("imdb_id") val imdbId: String?,
         @SerialName("season") val season: Int?,
         @SerialName("episode") val episode: Int?,
         @SerialName("intro") val intro: Segment?,
@@ -68,12 +69,12 @@ class IntroDbSkip : SkipAPI() {
 
     @Serializable
     data class Segment(
-        @SerialName("start_sec") val startSec: Double?,
-        @SerialName("end_sec") val endSec: Double?,
-        @SerialName("start_ms") val startMs: Long?,
-        @SerialName("end_ms") val endMs: Long?,
+        @JsonProperty("start_sec") @SerialName("start_sec") val startSec: Double?,
+        @JsonProperty("end_sec") @SerialName("end_sec") val endSec: Double?,
+        @JsonProperty("start_ms") @SerialName("start_ms") val startMs: Long?,
+        @JsonProperty("end_ms") @SerialName("end_ms") val endMs: Long?,
         @SerialName("confidence") val confidence: Double?,
-        @SerialName("submission_count") val submissionCount: Int?,
-        @SerialName("updated_at") val updatedAt: String?,
+        @JsonProperty("submission_count") @SerialName("submission_count") val submissionCount: Int?,
+        @JsonProperty("updated_at") @SerialName("updated_at") val updatedAt: String?,
     )
 }

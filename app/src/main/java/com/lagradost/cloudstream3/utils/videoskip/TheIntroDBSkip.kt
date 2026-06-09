@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils.videoskip
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getTMDbId
@@ -55,7 +56,7 @@ class TheIntroDBSkip : SkipAPI() {
 
     @Serializable
     data class Root(
-        @SerialName("tmdb_id") val tmdbId: Long,
+        @JsonProperty("tmdb_id") @SerialName("tmdb_id") val tmdbId: Long,
         @SerialName("type") val type: String,
         @SerialName("intro") val intro: List<Stamp> = emptyList(),
         @SerialName("recap") val recap: List<Stamp> = emptyList(),
@@ -65,7 +66,7 @@ class TheIntroDBSkip : SkipAPI() {
 
     @Serializable
     data class Stamp(
-        @SerialName("start_ms") val startMs: Long?,
-        @SerialName("end_ms") val endMs: Long?,
+        @JsonProperty("start_ms") @SerialName("start_ms") val startMs: Long?,
+        @JsonProperty("end_ms") @SerialName("end_ms") val endMs: Long?,
     )
 }
