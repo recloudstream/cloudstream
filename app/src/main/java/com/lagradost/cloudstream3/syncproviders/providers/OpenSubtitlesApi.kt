@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
 import android.util.Log
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.R
@@ -238,44 +239,44 @@ class OpenSubtitlesApi : SubtitleAPI() {
 
     @Serializable
     data class ResultAttributes(
-        @SerialName("subtitle_id") var subtitleId: String? = null,
+        @JsonProperty("subtitle_id") @SerialName("subtitle_id") var subtitleId: String? = null,
         @SerialName("language") var language: String? = null,
         @SerialName("release") var release: String? = null,
         @SerialName("url") var url: String? = null,
         @SerialName("files") var files: List<ResultFiles>? = listOf(),
-        @SerialName("feature_details") var featDetails: ResultFeatureDetails? = ResultFeatureDetails(),
-        @SerialName("hearing_impaired") var hearingImpaired: Boolean? = null,
+        @JsonProperty("feature_details") @SerialName("feature_details") var featDetails: ResultFeatureDetails? = ResultFeatureDetails(),
+        @JsonProperty("hearing_impaired") @SerialName("hearing_impaired") var hearingImpaired: Boolean? = null,
     )
 
     @Serializable
     data class ResultFiles(
-        @SerialName("file_id") var fileId: Int? = null,
-        @SerialName("file_name") var fileName: String? = null,
+        @JsonProperty("file_id") @SerialName("file_id") var fileId: Int? = null,
+        @JsonProperty("file_name") @SerialName("file_name") var fileName: String? = null,
     )
 
     @Serializable
     data class ResultDownloadLink(
         @SerialName("link") var link: String? = null,
-        @SerialName("file_name") var fileName: String? = null,
+        @JsonProperty("file_name") @SerialName("file_name") var fileName: String? = null,
         @SerialName("requests") var requests: Int? = null,
         @SerialName("remaining") var remaining: Int? = null,
         @SerialName("message") var message: String? = null,
-        @SerialName("reset_time") var resetTime: String? = null,
-        @SerialName("reset_time_utc") var resetTimeUtc: String? = null,
+        @JsonProperty("reset_time") @SerialName("reset_time") var resetTime: String? = null,
+        @JsonProperty("reset_time_utc") @SerialName("reset_time_utc") var resetTimeUtc: String? = null,
     )
 
     @Serializable
     data class ResultFeatureDetails(
         @SerialName("year") var year: Int? = null,
         @SerialName("title") var title: String? = null,
-        @SerialName("movie_name") var movieName: String? = null,
-        @SerialName("imdb_id") var imdbId: Int? = null,
-        @SerialName("tmdb_id") var tmdbId: Int? = null,
-        @SerialName("season_number") var seasonNumber: Int? = null,
-        @SerialName("episode_number") var episodeNumber: Int? = null,
-        @SerialName("parent_imdb_id") var parentImdbId: Int? = null,
-        @SerialName("parent_title") var parentTitle: String? = null,
-        @SerialName("parent_tmdb_id") var parentTmdbId: Int? = null,
-        @SerialName("parent_feature_id") var parentFeatureId: Int? = null,
+        @JsonProperty("movie_name") @SerialName("movie_name") var movieName: String? = null,
+        @JsonProperty("imdb_id") @SerialName("imdb_id") var imdbId: Int? = null,
+        @JsonProperty("tmdb_id") @SerialName("tmdb_id") var tmdbId: Int? = null,
+        @JsonProperty("season_number") @SerialName("season_number") var seasonNumber: Int? = null,
+        @JsonProperty("episode_number") @SerialName("episode_number") var episodeNumber: Int? = null,
+        @JsonProperty("parent_imdb_id") @SerialName("parent_imdb_id") var parentImdbId: Int? = null,
+        @JsonProperty("parent_title") @SerialName("parent_title") var parentTitle: String? = null,
+        @JsonProperty("parent_tmdb_id") @SerialName("parent_tmdb_id") var parentTmdbId: Int? = null,
+        @JsonProperty("parent_feature_id") @SerialName("parent_feature_id") var parentFeatureId: Int? = null,
     )
 }
