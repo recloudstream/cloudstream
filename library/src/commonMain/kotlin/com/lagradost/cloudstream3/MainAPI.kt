@@ -39,7 +39,6 @@ import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.format.char
 import kotlinx.datetime.format.parse
 import kotlinx.datetime.toInstant
-import java.util.EnumSet
 import kotlinx.serialization.json.Json
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
@@ -1513,7 +1512,7 @@ constructor(
 
     override var posterUrl: String? = null,
     var year: Int? = null,
-    var dubStatus: EnumSet<DubStatus>? = null,
+    var dubStatus: MutableSet<DubStatus>? = null,
 
     var otherName: String? = null,
     var episodes: MutableMap<DubStatus, Int> = mutableMapOf(),
@@ -1525,7 +1524,7 @@ constructor(
 ) : SearchResponse
 
 fun AnimeSearchResponse.addDubStatus(status: DubStatus, episodes: Int? = null) {
-    this.dubStatus = dubStatus?.also { it.add(status) } ?: EnumSet.of(status)
+    this.dubStatus = dubStatus?.also { it.add(status) } ?: mutableSetOf(status)
     if (this.type?.isMovieType() != true)
         if (episodes != null && episodes > 0)
             this.episodes[status] = episodes

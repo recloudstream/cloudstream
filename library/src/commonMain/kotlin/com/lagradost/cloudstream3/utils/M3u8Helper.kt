@@ -328,7 +328,7 @@ object M3u8Helper2 {
                 encryptionUrl = "${getParentLink(playlistStream.streamUrl)}/$encryptionUrl"
             }
 
-            encryptionIv = match[3].toByteArray()
+            encryptionIv = match[3].encodeToByteArray()
             val encryptionKeyResponse =
                 app.get(encryptionUrl, headers = playlistStream.headers, verify = false)
             val body = encryptionKeyResponse.body
