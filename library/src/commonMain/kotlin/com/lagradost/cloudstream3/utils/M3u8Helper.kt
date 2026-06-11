@@ -112,8 +112,8 @@ object M3u8Helper2 {
         return c.doFinal(data)
     }
 
-    private fun getParentLink(uri: String): String {
-        val split = uri.split("/").toMutableList()
+    private fun getParentLink(url: String): String {
+        val split = url.split("/").toMutableList()
         split.removeAt(split.lastIndex)
         return split.joinToString("/")
     }
@@ -322,15 +322,15 @@ object M3u8Helper2 {
 
         if (!match.isNullOrEmpty()) {
             encryptionState = true
-            var encryptionUri = match[2]
+            var encryptionUrl = match[2]
 
-            if (isNotCompleteUrl(encryptionUri)) {
-                encryptionUri = "${getParentLink(playlistStream.streamUrl)}/$encryptionUri"
+            if (isNotCompleteUrl(encryptionUrl)) {
+                encryptionUrl = "${getParentLink(playlistStream.streamUrl)}/$encryptionUrl"
             }
 
             encryptionIv = match[3].encodeToByteArray()
             val encryptionKeyResponse =
-                app.get(encryptionUri, headers = playlistStream.headers, verify = false)
+                app.get(encryptionUrl, headers = playlistStream.headers, verify = false)
             val body = encryptionKeyResponse.body
             encryptionData = body.bytes()
             body.close()
