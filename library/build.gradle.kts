@@ -61,6 +61,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization.json) // JSON Parser
+            implementation(libs.ktor.http)
             implementation(libs.jsoup) // HTML Parser
             implementation(libs.rhino) // Run JavaScript
             implementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
@@ -102,6 +103,11 @@ buildkonfig {
             FieldSpec.Type.STRING,
             "MDL_API_KEY",
             (System.getenv("MDL_API_KEY") ?: localProperties["mdl.key"]).toString()
+        )
+
+        buildConfigField(
+            FieldSpec.Type.STRING,
+            "TRAKT_CLIENT_ID", (System.getenv("TRAKT_CLIENT_ID") ?: localProperties["trakt.id"]).toString()
         )
     }
 }

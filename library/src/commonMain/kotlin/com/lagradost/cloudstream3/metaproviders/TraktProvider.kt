@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.metaproviders
 
 import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.api.BuildConfig
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.Actor
 import com.lagradost.cloudstream3.ActorData
@@ -24,7 +25,6 @@ import com.lagradost.cloudstream3.addDate
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.isUpcoming
 import com.lagradost.cloudstream3.mainPageOf
-import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.newEpisode
 import com.lagradost.cloudstream3.newHomePageResponse
 import com.lagradost.cloudstream3.newMovieLoadResponse
@@ -45,9 +45,9 @@ open class TraktProvider : MainAPI() {
         TvType.Anime,
     )
 
-    private val traktClientId =
-        "d9f434f48b55683a279ffe88ddc68351cc04c9dc9372bd95af5de780b794e770"
     private val traktApiUrl = "https://api.trakt.tv"
+
+    val traktClientId: String = BuildConfig.TRAKT_CLIENT_ID
 
     override val mainPage = mainPageOf(
         "$traktApiUrl/movies/trending" to "Trending Movies", //Most watched movies right now
@@ -113,6 +113,7 @@ open class TraktProvider : MainAPI() {
 
         val posterUrl = fixPath(mediaDetails?.images?.poster?.firstOrNull())
         val backDropUrl = fixPath(mediaDetails?.images?.fanart?.firstOrNull())
+        val logoUrl = fixPath(mediaDetails?.images?.logo?.firstOrNull())
 
         val resActor =
             getApi("$traktApiUrl/$moviesOrShows/${mediaDetails?.ids?.trakt}/people?extended=full,images")
@@ -182,6 +183,7 @@ open class TraktProvider : MainAPI() {
                 this.comingSoon = isUpcoming(mediaDetails.released)
                 //posterHeaders
                 this.backgroundPosterUrl = backDropUrl
+                this.logoUrl = logoUrl
                 this.contentRating = mediaDetails.certification
                 addTrailer(mediaDetails.trailer)
                 addImdbId(mediaDetails.ids?.imdb)
@@ -272,6 +274,7 @@ open class TraktProvider : MainAPI() {
                 //posterHeaders
                 this.nextAiring = nextAir
                 this.backgroundPosterUrl = backDropUrl
+                this.logoUrl = logoUrl
                 this.contentRating = mediaDetails.certification
                 addTrailer(mediaDetails.trailer)
                 addImdbId(mediaDetails.ids?.imdb)
