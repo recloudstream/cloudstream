@@ -9,6 +9,7 @@ import android.content.SharedPreferences
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
 import android.util.Log
@@ -1178,6 +1179,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            throw UnsupportedOperationException("Nuh uh")
+        }
         app.initClient(this, ignoreSSL = false)
         @OptIn(UnsafeSSL::class)
         insecureApp.initClient(this, ignoreSSL = true)
