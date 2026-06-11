@@ -70,6 +70,8 @@ object AppUtils {
                 return json.decodeFromString(serializer, value)
             } catch (e: SerializationException) {
                 logError(e)
+            } catch (_: Throwable) {
+                // Pass, the above code will trigger a NoSuchMethodError on stable due to our previously undefined json variable
             }
         }
 
