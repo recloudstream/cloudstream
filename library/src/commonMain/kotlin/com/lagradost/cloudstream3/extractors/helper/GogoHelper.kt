@@ -12,8 +12,8 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import com.lagradost.cloudstream3.utils.newExtractorLink
+import io.ktor.http.Url
 import org.jsoup.nodes.Document
-import java.net.URI
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -88,8 +88,8 @@ object GogoHelper {
         val foundKey = secretKey ?: getKey(base64Decode(id) + foundIv) ?: return@safeApiCall
         val foundDecryptKey = secretDecryptKey ?: foundKey
 
-        val uri = URI(iframeUrl)
-        val mainUrl = "https://" + uri.host
+        val url = Url(iframeUrl)
+        val mainUrl = "https://${url.host}"
 
         val encryptedId = cryptoHandler(id, foundIv, foundKey)
         val encryptRequestData = if (isUsingAdaptiveData) {

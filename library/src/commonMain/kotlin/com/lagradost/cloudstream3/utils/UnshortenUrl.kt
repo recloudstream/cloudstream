@@ -2,9 +2,9 @@ package com.lagradost.cloudstream3.utils
 
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.base64Decode
-import com.lagradost.cloudstream3.utils.StringUtils.decodeUri
+import com.lagradost.cloudstream3.utils.StringUtils.decodeUrl
 import com.lagradost.nicehttp.NiceResponse
-import java.net.URI
+import io.ktor.http.Url
 
 // Code heavily based on unshortenit.py form kodiondemand /addon
 
@@ -48,8 +48,8 @@ object ShortLink {
         }
     }
 
-    suspend fun unshorten(uri: String, type: String? = null): String {
-        var currentUrl = uri
+    suspend fun unshorten(url: String, type: String? = null): String {
+        var currentUrl = url
 
         val visitedUrls = mutableSetOf<String>()
         var count = 10
@@ -57,9 +57,7 @@ object ShortLink {
             visitedUrls += currentUrl
             count -= 1
 
-            val domain =
-                URI(currentUrl.trim()).host
-                    ?: throw IllegalArgumentException("No domain found in URI!")
+            val domain = Url(currentUrl.trim()).host
             currentUrl = shortList.firstOrNull {
                 it.regex.find(domain) != null || type == it.type
             }?.function?.let { it(currentUrl) } ?: break
@@ -67,8 +65,8 @@ object ShortLink {
         return currentUrl.trim()
     }
 
-    suspend fun unshortenAdfly(uri: String): String {
-        val html = app.get(uri).text
+    suspend fun unshortenAdfly(url: String): String {
+        val html = app.get(url).text
         val ysmm = Regex("""var ysmm =.*;?""").find(html)!!.value
 
         if (ysmm.isNotEmpty()) {
@@ -81,46 +79,46 @@ object ShortLink {
                 left += c[0]
                 right = c[1] + right
             }
-            val encodedUri = (left + right).toMutableList()
+            val encodedUrl = (left + right).toMutableList()
             val numbers =
-                encodedUri.mapIndexed { i, n -> Pair(i, n) }.filter { it.second.isDigit() }
+                encodedUrl.mapIndexed { i, n -> Pair(i, n) }.filter { it.second.isDigit() }
             for (el in numbers.chunked(2).dropLastWhile { it.size == 1 }) {
                 val xor = (el[0].second).code.xor(el[1].second.code)
                 if (xor < 10) {
-                    encodedUri[el[0].first] = xor.digitToChar()
+                    encodedUrl[el[0].first] = xor.digitToChar()
                 }
             }
-            val encodedbytearray = encodedUri.map { it.code.toByte() }.toByteArray()
-            var decodedUri =
+            val encodedbytearray = encodedUrl.map { it.code.toByte() }.toByteArray()
+            var decodedUrl =
                 base64Decode(encodedbytearray.toString()).dropLast(16)
                     .drop(16)
 
-            if (Regex("""go\.php\?u=""").find(decodedUri) != null) {
-                decodedUri =
-                    base64Decode(decodedUri.replace(Regex("""(.*?)u="""), ""))
+            if (Regex("""go\.php\?u=""").find(decodedUrl) != null) {
+                decodedUrl =
+                    base64Decode(decodedUrl.replace(Regex("""(.*?)u="""), ""))
             }
 
-            return decodedUri
+            return decodedUrl
         } else {
-            return uri
+            return url
         }
     }
 
-    suspend fun unshortenLinkup(uri: String): String {
+    suspend fun unshortenLinkup(url: String): String {
         var r: NiceResponse? = null
-        var uri = uri
+        var url = url
         when {
-            uri.contains("/tv/") -> uri = uri.replace("/tv/", "/tva/")
-            uri.contains("delta") -> uri = uri.replace("/delta/", "/adelta/")
-            (uri.contains("/ga/") || uri.contains("/ga2/")) -> uri =
-                base64Decode(uri.split('/').last()).trim()
+            url.contains("/tv/") -> url = url.replace("/tv/", "/tva/")
+            url.contains("delta") -> url = url.replace("/delta/", "/adelta/")
+            (url.contains("/ga/") || url.contains("/ga2/")) -> url =
+                base64Decode(url.split('/').last()).trim()
 
-            uri.contains("/speedx/") -> uri =
-                uri.replace("http://linkup.pro/speedx", "http://speedvideo.net")
+            url.contains("/speedx/") -> url =
+                url.replace("http://linkup.pro/speedx", "http://speedvideo.net")
 
             else -> {
-                r = app.get(uri, allowRedirects = true)
-                uri = r.url
+                r = app.get(url, allowRedirects = true)
+                url = r.url
                 val link =
                     Regex("<iframe[^<>]*src=\\'([^'>]*)\\'[^<>]*>").find(r.text)?.value
                         ?: Regex("""action="(?:[^/]+.*?/[^/]+/([a-zA-Z0-9_]+))">""").find(r.text)?.value
@@ -128,40 +126,40 @@ object ShortLink {
                             .elementAtOrNull(1)?.groupValues?.get(1)
 
                 if (link != null) {
-                    uri = link
+                    url = link
                 }
             }
         }
 
-        val short = Regex("""^https?://.*?(https?://.*)""").find(uri)?.value
+        val short = Regex("""^https?://.*?(https?://.*)""").find(url)?.value
         if (short != null) {
-            uri = short
+            url = short
         }
         if (r == null) {
             r = app.get(
-                uri,
+                url,
                 allowRedirects = false
             )
             if (r.headers["location"] != null) {
-                uri = r.headers["location"].toString()
+                url = r.headers["location"].toString()
             }
         }
-        if (uri.contains("snip.")) {
-            if (uri.contains("out_generator")) {
-                uri = Regex("url=(.*)\$").find(uri)!!.value
-            } else if (uri.contains("/decode/")) {
-                uri = app.get(uri, allowRedirects = true).url
+        if (url.contains("snip.")) {
+            if (url.contains("out_generator")) {
+                url = Regex("url=(.*)\$").find(url)!!.value
+            } else if (url.contains("/decode/")) {
+                url = app.get(url, allowRedirects = true).url
             }
         }
-        return uri
+        return url
     }
 
-    fun unshortenLinksafe(uri: String): String {
-        return base64Decode(uri.split("?url=").last())
+    fun unshortenLinksafe(url: String): String {
+        return base64Decode(url.split("?url=").last())
     }
 
-    suspend fun unshortenNuovoIndirizzo(uri: String): String {
-        val soup = app.get(uri, allowRedirects = true)
+    suspend fun unshortenNuovoIndirizzo(url: String): String {
+        val soup = app.get(url, allowRedirects = true)
         val header = soup.headers["refresh"]
         val link: String = if (header != null) {
             soup.headers["refresh"]!!.substringAfter("=")
@@ -171,29 +169,29 @@ object ShortLink {
         return link
     }
 
-    suspend fun unshortenNuovoLink(uri: String): String {
-        return app.get(uri, allowRedirects = true).document.selectFirst("a")!!.attr("href")
+    suspend fun unshortenNuovoLink(url: String): String {
+        return app.get(url, allowRedirects = true).document.selectFirst("a")!!.attr("href")
 
     }
 
-    suspend fun unshortenUprot(uri: String): String {
-        val page = app.get(uri).text
+    suspend fun unshortenUprot(url: String): String {
+        val page = app.get(url).text
         Regex("""<a[^>]+href="([^"]+)".*Continue""").findAll(page)
             .map { it.value.replace("""<a href="""", "") }
             .toList().forEach { link ->
-                if (link.contains("https://maxstream.video") || link.contains("https://uprot.net") && link != uri) {
+                if (link.contains("https://maxstream.video") || link.contains("https://uprot.net") && link != url) {
                     return link
                 }
             }
-        return uri
+        return url
     }
 
-    fun unshortenDavisonbarker(uri: String): String {
-        return uri.substringAfter("dest=").decodeUri()
+    fun unshortenDavisonbarker(url: String): String {
+        return url.substringAfter("dest=").decodeUrl()
     }
 
-    suspend fun unshortenIsecure(uri: String): String {
-        val doc = app.get(uri).document
-        return doc.selectFirst("iframe")?.attr("src")?.trim() ?: uri
+    suspend fun unshortenIsecure(url: String): String {
+        val doc = app.get(url).document
+        return doc.selectFirst("iframe")?.attr("src")?.trim() ?: url
     }
 }

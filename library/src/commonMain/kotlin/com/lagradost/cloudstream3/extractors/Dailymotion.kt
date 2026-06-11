@@ -7,9 +7,8 @@ import com.lagradost.cloudstream3.newSubtitleFile
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
-import java.net.URI
-
-
+import io.ktor.http.Url
+import io.ktor.http.decodeURLPart
 
 class Geodailymotion : Dailymotion() {
     override val name = "GeoDailymotion"
@@ -57,7 +56,6 @@ open class Dailymotion : ExtractorApi() {
         }
     }
 
-
     private fun getEmbedUrl(url: String): String? {
         if (url.contains("/embed/") || url.contains("/video/")) return url
         if (url.contains("geo.dailymotion.com")) {
@@ -67,9 +65,8 @@ open class Dailymotion : ExtractorApi() {
         return null
     }
 
-
     private fun getVideoId(url: String): String? {
-        val path = URI(url).path
+        val path = Url(url).encodedPath.decodeURLPart()
         val id = path.substringAfter("/video/")
         return if (id.matches(videoIdRegex)) id else null
     }
@@ -81,7 +78,6 @@ open class Dailymotion : ExtractorApi() {
     ) {
         return generateM3u8(name, streamLink, "").forEach(callback)
     }
-
 
     data class MetaData(
         val qualities: Map<String, List<Quality>>?,
@@ -102,5 +98,4 @@ open class Dailymotion : ExtractorApi() {
         val label: String,
         val urls: List<String>
     )
-
 }
