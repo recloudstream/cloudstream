@@ -11,7 +11,8 @@ import com.lagradost.cloudstream3.utils.M3u8Helper
 import dev.whyoleg.cryptography.CryptographyProvider
 import dev.whyoleg.cryptography.DelicateCryptographyApi
 import dev.whyoleg.cryptography.algorithms.AES
-import java.net.URI
+import io.ktor.http.Url
+import io.ktor.http.decodeURLPart
 
 class Bysezejataos : ByseSX() {
     override var name = "Bysezejataos"
@@ -47,11 +48,11 @@ open class ByseSX : ExtractorApi() {
     }
 
     private fun getBaseUrl(url: String): String {
-        return URI(url).let { "${it.scheme}://${it.host}" }
+        return Url(url).let { "${it.protocol.name}://${it.host}" }
     }
 
     private fun getCodeFromUrl(url: String): String {
-        val path = URI(url).path ?: ""
+        val path = Url(url).encodedPath.decodeURLPart()
         return path.trimEnd('/').substringAfterLast('/')
     }
 

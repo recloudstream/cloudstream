@@ -13,7 +13,7 @@ import com.lagradost.cloudstream3.utils.newExtractorLink
 import dev.whyoleg.cryptography.CryptographyProvider
 import dev.whyoleg.cryptography.DelicateCryptographyApi
 import dev.whyoleg.cryptography.algorithms.AES
-import java.net.URI
+import io.ktor.http.Url
 
 class Server1uns : VidStack() {
     override var name = "Vidstack"
@@ -83,7 +83,7 @@ open class VidStack : ExtractorApi() {
 
     private fun getBaseUrl(url: String): String {
         return try {
-            URI(url).let { "${it.scheme}://${it.host}" }
+            Url(url).let { "${it.protocol.name}://${it.host}" }
         } catch (e: Exception) {
             Log.e("Vidstack", "getBaseUrl fallback: ${e.message}")
             mainUrl

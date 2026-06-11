@@ -15,8 +15,8 @@ import com.lagradost.cloudstream3.utils.newExtractorLink
 import dev.whyoleg.cryptography.CryptographyProvider
 import dev.whyoleg.cryptography.DelicateCryptographyApi
 import dev.whyoleg.cryptography.algorithms.AES
+import io.ktor.http.Url
 import org.jsoup.nodes.Document
-import java.net.URI
 
 object GogoHelper {
 
@@ -91,8 +91,8 @@ object GogoHelper {
         val foundKey = secretKey ?: getKey(base64Decode(id) + foundIv) ?: return@safeApiCall
         val foundDecryptKey = secretDecryptKey ?: foundKey
 
-        val uri = URI(iframeUrl)
-        val mainUrl = "https://" + uri.host
+        val url = Url(iframeUrl)
+        val mainUrl = "https://${url.host}"
 
         val encryptedId = cryptoHandler(id, foundIv, foundKey)
         val encryptRequestData = if (isUsingAdaptiveData) {
