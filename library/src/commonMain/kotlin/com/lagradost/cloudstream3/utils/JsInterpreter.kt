@@ -29,6 +29,7 @@ import kotlin.random.Random
  *  - Function declarations and calls (named and anonymous)
  *  - return / break / continue
  *  - Template literals (back-tick strings)
+ *  - instanceof
  *  - typeof
  *
  * Usage:
