@@ -460,7 +460,21 @@ private class Parser(private val lex: Lexer) {
     private fun parseBitxor() = parseBin(::parseBitand, TT.CARET to "^")
     private fun parseBitand() = parseBin(::parseEq, TT.AMP to "&")
     private fun parseEq() = parseBin(::parseRel, TT.EQEQ to "==", TT.EQEQEQ to "===", TT.NEQ to "!=", TT.NEQEQ to "!==")
-    private fun parseRel() = parseBin(::parseShift, TT.LT to "<", TT.LTEQ to "<=", TT.GT to ">", TT.GTEQ to ">=")
+    private fun parseRel(): Node {
+        var left = parseShift()
+        while (true) {
+            left = when {
+                lex.peek().type == TT.LT -> { lex.consume(); BinExpr("<", left, parseShift()) }
+                lex.peek().type == TT.LTEQ -> { lex.consume(); BinExpr("<=", left, parseShift()) }
+                lex.peek().type == TT.GT -> { lex.consume(); BinExpr(">", left, parseShift()) }
+                lex.peek().type == TT.GTEQ -> { lex.consume(); BinExpr(">=", left, parseShift()) }
+                lex.peek().type == TT.IDENT && lex.peek().raw == "in" -> { lex.consume(); BinExpr("in", left, parseShift()) }
+                lex.peek().type == TT.IDENT && lex.peek().raw == "instanceof" -> { lex.consume(); BinExpr("instanceof", left, parseShift()) }
+                else -> break
+            }
+        }
+        return left
+    }
     private fun parseShift() = parseBin(::parseAdd, TT.LSHIFT to "<<", TT.RSHIFT to ">>", TT.URSHIFT to ">>>")
     private fun parseAdd() = parseBin(::parseMul, TT.PLUS to "+", TT.MINUS to "-")
     private fun parseMul() = parseBin(::parseUnary, TT.STAR to "*", TT.SLASH to "/", TT.PERCENT to "%")
@@ -497,7 +511,26 @@ private class Parser(private val lex: Lexer) {
         lex.consume() // "new"
         val callee = parsePrimary()
         val args = if (lex.peek().type == TT.LPAREN) parseArgs() else emptyList()
-        return NewExpr(callee, args)
+        var expr: Node = NewExpr(callee, args)
+        // Allow member access and calls on the constructed object: new Foo().bar, new Foo()[0]
+        while (true) {
+            expr = when (lex.peek().type) {
+                TT.DOT -> {
+                    lex.consume()
+                    val prop = lex.expect(TT.IDENT).raw
+                    MemberExpr(expr, StrLit(prop), false)
+                }
+                TT.LBRACKET -> {
+                    lex.consume()
+                    val prop = parseAssign()
+                    lex.expect(TT.RBRACKET)
+                    MemberExpr(expr, prop, true)
+                }
+                TT.LPAREN -> CallExpr(expr, parseArgs())
+                else -> break
+            }
+        }
+        return expr
     }
 
     private fun parsePostfix(): Node {
@@ -620,7 +653,7 @@ private fun toNumber(v: Any?): Double = when (v) {
     is Double -> v
     is Boolean -> if (v) 1.0 else 0.0
     is String -> v.trim().toDoubleOrNull() ?: if (v.startsWith("0x") || v.startsWith("0X")) v.drop(2).toLongOrNull(16)?.toDouble() ?: Double.NaN else Double.NaN
-    is JsList -> Double.NaN
+    is JsList -> toJsString(v).trim().let { s -> s.toDoubleOrNull() ?: if (s.isEmpty()) 0.0 else Double.NaN }
     else -> Double.NaN
 }
 
@@ -642,6 +675,8 @@ private fun toJsString(v: Any?): String = when (v) {
     is String -> v
     is JsList -> v.elements.joinToString(",") { toJsString(it) }
     is JsObject -> "[object Object]"
+    is NativeFn -> v.toString()
+    is JsFunction -> "function ${v.name ?: ""}() { [native code] }"
     else -> v.toString()
 }
 
@@ -656,6 +691,10 @@ private fun strictEq(a: Any?, b: Any?): Boolean = when {
 
 private fun looseEq(a: Any?, b: Any?): Boolean {
     if (strictEq(a, b)) return true
+    // null == undefined
+    val aNullish = a == null || a is Unit
+    val bNullish = b == null || b is Unit
+    if (aNullish || bNullish) return aNullish && bNullish
     // number coercion
     val an = a is Double || a is Boolean
     val bn = b is Double || b is Boolean
@@ -673,13 +712,13 @@ private class JsList(val elements: MutableList<Any?> = mutableListOf()) {
     operator fun set(idx: Int, v: Any?) { while (elements.size <= idx) elements.add(Unit); elements[idx] = v }
 }
 
-private class JsObject(val props: MutableMap<String, Any?> = mutableMapOf())
+private class JsObject(val props: MutableMap<String, Any?> = mutableMapOf(), var constructor: JsFunction? = null)
 
 private class JsFunction(
     val name: String?,
     val params: List<String>,
     val body: List<Node>,
-    val closure: Scope
+    val closure: Scope,
 )
 
 private class Scope(val parent: Scope? = null) {
@@ -709,61 +748,69 @@ private class JsInterpreter {
     private fun installGlobals() {
         val mathObj = JsObject(mutableMapOf(
             "PI" to PI, "E" to E,
-            "floor" to nativeFn { args -> floor(toNumber(args.getOrNull(0))) },
-            "ceil" to nativeFn { args -> ceil(toNumber(args.getOrNull(0))) },
-            "round" to nativeFn { args -> round(toNumber(args.getOrNull(0))) },
-            "abs" to nativeFn { args -> abs(toNumber(args.getOrNull(0))) },
-            "sqrt" to nativeFn { args -> sqrt(toNumber(args.getOrNull(0))) },
-            "pow" to nativeFn { args -> toNumber(args.getOrNull(0)).pow(toNumber(args.getOrNull(1))) },
-            "log" to nativeFn { args -> ln(toNumber(args.getOrNull(0))) },
-            "sin" to nativeFn { args -> sin(toNumber(args.getOrNull(0))) },
-            "cos" to nativeFn { args -> cos(toNumber(args.getOrNull(0))) },
-            "tan" to nativeFn { args -> tan(toNumber(args.getOrNull(0))) },
-            "max" to nativeFn { args -> args.maxOfOrNull { toNumber(it) } ?: Double.NEGATIVE_INFINITY },
-            "min" to nativeFn { args -> args.minOfOrNull { toNumber(it) } ?: Double.POSITIVE_INFINITY },
-            "random" to nativeFn { _ -> Random.nextDouble() },
-            "trunc" to nativeFn { args -> truncate(toNumber(args.getOrNull(0))) },
-            "log2" to nativeFn { args -> log2(toNumber(args.getOrNull(0))) },
-            "log10" to nativeFn { args -> log10(toNumber(args.getOrNull(0))) },
+            "floor" to nativeFn("floor") { args -> floor(toNumber(args.getOrNull(0))) },
+            "ceil" to nativeFn("ceil") { args -> ceil(toNumber(args.getOrNull(0))) },
+            "round" to nativeFn("round") { args -> round(toNumber(args.getOrNull(0))) },
+            "abs" to nativeFn("abs") { args -> abs(toNumber(args.getOrNull(0))) },
+            "sqrt" to nativeFn("sqrt") { args -> sqrt(toNumber(args.getOrNull(0))) },
+            "pow" to nativeFn("pow") { args -> toNumber(args.getOrNull(0)).pow(toNumber(args.getOrNull(1))) },
+            "log" to nativeFn("log") { args -> ln(toNumber(args.getOrNull(0))) },
+            "sin" to nativeFn("sin") { args -> sin(toNumber(args.getOrNull(0))) },
+            "cos" to nativeFn("cos") { args -> cos(toNumber(args.getOrNull(0))) },
+            "tan" to nativeFn("tan") { args -> tan(toNumber(args.getOrNull(0))) },
+            "max" to nativeFn("max") { args -> args.maxOfOrNull { toNumber(it) } ?: Double.NEGATIVE_INFINITY },
+            "min" to nativeFn("min") { args -> args.minOfOrNull { toNumber(it) } ?: Double.POSITIVE_INFINITY },
+            "random" to nativeFn("random") { _ -> Random.nextDouble() },
+            "trunc" to nativeFn("trunc") { args -> truncate(toNumber(args.getOrNull(0))) },
+            "log2" to nativeFn("log2") { args -> log2(toNumber(args.getOrNull(0))) },
+            "log10" to nativeFn("log10") { args -> log10(toNumber(args.getOrNull(0))) },
         ))
         globalScope.define("Math", mathObj)
 
         // for String.fromCharCode
         val stringObj = JsObject(mutableMapOf(
-            "fromCharCode" to nativeFn { args -> args.joinToString("") { toNumber(it).toInt().toChar().toString() } }
+            "fromCharCode" to nativeFn("fromCharCode") { args -> args.joinToString("") { toNumber(it).toInt().toChar().toString() } }
         ))
         globalScope.define("String", stringObj)
 
-        globalScope.define("parseInt", nativeFn { args ->
+        globalScope.define("parseInt", nativeFn("parseInt") { args ->
             val s = toJsString(args.getOrNull(0)).trim()
             val radix = args.getOrNull(1)?.let { toNumber(it).toInt() }?.takeIf { it in 2..36 } ?: 10
             try { s.toLong(radix).toDouble() } catch (_: Exception) { Double.NaN }
         })
-        globalScope.define("parseFloat", nativeFn { args -> toNumber(args.getOrNull(0)) })
-        globalScope.define("isNaN", nativeFn { args -> toNumber(args.getOrNull(0)).isNaN() })
-        globalScope.define("isFinite", nativeFn { args -> toNumber(args.getOrNull(0)).isFinite() })
-        globalScope.define("decodeURIComponent", nativeFn { args -> toJsString(args.getOrNull(0)).decodeUrl() })
-        globalScope.define("encodeURIComponent", nativeFn { args -> toJsString(args.getOrNull(0)).encodeUrl() })
-        globalScope.define("escape", nativeFn { args -> toJsString(args.getOrNull(0)).encodeUrl() })
-        globalScope.define("unescape", nativeFn { args -> toJsString(args.getOrNull(0)).decodeUrl() })
-        globalScope.define("eval", nativeFn { args -> eval(toJsString(args.getOrNull(0))) })
+        globalScope.define("parseFloat", nativeFn("parseFloat") { args -> toNumber(args.getOrNull(0)) })
+        globalScope.define("isNaN", nativeFn("isNaN") { args -> toNumber(args.getOrNull(0)).isNaN() })
+        globalScope.define("isFinite", nativeFn("isFinite") { args -> toNumber(args.getOrNull(0)).isFinite() })
+        globalScope.define("decodeURIComponent", nativeFn("decodeURIComponent") { args -> toJsString(args.getOrNull(0)).decodeUrl() })
+        globalScope.define("encodeURIComponent", nativeFn("encodeURIComponent") { args -> toJsString(args.getOrNull(0)).encodeUrl() })
+        globalScope.define("escape", nativeFn("escape") { args -> toJsString(args.getOrNull(0)).encodeUrl() })
+        globalScope.define("unescape", nativeFn("unescape") { args -> toJsString(args.getOrNull(0)).decodeUrl() })
+        globalScope.define("eval", nativeFn("eval") { args -> eval(toJsString(args.getOrNull(0))) })
         globalScope.define("undefined", Unit)
         globalScope.define("NaN", Double.NaN)
         globalScope.define("Infinity", Double.POSITIVE_INFINITY)
 
-        globalScope.define("Array", nativeFn { args ->
+        globalScope.define("Array", nativeFn("Array") { args ->
             if (args.size == 1 && args[0] is Double) JsList(MutableList((args[0] as Double).toInt()) { Unit })
             else JsList(args.toMutableList())
         })
 
-        globalScope.define("Object", JsObject(mutableMapOf(
-            "keys" to nativeFn { args ->
+        globalScope.define("Object", NativeFn({ args ->
+            // Object() called as a function, wrap primitive or return object as-is
+            when (val v = args.getOrNull(0)) {
+                null, is Unit -> JsObject()
+                is JsObject -> v
+                is JsList -> v
+                else -> JsObject()
+            }
+        }, "Object", mutableMapOf(
+            "keys" to nativeFn("keys") { args ->
                 when (val o = args.getOrNull(0)) {
                     is JsObject -> JsList(o.props.keys.map { it as Any? }.toMutableList())
                     else -> JsList()
                 }
             },
-            "values" to nativeFn { args ->
+            "values" to nativeFn("values") { args ->
                 when (val o = args.getOrNull(0)) {
                     is JsObject -> JsList(o.props.values.toMutableList())
                     else -> JsList()
@@ -771,16 +818,20 @@ private class JsInterpreter {
             }
         )))
 
+        globalScope.define("Function", nativeFn("Function") { _ -> nativeFn("anonymous") { Unit } })
+        globalScope.define("Number", nativeFn("Number") { args -> toNumber(args.getOrNull(0)) })
+        globalScope.define("Boolean", nativeFn("Boolean") { args -> toBoolean(args.getOrNull(0)) })
+
         // console.log (no-op for silence, but avoids errors)
         val consoleObj = JsObject(mutableMapOf(
-            "log" to nativeFn { _ -> Unit },
-            "error" to nativeFn { _ -> Unit },
-            "warn" to nativeFn { _ -> Unit },
+            "log" to nativeFn("log") { _ -> Unit },
+            "error" to nativeFn("error") { _ -> Unit },
+            "warn" to nativeFn("warn") { _ -> Unit },
         ))
         globalScope.define("console", consoleObj)
     }
 
-    private fun nativeFn(fn: (List<Any?>) -> Any?): Any? = NativeFn(fn)
+    private fun nativeFn(name: String, fn: (List<Any?>) -> Any?): Any? = NativeFn(fn, name)
 
     fun eval(code: String): Any? {
         return try {
@@ -946,9 +997,10 @@ private class JsInterpreter {
         val r = evalExpr(node.right, scope)
         return when (node.op) {
             "+" -> {
-                if (l is String || r is String) toJsString(l) + toJsString(r)
-                else if (l is JsList || r is JsList) toJsString(l) + toJsString(r)
-                else toNumber(l) + toNumber(r)
+                val lp = if (l is JsList || l is JsObject || l is NativeFn || l is JsFunction) toJsString(l) else l
+                val rp = if (r is JsList || r is JsObject || r is NativeFn || r is JsFunction) toJsString(r) else r
+                if (lp is String || rp is String) toJsString(lp) + toJsString(rp)
+                else toNumber(lp) + toNumber(rp)
             }
             "-" -> toNumber(l) - toNumber(r)
             "*" -> toNumber(l) * toNumber(r)
@@ -967,8 +1019,20 @@ private class JsInterpreter {
             "^" -> (toNumber(l).toLong() xor toNumber(r).toLong()).toDouble()
             "<<" -> (toNumber(l).toLong() shl toNumber(r).toInt()).toDouble()
             ">>" -> (toNumber(l).toLong() shr toNumber(r).toInt()).toDouble()
-            ">>>" -> (toNumber(l).toLong() ushr toNumber(r).toInt()).toDouble()
-            "instanceof" -> false
+            ">>>" -> (toNumber(l).toInt().toLong() and 0xFFFFFFFFL ushr toNumber(r).toInt()).toDouble()
+            "instanceof" -> when (r) {
+                is NativeFn -> when (r.name) {
+                    "Array" -> l is JsList
+                    "Object" -> l is JsObject || l is JsList
+                    "Function" -> l is JsFunction || l is NativeFn
+                    "String" -> l is String
+                    "Number" -> l is Double
+                    "Boolean" -> l is Boolean
+                    else -> false
+                }
+                is JsFunction -> l is JsObject && l.constructor === r
+                else -> false
+            }
             "in" -> when (r) {
                 is JsObject -> toJsString(l) in r.props
                 is JsList -> toNumber(l).toInt().let { it >= 0 && it < r.elements.size }
@@ -1022,23 +1086,24 @@ private class JsInterpreter {
     }
 
     private fun getMember(obj: Any?, key: String): Any? = when (obj) {
+        is NativeFn -> obj.props[key] ?: Unit
         is JsObject -> obj.props[key] ?: Unit
         is JsList -> when (key) {
             "length" -> obj.length.toDouble()
-            "join" -> nativeFn { args -> obj.elements.joinToString(args.getOrNull(0)?.let { toJsString(it) } ?: ",") { toJsString(it) } }
-            "reverse" -> nativeFn { _ -> obj.elements.reverse(); obj }
-            "push" -> nativeFn { args -> args.forEach { obj.elements.add(it) }; obj.elements.size.toDouble() }
-            "pop" -> nativeFn { _ -> if (obj.elements.isEmpty()) Unit else obj.elements.removeAt(obj.elements.size - 1) }
-            "shift" -> nativeFn { _ -> if (obj.elements.isEmpty()) Unit else obj.elements.removeAt(0) }
-            "unshift" -> nativeFn { args -> args.reversed().forEach { obj.elements.add(0, it) }; obj.elements.size.toDouble() }
-            "slice" -> nativeFn { args ->
+            "join" -> nativeFn("join") { args -> obj.elements.joinToString(args.getOrNull(0)?.let { toJsString(it) } ?: ",") { toJsString(it) } }
+            "reverse" -> nativeFn("reverse") { _ -> obj.elements.reverse(); obj }
+            "push" -> nativeFn("push") { args -> args.forEach { obj.elements.add(it) }; obj.elements.size.toDouble() }
+            "pop" -> nativeFn("pop") { _ -> if (obj.elements.isEmpty()) Unit else obj.elements.removeAt(obj.elements.size - 1) }
+            "shift" -> nativeFn("shift") { _ -> if (obj.elements.isEmpty()) Unit else obj.elements.removeAt(0) }
+            "unshift" -> nativeFn("unshift") { args -> args.reversed().forEach { obj.elements.add(0, it) }; obj.elements.size.toDouble() }
+            "slice" -> nativeFn("slice") { args ->
                 val start = args.getOrNull(0)?.let { toNumber(it).toInt() } ?: 0
                 val end = args.getOrNull(1)?.let { toNumber(it).toInt() } ?: obj.elements.size
                 val s = if (start < 0) maxOf(0, obj.elements.size + start) else minOf(start, obj.elements.size)
                 val e = if (end < 0) maxOf(0, obj.elements.size + end) else minOf(end, obj.elements.size)
                 JsList(obj.elements.subList(maxOf(0, s), maxOf(s, e)).toMutableList())
             }
-            "splice" -> nativeFn { args ->
+            "splice" -> nativeFn("splice") { args ->
                 val start = args.getOrNull(0)?.let { toNumber(it).toInt() }?.let { if (it < 0) maxOf(0, obj.elements.size + it) else minOf(it, obj.elements.size) } ?: 0
                 val deleteCount = args.getOrNull(1)?.let { toNumber(it).toInt() }?.coerceIn(0, obj.elements.size - start) ?: (obj.elements.size - start)
                 val removed = JsList(obj.elements.subList(start, start + deleteCount).toMutableList())
@@ -1046,56 +1111,56 @@ private class JsInterpreter {
                 args.drop(2).forEachIndexed { i, v -> obj.elements.add(start + i, v) }
                 removed
             }
-            "indexOf" -> nativeFn { args ->
+            "indexOf" -> nativeFn("indexOf") { args ->
                 val v = args.getOrNull(0); val start = args.getOrNull(1)?.let { toNumber(it).toInt() } ?: 0
                 obj.elements.indexOfFirst { strictEq(it, v) }.let { if (it < start) -1.0 else it.toDouble() }
             }
-            "map" -> nativeFn { args ->
+            "map" -> nativeFn("map") { args ->
                 val fn = args.getOrNull(0)
                 JsList(obj.elements.mapIndexed { i, v -> callAny(fn, listOf(v, i.toDouble(), obj), null) }.toMutableList())
             }
-            "filter" -> nativeFn { args ->
+            "filter" -> nativeFn("filter") { args ->
                 val fn = args.getOrNull(0)
                 JsList(obj.elements.filterIndexed { i, v -> toBoolean(callAny(fn, listOf(v, i.toDouble(), obj), null)) }.toMutableList())
             }
-            "forEach" -> nativeFn { args ->
+            "forEach" -> nativeFn("forEach") { args ->
                 val fn = args.getOrNull(0)
                 obj.elements.forEachIndexed { i, v -> callAny(fn, listOf(v, i.toDouble(), obj), null) }
                 Unit
             }
-            "reduce" -> nativeFn { args ->
+            "reduce" -> nativeFn("reduce") { args ->
                 val fn = args.getOrNull(0)
                 var acc: Any? = if (args.size > 1) args[1] else obj.elements.firstOrNull() ?: Unit
                 val startIdx = if (args.size > 1) 0 else 1
                 for (i in startIdx until obj.elements.size) acc = callAny(fn, listOf(acc, obj.elements[i], i.toDouble(), obj), null)
                 acc
             }
-            "concat" -> nativeFn { args ->
+            "concat" -> nativeFn("concat") { args ->
                 val result = JsList(obj.elements.toMutableList())
                 args.forEach { a -> when (a) { is JsList -> result.elements.addAll(a.elements); else -> result.elements.add(a) } }
                 result
             }
-            "find" -> nativeFn { args ->
+            "find" -> nativeFn("find") { args ->
                 val fn = args.getOrNull(0)
                 obj.elements.firstOrNull { toBoolean(callAny(fn, listOf(it), null)) } ?: Unit
             }
-            "some" -> nativeFn { args ->
+            "some" -> nativeFn("some") { args ->
                 val fn = args.getOrNull(0)
                 obj.elements.any { toBoolean(callAny(fn, listOf(it), null)) }
             }
-            "every" -> nativeFn { args ->
+            "every" -> nativeFn("every") { args ->
                 val fn = args.getOrNull(0)
                 obj.elements.all { toBoolean(callAny(fn, listOf(it), null)) }
             }
-            "sort" -> nativeFn { args ->
+            "sort" -> nativeFn("sort") { args ->
                 val fn = args.getOrNull(0)
                 if (fn == null) obj.elements.sortWith { a, b -> toJsString(a).compareTo(toJsString(b)) }
                 else obj.elements.sortWith { a, b -> toNumber(callAny(fn, listOf(a, b), null)).toInt() }
                 obj
             }
-            "includes" -> nativeFn { args -> obj.elements.any { looseEq(it, args.getOrNull(0)) } }
-            "toString" -> nativeFn { _ -> obj.elements.joinToString(",") { toJsString(it) } }
-            "flat" -> nativeFn { _ ->
+            "includes" -> nativeFn("includes") { args -> obj.elements.any { looseEq(it, args.getOrNull(0)) } }
+            "toString" -> nativeFn("toString") { _ -> obj.elements.joinToString(",") { toJsString(it) } }
+            "flat" -> nativeFn("flat") { _ ->
                 val result = JsList()
                 obj.elements.forEach { if (it is JsList) result.elements.addAll(it.elements) else result.elements.add(it) }
                 result
@@ -1104,7 +1169,7 @@ private class JsInterpreter {
         }
         is String -> when (key) {
             "length" -> obj.length.toDouble()
-            "split" -> nativeFn { args ->
+            "split" -> nativeFn("split") { args ->
                 val sep = args.getOrNull(0)
                 when {
                     sep == null || sep is Unit -> JsList(mutableListOf(obj))
@@ -1113,67 +1178,67 @@ private class JsInterpreter {
                     else -> JsList(obj.split(toJsString(sep)).map { it as Any? }.toMutableList())
                 }
             }
-            "join" -> nativeFn { args -> obj } // strings don't have join but just in case
-            "replace" -> nativeFn { args ->
+            "join" -> nativeFn("join") { args -> obj } // strings don't have join but just in case
+            "replace" -> nativeFn("replace") { args ->
                 val from = args.getOrNull(0); val to = toJsString(args.getOrNull(1))
                 when (from) {
                     is String -> obj.replaceFirst(from, to)
                     else -> obj.replace(toJsString(from), to)
                 }
             }
-            "replaceAll" -> nativeFn { args ->
+            "replaceAll" -> nativeFn("replaceAll") { args ->
                 val from = args.getOrNull(0); val to = toJsString(args.getOrNull(1))
                 obj.replace(toJsString(from), to)
             }
-            "indexOf" -> nativeFn { args -> obj.indexOf(toJsString(args.getOrNull(0))).toDouble() }
-            "lastIndexOf" -> nativeFn { args -> obj.lastIndexOf(toJsString(args.getOrNull(0))).toDouble() }
-            "includes" -> nativeFn { args -> obj.contains(toJsString(args.getOrNull(0))) }
-            "startsWith" -> nativeFn { args -> obj.startsWith(toJsString(args.getOrNull(0))) }
-            "endsWith" -> nativeFn { args -> obj.endsWith(toJsString(args.getOrNull(0))) }
-            "slice" -> nativeFn { args ->
+            "indexOf" -> nativeFn("indexOf") { args -> obj.indexOf(toJsString(args.getOrNull(0))).toDouble() }
+            "lastIndexOf" -> nativeFn("lastIndexOf") { args -> obj.lastIndexOf(toJsString(args.getOrNull(0))).toDouble() }
+            "includes" -> nativeFn("includes") { args -> obj.contains(toJsString(args.getOrNull(0))) }
+            "startsWith" -> nativeFn("startsWith") { args -> obj.startsWith(toJsString(args.getOrNull(0))) }
+            "endsWith" -> nativeFn("endsWith") { args -> obj.endsWith(toJsString(args.getOrNull(0))) }
+            "slice" -> nativeFn("slice") { args ->
                 val start = args.getOrNull(0)?.let { toNumber(it).toInt() }?.let { if (it < 0) maxOf(0, obj.length + it) else minOf(it, obj.length) } ?: 0
                 val end = args.getOrNull(1)?.let { toNumber(it).toInt() }?.let { if (it < 0) maxOf(0, obj.length + it) else minOf(it, obj.length) } ?: obj.length
                 if (end <= start) "" else obj.substring(start, end)
             }
-            "substr" -> nativeFn { args ->
+            "substr" -> nativeFn("substr") { args ->
                 val start = args.getOrNull(0)?.let { toNumber(it).toInt() }?.let { if (it < 0) maxOf(0, obj.length + it) else minOf(it, obj.length) } ?: 0
                 val len = args.getOrNull(1)?.let { toNumber(it).toInt() } ?: (obj.length - start)
                 if (len <= 0) "" else obj.substring(start, minOf(start + len, obj.length))
             }
-            "substring" -> nativeFn { args ->
+            "substring" -> nativeFn("substring") { args ->
                 val a = args.getOrNull(0)?.let { toNumber(it).toInt().coerceIn(0, obj.length) } ?: 0
                 val b = args.getOrNull(1)?.let { toNumber(it).toInt().coerceIn(0, obj.length) } ?: obj.length
                 obj.substring(minOf(a, b), maxOf(a, b))
             }
-            "charAt" -> nativeFn { args ->
+            "charAt" -> nativeFn("charAt") { args ->
                 val i = args.getOrNull(0)?.let { toNumber(it).toInt() } ?: 0
                 if (i < 0 || i >= obj.length) "" else obj[i].toString()
             }
-            "charCodeAt" -> nativeFn { args ->
+            "charCodeAt" -> nativeFn("charCodeAt") { args ->
                 val i = args.getOrNull(0)?.let { toNumber(it).toInt() } ?: 0
                 if (i < 0 || i >= obj.length) Double.NaN else obj[i].code.toDouble()
             }
-            "codePointAt" -> nativeFn { args ->
+            "codePointAt" -> nativeFn("codePointAt") { args ->
                 val i = args.getOrNull(0)?.let { toNumber(it).toInt() } ?: 0
                 if (i < 0 || i >= obj.length) Double.NaN else obj[i].code.toDouble()
             }
-            "toUpperCase", "toLocaleUpperCase" -> nativeFn { _ -> obj.uppercase() }
-            "toLowerCase", "toLocaleLowerCase" -> nativeFn { _ -> obj.lowercase() }
-            "trim" -> nativeFn { _ -> obj.trim() }
-            "trimStart", "trimLeft" -> nativeFn { _ -> obj.trimStart() }
-            "trimEnd", "trimRight" -> nativeFn { _ -> obj.trimEnd() }
-            "repeat" -> nativeFn { args -> obj.repeat(toNumber(args.getOrNull(0)).toInt().coerceAtLeast(0)) }
-            "padStart" -> nativeFn { args ->
+            "toUpperCase", "toLocaleUpperCase" -> nativeFn("toUpperCase") { _ -> obj.uppercase() }
+            "toLowerCase", "toLocaleLowerCase" -> nativeFn("toLowerCase") { _ -> obj.lowercase() }
+            "trim" -> nativeFn("trim") { _ -> obj.trim() }
+            "trimStart", "trimLeft" -> nativeFn("trimStart") { _ -> obj.trimStart() }
+            "trimEnd", "trimRight" -> nativeFn("trimEnd") { _ -> obj.trimEnd() }
+            "repeat" -> nativeFn("repeat") { args -> obj.repeat(toNumber(args.getOrNull(0)).toInt().coerceAtLeast(0)) }
+            "padStart" -> nativeFn("padStart") { args ->
                 val len = toNumber(args.getOrNull(0)).toInt(); val pad = args.getOrNull(1)?.let { toJsString(it) } ?: " "
                 if (obj.length >= len) obj else (pad.repeat(len) + obj).takeLast(len)
             }
-            "padEnd" -> nativeFn { args ->
+            "padEnd" -> nativeFn("padEnd") { args ->
                 val len = toNumber(args.getOrNull(0)).toInt(); val pad = args.getOrNull(1)?.let { toJsString(it) } ?: " "
                 if (obj.length >= len) obj else (obj + pad.repeat(len)).take(len)
             }
-            "toString" -> nativeFn { _ -> obj }
-            "valueOf" -> nativeFn { _ -> obj }
-            "match" -> nativeFn { args ->
+            "toString" -> nativeFn("toString") { _ -> obj }
+            "valueOf" -> nativeFn("valueOf") { _ -> obj }
+            "match" -> nativeFn("match") { args ->
                 val pattern = toJsString(args.getOrNull(0))
                 try {
                     val result = Regex(pattern).find(obj)
@@ -1186,11 +1251,11 @@ private class JsInterpreter {
             } ?: Unit
         }
         is Double -> when (key) {
-            "toString" -> nativeFn { args ->
+            "toString" -> nativeFn("toString") { args ->
                 val radix = args.getOrNull(0)?.let { toNumber(it).toInt() } ?: 10
                 if (radix == 10) toJsString(obj) else obj.toLong().toString(radix)
             }
-            "toFixed" -> nativeFn { args ->
+            "toFixed" -> nativeFn("toFixed") { args ->
                 val digits = (args.getOrNull(0)?.let { toNumber(it).toInt() } ?: 0).coerceIn(0, 20)
                 val factor = 10.0.pow(digits)
                 val rounded = round(obj * factor) / factor
@@ -1225,8 +1290,12 @@ private class JsInterpreter {
     private fun evalNew(node: NewExpr, scope: Scope): Any? {
         val callee = evalExpr(node.callee, scope)
         val args = node.args.map { evalExpr(it, scope) }
-        // Just call it
-        return callAny(callee, args, JsObject())
+        // NativeFn constructors (e.g. Array) return their value directly
+        if (callee is NativeFn) return callee.fn(args)
+        val thisVal = JsObject(constructor = callee as? JsFunction)
+        val result = callAny(callee, args, thisVal)
+        // JS 'new' returns the constructed object unless the constructor explicitly returns an object
+        return if (result is JsObject) result else thisVal
     }
 
     private fun callAny(callee: Any?, args: List<Any?>, thisVal: Any?): Any? = when (callee) {
@@ -1249,4 +1318,6 @@ private class JsInterpreter {
 }
 
 // Wrapper so we can store Kotlin lambdas as "callable" values
-private class NativeFn(val fn: (List<Any?>) -> Any?)
+private class NativeFn(val fn: (List<Any?>) -> Any?, val name: String, val props: MutableMap<String, Any?> = mutableMapOf()) {
+    override fun toString() = "function $name() { [native code] }"
+}

@@ -120,6 +120,39 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun stringMinusNumberCoercesToNumber() {
+        // "3" - 1 => 2  (JS coerces string to number for subtraction)
+        assertEquals(2.0, num("'3'-1"))
+    }
+
+    @Test
+    fun stringTimesStringCoercesToNumber() {
+        // "3" * "4" => 12
+        assertEquals(12.0, num("'3'*'4'"))
+    }
+
+    @Test
+    fun nanArithmetic() {
+        // NaN + 1 => NaN
+        assertTrue(num("NaN+1").isNaN())
+    }
+
+    @Test
+    fun infinityPositive() {
+        assertTrue(num("Infinity").isInfinite() && num("Infinity") > 0)
+    }
+
+    @Test
+    fun infinityArithmetic() {
+        assertTrue(num("Infinity+1").isInfinite())
+    }
+
+    @Test
+    fun divisionByZeroIsInfinity() {
+        assertTrue(num("1/0").isInfinite() && num("1/0") > 0)
+    }
+
+    @Test
     fun bitwiseAnd() {
         assertEquals(2.0, num("6&3"))
     }
@@ -140,6 +173,17 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun bitwiseNotOnNegative() {
+        assertEquals(4.0, num("~(-5)"))
+    }
+
+    @Test
+    fun bitwiseNotTruncatesFloat() {
+        // ~3.9 == ~3 == -4
+        assertEquals(-4.0, num("~3.9"))
+    }
+
+    @Test
     fun leftShift() {
         assertEquals(20.0, num("5<<2"))
     }
@@ -155,6 +199,18 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun unsignedRightShiftOnNegative() {
+        // (-1 >>> 0) in JS == 4294967295 (treats as unsigned 32-bit)
+        assertEquals(4294967295.0, num("-1>>>0"))
+    }
+
+    @Test
+    fun bitwiseOrWithZeroTruncatesFloat() {
+        // 3.9|0 == 3  (common JS truncation idiom)
+        assertEquals(3.0, num("3.9|0"))
+    }
+
+    @Test
     fun lessThanTrue() {
         assertTrue(bool("1<2"))
     }
@@ -165,8 +221,40 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun greaterThanTrue() {
+        assertTrue(bool("2>1"))
+    }
+
+    @Test
+    fun lessThanOrEqualEqual() {
+        assertTrue(bool("2<=2"))
+    }
+
+    @Test
+    fun greaterThanOrEqualEqual() {
+        assertTrue(bool("2>=2"))
+    }
+
+    @Test
     fun looseEqNumberString() {
         assertTrue(bool("1=='1'"))
+    }
+
+    @Test
+    fun looseEqNullUndefined() {
+        // null == undefined is true in JS
+        assertTrue(bool("null==undefined"))
+    }
+
+    @Test
+    fun looseEqNullNotZero() {
+        // null == 0 is false in JS
+        assertFalse(bool("null==0"))
+    }
+
+    @Test
+    fun looseNeqWorks() {
+        assertTrue(bool("1!='2'"))
     }
 
     @Test
@@ -182,6 +270,77 @@ class JsInterpreterTest {
     @Test
     fun strictNeq() {
         assertTrue(bool("1!=='1'"))
+    }
+
+    @Test
+    fun instanceofArrayTrue() {
+        assertTrue(bool("[] instanceof Array"))
+    }
+
+    @Test
+    fun instanceofArrayFalseForObject() {
+        assertFalse(bool("({}) instanceof Array"))
+    }
+
+    @Test
+    fun instanceofObjectTrueForPlainObject() {
+        assertTrue(bool("({}) instanceof Object"))
+    }
+
+    @Test
+    fun instanceofObjectTrueForArray() {
+        // Arrays are objects in JS
+        assertTrue(bool("[] instanceof Object"))
+    }
+
+    @Test
+    fun instanceofFunctionTrue() {
+        assertTrue(bool("(function(){}) instanceof Function"))
+    }
+
+    @Test
+    fun instanceofFunctionFalseForArray() {
+        assertFalse(bool("[] instanceof Function"))
+    }
+
+    @Test
+    fun instanceofUserDefinedConstructorTrue() {
+        assertTrue(bool("function Dog(){} var d = new Dog(); d instanceof Dog"))
+    }
+
+    @Test
+    fun instanceofUserDefinedConstructorFalseForOtherClass() {
+        assertFalse(bool("function Cat(){} function Dog(){} var d = new Dog(); d instanceof Cat"))
+    }
+
+    @Test
+    fun instanceofUserDefinedConstructorFalseForPlainObject() {
+        assertFalse(bool("function Dog(){} ({}) instanceof Dog"))
+    }
+
+    @Test
+    fun instanceofUserDefinedConstructorWithProperties() {
+        val code = """
+            function Point(x, y) { this.x = x; this.y = y; }
+            var p = new Point(1, 2);
+            (p instanceof Point) && p.x === 1 && p.y === 2
+        """.trimIndent()
+        assertTrue(bool(code))
+    }
+
+    @Test
+    fun inOperatorOnObject() {
+        assertTrue(bool("'a' in {a:1}"))
+    }
+
+    @Test
+    fun inOperatorOnObjectMissing() {
+        assertFalse(bool("'z' in {a:1}"))
+    }
+
+    @Test
+    fun inOperatorOnArray() {
+        assertTrue(bool("0 in [10,20]"))
     }
 
     @Test
@@ -210,6 +369,21 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun logicalNotOnZero() {
+        assertTrue(bool("!0"))
+    }
+
+    @Test
+    fun logicalNotOnEmptyString() {
+        assertTrue(bool("!''"))
+    }
+
+    @Test
+    fun logicalNotOnNonEmptyString() {
+        assertFalse(bool("!'x'"))
+    }
+
+    @Test
     fun ternaryTrueBranch() {
         assertEquals(1.0, num("true?1:2"))
     }
@@ -217,6 +391,12 @@ class JsInterpreterTest {
     @Test
     fun ternaryFalseBranch() {
         assertEquals(2.0, num("false?1:2"))
+    }
+
+    @Test
+    fun nestedTernary() {
+        // 1>2 ? 'a' : 3>2 ? 'b' : 'c'  => 'b'
+        assertEquals("b", str("1>2?'a':3>2?'b':'c'"))
     }
 
     @Test
@@ -235,6 +415,11 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun multiVarDeclaration() {
+        assertEquals(3.0, num("var a=1, b=2; a+b"))
+    }
+
+    @Test
     fun assignmentPlusEquals() {
         assertEquals(15.0, num("var x=10; x+=5; x"))
     }
@@ -250,6 +435,16 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun assignmentDivideEquals() {
+        assertEquals(5.0, num("var x=10; x/=2; x"))
+    }
+
+    @Test
+    fun assignmentModuloEquals() {
+        assertEquals(1.0, num("var x=7; x%=3; x"))
+    }
+
+    @Test
     fun prefixIncrement() {
         assertEquals(6.0, num("var x=5; ++x"))
     }
@@ -262,6 +457,27 @@ class JsInterpreterTest {
     @Test
     fun postfixIncrementMutatesVariable() {
         assertEquals(6.0, num("var x=5; x++; x"))
+    }
+
+    @Test
+    fun prefixDecrement() {
+        assertEquals(4.0, num("var x=5; --x"))
+    }
+
+    @Test
+    fun postfixDecrement() {
+        assertEquals(5.0, num("var x=5; x--"))
+    }
+
+    @Test
+    fun postfixDecrementMutates() {
+        assertEquals(4.0, num("var x=5; x--; x"))
+    }
+
+    @Test
+    fun commaOperatorReturnsLast() {
+        // Sequence/comma expression: (1, 2, 3) => 3
+        assertEquals(3.0, num("(1,2,3)"))
     }
 
     @Test
@@ -290,6 +506,38 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun typeofNull() {
+        // typeof null === "object" in JS
+        assertEquals("object", str("typeof null"))
+    }
+
+    @Test
+    fun typeofObject() {
+        assertEquals("object", str("typeof {}"))
+    }
+
+    @Test
+    fun typeofArray() {
+        assertEquals("object", str("typeof []"))
+    }
+
+    @Test
+    fun typeofUndeclaredVariable() {
+        // typeof on an undeclared variable should not throw, returns "undefined"
+        assertEquals("undefined", str("typeof neverDeclaredXyz"))
+    }
+
+    @Test
+    fun voidOperator() {
+        assertEquals(Unit, evalJs("void 0"))
+    }
+
+    @Test
+    fun voidOperatorOnExpression() {
+        assertEquals(Unit, evalJs("void (1+2)"))
+    }
+
+    @Test
     fun stringConcatenation() {
         assertEquals("ab", str("'a'+'b'"))
     }
@@ -310,8 +558,29 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun stringCharAtOutOfRange() {
+        assertEquals("", str("'hello'.charAt(99)"))
+    }
+
+    @Test
     fun stringCharCodeAt() {
         assertEquals(104.0, num("'hello'.charCodeAt(0)"))
+    }
+
+    @Test
+    fun stringCodePointAt() {
+        assertEquals(104.0, num("'hello'.codePointAt(0)"))
+    }
+
+    @Test
+    fun stringBracketIndexing() {
+        // 'hello'[1] === 'e'
+        assertEquals("e", str("'hello'[1]"))
+    }
+
+    @Test
+    fun stringBracketIndexingFirst() {
+        assertEquals("h", str("'hello'[0]"))
     }
 
     @Test
@@ -325,6 +594,16 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun stringLastIndexOf() {
+        assertEquals(3.0, num("'abcabc'.lastIndexOf('a')"))
+    }
+
+    @Test
+    fun stringLastIndexOfNotFound() {
+        assertEquals(-1.0, num("'hello'.lastIndexOf('z')"))
+    }
+
+    @Test
     fun stringSlice() {
         assertEquals("ell", str("'hello'.slice(1,4)"))
     }
@@ -335,6 +614,11 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun stringSliceNegativeEnd() {
+        assertEquals("hel", str("'hello'.slice(0,-2)"))
+    }
+
+    @Test
     fun stringSubstr() {
         assertEquals("ell", str("'hello'.substr(1,3)"))
     }
@@ -342,6 +626,12 @@ class JsInterpreterTest {
     @Test
     fun stringSubstring() {
         assertEquals("ell", str("'hello'.substring(1,4)"))
+    }
+
+    @Test
+    fun stringSubstringSwapsArgs() {
+        // substring swaps start/end if start > end
+        assertEquals("ell", str("'hello'.substring(4,1)"))
     }
 
     @Test
@@ -360,6 +650,16 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun stringReplaceAll() {
+        assertEquals("xbxbxb", str("'ababab'.replace('a','x').replace('a','x').replace('a','x')"))
+    }
+
+    @Test
+    fun stringReplaceAllMethod() {
+        assertEquals("xbxbxb", str("'ababab'.replaceAll('a','x')"))
+    }
+
+    @Test
     fun stringToUpperCase() {
         assertEquals("HELLO", str("'hello'.toUpperCase()"))
     }
@@ -375,8 +675,23 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun stringTrimStart() {
+        assertEquals("hi  ", str("'  hi  '.trimStart()"))
+    }
+
+    @Test
+    fun stringTrimEnd() {
+        assertEquals("  hi", str("'  hi  '.trimEnd()"))
+    }
+
+    @Test
     fun stringRepeat() {
         assertEquals("aaa", str("'a'.repeat(3)"))
+    }
+
+    @Test
+    fun stringRepeatZero() {
+        assertEquals("", str("'a'.repeat(0)"))
     }
 
     @Test
@@ -390,8 +705,18 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun stringPadStartNoOpWhenLongEnough() {
+        assertEquals("hello", str("'hello'.padStart(3,'0')"))
+    }
+
+    @Test
     fun stringIncludes() {
         assertTrue(bool("'hello'.includes('ell')"))
+    }
+
+    @Test
+    fun stringIncludesFalse() {
+        assertFalse(bool("'hello'.includes('xyz')"))
     }
 
     @Test
@@ -415,8 +740,29 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun stringToString() {
+        assertEquals("hello", str("'hello'.toString()"))
+    }
+
+    @Test
+    fun stringMatch() {
+        // match returns array of groups; [0] is the full match
+        assertEquals("ell", str("'hello'.match('ell')[0]"))
+    }
+
+    @Test
+    fun stringMatchNoMatch() {
+        assertNull(evalJs("'hello'.match('xyz')"))
+    }
+
+    @Test
     fun numberToStringRadix16() {
         assertEquals("ff", str("(255).toString(16)"))
+    }
+
+    @Test
+    fun numberToStringRadix2() {
+        assertEquals("1010", str("(10).toString(2)"))
     }
 
     @Test
@@ -475,6 +821,11 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun arrayJoinDefaultSep() {
+        assertEquals("1,2,3", str("[1,2,3].join()"))
+    }
+
+    @Test
     fun arrayReverse() {
         assertEquals("3,2,1", str("[1,2,3].reverse().join(',')"))
     }
@@ -485,13 +836,63 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun arrayPushMutates() {
+        assertEquals("1,2,3,4", str("var a=[1,2,3]; a.push(4); a.join(',')"))
+    }
+
+    @Test
     fun arrayPopRemovesLastElement() {
         assertEquals(3.0, num("var a=[1,2,3]; a.pop()"))
     }
 
     @Test
+    fun arrayPopMutates() {
+        assertEquals("1,2", str("var a=[1,2,3]; a.pop(); a.join(',')"))
+    }
+
+    @Test
+    fun arrayShift() {
+        assertEquals(1.0, num("var a=[1,2,3]; a.shift()"))
+    }
+
+    @Test
+    fun arrayShiftMutates() {
+        assertEquals("2,3", str("var a=[1,2,3]; a.shift(); a.join(',')"))
+    }
+
+    @Test
+    fun arrayUnshift() {
+        assertEquals(4.0, num("var a=[2,3,4]; a.unshift(1)"))
+    }
+
+    @Test
+    fun arrayUnshiftMutates() {
+        assertEquals("1,2,3,4", str("var a=[2,3,4]; a.unshift(1); a.join(',')"))
+    }
+
+    @Test
     fun arraySlice() {
         assertEquals("2,3", str("[1,2,3,4].slice(1,3).join(',')"))
+    }
+
+    @Test
+    fun arraySliceNegative() {
+        assertEquals("3,4", str("[1,2,3,4].slice(-2).join(',')"))
+    }
+
+    @Test
+    fun arraySpliceRemove() {
+        assertEquals("2,3", str("var a=[1,2,3,4]; a.splice(1,2).join(',')"))
+    }
+
+    @Test
+    fun arraySpliceMutates() {
+        assertEquals("1,4", str("var a=[1,2,3,4]; a.splice(1,2); a.join(',')"))
+    }
+
+    @Test
+    fun arraySpliceInsert() {
+        assertEquals("1,9,8,4", str("var a=[1,2,3,4]; a.splice(1,2,9,8); a.join(',')"))
     }
 
     @Test
@@ -510,13 +911,43 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun arrayReduceNoInitial() {
+        assertEquals(10.0, num("[1,2,3,4].reduce(function(acc,x){return acc+x})"))
+    }
+
+    @Test
+    fun arrayForEachSideEffect() {
+        assertEquals(6.0, num("var s=0; [1,2,3].forEach(function(x){s+=x}); s"))
+    }
+
+    @Test
+    fun arrayFind() {
+        assertEquals(3.0, num("[1,2,3,4].find(function(x){return x>2})"))
+    }
+
+    @Test
+    fun arrayFindNotFound() {
+        assertEquals(Unit, evalJs("[1,2,3].find(function(x){return x>9})"))
+    }
+
+    @Test
     fun arrayIndexOf() {
         assertEquals(2.0, num("[10,20,30].indexOf(30)"))
     }
 
     @Test
+    fun arrayIndexOfNotFound() {
+        assertEquals(-1.0, num("[10,20,30].indexOf(99)"))
+    }
+
+    @Test
     fun arrayIncludes() {
         assertTrue(bool("[1,2,3].includes(2)"))
+    }
+
+    @Test
+    fun arrayIncludesFalse() {
+        assertFalse(bool("[1,2,3].includes(9)"))
     }
 
     @Test
@@ -530,13 +961,44 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun arraySomeFalse() {
+        assertFalse(bool("[1,2,3].some(function(x){return x>9})"))
+    }
+
+    @Test
     fun arrayEvery() {
         assertFalse(bool("[1,2,3].every(function(x){return x>2})"))
     }
 
     @Test
+    fun arrayEveryTrue() {
+        assertTrue(bool("[3,4,5].every(function(x){return x>2})"))
+    }
+
+    @Test
+    fun arraySortDefault() {
+        // Default sort is lexicographic: [10,9,2] => [10,2,9]
+        assertEquals("10,2,9", str("[10,9,2].sort().join(',')"))
+    }
+
+    @Test
     fun arraySortWithComparator() {
         assertEquals("1,2,10", str("[10,1,2].sort(function(a,b){return a-b}).join(',')"))
+    }
+
+    @Test
+    fun arrayFlat() {
+        assertEquals("1,2,3,4", str("[[1,2],[3,4]].flat().join(',')"))
+    }
+
+    @Test
+    fun arrayToString() {
+        assertEquals("1,2,3", str("[1,2,3].toString()"))
+    }
+
+    @Test
+    fun newArrayWithSize() {
+        assertEquals(5.0, num("new Array(5).length"))
     }
 
     @Test
@@ -555,6 +1017,22 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun objectKeys() {
+        assertEquals("a,b", str("Object.keys({a:1,b:2}).join(',')"))
+    }
+
+    @Test
+    fun objectValues() {
+        assertEquals("1,2", str("Object.values({a:1,b:2}).join(',')"))
+    }
+
+    @Test
+    fun objectToStringCoercion() {
+        // ({}) + "" => "[object Object]"
+        assertEquals("[object Object]", str("({})+''"))
+    }
+
+    @Test
     fun ifTrueBranch() {
         assertEquals(1.0, num("var r=0; if(true){r=1} r"))
     }
@@ -562,6 +1040,11 @@ class JsInterpreterTest {
     @Test
     fun ifFalseUsesElse() {
         assertEquals(2.0, num("var r=0; if(false){r=1}else{r=2} r"))
+    }
+
+    @Test
+    fun ifElseIfChain() {
+        assertEquals(2.0, num("var x=5; var r=0; if(x<3){r=1}else if(x<7){r=2}else{r=3} r"))
     }
 
     @Test
@@ -590,8 +1073,19 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun forLoopNoInitTestUpdate() {
+        // All three parts optional; behaves like while(true) with internal break
+        assertEquals(3.0, num("var i=0; for(;;){if(i>=3)break; i++} i"))
+    }
+
+    @Test
     fun forInOverObjectKeys() {
         assertEquals("a,b,c", str("var o={a:1,b:2,c:3}; var keys=[]; for(var k in o){keys.push(k)} keys.sort().join(',')"))
+    }
+
+    @Test
+    fun forInOverArrayGivesIndices() {
+        assertEquals("0,1,2", str("var a=[10,20,30]; var idx=[]; for(var i in a){idx.push(i)} idx.join(',')"))
     }
 
     @Test
@@ -622,6 +1116,61 @@ class JsInterpreterTest {
     @Test
     fun functionAsArgument() {
         assertEquals(6.0, num("function apply(f,x){return f(x)} apply(function(n){return n+1},5)"))
+    }
+
+    @Test
+    fun nestedClosure() {
+        val code = """
+            function makeAdder(n) {
+                return function(x) { return x + n; }
+            }
+            var add5 = makeAdder(5);
+            add5(3)
+        """.trimIndent()
+        assertEquals(8.0, num(code))
+    }
+
+    @Test
+    fun closureCounterFactory() {
+        val code = """
+            function makeCounter() {
+                var count = 0;
+                return function() { count += 1; return count; }
+            }
+            var c = makeCounter();
+            c(); c(); c()
+        """.trimIndent()
+        assertEquals(3.0, num(code))
+    }
+
+    @Test
+    fun argumentsObject() {
+        val code = """
+            function sum() {
+                var total = 0;
+                for(var i=0; i<arguments.length; i++) { total += arguments[i]; }
+                return total;
+            }
+            sum(1,2,3,4)
+        """.trimIndent()
+        assertEquals(10.0, num(code))
+    }
+
+    @Test
+    fun functionReturnUndefinedImplicitly() {
+        assertEquals(Unit, evalJs("function f(){} f()"))
+    }
+
+    @Test
+    fun newExpressionCallsFunction() {
+        // Our interpreter just calls the function; result of new is the JsObject thisVal
+        // We verify it doesn't throw and the constructor side-effects are observable
+        val code = """
+            function Box(v) { this.value = v; }
+            var b = new Box(42);
+            b.value
+        """.trimIndent()
+        assertEquals(42.0, num(code))
     }
 
     @Test
@@ -680,6 +1229,26 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun mathLog2() {
+        assertApprox(3.0, num("Math.log2(8)"))
+    }
+
+    @Test
+    fun mathLog10() {
+        assertApprox(2.0, num("Math.log10(100)"))
+    }
+
+    @Test
+    fun mathSin() {
+        assertApprox(0.0, num("Math.sin(0)"))
+    }
+
+    @Test
+    fun mathCos() {
+        assertApprox(1.0, num("Math.cos(0)"))
+    }
+
+    @Test
     fun mathTruncPositive() {
         assertEquals(3.0, num("Math.trunc(3.9)"))
     }
@@ -727,6 +1296,11 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun parseIntLeadingWhitespace() {
+        assertEquals(42.0, num("parseInt('  42  ')"))
+    }
+
+    @Test
     fun parseFloat() {
         assertApprox(3.14, num("parseFloat('3.14')"))
     }
@@ -752,6 +1326,22 @@ class JsInterpreterTest {
     }
 
     @Test
+    fun consoleLogDoesNotThrow() {
+        // console.log is a no-op; just ensure it runs without exception
+        assertEquals(Unit, evalJs("console.log('test', 1, 2)"))
+    }
+
+    @Test
+    fun decodeURIComponentBasic() {
+        assertEquals("hello world", str("decodeURIComponent('hello%20world')"))
+    }
+
+    @Test
+    fun encodeURIComponentBasic() {
+        assertTrue(str("encodeURIComponent('hello world')").contains("%"))
+    }
+
+    @Test
     fun tryCatchSwallowsThrownValue() {
         assertEquals(42.0, num("var r=0; try{throw 42}catch(e){r=e} r"))
     }
@@ -764,6 +1354,16 @@ class JsInterpreterTest {
     @Test
     fun tryWithoutThrowSkipsCatch() {
         assertEquals(1.0, num("var r=0; try{r=1}catch(e){r=99} r"))
+    }
+
+    @Test
+    fun tryCatchThrowString() {
+        assertEquals("oops", str("var r=''; try{throw 'oops'}catch(e){r=e} r"))
+    }
+
+    @Test
+    fun tryCatchThrowObject() {
+        assertEquals(404.0, num("var r=0; try{throw {code:404}}catch(e){r=e.code} r"))
     }
 
     @Test
@@ -852,6 +1452,252 @@ class JsInterpreterTest {
     @Test
     fun evalJsWithVariableAfterMultipleStatements() {
         assertEquals(15.0, num("var x = 0; for(var i=1;i<=5;i++){x+=i}", "x"))
+    }
+
+    @Test
+    fun jsFuckEmptyArrayPlusEmptyArrayIsEmptyString() {
+        // [] + [] => ""
+        assertEquals("", str("[]+[]"))
+    }
+
+    @Test
+    fun jsFuckUnaryPlusEmptyArrayIsZero() {
+        // +[] => 0
+        assertEquals(0.0, num("+[]"))
+    }
+
+    @Test
+    fun jsFuckNotArrayIsFalse() {
+        // ![] => false  (array is truthy, so ![] is false)
+        assertFalse(bool("![]"))
+    }
+
+    @Test
+    fun jsFuckDoubleNotArrayIsTrue() {
+        // !![] => true
+        assertTrue(bool("!![]"))
+    }
+
+    @Test
+    fun jsFuckUnaryPlusDoubleNotArrayIsOne() {
+        // +!![] => 1
+        assertEquals(1.0, num("+!![]"))
+    }
+
+    @Test
+    fun jsFuckUnaryPlusNotArrayIsZero() {
+        // +![] => 0
+        assertEquals(0.0, num("+![]"))
+    }
+
+    @Test
+    fun jsFuckFalseCoercedToString() {
+        // ![]+[] => "false"
+        assertEquals("false", str("![]+[]"))
+    }
+
+    @Test
+    fun jsFuckTrueCoercedToString() {
+        // !![]+[] => "true"
+        assertEquals("true", str("!![]+[]"))
+    }
+
+    @Test
+    fun jsFuckFalseStringViaStringConcat() {
+        // (![]+""): false + "" => "false"
+        assertEquals("false", str("![]+''"))
+    }
+
+    @Test
+    fun jsFuckTrueStringViaStringConcat() {
+        // (!![]+""): true + "" => "true"
+        assertEquals("true", str("!![]+''"))
+    }
+
+    @Test
+    fun jsFuckUndefinedCoercedToString() {
+        assertEquals("undefined", str("[][0]+[]"))
+    }
+
+    @Test
+    fun jsFuckCharF() {
+        // (![]+[])[0] => "false"[0] => "f"
+        assertEquals("f", str("(![]+[])[0]"))
+    }
+
+    @Test
+    fun jsFuckCharA() {
+        // (![]+[])[1] => "false"[1] => "a"
+        assertEquals("a", str("(![]+[])[1]"))
+    }
+
+    @Test
+    fun jsFuckCharL() {
+        // (![]+[])[2] => "false"[2] => "l"
+        assertEquals("l", str("(![]+[])[2]"))
+    }
+
+    @Test
+    fun jsFuckCharS() {
+        // (![]+[])[3] => "false"[3] => "s"
+        assertEquals("s", str("(![]+[])[3]"))
+    }
+
+    @Test
+    fun jsFuckCharE() {
+        // (![]+[])[4] => "false"[4] => "e"
+        assertEquals("e", str("(![]+[])[4]"))
+    }
+
+    @Test
+    fun jsFuckCharT() {
+        // (!![]+[])[0] => "true"[0] => "t"
+        assertEquals("t", str("(!![]+[])[0]"))
+    }
+
+    @Test
+    fun jsFuckCharR() {
+        // (!![]+[])[1] => "true"[1] => "r"
+        assertEquals("r", str("(!![]+[])[1]"))
+    }
+
+    @Test
+    fun jsFuckCharU() {
+        // (!![]+[])[2] => "true"[2] => "u"
+        assertEquals("u", str("(!![]+[])[2]"))
+    }
+
+    @Test
+    fun jsFuckIndexViaArithmetic() {
+        // (![]+[])[+[]] => "false"[0] => "f"  (index built from +[])
+        assertEquals("f", str("(![]+[])[+[]]"))
+    }
+
+    @Test
+    fun jsFuckIndexOneViaArithmetic() {
+        // (![]+[])[+!![]] => "false"[1] => "a"
+        assertEquals("a", str("(![]+[])[+!![]]"))
+    }
+
+    @Test
+    fun jsFuckArrayToStringCoercion() {
+        // [1,2,3]+[] => "1,2,3"
+        assertEquals("1,2,3", str("[1,2,3]+[]"))
+    }
+
+    @Test
+    fun jsFuckObjectToStringCoercion() {
+        // []+{} => "[object Object]"
+        assertEquals("[object Object]", str("[]+{}"))
+    }
+
+    @Test
+    fun jsFuckObjectStringCharO() {
+        // ([]+{})[1] => "[object Object]"[1] => "o"
+        assertEquals("o", str("([]+{})[1]"))
+    }
+
+    @Test
+    fun jsFuckObjectStringCharB() {
+        // ([]+{})[2] => "[object Object]"[2] => "b"
+        assertEquals("b", str("([]+{})[2]"))
+    }
+
+    @Test
+    fun jsFuckFilterFunctionToString() {
+        // []["filter"]+"" => "function filter() { [native code] }"
+        assertEquals("function filter() { [native code] }", str("[]['filter']+''"))
+    }
+
+    @Test
+    fun jsFuckFilterStringCharF() {
+        // ([]["filter"]+[])[0] => "function filter() { [native code] }"[0] => "f"
+        assertEquals("f", str("([]['filter']+[])[0]"))
+    }
+
+    @Test
+    fun jsFuckFilterStringCharU() {
+        // ([]["filter"]+[])[1] => "u"
+        assertEquals("u", str("([]['filter']+[])[1]"))
+    }
+
+    @Test
+    fun jsFuckFilterStringCharN() {
+        // ([]["filter"]+[])[2] => "n"
+        assertEquals("n", str("([]['filter']+[])[2]"))
+    }
+
+    @Test
+    fun jsFuckFilterStringCharC() {
+        // ([]["filter"]+[])[3] => "c"
+        assertEquals("c", str("([]['filter']+[])[3]"))
+    }
+
+    @Test
+    fun jsFuckFilterStringCharI() {
+        assertEquals("i", str("([]['filter']+[])[5]"))
+    }
+
+    @Test
+    fun jsFuckNativeCodeBracketChar() {
+        // "function filter() { [native code] }" contains '[' at index 20
+        val s = "function filter() { [native code] }"
+        val idx = s.indexOf('[')
+        assertEquals("[", str("([]['filter']+[])[$idx]"))
+    }
+
+    @Test
+    fun jsFuckNativeCodeSpaceChar() {
+        // space at index 8
+        assertEquals(" ", str("([]['filter']+[])[8]"))
+    }
+
+    @Test
+    fun jsFuckBuildsNumberViaAddition() {
+        // +!![] + +!![] + +!![] => 3
+        assertEquals(3.0, num("+!![]+!![]+!![]"))
+    }
+
+    @Test
+    fun jsFuckBuildsNumberTen() {
+        assertEquals("10", str("(+!![])+[+[]]"))
+    }
+
+    @Test
+    fun jsFuckStringFromCharCodeViaNativeExtraction() {
+        assertEquals("A", str("String['fromCharCode'](65)"))
+    }
+
+    @Test
+    fun jsFuckFullAlphaFromFalseTrue() {
+        assertEquals("ftaseru", str("""
+            var f = ![]+[];
+            var t = !![]+[];
+            f[0]+t[0]+f[1]+f[3]+f[4]+t[1]+t[2]
+        """.trimIndent()))
+    }
+
+    @Test
+    fun jsFuckFunctionToStringContainsNativeCode() {
+        // Any array method coerced to string should contain "native code"
+        assertTrue(str("[]['map']+''").contains("native code"))
+    }
+
+    @Test
+    fun jsFuckFunctionToStringContainsFunctionKeyword() {
+        assertTrue(str("[]['join']+''").startsWith("function"))
+    }
+
+    @Test
+    fun jsFuckTypeofCoercion() {
+        // typeof([]) + [] => "object"
+        assertEquals("object", str("typeof([])+[]"))
+    }
+
+    @Test
+    fun jsFuckTypeofFunctionCoercion() {
+        // typeof([]['filter']) => "function"
+        assertEquals("function", str("typeof([]['filter'])"))
     }
 
     @Test
@@ -947,5 +1793,43 @@ class JsInterpreterTest {
             duf('z', 36)
         """.trimIndent()
         assertEquals(35.0, num(code))
+    }
+
+    @Test
+    fun chainedStringMethods() {
+        assertEquals("OLLEH", str("'hello'.split('').reverse().join('').toUpperCase()"))
+    }
+
+    @Test
+    fun deeplyNestedArithmetic() {
+        assertEquals(39.0, num("((((1+1)*3)+((2*3)+1))*3)"))
+    }
+
+    @Test
+    fun closureOverLoopVariable() {
+        val code = """
+            var fns = [];
+            for(var i=0; i<3; i++){
+                (function(j){ fns.push(function(){return j;}); })(i);
+            }
+            fns[0]()+fns[1]()+fns[2]()
+        """.trimIndent()
+        assertEquals(3.0, num(code))
+    }
+
+    @Test
+    fun multilineStringConcatenation() {
+        val code = """
+            var a = 'foo';
+            var b = 'bar';
+            var c = a + b;
+            c
+        """.trimIndent()
+        assertEquals("foobar", str(code))
+    }
+
+    @Test
+    fun bitwiseTruncationPattern() {
+        assertEquals(5.0, num("(11/2)|0"))
     }
 }
