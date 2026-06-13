@@ -1065,7 +1065,7 @@ private class JsInterpreter {
             is Ident -> scope.set(target.name, value)
             is MemberExpr -> {
                 val obj = evalExpr(target.obj, scope)
-                val key = if (target.computed) toJsString(evalExpr(target.prop, scope)) else (target.prop as StrLit).v
+                val key = propKey(target.prop, target.computed, scope)
                 when (obj) {
                     is JsObject -> obj.props[key] = value
                     is JsList -> {
@@ -1080,9 +1080,14 @@ private class JsInterpreter {
         }
     }
 
+    /** Resolves a MemberExpr property node to its string key without unsafe casts. */
+    private fun propKey(prop: Node, computed: Boolean, scope: Scope): String =
+        if (computed) toJsString(evalExpr(prop, scope))
+        else (prop as? StrLit)?.v ?: toJsString(evalExpr(prop, scope))
+
     private fun evalMember(node: MemberExpr, scope: Scope): Any? {
         val obj = evalExpr(node.obj, scope)
-        val key = if (node.computed) toJsString(evalExpr(node.prop, scope)) else (node.prop as StrLit).v
+        val key = propKey(node.prop, node.computed, scope)
         return getMember(obj, key)
     }
 
@@ -1281,7 +1286,7 @@ private class JsInterpreter {
     private fun resolveCallee(calleeNode: Node, scope: Scope): Pair<Any?, Any?> {
         return if (calleeNode is MemberExpr) {
             val obj = evalExpr(calleeNode.obj, scope)
-            val key = if (calleeNode.computed) toJsString(evalExpr(calleeNode.prop, scope)) else (calleeNode.prop as StrLit).v
+            val key = propKey(calleeNode.prop, calleeNode.computed, scope)
             getMember(obj, key) to obj
         } else {
             evalExpr(calleeNode, scope) to null
