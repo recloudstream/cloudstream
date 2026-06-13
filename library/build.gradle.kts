@@ -62,6 +62,7 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.io.core)
             implementation(libs.kotlinx.serialization.json) // JSON Parser
+            implementation(libs.ktor.http)
             implementation(libs.jsoup) // HTML Parser
             implementation(libs.rhino) // Run JavaScript
             implementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
