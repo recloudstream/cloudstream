@@ -32,11 +32,12 @@ kotlinxCollectionsImmutable = "0.4.0"
 kotlinxCoroutinesCore = "1.11.0"
 kotlinxDatetime = "0.8.0"
 kotlinxSerializationJson = "1.11.0"
+ktor = "3.5.0"
 lifecycleKtx = "2.10.0"
 material = "1.14.0"
 media3 = "1.9.3"
 navigationKtx = "2.9.8"
-newpipeextractor = "v0.26.2"
+newpipeextractor = "v0.26.3"
 nextlibMedia3 = "1.9.3-0.12.0"
 nicehttp = "0.4.18"
 overlappingpanels = "0.1.5"
@@ -95,6 +96,7 @@ kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collec
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+ktor-http = { module = "io.ktor:ktor-http", version.ref = "ktor" }
 lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleKtx" }
 lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleKtx" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
