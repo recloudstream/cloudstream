@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3d50fa</color>
+    <!-- Netflix Red -->
+    <color name="colorPrimary">#E50914</color>
     <color name="colorPrimarySecond">@color/colorPrimary</color>
-    <color name="colorSearch">#303135</color> <!--#3444D1 @color/itemBackground-->
-    <color name="colorOngoing">#F53B66</color> <!--FF8181-->
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#3b65f5</color> <!-- 818fff-->
+    <color name="colorSearch">#221F1F</color>
+    <color name="colorOngoing">#F53B66</color>
+    <color name="colorPrimaryDark">#B20710</color>
+    <color name="colorAccent">#E50914</color>
 
-    <color name="primaryGrayBackground">#2B2C30</color> <!--0f0f10 0E0E10 303135 2B2C30-->
-    <color name="primaryBlackBackground">#111111</color> <!--1C1C20 191a1f 19181E 202125 1C1C20-->
-    <color name="iconGrayBackground">#1C1C20</color> <!--141419 202125-->
-    <color name="boxItemBackground">#161616</color> <!-- 17171B 1B1B20-->
+    <!-- Netflix Dark Background -->
+    <color name="primaryGrayBackground">#141414</color>
+    <color name="primaryBlackBackground">#0F0F0F</color>
+    <color name="iconGrayBackground">#1A1A1A</color>
+    <color name="boxItemBackground">#221F1F</color>
 
-    <color name="textColor">#e9eaee</color> <!--FFF-->
-    <color name="grayTextColor">#9ba0a4</color> <!-- 5e5f62-->
-    <color name="grayShimmer">#DCDCDC</color> <!-- 5e5f62-->
+    <!-- Text Colors -->
+    <color name="textColor">#FFFFFF</color>
+    <color name="grayTextColor">#808080</color>
+    <color name="grayShimmer">#DCDCDC</color>
 
-    <color name="searchColorTransparent">#1AFFFFFF</color> <!--DADADA-->
+    <color name="searchColorTransparent">#1AFFFFFF</color>
     <color name="transparent">#00000000</color>
 
     <color name="white">#FFF</color>
@@ -29,21 +32,16 @@
 
     <color name="progressBackgroundColor">#1AFFFFFF</color>
 
-    <color name="dubColorText">#121950</color> <!--3b65f5 f18c82 8294F1-->
-    <color name="amoledModeLight">#121213</color>
+    <color name="dubColorText">#FFFFFF</color>
+    <color name="amoledModeLight">#0F0F0F</color>
 
-    <color name="dubColorBg">#3B65F5</color>
-    <color name="subColorText">#571711</color> <!--F53B66 FA3D79-->
-    <color name="subColorBg">#F53B66</color>
-    <color name="typeColorText">#BEC8FF</color>
-    <color name="typeColorBg">#3700B3</color>
+    <color name="dubColorBg">#E50914</color>
+    <color name="subColorText">#FFFFFF</color>
+    <color name="subColorBg">#E50914</color>
+    <color name="typeColorText">#FFFFFF</color>
+    <color name="typeColorBg">#B20710</color>
 
-    <!--
-    <color name="ratingColor">#4C3115</color>
-    <color name="ratingColorBg">#FFA662</color>
-    -->
-
-    <color name="adultColor">#FF6F63</color> <!-- same as sub color -->
+    <color name="adultColor">#FF6F63</color>
 
     <color name="video_ripple">#80FFFFFF</color>
     <color name="video_button_ripple">#32FFFFFF</color>
@@ -52,15 +50,11 @@
     <color name="darkBarTransparent">#C0121212</color>
     <color name="skipOpTransparent">#4D121212</color>
     <color name="darkBar">#121212</color>
-    <color name="videoProgress">#66B5B5B5</color> <!--66B5B5B5-->
-    <!--<color name="videoCache">#663D50FA</color>--> <!--66B5B5B5-->
+    <color name="videoProgress">#66B5B5B5</color>
 
-    <color name="iconColor">#9ba0a6</color>
+    <color name="iconColor">#808080</color>
 
-    <!-- <color name="usedStorageColor">?attr/white</color>#fff-->
-    <!-- <color name="freeStorageColor">?attr/grayTextColor</color> #676767-->
-
-    <!--Light Mode -->
+    <!-- Light Mode -->
     <color name="lightPrimaryGrayBackground">#f1f1f1</color>
     <color name="lightBitDarkerGrayBackground">#fff</color>
     <color name="lightGrayBackground">#eeeeee</color>
@@ -69,7 +63,7 @@
     <color name="lightGrayTextColor">#5f6267</color>
     <color name="lightIconColor">#5f6267</color>
 
-    <!--Dracula Theme-->
+    <!-- Dracula Theme -->
     <color name="DraculaPrimaryGrayBackground">#414450</color>
     <color name="DraculaBitDarkerGrayBackground">#282a36</color>
     <color name="DraculaGrayBackground">#44475A</color>
@@ -87,7 +81,7 @@
     <color name="LavenderGrayTextColor">#9ab3ff</color>
     <color name="LavenderIconColor">#7c3aed</color>
 
-    <!--Silent Blue Theme-->
+    <!-- Silent Blue Theme -->
     <color name="SilentBluePrimaryGrayBackground">#282f49</color>
     <color name="SilentBlueBitDarkerGrayBackground">#151a30</color>
     <color name="SilentBlueGrayBackground">#3A446A</color>
@@ -96,10 +90,10 @@
     <color name="SilentBlueGrayTextColor">#7B83B0</color>
     <color name="SilentBlueIconColor">#7B83B0</color>
 
-    <!--Other Colors -->
+    <!-- Other Colors -->
     <color name="colorPrimaryBlue">#5664B7</color>
-    <color name="colorPrimaryRed">#D50000</color>
-    <color name="colorPrimaryPurple">#6200EA</color> <!-- Burple-->
+    <color name="colorPrimaryRed">#E50914</color>
+    <color name="colorPrimaryPurple">#6200EA</color>
     <color name="colorPrimaryGreen">#00BFA5</color>
     <color name="colorPrimaryGreenApple">#48E484</color>
     <color name="colorPrimaryBanana">#E4D448</color>
