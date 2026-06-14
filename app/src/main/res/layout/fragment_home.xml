@@ -4,14 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/home_root"
     android:layout_width="match_parent"
-
     android:layout_height="match_parent"
+    android:background="?attr/primaryBlackBackground"
     tools:context=".ui.home.HomeFragment">
 
     <FrameLayout
         android:id="@+id/home_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="?attr/primaryBlackBackground"
         android:visibility="gone"
         tools:visibility="visible">
 
@@ -79,14 +80,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/result_padding"
                     android:layout_marginTop="@dimen/result_padding"
-
                     android:layout_marginEnd="@dimen/result_padding"
                     android:orientation="vertical">
 
                     <include layout="@layout/loading_list" />
-
                     <include layout="@layout/loading_list" />
-
                     <include layout="@layout/loading_list" />
                 </LinearLayout>
             </LinearLayout>
@@ -150,7 +148,6 @@
 
             <ImageView
                 android:id="@+id/home_switch_account"
-
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
@@ -167,6 +164,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:background="?attr/primaryBlackBackground"
         android:orientation="vertical"
         android:visibility="gone"
         tools:visibility="gone">
@@ -174,9 +172,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/home_reload_connectionerror"
             style="@style/WhiteButton"
-
             android:layout_width="wrap_content"
-
             android:layout_gravity="center"
             android:layout_margin="5dp"
             android:minWidth="200dp"
@@ -186,9 +182,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/home_reload_connection_open_in_browser"
             style="@style/BlackButton"
-
             android:layout_width="wrap_content"
-
             android:layout_gravity="center"
             android:layout_margin="5dp"
             android:minWidth="200dp"
@@ -198,9 +192,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/home_reload_connection_go_to_downloads"
             style="@style/BlackButton"
-
             android:layout_width="wrap_content"
-
             android:layout_gravity="center"
             android:layout_margin="5dp"
             android:minWidth="200dp"
@@ -221,6 +213,7 @@
         android:id="@+id/home_master_recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?attr/primaryBlackBackground"
         android:descendantFocusability="afterDescendants"
         android:nextFocusLeft="@id/nav_rail_view"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -230,10 +223,13 @@
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/home_api_fab"
         style="@style/ExtendedFloatingActionButton"
+        android:layout_margin="16dp"
         android:text="@string/home_source"
-        android:textColor="?attr/textColor"
+        android:textColor="@color/white"
         android:visibility="gone"
+        app:backgroundTint="@color/colorPrimary"
         app:icon="@drawable/ic_baseline_filter_list_24"
+        app:iconTint="@color/white"
         tools:ignore="ContentDescription"
         tools:visibility="visible" />
 
@@ -241,14 +237,16 @@
         android:id="@+id/home_random"
         style="@style/ExtendedFloatingActionButton"
         android:layout_gravity="bottom|start"
+        android:layout_margin="16dp"
         android:text="@string/home_random"
-        android:textColor="?attr/textColor"
+        android:textColor="@color/white"
         android:visibility="gone"
+        app:backgroundTint="@color/colorPrimary"
         app:icon="@drawable/ic_baseline_play_arrow_24"
+        app:iconTint="@color/white"
         tools:ignore="ContentDescription"
         tools:visibility="visible" />
 
-    <!-- Placeholder for TV layout random button - always hidden on phone -->
     <ImageView
         android:id="@+id/home_random_button_tv"
         android:layout_width="0dp"
