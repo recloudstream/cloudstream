@@ -15,7 +15,6 @@ import kotlin.math.min
 // see https://gist.github.com/thackerronak/554c985c3001b16810af5fc0eb5c358f
 @Suppress("unused", "FunctionName", "SameParameterValue")
 object CryptoJS {
-
     private const val KEY_SIZE = 256
     private const val IV_SIZE = 128
 
@@ -37,7 +36,7 @@ object CryptoJS {
         val saltBytes = generateSalt(8)
         val key = ByteArray(KEY_SIZE / 8)
         val iv = ByteArray(IV_SIZE / 8)
-        evpkdf(password.encodeToByteArray(), KEY_SIZE, IV_SIZE, saltBytes, key, iv)
+        evpkdf(password.encodeToByteArray(), KEY_SIZE, IV_SIZE, saltBytes, 1, key, iv)
 
         val aesKey = aesCbc.keyDecoder().decodeFromByteArrayBlocking(AES.Key.Format.RAW, key)
         val cipher = aesKey.cipher(padding = true)
@@ -67,7 +66,7 @@ object CryptoJS {
 
         val key = ByteArray(KEY_SIZE / 8)
         val iv = ByteArray(IV_SIZE / 8)
-        evpkdf(password.encodeToByteArray(), KEY_SIZE, IV_SIZE, saltBytes, key, iv)
+        evpkdf(password.encodeToByteArray(), KEY_SIZE, IV_SIZE, saltBytes, 1, key, iv)
 
         val aesKey = aesCbc.keyDecoder().decodeFromByteArrayBlocking(AES.Key.Format.RAW, key)
         val cipher = aesKey.cipher(padding = true)
@@ -75,16 +74,6 @@ object CryptoJS {
         return plainText.decodeToString()
     }
 
-    private fun evpkdf(
-        password: ByteArray,
-        keySize: Int,
-        ivSize: Int,
-        salt: ByteArray,
-        resultKey: ByteArray,
-        resultIv: ByteArray,
-    ): ByteArray = evpkdf(password, keySize, ivSize, salt, 1, resultKey, resultIv)
-
-    @Suppress("NAME_SHADOWING")
     private fun evpkdf(
         password: ByteArray,
         keySize: Int,
