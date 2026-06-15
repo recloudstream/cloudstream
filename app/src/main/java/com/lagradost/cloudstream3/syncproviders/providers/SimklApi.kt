@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.core.net.toUri
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
@@ -77,15 +78,15 @@ class SimklApi : SyncAPI() {
         private class SimklCacheWrapper<T>(
             @JsonProperty("obj") val obj: T?,
             @JsonProperty("validUntil") val validUntil: Long,
-            @JsonProperty("cacheTime") val cacheTime: Long = unixTime,
+            @JsonProperty("cacheTime") val cacheTime: Long = APIHolder.unixTime,
         ) {
             /** Returns true if cache is newer than cacheDays */
             fun isFresh(): Boolean {
-                return validUntil > unixTime
+                return validUntil > APIHolder.unixTime
             }
 
             fun remainingTime(): Duration {
-                val unixTime = unixTime
+                val unixTime = APIHolder.unixTime
                 return if (validUntil > unixTime) {
                     (validUntil - unixTime).toDuration(DurationUnit.SECONDS)
                 } else {
@@ -109,7 +110,7 @@ class SimklApi : SyncAPI() {
                 SIMKL_CACHE_KEY,
                 path,
                 // Storing as plain sting is required to make generics work.
-                SimklCacheWrapper(value, unixTime + cacheTime.inWholeSeconds).toJson()
+                SimklCacheWrapper(value, APIHolder.unixTime + cacheTime.inWholeSeconds).toJson()
             )
         }
 
@@ -418,7 +419,7 @@ class SimklApi : SyncAPI() {
                 }
 
                 suspend fun execute(): Boolean {
-                    val time = getDateTime(unixTime)
+                    val time = getDateTime(APIHolder.unixTime)
                     val headers = this.headers ?: emptyMap()
                     return if (this.status == SimklListStatusType.None.value) {
                         app.post(
@@ -568,7 +569,7 @@ class SimklApi : SyncAPI() {
             @JsonProperty("year") year: Int?,
             @JsonProperty("ids") ids: Ids?,
             @JsonProperty("rating") val rating: Int,
-            @JsonProperty("rated_at") val ratedAt: String? = getDateTime(unixTime)
+            @JsonProperty("rated_at") val ratedAt: String? = getDateTime(APIHolder.unixTime)
         ) : MediaObject(title, year, ids)
 
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -577,7 +578,7 @@ class SimklApi : SyncAPI() {
             @JsonProperty("year") year: Int?,
             @JsonProperty("ids") ids: Ids?,
             @JsonProperty("to") val to: String,
-            @JsonProperty("watched_at") val watchedAt: String? = getDateTime(unixTime)
+            @JsonProperty("watched_at") val watchedAt: String? = getDateTime(APIHolder.unixTime)
         ) : MediaObject(title, year, ids)
 
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -862,7 +863,7 @@ class SimklApi : SyncAPI() {
         newStatus: AbstractSyncStatus
     ): Boolean {
         val parsedId = readIdFromString(id)
-        lastScoreTime = unixTime
+        lastScoreTime = APIHolder.unixTime
         val simklStatus = newStatus as? SimklSyncStatus
 
         val builder = SimklScoreBuilder.Builder()
