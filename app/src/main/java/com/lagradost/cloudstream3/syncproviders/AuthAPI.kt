@@ -2,7 +2,9 @@ package com.lagradost.cloudstream3.syncproviders
 
 import android.util.Base64
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.unixTime
+import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING
 import com.lagradost.cloudstream3.utils.AppContextUtils.splitQuery
 import java.net.URI
@@ -150,7 +152,7 @@ abstract class AuthAPI {
             level = DeprecationLevel.WARNING,
         )
         val unixTime: Long
-            get() = System.currentTimeMillis() / 1000L
+            get() = APIHolder.unixTime
 
         @Deprecated(
             message = "Use APIHolder.unixTimeMS instead",
@@ -161,7 +163,7 @@ abstract class AuthAPI {
             level = DeprecationLevel.WARNING,
         )
         val unixTimeMs: Long
-            get() = System.currentTimeMillis()
+            get() = unixTimeMS
 
         fun splitRedirectUrl(redirectUrl: String): Map<String, String> {
             return splitQuery(
