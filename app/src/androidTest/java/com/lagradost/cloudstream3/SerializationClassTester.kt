@@ -101,7 +101,7 @@ class SerializationClassTester {
     }
 
     // DEX files are the best solution to read all our classes dynamically.
-    // ClassGraph() can be used instead, but it only gives results on the JVM, not Android.
+    // classgraph could be used instead, but it only gives results on the JVM, not Android.
     @Suppress("DEPRECATION")
     private fun findSerializableClasses(packageName: String): List<KClass<*>> {
         val context = InstrumentationRegistry
@@ -109,7 +109,6 @@ class SerializationClassTester {
             .targetContext
 
         val dexFile = DexFile(context.packageCodePath)
-
         return dexFile.entries()
             .toList()
             .filter { it.startsWith(packageName) }
