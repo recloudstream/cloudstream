@@ -1,10 +1,10 @@
 package com.lagradost.cloudstream3.syncproviders
 
-import android.util.Base64
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
+import com.lagradost.cloudstream3.base64Encode
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING
 import com.lagradost.cloudstream3.utils.AppContextUtils.splitQuery
 import java.net.URI
@@ -179,9 +179,8 @@ abstract class AuthAPI {
             val secureRandom = SecureRandom()
             val codeVerifierBytes = ByteArray(96) // base64 has 6bit per char; (8/6)*96 = 128
             secureRandom.nextBytes(codeVerifierBytes)
-            return Base64.encodeToString(codeVerifierBytes, Base64.DEFAULT).trimEnd('=')
-                .replace("+", "-")
-                .replace("/", "_").replace("\n", "")
+            return base64Encode(codeVerifierBytes).trimEnd('=')
+                .replace("+", "-").replace("/", "_").replace("\n", "")
         }
     }
 
