@@ -41,7 +41,6 @@ import kotlinx.datetime.format.parse
 import kotlinx.datetime.toInstant
 import kotlinx.serialization.json.Json
 import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 import kotlin.time.Clock
@@ -716,12 +715,10 @@ fun base64Decode(string: String): String {
     }
 }
 
-@OptIn(ExperimentalEncodingApi::class)
 fun base64DecodeArray(string: String): ByteArray {
     return Base64.decode(string)
 }
 
-@OptIn(ExperimentalEncodingApi::class)
 fun base64Encode(array: ByteArray): String {
     return Base64.encode(array)
 }
