@@ -35,7 +35,7 @@ class MALApi : SyncAPI() {
     override var name = "MAL"
     override val idPrefix = "mal"
 
-    val key = BuildConfig.MAL_KEY
+    private val key = BuildConfig.MAL_KEY
     private val apiUrl = "https://api.myanimelist.net"
     override val hasOAuth2 = true
     override val redirectUrlIdentifier: String? = "mallogin"

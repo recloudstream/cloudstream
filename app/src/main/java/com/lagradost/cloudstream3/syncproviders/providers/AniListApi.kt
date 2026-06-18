@@ -36,7 +36,7 @@ class AniListApi : SyncAPI() {
     override var name = "AniList"
     override val idPrefix = "anilist"
 
-    val key = BuildConfig.ANILIST_KEY
+    private val key = BuildConfig.ANILIST_KEY
     override val redirectUrlIdentifier = "anilistlogin"
     override var requireLibraryRefresh = true
     override val hasOAuth2 = true
