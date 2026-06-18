@@ -46,8 +46,8 @@ object InAppUpdater {
 
     @Serializable
     private data class GithubAsset(
-        @SerialName("name") val name: String,
-        @SerialName("size") val size: Int, // Size in bytes
+        @JsonProperty("name") @SerialName("name") val name: String,
+        @JsonProperty("size") @SerialName("size") val size: Int, // Size in bytes
         @JsonProperty("browser_download_url") @SerialName("browser_download_url") val browserDownloadUrl: String,
         @JsonProperty("content_type") @SerialName("content_type") val contentType: String, // application/vnd.android.package-archive
     )
@@ -55,18 +55,18 @@ object InAppUpdater {
     @Serializable
     private data class GithubRelease(
         @JsonProperty("tag_name") @SerialName("tag_name") val tagName: String, // Version code
-        @SerialName("body") val body: String, // Description
-        @SerialName("assets") val assets: List<GithubAsset>,
+        @JsonProperty("body") @SerialName("body") val body: String, // Description
+        @JsonProperty("assets") @SerialName("assets") val assets: List<GithubAsset>,
         @JsonProperty("target_commitish") @SerialName("target_commitish") val targetCommitish: String, // Branch
-        @SerialName("prerelease") val prerelease: Boolean,
+        @JsonProperty("prerelease") @SerialName("prerelease") val prerelease: Boolean,
         @JsonProperty("node_id") @SerialName("node_id") val nodeId: String,
     )
 
     @Serializable
     private data class GithubObject(
-        @SerialName("sha") val sha: String, // SHA-256 hash
-        @SerialName("type") val type: String,
-        @SerialName("url") val url: String,
+        @JsonProperty("sha") @SerialName("sha") val sha: String, // SHA-256 hash
+        @JsonProperty("type") @SerialName("type") val type: String,
+        @JsonProperty("url") @SerialName("url") val url: String,
     )
 
     @Serializable
@@ -76,11 +76,11 @@ object InAppUpdater {
 
     @Serializable
     private data class Update(
-        @SerialName("shouldUpdate") val shouldUpdate: Boolean,
-        @SerialName("updateURL") val updateURL: String?,
-        @SerialName("updateVersion") val updateVersion: String?,
-        @SerialName("changelog") val changelog: String?,
-        @SerialName("updateNodeId") val updateNodeId: String?,
+        @JsonProperty("shouldUpdate") @SerialName("shouldUpdate") val shouldUpdate: Boolean,
+        @JsonProperty("updateURL") @SerialName("updateURL") val updateURL: String?,
+        @JsonProperty("updateVersion") @SerialName("updateVersion") val updateVersion: String?,
+        @JsonProperty("changelog") @SerialName("changelog") val changelog: String?,
+        @JsonProperty("updateNodeId") @SerialName("updateNodeId") val updateNodeId: String?,
     )
 
     private suspend fun Activity.getAppUpdate(installPrerelease: Boolean): Update {
