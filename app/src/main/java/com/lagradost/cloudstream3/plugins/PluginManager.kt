@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.FragmentActivity
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.removePluginMapping
 import com.lagradost.cloudstream3.AllLanguagesName
@@ -76,11 +77,11 @@ const val EXTENSIONS_CHANNEL_DESCRIPT = "Extension notification channel"
 // Data class for internal storage
 @Serializable
 data class PluginData(
-    @SerialName("internalName") val internalName: String,
-    @SerialName("url") val url: String?,
-    @SerialName("isOnline") val isOnline: Boolean,
-    @SerialName("filePath") val filePath: String,
-    @SerialName("version") val version: Int,
+    @JsonProperty("internalName") @SerialName("internalName") val internalName: String,
+    @JsonProperty("url") @SerialName("url") val url: String?,
+    @JsonProperty("isOnline") @SerialName("isOnline") val isOnline: Boolean,
+    @JsonProperty("filePath") @SerialName("filePath") val filePath: String,
+    @JsonProperty("version") @SerialName("version") val version: Int,
 ) {
     @WorkerThread
     fun toSitePlugin(): SitePlugin {

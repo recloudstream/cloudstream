@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.plugins
 
 import android.util.Log
 import android.widget.Toast
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.context
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
@@ -15,7 +16,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 object VotingApi {
-
     private const val LOGKEY = "VotingApi"
     private const val API_DOMAIN = "https://api.countify.xyz"
 
@@ -95,7 +95,7 @@ object VotingApi {
 
     @Serializable
     private data class CountifyResult(
-        @SerialName("id") val id: String? = null,
-        @SerialName("count") val count: Int? = null,
+        @JsonProperty("id") @SerialName("id") val id: String? = null,
+        @JsonProperty("count") @SerialName("count") val count: Int? = null,
     )
 }
