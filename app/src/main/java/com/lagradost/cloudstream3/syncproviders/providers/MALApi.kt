@@ -98,9 +98,9 @@ class MALApi : SyncAPI() {
         )
     }
 
-    override suspend fun search(auth : AuthData?, query: String): List<SyncAPI.SyncSearchResult>? {
+    override suspend fun search(auth: AuthData?, query: String): List<SyncAPI.SyncSearchResult>? {
         val auth = auth?.token?.accessToken ?: return null
-        val url = "$apiUrl/v2/anime?q=$name&limit=$MAL_MAX_SEARCH_LIMIT"
+        val url = "$apiUrl/v2/anime?q=$query&limit=$MAL_MAX_SEARCH_LIMIT"
         val res = app.get(
             url, headers = mapOf(
                 "Authorization" to "Bearer $auth",
@@ -122,7 +122,7 @@ class MALApi : SyncAPI() {
         Regex("""/anime/((.*)/|(.*))""").find(url)!!.groupValues.first()
 
     override suspend fun updateStatus(
-        auth : AuthData?,
+        auth: AuthData?,
         id: String,
         newStatus: SyncAPI.AbstractSyncStatus
     ): Boolean {
@@ -225,7 +225,7 @@ class MALApi : SyncAPI() {
         )
     }
 
-    override suspend fun load(auth : AuthData?, id: String): SyncAPI.SyncResult? {
+    override suspend fun load(auth: AuthData?, id: String): SyncAPI.SyncResult? {
         val auth = auth?.token?.accessToken ?: return null
         val internalId = id.toIntOrNull() ?: return null
         val url =
@@ -271,7 +271,7 @@ class MALApi : SyncAPI() {
         }
     }
 
-    override suspend fun status(auth : AuthData?, id: String): SyncAPI.AbstractSyncStatus? {
+    override suspend fun status(auth: AuthData?, id: String): SyncAPI.AbstractSyncStatus? {
         val auth = auth?.token?.accessToken ?: return null
 
         // https://myanimelist.net/apiconfig/references/api/v2#operation/anime_anime_id_get
@@ -477,7 +477,7 @@ class MALApi : SyncAPI() {
         @JsonProperty("start_time") val startTime: String?
     )
 
-    override suspend fun library(auth : AuthData?): LibraryMetadata? {
+    override suspend fun library(auth: AuthData?): LibraryMetadata? {
         val list = getMalAnimeListSmart(auth ?: return null)?.groupBy {
             convertToStatus(it.listStatus?.status ?: "").stringRes
         }?.mapValues { group ->
@@ -505,7 +505,7 @@ class MALApi : SyncAPI() {
         )
     }
 
-    private suspend fun getMalAnimeListSmart(auth : AuthData): Array<Data>? {
+    private suspend fun getMalAnimeListSmart(auth: AuthData): Array<Data>? {
         return if (requireLibraryRefresh) {
             val list = getMalAnimeList(auth.token)
             setKey(MAL_CACHED_LIST, auth.user.id.toString(), list)

@@ -911,7 +911,7 @@ class SimklApi : SyncAPI() {
 
     override suspend fun search(auth: AuthData?, query: String): List<SyncAPI.SyncSearchResult>? {
         return app.get(
-            "$mainUrl/search/", params = mapOf("client_id" to CLIENT_ID, "q" to name)
+            "$mainUrl/search/", params = mapOf("client_id" to CLIENT_ID, "q" to query)
         ).parsedSafe<Array<MediaObject>>()?.mapNotNull { it.toSyncSearchResult() }
     }
 
