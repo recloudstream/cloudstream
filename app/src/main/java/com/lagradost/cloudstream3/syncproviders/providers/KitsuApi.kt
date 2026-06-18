@@ -180,7 +180,7 @@ class KitsuApi: SyncAPI() {
 
         @Serializable
         data class KitsuResponse(
-            @SerialName("data") val data: KitsuNode,
+            @JsonProperty("data") @SerialName("data") val data: KitsuNode,
         )
 
         val url =
