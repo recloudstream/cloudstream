@@ -64,22 +64,22 @@ data class AuthToken(
      * This is the general access tokens/api token representing a logged in user.
      * Access tokens are the thing that applications use to make API requests on behalf of a user.
      */
-    @SerialName("accessToken")
+    @JsonProperty("accessToken") @SerialName("accessToken")
     val accessToken: String? = null,
     /** For OAuth a special refresh token is issues to refresh the access token. */
-    @SerialName("refreshToken")
+    @JsonProperty("refreshToken") @SerialName("refreshToken")
     val refreshToken: String? = null,
     /** In UnixTime (sec) when it expires */
-    @SerialName("accessTokenLifetime")
+    @JsonProperty("accessTokenLifetime") @SerialName("accessTokenLifetime")
     val accessTokenLifetime: Long? = null,
     /** In UnixTime (sec) when it expires */
-    @SerialName("refreshTokenLifetime")
+    @JsonProperty("refreshTokenLifetime") @SerialName("refreshTokenLifetime")
     val refreshTokenLifetime: Long? = null,
     /**
      * Sometimes AuthToken needs to be customized to store e.g. username/password,
      * this acts as a catch all to store text or JSON data.
      */
-    @SerialName("payload")
+    @JsonProperty("payload") @SerialName("payload")
     val payload: String? = null,
 ) {
     fun isAccessTokenExpired(marginSec: Long = 10L) =
@@ -93,16 +93,16 @@ data class AuthToken(
 @Serializable
 data class AuthUser(
     /** Account display-name, can also be email if name does not exist */
-    @SerialName("name")
+    @JsonProperty("name") @SerialName("name")
     val name: String?,
     /**
      * Unique account identifier. If a subsequent login is done then it
      * will be refused if another account with the same id exists.
      */
-    @SerialName("id")
+    @JsonProperty("id") @SerialName("id")
     val id: Int,
     /** Profile picture URL */
-    @SerialName("profilePicture")
+    @JsonProperty("profilePicture") @SerialName("profilePicture")
     val profilePicture: String? = null,
     /** Profile picture Headers of the URL */
     @JsonProperty("profilePictureHeader")
@@ -120,8 +120,8 @@ data class AuthUser(
  */
 @Serializable
 data class AuthData(
-    @SerialName("user") val user: AuthUser,
-    @SerialName("token") val token: AuthToken,
+    @JsonProperty("user") @SerialName("user") val user: AuthUser,
+    @JsonProperty("token") @SerialName("token") val token: AuthToken,
 )
 
 data class AuthPinData(
@@ -146,10 +146,10 @@ data class AuthLoginRequirement(
 /** What the user responds to the AuthLoginRequirement */
 @Serializable
 data class AuthLoginResponse(
-    @SerialName("password") val password: String?,
-    @SerialName("username") val username: String?,
-    @SerialName("email") val email: String?,
-    @SerialName("server") val server: String?,
+    @JsonProperty("password") @SerialName("password") val password: String?,
+    @JsonProperty("username") @SerialName("username") val username: String?,
+    @JsonProperty("email") @SerialName("email") val email: String?,
+    @JsonProperty("server") @SerialName("server") val server: String?,
 )
 
 /** Stateless Authentication class used for all personalized content */
