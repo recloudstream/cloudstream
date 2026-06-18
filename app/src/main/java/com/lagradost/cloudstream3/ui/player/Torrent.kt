@@ -280,12 +280,12 @@ object Torrent {
     // https://github.com/Diegopyl1209/torrentserver-aniyomi/blob/main/web/api/route.go#L7
     @Serializable
     data class TorrentRequest(
-        @SerialName("action") val action: String,
-        @SerialName("hash") val hash: String = "",
-        @SerialName("link") val link: String = "",
-        @SerialName("title") val title: String = "",
-        @SerialName("poster") val poster: String = "",
-        @SerialName("data") val data: String = "",
+        @JsonProperty("action") @SerialName("action") val action: String,
+        @JsonProperty("hash") @SerialName("hash") val hash: String = "",
+        @JsonProperty("link") @SerialName("link") val link: String = "",
+        @JsonProperty("title") @SerialName("title") val title: String = "",
+        @JsonProperty("poster") @SerialName("poster") val poster: String = "",
+        @JsonProperty("data") @SerialName("data") val data: String = "",
         @JsonProperty("save_to_db") @SerialName("save_to_db") val saveToDB: Boolean = false,
     )
 
@@ -293,13 +293,13 @@ object Torrent {
     // omitempty = nullable
     @Serializable
     data class TorrentStatus(
-        @SerialName("title") var title: String,
-        @SerialName("poster") var poster: String,
-        @SerialName("data") var data: String?,
-        @SerialName("timestamp") var timestamp: Long,
-        @SerialName("name") var name: String?,
-        @SerialName("hash") var hash: String?,
-        @SerialName("stat") var stat: Int,
+        @JsonProperty("title") @SerialName("title") var title: String,
+        @JsonProperty("poster") @SerialName("poster") var poster: String,
+        @JsonProperty("data") @SerialName("data") var data: String?,
+        @JsonProperty("timestamp") @SerialName("timestamp") var timestamp: Long,
+        @JsonProperty("name") @SerialName("name") var name: String?,
+        @JsonProperty("hash") @SerialName("hash") var hash: String?,
+        @JsonProperty("stat") @SerialName("stat") var stat: Int,
         @JsonProperty("stat_string") @SerialName("stat_string") var statString: String,
         @JsonProperty("loaded_size") @SerialName("loaded_size") var loadedSize: Long?,
         @JsonProperty("torrent_size") @SerialName("torrent_size") var torrentSize: Long?,
@@ -326,7 +326,7 @@ object Torrent {
         @JsonProperty("duration_seconds") @SerialName("duration_seconds") var durationSeconds: Double?,
         @JsonProperty("bit_rate") @SerialName("bit_rate") var bitRate: String?,
         @JsonProperty("file_stats") @SerialName("file_stats") var fileStats: List<TorrentFileStat>?,
-        @SerialName("trackers") var trackers: List<String>?,
+        @JsonProperty("trackers") @SerialName("trackers") var trackers: List<String>?,
     ) {
         fun streamUrl(url: String): String {
             val fileName =
@@ -344,8 +344,8 @@ object Torrent {
 
     @Serializable
     data class TorrentFileStat(
-        @SerialName("id") val id: Int?,
-        @SerialName("path") val path: String?,
-        @SerialName("length") val length: Long?,
+        @JsonProperty("id") @SerialName("id") val id: Int?,
+        @JsonProperty("path") @SerialName("path") val path: String?,
+        @JsonProperty("length") @SerialName("length") val length: Long?,
     )
 }
