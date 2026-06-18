@@ -60,11 +60,11 @@ class IntroDbSkip : SkipAPI() {
     @Serializable
     data class IntroDbResponse(
         @JsonProperty("imdb_id") @SerialName("imdb_id") val imdbId: String?,
-        @SerialName("season") val season: Int?,
-        @SerialName("episode") val episode: Int?,
-        @SerialName("intro") val intro: Segment?,
-        @SerialName("recap") val recap: Segment?,
-        @SerialName("outro") val outro: Segment?,
+        @JsonProperty("season") @SerialName("season") val season: Int?,
+        @JsonProperty("episode") @SerialName("episode") val episode: Int?,
+        @JsonProperty("intro") @SerialName("intro") val intro: Segment?,
+        @JsonProperty("recap") @SerialName("recap") val recap: Segment?,
+        @JsonProperty("outro") @SerialName("outro") val outro: Segment?,
     )
 
     @Serializable
@@ -73,7 +73,7 @@ class IntroDbSkip : SkipAPI() {
         @JsonProperty("end_sec") @SerialName("end_sec") val endSec: Double?,
         @JsonProperty("start_ms") @SerialName("start_ms") val startMs: Long?,
         @JsonProperty("end_ms") @SerialName("end_ms") val endMs: Long?,
-        @SerialName("confidence") val confidence: Double?,
+        @JsonProperty("confidence") @SerialName("confidence") val confidence: Double?,
         @JsonProperty("submission_count") @SerialName("submission_count") val submissionCount: Int?,
         @JsonProperty("updated_at") @SerialName("updated_at") val updatedAt: String?,
     )

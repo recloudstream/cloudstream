@@ -57,11 +57,11 @@ class TheIntroDBSkip : SkipAPI() {
     @Serializable
     data class Root(
         @JsonProperty("tmdb_id") @SerialName("tmdb_id") val tmdbId: Long,
-        @SerialName("type") val type: String,
-        @SerialName("intro") val intro: List<Stamp> = emptyList(),
-        @SerialName("recap") val recap: List<Stamp> = emptyList(),
-        @SerialName("credits") val credits: List<Stamp> = emptyList(),
-        @SerialName("preview") val preview: List<Stamp> = emptyList(),
+        @JsonProperty("type") @SerialName("type") val type: String,
+        @JsonProperty("intro") @SerialName("intro") val intro: List<Stamp> = emptyList(),
+        @JsonProperty("recap") @SerialName("recap") val recap: List<Stamp> = emptyList(),
+        @JsonProperty("credits") @SerialName("credits") val credits: List<Stamp> = emptyList(),
+        @JsonProperty("preview") @SerialName("preview") val preview: List<Stamp> = emptyList(),
     )
 
     @Serializable
