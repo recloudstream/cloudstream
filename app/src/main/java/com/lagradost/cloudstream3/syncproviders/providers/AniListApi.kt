@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.Actor
 import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.ActorRole
+import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.ErrorLoadingException
@@ -35,7 +36,7 @@ class AniListApi : SyncAPI() {
     override var name = "AniList"
     override val idPrefix = "anilist"
 
-    val key = "6871"
+    val key = BuildConfig.ANILIST_KEY
     override val redirectUrlIdentifier = "anilistlogin"
     override var requireLibraryRefresh = true
     override val hasOAuth2 = true

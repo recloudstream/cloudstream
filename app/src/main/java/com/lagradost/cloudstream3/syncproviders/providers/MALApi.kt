@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.syncproviders.providers
 
 import androidx.annotation.StringRes
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.R
@@ -34,7 +35,7 @@ class MALApi : SyncAPI() {
     override var name = "MAL"
     override val idPrefix = "mal"
 
-    val key = "1714d6f2f4f7cc19644384f8c4629910"
+    val key = BuildConfig.MAL_KEY
     private val apiUrl = "https://api.myanimelist.net"
     override val hasOAuth2 = true
     override val redirectUrlIdentifier: String? = "mallogin"
