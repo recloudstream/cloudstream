@@ -29,17 +29,17 @@ object FillerEpisodeCheck {
 
     @Serializable
     data class Show(
-        @SerialName("slug") val slug: String,
-        @SerialName("title") val title: String,
-        @SerialName("filler") val filler: ArrayList<Int>,
-        @SerialName("mixedCanon") val mixedCanon: ArrayList<Int>,
-        @SerialName("mangaCanon") val mangaCanon: ArrayList<Int>,
-        @SerialName("animeCanon") val animeCanon: ArrayList<Int>,
+        @JsonProperty("slug") @SerialName("slug") val slug: String,
+        @JsonProperty("title") @SerialName("title") val title: String,
+        @JsonProperty("filler") @SerialName("filler") val filler: ArrayList<Int>,
+        @JsonProperty("mixedCanon") @SerialName("mixedCanon") val mixedCanon: ArrayList<Int>,
+        @JsonProperty("mangaCanon") @SerialName("mangaCanon") val mangaCanon: ArrayList<Int>,
+        @JsonProperty("animeCanon") @SerialName("animeCanon") val animeCanon: ArrayList<Int>,
     )
 
     @Serializable
     data class MappingRoot(
-        @SerialName("type") val type: String?,
+        @JsonProperty("type") @SerialName("type") val type: String?,
         @JsonProperty("anidb_id") @SerialName("anidb_id") val anidbId: Long?,
         @JsonProperty("anilist_id") @SerialName("anilist_id") val anilistId: Long?,
         @JsonProperty("animecountdown_id") @SerialName("animecountdown_id") val animecountdownId: Long?,
@@ -53,19 +53,19 @@ object FillerEpisodeCheck {
         @JsonProperty("simkl_id") @SerialName("simkl_id") val simklId: Long?,
         @JsonProperty("themoviedb_id") @SerialName("themoviedb_id") val themoviedbId: Long?,
         @JsonProperty("tvdb_id") @SerialName("tvdb_id") val tvdbId: Long?,
-        @SerialName("season") val season: Season?,
+        @JsonProperty("season") @SerialName("season") val season: Season?,
     )
 
     @Serializable
     data class Season(
-        @SerialName("tvdb") val tvdb: Long?,
-        @SerialName("tmdb") val tmdb: Long?,
+        @JsonProperty("tvdb") @SerialName("tvdb") val tvdb: Long?,
+        @JsonProperty("tmdb") @SerialName("tmdb") val tmdb: Long?,
     )
 
     @Serializable
     data class CombinedMedia(
-        @SerialName("mapping") val mapping: MappingRoot?,
-        @SerialName("show") val show: Show,
+        @JsonProperty("mapping") @SerialName("mapping") val mapping: MappingRoot?,
+        @JsonProperty("show") @SerialName("show") val show: Show,
     )
 
     data class Database(
