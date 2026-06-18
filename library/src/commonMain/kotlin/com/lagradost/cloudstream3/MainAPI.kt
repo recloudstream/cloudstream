@@ -390,15 +390,15 @@ const val PROVIDER_STATUS_DOWN = 0
 
 @Serializable
 data class ProvidersInfoJson(
-    @SerialName("name") var name: String,
-    @SerialName("url") var url: String,
-    @SerialName("credentials") var credentials: String? = null,
-    @SerialName("status") var status: Int,
+    @JsonProperty("name") @SerialName("name") var name: String,
+    @JsonProperty("url") @SerialName("url") var url: String,
+    @JsonProperty("credentials") @SerialName("credentials") var credentials: String? = null,
+    @JsonProperty("status") @SerialName("status") var status: Int,
 )
 
 @Serializable
 data class SettingsJson(
-    @SerialName("enableAdult") var enableAdult: Boolean = false,
+    @JsonProperty("enableAdult") @SerialName("enableAdult") var enableAdult: Boolean = false,
 )
 
 data class MainPageData(
