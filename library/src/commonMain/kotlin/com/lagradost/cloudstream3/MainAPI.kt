@@ -869,7 +869,7 @@ enum class DubStatus(val id: Int) {
 @Serializable
 class Score private constructor(
     /** Decimal between [0, 10^9] representing the min score and max score respectively */
-    @SerialName("data") private val data: Int,
+    @JsonProperty("data") @SerialName("data") private val data: Int,
 ) {
     override fun hashCode(): Int = this.data.hashCode()
     override fun equals(other: Any?): Boolean = other is Score && this.data == other.data
@@ -1197,8 +1197,8 @@ suspend fun newSubtitleFile(
 @ConsistentCopyVisibility
 @Serializable
 data class AudioFile internal constructor(
-    @SerialName("url") var url: String,
-    @SerialName("headers") var headers: Map<String, String>? = null,
+    @JsonProperty("url") @SerialName("url") var url: String,
+    @JsonProperty("headers") @SerialName("headers") var headers: Map<String, String>? = null,
 )
 
 /** Creates an AudioFile with optional initializer for setting additional properties.
@@ -2177,9 +2177,9 @@ data class NextAiring(
  * */
 @Serializable
 data class SeasonData(
-    @SerialName("season") val season: Int,
-    @SerialName("name") val name: String? = null,
-    @SerialName("displaySeason") val displaySeason: Int? = null, // will use season if null
+    @JsonProperty("season") @SerialName("season") val season: Int,
+    @JsonProperty("name") @SerialName("name") val name: String? = null,
+    @JsonProperty("displaySeason") @SerialName("displaySeason") val displaySeason: Int? = null, // will use season if null
 )
 
 /** Abstract interface of EpisodeResponse */
@@ -2739,36 +2739,36 @@ data class Tracker(
 
 @Serializable
 data class AniSearch(
-    @SerialName("data") var data: Data? = Data(),
+    @JsonProperty("data") @SerialName("data") var data: Data? = Data(),
 ) {
     @Serializable
     data class Data(
-        @SerialName("Page") @JsonProperty("Page") var page: Page? = Page(),
+        @JsonProperty("Page") @SerialName("Page") var page: Page? = Page(),
     ) {
         @Serializable
         data class Page(
-            @SerialName("media") var media: ArrayList<Media> = arrayListOf(),
+            @JsonProperty("media") @SerialName("media") var media: ArrayList<Media> = arrayListOf(),
         ) {
             @Serializable
             data class Media(
-                @SerialName("title") var title: Title? = null,
-                @SerialName("id") var id: Int? = null,
-                @SerialName("idMal") var idMal: Int? = null,
-                @SerialName("seasonYear") var seasonYear: Int? = null,
-                @SerialName("format") var format: String? = null,
-                @SerialName("coverImage") var coverImage: CoverImage? = null,
-                @SerialName("bannerImage") var bannerImage: String? = null,
+                @JsonProperty("title") @SerialName("title") var title: Title? = null,
+                @JsonProperty("id") @SerialName("id") var id: Int? = null,
+                @JsonProperty("idMal") @SerialName("idMal") var idMal: Int? = null,
+                @JsonProperty("seasonYear") @SerialName("seasonYear") var seasonYear: Int? = null,
+                @JsonProperty("format") @SerialName("format") var format: String? = null,
+                @JsonProperty("coverImage") @SerialName("coverImage") var coverImage: CoverImage? = null,
+                @JsonProperty("bannerImage") @SerialName("bannerImage") var bannerImage: String? = null,
             ) {
                 @Serializable
                 data class CoverImage(
-                    @SerialName("extraLarge") var extraLarge: String? = null,
-                    @SerialName("large") var large: String? = null,
+                    @JsonProperty("extraLarge") @SerialName("extraLarge") var extraLarge: String? = null,
+                    @JsonProperty("large") @SerialName("large") var large: String? = null,
                 )
 
                 @Serializable
                 data class Title(
-                    @SerialName("romaji") var romaji: String? = null,
-                    @SerialName("english") var english: String? = null,
+                    @JsonProperty("romaji") @SerialName("romaji") var romaji: String? = null,
+                    @JsonProperty("english") @SerialName("english") var english: String? = null,
                 ) {
                     fun isMatchingTitles(title: String?): Boolean {
                         if (title == null) return false
