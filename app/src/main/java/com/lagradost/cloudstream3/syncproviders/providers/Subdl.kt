@@ -126,78 +126,78 @@ class SubDlApi : SubtitleAPI() {
 
     @Serializable
     data class SubtitleOAuthEntity(
-        @SerialName("userEmail") var userEmail: String,
-        @SerialName("pass") var pass: String,
-        @SerialName("name") var name: String? = null,
-        @SerialName("accessToken") var accessToken: String? = null,
-        @SerialName("apiKey") var apiKey: String? = null,
+        @JsonProperty("userEmail") @SerialName("userEmail") var userEmail: String,
+        @JsonProperty("pass") @SerialName("pass") var pass: String,
+        @JsonProperty("name") @SerialName("name") var name: String? = null,
+        @JsonProperty("accessToken") @SerialName("accessToken") var accessToken: String? = null,
+        @JsonProperty("apiKey") @SerialName("apiKey") var apiKey: String? = null,
     )
 
     @Serializable
     data class OAuthTokenResponse(
-        @SerialName("token") val token: String,
-        @SerialName("userData") val userData: UserData? = null,
-        @SerialName("status") val status: Boolean? = null,
-        @SerialName("message") val message: String? = null,
+        @JsonProperty("token") @SerialName("token") val token: String,
+        @JsonProperty("userData") @SerialName("userData") val userData: UserData? = null,
+        @JsonProperty("status") @SerialName("status") val status: Boolean? = null,
+        @JsonProperty("message") @SerialName("message") val message: String? = null,
     )
 
     @Serializable
     data class UserData(
-        @SerialName("email") val email: String,
-        @SerialName("name") val name: String,
-        @SerialName("country") val country: String,
-        @SerialName("scStepCode") val scStepCode: String,
-        @SerialName("scVerified") val scVerified: Boolean,
-        @SerialName("username") val username: String? = null,
-        @SerialName("scUsername") val scUsername: String,
+        @JsonProperty("email") @SerialName("email") val email: String,
+        @JsonProperty("name") @SerialName("name") val name: String,
+        @JsonProperty("country") @SerialName("country") val country: String,
+        @JsonProperty("scStepCode") @SerialName("scStepCode") val scStepCode: String,
+        @JsonProperty("scVerified") @SerialName("scVerified") val scVerified: Boolean,
+        @JsonProperty("username") @SerialName("username") val username: String? = null,
+        @JsonProperty("scUsername") @SerialName("scUsername") val scUsername: String,
     )
 
     @Serializable
     data class ApiKeyResponse(
-        @SerialName("ok") val ok: Boolean? = false,
+        @JsonProperty("ok") @SerialName("ok") val ok: Boolean? = false,
         @JsonProperty("api_key") @SerialName("api_key") val apiKey: String,
-        @SerialName("usage") val usage: Usage? = null,
+        @JsonProperty("usage") @SerialName("usage") val usage: Usage? = null,
     )
 
     @Serializable
     data class Usage(
-        @SerialName("total") val total: Long? = 0,
-        @SerialName("today") val today: Long? = 0,
+        @JsonProperty("total") @SerialName("total") val total: Long? = 0,
+        @JsonProperty("today") @SerialName("today") val today: Long? = 0,
     )
 
     @Serializable
     data class ApiResponse(
-        @SerialName("status") val status: Boolean? = null,
-        @SerialName("results") val results: List<Result>? = null,
-        @SerialName("subtitles") val subtitles: List<Subtitle>? = null,
+        @JsonProperty("status") @SerialName("status") val status: Boolean? = null,
+        @JsonProperty("results") @SerialName("results") val results: List<Result>? = null,
+        @JsonProperty("subtitles") @SerialName("subtitles") val subtitles: List<Subtitle>? = null,
     )
 
     @Serializable
     data class Result(
         @JsonProperty("sd_id") @SerialName("sd_id") val sdId: Int? = null,
-        @SerialName("type") val type: String? = null,
-        @SerialName("name") val name: String? = null,
+        @JsonProperty("type") @SerialName("type") val type: String? = null,
+        @JsonProperty("name") @SerialName("name") val name: String? = null,
         @JsonProperty("imdb_id") @SerialName("imdb_id") val imdbId: String? = null,
         @JsonProperty("tmdb_id") @SerialName("tmdb_id") val tmdbId: Long? = null,
         @JsonProperty("first_air_date") @SerialName("first_air_date") val firstAirDate: String? = null,
-        @SerialName("year") val year: Int? = null,
+        @JsonProperty("year") @SerialName("year") val year: Int? = null,
     )
 
     @Serializable
     data class Subtitle(
         @JsonProperty("release_name") @SerialName("release_name") val releaseName: String,
-        @SerialName("name") val name: String,
-        @SerialName("lang") val lang: String, // subdl language code
-        @SerialName("author") val author: String? = null,
-        @SerialName("url") val url: String? = null,
-        @SerialName("subtitlePage") val subtitlePage: String? = null,
-        @SerialName("season") val season: Int? = null,
-        @SerialName("episode") val episode: Int? = null,
-        @SerialName("language") val language: String? = null, // full language name
+        @JsonProperty("name") @SerialName("name") val name: String,
+        @JsonProperty("lang") @SerialName("lang") val lang: String, // subdl language code
+        @JsonProperty("author") @SerialName("author") val author: String? = null,
+        @JsonProperty("url") @SerialName("url") val url: String? = null,
+        @JsonProperty("subtitlePage") @SerialName("subtitlePage") val subtitlePage: String? = null,
+        @JsonProperty("season") @SerialName("season") val season: Int? = null,
+        @JsonProperty("episode") @SerialName("episode") val episode: Int? = null,
+        @JsonProperty("language") @SerialName("language") val language: String? = null, // full language name
         @JsonProperty("hi") @SerialName("hi") val hearingImpaired: Boolean? = null,
     )
 
-    // https://subdl.com/api-files/language_list.json
+    // https://subdl.com/api-files/language_list.json
     // most of it is IETF BPC 47 conformant tag
     // but there are some exceptions
     private val langTagIETF2subdl = mapOf(
@@ -207,63 +207,63 @@ class SubDlApi : SubtitleAPI() {
         "en-nl" to "NL_EN", // "Dutch_English"
         "pt-br" to "BR_PT", // "Brazillian Portuguese"
         "zh-hant" to "ZH_BG", // "Big 5 code" -> traditional Chinese (?_?)
-        // "ar" to "AR", // "Arabic"
-        // "az" to "AZ", // "Azerbaijani"
-        // "be" to "BE", // "Belarusian"
-        // "bg" to "BG", // "Bulgarian"
-        // "bn" to "BN", // "Bengali"
-        // "bs" to "BS", // "Bosnian"
-        // "ca" to "CA", // "Catalan"
-        // "cs" to "CS", // "Czech"
-        // "da" to "DA", // "Danish"
-        // "de" to "DE", // "German"
-        // "el" to "EL", // "Greek"
-        // "en" to "EN", // "English"
-        // "eo" to "EO", // "Esperanto"
-        // "es" to "ES", // "Spanish"
-        // "et" to "ET", // "Estonian"
-        // "fa" to "FA", // "Farsi_Persian"
-        // "fi" to "FI", // "Finnish"
-        // "fr" to "FR", // "French"
-        // "he" to "HE", // "Hebrew"
-        // "hi" to "HI", // "Hindi"
-        // "hr" to "HR", // "Croatian"
-        // "hu" to "HU", // "Hungarian"
-        // "id" to "ID", // "Indonesian"
-        // "is" to "IS", // "Icelandic"
-        // "it" to "IT", // "Italian"
-        // "ja" to "JA", // "Japanese"
-        // "ka" to "KA", // "Georgian"
-        // "kl" to "KL", // "Greenlandic"
-        // "ko" to "KO", // "Korean"
-        // "ku" to "KU", // "Kurdish"
-        // "lt" to "LT", // "Lithuanian"
-        // "lv" to "LV", // "Latvian"
-        // "mk" to "MK", // "Macedonian"
-        // "ml" to "ML", // "Malayalam"
-        // "mni" to "MNI", // "Manipuri"
-        // "ms" to "MS", // "Malay"
-        // "my" to "MY", // "Burmese"
-        // "nl" to "NL", // "Dutch"
-        // "no" to "NO", // "Norwegian"
-        // "pl" to "PL", // "Polish"
-        // "pt" to "PT", // "Portuguese"
-        // "ro" to "RO", // "Romanian"
-        // "ru" to "RU", // "Russian"
-        // "si" to "SI", // "Sinhala"
-        // "sk" to "SK", // "Slovak"
-        // "sl" to "SL", // "Slovenian"
-        // "sq" to "SQ", // "Albanian"
-        // "sr" to "SR", // "Serbian"
-        // "sv" to "SV", // "Swedish"
-        // "ta" to "TA", // "Tamil"
-        // "te" to "TE", // "Telugu"
-        // "th" to "TH", // "Thai"
-        // "tl" to "TL", // "Tagalog"
-        // "tr" to "TR", // "Turkish"
-        // "uk" to "UK", // "Ukranian"
-        // "ur" to "UR", // "Urdu"
-        // "vi" to "VI", // "Vietnamese"
-        // "zh" to "ZH", // "Chinese BG code"
+        // "ar" to "AR", // "Arabic"
+        // "az" to "AZ", // "Azerbaijani"
+        // "be" to "BE", // "Belarusian"
+        // "bg" to "BG", // "Bulgarian"
+        // "bn" to "BN", // "Bengali"
+        // "bs" to "BS", // "Bosnian"
+        // "ca" to "CA", // "Catalan"
+        // "cs" to "CS", // "Czech"
+        // "da" to "DA", // "Danish"
+        // "de" to "DE", // "German"
+        // "el" to "EL", // "Greek"
+        // "en" to "EN", // "English"
+        // "eo" to "EO", // "Esperanto"
+        // "es" to "ES", // "Spanish"
+        // "et" to "ET", // "Estonian"
+        // "fa" to "FA", // "Farsi_Persian"
+        // "fi" to "FI", // "Finnish"
+        // "fr" to "FR", // "French"
+        // "he" to "HE", // "Hebrew"
+        // "hi" to "HI", // "Hindi"
+        // "hr" to "HR", // "Croatian"
+        // "hu" to "HU", // "Hungarian"
+        // "id" to "ID", // "Indonesian"
+        // "is" to "IS", // "Icelandic"
+        // "it" to "IT", // "Italian"
+        // "ja" to "JA", // "Japanese"
+        // "ka" to "KA", // "Georgian"
+        // "kl" to "KL", // "Greenlandic"
+        // "ko" to "KO", // "Korean"
+        // "ku" to "KU", // "Kurdish"
+        // "lt" to "LT", // "Lithuanian"
+        // "lv" to "LV", // "Latvian"
+        // "mk" to "MK", // "Macedonian"
+        // "ml" to "ML", // "Malayalam"
+        // "mni" to "MNI", // "Manipuri"
+        // "ms" to "MS", // "Malay"
+        // "my" to "MY", // "Burmese"
+        // "nl" to "NL", // "Dutch"
+        // "no" to "NO", // "Norwegian"
+        // "pl" to "PL", // "Polish"
+        // "pt" to "PT", // "Portuguese"
+        // "ro" to "RO", // "Romanian"
+        // "ru" to "RU", // "Russian"
+        // "si" to "SI", // "Sinhala"
+        // "sk" to "SK", // "Slovak"
+        // "sl" to "SL", // "Slovenian"
+        // "sq" to "SQ", // "Albanian"
+        // "sr" to "SR", // "Serbian"
+        // "sv" to "SV", // "Swedish"
+        // "ta" to "TA", // "Tamil"
+        // "te" to "TE", // "Telugu"
+        // "th" to "TH", // "Thai"
+        // "tl" to "TL", // "Tagalog"
+        // "tr" to "TR", // "Turkish"
+        // "uk" to "UK", // "Ukranian"
+        // "ur" to "UR", // "Urdu"
+        // "vi" to "VI", // "Vietnamese"
+        // "zh" to "ZH", // "Chinese BG code"
     )
 }
