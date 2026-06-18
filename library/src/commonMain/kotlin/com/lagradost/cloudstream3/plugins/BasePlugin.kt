@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.plugins
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.utils.ExtractorApi
@@ -11,6 +12,7 @@ import kotlinx.serialization.Serializable
 const val PLUGIN_TAG = "PluginInstance"
 
 abstract class BasePlugin {
+
     /**
      * Used to register providers instances of MainAPI
      * @param element MainAPI provider you want to register
@@ -61,16 +63,16 @@ abstract class BasePlugin {
 
     @Serializable
     class Manifest {
-        @SerialName("name")
+        @JsonProperty("name") @SerialName("name")
         var name: String? = null
 
-        @SerialName("pluginClassName")
+        @JsonProperty("pluginClassName") @SerialName("pluginClassName")
         var pluginClassName: String? = null
 
-        @SerialName("version")
+        @JsonProperty("version") @SerialName("version")
         var version: Int? = null
 
-        @SerialName("requiresResources")
+        @JsonProperty("requiresResources") @SerialName("requiresResources")
         var requiresResources: Boolean = false
     }
 }
