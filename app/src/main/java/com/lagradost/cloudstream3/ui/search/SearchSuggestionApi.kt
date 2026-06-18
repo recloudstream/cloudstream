@@ -17,14 +17,14 @@ object SearchSuggestionApi {
     
     @Serializable
     data class TmdbSearchResult(
-        @SerialName("results") val results: List<TmdbSearchItem>?,
+        @JsonProperty("results") @SerialName("results") val results: List<TmdbSearchItem>?,
     )
     
     @Serializable
     data class TmdbSearchItem(
         @JsonProperty("media_type") @SerialName("media_type") val mediaType: String?,
-        @SerialName("title") val title: String?,
-        @SerialName("name") val name: String?,
+        @JsonProperty("title") @SerialName("title") val title: String?,
+        @JsonProperty("name") @SerialName("name") val name: String?,
         @JsonProperty("original_title") @SerialName("original_title") val originalTitle: String?,
         @JsonProperty("original_name") @SerialName("original_name") val originalName: String?,
     )
