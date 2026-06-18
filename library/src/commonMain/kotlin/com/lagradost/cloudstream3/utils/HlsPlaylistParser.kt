@@ -21,12 +21,11 @@
  */
 package com.lagradost.cloudstream3.utils
 
+import com.lagradost.cloudstream3.base64DecodeArray
 import io.ktor.http.Url
 import kotlinx.io.Buffer
 import kotlinx.io.IOException
 import kotlinx.io.readByteArray
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -1177,7 +1176,6 @@ object HlsPlaylistParser {
         return parseOptionalStringAttr(line, pattern, null, variableDefinitions)
     }
 
-    @OptIn(ExperimentalEncodingApi::class)
     @Throws(ParserException::class)
     private fun parseDrmSchemeData(
         line: String, keyFormat: String, variableDefinitions: Map<String, String>
@@ -1189,7 +1187,7 @@ object HlsPlaylistParser {
             return SchemeData(
                 uuid = C.WIDEVINE_UUID,
                 mimeType = MimeTypes.VIDEO_MP4,
-                data = Base64.Default.decode(urlString.substring(urlString.indexOf(',')))
+                data = base64DecodeArray(urlString.substring(urlString.indexOf(',')))
             )
         } else if (KEYFORMAT_WIDEVINE_PSSH_JSON == keyFormat) {
             return SchemeData(
@@ -1200,7 +1198,7 @@ object HlsPlaylistParser {
         } else if (KEYFORMAT_PLAYREADY == keyFormat && "1" == keyFormatVersions) {
             val urlString = parseStringAttr(line, REGEX_URI, variableDefinitions)
             val data: ByteArray =
-                Base64.Default.decode(urlString.substring(urlString.indexOf(',')))
+                base64DecodeArray(urlString.substring(urlString.indexOf(',')))
             val psshData: ByteArray =
                 PsshAtomUtil.buildPsshAtom(
                     systemId = C.PLAYREADY_UUID,
