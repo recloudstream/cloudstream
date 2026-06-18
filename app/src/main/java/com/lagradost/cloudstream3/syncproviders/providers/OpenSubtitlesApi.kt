@@ -221,29 +221,29 @@ class OpenSubtitlesApi : SubtitleAPI() {
 
     @Serializable
     data class OAuthToken(
-        @SerialName("token") var token: String? = null,
-        @SerialName("status") var status: Int? = null,
+        @JsonProperty("token") @SerialName("token") var token: String? = null,
+        @JsonProperty("status") @SerialName("status") var status: Int? = null,
     )
 
     @Serializable
     data class Results(
-        @SerialName("data") var data: List<ResultData>? = listOf(),
+        @JsonProperty("data") @SerialName("data") var data: List<ResultData>? = listOf(),
     )
 
     @Serializable
     data class ResultData(
-        @SerialName("id") var id: String? = null,
-        @SerialName("type") var type: String? = null,
-        @SerialName("attributes") var attributes: ResultAttributes? = ResultAttributes(),
+        @JsonProperty("id") @SerialName("id") var id: String? = null,
+        @JsonProperty("type") @SerialName("type") var type: String? = null,
+        @JsonProperty("attributes") @SerialName("attributes") var attributes: ResultAttributes? = ResultAttributes(),
     )
 
     @Serializable
     data class ResultAttributes(
         @JsonProperty("subtitle_id") @SerialName("subtitle_id") var subtitleId: String? = null,
-        @SerialName("language") var language: String? = null,
-        @SerialName("release") var release: String? = null,
-        @SerialName("url") var url: String? = null,
-        @SerialName("files") var files: List<ResultFiles>? = listOf(),
+        @JsonProperty("language") @SerialName("language") var language: String? = null,
+        @JsonProperty("release") @SerialName("release") var release: String? = null,
+        @JsonProperty("url") @SerialName("url") var url: String? = null,
+        @JsonProperty("files") @SerialName("files") var files: List<ResultFiles>? = listOf(),
         @JsonProperty("feature_details") @SerialName("feature_details") var featDetails: ResultFeatureDetails? = ResultFeatureDetails(),
         @JsonProperty("hearing_impaired") @SerialName("hearing_impaired") var hearingImpaired: Boolean? = null,
     )
@@ -256,19 +256,19 @@ class OpenSubtitlesApi : SubtitleAPI() {
 
     @Serializable
     data class ResultDownloadLink(
-        @SerialName("link") var link: String? = null,
+        @JsonProperty("link") @SerialName("link") var link: String? = null,
         @JsonProperty("file_name") @SerialName("file_name") var fileName: String? = null,
-        @SerialName("requests") var requests: Int? = null,
-        @SerialName("remaining") var remaining: Int? = null,
-        @SerialName("message") var message: String? = null,
+        @JsonProperty("requests") @SerialName("requests") var requests: Int? = null,
+        @JsonProperty("remaining") @SerialName("remaining") var remaining: Int? = null,
+        @JsonProperty("message") @SerialName("message") var message: String? = null,
         @JsonProperty("reset_time") @SerialName("reset_time") var resetTime: String? = null,
         @JsonProperty("reset_time_utc") @SerialName("reset_time_utc") var resetTimeUtc: String? = null,
     )
 
     @Serializable
     data class ResultFeatureDetails(
-        @SerialName("year") var year: Int? = null,
-        @SerialName("title") var title: String? = null,
+        @JsonProperty("year") @SerialName("year") var year: Int? = null,
+        @JsonProperty("title") @SerialName("title") var title: String? = null,
         @JsonProperty("movie_name") @SerialName("movie_name") var movieName: String? = null,
         @JsonProperty("imdb_id") @SerialName("imdb_id") var imdbId: Int? = null,
         @JsonProperty("tmdb_id") @SerialName("tmdb_id") var tmdbId: Int? = null,
