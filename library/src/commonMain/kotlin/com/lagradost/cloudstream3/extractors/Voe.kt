@@ -1,9 +1,10 @@
 package com.lagradost.cloudstream3.extractors
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.base64Decode
-import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.INFER_TYPE
@@ -104,8 +105,8 @@ open class Voe : ExtractorApi() {
 
     @Serializable
     private data class VoeDecrypted(
-        @SerialName("source") val source: String? = null,
-        @SerialName("direct_access_url") val directAccessUrl: String? = null,
+        @JsonProperty("source") @SerialName("source") val source: String? = null,
+        @JsonProperty("direct_access_url") @SerialName("direct_access_url") val directAccessUrl: String? = null,
     )
 
     private fun decryptF7(p8: String): VoeDecrypted? {
@@ -117,7 +118,7 @@ open class Voe : ExtractorApi() {
             val vF5 = charShift(vF4, 3)
             val vF6 = reverse(vF5)
             val vAtob = base64Decode(vF6)
-            tryParseJson<VoeDecrypted>(vAtob)
+            parseJson<VoeDecrypted>(vAtob)
         } catch (e: Exception) {
             println("Decryption error: ${e.message}")
             null

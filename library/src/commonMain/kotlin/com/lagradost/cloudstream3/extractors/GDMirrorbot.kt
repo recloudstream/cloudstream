@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.extractors
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
@@ -25,18 +26,18 @@ open class GDMirrorbot : ExtractorApi() {
 
     @Serializable
     private data class EmbedData(
-        @SerialName("data") val data: List<FileSlug>? = null,
+        @JsonProperty("data") @SerialName("data") val data: List<FileSlug>? = null,
     )
 
     @Serializable
     private data class FileSlug(
-        @SerialName("fileslug") val fileslug: String? = null,
+        @JsonProperty("fileslug") @SerialName("fileslug") val fileslug: String? = null,
     )
 
     @Serializable
     private data class EmbedHelper(
-        @SerialName("siteUrls") val siteUrls: Map<String, String>? = null,
-        @SerialName("siteFriendlyNames") val siteFriendlyNames: Map<String, String>? = null,
+        @JsonProperty("siteUrls") @SerialName("siteUrls") val siteUrls: Map<String, String>? = null,
+        @JsonProperty("siteFriendlyNames") @SerialName("siteFriendlyNames") val siteFriendlyNames: Map<String, String>? = null,
     )
 
     override suspend fun getUrl(

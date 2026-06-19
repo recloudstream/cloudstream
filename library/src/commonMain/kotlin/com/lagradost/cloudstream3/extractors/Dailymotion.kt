@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.extractors
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.newSubtitleFile
@@ -82,25 +83,25 @@ open class Dailymotion : ExtractorApi() {
 
     @Serializable
     data class MetaData(
-        @SerialName("qualities") val qualities: Map<String, List<Quality>>?,
-        @SerialName("subtitles") val subtitles: SubtitlesWrapper?,
+        @JsonProperty("qualities") @SerialName("qualities") val qualities: Map<String, List<Quality>>?,
+        @JsonProperty("subtitles") @SerialName("subtitles") val subtitles: SubtitlesWrapper?,
     )
 
     @Serializable
     data class Quality(
-        @SerialName("type") val type: String?,
-        @SerialName("url") val url: String?,
+        @JsonProperty("type") @SerialName("type") val type: String?,
+        @JsonProperty("url") @SerialName("url") val url: String?,
     )
 
     @Serializable
     data class SubtitlesWrapper(
-        @SerialName("enable") val enable: Boolean,
-        @SerialName("data") val data: Map<String, SubtitleData>?,
+        @JsonProperty("enable") @SerialName("enable") val enable: Boolean,
+        @JsonProperty("data") @SerialName("data") val data: Map<String, SubtitleData>?,
     )
 
     @Serializable
     data class SubtitleData(
-        @SerialName("label") val label: String,
-        @SerialName("urls") val urls: List<String>,
+        @JsonProperty("label") @SerialName("label") val label: String,
+        @JsonProperty("urls") @SerialName("urls") val urls: List<String>,
     )
 }
