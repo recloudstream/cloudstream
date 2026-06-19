@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import com.lagradost.cloudstream3.utils.newExtractorLink
-import java.net.URI
+import io.ktor.http.Url
 
 class Doodspro : DoodLaExtractor() {
     override var mainUrl = "https://doods.pro"
@@ -138,8 +138,6 @@ open class DoodLaExtractor : ExtractorApi() {
     }
 
     private fun getBaseUrl(url: String): String {
-        return URI(url).let {
-            "${it.scheme}://${it.host}"
-        }
+        return Url(url).let { "${it.protocol.name}://${it.host}" }
     }
 }
