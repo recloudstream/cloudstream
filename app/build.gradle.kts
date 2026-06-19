@@ -60,6 +60,8 @@ val generateGitHash = tasks.register<GenerateGitHashTask>("generateGitHash") {
 }
 
 android {
+    val localProperties = gradleLocalProperties(rootDir, project.providers)
+
     @Suppress("UnstableApiUsage")
     testOptions {
         unitTests.isReturnDefaultValues = true
@@ -96,6 +98,16 @@ android {
                 keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
             }
         }
+
+        val keystorePath = localProperties.getProperty("keystore.file")
+        if (!keystorePath.isNullOrEmpty()) {
+            create("local") {
+                storeFile = file(keystorePath)
+                storePassword = localProperties.getProperty("keystore.password")
+                keyAlias = localProperties.getProperty("keystore.alias")
+                keyPassword = localProperties.getProperty("keystore.key_password")
+            }
+        }
     }
 
     compileSdk = libs.versions.compileSdk.get().toInt()
@@ -120,8 +132,7 @@ android {
 
         manifestPlaceholders["target_sdk_version"] = libs.versions.targetSdk.get()
 
-        // Reads local.properties
-        val localProperties = gradleLocalProperties(rootDir, project.providers)
+        // Reads local.properties (already loaded at class level)
 
         buildConfigField(
             "long",
@@ -154,6 +165,10 @@ android {
         debug {
             isDebuggable = true
             applicationIdSuffix = ".debug"
+            val keystorePath = localProperties.getProperty("keystore.file")
+            if (!keystorePath.isNullOrEmpty()) {
+                signingConfig = signingConfigs.getByName("local")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
