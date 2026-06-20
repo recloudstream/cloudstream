@@ -3,7 +3,7 @@ package com.lagradost.cloudstream3
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
-import io.github.classgraph.ClassGraph
+import dalvik.system.DexFile
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -100,19 +100,26 @@ class SerializationClassTester {
         }
     }
 
+    // DEX files are the best solution to read all our classes dynamically.
+    // classgraph could be used instead, but it only gives results on the JVM, not Android.
+    @Suppress("DEPRECATION")
     private fun findSerializableClasses(packageName: String): List<KClass<*>> {
         val context = InstrumentationRegistry
             .getInstrumentation()
             .targetContext
 
-        return ClassGraph()
-            .enableClassInfo()
-            .enableAnnotationInfo()
-            .overrideClassLoaders(context.classLoader)
-            .acceptPackages(packageName)
-            .scan()
-            .getClassesWithAnnotation(Serializable::class.java.name)
-            .mapNotNull { runCatching { Class.forName(it.name, false, context.classLoader).kotlin }.getOrNull() }
+        val dexFile = DexFile(context.packageCodePath)
+        return dexFile.entries()
+            .toList()
+            .filter { it.startsWith(packageName) }
+            .mapNotNull {
+                runCatching { Class.forName(it).kotlin }.getOrNull()
+            }.filter { kClass ->
+                // Not possible to use .hasAnnotation() on newer Android versions.
+                kClass.java.annotations.any {
+                    it is Serializable
+                }
+            }
     }
 
     @OptIn(InternalSerializationApi::class)

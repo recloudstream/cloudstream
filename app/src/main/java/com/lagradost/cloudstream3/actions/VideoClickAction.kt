@@ -20,8 +20,10 @@ import com.lagradost.cloudstream3.actions.temp.MpvExPackage
 import com.lagradost.cloudstream3.actions.temp.MpvKtPackage
 import com.lagradost.cloudstream3.actions.temp.MpvKtPreviewPackage
 import com.lagradost.cloudstream3.actions.temp.MpvPackage
+import com.lagradost.cloudstream3.actions.temp.MpvRxPackage
 import com.lagradost.cloudstream3.actions.temp.MpvYTDLPackage
 import com.lagradost.cloudstream3.actions.temp.NextPlayerPackage
+import com.lagradost.cloudstream3.actions.temp.OnlyPlayer
 import com.lagradost.cloudstream3.actions.temp.PlayInBrowserAction
 import com.lagradost.cloudstream3.actions.temp.PlayMirrorAction
 import com.lagradost.cloudstream3.actions.temp.ViewM3U8Action
@@ -64,6 +66,8 @@ object VideoClickActionHolder {
         MpvYTDLPackage(),
         MpvKtPackage(),
         MpvKtPreviewPackage(),
+        OnlyPlayer(),
+        MpvRxPackage(),
         // Always Ask option
         AlwaysAskAction(),
         // added by plugins
