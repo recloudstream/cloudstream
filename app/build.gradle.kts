@@ -127,6 +127,16 @@ android {
             "SIMKL_CLIENT_SECRET",
             "\"" + (System.getenv("SIMKL_CLIENT_SECRET") ?: localProperties["simkl.secret"]) + "\""
         )
+        buildConfigField(
+            "String",
+            "MAL_KEY",
+            "\"" + (System.getenv("MAL_KEY") ?: localProperties["mal.key"]) + "\""
+        )
+        buildConfigField(
+            "String",
+            "ANILIST_KEY",
+            "\"" + (System.getenv("ANILIST_KEY") ?: localProperties["anilist.key"]) + "\""
+        )
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
