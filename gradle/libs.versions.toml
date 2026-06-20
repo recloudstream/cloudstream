@@ -8,7 +8,6 @@ annotation = "1.10.0"
 appcompat = "1.7.1"
 biometric = "1.4.0-alpha07"
 buildkonfigGradlePlugin = "0.21.2"
-classgraph = "4.8.184"
 coil = { strictly = "3.3.0" } # Later versions require jvmTarget 11 or later
 colorpicker = "6b46b49"
 conscryptAndroid = { strictly = "2.5.2" } # 2.5.3 crashes everything
@@ -70,7 +69,6 @@ anime-db = { module = "com.github.recloudstream:anime-db", version.ref = "animeD
 annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
-classgraph = { group = "io.github.classgraph", name = "classgraph", version.ref = "classgraph" }
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 colorpicker = { module = "com.github.recloudstream:color-picker-android", version.ref = "colorpicker" }
