@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.Actor
 import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.ActorRole
+import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
@@ -54,7 +55,7 @@ class AniListApi : SyncAPI() {
             accessToken = sanitizer["access_token"]
                 ?: throw ErrorLoadingException("No access token"),
             //refreshToken = sanitizer["refresh_token"],
-            accessTokenLifetime = unixTime + sanitizer["expires_in"]!!.toLong(),
+            accessTokenLifetime = APIHolder.unixTime + sanitizer["expires_in"]!!.toLong(),
         )
         return token
     }
@@ -108,7 +109,7 @@ class AniListApi : SyncAPI() {
             nextAiring = season.nextAiringEpisode?.let {
                 NextAiring(
                     it.episode ?: return@let null,
-                    (it.timeUntilAiring ?: return@let null) + unixTime
+                    (it.timeUntilAiring ?: return@let null) + APIHolder.unixTime
                 )
             },
             title = season.title?.userPreferred,
