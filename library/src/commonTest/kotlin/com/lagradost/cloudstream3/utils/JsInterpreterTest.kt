@@ -8,6 +8,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.test.assertFalse
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeSource
 
 class JsInterpreterTest {
 
@@ -1831,5 +1834,231 @@ class JsInterpreterTest {
     @Test
     fun bitwiseTruncationPattern() {
         assertEquals(5.0, num("(11/2)|0"))
+    }
+
+    @Test
+    fun infiniteLoopIsAbortedByExecutionBudget() {
+        assertEquals(Unit, evalJs("while(true){}"))
+    }
+
+    @Test
+    fun infiniteLoopIsAbortedByTimeBudget() {
+        val mark = TimeSource.Monotonic.markNow()
+        val result = evalJs("while(true){}", maxExecutionTime = 200.milliseconds)
+        assertEquals(Unit, result)
+        // Generous upper bound just to avoid flakiness on slow machines.
+        assertTrue(mark.elapsedNow() < 2.seconds)
+    }
+
+    @Test
+    fun infiniteLoopIsAbortedByTinyInstructionBudget() {
+        // A tiny instruction cap but a generous time budget, the instruction count is what
+        // should abort this, not the clock.
+        assertEquals(Unit, evalJs("while(true){}", maxExecutionTime = 60.seconds, maxInstructions = 1000))
+    }
+
+    @Test
+    fun finiteLoopCompletesNormally() {
+        assertEquals(45.0, num("var s=0; for (var i=0;i<10;i++){ s+=i; } s"))
+    }
+
+    @Test
+    fun exponentiation() {
+        assertEquals(1024.0, num("2**10"))
+    }
+
+    @Test
+    fun exponentiationIsRightAssociative() {
+        // 2 ** (3 ** 2) == 2 ** 9 == 512, NOT (2 ** 3) ** 2 == 64
+        assertEquals(512.0, num("2**3**2"))
+    }
+
+    @Test
+    fun exponentiationWithNegativeExponent() {
+        assertEquals(0.5, num("2**-1"))
+    }
+
+    @Test
+    fun exponentiationOverflowsToInfinity() {
+        assertTrue(num("10**1000").isInfinite())
+    }
+
+    @Test
+    fun assignmentPowEquals() {
+        assertEquals(8.0, num("var x=2; x**=3; x"))
+    }
+
+    @Test
+    fun legacyOctalLiteral() {
+        // 010 (octal) == 8
+        assertEquals(8.0, num("010"))
+    }
+
+    @Test
+    fun legacyOctalLiteralArithmetic() {
+        // 010 (octal, 8) - 03 (octal, 3) == 5
+        assertEquals(5.0, num("010 - 03"))
+    }
+
+    @Test
+    fun octalLikeLiteralWithNonOctalDigitIsDecimal() {
+        // "08" contains a non-octal digit (8), so JS treats it as plain decimal 8.
+        assertEquals(8.0, num("08"))
+    }
+
+    @Test
+    fun arrayElisionsCountTowardLength() {
+        assertEquals(3.0, num("[,,,].length"))
+    }
+
+    @Test
+    fun arrayTrailingCommaDoesNotAddElement() {
+        assertEquals(2.0, num("[1,2,].length"))
+    }
+
+    @Test
+    fun arrayTrailingElisionAfterCommaAddsAHole() {
+        assertEquals(3.0, num("[1,2,,].length"))
+    }
+
+    @Test
+    fun arrayHoleJoinsAsEmptyString() {
+        // Array.prototype.join treats holes/undefined/null as "", not the literal "undefined".
+        assertEquals("1,,3", str("[1,,3].join(',')"))
+    }
+
+    @Test
+    fun parseIntStopsAtExponentNotation() {
+        // 0.0000005 stringifies to "5e-7"; parseInt reads the leading "5" and stops at "e".
+        assertEquals(5.0, num("parseInt(0.0000005)"))
+    }
+
+    @Test
+    fun parseIntWithExplicitRadix() {
+        assertEquals(255.0, num("parseInt('ff', 16)"))
+    }
+
+    @Test
+    fun parseIntStopsAtFirstNonDigit() {
+        assertEquals(42.0, num("parseInt('42px')"))
+    }
+
+    @Test
+    fun parseIntInvalidInputIsNaN() {
+        assertTrue(num("parseInt('xyz')").isNaN())
+    }
+
+    @Test
+    fun emptyStringCoercesToZero() {
+        assertEquals(0.0, num("\"\" - 0"))
+    }
+
+    @Test
+    fun emptyStringMinusNegatedEmptyStringIsZero() {
+        assertEquals(0.0, evalJs("\"\" - - \"\""))
+    }
+
+    @Test
+    fun emptyStringMinusNumber() {
+        assertEquals(-1.0, evalJs("\"\" - 1"))
+    }
+
+    @Test
+    fun nullCoercesToZeroNotNaN() {
+        assertEquals(1.0, num("null + 1"))
+    }
+
+    @Test
+    fun undefinedCoercesToNaNNotZero() {
+        // Unlike null, undefined coerces to NaN, not 0.
+        assertTrue(num("undefined + 1").isNaN())
+    }
+
+    @Test
+    fun postfixIncrementOnNonLvalueFailsGracefully() {
+        assertEquals(2.0, evalJs("true+1"))
+        // `true++` has no valid assignment target (a SyntaxError in real JS); evalJs falls
+        // back to Unit instead of returning a bogus number.
+        assertEquals(Unit, evalJs("true++"))
+    }
+
+    @Test
+    fun booleanAdditionCoercesToNumber() {
+        assertEquals(1.0, num("true + false"))
+    }
+
+    @Test
+    fun arrayPlusArrayConcatenatesAsStrings() {
+        assertEquals("1,2,34,5,6", str("[1, 2, 3] + [4, 5, 6]"))
+    }
+
+    @Test
+    fun commaOperatorWithTwoOperands() {
+        assertEquals(2.0, num("10,2"))
+    }
+
+    @Test
+    fun doubleNegationOfEmptyStringIsFalse() {
+        assertFalse(bool("!!\"\""))
+    }
+
+    @Test
+    fun looseEqualityBooleanVsNonNumericStringIsFalse() {
+        assertFalse(bool("true == \"true\""))
+    }
+
+    @Test
+    fun nullPlusZeroIsZero() {
+        assertEquals(0.0, num("null + 0"))
+    }
+
+    @Test
+    fun zeroDividedByZeroIsNaN() {
+        assertTrue(num("0/0").isNaN())
+    }
+
+    @Test
+    fun exponentiationInfinityComparisonIsFalse() {
+        assertFalse(bool("1/0 > 10 ** 1000"))
+    }
+
+    @Test
+    fun nullMinusZeroThenStringConcat() {
+        assertEquals("00", str("(null - 0) + \"0\""))
+    }
+
+    @Test
+    fun nonNumericStringMinusNumberThenAddBoolean() {
+        assertTrue(num("true + (\"true\" - 0) ").isNaN())
+    }
+
+    @Test
+    fun negatedTruthyNumbersSumToZero() {
+        assertEquals(0.0, num("!5 + !5"))
+    }
+
+    @Test
+    fun numberAdditionThenStringConcatenation() {
+        assertEquals("33", str("1 + 2 + \"3\""))
+    }
+
+    @Test
+    fun typeofNaNIsNumber() {
+        assertEquals("number", str("typeof NaN"))
+    }
+
+    @Test
+    fun undefinedPlusFalseIsNaN() {
+        assertTrue(num("undefined + false").isNaN())
+    }
+
+    @Test
+    fun logicalAndShortCircuitsOnFalsyEmptyString() {
+        assertEquals("", str("\"\" && -0"))
+    }
+
+    @Test
+    fun combinedCoercionOfNaNEmptyStringAndArrayHoleIsZero() {
+        assertEquals(0.0, evalJs("+!!NaN * \"\" - - [,]"))
     }
 }

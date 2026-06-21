@@ -6,6 +6,10 @@ import com.lagradost.cloudstream3.utils.StringUtils.decodeUrl
 import com.lagradost.cloudstream3.utils.StringUtils.encodeUrl
 import kotlin.math.*
 import kotlin.random.Random
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeMark
+import kotlin.time.TimeSource
 
 /**
  * Lightweight pure-Kotlin JavaScript interpreter designed to replace Rhino for
@@ -13,14 +17,14 @@ import kotlin.random.Random
  *
  * Supports the subset of JS that appears in obfuscated video-hosting scripts:
  *  - Variable declarations (var / let / const)
- *  - String, number and boolean literals
- *  - Arithmetic / bitwise / comparison / logical operators
+ *  - String, number (including hex `0x..` and legacy octal `0..`) and boolean literals
+ *  - Arithmetic / bitwise / comparison / logical operators, including exponentiation (`**`)
  *  - String concatenation with +
  *  - String methods: split, join, reverse, replace, charAt, charCodeAt,
  *                    fromCharCode, substr, substring, slice, indexOf,
  *                    trim, toLowerCase, toUpperCase, toString, length
- *  - Array literals and methods: join, reverse, split, push, pop,
- *                                 map, filter, forEach, length
+ *  - Array literals (including elisions, e.g. `[1,,3]`) and methods: join, reverse, split,
+ *                                 push, pop, map, filter, forEach, length
  *  - parseInt / parseFloat / isNaN / isFinite
  *  - Math.*  (sin, cos, floor, ceil, round, abs, pow, sqrt, log, max, min, random)
  *  - String.fromCharCode
@@ -31,6 +35,14 @@ import kotlin.random.Random
  *  - Template literals (back-tick strings)
  *  - instanceof
  *  - typeof
+ *
+ * Every evaluation is bounded by an execution budget (wall-clock time and/or instruction
+ * count, see [JS_DEFAULT_MAX_EXECUTION_TIME] / [JS_DEFAULT_MAX_INSTRUCTIONS]) so that
+ * untrusted/obfuscated scripts containing an infinite loop (such as `while(true){}`)
+ * cannot hang the calling thread forever. Note that since evaluation is synchronous, wrapping a call
+ * in `withTimeout` will not pre-empt it mid-flight (there's no suspension point for the
+ * coroutine machinery to act on) so the budget below is what actually guarantees the call
+ * returns.
  *
  * Usage:
  *   val result = evalJs("var x = 1+2; x")
@@ -45,6 +57,12 @@ import kotlin.random.Random
  *   val url = evalJs("var url = 'https:' + computeSuffix()", "url")
  */
 
+/** Default wall-clock budget for a single [evalJs] / [JsContext.eval] call before it's aborted. */
+val JS_DEFAULT_MAX_EXECUTION_TIME: Duration = 5.seconds
+
+/** Hard backstop on statements/expressions executed, independent of wall-clock time. */
+const val JS_DEFAULT_MAX_INSTRUCTIONS = 50_000_000L
+
 /**
  * Convert any JS runtime value to its JavaScript string representation.
  * Mirrors what JS `String(value)` would produce.
@@ -55,10 +73,17 @@ fun jsValueToString(v: Any?): String = toJsString(v)
 /**
  * Stateful JS execution context.  Keeps variables alive between [eval] calls,
  * mimicking the Rhino "scope" object that extensions used to hold on to.
+ *
+ * @param maxExecutionTime wall-clock budget given to each [eval] call.
+ * @param maxInstructions hard cap on statements/expressions executed per [eval] call,
+ *        independent of wall-clock time.
  */
 @Prerelease
-class JsContext {
-    private val interpreter = JsInterpreter()
+class JsContext(
+    maxExecutionTime: Duration = JS_DEFAULT_MAX_EXECUTION_TIME,
+    maxInstructions: Long = JS_DEFAULT_MAX_INSTRUCTIONS,
+) {
+    private val interpreter = JsInterpreter(maxExecutionTime, maxInstructions)
 
     /** Evaluate [code] in this context.  Returns the last expression value. */
     fun eval(code: String): Any? = interpreter.eval(code)
@@ -77,21 +102,31 @@ class JsContext {
  *
  * @param js The JavaScript code to evaluate.
  * @param variable Optional variable name to retrieve from the scope after evaluation.
+ * @param maxExecutionTime wall-clock budget before the script is forcibly aborted.
+ *        Defaults to [JS_DEFAULT_MAX_EXECUTION_TIME]; pass a smaller value for time-sensitive
+ *        call sites (e.g. inside a `withTimeout`, which cannot itself interrupt this call).
+ * @param maxInstructions hard cap on statements/expressions executed, independent of
+ *        wall-clock time. Defaults to [JS_DEFAULT_MAX_INSTRUCTIONS].
  * @return The last expression value, or the named variable value if [variable] is specified.
- *         Returns [Unit] on evaluation failure or when the result is JS undefined.
+ *         Returns [Unit] on evaluation failure, timeout, or when the result is JS undefined.
  *         JS null is represented as Kotlin null. Use [jsValueToString] to convert to a JS string.
  */
 @Prerelease
-fun evalJs(js: String, variable: String? = null): Any? {
-    val interpreter = JsInterpreter()
+fun evalJs(
+    js: String,
+    variable: String? = null,
+    maxExecutionTime: Duration = JS_DEFAULT_MAX_EXECUTION_TIME,
+    maxInstructions: Long = JS_DEFAULT_MAX_INSTRUCTIONS,
+): Any? {
+    val interpreter = JsInterpreter(maxExecutionTime, maxInstructions)
     val result = interpreter.eval(js)
     return if (variable != null) interpreter.getVar(variable) else result
 }
 
 private enum class TT {
-    NUMBER, STRING, IDENT, PLUS, MINUS, STAR, SLASH, PERCENT, EQ, EQEQ, EQEQEQ,
+    NUMBER, STRING, IDENT, PLUS, MINUS, STAR, SLASH, PERCENT, POW, EQ, EQEQ, EQEQEQ,
     NEQ, NEQEQ, LT, LTEQ, GT, GTEQ, AND, OR, NOT, AMP, PIPE, CARET, TILDE,
-    LSHIFT, RSHIFT, URSHIFT, PLUSEQ, MINUSEQ, STAREQ, SLASHEQ, PERCENTEQ,
+    LSHIFT, RSHIFT, URSHIFT, PLUSEQ, MINUSEQ, STAREQ, SLASHEQ, PERCENTEQ, POWEQ,
     PLUSPLUS, MINUSMINUS, DOT, COMMA, SEMI, COLON, QUESTION, LPAREN, RPAREN,
     LBRACE, RBRACE, LBRACKET, RBRACKET, EOF
 }
@@ -199,7 +234,12 @@ private class Lexer(private val src: String) {
         val tok = when (c) {
             '+' -> when (next) { '+' -> adv(TT.PLUSPLUS, 1); '=' -> adv(TT.PLUSEQ, 1); else -> Token(TT.PLUS, "+", start) }
             '-' -> when (next) { '-' -> adv(TT.MINUSMINUS, 1); '=' -> adv(TT.MINUSEQ, 1); else -> Token(TT.MINUS, "-", start) }
-            '*' -> if (next == '=') adv(TT.STAREQ, 1) else Token(TT.STAR, "*", start)
+            '*' -> when {
+                next == '*' && nn == '=' -> adv(TT.POWEQ, 2)
+                next == '*' -> adv(TT.POW, 1)
+                next == '=' -> adv(TT.STAREQ, 1)
+                else -> Token(TT.STAR, "*", start)
+            }
             '/' -> if (next == '=') adv(TT.SLASHEQ, 1) else Token(TT.SLASH, "/", start)
             '%' -> if (next == '=') adv(TT.PERCENTEQ, 1) else Token(TT.PERCENT, "%", start)
             '=' -> when { next == '=' && nn == '=' -> adv(TT.EQEQEQ, 2); next == '=' -> adv(TT.EQEQ, 1); else -> Token(TT.EQ, "=", start) }
@@ -440,7 +480,7 @@ private class Parser(private val lex: Lexer) {
     private fun parseAssign(): Node {
         val left = parseTernary()
         val op = when (lex.peek().type) {
-            TT.EQ -> "="; TT.PLUSEQ -> "+="; TT.MINUSEQ -> "-="; TT.STAREQ -> "*="; TT.SLASHEQ -> "/="; TT.PERCENTEQ -> "%="
+            TT.EQ -> "="; TT.PLUSEQ -> "+="; TT.MINUSEQ -> "-="; TT.STAREQ -> "*="; TT.SLASHEQ -> "/="; TT.PERCENTEQ -> "%="; TT.POWEQ -> "**="
             else -> return left
         }
         lex.consume()
@@ -478,7 +518,17 @@ private class Parser(private val lex: Lexer) {
     }
     private fun parseShift() = parseBin(::parseAdd, TT.LSHIFT to "<<", TT.RSHIFT to ">>", TT.URSHIFT to ">>>")
     private fun parseAdd() = parseBin(::parseMul, TT.PLUS to "+", TT.MINUS to "-")
-    private fun parseMul() = parseBin(::parseUnary, TT.STAR to "*", TT.SLASH to "/", TT.PERCENT to "%")
+    private fun parseMul() = parseBin(::parsePow, TT.STAR to "*", TT.SLASH to "/", TT.PERCENT to "%")
+
+    /** `**` binds tighter than `* / %` and is right-associative: `2 ** 3 ** 2 == 2 ** (3 ** 2)`. */
+    private fun parsePow(): Node {
+        val base = parseUnary()
+        if (lex.peek().type == TT.POW) {
+            lex.consume()
+            return BinExpr("**", base, parsePow())
+        }
+        return base
+    }
 
     private fun parseBin(next: () -> Node, vararg ops: Pair<TT, String>): Node {
         var left = next()
@@ -584,12 +634,17 @@ private class Parser(private val lex: Lexer) {
         return when (tok.type) {
             TT.NUMBER -> {
                 lex.consume()
-                NumLit(
-                    tok.raw.toDoubleOrNull()
-                        ?: if (tok.raw.startsWith("0x") || tok.raw.startsWith("0X"))
-                            tok.raw.drop(2).toLong(16).toDouble()
-                    else Double.NaN
-                )
+                val raw = tok.raw
+                val value = when {
+                    raw.startsWith("0x") || raw.startsWith("0X") ->
+                        raw.drop(2).toLongOrNull(16)?.toDouble() ?: Double.NaN
+                    // Legacy octal literal, a leading zero followed only by octal digits
+                    // (0-7), e.g. "010" == 8. If any digit is 8/9 it's just decimal ("08" == 8).
+                    raw.length > 1 && raw[0] == '0' && raw.all { it in '0'..'7' } ->
+                        raw.toLongOrNull(8)?.toDouble() ?: Double.NaN
+                    else -> raw.toDoubleOrNull() ?: Double.NaN
+                }
+                NumLit(value)
             }
             TT.STRING -> { lex.consume(); StrLit(tok.raw) }
             TT.LPAREN -> {
@@ -602,7 +657,15 @@ private class Parser(private val lex: Lexer) {
                 lex.consume()
                 val elems = mutableListOf<Node>()
                 while (lex.peek().type != TT.RBRACKET && lex.peek().type != TT.EOF) {
-                    elems.add(parseAssign()); lex.matchIf(TT.COMMA)
+                    if (lex.peek().type == TT.COMMA) {
+                        // Elision, a "hole" in the array, e.g. the middle slot of [1,,3].
+                        // Reads back as undefined but still occupies a slot/length.
+                        elems.add(UndefinedLit)
+                        lex.consume()
+                    } else {
+                        elems.add(parseAssign())
+                        if (lex.peek().type == TT.COMMA) lex.consume() else break
+                    }
                 }
                 lex.expect(TT.RBRACKET)
                 ArrayLit(elems)
@@ -649,13 +712,54 @@ private object BreakSignal : Throwable()
 private object ContinueSignal : Throwable()
 private class ThrowSignal(val value: Any?) : Throwable()
 
+/**
+ * Internal signal thrown once a script exceeds its execution budget (time or instruction
+ * count). Deliberately extends [Throwable] rather than [Exception]. The interpreter's own
+ * `try`/`catch` node handling (see [JsInterpreter.execNode]'s `TryCatch` branch) only catches
+ * `Exception`, so a JS script can't wrap an infinite loop in its own try/catch and swallow this,
+ * keeping the loop alive forever.
+ */
+private class JsExecutionLimitExceeded(message: String) : Throwable(message)
+
 private fun toNumber(v: Any?): Double = when (v) {
-    null, is Unit -> 0.0
+    null -> 0.0 // In JS Number(null) === 0
+    is Unit -> Double.NaN // In JS Number(undefined) === NaN
     is Double -> v
     is Boolean -> if (v) 1.0 else 0.0
-    is String -> v.trim().toDoubleOrNull() ?: if (v.startsWith("0x") || v.startsWith("0X")) v.drop(2).toLongOrNull(16)?.toDouble() ?: Double.NaN else Double.NaN
-    is JsList -> toJsString(v).trim().let { s -> s.toDoubleOrNull() ?: if (s.isEmpty()) 0.0 else Double.NaN }
+    is String -> stringToNumber(v)
+    is JsList -> stringToNumber(toJsString(v))
     else -> Double.NaN
+}
+
+/**
+ * Returns the numeric value of [c] in the given [radix] (2..36), or -1 if [c] isn't a valid
+ * digit for that radix. Only handles ASCII '0'-'9'/'a'-'z'/'A'-'Z', which is all JS
+ * number syntax (and parseInt) ever recognizes anyway.
+ */
+private fun digitValue(c: Char, radix: Int): Int {
+    val d = when (c) {
+        in '0'..'9' -> c - '0'
+        in 'a'..'z' -> c - 'a' + 10
+        in 'A'..'Z' -> c - 'A' + 10
+        else -> return -1
+    }
+    return if (d < radix) d else -1
+}
+
+/** Mirrors the JS ToNumber(string) abstract operation closely enough for our use-cases. */
+private fun stringToNumber(s: String): Double {
+    val trimmed = s.trim()
+    if (trimmed.isEmpty()) return 0.0 // In JS Number("") === 0, Number("   ") === 0
+    when (trimmed) {
+        "Infinity", "+Infinity" -> return Double.POSITIVE_INFINITY
+        "-Infinity" -> return Double.NEGATIVE_INFINITY
+    }
+    return when {
+        trimmed.startsWith("0x") || trimmed.startsWith("0X") -> trimmed.drop(2).toLongOrNull(16)?.toDouble() ?: Double.NaN
+        trimmed.startsWith("0o") || trimmed.startsWith("0O") -> trimmed.drop(2).toLongOrNull(8)?.toDouble() ?: Double.NaN
+        trimmed.startsWith("0b") || trimmed.startsWith("0B") -> trimmed.drop(2).toLongOrNull(2)?.toDouble() ?: Double.NaN
+        else -> trimmed.toDoubleOrNull() ?: Double.NaN
+    }
 }
 
 private fun toBoolean(v: Any?): Boolean = when (v) {
@@ -668,13 +772,16 @@ private fun toBoolean(v: Any?): Boolean = when (v) {
     else -> true
 }
 
+/** Array.prototype.join/toString treats holes/null/undefined elements as the empty string. */
+private fun joinElement(e: Any?): String = if (e == null || e is Unit) "" else toJsString(e)
+
 private fun toJsString(v: Any?): String = when (v) {
     null -> "null"
     is Unit -> "undefined"
     is Boolean -> v.toString()
     is Double -> if (v == floor(v) && !v.isInfinite()) v.toLong().toString() else v.toString()
     is String -> v
-    is JsList -> v.elements.joinToString(",") { toJsString(it) }
+    is JsList -> v.elements.joinToString(",") { joinElement(it) }
     is JsObject -> "[object Object]"
     is NativeFn -> v.toString()
     is JsFunction -> "function ${v.name ?: ""}() { [native code] }"
@@ -741,8 +848,15 @@ private class Scope(val parent: Scope? = null) {
         if (vars.containsKey(name)) this else parent?.findOwner(name)
 }
 
-private class JsInterpreter {
+private class JsInterpreter(
+    private val maxExecutionTime: Duration = JS_DEFAULT_MAX_EXECUTION_TIME,
+    private val maxInstructions: Long = JS_DEFAULT_MAX_INSTRUCTIONS,
+) {
     private val globalScope = Scope()
+
+    // Execution budget, reset at the start of every top-level eval() call.
+    private var instructionCount = 0L
+    private var startMark: TimeMark = TimeSource.Monotonic.markNow()
 
     init { installGlobals() }
 
@@ -768,7 +882,7 @@ private class JsInterpreter {
         ))
         globalScope.define("Math", mathObj)
 
-        // for String.fromCharCode
+        // For String.fromCharCode
         val stringObj = JsObject(mutableMapOf(
             "fromCharCode" to nativeFn("fromCharCode") { args -> args.joinToString("") { toNumber(it).toInt().toChar().toString() } }
         ))
@@ -776,8 +890,32 @@ private class JsInterpreter {
 
         globalScope.define("parseInt", nativeFn("parseInt") { args ->
             val s = toJsString(args.getOrNull(0)).trim()
-            val radix = args.getOrNull(1)?.let { toNumber(it).toInt() }?.takeIf { it in 2..36 } ?: 10
-            try { s.toLong(radix).toDouble() } catch (_: Exception) { Double.NaN }
+            var i = 0
+            var negative = false
+            if (i < s.length && (s[i] == '+' || s[i] == '-')) {
+                negative = s[i] == '-'
+                i++
+            }
+            var radix = args.getOrNull(1)?.let { toNumber(it).toInt() } ?: 0
+            if (radix != 0 && (radix < 2 || radix > 36)) {
+                Double.NaN
+            } else {
+                val stripHexPrefix = radix == 0 || radix == 16
+                if (radix == 0) radix = 10
+                if (stripHexPrefix && i + 1 < s.length && s[i] == '0' && (s[i + 1] == 'x' || s[i + 1] == 'X')) {
+                    radix = 16
+                    i += 2
+                }
+                val start = i
+                while (i < s.length && digitValue(s[i], radix) != -1) i++
+                if (i == start) {
+                    Double.NaN
+                } else {
+                    var value = 0.0
+                    for (idx in start until i) value = value * radix + digitValue(s[idx], radix)
+                    if (negative) -value else value
+                }
+            }
         })
         globalScope.define("parseFloat", nativeFn("parseFloat") { args -> toNumber(args.getOrNull(0)) })
         globalScope.define("isNaN", nativeFn("isNaN") { args -> toNumber(args.getOrNull(0)).isNaN() })
@@ -786,7 +924,9 @@ private class JsInterpreter {
         globalScope.define("encodeURIComponent", nativeFn("encodeURIComponent") { args -> toJsString(args.getOrNull(0)).encodeUrl() })
         globalScope.define("escape", nativeFn("escape") { args -> toJsString(args.getOrNull(0)).encodeUrl() })
         globalScope.define("unescape", nativeFn("unescape") { args -> toJsString(args.getOrNull(0)).decodeUrl() })
-        globalScope.define("eval", nativeFn("eval") { args -> eval(toJsString(args.getOrNull(0))) })
+        // Nested eval() reuses the current budget rather than resetting it, otherwise a
+        // script could keep itself alive forever via `while(true){ eval("1") }`.
+        globalScope.define("eval", nativeFn("eval") { args -> evalInternal(toJsString(args.getOrNull(0))) })
         globalScope.define("undefined", Unit)
         globalScope.define("NaN", Double.NaN)
         globalScope.define("Infinity", Double.POSITIVE_INFINITY)
@@ -835,6 +975,13 @@ private class JsInterpreter {
     private fun nativeFn(name: String, fn: (List<Any?>) -> Any?): Any? = NativeFn(fn, name)
 
     fun eval(code: String): Any? {
+        instructionCount = 0
+        startMark = TimeSource.Monotonic.markNow()
+        return evalInternal(code)
+    }
+
+    /** Runs [code] against the current budget, without resetting it. */
+    private fun evalInternal(code: String): Any? {
         return try {
             val lexer = Lexer(code)
             val parser = Parser(lexer)
@@ -850,83 +997,103 @@ private class JsInterpreter {
         }
     }
 
+    /**
+     * Called on every statement execution. Throws [JsExecutionLimitExceeded] once the
+     * script has used up its time or instruction budget. This is what lets
+     * `evalJs("while(true){}")` return instead of burning the CPU forever.
+     */
+    private fun checkBudget() {
+        instructionCount++
+        if (instructionCount >= maxInstructions) {
+            throw JsExecutionLimitExceeded("script exceeded max instruction count of $maxInstructions")
+        }
+        // Only sample the clock every 1024 ticks. Calling elapsedNow() on every single
+        // statement would add measurable overhead to normal (non-runaway) scripts.
+        if (instructionCount and 0x3FFL == 0L && startMark.elapsedNow() >= maxExecutionTime) {
+            throw JsExecutionLimitExceeded("script exceeded max execution time of $maxExecutionTime")
+        }
+    }
+
     fun getVar(name: String): Any? = globalScope.get(name).let { if (it is Unit) null else it }
     fun setVar(name: String, value: Any?) = globalScope.define(name, value)
 
-    private fun execNode(node: Node, scope: Scope): Any? = when (node) {
-        is VarDecl -> {
-            for ((name, init) in node.decls) scope.define(name, init?.let { evalExpr(it, scope) })
-            Unit
-        }
-        is ExprStmt -> evalExpr(node.expr, scope)
-        is BlockStmt -> {
-            val inner = Scope(scope)
-            var last: Any? = Unit
-            for (s in node.stmts) last = execNode(s, inner)
-            last
-        }
-        is ReturnStmt -> throw ReturnSignal(node.expr?.let { evalExpr(it, scope) })
-        is IfStmt -> {
-            if (toBoolean(evalExpr(node.test, scope))) execNode(node.cons, scope)
-            else node.alt?.let { execNode(it, scope) }
-        }
-        is WhileStmt -> {
-            try {
-                while (toBoolean(evalExpr(node.test, scope))) {
-                    try { execNode(node.body, scope) } catch (_: ContinueSignal) {}
-                }
-            } catch (_: BreakSignal) {}
-            Unit
-        }
-        is ForStmt -> {
-            val inner = Scope(scope)
-            node.init?.let { execNode(it, inner) }
-            try {
-                while (node.test == null || toBoolean(evalExpr(node.test, inner))) {
-                    try { execNode(node.body, inner) } catch (_: ContinueSignal) {}
-                    node.update?.let { evalExpr(it, inner) }
-                }
-            } catch (_: BreakSignal) {}
-            Unit
-        }
-        is ForInStmt -> {
-            val obj = evalExpr(node.obj, scope)
-            val inner = Scope(scope)
-            try {
-                when (obj) {
-                    is JsObject -> for (key in obj.props.keys) {
-                        inner.define(node.decl, key)
-                        try { execNode(node.body, inner) } catch (_: ContinueSignal) {}
-                    }
-                    is JsList -> for (i in obj.elements.indices) {
-                        inner.define(node.decl, i.toDouble())
-                        try { execNode(node.body, inner) } catch (_: ContinueSignal) {}
-                    }
-                    else -> {}
-                }
-            } catch (_: BreakSignal) {}
-            Unit
-        }
-        is TryCatch -> {
-            try {
-                for (s in node.body) execNode(s, scope)
-            } catch (e: ThrowSignal) {
-                if (node.catchBody != null) {
-                    val inner = Scope(scope)
-                    if (node.catchParam != null) inner.define(node.catchParam, e.value)
-                    for (s in node.catchBody) execNode(s, inner)
-                }
-            } catch (_: Exception) {
-                // swallow other exceptions inside try (e.g. runtime errors)
-            } finally {
-                node.finallyBody?.forEach { execNode(it, scope) }
+    private fun execNode(node: Node, scope: Scope): Any? {
+        checkBudget()
+        return when (node) {
+            is VarDecl -> {
+                for ((name, init) in node.decls) scope.define(name, init?.let { evalExpr(it, scope) })
+                Unit
             }
-            Unit
+            is ExprStmt -> evalExpr(node.expr, scope)
+            is BlockStmt -> {
+                val inner = Scope(scope)
+                var last: Any? = Unit
+                for (s in node.stmts) last = execNode(s, inner)
+                last
+            }
+            is ReturnStmt -> throw ReturnSignal(node.expr?.let { evalExpr(it, scope) })
+            is IfStmt -> {
+                if (toBoolean(evalExpr(node.test, scope))) execNode(node.cons, scope)
+                else node.alt?.let { execNode(it, scope) }
+            }
+            is WhileStmt -> {
+                try {
+                    while (toBoolean(evalExpr(node.test, scope))) {
+                        try { execNode(node.body, scope) } catch (_: ContinueSignal) {}
+                    }
+                } catch (_: BreakSignal) {}
+                Unit
+            }
+            is ForStmt -> {
+                val inner = Scope(scope)
+                node.init?.let { execNode(it, inner) }
+                try {
+                    while (node.test == null || toBoolean(evalExpr(node.test, inner))) {
+                        try { execNode(node.body, inner) } catch (_: ContinueSignal) {}
+                        node.update?.let { evalExpr(it, inner) }
+                    }
+                } catch (_: BreakSignal) {}
+                Unit
+            }
+            is ForInStmt -> {
+                val obj = evalExpr(node.obj, scope)
+                val inner = Scope(scope)
+                try {
+                    when (obj) {
+                        is JsObject -> for (key in obj.props.keys) {
+                            inner.define(node.decl, key)
+                            try { execNode(node.body, inner) } catch (_: ContinueSignal) {}
+                        }
+                        is JsList -> for (i in obj.elements.indices) {
+                            inner.define(node.decl, i.toDouble())
+                            try { execNode(node.body, inner) } catch (_: ContinueSignal) {}
+                        }
+                        else -> {}
+                    }
+                } catch (_: BreakSignal) {}
+                Unit
+            }
+            is TryCatch -> {
+                try {
+                    for (s in node.body) execNode(s, scope)
+                } catch (e: ThrowSignal) {
+                    if (node.catchBody != null) {
+                        val inner = Scope(scope)
+                        if (node.catchParam != null) inner.define(node.catchParam, e.value)
+                        for (s in node.catchBody) execNode(s, inner)
+                    }
+                } catch (_: Exception) {
+                    // swallow other exceptions inside try (e.g. runtime errors)
+                } finally {
+                    node.finallyBody?.forEach { execNode(it, scope) }
+                }
+                Unit
+            }
+            is ThrowStmt -> throw ThrowSignal(evalExpr(node.expr, scope))
+            is BreakStmt -> throw BreakSignal
+            is ContinueStmt -> throw ContinueSignal
+            else -> evalExpr(node, scope)
         }
-        is ThrowStmt -> throw ThrowSignal(evalExpr(node.expr, scope))
-        is BreakStmt -> throw BreakSignal
-        is ContinueStmt -> throw ContinueSignal
-        else -> evalExpr(node, scope)
     }
 
     private fun evalExpr(node: Node, scope: Scope): Any? = when (node) {
@@ -1007,6 +1174,7 @@ private class JsInterpreter {
             "*" -> toNumber(l) * toNumber(r)
             "/" -> toNumber(l) / toNumber(r)
             "%" -> toNumber(l) % toNumber(r)
+            "**" -> toNumber(l).pow(toNumber(r))
             "<" -> toNumber(l) < toNumber(r)
             "<=" -> toNumber(l) <= toNumber(r)
             ">" -> toNumber(l) > toNumber(r)
@@ -1053,6 +1221,7 @@ private class JsInterpreter {
                 "*=" -> toNumber(left) * toNumber(right)
                 "/=" -> toNumber(left) / toNumber(right)
                 "%=" -> toNumber(left) % toNumber(right)
+                "**=" -> toNumber(left).pow(toNumber(right))
                 else -> right
             }
         }
@@ -1076,7 +1245,10 @@ private class JsInterpreter {
                     else -> {}
                 }
             }
-            else -> {}
+            // Anything else (e.g. `true++` or `5 = 3`) is not a valid assignment target in
+            // JS. This would be a SyntaxError/ReferenceError there, so we fail the same way
+            // here rather than silently doing nothing.
+            else -> throw RuntimeException("Invalid assignment target: $target")
         }
     }
 
@@ -1096,7 +1268,10 @@ private class JsInterpreter {
         is JsObject -> obj.props[key] ?: Unit
         is JsList -> when (key) {
             "length" -> obj.length.toDouble()
-            "join" -> nativeFn("join") { args -> obj.elements.joinToString(args.getOrNull(0)?.let { toJsString(it) } ?: ",") { toJsString(it) } }
+            "join" -> nativeFn("join") { args ->
+                val sep = args.getOrNull(0)?.let { toJsString(it) } ?: ","
+                obj.elements.joinToString(sep) { joinElement(it) }
+            }
             "reverse" -> nativeFn("reverse") { _ -> obj.elements.reverse(); obj }
             "push" -> nativeFn("push") { args -> args.forEach { obj.elements.add(it) }; obj.elements.size.toDouble() }
             "pop" -> nativeFn("pop") { _ -> if (obj.elements.isEmpty()) Unit else obj.elements.removeAt(obj.elements.size - 1) }
@@ -1165,7 +1340,7 @@ private class JsInterpreter {
                 obj
             }
             "includes" -> nativeFn("includes") { args -> obj.elements.any { looseEq(it, args.getOrNull(0)) } }
-            "toString" -> nativeFn("toString") { _ -> obj.elements.joinToString(",") { toJsString(it) } }
+            "toString" -> nativeFn("toString") { _ -> obj.elements.joinToString(",") { joinElement(it) } }
             "flat" -> nativeFn("flat") { _ ->
                 val result = JsList()
                 obj.elements.forEach { if (it is JsList) result.elements.addAll(it.elements) else result.elements.add(it) }
