@@ -18,7 +18,7 @@ import kotlin.time.TimeSource
  * Supports the subset of JS that appears in obfuscated video-hosting scripts:
  *  - Variable declarations (var / let / const)
  *  - String, number (including hex `0x..` and legacy octal `0..`) and boolean literals
- *  - Arithmetic / bitwise / comparison / logical operators, including exponentiation (`**`)
+ *  - Arithmetic / bitwise / comparison / logical operators
  *  - String concatenation with +
  *  - String methods: split, join, reverse, replace, charAt, charCodeAt,
  *                    fromCharCode, substr, substring, slice, indexOf,
