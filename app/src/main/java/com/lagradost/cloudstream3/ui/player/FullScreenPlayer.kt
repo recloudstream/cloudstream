@@ -531,9 +531,22 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
         var currentOffset = subtitleDelay
         binding.apply {
+            var subtitleAdapter: SubtitleOffsetItemAdapter? = null
+
             subtitleOffsetInput.doOnTextChanged { text, _, _, _ ->
                 text?.toString()?.toLongOrNull()?.let { time ->
                     currentOffset = time
+
+                    // Scroll to the first active subtitle
+                    val playerPosition = player.getPosition() ?: 0
+                    val totalPosition = playerPosition - currentOffset
+                    subtitleAdapter?.updateTime(totalPosition)
+
+                    subtitleAdapter?.getLatestActiveItem(totalPosition)
+                        ?.let { subtitlePos ->
+                            subtitleOffsetRecyclerview.scrollToPosition(subtitlePos)
+                        }
+
                     val str = when {
                         time > 0L -> {
                             txt(R.string.subtitle_offset_extra_hint_later_format, time)
@@ -559,7 +572,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             noSubtitlesLoadedNotice.isVisible = subtitles.isEmpty()
 
             val initialSubtitlePosition = (player.getPosition() ?: 0) - currentOffset
-            val subtitleAdapter =
+            subtitleAdapter =
                 SubtitleOffsetItemAdapter(initialSubtitlePosition) { subtitleCue ->
                     val playerPosition = player.getPosition() ?: 0
                     subtitleOffsetInput.text = Editable.Factory.getInstance()
