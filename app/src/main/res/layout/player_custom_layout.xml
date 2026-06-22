@@ -264,6 +264,15 @@
                             tools:visibility="visible"
                             android:layout_gravity="center"/>
                     </LinearLayout>
+
+                    <TextClock
+                        android:id="@+id/player_video_clock"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:gravity="end"
+                        android:visibility="gone"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <!-- Removed as it has no use anymore-->
