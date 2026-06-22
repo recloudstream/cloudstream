@@ -2207,8 +2207,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             // Set up TV clock visibility
             if (isLayout(TV)) {
                 val showTvClock = settingsManager.getBoolean(ctx.getString(R.string.tv_layout_clock_key), false)
-                playerBinding?.root?.findViewById<View>(R.id.player_video_clock)?.visibility =
-                    if (showTvClock) View.VISIBLE else View.GONE
+                playerBinding?.playerVideoClock?.isVisible = showTvClock
             }
         }
 
