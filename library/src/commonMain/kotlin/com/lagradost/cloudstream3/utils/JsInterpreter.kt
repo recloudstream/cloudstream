@@ -23,8 +23,8 @@ import kotlin.time.TimeSource
  *  - String methods: split, join, reverse, replace, charAt, charCodeAt,
  *                    fromCharCode, substr, substring, slice, indexOf,
  *                    trim, toLowerCase, toUpperCase, toString, length
- *  - Array literals (including elisions, e.g. `[1,,3]`) and methods: join, reverse, split,
- *                                 push, pop, map, filter, forEach, length
+ *  - Array literals and methods: join, reverse, split, push, pop,
+ *                                map, filter, forEach, length
  *  - parseInt / parseFloat / isNaN / isFinite
  *  - Math.*  (sin, cos, floor, ceil, round, abs, pow, sqrt, log, max, min, random)
  *  - String.fromCharCode
@@ -58,10 +58,10 @@ import kotlin.time.TimeSource
  */
 
 /** Default wall-clock budget for a single [evalJs] / [JsContext.eval] call before it's aborted. */
-val JS_DEFAULT_MAX_EXECUTION_TIME: Duration = 5.seconds
+private val JS_DEFAULT_MAX_EXECUTION_TIME: Duration = 5.seconds
 
 /** Hard backstop on statements/expressions executed, independent of wall-clock time. */
-const val JS_DEFAULT_MAX_INSTRUCTIONS = 50_000_000L
+private const val JS_DEFAULT_MAX_INSTRUCTIONS: Long = 50_000_000L
 
 /**
  * Convert any JS runtime value to its JavaScript string representation.
@@ -213,7 +213,7 @@ private class Lexer(private val src: String) {
         tokens.add(Token(TT.STRING, sb.toString(), start))
     }
 
-    private fun unescape(c: Char) = when (c) {
+    private fun unescape(c: Char): Char = when (c) {
         'n' -> '\n'; 'r' -> '\r'; 't' -> '\t'; 'b' -> '\b'
         '\'' -> '\''; '"' -> '"'; '\\' -> '\\'; '`' -> '`'
         else -> c
@@ -495,12 +495,12 @@ private class Parser(private val lex: Lexer) {
         return CondExpr(test, cons, parseAssign())
     }
 
-    private fun parseOr() = parseBin(::parseAnd, TT.OR to "||")
-    private fun parseAnd() = parseBin(::parseBitor, TT.AND to "&&")
-    private fun parseBitor() = parseBin(::parseBitxor, TT.PIPE to "|")
-    private fun parseBitxor() = parseBin(::parseBitand, TT.CARET to "^")
-    private fun parseBitand() = parseBin(::parseEq, TT.AMP to "&")
-    private fun parseEq() = parseBin(::parseRel, TT.EQEQ to "==", TT.EQEQEQ to "===", TT.NEQ to "!=", TT.NEQEQ to "!==")
+    private fun parseOr(): Node = parseBin(::parseAnd, TT.OR to "||")
+    private fun parseAnd(): Node = parseBin(::parseBitor, TT.AND to "&&")
+    private fun parseBitor(): Node = parseBin(::parseBitxor, TT.PIPE to "|")
+    private fun parseBitxor(): Node = parseBin(::parseBitand, TT.CARET to "^")
+    private fun parseBitand(): Node = parseBin(::parseEq, TT.AMP to "&")
+    private fun parseEq(): Node = parseBin(::parseRel, TT.EQEQ to "==", TT.EQEQEQ to "===", TT.NEQ to "!=", TT.NEQEQ to "!==")
     private fun parseRel(): Node {
         var left = parseShift()
         while (true) {
@@ -516,9 +516,9 @@ private class Parser(private val lex: Lexer) {
         }
         return left
     }
-    private fun parseShift() = parseBin(::parseAdd, TT.LSHIFT to "<<", TT.RSHIFT to ">>", TT.URSHIFT to ">>>")
-    private fun parseAdd() = parseBin(::parseMul, TT.PLUS to "+", TT.MINUS to "-")
-    private fun parseMul() = parseBin(::parsePow, TT.STAR to "*", TT.SLASH to "/", TT.PERCENT to "%")
+    private fun parseShift(): Node = parseBin(::parseAdd, TT.LSHIFT to "<<", TT.RSHIFT to ">>", TT.URSHIFT to ">>>")
+    private fun parseAdd(): Node = parseBin(::parseMul, TT.PLUS to "+", TT.MINUS to "-")
+    private fun parseMul(): Node = parseBin(::parsePow, TT.STAR to "*", TT.SLASH to "/", TT.PERCENT to "%")
 
     /** `**` binds tighter than `* / %` and is right-associative: `2 ** 3 ** 2 == 2 ** (3 ** 2)`. */
     private fun parsePow(): Node {
@@ -1500,5 +1500,5 @@ private class JsInterpreter(
 
 // Wrapper so we can store Kotlin lambdas as "callable" values
 private class NativeFn(val fn: (List<Any?>) -> Any?, val name: String, val props: MutableMap<String, Any?> = mutableMapOf()) {
-    override fun toString() = "function $name() { [native code] }"
+    override fun toString(): String = "function $name() { [native code] }"
 }

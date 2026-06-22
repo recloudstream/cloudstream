@@ -14,9 +14,9 @@ import kotlin.time.TimeSource
 
 class JsInterpreterTest {
 
-    private fun bool(code: String, variable: String? = null) = evalJs(code, variable) as? Boolean ?: false
-    private fun num(code: String, variable: String? = null) = evalJs(code, variable) as? Double ?: Double.NaN
-    private fun str(code: String, variable: String? = null) = jsValueToString(evalJs(code, variable))
+    private fun bool(code: String, variable: String? = null): Boolean = evalJs(code, variable) as? Boolean ?: false
+    private fun num(code: String, variable: String? = null): Double = evalJs(code, variable) as? Double ?: Double.NaN
+    private fun str(code: String, variable: String? = null): String = jsValueToString(evalJs(code, variable))
 
     private fun assertApprox(expected: Double, actual: Double, tol: Double = 1e-9) {
         assertTrue(abs(actual - expected) <= tol, "Expected $expected ± $tol but was $actual")
@@ -1033,6 +1033,9 @@ class JsInterpreterTest {
     fun objectToStringCoercion() {
         // ({}) + "" => "[object Object]"
         assertEquals("[object Object]", str("({})+''"))
+
+        // []+{} => "[object Object]"
+        assertEquals("[object Object]", str("[]+{}"))
     }
 
     @Test
@@ -1458,191 +1461,185 @@ class JsInterpreterTest {
     }
 
     @Test
-    fun jsFuckEmptyArrayPlusEmptyArrayIsEmptyString() {
+    fun emptyArrayPlusEmptyArrayIsEmptyString() {
         // [] + [] => ""
         assertEquals("", str("[]+[]"))
     }
 
     @Test
-    fun jsFuckUnaryPlusEmptyArrayIsZero() {
+    fun unaryPlusEmptyArrayIsZero() {
         // +[] => 0
         assertEquals(0.0, num("+[]"))
     }
 
     @Test
-    fun jsFuckNotArrayIsFalse() {
+    fun notArrayIsFalse() {
         // ![] => false  (array is truthy, so ![] is false)
         assertFalse(bool("![]"))
     }
 
     @Test
-    fun jsFuckDoubleNotArrayIsTrue() {
+    fun doubleNotArrayIsTrue() {
         // !![] => true
         assertTrue(bool("!![]"))
     }
 
     @Test
-    fun jsFuckUnaryPlusDoubleNotArrayIsOne() {
+    fun unaryPlusDoubleNotArrayIsOne() {
         // +!![] => 1
         assertEquals(1.0, num("+!![]"))
     }
 
     @Test
-    fun jsFuckUnaryPlusNotArrayIsZero() {
+    fun unaryPlusNotArrayIsZero() {
         // +![] => 0
         assertEquals(0.0, num("+![]"))
     }
 
     @Test
-    fun jsFuckFalseCoercedToString() {
+    fun falseCoercedToString() {
         // ![]+[] => "false"
         assertEquals("false", str("![]+[]"))
     }
 
     @Test
-    fun jsFuckTrueCoercedToString() {
+    fun trueCoercedToString() {
         // !![]+[] => "true"
         assertEquals("true", str("!![]+[]"))
     }
 
     @Test
-    fun jsFuckFalseStringViaStringConcat() {
+    fun falseStringViaStringConcat() {
         // (![]+""): false + "" => "false"
         assertEquals("false", str("![]+''"))
     }
 
     @Test
-    fun jsFuckTrueStringViaStringConcat() {
+    fun trueStringViaStringConcat() {
         // (!![]+""): true + "" => "true"
         assertEquals("true", str("!![]+''"))
     }
 
     @Test
-    fun jsFuckUndefinedCoercedToString() {
+    fun undefinedCoercedToString() {
         assertEquals("undefined", str("[][0]+[]"))
     }
 
     @Test
-    fun jsFuckCharF() {
+    fun charF() {
         // (![]+[])[0] => "false"[0] => "f"
         assertEquals("f", str("(![]+[])[0]"))
     }
 
     @Test
-    fun jsFuckCharA() {
+    fun charA() {
         // (![]+[])[1] => "false"[1] => "a"
         assertEquals("a", str("(![]+[])[1]"))
     }
 
     @Test
-    fun jsFuckCharL() {
+    fun charL() {
         // (![]+[])[2] => "false"[2] => "l"
         assertEquals("l", str("(![]+[])[2]"))
     }
 
     @Test
-    fun jsFuckCharS() {
+    fun charS() {
         // (![]+[])[3] => "false"[3] => "s"
         assertEquals("s", str("(![]+[])[3]"))
     }
 
     @Test
-    fun jsFuckCharE() {
+    fun charE() {
         // (![]+[])[4] => "false"[4] => "e"
         assertEquals("e", str("(![]+[])[4]"))
     }
 
     @Test
-    fun jsFuckCharT() {
+    fun charT() {
         // (!![]+[])[0] => "true"[0] => "t"
         assertEquals("t", str("(!![]+[])[0]"))
     }
 
     @Test
-    fun jsFuckCharR() {
+    fun charR() {
         // (!![]+[])[1] => "true"[1] => "r"
         assertEquals("r", str("(!![]+[])[1]"))
     }
 
     @Test
-    fun jsFuckCharU() {
+    fun charU() {
         // (!![]+[])[2] => "true"[2] => "u"
         assertEquals("u", str("(!![]+[])[2]"))
     }
 
     @Test
-    fun jsFuckIndexViaArithmetic() {
+    fun indexViaArithmetic() {
         // (![]+[])[+[]] => "false"[0] => "f"  (index built from +[])
         assertEquals("f", str("(![]+[])[+[]]"))
     }
 
     @Test
-    fun jsFuckIndexOneViaArithmetic() {
+    fun indexOneViaArithmetic() {
         // (![]+[])[+!![]] => "false"[1] => "a"
         assertEquals("a", str("(![]+[])[+!![]]"))
     }
 
     @Test
-    fun jsFuckArrayToStringCoercion() {
+    fun arrayToStringCoercion() {
         // [1,2,3]+[] => "1,2,3"
         assertEquals("1,2,3", str("[1,2,3]+[]"))
     }
 
     @Test
-    fun jsFuckObjectToStringCoercion() {
-        // []+{} => "[object Object]"
-        assertEquals("[object Object]", str("[]+{}"))
-    }
-
-    @Test
-    fun jsFuckObjectStringCharO() {
+    fun objectStringCharO() {
         // ([]+{})[1] => "[object Object]"[1] => "o"
         assertEquals("o", str("([]+{})[1]"))
     }
 
     @Test
-    fun jsFuckObjectStringCharB() {
+    fun objectStringCharB() {
         // ([]+{})[2] => "[object Object]"[2] => "b"
         assertEquals("b", str("([]+{})[2]"))
     }
 
     @Test
-    fun jsFuckFilterFunctionToString() {
+    fun filterFunctionToString() {
         // []["filter"]+"" => "function filter() { [native code] }"
         assertEquals("function filter() { [native code] }", str("[]['filter']+''"))
     }
 
     @Test
-    fun jsFuckFilterStringCharF() {
+    fun filterStringCharF() {
         // ([]["filter"]+[])[0] => "function filter() { [native code] }"[0] => "f"
         assertEquals("f", str("([]['filter']+[])[0]"))
     }
 
     @Test
-    fun jsFuckFilterStringCharU() {
+    fun filterStringCharU() {
         // ([]["filter"]+[])[1] => "u"
         assertEquals("u", str("([]['filter']+[])[1]"))
     }
 
     @Test
-    fun jsFuckFilterStringCharN() {
+    fun filterStringCharN() {
         // ([]["filter"]+[])[2] => "n"
         assertEquals("n", str("([]['filter']+[])[2]"))
     }
 
     @Test
-    fun jsFuckFilterStringCharC() {
+    fun filterStringCharC() {
         // ([]["filter"]+[])[3] => "c"
         assertEquals("c", str("([]['filter']+[])[3]"))
     }
 
     @Test
-    fun jsFuckFilterStringCharI() {
+    fun filterStringCharI() {
         assertEquals("i", str("([]['filter']+[])[5]"))
     }
 
     @Test
-    fun jsFuckNativeCodeBracketChar() {
+    fun nativeCodeBracketChar() {
         // "function filter() { [native code] }" contains '[' at index 20
         val s = "function filter() { [native code] }"
         val idx = s.indexOf('[')
@@ -1650,29 +1647,29 @@ class JsInterpreterTest {
     }
 
     @Test
-    fun jsFuckNativeCodeSpaceChar() {
+    fun nativeCodeSpaceChar() {
         // space at index 8
         assertEquals(" ", str("([]['filter']+[])[8]"))
     }
 
     @Test
-    fun jsFuckBuildsNumberViaAddition() {
+    fun buildsNumberViaAddition() {
         // +!![] + +!![] + +!![] => 3
         assertEquals(3.0, num("+!![]+!![]+!![]"))
     }
 
     @Test
-    fun jsFuckBuildsNumberTen() {
+    fun buildsNumberTen() {
         assertEquals("10", str("(+!![])+[+[]]"))
     }
 
     @Test
-    fun jsFuckStringFromCharCodeViaNativeExtraction() {
+    fun stringFromCharCodeViaNativeExtraction() {
         assertEquals("A", str("String['fromCharCode'](65)"))
     }
 
     @Test
-    fun jsFuckFullAlphaFromFalseTrue() {
+    fun fullAlphaFromFalseTrue() {
         assertEquals("ftaseru", str("""
             var f = ![]+[];
             var t = !![]+[];
@@ -1681,24 +1678,24 @@ class JsInterpreterTest {
     }
 
     @Test
-    fun jsFuckFunctionToStringContainsNativeCode() {
+    fun functionToStringContainsNativeCode() {
         // Any array method coerced to string should contain "native code"
         assertTrue(str("[]['map']+''").contains("native code"))
     }
 
     @Test
-    fun jsFuckFunctionToStringContainsFunctionKeyword() {
+    fun functionToStringContainsFunctionKeyword() {
         assertTrue(str("[]['join']+''").startsWith("function"))
     }
 
     @Test
-    fun jsFuckTypeofCoercion() {
+    fun typeofCoercion() {
         // typeof([]) + [] => "object"
         assertEquals("object", str("typeof([])+[]"))
     }
 
     @Test
-    fun jsFuckTypeofFunctionCoercion() {
+    fun typeofFunctionCoercion() {
         // typeof([]['filter']) => "function"
         assertEquals("function", str("typeof([]['filter'])"))
     }
@@ -1859,7 +1856,7 @@ class JsInterpreterTest {
 
     @Test
     fun finiteLoopCompletesNormally() {
-        assertEquals(45.0, num("var s=0; for (var i=0;i<10;i++){ s+=i; } s"))
+        assertEquals(45.0, num("var s=0; for (var i=0;i<10;i++){ s+=i; }", "s"))
     }
 
     @Test
@@ -1885,7 +1882,7 @@ class JsInterpreterTest {
 
     @Test
     fun assignmentPowEquals() {
-        assertEquals(8.0, num("var x=2; x**=3; x"))
+        assertEquals(8.0, num("var x=2; x**=3", "x"))
     }
 
     @Test
