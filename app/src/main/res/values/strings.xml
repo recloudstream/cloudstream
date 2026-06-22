@@ -169,8 +169,8 @@
     <string name="extra_brightness_settings">Extra brightness</string>
     <string name="extra_brightness_settings_des">Enable brightness filter when 100% display brightness is exceeded</string>
     <string name="extra_brightness_key">extra_brightness_enabled</string>
-    <string name="tv_layout_clock_settings">Show real time clock</string>
-    <string name="tv_layout_clock_settings_des">Show a real time clock above the video title</string>
+    <string name="tv_layout_clock_settings">Player real time clock</string>
+    <string name="tv_layout_clock_settings_des">Show a real time clock above the video title in the video player</string>
     <string name="episode_sync_settings">Update watch progress</string>
     <string name="episode_sync_settings_des">Automatically sync your current episode progress</string>
     <string name="restore_settings">Restore data from backup</string>
