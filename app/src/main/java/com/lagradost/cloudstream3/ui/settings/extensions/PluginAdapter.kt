@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.viewbinding.ViewBinding
@@ -36,6 +37,9 @@ import kotlin.math.pow
 data class PluginViewData(
     val plugin: Plugin,
     val isDownloaded: Boolean,
+    val isLocalDisabled: Boolean = false,
+    val isSelected: Boolean = false,
+    val isInSelectionMode: Boolean = false,
 )
 
 class RepositoryViewHolderState(view: ViewBinding) : ViewHolderState<Any>(view) {
@@ -44,10 +48,12 @@ class RepositoryViewHolderState(view: ViewBinding) : ViewHolderState<Any>(view) 
 }
 
 class PluginAdapter(
-    val iconClickCallback: (Plugin) -> Unit
+    val iconClickCallback: (Plugin) -> Unit,
+    val longClickCallback: (Plugin) -> Unit = {},
+    val clickCallback: (Plugin) -> Unit = {},
 ) : NoStateAdapter<PluginViewData>(diffCallback = BaseDiffCallback(itemSame = { a, b ->
     a.plugin.second.internalName == b.plugin.second.internalName && a.plugin.first == b.plugin.first
-})) {
+}, contentSame = { a, b -> a == b })) {
     override fun onCreateContent(parent: ViewGroup): ViewHolderState<Any> {
         val layout = if (isLayout(TV)) R.layout.repository_item_tv else R.layout.repository_item
         val inflated = LayoutInflater.from(parent.context).inflate(layout, parent, false)
@@ -74,16 +80,17 @@ class PluginAdapter(
         val itemView = holder.itemView
 
         val metadata = item.plugin.second
-        val disabled = metadata.status == PROVIDER_STATUS_DOWN
+        val disabled = metadata.status == PROVIDER_STATUS_DOWN || item.isLocalDisabled
         val name = metadata.name.removeSuffix("Provider")
         val alpha = if (disabled) 0.6f else 1f
         val isLocal = !item.plugin.second.url.startsWith("http")
         binding.mainText.alpha = alpha
         binding.subText.alpha = alpha
 
-        val drawableInt = if (item.isDownloaded)
-            R.drawable.ic_baseline_delete_outline_24
-        else R.drawable.netflix_download
+        val drawableInt = if (item.isDownloaded) {
+            if (item.isLocalDisabled) R.drawable.ic_baseline_play_arrow_24
+            else R.drawable.ic_baseline_delete_outline_24
+        } else R.drawable.netflix_download
 
         binding.nsfwMarker.isVisible = metadata.tvTypes?.contains(TvType.NSFW.name) ?: false
         binding.actionButton.setImageResource(drawableInt)
@@ -92,20 +99,30 @@ class PluginAdapter(
             iconClickCallback.invoke(item.plugin)
         }
         itemView.setOnClickListener {
+            if (item.isInSelectionMode) {
+                clickCallback.invoke(item.plugin)
+                return@setOnClickListener
+            }
             if (isLocal) return@setOnClickListener
 
             val sheet = PluginDetailsFragment(item)
             val activity = itemView.context.getActivity() as AppCompatActivity
             sheet.show(activity.supportFragmentManager, "PluginDetails")
         }
-        //if (itemView.context?.isTrueTvSettings() == false) {
-        //    val siteUrl = metadata.repositoryUrl
-        //    if (siteUrl != null && siteUrl.isNotBlank() && siteUrl != "NONE") {
-        //        itemView.setOnClickListener {
-        //            openBrowser(siteUrl)
-        //        }
-        //    }
-        //}
+        itemView.setOnLongClickListener {
+            longClickCallback.invoke(item.plugin)
+            true
+        }
+
+        if (item.isInSelectionMode) {
+            binding.actionButton.setImageResource(
+                if (item.isSelected) R.drawable.ic_baseline_check_circle_24
+                else R.drawable.ic_baseline_radio_button_unchecked_24
+            )
+            binding.actionButton.isVisible = true
+        } else {
+            binding.actionButton.setImageResource(drawableInt)
+        }
 
         if (item.isDownloaded) {
             // On local plugins page the filepath is provided instead of url.
@@ -193,6 +210,19 @@ class PluginAdapter(
                 name
             ) else txt(name)
         )
+
+        // Health Badge
+        val healthColor = when {
+            disabled -> R.color.colorTestFail
+            metadata.status == 2 -> R.color.colorTestWarning // Status 2 for unstable
+            else -> R.color.colorTestPass
+        }
+        val circle = ContextCompat.getDrawable(itemView.context, R.drawable.ic_baseline_check_circle_24)?.mutate()?.apply {
+            setTint(ContextCompat.getColor(itemView.context, healthColor))
+            setBounds(0, 0, 10.toPx, 10.toPx)
+        }
+        binding.mainText.setCompoundDrawablesWithIntrinsicBounds(null, null, circle, null)
+        binding.mainText.compoundDrawablePadding = 5.toPx
 
         binding.subText.isGone = metadata.description.isNullOrBlank()
         binding.subText.text = metadata.description.html()

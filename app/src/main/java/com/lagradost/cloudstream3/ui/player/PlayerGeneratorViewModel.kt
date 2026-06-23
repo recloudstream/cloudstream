@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.videoskip.SkipAPI
 import com.lagradost.cloudstream3.utils.videoskip.VideoSkipStamp
 import kotlinx.collections.immutable.PersistentList
@@ -66,9 +67,16 @@ data class VideoState(
      * Use .links if order is not needed */
     @Contract(pure = true)
     fun sortLinks(qualityProfile: Int): List<VideoLink> {
-        return sortedLinks[qualityProfile] ?: links.sortedBy { link ->
+        val preferredSource = generatorState?.id?.let { DataStoreHelper.getSourcePreference(it) }
+        return sortedLinks[qualityProfile] ?: links.sortedWith { a, b ->
+            if (preferredSource != null) {
+                val aPreferred = a.first?.source == preferredSource
+                val bPreferred = b.first?.source == preferredSource
+                if (aPreferred && !bPreferred) return@sortedWith -1
+                if (!aPreferred && bPreferred) return@sortedWith 1
+            }
             // negative because we want to sort highest quality first
-            -getLinkPriority(qualityProfile, link.first)
+            compareValuesBy(b, a) { getLinkPriority(qualityProfile, it.first) }
         }.also { value -> sortedLinks[qualityProfile] = value }
     }
 

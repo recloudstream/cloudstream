@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIE
 import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 
 data class RepositoryData(
     @JsonProperty("iconUrl") val iconUrl: String?,
@@ -87,7 +88,20 @@ class ExtensionsViewModel : ViewModel() {
         ?: emptyArray()) + PREBUILT_REPOSITORIES
 
     fun loadRepositories() {
-        val urls = repos()
-        _repositories.postValue(urls)
+        val urls = repos().toMutableList()
+        val folders = DataStoreHelper.getExtensionFolders()
+        folders.forEach { entry ->
+            urls.add(RepositoryData(null, entry.key, "folder://${entry.key}"))
+        }
+        _repositories.postValue(urls.toTypedArray())
+    }
+
+    fun syncAllRepositories() = ioSafe {
+        val repos = repos().toList()
+        repos.amap { repo ->
+            RepositoryManager.getRepoPlugins(repo.url)
+        }
+        loadStats()
+        loadRepositories()
     }
 }

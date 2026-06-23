@@ -67,6 +67,7 @@ import java.io.InputStreamReader
 // Different keys for local and not since local can be removed at any time without app knowing, hence the local are getting rebuilt on every app start
 const val PLUGINS_KEY = "PLUGINS_KEY"
 const val PLUGINS_KEY_LOCAL = "PLUGINS_KEY_LOCAL"
+const val PLUGINS_DISABLED_KEY = "PLUGINS_DISABLED_KEY"
 
 const val EXTENSIONS_CHANNEL_ID = "cloudstream3.extensions"
 const val EXTENSIONS_CHANNEL_NAME = "Extensions"
@@ -180,6 +181,23 @@ object PluginManager {
         return getKey(PLUGINS_KEY_LOCAL) ?: emptyArray()
     }
 
+    fun getDisabledPlugins(): Set<String> {
+        return getKey<Array<String>>(PLUGINS_DISABLED_KEY)?.toSet() ?: emptySet()
+    }
+
+    fun setPluginDisabled(path: String, disabled: Boolean) {
+        val current = getDisabledPlugins().toMutableSet()
+        if (disabled) {
+            current.add(path)
+            unloadPlugin(path)
+        } else {
+            current.remove(path)
+            // Note: Enabling requires reloading which might need context. 
+            // For now, we just update the persistent list.
+        }
+        setKey(PLUGINS_DISABLED_KEY, current.toTypedArray())
+    }
+
     private val CLOUD_STREAM_FOLDER =
         Environment.getExternalStorageDirectory().absolutePath + "/Cloudstream3/"
 
@@ -247,6 +265,17 @@ object PluginManager {
                 it.internalName.replace("provider", "", ignoreCase = true) == apiName
             })?.let { savedData ->
             // OnlinePluginData(savedData, onlineData)
+            loadPlugin(
+                context,
+                File(savedData.filePath),
+                savedData
+            )
+        } ?: false
+    }
+
+    suspend fun loadSinglePluginByPath(context: Context, path: String): Boolean {
+        return (getPluginsOnline().firstOrNull { it.filePath == path }
+            ?: getPluginsLocal().firstOrNull { it.filePath == path })?.let { savedData ->
             loadPlugin(
                 context,
                 File(savedData.filePath),
@@ -460,13 +489,16 @@ object PluginManager {
     suspend fun ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(context: Context) {
         assertNonRecursiveCallstack()
 
+        val disabled = getDisabledPlugins()
         // Load all plugins as fast as possible!
         (getPluginsOnline()).toList().amap { pluginData ->
-            loadPlugin(
-                context,
-                File(pluginData.filePath),
-                pluginData
-            )
+            if (pluginData.filePath !in disabled) {
+                loadPlugin(
+                    context,
+                    File(pluginData.filePath),
+                    pluginData
+                )
+            }
         }
     }
 
@@ -529,9 +561,11 @@ object PluginManager {
         // Make sure all local plugins are fully refreshed.
         removeKey(PLUGINS_KEY_LOCAL)
 
+        val disabled = getDisabledPlugins()
         sortedPlugins?.sortedBy { it.name }?.amap { file ->
             try {
                 val destinationFile = File(pluginDirectory, file.name)
+                if (destinationFile.absolutePath in disabled) return@amap
 
                 // Only copy the file if the destination file doesn't exist or if it
                 // has been modified (check file length and modification time).

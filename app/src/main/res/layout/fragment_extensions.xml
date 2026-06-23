@@ -129,56 +129,81 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/storage_bar_left_box" />
-
-                <TextView
-                    android:id="@+id/plugin_download_txt"
+                <LinearLayout
+                    android:id="@+id/plugin_download_holder"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:textColor="?attr/textColor"
-                    android:textSize="12sp"
-                    tools:text="Downloaded: 7" />
+                    android:orientation="horizontal">
 
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/storage_bar_mid_box" />
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:background="@drawable/storage_bar_left_box" />
 
-                <TextView
-                    android:id="@+id/plugin_disabled_txt"
+                    <TextView
+                        android:id="@+id/plugin_download_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="?attr/textColor"
+                        android:textSize="12sp"
+                        tools:text="Downloaded: 7" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/plugin_disabled_holder"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:textColor="?attr/textColor"
-                    android:textSize="12sp"
-                    tools:text="Disabled: 3" />
+                    android:orientation="horizontal"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true">
 
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/storage_bar_right_box" />
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/storage_bar_mid_box" />
 
-                <TextView
-                    android:id="@+id/plugin_not_downloaded_txt"
+                    <TextView
+                        android:id="@+id/plugin_disabled_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="?attr/textColor"
+                        android:textSize="12sp"
+                        tools:text="Disabled: 3" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/plugin_not_downloaded_holder"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:textColor="?attr/textColor"
-                    android:textSize="12sp"
-                    tools:text="Not downloaded 3" />
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/storage_bar_right_box" />
+
+                    <TextView
+                        android:id="@+id/plugin_not_downloaded_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="?attr/textColor"
+                        android:textSize="12sp"
+                        tools:text="Not downloaded 3" />
+                </LinearLayout>
             </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout

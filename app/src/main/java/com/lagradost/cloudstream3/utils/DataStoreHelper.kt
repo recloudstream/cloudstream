@@ -51,6 +51,9 @@ const val RESULT_SEASON = "result_season"
 const val RESULT_DUB = "result_dub"
 const val KEY_RESULT_SORT = "result_sort"
 const val USER_PINNED_PROVIDERS = "user_pinned_providers" //key for pinned user set
+const val SOURCE_PREFERENCE = "source_preference"
+const val EXTENSION_FOLDERS = "extension_folders"
+const val GLOBAL_PROGRESS = "global_progress"
 
 class UserPreferenceDelegate<T : Any>(
     private val key: String, private val default: T //, private val klass: KClass<T>
@@ -527,18 +530,24 @@ object DataStoreHelper {
         updateTime: Long? = null,
     ) {
         if (parentId == null) return
+        val res = DownloadObjects.ResumeWatching(
+            parentId,
+            episodeId,
+            episode,
+            season,
+            updateTime ?: System.currentTimeMillis(),
+            isFromDownload
+        )
         setKey(
             "$currentAccount/$RESULT_RESUME_WATCHING",
             parentId.toString(),
-            DownloadObjects.ResumeWatching(
-                parentId,
-                episodeId,
-                episode,
-                season,
-                updateTime ?: System.currentTimeMillis(),
-                isFromDownload
-            )
+            res
         )
+
+        // Feature 6: Cross-provider sync
+        (getBookmarkedData(parentId) ?: getSubscribedData(parentId) ?: getFavoritesData(parentId))?.let { meta ->
+            setGlobalProgress(meta.name, meta.type, res)
+        }
     }
 
     private fun removeLastWatchedOld(parentId: Int?) {
@@ -553,10 +562,17 @@ object DataStoreHelper {
 
     fun getLastWatched(id: Int?): DownloadObjects.ResumeWatching? {
         if (id == null) return null
-        return getKey(
+        val local = getKey<DownloadObjects.ResumeWatching>(
             "$currentAccount/$RESULT_RESUME_WATCHING",
             id.toString(),
         )
+        if (local != null) return local
+
+        // Feature 6: Cross-provider sync
+        (getBookmarkedData(id) ?: getSubscribedData(id) ?: getFavoritesData(id))?.let { meta ->
+            return getGlobalProgress(meta.name, meta.type)
+        }
+        return null
     }
 
     private fun getLastWatchedOld(id: Int?): DownloadObjects.ResumeWatching? {
@@ -777,6 +793,32 @@ object DataStoreHelper {
         return idPrefixes.map { idPrefix ->
             getKey("${idPrefix}_sync", id.toString())
         }
+    }
+
+    fun getSourcePreference(parentId: Int): String? {
+        return getKey("$currentAccount/$SOURCE_PREFERENCE", parentId.toString())
+    }
+
+    fun setSourcePreference(parentId: Int, source: String) {
+        setKey("$currentAccount/$SOURCE_PREFERENCE", parentId.toString(), source)
+    }
+
+    fun getExtensionFolders(): Map<String, List<String>> {
+        return getKey("$currentAccount/$EXTENSION_FOLDERS") ?: emptyMap()
+    }
+
+    fun setExtensionFolders(folders: Map<String, List<String>>) {
+        setKey("$currentAccount/$EXTENSION_FOLDERS", folders)
+    }
+
+    fun getGlobalProgress(name: String, type: TvType?): DownloadObjects.ResumeWatching? {
+        val globalId = "${name.lowercase().filter { it.isLetterOrDigit() }}_$type"
+        return getKey("$currentAccount/$GLOBAL_PROGRESS", globalId)
+    }
+
+    fun setGlobalProgress(name: String, type: TvType?, progress: DownloadObjects.ResumeWatching) {
+        val globalId = "${name.lowercase().filter { it.isLetterOrDigit() }}_$type"
+        setKey("$currentAccount/$GLOBAL_PROGRESS", globalId, progress)
     }
 
     var pinnedProviders: Array<String>

@@ -59,7 +59,8 @@ object TestingUtils {
     class TestResultProvider(
         success: Boolean,
         val log: List<Logger.Message>,
-        val exception: Throwable?
+        val exception: Throwable?,
+        val isLikelyBlocked: Boolean = false
     ) :
         TestResult(success)
 
@@ -319,7 +320,15 @@ object TestingUtils {
                         TestResultProvider(false, logger.getRawLog(), null)
                     }
                 } catch (e: Throwable) {
-                    TestResultProvider(false, logger.getRawLog(), e)
+                    val isLikelyBlocked = when (e) {
+                        is java.net.SocketTimeoutException -> true
+                        is java.net.UnknownHostException -> true
+                        is java.net.ConnectException -> true
+                        is javax.net.ssl.SSLHandshakeException -> true
+                        else -> e.message?.contains("timeout", ignoreCase = true) == true ||
+                                e.message?.contains("connection", ignoreCase = true) == true
+                    }
+                    TestResultProvider(false, logger.getRawLog(), e, isLikelyBlocked)
                 }
                 callback.invoke(api, result)
             }

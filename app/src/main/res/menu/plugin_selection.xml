@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_batch_download"
+        android:icon="@drawable/netflix_download"
+        android:title="@string/download"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_batch_enable"
+        android:icon="@drawable/ic_baseline_play_arrow_24"
+        android:title="@string/resume"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_batch_disable"
+        android:icon="@drawable/ic_baseline_close_24"
+        android:title="@string/disable"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_batch_delete"
+        android:icon="@drawable/ic_baseline_delete_outline_24"
+        android:title="@string/delete"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_batch_move"
+        android:icon="@drawable/ic_baseline_folder_open_24"
+        android:title="@string/add_folder"
+        app:showAsAction="ifRoom" />
+</menu>

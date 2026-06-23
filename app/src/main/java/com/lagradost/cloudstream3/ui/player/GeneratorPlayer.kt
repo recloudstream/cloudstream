@@ -1350,6 +1350,11 @@ class GeneratorPlayer : FullScreenPlayer() {
                     }
                     if (init) {
                         sortedUrls.getOrNull(sourceIndex)?.let {
+                            it.first?.source?.let { source ->
+                                viewModel.state.generatorState?.id?.let { parentId ->
+                                    DataStoreHelper.setSourcePreference(parentId, source)
+                                }
+                            }
                             loadLink(it, true)
                         }
                     }

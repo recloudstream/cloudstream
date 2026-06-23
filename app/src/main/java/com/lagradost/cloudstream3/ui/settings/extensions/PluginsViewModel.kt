@@ -19,6 +19,7 @@ import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.PluginManager.getPluginPath
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.plugins.SitePlugin
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -61,6 +62,71 @@ class PluginsViewModel : ViewModel() {
     var selectedLanguages = listOf<String>()
     private var currentQuery: String? = null
 
+    val selectedPlugins = mutableSetOf<String>() // Set of plugin names/urls
+    private var isSelectionMode = false
+
+    fun toggleSelectionMode(enabled: Boolean) {
+        isSelectionMode = enabled
+        if (!enabled) selectedPlugins.clear()
+        updateFilteredPlugins()
+    }
+
+    fun toggleSelection(pluginUrl: String) {
+        if (selectedPlugins.contains(pluginUrl)) {
+            selectedPlugins.remove(pluginUrl)
+        } else {
+            selectedPlugins.add(pluginUrl)
+        }
+        updateFilteredPlugins()
+    }
+
+    fun batchAction(activity: Activity?, action: BatchAction) = ioSafe {
+        if (activity == null) return@ioSafe
+        val pluginsToProcess = plugins.filter { selectedPlugins.contains(it.plugin.second.url) }
+        
+        pluginsToProcess.amap { data ->
+            val (repo, metadata) = data.plugin
+            val file = if (metadata.url.startsWith("http")) getPluginPath(activity, metadata.internalName, repo) else File(metadata.url)
+            val exists = file.exists()
+
+            when (action) {
+                BatchAction.Download -> {
+                    if (!exists) {
+                        PluginManager.downloadPlugin(activity, metadata.url, metadata.fileHash, metadata.internalName, repo, true)
+                    }
+                }
+                BatchAction.Delete -> {
+                    if (exists) {
+                        PluginManager.deletePlugin(file)
+                    }
+                }
+                BatchAction.Disable -> {
+                    if (exists) {
+                        PluginManager.setPluginDisabled(file.absolutePath, true)
+                    }
+                }
+                BatchAction.Enable -> {
+                    if (exists) {
+                        PluginManager.setPluginDisabled(file.absolutePath, false)
+                        PluginManager.loadSinglePluginByPath(activity, file.absolutePath)
+                    }
+                }
+                BatchAction.MoveToFolder -> {
+                    // Logic handled in Fragment with folder picker
+                }
+            }
+        }
+
+        toggleSelectionMode(false)
+        runOnMainThread {
+            updatePluginListLocal() // Refresh
+        }
+    }
+
+    enum class BatchAction {
+        Download, Delete, Disable, Enable, MoveToFolder
+    }
+
     companion object {
         private val repositoryCache: MutableMap<String, List<Plugin>> = mutableMapOf()
         const val TAG = "PLG"
@@ -85,6 +151,16 @@ class PluginsViewModel : ViewModel() {
             }
             return RepositoryManager.getRepoPlugins(repositoryUrl)
                 ?.also { repositoryCache[repositoryUrl] = it } ?: emptyList()
+        }
+
+        private fun isLocalDisabled(
+            pluginName: String,
+            repositoryUrl: String,
+            activity: Activity? = null
+        ): Boolean {
+            val path = activity?.let { getPluginPath(it, pluginName, repositoryUrl).absolutePath }
+                ?: return false
+            return PluginManager.getDisabledPlugins().contains(path)
         }
 
         /**
@@ -172,8 +248,16 @@ class PluginsViewModel : ViewModel() {
             plugin.first
         )
 
+        val isDisabled = PluginManager.getDisabledPlugins().contains(file.absolutePath)
+
         val (success, message) = if (file.exists()) {
-            PluginManager.deletePlugin(file) to R.string.plugin_deleted
+            if (isDisabled) {
+                PluginManager.setPluginDisabled(file.absolutePath, false)
+                PluginManager.loadSinglePluginByPath(activity, file.absolutePath)
+                true to R.string.plugin_loaded
+            } else {
+                PluginManager.deletePlugin(file) to R.string.plugin_deleted
+            }
         } else {
             val isEnabled = plugin.second.status != PROVIDER_STATUS_DOWN
             val message = if (isEnabled) R.string.plugin_loaded else R.string.plugin_downloaded
@@ -206,12 +290,25 @@ class PluginsViewModel : ViewModel() {
             .getStringSet(context.getString(R.string.prefer_media_type_key), emptySet())
             ?.contains(TvType.NSFW.ordinal.toString()) == true
 
-        val plugins = getPlugins(repositoryUrl)
+        val plugins = if (repositoryUrl.startsWith("folder://")) {
+            val folderName = repositoryUrl.removePrefix("folder://")
+            val pluginNames = DataStoreHelper.getExtensionFolders()[folderName] ?: emptyList<String>()
+            (PluginManager.getPluginsOnline() + PluginManager.getPluginsLocal())
+                .filter { pluginNames.contains(it.internalName) }
+                .map { "" to it.toSitePlugin() }
+        } else {
+            getPlugins(repositoryUrl)
+        }
+
         val list = plugins.filter {
             // Show all non-nsfw plugins or all if nsfw is enabled
             it.second.tvTypes?.contains(TvType.NSFW.name) != true || isAdult
         }.map { plugin ->
-            PluginViewData(plugin, isDownloaded(context, plugin.second.internalName, plugin.first))
+            PluginViewData(
+                plugin,
+                isDownloaded(context, plugin.second.internalName, plugin.first),
+                isLocalDisabled(plugin.second.internalName, plugin.first, context as? Activity)
+            )
         }
 
         this.plugins = list
@@ -254,9 +351,18 @@ class PluginsViewModel : ViewModel() {
         }
     }
 
+    private fun List<PluginViewData>.applySelection(): List<PluginViewData> {
+        return this.map { 
+            it.copy(
+                isSelected = selectedPlugins.contains(it.plugin.second.url),
+                isInSelectionMode = isSelectionMode
+            )
+        }
+    }
+
     fun updateFilteredPlugins() {
         _filteredPlugins.postValue(
-            false to plugins.filterTvTypes().filterLang().sortByQuery(currentQuery)
+            false to plugins.filterTvTypes().filterLang().sortByQuery(currentQuery).applySelection()
         )
     }
 
@@ -283,13 +389,22 @@ class PluginsViewModel : ViewModel() {
     /**
      * Update the list but only with the local data. Used for file management.
      * */
-    fun updatePluginListLocal() = viewModelScope.launchSafe {
-        Log.i(TAG, "updatePluginList = local")
+    fun updatePluginListLocal(filterDisabled: Boolean = false, folderName: String? = null) = viewModelScope.launchSafe {
+        Log.i(TAG, "updatePluginList = local, filterDisabled = $filterDisabled, folderName = $folderName")
 
+        val disabled = PluginManager.getDisabledPlugins()
+        val folderPlugins = folderName?.let { DataStoreHelper.getExtensionFolders()[it] }
+        
         val downloadedPlugins = (PluginManager.getPluginsOnline() + PluginManager.getPluginsLocal())
             .distinctBy { it.filePath }
+            .filter { !filterDisabled || it.filePath in disabled }
+            .filter { folderPlugins == null || folderPlugins.contains(it.internalName) }
             .map {
-                PluginViewData("" to it.toSitePlugin(), true)
+                PluginViewData(
+                    "" to it.toSitePlugin(),
+                    true,
+                    it.filePath in disabled
+                )
             }
 
         plugins = downloadedPlugins

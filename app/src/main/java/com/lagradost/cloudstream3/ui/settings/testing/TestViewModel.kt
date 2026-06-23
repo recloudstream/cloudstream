@@ -3,13 +3,17 @@ package com.lagradost.cloudstream3.ui.settings.testing
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.MainAPI
+import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.utils.Coroutines.atomicListOf
 import com.lagradost.cloudstream3.utils.TestingUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import java.io.File
 
 class TestViewModel : ViewModel() {
     data class TestProgress(
@@ -103,5 +107,69 @@ class TestViewModel : ViewModel() {
     fun stopTest() {
         scope?.cancel()
         scope = null
+    }
+
+    fun deleteExtensions(paths: List<String>) {
+        viewModelScope.launch {
+            paths.forEach { path ->
+                PluginManager.deletePlugin(File(path))
+            }
+            providers.withLock {
+                providers.removeAll { it.first.sourcePlugin in paths }
+                passed = providers.count { it.second.success }
+                failed = providers.count { !it.second.success }
+            }
+            total = APIHolder.allProviders.withLock { APIHolder.allProviders.size }
+            updateProgress()
+        }
+    }
+
+    fun disableExtensions(paths: List<String>) {
+        viewModelScope.launch {
+            paths.forEach { path ->
+                PluginManager.setPluginDisabled(path, true)
+            }
+            providers.withLock {
+                providers.removeAll { it.first.sourcePlugin in paths }
+                passed = providers.count { it.second.success }
+                failed = providers.count { !it.second.success }
+            }
+            total = APIHolder.allProviders.withLock { APIHolder.allProviders.size }
+            updateProgress()
+        }
+    }
+
+    fun getFailedExtensions(): List<Pair<String, String>> {
+        return providers.withLock {
+            val failed = providers.filter { !it.second.success }.mapNotNull {
+                val path = it.first.sourcePlugin ?: return@mapNotNull null
+                it.first.name to path
+            }.toSet()
+
+            val passedPaths = providers.filter { it.second.success }.mapNotNull { it.first.sourcePlugin }.toSet()
+
+            failed.filter { it.second !in passedPaths }.distinctBy { it.second }
+        }
+    }
+
+    fun retryFailed() {
+        scope?.cancel()
+        scope = CoroutineScope(Dispatchers.Default)
+
+        val failedApis = providers.withLock {
+            val failed = providers.filter { !it.second.success }.map { it.first }
+            providers.removeAll { !it.second.success }
+            failed
+        }.toTypedArray()
+
+        if (failedApis.isEmpty()) return
+
+        failed = providers.count { !it.second.success }
+        passed = providers.count { it.second.success }
+        updateProgress()
+
+        TestingUtils.getDeferredProviderTests(scope ?: return, failedApis) { api, result ->
+            addProvider(api, result)
+        }
     }
 }

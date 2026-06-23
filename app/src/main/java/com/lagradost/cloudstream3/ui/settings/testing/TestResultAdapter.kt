@@ -89,12 +89,19 @@ class TestResultAdapter() :
         val stackTrace = result.exception?.getStackTracePretty(false)?.ifBlank { null }
         val messages = result.exception?.getAllMessages()?.ifBlank { null }
         val resultLog = result.log.joinToString("\n")
+
+        if (result.isLikelyBlocked) {
+            failDescription.text = itemView.context.getString(R.string.connection_blocked_warning)
+            failDescription.setTextColor(ContextCompat.getColor(itemView.context, R.color.colorTestWarning))
+        } else {
+            failDescription.text = messages?.lastLine() ?: resultLog.lastLine()
+            failDescription.setTextColor(ContextCompat.getColor(itemView.context, R.color.grayTextColor))
+        }
+
         val fullLog =
             resultLog +
                     (messages?.let { "\n\nError: $it" } ?: "") +
                     (stackTrace?.let { "\n\n$it" } ?: "")
-
-        failDescription.text = messages?.lastLine() ?: resultLog.lastLine()
 
         logButton.setOnClickListener {
             val builder: AlertDialog.Builder =

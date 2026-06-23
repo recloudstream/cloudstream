@@ -231,6 +231,8 @@
     <string name="episode_short">E</string>
     <string name="no_episodes_found">No Episodes found</string>
     <string name="delete">Delete</string>
+    <string name="delete_failed">Delete</string>
+    <string name="disable_failed">Disable</string>
     <string name="delete_file">Delete File</string>
     <string name="delete_files">Delete Files</string>
     <string name="delete_format" formatted="true">Delete (%1$d | %2$s)</string>
@@ -519,6 +521,7 @@
     <string name="setup_extensions_subtext">Download the list of sites you want to use</string>
     <string name="plugins_downloaded" formatted="true">Downloaded: %d</string>
     <string name="plugins_disabled" formatted="true">Disabled: %d</string>
+    <string name="plugins_disabled_title">Disabled extensions</string>
     <string name="plugins_not_downloaded" formatted="true">Not downloaded: %d</string>
     <string name="plugins_updated" formatted="true">Updated %d plugins</string>
     <string name="blank_repo_message">CloudStream has no sites installed by default. You need to install the sites from repositories.
@@ -721,6 +724,12 @@
     <string name="volume_exceeded_100">Volume has exceeded 100%</string>
     <string name="slide_up_again_to_exceed_100">Slide up again to go beyond 100%</string>
     <string name="update_plugins">Update Plugins</string>
+    <string name="sync_all_repos">Sync all repositories</string>
+    <string name="sync_all_repos_success">Successfully synced all repositories</string>
+    <string name="add_folder">Add folder</string>
+    <string name="folder_name">Folder name</string>
+    <string name="connection_blocked_warning">Likely ISP block detected. Try DNS-over-HTTPS or a VPN.</string>
+    <string name="retry_failed">Retry</string>
     <!--Manual Update Button-->
     <string name="update_plugins_manually">Update plugins manually</string>
     <string name="starting_plugin_update_manually">Starting plugin update process!</string>

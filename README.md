@@ -11,13 +11,13 @@
 + [Contributing:](#contributing)
 + [Issues:](#issues)
   + [Bugs Reports:](#bug_report)
-  + [Enhancement:](#enhancment)
+  + [Enhancement:](#enhancement)
 + [Extension Development:](#extensions)
 + [Language Support:](#languages)
 + [Further Sources](#contact_and_sources)
 
 
-<a id="about_us"></a>
+<a id="about_us" name="about_us"></a>
 
 ## About us: 
 
@@ -49,7 +49,7 @@ Our documentation is unmaintained and open to contributions; therefore, apps and
 + Extension system for personal customization
 
 
-<a id="install_rules"></a>
+<a id="install_rules" name="install_rules"></a>
 
 ## Installation: 
 
@@ -57,37 +57,38 @@ Our documentation provides the steps to install and configure CloudStream for yo
 
 [Getting Started With CloudStream:](https://recloudstream.github.io/csdocs/)
 
-<a id="contributing"></a>
+<a id="contributing" name="contributing"></a>
 
 ## Contributing:
-We **happily** accept any contributions to our project. To find out where you can start contributing towards the project, please look [at our issues tab](/cloudstream/issues)
+We **happily** accept any contributions to our project. To find out where you can start contributing towards the project, please look [at our issues tab](https://github.com/recloudstream/cloudstream/issues)
 
 
 
-<a id="issues"></a> 
+<a id="issues" name="issues"></a> 
  
 ### Issues: 
 While we **actively** accept issues and pull requests, we do require you fill out an [template](https://github.com/recloudstream/cloudstream/issues/new/choose) for issues. These include the following:
 
-<a id="bug_report"></a>
+<a id="bug_report" name="bug_report"></a>
 
 - [Bug Report Template: ](https://github.com/recloudstream/cloudstream/issues/new?assignees=&labels=bug&projects=&template=application-bug.yml)
   - For bug reports, we want as much info as possible, including your downloaded version of CloudeStream, device and updated version (if possible, current API),
     expected behavior of the program, and the actual behavior that the program did, most importantly we require clear, reproducible steps of the bug. If your bug can't be       reproduced, it is unlikely we'll work on your issue.
     
-<a id="enhancment"></a>
+<a id="enhancement" name="enhancement"></a>
   
 - [Feature Request Template: ](https://github.com/recloudstream/cloudstream/issues/new?assignees=&labels=enhancement&projects=&template=feature-request.yml)
   - Before adding a feature request, please check to see if a feature request already has been requested.  
 
 
 ### Extensions:
+<a id="extensions" name="extensions"></a>
  
 **Further details on creating extensions for CloudStream are found in our documentation.**
 
 [Guide: For Extension Developers](https://recloudstream.github.io/csdocs/devs/gettingstarted/) 
 
-<a id="contact_and_sources"></a>
+<a id="contact_and_sources" name="contact_and_sources"></a>
 
 ## Further Sources: 
 
@@ -100,7 +101,7 @@ As well as providing clear install steps, our [website](https://dweb.link/ipns/c
   - [Linux](https://recloudstream.github.io/csdocs/other-devices/linux/)
 - And more...
 
-<a id="languages"> </a>  
+<a id="languages" name="languages"></a>
 
 ### Supported languages:
 

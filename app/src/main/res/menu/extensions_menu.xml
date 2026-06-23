@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_sync_all"
+        android:icon="@drawable/baseline_sync_24"
+        android:title="@string/sync_all_repos"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_add_folder"
+        android:icon="@drawable/ic_baseline_folder_open_24"
+        android:title="@string/add_folder"
+        app:showAsAction="ifRoom" />
+</menu>
