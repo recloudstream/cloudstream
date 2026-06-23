@@ -673,6 +673,23 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 homeViewModel.queryTextSubmit("")
             }
 
+            // Load value for toggling Tv layout real time clock. Hide by default at startup
+            // set visibility first, to apply a scroll effect later
+            context?.let {
+                if (isLayout(TV)) {
+                    val settingsManager = PreferenceManager.getDefaultSharedPreferences(it)
+                    val toggleClock =
+                        settingsManager.getBoolean(
+                            getString(R.string.tv_layout_clock_key),
+                            false
+                        )
+                    binding.homeClock.isVisible = toggleClock
+                } else {
+                    binding.homeClock.isVisible = false
+                }
+            }
+
+
             homeMasterRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if (isLayout(PHONE)) {
@@ -712,6 +729,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                             view.getLocationInWindow(rect)
                             scrollParent.isVisible = true
                             scrollParent.translationY = rect[1].toFloat() - 60.toPx
+
+                            // Move the TV layout real time clock out of the way too
+                            // We check if we have the correct layout and if the clock is enabled
+                            if(isLayout(TV) && binding.homeClock.isVisible) {
+                                val scrollParent = binding.homeClock
+
+                                val rect = IntArray(2)
+                                view.getLocationInWindow(rect)
+                                scrollParent.isVisible = true
+                                scrollParent.translationY = rect[1].toFloat() - 60.toPx
+                            }
                         }
                     }
                     super.onScrolled(recyclerView, dx, dy)
