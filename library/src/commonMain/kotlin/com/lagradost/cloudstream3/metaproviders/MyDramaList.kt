@@ -80,7 +80,7 @@ abstract class MyDramaListAPI : MainAPI() {
         val list = app.get(
             url = "${request.data}&limit=20&page=$page&lang=en-US",
             interceptor = headerInterceptor
-        ).parsed<SearchResult>().map { element ->
+        ).parsed<List<MediaSummary>>().map { element ->
             element.toSearchResponse()
         }
         return newHomePageResponse(request.name, list)
@@ -91,7 +91,7 @@ abstract class MyDramaListAPI : MainAPI() {
             url = "$API_HOST/search/titles",
             data = mapOf("q" to query),
             interceptor = headerInterceptor
-        ).parsed<SearchResult>().map { element ->
+        ).parsed<List<MediaSummary>>().map { element ->
             element.toSearchResponse()
         }
     }
@@ -220,12 +220,6 @@ abstract class MyDramaListAPI : MainAPI() {
     )
 
     @Serializable
-    class SearchResult : ArrayList<MediaSummary>()
-
-    @Serializable
-    class Recommendations : ArrayList<MediaSummary>()
-
-    @Serializable
     data class MediaSummary(
         @JsonProperty("id") @SerialName("id") val id: Long,
         @JsonProperty("title") @SerialName("title") val title: String,
@@ -299,11 +293,11 @@ abstract class MyDramaListAPI : MainAPI() {
             return actors
         }
 
-        suspend fun fetchRecommendations(): Recommendations {
+        suspend fun fetchRecommendations(): List<MediaSummary> {
             return app.get(
                 url = "$API_HOST/titles/$id/recommendations",
                 interceptor = headerInterceptor
-            ).parsed<Recommendations>()
+            ).parsed<List<MediaSummary>>()
         }
 
         suspend fun fetchTrailer(): String? {
@@ -328,7 +322,7 @@ abstract class MyDramaListAPI : MainAPI() {
         return app.get(
             url = "$API_HOST/titles/${this.id}/episodes",
             interceptor = headerInterceptor
-        ).parsed<ShowEpisodes>().map {
+        ).parsed<List<ShowEpisodesItem>>().map {
             it.episodes
         }.flatten().map { ep ->
             val link = LinkData(
@@ -411,9 +405,6 @@ abstract class MyDramaListAPI : MainAPI() {
         @JsonProperty("images") @SerialName("images") val images: Images,
         @JsonProperty("job") @SerialName("job") val job: String,
     )
-
-    @Serializable
-    class ShowEpisodes : ArrayList<ShowEpisodesItem>()
 
     @Serializable
     data class ShowEpisodesItem(
