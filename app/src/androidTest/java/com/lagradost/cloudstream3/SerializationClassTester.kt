@@ -30,7 +30,7 @@ class SerializationClassTester {
         println("Number of serializable classes: ${serializableClasses.size}")
 
         serializableClasses.forEach { kClass ->
-            val instance = Instancio.create(kClass.java)
+            val instance = Instancio.of(kClass.java).withMaxDepth(10).create()
 
             val jacksonJson = jacksonMapper.writeValueAsString(instance)
             val kotlinxJson = serializeWithKotlinx(kClass, instance)
@@ -61,7 +61,7 @@ class SerializationClassTester {
         println("Number of serializable classes: ${serializableClasses.size}")
 
         serializableClasses.forEach { kClass ->
-            val instance = Instancio.create(kClass.java)
+            val instance = Instancio.of(kClass.java).withMaxDepth(10).create()
             // Convert to JSON to get example JSON object
             // We prefer jackson here because the app may have many jackson JSON strings in local storage
             val originalJson = jacksonMapper.writeValueAsString(instance)
