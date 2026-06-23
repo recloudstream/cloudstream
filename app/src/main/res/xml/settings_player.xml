@@ -128,12 +128,6 @@
             android:title="@string/extra_brightness_settings"
             app:defaultValue="false"
             app:key="@string/extra_brightness_key" />
-        <SwitchPreference
-                android:icon="@drawable/ic_baseline_clock_24"
-                android:summary="@string/tv_layout_clock_settings_des"
-                android:title="@string/tv_layout_clock_settings"
-                android:defaultValue="false"
-                android:key="@string/tv_layout_clock_key" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/pref_category_gestures"

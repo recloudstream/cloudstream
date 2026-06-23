@@ -55,7 +55,6 @@ class SettingsPlayer : BasePreferenceFragmentCompat() {
 
         getPref(R.string.preview_seekbar_key)?.hideOn(TV)
         getPref(R.string.pref_category_android_tv_key)?.hideOn(PHONE)
-        getPref(R.string.tv_layout_clock_key)?.hideOn(PHONE or EMULATOR)
 
         getPref(R.string.video_buffer_length_key)?.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.video_buffer_length_names)
