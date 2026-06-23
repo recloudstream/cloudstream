@@ -169,8 +169,6 @@
     <string name="extra_brightness_settings">Extra brightness</string>
     <string name="extra_brightness_settings_des">Enable brightness filter when 100% display brightness is exceeded</string>
     <string name="extra_brightness_key">extra_brightness_enabled</string>
-    <string name="tv_layout_clock_settings">Player real time clock</string>
-    <string name="tv_layout_clock_settings_des">Show a real time clock above the video title in the video player</string>
     <string name="episode_sync_settings">Update watch progress</string>
     <string name="episode_sync_settings_des">Automatically sync your current episode progress</string>
     <string name="restore_settings">Restore data from backup</string>
@@ -376,6 +374,8 @@
     <string name="pref_category_looks">Looks</string>
     <string name="pref_category_ui_features">Features</string>
     <string name="category_general">General</string>
+    <string name="tv_layout_clock_settings">Show real time clock</string>
+    <string name="tv_layout_clock_settings_des">Show a real time clock at the top of the screen. Applies to the homepage and player</string>
     <string name="random_button_settings">Random Button</string>
     <string name="random_button_settings_desc">Show random button on Homepage and Library</string>
     <string name="provider_lang_settings">Extension languages</string>
