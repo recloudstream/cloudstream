@@ -22,6 +22,10 @@ import com.lagradost.cloudstream3.utils.Coroutines.mainWork
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToLangTagIETF
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromLanguageToTagIETF
 import com.lagradost.nicehttp.RequestBodyTypes
+import io.ktor.http.Url
+import io.ktor.http.URLBuilder
+import io.ktor.http.encodedPath
+import io.ktor.http.takeFrom
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -35,11 +39,8 @@ import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.format.char
 import kotlinx.datetime.format.parse
 import kotlinx.datetime.toInstant
-import java.net.URI
-import java.util.EnumSet
 import kotlinx.serialization.json.Json
 import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 import kotlin.time.Clock
@@ -90,6 +91,7 @@ class ErrorLoadingException(message: String? = null) : Exception(message)
 @Prerelease
 val json = Json {
     encodeDefaults = true
+    explicitNulls = false
     ignoreUnknownKeys = true
 }
 
@@ -176,9 +178,9 @@ object APIHolder {
     // To get the key
     suspend fun getCaptchaToken(url: String, key: String, referer: String? = null): String? {
         try {
-            val uri = URI.create(url)
+            val _url = Url(url)
             val domain = base64Encode(
-                (uri.scheme + "://" + uri.host + ":443").encodeToByteArray(),
+                (_url.protocol.name + "://" + _url.host + ":443").encodeToByteArray(),
             ).replace("\n", "").replace("=", ".")
 
             val vToken =
@@ -713,12 +715,10 @@ fun base64Decode(string: String): String {
     }
 }
 
-@OptIn(ExperimentalEncodingApi::class)
 fun base64DecodeArray(string: String): ByteArray {
     return Base64.decode(string)
 }
 
-@OptIn(ExperimentalEncodingApi::class)
 fun base64Encode(array: ByteArray): String {
     return Base64.encode(array)
 }
@@ -1330,23 +1330,23 @@ fun getQualityFromString(string: String?): SearchQuality? {
  * ```
  */
 fun MainAPI.updateUrl(url: String): String {
-    try {
-        val original = URI(url)
-        val updated = URI(mainUrl)
+    return try {
+        val original = Url(url)
+        val updated = Url(mainUrl)
 
-        // URI(String scheme, String userInfo, String host, int port, String path, String query, String fragment)
-        return URI(
-            updated.scheme,
-            original.userInfo,
-            updated.host,
-            updated.port,
-            original.path,
-            original.query,
-            original.fragment
-        ).toString()
+        URLBuilder().apply {
+            takeFrom(updated)
+            user = original.user
+            password = original.password
+            encodedPath = original.encodedPath
+            fragment = original.fragment
+
+            parameters.clear()
+            parameters.appendAll(original.parameters)
+        }.buildString()
     } catch (t: Throwable) {
         logError(t)
-        return url
+        url
     }
 }
 
@@ -1510,7 +1510,7 @@ constructor(
 
     override var posterUrl: String? = null,
     var year: Int? = null,
-    var dubStatus: EnumSet<DubStatus>? = null,
+    var dubStatus: MutableSet<DubStatus>? = null,
 
     var otherName: String? = null,
     var episodes: MutableMap<DubStatus, Int> = mutableMapOf(),
@@ -1522,7 +1522,7 @@ constructor(
 ) : SearchResponse
 
 fun AnimeSearchResponse.addDubStatus(status: DubStatus, episodes: Int? = null) {
-    this.dubStatus = dubStatus?.also { it.add(status) } ?: EnumSet.of(status)
+    this.dubStatus = dubStatus?.also { it.add(status) } ?: mutableSetOf(status)
     if (this.type?.isMovieType() != true)
         if (episodes != null && episodes > 0)
             this.episodes[status] = episodes

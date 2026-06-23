@@ -8,7 +8,8 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
-import java.net.URI
+import io.ktor.http.Url
+import io.ktor.http.decodeURLPart
 import javax.crypto.Cipher
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -45,11 +46,11 @@ open class ByseSX : ExtractorApi() {
     }
 
     private fun getBaseUrl(url: String): String {
-        return URI(url).let { "${it.scheme}://${it.host}" }
+        return Url(url).let { "${it.protocol.name}://${it.host}" }
     }
 
     private fun getCodeFromUrl(url: String): String {
-        val path = URI(url).path ?: ""
+        val path = Url(url).encodedPath.decodeURLPart()
         return path.trimEnd('/').substringAfterLast('/')
     }
 
