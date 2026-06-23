@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.syncproviders
 
+import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.unixTime
@@ -71,7 +72,7 @@ data class AuthUser(
     @JsonProperty("profilePicture") @SerialName("profilePicture")
     val profilePicture: String? = null,
     /** Profile picture Headers of the URL */
-    @JsonProperty("profilePictureHeader")
+    @JsonProperty("profilePictureHeaders") @JsonAlias("profilePictureHeader")
     @SerialName("profilePictureHeaders") @JsonNames("profilePictureHeader")
     val profilePictureHeaders: Map<String, String>? = null,
 )
