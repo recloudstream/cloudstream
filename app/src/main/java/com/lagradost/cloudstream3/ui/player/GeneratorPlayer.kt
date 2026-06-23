@@ -1584,7 +1584,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         )
 
         val meta = arrayOf(
-            load.tags?.takeIf { it.isNotEmpty() }?.joinToString(", "),
+            load.tags?.takeIf { it.isNotEmpty() }?.take(6)?.joinToString(", "),
             load.year?.toString(),
             if (!load.type.isMovieType())
                 context?.getShortSeasonText(
