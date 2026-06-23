@@ -332,7 +332,7 @@ open class TraktProvider : MainAPI() {
         @JsonProperty("airs") @SerialName("airs") val airs: Airs? = null,
         @JsonProperty("network") @SerialName("network") val network: String? = null,
         @JsonProperty("images") @SerialName("images") val images: Images? = null,
-        @JsonProperty("movie") @JsonAlias("show") @SerialName("media") @JsonNames("movie", "show") val media: MediaDetails? = null,
+        @JsonProperty("media") @JsonAlias("movie", "show") @SerialName("media") @JsonNames("movie", "show") val media: MediaDetails? = null,
     )
 
     @Serializable
