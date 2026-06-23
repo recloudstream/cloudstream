@@ -69,10 +69,10 @@ abstract class BasePlugin {
         @JsonProperty("pluginClassName") @SerialName("pluginClassName")
         var pluginClassName: String? = null
 
-        @JsonProperty("version") @SerialName("version")
-        var version: Int? = null
-
         @JsonProperty("requiresResources") @SerialName("requiresResources")
         var requiresResources: Boolean = false
+
+        @JsonProperty("version") @SerialName("version")
+        var version: Int? = null
     }
 }
