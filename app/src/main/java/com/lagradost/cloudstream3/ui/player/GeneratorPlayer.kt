@@ -1604,7 +1604,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         if (!description.isNullOrBlank()) {
             descView.isVisible = true
-            descView.text = description
+            descView.text = description.html()
         } else {
             descView.isVisible = false
 
