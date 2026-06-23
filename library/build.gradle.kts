@@ -55,14 +55,15 @@ kotlin {
 
         commonMain.dependencies {
             implementation(libs.annotation) // Annotations
-            implementation(libs.nicehttp) // HTTP Lib
             implementation(libs.jackson.module.kotlin) // JSON Parser
+            implementation(libs.jsoup) // HTML Parser
             implementation(libs.kotlinx.atomicfu)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization.json) // JSON Parser
+            implementation(libs.ksoup) // HTML Parser
             implementation(libs.ktor.http)
-            implementation(libs.jsoup) // HTML Parser
+            implementation(libs.nicehttp) // HTTP Library
             implementation(libs.rhino) // Run JavaScript
             implementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
 
