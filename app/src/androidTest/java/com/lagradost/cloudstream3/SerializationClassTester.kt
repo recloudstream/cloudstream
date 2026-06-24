@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.lagradost.cloudstream3.SkipSerializationTest
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import dalvik.system.DexFile
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -118,7 +119,7 @@ class SerializationClassTester {
                 // Not possible to use .hasAnnotation() on newer Android versions.
                 kClass.java.annotations.any {
                     it is Serializable
-                }
+                } && kClass.java.annotations.none { it is SkipSerializationTest }
             }
     }
 
