@@ -69,7 +69,13 @@ open class TraktProvider : MainAPI() {
     }
 
     private fun MediaDetails.toSearchResponse(): SearchResponse {
-        val media = this.media ?: this
+        val media = this.media ?: MediaSummary(
+            title = this.title,
+            year = this.year,
+            ids = this.ids,
+            rating = this.rating,
+            images = this.images,
+        )
         val mediaType = if (media.ids?.tvdb == null) TvType.Movie else TvType.TvSeries
         val poster = media.images?.poster?.firstOrNull()
         return if (mediaType == TvType.Movie) {
@@ -77,7 +83,7 @@ open class TraktProvider : MainAPI() {
                 name = media.title ?: "",
                 url = Data(
                     type = mediaType,
-                    mediaDetails = media,
+                    mediaDetails = this,
                 ).toJson(),
                 type = TvType.Movie,
             ) {
@@ -89,7 +95,7 @@ open class TraktProvider : MainAPI() {
                 name = media.title ?: "",
                 url = Data(
                     type = mediaType,
-                    mediaDetails = media,
+                    mediaDetails = this,
                 ).toJson(),
                 type = TvType.TvSeries,
             ) {
@@ -226,7 +232,7 @@ open class TraktProvider : MainAPI() {
                             this.episode = episode.number
                             this.description = episode.overview
                             this.runTime = episode.runtime
-                            this.posterUrl = fixPath( episode.images?.screenshot?.firstOrNull())
+                            this.posterUrl = fixPath(episode.images?.screenshot?.firstOrNull())
                             this.score = Score.from10(episode.rating)
 
                             this.addDate(episode.firstAired, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
@@ -304,6 +310,15 @@ open class TraktProvider : MainAPI() {
         @JsonProperty("mediaDetails") @SerialName("mediaDetails") val mediaDetails: MediaDetails? = null,
     )
 
+    @Serializable
+    data class MediaSummary(
+        @JsonProperty("title") @SerialName("title") val title: String? = null,
+        @JsonProperty("year") @SerialName("year") val year: Int? = null,
+        @JsonProperty("ids") @SerialName("ids") val ids: Ids? = null,
+        @JsonProperty("rating") @SerialName("rating") val rating: Double? = null,
+        @JsonProperty("images") @SerialName("images") val images: Images? = null,
+    )
+
     @OptIn(ExperimentalSerializationApi::class) // JsonNames is an experimental annotation for now
     @Serializable
     data class MediaDetails(
@@ -332,7 +347,7 @@ open class TraktProvider : MainAPI() {
         @JsonProperty("airs") @SerialName("airs") val airs: Airs? = null,
         @JsonProperty("network") @SerialName("network") val network: String? = null,
         @JsonProperty("images") @SerialName("images") val images: Images? = null,
-        @JsonProperty("media") @JsonAlias("movie", "show") @SerialName("media") @JsonNames("movie", "show") val media: MediaDetails? = null,
+        @JsonProperty("media") @JsonAlias("movie", "show") @SerialName("media") @JsonNames("movie", "show") val media: MediaSummary? = null,
     )
 
     @Serializable
