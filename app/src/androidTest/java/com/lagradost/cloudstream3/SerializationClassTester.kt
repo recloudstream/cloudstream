@@ -30,16 +30,19 @@ class SerializationClassTester {
         val serializableClasses = findSerializableClasses("com.lagradost")
         println("Number of serializable classes: ${serializableClasses.size}")
 
+        val failures = mutableListOf<String>()
+
         serializableClasses.forEach { kClass ->
-            val instance = Instancio.of(kClass.java).withMaxDepth(10).create()
+            runCatching {
+                val instance = Instancio.of(kClass.java).withMaxDepth(10).create()
 
-            val jacksonJson = jacksonMapper.writeValueAsString(instance)
-            val kotlinxJson = serializeWithKotlinx(kClass, instance)
+                val jacksonJson = jacksonMapper.writeValueAsString(instance)
+                val kotlinxJson = serializeWithKotlinx(kClass, instance)
 
-            assertEquals(
-                jacksonJson,
-                kotlinxJson,
-                """
+                assertEquals(
+                    jacksonJson,
+                    kotlinxJson,
+                    """
                     Serialization mismatch for:
                     ${kClass.qualifiedName}
 
@@ -50,8 +53,15 @@ class SerializationClassTester {
                     $kotlinxJson
                     
                     """.trimIndent()
-            )
-            println("Identical serialization for: ${kClass.jvmName}")
+                )
+                println("Identical serialization for: ${kClass.jvmName}")
+            }.onFailure { e ->
+                failures.add("FAILED ${kClass.qualifiedName}: ${e.message}")
+            }
+        }
+
+        if (failures.isNotEmpty()) {
+            throw AssertionError("${failures.size} class(es) failed:\n${failures.joinToString("\n")}")
         }
     }
 
@@ -61,31 +71,33 @@ class SerializationClassTester {
         val serializableClasses = findSerializableClasses("com.lagradost")
         println("Number of serializable classes: ${serializableClasses.size}")
 
+        val failures = mutableListOf<String>()
+
         serializableClasses.forEach { kClass ->
-            val instance = Instancio.of(kClass.java).withMaxDepth(10).create()
-            // Convert to JSON to get example JSON object
-            // We prefer jackson here because the app may have many jackson JSON strings in local storage
-            val originalJson = jacksonMapper.writeValueAsString(instance)
+            runCatching {
+                val instance = Instancio.of(kClass.java).withMaxDepth(10).create()
+                // Convert to JSON to get example JSON object
+                // We prefer jackson here because the app may have many jackson JSON strings in local storage
+                val originalJson = jacksonMapper.writeValueAsString(instance)
 
-            // Create an object from the JSON using kotlinx
-            val serializer =
-                kClass.serializerOrNull() ?: kotlinxMapper.serializersModule.getContextual(kClass)
-            assertNotNull(serializer, "The class: ${kClass.jvmName} must be serializable!")
-            val kotlinxDecoded = kotlinxMapper.decodeFromString(serializer, originalJson)
+                // Create an object from the JSON using kotlinx
+                val serializer =
+                    kClass.serializerOrNull() ?: kotlinxMapper.serializersModule.getContextual(kClass)
+                assertNotNull(serializer, "The class: ${kClass.jvmName} must be serializable!")
+                val kotlinxDecoded = kotlinxMapper.decodeFromString(serializer, originalJson)
 
-            // Create an object from the JSON using jackson
-            val mapperDecoded = jacksonMapper.readValue(originalJson, kClass.java)
+                // Create an object from the JSON using jackson
+                val mapperDecoded = jacksonMapper.readValue(originalJson, kClass.java)
 
+                // Deep inspect both object using the mapper toJson function.
+                // This deep equality check can be performed using other methods, but this just works.
+                val jacksonJson = mapperDecoded.toJson()
+                val kotlinxJson = kotlinxDecoded.toJson()
 
-            // Deep inspect both object using the mapper toJson function.
-            // This deep equality check can be performed using other methods, but this just works.
-            val jacksonJson = mapperDecoded.toJson()
-            val kotlinxJson = kotlinxDecoded.toJson()
-
-            assertEquals(
-                jacksonJson,
-                kotlinxJson,
-                """
+                assertEquals(
+                    jacksonJson,
+                    kotlinxJson,
+                    """
                     Serialization mismatch for:
                     ${kClass.qualifiedName}
 
@@ -96,8 +108,15 @@ class SerializationClassTester {
                     $kotlinxJson
                     
                     """.trimIndent()
-            )
-            println("Identical deserialization for: ${kClass.jvmName}")
+                )
+                println("Identical deserialization for: ${kClass.jvmName}")
+            }.onFailure { e ->
+                failures.add("FAILED ${kClass.qualifiedName}: ${e.message}")
+            }
+        }
+
+        if (failures.isNotEmpty()) {
+            throw AssertionError("${failures.size} class(es) failed:\n${failures.joinToString("\n")}")
         }
     }
 
