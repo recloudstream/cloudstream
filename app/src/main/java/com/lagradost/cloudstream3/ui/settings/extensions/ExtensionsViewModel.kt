@@ -15,13 +15,16 @@ import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIE
 import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class RepositoryData(
-    @JsonProperty("iconUrl") val iconUrl: String?,
-    @JsonProperty("name") val name: String,
-    @JsonProperty("url") val url: String
-){
-    constructor(name: String,url: String):this(null,name,url)
+    @JsonProperty("iconUrl") @SerialName("iconUrl") val iconUrl: String?,
+    @JsonProperty("name") @SerialName("name") val name: String,
+    @JsonProperty("url") @SerialName("url") val url: String,
+) {
+    constructor(name: String, url: String): this(null, name, url)
 }
 
 const val REPOSITORIES_KEY = "REPOSITORIES_KEY"
