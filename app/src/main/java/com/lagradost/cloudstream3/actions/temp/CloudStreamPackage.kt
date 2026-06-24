@@ -7,6 +7,7 @@ import android.net.Uri
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.actions.OpenInAppAction
 import com.lagradost.cloudstream3.BuildConfig
+import com.lagradost.cloudstream3.SkipSerializationTest
 import com.lagradost.cloudstream3.ui.player.ExtractorUri
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.player.SubtitleOrigin
@@ -53,6 +54,7 @@ class CloudStreamPackage : OpenInAppAction(
     }
 
     @Serializable
+    @SkipSerializationTest //.Uri has issues with Jackson
     data class MinimalVideoLink(
         @JsonProperty("uri") @SerialName("uri")
         @Serializable(with = UriSerializer::class)
