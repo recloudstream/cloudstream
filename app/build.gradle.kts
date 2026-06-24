@@ -233,7 +233,6 @@ dependencies {
     implementation(libs.bundles.navigation)
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.kotlinx.serialization.json) // JSON Parser
-    implementation(libs.ktor.http)
 
     // Design & UI
     implementation(libs.preference.ktx)

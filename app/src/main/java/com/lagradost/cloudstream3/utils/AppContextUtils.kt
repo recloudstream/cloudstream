@@ -86,7 +86,6 @@ import com.lagradost.cloudstream3.utils.FillerEpisodeCheck.toClassDir
 import com.lagradost.cloudstream3.utils.JsUnpacker.Companion.load
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
-import io.ktor.http.Url
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okhttp3.Cache
@@ -630,15 +629,15 @@ object AppContextUtils {
 
     // Deprecate after next stable
     /* @Deprecated(
-        message = "Use Ktor 'Url' based splitQuery instead.",
+        message = "Use splitUrlParameters instead.",
         replaceWith = ReplaceWith(
-            expression = "splitQuery(Url(url.toString()))",
-            imports = ["com.lagradost.cloudstream3.splitQuery", "io.ktor.http.Url"],
+            expression = "splitUrlParameters(url.toString())",
+            imports = ["com.lagradost.cloudstream3.splitUrlParameters"],
         ),
         level = DeprecationLevel.WARNING,
     ) */
     fun splitQuery(url: java.net.URL): Map<String, String> {
-        return com.lagradost.cloudstream3.splitQuery(Url(url.toString()))
+        return com.lagradost.cloudstream3.splitUrlParameters(url.toString())
     }
 
     /**| S1:E2 Hello World

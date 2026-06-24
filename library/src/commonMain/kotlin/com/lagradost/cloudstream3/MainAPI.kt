@@ -762,45 +762,45 @@ fun sortUrls(urls: Set<ExtractorLink>): List<ExtractorLink> {
 }
 
 /**
- * Splits the query string of a [Url] into a map of key-value pairs.
+ * Splits the parameters of a [Url] into a map of key-value pairs.
  *
  * Unlike a manual `split("&")` / `split("=")` implementation, this relies on Ktor's
- * built-in query parser ([Url.parameters]), which already handles URL-decoding,
+ * built-in parameters parser ([Url.parameters]), which already handles URL-decoding,
  * malformed pairs, and parameters without a value.
  *
- * Note: if a key appears multiple times in the query string (e.g. `?a=1&a=2`),
- * only the **first** value is kept, since the return type is `Map<String, String>`.
- * Use [Url.parameters] directly if you need all values for repeated keys.
+ * Note: if a parameter key appears multiple times (e.g. `?a=1&a=2`), only the **first**
+ * value is kept, since the return type is `Map<String, String>`. Use [Url.parameters]
+ * directly if you need all values for repeated keys.
  *
- * @param url the [Url] whose query parameters should be extracted.
- * @return a map of decoded query parameter names to their first decoded value.
+ * @param url the [Url] whose parameters should be extracted.
+ * @return a map of decoded parameter names to their first decoded value.
  *
  * @sample
- * splitQuery(Url("https://example.com/path?foo=bar&baz=qux"))
+ * splitUrlParameters(Url("https://example.com/path?foo=bar&baz=qux"))
  * // returns {"foo": "bar", "baz": "qux"}
  */
 @Prerelease
-fun splitQuery(url: Url): Map<String, String> {
+fun splitUrlParameters(url: Url): Map<String, String> {
     return url.parameters.entries().associate { (key, values) -> key to values.firstOrNull().orEmpty() }
 }
 
 /**
- * Splits the query portion of a raw URL [String] into a map of key-value pairs.
+ * Splits the parameters of a raw URL [String] into a map of key-value pairs.
  *
  * Convenience overload for callers that have a URL as plain text rather than a parsed
  * [Url] instance. Internally parses [url] with Ktor's [Url] constructor and delegates
- * to [splitQuery].
+ * to [splitUrlParameters].
  *
- * @param url the URL string whose query parameters should be extracted.
- * @return a map of decoded query parameter names to their first decoded value.
+ * @param url the URL string whose parameters should be extracted.
+ * @return a map of decoded parameter names to their first decoded value.
  *
  * @sample
- * splitQuery("https://example.com/path?foo=bar&baz=qux")
+ * splitUrlParameters("https://example.com/path?foo=bar&baz=qux")
  * // returns {"foo": "bar", "baz": "qux"}
  */
 @Prerelease
-fun splitQuery(url: String): Map<String, String> {
-    return splitQuery(Url(url))
+fun splitUrlParameters(url: String): Map<String, String> {
+    return splitUrlParameters(Url(url))
 }
 
 /**

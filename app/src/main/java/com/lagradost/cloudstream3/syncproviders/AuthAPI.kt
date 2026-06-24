@@ -5,7 +5,7 @@ import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.base64Encode
-import com.lagradost.cloudstream3.splitQuery
+import com.lagradost.cloudstream3.splitUrlParameters
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING
 import java.security.SecureRandom
 
@@ -165,7 +165,7 @@ abstract class AuthAPI {
             get() = unixTimeMS
 
         fun splitRedirectUrl(redirectUrl: String): Map<String, String> {
-            return splitQuery(
+            return splitUrlParameters(
                 redirectUrl.replace(APP_STRING, "https").replace("/#", "?")
             )
         }
