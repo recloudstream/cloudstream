@@ -531,9 +531,22 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
 
         var currentOffset = subtitleDelay
         binding.apply {
+            var subtitleAdapter: SubtitleOffsetItemAdapter? = null
+
             subtitleOffsetInput.doOnTextChanged { text, _, _, _ ->
                 text?.toString()?.toLongOrNull()?.let { time ->
                     currentOffset = time
+
+                    // Scroll to the first active subtitle
+                    val playerPosition = player.getPosition() ?: 0
+                    val totalPosition = playerPosition - currentOffset
+                    subtitleAdapter?.updateTime(totalPosition)
+
+                    subtitleAdapter?.getLatestActiveItem(totalPosition)
+                        ?.let { subtitlePos ->
+                            subtitleOffsetRecyclerview.scrollToPosition(subtitlePos)
+                        }
+
                     val str = when {
                         time > 0L -> {
                             txt(R.string.subtitle_offset_extra_hint_later_format, time)
@@ -559,7 +572,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
             noSubtitlesLoadedNotice.isVisible = subtitles.isEmpty()
 
             val initialSubtitlePosition = (player.getPosition() ?: 0) - currentOffset
-            val subtitleAdapter =
+            subtitleAdapter =
                 SubtitleOffsetItemAdapter(initialSubtitlePosition) { subtitleCue ->
                     val playerPosition = player.getPosition() ?: 0
                     subtitleOffsetInput.text = Editable.Factory.getInstance()
@@ -945,12 +958,18 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                 player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
             }
 
-            KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_P, KeyEvent.KEYCODE_SPACE, KeyEvent.KEYCODE_NUMPAD_ENTER, KeyEvent.KEYCODE_ENTER -> { // space is not captured due to navigation
+            KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_P, KeyEvent.KEYCODE_SPACE, KeyEvent.KEYCODE_NUMPAD_ENTER -> { // space is not captured due to navigation
                 player.handleEvent(CSPlayerEvent.PlayPauseToggle)
             }
 
-            KeyEvent.KEYCODE_DPAD_CENTER -> {
-                if (isShowing) {
+            // KEYCODE_DPAD_CENTER and KEYCODE_ENTER both act as a "select/confirm" button.
+            // Some remotes (e.g. LG Magic Remote) send KEYCODE_ENTER instead of KEYCODE_DPAD_CENTER.
+            // When the player UI or a dialog is visible, we let the event pass through (return null)
+            // so the focused button/item can handle the click normally, rather than always toggling
+            // play/pause. Only when the UI is hidden do we treat it as a play/pause toggle.
+            KeyEvent.KEYCODE_DPAD_CENTER,
+            KeyEvent.KEYCODE_ENTER -> {
+                if (isShowing || isDialogOpen()) {
                     return null
                 }
                 // If UI is not shown make click instantly skip to next chapter even if locked

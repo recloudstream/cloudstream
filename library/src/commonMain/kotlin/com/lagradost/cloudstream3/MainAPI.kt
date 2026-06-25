@@ -22,24 +22,35 @@ import com.lagradost.cloudstream3.utils.Coroutines.mainWork
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToLangTagIETF
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromLanguageToTagIETF
 import com.lagradost.nicehttp.RequestBodyTypes
+import io.ktor.http.Url
+import io.ktor.http.URLBuilder
+import io.ktor.http.encodedPath
+import io.ktor.http.takeFrom
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.net.URI
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.EnumSet
-import java.util.Locale
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.format.DateTimeComponents
+import kotlinx.datetime.format.FormatStringsInDatetimeFormats
+import kotlinx.datetime.format.byUnicodePattern
+import kotlinx.datetime.format.char
+import kotlinx.datetime.format.parse
+import kotlinx.datetime.toInstant
+import kotlinx.serialization.json.Json
 import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 /**
  * API available only on prerelease builds.
  * Using it will cause stable to crash with `NoSuchMethodException`.
  */
-@MustBeDocumented // Same as java.lang.annotation.Documented
+@MustBeDocumented
 @Retention(AnnotationRetention.BINARY) // This is only an IDE hint, and will not be used in the runtime
 @RequiresOptIn(
     message = "This API is only available on prerelease builds. " +
@@ -64,10 +75,16 @@ annotation class InternalAPI
 )
 annotation class UnsafeSSL
 
+/** Temporary; will be removed when the Jackson -> Kotlinx serialization migration is completed. */
+@InternalAPI
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class SkipSerializationTest
+
 /**
  * Defines the constant for the all languages preference, if this is set then it is
  * the equivalent of all languages being set
- **/
+ */
 const val AllLanguagesName = "universal"
 
 const val USER_AGENT =
@@ -76,14 +93,22 @@ const val USER_AGENT =
 class ErrorLoadingException(message: String? = null) : Exception(message)
 
 //val baseHeader = mapOf("User-Agent" to USER_AGENT)
+
+@Prerelease
+val json = Json {
+    encodeDefaults = true
+    explicitNulls = false
+    ignoreUnknownKeys = true
+}
+
 val mapper = JsonMapper.builder().addModule(kotlinModule())
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()!!
 
 object APIHolder {
-    val unixTime: Long
-        get() = System.currentTimeMillis() / 1000L
     val unixTimeMS: Long
-        get() = System.currentTimeMillis()
+        get() = Clock.System.now().toEpochMilliseconds()
+    val unixTime: Long
+        get() = unixTimeMS / 1000L
 
     val allProviders = atomicListOf<MainAPI>()
 
@@ -159,9 +184,9 @@ object APIHolder {
     // To get the key
     suspend fun getCaptchaToken(url: String, key: String, referer: String? = null): String? {
         try {
-            val uri = URI.create(url)
+            val _url = Url(url)
             val domain = base64Encode(
-                (uri.scheme + "://" + uri.host + ":443").encodeToByteArray(),
+                (_url.protocol.name + "://" + _url.host + ":443").encodeToByteArray(),
             ).replace("\n", "").replace("=", ".")
 
             val vToken =
@@ -696,12 +721,10 @@ fun base64Decode(string: String): String {
     }
 }
 
-@OptIn(ExperimentalEncodingApi::class)
 fun base64DecodeArray(string: String): ByteArray {
     return Base64.decode(string)
 }
 
-@OptIn(ExperimentalEncodingApi::class)
 fun base64Encode(array: ByteArray): String {
     return Base64.encode(array)
 }
@@ -1313,23 +1336,23 @@ fun getQualityFromString(string: String?): SearchQuality? {
  * ```
  */
 fun MainAPI.updateUrl(url: String): String {
-    try {
-        val original = URI(url)
-        val updated = URI(mainUrl)
+    return try {
+        val original = Url(url)
+        val updated = Url(mainUrl)
 
-        // URI(String scheme, String userInfo, String host, int port, String path, String query, String fragment)
-        return URI(
-            updated.scheme,
-            original.userInfo,
-            updated.host,
-            updated.port,
-            original.path,
-            original.query,
-            original.fragment
-        ).toString()
+        URLBuilder().apply {
+            takeFrom(updated)
+            user = original.user
+            password = original.password
+            encodedPath = original.encodedPath
+            fragment = original.fragment
+
+            parameters.clear()
+            parameters.appendAll(original.parameters)
+        }.buildString()
     } catch (t: Throwable) {
         logError(t)
-        return url
+        url
     }
 }
 
@@ -1493,7 +1516,7 @@ constructor(
 
     override var posterUrl: String? = null,
     var year: Int? = null,
-    var dubStatus: EnumSet<DubStatus>? = null,
+    var dubStatus: MutableSet<DubStatus>? = null,
 
     var otherName: String? = null,
     var episodes: MutableMap<DubStatus, Int> = mutableMapOf(),
@@ -1502,46 +1525,10 @@ constructor(
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
     override var score: Score? = null,
-) : SearchResponse {
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(
-        "Use newAnimeSearchResponse",
-        level = DeprecationLevel.ERROR
-    )
-    constructor(
-        name: String,
-        url: String,
-        apiName: String,
-        type: TvType? = null,
-
-        posterUrl: String? = null,
-        year: Int? = null,
-        dubStatus: EnumSet<DubStatus>? = null,
-
-        otherName: String? = null,
-        episodes: MutableMap<DubStatus, Int> = mutableMapOf(),
-
-        id: Int? = null,
-        quality: SearchQuality? = null,
-        posterHeaders: Map<String, String>? = null,
-    ) : this(
-        name,
-        url,
-        apiName,
-        type,
-        posterUrl,
-        year,
-        dubStatus,
-        otherName,
-        episodes,
-        id,
-        quality,
-        posterHeaders, null
-    )
-}
+) : SearchResponse
 
 fun AnimeSearchResponse.addDubStatus(status: DubStatus, episodes: Int? = null) {
-    this.dubStatus = dubStatus?.also { it.add(status) } ?: EnumSet.of(status)
+    this.dubStatus = dubStatus?.also { it.add(status) } ?: mutableSetOf(status)
     if (this.type?.isMovieType() != true)
         if (episodes != null && episodes > 0)
             this.episodes[status] = episodes
@@ -2540,15 +2527,45 @@ constructor(
         get() = score?.toInt(100)
 }
 
+@OptIn(FormatStringsInDatetimeFormats::class)
 fun Episode.addDate(date: String?, format: String = "yyyy-MM-dd") {
-    try {
-        this.date = SimpleDateFormat(format, Locale.getDefault()).parse(date ?: return)?.time
-    } catch (e: Exception) {
-        logError(e)
-    }
+    if (date == null) return
+    this.date = runCatching {
+        // First try standard ISO 8601 (e.g. "2026-01-01T12:30:00.000Z", "2026-05-17T14:35+02:00")
+        runCatching { Instant.parse(date).toEpochMilliseconds() }
+            .getOrElse {
+                val fmt = DateTimeComponents.Format { byUnicodePattern(format) }
+                val components = DateTimeComponents.parse(date, fmt)
+                /**
+                 * Try multiple conversions in order of precision for non-ISO-8601 formats,
+                 * since the date string may or may not include time and/or timezone offset:
+                 * 1. If the custom format produced a UTC offset (e.g. "2026-05-17 14:35+02:00"), use it directly
+                 * 2. If it has time but no offset (e.g. "2026-05-17 14:35"), fall back to device timezone
+                 * 3. If it's date-only (e.g. "2026-05-17"), use start of day in device timezone
+                 */
+                runCatching { components.toInstantUsingOffset().toEpochMilliseconds() }
+                    .recoverCatching { components.toLocalDateTime().toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds() }
+                    .getOrElse { components.toLocalDate().atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds() }
+            }
+    }.onFailure { logError(it) }.getOrNull()
 }
 
-fun Episode.addDate(date: Date?) {
+@Prerelease
+fun Episode.addDate(date: LocalDate?) {
+    this.date = date?.atStartOfDayIn(TimeZone.currentSystemDefault())?.toEpochMilliseconds()
+}
+
+@Prerelease
+fun Episode.addDate(date: Instant?) {
+    this.date = date?.toEpochMilliseconds()
+}
+
+// Deprecate after next stable
+/* @Deprecated(
+    message = "Use addDate with LocalDate, Instant, or String instead.",
+    level = DeprecationLevel.WARNING,
+) */
+fun Episode.addDate(date: java.util.Date?) {
     this.date = date?.time
 }
 
@@ -2683,6 +2700,27 @@ fun fetchUrls(text: String?): List<String> {
     val linkRegex =
         Regex("""(https?://(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*))""")
     return linkRegex.findAll(text).map { it.value.trim().removeSurrounding("\"") }.toList()
+}
+
+@Prerelease
+fun isUpcoming(dateString: String?): Boolean {
+    return runCatching {
+        val fmt = DateTimeComponents.Format {
+            year(); char('-'); monthNumber(); char('-'); day()
+        }
+        val components = DateTimeComponents.parse(dateString ?: return false, fmt)
+        /**
+         * Try multiple conversions in order of precision, since the date string format
+         * may or may not include time and/or timezone offset information:
+         * 1. If the string has a UTC offset (e.g. "2026-05-17T14:35+02:00"), use it directly
+         * 2. If it has time but no offset (e.g. "2026-05-17T14:35"), fall back to device timezone
+         * 3. If it's date-only (e.g. "2026-05-17"), use start of day in device timezone
+         */
+        val instant = runCatching { components.toInstantUsingOffset() }
+            .recoverCatching { components.toLocalDateTime().toInstant(TimeZone.currentSystemDefault()) }
+            .getOrElse { components.toLocalDate().atStartOfDayIn(TimeZone.currentSystemDefault()) }
+        Clock.System.now() < instant
+    }.onFailure { logError(it) }.getOrElse { false }
 }
 
 @Deprecated(
