@@ -13,6 +13,7 @@ colorpicker = "6b46b49"
 conscryptAndroid = { strictly = "2.5.2" } # 2.5.3 crashes everything
 constraintlayout = "2.2.1"
 coreKtx = "1.18.0"
+cryptography = "0.6.0"
 desugar_jdk_libs_nio = "2.1.5"
 dokkaGradlePlugin = "2.2.0"
 espressoCore = "3.7.0"
@@ -77,6 +78,8 @@ conscrypt-android = { module = "org.conscrypt:conscrypt-android", version.ref = 
 constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
 core = { module = "androidx.test:core" }
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+cryptography-core = { module = "dev.whyoleg.cryptography:cryptography-core", version.ref = "cryptography" }
+cryptography-provider-optimal = { module = "dev.whyoleg.cryptography:cryptography-provider-optimal", version.ref = "cryptography" }
 databinding = { module = "androidx.databinding:viewbinding", version.ref = "androidGradlePlugin" }
 desugar_jdk_libs_nio = { module = "com.android.tools:desugar_jdk_libs_nio", version.ref = "desugar_jdk_libs_nio" }
 espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
@@ -143,6 +146,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 
 [bundles]
 coil = ["coil", "coil-network-okhttp"]
+cryptography = ["cryptography-core", "cryptography-provider-optimal"]
 lifecycle = ["lifecycle-livedata-ktx", "lifecycle-viewmodel-ktx"]
 media3 = ["media3-cast", "media3-common", "media3-container", "media3-datasource-cronet", "media3-datasource-okhttp", "media3-exoplayer", "media3-exoplayer-dash", "media3-exoplayer-hls", "media3-session", "media3-ui"]
 navigation = ["navigation-fragment-ktx", "navigation-ui-ktx"]
