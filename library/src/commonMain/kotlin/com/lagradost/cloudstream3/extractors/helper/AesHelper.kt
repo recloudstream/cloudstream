@@ -1,86 +1,107 @@
 package com.lagradost.cloudstream3.extractors.helper
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.base64DecodeArray
 import com.lagradost.cloudstream3.base64Encode
 import com.lagradost.cloudstream3.utils.AppUtils
-import java.security.DigestException
-import java.security.MessageDigest
-import javax.crypto.Cipher
-import javax.crypto.spec.IvParameterSpec
-import javax.crypto.spec.SecretKeySpec
+import dev.whyoleg.cryptography.CryptographyProvider
+import dev.whyoleg.cryptography.DelicateCryptographyApi
+import dev.whyoleg.cryptography.algorithms.AES
+import dev.whyoleg.cryptography.algorithms.MD5
 
 object AesHelper {
 
-    private const val HASH = "AES/CBC/PKCS5PADDING"
-    private const val KDF = "MD5"
+    private val provider = CryptographyProvider.Default
+    private val aesCbc = provider.get(AES.CBC)
+    @OptIn(DelicateCryptographyApi::class)
+    private val md5Hasher = provider.get(MD5).hasher()
 
+    @OptIn(DelicateCryptographyApi::class)
+    @Prerelease
     fun cryptoAESHandler(
         data: String,
         pass: ByteArray,
         encrypt: Boolean = true,
-        padding: String = HASH,
+        padding: Boolean = true,
     ): String? {
         val parse = AppUtils.tryParseJson<AesData>(data) ?: return null
         val (key, iv) = generateKeyAndIv(
-            pass,
-            parse.s.hexToByteArray(),
+            password = pass,
+            salt = parse.s.hexToByteArray(),
             ivLength = parse.iv.length / 2,
             saltLength = parse.s.length / 2
         ) ?: return null
-        val cipher = Cipher.getInstance(padding)
+
+        val aesKey = aesCbc.keyDecoder().decodeFromByteArrayBlocking(AES.Key.Format.RAW, key)
+        val cipher = aesKey.cipher(padding = padding)
+
         return if (!encrypt) {
-            cipher.init(Cipher.DECRYPT_MODE, SecretKeySpec(key, "AES"), IvParameterSpec(iv))
-            String(cipher.doFinal(base64DecodeArray(parse.ct)))
+            val plainBytes = cipher.decryptWithIvBlocking(iv, base64DecodeArray(parse.ct))
+            plainBytes.decodeToString()
         } else {
-            cipher.init(Cipher.ENCRYPT_MODE, SecretKeySpec(key, "AES"), IvParameterSpec(iv))
-            base64Encode(cipher.doFinal(parse.ct.toByteArray()))
+            base64Encode(cipher.encryptWithIvBlocking(iv, parse.ct.encodeToByteArray()))
         }
+    }
+
+    // Deprecate after next stable
+    /* @Deprecated(
+        message = "Set padding = false for no padding",
+        level = DeprecationLevel.WARNING,
+    ) */
+    fun cryptoAESHandler(
+        data: String,
+        pass: ByteArray,
+        encrypt: Boolean = true,
+        padding: String,
+    ): String? {
+        // If it ends with NoPadding (e.g. "AES/CBC/NoPadding"), then it
+        // doesn't have padding, otherwise we treat as if it does.
+        val hasPadding = !padding.endsWith("NoPadding")
+        return cryptoAESHandler(data, pass, encrypt, hasPadding)
     }
 
     // https://stackoverflow.com/a/41434590/8166854
     fun generateKeyAndIv(
         password: ByteArray,
         salt: ByteArray,
-        hashAlgorithm: String = KDF,
         keyLength: Int = 32,
         ivLength: Int,
         saltLength: Int,
-        iterations: Int = 1
-    ): Pair<ByteArray,ByteArray>? {
-
-        val md = MessageDigest.getInstance(hashAlgorithm)
-        val digestLength = md.digestLength
-        val targetKeySize = keyLength + ivLength
-        val requiredLength = (targetKeySize + digestLength - 1) / digestLength * digestLength
-        val generatedData = ByteArray(requiredLength)
-        var generatedLength = 0
-
-        try {
-            md.reset()
+        iterations: Int = 1,
+    ): Pair<ByteArray, ByteArray>? {
+        return try {
+            val digestLength = 16 // MD5 digest is always 16 bytes
+            val targetKeySize = keyLength + ivLength
+            val requiredLength = (targetKeySize + digestLength - 1) / digestLength * digestLength
+            val generatedData = ByteArray(requiredLength)
+            var generatedLength = 0
 
             while (generatedLength < targetKeySize) {
-                if (generatedLength > 0)
-                    md.update(
-                        generatedData,
-                        generatedLength - digestLength,
-                        digestLength
-                    )
-
-                md.update(password)
-                md.update(salt, 0, saltLength)
-                md.digest(generatedData, generatedLength, digestLength)
+                val hashFn = md5Hasher.createHashFunction()
+                if (generatedLength > 0) {
+                    // update(source, startIndex, endIndex) — endIndex is exclusive
+                    hashFn.update(generatedData, generatedLength - digestLength, generatedLength)
+                }
+                hashFn.update(password)
+                hashFn.update(salt, 0, saltLength)
+                val digest = hashFn.hashToByteArray()
+                digest.copyInto(generatedData, generatedLength)
 
                 for (i in 1 until iterations) {
-                    md.update(generatedData, generatedLength, digestLength)
-                    md.digest(generatedData, generatedLength, digestLength)
+                    val iterFn = md5Hasher.createHashFunction()
+                    iterFn.update(generatedData, generatedLength, generatedLength + digestLength)
+                    val iterDigest = iterFn.hashToByteArray()
+                    iterDigest.copyInto(generatedData, generatedLength)
                 }
 
                 generatedLength += digestLength
             }
-            return generatedData.copyOfRange(0, keyLength) to generatedData.copyOfRange(keyLength, targetKeySize)
-        } catch (e: DigestException) {
-            return null
+
+            generatedData.copyOfRange(0, keyLength) to
+                    generatedData.copyOfRange(keyLength, targetKeySize)
+        } catch (_: Exception) {
+            null
         }
     }
 
@@ -96,5 +117,4 @@ object AesHelper {
         @JsonProperty("iv") val iv: String,
         @JsonProperty("s") val s: String
     )
-
 }
