@@ -52,7 +52,7 @@ import kotlin.time.Instant
  * API available only on prerelease builds.
  * Using it will cause stable to crash with `NoSuchMethodException`.
  */
-@MustBeDocumented // Same as java.lang.annotation.Documented
+@MustBeDocumented
 @Retention(AnnotationRetention.BINARY) // This is only an IDE hint, and will not be used in the runtime
 @RequiresOptIn(
     message = "This API is only available on prerelease builds. " +
@@ -77,10 +77,16 @@ annotation class InternalAPI
 )
 annotation class UnsafeSSL
 
+/** Temporary; will be removed when the Jackson -> Kotlinx serialization migration is completed. */
+@InternalAPI
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class SkipSerializationTest
+
 /**
  * Defines the constant for the all languages preference, if this is set then it is
  * the equivalent of all languages being set
- **/
+ */
 const val AllLanguagesName = "universal"
 
 const val USER_AGENT =

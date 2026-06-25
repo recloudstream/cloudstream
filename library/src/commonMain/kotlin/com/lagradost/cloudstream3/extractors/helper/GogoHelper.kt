@@ -12,18 +12,20 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import com.lagradost.cloudstream3.utils.newExtractorLink
+import dev.whyoleg.cryptography.CryptographyProvider
+import dev.whyoleg.cryptography.DelicateCryptographyApi
+import dev.whyoleg.cryptography.algorithms.AES
 import io.ktor.http.Url
 import org.jsoup.nodes.Document
-import javax.crypto.Cipher
-import javax.crypto.spec.IvParameterSpec
-import javax.crypto.spec.SecretKeySpec
 
 object GogoHelper {
+
+    private val aesCbc = CryptographyProvider.Default.get(AES.CBC)
 
     /**
      * @param id base64Decode(show_id) + IV
      * @return the encryption key
-     * */
+     */
     private fun getKey(id: String): String? {
         return safe {
             id.map {
@@ -34,22 +36,23 @@ object GogoHelper {
 
     // https://github.com/saikou-app/saikou/blob/45d0a99b8a72665a29a1eadfb38c506b842a29d7/app/src/main/java/ani/saikou/parsers/anime/extractors/GogoCDN.kt#L97
     // No Licence on the function
+    @OptIn(DelicateCryptographyApi::class)
     private fun cryptoHandler(
         string: String,
         iv: String,
         secretKeyString: String,
         encrypt: Boolean = true
     ): String {
-        //println("IV: $iv, Key: $secretKeyString, encrypt: $encrypt, Message: $string")
-        val ivParameterSpec = IvParameterSpec(iv.toByteArray())
-        val secretKey = SecretKeySpec(secretKeyString.toByteArray(), "AES")
-        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+        val ivBytes = iv.encodeToByteArray()
+        val keyBytes = secretKeyString.encodeToByteArray()
+        val aesKey = aesCbc.keyDecoder().decodeFromByteArrayBlocking(AES.Key.Format.RAW, keyBytes)
+        val cipher = aesKey.cipher(padding = true)
+
         return if (!encrypt) {
-            cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec)
-            String(cipher.doFinal(base64DecodeArray(string)))
+            val plainBytes = cipher.decryptWithIvBlocking(ivBytes, base64DecodeArray(string))
+            plainBytes.decodeToString()
         } else {
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec)
-            base64Encode(cipher.doFinal(string.toByteArray()))
+            base64Encode(cipher.encryptWithIvBlocking(ivBytes, string.encodeToByteArray()))
         }
     }
 
@@ -61,7 +64,7 @@ object GogoHelper {
      * @param secretDecryptKey secret key to decrypt the response json, required non-null if isUsingAdaptiveKeys is off
      * @param isUsingAdaptiveKeys generates keys from IV and ID, see getKey()
      * @param isUsingAdaptiveData generate encrypt-ajax data based on $("script[data-name='episode']")[0].dataset.value
-     * */
+     */
     suspend fun extractVidstream(
         iframeUrl: String,
         mainApiName: String,
@@ -95,8 +98,7 @@ object GogoHelper {
         val encryptRequestData = if (isUsingAdaptiveData) {
             // Only fetch the document if necessary
             val realDocument = document ?: app.get(iframeUrl).document
-            val dataEncrypted =
-                realDocument.select("script[data-name='episode']").attr("data-value")
+            val dataEncrypted = realDocument.select("script[data-name='episode']").attr("data-value")
             val headers = cryptoHandler(dataEncrypted, foundIv, foundKey, false)
             "id=$encryptedId&alias=$id&" + headers.substringAfter("&")
         } else {
@@ -137,12 +139,8 @@ object GogoHelper {
             }
         }
 
-        sources.source?.forEach {
-            invokeGogoSource(it, callback)
-        }
-        sources.sourceBk?.forEach {
-            invokeGogoSource(it, callback)
-        }
+        sources.source?.forEach { invokeGogoSource(it, callback) }
+        sources.sourceBk?.forEach { invokeGogoSource(it, callback) }
     }
 
     data class GogoSources(

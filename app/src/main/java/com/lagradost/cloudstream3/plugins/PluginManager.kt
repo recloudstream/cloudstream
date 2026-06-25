@@ -61,6 +61,8 @@ import com.lagradost.cloudstream3.utils.txt
 import dalvik.system.PathClassLoader
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import java.io.File
 import java.io.InputStreamReader
 
@@ -73,12 +75,13 @@ const val EXTENSIONS_CHANNEL_NAME = "Extensions"
 const val EXTENSIONS_CHANNEL_DESCRIPT = "Extension notification channel"
 
 // Data class for internal storage
+@Serializable
 data class PluginData(
-    @JsonProperty("internalName") val internalName: String,
-    @JsonProperty("url") val url: String?,
-    @JsonProperty("isOnline") val isOnline: Boolean,
-    @JsonProperty("filePath") val filePath: String,
-    @JsonProperty("version") val version: Int,
+    @JsonProperty("internalName") @SerialName("internalName") val internalName: String,
+    @JsonProperty("url") @SerialName("url") val url: String?,
+    @JsonProperty("isOnline") @SerialName("isOnline") val isOnline: Boolean,
+    @JsonProperty("filePath") @SerialName("filePath") val filePath: String,
+    @JsonProperty("version") @SerialName("version") val version: Int,
 ) {
     @WorkerThread
     fun toSitePlugin(): SitePlugin {
