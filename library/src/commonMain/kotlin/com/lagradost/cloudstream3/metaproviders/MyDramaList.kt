@@ -80,7 +80,7 @@ abstract class MyDramaListAPI : MainAPI() {
         val list = app.get(
             url = "${request.data}&limit=20&page=$page&lang=en-US",
             interceptor = headerInterceptor
-        ).parsed<List<MediaSummary>>().map { element ->
+        ).parsed<ArrayList<MediaSummary>>().map { element ->
             element.toSearchResponse()
         }
         return newHomePageResponse(request.name, list)
@@ -91,7 +91,7 @@ abstract class MyDramaListAPI : MainAPI() {
             url = "$API_HOST/search/titles",
             data = mapOf("q" to query),
             interceptor = headerInterceptor
-        ).parsed<List<MediaSummary>>().map { element ->
+        ).parsed<ArrayList<MediaSummary>>().map { element ->
             element.toSearchResponse()
         }
     }
@@ -293,11 +293,11 @@ abstract class MyDramaListAPI : MainAPI() {
             return actors
         }
 
-        suspend fun fetchRecommendations(): List<MediaSummary> {
+        suspend fun fetchRecommendations(): ArrayList<MediaSummary> {
             return app.get(
                 url = "$API_HOST/titles/$id/recommendations",
                 interceptor = headerInterceptor
-            ).parsed<List<MediaSummary>>()
+            ).parsed<ArrayList<MediaSummary>>()
         }
 
         suspend fun fetchTrailer(): String? {
@@ -322,7 +322,7 @@ abstract class MyDramaListAPI : MainAPI() {
         return app.get(
             url = "$API_HOST/titles/${this.id}/episodes",
             interceptor = headerInterceptor
-        ).parsed<List<ShowEpisodesItem>>().map {
+        ).parsed<ArrayList<ShowEpisodesItem>>().map {
             it.episodes
         }.flatten().map { ep ->
             val link = LinkData(
