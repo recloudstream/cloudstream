@@ -2,6 +2,7 @@
 
 package com.lagradost.cloudstream3.utils
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fleeksoft.ksoup.Ksoup
 import com.lagradost.cloudstream3.AudioFile
 import com.lagradost.cloudstream3.IDownloadableMinimum
@@ -320,6 +321,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -410,6 +412,7 @@ enum class ExtractorLinkType {
     MAGNET;
 
     // See https://www.iana.org/assignments/media-types/media-types.xhtml
+    @JsonIgnore
     fun getMimeType(): String {
         return when (this) {
             VIDEO -> "video/mp4"
@@ -693,11 +696,11 @@ constructor(
     /** List of separate audio tracks that can be merged with this video */
     @SerialName("audioTracks") open var audioTracks: List<AudioFile> = emptyList(),
 ) : IDownloadableMinimum {
-    val isM3u8: Boolean get() = type == ExtractorLinkType.M3U8
-    val isDash: Boolean get() = type == ExtractorLinkType.DASH
+    @get:JsonIgnore val isM3u8: Boolean get() = type == ExtractorLinkType.M3U8
+    @get:JsonIgnore val isDash: Boolean get() = type == ExtractorLinkType.DASH
 
     // Cached video size
-    private var videoSize: Long? = null
+    @Transient private var videoSize: Long? = null
 
     /**
      * Get video size in bytes with one head request. Only available for ExtractorLinkType.Video
@@ -716,6 +719,7 @@ constructor(
         return videoSize
     }
 
+    @JsonIgnore
     fun getAllHeaders(): Map<String, String> {
         if (referer.isBlank()) {
             return headers
