@@ -267,83 +267,70 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                 // The lib uses Invisible instead of Gone for no reason
                 binding.previewFrameLayout.height - binding.bottomPlayerBar.height
             ) else -sStyle.elevation.toPx
-            ObjectAnimator.ofFloat(sView, "translationY", move.toFloat()).apply {
-                duration = 200
-                start()
-            }
+
+            sView.animateY(move.toFloat())
         }
+
+    private fun View.animateY(value: Float) {
+        ObjectAnimator.ofFloat(this, "translationY", value).apply {
+            duration = 200
+            start()
+        }
+    }
+
+    private fun View.animateX(value: Float) {
+        ObjectAnimator.ofFloat(this, "translationX", value).apply {
+            duration = 200
+            start()
+        }
+    }
 
     protected fun animateLayoutChanges() {
-        if (isLayout(PHONE)) { // isEnabled also disables the onKeyDown
-            playerBinding?.exoProgress?.isEnabled = isShowing // Prevent accidental clicks/drags
-        }
-
-        if (isShowing) {
-            updateUIVisibility()
-        } else {
-            toggleEpisodesOverlay(false)
-            playerBinding?.playerHolder?.postDelayed({ updateUIVisibility() }, 200)
-        }
-
-        val titleMove = if (isShowing) 0f else -50.toPx.toFloat()
-        playerBinding?.playerVideoTitleHolder?.let {
-            ObjectAnimator.ofFloat(it, "translationY", titleMove).apply {
-                duration = 200
-                start()
-            }
-        }
-        playerBinding?.playerVideoTitleRez?.let {
-            ObjectAnimator.ofFloat(it, "translationY", titleMove).apply {
-                duration = 200
-                start()
-            }
-        }
-        playerBinding?.playerVideoInfo?.let {
-            ObjectAnimator.ofFloat(it, "translationY", titleMove).apply {
-                duration = 200
-                start()
-            }
-        }
-        playerBinding?.playerMetadataScrim?.let {
-            ObjectAnimator.ofFloat(it, "translationY", 1f).apply {
-                duration = 200
-                start()
-            }
-        }
-
-        val playerBarMove = if (isShowing) 0f else 50.toPx.toFloat()
-        playerBinding?.bottomPlayerBar?.let {
-            ObjectAnimator.ofFloat(it, "translationY", playerBarMove).apply {
-                duration = 200
-                start()
-            }
-        }
-        if (isLayout(PHONE)) {
-            playerBinding?.playerEpisodesButton?.let {
-                ObjectAnimator.ofFloat(it, "translationX", if (isShowing) 0f else 50.toPx.toFloat())
-                    .apply {
-                        duration = 200
-                        start()
-                    }
-            }
-        }
-        val fadeTo = if (isShowing) 1f else 0f
-        val fadeAnimation = AlphaAnimation(1f - fadeTo, fadeTo)
-
-        fadeAnimation.duration = 100
-        fadeAnimation.fillAfter = true
-
-        animateLayoutChangesForSubtitles()
-
-        val playerSourceMove = if (isShowing) 0f else -50.toPx.toFloat()
 
         playerBinding?.apply {
-            playerOpenSource.let {
-                ObjectAnimator.ofFloat(it, "translationY", playerSourceMove).apply {
-                    duration = 200
-                    start()
-                }
+
+            if (isLayout(PHONE)) { // isEnabled also disables the onKeyDown
+                exoProgress.isEnabled = isShowing // Prevent accidental clicks/drags
             }
+
+            if (isShowing) {
+                updateUIVisibility()
+            } else {
+                toggleEpisodesOverlay(false)
+                playerHolder.postDelayed({ updateUIVisibility() }, 200)
+            }
+
+            val titleMove = if (isShowing) 0f else -50.toPx.toFloat()
+
+            listOfNotNull(
+                playerVideoTitleHolder,
+                playerVideoTitleRez,
+                playerVideoInfo,
+                playerGoBackHolder,
+            ).forEach {
+                it.animateY(titleMove)
+            }
+
+            playerMetadataScrim.animateY(1f)
+
+            val playerBarMove = if (isShowing) 0f else 50.toPx.toFloat()
+            bottomPlayerBar.animateY(playerBarMove)
+
+            if (isLayout(PHONE)) {
+                playerEpisodesButton.animateX(if (isShowing) 0f else 50.toPx.toFloat())
+            }
+
+            val fadeTo = if (isShowing) 1f else 0f
+            val fadeAnimation = AlphaAnimation(1f - fadeTo, fadeTo)
+
+            fadeAnimation.duration = 100
+            fadeAnimation.fillAfter = true
+
+            animateLayoutChangesForSubtitles()
+
+            val playerSourceMove = if (isShowing) 0f else -50.toPx.toFloat()
+
+            playerOpenSource.animateY(playerSourceMove)
 
             if (!isLocked) {
                 playerHostView?.gestureHelper?.animateCenterControls(fadeTo)
@@ -1026,6 +1013,7 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
                 }
                 toggleEpisodesOverlay(true)
             }
+
             else -> return null // Avoid capturing all input
         }
         return true
