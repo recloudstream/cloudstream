@@ -769,7 +769,10 @@ class CS3IPlayer : IPlayer {
                 CronetEngine.Builder(context)
                     .enableBrotli(true)
                     .enableHttp2(true)
-                    .enableQuic(true)
+                    // QUIC runs over UDP port 443, which many TV routers/ISPs block or
+                    // throttle. Phones fall back gracefully; Cronet on TV gets stuck and
+                    // dies with error 2004/2001. Disable QUIC so Cronet always uses TCP.
+                    .enableQuic(false)
                     .setStoragePath(cacheDirectory.absolutePath)
                     .setLibraryLoader(null)
                     .enableHttpCache(CronetEngine.Builder.HTTP_CACHE_DISK, diskCacheSize)
