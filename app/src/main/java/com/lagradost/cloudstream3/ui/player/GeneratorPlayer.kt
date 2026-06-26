@@ -2203,6 +2203,14 @@ class GeneratorPlayer : FullScreenPlayer() {
                     fromTagToEnglishLanguageName(it)?.lowercase() ?: return@mapNotNull null
                 } ?: listOf()
             }
+
+            // Set up TV clock visibility
+            if (isLayout(TV)) {
+                val showTvClock = settingsManager.getBoolean(ctx.getString(R.string.tv_layout_clock_key), false)
+                playerBinding?.playerVideoClock?.isVisible = showTvClock
+            } else {
+                playerBinding?.playerVideoClock?.isVisible = false
+            }
         }
 
         unwrapBundle(savedInstanceState)

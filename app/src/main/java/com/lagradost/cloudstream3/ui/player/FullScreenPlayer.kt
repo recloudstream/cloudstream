@@ -286,6 +286,12 @@ open class FullScreenPlayer : AbstractPlayerFragment<FragmentPlayerBinding>(
         }
 
         val titleMove = if (isShowing) 0f else -50.toPx.toFloat()
+        playerBinding?.playerVideoClock.let {
+            ObjectAnimator.ofFloat(it, "translationY", titleMove).apply {
+                duration = 200
+                start()
+            }
+        }
         playerBinding?.playerVideoTitleHolder?.let {
             ObjectAnimator.ofFloat(it, "translationY", titleMove).apply {
                 duration = 200

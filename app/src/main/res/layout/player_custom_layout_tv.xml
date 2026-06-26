@@ -352,6 +352,22 @@
                     android:layout_marginEnd="32dp"
                     android:orientation="vertical">
 
+                    <TextClock
+                            android:id="@+id/player_video_clock"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:gravity="end"
+                            android:maxWidth="600dp"
+                            android:textAlignment="viewEnd"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:visibility="visible"
+                            android:format12Hour="hh:mm a"
+                            android:format24Hour="HH:mm"
+                            android:fontFamily="@font/google_sans"
+                            android:textStyle="bold" />
+
                     <LinearLayout
                         android:id="@+id/player_video_title_holder"
                         android:layout_width="wrap_content"
