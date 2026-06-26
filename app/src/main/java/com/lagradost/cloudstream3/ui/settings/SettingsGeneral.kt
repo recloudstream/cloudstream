@@ -48,6 +48,8 @@ import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement
 import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.getBasePath
 import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import java.util.Locale
 
 // Change local language settings in the app.
@@ -134,7 +136,7 @@ fun Pair<String, String>.nameNextToFlagEmoji(): String {
     // fallback to [A][A] -> [?] question mak flag
     val flag = SubtitleHelper.getFlagFromIso(this.second) ?: "\ud83c\udde6\ud83c\udde6"
 
-    return "$flag\u00a0${this.first}" // \u00a0 non-breaking space
+    return "$flag\u00a0${this.first}" // \u00a0 non-breaking space
 }
 
 class SettingsGeneral : BasePreferenceFragmentCompat() {
@@ -145,15 +147,12 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
         setToolBarScrollFlags()
     }
 
+    @Serializable
     data class CustomSite(
-        @JsonProperty("parentJavaClass") // javaClass.simpleName
-        val parentJavaClass: String,
-        @JsonProperty("name")
-        val name: String,
-        @JsonProperty("url")
-        val url: String,
-        @JsonProperty("lang")
-        val lang: String,
+        @JsonProperty("parentJavaClass") @SerialName("parentJavaClass") val parentJavaClass: String, // javaClass.simpleName
+        @JsonProperty("name") @SerialName("name") val name: String,
+        @JsonProperty("url") @SerialName("url") val url: String,
+        @JsonProperty("lang") @SerialName("lang") val lang: String,
     )
 
     companion object {
