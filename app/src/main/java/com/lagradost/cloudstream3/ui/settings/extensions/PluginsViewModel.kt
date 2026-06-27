@@ -143,7 +143,7 @@ class PluginsViewModel : ViewModel() {
                             ),
                             Toast.LENGTH_SHORT
                         )
-                        viewModel?.updatePluginListPrivate(activity, repositoryUrl)
+                        viewModel?.updatePluginListPrivate(activity, listOf(repositoryUrl))
                     } else if (list.isNotEmpty()) {
                         showToast(R.string.download_failed, Toast.LENGTH_SHORT)
                     }
@@ -157,11 +157,11 @@ class PluginsViewModel : ViewModel() {
      * */
     fun handlePluginAction(
         activity: Activity?,
-        repositoryUrl: String,
+        repositoryUrls: List<String>,
         plugin: Plugin,
         isLocal: Boolean
     ) = ioSafe {
-        Log.i(TAG, "handlePluginAction = $repositoryUrl, $plugin, $isLocal")
+        Log.i(TAG, "handlePluginAction = ${repositoryUrls}, $plugin, $isLocal")
 
         if (activity == null) return@ioSafe
         val (repo, metadata) = plugin
@@ -198,15 +198,18 @@ class PluginsViewModel : ViewModel() {
             if (isLocal)
                 updatePluginListLocal()
             else
-                updatePluginListPrivate(activity, repositoryUrl)
+                updatePluginListPrivate(activity, repositoryUrls)
     }
 
-    private suspend fun updatePluginListPrivate(context: Context, repositoryUrl: String) {
+    private suspend fun updatePluginListPrivate(context: Context, repositoryUrls: List<String>) {
         val isAdult = PreferenceManager.getDefaultSharedPreferences(context)
             .getStringSet(context.getString(R.string.prefer_media_type_key), emptySet())
             ?.contains(TvType.NSFW.ordinal.toString()) == true
 
-        val plugins = getPlugins(repositoryUrl)
+        val plugins = repositoryUrls.flatMap { repositoryUrl ->
+            getPlugins(repositoryUrl)
+        }
+
         val list = plugins.filter {
             // Show all non-nsfw plugins or all if nsfw is enabled
             it.second.tvTypes?.contains(TvType.NSFW.name) != true || isAdult
@@ -241,16 +244,28 @@ class PluginsViewModel : ViewModel() {
     }
 
     private fun List<PluginViewData>.sortByQuery(query: String?): List<PluginViewData> {
-        return if (query == null) {
+        return if (query.isNullOrBlank()) {
             // Return list to base state if no query
             this.sortedBy { it.plugin.second.name }
         } else {
-            this.sortedBy {
-                -Levenshtein.partialRatio(
+            this.mapNotNull {
+                // Try matching name
+                val score = Levenshtein.partialRatio(
                     it.plugin.second.name.lowercase(),
                     query.lowercase()
-                )
-            }
+                ).takeIf { score -> score > 80 } ?:
+                // Fallback to description, but limit characters to reduce lag
+                it.plugin.second.description?.lowercase()?.take(64)
+                    ?.let { description ->
+                        Levenshtein.partialRatio(
+                            description,
+                            query.lowercase()
+                        )
+                    }?.takeIf { score -> score > 80 } ?: return@mapNotNull null
+                it to score
+            }.sortedBy {
+                -it.second
+            }.map { it.first }
         }
     }
 
@@ -267,16 +282,17 @@ class PluginsViewModel : ViewModel() {
         )
     }
 
-    fun updatePluginList(context: Context?, repositoryUrl: String) = viewModelScope.launchSafe {
-        if (context == null) return@launchSafe
-        Log.i(TAG, "updatePluginList = $repositoryUrl")
-        updatePluginListPrivate(context, repositoryUrl)
-    }
+    fun updatePluginList(context: Context?, repositoryUrls: List<String>) =
+        viewModelScope.launchSafe {
+            if (context == null) return@launchSafe
+            Log.i(TAG, "updatePluginList = $repositoryUrls")
+            updatePluginListPrivate(context, repositoryUrls)
+        }
 
     fun search(query: String?) {
         currentQuery = query
         _filteredPlugins.postValue(
-            true to (filteredPlugins.value?.second?.sortByQuery(query) ?: emptyList())
+            true to plugins.filterTvTypes().filterLang().sortByQuery(query)
         )
     }
 

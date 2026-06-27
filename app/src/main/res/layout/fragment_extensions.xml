@@ -4,20 +4,39 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/extensions_root"
-    android:background="?attr/primaryGrayBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/primaryGrayBackground"
     android:orientation="vertical">
 
-    <include layout="@layout/standard_toolbar" />
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/settings_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/primaryGrayBackground"
+            android:paddingTop="@dimen/navbar_height"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:menu="@menu/repository_search"
+            app:navigationIconTint="?attr/iconColor"
+            app:titleTextColor="?attr/textColor"
+            tools:title="Overlord" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!--    <include layout="@layout/standard_toolbar" />-->
 
     <androidx.recyclerview.widget.RecyclerView
-        android:clipToPadding="false"
         android:id="@+id/repo_recycler_view"
-        android:background="?attr/primaryBlackBackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="80dp"
+        android:background="?attr/primaryBlackBackground"
+        android:clipToPadding="false"
         android:nextFocusUp="@id/settings_toolbar"
         android:nextFocusDown="@id/plugin_storage_appbar"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -27,11 +46,25 @@
         tools:listitem="@layout/repository_item"
         tools:visibility="visible" />
 
-    <LinearLayout
-        android:id="@+id/blank_repo_screen"
-        android:background="?attr/primaryBlackBackground"
+    <androidx.recyclerview.widget.RecyclerView
+        android:visibility="gone"
+        android:id="@+id/plugin_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="?attr/primaryBlackBackground"
+        android:clipToPadding="false"
+
+        android:nextFocusLeft="@id/nav_rail_view"
+        android:nextFocusUp="@id/tvtypes_chips"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:listitem="@layout/repository_item" />
+
+    <LinearLayout
+        android:id="@+id/blank_repo_screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/primaryBlackBackground"
         android:gravity="center"
         android:orientation="vertical"
         tools:visibility="gone">
@@ -64,14 +97,14 @@
         android:layout_height="80dp"
         android:layout_gravity="bottom"
         android:background="?attr/primaryGrayBackground"
+        android:baselineAligned="false"
         android:focusable="true"
         android:foreground="@drawable/outline_drawable"
         android:nextFocusRight="@id/add_repo_button_imageview"
         android:nextFocusUp="@id/repo_recycler_view"
         android:orientation="horizontal"
         android:padding="10dp"
-        android:visibility="visible"
-        android:baselineAligned="false">
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="0dp"
