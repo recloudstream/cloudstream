@@ -36,6 +36,7 @@ import com.lagradost.cloudstream3.utils.ResourceLiveData
 import com.lagradost.cloudstream3.utils.downloader.DownloadObjects
 import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.deleteFilesAndUpdateSettings
+import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.downloadDeleteEvent
 import com.lagradost.cloudstream3.utils.downloader.VideoDownloadManager.getDownloadFileInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -67,6 +68,17 @@ class DownloadViewModel : ViewModel() {
     private val _selectedItemIds = ConsistentLiveData<Set<Int>?>(null)
     val selectedItemIds: LiveData<Set<Int>?> = _selectedItemIds
 
+    init {
+        // Keep the Downloads list in sync when a download is deleted/cancelled from
+        // anywhere in the app (result page button, queue, notification, etc.). See
+        // onDownloadDeleted for the rationale (issue #1227).
+        downloadDeleteEvent += ::onDownloadDeleted
+    }
+
+    override fun onCleared() {
+        downloadDeleteEvent -= ::onDownloadDeleted
+        super.onCleared()
+    }
 
     fun cancelSelection() {
         updateSelectedItems { null }
@@ -387,6 +399,36 @@ class DownloadViewModel : ViewModel() {
         _selectedItemIds.postValue(null)
         postHeaders(_headerCards.success?.filter { it.data.id !in idsToRemove })
         postChildren(_childCards.success?.filter { it.data.id !in idsToRemove })
+    }
+
+    /**
+     * Removes a deleted/cancelled download from the currently displayed lists in real time.
+     *
+     * Issue #1227: cancelling a download (or deleting it from the result page, the download
+     * queue, or a notification) fires [VideoDownloadManager.downloadDeleteEvent], but until
+     * now only the download *button* ([BaseFetchButton]) listened to it. The Downloads page
+     * itself never reacted, so the deleted episode/movie card stayed on screen until the user
+     * navigated away and back. We observe the same event here, at the activity-scoped (shared)
+     * ViewModel level, so both [DownloadFragment] (headers) and [DownloadChildFragment]
+     * (children) refresh without a manual reload.
+     *
+     * The event is invoked synchronously on the downloader's background thread, so this only
+     * uses thread-safe LiveData postValue.
+     */
+    private fun onDownloadDeleted(id: Int) {
+        // The id space is shared: movie/series headers use their own id and individual
+        // episodes use the child id, so filtering both lists by id covers every card type.
+        // filter() returns null only while the list is still Loading; postHeaders/postChildren
+        // treat null as "no change", so there is nothing to update in that case.
+        postHeaders(_headerCards.success?.filter { it.data.id != id })
+        postChildren(_childCards.success?.filter { it.data.id != id })
+
+        // Keep multi-select state consistent: forget the removed id if it was selected.
+        val currentSelection = selectedItemIds.value
+        if (currentSelection?.contains(id) == true) {
+            _selectedItemIds.postValue(currentSelection - id)
+            updateSelectedBytes()
+        }
     }
 
     private fun updateStorageStats(visual: List<VisualDownloadCached.Header>) {
