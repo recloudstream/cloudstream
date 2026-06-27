@@ -130,9 +130,6 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
                     dispatchBackPressed()
                 }
             }
-            searchView?.setOnQueryTextFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) pluginViewModel.search(null)
-            }
 
             searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
@@ -161,7 +158,7 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
             setRecycledViewPool(PluginAdapter.sharedPool)
             adapter =
                 PluginAdapter {
-                    pluginViewModel.handlePluginAction(activity, url, it, isLocal)
+                    pluginViewModel.handlePluginAction(activity, listOf(url), it, isLocal)
                 }
         }
 
@@ -185,7 +182,7 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
 
             binding.tvtypesChipsScroll.root.isVisible = false
         } else {
-            pluginViewModel.updatePluginList(context, url)
+            pluginViewModel.updatePluginList(context, listOf(url))
             binding.tvtypesChipsScroll.root.isVisible = true
             // not needed for users but may be useful for devs
             downloadAllButton?.isVisible = BuildConfig.DEBUG
