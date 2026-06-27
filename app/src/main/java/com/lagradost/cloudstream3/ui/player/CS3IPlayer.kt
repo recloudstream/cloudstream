@@ -1542,7 +1542,13 @@ class CS3IPlayer : IPlayer {
                     // This is to switch mirrors automatically if the stream has not been fetched, but
                     // allow playing the buffer without internet as then the duration is fetched.
                     when {
-                        error.errorCode == PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED
+                        // Recover mid-stream network blips (both connection drop and timeout)
+                        // by re-preparing the player when we already have a known duration.
+                        // Without this, timeouts during buffering (very common on Android TV
+                        // due to slower network stacks) fall through to ErrorEvent and give up
+                        // instead of retrying — even though the stream was already playing fine.
+                        (error.errorCode == PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED
+                                || error.errorCode == PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT)
                                 && exoPlayer?.duration != TIME_UNSET -> {
                             exoPlayer?.prepare()
                         }
