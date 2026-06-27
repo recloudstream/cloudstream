@@ -1,7 +1,9 @@
 package com.lagradost.cloudstream3.network
 
+import android.os.Build
 import android.util.Log
 import android.webkit.CookieManager
+import android.webkit.WebView
 import androidx.annotation.AnyThread
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.debugWarning
@@ -22,6 +24,36 @@ class CloudflareKiller : Interceptor {
         const val TAG = "CloudflareKiller"
         private val ERROR_CODES = listOf(403, 503)
         private val CLOUDFLARE_SERVERS = listOf("cloudflare-nginx", "cloudflare")
+
+        /**
+         * Whether the system WebView is present and functional.
+         *
+         * Many Android TV devices (and FireSticks) ship without WebView or with
+         * a severely outdated/broken version. When WebView is absent:
+         *  - CookieManager.getInstance() throws (the original code has a comment
+         *    about this: "can throw on unsupported devices").
+         *  - Every subsequent WebView call silently fails via safe{}.
+         *  - The Cloudflare challenge is never solved.
+         *  - The request goes out without CF cookies → server returns 403
+         *    → ExoPlayer reports error 2004 / 2001.
+         *
+         * We probe once at class-load time and store the result. All WebView-
+         * dependent paths are gated on this flag so they are completely skipped
+         * on devices where WebView doesn't work, rather than failing silently.
+         *
+         * On normal phones/tablets this will always be true so behaviour is
+         * identical to before.
+         */
+        val isWebViewAvailable: Boolean = runCatching {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // API 26+: fast, no WebView instantiation needed.
+                WebView.getCurrentWebViewPackage() != null
+            } else {
+                // API 23-25 (minSdk = 23): fall back to probing CookieManager.
+                CookieManager.getInstance() != null
+            }
+        }.getOrDefault(false)
+
         fun parseCookieMap(cookie: String): Map<String, String> {
             return cookie.split(";").associate {
                 val split = it.split("=")
@@ -31,10 +63,12 @@ class CloudflareKiller : Interceptor {
     }
 
     init {
-        // Needs to clear cookies between sessions to generate new cookies.
-        safe {
-            // This can throw an exception on unsupported devices :(
-            CookieManager.getInstance().removeAllCookies(null)
+        if (isWebViewAvailable) {
+            // Needs to clear cookies between sessions to generate new cookies.
+            safe {
+                // This can throw an exception on unsupported devices :(
+                CookieManager.getInstance().removeAllCookies(null)
+            }
         }
     }
 
@@ -42,17 +76,29 @@ class CloudflareKiller : Interceptor {
 
     /**
      * Gets the headers with cookies, webview user agent included!
+     * Returns plain headers (no WebView UA) when WebView is unavailable.
      * */
     fun getCookieHeaders(url: String): Headers {
-        val userAgentHeaders = WebViewResolver.webViewUserAgent?.let {
-            mapOf("user-agent" to it)
-        } ?: emptyMap()
+        // getWebViewUserAgent() instantiates a WebView internally — skip it
+        // when WebView is not available to avoid a crash on Android TV.
+        val userAgentHeaders = if (isWebViewAvailable) {
+            WebViewResolver.webViewUserAgent?.let { mapOf("user-agent" to it) } ?: emptyMap()
+        } else emptyMap()
 
         return getHeaders(userAgentHeaders, savedCookies[URI(url).host] ?: emptyMap())
     }
 
     override fun intercept(chain: Interceptor.Chain): Response = runBlocking {
         val request = chain.request()
+
+        // Skip the entire CF-bypass path when WebView is unavailable (e.g. Android TV).
+        // Without a working WebView the challenge can never be solved, so we would
+        // just waste time before failing with the same 403. Falling through to the
+        // direct request at least works for sources that don't strictly need CF cookies.
+        if (!isWebViewAvailable) {
+            Log.d(TAG, "WebView unavailable, skipping CF bypass for ${request.url.host}")
+            return@runBlocking chain.proceed(request)
+        }
 
         when (val cookies = savedCookies[request.url.host]) {
             null -> {
@@ -96,9 +142,13 @@ class CloudflareKiller : Interceptor {
     }
 
     private suspend fun proceed(request: Request, cookies: Map<String, String>): Response {
-        val userAgentMap = WebViewResolver.getWebViewUserAgent()?.let {
-            mapOf("user-agent" to it)
-        } ?: emptyMap()
+        // getWebViewUserAgent() instantiates a WebView internally — only call it
+        // when WebView is available. This path is already unreachable when
+        // isWebViewAvailable == false (intercept() returns early), but guard it
+        // explicitly so future refactors can't accidentally call proceed() directly.
+        val userAgentMap = if (isWebViewAvailable) {
+            WebViewResolver.getWebViewUserAgent()?.let { mapOf("user-agent" to it) } ?: emptyMap()
+        } else emptyMap()
 
         val headers =
             getHeaders(request.headers.toMap() + userAgentMap, cookies + request.cookies)
