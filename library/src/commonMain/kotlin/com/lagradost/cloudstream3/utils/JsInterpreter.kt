@@ -4,7 +4,24 @@ import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.StringUtils.decodeUrl
 import com.lagradost.cloudstream3.utils.StringUtils.encodeUrl
-import kotlin.math.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.isActive
+import kotlin.math.E
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.cos
+import kotlin.math.floor
+import kotlin.math.ln
+import kotlin.math.log10
+import kotlin.math.log2
+import kotlin.math.pow
+import kotlin.math.round
+import kotlin.math.sin
+import kotlin.math.sqrt
+import kotlin.math.tan
+import kotlin.math.truncate
 import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -119,6 +136,30 @@ fun evalJs(
     maxInstructions: Long = JS_DEFAULT_MAX_INSTRUCTIONS,
 ): Any? {
     val interpreter = JsInterpreter(maxExecutionTime, maxInstructions)
+    val result = interpreter.eval(js)
+    return if (variable != null) interpreter.getVar(variable) else result
+}
+
+/**
+ * Scope-aware variant of [evalJs]. The interpreter checks [CoroutineScope.isActive] every
+ * 1024 instructions and aborts (returning [Unit]) if the scope has been cancelled.
+ *
+ * There is no thread dispatch or suspension. This function runs synchronously on the
+ * calling thread, so it carries zero coroutine overhead for normal (non-cancelled) scripts.
+ * Cancellation latency is bounded to one check window (~1024 interpreter instructions).
+ *
+ * Typical usage inside a coroutine:
+ *   val result = coroutineScope { evalJs("...") }
+ */
+@Prerelease
+@Throws(CancellationException::class)
+fun CoroutineScope.evalJs(
+    js: String,
+    variable: String? = null,
+    maxExecutionTime: Duration = JS_DEFAULT_MAX_EXECUTION_TIME,
+    maxInstructions: Long = JS_DEFAULT_MAX_INSTRUCTIONS,
+): Any? {
+    val interpreter = JsInterpreter(maxExecutionTime, maxInstructions, this)
     val result = interpreter.eval(js)
     return if (variable != null) interpreter.getVar(variable) else result
 }
@@ -713,8 +754,25 @@ private object ContinueSignal : Throwable()
 private class ThrowSignal(val value: Any?) : Throwable()
 
 /**
+ * Thrown when the enclosing [CoroutineScope] is cancelled (e.g. by [withTimeout]).
+ * Extends [CancellationException] so coroutines recognize and handle it correctly.
+ *
+ * We use a dedicated subclass rather than [CancellationException] directly so that
+ * tests can use [assertFailsWith]<[JsCancellationException]> to verify that cancellation
+ * originated from the interpreter's scope check rather than some other source. The class
+ * is [internal] rather than private for the same reason.
+ *
+ * The [TryCatch] handler in [JsInterpreter.execNode] explicitly rethrows this before
+ * its generic `catch (Exception)` clause, so a JS script's own try/catch block cannot
+ * swallow it and keep a cancelled loop alive.
+ */
+internal class JsCancellationException(message: String) : CancellationException(message)
+
+/**
  * Internal signal thrown once a script exceeds its execution budget (time or instruction
- * count). Deliberately extends [Throwable] rather than [Exception]. The interpreter's own
+ * count), or the enclosing [CoroutineScope] has been cancelled.
+ *
+ * Deliberately extends [Throwable] rather than [Exception]. The interpreter's own
  * `try`/`catch` node handling (see [JsInterpreter.execNode]'s `TryCatch` branch) only catches
  * `Exception`, so a JS script can't wrap an infinite loop in its own try/catch and swallow this,
  * keeping the loop alive forever.
@@ -851,6 +909,7 @@ private class Scope(val parent: Scope? = null) {
 private class JsInterpreter(
     private val maxExecutionTime: Duration = JS_DEFAULT_MAX_EXECUTION_TIME,
     private val maxInstructions: Long = JS_DEFAULT_MAX_INSTRUCTIONS,
+    private val scope: CoroutineScope? = null,
 ) {
     private val globalScope = Scope()
 
@@ -991,21 +1050,34 @@ private class JsInterpreter(
             last
         } catch (r: ReturnSignal) {
             r.value
-        } catch (e: Throwable) {
-            logError(e)
+        } catch (e: JsCancellationException) {
+            // CancellationException must never be swallowed. It signals that the
+            // enclosing coroutine has been cancelled and must propagate so that the
+            // coroutine can clean up correctly.
+            throw e
+        } catch (t: Throwable) {
+            logError(t)
             Unit
         }
     }
 
     /**
      * Called on every statement execution. Throws [JsExecutionLimitExceeded] once the
-     * script has used up its time or instruction budget. This is what lets
-     * `evalJs("while(true){}")` return instead of burning the CPU forever.
+     * script has used up its time or instruction budget, or the enclosing [CoroutineScope]
+     * has been cancelled. This is what lets something like `evalJs("while(true){}")`
+     * return instead of burning the CPU forever.
+     *
+     * [JsExecutionLimitExceeded] extends [Throwable] rather than [Exception], so a JS
+     * script cannot catch it with its own try/catch block (the [TryCatch] handler in
+     * [execNode] only catches [Exception]).
      */
     private fun checkBudget() {
         instructionCount++
         if (instructionCount >= maxInstructions) {
             throw JsExecutionLimitExceeded("script exceeded max instruction count of $maxInstructions")
+        }
+        if (scope != null && !scope.isActive) {
+            throw JsCancellationException("script cancelled: coroutine scope is no longer active")
         }
         // Only sample the clock every 1024 ticks. Calling elapsedNow() on every single
         // statement would add measurable overhead to normal (non-runaway) scripts.
@@ -1076,12 +1148,17 @@ private class JsInterpreter(
             is TryCatch -> {
                 try {
                     for (s in node.body) execNode(s, scope)
-                } catch (e: ThrowSignal) {
+                } catch (ts: ThrowSignal) {
                     if (node.catchBody != null) {
                         val inner = Scope(scope)
-                        if (node.catchParam != null) inner.define(node.catchParam, e.value)
+                        if (node.catchParam != null) inner.define(node.catchParam, ts.value)
                         for (s in node.catchBody) execNode(s, inner)
                     }
+                } catch (e: JsCancellationException) {
+                    // CancellationException must never be swallowed by a JS try/catch.
+                    // It must propagate so withTimeout and structured concurrency
+                    // work correctly.
+                    throw e
                 } catch (_: Exception) {
                     // swallow other exceptions inside try (e.g. runtime errors)
                 } finally {
@@ -1428,7 +1505,7 @@ private class JsInterpreter(
                 } catch (_: Exception) { null }
             }
             else -> key.toIntOrNull()?.let {
-                if (it >= 0 && it < obj.length) obj[it].toString() else Unit 
+                if (it >= 0 && it < obj.length) obj[it].toString() else Unit
             } ?: Unit
         }
         is Double -> when (key) {

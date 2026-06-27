@@ -1,5 +1,12 @@
 package com.lagradost.cloudstream3.utils
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withTimeout
 import kotlin.math.E
 import kotlin.math.PI
 import kotlin.math.abs
@@ -7,7 +14,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
@@ -2057,5 +2066,134 @@ class JsInterpreterTest {
     @Test
     fun combinedCoercionOfNaNEmptyStringAndArrayHoleIsZero() {
         assertEquals(0.0, evalJs("+!!NaN * \"\" - - [,]"))
+    }
+
+    /** Returns a [CoroutineScope] backed by a plain [Job] with no dispatcher attached. */
+    private fun activeScope(): CoroutineScope = CoroutineScope(Job())
+
+    @Test
+    fun scopeEvalJsFiniteScriptReturnsCorrectResult() {
+        // Normal script with an active scope should behave identically to plain evalJs.
+        val scope = activeScope()
+        val result = scope.evalJs("var s=0; for(var i=1;i<=10;i++){s+=i}", "s")
+        assertEquals(55.0, result as? Double ?: 0.0)
+        scope.cancel()
+    }
+
+    @Test
+    fun scopeEvalJsStringResultWithActiveScope() {
+        val scope = activeScope()
+        val result = jsValueToString(scope.evalJs("'hello'.split('').reverse().join('')"))
+        assertEquals("olleh", result)
+        scope.cancel()
+    }
+
+    @Test
+    fun scopeEvalJsVariableLookupWithActiveScope() {
+        val scope = activeScope()
+        val result = scope.evalJs("var x = 21 * 2", "x")
+        assertEquals(42.0, result as? Double ?: 0.0)
+        scope.cancel()
+    }
+
+    @Test
+    fun scopeEvalJsCancelledBeforeCallThrowsJsCancellationException() {
+        // Cancel the scope before calling evalJs. The very first budget check sees
+        // isActive==false and throws JsCancellationException immediately.
+        val scope = activeScope()
+        scope.cancel()
+        assertFailsWith<JsCancellationException> {
+            scope.evalJs("var x = 1 + 2", "x")
+        }
+    }
+
+    @Test
+    fun scopeEvalJsInfiniteLoopAbortedWhenScopeCancelled() {
+        // Pre-cancel the scope and confirm an infinite loop aborts well within the
+        // time budget. A sub-1s return against a 5s budget proves it was
+        // scope cancellation, not the clock, that stopped the script.
+        val scope = activeScope()
+        scope.cancel()
+        val mark = TimeSource.Monotonic.markNow()
+        assertFailsWith<JsCancellationException> {
+            scope.evalJs("while(true){}")
+        }
+        assertTrue(
+            mark.elapsedNow() < 1.seconds,
+            "Expected abort well before 5s time budget; elapsed: ${mark.elapsedNow()}",
+        )
+    }
+
+    @Test
+    fun scopeEvalJsInfiniteLoopAbortedByOwnBudgetEvenWithActiveScope() {
+        // Even with an active (never-cancelled) scope the internal budget still fires.
+        val scope = activeScope()
+        val mark = TimeSource.Monotonic.markNow()
+        val result = scope.evalJs("while(true){}", maxExecutionTime = 200.milliseconds)
+        assertEquals(Unit, result)
+        assertTrue(mark.elapsedNow() < 2.seconds)
+        scope.cancel()
+    }
+
+    @Test
+    fun scopeEvalJsJsTryCatchCannotSwallowCancellation() {
+        // A JS try/catch must not be able to intercept the cancellation signal and keep
+        // the infinite loop alive. JsCancellationException extends CancellationException
+        // which the TryCatch node handler explicitly rethrows before catch(_: Exception).
+        val scope = activeScope()
+        scope.cancel()
+        val mark = TimeSource.Monotonic.markNow()
+        assertFailsWith<JsCancellationException> {
+            scope.evalJs("while(true){ try{ throw 1; }catch(e){} }")
+        }
+        assertTrue(
+            mark.elapsedNow() < 1.seconds,
+            "JS try/catch appears to have swallowed the cancellation; elapsed: ${mark.elapsedNow()}",
+        )
+    }
+
+    @Test
+    fun scopeEvalJsCancelledScopeThrowsJsCancellationException() {
+        // A cancelled scope must propagate CancellationException so that withTimeout
+        // and structured concurrency see the cancellation correctly. Swallowing it
+        // silently as Unit would break withTimeout.
+        val scope = activeScope()
+        scope.cancel()
+        assertFailsWith<JsCancellationException> {
+            scope.evalJs("1+1")
+        }
+    }
+
+    @Test
+    fun suspendEvalJsWithTimeoutCancelsInfiniteLoop() = runTest {
+        /**
+         * activeScope() provides a real CoroutineScope with a real Job, so withTimeout
+         * fires after a genuine 300ms rather than instantly via the virtual clock.
+         * The test coroutine suspends at done.receive(), keeping runTest alive until
+         * the background coroutine finishes.
+         *
+         * We measure elapsed time inside the coroutine. If withTimeout fired before
+         * evalJs started, elapsed would be ~0ms. ~300ms proves evalJs was genuinely
+         * running and cancelled mid-execution, not trivially before it began.
+         */
+        var elapsed = Duration.ZERO
+        val done = Channel<Unit>()
+        activeScope().launch {
+            assertFailsWith<JsCancellationException> {
+                withTimeout(300.milliseconds) {
+                    val mark = TimeSource.Monotonic.markNow()
+                    try {
+                        evalJs("while(true){}")
+                    } finally {
+                        elapsed = mark.elapsedNow()
+                    }
+                }
+            }
+            done.send(Unit)
+        }
+
+        done.receive()
+        assertTrue(elapsed > 200.milliseconds, "evalJs should have run for ~300ms but elapsed: $elapsed")
+        assertTrue(elapsed < 1.seconds, "evalJs ran too long: $elapsed")
     }
 }
