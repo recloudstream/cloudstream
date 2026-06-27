@@ -292,7 +292,7 @@ class PluginsViewModel : ViewModel() {
     fun search(query: String?) {
         currentQuery = query
         _filteredPlugins.postValue(
-            true to plugins.sortByQuery(query)
+            true to plugins.filterTvTypes().filterLang().sortByQuery(query)
         )
     }
 

@@ -4,13 +4,13 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
-import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.BuildConfig
-import com.lagradost.cloudstream3.databinding.FragmentPluginsBinding
-import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.databinding.FragmentPluginsBinding
+import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.bindChips
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
@@ -34,8 +34,7 @@ const val PLUGINS_BUNDLE_LOCAL = "isLocal"
 class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
     BaseFragment.BindingCreator.Inflate(FragmentPluginsBinding::inflate)
 ) {
-
-    private val pluginViewModel: PluginsViewModel by activityViewModels()
+    private lateinit var pluginViewModel: PluginsViewModel
 
     override fun onDestroyView() {
         pluginViewModel.clear() // clear for the next observe
@@ -47,6 +46,8 @@ class PluginsFragment : BaseFragment<FragmentPluginsBinding>(
     }
 
     override fun onBindingCreated(binding: FragmentPluginsBinding) {
+        pluginViewModel = ViewModelProvider(this)[PluginsViewModel::class.java]
+
         // Since the ViewModel is getting reused the tvTypes must be cleared between uses
         pluginViewModel.tvTypes.clear()
         pluginViewModel.selectedLanguages = listOf()
