@@ -3,6 +3,8 @@
 [versions]
 activityKtx = "1.13.0"
 androidGradlePlugin = "9.1.1"
+androidxCore = "1.18.0"
+androidxTestCore = "1.7.0"
 animeDb = "1.0.2"
 annotation = "1.10.0"
 appcompat = "1.7.1"
@@ -12,7 +14,6 @@ coil = { strictly = "3.3.0" } # Later versions require jvmTarget 11 or later
 colorpicker = "6b46b49"
 conscryptAndroid = { strictly = "2.5.2" } # 2.5.3 crashes everything
 constraintlayout = "2.2.1"
-coreKtx = "1.18.0"
 cryptography = "0.6.0"
 desugar_jdk_libs_nio = "2.1.5"
 dokkaGradlePlugin = "2.2.0"
@@ -67,6 +68,8 @@ versionName = "4.7.0"
 
 [libraries]
 activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
+androidx-core = { module = "androidx.core:core", version.ref = "androidxCore" }
+androidx-test-core = { module = "androidx.test:core", version.ref = "androidxTestCore" }
 anime-db = { module = "com.github.recloudstream:anime-db", version.ref = "animeDb" }
 annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -76,8 +79,6 @@ coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version
 colorpicker = { module = "com.github.recloudstream:color-picker-android", version.ref = "colorpicker" }
 conscrypt-android = { module = "org.conscrypt:conscrypt-android", version.ref = "conscryptAndroid" }
 constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
-core = { module = "androidx.test:core" }
-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 cryptography-core = { module = "dev.whyoleg.cryptography:cryptography-core", version.ref = "cryptography" }
 cryptography-provider-optimal = { module = "dev.whyoleg.cryptography:cryptography-provider-optimal", version.ref = "cryptography" }
 databinding = { module = "androidx.databinding:viewbinding", version.ref = "androidGradlePlugin" }

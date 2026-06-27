@@ -216,7 +216,7 @@ dependencies {
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.json)
-    androidTestImplementation(libs.core)
+    androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.instancio.core)
@@ -224,8 +224,8 @@ dependencies {
     androidTestImplementation(libs.kotlin.test)
 
     // Android Core & Lifecycle
-    implementation(libs.core.ktx)
     implementation(libs.activity.ktx)
+    implementation(libs.androidx.core)
     implementation(libs.annotation)
     implementation(libs.appcompat)
     implementation(libs.fragment.ktx)
