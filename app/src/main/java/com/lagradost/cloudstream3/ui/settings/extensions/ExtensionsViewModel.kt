@@ -55,16 +55,16 @@ class ExtensionsViewModel : ViewModel() {
             ?: emptyArray()) + PREBUILT_REPOSITORIES
 
         val onlinePlugins = urls.toList().amap {
-            RepositoryManager.getRepoPlugins(it.url)?.toList() ?: emptyList()
-        }.flatten().distinctBy { it.second.url }
+            RepositoryManager.getRepoPlugins(it)?.toList() ?: emptyList()
+        }.flatten().distinctBy { it.plugin.url }
 
         // Iterates over all offline plugins, compares to remote repo and returns the plugins which are outdated
-        val outdatedPlugins = getPluginsOnline().map { savedData ->
-            onlinePlugins.filter { onlineData -> savedData.internalName == onlineData.second.internalName }
+        val outdatedPlugins = getPluginsOnline().flatMap { savedData ->
+            onlinePlugins.filter { onlineData -> savedData.internalName == onlineData.plugin.internalName }
                 .map { onlineData ->
                     PluginManager.OnlinePluginData(savedData, onlineData)
                 }
-        }.flatten().distinctBy { it.onlineData.second.url }
+        }.distinctBy { it.onlineData.plugin.url }
 
         val total = onlinePlugins.count()
         val disabled = outdatedPlugins.count { it.isDisabled }
