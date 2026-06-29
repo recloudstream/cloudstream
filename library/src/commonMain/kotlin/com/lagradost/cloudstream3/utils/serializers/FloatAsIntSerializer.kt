@@ -27,6 +27,7 @@ import kotlinx.serialization.json.intOrNull
  */
 @Prerelease
 object FloatAsIntSerializer : KSerializer<Int> {
+
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("FloatAsInt", PrimitiveKind.INT)
 
