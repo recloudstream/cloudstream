@@ -27,6 +27,7 @@ import kotlinx.serialization.json.longOrNull
  */
 @Prerelease
 object FloatAsLongSerializer : KSerializer<Long> {
+
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("FloatAsLong", PrimitiveKind.LONG)
 
