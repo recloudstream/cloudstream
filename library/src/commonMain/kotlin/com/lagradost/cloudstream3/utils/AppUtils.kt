@@ -60,8 +60,9 @@ object AppUtils {
     inline fun <reified T : Any> parseJson(value: String): T {
         // @Serializable generates a serializer at compile time; contextual serializers are
         // registered manually in serializersModule, we need both to support all cases
-        val serializer = runCatching { serializer<T>() }.getOrNull()
-            ?: json.serializersModule.getContextual(T::class)
+        val serializer = runCatching { serializer<T>() }
+            .recoverCatching { json.serializersModule.getContextual(T::class) }
+            .getOrNull()
 
         // Prefer Kotlin Serialization over Jackson
         if (serializer != null) {
@@ -69,6 +70,8 @@ object AppUtils {
                 return json.decodeFromString(serializer, value)
             } catch (e: SerializationException) {
                 logError(e)
+            } catch (_: Throwable) {
+                // Pass, the above code will trigger a NoSuchMethodError on stable due to our previously undefined json variable
             }
         }
 

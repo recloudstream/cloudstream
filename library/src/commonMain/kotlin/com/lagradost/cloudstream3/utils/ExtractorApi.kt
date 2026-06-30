@@ -3,6 +3,7 @@
 package com.lagradost.cloudstream3.utils
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fleeksoft.ksoup.Ksoup
 import com.lagradost.cloudstream3.AudioFile
 import com.lagradost.cloudstream3.IDownloadableMinimum
 import com.lagradost.cloudstream3.Prerelease
@@ -81,6 +82,7 @@ import com.lagradost.cloudstream3.extractors.FilemoonV2
 import com.lagradost.cloudstream3.extractors.Filesim
 import com.lagradost.cloudstream3.extractors.Multimoviesshg
 import com.lagradost.cloudstream3.extractors.FlaswishCom
+import com.lagradost.cloudstream3.extractors.Flyfile
 import com.lagradost.cloudstream3.extractors.FourCX
 import com.lagradost.cloudstream3.extractors.FourPichive
 import com.lagradost.cloudstream3.extractors.FourPlayRu
@@ -312,11 +314,11 @@ import com.lagradost.cloudstream3.extractors.ZplayerV2
 import com.lagradost.cloudstream3.extractors.Ztreamhub
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.Coroutines.atomicListOf
+import io.ktor.http.Url
+import io.ktor.http.decodeURLPart
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
-import org.jsoup.Jsoup
-import java.net.URI
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -420,7 +422,7 @@ enum class ExtractorLinkType {
 
 private fun inferTypeFromUrl(url: String): ExtractorLinkType {
     val path = try {
-        URI(url).path
+        Url(url).encodedPath.decodeURLPart()
     } catch (_: Throwable) {
         // don't log magnet links as errors
         null
@@ -819,7 +821,7 @@ constructor(
 
 /**
  * Removes https:// and www.
- * To match urls regardless of schema, perhaps Uri() can be used?
+ * To match urls regardless of schema, perhaps Url() can be used?
  */
 val schemaStripRegex = Regex("""^(https:|)//(www\.|)""")
 
@@ -1297,6 +1299,7 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     GUpload(),
     HlsWish(),
     ByseQekaho(),
+    Flyfile()
 )
 
 
@@ -1316,7 +1319,7 @@ fun httpsify(url: String): String {
 }
 
 suspend fun getPostForm(requestUrl: String, html: String): String? {
-    val document = Jsoup.parse(html)
+    val document = Ksoup.parse(html)
     val inputs = document.select("Form > input")
     if (inputs.size < 4) return null
     var op: String? = null
