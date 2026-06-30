@@ -238,7 +238,7 @@ class PluginsViewModel : ViewModel() {
             if (it.pluginWrapper.plugin.language == null) {
                 return@filter selectedLanguages.contains("none")
             }
-            selectedLanguages.contains(it.pluginWrapper.plugin.language?.lowercase())
+            selectedLanguages.contains(it.pluginWrapper.plugin.language.lowercase())
         }
     }
 
