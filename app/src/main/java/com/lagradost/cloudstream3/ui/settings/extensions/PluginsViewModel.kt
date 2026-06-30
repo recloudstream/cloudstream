@@ -17,8 +17,8 @@ import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.PluginManager.getPluginPath
+import com.lagradost.cloudstream3.plugins.PluginWrapper
 import com.lagradost.cloudstream3.plugins.RepositoryManager
-import com.lagradost.cloudstream3.plugins.SitePlugin
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -26,8 +26,6 @@ import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.Levenshtein
 import java.io.File
 
-// String => repository url
-typealias Plugin = Pair<String, SitePlugin>
 /**
  * The boolean signifies if the plugin list should be scrolled to the top, used for searching.
  * */
@@ -40,7 +38,7 @@ class PluginsViewModel : ViewModel() {
         set(value) {
             // Also set all the plugin languages for easier filtering
             value.map { pluginViewData ->
-                val language = pluginViewData.plugin.second.language?.lowercase()
+                val language = pluginViewData.pluginWrapper.plugin.language?.lowercase()
                 pluginLanguages.add(
                     when {
                         language.isNullOrBlank() -> "none"
@@ -62,7 +60,7 @@ class PluginsViewModel : ViewModel() {
     private var currentQuery: String? = null
 
     companion object {
-        private val repositoryCache: MutableMap<String, List<Plugin>> = mutableMapOf()
+        private val repositoryCache: MutableMap<String, List<PluginWrapper>> = mutableMapOf()
         const val TAG = "PLG"
 
         private fun isDownloaded(
@@ -74,32 +72,33 @@ class PluginsViewModel : ViewModel() {
         }
 
         private suspend fun getPlugins(
-            repositoryUrl: String,
+            repository: RepositoryData,
             canUseCache: Boolean = true
-        ): List<Plugin> {
-            Log.i(TAG, "getPlugins = $repositoryUrl")
-            if (canUseCache && repositoryCache.containsKey(repositoryUrl)) {
-                repositoryCache[repositoryUrl]?.let {
+        ): List<PluginWrapper> {
+            Log.i(TAG, "getPlugins = $repository")
+            if (canUseCache && repositoryCache.containsKey(repository.url)) {
+                repositoryCache[repository.url]?.let {
                     return it
                 }
             }
-            return RepositoryManager.getRepoPlugins(repositoryUrl)
-                ?.also { repositoryCache[repositoryUrl] = it } ?: emptyList()
+
+            return RepositoryManager.getRepoPlugins(repository)
+                ?.also { repositoryCache[repository.url] = it } ?: emptyList()
         }
 
         /**
          * @param viewModel optional, updates the plugins livedata for that viewModel if included
          * */
-        fun downloadAll(activity: Activity?, repositoryUrl: String, viewModel: PluginsViewModel?) =
+        fun downloadAll(activity: Activity?, repository: RepositoryData, viewModel: PluginsViewModel?) =
             ioSafe {
                 if (activity == null) return@ioSafe
-                val plugins = getPlugins(repositoryUrl)
+                val plugins = getPlugins(repository)
 
-                plugins.filter { plugin ->
+                plugins.filter { pluginWrapper ->
                     !isDownloaded(
                         activity,
-                        plugin.second.internalName,
-                        repositoryUrl
+                        pluginWrapper.plugin.internalName,
+                        repository.url
                     )
                 }.also { list ->
                     main {
@@ -124,13 +123,13 @@ class PluginsViewModel : ViewModel() {
                             Toast.LENGTH_SHORT
                         )
                     }
-                }.amap { (repo, metadata) ->
+                }.amap { (_, repo, metadata) ->
                     PluginManager.downloadPlugin(
                         activity,
                         metadata.url,
                         metadata.fileHash,
                         metadata.internalName,
-                        repo,
+                        repo.url,
                         metadata.status != PROVIDER_STATUS_DOWN
                     )
                 }.main { list ->
@@ -143,7 +142,7 @@ class PluginsViewModel : ViewModel() {
                             ),
                             Toast.LENGTH_SHORT
                         )
-                        viewModel?.updatePluginListPrivate(activity, repositoryUrl)
+                        viewModel?.updatePluginListPrivate(activity, listOf(repository))
                     } else if (list.isNotEmpty()) {
                         showToast(R.string.download_failed, Toast.LENGTH_SHORT)
                     }
@@ -157,32 +156,32 @@ class PluginsViewModel : ViewModel() {
      * */
     fun handlePluginAction(
         activity: Activity?,
-        repositoryUrl: String,
-        plugin: Plugin,
+        repositoryUrls: List<RepositoryData>,
+        pluginWrapper: PluginWrapper,
         isLocal: Boolean
     ) = ioSafe {
-        Log.i(TAG, "handlePluginAction = $repositoryUrl, $plugin, $isLocal")
+        Log.i(TAG, "handlePluginAction = ${repositoryUrls}, $pluginWrapper, $isLocal")
 
         if (activity == null) return@ioSafe
-        val (repo, metadata) = plugin
+        val (_, repositoryData, metadata) = pluginWrapper
 
-        val file = if (isLocal) File(plugin.second.url) else getPluginPath(
+        val file = if (isLocal) File(pluginWrapper.plugin.url) else getPluginPath(
             activity,
-            plugin.second.internalName,
-            plugin.first
+            pluginWrapper.plugin.internalName,
+            pluginWrapper.repositoryData.url
         )
 
         val (success, message) = if (file.exists()) {
             PluginManager.deletePlugin(file) to R.string.plugin_deleted
         } else {
-            val isEnabled = plugin.second.status != PROVIDER_STATUS_DOWN
+            val isEnabled = pluginWrapper.plugin.status != PROVIDER_STATUS_DOWN
             val message = if (isEnabled) R.string.plugin_loaded else R.string.plugin_downloaded
             PluginManager.downloadPlugin(
                 activity,
                 metadata.url,
                 metadata.fileHash,
                 metadata.internalName,
-                repo,
+                repositoryData.url,
                 isEnabled
             ) to message
         }
@@ -198,20 +197,23 @@ class PluginsViewModel : ViewModel() {
             if (isLocal)
                 updatePluginListLocal()
             else
-                updatePluginListPrivate(activity, repositoryUrl)
+                updatePluginListPrivate(activity, repositoryUrls)
     }
 
-    private suspend fun updatePluginListPrivate(context: Context, repositoryUrl: String) {
+    private suspend fun updatePluginListPrivate(context: Context, repositories: List<RepositoryData>) {
         val isAdult = PreferenceManager.getDefaultSharedPreferences(context)
             .getStringSet(context.getString(R.string.prefer_media_type_key), emptySet())
             ?.contains(TvType.NSFW.ordinal.toString()) == true
 
-        val plugins = getPlugins(repositoryUrl)
+        val plugins = repositories.flatMap { repositoryUrl ->
+            getPlugins(repositoryUrl)
+        }
+
         val list = plugins.filter {
             // Show all non-nsfw plugins or all if nsfw is enabled
-            it.second.tvTypes?.contains(TvType.NSFW.name) != true || isAdult
+            it.plugin.tvTypes?.contains(TvType.NSFW.name) != true || isAdult
         }.map { plugin ->
-            PluginViewData(plugin, isDownloaded(context, plugin.second.internalName, plugin.first))
+            PluginViewData(plugin, isDownloaded(context, plugin.plugin.internalName, plugin.repositoryData.url))
         }
 
         this.plugins = list
@@ -224,8 +226,8 @@ class PluginsViewModel : ViewModel() {
     private fun List<PluginViewData>.filterTvTypes(): List<PluginViewData> {
         if (tvTypes.isEmpty()) return this
         return this.filter {
-            (it.plugin.second.tvTypes?.any { type -> tvTypes.contains(type) } == true) ||
-                    (tvTypes.contains(TvType.Others.name) && (it.plugin.second.tvTypes
+            (it.pluginWrapper.plugin.tvTypes?.any { type -> tvTypes.contains(type) } == true) ||
+                    (tvTypes.contains(TvType.Others.name) && (it.pluginWrapper.plugin.tvTypes
                         ?: emptyList()).isEmpty())
         }
     }
@@ -233,24 +235,36 @@ class PluginsViewModel : ViewModel() {
     private fun List<PluginViewData>.filterLang(): List<PluginViewData> {
         if (selectedLanguages.isEmpty()) return this // do not filter
         return this.filter {
-            if (it.plugin.second.language == null) {
+            if (it.pluginWrapper.plugin.language == null) {
                 return@filter selectedLanguages.contains("none")
             }
-            selectedLanguages.contains(it.plugin.second.language?.lowercase())
+            selectedLanguages.contains(it.pluginWrapper.plugin.language?.lowercase())
         }
     }
 
     private fun List<PluginViewData>.sortByQuery(query: String?): List<PluginViewData> {
-        return if (query == null) {
+        return if (query.isNullOrBlank()) {
             // Return list to base state if no query
-            this.sortedBy { it.plugin.second.name }
+            this.sortedBy { it.pluginWrapper.plugin.name }
         } else {
-            this.sortedBy {
-                -Levenshtein.partialRatio(
-                    it.plugin.second.name.lowercase(),
+            this.mapNotNull {
+                // Try matching name
+                val score = Levenshtein.partialRatio(
+                    it.pluginWrapper.plugin.name.lowercase(),
                     query.lowercase()
-                )
-            }
+                ).takeIf { score -> score > 80 } ?:
+                // Fallback to description, but limit characters to reduce lag
+                it.pluginWrapper.plugin.description?.lowercase()?.take(64)
+                    ?.let { description ->
+                        Levenshtein.partialRatio(
+                            description,
+                            query.lowercase()
+                        )
+                    }?.takeIf { score -> score > 80 } ?: return@mapNotNull null
+                it to score
+            }.sortedBy {
+                -it.second
+            }.map { it.first }
         }
     }
 
@@ -267,16 +281,17 @@ class PluginsViewModel : ViewModel() {
         )
     }
 
-    fun updatePluginList(context: Context?, repositoryUrl: String) = viewModelScope.launchSafe {
-        if (context == null) return@launchSafe
-        Log.i(TAG, "updatePluginList = $repositoryUrl")
-        updatePluginListPrivate(context, repositoryUrl)
-    }
+    fun updatePluginList(context: Context?, repositories: List<RepositoryData>) =
+        viewModelScope.launchSafe {
+            if (context == null) return@launchSafe
+            Log.i(TAG, "updatePluginList = $repositories")
+            updatePluginListPrivate(context, repositories)
+        }
 
     fun search(query: String?) {
         currentQuery = query
         _filteredPlugins.postValue(
-            true to (filteredPlugins.value?.second?.sortByQuery(query) ?: emptyList())
+            true to plugins.filterTvTypes().filterLang().sortByQuery(query)
         )
     }
 
@@ -289,7 +304,7 @@ class PluginsViewModel : ViewModel() {
         val downloadedPlugins = (PluginManager.getPluginsOnline() + PluginManager.getPluginsLocal())
             .distinctBy { it.filePath }
             .map {
-                PluginViewData("" to it.toSitePlugin(), true)
+                PluginViewData(PluginWrapper.getLocalPluginWrapper(it.toSitePlugin()), true)
             }
 
         plugins = downloadedPlugins

@@ -16,7 +16,6 @@ import com.lagradost.cloudstream3.plugins.PluginManager.getPluginSanitizedFileNa
 import com.lagradost.cloudstream3.plugins.PluginManager.unloadPlugin
 import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
-import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.SerialName
@@ -26,7 +25,7 @@ import java.nio.file.AtomicMoveNotSupportedException
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.security.MessageDigest
-import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.TimeUnit
 
 /**
  * Comes with the app, always available in the app, non removable.
@@ -75,6 +74,26 @@ data class SitePlugin(
     @JsonProperty("fileSize") @SerialName("fileSize") val fileSize: Long?,
     @JsonProperty("fileHash") @SerialName("fileHash") val fileHash: String?,
 )
+
+@Serializable
+data class PluginWrapper(
+    @JsonProperty("repository") @SerialName("repository") val repository: Repository,
+    @JsonProperty("repositoryData") @SerialName("repositoryData") val repositoryData: RepositoryData,
+    @JsonProperty("plugin") @SerialName("plugin") val plugin: SitePlugin
+) {
+    companion object {
+        private val localRepository = Repository("", "", "", 1, emptyList())
+        private val localRepositoryData = RepositoryData("", "", "")
+        fun getLocalPluginWrapper(plugin: SitePlugin): PluginWrapper {
+            return PluginWrapper(
+                localRepository,
+                localRepositoryData,
+                plugin
+            )
+        }
+    }
+}
+
 
 object RepositoryManager {
     const val ONLINE_PLUGINS_FOLDER = "Extensions"
@@ -136,17 +155,16 @@ object RepositoryManager {
     suspend fun parseRepository(url: String): Repository? {
         return safeAsync {
             // Take manifestVersion and such into account later
-            app.get(convertRawGitUrl(url)).parsedSafe<Repository>()
+            app.get(convertRawGitUrl(url), cacheTime = 5, cacheUnit = TimeUnit.MINUTES)
+                .parsedSafe<Repository>()
         }
     }
 
     private suspend fun parsePlugins(pluginUrls: String): List<SitePlugin> {
         // Take manifestVersion and such into account later
         return try {
-            val response = app.get(convertRawGitUrl(pluginUrls))
-            // Normal parsed function not working?
-            // return response.parsedSafe()
-            tryParseJson<Array<SitePlugin>>(response.text)?.toList() ?: emptyList()
+            app.get(convertRawGitUrl(pluginUrls), cacheTime = 5, cacheUnit = TimeUnit.MINUTES)
+                .parsed<Array<SitePlugin>>().toList()
         } catch (t: Throwable) {
             logError(t)
             emptyList()
@@ -156,13 +174,14 @@ object RepositoryManager {
     /**
      * Gets all plugins from repositories and pairs them with the repository url
      */
-    suspend fun getRepoPlugins(repositoryUrl: String): List<Pair<String, SitePlugin>>? {
-        val repo = parseRepository(repositoryUrl) ?: return null
-        return repo.pluginLists.amap { url ->
+    suspend fun getRepoPlugins(repositoryData: RepositoryData): List<PluginWrapper>? {
+        val repo = parseRepository(repositoryData.url) ?: return null
+        val list = repo.pluginLists.amap { url ->
             parsePlugins(url).map {
-                repositoryUrl to it
+                PluginWrapper(repo, repositoryData, it)
             }
         }.flatten()
+        return list
     }
 
     suspend fun downloadPluginToFile(
