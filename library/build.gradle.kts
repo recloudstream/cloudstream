@@ -20,6 +20,8 @@ val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
 kotlin {
     version = "1.0.1"
 
+    applyDefaultHierarchyTemplate()
+
     android {
         // If this is the same com.lagradost.cloudstream3.R stops working
         namespace = "com.lagradost.api"
@@ -55,16 +57,18 @@ kotlin {
 
         commonMain.dependencies {
             implementation(libs.annotation) // Annotations
-            implementation(libs.nicehttp) // HTTP Lib
             implementation(libs.jackson.module.kotlin) // JSON Parser
+            implementation(libs.jsoup) // HTML Parser
             implementation(libs.kotlinx.atomicfu)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization.json) // JSON Parser
+            implementation(libs.ksoup) // HTML Parser
             implementation(libs.ktor.http)
-            implementation(libs.jsoup) // HTML Parser
+            implementation(libs.nicehttp) // HTTP Library
             implementation(libs.rhino) // Run JavaScript
             implementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
+            implementation(libs.bundles.cryptography) // Cryptography
 
             // Deprecated; will be removed once extensions have time to migrate from using it
             implementation("me.xdrop:fuzzywuzzy:1.4.0")
@@ -74,15 +78,15 @@ kotlin {
             implementation(libs.kotlin.test)
         }
 
-        // We will eventually add a new jvmCommonMain source set
-        // for things shared between Android and JVM.
-        androidMain.dependencies {
-            implementation(libs.newpipeextractor)
+        val jvmCommonMain by creating {
+            dependsOn(commonMain.get())
+            dependencies {
+                implementation(libs.newpipeextractor)
+            }
         }
 
-        jvmMain.dependencies {
-            implementation(libs.newpipeextractor)
-        }
+        androidMain { dependsOn(jvmCommonMain) }
+        jvmMain { dependsOn(jvmCommonMain) }
     }
 }
 

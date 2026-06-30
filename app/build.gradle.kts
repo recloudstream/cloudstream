@@ -268,6 +268,7 @@ dependencies {
 
     // Extensions & Other Libs
     implementation(libs.jsoup) // HTML Parser
+    implementation(libs.ksoup) // HTML Parser
     implementation(libs.rhino) // Run JavaScript
     implementation(libs.safefile) // To Prevent the URI File Fu*kery
     coreLibraryDesugaring(libs.desugar.jdk.libs.nio) // NIO Flavor Needed for NewPipeExtractor

@@ -20,6 +20,8 @@ import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToLangTagIETF
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromCodeToOpenSubtitlesTag
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 class OpenSubtitlesApi : SubtitleAPI() {
     override val name = "OpenSubtitles"
@@ -99,7 +101,7 @@ class OpenSubtitlesApi : SubtitleAPI() {
     /**
      * Fetch subtitles using token authenticated on previous method (see authorize).
      * Returns list of Subtitles which user can select to download (see load).
-     * */
+     */
     override suspend fun search(
         auth : AuthData?,
         query: AbstractSubtitleEntities.SubtitleSearch
@@ -179,16 +181,15 @@ class OpenSubtitlesApi : SubtitleAPI() {
         return results
     }
 
-    /*
-        Process data returned from search.
-        Returns string url for the subtitle file.
-    */
-
+    /**
+     * Process data returned from search.
+     * Returns string url for the subtitle file.
+     */
     override suspend fun load(
         auth : AuthData?,
         subtitle: AbstractSubtitleEntities.SubtitleEntity
     ): String? {
-        if(auth == null) return null
+        if (auth == null) return null
         throwIfCantDoRequest()
 
         val req = app.post(
@@ -220,57 +221,64 @@ class OpenSubtitlesApi : SubtitleAPI() {
         return null
     }
 
+    @Serializable
     data class OAuthToken(
-        @JsonProperty("token") var token: String? = null,
-        @JsonProperty("status") var status: Int? = null
+        @JsonProperty("token") @SerialName("token") var token: String? = null,
+        @JsonProperty("status") @SerialName("status") var status: Int? = null,
     )
 
+    @Serializable
     data class Results(
-        @JsonProperty("data") var data: List<ResultData>? = listOf()
+        @JsonProperty("data") @SerialName("data") var data: List<ResultData>? = listOf(),
     )
 
+    @Serializable
     data class ResultData(
-        @JsonProperty("id") var id: String? = null,
-        @JsonProperty("type") var type: String? = null,
-        @JsonProperty("attributes") var attributes: ResultAttributes? = ResultAttributes()
+        @JsonProperty("id") @SerialName("id") var id: String? = null,
+        @JsonProperty("type") @SerialName("type") var type: String? = null,
+        @JsonProperty("attributes") @SerialName("attributes") var attributes: ResultAttributes? = ResultAttributes(),
     )
 
+    @Serializable
     data class ResultAttributes(
-        @JsonProperty("subtitle_id") var subtitleId: String? = null,
-        @JsonProperty("language") var language: String? = null,
-        @JsonProperty("release") var release: String? = null,
-        @JsonProperty("url") var url: String? = null,
-        @JsonProperty("files") var files: List<ResultFiles>? = listOf(),
-        @JsonProperty("feature_details") var featDetails: ResultFeatureDetails? = ResultFeatureDetails(),
-        @JsonProperty("hearing_impaired") var hearingImpaired: Boolean? = null,
+        @JsonProperty("subtitle_id") @SerialName("subtitle_id") var subtitleId: String? = null,
+        @JsonProperty("language") @SerialName("language") var language: String? = null,
+        @JsonProperty("release") @SerialName("release") var release: String? = null,
+        @JsonProperty("url") @SerialName("url") var url: String? = null,
+        @JsonProperty("files") @SerialName("files") var files: List<ResultFiles>? = listOf(),
+        @JsonProperty("feature_details") @SerialName("feature_details") var featDetails: ResultFeatureDetails? = ResultFeatureDetails(),
+        @JsonProperty("hearing_impaired") @SerialName("hearing_impaired") var hearingImpaired: Boolean? = null,
     )
 
+    @Serializable
     data class ResultFiles(
-        @JsonProperty("file_id") var fileId: Int? = null,
-        @JsonProperty("file_name") var fileName: String? = null
+        @JsonProperty("file_id") @SerialName("file_id") var fileId: Int? = null,
+        @JsonProperty("file_name") @SerialName("file_name") var fileName: String? = null,
     )
 
+    @Serializable
     data class ResultDownloadLink(
-        @JsonProperty("link") var link: String? = null,
-        @JsonProperty("file_name") var fileName: String? = null,
-        @JsonProperty("requests") var requests: Int? = null,
-        @JsonProperty("remaining") var remaining: Int? = null,
-        @JsonProperty("message") var message: String? = null,
-        @JsonProperty("reset_time") var resetTime: String? = null,
-        @JsonProperty("reset_time_utc") var resetTimeUtc: String? = null
+        @JsonProperty("link") @SerialName("link") var link: String? = null,
+        @JsonProperty("file_name") @SerialName("file_name") var fileName: String? = null,
+        @JsonProperty("requests") @SerialName("requests") var requests: Int? = null,
+        @JsonProperty("remaining") @SerialName("remaining") var remaining: Int? = null,
+        @JsonProperty("message") @SerialName("message") var message: String? = null,
+        @JsonProperty("reset_time") @SerialName("reset_time") var resetTime: String? = null,
+        @JsonProperty("reset_time_utc") @SerialName("reset_time_utc") var resetTimeUtc: String? = null,
     )
 
+    @Serializable
     data class ResultFeatureDetails(
-        @JsonProperty("year") var year: Int? = null,
-        @JsonProperty("title") var title: String? = null,
-        @JsonProperty("movie_name") var movieName: String? = null,
-        @JsonProperty("imdb_id") var imdbId: Int? = null,
-        @JsonProperty("tmdb_id") var tmdbId: Int? = null,
-        @JsonProperty("season_number") var seasonNumber: Int? = null,
-        @JsonProperty("episode_number") var episodeNumber: Int? = null,
-        @JsonProperty("parent_imdb_id") var parentImdbId: Int? = null,
-        @JsonProperty("parent_title") var parentTitle: String? = null,
-        @JsonProperty("parent_tmdb_id") var parentTmdbId: Int? = null,
-        @JsonProperty("parent_feature_id") var parentFeatureId: Int? = null
+        @JsonProperty("year") @SerialName("year") var year: Int? = null,
+        @JsonProperty("title") @SerialName("title") var title: String? = null,
+        @JsonProperty("movie_name") @SerialName("movie_name") var movieName: String? = null,
+        @JsonProperty("imdb_id") @SerialName("imdb_id") var imdbId: Int? = null,
+        @JsonProperty("tmdb_id") @SerialName("tmdb_id") var tmdbId: Int? = null,
+        @JsonProperty("season_number") @SerialName("season_number") var seasonNumber: Int? = null,
+        @JsonProperty("episode_number") @SerialName("episode_number") var episodeNumber: Int? = null,
+        @JsonProperty("parent_imdb_id") @SerialName("parent_imdb_id") var parentImdbId: Int? = null,
+        @JsonProperty("parent_title") @SerialName("parent_title") var parentTitle: String? = null,
+        @JsonProperty("parent_tmdb_id") @SerialName("parent_tmdb_id") var parentTmdbId: Int? = null,
+        @JsonProperty("parent_feature_id") @SerialName("parent_feature_id") var parentFeatureId: Int? = null,
     )
 }
