@@ -35,10 +35,10 @@ open class Dailymotion : ExtractorApi() {
     ) {
         val embedUrl = getEmbedUrl(url) ?: return
         val id = getVideoId(embedUrl) ?: return
-        val metaDataUrl = "$baseUrl/player/metadata/video/$id"
+        val metadataUrl = "$baseUrl/player/metadata/video/$id"
 
-        val response = app.get(metaDataUrl, referer = embedUrl).text
-        val meta = parseJson<MetaData>(response)
+        val response = app.get(metadataUrl, referer = embedUrl).text
+        val meta = parseJson<Metadata>(response)
         meta.qualities?.get("auto")?.forEach { quality ->
             val videoUrl = quality.url
             if (!videoUrl.isNullOrEmpty() && videoUrl.contains(".m3u8")) {
@@ -82,7 +82,7 @@ open class Dailymotion : ExtractorApi() {
     }
 
     @Serializable
-    data class MetaData(
+    data class Metadata(
         @JsonProperty("qualities") @SerialName("qualities") val qualities: Map<String, List<Quality>>?,
         @JsonProperty("subtitles") @SerialName("subtitles") val subtitles: SubtitlesWrapper?,
     )
