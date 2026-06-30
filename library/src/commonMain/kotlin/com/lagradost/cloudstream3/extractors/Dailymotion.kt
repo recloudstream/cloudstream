@@ -42,12 +42,14 @@ open class Dailymotion : ExtractorApi() {
         meta.qualities?.get("auto")?.forEach { quality ->
             val videoUrl = quality.url
             if (!videoUrl.isNullOrEmpty() && videoUrl.contains(".m3u8")) {
-                callback.invoke(newExtractorLink(
-                    name,
-                    name,
-                    videoUrl,
-                    ExtractorLinkType.M3U8,
-                ))
+                callback.invoke(
+                    newExtractorLink(
+                        name,
+                        name,
+                        videoUrl,
+                        ExtractorLinkType.M3U8,
+                    )
+                )
             }
         }
 
