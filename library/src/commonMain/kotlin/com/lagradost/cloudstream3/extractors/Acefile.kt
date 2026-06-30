@@ -1,8 +1,11 @@
 package com.lagradost.cloudstream3.extractors
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 open class Acefile : ExtractorApi() {
     override val name = "Acefile"
@@ -13,7 +16,7 @@ open class Acefile : ExtractorApi() {
         url: String,
         referer: String?,
         subtitleCallback: (SubtitleFile) -> Unit,
-        callback: (ExtractorLink) -> Unit
+        callback: (ExtractorLink) -> Unit,
     ) {
         val id = "/(?:d|download|player|f|file)/(\\w+)".toRegex().find(url)?.groupValues?.get(1)
         val script = getAndUnpack(app.get("$mainUrl/player/${id ?: return}").text)
@@ -27,14 +30,14 @@ open class Acefile : ExtractorApi() {
             newExtractorLink(
                 this.name,
                 this.name,
-                video ?: return
+                video ?: return,
             )
         )
 
     }
 
+    @Serializable
     data class Source(
-        val data: String? = null,
+        @JsonProperty("data") @SerialName("data") val data: String? = null,
     )
-
 }

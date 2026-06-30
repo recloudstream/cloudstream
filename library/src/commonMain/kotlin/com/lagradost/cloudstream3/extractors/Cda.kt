@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.extractors
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
@@ -8,6 +9,8 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.StringUtils.decodeUrl
 import com.lagradost.cloudstream3.utils.newExtractorLink
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 open class Cda : ExtractorApi() {
     override var mainUrl = "https://ebd.cda.pl"
@@ -22,7 +25,7 @@ open class Cda : ExtractorApi() {
             "https://ebd.cda.pl/647x500/$mediaId", headers = mapOf(
                 "Referer" to "https://ebd.cda.pl/647x500/$mediaId",
                 "User-Agent" to USER_AGENT,
-                "Cookie" to "cda.player=html5"
+                "Cookie" to "cda.player=html5",
             )
         ).document
         val dataRaw = doc.selectFirst("[player_data]")?.attr("player_data") ?: return null
@@ -86,15 +89,17 @@ open class Cda : ExtractorApi() {
         else -> a
     }
 
+    @Serializable
     data class VideoPlayerData(
-        val file: String,
-        val qualities: Map<String, String> = mapOf(),
-        val quality: String?,
-        val ts: Int?,
-        val hash2: String?
+        @JsonProperty("file") @SerialName("file") val file: String,
+        @JsonProperty("qualities") @SerialName("qualities") val qualities: Map<String, String> = mapOf(),
+        @JsonProperty("quality") @SerialName("quality") val quality: String?,
+        @JsonProperty("ts") @SerialName("ts") val ts: Int?,
+        @JsonProperty("hash2") @SerialName("hash2") val hash2: String?,
     )
 
+    @Serializable
     data class PlayerData(
-        val video: VideoPlayerData
+        @JsonProperty("video") @SerialName("video") val video: VideoPlayerData,
     )
 }
