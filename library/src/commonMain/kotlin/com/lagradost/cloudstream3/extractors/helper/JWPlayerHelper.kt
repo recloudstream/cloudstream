@@ -9,6 +9,8 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.newExtractorLink
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlin.collections.orEmpty
 
 @Prerelease
@@ -23,10 +25,16 @@ object JwPlayerHelper {
      * ```js
      * <script>
      * jwplayer("vplayer").setup({
-     *     sources: [{file:"https://example.com/master.m3u8"}],
-     *     tracks: [{file: "https://example.com/subtitles.vtt", kind: "captions", label: "en"}],
+     *     sources: [{
+     *         file: "https://example.com/master.m3u8",
+     *     }],
+     *     tracks: [{
+     *         file: "https://example.com/subtitles.vtt",
+     *         kind: "captions",
+     *         label: "en",
+     *     }],
      * }
-     *  ```
+     * ```
      *
      *  @param script The content of a HTML <script> tag containing the jwplayer code.
      *  @return whether any extractor or subtitle link was found
@@ -37,13 +45,10 @@ object JwPlayerHelper {
         mainUrl: String,
         callback: (ExtractorLink) -> Unit,
         subtitleCallback: (SubtitleFile) -> Unit,
-        headers: Map<String, String> = mapOf()
+        headers: Map<String, String> = mapOf(),
     ): Boolean {
         val sourceMatches = sourceRegex.findAll(script).flatMap { sourceMatch ->
-            val match = sourceMatch.groupValues[1]
-                .addMarks("file")
-                .addMarks("label")
-                .addMarks("type")
+            val match = sourceMatch.groupValues[1].addMarks("file", "label", "type")
             tryParseJson<List<Source>>(match).orEmpty()
         }.toList()
 
@@ -54,7 +59,7 @@ object JwPlayerHelper {
                         source = sourceName,
                         streamUrl = link.file,
                         referer = mainUrl,
-                        headers = headers
+                        headers = headers,
                     )
                 } catch (e: Exception) {
                     Log.d("JW_PLAYER_HELPER", "Error generating M3U8 links: ${e.message}")
@@ -74,25 +79,31 @@ object JwPlayerHelper {
             }
         }
 
-        // Fallback to searching for HLS streams, e.g.
-        // var links = {
-        //  "hls3": "https://mmmmmmmmmm.qqqqqqqqqqqq.space/#########/hls3/01/00000/ggggggggg_l/master.txt",
-        //  "hls4": "/stream/zzzzzzzzzzzzzzz/hhhhhhhhhhh/123456789/123456/master.m3u8",
-        //  "hls2": "https://mmmmmmmmmm.qqqqqqqqqqqq.com/hls2/01/00000/ggggggggg_l/master.m3u8?t=##################&s=123456"
-        // };
-        // jwplayer("vplayer").setup({
-        //  sources: [{
-        //    file: links.hls4 || links.hls3 || links.hls2,
-        //    type: "hls"
-        //  }],
+        /**
+         * Fallback to searching for HLS streams, e.g.
+         *
+         * ```js
+         * var links = {
+         *     "hls2": "https://mmmmmmmmmm.qqqqqqqqqqqq.com/hls2/01/00000/ggggggggg_l/master.m3u8?t=##################&s=123456",
+         *     "hls3": "https://mmmmmmmmmm.qqqqqqqqqqqq.space/#########/hls3/01/00000/ggggggggg_l/master.txt",
+         *     "hls4": "/stream/zzzzzzzzzzzzzzz/hhhhhhhhhhh/123456789/123456/master.m3u8",
+         * };
+         *
+         * jwplayer("vplayer").setup({
+         *     sources: [{
+         *         file: links.hls4 || links.hls3 || links.hls2,
+         *         type: "hls",
+         *     }],
+         * });
+         * ```
+         */
         if (extractedLinks.isEmpty()) {
             extractedLinks = m3u8Regex.findAll(script).toList().map { match ->
                 val link = match.groupValues[1]
-
                 newExtractorLink(
                     source = sourceName,
                     name = sourceName,
-                    url = fixUrl(link, mainUrl)
+                    url = fixUrl(link, mainUrl),
                 ) {
                     this.referer = url
                     this.headers = headers
@@ -101,27 +112,22 @@ object JwPlayerHelper {
         }
 
         val tracksMatches = tracksRegex.findAll(script).flatMap { trackMatch ->
-            val match = trackMatch.groupValues[1]
-                .addMarks("file")
-                .addMarks("label")
-                .addMarks("kind")
+            val match = trackMatch.groupValues[1].addMarks("file", "kind", "label")
             tryParseJson<List<Track>>(match).orEmpty()
         }.toList()
 
-        val subtitleFiles =
-            tracksMatches.filter {
-                (it.kind.orEmpty().contains("caption") || it.kind.orEmpty()
-                    .contains("subtitle")) && it.file != null && it.label != null
-            }.map {
-                newSubtitleFile(
-                    lang = it.label!!,
-                    url = fixUrl(it.file!!, mainUrl)
-                )
-            }
+        val subtitleFiles = tracksMatches.filter {
+            (it.kind.orEmpty().contains("caption") || it.kind.orEmpty()
+                .contains("subtitle")) && it.file != null && it.label != null
+        }.map {
+            newSubtitleFile(
+                lang = it.label!!,
+                url = fixUrl(it.file!!, mainUrl),
+            )
+        }
 
         extractedLinks.forEach { callback.invoke(it) }
         subtitleFiles.forEach { subtitleCallback.invoke(it) }
-
         return sourceMatches.isNotEmpty() || subtitleFiles.isNotEmpty()
     }
 
@@ -137,19 +143,23 @@ object JwPlayerHelper {
         }
     }
 
-    private fun String.addMarks(str: String): String {
-        return this.replace(Regex("\"?$str\"?"), "\"$str\"")
+    private fun String.addMarks(vararg strings: String): String {
+        return strings.fold(this) { accumulator, str ->
+            accumulator.replace(Regex("\"?$str\"?"), "\"$str\"")
+        }
     }
 
+    @Serializable
     private data class Source(
-        @JsonProperty("file") val file: String,
-        @JsonProperty("label") val label: String?,
-        @JsonProperty("type") val type: String?,
+        @JsonProperty("file") @SerialName("file") val file: String,
+        @JsonProperty("label") @SerialName("label") val label: String?,
+        @JsonProperty("type") @SerialName("type") val type: String?,
     )
 
+    @Serializable
     data class Track(
-        @JsonProperty("file") val file: String? = null,
-        @JsonProperty("label") val label: String? = null,
-        @JsonProperty("kind") val kind: String? = null,
+        @JsonProperty("file") @SerialName("file") val file: String? = null,
+        @JsonProperty("label") @SerialName("label") val label: String? = null,
+        @JsonProperty("kind") @SerialName("kind") val kind: String? = null,
     )
 }
