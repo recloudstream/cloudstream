@@ -5,10 +5,12 @@ import android.content.Context
 import android.content.DialogInterface
 import android.os.Build
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.marginBottom
@@ -26,6 +28,7 @@ import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.ui.BaseFragment
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
+import com.lagradost.cloudstream3.ui.setRecycledViewPool
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setSystemBarsPadding
@@ -43,6 +46,7 @@ class ExtensionsFragment : BaseFragment<FragmentExtensionsBinding>(
 ) {
 
     private val extensionViewModel: ExtensionsViewModel by activityViewModels()
+    private val pluginViewModel: PluginsViewModel by activityViewModels()
 
     private fun View.setLayoutWidth(weight: Int) {
         val param = LinearLayout.LayoutParams(
@@ -110,11 +114,7 @@ class ExtensionsFragment : BaseFragment<FragmentExtensionsBinding>(
             adapter = RepoAdapter(false, {
                 findNavController().navigate(
                     R.id.navigation_settings_extensions_to_navigation_settings_plugins,
-                    PluginsFragment.newInstance(
-                        it.name,
-                        it.url,
-                        false
-                    )
+                    PluginsFragment.newInstance(it)
                 )
             }, { repo ->
                 // Prompt user before deleting repo
@@ -126,7 +126,10 @@ class ExtensionsFragment : BaseFragment<FragmentExtensionsBinding>(
                             when (which) {
                                 DialogInterface.BUTTON_POSITIVE -> {
                                     ioSafe {
-                                        RepositoryManager.removeRepository(uiContext.applicationContext, repo)
+                                        RepositoryManager.removeRepository(
+                                            uiContext.applicationContext,
+                                            repo
+                                        )
                                         extensionViewModel.loadStats()
                                         extensionViewModel.loadRepositories()
                                     }
@@ -145,10 +148,11 @@ class ExtensionsFragment : BaseFragment<FragmentExtensionsBinding>(
             })
         }
 
-        observe(extensionViewModel.repositories) {
-            binding.repoRecyclerView.isVisible = it.isNotEmpty()
-            binding.blankRepoScreen.isVisible = it.isEmpty()
-            (binding.repoRecyclerView.adapter as? RepoAdapter)?.submitList(it.toList())
+        observe(extensionViewModel.repositories) { repos ->
+            binding.repoRecyclerView.isVisible = repos.isNotEmpty()
+            binding.blankRepoScreen.isVisible = repos.isEmpty()
+            (binding.repoRecyclerView.adapter as? RepoAdapter)?.submitList(repos.toList())
+            pluginViewModel.updatePluginList(binding.root.context, repos.toList())
         }
 
         observeNullable(extensionViewModel.pluginStats) { value ->
@@ -177,13 +181,74 @@ class ExtensionsFragment : BaseFragment<FragmentExtensionsBinding>(
         binding.pluginStorageAppbar.setOnClickListener {
             findNavController().navigate(
                 R.id.navigation_settings_extensions_to_navigation_settings_plugins,
-                PluginsFragment.newInstance(
+                PluginsFragment.newLocalInstance(
                     getString(R.string.extensions),
-                    "",
-                    true
                 )
             )
         }
+
+        binding.pluginRecyclerView.apply {
+            setLinearListLayout(
+                isHorizontal = false,
+                nextDown = FOCUS_SELF,
+                nextRight = FOCUS_SELF,
+            )
+            setRecycledViewPool(PluginAdapter.sharedPool)
+            adapter =
+                PluginAdapter(true) {
+                    val urls = extensionViewModel.repositories.value?.toList() ?: emptyList()
+                    pluginViewModel.handlePluginAction(activity, urls, it, false)
+                }
+        }
+
+        observe(pluginViewModel.filteredPlugins) { (scrollToTop, list) ->
+            (binding.pluginRecyclerView.adapter as? PluginAdapter)?.submitList(list)
+            if (scrollToTop) {
+                binding.pluginRecyclerView.scrollToPosition(0)
+            }
+        }
+
+        binding.settingsToolbar.apply {
+            val searchItem = menu?.findItem(R.id.search_button)
+            val searchView = searchItem?.actionView as? SearchView
+
+            searchItem?.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+                override fun onMenuItemActionCollapse(p0: MenuItem): Boolean {
+                    binding.pluginRecyclerView.isVisible = false
+                    binding.repoRecyclerView.isVisible = true
+                    return true
+
+                }
+
+                override fun onMenuItemActionExpand(p0: MenuItem): Boolean {
+                    binding.pluginRecyclerView.isVisible = true
+                    binding.repoRecyclerView.isVisible = false
+                    return true
+                }
+            })
+
+            // Don't go back if active query
+            setNavigationOnClickListener {
+                if (searchView?.isIconified == false) {
+                    searchView.isIconified = true
+                } else {
+                    dispatchBackPressed()
+                }
+            }
+
+            searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    pluginViewModel.search(query)
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    pluginViewModel.search(newText)
+                    return true
+                }
+            })
+        }
+
 
         val addRepositoryClick = View.OnClickListener {
             val ctx = context ?: return@OnClickListener
@@ -199,7 +264,10 @@ class ExtensionsFragment : BaseFragment<FragmentExtensionsBinding>(
             )?.text?.toString()?.let { copiedText ->
                 if (copiedText.contains(RepoAdapter.SHAREABLE_REPO_SEPARATOR)) {
                     // text is of format <repository name> : <repository url>
-                    val (name, url) = copiedText.split(RepoAdapter.SHAREABLE_REPO_SEPARATOR, limit = 2)
+                    val (name, url) = copiedText.split(
+                        RepoAdapter.SHAREABLE_REPO_SEPARATOR,
+                        limit = 2
+                    )
                     binding.repoUrlInput.setText(url.trim())
                     binding.repoNameInput.setText(name.trim())
                 } else {
@@ -227,18 +295,17 @@ class ExtensionsFragment : BaseFragment<FragmentExtensionsBinding>(
 
                         val fixedName = if (!name.isNullOrBlank()) name
                         else repository.name
-                        val newRepo = RepositoryData(repository.iconUrl,fixedName, url)
+                        val newRepo = RepositoryData(repository.iconUrl, fixedName, url)
                         RepositoryManager.addRepository(newRepo)
                         extensionViewModel.loadStats()
                         extensionViewModel.loadRepositories()
 
-                        val plugins = RepositoryManager.getRepoPlugins(url)
+                        val plugins = RepositoryManager.getRepoPlugins(newRepo)
                         if (plugins.isNullOrEmpty()) {
                             showToast(R.string.no_plugins_found_error, Toast.LENGTH_LONG)
                         } else {
                             this@ExtensionsFragment.activity?.addRepositoryDialog(
-                                fixedName,
-                                url,
+                                newRepo
                             )
                         }
                     }
