@@ -31,6 +31,7 @@ kotlinxAtomicfu = "0.33.0"
 kotlinxCollectionsImmutable = "0.4.0"
 kotlinxCoroutinesCore = "1.11.0"
 kotlinxDatetime = "0.8.0"
+kotlinxIOCore = "0.9.1"
 kotlinxSerializationJson = "1.11.0"
 ksoup = "0.2.6"
 ktor = "3.5.0"
@@ -97,6 +98,7 @@ kotlinx-atomicfu = { module = "org.jetbrains.kotlinx:atomicfu", version.ref = "k
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinxIOCore" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 ksoup = { module = "com.fleeksoft.ksoup:ksoup", version.ref = "ksoup" }
 ktor-http = { module = "io.ktor:ktor-http", version.ref = "ktor" }
