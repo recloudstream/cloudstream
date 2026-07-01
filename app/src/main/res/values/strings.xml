@@ -1,6 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
+    <!-- KEYS DON'T TRANSLATE -->
+    <string name="search_providers_list_key" translatable="false">search_providers_list</string>
+    <string name="locale_key" translatable="false">app_locale</string>
+    <string name="search_types_list_key" translatable="false">search_type_list</string>
+    <string name="auto_update_key" translatable="false">auto_update</string>
+    <string name="auto_update_plugins_key" translatable="false">auto_update_plugins</string>
+    <string name="auto_download_plugins_key" translatable="false">auto_download_plugins_key2</string>
+    <string name="skip_update_key" translatable="false">skip_update_key</string>
+    <string name="prerelease_update_key" translatable="false">prerelease_update</string>
+    <string name="manual_check_update_key" translatable="false">manual_check_update</string>
+    <string name="fast_forward_button_time_key" translatable="false">fast_forward_button_time</string>
+    <string name="benene_count" translatable="false">benene_count</string>
+    <string name="subtitle_settings_key" translatable="false">subtitle_settings_key</string>
+    <string name="test_providers_key" translatable="false">test_providers_key</string>
+    <string name="subtitle_settings_chromecast_key" translatable="false">subtitle_settings_chromecast_key</string>
+    <string name="quality_pref_key" translatable="false">quality_pref_key</string>
+    <string name="quality_pref_mobile_data_key" translatable="false">quality_pref_mobile_data_key</string>
+    <string name="player_pref_key" translatable="false">player_pref_key</string>
+    <string name="prefer_limit_title_key" translatable="false">prefer_limit_title_key</string>
+    <string name="prefer_limit_title_rez_key" translatable="false">prefer_limit_title_rez_key</string>
+    <string name="apk_installer_key" translatable="false">apk_installer_key</string>
+    <string name="video_buffer_size_key" translatable="false">video_buffer_size_key</string>
+    <string name="video_buffer_length_key" translatable="false">video_buffer_length_key</string>
+    <string name="video_buffer_clear_key" translatable="false">video_buffer_clear_key</string>
+    <string name="video_buffer_disk_key" translatable="false">video_buffer_disk_key</string>
+    <string name="use_system_brightness_key" translatable="false">use_system_brightness_key</string>
+    <string name="swipe_enabled_key" translatable="false">swipe_enabled_key</string>
+    <string name="playback_speed_enabled_key" translatable="false">playback_speed_enabled_key</string>
+    <string name="player_resize_enabled_key" translatable="false">player_resize_enabled_key</string>
+    <string name="pip_enabled_key" translatable="false">pip_enabled_key</string>
+    <string name="double_tap_enabled_key" translatable="false">double_tap_enabled_key</string>
+    <string name="double_tap_pause_enabled_key" translatable="false">double_tap_pause_enabled_key</string>
+    <string name="double_tap_seek_time_key" translatable="false">double_tap_seek_time_key2</string>
+    <string name="android_tv_interface_off_seek_key" translatable="false">android_tv_interface_off_seek_key</string>
+    <string name="android_tv_interface_on_seek_key" translatable="false">android_tv_interface_on_seek_key</string>
+    <string name="swipe_vertical_enabled_key" translatable="false">swipe_vertical_enabled_key</string>
+    <string name="autoplay_next_key" translatable="false">autoplay_next_key</string>
+    <string name="display_sub_key" translatable="false">display_sub_key</string>
+    <string name="show_fillers_key" translatable="false">show_fillers_key</string>
+    <string name="show_trailers_key" translatable="false">show_trailers_key</string>
+    <string name="show_kitsu_posters_key" translatable="false">show_kitsu_posters_key</string>
+    <string name="random_button_key" translatable="false">random_button_key</string>
+    <string name="provider_lang_key" translatable="false">provider_lang_key</string>
+    <string name="dns_key" translatable="false">dns_key</string>
+    <string name="jsdelivr_proxy_key" translatable="false">jsdelivr_proxy_key</string>
+    <string name="download_path_key" translatable="false">download_path_key</string>
+    <string name="app_name_download_path" translatable="false">Cloudstream</string>
+    <string name="app_layout_key" translatable="false">app_layout_key</string>
+    <string name="primary_color_key" translatable="false">primary_color_key</string>
+    <string name="restore_key" translatable="false">restore_key</string>
+    <string name="backup_key" translatable="false">backup_key</string>
+    <string name="automatic_backup_key" translatable="false">automatic_backup_key</string>
+    <string name="prefer_media_type_key" translatable="false">prefer_media_type_key_2</string>
+    <string name="app_theme_key" translatable="false">app_theme_key</string>
+    <string name="episode_sync_enabled_key" translatable="false">episode_sync_enabled_key</string>
+    <string name="log_enabled_key" translatable="false">log_enabled_key</string>
+    <string name="show_logcat_key" translatable="false">show_logcat_key</string>
+    <string name="bottom_title_key" translatable="false">bottom_title_key</string>
+    <string name="poster_ui_key" translatable="false">poster_ui_key</string>
+    <string name="subtitles_encoding_key" translatable="false">subtitles_encoding_key</string>
+    <string name="override_site_key" translatable="false">override_site_key</string>
+    <string name="redo_setup_key" translatable="false">redo_setup_key</string>
+    <string name="filter_sub_lang_key" translatable="false">filter_sub_lang_key</string>
+    <string name="pref_filter_search_quality_key" translatable="false">pref_filter_search_quality_key</string>
+    <string name="enable_nsfw_on_providers_key" translatable="false">enable_nsfw_on_providers_key</string>
+    <string name="skip_startup_account_select_key" translatable="false">skip_startup_account_select_key</string>
+    <string name="enable_skip_op_from_database" translatable="false">enable_skip_op_from_database</string>
+    <string name="rotate_video_key" translatable="false">rotate_video_key</string>
+    <string name="auto_rotate_video_key" translatable="false">auto_rotate_video_key</string>
+    <string name="biometric_key" translatable="false">biometric_key</string>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
+    <string name="extra_info_format" formatted="true" translatable="false">%d %s | %s</string>
+    <string name="storage_size_format" formatted="true" translatable="false">%s • %s</string>
+    <string name="download_size_format" formatted="true" translatable="false">%s / %s</string>
+    <string name="episode_name_format" formatted="true" translatable="false">%s %s</string>
+    <string name="ffw_text_format" formatted="true" translatable="false">+%d</string>
+    <string name="rew_text_format" formatted="true" translatable="false">-%d</string>
+    <string name="ffw_text_regular_format" formatted="true" translatable="false">%d</string>
+    <string name="rew_text_regular_format" formatted="true" translatable="false">%d</string>
+    <string name="rating_format" formatted="true" translatable="false">%.1f/10.0</string>
+    <string name="year_format" formatted="true" translatable="false">%d</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
     <string name="cast_format" formatted="true">Cast: %s</string>
     <string name="next_episode_format" formatted="true">Episode %d will be released in</string>
@@ -8,17 +88,15 @@
     <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
     <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
-    <string name="download_time_left_hour_min_sec_format" formatted="true">%1$dh %2$dm %3$ds</string>
-    <string name="download_time_left_min_sec_format" formatted="true">%1$dm %2$ds</string>
-    <string name="download_time_left_sec_format" formatted="true">%1$ds</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
     <string name="search_poster_img_des">Poster</string>
     <string name="episode_poster_img_des">Episode Poster</string>
     <string name="home_main_poster_img_des">Main Poster</string>
     <string name="home_next_random_img_des">Next Random</string>
+    <string name="episode_play_img_des" translatable="false">@string/play_episode</string>
     <string name="go_back_img_des">Go back</string>
-    <string name="play_from_beginning_img_des">Play from the Beginning</string>
+    <string name="change_providers_img_des" translatable="false">@string/home_change_provider_img_des</string>
     <string name="home_change_provider_img_des">Change Provider</string>
     <string name="preview_background_img_des">Preview Background</string>
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
@@ -32,15 +110,13 @@
     <string name="title_home">Home</string>
     <string name="title_search">Search</string>
     <string name="title_downloads">Downloads</string>
-    <string name="download_queue">Download queue</string>
     <string name="title_settings">Settings</string>
     <string name="search_hint">Search…</string>
     <string name="search_hint_site" formatted="true">Search %s…</string>
-    <string name="speech_recognition_unavailable">Speech recognition is not available</string>
-    <string name="begin_speaking">Begin Speaking…</string>
     <string name="no_data">No Data</string>
     <string name="episode_more_options_des">More Options</string>
     <string name="next_episode">Next episode</string>
+    <string name="result_plot" translatable="false">@string/synopsis</string>
     <string name="result_tags">Genres</string>
     <string name="result_share">Share</string>
     <string name="result_open_in_browser">Open In Browser</string>
@@ -52,13 +128,12 @@
     <string name="type_completed">Completed</string>
     <string name="type_dropped">Dropped</string>
     <string name="type_plan_to_watch">Plan to Watch</string>
+    <string name="type_none" translatable="false">@string/none</string>
     <string name="type_re_watching">Rewatching</string>
     <string name="play_movie_button">Play Movie</string>
     <string name="play_trailer_button">Play Trailer</string>
     <string name="play_livestream_button">Play Livestream</string>
     <string name="play_torrent_button">Stream Torrent</string>
-    <string name="play_full_series_button">Play Full Series</string>
-    <string name="torrent_info">This video is a Torrent, this means that your video activity can be tracked.\nMake sure you understand Torrenting before continuing.</string>
     <string name="pick_source">Sources</string>
     <string name="pick_subtitle">Subtitles</string>
     <string name="reload_error">Retry connection…</string>
@@ -73,12 +148,8 @@
     <string name="download_failed">Download Failed</string>
     <string name="download_canceled">Download Canceled</string>
     <string name="download_done">Download Done</string>
-    <string name="downloads_delete_select">Select Items to Delete</string>
+    <string name="download_format" translatable="false">%s - %s</string>
     <string name="downloads_empty">There are currently no downloads.</string>
-    <string name="queue_empty_message">There are currently no queued downloads.</string>
-    <string name="offline_file">Available for watching offline</string>
-    <string name="select_all">Select All</string>
-    <string name="deselect_all">Deselect All</string>
     <string name="update_started">Update Started</string>
     <string name="stream">Network stream</string>
     <string name="open_local_video">Open local video</string>
@@ -91,6 +162,7 @@
     <string name="popup_play_file">Play File</string>
     <string name="popup_resume_download">Resume Download</string>
     <string name="popup_pause_download">Pause Download</string>
+    <string name="pref_disable_acra">Disable automatic bug reporting</string>
     <string name="home_more_info">More info</string>
     <string name="home_expanded_hide">Hide</string>
     <string name="home_play">Play</string>
@@ -100,6 +172,7 @@
     <string name="action_remove_from_bookmarks">Remove</string>
     <string name="action_add_to_bookmarks">Set watch status</string>
     <string name="sort_apply">Apply</string>
+    <string name="sort_cancel" translatable="false">@string/cancel</string>
     <string name="sort_copy">Copy</string>
     <string name="sort_close">Close</string>
     <string name="sort_clear">Clear</string>
@@ -166,9 +239,6 @@
     <string name="use_system_brightness_settings_des">Use system brightness in the app player instead of a dark
         overlay
     </string>
-    <string name="extra_brightness_settings">Extra brightness</string>
-    <string name="extra_brightness_settings_des">Enable brightness filter when 100% display brightness is exceeded</string>
-    <string name="extra_brightness_key">extra_brightness_enabled</string>
     <string name="episode_sync_settings">Update watch progress</string>
     <string name="episode_sync_settings_des">Automatically sync your current episode progress</string>
     <string name="restore_settings">Restore data from backup</string>
@@ -186,14 +256,11 @@
     <string name="settings_info">Info</string>
     <string name="advanced_search">Advanced Search</string>
     <string name="advanced_search_des">Gives you the search results separated by provider</string>
-    <string name="search_suggestions">Search Suggestions</string>
-    <string name="search_suggestions_des">Show search suggestions while typing</string>
-    <string name="clear_suggestions">Clear Suggestions</string>
+    <string name="bug_report_settings_off">Only sends data on crashes</string>
+    <string name="bug_report_settings_on">Sends no data</string>
     <string name="show_fillers_settings">Show filler episode for anime</string>
-    <string name="show_player_metadata_overlay">Show Player Metadata Overlay</string>
     <string name="show_trailers_settings">Show trailers</string>
     <string name="kitsu_settings">Show posters from Kitsu</string>
-    <string name="show_cast_in_details">Show cast panel</string>
     <string name="pref_filter_search_quality">Hide selected video quality in search results</string>
     <string name="automatic_plugin_updates">Automatic plugin updates</string>
     <string name="automatic_plugin_download">Automatically download plugins</string>
@@ -202,11 +269,10 @@
     <string name="updates_settings">Show app updates</string>
     <string name="updates_settings_des">Automatically search for new updates after starting the app.</string>
     <string name="redo_setup_process">Redo setup process</string>
-    <string name="install_prerelease">Install pre-release version</string>
-    <string name="prerelease_already_installed">Pre-release is already installed.</string>
-    <string name="prerelease_install_failed">Failed to install pre-release.</string>
+    <string name="uprereleases_settings">Update to prereleases</string>
+    <string name="uprereleases_settings_des">Search for prerelease updates instead of full releases only</string>
     <string name="apk_installer_settings">APK Installer</string>
-    <string name="apk_installer_settings_des">Some devices do not support the new package installer. Try the legacy option if updates do not install.</string>
+    <string name="apk_installer_settings_des">Some phones do not support the new package installer. Try the legacy option if updates do not install. </string>
     <string name="github">Github</string>
     <string name="lightnovel">Light novel app by the same devs</string>
     <string name="anim">Anime app by the same devs</string>
@@ -219,6 +285,9 @@
     <string name="copy_link_toast">Link copied to clipboard</string>
     <string name="play_episode_toast">Play Episode</string>
     <string name="subs_default_reset_toast">Reset to default value</string>
+    <string name="acra_report_toast">Sorry, the application crashed. An anonymous bug report will be sent to the
+        developers
+    </string>
     <string name="season">Season</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">No Season</string>
@@ -230,10 +299,8 @@
     <string name="season_short">S</string>
     <string name="episode_short">E</string>
     <string name="no_episodes_found">No Episodes found</string>
-    <string name="delete">Delete</string>
     <string name="delete_file">Delete File</string>
-    <string name="delete_files">Delete Files</string>
-    <string name="delete_format" formatted="true">Delete (%1$d | %2$s)</string>
+    <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="pause">Pause</string>
     <string name="start">Start</string>
@@ -244,10 +311,6 @@
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">This will permanently delete %s\nAre you sure?</string>
-    <string name="delete_message_multiple" formatted="true">Are you sure you want to permanently delete the following items?\n\n%s</string>
-    <string name="delete_message_series_episodes" formatted="true">Are you sure you want to permanently delete the following episodes in %1$s?\n\n%2$s</string>
-    <string name="delete_message_series_section" formatted="true">You will also permanently delete all episodes in the following series:\n\n%s</string>
-    <string name="delete_message_series_only" formatted="true">Are you sure you want to permanently delete all episodes in the following series?\n\n%s</string>
     <string name="resume_time_left" formatted="true">%dm\nremaining</string>
     <string name="resume_remaining" formatted="true">%s\nremaining</string>
     <string name="status_ongoing">Ongoing</string>
@@ -261,6 +324,8 @@
     <string name="queued">queued</string>
     <string name="no_subtitles">No Subtitles</string>
     <string name="action_default">Default</string>
+    <string name="default_subtitles" translatable="false">@string/action_default</string>
+    <string name="default_account" translatable="false">@string/action_default</string>
     <string name="free_storage">Free</string>
     <string name="used_storage">Used</string>
     <string name="app_storage">App</string>
@@ -276,6 +341,10 @@
     <string name="livestreams">Livestreams</string>
     <string name="nsfw">NSFW</string>
     <string name="others">Others</string>
+    <plurals name="episodes" translatable="false">
+        <item quantity="one">@string/episode</item>
+        <item quantity="other">@string/episodes</item>
+    </plurals>
     <!--singular-->
     <string name="movies_singular">Movie</string>
     <string name="tv_series_singular">Series</string>
@@ -288,25 +357,21 @@
     <string name="live_singular">Livestream</string>
     <string name="nsfw_singular">NSFW</string>
     <string name="other_singular">Video</string>
-    <string name="music_singular">Music</string>
+    <string name="music_singlar">Music</string>
     <string name="audio_book_singular">Audio Book</string>
-    <string name="custom_media_singular">Media</string>
-    <string name="audio_singular">Audio</string>
-    <string name="podcast_singular">Podcast</string>
-    <string name="video_singular">Video</string>
+    <string name="custom_media_singluar">Media</string>
     <string name="source_error">Source error</string>
     <string name="remote_error">Remote error</string>
     <string name="render_error">Renderer error</string>
-    <string name="encoding_error">Encoding error</string>
-    <string name="unsupported_error">Unsupported error</string>
     <string name="unexpected_error">Unexpected player error</string>
     <string name="storage_error">Download error, check storage permissions</string>
     <string name="episode_action_chromecast_episode">Chromecast episode</string>
     <string name="episode_action_chromecast_mirror">Chromecast mirror</string>
     <string name="episode_action_cast_mirror">Cast mirror</string>
     <string name="episode_action_play_in_app">Play in app</string>
-    <string name="episode_action_play_mirror">Play mirror</string>"
     <string name="episode_action_play_in_format">Play in %s</string>
+    <string name="episode_action_play_in_browser">Play in browser</string>
+    <string name="episode_action_copy_link">Copy link</string>
     <string name="episode_action_auto_download">Auto download</string>
     <string name="episode_action_download_mirror">Download mirror</string>
     <string name="episode_action_reload_links">Reload links</string>
@@ -314,9 +379,11 @@
     <string name="show_hd">Quality label</string>
     <string name="show_dub">Dub label</string>
     <string name="show_sub">Sub label</string>
-    <string name="show_rating">Rating Label</string>
     <string name="show_title">Title</string>
-    <string name="show_episode_text">Episode Text</string>
+    <string name="show_hd_key" translatable="false">show_hd_key</string>
+    <string name="show_dub_key" translatable="false">show_dub_key</string>
+    <string name="show_sub_key" translatable="false">show_sub_key</string>
+    <string name="show_title_key" translatable="false">show_title_key</string>
     <string name="poster_ui_settings">Toggle UI elements on poster</string>
     <string name="no_update_found">No Update Found</string>
     <string name="check_for_update">Check for Update</string>
@@ -330,7 +397,7 @@
     <string name="watch_quality_pref">Preferred watch quality (WiFi)</string>
     <string name="watch_quality_pref_data">Preferred watch quality (Mobile Data)</string>
     <string name="limit_title">Video player title max chars</string>
-    <string name="limit_title_rez">Show player information</string>
+    <string name="limit_title_rez">Video player resolution</string>
     <string name="video_buffer_size_settings">Video buffer size</string>
     <string name="video_buffer_length_settings">Video buffer length</string>
     <string name="video_buffer_disk_settings">Video cache on disk</string>
@@ -355,7 +422,28 @@
     <string name="resize_fit">Fit to screen</string>
     <string name="resize_fill">Stretch</string>
     <string name="resize_zoom">Zoom</string>
+    <string name="resize_custom">Custom ratio</string>
+    <string name="custom_ratio_horizontal">Horizontal ratio</string>
+    <string name="custom_ratio_vertical">Vertical ratio</string>
+    <string name="invalid_ratio_toast">Enter a valid ratio</string>
     <string name="legal_notice">Disclaimer</string>
+    <string name="legal_notice_key" translatable="false">legal_notice_key</string>
+    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application
+        should be taken up with the actual file hosts and providers themselves as we are not affiliated with them.
+
+        In case of copyright infringement, please directly contact the responsible parties or the streaming websites.
+
+        The app is purely for educational and personal use.
+
+        CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down.
+        CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or
+        manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient,
+        user-friendly interface.
+
+        It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the
+        responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use
+        CloudStream 3 at your own risk.
+    </string>
     <string name="pref_category_bypass">ISP Bypasses</string>
     <string name="pref_category_links">Links</string>
     <string name="pref_category_app_updates">App updates</string>
@@ -364,8 +452,11 @@
     <string name="pref_category_actions">Actions</string>
     <string name="pref_category_cache">Cache</string>
     <string name="pref_category_android_tv">Android TV</string>
+    <string name="pref_category_android_tv_key" translatable="false" >pref_category_android_tv_key</string>
     <string name="pref_category_gestures">Gestures</string>
+    <string name="pref_category_gestures_key" translatable="false">pref_category_gestures_key</string>
     <string name="pref_category_security">Security</string>
+    <string name="pref_category_security_key" translatable="false">pref_category_security_key</string>
     <string name="pref_category_accounts">Accounts</string>
     <string name="pref_category_player_features">Player features</string>
     <string name="pref_category_subtitles">Subtitles</string>
@@ -395,6 +486,12 @@
     <string name="bottom_title_settings">Poster title location</string>
     <string name="bottom_title_settings_des">Put the title under the poster</string>
     <!-- account stuff -->
+    <string name="anilist_key" translatable="false">anilist_key</string>
+    <string name="simkl_key" translatable="false">simkl_key</string>
+    <string name="mal_key" translatable="false">mal_key</string>
+    <string name="opensubtitles_key" translatable="false">opensubtitles_key</string>
+    <string name="subdl_key" translatable="false">subdl_key</string>
+    <string name="nginx_key" translatable="false">nginx_key</string>
     <string name="example_password">password123</string>
     <string name="example_username">Username</string>
     <string name="example_email">hello@world.com</string>
@@ -402,6 +499,14 @@
     <string name="example_site_name">NewSiteName</string>
     <string name="example_site_url">https://example.com</string>
     <string name="example_lang_name">Language code (en)</string>
+    <!--
+    <string name="mal_account_settings" translatable="false">MAL</string>
+    <string name="anilist_account_settings" translatable="false">AniList</string>
+    <string name="tmdb_account_settings" translatable="false">TMDB</string>
+    <string name="imdb_account_settings" translatable="false">IMDB</string>
+    <string name="kitsu_account_settings" translatable="false">Kitsu</string>
+    <string name="trakt_account_settings" translatable="false">Trakt</string>
+    -->
     <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">account</string>
     <string name="logout">Log out</string>
@@ -426,6 +531,7 @@
     <string name="all">All</string>
     <string name="max">Max</string>
     <string name="min">Min</string>
+    <string name="subtitles_none" translatable="false">@string/none</string>
     <string name="subtitles_outline">Outline</string>
     <string name="subtitles_depressed">Depressed</string>
     <string name="subtitles_shadow">Shadow</string>
@@ -447,7 +553,6 @@
     <string name="player_loaded_subtitles" formatted="true">Loaded %s</string>
     <string name="player_load_subtitles">Load from file</string>
     <string name="player_load_subtitles_online">Load from Internet</string>
-    <string name="player_load_one_subtitle_online">Load first available</string>
     <string name="downloaded_file">Downloaded file</string>
     <string name="actor_main">Main</string>
     <string name="actor_supporting">Supporting</string>
@@ -477,7 +582,6 @@
     <string name="resolution_and_title">Resolution and title</string>
     <string name="title">Title</string>
     <string name="resolution">Resolution</string>
-    <string name="video_info">Media Info</string>
     <string name="error_invalid_id">Invalid ID</string>
     <string name="error_invalid_data">Invalid data</string>
     <string name="error_invalid_url">Invalid URL</string>
@@ -494,12 +598,13 @@
     <string name="previous">Previous</string>
     <string name="skip_setup">Skip setup</string>
     <string name="app_layout_subtext">Change the look of the app to suit your device</string>
+    <string name="crash_reporting_title">Crash reporting</string>
     <string name="preferred_media_subtext">What do you want to see</string>
     <string name="setup_done">Done</string>
     <string name="extensions">Extensions</string>
     <string name="add_repository">Add repository</string>
-    <string name="repository_name_hint">Repository name (Optional)</string>
-    <string name="repository_url_hint">Repository URL or Shortcode</string>
+    <string name="repository_name_hint">Repository name</string>
+    <string name="repository_url_hint">Repository URL</string>
     <string name="plugin_loaded">Plugin Loaded</string>
     <string name="plugin_downloaded">Plugin Downloaded</string>
     <string name="plugin_deleted">Plugin Deleted</string>
@@ -527,7 +632,7 @@
     <string name="view_public_repositories_button">View community repositories</string>
     <string name="view_public_repositories_button_short">Public list</string>
     <string name="uppercase_all_subtitles">Uppercase all subtitles</string>
-    <string name="download_all_plugins_from_repo">Warning: CloudStream does not take any responsibility for using third-party extensions and does not provide any support for them!</string>
+    <string name="download_all_plugins_from_repo">Warning: CloudStream 3 does not take any responsibility for using third-party extensions and does not provide any support for them!</string>
     <string name="single_plugin_disabled" formatted="true">%s (Disabled)</string>
     <string name="tracks">Tracks</string>
     <string name="audio_tracks">Audio tracks</string>
@@ -550,7 +655,11 @@
     <string name="hls_playlist">HLS Playlist</string>
     <string name="player_pref">Preferred video player</string>
     <string name="player_settings_play_in_app">Internal player</string>
-    <string name="player_settings_always_ask">Always ask</string>
+    <string name="player_settings_play_in_vlc">VLC</string>
+    <string name="player_settings_play_in_mpv">MPV</string>
+    <string name="player_settings_play_in_web">Web Video Cast</string>
+    <string name="player_settings_play_in_fcast">Fcast</string>
+    <string name="player_settings_play_in_browser">Web browser</string>
     <string name="player_settings_select_cast_device">Select cast device</string>
     <string name="app_not_found_error">App not found</string>
     <string name="all_languages_preference">All Languages</string>
@@ -560,8 +669,7 @@
     <string name="skip_type_recap">Recap</string>
     <string name="skip_type_mixed_ed">Mixed ending</string>
     <string name="skip_type_mixed_op">Mixed opening</string>
-    <string name="skip_type_credits">Credits</string>
-    <string name="skip_type_preview">Preview</string>
+    <string name="skip_type_creddits">Credits</string>
     <string name="skip_type_intro">Intro</string>
     <string name="clear_history">Clear history</string>
     <string name="history">History</string>
@@ -579,9 +687,12 @@
     <string name="open_downloaded_repo">Open repository</string>
     <string name="battery_dialog_title">Disable Battery optimization</string>
     <string name="battery_dialog_message">To ensure uninterrupted downloads and notifications for subscribed
-        TV shows, CloudStream needs permission to run in background. By pressing "OK", you\'ll be shown a request dialog.
-        Please press \'Allow\'.\n\nPlease note, this permission does not mean CS3 will drain your battery. It will only operate in the background when necessary, such as
-        when receiving notifications or downloading videos from official extensions.</string>
+        TV shows, CloudStream needs permission to run in background. By pressing "OK", you\'ll be directed to App info.
+        There, scroll to 𝘼𝙥𝙥 𝙗𝙖𝙩𝙩𝙚𝙧𝙮 𝙪𝙨𝙖𝙜𝙚 and set battery usage to 𝙐𝙣𝙧𝙚𝙨𝙩𝙧𝙞𝙘𝙩𝙚𝙙. Please note, this permission
+        does not mean CS3 will drain your battery. It will only operate in the background when necessary, such as
+        when receiving notifications or downloading videos from official extensions. If you choose to cancel,
+        you can adjust this setting later in 𝙂𝙚𝙣𝙚𝙧𝙖𝙡 𝙎𝙚𝙩𝙩𝙞𝙣𝙜𝙨.</string>
+    <string name="battery_optimisation_key" translatable="false">battery_optimisation</string>
     <string name="app_unrestricted_toast">App battery usage is already set to unrestricted</string>
     <string name="app_info_intent_error">Unable to open CloudStream\'s App info.</string>
     <string name="update_notification_downloading">Downloading app update…</string>
@@ -598,15 +709,6 @@
     <string name="sort_updated_old">Updated (Old to New)</string>
     <string name="sort_alphabetical_a">Alphabetical (A to Z)</string>
     <string name="sort_alphabetical_z">Alphabetical (Z to A)</string>
-    <string name="sort_episodes_number_asc">Episode (Ascending)</string>
-    <string name="sort_episodes_number_desc">Episode (Descending)</string>
-    <string name="sort_episodes_rating_high_low">Rating (Highest)</string>
-    <string name="sort_episodes_rating_low_high">Rating (Lowest)</string>
-    <string name="sort_episodes_date_newest">Air Date (Newest)</string>
-    <string name="sort_episodes_date_oldest">Air Date (Oldest)</string>
-    <string name="sort_button_episode">Ep %s</string>
-    <string name="sort_button_rating">Rating %s</string>
-    <string name="sort_button_date">Date %s</string>
     <string name="select_library">Select Library</string>
     <string name="open_with">Open with</string>
     <string name="empty_library_no_accounts_message">Your library is empty :(
@@ -627,8 +729,6 @@
     <string name="set_default">Set default</string>
     <string name="use">Use</string>
     <string name="edit">Edit</string>
-    <string name="source_priority">Source priority</string>
-    <string name="source_priority_help">Decide how video sources should be sorted in the player</string>
     <string name="profiles">Profiles</string>
     <string name="help">Help</string>
     <string name="quality_profile_help">
@@ -653,6 +753,7 @@
     <string name="duplicate_add">Add</string>
     <string name="duplicate_replace">Replace</string>
     <string name="duplicate_replace_all">Replace All</string>
+    <string name="duplicate_cancel" translatable="false">@string/cancel</string>
     <string name="duplicate_message_single" formatted="true">
         It appears that a potentially duplicate item already exists in your library: \'%s.\'
 
@@ -665,6 +766,7 @@
 
         \n\nWould you like to add this item anyway, replace the existing ones, or cancel the action?
     </string>
+    <string name="tv_no_focus_tag" translatable="false">tv_no_focus_tag</string>
     <string name="enter_pin">Enter PIN</string>
     <string name="enter_pin_with_name" formatted="true">Enter PIN for %s</string>
     <string name="enter_current_pin">Enter Current PIN</string>
@@ -673,7 +775,6 @@
     <string name="pin_error_incorrect">Incorrect PIN. Please try again.</string>
     <string name="pin_error_length">PIN must be 4 characters</string>
     <string name="select_an_account">Select an Account</string>
-    <string name="no_account">No account</string>
     <string name="manage_accounts">Manage Accounts</string>
     <string name="edit_account">Edit account</string>
     <string name="logged_account" formatted="true">Logged in as %s</string>
@@ -699,89 +800,4 @@
     <string name="device_pin_error_message">Can\'t get the device PIN code, try local authentication</string>
     <string name="device_pin_expired_message">PIN code is now expired !</string>
     <string name="device_pin_counter_text">Code expires in %1$dm %2$ds</string>
-    <string name="sort_release_date_new">Release Date (New to Old)</string>
-    <string name="sort_release_date_old">Release Date (Old to New)</string>
-    <string name="hide_player_control_names">Hide names of the player\'s controls</string>
-    <string name="preview_seekbar">Seekbar preview</string>
-    <string name="preview_seekbar_desc">Enable preview thumbnail on seekbar</string>
-    <string name="no_subtitles_loaded">No subtitles loaded yet</string>
-    <string name="backup_path_title">Backup folder location</string>
-    <string name="custom">Custom</string>
-    <!--confirm exit dialog-->
-    <string name="confirm_before_exiting_title">Confirm before exiting</string>
-    <string name="confirm_before_exiting_desc">Show dialog before exiting the app</string>
-    <!--confirm exit dialog-->
-    <string name="show">Show</string>
-    <string name="dont_show">Don\'t Show</string>
-    <string name="subs_edge_size">Edge Size</string>
-    <string name="torrent_preferred_media">Enable torrent in Settings/Providers/Preferred media</string>
-    <string name="torrent_not_accepted">Restart app and accept Stream Torrent pop-up to proceed.</string>
-    <string name="software_decoding">Software decoding</string>
-    <string name="software_decoding_desc">Software decoding enables the player to play video files not supported by your device, but may cause laggy or unstable playback on high resolution.</string>
-    <string name="volume_exceeded_100">Volume has exceeded 100%</string>
-    <string name="slide_up_again_to_exceed_100">Slide up again to go beyond 100%</string>
-    <string name="update_plugins">Update Plugins</string>
-    <!--Manual Update Button-->
-    <string name="update_plugins_manually">Update plugins manually</string>
-    <string name="starting_plugin_update_manually">Starting plugin update process!</string>
-    <string name="plugins_updated_manually">Successfully updated %d plugin(s)!</string>
-    <string name="no_plugins_updated_manually">No plugins were updated.</string>
-    <string name="player_notification_channel_name">Player notifications</string>
-    <string name="player_notification_channel_description">The player notification for controlling the playback from the background</string>
-    <string name="subtitles_from_embedded">Embedded</string>
-    <string name="subtitles_from_online">Online</string>
-    <string name="all_subtitles_bold">Make all subtitles bold</string>
-    <string name="all_subtitles_italic">Make all subtitles italic</string>
-    <string name="background_radius">Background Radius</string>
-    <string name="download_parallel_settings_des">How many different items that can be downloaded in parallel</string>
-    <string name="parallel_downloads">Parallel downloads</string>
-    <string name="concurrent_connections">Concurrent connections</string>
-    <string name="concurrent_connections_settings_des">How many concurrent connections each download can use while downloading</string>
-    <string name="go_to_downloads">Go to Downloads</string>
-    <string name="no_internet_connection">
-        No internet connection.
-        \n\nPlease connect to the internet and try again, or watch your downloads while you are offline.
-    </string>
-    <string name="overscan_settings_des">Changes the bounds of the screen</string>
-    <string name="overscan_settings">Overscan</string>
-    <string name="poster_size_settings_des">Changes size of posters</string>
-    <string name="poster_size_settings">Poster size</string>
-    <string name="speedup_title">LongPress Speed Toggle</string>
-    <string name="speedup_summary">Hold to get 2x speed</string>
-    <string name="edit_profile_image_title">Edit Profile Image</string>
-    <string name="edit_profile_image_hint">Enter Profile Image URL</string>
-    <string name="edit_profile_image_error_empty">No URL Found</string>
-    <string name="edit_profile_image_error_invalid">Invalid URL or Image</string>
-    <string name="edit_profile_image_success">Successfully Image Updated</string>
-    <string name="action_mark_watched_up_to_this_episode">Mark as watched up to this episode</string>
-    <string name="action_remove_mark_watched_up_to_this_episode">Remove watched up to this episode</string>
-    <string name="action_reload">Reloaded</string>
-    <string name="reload_provider">Reload Provider</string>
-    <string name="name">Name</string>
-    <string name="source_name">Source Name</string>
-    <string name="resolution_and_name">Resolution and name</string>
-    <string name="download_all">Download all</string>
-    <string name="cancel_all">Cancel all</string>
-    <string name="download_episode_range">Do you want to download episode %s?</string>
-    <string name="cancel_queue_message">Do you want to cancel all queued downloads?</string>
-    <string name="subs_subtitle_alignment">Subtitle Alignment</string>
-    <string name="bottom_left">Bottom left</string>
-    <string name="bottom_center">Bottom center</string>
-    <string name="bottom_right">Bottom right</string>
-    <string name="middle_left">Middle left</string>
-    <string name="middle_center">Middle center</string>
-    <string name="middle_right">Middle right</string>
-    <string name="top_left">Top left</string>
-    <string name="top_center">Top center</string>
-    <string name="top_right">Top right</string>
-    <plurals name="downloads_active">
-        <item quantity="one">%d active download</item>
-        <item quantity="other">%d active downloads</item>
-    </plurals>
-    <plurals name="downloads_queued">
-        <item quantity="one">%d download queued</item>
-        <item quantity="other">%d downloads queued</item>
-    </plurals>
-    <string name="player_is_live">Live</string>
-
 </resources>
