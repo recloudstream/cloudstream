@@ -43,6 +43,11 @@ fun buildDefaultClient(context: Context, ignoreSSL: Boolean = false): OkHttpClie
     val baseClient = OkHttpClient.Builder()
         .followRedirects(true)
         .followSslRedirects(true)
+        // Explicit timeouts — OkHttp defaults (10 s) are too short for TV
+        // network stacks which can be slower than phones on the same Wi-Fi.
+        .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+        .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+        .writeTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
         .apply {
             if (ignoreSSL) {
                 ignoreAllSSLErrors()
