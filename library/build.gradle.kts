@@ -81,6 +81,7 @@ kotlin {
         val jvmCommonMain by creating {
             dependsOn(commonMain.get())
             dependencies {
+                implementation(libs.kotlin.reflect)
                 implementation(libs.newpipeextractor)
             }
         }
