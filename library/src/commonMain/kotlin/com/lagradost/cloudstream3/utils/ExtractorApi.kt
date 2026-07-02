@@ -36,6 +36,7 @@ import com.lagradost.cloudstream3.extractors.D0000d
 import com.lagradost.cloudstream3.extractors.D000dCom
 import com.lagradost.cloudstream3.extractors.DBfilm
 import com.lagradost.cloudstream3.extractors.Dailymotion
+import com.lagradost.cloudstream3.extractors.Darkibox
 import com.lagradost.cloudstream3.extractors.DatabaseGdrive
 import com.lagradost.cloudstream3.extractors.DatabaseGdrive2
 import com.lagradost.cloudstream3.extractors.DesuArcg
@@ -1189,6 +1190,7 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
 
     Cda(),
     Dailymotion(),
+    Darkibox(),
     Ztreamhub(),
     Rabbitstream(),
     Dokicloud(),
