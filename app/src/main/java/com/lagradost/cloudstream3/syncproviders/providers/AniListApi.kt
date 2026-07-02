@@ -919,7 +919,6 @@ class AniListApi : SyncAPI() {
 
     @Serializable
     data class Recommendation(
-        @JsonProperty("id") @SerialName("id") val id: Long,
         @JsonProperty("mediaRecommendation") @SerialName("mediaRecommendation") val mediaRecommendation: RecommendedMedia?,
     )
 
