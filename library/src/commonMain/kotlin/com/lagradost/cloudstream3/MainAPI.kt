@@ -6,6 +6,7 @@
 
 package com.lagradost.cloudstream3
 
+import android.os.Build
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -444,6 +445,11 @@ fun newHomePageResponse(
     hasNext: Boolean? = null,
 ): HomePageResponse {
     @Suppress("DEPRECATION_ERROR")
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+        return HomePageResponse(listOf(), hasNext = false)
+    }
+
+    @Suppress("DEPRECATION_ERROR")
     return HomePageResponse(
         listOf(HomePageList(name, list)),
         hasNext = hasNext ?: list.isNotEmpty()
@@ -456,6 +462,11 @@ fun newHomePageResponse(
     hasNext: Boolean? = null,
 ): HomePageResponse {
     @Suppress("DEPRECATION_ERROR")
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+        return HomePageResponse(listOf(), hasNext = false)
+    }
+
+    @Suppress("DEPRECATION_ERROR")
     return HomePageResponse(
         listOf(HomePageList(data.name, list, data.horizontalImages)),
         hasNext = hasNext ?: list.isNotEmpty()
@@ -464,10 +475,20 @@ fun newHomePageResponse(
 
 fun newHomePageResponse(list: HomePageList, hasNext: Boolean? = null): HomePageResponse {
     @Suppress("DEPRECATION_ERROR")
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+        return HomePageResponse(listOf(), hasNext = false)
+    }
+
+    @Suppress("DEPRECATION_ERROR")
     return HomePageResponse(listOf(list), hasNext = hasNext ?: list.list.isNotEmpty())
 }
 
 fun newHomePageResponse(list: List<HomePageList>, hasNext: Boolean? = null): HomePageResponse {
+    @Suppress("DEPRECATION_ERROR")
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+        return HomePageResponse(listOf(), hasNext = false)
+    }
+
     @Suppress("DEPRECATION_ERROR")
     return HomePageResponse(list, hasNext = hasNext ?: list.any { it.list.isNotEmpty() })
 }
@@ -476,6 +497,11 @@ fun newSearchResponseList(
     list: List<SearchResponse>,
     hasNext: Boolean? = null,
 ): SearchResponseList {
+    @Suppress("DEPRECATION_ERROR")
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+        return SearchResponseList(listOf(), hasNext = false)
+    }
+
     @Suppress("DEPRECATION_ERROR")
     return SearchResponseList(
         list,
