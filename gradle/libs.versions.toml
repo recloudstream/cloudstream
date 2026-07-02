@@ -60,7 +60,7 @@ jvmTarget = "1.8"
 jdkToolchain = "17"
 minSdk = "23"
 compileSdk = "36"
-targetSdk = "36"
+targetSdk = "37"
 
 versionCode = "68"
 versionName = "4.7.0"
