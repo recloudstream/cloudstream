@@ -1,16 +1,14 @@
 package com.lagradost.cloudstream3.mvvm
 
+import androidx.annotation.AnyThread
+import androidx.annotation.WorkerThread
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.utils.AppDebug
+import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import kotlinx.coroutines.*
-import java.io.InterruptedIOException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
-import javax.net.ssl.SSLHandshakeException
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
-import kotlin.reflect.full.NoSuchPropertyException
 
 const val DEBUG_EXCEPTION = "THIS IS A DEBUG EXCEPTION!"
 const val DEBUG_PRINT = "DEBUG PRINT"
@@ -59,7 +57,7 @@ sealed class Resource<out T> {
     companion object {
         fun <T> fromResult(result: Result<T>) : Resource<T> {
             val value = result.getOrNull()
-            return if(value != null) {
+            return if (value != null) {
                 Success(value)
             } else {
                 throwAbleToResource(result.exceptionOrNull() ?: Exception("this should not be possible"))
@@ -70,7 +68,6 @@ sealed class Resource<out T> {
 
 fun logError(throwable: Throwable) {
     Log.d("ApiError", "-------------------------------------------------------------------")
-    Log.d("ApiError", "safeApiCall: " + throwable.localizedMessage)
     Log.d("ApiError", "safeApiCall: " + throwable.message)
     throwable.printStackTrace()
     Log.d("ApiError", "-------------------------------------------------------------------")
@@ -127,16 +124,18 @@ suspend fun <T> suspendSafeApiCall(apiCall: suspend () -> T): T? {
 }
 
 fun Throwable.getAllMessages(): String {
-    return (this.localizedMessage ?: "") + (this.cause?.getAllMessages()?.let { "\n$it" } ?: "")
+    return (this.message ?: "") + (this.cause?.getAllMessages()?.let { "\n$it" } ?: "")
 }
 
 fun Throwable.getStackTracePretty(showMessage: Boolean = true): String {
-    val prefix = if (showMessage) this.localizedMessage?.let { "\n$it" } ?: "" else ""
-    return prefix + this.stackTrace.joinToString(
-        separator = "\n"
-    ) {
-        "${it.fileName} ${it.lineNumber}"
-    }
+    val prefix = if (showMessage) this.message?.let { "\n$it" } ?: "" else ""
+    return prefix + this.stackTraceToString()
+        .lines()
+        .mapNotNull { line ->
+            val trimmed = line.trim()
+            if (trimmed.startsWith("at ")) trimmed.removePrefix("at ") else null
+        }
+        .joinToString("\n")
 }
 
 fun <T> safeFail(throwable: Throwable): Resource<T> {
@@ -160,48 +159,23 @@ fun CoroutineScope.launchSafe(
     return this.launch(context, start, obj)
 }
 
+expect fun <T> platformThrowAbleToResource(throwable: Throwable): Resource<T>
+
 fun <T> throwAbleToResource(
     throwable: Throwable
 ): Resource<T> {
     return when (throwable) {
-        is NoSuchMethodException, is NoSuchFieldException, is NoSuchMethodError, is NoSuchFieldError, is NoSuchPropertyException -> {
-            Resource.Failure(
-                false,
-                "App or extension is outdated, update the app or try pre-release.\n${throwable.message}" // todo add exact version?
-            )
-        }
-
         is NullPointerException -> {
-            for (line in throwable.stackTrace) {
-                if (line?.fileName?.endsWith("provider.kt", ignoreCase = true) == true) {
-                    return Resource.Failure(
-                        false,
-                        "NullPointerException at ${line.fileName} ${line.lineNumber}\nSite might have updated or added Cloudflare/DDOS protection"
-                    )
-                }
+            val traceLine = throwable.stackTraceToString()
+                .lines()
+                .firstOrNull { it.contains("provider.kt", ignoreCase = true) }
+            if (traceLine != null) {
+                return Resource.Failure(
+                    false,
+                    "NullPointerException at $traceLine\nSite might have updated or added Cloudflare/DDOS protection"
+                )
             }
             safeFail(throwable)
-        }
-
-        is SocketTimeoutException, is InterruptedIOException -> {
-            Resource.Failure(
-                true,
-                "Connection Timeout\nPlease try again later."
-            )
-        }
-//        is HttpException -> {
-//            Resource.Failure(
-//                false,
-//                throwable.statusCode,
-//                null,
-//                throwable.message ?: "HttpException"
-//            )
-//        }
-        is UnknownHostException -> {
-            Resource.Failure(
-                true,
-                "Cannot connect to server, try again later.\n${throwable.message}"
-            )
         }
 
         is ErrorLoadingException -> {
@@ -215,29 +189,23 @@ fun <T> throwAbleToResource(
             Resource.Failure(false, "This operation is not implemented.")
         }
 
-        is SSLHandshakeException -> {
-            Resource.Failure(
-                true,
-                (throwable.message ?: "SSLHandshakeException") + "\nTry a VPN or DNS."
-            )
-        }
-
         is CancellationException -> {
             throwable.cause?.let {
                 throwAbleToResource(it)
             } ?: safeFail(throwable)
         }
 
-        else -> safeFail(throwable)
+        else -> platformThrowAbleToResource(throwable)
     }
 }
 
+@AnyThread
 suspend fun <T> safeApiCall(
-    apiCall: suspend () -> T,
+    @WorkerThread apiCall: suspend () -> T,
 ): Resource<T> {
-    return withContext(Dispatchers.IO) {
+    return apiCall.ioWork {
         try {
-            Resource.Success(apiCall.invoke())
+            Resource.Success(it())
         } catch (throwable: Throwable) {
             logError(throwable)
             throwAbleToResource(throwable)
