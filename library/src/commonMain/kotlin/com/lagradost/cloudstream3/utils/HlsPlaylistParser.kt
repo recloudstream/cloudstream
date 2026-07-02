@@ -458,14 +458,14 @@ object HlsPlaylistParser {
                 // "." or "..", remove the appropriate segments of the path.
                 if (i == segmentStart + 1 && url[segmentStart] == '.') {
                     // Given "abc/def/./ghi", remove "./" to get "abc/def/ghi".
-                    url.delete(segmentStart, nextSegmentStart)
+                    url.deleteRange(segmentStart, nextSegmentStart)
                     limit -= nextSegmentStart - segmentStart
                     i = segmentStart
                 } else if (i == segmentStart + 2 && url[segmentStart] == '.' && url[segmentStart + 1] == '.') {
                     // Given "abc/def/../ghi", remove "def/../" to get "abc/ghi".
                     val prevSegmentStart = url.lastIndexOf("/", segmentStart - 2) + 1
                     val removeFrom = if (prevSegmentStart > offset) prevSegmentStart else offset
-                    url.delete(removeFrom, nextSegmentStart)
+                    url.deleteRange(removeFrom, nextSegmentStart)
                     limit -= nextSegmentStart - removeFrom
                     segmentStart = prevSegmentStart
                     i = prevSegmentStart
