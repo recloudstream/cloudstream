@@ -9,7 +9,9 @@ import android.content.SharedPreferences
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Rect
+import android.os.Handler
 import android.os.Bundle
+import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
 import android.view.Gravity
@@ -156,6 +158,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.accounts
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
 import com.lagradost.cloudstream3.utils.Event
+import com.lagradost.cloudstream3.utils.extractorApis
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.InAppUpdater.runAutoUpdate
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
@@ -218,6 +221,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
         private const val FILE_DELETE_KEY = "FILES_TO_DELETE_KEY"
         const val API_NAME_EXTRA_KEY = "API_NAME_EXTRA_KEY"
+        const val EXTRA_SHARED_URL = "EXTRA_SHARED_URL"
+        const val EXTRA_SHARED_URL_ID = "EXTRA_SHARED_URL_ID"
 
         /**
          * Transient files to delete on application exit.
@@ -724,6 +729,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         broadcastIntent.setClass(this, VideoDownloadRestartReceiver::class.java)
         this.sendBroadcast(broadcastIntent)
         afterPluginsLoadedEvent -= ::onAllPluginsLoaded
+        sharedUrlPluginObserver?.let { afterPluginsLoadedEvent -= it }
+        sharedUrlPluginObserver = null
+        sharedUrlHandler.removeCallbacksAndMessages(null)
         detachBackPressedCallback("MainActivityDefault")
         super.onDestroy()
     }
@@ -738,7 +746,101 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         val str = intent.dataString
         loadCache()
 
+        if (handleSharedUrlIntent(intent)) return
         handleAppIntentUrl(this, str, false, intent.extras)
+    }
+
+    private fun handleSharedUrlIntent(intent: Intent): Boolean {
+        val sharedUrl = intent.getStringExtra(EXTRA_SHARED_URL) ?: return false
+        val sharedUrlId = intent.getStringExtra(EXTRA_SHARED_URL_ID) ?: sharedUrl
+        if (!handledSharedUrlIds.add(sharedUrlId)) return true
+
+        var hasHandledSharedUrl = false
+        var timeoutRunnable: Runnable? = null
+        fun tryRouteSharedUrl(showUnsupported: Boolean): Boolean {
+            if (hasHandledSharedUrl) return true
+            hasHandledSharedUrl = routeSharedUrl(sharedUrl, showUnsupported)
+            if (hasHandledSharedUrl) timeoutRunnable?.let(sharedUrlHandler::removeCallbacks)
+            return hasHandledSharedUrl
+        }
+
+        if (tryRouteSharedUrl(showUnsupported = false)) return true
+        if (sharedLinkPluginsLoaded) {
+            tryRouteSharedUrl(showUnsupported = true)
+            return true
+        }
+
+        sharedUrlPluginObserver?.let { afterPluginsLoadedEvent -= it }
+        lateinit var observer: (Boolean) -> Unit
+        observer = {
+            main {
+                afterPluginsLoadedEvent -= observer
+                sharedUrlPluginObserver = null
+                tryRouteSharedUrl(showUnsupported = false)
+            }
+        }
+        sharedUrlPluginObserver = observer
+        afterPluginsLoadedEvent += observer
+
+        timeoutRunnable = Runnable {
+            afterPluginsLoadedEvent -= observer
+            sharedUrlPluginObserver = null
+            if (!tryRouteSharedUrl(showUnsupported = false)) {
+                tryRouteSharedUrl(showUnsupported = true)
+            }
+        }
+        sharedUrlHandler.postDelayed(timeoutRunnable, 2500)
+
+        return true
+    }
+
+    private fun routeSharedUrl(sharedUrl: String, showUnsupported: Boolean): Boolean {
+        val normalizedUrl = normalizeSharedUrl(sharedUrl)
+        val provider = APIHolder.getApiFromUrlNull(sharedUrl)
+
+        if (provider != null) {
+            loadResult(sharedUrl, provider.name, "")
+            return true
+        }
+
+        val extractor = synchronized(extractorApis) {
+            extractorApis.asReversed()
+                .firstOrNull { normalizedUrl.matchesSharedUrlBase(normalizeSharedUrl(it.mainUrl)) }
+        }
+
+        if (extractor != null) {
+            sharedUrlHandler.post {
+                navigate(
+                    R.id.global_to_navigation_player,
+                    GeneratorPlayer.newInstance(
+                        LinkGenerator(
+                            listOf(BasicLink(sharedUrl)),
+                            extract = true,
+                            id = sharedUrl.hashCode()
+                        ),
+                        0
+                    )
+                )
+            }
+            return true
+        }
+
+        if (showUnsupported) {
+            showToast(this, "Unsupported shared link", Toast.LENGTH_LONG)
+            return true
+        }
+
+        return false
+    }
+
+    private fun normalizeSharedUrl(url: String): String {
+        return url.lowercase()
+            .replace(Regex("""^(https?:)?//(www\.)?"""), "")
+            .trimEnd('/')
+    }
+
+    private fun String.matchesSharedUrlBase(baseUrl: String): Boolean {
+        return this == baseUrl || startsWith("$baseUrl/")
     }
 
     private fun NavDestination.matchDestination(@IdRes destId: Int): Boolean =
@@ -807,7 +909,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     }
 
     private val pluginsLock = Mutex()
+    private var sharedLinkPluginsLoaded = false
+
     private fun onAllPluginsLoaded(success: Boolean = false) {
+        sharedLinkPluginsLoaded = true
         ioSafe {
             pluginsLock.withLock {
                 allProviders.withLock {
@@ -845,6 +950,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     lateinit var viewModel: ResultViewModel2
     lateinit var syncViewModel: SyncViewModel
     private var libraryViewModel: LibraryViewModel? = null
+    private var sharedUrlPluginObserver: ((Boolean) -> Unit)? = null
+    private val sharedUrlHandler = Handler(Looper.getMainLooper())
+    private val handledSharedUrlIds = mutableSetOf<String>()
 
     /** kinda dirty, however it signals that we should use the watch status as sync or not*/
     var isLocalList: Boolean = false
