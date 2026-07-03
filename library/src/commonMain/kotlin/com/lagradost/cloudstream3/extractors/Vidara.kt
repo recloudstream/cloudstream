@@ -44,9 +44,9 @@ class VidaraSo : Vidara() {
 }
 
 open class Vidara : ExtractorApi() {
-    override val name: String = "Vidara"
+    override val name = "Vidara"
     override val mainUrl = "https://vidara.to"
-    override val requiresReferer: Boolean = false
+    override val requiresReferer = false
 
     override suspend fun getUrl(
         url: String,
@@ -55,10 +55,12 @@ open class Vidara : ExtractorApi() {
         callback: (ExtractorLink) -> Unit,
     ) {
         val fileCode = url.substringAfterLast("/")
-        val fileInfo =
-            app.post("$mainUrl/api/stream", json = mapOf("filecode" to fileCode, "device" to "web"))
-                .parsed<StreamUpFileInfo>()
-
+        val fileInfo = app.post(
+            "$mainUrl/api/stream", json = mapOf(
+                "filecode" to fileCode,
+                "device" to "web"
+            )
+        ).parsed<StreamUpFileInfo>()
         callback.invoke(
             newExtractorLink(
                 source = name,
