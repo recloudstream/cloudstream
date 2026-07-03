@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.api.Log
+import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.isEpisodeBased
 import com.lagradost.cloudstream3.mvvm.Resource
@@ -67,14 +68,6 @@ class DownloadViewModel : ViewModel() {
 
     private val _selectedItemIds = ConsistentLiveData<Set<Int>?>(null)
     val selectedItemIds: LiveData<Set<Int>?> = _selectedItemIds
-
-    // Retained so onDownloadDeleted can rebuild the lists from disk after a
-    // delete triggered from anywhere in the app. We only ever store the
-    // application context (never an Activity) to avoid leaking it past the
-    // ViewModel's lifetime. currentChildFolder is the folder backing the child
-    // list currently on screen, or null when no child screen is open.
-    private var appContext: Context? = null
-    private var currentChildFolder: String? = null
 
     init {
         // Keep the Downloads list in sync when a download is deleted/cancelled from
@@ -214,7 +207,6 @@ class DownloadViewModel : ViewModel() {
     }
 
     fun updateHeaderList(context: Context) = viewModelScope.launchSafe {
-        appContext = context.applicationContext
         // Do not push loading as it interrupts the UI
         //_headerCards.postValue(Resource.Loading())
 
@@ -377,16 +369,8 @@ class DownloadViewModel : ViewModel() {
         })
     }
 
-    fun updateChildList(
-        context: Context,
-        folder: String,
-        pushLoading: Boolean = true
-    ) = viewModelScope.launchSafe {
-        appContext = context.applicationContext
-        currentChildFolder = folder
-        // Push loading when first opening the screen, but not on a live refresh
-        // (e.g. after a delete) where clearing the list would flicker the UI.
-        if (pushLoading) _childCards.postValue(Resource.Loading())
+    fun updateChildList(context: Context, folder: String) = viewModelScope.launchSafe {
+        _childCards.postValue(Resource.Loading()) // always push loading
 
         val visual = withContext(Dispatchers.IO) {
             context.getKeys(folder).mapNotNull { key ->
@@ -429,33 +413,19 @@ class DownloadViewModel : ViewModel() {
      * ViewModel level, so both [DownloadFragment] (headers) and [DownloadChildFragment]
      * (children) refresh.
      *
-     * We rebuild the lists from disk rather than filtering the in-memory lists by id. Filtering
-     * cannot handle a series correctly: deleting an *episode* fires the event with the child id,
-     * which must shrink (or remove) the parent *header* rather than match a header id, and the
-     * child list is frequently in the [Resource.Loading] state when the delete originates from
-     * outside the child screen. Reloading reads [VideoDownloadManager.getDownloadFileInfo],
-     * whose [KEY_DOWNLOAD_INFO] the delete has already cleared, so the gone episode/movie
-     * disappears and the header aggregates (download count, size) are recomputed.
-     *
-     * The event is invoked synchronously on the downloader's background thread; the reloads
-     * below hop onto [viewModelScope] and only post via thread-safe LiveData postValue.
+     * The header list is rebuilt from disk: deleting an *episode* fires the event with the
+     * child id, so the parent series header (download count, size) must be recomputed rather
+     * than filtered by id. The child list only needs the deleted id removed. The event is
+     * invoked on the downloader's background thread; everything below posts via thread-safe
+     * LiveData postValue.
      */
     private fun onDownloadDeleted(id: Int) {
         // Keep multi-select state consistent: forget the removed id if it was selected.
-        val currentSelection = selectedItemIds.value
-        if (currentSelection?.contains(id) == true) {
-            _selectedItemIds.postValue(currentSelection - id)
-            updateSelectedBytes()
-        }
+        updateSelectedItems { it?.minus(id) }
 
-        // Nothing has been shown yet (no list ever loaded), so there is nothing to refresh.
-        val context = appContext ?: return
+        val context = CloudStreamApp.context ?: return
         updateHeaderList(context)
-        // Refresh the child screen too, without flashing a loading state. currentChildFolder is
-        // cleared once the child screen closes (clearChildren), so this is a no-op afterwards.
-        currentChildFolder?.let { folder ->
-            updateChildList(context, folder, pushLoading = false)
-        }
+        postChildren(_childCards.success?.filterNot { it.data.id == id })
     }
 
     private fun updateStorageStats(visual: List<VisualDownloadCached.Header>) {
@@ -643,7 +613,6 @@ class DownloadViewModel : ViewModel() {
     }
 
     fun clearChildren() {
-        currentChildFolder = null
         _childCards.postValue(Resource.Loading())
     }
 
