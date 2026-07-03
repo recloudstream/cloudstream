@@ -271,6 +271,7 @@ import com.lagradost.cloudstream3.extractors.VidHidePro5
 import com.lagradost.cloudstream3.extractors.VidHidePro6
 import com.lagradost.cloudstream3.extractors.VidHideHub
 import com.lagradost.cloudstream3.extractors.Ryderjet
+import com.lagradost.cloudstream3.extractors.Streamcash
 import com.lagradost.cloudstream3.extractors.VidMoxy
 import com.lagradost.cloudstream3.extractors.VidStack
 import com.lagradost.cloudstream3.extractors.VideoSeyred
@@ -1090,6 +1091,7 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     Tantifilm(),
     Userload(),
     Supervideo(),
+    Streamcash(),
 
     // StreamSB.kt works
     //  SBPlay(),
