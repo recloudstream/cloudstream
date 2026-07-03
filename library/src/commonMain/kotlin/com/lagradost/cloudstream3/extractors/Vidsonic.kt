@@ -38,13 +38,13 @@ class Vidsonic() : ExtractorApi() {
             .substringBefore(";")
             .replace("'", "")
 
-        // (improved) Java implementation of the JavaScript code from above
+        // (improved) Kotlin implementation of the JavaScript code from above
         val streamUrl = encodedStreamUrl
             .replace("|", "")
             // always two base16 digits together build one ASCII char
             .chunked(2)
             .map {
-                Integer.parseInt(it, 16).toChar()
+                it.toInt(16).toChar()
             }
             .joinToString("")
             .reversed()

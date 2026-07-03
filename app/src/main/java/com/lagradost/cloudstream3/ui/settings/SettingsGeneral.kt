@@ -8,7 +8,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.edit
 import androidx.core.os.ConfigurationCompat
+import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
+import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder.allProviders
 import com.lagradost.cloudstream3.CloudStreamApp
@@ -47,6 +49,10 @@ import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement
 import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.getBasePath
 import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 import java.util.Locale
 
 // Change local language settings in the app.
@@ -133,7 +139,7 @@ fun Pair<String, String>.nameNextToFlagEmoji(): String {
     // fallback to [A][A] -> [?] question mak flag
     val flag = SubtitleHelper.getFlagFromIso(this.second) ?: "\ud83c\udde6\ud83c\udde6"
 
-    return "$flag\u00a0${this.first}" // \u00a0 non-breaking space
+    return "$flag\u00a0${this.first}" // \u00a0 non-breaking space
 }
 
 class SettingsGeneral : BasePreferenceFragmentCompat() {
@@ -144,25 +150,32 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
         setToolBarScrollFlags()
     }
 
+    @OptIn(ExperimentalSerializationApi::class) // JsonNames is an experimental annotation for now
+    @Serializable
     data class CustomSite(
-        @JsonProperty("parentJavaClass") // javaClass.simpleName
-        val parentJavaClass: String,
-        @JsonProperty("name")
-        val name: String,
-        @JsonProperty("url")
-        val url: String,
-        @JsonProperty("lang")
-        val lang: String,
+        @JsonProperty("parentClassName") @JsonAlias("parentJavaClass")
+        @SerialName("parentClassName") @JsonNames("parentJavaClass")
+        val parentClassName: String, // ::class.simpleName
+        @JsonProperty("name") @SerialName("name") val name: String,
+        @JsonProperty("url") @SerialName("url") val url: String,
+        @JsonProperty("lang") @SerialName("lang") val lang: String,
     )
 
-    private val pathPicker = getChooseFolderLauncher { uri, path ->
-        val context = context ?: CloudStreamApp.context ?: return@getChooseFolderLauncher
-        (path ?: uri.toString()).let {
+    companion object {
+        fun Fragment.pickDownloadPath(uri: Uri?, path: String?) {
+            if (uri == null) return
+
+            val context = context ?: CloudStreamApp.context ?: return
+            val visual = path ?: uri.toString()
             PreferenceManager.getDefaultSharedPreferences(context).edit {
                 putString(getString(R.string.download_path_key), uri.toString())
-                putString(getString(R.string.download_path_key_visual), it)
+                putString(context.getString(R.string.download_path_key_visual), visual)
             }
         }
+    }
+
+    private val pathPicker = getChooseFolderLauncher { uri, path ->
+        pickDownloadPath(uri, path)
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -211,7 +224,7 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
         }
 
         fun showAdd() {
-            val providers = synchronized(allProviders) { allProviders.distinctBy { it.javaClass }.sortedBy { it.name } }
+            val providers = allProviders.distinctBy { it::class }.sortedBy { it.name }
             activity?.showDialog(
                 providers.map { "${it.name} (${it.mainUrl})" },
                 -1,
@@ -235,13 +248,14 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
                     val url = binding.siteUrlInput.text?.toString()
                     val lang = binding.siteLangInput.text?.toString()
                     val realLang = if (lang.isNullOrBlank()) provider.lang else lang
-                    if (url.isNullOrBlank() || name.isNullOrBlank()) {
+                    val simpleName = provider::class.simpleName
+                    if (url.isNullOrBlank() || name.isNullOrBlank() || simpleName == null) {
                         showToast(R.string.error_invalid_data, Toast.LENGTH_SHORT)
                         return@setOnClickListener
                     }
 
                     val current = getCurrent()
-                    val newSite = CustomSite(provider.javaClass.simpleName, name, url, realLang)
+                    val newSite = CustomSite(simpleName, name, url, realLang)
                     current.add(newSite)
                     setKey(USER_PROVIDER_API, current.toTypedArray())
                     // reload apis

@@ -174,10 +174,13 @@ import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
+import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.safefile.SafeFile
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
@@ -187,8 +190,8 @@ import java.net.URLDecoder
 import java.nio.charset.Charset
 import kotlin.math.abs
 import kotlin.math.absoluteValue
+import kotlin.reflect.full.createInstance
 import kotlin.system.exitProcess
-import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
     companion object {
@@ -274,7 +277,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
          * @return true if the str has launched an app task (be it successful or not)
          * @param isWebview does not handle providers and opening download page if true. Can still add repos and login.
          * */
-        @Suppress("DEPRECATION_ERROR")
         fun handleAppIntentUrl(
             activity: FragmentActivity?,
             str: String?,
@@ -361,7 +363,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                                 LinkGenerator(
                                     listOf(BasicLink(url, name)),
                                     extract = true,
-                                )
+                                    id = url.hashCode()
+                                ), 0
                             )
                         )
                     } else if (safeURI(str)?.scheme == APP_STRING_RESUME_WATCHING) {
@@ -406,13 +409,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                                 return true
                             }
 
-                            synchronized(apis) {
-                                for (api in apis) {
-                                    if (str.startsWith(api.mainUrl)) {
-                                        loadResult(str, api.name, "")
-                                        return true
-                                    }
-                                }
+                            val matchedApi = apis.filter { str.startsWith(it.mainUrl) }.firstOrNull()
+                            if (matchedApi != null) {
+                                loadResult(str, matchedApi.name, "")
+                                return true
                             }
                         }
                     }
@@ -441,6 +441,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
 
     var lastPopup: SearchResponse? = null
+    var lastPopupJob: Job? = null
     fun loadPopup(result: SearchResponse, load: Boolean = true) {
         lastPopup = result
         val syncName = syncViewModel.syncName(result.apiName)
@@ -456,7 +457,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             syncViewModel.clear()
         }
 
-        if (load) {
+        lastPopupJob?.cancel()
+        lastPopupJob = if (load) {
             viewModel.load(
                 this, result.url, result.apiName, false, if (getApiDubstatusSettings()
                         .contains(DubStatus.Dubbed)
@@ -556,9 +558,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             navView.isVisible = isNavVisible && !isLandscape()
             navHostFragment.apply {
                 val marginPx = resources.getDimensionPixelSize(R.dimen.nav_rail_view_width)
-                layoutParams = (navHostFragment.layoutParams as ViewGroup.MarginLayoutParams).apply {
-                    marginStart = if (isNavVisible && isLandscape() && isLayout(TV or EMULATOR)) marginPx else 0
-                }
+                layoutParams =
+                    (navHostFragment.layoutParams as ViewGroup.MarginLayoutParams).apply {
+                        marginStart =
+                            if (isNavVisible && isLandscape() && isLayout(TV or EMULATOR)) marginPx else 0
+                    }
             }
 
             /**
@@ -567,7 +571,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
              * highlight the wrong one in UI.
              */
             when (destination.id) {
-                in listOf(R.id.navigation_downloads, R.id.navigation_download_child, R.id.navigation_download_queue) -> {
+                in listOf(
+                    R.id.navigation_downloads,
+                    R.id.navigation_download_child,
+                    R.id.navigation_download_queue
+                ) -> {
                     navRailView.menu.findItem(R.id.navigation_downloads).isChecked = true
                     navView.menu.findItem(R.id.navigation_downloads).isChecked = true
                 }
@@ -777,7 +785,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             }
         }
 
-
         val builder = NavOptions.Builder().setLaunchSingleTop(true).setRestoreState(true)
             .setEnterAnim(R.anim.enter_anim)
             .setExitAnim(R.anim.exit_anim)
@@ -799,32 +806,33 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
     }
 
-
     private val pluginsLock = Mutex()
     private fun onAllPluginsLoaded(success: Boolean = false) {
         ioSafe {
             pluginsLock.withLock {
-                synchronized(allProviders) {
+                allProviders.withLock {
                     // Load cloned sites after plugins have been loaded since clones depend on plugins.
                     try {
                         getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
                             list.forEach { custom ->
-                                allProviders.firstOrNull { it.javaClass.simpleName == custom.parentJavaClass }
-                                    ?.let {
-                                        allProviders.add(
-                                            it.javaClass.getDeclaredConstructor().newInstance()
-                                                .apply {
-                                                    name = custom.name
-                                                    lang = custom.lang
-                                                    mainUrl = custom.url.trimEnd('/')
-                                                    canBeOverridden = false
-                                                })
-                                    }
+                                allProviders.firstOrNull {
+                                    it::class.simpleName == custom.parentClassName
+                                }?.let {
+                                    allProviders.add(
+                                        it::class.createInstance().apply {
+                                            name = custom.name
+                                            lang = custom.lang
+                                            mainUrl = custom.url.trimEnd('/')
+                                            canBeOverridden = false
+                                        }
+                                    )
+                                }
                             }
                         }
                         // it.hashCode() is not enough to make sure they are distinct
-                        apis =
-                            allProviders.distinctBy { it.lang + it.name + it.mainUrl + it.javaClass.name }
+                        apis = allProviders.distinctBy {
+                            it.lang + it.name + it.mainUrl + it::class.qualifiedName
+                        }
                         APIHolder.apiMap = null
                     } catch (e: Exception) {
                         logError(e)
@@ -850,6 +858,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
     private fun hidePreviewPopupDialog() {
         bottomPreviewPopup.dismissSafe(this)
+        lastPopupJob?.cancel()
+        lastPopupJob = null
         bottomPreviewPopup = null
         bottomPreviewBinding = null
     }
@@ -1169,9 +1179,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
     }
 
-    @Suppress("DEPRECATION_ERROR")
     override fun onCreate(savedInstanceState: Bundle?) {
-        app.initClient(this)
+        app.initClient(this, ignoreSSL = false)
+        @OptIn(UnsafeSSL::class)
+        insecureApp.initClient(this, ignoreSSL = true)
+
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
         setLastError(this)
@@ -1643,9 +1655,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         ioSafe {
             initAll()
             // No duplicates (which can happen by registerMainAPI)
-            apis = synchronized(allProviders) {
-                allProviders.distinctBy { it }
-            }
+            apis = allProviders.distinctBy { it }
         }
 
         //  val navView: BottomNavigationView = findViewById(R.id.nav_view)
@@ -1953,7 +1963,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
         if (BuildConfig.DEBUG) {
             var providersAndroidManifestString = "Current androidmanifest should be:\n"
-            synchronized(allProviders) {
+            allProviders.withLock {
                 for (api in allProviders) {
                     providersAndroidManifestString += "<data android:scheme=\"https\" android:host=\"${
                         api.mainUrl.removePrefix(
@@ -2036,7 +2046,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             updateLocale()
             runDefault()
         }
-        
+
         // Start the download queue
         DownloadQueueManager.init(this)
     }

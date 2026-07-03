@@ -147,6 +147,7 @@ object AppContextUtils {
             text.toSpanned()
         }
     }
+
     /** Get channel ID by name */
     @SuppressLint("RestrictedApi")
     private fun buildWatchNextProgramUri(
@@ -369,28 +370,11 @@ object AppContextUtils {
     }
 
     fun Context.getApiSettings(): HashSet<String> {
-        //val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-
         val hashSet = HashSet<String>()
         val activeLangs = getApiProviderLangSettings()
         val hasUniversal = activeLangs.contains(AllLanguagesName)
-        hashSet.addAll(synchronized(apis) { apis.filter { hasUniversal || activeLangs.contains(it.lang) } }
+        hashSet.addAll(apis.filter { hasUniversal || activeLangs.contains(it.lang) }
             .map { it.name })
-
-        /*val set = settingsManager.getStringSet(
-            this.getString(R.string.search_providers_list_key),
-            hashSet
-        )?.toHashSet() ?: hashSet
-
-        val list = HashSet<String>()
-        for (name in set) {
-            val api = getApiFromNameNull(name) ?: continue
-            if (activeLangs.contains(api.lang)) {
-                list.add(name)
-            }
-        }*/
-        //if (list.isEmpty()) return hashSet
-        //return list
         return hashSet
     }
 
@@ -481,9 +465,8 @@ object AppContextUtils {
         } ?: default
         val langs = this.getApiProviderLangSettings()
         val hasUniversal = langs.contains(AllLanguagesName)
-        val allApis = synchronized(apis) {
+        val allApis =
             apis.filter { api -> (hasUniversal || langs.contains(api.lang)) && (api.hasMainPage || !hasHomePageIsRequired) }
-        }
         return if (currentPrefMedia.isEmpty()) {
             allApis
         } else {
@@ -537,13 +520,12 @@ object AppContextUtils {
     fun Activity.loadRepository(url: String) {
         ioSafe {
             val repo = RepositoryManager.parseRepository(url) ?: return@ioSafe
-            RepositoryManager.addRepository(
-                RepositoryData(
-                    repo.iconUrl ?: "",
-                    repo.name,
-                    url
-                )
+            val data = RepositoryData(
+                repo.iconUrl ?: "",
+                repo.name,
+                url
             )
+            RepositoryManager.addRepository(data)
             main {
                 showToast(
                     getString(R.string.player_loaded_subtitles, repo.name),
@@ -551,13 +533,12 @@ object AppContextUtils {
                 )
             }
             afterRepositoryLoadedEvent.invoke(true)
-            addRepositoryDialog(repo.name, url)
+            addRepositoryDialog(data)
         }
     }
 
     fun Activity.addRepositoryDialog(
-        repositoryName: String,
-        repositoryURL: String,
+        repositoryData: RepositoryData
     ) {
         val repos = RepositoryManager.getRepositories()
 
@@ -567,9 +548,7 @@ object AppContextUtils {
                 navigate(
                     R.id.global_to_navigation_settings_plugins,
                     PluginsFragment.newInstance(
-                        repositoryName,
-                        repositoryURL,
-                        false,
+                        repositoryData,
                     )
                 )
             }
@@ -577,7 +556,7 @@ object AppContextUtils {
 
         runOnUiThread {
             AlertDialog.Builder(this).apply {
-                setTitle(repositoryName)
+                setTitle(repositoryData.name)
                 setMessage(R.string.download_all_plugins_from_repo)
                 setPositiveButton(R.string.open_downloaded_repo) { _, _ ->
                     openAddedRepo()
@@ -704,7 +683,7 @@ object AppContextUtils {
             "$seasonNameShort${rSeason}:$episodeNameShort${rEpisode}"
         } else if (rEpisode != null) {
             "$episodeNameShort$rEpisode"
-        }else null
+        } else null
     }
 
     fun Activity?.loadCache() {
@@ -727,7 +706,7 @@ object AppContextUtils {
     fun loadResult(
         url: String,
         apiName: String,
-        name : String,
+        name: String,
         startAction: Int = 0,
         startValue: Int = 0
     ) {
@@ -737,7 +716,7 @@ object AppContextUtils {
     fun FragmentActivity.loadResult(
         url: String,
         apiName: String,
-        name : String,
+        name: String,
         startAction: Int = 0,
         startValue: Int = 0
     ) {
@@ -863,7 +842,8 @@ object AppContextUtils {
     }
 
     fun Context.isUsingMobileData(): Boolean {
-        val connectionManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectionManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val activeNetwork: Network? = connectionManager.activeNetwork
             val networkCapabilities = connectionManager.getNetworkCapabilities(activeNetwork)

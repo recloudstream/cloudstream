@@ -136,9 +136,9 @@
     <string name="picture_in_picture_des">Continua la reproducció en una finestra en miniatura per sobre de altres aplicacions</string>
     <string name="player_size_settings">Botó de canvi de mida del reproductor</string>
     <string name="audio_book_singular">Audiollibre</string>
-    <string name="custom_media_singluar">Mitjà</string>
-    <string name="audio_singluar">Àudio</string>
-    <string name="podcast_singluar">Pòdcast</string>
+    <string name="custom_media_singular">Mitjà</string>
+    <string name="audio_singular">Àudio</string>
+    <string name="podcast_singular">Pòdcast</string>
     <string name="source_error">Error a l\'origen</string>
     <string name="remote_error">Error remot</string>
     <string name="render_error">Error de renderitzat</string>

@@ -17,7 +17,7 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.newSearchResponseList
-import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
+import com.lagradost.cloudstream3.utils.Coroutines.atomicListOf
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
@@ -55,7 +55,7 @@ class APIRepository(val api: MainAPI) {
             val hash: Pair<String, String>
         )
 
-        private val cache = threadSafeListOf<SavedLoadResponse>()
+        private val cache = atomicListOf<SavedLoadResponse>()
         private var cacheIndex: Int = 0
         const val CACHE_SIZE = 20
 
@@ -66,9 +66,7 @@ class APIRepository(val api: MainAPI) {
 
     private fun afterPluginsLoaded(forceReload: Boolean) {
         if (forceReload) {
-            synchronized(cache) {
-                cache.clear()
-            }
+            cache.clear()
         }
     }
 
@@ -91,21 +89,25 @@ class APIRepository(val api: MainAPI) {
                 val fixedUrl = api.fixUrl(url)
                 val lookingForHash = Pair(api.name, fixedUrl)
 
-                synchronized(cache) {
+                val cached = cache.withLock {
+                    var found: LoadResponse? = null
                     for (item in cache) {
                         // 10 min save
                         if (item.hash == lookingForHash && (unixTime - item.unixTime) < 60 * 10) {
-                            return@withTimeout item.response
+                            found = item.response
+                            break
                         }
                     }
+                    found
                 }
 
+                if (cached != null) return@withTimeout cached
                 api.load(fixedUrl)?.also { response ->
                     // Remove all blank tags as early as possible
                     response.tags = response.tags?.filter { it.isNotBlank() }
                     val add = SavedLoadResponse(unixTime, response, lookingForHash)
 
-                    synchronized(cache) {
+                    cache.withLock {
                         if (cache.size > CACHE_SIZE) {
                             cache[cacheIndex] = add // rolling cache
                             cacheIndex = (cacheIndex + 1) % CACHE_SIZE

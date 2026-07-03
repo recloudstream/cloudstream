@@ -148,7 +148,7 @@ class DownloadFragment : BaseFragment<FragmentDownloadsBinding>(
             val size = cards.currentDownloads.size + cards.queue.size
             val context = binding.root.context
             val baseText = context.getString(R.string.download_queue)
-            binding.downloadQueueText.text =  if (size > 0) {
+            binding.downloadQueueText.text = if (size > 0) {
                 "$baseText (${cards.currentDownloads.size}/$size)"
             } else {
                 baseText
@@ -349,7 +349,8 @@ class DownloadFragment : BaseFragment<FragmentDownloadsBinding>(
                             listOf(BasicLink(url)),
                             extract = true,
                             refererUrl = referer,
-                        )
+                            id = url.hashCode()
+                        ), 0
                     )
                 )
                 dialog.dismissSafe(activity)

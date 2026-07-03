@@ -16,8 +16,9 @@ enum class SkipType(@StringRes val res: Int) {
     Recap(R.string.skip_type_recap),
     MixedOpening(R.string.skip_type_mixed_op),
     MixedEnding(R.string.skip_type_mixed_ed),
-    Credits(R.string.skip_type_creddits),
-    Intro(R.string.skip_type_creddits),
+    Credits(R.string.skip_type_credits),
+    Intro(R.string.skip_type_intro),
+    Preview(R.string.skip_type_preview),
 }
 
 data class SkipStamp(
@@ -60,7 +61,7 @@ abstract class SkipAPI {
     }
 
     companion object {
-        private val skipApis: List<SkipAPI> = listOf(AniSkip(), IntroDbSkip())
+        private val skipApis: List<SkipAPI> = listOf(AniSkip(), TheIntroDBSkip(), IntroDbSkip(), AnimeSkip())
         private val cachedStamps = ConcurrentHashMap<Int, List<VideoSkipStamp>>()
 
         /** Get all video timestamps from an episode */

@@ -9,6 +9,9 @@ on:
       - '**/wcokey.txt'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
   group: "Archive-build"
   cancel-in-progress: true
@@ -68,7 +71,10 @@ jobs:
         SIGNING_STORE_PASSWORD: ${{ steps.fetch_keystore.outputs.key_pwd }}
         SIMKL_CLIENT_ID: ${{ secrets.SIMKL_CLIENT_ID }}
         SIMKL_CLIENT_SECRET: ${{ secrets.SIMKL_CLIENT_SECRET }}
+        TRAKT_CLIENT_ID: ${{ secrets.TRAKT_CLIENT_ID }}
         MDL_API_KEY: ${{ secrets.MDL_API_KEY }}
+        MAL_KEY: ${{ secrets.MAL_KEY }}
+        ANILIST_KEY: ${{ secrets.ANILIST_KEY }}
 
     - uses: actions/checkout@v6
       with:

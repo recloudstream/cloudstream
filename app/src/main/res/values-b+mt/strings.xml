@@ -18,8 +18,7 @@
     <string name="home_change_provider_img_des">Ibdel Il-fornitur</string>
     <string name="player_speed_text_format" formatted="true">veloċità (%.2fx)</string>
     <string name="rated_format" formatted="true">Klassifikazzjoni: %.1f</string>
-    <string name="new_update_format" formatted="true">Aġġornament ġdid misjub!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">Aġġornament ġdid misjub! \n%1$s -&gt; %2$s</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="app_name">CloudStream</string>
     <string name="play_with_app_name">Ara bil-CloudStream</string>

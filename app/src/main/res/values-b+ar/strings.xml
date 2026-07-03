@@ -12,8 +12,7 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">سرعة (%.2fx)</string>
     <string name="rated_format" formatted="true">تقييم: %.1f</string>
-    <string name="new_update_format" formatted="true">يوجد تحديث جديد!
-\n%1$s -&gt; %2$s</string>
+    <string name="new_update_format" formatted="true">يوجد تحديث جديد! \n%1$s -&gt; %2$s</string>
     <string name="duration_format" formatted="true">%d دقيقة</string>
     <string name="app_name">CloudStream</string>
     <string name="play_with_app_name">تشغيل بواسطة CloudStream</string>
@@ -176,10 +175,8 @@
     <string name="resume">إستئناف</string>
     <string name="go_back_30">-٣٠</string>
     <string name="go_forward_30">+٣٠</string>
-    <string name="delete_message">سوف يتم الحذف نهائيا %s
-\nهل أنت متأكد?</string>
-    <string name="resume_time_left" formatted="true">%dm
-\nمتبقية</string>
+    <string name="delete_message">سوف يتم الحذف نهائيا %s \nهل أنت متأكد?</string>
+    <string name="resume_time_left" formatted="true">%dm \nمتبقية</string>
     <string name="status_ongoing">جاري التنفيذ</string>
     <string name="status_completed">اكتمل</string>
     <string name="status">الحالة</string>
@@ -401,9 +398,7 @@
     <string name="plugins_downloaded" formatted="true">تم تحميل: %d</string>
     <string name="plugins_disabled" formatted="true">مُعطل %d</string>
     <string name="plugins_not_downloaded" formatted="true">غير مُحمل: %d</string>
-    <string name="blank_repo_message">لا يحتوي CloudStream على مواقع مثبتة افتراضيًا. تحتاج إلى تثبيت المواقع من المستودعات.
-\n
-\nانضم إلى ديسكورد أو ابحث عبر الإنترنت.</string>
+    <string name="blank_repo_message">لا يحتوي CloudStream على مواقع مثبتة افتراضيًا. تحتاج إلى تثبيت المواقع من المستودعات. \n \nانضم إلى ديسكورد أو ابحث عبر الإنترنت.</string>
     <string name="view_public_repositories_button">عرض مستودعات المجتمع</string>
     <string name="view_public_repositories_button_short">قائمة عامة</string>
     <string name="uppercase_all_subtitles">جميع الترجمات حروف كبيرة</string>
@@ -454,7 +449,7 @@
     <string name="player_settings_play_in_app">مشغل داخلي</string>
     <string name="app_not_found_error">لم يتم العثور على التطبيق</string>
     <string name="all_languages_preference">جميع اللغات</string>
-    <string name="skip_type_creddits">الإعتمادات</string>
+    <string name="skip_type_credits">الإعتمادات</string>
     <string name="update_notification_downloading">‌تنزيل تحديث التطبيق…</string>
     <string name="update_notification_installing">‏تثبيت تحديث التطبيق…</string>
     <string name="next_episode_time_min_format" formatted="true">%d دقيقة</string>
@@ -493,15 +488,13 @@
     <string name="sort_rating_desc">التقييم (من الأعلى إلى الأدنى)</string>
     <string name="sort_rating_asc">التقييم (من الأدنى إلى الأعلى)</string>
     <string name="sort_alphabetical_z">الترتيب الأبجدي (من ي إلى أ)</string>
-    <string name="empty_library_no_accounts_message">مكتبتك فارغة :(
-\nقم بتسجيل الدخول على حساب مكتبة أو أضف عروضا إلى مكتبتك المحلية.</string>
+    <string name="empty_library_no_accounts_message">مكتبتك فارغة :( \nقم بتسجيل الدخول على حساب مكتبة أو أضف عروضا إلى مكتبتك المحلية.</string>
     <string name="sort_updated_old">محدث (من القديم إلى الجديد)</string>
     <string name="sort_by">فرز حسب</string>
     <string name="sort">افرز</string>
     <string name="open_with">فتح بواسطة</string>
     <string name="library">المكتبة</string>
-    <string name="safe_mode_file">تم العثور على ملف الوضع الآمن!
-\nلا يتم تحميل أي ملحقات عند بدء التشغيل حتى تتم إزالة الملف.</string>
+    <string name="safe_mode_file">تم العثور على ملف الوضع الآمن! \nلا يتم تحميل أي ملحقات عند بدء التشغيل حتى تتم إزالة الملف.</string>
     <string name="android_tv_interface_off_seek_settings_summary">مدة التقديم عنما يكون المشغل مخفيا</string>
     <string name="android_tv_interface_off_seek_settings">مدة التقديم - المشغل مخفي</string>
     <string name="pref_category_android_tv">تلفزيون أندرويد</string>
@@ -533,13 +526,7 @@
     <string name="edit">تعديل</string>
     <string name="profiles">الملفات التعريفية</string>
     <string name="help">مساعدة</string>
-    <string name="quality_profile_help">‎‎هنا يمكنك تغيير طريقة ترتيب المصادر. إذا كان للفيديو أولوية أعلى ، فسيظهر في الأعلى في اختيار المصدر. يمثل مجموع أولوية المصدر وأولوية الجودة أولوية الفيديو.
-\n
-\nالمصدر أ: 3
-\nالجودة ب: 7
-\nسيكون لها أولوية فيديو مجمعة تبلغ 10.
-\n
-\nملاحظة: إذا كان المجموع 10 أو أكثر ، فسيتخطى المشغل التحميل تلقائيًا عند تحميل هذا الرابط!</string>
+    <string name="quality_profile_help">‎‎هنا يمكنك تغيير طريقة ترتيب المصادر. إذا كان للفيديو أولوية أعلى ، فسيظهر في الأعلى في اختيار المصدر. يمثل مجموع أولوية المصدر وأولوية الجودة أولوية الفيديو. \n \nالمصدر أ: 3 \nالجودة ب: 7 \nسيكون لها أولوية فيديو مجمعة تبلغ 10. \n \nملاحظة: إذا كان المجموع 10 أو أكثر ، فسيتخطى المشغل التحميل تلقائيًا عند تحميل هذا الرابط!</string>
     <string name="qualities">النوعيات</string>
     <string name="profile_background_des">خلفية الملف الشخصي</string>
     <string name="unable_to_inflate">تعذر إنشاء واجهة المستخدم بشكل صحيح ، وهذا خطأ كبير ويجب الإبلاغ عنه على الفور %s</string>
@@ -552,11 +539,7 @@
     <string name="favorite_removed">تمت إزالة %s من المفضلة</string>
     <string name="favorites_list_name">المفضلة</string>
     <string name="favorite_added">تمت إضافة %s إلى المفضلة</string>
-    <string name="duplicate_message_multiple" formatted="true">احتمال وجود تكرارات في مكتبتك.
-\n
-\n%s
-\n
-\nهل تريد الاضافة على اي حال مستبدلاً النسخة الموجودة بالفعل, أم تفضل إلغاء العملية؟</string>
+    <string name="duplicate_message_multiple" formatted="true">احتمال وجود تكرارات في مكتبتك. \n \n%s \n \nهل تريد الاضافة على اي حال مستبدلاً النسخة الموجودة بالفعل, أم تفضل إلغاء العملية؟</string>
     <string name="duplicate_title">احتمال أن يكون موجود بالفعل</string>
     <string name="lock_profile">قفل الحساب</string>
     <string name="action_add_to_favorites">اضافة الى المفضلة</string>
@@ -569,9 +552,7 @@
     <string name="action_subscribe">إشترك</string>
     <string name="action_remove_from_favorites">إزالة من المفضلة</string>
     <string name="select_an_account">اختار حساب</string>
-    <string name="duplicate_message_single">يبدو أن هناك عنصرًا مكررًا موجود بالفعل في مكتبتك: \'%s\'.
-\n
-\nهل ترغب في إضافة هذا العنصر على أية حال، أو استبدال العنصر الموجود، أو إلغاء الإجراء؟</string>
+    <string name="duplicate_message_single">يبدو أن هناك عنصرًا مكررًا موجود بالفعل في مكتبتك: \'%s\'. \n \nهل ترغب في إضافة هذا العنصر على أية حال، أو استبدال العنصر الموجود، أو إلغاء الإجراء؟</string>
     <string name="enter_pin">ادخال ال PIN</string>
     <string name="pin">PIN</string>
     <string name="enter_current_pin">أدخل ال PIN الحالي</string>
@@ -599,8 +580,7 @@
     <string name="password_pin_authentication_title">مصادقة كلمة المرور/رقم التعريف الشخصي</string>
     <string name="biometric_prompt_description">بعد عدة محاولات فاشلة، سيتم إغلاق المطالبة. ما عليك سوى إعادة تشغيل التطبيق للمحاولة مرة أخرى.</string>
     <string name="biometric_warning">لقد تم الآن نسخ بيانات CloudStream احتياطيًا. على الرغم من أن احتمال حدوث ذلك منخفض جدًا، إلا أن جميع الأجهزة يمكن أن تتصرف بشكل مختلف. في الحالات النادرة، التي يتم فيها منعك من الوصول إلى التطبيق، قم بمسح بيانات التطبيق بالكامل واستعادتها من نسخة احتياطية. نحن نأسف جدًا لأي إزعاج ناتج عن هذا.</string>
-    <string name="resume_remaining" formatted="true">%s
-\nمتبقي</string>
+    <string name="resume_remaining" formatted="true">%s \nمتبقي</string>
     <string name="favorite">المفضلة</string>
     <string name="unfavorite">إزالة من المفضلة</string>
     <string name="repo_copy_label">اسم و عنوان المخزن</string>
@@ -613,8 +593,8 @@
     <string name="audio_book_singular">كتاب صوتي</string>
     <string name="ok">حسناً</string>
     <string name="battery_dialog_message">لضمان عدم انقطاع التنزيلات والإشعارات للعروض التلفزيونية التي اشتركت بها ، يحتاج CloudStream إلى إذن للتشغيل في الخلفية. بالضغط على \"موافق\"، سيظهر لك مربع حوار طلب. يُرجى الضغط على \"السماح\".\n\nيرجى ملاحظة أن هذا الإذن لا يعني أن CS3 سيستنزف بطاريتك. سيعمل في الخلفية فقط عند الضرورة، مثلا عند تلقي الإشعارات أو تنزيل مقاطع الفيديو من الإضافات الرسمية.</string>
-    <string name="music_singlar">موسيقى</string>
-    <string name="custom_media_singluar">الوسائط</string>
+    <string name="music_singular">موسيقى</string>
+    <string name="custom_media_singular">الوسائط</string>
     <string name="reset_btn">اعادة تعيين</string>
     <string name="episode_upcoming_format" formatted="true">قادم خلال %s</string>
     <string name="next_season_episode_format" formatted="true">سيتم إصدار الحلقة %1$d من الموسم %2$d في</string>
@@ -642,21 +622,13 @@
     <string name="downloads_delete_select">الرجاء تحديد العناصر للحذف</string>
     <string name="select_all">تحديد الكل</string>
     <string name="delete_files">حذف الملفات</string>
-    <string name="delete_message_series_episodes" formatted="true">هل أنت متأكد أنك تريد حذف الحلقات التالية نهائيًا في %1$s ؟
-\n
-\n%2$s</string>
-    <string name="delete_message_series_section" formatted="true">ستقوم أيضًا بحذف جميع الحلقات في السلسلة التالية نهائيًا:
-\n
-\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">هل أنت متأكد أنك تريد حذف الحلقات التالية نهائيًا في %1$s ؟ \n \n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">ستقوم أيضًا بحذف جميع الحلقات في السلسلة التالية نهائيًا: \n \n%s</string>
     <string name="delete_format" formatted="true">حذف (%1$d | %2$s)</string>
     <string name="offline_file">متاح للمشاهدة في وضع عدم الاتصال</string>
     <string name="deselect_all">إلغاء تحديد الكل</string>
-    <string name="delete_message_multiple" formatted="true">هل أنت متأكد أنك تريد حذف العناصر التالية نهائيًا ؟
-\n
-\n%s</string>
-    <string name="delete_message_series_only" formatted="true">هل أنت متأكد أنك تريد حذف جميع الحلقات في السلسلة التالية نهائيًا ؟
-\n
-\n%s</string>
+    <string name="delete_message_multiple" formatted="true">هل أنت متأكد أنك تريد حذف العناصر التالية نهائيًا ؟ \n \n%s</string>
+    <string name="delete_message_series_only" formatted="true">هل أنت متأكد أنك تريد حذف جميع الحلقات في السلسلة التالية نهائيًا ؟ \n \n%s</string>
     <string name="preview_seekbar">معاينة شريط البحث</string>
     <string name="preview_seekbar_desc">تمكين معاينة الصورة المصغرة على شريط البحث</string>
     <string name="no_subtitles_loaded">لم يتم تحميل أي ترجمات بعد</string>
@@ -668,8 +640,8 @@
     <string name="custom">مخصص</string>
     <string name="torrent_info">هذا الفيديو موجود على شبكة تورنت، مما يعني ان الاستخدام يمكن تعقبه.\nتأكد من فهم شبكات التورنت قبل الاستكمال.</string>
     <string name="subs_edge_size">حجم الحافة</string>
-    <string name="audio_singluar">صوت</string>
-    <string name="podcast_singluar">بودكاست</string>
+    <string name="audio_singular">صوت</string>
+    <string name="podcast_singular">بودكاست</string>
     <string name="encoding_error">خطأ في التكويد</string>
     <string name="unsupported_error">خطأ في الدعم</string>
     <string name="player_load_one_subtitle_online">تحميل أول ترجمة متاحة</string>
@@ -749,7 +721,7 @@
     <string name="search_suggestions">اقتراحات البحث</string>
     <string name="search_suggestions_des">عرض اقتراحات البحث أثناء الكتابة</string>
     <string name="clear_suggestions">مسح الاقتراحات</string>
-    <string name="show_cast_in_details">عرض لوحة البث</string>
+    <string name="show_cast_in_details">عرض لوحة فريق التمثيل</string>
     <string name="install_prerelease">تثبيت الإصدار التجريبي</string>
     <string name="prerelease_already_installed">تم تثبيت الإصدار التجريبي بالفعل.</string>
     <string name="prerelease_install_failed">فشل تثبيت الإصدار التجريبي.</string>
@@ -780,4 +752,8 @@
         <item quantity="many">%d تنزيل قيد الانتظار</item>
         <item quantity="other">%d تنزيل قيد الانتظار</item>
     </plurals>
+    <string name="show_player_metadata_overlay">عرض واجهة منبثقة للبيانات الوصفية للمشغِّل</string>
+    <string name="video_singular">مقطع</string>
+    <string name="skip_type_preview">استعراض</string>
+    <string name="player_is_live">البث قائم</string>
 </resources>

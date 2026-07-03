@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.extractors.helper.JwPlayerHelper
 import com.lagradost.cloudstream3.network.WebViewResolver
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -54,18 +55,16 @@ open class FilemoonV2 : ExtractorApi() {
                 ?.data().orEmpty()
             val unpackedScript = JsUnpacker(fallbackScriptData).unpack()
 
-            val videoUrl = unpackedScript?.let {
-                Regex("""sources:\[\{file:"(.*?)"""").find(it)?.groupValues?.get(1)
-            }
+            val linkFound = JwPlayerHelper.extractStreamLinks(
+                unpackedScript.orEmpty(),
+                name,
+                mainUrl,
+                callback,
+                subtitleCallback,
+                defaultHeaders
+            )
 
-            if (!videoUrl.isNullOrEmpty()) {
-                M3u8Helper.generateM3u8(
-                    name,
-                    videoUrl,
-                    mainUrl,
-                    headers = defaultHeaders
-                ).forEach(callback)
-            } else {
+            if (!linkFound) {
                 Log.d("FilemoonV2", "No iframe and no video URL found in script fallback.")
             }
             return
@@ -81,18 +80,15 @@ open class FilemoonV2 : ExtractorApi() {
 
         val unpackedScript = JsUnpacker(iframeScriptData).unpack()
 
-        val videoUrl = unpackedScript?.let {
-            Regex("""sources:\[\{file:"(.*?)"""").find(it)?.groupValues?.get(1)
-        }
+        val linkFound = JwPlayerHelper.extractStreamLinks(
+            unpackedScript.orEmpty(),
+            name,
+            mainUrl,
+            callback,
+            subtitleCallback
+        )
 
-        if (!videoUrl.isNullOrEmpty()) {
-            M3u8Helper.generateM3u8(
-                name,
-                videoUrl,
-                mainUrl,
-                headers = defaultHeaders
-            ).forEach(callback)
-        } else {
+        if (!linkFound) {
             // Last-resort fallback using WebView interception
             val resolver = WebViewResolver(
                 interceptUrl = Regex("""(m3u8|master\.txt)"""),
