@@ -141,6 +141,7 @@
         android:contentDescription="@string/download"
         android:focusable="true"
         android:nextFocusLeft="@id/action_settings"
+        android:nextFocusRight="@id/add_repo_button_imageview"
         android:padding="12dp"
         tools:src="@drawable/ic_baseline_add_24" />
 
