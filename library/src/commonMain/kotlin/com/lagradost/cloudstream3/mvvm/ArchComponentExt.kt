@@ -1,11 +1,11 @@
 package com.lagradost.cloudstream3.mvvm
 
 import androidx.annotation.AnyThread
-import androidx.annotation.WorkerThread
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.utils.AppDebug
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
+import com.lagradost.cloudstream3.utils.WorkerThread
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext

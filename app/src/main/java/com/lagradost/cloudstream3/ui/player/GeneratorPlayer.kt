@@ -1525,7 +1525,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         Log.e(
             TAG,
             "playerError: $currentSelectedLink, " +
-                    "type=${exception::class.java.canonicalName}, " +
+                    "type=${exception::class.qualifiedName}, " +
                     "message=${exception.message}, url=$currentUrl, headers=$headers, " +
                     "referer=$referer, position=${player.getPosition() ?: "unknown"}, " +
                     "duration=${player.getDuration() ?: "unknown"}, " +

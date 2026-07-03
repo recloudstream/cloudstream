@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.utils
 
 import androidx.annotation.AnyThread
 import androidx.annotation.MainThread
-import androidx.annotation.WorkerThread
 import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
@@ -12,6 +11,7 @@ import kotlinx.coroutines.*
 expect fun runOnMainThreadNative(@MainThread work: (() -> Unit))
 
 expect val workerDispatcher: CoroutineDispatcher
+internal expect annotation class WorkerThread()
 
 object Coroutines {
     @AnyThread

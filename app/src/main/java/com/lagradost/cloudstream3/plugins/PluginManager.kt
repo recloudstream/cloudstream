@@ -224,17 +224,17 @@ object PluginManager {
     // Helper class for updateAllOnlinePluginsAndLoadThem
     data class OnlinePluginData(
         val savedData: PluginData,
-        val onlineData: Pair<String, SitePlugin>,
+        val onlineData: PluginWrapper,
     ) {
         val isOutdated =
-            onlineData.second.version > savedData.version || onlineData.second.version == PLUGIN_VERSION_ALWAYS_UPDATE
-        val isDisabled = onlineData.second.status == PROVIDER_STATUS_DOWN
+            onlineData.plugin.version > savedData.version || onlineData.plugin.version == PLUGIN_VERSION_ALWAYS_UPDATE
+        val isDisabled = onlineData.plugin.status == PROVIDER_STATUS_DOWN
 
         fun validOnlineData(context: Context): Boolean {
             return getPluginPath(
                 context,
                 savedData.internalName,
-                onlineData.first
+                onlineData.repositoryData.url
             ).absolutePath == savedData.filePath
         }
     }
@@ -282,19 +282,19 @@ object PluginManager {
             ?: emptyArray()) + PREBUILT_REPOSITORIES
 
         val onlinePlugins = urls.toList().amap {
-            getRepoPlugins(it.url)?.toList() ?: emptyList()
-        }.flatten().distinctBy { it.second.url }
+            getRepoPlugins(it) ?: emptyList()
+        }.flatten().distinctBy { it.plugin.url }
 
         // Iterates over all offline plugins, compares to remote repo and returns the plugins which are outdated
         val outdatedPlugins = getPluginsOnline().map { savedData ->
             onlinePlugins
-                .filter { onlineData -> savedData.internalName == onlineData.second.internalName }
+                .filter { onlineData -> savedData.internalName == onlineData.plugin.internalName }
                 .map { onlineData ->
                     OnlinePluginData(savedData, onlineData)
                 }.filter {
                     it.validOnlineData(activity)
                 }
-        }.flatten().distinctBy { it.onlineData.second.url }
+        }.flatten().distinctBy { it.onlineData.plugin.url }
 
         debugPrint {
             "Outdated plugins: ${outdatedPlugins.filter { it.isOutdated }}"
@@ -309,14 +309,14 @@ object PluginManager {
             } else if (pluginData.isOutdated) {
                 downloadPlugin(
                     activity,
-                    pluginData.onlineData.second.url,
-                    pluginData.onlineData.second.fileHash,
+                    pluginData.onlineData.plugin.url,
+                    pluginData.onlineData.plugin.fileHash,
                     pluginData.savedData.internalName,
                     File(pluginData.savedData.filePath),
                     true
                 ).let { success ->
                     if (success)
-                        updatedPlugins.add(pluginData.onlineData.second.name)
+                        updatedPlugins.add(pluginData.onlineData.plugin.name)
                 }
             }
         }
@@ -359,15 +359,15 @@ object PluginManager {
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
             ?: emptyArray()) + PREBUILT_REPOSITORIES
         val onlinePlugins = urls.toList().amap {
-            getRepoPlugins(it.url)?.toList() ?: emptyList()
-        }.flatten().distinctBy { it.second.url }
+            getRepoPlugins(it)?.toList() ?: emptyList()
+        }.flatten().distinctBy { it.plugin.url }
 
         val providerLang = activity.getApiProviderLangSettings()
         //Log.i(TAG, "providerLang => ${providerLang.toJson()}")
 
         // Iterate online repos and returns not downloaded plugins
         val notDownloadedPlugins = onlinePlugins.mapNotNull { onlineData ->
-            val sitePlugin = onlineData.second
+            val sitePlugin = onlineData.plugin
             val tvtypes = sitePlugin.tvTypes ?: listOf()
 
             //Don't include empty urls
@@ -379,7 +379,7 @@ object PluginManager {
             }
 
             //Omit already existing plugins
-            if (getPluginPath(activity, sitePlugin.internalName, onlineData.first).exists()) {
+            if (getPluginPath(activity, sitePlugin.internalName, onlineData.repositoryData.url).exists()) {
                 Log.i(TAG, "Skip > ${sitePlugin.internalName}")
                 return@mapNotNull null
             }
@@ -421,14 +421,14 @@ object PluginManager {
         notDownloadedPlugins.amap { pluginData ->
             downloadPlugin(
                 activity,
-                pluginData.onlineData.second.url,
-                pluginData.onlineData.second.fileHash,
+                pluginData.onlineData.plugin.url,
+                pluginData.onlineData.plugin.fileHash,
                 pluginData.savedData.internalName,
-                pluginData.onlineData.first,
+                pluginData.onlineData.repositoryData.url,
                 !pluginData.isDisabled
             ).let { success ->
                 if (success)
-                    newDownloadPlugins.add(pluginData.onlineData.second.name)
+                    newDownloadPlugins.add(pluginData.onlineData.plugin.name)
             }
         }
 
@@ -835,16 +835,16 @@ object PluginManager {
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
             ?: emptyArray()) + PREBUILT_REPOSITORIES
         val onlinePlugins = urls.toList().amap {
-            getRepoPlugins(it.url)?.toList() ?: emptyList()
-        }.flatten().distinctBy { it.second.url }
+            getRepoPlugins(it) ?: emptyList()
+        }.flatten().distinctBy { it.plugin.url }
 
         val allPlugins = getPluginsOnline().flatMap { savedData ->
             onlinePlugins
-                .filter { it.second.internalName == savedData.internalName }
+                .filter { it.plugin.internalName == savedData.internalName }
                 .mapNotNull { onlineData ->
                     OnlinePluginData(savedData, onlineData).takeIf { it.validOnlineData(activity) }
                 }
-        }.distinctBy { it.onlineData.second.url }
+        }.distinctBy { it.onlineData.plugin.url }
 
         val updatedPlugins = mutableListOf<String>()
 
@@ -852,7 +852,7 @@ object PluginManager {
             if (pluginData.isDisabled) {
                 Log.e(
                     "PluginManager",
-                    "Unloading disabled plugin: ${pluginData.onlineData.second.name}"
+                    "Unloading disabled plugin: ${pluginData.onlineData.plugin.name}"
                 )
                 unloadPlugin(pluginData.savedData.filePath)
             } else {
@@ -861,14 +861,14 @@ object PluginManager {
 
                 if (downloadPlugin(
                         activity,
-                        pluginData.onlineData.second.url,
-                        pluginData.onlineData.second.fileHash,
+                        pluginData.onlineData.plugin.url,
+                        pluginData.onlineData.plugin.fileHash,
                         pluginData.savedData.internalName,
                         existingFile,
                         true
                     )
                 ) {
-                    updatedPlugins.add(pluginData.onlineData.second.name)
+                    updatedPlugins.add(pluginData.onlineData.plugin.name)
                 }
             }
         }.also {
