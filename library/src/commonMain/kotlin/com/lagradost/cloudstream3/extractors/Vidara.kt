@@ -11,22 +11,42 @@ import com.lagradost.cloudstream3.utils.newExtractorLink
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-class Streamix() : Streamup() {
-    override val name = "Streamix"
-    override val mainUrl = "https://streamix.so"
+class Vidavaca : Vidara() {
+    override val mainUrl = "https://vidavaca.net"
 }
 
-class Vidara() : Streamup() {
-    override val name = "Vidara"
+class VidaaraxNet : Vidara() {
+    override val mainUrl = "https://vidaarax.net"
+}
+
+class VidaaraxCom : Vidara() {
+    override val mainUrl = "https://vidaarax.com"
+}
+
+class Vidaratem : Vidara() {
+    override val mainUrl = "https://vidaratem.com"
+}
+
+class Vidaraw : Vidara() {
+    override val mainUrl = "https://vidaraw.com"
+}
+
+class Vidarax : Vidara() {
+    override val mainUrl = "https://vidarax.cc"
+}
+
+class Vidaraa : Vidara() {
+    override val mainUrl = "https://vidaraa.cc"
+}
+
+class VidaraSo : Vidara() {
+    override val mainUrl = "https://vidara.so"
+}
+
+open class Vidara : ExtractorApi() {
+    override val name: String = "Vidara"
     override val mainUrl = "https://vidara.to"
-    override val apiPath = "/api/stream"
-}
-
-open class Streamup() : ExtractorApi() {
-    override val name = "Streamup"
-    override val mainUrl = "https://strmup.to"
-    override val requiresReferer = false
-    open val apiPath = "/ajax/stream"
+    override val requiresReferer: Boolean = false
 
     override suspend fun getUrl(
         url: String,
@@ -35,8 +55,10 @@ open class Streamup() : ExtractorApi() {
         callback: (ExtractorLink) -> Unit,
     ) {
         val fileCode = url.substringAfterLast("/")
-        val fileInfo = app.get("$mainUrl$apiPath?filecode=$fileCode")
-            .parsed<StreamUpFileInfo>()
+        val fileInfo =
+            app.post("$mainUrl/api/stream", json = mapOf("filecode" to fileCode, "device" to "web"))
+                .parsed<StreamUpFileInfo>()
+
         callback.invoke(
             newExtractorLink(
                 source = name,
