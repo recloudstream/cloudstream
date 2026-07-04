@@ -3,11 +3,11 @@ package com.lagradost.cloudstream3.utils
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.app
+import dev.whyoleg.cryptography.CryptographyProvider
+import dev.whyoleg.cryptography.DelicateCryptographyApi
+import dev.whyoleg.cryptography.algorithms.AES
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
-import javax.crypto.Cipher
-import javax.crypto.spec.IvParameterSpec
-import javax.crypto.spec.SecretKeySpec
 import kotlin.math.pow
 
 /** backwards api surface */
@@ -40,6 +40,8 @@ class M3u8Helper {
 
 object M3u8Helper2 {
     private val TAG = "M3u8Helper"
+
+    private val aesCbc = CryptographyProvider.Default.get(AES.CBC)
 
     suspend fun generateM3u8(
         source: String,
@@ -77,7 +79,6 @@ object M3u8Helper2 {
         Regex("""#EXT-X-STREAM-INF:(?:(?:.*?(?:RESOLUTION=\d+x(\d+)).*?\s+(.*))|(?:.*?\s+(.*)))""")
     private val TS_EXTENSION_REGEX =
         Regex("""#EXTINF:(([0-9]*[.])?[0-9]+|).*\n(.+?\n)""") // fuck it we ball, who cares about the type anyways
-    //Regex("""(.*\.(ts|jpg|html).*)""") //.jpg here 'case vizcloud uses .jpg instead of .ts
 
     private fun absoluteExtensionDetermination(url: String): String? {
         val split = url.split("/")
@@ -98,6 +99,7 @@ object M3u8Helper2 {
         return toBytes16Big(index + 1)
     }
 
+    @OptIn(DelicateCryptographyApi::class)
     fun getDecrypted(
         secretKey: ByteArray,
         data: ByteArray,
@@ -105,11 +107,8 @@ object M3u8Helper2 {
         index: Int,
     ): ByteArray {
         val ivKey = if (iv.isEmpty()) defaultIv(index) else iv
-        val c = Cipher.getInstance("AES/CBC/PKCS5Padding")
-        val skSpec = SecretKeySpec(secretKey, "AES")
-        val ivSpec = IvParameterSpec(ivKey)
-        c.init(Cipher.DECRYPT_MODE, skSpec, ivSpec)
-        return c.doFinal(data)
+        val aesKey = aesCbc.keyDecoder().decodeFromByteArrayBlocking(AES.Key.Format.RAW, secretKey)
+        return aesKey.cipher(padding = true).decryptWithIvBlocking(ivKey, data)
     }
 
     private fun getParentLink(url: String): String {
@@ -129,10 +128,7 @@ object M3u8Helper2 {
     ): List<M3u8Helper.M3u8Stream> {
         val list = mutableListOf<M3u8Helper.M3u8Stream>()
         val response = app.get(m3u8.streamUrl, headers = m3u8.headers, verify = false).text
-        val parsed = HlsPlaylistParser.parse(
-            m3u8.streamUrl,
-            response,
-        )
+        val parsed = HlsPlaylistParser.parse(m3u8.streamUrl, response)
 
         var anyFound = false
         if (parsed != null) {
@@ -280,11 +276,8 @@ object M3u8Helper2 {
 
             if (variants.isEmpty()) {
                 throw IllegalStateException(
-                    if (requireAudio) {
-                        "M3u8 contains no video with audio"
-                    } else {
-                        "M3u8 contains no video"
-                    }
+                    if (requireAudio) "M3u8 contains no video with audio"
+                    else "M3u8 contains no video"
                 )
             }
 
@@ -311,6 +304,7 @@ object M3u8Helper2 {
                 depth = depth - 1
             )
         }
+
         // This is already a "Media Segments" file
 
         // Encryption, this is because crunchy uses it
