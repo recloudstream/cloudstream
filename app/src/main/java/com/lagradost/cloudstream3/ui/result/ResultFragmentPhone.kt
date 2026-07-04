@@ -811,6 +811,8 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
                 // no failure?
                 resultEpisodeLoading.isVisible = episodes is Resource.Loading
                 resultEpisodes.isVisible = episodes is Resource.Success
+                syncBinding?.resultSyncEpisodeHolder?.isVisible = true
+                syncBinding?.resultSyncEpisodes?.isVisible = true
                 resultBatchDownloadButton.isVisible =
                     episodes is Resource.Success && episodes.value.isNotEmpty()
 
