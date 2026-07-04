@@ -398,7 +398,8 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                             toggleSync(false)
                             toggleEpisodes(false)
 
-                            resultSyncButton.nextFocusRightId = if (resultEpisodesShow.isVisible) R.id.result_episodes_show_button else R.id.result_sync_Button
+                            resultSyncButton.nextFocusRightId =
+                                if (resultEpisodesShow.isVisible) R.id.result_episodes_show_button else R.id.result_sync_Button
                         }
 
                         else -> {
@@ -698,7 +699,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
 
                         val d = status.value
                         val desiredScore = d.score?.toFloat(1) ?: 0.0f
-                        val totalSteps = (resultSyncRating.valueTo / resultSyncRating.stepSize)
+                        val totalSteps = resultSyncRating.valueTo / resultSyncRating.stepSize
                         val desiredStep = (totalSteps * desiredScore).roundToInt()
                         resultSyncRating.value = desiredStep * resultSyncRating.stepSize
 
