@@ -15,13 +15,16 @@ import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIE
 import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class RepositoryData(
-    @JsonProperty("iconUrl") val iconUrl: String?,
-    @JsonProperty("name") val name: String,
-    @JsonProperty("url") val url: String
-){
-    constructor(name: String,url: String):this(null,name,url)
+    @JsonProperty("iconUrl") @SerialName("iconUrl") val iconUrl: String?,
+    @JsonProperty("name") @SerialName("name") val name: String,
+    @JsonProperty("url") @SerialName("url") val url: String,
+) {
+    constructor(name: String, url: String): this(null, name, url)
 }
 
 const val REPOSITORIES_KEY = "REPOSITORIES_KEY"
@@ -52,16 +55,16 @@ class ExtensionsViewModel : ViewModel() {
             ?: emptyArray()) + PREBUILT_REPOSITORIES
 
         val onlinePlugins = urls.toList().amap {
-            RepositoryManager.getRepoPlugins(it.url)?.toList() ?: emptyList()
-        }.flatten().distinctBy { it.second.url }
+            RepositoryManager.getRepoPlugins(it)?.toList() ?: emptyList()
+        }.flatten().distinctBy { it.plugin.url }
 
         // Iterates over all offline plugins, compares to remote repo and returns the plugins which are outdated
-        val outdatedPlugins = getPluginsOnline().map { savedData ->
-            onlinePlugins.filter { onlineData -> savedData.internalName == onlineData.second.internalName }
+        val outdatedPlugins = getPluginsOnline().flatMap { savedData ->
+            onlinePlugins.filter { onlineData -> savedData.internalName == onlineData.plugin.internalName }
                 .map { onlineData ->
                     PluginManager.OnlinePluginData(savedData, onlineData)
                 }
-        }.flatten().distinctBy { it.onlineData.second.url }
+        }.distinctBy { it.onlineData.plugin.url }
 
         val total = onlinePlugins.count()
         val disabled = outdatedPlugins.count { it.isDisabled }
