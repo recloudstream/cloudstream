@@ -22,6 +22,7 @@ import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Visibility
 import com.discord.panels.OverlappingPanelsLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
@@ -662,8 +663,6 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                     setSyncMaxEpisodes(d.totalEpisodes)
 
                     viewModel.setMeta(d, syncModel.getSyncs())
-
-                    Log.d("King", "metadata")
                 }
 
                 is Resource.Loading -> {
@@ -704,6 +703,14 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         resultSyncRating.value = desiredStep * resultSyncRating.stepSize
 
                         resultSyncCheck.setItemChecked(d.status.internalId + 1, true)
+
+                        safe { // format might fail
+                            val text = d.score?.toFloat(10)?.roundToInt()?.let {
+                                context?.getString(R.string.sync_score_format)?.format(it)
+                            } ?: "?"
+                            resultSyncScoreText.text = text
+                        }
+
                         val watchedEpisodes = d.watchedEpisodes ?: 0
                         currentSyncProgress = watchedEpisodes
 
@@ -719,16 +726,6 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         }
                         resultSyncCurrentEpisodes.text =
                             Editable.Factory.getInstance()?.newEditable(watchedEpisodes.toString())
-                        safe { // format might fail
-                            val text = d.score?.toFloat(10)?.roundToInt()?.let {
-                                context?.getString(R.string.sync_score_format)?.format(it)
-                            } ?: "?"
-                            resultSyncScoreText.text = text
-                        }
-
-                        //resultSyncAddEpisode.requestFocus()
-                        Log.d("King", "userData")
-                        //resultSyncSetScore.requestFocus()
                     }
 
                     null -> {
@@ -736,7 +733,6 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                     }
                 }
             }
-            //binding.resultOverlappingPanels.setStartPanelLockState(if (closed) OverlappingPanelsLayout.LockState.CLOSE else OverlappingPanelsLayout.LockState.UNLOCKED)
         }
 
         context?.let { ctx ->
@@ -922,13 +918,6 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                     if (comingSoon) {
                         resultBookmarkButton.requestFocus()
                     } else resultPlayMovieButton.requestFocus()
-
-                    // Stops last button right focus
-                    /*if (binding.resultSyncUi.root.isVisible) {
-                        resultSyncButton.nextFocusRightId = R.id.result_sync_set_score
-                    } else {
-                        resultSyncButton.nextFocusRightId = R.id.result_sync_Button
-                    }*/
                 }
             }
         }
@@ -1080,6 +1069,8 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                             hasLoadedEpisodesOnce = true
                             resultPlaySeries.isVisible = resultResumeSeries.isGone && !comingSoon
                             resultEpisodesShow.isVisible = true && !comingSoon
+                            resultSyncUi.resultSyncEpisodeHolder.isVisible = true
+                            resultSyncUi.resultSyncEpisodes.isVisible = true
                             resultPlaySeriesButton.requestFocus()
                         }
                     }

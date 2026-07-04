@@ -32,10 +32,12 @@
                 tools:text="MyAnimeList, AniList" />
 
             <LinearLayout
+                android:id="@+id/result_sync_episode_holder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:visibility="visible">
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <ImageView
                     android:id="@+id/result_sync_sub_episode"
@@ -112,6 +114,7 @@
                 android:padding="10dp"
                 android:progress="0"
                 android:progressBackgroundTint="?attr/colorPrimary"
+                android:visibility="gone"
                 tools:visibility="visible" />
 
             <LinearLayout
