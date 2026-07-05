@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:visibility="gone"
-                tools:visibility="visible">
+                tools:visibility="gone">
 
                 <ImageView
                     android:id="@+id/result_sync_sub_episode"
@@ -103,6 +103,63 @@
                     tools:ignore="contentDescription" />
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/result_sync_episodes_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:id="@+id/result_sync_episodes_counter_holder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:padding="10dp"
+                        android:text="@string/episodes"
+                        android:textColor="?attr/textColor"
+                        android:textSize="17sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/result_sync_episodes_text"
+                        style="@style/BlackButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="0dp"
+                        android:minWidth="0dp"
+                        tools:text="7/10" />
+                </LinearLayout>
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/result_sync_episodes_slider"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="-5dp"
+                    android:layout_marginEnd="-5dp"
+                    android:focusable="true"
+                    android:nextFocusUp="@id/result_sync_episodes_slider"
+                    android:nextFocusDown="@id/result_sync_rating"
+                    android:stepSize="1"
+                    android:value="4"
+                    android:valueFrom="0"
+                    android:valueTo="10"
+                    app:labelStyle="@style/BlackLabel"
+                    app:thumbHeight="20dp"
+                    app:thumbRadius="10dp"
+                    app:tickVisible="false"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
+
+            </LinearLayout>
+
+
             <androidx.core.widget.ContentLoadingProgressBar
                 android:id="@+id/result_sync_episodes"
                 style="?android:attr/progressBarStyleHorizontal"
@@ -115,7 +172,7 @@
                 android:progress="0"
                 android:progressBackgroundTint="?attr/colorPrimary"
                 android:visibility="gone"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -150,7 +207,7 @@
                 android:layout_marginStart="-5dp"
                 android:layout_marginEnd="-5dp"
                 android:focusable="true"
-                android:nextFocusUp="@id/result_sync_add_episode"
+                android:nextFocusUp="@id/result_sync_episodes_slider"
                 android:nextFocusDown="@id/result_sync_check"
                 android:stepSize="1"
                 android:value="4"
@@ -190,6 +247,7 @@
                 android:layout_height="match_parent"
                 android:layout_rowWeight="1"
                 android:focusable="true"
+                android:nextFocusLeft="@id/result_sync_Button"
                 tools:listitem="@layout/sort_bottom_single_choice" />
 
             <com.google.android.material.button.MaterialButton
