@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.widget.AbsListView
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -314,7 +315,6 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         var comingSoon = false
 
         binding.apply {
-            //episodesShadow.rotationX = 180.0f//if(episodesShadow.isRtl()) 180.0f else 0.0f
 
             // parallax on background
             resultFinishLoading.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { view, _, scrollY, _, oldScrollY ->
@@ -400,7 +400,12 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                             toggleEpisodes(false)
 
                             resultSyncButton.nextFocusRightId =
-                                if (resultEpisodesShow.isVisible) R.id.result_episodes_show_button else R.id.result_sync_episodes_slider
+                                if (resultEpisodesShow.isVisible)
+                                    R.id.result_episodes_show_button
+                                else if (binding.resultSyncUi.root.isVisible)
+                                    R.id.result_sync_rating
+                                else
+                                    R.id.result_sync_Button
                         }
 
                         else -> {
@@ -420,7 +425,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                 // toggle, to make it more touch accessible just in case someone thinks that a
                 // tv layout is better but is using a touch device
                 toggleSync(!resultSyncUi.root.isVisible)
-                resultSyncButton.nextFocusRightId = R.id.result_sync_episodes_slider
+                resultSyncButton.nextFocusRightId = R.id.result_sync_rating
             }
 
             resultEpisodes.setLinearListLayout(
@@ -445,11 +450,6 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                 nextDown = FOCUS_SELF,
             )
 
-            /*.layoutManager =
-                LinearListLayout(resultEpisodes.context, resultEpisodes.isRtl()).apply {
-                    setVertical()
-                }*/
-
             resultReloadConnectionerror.setOnClickListener {
                 viewModel.load(
                     activity,
@@ -473,9 +473,6 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                 // Always escape focus
                 if (hasFocus) binding.resultBookmarkButton.requestFocus()
             }
-            //resultBack.setOnClickListener {
-            //    activity?.popCurrentPage()
-            //}
 
             resultRecommendationsList.spanCount = 8
             resultRecommendationsList.setRecycledViewPool(SearchAdapter.sharedPool)
@@ -633,28 +630,9 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
             binding.resultSync.isVisible = newList.isNotEmpty()
         }
 
-        var currentSyncProgress = 0
-
-        fun setSyncMaxEpisodes(totalEpisodes: Int?) {
-            binding.resultSyncUi.resultSyncEpisodes.max = (totalEpisodes ?: 0) * 1000
+        fun setSyncMaxEpisodes(currentEpisodes: Int?, totalEpisodes: Int?) {
 
             safe {
-                val ctx = binding.resultSyncUi.resultSyncEpisodes.context
-                binding.resultSyncUi.resultSyncMaxEpisodes.text =
-                    totalEpisodes?.let { episodes ->
-                        ctx?.getString(R.string.sync_total_episodes_some)?.format(episodes)
-                    } ?: run {
-                        ctx?.getString(R.string.sync_total_episodes_none)
-                    }
-            }
-        }
-
-        fun setSyncEpisodes(currentEpisodes: Int?, totalEpisodes: Int?) {
-
-            Log.d("King", "current: $currentEpisodes, total: $totalEpisodes")
-
-            safe {
-                val ctx = binding.resultSyncUi.resultSyncEpisodes.context
 
                 binding.resultSyncUi.resultSyncEpisodesText.text = totalEpisodes?.let { episodes ->
 
@@ -665,13 +643,13 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         binding.resultSyncUi.resultSyncEpisodesHolder.isVisible = false
                     }
 
-                    ctx?.getString(R.string.sync_total_episodes_format)?.format(currentEpisodes, episodes)
+                    context?.getString(R.string.sync_total_episodes_format)?.format(currentEpisodes, episodes)
 
                 } ?: run {
                     binding.resultSyncUi.resultSyncEpisodesHolder.isVisible = false
                     binding.resultSyncUi.resultSyncSetScore.isClickable = false
 
-                    ctx?.getString(R.string.sync_total_episodes_format_none)
+                    context?.getString(R.string.sync_total_episodes_format_none)
                 }
             }
         }
@@ -680,15 +658,14 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
             when (meta) {
                 is Resource.Success -> {
                     val d = meta.value
-                    binding.resultSyncUi.resultSyncEpisodes.progress = currentSyncProgress * 1000
-                    setSyncMaxEpisodes(d.totalEpisodes)
+                    setSyncMaxEpisodes(null, d.totalEpisodes)
 
                     viewModel.setMeta(d, syncModel.getSyncs())
                 }
 
                 is Resource.Loading -> {
-                    binding.resultSyncUi.resultSyncMaxEpisodes.text =
-                        binding.resultSyncUi.resultSyncMaxEpisodes.context?.getString(R.string.sync_total_episodes_none)
+                    binding.resultSyncUi.resultSyncEpisodesText.text =
+                        context?.getString(R.string.sync_total_episodes_all_none)
                 }
 
                 else -> {}
@@ -733,23 +710,11 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                         }
 
                         val watchedEpisodes = d.watchedEpisodes ?: 0
-                        currentSyncProgress = watchedEpisodes
-
-                        Log.d("King", "Watched: $watchedEpisodes, Max: ${d.maxEpisodes}")
 
                         d.maxEpisodes?.let {
                             // don't directly call it because we don't want to override metadata observe
-                            setSyncMaxEpisodes(it)
-                            setSyncEpisodes(watchedEpisodes,it)
+                            setSyncMaxEpisodes(watchedEpisodes,it)
                         }
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            resultSyncEpisodes.setProgress(watchedEpisodes * 1000, true)
-                        } else {
-                            resultSyncEpisodes.progress = watchedEpisodes * 1000
-                        }
-                        resultSyncCurrentEpisodes.text =
-                            Editable.Factory.getInstance()?.newEditable(watchedEpisodes.toString())
                     }
 
                     null -> {
@@ -761,6 +726,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
 
         context?.let { ctx ->
             val arrayAdapter = ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
+
             /*
             -1 -> None
             0 -> Watching
@@ -796,21 +762,6 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
 
                 resultSyncEpisodesSlider.addOnChangeListener { it, value, fromUser ->
                     if (fromUser) syncModel.setEpisodes(value.roundToInt())
-                }
-
-                resultSyncAddEpisode.setOnClickListener {
-                    syncModel.setEpisodesDelta(1)
-                }
-
-                resultSyncSubEpisode.setOnClickListener {
-                    syncModel.setEpisodesDelta(-1)
-                }
-
-                resultSyncCurrentEpisodes.doOnTextChanged { text, _, before, count ->
-                    if (count == before) return@doOnTextChanged
-                    text?.toString()?.toIntOrNull()?.let { ep ->
-                        syncModel.setEpisodes(ep)
-                    }
                 }
             }
         }
@@ -1097,8 +1048,6 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                             hasLoadedEpisodesOnce = true
                             resultPlaySeries.isVisible = resultResumeSeries.isGone && !comingSoon
                             resultEpisodesShow.isVisible = true && !comingSoon
-                            //resultSyncUi.resultSyncEpisodeHolder.isVisible = true
-                            //resultSyncUi.resultSyncEpisodes.isVisible = true
                             resultSyncUi.resultSyncEpisodesCounterHolder.isVisible = true
                             resultSyncUi.resultSyncEpisodesSlider.isVisible = true
 
@@ -1106,7 +1055,6 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
                             resultPlaySeriesButton.requestFocus()
                         }
                     }
-
 
                     (resultEpisodes.adapter as? EpisodeAdapter)?.submitList(episodes.value)
                 }
