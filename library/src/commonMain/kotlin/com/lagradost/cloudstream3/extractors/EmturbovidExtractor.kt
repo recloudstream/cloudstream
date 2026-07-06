@@ -14,7 +14,7 @@ open class EmturbovidExtractor : ExtractorApi() {
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
         val response = app.get(url, referer = referer ?: "$mainUrl/")
-        val playerScript2 = response.document
+        val playerScript = response.document
             .select("script")
             .first { it.data().contains("var urlPlay") }
             .html()
