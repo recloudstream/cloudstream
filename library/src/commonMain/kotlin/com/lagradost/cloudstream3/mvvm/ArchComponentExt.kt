@@ -84,6 +84,8 @@ fun logError(throwable: Throwable) {
 fun <T> normalSafeApiCall(apiCall: () -> T): T? {
     return try {
         apiCall.invoke()
+    } catch (cancellation: CancellationException) {
+        throw cancellation
     } catch (throwable: Throwable) {
         logError(throwable)
         return null
@@ -91,10 +93,15 @@ fun <T> normalSafeApiCall(apiCall: () -> T): T? {
 }
 
 /** Catches any exception (or error) and only logs it.
- * Will return null on exceptions. */
+ * Will return null on exceptions.
+ *
+ * [CancellationException] is rethrown so that coroutine cancellation keeps
+ * propagating instead of being silently swallowed. */
 fun <T> safe(apiCall: () -> T): T? {
     return try {
         apiCall.invoke()
+    } catch (cancellation: CancellationException) {
+        throw cancellation
     } catch (throwable: Throwable) {
         logError(throwable)
         return null
@@ -102,10 +109,15 @@ fun <T> safe(apiCall: () -> T): T? {
 }
 
 /** Catches any exception (or error) and only logs it.
- * Will return null on exceptions. */
+ * Will return null on exceptions.
+ *
+ * [CancellationException] is rethrown so that coroutine cancellation keeps
+ * propagating instead of being silently swallowed. */
 suspend fun <T> safeAsync(apiCall: suspend () -> T): T? {
     return try {
         apiCall.invoke()
+    } catch (cancellation: CancellationException) {
+        throw cancellation
     } catch (throwable: Throwable) {
         logError(throwable)
         return null
@@ -120,6 +132,8 @@ suspend fun <T> safeAsync(apiCall: suspend () -> T): T? {
 suspend fun <T> suspendSafeApiCall(apiCall: suspend () -> T): T? {
     return try {
         apiCall.invoke()
+    } catch (cancellation: CancellationException) {
+        throw cancellation
     } catch (throwable: Throwable) {
         logError(throwable)
         return null
@@ -152,6 +166,8 @@ fun CoroutineScope.launchSafe(
     val obj: suspend CoroutineScope.() -> Unit = {
         try {
             block()
+        } catch (cancellation: CancellationException) {
+            throw cancellation
         } catch (throwable: Throwable) {
             logError(throwable)
         }
@@ -238,6 +254,8 @@ suspend fun <T> safeApiCall(
     return withContext(Dispatchers.IO) {
         try {
             Resource.Success(apiCall.invoke())
+        } catch (cancellation: CancellationException) {
+            throw cancellation
         } catch (throwable: Throwable) {
             logError(throwable)
             throwAbleToResource(throwable)
