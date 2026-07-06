@@ -2,7 +2,10 @@ package com.lagradost.cloudstream3.ui.result
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
@@ -18,9 +21,11 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.seconds
 import com.lagradost.cloudstream3.ui.BaseDiffCallback
 import com.lagradost.cloudstream3.ui.NoStateAdapter
 import com.lagradost.cloudstream3.ui.ViewHolderState
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_LONG_CLICK
 import com.lagradost.cloudstream3.ui.download.DownloadClickEvent
+import com.lagradost.cloudstream3.ui.download.button.PieFetchButton
 import com.lagradost.cloudstream3.ui.newSharedPool
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
@@ -156,83 +161,14 @@ class EpisodeAdapter(
                         episodeHolder.setPadding(0)
                     }
 
-                    downloadButton.isVisible = hasDownloadSupport
-                    downloadButton.setDefaultClickListener(
-                        DownloadObjects.DownloadEpisodeCached(
-                            name = item.name,
-                            poster = item.poster,
-                            episode = item.episode,
-                            season = item.season,
-                            id = item.id,
-                            parentId = item.parentId,
-                            score = item.score,
-                            description = item.description,
-                            cacheTime = System.currentTimeMillis(),
-                        ), null
-                    ) {
-                        when (it.action) {
-                            DOWNLOAD_ACTION_DOWNLOAD -> {
-                                clickCallback.invoke(
-                                    EpisodeClickEvent(
-                                        position,
-                                        ACTION_DOWNLOAD_EPISODE,
-                                        item
-                                    )
-                                )
-                            }
-
-                            DOWNLOAD_ACTION_LONG_CLICK -> {
-                                clickCallback.invoke(
-                                    EpisodeClickEvent(
-                                        position,
-                                        ACTION_DOWNLOAD_MIRROR,
-                                        item
-                                    )
-                                )
-                            }
-
-                            else -> {
-                                downloadClickCallback.invoke(it)
-                            }
-                        }
-                    }
-
-                    val status = VideoDownloadManager.downloadStatus[item.id]
-                    downloadButton.resetView()
-                    downloadButton.setPersistentId(item.id)
-                    downloadButton.setStatus(status)
-
-                    val name =
-                        if (item.name == null) "${episodeText.context.getString(R.string.episode)} ${item.episode}" else "${item.episode}. ${item.name}"
-                    episodeFiller.isVisible = item.isFiller == true
-                    episodeText.text =
-                        name//if(card.isFiller == true) episodeText.context.getString(R.string.filler).format(name) else name
-                    episodeText.isSelected = true // is needed for text repeating
-
-                    if (item.videoWatchState == VideoWatchState.Watched) {
-                        // This cannot be done in getDisplayPosition() as when you have not watched something
-                        // the duration and position is 0
-                        //episodeProgress.max = 1
-                        //episodeProgress.progress = 1
-                        episodePlayIcon.setImageResource(R.drawable.ic_baseline_check_24)
-                        episodeProgress.isVisible = false
-                    } else {
-                        val displayPos = item.getDisplayPosition()
-                        val durationSec = (item.duration / 1000).toInt()
-                        val progressSec = (displayPos / 1000).toInt()
-
-                        if (displayPos >= item.duration && displayPos > 0) {
-                            episodePlayIcon.setImageResource(R.drawable.ic_baseline_check_24)
-                            episodeProgress.isVisible = false
-                        } else {
-                            episodePlayIcon.setImageResource(R.drawable.netflix_play)
-                            episodeProgress.apply {
-                                max = durationSec
-                                progress = progressSec
-                                isVisible = displayPos > 0L
-                            }
-                        }
-                    }
+                    bindDownloadButton(downloadButton, item, position)
+                    bindEpisodeText(episodeText, episodeFiller, item)
+                    bindWatchProgress(
+                        episodePlayIcon,
+                        episodeProgress,
+                        item,
+                        R.drawable.netflix_play
+                    )
 
                     val posterVisible = !item.poster.isNullOrBlank()
                     if (posterVisible) {
@@ -354,20 +290,7 @@ class EpisodeAdapter(
                     }
                 }
 
-                itemView.setOnClickListener {
-                    clickCallback.invoke(EpisodeClickEvent(position, ACTION_CLICK_DEFAULT, item))
-                }
-
-                if (isLayout(TV)) {
-                    itemView.isFocusable = true
-                    itemView.isFocusableInTouchMode = true
-                    //itemView.touchscreenBlocksFocus = false
-                }
-
-                itemView.setOnLongClickListener {
-                    clickCallback.invoke(EpisodeClickEvent(position, ACTION_SHOW_OPTIONS, item))
-                    return@setOnLongClickListener true
-                }
+                bindItemViewInteractions(itemView, item, position)
             }
 
             is ResultEpisodeBinding -> {
@@ -377,105 +300,137 @@ class EpisodeAdapter(
                 }
 
                 binding.apply {
-                    downloadButton.isVisible = hasDownloadSupport
-                    downloadButton.setDefaultClickListener(
-                        DownloadObjects.DownloadEpisodeCached(
-                            name = item.name,
-                            poster = item.poster,
-                            episode = item.episode,
-                            season = item.season,
-                            id = item.id,
-                            parentId = item.parentId,
-                            score = item.score,
-                            description = item.description,
-                            cacheTime = System.currentTimeMillis(),
-                        ), null
-                    ) {
-                        when (it.action) {
-                            DOWNLOAD_ACTION_DOWNLOAD -> {
-                                clickCallback.invoke(
-                                    EpisodeClickEvent(
-                                        position,
-                                        ACTION_DOWNLOAD_EPISODE,
-                                        item
-                                    )
-                                )
-                            }
+                    bindDownloadButton(downloadButton, item, position)
+                    bindEpisodeText(episodeText, episodeFiller, item)
+                    bindWatchProgress(
+                        episodePlayIcon,
+                        episodeProgress,
+                        item,
+                        R.drawable.play_button_transparent
+                    )
 
-                            DOWNLOAD_ACTION_LONG_CLICK -> {
-                                clickCallback.invoke(
-                                    EpisodeClickEvent(
-                                        position,
-                                        ACTION_DOWNLOAD_MIRROR,
-                                        item
-                                    )
-                                )
-                            }
-
-                            else -> {
-                                downloadClickCallback.invoke(it)
-                            }
-                        }
-                    }
-
-                    val status = VideoDownloadManager.downloadStatus[item.id]
-                    downloadButton.resetView()
-                    downloadButton.setPersistentId(item.id)
-                    downloadButton.setStatus(status)
-
-                    val name =
-                        if (item.name == null) "${episodeText.context.getString(R.string.episode)} ${item.episode}" else "${item.episode}. ${item.name}"
-                    episodeFiller.isVisible = item.isFiller == true
-                    episodeText.text =
-                        name//if(card.isFiller == true) episodeText.context.getString(R.string.filler).format(name) else name
-                    episodeText.isSelected = true // is needed for text repeating
-
-                    if (item.videoWatchState == VideoWatchState.Watched) {
-                        episodePlayIcon.setImageResource(R.drawable.ic_baseline_check_24)
-                        episodeProgress.isVisible = false
-                    } else {
-                        val displayPos = item.getDisplayPosition()
-                        val durationSec = (item.duration / 1000).toInt()
-                        val progressSec = (displayPos / 1000).toInt()
-
-                        if (displayPos >= item.duration && displayPos > 0) {
-                            episodePlayIcon.setImageResource(R.drawable.ic_baseline_check_24)
-                            episodeProgress.isVisible = false
-                        } else {
-                            episodePlayIcon.setImageResource(R.drawable.play_button_transparent)
-                            episodeProgress.apply {
-                                max = durationSec
-                                progress = progressSec
-                                isVisible = displayPos > 0L
-                            }
-                        }
-                    }
-
-                    itemView.setOnClickListener {
-                        clickCallback.invoke(
-                            EpisodeClickEvent(
-                                position,
-                                ACTION_CLICK_DEFAULT,
-                                item
-                            )
-                        )
-                    }
-
-                    if (isLayout(TV)) {
-                        itemView.isFocusable = true
-                        itemView.isFocusableInTouchMode = true
-                        //itemView.touchscreenBlocksFocus = false
-                    }
-
-                    itemView.setOnLongClickListener {
-                        clickCallback.invoke(EpisodeClickEvent(position, ACTION_SHOW_OPTIONS, item))
-                        return@setOnLongClickListener true
-                    }
+                    bindItemViewInteractions(itemView, item, position)
 
                     //binding.resultEpisodeDownload.isVisible = hasDownloadSupport
                     //binding.resultEpisodeProgressDownloaded.isVisible = hasDownloadSupport
                 }
             }
+        }
+    }
+
+    private fun bindDownloadButton(
+        downloadButton: PieFetchButton,
+        item: ResultEpisode,
+        position: Int
+    ) {
+        downloadButton.isVisible = hasDownloadSupport
+        downloadButton.setDefaultClickListener(
+            DownloadObjects.DownloadEpisodeCached(
+                name = item.name,
+                poster = item.poster,
+                episode = item.episode,
+                season = item.season,
+                id = item.id,
+                parentId = item.parentId,
+                score = item.score,
+                description = item.description,
+                cacheTime = System.currentTimeMillis(),
+            ), null
+        ) {
+            when (it.action) {
+                DOWNLOAD_ACTION_DOWNLOAD -> {
+                    clickCallback.invoke(
+                        EpisodeClickEvent(
+                            position,
+                            ACTION_DOWNLOAD_EPISODE,
+                            item
+                        )
+                    )
+                }
+
+                DOWNLOAD_ACTION_LONG_CLICK -> {
+                    clickCallback.invoke(
+                        EpisodeClickEvent(
+                            position,
+                            ACTION_DOWNLOAD_MIRROR,
+                            item
+                        )
+                    )
+                }
+
+                else -> {
+                    downloadClickCallback.invoke(it)
+                }
+            }
+        }
+
+        val status = VideoDownloadManager.downloadStatus[item.id]
+        downloadButton.resetView()
+        downloadButton.setPersistentId(item.id)
+        downloadButton.setStatus(status)
+    }
+
+    private fun bindEpisodeText(
+        episodeText: TextView,
+        episodeFiller: View,
+        item: ResultEpisode
+    ) {
+        val name =
+            if (item.name == null) "${episodeText.context.getString(R.string.episode)} ${item.episode}" else "${item.episode}. ${item.name}"
+        episodeFiller.isVisible = item.isFiller == true
+        episodeText.text =
+            name//if(card.isFiller == true) episodeText.context.getString(R.string.filler).format(name) else name
+        episodeText.isSelected = true // is needed for text repeating
+    }
+
+    private fun bindWatchProgress(
+        episodePlayIcon: ImageView,
+        episodeProgress: CircularProgressIndicator,
+        item: ResultEpisode,
+        playIconRes: Int
+    ) {
+        if (item.videoWatchState == VideoWatchState.Watched) {
+            // This cannot be done in getDisplayPosition() as when you have not watched something
+            // the duration and position is 0
+            episodePlayIcon.setImageResource(R.drawable.ic_baseline_check_24)
+            episodeProgress.isVisible = false
+        } else {
+            val displayPos = item.getDisplayPosition()
+            val durationSec = (item.duration / 1000).toInt()
+            val progressSec = (displayPos / 1000).toInt()
+
+            if (displayPos >= item.duration && displayPos > 0) {
+                episodePlayIcon.setImageResource(R.drawable.ic_baseline_check_24)
+                episodeProgress.isVisible = false
+            } else {
+                episodePlayIcon.setImageResource(playIconRes)
+                episodeProgress.apply {
+                    max = durationSec
+                    progress = progressSec
+                    isVisible = displayPos > 0L
+                }
+            }
+        }
+    }
+
+    private fun bindItemViewInteractions(
+        itemView: View,
+        item: ResultEpisode,
+        position: Int
+    ) {
+        itemView.setOnClickListener {
+            clickCallback.invoke(EpisodeClickEvent(position, ACTION_CLICK_DEFAULT, item))
+        }
+
+        if (isLayout(TV)) {
+            itemView.isFocusable = true
+            itemView.isFocusableInTouchMode = true
+            //itemView.touchscreenBlocksFocus = false
+        }
+
+        itemView.setOnLongClickListener {
+            clickCallback.invoke(EpisodeClickEvent(position, ACTION_SHOW_OPTIONS, item))
+            return@setOnLongClickListener true
         }
     }
 }

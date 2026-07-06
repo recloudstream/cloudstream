@@ -1,12 +1,17 @@
 package com.lagradost.cloudstream3.ui.result
 
+import android.annotation.SuppressLint
+import android.app.Dialog
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import coil3.dispose
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.Score
@@ -20,6 +25,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
+import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UiImage
 
 const val START_ACTION_RESUME_LATEST = 1
@@ -312,6 +318,59 @@ object ResultFragment {
             )
         }
         return StoredData(url, apiName, name, showFillers, dubStatus, start, playerAction, restart)
+    }
+
+    /**
+     * Shows, updates or dismisses the bottom loading dialog that displays link
+     * loading progress. Shared between the phone and TV result fragments.
+     *
+     * @param load the current link loading progress, or null to dismiss the dialog.
+     * @param currentDialog the fragment's currently shown loading dialog, if any.
+     * @param setLoadingDialog callback used to persist the new dialog reference
+     * back on the fragment (also invoked with null when the dialog is dismissed).
+     */
+    @SuppressLint("SetTextI18n")
+    fun Fragment.updateLoadedLinksDialog(
+        load: LinkProgress?,
+        currentDialog: Dialog?,
+        viewModel: ResultViewModel2,
+        setLoadingDialog: (Dialog?) -> Unit,
+    ) {
+        if (load == null) {
+            currentDialog?.dismissSafe(activity)
+            setLoadingDialog(null)
+            return
+        }
+
+        var dialog = currentDialog
+        if (dialog?.isShowing != true) {
+            dialog?.dismissSafe(activity)
+            dialog = null
+        }
+        dialog = dialog ?: context?.let { ctx ->
+            val builder = BottomSheetDialog(ctx)
+            builder.setContentView(R.layout.bottom_loading)
+            builder.setOnDismissListener {
+                setLoadingDialog(null)
+                viewModel.cancelLinks()
+            }
+            builder.setCanceledOnTouchOutside(true)
+            builder.show()
+            builder
+        }
+        setLoadingDialog(dialog)
+
+        dialog?.findViewById<MaterialButton>(R.id.overlay_loading_skip_button)?.apply {
+            if (load.linksLoaded <= 0) {
+                isInvisible = true
+            } else {
+                setOnClickListener {
+                    viewModel.skipLoading()
+                }
+                isVisible = true
+                text = "${context.getString(R.string.skip_loading)} (${load.linksLoaded})"
+            }
+        }
     }
 
     /*private fun reloadViewModel(forceReload: Boolean) {

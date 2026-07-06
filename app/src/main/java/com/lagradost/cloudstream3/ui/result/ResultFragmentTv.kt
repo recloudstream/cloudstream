@@ -11,13 +11,10 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.LoadResponse
@@ -38,6 +35,7 @@ import com.lagradost.cloudstream3.ui.player.NEXT_WATCH_EPISODE_PERCENTAGE
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment.bindLogo
 import com.lagradost.cloudstream3.ui.result.ResultFragment.getStoredData
+import com.lagradost.cloudstream3.ui.result.ResultFragment.updateLoadedLinksDialog
 import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_FOCUSED
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
@@ -726,37 +724,7 @@ class ResultFragmentTv : BaseFragment<FragmentResultTvBinding>(
         }
 
         observeNullable(viewModel.loadedLinks) { load ->
-            if (load == null) {
-                loadingDialog?.dismissSafe(activity)
-                loadingDialog = null
-                return@observeNullable
-            }
-            if (loadingDialog?.isShowing != true) {
-                loadingDialog?.dismissSafe(activity)
-                loadingDialog = null
-            }
-            loadingDialog = loadingDialog ?: context?.let { ctx ->
-                val builder = BottomSheetDialog(ctx)
-                builder.setContentView(R.layout.bottom_loading)
-                builder.setOnDismissListener {
-                    loadingDialog = null
-                    viewModel.cancelLinks()
-                }
-                builder.setCanceledOnTouchOutside(true)
-                builder.show()
-                builder
-            }
-            loadingDialog?.findViewById<MaterialButton>(R.id.overlay_loading_skip_button)?.apply {
-                if (load.linksLoaded <= 0) {
-                    isInvisible = true
-                } else {
-                    setOnClickListener {
-                        viewModel.skipLoading()
-                    }
-                    isVisible = true
-                    text = "${context.getString(R.string.skip_loading)} (${load.linksLoaded})"
-                }
-            }
+            updateLoadedLinksDialog(load, loadingDialog, viewModel) { loadingDialog = it }
         }
 
 

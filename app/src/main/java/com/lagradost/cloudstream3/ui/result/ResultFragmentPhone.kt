@@ -19,7 +19,6 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doOnTextChanged
@@ -30,8 +29,6 @@ import com.discord.panels.PanelState
 import com.discord.panels.PanelsChildGestureRegionObserver
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.DubStatus
@@ -67,6 +64,7 @@ import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment.bindLogo
 import com.lagradost.cloudstream3.ui.result.ResultFragment.getStoredData
+import com.lagradost.cloudstream3.ui.result.ResultFragment.updateLoadedLinksDialog
 import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
@@ -1292,38 +1290,7 @@ open class ResultFragmentPhone : BaseFragment<FragmentResultSwipeBinding>(
 
 
         observeNullable(viewModel.loadedLinks) { load ->
-            if (load == null) {
-                loadingDialog?.dismissSafe(activity)
-                loadingDialog = null
-                return@observeNullable
-            }
-            if (loadingDialog?.isShowing != true) {
-                loadingDialog?.dismissSafe(activity)
-                loadingDialog = null
-            }
-            loadingDialog = loadingDialog ?: context?.let { ctx ->
-                val builder = BottomSheetDialog(ctx)
-                builder.setContentView(R.layout.bottom_loading)
-                builder.setOnDismissListener {
-                    loadingDialog = null
-                    viewModel.cancelLinks()
-                }
-                builder.setCanceledOnTouchOutside(true)
-                builder.show()
-                builder
-            }
-            loadingDialog?.findViewById<MaterialButton>(R.id.overlay_loading_skip_button)?.apply {
-                if (load.linksLoaded <= 0) {
-                    isInvisible = true
-                } else {
-                    setOnClickListener {
-                        viewModel.skipLoading()
-                    }
-                    isVisible = true
-                    @SuppressLint("SetTextI18n")
-                    text = "${context.getString(R.string.skip_loading)} (${load.linksLoaded})"
-                }
-            }
+            updateLoadedLinksDialog(load, loadingDialog, viewModel) { loadingDialog = it }
         }
 
         observeNullable(viewModel.selectedSeason) { text ->
