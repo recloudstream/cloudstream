@@ -156,7 +156,7 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
             val logList = mutableListOf<String>()
             try {
                 // https://developer.android.com/studio/command-line/logcat
-                val process = Runtime.getRuntime().exec("logcat -d")
+                val process = Runtime.getRuntime().exec(arrayOf("logcat", "-d"))
                 val bufferedReader = BufferedReader(InputStreamReader(process.inputStream))
                 bufferedReader.lineSequence().forEach { logList.add(it) }
             } catch (e: Exception) {
@@ -173,7 +173,7 @@ class SettingsUpdates : BasePreferenceFragmentCompat() {
             }
 
             binding.clearBtt.setOnClickListener {
-                Runtime.getRuntime().exec("logcat -c")
+                Runtime.getRuntime().exec(arrayOf("logcat", "-c"))
                 dialog.dismissSafe(activity)
             }
 

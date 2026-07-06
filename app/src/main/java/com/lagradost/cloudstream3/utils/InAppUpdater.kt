@@ -355,7 +355,7 @@ object InAppUpdater {
     private fun isMiUi(): Boolean = !getSystemProperty("ro.miui.ui.version.name").isNullOrEmpty()
 
     private fun getSystemProperty(propName: String): String? = try {
-        val p = Runtime.getRuntime().exec("getprop $propName")
+        val p = Runtime.getRuntime().exec(arrayOf("getprop", propName))
         BufferedReader(InputStreamReader(p.inputStream), 1024).use {
             it.readLine()
         }

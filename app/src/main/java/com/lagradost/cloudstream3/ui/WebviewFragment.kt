@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.webkit.JavascriptInterface
 import android.webkit.WebResourceRequest
@@ -64,6 +65,10 @@ class WebviewFragment : BaseFragment<FragmentWebviewBinding>(
     private class RepoApi(val activity: FragmentActivity?) {
         @JavascriptInterface
         fun installRepo(repoUrl: String) {
+            if (!repoUrl.startsWith("https://")) {
+                Log.w("RepoApi", "Blocked non-HTTPS repo URL: $repoUrl")
+                return
+            }
             activity?.loadRepository(repoUrl)
         }
     }

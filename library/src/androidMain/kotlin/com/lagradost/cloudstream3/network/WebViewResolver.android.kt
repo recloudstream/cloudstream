@@ -250,7 +250,8 @@ actual class WebViewResolver actual constructor(
                         handler: SslErrorHandler?,
                         error: SslError?
                     ) {
-                        handler?.proceed() // Ignore ssl issues
+                        Log.e(TAG, "SSL error in WebView: ${error?.primaryError}, url: ${error?.url}")
+                        handler?.cancel()
                     }
                 }
                 webView?.loadUrl(url, headers.toMap())
