@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fleeksoft.ksoup.Ksoup
 import com.lagradost.cloudstream3.AudioFile
 import com.lagradost.cloudstream3.IDownloadableMinimum
 import com.lagradost.cloudstream3.Prerelease
@@ -77,8 +78,10 @@ import com.lagradost.cloudstream3.extractors.FileMoonIn
 import com.lagradost.cloudstream3.extractors.FileMoonSx
 import com.lagradost.cloudstream3.extractors.FilemoonV2
 import com.lagradost.cloudstream3.extractors.Filesim
+import com.lagradost.cloudstream3.extractors.Firestream
 import com.lagradost.cloudstream3.extractors.Multimoviesshg
 import com.lagradost.cloudstream3.extractors.FlaswishCom
+import com.lagradost.cloudstream3.extractors.Flyfile
 import com.lagradost.cloudstream3.extractors.FourCX
 import com.lagradost.cloudstream3.extractors.FourPichive
 import com.lagradost.cloudstream3.extractors.FourPlayRu
@@ -224,12 +227,10 @@ import com.lagradost.cloudstream3.extractors.StreamWishExtractor
 import com.lagradost.cloudstream3.extractors.StreamhideCom
 import com.lagradost.cloudstream3.extractors.StreamhideTo
 import com.lagradost.cloudstream3.extractors.Streamhub2
-import com.lagradost.cloudstream3.extractors.Streamix
 import com.lagradost.cloudstream3.extractors.Streamlare
 import com.lagradost.cloudstream3.extractors.StreamoUpload
 import com.lagradost.cloudstream3.extractors.Streamplay
 import com.lagradost.cloudstream3.extractors.Streamsss
-import com.lagradost.cloudstream3.extractors.Streamup
 import com.lagradost.cloudstream3.extractors.Streamwish2
 import com.lagradost.cloudstream3.extractors.Strwish
 import com.lagradost.cloudstream3.extractors.Strwish2
@@ -267,6 +268,7 @@ import com.lagradost.cloudstream3.extractors.VidHidePro5
 import com.lagradost.cloudstream3.extractors.VidHidePro6
 import com.lagradost.cloudstream3.extractors.VidHideHub
 import com.lagradost.cloudstream3.extractors.Ryderjet
+import com.lagradost.cloudstream3.extractors.Streamcash
 import com.lagradost.cloudstream3.extractors.VidMoxy
 import com.lagradost.cloudstream3.extractors.VidStack
 import com.lagradost.cloudstream3.extractors.VideoSeyred
@@ -283,8 +285,17 @@ import com.lagradost.cloudstream3.extractors.Vidoza
 import com.lagradost.cloudstream3.extractors.VinovoSi
 import com.lagradost.cloudstream3.extractors.VinovoTo
 import com.lagradost.cloudstream3.extractors.VidNest
+import com.lagradost.cloudstream3.extractors.VidaaraxCom
+import com.lagradost.cloudstream3.extractors.VidaaraxNet
 import com.lagradost.cloudstream3.extractors.Vidara
+import com.lagradost.cloudstream3.extractors.VidaraSo
+import com.lagradost.cloudstream3.extractors.Vidaraa
+import com.lagradost.cloudstream3.extractors.Vidaratem
+import com.lagradost.cloudstream3.extractors.Vidaraw
+import com.lagradost.cloudstream3.extractors.Vidarax
+import com.lagradost.cloudstream3.extractors.Vidavaca
 import com.lagradost.cloudstream3.extractors.Vide0Net
+import com.lagradost.cloudstream3.extractors.Vids
 import com.lagradost.cloudstream3.extractors.Vidsonic
 import com.lagradost.cloudstream3.extractors.VkExtractor
 import com.lagradost.cloudstream3.extractors.Voe
@@ -310,11 +321,11 @@ import com.lagradost.cloudstream3.extractors.ZplayerV2
 import com.lagradost.cloudstream3.extractors.Ztreamhub
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.Coroutines.atomicListOf
+import io.ktor.http.Url
+import io.ktor.http.decodeURLPart
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
-import org.jsoup.Jsoup
-import java.net.URI
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.uuid.Uuid
 import kotlin.uuid.toJavaUuid
@@ -417,7 +428,7 @@ enum class ExtractorLinkType {
 
 private fun inferTypeFromUrl(url: String): ExtractorLinkType {
     val path = try {
-        URI(url).path
+        Url(url).encodedPath.decodeURLPart()
     } catch (_: Throwable) {
         // don't log magnet links as errors
         null
@@ -816,7 +827,7 @@ constructor(
 
 /**
  * Removes https:// and www.
- * To match urls regardless of schema, perhaps Uri() can be used?
+ * To match urls regardless of schema, perhaps Url() can be used?
  */
 val schemaStripRegex = Regex("""^(https:|)//(www\.|)""")
 
@@ -1085,6 +1096,7 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     Tantifilm(),
     Userload(),
     Supervideo(),
+    Streamcash(),
 
     // StreamSB.kt works
     //  SBPlay(),
@@ -1155,9 +1167,15 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     MoviehabNet(),
     Jeniusplay(),
     StreamoUpload(),
-    Streamup(),
-    Streamix(),
     Vidara(),
+    Vidavaca(),
+    Vidaraa(),
+    Vidaraw(),
+    Vidarax(),
+    VidaraSo(),
+    Vidaratem(),
+    VidaaraxCom(),
+    VidaaraxNet(),
 
     GamoVideo(),
     Gdriveplayerapi(),
@@ -1294,6 +1312,9 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     GUpload(),
     HlsWish(),
     ByseQekaho(),
+    Flyfile(),
+    Firestream(),
+    Vids(),
 )
 
 
@@ -1313,7 +1334,7 @@ fun httpsify(url: String): String {
 }
 
 suspend fun getPostForm(requestUrl: String, html: String): String? {
-    val document = Jsoup.parse(html)
+    val document = Ksoup.parse(html)
     val inputs = document.select("Form > input")
     if (inputs.size < 4) return null
     var op: String? = null
