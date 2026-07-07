@@ -507,7 +507,8 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         showDownloadProgress(DownloadEvent(0, 0, 0, null))
 
-        uiReset()
+        // uiReset() // Removed due to UX
+        
         currentSelectedLink = link
         //  setEpisodes(viewModel.getAllMeta() ?: emptyList())
         setPlayerDimen(null)
