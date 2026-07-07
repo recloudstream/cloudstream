@@ -21,7 +21,7 @@ object DeviceLayout {
 
     /**
      * Returns true if the layout is any of the flags, so
-     * so isLayout(TV or EMULATOR) is a valid statement 
+     * so isLayout(TV or EMULATOR) is a valid statement
      * for checking if the layout is in the emulator
      * or tv. Auto will become the "TV" or the
      * "PHONE" layout.
