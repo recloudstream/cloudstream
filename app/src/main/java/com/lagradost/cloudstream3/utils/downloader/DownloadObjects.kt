@@ -158,7 +158,7 @@ object DownloadObjects {
         @JsonProperty("extraInfo") @SerialName("extraInfo") val extraInfo: String? = null,
         @JsonProperty("basePath") @SerialName("basePath") val basePath: String? = null, // null is for legacy downloads. See getBasePath()
         // Hash of the link associated with this DownloadFile, used so not override old data in the DownloadedFileInfo
-        @JsonProperty("linkHash") @SerialName("linkHash") val linkHash : Int? = null,
+        @JsonProperty("linkHash") @SerialName("linkHash") val linkHash: Int? = null,
     )
 
     @Serializable
