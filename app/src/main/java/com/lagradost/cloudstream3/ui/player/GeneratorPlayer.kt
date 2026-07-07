@@ -1698,8 +1698,10 @@ class GeneratorPlayer : FullScreenPlayer() {
                         if (settingsManager.getBoolean(
                                 ctx.getString(R.string.episode_sync_enabled_key), true
                             )
-                        ) maxEpisodeSet = meta.episode
-                        sync.modifyMaxEpisode(meta.totalEpisodeIndex ?: meta.episode)
+                        ) {
+                            maxEpisodeSet = meta.episode
+                            sync.modifyMaxEpisode(meta.totalEpisodeIndex ?: meta.episode)
+                        }
                     }
                 }
 
