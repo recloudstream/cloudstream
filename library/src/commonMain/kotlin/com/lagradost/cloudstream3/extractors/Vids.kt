@@ -10,7 +10,7 @@ import com.lagradost.cloudstream3.utils.newExtractorLink
 @Prerelease
 open class Vids : ExtractorApi() {
     override val name: String = "Vids"
-    override val mainUrl: String = " https://vids.st"
+    override val mainUrl: String = "https://vids.st"
     override val requiresReferer: Boolean = false
 
     private val streamUrlRegex = Regex("""const url = "(.*?)";""")
