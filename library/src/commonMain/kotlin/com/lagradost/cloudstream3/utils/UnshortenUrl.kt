@@ -68,11 +68,9 @@ object ShortLink {
     suspend fun unshortenAdfly(url: String): String {
         val html = app.get(url).text
         val ysmm = Regex("""var ysmm =.*;?""").find(html)!!.value
-
         if (ysmm.isNotEmpty()) {
             var left = ""
             var right = ""
-
 
             for (c in ysmm.replace(Regex("""var ysmm = '|';"""), "").chunked(2)
                 .dropLastWhile { it.length == 1 }) {
@@ -88,14 +86,11 @@ object ShortLink {
                     encodedUrl[el[0].first] = xor.digitToChar()
                 }
             }
-            val encodedbytearray = encodedUrl.map { it.code.toByte() }.toByteArray()
-            var decodedUrl =
-                base64Decode(encodedbytearray.toString()).dropLast(16)
-                    .drop(16)
 
+            val encodedByteArray = encodedUrl.map { it.code.toByte() }.toByteArray()
+            var decodedUrl = base64Decode(encodedByteArray.decodeToString()).dropLast(16).drop(16)
             if (Regex("""go\.php\?u=""").find(decodedUrl) != null) {
-                decodedUrl =
-                    base64Decode(decodedUrl.replace(Regex("""(.*?)u="""), ""))
+                decodedUrl = base64Decode(decodedUrl.replace(Regex("""(.*?)u="""), ""))
             }
 
             return decodedUrl

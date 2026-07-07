@@ -1525,7 +1525,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         Log.e(
             TAG,
             "playerError: $currentSelectedLink, " +
-                    "type=${exception::class.java.canonicalName}, " +
+                    "type=${exception::class.qualifiedName}, " +
                     "message=${exception.message}, url=$currentUrl, headers=$headers, " +
                     "referer=$referer, position=${player.getPosition() ?: "unknown"}, " +
                     "duration=${player.getDuration() ?: "unknown"}, " +
@@ -1584,7 +1584,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         )
 
         val meta = arrayOf(
-            load.tags?.takeIf { it.isNotEmpty() }?.joinToString(", "),
+            load.tags?.takeIf { it.isNotEmpty() }?.take(6)?.joinToString(", "),
             load.year?.toString(),
             if (!load.type.isMovieType())
                 context?.getShortSeasonText(
@@ -1604,7 +1604,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         if (!description.isNullOrBlank()) {
             descView.isVisible = true
-            descView.text = description
+            descView.text = description.html()
         } else {
             descView.isVisible = false
 
@@ -1698,8 +1698,10 @@ class GeneratorPlayer : FullScreenPlayer() {
                         if (settingsManager.getBoolean(
                                 ctx.getString(R.string.episode_sync_enabled_key), true
                             )
-                        ) maxEpisodeSet = meta.episode
-                        sync.modifyMaxEpisode(meta.totalEpisodeIndex ?: meta.episode)
+                        ) {
+                            maxEpisodeSet = meta.episode
+                            sync.modifyMaxEpisode(meta.totalEpisodeIndex ?: meta.episode)
+                        }
                     }
                 }
 

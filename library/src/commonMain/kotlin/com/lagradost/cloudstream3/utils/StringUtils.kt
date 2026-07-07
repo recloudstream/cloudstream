@@ -19,13 +19,15 @@ object StringUtils {
 
     /* @Deprecated(
         message = "Use Ktor 'Url' naming convention instead.",
-        replaceWith = ReplaceWith("this.encodeUrl()")
+        replaceWith = ReplaceWith("this.encodeUrl()"),
+        level = DeprecationLevel.WARNING,
     ) */
     fun String.encodeUri(): String = encodeUrl()
 
     /* @Deprecated(
         message = "Use Ktor 'Url' naming convention instead.",
-        replaceWith = ReplaceWith("this.decodeUrl()")
+        replaceWith = ReplaceWith("this.decodeUrl()"),
+        level = DeprecationLevel.WARNING,
     ) */
     fun String.decodeUri(): String = decodeUrl()
 }
