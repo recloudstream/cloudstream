@@ -597,6 +597,10 @@ object UIHelper {
     fun MaterialButton.showProgress(@ColorInt tintColor: Int = this.iconTint.defaultColor) =
         // Use runOnMainThreadNative to allow process on io threads, to make the code a bit cleaner
         runOnMainThreadNative {
+            // No need to set it again, as then it will reset the animation
+            if(this.icon is IndeterminateDrawable<*>) {
+                return@runOnMainThreadNative
+            }
             val spec = CircularProgressIndicatorSpec(
                 context, null, 0,
                 com.google.android.material.R.style.Widget_Material3_CircularProgressIndicator_ExtraSmall
