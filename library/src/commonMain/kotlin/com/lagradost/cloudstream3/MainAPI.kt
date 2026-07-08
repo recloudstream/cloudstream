@@ -804,6 +804,11 @@ fun fixTitle(str: String): String {
  *
  * Use like the following: rhino.evaluateString(scope, js, "JavaScript", 1, null)
  **/
+// Deprecate after next stable
+/* @Deprecated(
+    message = "Use JsContext or evalJs instead.",
+    level = DeprecationLevel.WARNING,
+) */
 suspend fun getRhinoContext(): org.mozilla.javascript.Context {
     return Coroutines.mainWork {
         val rhino = org.mozilla.javascript.Context.enter()
