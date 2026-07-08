@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
@@ -104,34 +105,34 @@ class SubSourceApi : SubtitleAPI() {
 
     @Serializable
     data class SearchRoot(
-        @SerialName("success") var success: Boolean? = null,
-        @SerialName("results") var results: ArrayList<Results> = arrayListOf(),
-        @SerialName("users") var users: ArrayList<Users> = arrayListOf()
+        @JsonProperty("success") @SerialName("success") var success: Boolean? = null,
+        @JsonProperty("results") @SerialName("results") var results: ArrayList<Results> = arrayListOf(),
+        @JsonProperty("users") @SerialName("users") var users: ArrayList<Users> = arrayListOf()
     )
 
     @Serializable
     data class Users(
 
-        @SerialName("id") var id: Int? = null,
-        @SerialName("displayname") var displayname: String? = null,
-        @SerialName("avatar") var avatar: String? = null,
-        @SerialName("badges") var badges: ArrayList<String> = arrayListOf()
+        @JsonProperty("id") @SerialName("id") var id: Int? = null,
+        @JsonProperty("displayname") @SerialName("displayname") var displayname: String? = null,
+        @JsonProperty("avatar") @SerialName("avatar") var avatar: String? = null,
+        @JsonProperty("badges") @SerialName("badges") var badges: ArrayList<String> = arrayListOf()
 
     )
 
     @Serializable
     data class Results(
-        @SerialName("id") var id: Int? = null,
-        @SerialName("title") var title: String? = null,
-        @SerialName("type") var type: String? = null,
-        @SerialName("link") var link: String,
-        @SerialName("releaseYear") var releaseYear: Int? = null,
-        @SerialName("poster") var poster: String? = null,
-        @SerialName("subtitleCount") var subtitleCount: String? = null,
-        @SerialName("rating") var rating: Double? = null,
-        @SerialName("cast") var cast: ArrayList<String> = arrayListOf(),
-        @SerialName("genres") var genres: ArrayList<String> = arrayListOf(),
-        @SerialName("score") var score: Double? = null
+        @JsonProperty("id") @SerialName("id") var id: Int? = null,
+        @JsonProperty("title") @SerialName("title") var title: String? = null,
+        @JsonProperty("type") @SerialName("type") var type: String? = null,
+        @JsonProperty("link") @SerialName("link") var link: String,
+        @JsonProperty("releaseYear") @SerialName("releaseYear") var releaseYear: Int? = null,
+        @JsonProperty("poster") @SerialName("poster") var poster: String? = null,
+        @JsonProperty("subtitleCount") @SerialName("subtitleCount") var subtitleCount: String? = null,
+        @JsonProperty("rating") @SerialName("rating") var rating: Double? = null,
+        @JsonProperty("cast") @SerialName("cast") var cast: ArrayList<String> = arrayListOf(),
+        @JsonProperty("genres") @SerialName("genres") var genres: ArrayList<String> = arrayListOf(),
+        @JsonProperty("score") @SerialName("score") var score: Double? = null
     )
 
     @Serializable
@@ -139,7 +140,7 @@ class SubSourceApi : SubtitleAPI() {
     data class ItemRoot(
 
         // @SerialName("media_type" ) var mediaType : String?              = null,
-        @SerialName("subtitles") var subtitles: ArrayList<Subtitles>,
+        @JsonProperty("subtitles") @SerialName("subtitles") var subtitles: ArrayList<Subtitles>,
         //@SerialName("movie"      ) var movie     : Movie?               = Movie()
 
     )
@@ -147,26 +148,26 @@ class SubSourceApi : SubtitleAPI() {
     @Serializable
     data class Subtitles(
 
-        @SerialName("id") var id: Int? = null,
-        @SerialName("language") var language: String,
-        @SerialName("release_type") var releaseType: String? = null,
-        @SerialName("release_info") var releaseInfo: String,
-        @SerialName("upload_date") var uploadDate: String? = null,
-        @SerialName("hearing_impaired") var hearingImpaired: Int? = null,
-        @SerialName("caption") var caption: String? = null,
-        @SerialName("rating") var rating: String? = null,
-        @SerialName("uploader_id") var uploaderId: Int? = null,
-        @SerialName("uploader_displayname") var uploaderDisplayname: String? = null,
-        @SerialName("uploader_badges") var uploaderBadges: ArrayList<String> = arrayListOf(),
-        @SerialName("link") var link: String,
-        @SerialName("production_type") var productionType: String? = null,
-        @SerialName("last_subtitle") var lastSubtitle: Boolean? = null
+        @JsonProperty("id") @SerialName("id") var id: Int? = null,
+        @JsonProperty("language") @SerialName("language") var language: String,
+        @JsonProperty("release_type") @SerialName("release_type") var releaseType: String? = null,
+        @JsonProperty("release_info") @SerialName("release_info") var releaseInfo: String,
+        @JsonProperty("upload_date") @SerialName("upload_date") var uploadDate: String? = null,
+        @JsonProperty("hearing_impaired") @SerialName("hearing_impaired") var hearingImpaired: Int? = null,
+        @JsonProperty("caption") @SerialName("caption") var caption: String? = null,
+        @JsonProperty("rating") @SerialName("rating") var rating: String? = null,
+        @JsonProperty("uploader_id") @SerialName("uploader_id") var uploaderId: Int? = null,
+        @JsonProperty("uploader_displayname") @SerialName("uploader_displayname") var uploaderDisplayname: String? = null,
+        @JsonProperty("uploader_badges") @SerialName("uploader_badges") var uploaderBadges: ArrayList<String> = arrayListOf(),
+        @JsonProperty("link") @SerialName("link") var link: String,
+        @JsonProperty("production_type") @SerialName("production_type") var productionType: String? = null,
+        @JsonProperty("last_subtitle") @SerialName("last_subtitle") var lastSubtitle: Boolean? = null
 
     )
 
     @Serializable
     data class DownloadRoot(
-        @SerialName("subtitle") var subtitle: Subtitle,
+        @JsonProperty("subtitle") @SerialName("subtitle") var subtitle: Subtitle,
         //@SerializedName("movie"         ) var movie         : Movie?         = Movie(),
         //@SerializedName("donationLinks" ) var donationLinks : DonationLinks? = DonationLinks(),
         //@SerializedName("isDownloaded"  ) var isDownloaded  : Boolean?       = null,
@@ -176,28 +177,28 @@ class SubSourceApi : SubtitleAPI() {
     @Serializable
     data class Subtitle(
 
-        @SerialName("id") var id: Int? = null,
-        @SerialName("uploaded_at") var uploadedAt: String? = null,
-        @SerialName("language") var language: String? = null,
-        @SerialName("rating") var rating: String? = null,
+        @JsonProperty("id") @SerialName("id") var id: Int? = null,
+        @JsonProperty("uploaded_at") @SerialName("uploaded_at") var uploadedAt: String? = null,
+        @JsonProperty("language") @SerialName("language") var language: String? = null,
+        @JsonProperty("rating") @SerialName("rating") var rating: String? = null,
         //SerialName("rates"            ) var rates           : Rates?              = Rates(),
-        @SerialName("uploaded_by") var uploadedBy: Int? = null,
+        @JsonProperty("uploaded_by") @SerialName("uploaded_by") var uploadedBy: Int? = null,
         //@SerialName("contribs"         ) var contribs        : ArrayList<Contribs> = arrayListOf(),
-        @SerialName("release_info") var releaseInfo: ArrayList<String> = arrayListOf(),
-        @SerialName("commentary") var commentary: String? = null,
-        @SerialName("files") var files: String? = null,
-        @SerialName("size") var size: String? = null,
-        @SerialName("downloads") var downloads: Int? = null,
-        @SerialName("comments") var comments: Int? = null,
-        @SerialName("production_type") var productionType: String? = null,
-        @SerialName("release_type") var releaseType: String? = null,
-        @SerialName("episode") var episode: String? = null,
-        @SerialName("hearing_impaired") var hearingImpaired: Int? = null,
-        @SerialName("foreign_parts") var foreignParts: String? = null,
-        @SerialName("framerate") var framerate: String? = null,
-        @SerialName("preview") var preview: String? = null,
-        @SerialName("user_uploaded") var userUploaded: Boolean? = null,
-        @SerialName("download_token") var downloadToken: String
+        @JsonProperty("release_info") @SerialName("release_info") var releaseInfo: ArrayList<String> = arrayListOf(),
+        @JsonProperty("commentary") @SerialName("commentary") var commentary: String? = null,
+        @JsonProperty("files") @SerialName("files") var files: String? = null,
+        @JsonProperty("size") @SerialName("size") var size: String? = null,
+        @JsonProperty("downloads") @SerialName("downloads") var downloads: Int? = null,
+        @JsonProperty("comments") @SerialName("comments") var comments: Int? = null,
+        @JsonProperty("production_type") @SerialName("production_type") var productionType: String? = null,
+        @JsonProperty("release_type") @SerialName("release_type") var releaseType: String? = null,
+        @JsonProperty("episode") @SerialName("episode") var episode: String? = null,
+        @JsonProperty("hearing_impaired") @SerialName("hearing_impaired") var hearingImpaired: Int? = null,
+        @JsonProperty("foreign_parts") @SerialName("foreign_parts") var foreignParts: String? = null,
+        @JsonProperty("framerate") @SerialName("framerate") var framerate: String? = null,
+        @JsonProperty("preview") @SerialName("preview") var preview: String? = null,
+        @JsonProperty("user_uploaded") @SerialName("user_uploaded") var userUploaded: Boolean? = null,
+        @JsonProperty("download_token") @SerialName("download_token") var downloadToken: String
 
     )
 }
