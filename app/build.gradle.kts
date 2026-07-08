@@ -119,6 +119,11 @@ android {
         )
         buildConfigField(
             "String",
+            "TMDB_API_KEY",
+            "\"" + (System.getenv("TMDB_API_KEY") ?: localProperties["tmdb.key"] ?: "") + "\""
+        )
+        buildConfigField(
+            "String",
             "SIMKL_CLIENT_ID",
             "\"" + (System.getenv("SIMKL_CLIENT_ID") ?: localProperties["simkl.id"]) + "\""
         )

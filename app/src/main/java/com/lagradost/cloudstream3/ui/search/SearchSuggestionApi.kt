@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.search
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.nicehttp.NiceResponse
@@ -11,7 +12,7 @@ import com.lagradost.nicehttp.NiceResponse
  */
 object SearchSuggestionApi {
     private const val TMDB_API_URL = "https://api.themoviedb.org/3/search/multi"
-    private const val TMDB_API_KEY = "e6333b32409e02a4a6eba6fb7ff866bb"
+    private val TMDB_API_KEY: String = BuildConfig.TMDB_API_KEY
     
     data class TmdbSearchResult(
         @JsonProperty("results") val results: List<TmdbSearchItem>?

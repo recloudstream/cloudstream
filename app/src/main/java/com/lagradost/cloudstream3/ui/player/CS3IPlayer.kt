@@ -158,7 +158,7 @@ class CS3IPlayer : IPlayer {
             it.isCommandAvailable(Player.COMMAND_GET_CURRENT_MEDIA_ITEM) && it.isCurrentMediaItemSeekable
         } ?: false
 
-    private var ignoreSSL: Boolean = true
+    private var ignoreSSL: Boolean = false
     private var playBackSpeed: Float = 1.0f
 
     private var lastMuteVolume: Float = 1.0f
