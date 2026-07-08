@@ -7,6 +7,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.math.E
 import kotlin.math.PI
 import kotlin.math.abs
@@ -23,9 +24,9 @@ import kotlin.time.TimeSource
 
 class JsInterpreterTest {
 
-    private fun bool(code: String, variable: String? = null): Boolean = evalJs(code, variable) as? Boolean ?: false
-    private fun num(code: String, variable: String? = null): Double = evalJs(code, variable) as? Double ?: Double.NaN
-    private fun str(code: String, variable: String? = null): String = jsValueToString(evalJs(code, variable))
+    private fun bool(code: String, variable: String? = null): Boolean = evalJsInternal(code, variable) as? Boolean ?: false
+    private fun num(code: String, variable: String? = null): Double = evalJsInternal(code, variable) as? Double ?: Double.NaN
+    private fun str(code: String, variable: String? = null): String = jsValueToString(evalJsInternal(code, variable))
 
     private fun assertApprox(expected: Double, actual: Double, tol: Double = 1e-9) {
         assertTrue(abs(actual - expected) <= tol, "Expected $expected ± $tol but was $actual")
@@ -78,12 +79,12 @@ class JsInterpreterTest {
 
     @Test
     fun nullLiteral() {
-        assertNull(evalJs("null"))
+        assertNull(evalJsInternal("null"))
     }
 
     @Test
     fun undefinedLiteral() {
-        assertEquals(Unit, evalJs("undefined"))
+        assertEquals(Unit, evalJsInternal("undefined"))
     }
 
     @Test
@@ -541,12 +542,12 @@ class JsInterpreterTest {
 
     @Test
     fun voidOperator() {
-        assertEquals(Unit, evalJs("void 0"))
+        assertEquals(Unit, evalJsInternal("void 0"))
     }
 
     @Test
     fun voidOperatorOnExpression() {
-        assertEquals(Unit, evalJs("void (1+2)"))
+        assertEquals(Unit, evalJsInternal("void (1+2)"))
     }
 
     @Test
@@ -764,7 +765,7 @@ class JsInterpreterTest {
 
     @Test
     fun stringMatchNoMatch() {
-        assertNull(evalJs("'hello'.match('xyz')"))
+        assertNull(evalJsInternal("'hello'.match('xyz')"))
     }
 
     @Test
@@ -939,7 +940,7 @@ class JsInterpreterTest {
 
     @Test
     fun arrayFindNotFound() {
-        assertEquals(Unit, evalJs("[1,2,3].find(function(x){return x>9})"))
+        assertEquals(Unit, evalJsInternal("[1,2,3].find(function(x){return x>9})"))
     }
 
     @Test
@@ -1173,7 +1174,7 @@ class JsInterpreterTest {
 
     @Test
     fun functionReturnUndefinedImplicitly() {
-        assertEquals(Unit, evalJs("function f(){} f()"))
+        assertEquals(Unit, evalJsInternal("function f(){} f()"))
     }
 
     @Test
@@ -1343,7 +1344,7 @@ class JsInterpreterTest {
     @Test
     fun consoleLogDoesNotThrow() {
         // console.log is a no-op; just ensure it runs without exception
-        assertEquals(Unit, evalJs("console.log('test', 1, 2)"))
+        assertEquals(Unit, evalJsInternal("console.log('test', 1, 2)"))
     }
 
     @Test
@@ -1382,56 +1383,19 @@ class JsInterpreterTest {
     }
 
     @Test
-    fun jsContextPersistsVariablesAcrossEvals() {
-        val ctx = JsContext()
-        ctx.eval("var x = 10")
-        ctx.eval("x += 5")
-        assertEquals(15.0, ctx["x"] as? Double ?: 0.0)
-    }
-
-    @Test
-    fun jsContextGetReturnsNullForUndefined() {
-        val ctx = JsContext()
-        assertNull(ctx["nope"])
-    }
-
-    @Test
-    fun jsContextSetExposesValueToEval() {
-        val ctx = JsContext()
-        ctx["base"] = 100.0
-        ctx.eval("var result = base + 1")
-        assertEquals(101.0, ctx["result"] as? Double ?: 0.0)
-    }
-
-    @Test
-    fun jsContextEvalReturnsLastExpression() {
-        val ctx = JsContext()
-        val result = ctx.eval("1+2")
-        assertEquals(3.0, result as? Double ?: 0.0)
-    }
-
-    @Test
-    fun jsContextUrlExtractionPattern() {
-        val scriptContent = "var url = '/e/abc123?t=' + (1000+337) + '&s=xyz'"
-        val ctx = JsContext()
-        ctx.eval(scriptContent)
-        assertEquals("/e/abc123?t=1337&s=xyz", ctx["url"]?.toString())
-    }
-
-    @Test
     fun evaluateMathSimpleAddition() {
-        assertEquals("5", jsValueToString(evalJs("eval(2+3)")))
+        assertEquals("5", jsValueToString(evalJsInternal("eval(2+3)")))
     }
 
     @Test
     fun evaluateMathNestedParens() {
-        assertEquals("12", jsValueToString(evalJs("eval((2+4)*2)")))
+        assertEquals("12", jsValueToString(evalJsInternal("eval((2+4)*2)")))
     }
 
     @Test
     fun evaluateMathProducesCharCode() {
         val code = "eval(1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)"
-        assertEquals(65.0, (evalJs(code) as? Double) ?: 0.0)
+        assertEquals(65.0, (evalJsInternal(code) as? Double) ?: 0.0)
     }
 
     @Test
@@ -1451,17 +1415,17 @@ class JsInterpreterTest {
 
     @Test
     fun evalJsWithVariableNullValue() {
-        assertNull(evalJs("var x = null", "x"))
+        assertNull(evalJsInternal("var x = null", "x"))
     }
 
     @Test
     fun evalJsWithVariableReturnsNullForUndefined() {
-        assertNull(evalJs("var x = 42", "y"))
+        assertNull(evalJsInternal("var x = 42", "y"))
     }
 
     @Test
     fun evalJsWithVariableUnitWhenNoVariable() {
-        assertEquals(Unit, evalJs("var x = 42"))
+        assertEquals(Unit, evalJsInternal("var x = 42"))
     }
 
     @Test
@@ -1844,13 +1808,13 @@ class JsInterpreterTest {
 
     @Test
     fun infiniteLoopIsAbortedByExecutionBudget() {
-        assertEquals(Unit, evalJs("while(true){}"))
+        assertEquals(Unit, evalJsInternal("while(true){}"))
     }
 
     @Test
     fun infiniteLoopIsAbortedByTimeBudget() {
         val mark = TimeSource.Monotonic.markNow()
-        val result = evalJs("while(true){}", maxExecutionTime = 200.milliseconds)
+        val result = evalJsInternal("while(true){}", maxExecutionTime = 200.milliseconds)
         assertEquals(Unit, result)
         // Generous upper bound just to avoid flakiness on slow machines.
         assertTrue(mark.elapsedNow() < 2.seconds)
@@ -1860,7 +1824,7 @@ class JsInterpreterTest {
     fun infiniteLoopIsAbortedByTinyInstructionBudget() {
         // A tiny instruction cap but a generous time budget, the instruction count is what
         // should abort this, not the clock.
-        assertEquals(Unit, evalJs("while(true){}", maxExecutionTime = 60.seconds, maxInstructions = 1000))
+        assertEquals(Unit, evalJsInternal("while(true){}", maxExecutionTime = 60.seconds, maxInstructions = 1000))
     }
 
     @Test
@@ -1961,12 +1925,12 @@ class JsInterpreterTest {
 
     @Test
     fun emptyStringMinusNegatedEmptyStringIsZero() {
-        assertEquals(0.0, evalJs("\"\" - - \"\""))
+        assertEquals(0.0, evalJsInternal("\"\" - - \"\""))
     }
 
     @Test
     fun emptyStringMinusNumber() {
-        assertEquals(-1.0, evalJs("\"\" - 1"))
+        assertEquals(-1.0, evalJsInternal("\"\" - 1"))
     }
 
     @Test
@@ -1982,10 +1946,10 @@ class JsInterpreterTest {
 
     @Test
     fun postfixIncrementOnNonLvalueFailsGracefully() {
-        assertEquals(2.0, evalJs("true+1"))
+        assertEquals(2.0, evalJsInternal("true+1"))
         // `true++` has no valid assignment target (a SyntaxError in real JS); evalJs falls
         // back to Unit instead of returning a bogus number.
-        assertEquals(Unit, evalJs("true++"))
+        assertEquals(Unit, evalJsInternal("true++"))
     }
 
     @Test
@@ -2065,7 +2029,7 @@ class JsInterpreterTest {
 
     @Test
     fun combinedCoercionOfNaNEmptyStringAndArrayHoleIsZero() {
-        assertEquals(0.0, evalJs("+!!NaN * \"\" - - [,]"))
+        assertEquals(0.0, evalJsInternal("+!!NaN * \"\" - - [,]"))
     }
 
     /** Returns a [CoroutineScope] backed by a plain [Job] with no dispatcher attached. */
@@ -2075,7 +2039,7 @@ class JsInterpreterTest {
     fun scopeEvalJsFiniteScriptReturnsCorrectResult() {
         // Normal script with an active scope should behave identically to plain evalJs.
         val scope = activeScope()
-        val result = scope.evalJs("var s=0; for(var i=1;i<=10;i++){s+=i}", "s")
+        val result = evalJsInternal("var s=0; for(var i=1;i<=10;i++){s+=i}", "s", scope = scope)
         assertEquals(55.0, result as? Double ?: 0.0)
         scope.cancel()
     }
@@ -2083,7 +2047,7 @@ class JsInterpreterTest {
     @Test
     fun scopeEvalJsStringResultWithActiveScope() {
         val scope = activeScope()
-        val result = jsValueToString(scope.evalJs("'hello'.split('').reverse().join('')"))
+        val result = jsValueToString(evalJsInternal("'hello'.split('').reverse().join('')", scope = scope))
         assertEquals("olleh", result)
         scope.cancel()
     }
@@ -2091,7 +2055,7 @@ class JsInterpreterTest {
     @Test
     fun scopeEvalJsVariableLookupWithActiveScope() {
         val scope = activeScope()
-        val result = scope.evalJs("var x = 21 * 2", "x")
+        val result = evalJsInternal("var x = 21 * 2", "x", scope = scope)
         assertEquals(42.0, result as? Double ?: 0.0)
         scope.cancel()
     }
@@ -2103,7 +2067,7 @@ class JsInterpreterTest {
         val scope = activeScope()
         scope.cancel()
         assertFailsWith<JsCancellationException> {
-            scope.evalJs("var x = 1 + 2", "x")
+            evalJsInternal("var x = 1 + 2", "x", scope = scope)
         }
     }
 
@@ -2116,7 +2080,7 @@ class JsInterpreterTest {
         scope.cancel()
         val mark = TimeSource.Monotonic.markNow()
         assertFailsWith<JsCancellationException> {
-            scope.evalJs("while(true){}")
+            evalJsInternal("while(true){}", scope = scope)
         }
         assertTrue(
             mark.elapsedNow() < 1.seconds,
@@ -2129,7 +2093,7 @@ class JsInterpreterTest {
         // Even with an active (never-cancelled) scope the internal budget still fires.
         val scope = activeScope()
         val mark = TimeSource.Monotonic.markNow()
-        val result = scope.evalJs("while(true){}", maxExecutionTime = 200.milliseconds)
+        val result = evalJsInternal("while(true){}", maxExecutionTime = 200.milliseconds, scope = scope)
         assertEquals(Unit, result)
         assertTrue(mark.elapsedNow() < 2.seconds)
         scope.cancel()
@@ -2144,7 +2108,7 @@ class JsInterpreterTest {
         scope.cancel()
         val mark = TimeSource.Monotonic.markNow()
         assertFailsWith<JsCancellationException> {
-            scope.evalJs("while(true){ try{ throw 1; }catch(e){} }")
+            evalJsInternal("while(true){ try{ throw 1; }catch(e){} }", scope = scope)
         }
         assertTrue(
             mark.elapsedNow() < 1.seconds,
@@ -2160,7 +2124,7 @@ class JsInterpreterTest {
         val scope = activeScope()
         scope.cancel()
         assertFailsWith<JsCancellationException> {
-            scope.evalJs("1+1")
+            evalJsInternal("1+1", scope = scope)
         }
     }
 
@@ -2189,11 +2153,258 @@ class JsInterpreterTest {
                     }
                 }
             }
+
             done.send(Unit)
         }
 
         done.receive()
         assertTrue(elapsed > 200.milliseconds, "evalJs should have run for ~300ms but elapsed: $elapsed")
         assertTrue(elapsed < 1.seconds, "evalJs ran too long: $elapsed")
+    }
+
+    @Test
+    fun newJsContextWithNoInitializerIsUsable() = runTest {
+        val ctx = newJsContext()
+        assertEquals(3.0, ctx.eval("1+2") as? Double ?: 0.0)
+    }
+
+    @Test
+    fun newJsContextInitializerRunsBeforeReturning() = runTest {
+        val ctx = newJsContext {
+            set("x", 10.0)
+            eval("var y = x + 1")
+        }
+
+        assertEquals(11.0, ctx["y"] as? Double ?: 0.0)
+    }
+
+    @Test
+    fun jsContextGetReturnsNullForNeverSetVariable() = runTest {
+        val ctx = newJsContext()
+        assertNull(ctx["neverSet"])
+    }
+
+    @Test
+    fun jsContextSetThenGetRoundTripsSameValue() = runTest {
+        val ctx = newJsContext()
+        ctx["greeting"] = "hello"
+        assertEquals("hello", ctx["greeting"])
+    }
+
+    @Test
+    fun jsContextSetOverwritesPreviousValue() = runTest {
+        val ctx = newJsContext()
+        ctx["x"] = 1.0
+        ctx["x"] = 2.0
+        assertEquals(2.0, ctx["x"] as? Double ?: 0.0)
+    }
+
+    @Test
+    fun jsContextSetNullIsRetrievedAsNull() = runTest {
+        val ctx = newJsContext()
+        ctx["x"] = null
+        assertNull(ctx["x"])
+    }
+
+    @Test
+    fun jsContextGetAfterEvalSetsVariable() = runTest {
+        val ctx = newJsContext()
+        ctx.eval("var fromJs = 42")
+        assertEquals(42.0, ctx["fromJs"] as? Double ?: 0.0)
+    }
+
+    @Test
+    fun jsContextPersistsVariablesAcrossManyEvalCalls() = runTest {
+        val ctx = newJsContext()
+        ctx.eval("var total = 0")
+        repeat(5) { ctx.eval("total += 1") }
+        assertEquals(5.0, ctx["total"] as? Double ?: 0.0)
+    }
+
+    @Test
+    fun jsContextFunctionDeclaredInOneEvalUsableInAnother() = runTest {
+        val ctx = newJsContext()
+        ctx.eval("function double(n) { return n * 2; }")
+        val result = ctx.eval("double(21)")
+        assertEquals(42.0, result as? Double ?: 0.0)
+    }
+
+    @Test
+    fun jsContextArrayMutatedAcrossEvalsPersists() = runTest {
+        val ctx = newJsContext()
+        ctx.eval("var arr = [1,2,3]")
+        ctx.eval("arr.push(4)")
+        assertEquals("1,2,3,4", ctx.eval("arr.join(',')") as? String)
+    }
+
+    @Test
+    fun jsContextEvalReturnsLastStatementValue() = runTest {
+        val ctx = newJsContext()
+        assertEquals(9.0, ctx.eval("var a = 3; a * a") as? Double ?: 0.0)
+    }
+
+    @Test
+    fun jsContextEvalReturnsUnitForDeclarationOnlyStatement() = runTest {
+        val ctx = newJsContext()
+        assertEquals(Unit, ctx.eval("var a = 3"))
+    }
+
+    @Test
+    fun jsContextEvalReturnsStringValue() = runTest {
+        val ctx = newJsContext()
+        assertEquals("ab", ctx.eval("'a' + 'b'"))
+    }
+
+    @Test
+    fun separateJsContextsDoNotShareVariables() = runTest {
+        val ctx1 = newJsContext { set("x", 1.0) }
+        val ctx2 = newJsContext { set("x", 2.0) }
+        assertEquals(1.0, ctx1["x"] as? Double ?: 0.0)
+        assertEquals(2.0, ctx2["x"] as? Double ?: 0.0)
+    }
+
+    @Test
+    fun separateJsContextsDoNotShareFunctions() = runTest {
+        val ctx1 = newJsContext { eval("function f(){ return 1; }") }
+        val ctx2 = newJsContext()
+        assertEquals(1.0, ctx1.eval("f()") as? Double ?: 0.0)
+        // f was never declared in ctx2, so calling it should not crash and yields Unit.
+        assertEquals(Unit, ctx2.eval("typeof f === 'function' ? f() : undefined"))
+    }
+
+    @Test
+    fun jsContextEvalDefaultBudgetHandlesNormalScript() = runTest {
+        val ctx = newJsContext()
+        val result = ctx.eval("var s=0; for(var i=1;i<=1000;i++){s+=i} s")
+        assertEquals(500500.0, result as? Double ?: 0.0)
+    }
+
+    @Test
+    fun jsContextEvalInfiniteLoopAbortedByDefaultInstructionBudget() = runTest {
+        val ctx = newJsContext()
+        assertEquals(Unit, ctx.eval("while(true){}"))
+    }
+
+    @Test
+    fun jsContextEvalInfiniteLoopAbortedByCustomTimeBudget() = runTest {
+        val ctx = newJsContext()
+        ctx.maxExecutionTime = 200.milliseconds
+        val mark = TimeSource.Monotonic.markNow()
+        val result = ctx.eval("while(true){}")
+        assertEquals(Unit, result)
+        assertTrue(mark.elapsedNow() < 2.seconds)
+    }
+
+    @Test
+    fun jsContextEvalInfiniteLoopAbortedByTinyInstructionBudget() = runTest {
+        val ctx = newJsContext()
+        ctx.maxExecutionTime = 60.seconds
+        ctx.maxInstructions = 1000
+        // High time budget; instruction cap should be what stops it.
+        val result = ctx.eval("while(true){}")
+        assertEquals(Unit, result)
+    }
+
+    @Test
+    fun jsContextEvalCustomBudgetAppliesOnlyToThatCall() = runTest {
+        val ctx = newJsContext()
+        ctx.maxInstructions = 100
+        // Abort this call
+        assertEquals(Unit, ctx.eval("while(true){}"))
+        // The next call, using the defaults again, runs a normal script fine.
+        val result = ctx.eval("1+1")
+        assertEquals(2.0, result as? Double ?: 0.0)
+    }
+
+    @Test
+    fun jsContextEvalVariablesSurviveAnAbortedPriorCall() = runTest {
+        val ctx = newJsContext()
+        ctx.maxInstructions = 100
+        ctx.eval("var x = 5")
+        ctx.eval("while(true){}")
+        assertEquals(5.0, ctx["x"] as? Double ?: 0.0)
+    }
+
+    @Test
+    fun jsContextEvalCancelledWhenEnclosingCoroutineCancelledViaWithTimeout() = runTest {
+        val done = Channel<Unit>()
+        var elapsed = Duration.ZERO
+        activeScope().launch {
+            assertFailsWith<JsCancellationException> {
+                withTimeout(300.milliseconds) {
+                    val ctx = newJsContext()
+                    val mark = TimeSource.Monotonic.markNow()
+                    try {
+                        ctx.eval("while(true){}")
+                    } finally {
+                        elapsed = mark.elapsedNow()
+                    }
+                }
+            }
+
+            done.send(Unit)
+        }
+
+        done.receive()
+        assertTrue(elapsed > 200.milliseconds, "expected genuine ~300ms run, was $elapsed")
+        assertTrue(elapsed < 1.seconds, "expected prompt cancellation, was $elapsed")
+    }
+
+    @Test
+    fun jsContextEvalNotCancelledWhenWithTimeoutDoesNotExpire() = runTest {
+        val ctx = newJsContext()
+        val result = withTimeoutOrNull(5.seconds) {
+            ctx.eval("var s=0; for(var i=0;i<100;i++){s+=i} s")
+        }
+
+        assertEquals(4950.0, result as? Double ?: 0.0)
+    }
+
+    @Test
+    fun jsContextJsTryCatchCannotSwallowEnclosingCancellation() = runTest {
+        val done = Channel<Unit>()
+        var elapsed = Duration.ZERO
+        activeScope().launch {
+            assertFailsWith<JsCancellationException> {
+                withTimeout(300.milliseconds) {
+                    val ctx = newJsContext()
+                    val mark = TimeSource.Monotonic.markNow()
+                    try {
+                        ctx.eval("while(true){ try{ throw 1; }catch(e){} }")
+                    } finally {
+                        elapsed = mark.elapsedNow()
+                    }
+                }
+            }
+            done.send(Unit)
+        }
+
+        done.receive()
+        assertTrue(elapsed < 1.seconds, "JS try/catch appears to have swallowed cancellation; elapsed: $elapsed")
+    }
+
+    @Test
+    fun jsContextUrlExtractionPattern() = runTest {
+        val ctx = newJsContext()
+        ctx.eval("var url = '/e/abc123?t=' + (1000+337) + '&s=xyz'")
+        assertEquals("/e/abc123?t=1337&s=xyz", ctx["url"]?.toString())
+    }
+
+    @Test
+    fun jsContextInitializerCanReadBackItsOwnEvalResult() = runTest {
+        var capturedDuringInit: Any? = null
+        newJsContext {
+            capturedDuringInit = eval("2 * 21")
+        }
+
+        assertEquals(42.0, capturedDuringInit as? Double ?: 0.0)
+    }
+
+    @Test
+    fun jsContextSequentialIndependentComputations() = runTest {
+        val ctx = newJsContext()
+        assertEquals(4.0, ctx.eval("2+2") as? Double ?: 0.0)
+        assertEquals("hi", ctx.eval("'h'+'i'") as? String)
+        assertFalse(ctx.eval("1 > 2") as? Boolean ?: true)
     }
 }

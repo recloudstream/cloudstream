@@ -29,11 +29,11 @@ open class Userload : ExtractorApi() {
         return array
     }
 
-    private fun evaluateMath(mathExpression: String): String {
+    private suspend fun evaluateMath(mathExpression: String): String {
         return jsValueToString(evalJs("eval($mathExpression)"))
     }
 
-    private fun decodeVideoJs(text: String): List<String> {
+    private suspend fun decodeVideoJs(text: String): List<String> {
         text.replace("""\s+|/\*.*?\*/""".toRegex(), "")
         val data = text.split("""+(ﾟДﾟ)[ﾟoﾟ]""")[1]
         val chars = data.split("""+ (ﾟДﾟ)[ﾟεﾟ]+""").drop(1)
