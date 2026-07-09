@@ -107,7 +107,7 @@ class SettingsFragment : Fragment() {
 
     private fun buildVersionState(): SettingsVersionState {
         val buildDate = SimpleDateFormat
-            .getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, Locale.getDefault())
+            .getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM, Locale.getDefault())
             .apply { timeZone = TimeZone.getTimeZone("UTC") }
             .format(Date(BuildConfig.BUILD_DATE))
             .replace("UTC", "")
