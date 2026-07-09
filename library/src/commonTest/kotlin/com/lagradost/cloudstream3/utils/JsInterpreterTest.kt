@@ -28,6 +28,10 @@ class JsInterpreterTest {
     private fun num(code: String, variable: String? = null): Double = evalJsInternal(code, variable) as? Double ?: Double.NaN
     private fun str(code: String, variable: String? = null): String = jsValueToString(evalJsInternal(code, variable))
 
+    private suspend fun JsContext.bool(code: String): Boolean = eval(code) as? Boolean ?: false
+    private suspend fun JsContext.num(code: String): Double = eval(code) as? Double ?: Double.NaN
+    private suspend fun JsContext.str(code: String): String = jsValueToString(eval(code))
+
     private fun assertApprox(expected: Double, actual: Double, tol: Double = 1e-9) {
         assertTrue(abs(actual - expected) <= tol, "Expected $expected ± $tol but was $actual")
     }
@@ -1384,18 +1388,18 @@ class JsInterpreterTest {
 
     @Test
     fun evaluateMathSimpleAddition() {
-        assertEquals("5", jsValueToString(evalJsInternal("eval(2+3)")))
+        assertEquals("5", str("eval(2+3)"))
     }
 
     @Test
     fun evaluateMathNestedParens() {
-        assertEquals("12", jsValueToString(evalJsInternal("eval((2+4)*2)")))
+        assertEquals("12", str("eval((2+4)*2)"))
     }
 
     @Test
     fun evaluateMathProducesCharCode() {
         val code = "eval(1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)"
-        assertEquals(65.0, (evalJsInternal(code) as? Double) ?: 0.0)
+        assertEquals(65.0, num(code))
     }
 
     @Test
@@ -1925,12 +1929,12 @@ class JsInterpreterTest {
 
     @Test
     fun emptyStringMinusNegatedEmptyStringIsZero() {
-        assertEquals(0.0, evalJsInternal("\"\" - - \"\""))
+        assertEquals(0.0, num("\"\" - - \"\""))
     }
 
     @Test
     fun emptyStringMinusNumber() {
-        assertEquals(-1.0, evalJsInternal("\"\" - 1"))
+        assertEquals(-1.0, num("\"\" - 1"))
     }
 
     @Test
@@ -1946,7 +1950,7 @@ class JsInterpreterTest {
 
     @Test
     fun postfixIncrementOnNonLvalueFailsGracefully() {
-        assertEquals(2.0, evalJsInternal("true+1"))
+        assertEquals(2.0, num("true+1"))
         // `true++` has no valid assignment target (a SyntaxError in real JS); evalJs falls
         // back to Unit instead of returning a bogus number.
         assertEquals(Unit, evalJsInternal("true++"))
@@ -2029,7 +2033,7 @@ class JsInterpreterTest {
 
     @Test
     fun combinedCoercionOfNaNEmptyStringAndArrayHoleIsZero() {
-        assertEquals(0.0, evalJsInternal("+!!NaN * \"\" - - [,]"))
+        assertEquals(0.0, num("+!!NaN * \"\" - - [,]"))
     }
 
     /** Returns a [CoroutineScope] backed by a plain [Job] with no dispatcher attached. */
@@ -2154,7 +2158,6 @@ class JsInterpreterTest {
                     }
                 }
             }
-
             done.send(Unit)
         }
 
@@ -2166,7 +2169,7 @@ class JsInterpreterTest {
     @Test
     fun newJsContextWithNoInitializerIsUsable() = runTest {
         val ctx = newJsContext()
-        assertEquals(3.0, ctx.eval("1+2") as? Double ?: 0.0)
+        assertEquals(3.0, ctx.num("1+2"))
     }
 
     @Test
@@ -2226,8 +2229,7 @@ class JsInterpreterTest {
     fun jsContextFunctionDeclaredInOneEvalUsableInAnother() = runTest {
         val ctx = newJsContext()
         ctx.eval("function double(n) { return n * 2; }")
-        val result = ctx.eval("double(21)")
-        assertEquals(42.0, result as? Double ?: 0.0)
+        assertEquals(42.0, ctx.num("double(21)"))
     }
 
     @Test
@@ -2235,13 +2237,13 @@ class JsInterpreterTest {
         val ctx = newJsContext()
         ctx.eval("var arr = [1,2,3]")
         ctx.eval("arr.push(4)")
-        assertEquals("1,2,3,4", ctx.eval("arr.join(',')") as? String)
+        assertEquals("1,2,3,4", ctx.str("arr.join(',')"))
     }
 
     @Test
     fun jsContextEvalReturnsLastStatementValue() = runTest {
         val ctx = newJsContext()
-        assertEquals(9.0, ctx.eval("var a = 3; a * a") as? Double ?: 0.0)
+        assertEquals(9.0, ctx.num("var a = 3; a * a"))
     }
 
     @Test
@@ -2253,7 +2255,7 @@ class JsInterpreterTest {
     @Test
     fun jsContextEvalReturnsStringValue() = runTest {
         val ctx = newJsContext()
-        assertEquals("ab", ctx.eval("'a' + 'b'"))
+        assertEquals("ab", ctx.str("'a' + 'b'"))
     }
 
     @Test
@@ -2268,7 +2270,7 @@ class JsInterpreterTest {
     fun separateJsContextsDoNotShareFunctions() = runTest {
         val ctx1 = newJsContext { eval("function f(){ return 1; }") }
         val ctx2 = newJsContext()
-        assertEquals(1.0, ctx1.eval("f()") as? Double ?: 0.0)
+        assertEquals(1.0, ctx1.num("f()"))
         // f was never declared in ctx2, so calling it should not crash and yields Unit.
         assertEquals(Unit, ctx2.eval("typeof f === 'function' ? f() : undefined"))
     }
@@ -2276,8 +2278,7 @@ class JsInterpreterTest {
     @Test
     fun jsContextEvalDefaultBudgetHandlesNormalScript() = runTest {
         val ctx = newJsContext()
-        val result = ctx.eval("var s=0; for(var i=1;i<=1000;i++){s+=i} s")
-        assertEquals(500500.0, result as? Double ?: 0.0)
+        assertEquals(500500.0, ctx.num("var s=0; for(var i=1;i<=1000;i++){s+=i} s"))
     }
 
     @Test
@@ -2313,8 +2314,7 @@ class JsInterpreterTest {
         // Abort this call
         assertEquals(Unit, ctx.eval("while(true){}"))
         // The next call, using the defaults again, runs a normal script fine.
-        val result = ctx.eval("1+1")
-        assertEquals(2.0, result as? Double ?: 0.0)
+        assertEquals(2.0, ctx.num("1+1"))
     }
 
     @Test
@@ -2343,7 +2343,6 @@ class JsInterpreterTest {
                     }
                 }
             }
-
             done.send(Unit)
         }
 
@@ -2356,10 +2355,10 @@ class JsInterpreterTest {
     fun jsContextEvalNotCancelledWhenWithTimeoutDoesNotExpire() = runTest {
         val ctx = newJsContext()
         val result = withTimeoutOrNull(5.seconds) {
-            ctx.eval("var s=0; for(var i=0;i<100;i++){s+=i} s")
+            ctx.num("var s=0; for(var i=0;i<100;i++){s+=i} s")
         }
 
-        assertEquals(4950.0, result as? Double ?: 0.0)
+        assertEquals(4950.0, result ?: Double.NaN)
     }
 
     @Test
@@ -2395,19 +2394,19 @@ class JsInterpreterTest {
 
     @Test
     fun jsContextInitializerCanReadBackItsOwnEvalResult() = runTest {
-        var capturedDuringInit: Any? = null
+        var capturedDuringInit: Double? = null
         newJsContext {
-            capturedDuringInit = eval("2 * 21")
+            capturedDuringInit = num("2 * 21")
         }
 
-        assertEquals(42.0, capturedDuringInit as? Double ?: 0.0)
+        assertEquals(42.0, capturedDuringInit ?: Double.NaN)
     }
 
     @Test
     fun jsContextSequentialIndependentComputations() = runTest {
         val ctx = newJsContext()
-        assertEquals(4.0, ctx.eval("2+2") as? Double ?: 0.0)
-        assertEquals("hi", ctx.eval("'h'+'i'") as? String)
-        assertFalse(ctx.eval("1 > 2") as? Boolean ?: true)
+        assertEquals(4.0, ctx.num("2+2"))
+        assertEquals("hi", ctx.str("'h'+'i'"))
+        assertFalse(ctx.bool("1 > 2"))
     }
 }
