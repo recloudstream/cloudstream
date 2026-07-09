@@ -12,10 +12,10 @@ import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
-import java.security.MessageDigest
-import javax.crypto.Cipher
-import javax.crypto.spec.IvParameterSpec
-import javax.crypto.spec.SecretKeySpec
+import dev.whyoleg.cryptography.CryptographyProvider
+import dev.whyoleg.cryptography.DelicateCryptographyApi
+import dev.whyoleg.cryptography.algorithms.AES
+import dev.whyoleg.cryptography.algorithms.MD5
 
 class Megacloud : Rabbitstream() {
     override val name = "Megacloud"
@@ -62,7 +62,6 @@ class Megacloud : Rabbitstream() {
 
         return indexPairs
     }
-
 }
 
 class Dokicloud : Rabbitstream() {
@@ -78,6 +77,10 @@ open class Rabbitstream : ExtractorApi() {
     override val requiresReferer = false
     open val embed = "ajax/embed-4"
     open val key = "https://raw.githubusercontent.com/eatmynerds/key/e4/key.txt"
+
+    private val aesCbc = CryptographyProvider.Default.get(AES.CBC)
+    @OptIn(DelicateCryptographyApi::class)
+    private val md5Hasher = CryptographyProvider.Default.get(MD5).hasher()
 
     override suspend fun getUrl(
         url: String,
@@ -122,8 +125,6 @@ open class Rabbitstream : ExtractorApi() {
                 )
             )
         }
-
-
     }
 
     open suspend fun extractRealKey(sources: String): Pair<String, String> {
@@ -140,8 +141,8 @@ open class Rabbitstream : ExtractorApi() {
     private fun decrypt(input: String, key: String): String {
         return decryptSourceUrl(
             generateKey(
-                base64DecodeArray(input).copyOfRange(8, 16),
-                key.toByteArray()
+                salt = base64DecodeArray(input).copyOfRange(8, 16),
+                secret = key.encodeToByteArray()
             ), input
         )
     }
@@ -156,20 +157,18 @@ open class Rabbitstream : ExtractorApi() {
         return currentKey
     }
 
-    private fun md5(input: ByteArray): ByteArray {
-        return MessageDigest.getInstance("MD5").digest(input)
-    }
+    private fun md5(input: ByteArray): ByteArray =
+        md5Hasher.hashBlocking(input)
 
+    @OptIn(DelicateCryptographyApi::class)
     private fun decryptSourceUrl(decryptionKey: ByteArray, sourceUrl: String): String {
         val cipherData = base64DecodeArray(sourceUrl)
         val encrypted = cipherData.copyOfRange(16, cipherData.size)
-        val aesCBC = Cipher.getInstance("AES/CBC/PKCS5Padding")
-        aesCBC.init(
-            Cipher.DECRYPT_MODE,
-            SecretKeySpec(decryptionKey.copyOfRange(0, 32), "AES"),
-            IvParameterSpec(decryptionKey.copyOfRange(32, decryptionKey.size))
-        )
-        val decryptedData = aesCBC?.doFinal(encrypted) ?: throw ErrorLoadingException("Cipher not found")
+        val keyBytes = decryptionKey.copyOfRange(0, 32)
+        val ivBytes = decryptionKey.copyOfRange(32, decryptionKey.size)
+
+        val aesKey = aesCbc.keyDecoder().decodeFromByteArrayBlocking(AES.Key.Format.RAW, keyBytes)
+        val decryptedData = aesKey.cipher(padding = true).decryptWithIvBlocking(ivBytes, encrypted)
         return decryptedData.decodeToString()
     }
 
@@ -195,5 +194,4 @@ open class Rabbitstream : ExtractorApi() {
         @JsonProperty("encrypted") val encrypted: Boolean? = null,
         @JsonProperty("tracks") val tracks: List<Tracks?>? = emptyList(),
     )
-
 }

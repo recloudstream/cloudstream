@@ -1,8 +1,12 @@
+@file:OptIn(ExperimentalUuidApi::class)
+
 package com.lagradost.cloudstream3.utils
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fleeksoft.ksoup.Ksoup
 import com.lagradost.cloudstream3.AudioFile
 import com.lagradost.cloudstream3.IDownloadableMinimum
+import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
@@ -76,8 +80,10 @@ import com.lagradost.cloudstream3.extractors.FileMoonIn
 import com.lagradost.cloudstream3.extractors.FileMoonSx
 import com.lagradost.cloudstream3.extractors.FilemoonV2
 import com.lagradost.cloudstream3.extractors.Filesim
+import com.lagradost.cloudstream3.extractors.Firestream
 import com.lagradost.cloudstream3.extractors.Multimoviesshg
 import com.lagradost.cloudstream3.extractors.FlaswishCom
+import com.lagradost.cloudstream3.extractors.Flyfile
 import com.lagradost.cloudstream3.extractors.FourCX
 import com.lagradost.cloudstream3.extractors.FourPichive
 import com.lagradost.cloudstream3.extractors.FourPlayRu
@@ -223,12 +229,10 @@ import com.lagradost.cloudstream3.extractors.StreamWishExtractor
 import com.lagradost.cloudstream3.extractors.StreamhideCom
 import com.lagradost.cloudstream3.extractors.StreamhideTo
 import com.lagradost.cloudstream3.extractors.Streamhub2
-import com.lagradost.cloudstream3.extractors.Streamix
 import com.lagradost.cloudstream3.extractors.Streamlare
 import com.lagradost.cloudstream3.extractors.StreamoUpload
 import com.lagradost.cloudstream3.extractors.Streamplay
 import com.lagradost.cloudstream3.extractors.Streamsss
-import com.lagradost.cloudstream3.extractors.Streamup
 import com.lagradost.cloudstream3.extractors.Streamwish2
 import com.lagradost.cloudstream3.extractors.Strwish
 import com.lagradost.cloudstream3.extractors.Strwish2
@@ -266,6 +270,7 @@ import com.lagradost.cloudstream3.extractors.VidHidePro5
 import com.lagradost.cloudstream3.extractors.VidHidePro6
 import com.lagradost.cloudstream3.extractors.VidHideHub
 import com.lagradost.cloudstream3.extractors.Ryderjet
+import com.lagradost.cloudstream3.extractors.Streamcash
 import com.lagradost.cloudstream3.extractors.VidMoxy
 import com.lagradost.cloudstream3.extractors.VidStack
 import com.lagradost.cloudstream3.extractors.VideoSeyred
@@ -282,8 +287,17 @@ import com.lagradost.cloudstream3.extractors.Vidoza
 import com.lagradost.cloudstream3.extractors.VinovoSi
 import com.lagradost.cloudstream3.extractors.VinovoTo
 import com.lagradost.cloudstream3.extractors.VidNest
+import com.lagradost.cloudstream3.extractors.VidaaraxCom
+import com.lagradost.cloudstream3.extractors.VidaaraxNet
 import com.lagradost.cloudstream3.extractors.Vidara
+import com.lagradost.cloudstream3.extractors.VidaraSo
+import com.lagradost.cloudstream3.extractors.Vidaraa
+import com.lagradost.cloudstream3.extractors.Vidaratem
+import com.lagradost.cloudstream3.extractors.Vidaraw
+import com.lagradost.cloudstream3.extractors.Vidarax
+import com.lagradost.cloudstream3.extractors.Vidavaca
 import com.lagradost.cloudstream3.extractors.Vide0Net
+import com.lagradost.cloudstream3.extractors.Vids
 import com.lagradost.cloudstream3.extractors.Vidsonic
 import com.lagradost.cloudstream3.extractors.VkExtractor
 import com.lagradost.cloudstream3.extractors.Voe
@@ -309,14 +323,16 @@ import com.lagradost.cloudstream3.extractors.ZplayerV2
 import com.lagradost.cloudstream3.extractors.Ztreamhub
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.Coroutines.atomicListOf
+import io.ktor.http.Url
+import io.ktor.http.decodeURLPart
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
-import me.xdrop.fuzzywuzzy.FuzzySearch
-import org.jsoup.Jsoup
-import java.net.URI
-import java.util.UUID
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
+import kotlin.uuid.toJavaUuid
+import kotlin.uuid.toKotlinUuid
 
 /**
  * For use in the ConcatenatingMediaSource.
@@ -415,7 +431,7 @@ enum class ExtractorLinkType {
 
 private fun inferTypeFromUrl(url: String): ExtractorLinkType {
     val path = try {
-        URI(url).path
+        Url(url).encodedPath.decodeURLPart()
     } catch (_: Throwable) {
         // don't log magnet links as errors
         null
@@ -432,29 +448,43 @@ private fun inferTypeFromUrl(url: String): ExtractorLinkType {
 val INFER_TYPE: ExtractorLinkType? = null
 
 /**
- * UUID for the ClearKey DRM scheme.
+ * [Uuid] for the ClearKey DRM scheme.
  *
  *
  * ClearKey is supported on Android devices running Android 5.0 (API Level 21) and up.
  */
-val CLEARKEY_UUID = UUID(-0x1d8e62a7567a4c37L, 0x781AB030AF78D30EL)
+@Prerelease
+val CLEARKEY_DRM_UUID = Uuid.fromLongs(-0x1d8e62a7567a4c37L, 0x781AB030AF78D30EL)
 
 /**
- * UUID for the Widevine DRM scheme.
+ * [Uuid] for the Widevine DRM scheme.
  *
  *
  * Widevine is supported on Android devices running Android 4.3 (API Level 18) and up.
  */
-val WIDEVINE_UUID = UUID(-0x121074568629b532L, -0x5c37d8232ae2de13L)
+@Prerelease
+val WIDEVINE_DRM_UUID = Uuid.fromLongs(-0x121074568629b532L, -0x5c37d8232ae2de13L)
 
 /**
- * UUID for the PlayReady DRM scheme.
+ * [Uuid] for the PlayReady DRM scheme.
  *
  *
  * PlayReady is supported on all AndroidTV devices. Note that most other Android devices do not
  * provide PlayReady support.
  */
-val PLAYREADY_UUID = UUID(-0x65fb0f8667bfbd7aL, -0x546d19a41f77a06bL)
+@Prerelease
+val PLAYREADY_DRM_UUID = Uuid.fromLongs(-0x65fb0f8667bfbd7aL, -0x546d19a41f77a06bL)
+
+// Deprecate after next stable
+
+// @Deprecated("Use CLEARKEY_DRM_UUID", ReplaceWith("CLEARKEY_DRM_UUID"), level = DeprecationLevel.WARNING)
+val CLEARKEY_UUID = CLEARKEY_DRM_UUID.toJavaUuid()
+
+// @Deprecated("Use WIDEVINE_DRM_UUID", ReplaceWith("WIDEVINE_DRM_UUID"), level = DeprecationLevel.WARNING)
+val WIDEVINE_UUID = WIDEVINE_DRM_UUID.toJavaUuid()
+
+// @Deprecated("Use PLAYREADY_DRM_UUID", ReplaceWith("PLAYREADY_DRM_UUID"), level = DeprecationLevel.WARNING)
+val PLAYREADY_UUID = PLAYREADY_DRM_UUID.toJavaUuid()
 
 suspend fun newExtractorLink(
     source: String,
@@ -477,15 +507,42 @@ suspend fun newExtractorLink(
     return builder
 }
 
+// Deprecate after next stable
+/* @Deprecated(
+    message = "Use Kotlin Uuid (kotlin.uuid.Uuid) instead of Java UUID.",
+    level = DeprecationLevel.WARNING,
+) */
 suspend fun newDrmExtractorLink(
     source: String,
     name: String,
     url: String,
     type: ExtractorLinkType? = null,
-    uuid: UUID,
+    uuid: java.util.UUID,
     initializer: suspend DrmExtractorLink.() -> Unit = { }
 ): DrmExtractorLink {
+    @Suppress("DEPRECATION_ERROR")
+    val builder =
+        DrmExtractorLink(
+            source = source,
+            name = name,
+            url = url,
+            uuid = uuid.toKotlinUuid(),
+            type = type ?: INFER_TYPE
+        )
 
+    builder.initializer()
+    return builder
+}
+
+@Prerelease
+suspend fun newDrmExtractorLink(
+    source: String,
+    name: String,
+    url: String,
+    type: ExtractorLinkType? = null,
+    uuid: Uuid,
+    initializer: suspend DrmExtractorLink.() -> Unit = {},
+): DrmExtractorLink {
     @Suppress("DEPRECATION_ERROR")
     val builder =
         DrmExtractorLink(
@@ -511,7 +568,7 @@ suspend fun newDrmExtractorLink(
  * @property type the type of the media, use [INFER_TYPE] if you want to auto infer the type from the url
  * @property kid  Base64 value of The KID element (Key Id) contains the identifier of the key associated with a license.
  * @property key Base64 value of Key to be used to decrypt the media file.
- * @property uuid Drm UUID [WIDEVINE_UUID], [PLAYREADY_UUID], [CLEARKEY_UUID] (by default) .. etc
+ * @property uuid Drm [Uuid] [WIDEVINE_DRM_UUID], [PLAYREADY_DRM_UUID], [CLEARKEY_DRM_UUID] (by default) .. etc
  * @property kty Key type "oct" (octet sequence) by default
  * @property keyRequestParameters Parameters that will used to request the key.
  * @see newDrmExtractorLink
@@ -529,7 +586,7 @@ open class DrmExtractorLink private constructor(
     override var type: ExtractorLinkType,
     open var kid: String? = null,
     open var key: String? = null,
-    open var uuid: UUID,
+    open var uuid: Uuid,
     open var kty: String? = null,
     open var keyRequestParameters: HashMap<String, String>,
     open var licenseUrl: String? = null,
@@ -551,7 +608,7 @@ open class DrmExtractorLink private constructor(
         extractorData: String? = null,
         kid: String? = null,
         key: String? = null,
-        uuid: UUID = CLEARKEY_UUID,
+        uuid: Uuid = CLEARKEY_DRM_UUID,
         kty: String? = "oct",
         keyRequestParameters: HashMap<String, String> = hashMapOf(),
         licenseUrl: String? = null,
@@ -586,7 +643,7 @@ open class DrmExtractorLink private constructor(
         extractorData: String? = null,
         kid: String? = null,
         key: String? = null,
-        uuid: UUID = CLEARKEY_UUID,
+        uuid: Uuid = CLEARKEY_DRM_UUID,
         kty: String? = "oct",
         keyRequestParameters: HashMap<String, String> = hashMapOf(),
         licenseUrl: String? = null,
@@ -606,6 +663,14 @@ open class DrmExtractorLink private constructor(
         kty = kty,
         licenseUrl = licenseUrl,
     )
+
+    @Deprecated(message = "Use Kotlin Uuid", level = DeprecationLevel.HIDDEN)
+    fun setUuid(uuid: java.util.UUID) {
+        this.uuid = uuid.toKotlinUuid()
+    }
+
+    @Deprecated(message = "Use Kotlin Uuid", level = DeprecationLevel.HIDDEN)
+    fun getUuid(): java.util.UUID = this.uuid.toJavaUuid()
 }
 
 /** Class holds extracted media info to be passed to the player.
@@ -765,7 +830,7 @@ constructor(
 
 /**
  * Removes https:// and www.
- * To match urls regardless of schema, perhaps Uri() can be used?
+ * To match urls regardless of schema, perhaps Url() can be used?
  */
 val schemaStripRegex = Regex("""^(https:|)//(www\.|)""")
 
@@ -884,7 +949,7 @@ suspend fun loadExtractor(
     // this is to match mirror domains - like example.com, example.net
     for (index in extractorApis.lastIndex downTo 0) {
         val extractor = extractorApis[index]
-        if (FuzzySearch.partialRatio(
+        if (Levenshtein.partialRatio(
                 extractor.mainUrl,
                 currentUrl
             ) > 80
@@ -1034,6 +1099,7 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     Tantifilm(),
     Userload(),
     Supervideo(),
+    Streamcash(),
 
     // StreamSB.kt works
     //  SBPlay(),
@@ -1104,9 +1170,15 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     MoviehabNet(),
     Jeniusplay(),
     StreamoUpload(),
-    Streamup(),
-    Streamix(),
     Vidara(),
+    Vidavaca(),
+    Vidaraa(),
+    Vidaraw(),
+    Vidarax(),
+    VidaraSo(),
+    Vidaratem(),
+    VidaaraxCom(),
+    VidaaraxNet(),
 
     GamoVideo(),
     Gdriveplayerapi(),
@@ -1243,6 +1315,9 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     GUpload(),
     HlsWish(),
     ByseQekaho(),
+    Flyfile(),
+    Firestream(),
+    Vids(),
 )
 
 
@@ -1262,7 +1337,7 @@ fun httpsify(url: String): String {
 }
 
 suspend fun getPostForm(requestUrl: String, html: String): String? {
-    val document = Jsoup.parse(html)
+    val document = Ksoup.parse(html)
     val inputs = document.select("Form > input")
     if (inputs.size < 4) return null
     var op: String? = null

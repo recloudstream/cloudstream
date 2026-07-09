@@ -579,8 +579,10 @@ object CommonActivity {
 
             // TODO: Figure out why removing the check for SearchAutoComplete seems
             // to break focus on TV as it shouldn't need to be used.
+            // Also handle KEYCODE_ENTER here because some remotes (e.g. LG Magic Remote)
+            // send KEYCODE_ENTER instead of KEYCODE_DPAD_CENTER when clicking the OK button.
             @SuppressLint("RestrictedApi")
-            if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER &&
+            if ((keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER) &&
                 (act.currentFocus is SearchView || act.currentFocus is SearchView.SearchAutoComplete)
             ) {
                 showInputMethod(act.currentFocus?.findFocus())
