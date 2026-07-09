@@ -326,7 +326,7 @@ object APIHolder {
         ).toJson().toRequestBody(RequestBodyTypes.JSON.toMediaTypeOrNull())
 
         return app.post("https://graphql.anilist.co", requestBody = data)
-            .parsedSafe()
+            .parsedSafe<AniSearch>()
     }
 }
 
