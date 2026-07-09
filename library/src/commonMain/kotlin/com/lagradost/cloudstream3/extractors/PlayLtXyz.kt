@@ -50,7 +50,7 @@ open class PlayLtXyz : ExtractorApi() {
             if (data.isSuccessful) {
                 val itemStr = data.text
                 Log.i(this.name, "Result => (data) $itemStr")
-                tryParseJson<ResponseData?>(itemStr)?.let { item ->
+                tryParseJson<ResponseData>(itemStr)?.let { item ->
                     val linkUrl = item.data ?: ""
                     if (linkUrl.isNotBlank()) {
                         extractedLinksList.add(

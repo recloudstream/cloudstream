@@ -96,7 +96,7 @@ open class XStreamCdn : ExtractorApi() {
         val id = url.trimEnd('/').split("/").last()
         val newUrl = "https://$domainUrl/api/source/$id"
         app.post(newUrl, headers = headers).let { res ->
-            val sources = tryParseJson<ResponseJson?>(res.text)
+            val sources = tryParseJson<ResponseJson>(res.text)
             sources?.let {
                 if (it.success && it.data != null) {
                     it.data.map { source ->

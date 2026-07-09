@@ -104,7 +104,7 @@ open class Rabbitstream : ExtractorApi() {
             response.parsedSafe()
         } else {
             val (key, encData) = extractRealKey(sources)
-            val decrypted = decryptMapped<List<Sources>>(encData, key)
+            val decrypted = tryParseJson<List<Sources>>(decrypt(encData, key))
             SourcesResponses(
                 sources = decrypted,
                 tracks = encryptedMap.tracks,
@@ -133,11 +133,6 @@ open class Rabbitstream : ExtractorApi() {
         val rawKeys = parseJson<List<Int>>(app.get(key).text)
         val extractedKey = base64Encode(rawKeys.map { it.toByte() }.toByteArray())
         return extractedKey to sources
-    }
-
-    private inline fun <reified T> decryptMapped(input: String, key: String): T? {
-        val decrypt = decrypt(input, key)
-        return tryParseJson(decrypt)
     }
 
     private fun decrypt(input: String, key: String): String {
