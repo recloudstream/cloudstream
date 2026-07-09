@@ -797,16 +797,9 @@ fun fixTitle(str: String): String {
     }
 }
 
-/**
- * Get rhino context in a safe way as it needs to be initialized on the main thread.
- *
- * Make sure you get the scope using: val scope: Scriptable = rhino.initSafeStandardObjects()
- *
- * Use like the following: rhino.evaluateString(scope, js, "JavaScript", 1, null)
- **/
 // Deprecate after next stable
 /* @Deprecated(
-    message = "Use JsContext or evalJs instead.",
+    message = "Use newJsContext or evalJs instead.",
     level = DeprecationLevel.WARNING,
 ) */
 suspend fun getRhinoContext(): org.mozilla.javascript.Context {
