@@ -101,7 +101,7 @@ open class Rabbitstream : ExtractorApi() {
         val encryptedMap = response.parsedSafe<SourcesEncrypted>()
         val sources = encryptedMap?.sources
         val decryptedSources = if (sources == null || encryptedMap.encrypted == false) {
-            response.parsedSafe()
+            response.parsedSafe<SourcesResponses>()
         } else {
             val (key, encData) = extractRealKey(sources)
             val decrypted = tryParseJson<List<Sources>>(decrypt(encData, key))
