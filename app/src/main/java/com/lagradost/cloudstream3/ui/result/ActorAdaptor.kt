@@ -59,7 +59,7 @@ class ActorAdaptor(
                     Animation.RELATIVE_TO_SELF, 0.5f
                 )
                 anim.fillAfter = true
-                anim.setDuration(200)
+                anim.duration = 200
                 anim.interpolator = OvershootInterpolator()
                 binding.voiceActorImageHolder2.startAnimation(anim)
             }
