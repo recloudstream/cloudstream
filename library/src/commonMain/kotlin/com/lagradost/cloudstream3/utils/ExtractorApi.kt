@@ -297,6 +297,7 @@ import com.lagradost.cloudstream3.extractors.Vidaraw
 import com.lagradost.cloudstream3.extractors.Vidarax
 import com.lagradost.cloudstream3.extractors.Vidavaca
 import com.lagradost.cloudstream3.extractors.Vide0Net
+import com.lagradost.cloudstream3.extractors.Vids
 import com.lagradost.cloudstream3.extractors.Vidsonic
 import com.lagradost.cloudstream3.extractors.VkExtractor
 import com.lagradost.cloudstream3.extractors.Voe
@@ -1316,6 +1317,7 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     ByseQekaho(),
     Flyfile(),
     Firestream(),
+    Vids(),
 )
 
 

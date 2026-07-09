@@ -512,6 +512,9 @@ object PluginManager {
             val res = dir.mkdirs()
             if (!res) {
                 Log.w(TAG, "Failed to create local directories")
+                // We have tried to load local plugins, but exit early.
+                // This needs to be true to prevent the downloader waiting for plugins.
+                loadedLocalPlugins = true
                 return
             }
         }
