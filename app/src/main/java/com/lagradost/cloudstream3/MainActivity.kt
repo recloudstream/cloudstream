@@ -171,6 +171,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.UIHelper.setNavigationBarColorCompat
+import com.lagradost.cloudstream3.utils.UIHelper.showProgress
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
@@ -1428,8 +1429,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
                     else -> {
                         resultviewPreviewBookmark.isEnabled = false
-                        resultviewPreviewBookmark.setIconResource(R.drawable.ic_baseline_bookmark_border_24)
-                        resultviewPreviewBookmark.setText(R.string.loading)
+                        resultviewPreviewBookmark.showProgress()
+                        //resultviewPreviewBookmark.setIconResource(R.drawable.ic_baseline_bookmark_border_24)
+                        //resultviewPreviewBookmark.setText(R.string.loading)
                     }
                 }
             }
