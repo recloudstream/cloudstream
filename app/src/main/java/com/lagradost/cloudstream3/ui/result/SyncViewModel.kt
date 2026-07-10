@@ -306,4 +306,23 @@ class SyncViewModel : ViewModel() {
         updateMetadata()
         updateUserData()
     }
+
+    /** Triggers on every player event (Start/Pause/Stop/Ended) */
+    fun updatePlaybackStatus(
+        status: SyncAPI.PlaybackStatus,
+        season: Int?,
+        episode: Int?,
+        positionMs: Long,
+        durationMs: Long,
+        isAnime: Boolean = false
+    ) = ioSafe {
+        syncs.amap { (prefix, id) ->
+            repos.firstOrNull {
+                it.idPrefix == prefix
+            }?.onPlaybackStatus(
+                progress = SyncAPI.PlaybackProgress(id, season, episode, positionMs, durationMs, isAnime),
+                status = status
+            )
+        }
+    }
 }

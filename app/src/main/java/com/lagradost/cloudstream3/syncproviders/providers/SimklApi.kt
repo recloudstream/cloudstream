@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.core.net.toUri
 import com.fasterxml.jackson.annotation.JsonInclude
@@ -139,6 +140,8 @@ class SimklApi : SyncAPI() {
     companion object {
         private const val CLIENT_ID: String = BuildConfig.SIMKL_CLIENT_ID
         private const val CLIENT_SECRET: String = BuildConfig.SIMKL_CLIENT_SECRET
+        private const val APP_NAME: String = "Cloudstream"
+        private const val APP_VERSION: String = BuildConfig.VERSION_NAME
         const val SIMKL_CACHED_LIST: String = "simkl_cached_list"
         const val SIMKL_CACHED_LIST_TIME: String = "simkl_cached_time"
 
@@ -1083,4 +1086,78 @@ class SimklApi : SyncAPI() {
             profilePicture = user.user.avatar
         )
     }
+
+    override suspend fun onPlaybackStatus(
+        auth: AuthData?,
+        progress: PlaybackProgress,
+        status: PlaybackStatus
+    ): Boolean {
+
+        val token = auth?.token ?: return false
+        val ids = MediaObject.Ids.fromMap(readIdFromString(progress.id))
+
+        val body = if (progress.season != null && progress.episode != null) {
+            val media = MediaObject(
+                title = null,
+                year = null,
+                ids = ids
+            )
+            ScrobbleRequest(
+                show = if (!progress.isAnime) media else null,
+                anime = if (progress.isAnime) media else null,
+                episode = ScrobbleEpisode(
+                    season = progress.season,
+                    episode = progress.episode
+                ),
+                progress = progress.progressPercentage
+            )
+        } else {
+            ScrobbleRequest(
+                movie = MediaObject(
+                    title = null,
+                    year = null,
+                    ids = ids
+                ),
+                progress = progress.progressPercentage
+            )
+        }
+
+        val endPoint = when (status) {
+            PlaybackStatus.Started -> "start"
+            PlaybackStatus.Paused -> "pause"
+            PlaybackStatus.Stopped -> "stop"
+        }
+
+        return try {
+            app.post(
+                url = "$mainUrl/scrobble/$endPoint",
+                params = mapOf(
+                    "app-name" to APP_NAME,
+                    "app-version" to APP_VERSION
+                ),
+                headers = getHeaders(token) + mapOf("User-Agent" to "$APP_NAME/$APP_VERSION"),
+                json = body
+            ).isSuccessful
+        } catch (e: Exception) {
+            logError(e)
+            false
+        }
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    data class ScrobbleEpisode(
+        @JsonProperty("season") val season: Int,
+        @JsonProperty("episode") val episode: Int,
+    )
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    data class ScrobbleRequest(
+        @JsonProperty("show") val show: MediaObject? = null,
+        @JsonProperty("movie") val movie: MediaObject? = null,
+        @JsonProperty("anime") val anime: MediaObject? = null,
+        @JsonProperty("episode") val episode: ScrobbleEpisode? = null,
+        @JsonProperty("progress") val progress: Double,
+
+
+    )
 }

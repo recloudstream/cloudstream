@@ -70,6 +70,36 @@ abstract class SyncAPI : AuthAPI() {
     @Throws
     open fun urlToId(url: String): String? = null
 
+    @Throws
+    @WorkerThread
+    open suspend fun onPlaybackStatus(
+        auth: AuthData?,
+        progress: PlaybackProgress,
+        status: PlaybackStatus
+    ) : Boolean = false
+
+    enum class PlaybackStatus {
+        Started,
+        Paused,
+        Stopped
+    }
+
+    data class PlaybackProgress(
+        /** Show/Movie Sync level ID */
+        val id: String,
+        /** Season Number, Should be null for Movies */
+        val season: Int?,
+        /** Episode Number, Should be null for Movies */
+        val episode: Int?,
+        val positionMs: Long,
+        val durationMs: Long,
+        val isAnime: Boolean = false,
+    ) {
+        val progressPercentage: Double
+            get() = if (durationMs<= 0L) 0.0 else
+                (positionMs.toDouble() / durationMs.toDouble() * 100.0).coerceIn(0.0, 100.0)
+    }
+
     data class SyncSearchResult(
         override val name: String,
         override val apiName: String,

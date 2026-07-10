@@ -27,4 +27,16 @@ class SyncRepo(override val api: SyncAPI) : AuthRepo(api) {
     suspend fun library(): Result<SyncAPI.LibraryMetadata?> = runCatching {
         api.library(freshAuth())
     }
+
+    suspend fun onPlaybackStatus(
+        progress: SyncAPI.PlaybackProgress,
+        status: SyncAPI.PlaybackStatus
+    ): Result<Boolean> =
+        runCatching {
+            api.onPlaybackStatus(
+                freshAuth(),
+                progress,
+                status
+            )
+        }
 }
