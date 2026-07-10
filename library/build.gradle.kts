@@ -76,11 +76,13 @@ kotlin {
 
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
         }
 
         val jvmCommonMain by creating {
             dependsOn(commonMain.get())
             dependencies {
+                implementation(libs.kotlin.reflect)
                 implementation(libs.newpipeextractor)
             }
         }
