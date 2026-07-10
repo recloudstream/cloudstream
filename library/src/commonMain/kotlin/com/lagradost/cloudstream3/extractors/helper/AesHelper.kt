@@ -21,6 +21,21 @@ object AesHelper {
     private val md5Hasher = provider.get(MD5).hasher()
 
     @OptIn(DelicateCryptographyApi::class)
+    @Prerelease
+    suspend fun rawAesCbc(
+        input: ByteArray,
+        key: ByteArray,
+        iv: ByteArray,
+        encrypt: Boolean = true,
+        padding: Boolean = true,
+    ): ByteArray {
+        val aesKey = aesCbc.keyDecoder().decodeFromByteArray(AES.Key.Format.RAW, key)
+        val cipher = aesKey.cipher(padding = padding)
+        return if (!encrypt) {
+            cipher.decryptWithIv(iv, input)
+        } else cipher.encryptWithIv(iv, input)
+    }
+
     suspend fun cryptoAESHandler(
         data: String,
         pass: ByteArray,
@@ -35,14 +50,11 @@ object AesHelper {
             saltLength = parse.s.length / 2,
         ) ?: return null
 
-        val aesKey = aesCbc.keyDecoder().decodeFromByteArray(AES.Key.Format.RAW, key)
-        val cipher = aesKey.cipher(padding = padding)
-
         return if (!encrypt) {
-            val plainBytes = cipher.decryptWithIv(iv, base64DecodeArray(parse.ct))
+            val plainBytes = rawAesCbc(base64DecodeArray(parse.ct), key, iv, encrypt = false, padding = padding)
             plainBytes.decodeToString()
         } else {
-            base64Encode(cipher.encryptWithIv(iv, parse.ct.encodeToByteArray()))
+            base64Encode(rawAesCbc(parse.ct.encodeToByteArray(), key, iv, encrypt = true, padding = padding))
         }
     }
 
