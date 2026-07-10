@@ -799,11 +799,10 @@ fun fixTitle(str: String): String {
     }
 }
 
-// Deprecate after next stable
-/* @Deprecated(
+@Deprecated(
     message = "Use newJsContext or evalJs instead.",
     level = DeprecationLevel.WARNING,
-) */
+)
 suspend fun getRhinoContext(): org.mozilla.javascript.Context {
     return Coroutines.mainWork {
         val rhino = org.mozilla.javascript.Context.enter()
@@ -2560,11 +2559,10 @@ fun Episode.addDate(date: Instant?) {
     this.date = date?.toEpochMilliseconds()
 }
 
-// Deprecate after next stable
-/* @Deprecated(
+@Deprecated(
     message = "Use addDate with LocalDate, Instant, or String instead.",
     level = DeprecationLevel.WARNING,
-) */
+)
 fun Episode.addDate(date: java.util.Date?) {
     this.date = date?.time
 }
