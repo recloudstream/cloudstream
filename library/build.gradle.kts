@@ -69,9 +69,6 @@ kotlin {
             implementation(libs.rhino) // Run JavaScript
             implementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
             implementation(libs.bundles.cryptography) // Cryptography
-
-            // Deprecated; will be removed once extensions have time to migrate from using it
-            implementation("me.xdrop:fuzzywuzzy:1.4.0")
         }
 
         commonTest.dependencies {
