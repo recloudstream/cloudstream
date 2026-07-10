@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.core.net.toUri
 import com.fasterxml.jackson.annotation.JsonInclude
@@ -140,7 +139,7 @@ class SimklApi : SyncAPI() {
     companion object {
         private const val CLIENT_ID: String = BuildConfig.SIMKL_CLIENT_ID
         private const val CLIENT_SECRET: String = BuildConfig.SIMKL_CLIENT_SECRET
-        private const val APP_NAME: String = "Cloudstream"
+        private const val APP_NAME: String = "CloudStream"
         private const val APP_VERSION: String = BuildConfig.VERSION_NAME
         const val SIMKL_CACHED_LIST: String = "simkl_cached_list"
         const val SIMKL_CACHED_LIST_TIME: String = "simkl_cached_time"
