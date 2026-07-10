@@ -534,6 +534,7 @@ suspend fun newDrmExtractorLink(
     return builder
 }
 
+@Prerelease
 suspend fun newDrmExtractorLink(
     source: String,
     name: String,
