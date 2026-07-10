@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.NONE_ID
+import com.lagradost.cloudstream3.utils.PreferenceDelegate
 import com.lagradost.cloudstream3.utils.txt
 
 /** General-purpose repo */
@@ -25,6 +26,11 @@ abstract class AuthRepo(open val api: AuthAPI) {
     val hasInApp get() = api.hasInApp
     val inAppLoginRequirement get() = api.inAppLoginRequirement
     val isAvailable get() = !api.requiresLogin || authUser() != null
+    val supportScrobble get() = api.supportScrobble
+
+    val supportScrobbleDelegate: PreferenceDelegate<Boolean> by lazy {
+        PreferenceDelegate("$idPrefix/supportScrobble", api.supportScrobble)
+    }
 
     companion object {
         private val oauthPayload: MutableMap<String, String?> = mutableMapOf()

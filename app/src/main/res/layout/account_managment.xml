@@ -61,6 +61,13 @@
 
     </LinearLayout>
 
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/account_support_scrobble_switch"
+        android:text="@string/supports_scrobble"
+        style="@style/SettingsItem"
+        android:focusable="true">
+    </com.google.android.material.materialswitch.MaterialSwitch>
+
     <TextView
         android:id="@+id/account_switch_account"
         android:text="@string/switch_account"
@@ -75,4 +82,5 @@
 
         <requestFocus />
     </TextView>
+
 </LinearLayout>

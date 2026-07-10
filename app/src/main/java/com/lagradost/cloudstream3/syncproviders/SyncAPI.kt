@@ -84,6 +84,7 @@ abstract class SyncAPI : AuthAPI() {
         Stopped
     }
 
+    /** Triggers on every player event (Start/Pause/Stop/Ended) */
     data class PlaybackProgress(
         /** Show/Movie Sync level ID */
         val id: String,

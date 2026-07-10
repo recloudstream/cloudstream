@@ -148,6 +148,11 @@ abstract class AuthAPI {
     /** The requirements to login in app */
     open val inAppLoginRequirement: AuthLoginRequirement? = null
 
+    /** Determine if SyncApi supports Playback Scrobbling.
+     *  @see SyncAPI.onPlaybackStatus
+     *  */
+    open val supportScrobble: Boolean = false
+
     companion object {
         @Deprecated(
             message = "Use APIHolder.unixTime instead",

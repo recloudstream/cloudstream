@@ -58,6 +58,7 @@ class SimklApi : SyncAPI() {
     override val icon = R.drawable.simkl_logo
     override val createAccountUrl = "$mainUrl/signup"
     override val syncIdName = SyncIdName.Simkl
+    override val supportScrobble = true
 
     /** Automatically adds simkl auth headers */
     // private val interceptor = HeaderInterceptor()
