@@ -958,7 +958,9 @@ class SimklApi : SyncAPI() {
         val watchedEpisodes =
             if (newStatus.status.internalId == SimklListStatusType.Completed.value) {
                 episodes?.size
-            } else newStatus.watchedEpisodes
+            } else {
+                newStatus.watchedEpisodes
+            }
 
         builder.episodes(episodes?.toList(), watchedEpisodes, simklStatus?.oldEpisodes)
         requireLibraryRefresh = true
