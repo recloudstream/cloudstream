@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.lagradost.cloudstream3.Score
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
@@ -312,15 +313,22 @@ class SyncViewModel : ViewModel() {
         status: SyncAPI.PlaybackStatus,
         season: Int?,
         episode: Int?,
+        type: TvType?,
         positionMs: Long,
         durationMs: Long,
-        isAnime: Boolean = false
     ) = ioSafe {
         syncs.amap { (prefix, id) ->
             repos.firstOrNull {
                 it.idPrefix == prefix
             }?.onPlaybackStatus(
-                progress = SyncAPI.PlaybackProgress(id, season, episode, positionMs, durationMs, isAnime),
+                progress = SyncAPI.PlaybackProgress(
+                    id = id,
+                    season = season,
+                    episode = episode,
+                    type = type,
+                    positionMs = positionMs,
+                    durationMs = durationMs
+                ),
                 status = status
             )
         }

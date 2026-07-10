@@ -91,9 +91,9 @@ abstract class SyncAPI : AuthAPI() {
         val season: Int?,
         /** Episode Number, Should be null for Movies */
         val episode: Int?,
+        val type: TvType?,
         val positionMs: Long,
         val durationMs: Long,
-        val isAnime: Boolean = false,
     ) {
         val progressPercentage: Double
             get() = if (durationMs<= 0L) 0.0 else

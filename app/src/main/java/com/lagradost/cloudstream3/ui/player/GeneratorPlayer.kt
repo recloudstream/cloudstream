@@ -248,7 +248,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         val status = currentPlayerStatus
         val episode = currentMeta as? ResultEpisode
         val episodeKey = episode?.season to episode?.episode
-        val isAnime = episode?.tvType?.isAnimeOp() == true
+        val type = episode?.tvType
 
         val episodeChanged = lastSyncEpisodeKey != null && episodeKey != lastSyncEpisodeKey
         if (episodeChanged && lastSyncPlaybackStatus != CSPlayerLoading.IsEnded) {
@@ -258,9 +258,9 @@ class GeneratorPlayer : FullScreenPlayer() {
                 status = SyncAPI.PlaybackStatus.Stopped,
                 season = oldSeason,
                 episode = oldEpisode,
+                type = type,
                 positionMs = lastSyncPosition,
                 durationMs = lastSyncDuration,
-                isAnime = isAnime
             )
         }
 
@@ -283,9 +283,9 @@ class GeneratorPlayer : FullScreenPlayer() {
             status = playbackStatus,
             season = episode?.season,
             episode = episode?.episode,
+            type = type,
             positionMs = lastSyncPosition,
             durationMs = lastSyncDuration,
-            isAnime = isAnime
         )
     }
 
@@ -1728,9 +1728,9 @@ class GeneratorPlayer : FullScreenPlayer() {
                     status = SyncAPI.PlaybackStatus.Stopped,
                     season = episode?.season,
                     episode = episode?.episode,
+                    type = episode?.tvType,
                     positionMs = position,
-                    durationMs = duration,
-                    isAnime = episode?.tvType?.isAnimeOp() == true
+                    durationMs = duration
                 )
             }
         }

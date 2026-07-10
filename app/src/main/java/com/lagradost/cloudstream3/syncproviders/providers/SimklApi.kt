@@ -17,6 +17,7 @@ import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.SimklSyncServices
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.isAnimeOp
 import com.lagradost.cloudstream3.mvvm.debugPrint
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING
@@ -1094,6 +1095,7 @@ class SimklApi : SyncAPI() {
 
         val token = auth?.token ?: return false
         val ids = MediaObject.Ids.fromMap(readIdFromString(progress.id))
+        val isAnime = progress.type?.isAnimeOp() == true
 
         val body = if (progress.season != null && progress.episode != null) {
             val media = MediaObject(
@@ -1102,8 +1104,8 @@ class SimklApi : SyncAPI() {
                 ids = ids
             )
             ScrobbleRequest(
-                show = if (!progress.isAnime) media else null,
-                anime = if (progress.isAnime) media else null,
+                show = if (!isAnime) media else null,
+                anime = if (isAnime) media else null,
                 episode = ScrobbleEpisode(
                     season = progress.season,
                     episode = progress.episode
