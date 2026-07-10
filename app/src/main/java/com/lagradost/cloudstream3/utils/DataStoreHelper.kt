@@ -234,7 +234,9 @@ object DataStoreHelper {
         } ?: accounts.toList()).firstNotNullOfOrNull { account ->
             if (account.keyIndex == selectedKeyIndex) {
                 account
-            } else null
+            } else {
+                null
+            }
         }
     }
 
