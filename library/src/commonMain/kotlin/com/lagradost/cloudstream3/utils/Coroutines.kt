@@ -68,7 +68,6 @@ object Coroutines {
      * If you want to iterate over the list then you need to do:
      * list.withLock { code here }
      */
-    @Prerelease
     fun <T> atomicListOf(vararg items: T): AtomicMutableList<T> {
         return AtomicMutableList(items.toMutableList())
     }
