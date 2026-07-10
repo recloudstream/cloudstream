@@ -100,15 +100,15 @@ object M3u8Helper2 {
     }
 
     @OptIn(DelicateCryptographyApi::class)
-    fun getDecrypted(
+    suspend fun getDecrypted(
         secretKey: ByteArray,
         data: ByteArray,
         iv: ByteArray = byteArrayOf(),
         index: Int,
     ): ByteArray {
         val ivKey = if (iv.isEmpty()) defaultIv(index) else iv
-        val aesKey = aesCbc.keyDecoder().decodeFromByteArrayBlocking(AES.Key.Format.RAW, secretKey)
-        return aesKey.cipher(padding = true).decryptWithIvBlocking(ivKey, data)
+        val aesKey = aesCbc.keyDecoder().decodeFromByteArray(AES.Key.Format.RAW, secretKey)
+        return aesKey.cipher(padding = true).decryptWithIv(ivKey, data)
     }
 
     private fun getParentLink(url: String): String {
